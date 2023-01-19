@@ -27,7 +27,6 @@ step of checkout.
 
 ### Properties
 
-- [amazon](ShippingInitializeOptions.md#amazon)
 - [amazonpay](ShippingInitializeOptions.md#amazonpay)
 - [methodId](ShippingInitializeOptions.md#methodid)
 - [params](ShippingInitializeOptions.md#params)
@@ -35,15 +34,6 @@ step of checkout.
 - [timeout](ShippingInitializeOptions.md#timeout)
 
 ## Properties
-
-### amazon
-
-• `Optional` **amazon**: [`AmazonPayShippingInitializeOptions`](AmazonPayShippingInitializeOptions.md)
-
-The options that are required to initialize the shipping step of checkout
-when using Amazon Pay.
-
-___
 
 ### amazonpay
 

@@ -10,8 +10,8 @@ When the customer clicks on it, they will be redirected to Amazon to
 select a different payment method.
 
 ```html
-<!-- This is where the Amazon button will be inserted -->
-<div id="edit-button"></div>
+<!-- This is the change payment button that will be bound -->
+<button id="edit-button">Change card</button>
 ```
 
 ```js

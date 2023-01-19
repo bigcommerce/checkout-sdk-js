@@ -519,124 +519,6 @@ declare interface AdyenV3ValidationState {
     errorKey?: string;
 }
 
-/**
- * A set of options that are required to initialize the customer step of
- * checkout to support Amazon Pay.
- *
- * When AmazonPay is initialized, a sign-in button will be inserted into the
- * DOM. When the customer clicks on it, they will be redirected to Amazon to
- * sign in.
- */
-declare interface AmazonPayCustomerInitializeOptions {
-    /**
-     * The ID of a container which the sign-in button should insert into.
-     */
-    container: string;
-    /**
-     * The colour of the sign-in button.
-     */
-    color?: 'Gold' | 'LightGray' | 'DarkGray';
-    /**
-     * The size of the sign-in button.
-     */
-    size?: 'small' | 'medium' | 'large' | 'x-large';
-    /**
-     * A callback that gets called if unable to initialize the widget or select
-     * one of the address options provided by the widget.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onError?(error: AmazonPayWidgetError | StandardError): void;
-}
-
-declare interface AmazonPayOrderReference {
-    getAmazonBillingAgreementId(): string;
-    getAmazonOrderReferenceId(): string;
-}
-
-/**
- * A set of options that are required to initialize the Amazon Pay payment
- * method.
- *
- * When AmazonPay is initialized, a widget will be inserted into the DOM. The
- * widget has a list of payment options for the customer to choose from.
- *
- * ```html
- * <!-- This is where the widget will be inserted -->
- * <div id="container"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'amazon',
- *     amazon: {
- *         container: 'container',
- *     },
- * });
- * ```
- */
-declare interface AmazonPayPaymentInitializeOptions {
-    /**
-     * The ID of a container which the payment widget should insert into.
-     */
-    container: string;
-    /**
-     * A callback that gets called if unable to initialize the widget or select
-     * one of the payment options.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onError?(error: AmazonPayWidgetError | StandardError): void;
-    /**
-     * A callback that gets called when the customer selects one of the payment
-     * options provided by the widget.
-     *
-     * @param reference - The order reference provided by Amazon.
-     */
-    onPaymentSelect?(reference: AmazonPayOrderReference): void;
-    /**
-     * A callback that gets called when the widget is loaded and ready to be
-     * interacted with.
-     *
-     * @param reference - The order reference provided by Amazon.
-     */
-    onReady?(reference: AmazonPayOrderReference): void;
-}
-
-/**
- * A set of options that are required to initialize the shipping step of
- * checkout in order to support Amazon Pay.
- *
- * When Amazon Pay is initialized, a widget will be inserted into the DOM. The
- * widget has a list of shipping addresses for the customer to choose from.
- */
-declare interface AmazonPayShippingInitializeOptions {
-    /**
-     * The ID of a container which the address widget should insert into.
-     */
-    container: string;
-    /**
-     * A callback that gets called when the customer selects an address option.
-     *
-     * @param reference - The order reference provided by Amazon.
-     */
-    onAddressSelect?(reference: AmazonPayOrderReference): void;
-    /**
-     * A callback that gets called if unable to initialize the widget or select
-     * one of the address options provided by the widget.
-     *
-     * @param error - The error object describing the failure of the initialization.
-     */
-    onError?(error: AmazonPayWidgetError | StandardError): void;
-    /**
-     * A callback that gets called when the widget is loaded and ready to be
-     * interacted with.
-     *
-     * @param reference - The order reference provided by Amazon.
-     */
-    onReady?(reference: AmazonPayOrderReference): void;
-}
-
 declare enum AmazonPayV2ButtonColor {
     Gold = "Gold",
     LightGray = "LightGray",
@@ -737,6 +619,20 @@ declare interface AmazonPayV2CheckoutSessionConfig {
  * When AmazonPayV2 is initialized, a sign-in button will be inserted into the
  * DOM. When the customer clicks on it, they will be redirected to Amazon to
  * sign in.
+ *
+ * ```html
+ * <!-- This is where the Amazon Pay button will be inserted -->
+ * <div id="signInButton"></div>
+ * ```
+ *
+ * ```js
+ * service.initializeCustomer({
+ *     methodId: 'amazonpay',
+ *     amazonpay: {
+ *         container: 'signInButton',
+ *     },
+ * });
+ * ```
  */
 declare interface AmazonPayV2CustomerInitializeOptions {
     /**
@@ -787,8 +683,8 @@ declare enum AmazonPayV2PayOptions {
  * select a different payment method.
  *
  * ```html
- * <!-- This is where the Amazon button will be inserted -->
- * <div id="edit-button"></div>
+ * <!-- This is the change payment button that will be bound -->
+ * <button id="edit-button">Change card</button>
  * ```
  *
  * ```js
@@ -840,6 +736,20 @@ declare interface AmazonPayV2Price {
  * When AmazonPayV2 is initialized, a change shipping button will be bound.
  * When the customer clicks on it, they will be redirected to Amazon to
  * select a different shipping address.
+ *
+ * ```html
+ * <!-- This is the change shipping button that will be bound -->
+ * <button id="edit-button">Change shipping</button>
+ * ```
+ *
+ * ```js
+ * service.initializeShipping({
+ *     methodId: 'amazonpay',
+ *     amazonpay: {
+ *         editAddressButtonId: 'edit-button',
+ *     },
+ * });
+ * ```
  */
 declare interface AmazonPayV2ShippingInitializeOptions {
     /**
@@ -848,10 +758,6 @@ declare interface AmazonPayV2ShippingInitializeOptions {
      * address by clicking on a button. It should be an HTML element.
      */
     editAddressButtonId?: string;
-}
-
-declare interface AmazonPayWidgetError extends Error {
-    getErrorCode(): string;
 }
 
 declare type AnalyticStepType = 'customer' | 'shipping' | 'billing' | 'payment';
@@ -1098,11 +1004,6 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
     [key: string]: unknown;
     /**
      * The options that are required to initialize the customer step of checkout
-     * when using Amazon Pay.
-     */
-    amazon?: AmazonPayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the customer step of checkout
      * when using AmazonPayV2.
      */
     amazonpay?: AmazonPayV2CustomerInitializeOptions;
@@ -1240,11 +1141,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * consumption.
      */
     creditCard?: CreditCardPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Amazon Pay payment
-     * method. They can be omitted unless you need to support AmazonPay.
-     */
-    amazon?: AmazonPayPaymentInitializeOptions;
     /**
      * The options that are required to initialize the AmazonPayV2 payment
      * method. They can be omitted unless you need to support AmazonPayV2.
@@ -2656,14 +2552,15 @@ declare class CheckoutService {
      *
      * Before a payment method can accept payment details, it must first be
      * initialized. Some payment methods require you to provide additional
-     * initialization options. For example, Amazon requires a container ID in
-     * order to initialize their payment widget.
+     * initialization options. For example, you can provide an element ID for
+     * Amazon Pay if you want users to be able to select a different payment
+     * method by clicking on the element.
      *
      * ```js
      * await service.initializePayment({
-     *     methodId: 'amazon',
-     *     amazon: {
-     *         container: 'walletWidget',
+     *     methodId: 'amazonpay',
+     *     amazonpay: {
+     *         editButtonId: 'edit-button',
      *     },
      * });
      * ```
@@ -2682,7 +2579,7 @@ declare class CheckoutService {
      *
      * ```js
      * await service.deinitializePayment({
-     *     methodId: 'amazon',
+     *     methodId: 'amazonpay',
      * });
      * ```
      *
@@ -2788,13 +2685,13 @@ declare class CheckoutService {
     /**
      * Initializes the sign-in step of a checkout process.
      *
-     * Some payment methods, such as Amazon, have their own sign-in flow. In
+     * Some payment methods, such as Amazon Pay, have their own sign-in flow. In
      * order to support them, this method must be called.
      *
      * ```js
      * await service.initializeCustomer({
-     *     methodId: 'amazon',
-     *     amazon: {
+     *     methodId: 'amazonpay',
+     *     amazonpay: {
      *         container: 'signInButton',
      *     },
      * });
@@ -2814,7 +2711,7 @@ declare class CheckoutService {
      *
      * ```js
      * await service.deinitializeCustomer({
-     *     methodId: 'amazon',
+     *     methodId: 'amazonpay',
      * });
      * ```
      *
@@ -2999,15 +2896,15 @@ declare class CheckoutService {
     /**
      * Initializes the shipping step of a checkout process.
      *
-     * Some payment methods, such as Amazon, can provide shipping information to
-     * be used for checkout. In order to support them, this method must be
-     * called.
+     * Some payment methods, such as Amazon Pay, can provide shipping
+     * information to be used for checkout. In order to support them, this
+     * method must be called.
      *
      * ```js
      * await service.initializeShipping({
-     *     methodId: 'amazon',
-     *     amazon: {
-     *         container: 'addressBook',
+     *     methodId: 'amazonpay',
+     *     amazonpay: {
+     *         editAddressButtonId: 'changeAddressButton',
      *     },
      * });
      * ```
@@ -3026,7 +2923,7 @@ declare class CheckoutService {
      *
      * ```js
      * await service.deinitializeShipping({
-     *     methodId: 'amazon',
+     *     methodId: 'amazonpay',
      * });
      * ```
      *
@@ -6855,11 +6752,6 @@ declare interface SepaPlaceHolder_2 {
  * step of checkout.
  */
 declare interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptions<T> {
-    /**
-     * The options that are required to initialize the shipping step of checkout
-     * when using Amazon Pay.
-     */
-    amazon?: AmazonPayShippingInitializeOptions;
     /**
      * The options that are required to initialize the shipping step of checkout
      * when using AmazonPayV2.

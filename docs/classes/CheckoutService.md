@@ -371,7 +371,7 @@ initialization.
 
 ```js
 await service.deinitializeCustomer({
-    methodId: 'amazon',
+    methodId: 'amazonpay',
 });
 ```
 
@@ -402,7 +402,7 @@ result of payment initialization.
 
 ```js
 await service.deinitializePayment({
-    methodId: 'amazon',
+    methodId: 'amazonpay',
 });
 ```
 
@@ -433,7 +433,7 @@ initialization.
 
 ```js
 await service.deinitializeShipping({
-    methodId: 'amazon',
+    methodId: 'amazonpay',
 });
 ```
 
@@ -645,13 +645,13 @@ ___
 
 Initializes the sign-in step of a checkout process.
 
-Some payment methods, such as Amazon, have their own sign-in flow. In
+Some payment methods, such as Amazon Pay, have their own sign-in flow. In
 order to support them, this method must be called.
 
 ```js
 await service.initializeCustomer({
-    methodId: 'amazon',
-    amazon: {
+    methodId: 'amazonpay',
+    amazonpay: {
         container: 'signInButton',
     },
 });
@@ -679,14 +679,15 @@ Initializes the payment step of a checkout process.
 
 Before a payment method can accept payment details, it must first be
 initialized. Some payment methods require you to provide additional
-initialization options. For example, Amazon requires a container ID in
-order to initialize their payment widget.
+initialization options. For example, you can provide an element ID for
+Amazon Pay if you want users to be able to select a different payment
+method by clicking on the element.
 
 ```js
 await service.initializePayment({
-    methodId: 'amazon',
-    amazon: {
-        container: 'walletWidget',
+    methodId: 'amazonpay',
+    amazonpay: {
+        editButtonId: 'edit-button',
     },
 });
 ```
@@ -711,15 +712,15 @@ ___
 
 Initializes the shipping step of a checkout process.
 
-Some payment methods, such as Amazon, can provide shipping information to
-be used for checkout. In order to support them, this method must be
-called.
+Some payment methods, such as Amazon Pay, can provide shipping
+information to be used for checkout. In order to support them, this
+method must be called.
 
 ```js
 await service.initializeShipping({
-    methodId: 'amazon',
-    amazon: {
-        container: 'addressBook',
+    methodId: 'amazonpay',
+    amazonpay: {
+        editAddressButtonId: 'changeAddressButton',
     },
 });
 ```

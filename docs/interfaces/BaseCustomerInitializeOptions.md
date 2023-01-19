@@ -24,7 +24,6 @@ information in order to initialize the customer step of checkout.
 
 ### Properties
 
-- [amazon](BaseCustomerInitializeOptions.md#amazon)
 - [amazonpay](BaseCustomerInitializeOptions.md#amazonpay)
 - [bolt](BaseCustomerInitializeOptions.md#bolt)
 - [braintreepaypal](BaseCustomerInitializeOptions.md#braintreepaypal)
@@ -47,15 +46,6 @@ information in order to initialize the customer step of checkout.
 - [timeout](BaseCustomerInitializeOptions.md#timeout)
 
 ## Properties
-
-### amazon
-
-• `Optional` **amazon**: [`AmazonPayCustomerInitializeOptions`](AmazonPayCustomerInitializeOptions.md)
-
-The options that are required to initialize the customer step of checkout
-when using Amazon Pay.
-
-___
 
 ### amazonpay
 

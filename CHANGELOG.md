@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.326.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.326.1...v1.326.2) (2023-01-19)
+
+
+### Code Refactoring
+
+* **payment:** INT-6964 AmazonPayV1: Remove all related files ([f24e5f8](https://github.com/bigcommerce/checkout-sdk-js/commit/f24e5f8b8911eb26476aaa681e04695f6f13ea87))
+* **payment:** INT-6964 Rename `AMAZONPAYV2` to `AMAZONPAY` ([4eb2688](https://github.com/bigcommerce/checkout-sdk-js/commit/4eb2688d1c7b6c2b9c44be45ed2121942898276f))
+
 ### [1.326.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.326.0...v1.326.1) (2023-01-19)
 
 

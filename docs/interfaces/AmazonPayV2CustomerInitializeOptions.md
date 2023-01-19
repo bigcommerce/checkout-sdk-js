@@ -9,6 +9,20 @@ When AmazonPayV2 is initialized, a sign-in button will be inserted into the
 DOM. When the customer clicks on it, they will be redirected to Amazon to
 sign in.
 
+```html
+<!-- This is where the Amazon Pay button will be inserted -->
+<div id="signInButton"></div>
+```
+
+```js
+service.initializeCustomer({
+    methodId: 'amazonpay',
+    amazonpay: {
+        container: 'signInButton',
+    },
+});
+```
+
 ## Table of contents
 
 ### Properties

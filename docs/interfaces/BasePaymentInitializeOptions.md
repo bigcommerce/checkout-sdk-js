@@ -15,7 +15,6 @@ current checkout flow.
 
 ### Properties
 
-- [amazon](BasePaymentInitializeOptions.md#amazon)
 - [amazonpay](BasePaymentInitializeOptions.md#amazonpay)
 - [bluesnapv2](BasePaymentInitializeOptions.md#bluesnapv2)
 - [bolt](BasePaymentInitializeOptions.md#bolt)
@@ -52,15 +51,6 @@ current checkout flow.
 - [worldpay](BasePaymentInitializeOptions.md#worldpay)
 
 ## Properties
-
-### amazon
-
-• `Optional` **amazon**: [`AmazonPayPaymentInitializeOptions`](AmazonPayPaymentInitializeOptions.md)
-
-The options that are required to initialize the Amazon Pay payment
-method. They can be omitted unless you need to support AmazonPay.
-
-___
 
 ### amazonpay
 

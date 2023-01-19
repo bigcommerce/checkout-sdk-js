@@ -9,6 +9,20 @@ When AmazonPayV2 is initialized, a change shipping button will be bound.
 When the customer clicks on it, they will be redirected to Amazon to
 select a different shipping address.
 
+```html
+<!-- This is the change shipping button that will be bound -->
+<button id="edit-button">Change shipping</button>
+```
+
+```js
+service.initializeShipping({
+    methodId: 'amazonpay',
+    amazonpay: {
+        editAddressButtonId: 'edit-button',
+    },
+});
+```
+
 ## Table of contents
 
 ### Properties

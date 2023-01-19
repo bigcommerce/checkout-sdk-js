@@ -68,7 +68,7 @@ A callback that gets called if unable to authorize and tokenize payment.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `error` | [`StandardError`](../classes/StandardError.md) \| [`BraintreeError`](BraintreeError.md) | The error object describing the failure. |
+| `error` | [`BraintreeError`](BraintreeError.md) \| [`StandardError`](../classes/StandardError.md) | The error object describing the failure. |
 
 #### Returns
 
@@ -86,7 +86,7 @@ A callback that gets called on any error instead of submit payment or authorizat
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `error` | [`StandardError`](../classes/StandardError.md) \| [`BraintreeError`](BraintreeError.md) | The error object describing the failure. |
+| `error` | [`BraintreeError`](BraintreeError.md) \| [`StandardError`](../classes/StandardError.md) | The error object describing the failure. |
 
 #### Returns
 
@@ -104,7 +104,7 @@ A callback that gets called if unable to submit payment.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `error` | [`StandardError`](../classes/StandardError.md) \| [`BraintreeError`](BraintreeError.md) | The error object describing the failure. |
+| `error` | [`BraintreeError`](BraintreeError.md) \| [`StandardError`](../classes/StandardError.md) | The error object describing the failure. |
 
 #### Returns
 
