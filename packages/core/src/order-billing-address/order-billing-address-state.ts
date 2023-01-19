@@ -1,6 +1,8 @@
-import { BillingAddress } from '../billing';
+import { Address } from '../address';
 
-export type OrderBillingAddress = Omit<BillingAddress, 'id'>;
+export interface OrderBillingAddress extends Address {
+    email?: string;
+}
 
 export default interface OrderBillingAddressState {
     data?: OrderBillingAddress;

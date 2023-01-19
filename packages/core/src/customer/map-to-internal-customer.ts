@@ -1,5 +1,5 @@
 import { mapToInternalAddress } from '../address';
-import { BillingAddress } from '../billing';
+import { OrderBillingAddress } from '../order-billing-address/order-billing-address-state';
 
 import InternalCustomer from './internal-customer';
 
@@ -12,7 +12,7 @@ import { Customer } from '.';
  */
 export default function mapToInternalCustomer(
     customer: Customer,
-    billingAddress: BillingAddress,
+    billingAddress: OrderBillingAddress,
 ): InternalCustomer {
     const firstName = customer.firstName || billingAddress.firstName || '';
     const lastName = customer.lastName || billingAddress.lastName || '';
