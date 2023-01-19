@@ -118,7 +118,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
             giftCertificates,
             instruments,
             order,
-            createOrderBillingAddressSelector,
+            orderBillingAddress,
             payment,
             paymentMethods,
             paymentStrategies,
