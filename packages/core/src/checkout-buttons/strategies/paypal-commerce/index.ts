@@ -17,12 +17,6 @@ export { PaypalCommerceAlternativeMethodsButtonOptions } from './paypal-commerce
 export { default as PaypalCommerceAlternativeMethodsButtonStrategy } from './paypal-commerce-alternative-methods-button-strategy';
 
 /**
- * PayPal Commerce Inline Checkout
- */
-export { PaypalCommerceInlineCheckoutButtonInitializeOptions } from './paypal-commerce-inline-checkout-button-options';
-export { default as PaypalCommerceInlineCheckoutButtonStrategy } from './paypal-commerce-inline-checkout-button-strategy';
-
-/**
  * PayPal Commerce Venmo
  */
 export { PaypalCommerceVenmoButtonInitializeOptions } from './paypal-commerce-venmo-button-options';
