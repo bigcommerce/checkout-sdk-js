@@ -1,14 +1,14 @@
-import { BillingAddress } from '../billing';
 import { LineItemMap } from '../cart';
 import { Coupon } from '../coupon';
 import { Currency } from '../currency';
+import { OrderBillingAddress } from '../order-billing-address/order-billing-address-state';
 import { Tax } from '../tax';
 
 import { OrderMetaState } from './order-state';
 
 export default interface Order {
     baseAmount: number;
-    billingAddress: BillingAddress;
+    billingAddress: OrderBillingAddress;
     cartId: string;
     coupons: Coupon[];
     consignments: OrderConsignment;

@@ -23,6 +23,7 @@ import {
     OrderRequestBody,
     OrderRequestSender,
 } from '../../../order';
+import { getOrderBillingAddressState } from '../../../order-billing-address';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getOrderState } from '../../../order/orders.mock';
@@ -79,6 +80,7 @@ describe('AffirmPaymentStrategy', () => {
             billingAddress: getBillingAddressState(),
             formFields: getFormFieldsState(),
             order: getOrderState(),
+            orderBillingAddress: getOrderBillingAddressState(),
         });
         checkoutRequestSender = new CheckoutRequestSender(requestSender);
         orderActionCreator = new OrderActionCreator(

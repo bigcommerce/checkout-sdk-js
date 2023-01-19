@@ -8,6 +8,7 @@ import { getCustomer, getCustomerState } from '../customer/customers.mock';
 import { getCustomerStrategyState } from '../customer/internal-customers.mock';
 import { getFormFieldsState } from '../form/form.mock';
 import { getCountriesState } from '../geography/countries.mock';
+import { getOrderBillingAddressState } from '../order-billing-address';
 import { getOrderState } from '../order/orders.mock';
 import { ACKNOWLEDGE, HOSTED } from '../payment';
 import { getInstrumentsState } from '../payment/instrument/instrument.mock';
@@ -123,6 +124,7 @@ export function getCheckoutStoreState(): CheckoutStoreState {
         giftCertificates: getGiftCertificatesState(),
         instruments: getInstrumentsState(),
         order: { errors: {}, statuses: {} },
+        orderBillingAddress: getOrderBillingAddressState(),
         payment: getPaymentState(),
         paymentMethods: getPaymentMethodsState(),
         paymentStrategies: { data: {}, errors: {}, statuses: {} },

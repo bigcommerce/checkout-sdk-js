@@ -7,6 +7,7 @@ import { CustomerSelector, CustomerStrategySelector } from '../customer';
 import { FormSelector } from '../form';
 import { CountrySelector } from '../geography';
 import { OrderSelector } from '../order';
+import OrderBillingAddressSelector from '../order-billing-address/order-billing-address-selector';
 import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
@@ -38,6 +39,7 @@ export default interface InternalCheckoutSelectors {
     giftCertificates: GiftCertificateSelector;
     instruments: InstrumentSelector;
     order: OrderSelector;
+    orderBillingAddress: OrderBillingAddressSelector;
     payment: PaymentSelector;
     paymentMethods: PaymentMethodSelector;
     paymentStrategies: PaymentStrategySelector;

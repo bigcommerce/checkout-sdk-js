@@ -9,6 +9,7 @@ import { customerReducer, customerStrategyReducer } from '../customer';
 import { formFieldsReducer } from '../form';
 import { countryReducer } from '../geography';
 import { orderReducer } from '../order';
+import { orderBillingAddressReducer } from '../order-billing-address';
 import { paymentMethodReducer, paymentReducer, paymentStrategyReducer } from '../payment';
 import { instrumentReducer } from '../payment/instrument';
 import { remoteCheckoutReducer } from '../remote-checkout';
@@ -40,6 +41,7 @@ export default function createCheckoutStoreReducer(): Reducer<CheckoutStoreState
         formFields: formFieldsReducer,
         giftCertificates: giftCertificateReducer,
         instruments: instrumentReducer,
+        orderBillingAddress: orderBillingAddressReducer,
         order: orderReducer,
         payment: paymentReducer,
         paymentMethods: paymentMethodReducer,

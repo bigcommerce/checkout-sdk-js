@@ -7,6 +7,7 @@ import { CustomerState, CustomerStrategyState } from '../customer';
 import { FormFieldsState } from '../form';
 import { CountryState } from '../geography';
 import { OrderState } from '../order';
+import { OrderBillingAddressState } from '../order-billing-address';
 import { PaymentMethodState, PaymentState, PaymentStrategyState } from '../payment';
 import { InstrumentState } from '../payment/instrument';
 import { RemoteCheckoutState } from '../remote-checkout';
@@ -37,6 +38,7 @@ export default interface CheckoutStoreState {
     giftCertificates: GiftCertificateState;
     instruments: InstrumentState;
     order: OrderState;
+    orderBillingAddress: OrderBillingAddressState;
     payment: PaymentState;
     paymentMethods: PaymentMethodState;
     paymentStrategies: PaymentStrategyState;

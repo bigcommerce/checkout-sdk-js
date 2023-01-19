@@ -8,6 +8,7 @@ import { createCustomerSelectorFactory, createCustomerStrategySelectorFactory } 
 import { createFormSelectorFactory } from '../form';
 import { createCountrySelectorFactory } from '../geography';
 import { createOrderSelectorFactory } from '../order';
+import { createOrderBillingAddressSelectorFactory } from '../order-billing-address';
 import {
     createPaymentMethodSelectorFactory,
     createPaymentSelectorFactory,
@@ -58,6 +59,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createConsignmentSelector = createConsignmentSelectorFactory();
     const createCheckoutSelector = createCheckoutSelectorFactory();
     const createOrderSelector = createOrderSelectorFactory();
+    const createOrderBillingAddressSelector = createOrderBillingAddressSelectorFactory();
     const createPaymentSelector = createPaymentSelectorFactory();
     const createStoreCreditSelector = createStoreCreditSelectorFactory();
     const createSubscriptionsSelector = createSubscriptionsSelectorFactory();
@@ -74,6 +76,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const form = createFormSelector(state.formFields);
         const giftCertificates = createGiftCertificateSelector(state.giftCertificates);
         const instruments = createInstrumentSelector(state.instruments);
+        const orderBillingAddress = createOrderBillingAddressSelector(state.orderBillingAddress);
         const paymentMethods = createPaymentMethodSelector(state.paymentMethods);
         const paymentStrategies = createPaymentStrategySelector(state.paymentStrategies);
         const pickupOptions = createPickupOptionSelector(state.pickupOptions);
@@ -96,7 +99,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
             customer,
             giftCertificates,
         );
-        const order = createOrderSelector(state.order, billingAddress, coupons);
+        const order = createOrderSelector(state.order, orderBillingAddress, coupons);
         const payment = createPaymentSelector(checkout, order);
         const config = createConfigSelector(state.config, state.formFields);
 
@@ -115,6 +118,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
             giftCertificates,
             instruments,
             order,
+            orderBillingAddress,
             payment,
             paymentMethods,
             paymentStrategies,

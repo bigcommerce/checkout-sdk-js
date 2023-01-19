@@ -30,13 +30,13 @@ describe('OrderSelector', () => {
         it('returns the current order', () => {
             orderSelector = createOrderSelector(
                 state.order,
-                selectors.billingAddress,
+                selectors.orderBillingAddress,
                 selectors.coupons,
             );
 
             expect(orderSelector.getOrder()).toEqual({
                 ...getOrder(),
-                billingAddress: selectors.billingAddress.getBillingAddress(),
+                billingAddress: selectors.orderBillingAddress.getOrderBillingAddress(),
                 coupons: selectors.coupons.getCoupons(),
             });
         });
@@ -46,7 +46,7 @@ describe('OrderSelector', () => {
         it('returns order meta', () => {
             orderSelector = createOrderSelector(
                 state.order,
-                selectors.billingAddress,
+                selectors.orderBillingAddress,
                 selectors.coupons,
             );
 
@@ -63,7 +63,7 @@ describe('OrderSelector', () => {
                     ...state.order,
                     errors: { loadError },
                 },
-                selectors.billingAddress,
+                selectors.orderBillingAddress,
                 selectors.coupons,
             );
 
@@ -73,7 +73,7 @@ describe('OrderSelector', () => {
         it('does not returns error if able to load', () => {
             orderSelector = createOrderSelector(
                 state.order,
-                selectors.billingAddress,
+                selectors.orderBillingAddress,
                 selectors.coupons,
             );
 
@@ -96,7 +96,7 @@ describe('OrderSelector', () => {
 
                 orderSelector = createOrderSelector(
                     orderState,
-                    selectors.billingAddress,
+                    selectors.orderBillingAddress,
                     selectors.coupons,
                 );
 
@@ -108,7 +108,7 @@ describe('OrderSelector', () => {
             it('returns undefined', () => {
                 orderSelector = createOrderSelector(
                     state.order,
-                    selectors.billingAddress,
+                    selectors.orderBillingAddress,
                     selectors.coupons,
                 );
 
@@ -124,7 +124,7 @@ describe('OrderSelector', () => {
                     ...state.order,
                     statuses: { isLoading: true },
                 },
-                selectors.billingAddress,
+                selectors.orderBillingAddress,
                 selectors.coupons,
             );
 
@@ -134,7 +134,7 @@ describe('OrderSelector', () => {
         it('returns false if not loading order', () => {
             orderSelector = createOrderSelector(
                 state.order,
-                selectors.billingAddress,
+                selectors.orderBillingAddress,
                 selectors.coupons,
             );
 
