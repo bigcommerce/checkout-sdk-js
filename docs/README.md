@@ -30,9 +30,13 @@
 - [PaypalCommerceFormFieldType](enums/PaypalCommerceFormFieldType.md)
 - [RadiusUnit](enums/RadiusUnit.md)
 - [StyleButtonColor](enums/StyleButtonColor.md)
+- [StyleButtonColor_2](enums/StyleButtonColor_2.md)
 - [StyleButtonLabel](enums/StyleButtonLabel.md)
+- [StyleButtonLabel_2](enums/StyleButtonLabel_2.md)
 - [StyleButtonLayout](enums/StyleButtonLayout.md)
+- [StyleButtonLayout_2](enums/StyleButtonLayout_2.md)
 - [StyleButtonShape](enums/StyleButtonShape.md)
+- [StyleButtonShape_2](enums/StyleButtonShape_2.md)
 
 ### Classes
 
@@ -282,7 +286,9 @@
 - [OrderRequestBody](interfaces/OrderRequestBody.md)
 - [OrderShippingConsignment](interfaces/OrderShippingConsignment.md)
 - [PasswordRequirements](interfaces/PasswordRequirements.md)
+- [PayPalButtonStyleOptions](interfaces/PayPalButtonStyleOptions.md)
 - [PayPalCommerceCustomerInitializeOptions](interfaces/PayPalCommerceCustomerInitializeOptions.md)
+- [PayPalCommerceInlineButtonInitializeOptions](interfaces/PayPalCommerceInlineButtonInitializeOptions.md)
 - [PayPalInstrument](interfaces/PayPalInstrument.md)
 - [PaymentMethod](interfaces/PaymentMethod.md)
 - [PaymentMethodConfig](interfaces/PaymentMethodConfig.md)
@@ -380,6 +386,7 @@
 - [WithDocumentInstrument](interfaces/WithDocumentInstrument.md)
 - [WithMollieIssuerInstrument](interfaces/WithMollieIssuerInstrument.md)
 - [WithPayPalCommerceCustomerInitializeOptions](interfaces/WithPayPalCommerceCustomerInitializeOptions.md)
+- [WithPayPalCommerceInlineButtonInitializeOptions](interfaces/WithPayPalCommerceInlineButtonInitializeOptions.md)
 - [WithSquareV2PaymentInitializeOptions](interfaces/WithSquareV2PaymentInitializeOptions.md)
 - [WorldpayAccessPaymentInitializeOptions](interfaces/WorldpayAccessPaymentInitializeOptions.md)
 - [ZipCodeElementOptions](interfaces/ZipCodeElementOptions.md)
@@ -515,7 +522,7 @@ ___
 
 ### CheckoutButtonInitializeOptions
 
-Ƭ **CheckoutButtonInitializeOptions**: [`BaseCheckoutButtonInitializeOptions`](interfaces/BaseCheckoutButtonInitializeOptions.md) & [`WithApplePayButtonInitializeOptions`](interfaces/WithApplePayButtonInitializeOptions.md)
+Ƭ **CheckoutButtonInitializeOptions**: [`BaseCheckoutButtonInitializeOptions`](interfaces/BaseCheckoutButtonInitializeOptions.md) & [`WithApplePayButtonInitializeOptions`](interfaces/WithApplePayButtonInitializeOptions.md) & [`WithPayPalCommerceInlineButtonInitializeOptions`](interfaces/WithPayPalCommerceInlineButtonInitializeOptions.md)
 
 ___
 

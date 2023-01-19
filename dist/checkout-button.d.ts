@@ -459,7 +459,7 @@ declare class CheckoutButtonErrorSelector {
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithPayPalCommerceInlineButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -632,6 +632,49 @@ declare interface LineItem {
         optionId: number;
         optionValue: number | string;
     };
+}
+
+declare interface PayPalButtonStyleOptions {
+    layout?: StyleButtonLayout_2;
+    color?: StyleButtonColor_2;
+    shape?: StyleButtonShape_2;
+    height?: number;
+    label?: StyleButtonLabel_2;
+    tagline?: boolean;
+    custom?: {
+        label?: string;
+        css?: {
+            background?: string;
+            color?: string;
+            width?: string;
+        };
+    };
+}
+
+/**
+ * A set of options that are required to initialize ApplePay in cart.
+ *
+ * When ApplePay is initialized, an ApplePay button will be inserted into the
+ * DOM. When a customer clicks on it, it will trigger Apple sheet.
+ */
+declare interface PayPalCommerceInlineButtonInitializeOptions {
+    /**
+     * A class name used to add special class for container where the button will be generated in
+     * Default: 'PaypalCommerceInlineButton'
+     */
+    buttonContainerClassName?: string;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: Pick<PayPalButtonStyleOptions, 'custom'>;
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete(): void;
+    /**
+     * A callback that gets called on any error
+     */
+    onError?(): void;
 }
 
 declare interface PaypalButtonInitializeOptions {
@@ -875,6 +918,14 @@ declare enum StyleButtonColor {
     white = "white"
 }
 
+declare enum StyleButtonColor_2 {
+    GOLD = "gold",
+    BLUE = "blue",
+    SILVER = "silver",
+    BLACK = "black",
+    WHITE = "white"
+}
+
 declare enum StyleButtonLabel {
     paypal = "paypal",
     checkout = "checkout",
@@ -883,9 +934,22 @@ declare enum StyleButtonLabel {
     installment = "installment"
 }
 
+declare enum StyleButtonLabel_2 {
+    PAYPAL = "paypal",
+    CHECKOUT = "checkout",
+    BUYNOW = "buynow",
+    PAY = "pay",
+    INSTALLMENT = "installment"
+}
+
 declare enum StyleButtonLayout {
     vertical = "vertical",
     horizontal = "horizontal"
+}
+
+declare enum StyleButtonLayout_2 {
+    VERTICAL = "vertical",
+    HORIZONTAL = "horizontal"
 }
 
 declare enum StyleButtonShape {
@@ -893,8 +957,17 @@ declare enum StyleButtonShape {
     rect = "rect"
 }
 
+declare enum StyleButtonShape_2 {
+    PILL = "pill",
+    RECT = "rect"
+}
+
 declare interface WithApplePayButtonInitializeOptions {
     applepay?: ApplePayButtonInitializeOptions_2;
+}
+
+declare interface WithPayPalCommerceInlineButtonInitializeOptions {
+    paypalcommerceinline?: PayPalCommerceInlineButtonInitializeOptions;
 }
 
 /**
