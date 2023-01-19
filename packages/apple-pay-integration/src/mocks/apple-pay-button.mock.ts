@@ -1,8 +1,21 @@
 import { CheckoutButtonInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WithApplePayButtonInitializeOptions } from '../apple-pay-button-initialize-options';
 import ApplePayButtonMethodType from '../apple-pay-button-method-type';
-import LineItemMap from "../../../core/src/cart/line-item-map";
 
+export interface CustomItem {
+    id: string;
+    listPrice: number;
+    extendedListPrice: number;
+    name: string;
+    quantity: number;
+    sku: string;
+}
+export interface LineItemMap {
+    physicalItems: PhysicalItem[];
+    digitalItems: DigitalItem[];
+    customItems?: CustomItem[];
+    giftCertificates: GiftCertificateItem[];
+}
 export interface Cart {
     id: string;
     customerId: number;
