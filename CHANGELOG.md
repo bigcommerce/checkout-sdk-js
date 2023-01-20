@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.326.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.326.2...v1.326.3) (2023-01-20)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-000 Fix issue with offsite payment completion ([#1786](https://github.com/bigcommerce/checkout-sdk-js/issues/1786)) ([c1d5b79](https://github.com/bigcommerce/checkout-sdk-js/commit/c1d5b79efd17da26c553ad515f5d9ab78ee152a8))
+
 ### [1.326.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.326.1...v1.326.2) (2023-01-19)
 
 
