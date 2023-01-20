@@ -22,4 +22,13 @@ describe('orderBillingAddressReducer', () => {
             data: action.payload && action.payload.billingAddress,
         });
     });
+
+    it('returns billing address for offsite payment', () => {
+        const action = createAction(OrderActionType.LoadOrderPaymentsSucceeded, getOrder());
+        const output = orderBillingAddressReducer(initialState, action);
+
+        expect(output).toEqual({
+            data: action.payload && action.payload.billingAddress,
+        });
+    });
 });
