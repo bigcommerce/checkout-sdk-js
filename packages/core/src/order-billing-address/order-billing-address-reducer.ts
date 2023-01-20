@@ -24,6 +24,7 @@ function dataReducer(
     action: OrderAction,
 ): OrderBillingAddress | undefined {
     switch (action.type) {
+        case OrderActionType.LoadOrderPaymentsSucceeded:
         case OrderActionType.LoadOrderSucceeded:
             return replace(data, action.payload && action.payload.billingAddress);
 
