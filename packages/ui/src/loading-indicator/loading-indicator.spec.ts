@@ -25,6 +25,22 @@ describe('LoadingIndicator', () => {
         expect(parent.firstChild).toMatchSnapshot();
     });
 
+    it('renders loading indicator with provided styles prop', () => {
+        indicator = new LoadingIndicator({
+            styles: {
+                size: 10,
+            },
+        });
+
+        indicator.show(parentId);
+
+        const child = parent.firstChild as HTMLElement;
+        const loadingIndicator = child.firstChild as HTMLElement;
+
+        expect(loadingIndicator.style.width).toBe('10px');
+        expect(loadingIndicator.style.height).toBe('10px');
+    });
+
     it('shows loading indicator', () => {
         indicator.show(parentId);
 

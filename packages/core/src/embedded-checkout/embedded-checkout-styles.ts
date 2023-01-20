@@ -1,4 +1,4 @@
-import { LoadingIndicatorStyles } from '../common/loading-indicator';
+import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 
 export default interface EmbeddedCheckoutStyles {
     // Base

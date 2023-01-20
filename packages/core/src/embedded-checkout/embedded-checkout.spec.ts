@@ -1,5 +1,7 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import {
     IFrameComponent,
@@ -7,7 +9,6 @@ import {
     IframeEventPoster,
     iframeResizer,
 } from '../common/iframe';
-import { LoadingIndicator } from '../common/loading-indicator';
 import { BrowserStorage } from '../common/storage';
 
 import EmbeddedCheckout, {

@@ -1,6 +1,7 @@
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, TimeoutError } from '../../../common/error/errors';
-import { LoadingIndicator } from '../../../common/loading-indicator';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';

@@ -9,19 +9,19 @@ const DEFAULT_STYLES: LoadingIndicatorStyles = {
 const ROTATION_ANIMATION = 'embedded-checkout-loading-indicator-rotation';
 
 export default class LoadingIndicator {
-    private _container: HTMLElement;
-    private _indicator: HTMLElement;
-    private _styles: LoadingIndicatorStyles;
+    private container: HTMLElement;
+    private indicator: HTMLElement;
+    private styles: LoadingIndicatorStyles;
 
     constructor(options?: { styles?: LoadingIndicatorStyles }) {
-        this._styles = { ...DEFAULT_STYLES, ...(options && options.styles) };
+        this.styles = { ...DEFAULT_STYLES, ...(options && options.styles) };
 
-        this._defineAnimation();
+        this.defineAnimation();
 
-        this._container = this._buildContainer();
-        this._indicator = this._buildIndicator();
+        this.container = this.buildContainer();
+        this.indicator = this.buildIndicator();
 
-        this._container.appendChild(this._indicator);
+        this.container.appendChild(this.indicator);
     }
 
     show(parentId?: string): void {
@@ -34,26 +34,26 @@ export default class LoadingIndicator {
                 );
             }
 
-            parent.appendChild(this._container);
+            parent.appendChild(this.container);
         }
 
-        this._container.style.visibility = 'visible';
-        this._container.style.opacity = '1';
+        this.container.style.visibility = 'visible';
+        this.container.style.opacity = '1';
     }
 
     hide(): void {
         const handleTransitionEnd = () => {
-            this._container.style.visibility = 'hidden';
+            this.container.style.visibility = 'hidden';
 
-            this._container.removeEventListener('transitionend', handleTransitionEnd);
+            this.container.removeEventListener('transitionend', handleTransitionEnd);
         };
 
-        this._container.addEventListener('transitionend', handleTransitionEnd);
+        this.container.addEventListener('transitionend', handleTransitionEnd);
 
-        this._container.style.opacity = '0';
+        this.container.style.opacity = '0';
     }
 
-    private _buildContainer(): HTMLElement {
+    private buildContainer(): HTMLElement {
         const container = document.createElement('div');
 
         container.style.display = 'block';
@@ -70,15 +70,15 @@ export default class LoadingIndicator {
         return container;
     }
 
-    private _buildIndicator(): HTMLElement {
+    private buildIndicator(): HTMLElement {
         const indicator = document.createElement('div');
 
         indicator.style.display = 'block';
-        indicator.style.width = `${this._styles.size}px`;
-        indicator.style.height = `${this._styles.size}px`;
-        indicator.style.borderRadius = `${this._styles.size}px`;
+        indicator.style.width = `${this.styles.size}px`;
+        indicator.style.height = `${this.styles.size}px`;
+        indicator.style.borderRadius = `${this.styles.size}px`;
         indicator.style.border = 'solid 1px';
-        indicator.style.borderColor = `${this._styles.backgroundColor} ${this._styles.backgroundColor} ${this._styles.color} ${this._styles.color}`;
+        indicator.style.borderColor = `${this.styles.backgroundColor} ${this.styles.backgroundColor} ${this.styles.color} ${this.styles.color}`;
         indicator.style.margin = '0 auto';
         indicator.style.position = 'absolute';
         indicator.style.left = '0';
@@ -91,7 +91,7 @@ export default class LoadingIndicator {
         return indicator;
     }
 
-    private _defineAnimation(): void {
+    private defineAnimation(): void {
         // In order to define CSS animation, we need to insert a stylesheet into the host frame.
         // We only have to do it once.
         if (document.getElementById(ROTATION_ANIMATION)) {
@@ -102,7 +102,8 @@ export default class LoadingIndicator {
 
         style.id = ROTATION_ANIMATION;
 
-        document.head.appendChild(style);
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        document.head?.appendChild(style);
 
         if (style.sheet instanceof CSSStyleSheet) {
             // We need to provide the 2nd parameter for IE11, even though it is

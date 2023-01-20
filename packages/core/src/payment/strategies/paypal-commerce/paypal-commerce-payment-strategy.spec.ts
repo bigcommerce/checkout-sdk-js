@@ -5,13 +5,14 @@ import { EventEmitter } from 'events';
 import { omit } from 'lodash';
 import { Observable, of } from 'rxjs';
 
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { Cart } from '../../../cart';
 import { getCart } from '../../../cart/carts.mock';
 import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../../../common/error/errors';
-import { LoadingIndicator } from '../../../common/loading-indicator';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
