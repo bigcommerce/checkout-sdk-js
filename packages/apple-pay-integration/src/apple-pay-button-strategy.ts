@@ -299,11 +299,11 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             });
             console.log('LOG2');
             if (this._shippingEvent) {
-              await this._handleShippingContactSelected(
-                  applePaySession,
-                  storeName,
-                  this._shippingEvent
-              );
+                  await this._handleShippingContactSelected(
+                      applePaySession,
+                      storeName,
+                      this._shippingEvent
+                );
             }
         };
 
@@ -396,7 +396,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                     amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
                 },
                 [],
-
             );
 
             return;
