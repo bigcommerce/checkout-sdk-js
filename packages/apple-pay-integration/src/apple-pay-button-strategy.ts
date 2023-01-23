@@ -38,6 +38,7 @@ function isShippingOptions(options: ShippingOption[] | undefined): options is Sh
 export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
+    private _shippingEvent?: any;
     private _buyNowInitializeOptions: ApplePayButtonInitializeOptions['buyNowInitializeOptions'];
     private _onAuthorizeCallback = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
@@ -70,6 +71,8 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         if (!buyNowInitializeOptions) {
             await this._paymentIntegrationService.loadDefaultCheckout();
         }
+
+        console.log('REQ BODY', this._buyNowInitializeOptions?.getBuyNowCartRequestBody?.());
 
         await this._paymentIntegrationService.loadPaymentMethod(methodId);
 
@@ -257,7 +260,8 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 throw new Error('Merchant validation failed');
             }
         };
-        applePaySession.onpaymentmethodselected = async () => {
+        applePaySession.onpaymentmethodselected = async (event) => {
+            console.log('onpaymentmethodselected', event);
             try {
                 const cartRequestBody = this._buyNowInitializeOptions?.getBuyNowCartRequestBody?.();
                 console.log('CART REQUEST BODY', cartRequestBody, this._buyNowInitializeOptions);
@@ -294,16 +298,20 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 newLineItems: request.lineItems,
             });
             console.log('LOG2');
+            if (this._shippingEvent) {
+                this._handleShippingContactSelected(applePaySession, storeName, this._shippingEvent);
+            }
+        };
 
-            applePaySession.onshippingcontactselected = async (event) => {
-                console.log('SHIPPING');
-                return this._handleShippingContactSelected(applePaySession, storeName, event);
-            };
+        applePaySession.onshippingcontactselected = async (event) => {
+            console.log('SHIPPING', event);
+            this._shippingEvent = event;
+            // return this._handleShippingContactSelected(applePaySession, storeName, event);
+        };
 
-            applePaySession.onshippingmethodselected = async (event) => {
-                console.log('SHIPPING1');
-                return this._handleShippingMethodSelected(applePaySession, storeName, event);
-            };
+        applePaySession.onshippingmethodselected = async (event) => {
+            console.log('SHIPPING1', event);
+            return this._handleShippingMethodSelected(applePaySession, storeName, event);
         };
 
         applePaySession.oncancel = async () => {
@@ -384,6 +392,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                     amount: `${checkout.grandTotal.toFixed(decimalPlaces)}`,
                 },
                 [],
+
             );
 
             return;
@@ -402,6 +411,8 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         state = this._paymentIntegrationService.getState();
         checkout = state.getCheckoutOrThrow();
+
+        console.log('SHIPPING METHODS', shippingOptions, availableOptions);
 
         applePaySession.completeShippingContactSelection({
             newShippingMethods: shippingOptions,
@@ -422,6 +433,8 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const {
             shippingMethod: { identifier: optionId },
         } = event;
+
+        console.log('SHIPPING OPTION', event);
 
         try {
             await this._updateShippingOption(optionId);
@@ -549,6 +562,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
             return this._onAuthorizeCallback();
         } catch (error) {
+            console.log('PAYMENT ERROR', error);
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
 
             throw new Error('Payment cannot complete');
