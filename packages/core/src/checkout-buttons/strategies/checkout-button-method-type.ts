@@ -20,6 +20,7 @@ export enum BaseCheckoutButtonMethodType {
     PAYPALCOMMERCE = 'paypalcommerce',
     PAYPALCOMMERCE_CREDIT = 'paypalcommercecredit',
     PAYPALCOMMERCE_APMS = 'paypalcommercealternativemethods',
+    PAYPALCOMMERCE_APMS_TEMPORARY = 'paypalcommercealternativemethodsv2',
     PAYPALCOMMERCE_INLINE = 'paypalcommerceinline',
     PAYPALCOMMERCE_VENMO = 'paypalcommercevenmo',
 }
