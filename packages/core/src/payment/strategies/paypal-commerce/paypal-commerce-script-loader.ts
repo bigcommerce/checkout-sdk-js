@@ -121,6 +121,8 @@ export default class PaypalCommerceScriptLoader {
         ];
 
         return {
+            'buyer-country': 'DE',
+            locale: 'de_DE',
             'client-id': clientId,
             'data-partner-attribution-id': attributionId,
             'data-client-token': clientToken,

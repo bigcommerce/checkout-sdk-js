@@ -343,6 +343,7 @@ export interface PaypalCommerceScriptParams {
     'client-id'?: string;
     'merchant-id'?: string;
     'buyer-country'?: string;
+    locale?: string;
     'disable-funding'?: FundingType;
     'enable-funding'?: EnableFundingType;
     'data-client-token'?: string;

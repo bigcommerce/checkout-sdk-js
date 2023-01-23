@@ -72,6 +72,8 @@ describe('PaypalCommerceScriptLoader', () => {
         const output = await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
 
         const paypalSdkLoaderOptions = {
+            'buyer-country': 'DE',
+            locale: 'de_DE',
             'client-id': paymentMethod.initializationData.clientId,
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
@@ -106,6 +108,8 @@ describe('PaypalCommerceScriptLoader', () => {
         await paypalLoader.getPayPalSDK(paymentMethod, 'EUR');
 
         const paypalSdkLoaderOptions = {
+            'buyer-country': 'DE',
+            locale: 'de_DE',
             'client-id': paymentMethod.initializationData.clientId,
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
@@ -128,6 +132,8 @@ describe('PaypalCommerceScriptLoader', () => {
         await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
 
         const paypalSdkLoaderOptions = {
+            'buyer-country': 'DE',
+            locale: 'de_DE',
             'client-id': paymentMethod.initializationData.clientId,
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
@@ -155,6 +161,8 @@ describe('PaypalCommerceScriptLoader', () => {
         await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
         const paypalSdkLoaderOptions = {
+            'buyer-country': 'DE',
+            locale: 'de_DE',
             'client-id': paymentMethod.initializationData.clientId,
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
@@ -182,6 +190,8 @@ describe('PaypalCommerceScriptLoader', () => {
         await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
         const paypalSdkLoaderOptions = {
+            'buyer-country': 'DE',
+            locale: 'de_DE',
             'client-id': paymentMethod.initializationData.clientId,
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
@@ -209,6 +219,8 @@ describe('PaypalCommerceScriptLoader', () => {
         await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
         const paypalSdkLoaderOptions = {
+            'buyer-country': 'DE',
+            locale: 'de_DE',
             'client-id': paymentMethod.initializationData.clientId,
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
@@ -236,6 +248,8 @@ describe('PaypalCommerceScriptLoader', () => {
         await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
         const paypalSdkLoaderOptions = {
+            'buyer-country': 'DE',
+            locale: 'de_DE',
             'client-id': paymentMethod.initializationData.clientId,
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
@@ -271,6 +285,8 @@ describe('PaypalCommerceScriptLoader', () => {
         await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
         const paypalSdkLoaderOptions = {
+            'buyer-country': 'DE',
+            locale: 'de_DE',
             'client-id': paymentMethod.initializationData.clientId,
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
@@ -293,6 +309,8 @@ describe('PaypalCommerceScriptLoader', () => {
         await paypalLoader.getPayPalSDK(paymentMethod, 'USD', true);
 
         const paypalSdkLoaderOptions = {
+            'buyer-country': 'DE',
+            locale: 'de_DE',
             'client-id': paymentMethod.initializationData.clientId,
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
@@ -312,6 +330,8 @@ describe('PaypalCommerceScriptLoader', () => {
         await paypalLoader.getPayPalSDK(paymentMethod, 'USD', false);
 
         const paypalSdkLoaderOptions = {
+            'buyer-country': 'DE',
+            locale: 'de_DE',
             'client-id': paymentMethod.initializationData.clientId,
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
