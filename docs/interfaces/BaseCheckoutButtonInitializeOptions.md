@@ -39,7 +39,6 @@
 - [paypalcommerce](BaseCheckoutButtonInitializeOptions.md#paypalcommerce)
 - [paypalcommercealternativemethods](BaseCheckoutButtonInitializeOptions.md#paypalcommercealternativemethods)
 - [paypalcommercecredit](BaseCheckoutButtonInitializeOptions.md#paypalcommercecredit)
-- [paypalcommerceinline](BaseCheckoutButtonInitializeOptions.md#paypalcommerceinline)
 - [paypalcommercevenmo](BaseCheckoutButtonInitializeOptions.md#paypalcommercevenmo)
 - [timeout](BaseCheckoutButtonInitializeOptions.md#timeout)
 
@@ -253,15 +252,6 @@ ___
 
 The options that are required to facilitate PayPal Commerce. They can be omitted
 unless you need to support PayPal Commerce Credit / PayLater.
-
-___
-
-### paypalcommerceinline
-
-• `Optional` **paypalcommerceinline**: [`PaypalCommerceInlineCheckoutButtonInitializeOptions`](PaypalCommerceInlineCheckoutButtonInitializeOptions.md)
-
-The options that are required to facilitate PayPal Commerce Inline Checkout. They can be omitted
-unless you need to support PayPal Commerce Inline(Accelerated) Checkout.
 
 ___
 

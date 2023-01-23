@@ -305,7 +305,6 @@
 - [PaypalCommerceFormFieldValidateEventData](interfaces/PaypalCommerceFormFieldValidateEventData.md)
 - [PaypalCommerceFormFieldsMap](interfaces/PaypalCommerceFormFieldsMap.md)
 - [PaypalCommerceFormOptions](interfaces/PaypalCommerceFormOptions.md)
-- [PaypalCommerceInlineCheckoutButtonInitializeOptions](interfaces/PaypalCommerceInlineCheckoutButtonInitializeOptions.md)
 - [PaypalCommercePaymentInitializeOptions](interfaces/PaypalCommercePaymentInitializeOptions.md)
 - [PaypalCommerceStoredCardFieldOptions](interfaces/PaypalCommerceStoredCardFieldOptions.md)
 - [PaypalCommerceStoredCardFieldsMap](interfaces/PaypalCommerceStoredCardFieldsMap.md)

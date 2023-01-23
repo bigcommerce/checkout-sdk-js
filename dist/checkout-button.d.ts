@@ -314,11 +314,6 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
      */
     paypalcommercealternativemethods?: PaypalCommerceAlternativeMethodsButtonOptions;
     /**
-     * The options that are required to facilitate PayPal Commerce Inline Checkout. They can be omitted
-     * unless you need to support PayPal Commerce Inline(Accelerated) Checkout.
-     */
-    paypalcommerceinline?: PaypalCommerceInlineCheckoutButtonInitializeOptions;
-    /**
      * The options that are required to facilitate PayPal Commerce Venmo. They can be omitted
      * unless you need to support PayPal Commerce Venmo.
      */
@@ -841,26 +836,6 @@ declare interface PaypalCommerceCreditButtonInitializeOptions {
      * A callback that gets called when payment complete on paypal side.
      */
     onComplete?(): void;
-}
-
-declare interface PaypalCommerceInlineCheckoutButtonInitializeOptions {
-    /**
-     * A class name used to add special class for container where the button will be generated in
-     * Default: 'PaypalCommerceInlineButton'
-     */
-    buttonContainerClassName?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PaypalButtonStyleOptions_2;
-    /**
-     * A callback that gets called when payment complete on paypal side.
-     */
-    onComplete(): void;
-    /**
-     * A callback that gets called on any error
-     */
-    onError?(): void;
 }
 
 declare interface PaypalCommerceVenmoButtonInitializeOptions {
