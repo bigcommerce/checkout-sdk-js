@@ -14,7 +14,6 @@ import {
     PaypalCommerceAlternativeMethodsButtonOptions,
     PaypalCommerceButtonInitializeOptions,
     PaypalCommerceCreditButtonInitializeOptions,
-    PaypalCommerceInlineCheckoutButtonInitializeOptions,
     PaypalCommerceVenmoButtonInitializeOptions,
 } from './strategies/paypal-commerce';
 
@@ -156,12 +155,6 @@ export interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptio
      * unless you need to support PayPal Commerce Alternative Payment Methods.
      */
     paypalcommercealternativemethods?: PaypalCommerceAlternativeMethodsButtonOptions;
-
-    /**
-     * The options that are required to facilitate PayPal Commerce Inline Checkout. They can be omitted
-     * unless you need to support PayPal Commerce Inline(Accelerated) Checkout.
-     */
-    paypalcommerceinline?: PaypalCommerceInlineCheckoutButtonInitializeOptions;
 
     /**
      * The options that are required to facilitate PayPal Commerce Venmo. They can be omitted

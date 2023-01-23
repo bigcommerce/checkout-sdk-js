@@ -63,7 +63,6 @@ import {
     PaypalCommerceAlternativeMethodsButtonStrategy,
     PaypalCommerceButtonStrategy,
     PaypalCommerceCreditButtonStrategy,
-    PaypalCommerceInlineCheckoutButtonStrategy,
     PaypalCommerceVenmoButtonStrategy,
 } from './strategies/paypal-commerce';
 
@@ -382,21 +381,6 @@ export default function createCheckoutButtonRegistry(
                 formPoster,
                 paypalScriptLoader,
                 paypalCommerceRequestSender,
-            ),
-    );
-
-    registry.register(
-        CheckoutButtonMethodType.PAYPALCOMMERCE_INLINE,
-        () =>
-            new PaypalCommerceInlineCheckoutButtonStrategy(
-                store,
-                checkoutActionCreator,
-                paypalScriptLoader,
-                paypalCommerceRequestSender,
-                orderActionCreator,
-                consignmentActionCreator,
-                billingAddressActionCreator,
-                paymentActionCreator,
             ),
     );
 
