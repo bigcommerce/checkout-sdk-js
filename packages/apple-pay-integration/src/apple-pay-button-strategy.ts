@@ -38,7 +38,7 @@ function isShippingOptions(options: ShippingOption[] | undefined): options is Sh
 export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
-    private _shippingEvent?: any;
+    private _shippingEvent?: ApplePayJS.ApplePayShippingContactSelectedEvent;
     private _buyNowInitializeOptions: ApplePayButtonInitializeOptions['buyNowInitializeOptions'];
     private _onAuthorizeCallback = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
@@ -299,7 +299,11 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             });
             console.log('LOG2');
             if (this._shippingEvent) {
-                this._handleShippingContactSelected(applePaySession, storeName, this._shippingEvent);
+              await this._handleShippingContactSelected(
+                  applePaySession,
+                  storeName,
+                  this._shippingEvent
+              );
             }
         };
 
