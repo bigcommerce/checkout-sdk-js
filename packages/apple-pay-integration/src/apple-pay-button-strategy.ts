@@ -310,7 +310,9 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         applePaySession.onshippingcontactselected = async (event) => {
             console.log('SHIPPING', event);
             this._shippingEvent = event;
-            // return this._handleShippingContactSelected(applePaySession, storeName, event);
+            if (!this._buyNowInitializeOptions) {
+                return this._handleShippingContactSelected(applePaySession, storeName, event);
+            }
         };
 
         applePaySession.onshippingmethodselected = async (event) => {
