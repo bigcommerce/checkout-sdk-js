@@ -302,7 +302,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 await this._handleShippingContactSelected(
                     applePaySession,
                     storeName,
-                    this._shippingEvent
+                    this._shippingEvent,
                 );
             }
         };
