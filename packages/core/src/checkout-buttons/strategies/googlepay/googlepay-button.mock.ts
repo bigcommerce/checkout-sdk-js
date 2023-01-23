@@ -1,3 +1,5 @@
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { BuyNowCartRequestBody } from '../../../cart';
 import { PaymentMethod } from '../../../payment';
 import { getGooglePay } from '../../../payment/payment-methods.mock';
@@ -33,7 +35,7 @@ export enum Mode {
 }
 
 const buyNowCartRequestBody: BuyNowCartRequestBody = {
-    source: 'BUY_NOW',
+    source: CartSource.BuyNow,
     lineItems: [
         {
             productId: 1,

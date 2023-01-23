@@ -1,8 +1,9 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../../../billing';
-import { CartRequestSender } from '../../../cart';
-import { BuyNowCartCreationError } from '../../../cart/errors';
+import { CartActionCreator } from '../../../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import {
     InvalidArgumentError,
@@ -33,12 +34,11 @@ import { PaypalCommerceButtonInitializeOptions } from './paypal-commerce-button-
 
 export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrategy {
     private _paypalCommerceSdk?: PaypalCommerceSDK;
-    private _buyNowCartId?: string;
 
     constructor(
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
-        private _cartRequestSender: CartRequestSender,
+        private _cartActionCreator: CartActionCreator,
         private _formPoster: FormPoster,
         private _paypalScriptLoader: PaypalCommerceScriptLoader,
         private _paypalCommerceRequestSender: PaypalCommerceRequestSender,
@@ -171,16 +171,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
                 throw new MissingDataError(MissingDataErrorType.MissingCart);
             }
 
-            try {
-                const { body: cart } = await this._cartRequestSender.createBuyNowCart(
-                    cartRequestBody,
-                );
-
-                this._buyNowCartId = cart.id;
-                await this._store.dispatch(this._checkoutActionCreator.loadCheckout(cart.id));
-            } catch (error) {
-                throw new BuyNowCartCreationError();
-            }
+            await this._store.dispatch(this._cartActionCreator.createBuyNowCart(cartRequestBody));
         }
     }
 
@@ -376,7 +367,8 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     }
 
     private async _createOrder(initializesOnCheckoutPage?: boolean): Promise<string> {
-        const cartId = this._buyNowCartId || this._store.getState().cart.getCartOrThrow().id;
+        const state = this._store.getState();
+        const cartId = state.cart.getCartOrThrow().id;
 
         const providerId = initializesOnCheckoutPage ? 'paypalcommercecheckout' : 'paypalcommerce';
 
@@ -388,6 +380,9 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
     }
 
     private _tokenizePayment(methodId: string, orderId?: string): void {
+        const state = this._store.getState();
+        const cart = state.cart.getCartOrThrow();
+
         if (!orderId) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
         }
@@ -397,7 +392,7 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             action: 'set_external_checkout',
             provider: methodId,
             order_id: orderId,
-            ...(this._buyNowCartId && { cart_id: this._buyNowCartId }),
+            ...(cart.source === CartSource.BuyNow && { cart_id: cart.id }),
         });
     }
 

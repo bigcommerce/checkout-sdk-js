@@ -3,11 +3,12 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../../../billing';
-import { Cart, CartRequestSender } from '../../../cart';
+import { Cart, CartActionCreator, CartRequestSender } from '../../../cart';
 import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
-import { getCart } from '../../../cart/carts.mock';
-import { BuyNowCartCreationError } from '../../../cart/errors';
+import { getBuyNowCart, getCart } from '../../../cart/carts.mock';
 import {
     CheckoutActionCreator,
     CheckoutRequestSender,
@@ -48,6 +49,7 @@ import PaypalCommerceButtonStrategy from './paypal-commerce-button-strategy';
 
 describe('PaypalCommerceButtonStrategy', () => {
     let billingAddressActionCreator: BillingAddressActionCreator;
+    let cartActionCreator: CartActionCreator;
     let cartMock: Cart;
     let cartRequestSender: CartRequestSender;
     let checkoutValidator: CheckoutValidator;
@@ -90,11 +92,11 @@ describe('PaypalCommerceButtonStrategy', () => {
     const buyNowCartMock = {
         ...getCart(),
         id: 999,
-        source: 'BUY_NOW',
+        source: CartSource.BuyNow,
     };
 
     const buyNowCartRequestBody: BuyNowCartRequestBody = {
-        source: 'BUY_NOW',
+        source: CartSource.BuyNow,
         lineItems: [
             {
                 productId: 1,
@@ -128,15 +130,16 @@ describe('PaypalCommerceButtonStrategy', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         requestSender = createRequestSender();
         formPoster = createFormPoster();
-        cartRequestSender = new CartRequestSender(requestSender);
         paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
         paypalScriptLoader = new PaypalCommerceScriptLoader(getScriptLoader());
 
+        cartRequestSender = new CartRequestSender(requestSender);
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
             new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
         );
+        cartActionCreator = new CartActionCreator(cartRequestSender, checkoutActionCreator);
 
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
         orderActionCreator = new OrderActionCreator(
@@ -168,7 +171,7 @@ describe('PaypalCommerceButtonStrategy', () => {
         strategy = new PaypalCommerceButtonStrategy(
             store,
             checkoutActionCreator,
-            cartRequestSender,
+            cartActionCreator,
             formPoster,
             paypalScriptLoader,
             paypalCommerceRequestSender,
@@ -184,6 +187,7 @@ describe('PaypalCommerceButtonStrategy', () => {
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout').mockImplementation(() => {});
+        jest.spyOn(cartActionCreator, 'createBuyNowCart').mockImplementation(() => {});
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,
         );
@@ -479,27 +483,16 @@ describe('PaypalCommerceButtonStrategy', () => {
         });
 
         it('creates buy now cart (Buy Now Flow)', async () => {
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
+            jest.spyOn(cartActionCreator, 'createBuyNowCart').mockReturnValue({
                 body: buyNowCartMock,
             });
 
             await strategy.initialize(buyNowInitializationOptions);
 
             eventEmitter.emit('onClick', () => {
-                expect(cartRequestSender.createBuyNowCart).toHaveBeenCalledWith(
+                expect(cartActionCreator.createBuyNowCart).toHaveBeenCalledWith(
                     buyNowCartRequestBody,
                 );
-            });
-        });
-
-        it('throws an error if failed to create buy now cart (Buy Now Flow)', async () => {
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockImplementation(() =>
-                Promise.reject(),
-            );
-
-            await strategy.initialize(buyNowInitializationOptions);
-            eventEmitter.emit('onClick', undefined, (error: Error) => {
-                expect(error).toBeInstanceOf(BuyNowCartCreationError);
             });
         });
 
@@ -543,10 +536,12 @@ describe('PaypalCommerceButtonStrategy', () => {
         });
 
         it('creates order with Buy Now cart id (Buy Now flow)', async () => {
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
-                body: buyNowCartMock,
-            });
             jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('');
+            jest.spyOn(cartActionCreator, 'createBuyNowCart');
+            jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue({
+                ...getBuyNowCart(),
+                id: buyNowCartMock.id,
+            });
 
             await strategy.initialize(buyNowInitializationOptions);
 
@@ -610,10 +605,12 @@ describe('PaypalCommerceButtonStrategy', () => {
         });
 
         it('provides buy now cart_id on payment tokenization on paypal approve', async () => {
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
-                body: buyNowCartMock,
-            });
             jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('111');
+            jest.spyOn(cartActionCreator, 'createBuyNowCart');
+            jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue({
+                ...getBuyNowCart(),
+                id: buyNowCartMock.id,
+            });
 
             await strategy.initialize(buyNowInitializationOptions);
 
@@ -929,13 +926,13 @@ describe('PaypalCommerceButtonStrategy', () => {
 
     describe('#_handleClick', () => {
         beforeEach(() => {
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue(
+            jest.spyOn(cartActionCreator, 'createBuyNowCart').mockReturnValue(
                 new Promise((resolve) => resolve({ body: { ...buyNowCartMock } })),
             );
             jest.spyOn(checkoutActionCreator, 'loadCheckout').mockReturnValue(true);
         });
 
-        it('calls _cartRequestSender.createBuyNowCart on button click', async () => {
+        it('calls creates buy now cart on button click', async () => {
             const options = {
                 ...initializationOptions,
                 ...buyNowInitializationOptions,
@@ -945,21 +942,7 @@ describe('PaypalCommerceButtonStrategy', () => {
             eventEmitter.emit('onClick');
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(cartRequestSender.createBuyNowCart).toHaveBeenCalled();
-        });
-
-        it('calls loadCheckout with proper cartId on button click', async () => {
-            const options = {
-                ...initializationOptions,
-                ...buyNowInitializationOptions,
-            };
-            const cartId = buyNowCartMock.id;
-
-            await strategy.initialize(options);
-            eventEmitter.emit('onClick');
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(checkoutActionCreator.loadCheckout).toHaveBeenCalledWith(cartId);
+            expect(cartActionCreator.createBuyNowCart).toHaveBeenCalled();
         });
     });
 });

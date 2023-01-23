@@ -3,7 +3,7 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
-import { CartRequestSender } from '../cart';
+import { CartActionCreator, CartRequestSender } from '../cart';
 import {
     CheckoutActionCreator,
     CheckoutRequestSender,
@@ -123,6 +123,7 @@ export default function createCheckoutButtonRegistry(
         checkoutRequestSender,
     );
     const cartRequestSender = new CartRequestSender(requestSender);
+    const cartActionCreator = new CartActionCreator(cartRequestSender, checkoutActionCreator);
 
     registry.register(
         CheckoutButtonMethodType.APPLEPAY,
@@ -344,7 +345,7 @@ export default function createCheckoutButtonRegistry(
             new PaypalCommerceButtonStrategy(
                 store,
                 checkoutActionCreator,
-                cartRequestSender,
+                cartActionCreator,
                 formPoster,
                 paypalScriptLoader,
                 paypalCommerceRequestSender,

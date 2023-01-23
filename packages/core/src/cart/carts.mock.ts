@@ -1,4 +1,6 @@
-import { Cart, CartState } from '../cart';
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import { BuyNowCartRequestBody, Cart, CartState } from '../cart';
 import { getCoupon, getShippingCoupon } from '../coupon/coupons.mock';
 import { getCurrency } from '../currency/currencies.mock';
 import { getDiscount } from '../discount/discounts.mock';
@@ -25,6 +27,25 @@ export function getCart(): Cart {
         },
         createdTime: '2018-03-06T04:41:49+00:00',
         updatedTime: '2018-03-07T03:44:51+00:00',
+    };
+}
+
+export function getBuyNowCart(): Cart {
+    return {
+        ...getCart(),
+        source: CartSource.BuyNow,
+    };
+}
+
+export function getBuyNowCartRequestBody(): BuyNowCartRequestBody {
+    return {
+        lineItems: [
+            {
+                productId: 1,
+                quantity: 1,
+            },
+        ],
+        source: CartSource.BuyNow,
     };
 }
 

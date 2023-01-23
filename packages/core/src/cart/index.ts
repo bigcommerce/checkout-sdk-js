@@ -11,6 +11,8 @@ export {
 } from './line-item';
 export { default as LineItemMap } from './line-item-map';
 
+export { CartAction, CartActionType } from './cart-actions';
+export { default as CartActionCreator } from './cart-action-creator';
 export { default as CartComparator } from './cart-comparator';
 export { default as CartRequestSender } from './cart-request-sender';
 export { default as cartReducer } from './cart-reducer';
