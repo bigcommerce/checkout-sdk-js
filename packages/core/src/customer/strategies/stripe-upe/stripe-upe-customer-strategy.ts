@@ -113,9 +113,10 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
 
             const {
                 billingAddress: { getBillingAddress },
-                consignments: { getConsignmentsOrThrow },
+                consignments: { getConsignments },
             } = this._store.getState();
-            const { id } = getConsignmentsOrThrow()[0] || '';
+            const consignments = getConsignments();
+            const id = consignments?.[0]?.id;
             const { email: billingEmail } = getBillingAddress() || {};
             const options = billingEmail ? { defaultValues: { email: billingEmail } } : {};
             const linkAuthenticationElement =

@@ -202,7 +202,7 @@ describe('StripeUpeCustomerStrategy', () => {
             const stripeUPEJsMockWithElement = getCustomerStripeUPEJsMock(stripeMockElement);
             const action = of(createAction(ConsignmentActionType.DeleteConsignmentSucceeded));
 
-            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow').mockReturnValue([
+            jest.spyOn(store.getState().consignments, 'getConsignments').mockReturnValue([
                 getConsignment(),
             ]);
             jest.spyOn(consignmentActionCreator, 'deleteConsignment').mockReturnValue(action);
@@ -243,7 +243,7 @@ describe('StripeUpeCustomerStrategy', () => {
             const stripeUPEJsMockWithElement = getCustomerStripeUPEJsMock(stripeMockElement);
             const action = of(createAction(ConsignmentActionType.DeleteConsignmentSucceeded));
 
-            jest.spyOn(store.getState().consignments, 'getConsignmentsOrThrow').mockReturnValue([
+            jest.spyOn(store.getState().consignments, 'getConsignments').mockReturnValue([
                 getConsignment(),
             ]);
             jest.spyOn(consignmentActionCreator, 'deleteConsignment').mockReturnValue(action);
