@@ -347,7 +347,7 @@ export interface AdyenHostWindow extends Window {
     AdyenCheckout?: new (configuration: AdyenConfiguration) => AdyenClient;
 }
 
-export interface AdyenIdealComponentOptions {
+export interface AdyenIdealComponentOptions extends AdyenBaseCardComponentOptions {
     /**
      * Optional. Set to **false** to remove the bank logos from the iDEAL form.
      */
@@ -564,6 +564,7 @@ export interface AccountState {
 
 export interface CssProperties {
     background?: string;
+    caretColor?: string;
     color?: string;
     display?: string;
     font?: string;
