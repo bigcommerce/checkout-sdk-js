@@ -555,6 +555,7 @@ export interface AccountState {
 
 export interface CssProperties {
     background?: string;
+    caretColor?: string;
     color?: string;
     display?: string;
     font?: string;

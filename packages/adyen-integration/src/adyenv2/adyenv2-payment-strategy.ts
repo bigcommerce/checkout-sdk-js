@@ -343,6 +343,14 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
             if (adyenv2.cardVerificationContainerId) {
                 cardVerificationComponent = adyenClient.create(AdyenComponentType.SecuredFields, {
                     ...adyenv2.options,
+                    styles: {
+                        ...adyenv2.options?.styles,
+                        placeholder: {
+                            color: 'transparent',
+                            caretColor: '#000',
+                            ...adyenv2.options?.styles?.placeholder,
+                        },
+                    },
                     onChange: (componentState) => this._updateComponentState(componentState),
                     onError: (validateState) => adyenv2.validateCardFields(validateState),
                     onFieldValid: (validateState) => adyenv2.validateCardFields(validateState),
