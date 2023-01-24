@@ -153,9 +153,13 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             },
         };
 
-        const shippingAddressElement =
-            this._stripeElements.getElement(StripeElementType.SHIPPING) ||
-            this._stripeElements.create(StripeElementType.SHIPPING, option);
+        let shippingAddressElement = this._stripeElements.getElement(StripeElementType.SHIPPING);
+
+        if (shippingAddressElement) {
+            shippingAddressElement.destroy();
+        }
+
+        shippingAddressElement = this._stripeElements.create(StripeElementType.SHIPPING, option);
 
         shippingAddressElement.on('change', (event: StripeEventType) => {
             if (!('isNewAddress' in event)) {
