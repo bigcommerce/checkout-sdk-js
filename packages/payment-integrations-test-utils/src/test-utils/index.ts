@@ -1,6 +1,7 @@
 export { default as PaymentIntegrationServiceMock } from './payment-integration-service.mock';
-export { default as getCart } from './carts.mock';
-export { default as getCheckout } from './checkouts.mock';
+export { default as getBuyNowCartRequestBody } from './buy-now-cart-request-body.mock';
+export { default as getCart, getBuyNowCart } from './carts.mock';
+export { default as getCheckout, getCheckoutWithBuyNowCart } from './checkouts.mock';
 export { default as getConfig } from './config.mock';
 export { default as getConsignment } from './consignment.mock';
 export { default as getOrderRequestBody } from './internal-orders.mock';

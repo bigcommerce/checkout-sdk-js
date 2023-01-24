@@ -2,7 +2,10 @@ import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { InvalidArgumentError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    CartSource,
+    InvalidArgumentError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { Cart, CartRequestSender } from '../../../cart';
 import { getCart, getCartState } from '../../../cart/carts.mock';
@@ -49,7 +52,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
     const buyNowCartMock = {
         ...getCart(),
         id: 999,
-        source: 'BUY_NOW',
+        source: CartSource.BuyNow,
     };
 
     beforeEach(() => {

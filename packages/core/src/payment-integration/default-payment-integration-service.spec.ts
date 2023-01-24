@@ -1,4 +1,5 @@
 import { createAction } from '@bigcommerce/data-store';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { noop } from 'lodash';
 
 import {
@@ -7,10 +8,17 @@ import {
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import {
+    getBuyNowCart,
+    getBuyNowCartRequestBody,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+
 import { BillingAddressActionCreator } from '../billing';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
+import { CartRequestSender } from '../cart';
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
+import { getResponse } from '../common/http-request/responses.mock';
 import { CustomerActionCreator } from '../customer';
 import { HostedForm, HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
@@ -28,6 +36,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let subject: PaymentIntegrationService;
     let hostedFormFactory: HostedFormFactory;
     let paymentIntegrationSelectors: PaymentIntegrationSelectors;
+    let requestSender: RequestSender;
     let internalCheckoutSelectors: InternalCheckoutSelectors;
     let store: Pick<CheckoutStore, 'dispatch' | 'getState'>;
     let storeProjection: Pick<
@@ -51,8 +60,11 @@ describe('DefaultPaymentIntegrationService', () => {
         'submitPayment' | 'initializeOffsitePayment'
     >;
     let customerActionCreator: Pick<CustomerActionCreator, 'signInCustomer' | 'signOutCustomer'>;
+    let cartRequestSender: CartRequestSender;
 
     beforeEach(() => {
+        requestSender = createRequestSender();
+        cartRequestSender = new CartRequestSender(requestSender);
         hostedFormFactory = new HostedFormFactory(store as CheckoutStore);
         paymentIntegrationSelectors = {} as PaymentIntegrationSelectors;
 
@@ -122,6 +134,7 @@ describe('DefaultPaymentIntegrationService', () => {
             paymentMethodActionCreator as PaymentMethodActionCreator,
             paymentActionCreator as PaymentActionCreator,
             customerActionCreator as CustomerActionCreator,
+            cartRequestSender,
         );
     });
 
@@ -285,6 +298,21 @@ describe('DefaultPaymentIntegrationService', () => {
             expect(customerActionCreator.signOutCustomer).toHaveBeenCalledWith({});
             expect(store.dispatch).toHaveBeenCalledWith(customerActionCreator.signOutCustomer({}));
             expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#createBuyNowCart', () => {
+        it('creates buy now cart', async () => {
+            const buyNowCart = getBuyNowCart();
+            const buyNowCartRequestBody = getBuyNowCartRequestBody();
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(getResponse(buyNowCart));
+            jest.spyOn(cartRequestSender, 'createBuyNowCart');
+
+            const output = await subject.createBuyNowCart(buyNowCartRequestBody);
+
+            expect(cartRequestSender.createBuyNowCart).toHaveBeenCalledWith(buyNowCartRequestBody);
+            expect(output).toEqual(buyNowCart);
         });
     });
 });

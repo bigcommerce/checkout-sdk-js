@@ -1,9 +1,8 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
+import { BuyNowCartRequestBody, Cart } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import BuyNowCartRequestBody from './buy-now-cart-request-body';
-import Cart from './cart';
+import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
 export default class CartRequestSender {
     constructor(private _requestSender: RequestSender) {}

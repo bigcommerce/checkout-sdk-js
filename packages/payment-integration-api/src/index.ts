@@ -6,7 +6,14 @@ export {
     CheckoutButtonStrategyResolveId,
     CheckoutButtonInitializeOptions,
 } from './checkout-buttons';
-export { Cart, DigitalItem, GiftCertificateItem, PhysicalItem } from './cart';
+export {
+    BuyNowCartRequestBody,
+    Cart,
+    CartSource,
+    DigitalItem,
+    GiftCertificateItem,
+    PhysicalItem,
+} from './cart';
 export { Checkout } from './checkout';
 export { BrowserInfo, getBrowserInfo } from './common/browser-info';
 export { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from './common/http-request';

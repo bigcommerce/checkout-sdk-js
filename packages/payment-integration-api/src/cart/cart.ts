@@ -2,6 +2,7 @@ import { Coupon } from '../coupon';
 import { Currency } from '../currency';
 import { Discount } from '../discount';
 
+import { CartSource } from './cart-source';
 import LineItemMap from './line-item-map';
 
 export default interface Cart {
@@ -18,4 +19,5 @@ export default interface Cart {
     lineItems: LineItemMap;
     createdTime: string;
     updatedTime: string;
+    source?: CartSource;
 }
