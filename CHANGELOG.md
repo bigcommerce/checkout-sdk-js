@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.327.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.326.4...v1.327.0) (2023-01-24)
+
+
+### Features
+
+* **payment:** STRIPE-194 keep Shipping Address Information If Shopper Logs Out Of Link ([#1760](https://github.com/bigcommerce/checkout-sdk-js/issues/1760)) ([9a661a3](https://github.com/bigcommerce/checkout-sdk-js/commit/9a661a3b3f6abbbe716f6f9227c9e6e68aad65df))
+
 ### [1.326.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.326.3...v1.326.4) (2023-01-23)
 
 
