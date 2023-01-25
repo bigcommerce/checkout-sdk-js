@@ -22,7 +22,6 @@ const state = {
     getBillingAddressOrThrow: jest.fn(() => getBillingAddress()),
 };
 
-const createBuyNowCart = jest.fn();
 const createHostedForm = jest.fn();
 const getState = jest.fn(() => state);
 const initializeOffsitePayment = jest.fn();
@@ -58,7 +57,6 @@ const PaymentIntegrationServiceMock = jest.fn().mockImplementation(() => {
         signInCustomer,
         signOutCustomer,
         selectShippingOption,
-        createBuyNowCart,
         loadDefinedCheckout,
     };
 });
