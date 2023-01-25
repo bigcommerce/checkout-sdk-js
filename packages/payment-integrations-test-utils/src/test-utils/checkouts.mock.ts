@@ -1,7 +1,7 @@
 import { Checkout } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { getBillingAddress } from './address.mock';
-import getCart from './carts.mock';
+import getCart, { getBuyNowCart } from './carts.mock';
 import getConsignment from './consignment.mock';
 import { getCustomer } from './customer.mock';
 
@@ -46,5 +46,12 @@ export default function getCheckout(): Checkout {
                 ],
             },
         ],
+    };
+}
+
+export function getCheckoutWithBuyNowCart() {
+    return {
+        ...getCheckout(),
+        cart: getBuyNowCart(),
     };
 }

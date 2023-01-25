@@ -5,6 +5,8 @@ import {
     Response,
 } from '@bigcommerce/request-sender';
 
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
@@ -26,7 +28,7 @@ describe('CartRequestSender', () => {
 
     describe('#createBuyNowCart', () => {
         const buyNowCartRequestBody: BuyNowCartRequestBody = {
-            source: 'BUY_NOW',
+            source: CartSource.BuyNow,
             lineItems: [
                 {
                     productId: 1,
@@ -40,7 +42,7 @@ describe('CartRequestSender', () => {
         };
 
         beforeEach(() => {
-            cart = { ...getCart(), source: 'BUY_NOW' };
+            cart = { ...getCart(), source: CartSource.BuyNow };
             response = getResponse(cart);
 
             jest.spyOn(requestSender, 'post').mockResolvedValue(response);

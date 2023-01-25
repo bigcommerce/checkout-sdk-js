@@ -1,4 +1,4 @@
-import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { CartSource } from './cart-source';
 
 interface LineItem {
     productId: number;

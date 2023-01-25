@@ -1,5 +1,7 @@
 import {
     BillingAddressRequestBody,
+    BuyNowCartRequestBody,
+    Cart,
     HostedForm,
     HostedFormOptions,
     InitializeOffsitePaymentConfig,
@@ -12,6 +14,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BillingAddressActionCreator } from '../billing';
+import { CartRequestSender } from '../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
 import { CustomerActionCreator, CustomerCredentials } from '../customer';
@@ -37,6 +40,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _customerActionCreator: CustomerActionCreator,
+        private _cartRequestSender: CartRequestSender,
     ) {
         this._storeProjection = this._storeProjectionFactory.create(this._store);
     }
@@ -153,5 +157,17 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         await this._store.dispatch(this._customerActionCreator.signOutCustomer(options));
 
         return this._storeProjection.getState();
+    }
+
+    async createBuyNowCart(
+        buyNowCartRequestBody: BuyNowCartRequestBody,
+        options?: RequestOptions,
+    ): Promise<Cart> {
+        const { body: buyNowCart } = await this._cartRequestSender.createBuyNowCart(
+            buyNowCartRequestBody,
+            options,
+        );
+
+        return buyNowCart;
     }
 }

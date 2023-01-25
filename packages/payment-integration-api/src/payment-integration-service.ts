@@ -1,4 +1,5 @@
 import { BillingAddressRequestBody } from './billing';
+import { BuyNowCartRequestBody, Cart } from './cart';
 import { CustomerCredentials } from './customer';
 import { HostedForm, HostedFormOptions } from './hosted-form';
 import { OrderRequestBody } from './order';
@@ -53,4 +54,6 @@ export default interface PaymentIntegrationService {
     ): Promise<PaymentIntegrationSelectors>;
 
     signOutCustomer(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
+
+    createBuyNowCart(body: BuyNowCartRequestBody, options?: RequestOptions): Promise<Cart>;
 }

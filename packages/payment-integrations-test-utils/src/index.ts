@@ -1,7 +1,10 @@
 export {
     PaymentIntegrationServiceMock,
+    getBuyNowCart,
+    getBuyNowCartRequestBody,
     getCart,
     getCheckout,
+    getCheckoutWithBuyNowCart,
     getConfig,
     getConsignment,
     getOrder,

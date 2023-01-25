@@ -1,3 +1,5 @@
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { Coupon } from '../coupon';
 import { Currency } from '../currency';
 import { Discount } from '../discount';
@@ -18,5 +20,5 @@ export default interface Cart {
     lineItems: LineItemMap;
     createdTime: string;
     updatedTime: string;
-    source?: 'BUY_NOW';
+    source?: CartSource;
 }

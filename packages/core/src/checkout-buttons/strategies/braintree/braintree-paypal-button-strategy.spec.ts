@@ -3,6 +3,8 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CartRequestSender } from '../../../cart';
 import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
 import { getCart } from '../../../cart/carts.mock';
@@ -87,11 +89,11 @@ describe('BraintreePaypalButtonStrategy', () => {
     const buyNowCartMock = {
         ...getCart(),
         id: 999,
-        source: 'BUY_NOW',
+        source: CartSource.BuyNow,
     };
 
     const buyNowCartRequestBody: BuyNowCartRequestBody = {
-        source: 'BUY_NOW',
+        source: CartSource.BuyNow,
         lineItems: [
             {
                 productId: 1,

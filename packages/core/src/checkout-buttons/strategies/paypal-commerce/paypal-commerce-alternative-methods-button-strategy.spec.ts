@@ -3,6 +3,8 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { BuyNowCartRequestBody, Cart, CartRequestSender } from '../../../cart';
 import { getCart } from '../../../cart/carts.mock';
 import { BuyNowCartCreationError } from '../../../cart/errors';
@@ -67,11 +69,11 @@ describe('PaypalCommerceAlternativeMethodsButtonStrategy', () => {
     const buyNowCartMock = {
         ...getCart(),
         id: 999,
-        source: 'BUY_NOW',
+        source: CartSource.BuyNow,
     };
 
     const buyNowCartRequestBody: BuyNowCartRequestBody = {
-        source: 'BUY_NOW',
+        source: CartSource.BuyNow,
         lineItems: [
             {
                 productId: 1,
