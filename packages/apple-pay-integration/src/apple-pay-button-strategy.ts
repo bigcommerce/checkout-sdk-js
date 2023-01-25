@@ -63,12 +63,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const {
-            buttonClassName,
-            onPaymentAuthorize,
-            buyNowInitializeOptions,
-            requiresShipping
-        } = applepay;
+        const { buttonClassName, onPaymentAuthorize, buyNowInitializeOptions, requiresShipping } = applepay;
 
         this._requiresShipping = requiresShipping;
 
@@ -275,7 +270,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         applePaySession.onshippingcontactselected = async (event) => {
             if (this._buyNowInitializeOptions && this._requiresShipping) {
-               await this._createBuyNowCart();
+                await this._createBuyNowCart();
             }
             return this._handleShippingContactSelected(applePaySession, storeName, event);
         };
