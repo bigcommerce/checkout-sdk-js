@@ -25,10 +25,26 @@ describe('LoadingIndicator', () => {
         expect(parent.firstChild).toMatchSnapshot();
     });
 
+    it('renders loading indicator with provided styles prop', () => {
+        indicator = new LoadingIndicator({
+            styles: {
+                size: 10,
+            },
+        });
+
+        indicator.show(parentId);
+
+        const child = parent.getElementsByTagName('div')[0];
+        const loadingIndicator = child.getElementsByTagName('div')[0];
+
+        expect(loadingIndicator.style.width).toBe('10px');
+        expect(loadingIndicator.style.height).toBe('10px');
+    });
+
     it('shows loading indicator', () => {
         indicator.show(parentId);
 
-        const child = parent.firstChild as HTMLElement;
+        const child = parent.getElementsByTagName('div')[0];
 
         expect(child.style.visibility).toBe('visible');
         expect(child.style.opacity).toBe('1');
@@ -42,7 +58,7 @@ describe('LoadingIndicator', () => {
         indicator.show(parentId);
         indicator.hide();
 
-        const child = parent.firstChild as HTMLElement;
+        const child = parent.getElementsByTagName('div')[0];
 
         expect(child.style.opacity).toBe('0');
     });
@@ -51,7 +67,7 @@ describe('LoadingIndicator', () => {
         indicator.show(parentId);
         indicator.hide();
 
-        const child = parent.firstChild as HTMLElement;
+        const child = parent.getElementsByTagName('div')[0];
         const event = new Event('transitionend');
 
         child.dispatchEvent(event);
