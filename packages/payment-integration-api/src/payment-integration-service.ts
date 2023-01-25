@@ -61,5 +61,5 @@ export default interface PaymentIntegrationService {
     createBuyNowCart(
         body: BuyNowCartRequestBody,
         options?: RequestOptions,
-    ): Promise<Response<Cart>>;
+    ): Promise<Cart>;
 }
