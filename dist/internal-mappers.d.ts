@@ -1,3 +1,4 @@
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 declare interface Address extends AddressRequestBody {
     country: string;
@@ -66,7 +67,7 @@ declare interface Cart {
     lineItems: LineItemMap;
     createdTime: string;
     updatedTime: string;
-    source?: 'BUY_NOW';
+    source?: CartSource;
 }
 
 declare interface Checkout {

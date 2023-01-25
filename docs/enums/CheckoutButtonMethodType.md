@@ -24,6 +24,7 @@
 - [MASTERPASS](CheckoutButtonMethodType.md#masterpass)
 - [PAYPALCOMMERCE](CheckoutButtonMethodType.md#paypalcommerce)
 - [PAYPALCOMMERCE_APMS](CheckoutButtonMethodType.md#paypalcommerce_apms)
+- [PAYPALCOMMERCE_APMS_TEMPORARY](CheckoutButtonMethodType.md#paypalcommerce_apms_temporary)
 - [PAYPALCOMMERCE_CREDIT](CheckoutButtonMethodType.md#paypalcommerce_credit)
 - [PAYPALCOMMERCE_INLINE](CheckoutButtonMethodType.md#paypalcommerce_inline)
 - [PAYPALCOMMERCE_VENMO](CheckoutButtonMethodType.md#paypalcommerce_venmo)
@@ -136,6 +137,12 @@ ___
 ### PAYPALCOMMERCE\_APMS
 
 • **PAYPALCOMMERCE\_APMS**
+
+___
+
+### PAYPALCOMMERCE\_APMS\_TEMPORARY
+
+• **PAYPALCOMMERCE\_APMS\_TEMPORARY**
 
 ___
 

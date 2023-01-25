@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.330.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.329.0...v1.330.0) (2023-01-25)
+
+
+### Features
+
+* **payment:** PAYPAL-1882 sending PPC APM V2 gateway instead of PPC APM ([#1782](https://github.com/bigcommerce/checkout-sdk-js/issues/1782)) ([27393bc](https://github.com/bigcommerce/checkout-sdk-js/commit/27393bc09f9a2ae8d4de27fcd7cab15288d8141f))
+* **payment:** PAYPAL-1898 added CartRequestSender to payment integration api package ([#1791](https://github.com/bigcommerce/checkout-sdk-js/issues/1791)) ([84c146c](https://github.com/bigcommerce/checkout-sdk-js/commit/84c146cb993bdb2ec07f095a591f40ab100a94a0))
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-1918 moved LoadingIndicator from core to ui package ([#1784](https://github.com/bigcommerce/checkout-sdk-js/issues/1784)) ([926265c](https://github.com/bigcommerce/checkout-sdk-js/commit/926265ca604682d461c9b8d283ffbd50c3bacb20))
+
 ## [1.329.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.328.0...v1.329.0) (2023-01-25)
 
 

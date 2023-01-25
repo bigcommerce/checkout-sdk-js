@@ -1,3 +1,4 @@
+import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 
 declare interface BlockElementStyles extends InlineElementStyles {
     backgroundColor?: string;
@@ -178,12 +179,6 @@ declare interface LinkStyles extends InlineElementStyles {
     active?: InlineElementStyles;
     focus?: InlineElementStyles;
     hover?: InlineElementStyles;
-}
-
-declare interface LoadingIndicatorStyles {
-    size?: number;
-    color?: string;
-    backgroundColor?: string;
 }
 
 declare interface StepStyles extends BlockElementStyles {

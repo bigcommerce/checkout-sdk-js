@@ -97,7 +97,7 @@ ___
 
 ### source
 
-• `Optional` **source**: ``"BUY_NOW"``
+• `Optional` **source**: `BuyNow`
 
 ___
 

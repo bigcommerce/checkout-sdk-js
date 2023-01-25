@@ -1,3 +1,4 @@
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Timeout } from '@bigcommerce/request-sender';
 import { createTimeout } from '@bigcommerce/request-sender';
 
@@ -444,7 +445,7 @@ declare enum ButtonType {
  * An object that contains the information required for creating 'Buy now' cart.
  */
 declare interface BuyNowCartRequestBody {
-    source: 'BUY_NOW';
+    source: CartSource.BuyNow;
     lineItems: LineItem[];
 }
 
@@ -567,6 +568,7 @@ declare enum CheckoutButtonMethodType {
     PAYPALCOMMERCE = "paypalcommerce",
     PAYPALCOMMERCE_CREDIT = "paypalcommercecredit",
     PAYPALCOMMERCE_APMS = "paypalcommercealternativemethods",
+    PAYPALCOMMERCE_APMS_TEMPORARY = "paypalcommercealternativemethodsv2",
     PAYPALCOMMERCE_INLINE = "paypalcommerceinline",
     PAYPALCOMMERCE_VENMO = "paypalcommercevenmo"
 }
@@ -623,6 +625,7 @@ declare interface GooglePayButtonInitializeOptions {
 declare interface LineItem {
     productId: number;
     quantity: number;
+    variantId?: number;
     optionSelections?: {
         optionId: number;
         optionValue: number | string;

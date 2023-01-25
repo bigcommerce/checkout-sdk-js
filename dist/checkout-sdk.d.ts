@@ -1,7 +1,9 @@
 /// <reference types="applepayjs" />
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import { HostedFormOptions as HostedFormOptions_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
@@ -1891,7 +1893,7 @@ declare enum ButtonType {
  * An object that contains the information required for creating 'Buy now' cart.
  */
 declare interface BuyNowCartRequestBody {
-    source: 'BUY_NOW';
+    source: CartSource.BuyNow;
     lineItems: LineItem_2[];
 }
 
@@ -2004,7 +2006,7 @@ declare interface Cart {
     lineItems: LineItemMap;
     createdTime: string;
     updatedTime: string;
-    source?: 'BUY_NOW';
+    source?: CartSource;
 }
 
 declare class CartChangedError extends StandardError {
@@ -2261,6 +2263,7 @@ declare enum CheckoutButtonMethodType {
     PAYPALCOMMERCE = "paypalcommerce",
     PAYPALCOMMERCE_CREDIT = "paypalcommercecredit",
     PAYPALCOMMERCE_APMS = "paypalcommercealternativemethods",
+    PAYPALCOMMERCE_APMS_TEMPORARY = "paypalcommercealternativemethodsv2",
     PAYPALCOMMERCE_INLINE = "paypalcommerceinline",
     PAYPALCOMMERCE_VENMO = "paypalcommercevenmo"
 }
@@ -5524,6 +5527,7 @@ declare interface LineItemSocialData {
 declare interface LineItem_2 {
     productId: number;
     quantity: number;
+    variantId?: number;
     optionSelections?: {
         optionId: number;
         optionValue: number | string;
@@ -5534,12 +5538,6 @@ declare interface LinkStyles extends InlineElementStyles {
     active?: InlineElementStyles;
     focus?: InlineElementStyles;
     hover?: InlineElementStyles;
-}
-
-declare interface LoadingIndicatorStyles {
-    size?: number;
-    color?: string;
-    backgroundColor?: string;
 }
 
 declare interface Locales {

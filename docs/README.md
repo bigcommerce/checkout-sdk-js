@@ -263,7 +263,6 @@
 - [LineItemSocialData](interfaces/LineItemSocialData.md)
 - [LineItem_2](interfaces/LineItem_2.md)
 - [LinkStyles](interfaces/LinkStyles.md)
-- [LoadingIndicatorStyles](interfaces/LoadingIndicatorStyles.md)
 - [Locales](interfaces/Locales.md)
 - [MasterpassCustomerInitializeOptions](interfaces/MasterpassCustomerInitializeOptions.md)
 - [MasterpassPaymentInitializeOptions](interfaces/MasterpassPaymentInitializeOptions.md)

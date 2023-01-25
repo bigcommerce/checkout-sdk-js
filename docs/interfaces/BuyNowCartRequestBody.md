@@ -21,4 +21,4 @@ ___
 
 ### source
 
-• **source**: ``"BUY_NOW"``
+• **source**: `BuyNow`

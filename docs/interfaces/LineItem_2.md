@@ -9,6 +9,7 @@
 - [optionSelections](LineItem_2.md#optionselections)
 - [productId](LineItem_2.md#productid)
 - [quantity](LineItem_2.md#quantity)
+- [variantId](LineItem_2.md#variantid)
 
 ## Properties
 
@@ -34,3 +35,9 @@ ___
 ### quantity
 
 • **quantity**: `number`
+
+___
+
+### variantId
+
+• `Optional` **variantId**: `number`

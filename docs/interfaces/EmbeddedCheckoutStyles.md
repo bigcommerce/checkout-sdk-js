@@ -90,7 +90,7 @@ ___
 
 ### loadingIndicator
 
-• `Optional` **loadingIndicator**: [`LoadingIndicatorStyles`](LoadingIndicatorStyles.md)
+• `Optional` **loadingIndicator**: `LoadingIndicatorStyles`
 
 ___
 
