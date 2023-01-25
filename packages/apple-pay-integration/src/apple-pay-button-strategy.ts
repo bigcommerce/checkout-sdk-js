@@ -304,7 +304,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             if (!cartRequestBody) {
                 throw new MissingDataError(MissingDataErrorType.MissingCart);
             }
-            const { body: buyNowCart } = await this._paymentIntegrationService.createBuyNowCart(
+            const buyNowCart = await this._paymentIntegrationService.createBuyNowCart(
                 cartRequestBody,
             );
 
