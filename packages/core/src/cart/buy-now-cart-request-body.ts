@@ -3,6 +3,7 @@ import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 interface LineItem {
     productId: number;
     quantity: number;
+    variantId?: number;
     optionSelections?: {
         optionId: number;
         optionValue: number | string;

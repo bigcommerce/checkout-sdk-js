@@ -3,6 +3,7 @@ import { CartSource } from './cart-source';
 interface LineItem {
     productId: number;
     quantity: number;
+    variantId?: number;
     optionSelections?: {
         optionId: number;
         optionValue: number | string;
