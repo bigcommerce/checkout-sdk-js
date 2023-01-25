@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.328.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.327.0...v1.328.0) (2023-01-25)
+
+
+### Features
+
+* **payment:** STRIPE-216 delete consignments to recover auto-step flow when reloads page for stripe link ([#1731](https://github.com/bigcommerce/checkout-sdk-js/issues/1731)) ([1e56b66](https://github.com/bigcommerce/checkout-sdk-js/commit/1e56b6627a20fb1078ffd7c2cf67b480ad4782bb))
+
 ## [1.327.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.326.4...v1.327.0) (2023-01-24)
 
 
