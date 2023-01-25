@@ -15,6 +15,7 @@ import {
     StripeUPEAppearanceOptions,
     StripeUPEClient,
 } from '../../../payment/strategies/stripe-upe';
+import { ConsignmentActionCreator } from '../../../shipping';
 import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerActionType } from '../../customer-actions';
 import CustomerCredentials from '../../customer-credentials';
@@ -33,6 +34,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
         private _stripeUPEScriptLoader: StripeScriptLoader,
         private _customerActionCreator: CustomerActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
+        private _consignmentActionCreator: ConsignmentActionCreator,
     ) {}
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -67,7 +69,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             clientToken,
             initializationData: { stripePublishableKey, stripeConnectedAccount } = {},
         } = getPaymentMethodOrThrow(methodId, gatewayId);
-        const { email } = getCustomerOrThrow();
+        const { email, isStripeLinkAuthenticated } = getCustomerOrThrow();
 
         if (!email) {
             if (!stripePublishableKey || !clientToken) {
@@ -109,8 +111,13 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 appearance,
             });
 
-            const billingAddress = this._store.getState().billingAddress.getBillingAddress();
-            const { email: billingEmail } = billingAddress || {};
+            const {
+                billingAddress: { getBillingAddress },
+                consignments: { getConsignments },
+            } = this._store.getState();
+            const consignments = getConsignments();
+            const id = consignments?.[0]?.id;
+            const { email: billingEmail } = getBillingAddress() || {};
             const options = billingEmail ? { defaultValues: { email: billingEmail } } : {};
             const linkAuthenticationElement =
                 this._stripeElements.getElement(StripeElementType.AUTHENTICATION) ||
@@ -130,6 +137,10 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
 
                 if (isLoading) {
                     isLoading(false);
+                }
+
+                if (isStripeLinkAuthenticated === undefined && event.authenticated && id) {
+                    this._store.dispatch(this._consignmentActionCreator.deleteConsignment(id));
                 }
             });
 
