@@ -341,7 +341,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const shippingAddress = this._transformContactToAddress(event.shippingContact);
 
         try {
-          await this._paymentIntegrationService.updateShippingAddress(shippingAddress);
+            await this._paymentIntegrationService.updateShippingAddress(shippingAddress);
         } catch (error) {
             applePaySession.abort();
 
