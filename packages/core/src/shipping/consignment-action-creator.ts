@@ -218,6 +218,8 @@ export default class ConsignmentActionCreator {
         return (store) => {
             const consignment = this._getUpdateAddressRequestBody(address, store);
             const consignments = store.getState().consignments.getConsignments();
+            console.log('CONSIGNMENT', consignment);
+            console.log('CONSIGNMENTS', consignments);
 
             if (consignments && consignments.length) {
                 (consignment as ConsignmentUpdateRequestBody).id = consignments[0].id;

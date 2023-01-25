@@ -102,6 +102,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         payload?: OrderRequestBody,
         options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors> {
+        console.log('ORDER PAYLOAD', payload, options);
         await this._store.dispatch(this._orderActionCreator.submitOrder(payload, options));
 
         return this._storeProjection.getState();
@@ -136,6 +137,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
     async updateShippingAddress(
         payload: ShippingAddressRequestBody,
     ): Promise<PaymentIntegrationSelectors> {
+        console.log('PAYLOAD', payload);
         await this._store.dispatch(this._consignmentActionCreator.updateAddress(payload));
 
         return this._storeProjection.getState();
