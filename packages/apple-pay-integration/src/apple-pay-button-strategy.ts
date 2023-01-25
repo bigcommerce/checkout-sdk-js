@@ -126,7 +126,13 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             }
 
             console.log('INIT DATA', this._paymentMethod.initializationData);
-            const { countryCode, currencyCode, merchantCapabilities, supportedNetworks, storeName } = this._paymentMethod.initializationData;
+            const {
+                countryCode,
+                currencyCode,
+                merchantCapabilities,
+                supportedNetworks,
+                storeName
+            } = this._paymentMethod.initializationData;
 
             const request: ApplePayJS.ApplePayPaymentRequest = {
                 countryCode,
@@ -144,11 +150,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
             const applePaySession = this._sessionFactory.create(request);
 
-            this._handleApplePayEvents(
-                applePaySession,
-                this._paymentMethod,
-                storeName,
-            );
+            this._handleApplePayEvents(applePaySession, this._paymentMethod, storeName);
 
             applePaySession.begin();
         } else {

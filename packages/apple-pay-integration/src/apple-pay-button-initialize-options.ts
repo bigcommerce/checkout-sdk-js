@@ -7,6 +7,7 @@ import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integra
  * DOM. When a customer clicks on it, it will trigger Apple sheet.
  */
 export default interface ApplePayButtonInitializeOptions {
+    requiresShipping?: string;
     /**
      * The options that are required to initialize Buy Now functionality.
      */
@@ -22,7 +23,6 @@ export default interface ApplePayButtonInitializeOptions {
      * A callback that gets called when a payment is successfully completed.
      */
     onPaymentAuthorize(): void;
-    requiresShipping?: string;
 }
 
 export interface WithApplePayButtonInitializeOptions {
