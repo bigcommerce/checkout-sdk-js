@@ -159,9 +159,13 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         return this._storeProjection.getState();
     }
 
-    async createBuyNowCart(buyNowCartRequestBody: BuyNowCartRequestBody): Promise<Cart> {
+    async createBuyNowCart(
+        buyNowCartRequestBody: BuyNowCartRequestBody,
+        options?: RequestOptions,
+    ): Promise<Cart> {
         const { body: buyNowCart } = await this._cartRequestSender.createBuyNowCart(
             buyNowCartRequestBody,
+            options,
         );
 
         return buyNowCart;

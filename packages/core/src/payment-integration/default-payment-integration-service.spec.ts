@@ -311,7 +311,10 @@ describe('DefaultPaymentIntegrationService', () => {
 
             const output = await subject.createBuyNowCart(buyNowCartRequestBody);
 
-            expect(cartRequestSender.createBuyNowCart).toHaveBeenCalledWith(buyNowCartRequestBody);
+            expect(cartRequestSender.createBuyNowCart).toHaveBeenCalledWith(
+                buyNowCartRequestBody,
+                undefined,
+            );
             expect(output).toEqual(buyNowCart);
         });
     });
