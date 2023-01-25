@@ -22,6 +22,7 @@ import ApplePayButtonInitializeOptions, {
     WithApplePayButtonInitializeOptions,
 } from './apple-pay-button-initialize-options';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
+import ApplePayShippingMethod = ApplePayJS.ApplePayShippingMethod;
 
 const validationEndpoint = (bigPayEndpoint: string) =>
     `${bigPayEndpoint}/api/public/v1/payments/applepay/validate_merchant`;
@@ -298,6 +299,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     }
 
     private async _createBuyNowCart() {
+        console.log('_createBuyNowCart');
         try {
             const cartRequestBody = this._buyNowInitializeOptions?.getBuyNowCartRequestBody?.();
 
@@ -403,6 +405,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         const optionId = recommendedOption ? recommendedOption.id : availableOptions[0].id;
         const selectedOptionId = selectedOption ? selectedOption.id : optionId;
+        console.log('OPTION ID & SELECTED', optionId, selectedOptionId);
 
         try {
             await this._updateShippingOption(selectedOptionId);
@@ -412,12 +415,20 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         state = this._paymentIntegrationService.getState();
         checkout = state.getCheckoutOrThrow();
+        const sortedShippingOptions: ApplePayShippingMethod[] = [];
+        shippingOptions.forEach((option) => {
+            if (option.identifier === selectedOptionId) {
+                sortedShippingOptions.unshift(option);
+            } else {
+                sortedShippingOptions.push(option);
+            }
+        });
+        console.log('SORTED', sortedShippingOptions);
 
         console.log('SHIPPING METHODS', shippingOptions, availableOptions);
-        console.log('CHECKOUT', checkout);
 
         applePaySession.completeShippingContactSelection({
-            newShippingMethods: shippingOptions,
+            newShippingMethods: sortedShippingOptions,
             newTotal: {
                 type: 'final',
                 label: storeName,
@@ -467,6 +478,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         checkout: Checkout,
         decimalPlaces: number,
     ): ApplePayJS.ApplePayLineItem[] {
+        console.log('CHECKOUT1111', checkout);
         const lineItems: ApplePayJS.ApplePayLineItem[] = [
             {
                 label: this._subTotalLabel,
