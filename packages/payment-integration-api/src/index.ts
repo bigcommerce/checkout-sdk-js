@@ -92,4 +92,3 @@ export { RequestOptions, guard } from './util-types';
 export { default as ResolvableModule } from './resolvable-module';
 export { default as isResolvableModule } from './is-resolvable-module';
 export { default as toResolvableModule } from './to-resolvable-module';
-export { default as BuyNowCartRequestBody } from './cart/buyNowCart';
