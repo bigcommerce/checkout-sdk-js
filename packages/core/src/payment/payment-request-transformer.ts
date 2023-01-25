@@ -164,6 +164,7 @@ export default class PaymentRequestTransformer {
             return { ...paymentMethod, id: CheckoutButtonMethodType.BRAINTREE_PAYPAL };
         }
 
+        // TODO: this block of code should be removed in PAYPAL-1921
         if (
             paymentMethod.gateway === CheckoutButtonMethodType.PAYPALCOMMERCE_APMS &&
             storeConfig?.checkoutSettings.features['PAYPAL-1883.paypal-commerce-split-gateway']
