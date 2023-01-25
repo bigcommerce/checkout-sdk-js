@@ -22,6 +22,7 @@ export default interface ApplePayButtonInitializeOptions {
      * A callback that gets called when a payment is successfully completed.
      */
     onPaymentAuthorize(): void;
+    requiresShipping?: string;
 }
 
 export interface WithApplePayButtonInitializeOptions {

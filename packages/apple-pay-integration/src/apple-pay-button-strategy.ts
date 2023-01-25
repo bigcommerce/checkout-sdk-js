@@ -35,11 +35,12 @@ function isShippingOptions(options: ShippingOption[] | undefined): options is Sh
     return options instanceof Array;
 }
 
-const requiresShipping = true;
+// const requiresShipping = true;
 
 export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
+    private _requiresShipping?: string;
     private _buyNowInitializeOptions: ApplePayButtonInitializeOptions['buyNowInitializeOptions'];
     private _onAuthorizeCallback = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
@@ -62,7 +63,9 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { buttonClassName, onPaymentAuthorize, buyNowInitializeOptions } = applepay;
+        const { buttonClassName, onPaymentAuthorize, buyNowInitializeOptions, requiresShipping } = applepay;
+
+        this._requiresShipping = requiresShipping;
 
         this._buyNowInitializeOptions = buyNowInitializeOptions;
 
@@ -135,7 +138,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 requiredShippingContactFields: ['email', 'phone'],
             };
 
-            if (requiresShipping) {
+            if (this._requiresShipping) {
                 request.requiredShippingContactFields?.push('postalAddress');
             }
 
@@ -253,7 +256,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 throw new Error('Merchant validation failed');
             }
         };
-        if (this._buyNowInitializeOptions && !requiresShipping) {
+        if (this._buyNowInitializeOptions && !this._requiresShipping) {
             applePaySession.onpaymentmethodselected = async () => {
                 console.log('SHIPPING NOT REQUIRED');
                 // TODO Add createBuyNowCart private method
@@ -264,7 +267,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         }
 
         applePaySession.onshippingcontactselected = async (event) => {
-            if (this._buyNowInitializeOptions && requiresShipping) {
+            if (this._buyNowInitializeOptions && this._requiresShipping) {
                 console.log('SHIPPING REQUIRED');
                // TODO createBuyNowCartMethod call
                await this._createBuyNowCart();
