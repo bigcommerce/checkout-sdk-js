@@ -131,7 +131,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                 currencyCode,
                 merchantCapabilities,
                 supportedNetworks,
-                storeName
+                storeName,
             } = this._paymentMethod.initializationData;
 
             const request: ApplePayJS.ApplePayPaymentRequest = {
@@ -270,8 +270,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         applePaySession.onshippingcontactselected = async (event) => {
             if (this._buyNowInitializeOptions && this._requiresShipping) {
-                console.log('SHIPPING REQUIRED');
-               // TODO createBuyNowCartMethod call
                await this._createBuyNowCart();
             }
             return this._handleShippingContactSelected(applePaySession, storeName, event);
@@ -308,10 +306,8 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             const { body: buyNowCart } = await this._paymentIntegrationService.createBuyNowCart(
                 cartRequestBody,
             );
-            console.log('BUY NOW CART', buyNowCart);
 
-            const definedCheckout = await this._paymentIntegrationService.loadDefinedCheckout(buyNowCart.id);
-            console.log('DEFINED CHECKOUT', definedCheckout);
+            await this._paymentIntegrationService.loadDefinedCheckout(buyNowCart.id);
         } catch (error) {
             throw new BuyNowCartCreationError();
         }
