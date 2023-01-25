@@ -123,6 +123,7 @@
 - [BraintreePaymentInitializeOptions](interfaces/BraintreePaymentInitializeOptions.md)
 - [BraintreePaypalButtonInitializeOptions](interfaces/BraintreePaypalButtonInitializeOptions.md)
 - [BraintreePaypalCreditButtonInitializeOptions](interfaces/BraintreePaypalCreditButtonInitializeOptions.md)
+- [BraintreePaypalCreditCustomerInitializeOptions](interfaces/BraintreePaypalCreditCustomerInitializeOptions.md)
 - [BraintreePaypalCustomerInitializeOptions](interfaces/BraintreePaypalCustomerInitializeOptions.md)
 - [BraintreeStoredCardFieldOptions](interfaces/BraintreeStoredCardFieldOptions.md)
 - [BraintreeStoredCardFieldsMap](interfaces/BraintreeStoredCardFieldsMap.md)

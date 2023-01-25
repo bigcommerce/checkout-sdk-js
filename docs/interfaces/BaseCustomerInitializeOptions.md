@@ -27,6 +27,7 @@ information in order to initialize the customer step of checkout.
 - [amazonpay](BaseCustomerInitializeOptions.md#amazonpay)
 - [bolt](BaseCustomerInitializeOptions.md#bolt)
 - [braintreepaypal](BaseCustomerInitializeOptions.md#braintreepaypal)
+- [braintreepaypalcredit](BaseCustomerInitializeOptions.md#braintreepaypalcredit)
 - [braintreevisacheckout](BaseCustomerInitializeOptions.md#braintreevisacheckout)
 - [chasepay](BaseCustomerInitializeOptions.md#chasepay)
 - [googlepayadyenv2](BaseCustomerInitializeOptions.md#googlepayadyenv2)
@@ -71,6 +72,15 @@ ___
 
 The options that are required to initialize the customer step of checkout
 when using Braintree PayPal provided.
+
+___
+
+### braintreepaypalcredit
+
+• `Optional` **braintreepaypalcredit**: [`BraintreePaypalCreditCustomerInitializeOptions`](BraintreePaypalCreditCustomerInitializeOptions.md)
+
+The options that are required to facilitate Braintree Credit. They can be
+omitted unless you need to support Braintree Credit.
 
 ___
 

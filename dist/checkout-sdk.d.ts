@@ -219,7 +219,7 @@ declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponent
     placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
 }
 
-declare interface AdyenIdealComponentOptions {
+declare interface AdyenIdealComponentOptions extends AdyenBaseCardComponentOptions {
     /**
      * Optional. Set to **false** to remove the bank logos from the iDEAL form.
      */
@@ -1008,6 +1008,11 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      */
     braintreepaypal?: BraintreePaypalCustomerInitializeOptions;
     /**
+     * The options that are required to facilitate Braintree Credit. They can be
+     * omitted unless you need to support Braintree Credit.
+     */
+    braintreepaypalcredit?: BraintreePaypalCreditCustomerInitializeOptions;
+    /**
      * The options that are required to initialize the customer step of checkout
      * when using Visa Checkout provided by Braintree.
      */
@@ -1701,6 +1706,19 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
+}
+
+declare interface BraintreePaypalCreditCustomerInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback that gets called on any error instead of submit payment or authorization errors.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error: BraintreeError | StandardError): void;
 }
 
 declare interface BraintreePaypalCustomerInitializeOptions {
@@ -4317,6 +4335,7 @@ declare interface CreditCardPlaceHolder_2 {
 
 declare interface CssProperties {
     background?: string;
+    caretColor?: string;
     color?: string;
     display?: string;
     font?: string;
@@ -4349,6 +4368,7 @@ declare interface CssProperties {
 
 declare interface CssProperties_2 {
     background?: string;
+    caretColor?: string;
     color?: string;
     display?: string;
     font?: string;

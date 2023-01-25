@@ -7,6 +7,7 @@
 ### Properties
 
 - [background](CssProperties.md#background)
+- [caretColor](CssProperties.md#caretcolor)
 - [color](CssProperties.md#color)
 - [display](CssProperties.md#display)
 - [font](CssProperties.md#font)
@@ -41,6 +42,12 @@
 ### background
 
 • `Optional` **background**: `string`
+
+___
+
+### caretColor
+
+• `Optional` **caretColor**: `string`
 
 ___
 

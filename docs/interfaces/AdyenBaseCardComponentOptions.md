@@ -8,6 +8,8 @@
 
   ↳ [`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md)
 
+  ↳ [`AdyenIdealComponentOptions`](AdyenIdealComponentOptions.md)
+
 ## Table of contents
 
 ### Properties

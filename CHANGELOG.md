@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.329.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.328.0...v1.329.0) (2023-01-25)
+
+
+### Features
+
+* **payment:** PAYPAL-1840 Create braintreepaypalcredit customer button strategy ([97bcb1b](https://github.com/bigcommerce/checkout-sdk-js/commit/97bcb1b22b84d613d2dec129f4720e8a3e99294e))
+
+
+### Bug Fixes
+
+* **checkout:** ADYEN-502 hide wrong placeholder text for the vaulted validation fields ([1c93745](https://github.com/bigcommerce/checkout-sdk-js/commit/1c93745a068e38bab3b882c65d88cfe1315ff1e3))
+
 ## [1.328.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.327.0...v1.328.0) (2023-01-25)
 
 
