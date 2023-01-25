@@ -65,6 +65,7 @@ import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayCustomerStrategy } from './strategies/apple-pay';
 import { BoltCustomerStrategy } from './strategies/bolt';
 import {
+    BraintreePaypalCreditCustomerStrategy,
     BraintreePaypalCustomerStrategy,
     BraintreeVisaCheckoutCustomerStrategy,
 } from './strategies/braintree';
@@ -182,6 +183,20 @@ export default function createCustomerStrategyRegistry(
         'braintreepaypal',
         () =>
             new BraintreePaypalCustomerStrategy(
+                store,
+                checkoutActionCreator,
+                customerActionCreator,
+                paymentMethodActionCreator,
+                braintreeSDKCreator,
+                formPoster,
+                window,
+            ),
+    );
+
+    registry.register(
+        'braintreepaypalcredit',
+        () =>
+            new BraintreePaypalCreditCustomerStrategy(
                 store,
                 checkoutActionCreator,
                 customerActionCreator,
