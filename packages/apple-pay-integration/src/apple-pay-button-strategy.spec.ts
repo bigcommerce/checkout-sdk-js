@@ -336,6 +336,77 @@ describe('ApplePayButtonStrategy', () => {
             }
         });
 
+        it('gets shipping options sorted correctly with recommended option first', async () => {
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockResolvedValue(true);
+
+            const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+            const newCheckout = {
+                ...getCheckout(),
+                consignments: [
+                    {
+                        ...getConsignment(),
+                        availableShippingOptions: [
+                            {
+                                ...getShippingOption(),
+                                description: 'Free Shipping',
+                                additionalDescription: 'Free shipping to your order',
+                                isRecommended: false,
+                                id: '0:11111111',
+                            },
+                            {
+                                ...getShippingOption(),
+                                id: '0:22222222',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const freeShippingOption = newCheckout.consignments[0].availableShippingOptions[0];
+            const flatFeeShippingOption = newCheckout.consignments[0].availableShippingOptions[1];
+
+            const expectedShippingMethods = [
+                {
+                    label: flatFeeShippingOption.description,
+                    amount: flatFeeShippingOption.cost.toFixed(2),
+                    detail: flatFeeShippingOption.additionalDescription,
+                    identifier: flatFeeShippingOption.id,
+                },
+                {
+                    label: freeShippingOption.description,
+                    amount: freeShippingOption.cost.toFixed(2),
+                    detail: freeShippingOption.additionalDescription,
+                    identifier: freeShippingOption.id,
+                },
+            ];
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
+                newCheckout,
+            );
+
+            await strategy.initialize(CheckoutButtonInitializeOptions);
+
+            if (CheckoutButtonInitializeOptions.applepay) {
+                const button = container.firstChild as HTMLElement;
+
+                if (button) {
+                    button.click();
+
+                    const event = {
+                        shippingContact: getContactAddress(),
+                    } as ApplePayJS.ApplePayShippingContactSelectedEvent;
+
+                    await applePaySession.onshippingcontactselected(event);
+
+                    const actualShippingMethods =
+                        applePaySession.completeShippingContactSelection.mock.calls[0][0]
+                            .newShippingMethods;
+
+                    expect(actualShippingMethods).toEqual(expectedShippingMethods);
+                }
+            }
+        });
+
         it('gets call to update shipping option in consignment fails', async () => {
             jest.spyOn(paymentIntegrationService, 'selectShippingOption').mockRejectedValue(false);
 
