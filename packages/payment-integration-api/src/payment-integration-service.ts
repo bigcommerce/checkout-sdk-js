@@ -7,6 +7,7 @@ import { InitializeOffsitePaymentConfig, Payment } from './payment';
 import PaymentIntegrationSelectors from './payment-integration-selectors';
 import { ShippingAddressRequestBody } from './shipping';
 import { RequestOptions } from './util-types';
+import { Response } from '@bigcommerce/request-sender';
 
 export default interface PaymentIntegrationService {
     createHostedForm(host: string, options: HostedFormOptions): HostedForm;
@@ -57,5 +58,5 @@ export default interface PaymentIntegrationService {
 
     signOutCustomer(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 
-    createBuyNowCart(body: BuyNowCartRequestBody, options?: RequestOptions): Promise<Cart>;
+    createBuyNowCart(body: BuyNowCartRequestBody, options?: RequestOptions): Promise<Response<Cart>>;
 }
