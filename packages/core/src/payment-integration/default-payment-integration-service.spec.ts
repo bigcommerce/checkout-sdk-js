@@ -124,8 +124,6 @@ describe('DefaultPaymentIntegrationService', () => {
             signOutCustomer: jest.fn(async () => () => createAction('SIGN_OUT_CUSTOMER')),
         };
 
-        requestSender = {};
-
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
