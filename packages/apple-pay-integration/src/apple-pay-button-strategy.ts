@@ -577,10 +577,10 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             await this._paymentIntegrationService.submitPayment(payment);
             console.log('AFTER PAYMENT SUBMIT');
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
-            // window.location.replace('/checkout/order-confirmation');
             return this._onAuthorizeCallback();
         } catch (error) {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
+            console.log('ERROR', error);
 
             throw new Error('Payment cannot complete');
         }
