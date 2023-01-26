@@ -150,6 +150,15 @@ export interface BraintreeError extends Error {
     details?: unknown;
 }
 
+export enum BraintreeIntent {
+    AUTHORIZE = 'authorize',
+    CAPTURE = 'capture',
+}
+
+export interface BraintreePaypalInitializationData {
+    intent: BraintreeIntent;
+}
+
 /**
  *
  * Braintree Client

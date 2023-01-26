@@ -11,6 +11,7 @@ import {
     BraintreeError,
     BraintreeHostedFields,
     BraintreeHostedFieldsCreatorConfig,
+    BraintreeIntent,
     BraintreeModule,
     BraintreePaypal,
     BraintreePaypalCheckout,
@@ -71,7 +72,7 @@ export default class BraintreeSDKCreator {
     }
 
     async getPaypalCheckout(
-        config: { currency: string },
+        config: { currency: string; indent?: BraintreeIntent },
         onSuccess: (instance: BraintreePaypalCheckout) => void,
         onError: (error: BraintreeError) => void,
     ): Promise<BraintreePaypalCheckout> {
@@ -91,6 +92,7 @@ export default class BraintreeSDKCreator {
             const paypalSdkLoadConfig = {
                 currency: config.currency,
                 components: PAYPAL_COMPONENTS.toString(),
+                intent: config.indent,
             };
 
             if (!this._window.paypal) {

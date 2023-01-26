@@ -13,6 +13,7 @@ import PaymentMethod from '../../../payment/payment-method';
 import {
     BraintreeError,
     BraintreePaypalCheckout,
+    BraintreePaypalInitializationData,
     BraintreeSDKCreator,
     BraintreeTokenizePayload,
     mapToBraintreeShippingAddressOverride,
@@ -66,7 +67,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         }
 
         let state: InternalCheckoutSelectors;
-        let paymentMethod: PaymentMethod;
+        let paymentMethod: PaymentMethod<BraintreePaypalInitializationData>;
         let currencyCode: string;
 
         if (braintreepaypal.buyNowInitializeOptions) {
@@ -90,7 +91,11 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const paypalCheckoutOptions = { currency: currencyCode };
+        const paypalCheckoutOptions = {
+            currency: currencyCode,
+            intent: paymentMethod.initializationData?.intent,
+        };
+
         const paypalCheckoutSuccessCallback = (
             braintreePaypalCheckout: BraintreePaypalCheckout,
         ) => {
