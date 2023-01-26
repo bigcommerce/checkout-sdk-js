@@ -325,7 +325,7 @@ describe('PayPalCommerceScriptLoader', () => {
             },
         };
 
-        await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
+        await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD', false);
 
         const paypalSdkLoaderOptions = {
             'client-id': paymentMethod.initializationData.clientId,
