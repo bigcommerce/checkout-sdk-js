@@ -22,7 +22,7 @@ export default interface PaymentIntegrationService {
         initializeOffsitePaymentConfig: InitializeOffsitePaymentConfig,
     ): Promise<PaymentIntegrationSelectors>;
 
-    loadCheckout(): Promise<PaymentIntegrationSelectors>;
+    loadCheckout(id?: string): Promise<PaymentIntegrationSelectors>;
 
     loadDefaultCheckout(): Promise<PaymentIntegrationSelectors>;
 
