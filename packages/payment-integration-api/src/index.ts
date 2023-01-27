@@ -45,6 +45,7 @@ export {
     PaymentInvalidFormErrorDetails,
     PaymentMethodCancelledError,
     PaymentMethodClientUnavailableError,
+    PaymentMethodFailedError,
     RequestError,
     isRequestError,
 } from './errors';

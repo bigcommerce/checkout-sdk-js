@@ -4,6 +4,8 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable, of } from 'rxjs';
 
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     BillingAddressActionCreator,
     BillingAddressActionType,
@@ -49,11 +51,7 @@ import {
     StoreCreditRequestSender,
 } from '../../../store-credit';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
-import {
-    PaymentArgumentInvalidError,
-    PaymentMethodCancelledError,
-    PaymentMethodFailedError,
-} from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';

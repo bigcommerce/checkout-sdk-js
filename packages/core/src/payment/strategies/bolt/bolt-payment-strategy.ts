@@ -1,3 +1,5 @@
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import AnalyticsExtraItemsManager from '../../../analytics/analytics-extra-items-manager';
 import { isAnalyticsTrackerWindow } from '../../../analytics/is-analytics-step-tracker-window';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
@@ -14,7 +16,6 @@ import { StoreCreditActionCreator } from '../../../store-credit';
 import {
     PaymentArgumentInvalidError,
     PaymentMethodCancelledError,
-    PaymentMethodFailedError,
     PaymentMethodInvalidError,
 } from '../../errors';
 import { withAccountCreation } from '../../index';

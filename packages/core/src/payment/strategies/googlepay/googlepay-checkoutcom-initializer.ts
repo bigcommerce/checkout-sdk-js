@@ -1,10 +1,11 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 import { round } from 'lodash';
 
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { Checkout } from '../../../checkout';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { ContentType } from '../../../common/http-request';
-import { PaymentMethodFailedError } from '../../errors';
 import PaymentMethod from '../../payment-method';
 import { CheckoutcomGooglePayToken, CheckoutcomToken } from '../checkoutcom';
 

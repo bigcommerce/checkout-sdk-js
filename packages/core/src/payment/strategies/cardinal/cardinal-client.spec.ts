@@ -1,6 +1,8 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { MissingDataError, NotInitializedError, StandardError } from '../../../common/error/errors';
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
 
 import {
     getCardinalBinProcessResponse,
@@ -242,7 +244,7 @@ describe('CardinalClient', () => {
                     getCardinalOrderData(),
                 );
             } catch (error) {
-                expect(error).toBeInstanceOf(StandardError);
+                expect(error).toBeInstanceOf(PaymentMethodFailedError);
             }
         });
 
@@ -268,7 +270,7 @@ describe('CardinalClient', () => {
                     getCardinalOrderData(),
                 );
             } catch (error) {
-                expect(error).toBeInstanceOf(StandardError);
+                expect(error).toBeInstanceOf(PaymentMethodFailedError);
             }
         });
 
@@ -286,7 +288,7 @@ describe('CardinalClient', () => {
                     getCardinalOrderData(),
                 );
             } catch (error) {
-                expect(error).toBeInstanceOf(StandardError);
+                expect(error).toBeInstanceOf(PaymentMethodFailedError);
             }
         });
 
@@ -304,7 +306,7 @@ describe('CardinalClient', () => {
                     getCardinalOrderData(),
                 );
             } catch (error) {
-                expect(error).toBeInstanceOf(StandardError);
+                expect(error).toBeInstanceOf(PaymentMethodFailedError);
                 expect(error.message).toBe(
                     'User failed authentication or an error was encountered while processing the transaction.',
                 );
@@ -375,7 +377,7 @@ describe('CardinalClient', () => {
                     getCardinalOrderData(),
                 );
             } catch (error) {
-                expect(error).toBeInstanceOf(StandardError);
+                expect(error).toBeInstanceOf(PaymentMethodFailedError);
                 expect(error.message).toBe(
                     'An error was encountered while processing the transaction.',
                 );

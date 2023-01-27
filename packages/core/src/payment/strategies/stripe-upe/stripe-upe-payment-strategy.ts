@@ -1,5 +1,7 @@
 import { includes, some } from 'lodash';
 
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { isHostedInstrumentLike } from '../..';
 import { Address } from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
@@ -15,11 +17,7 @@ import {
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
-import {
-    PaymentArgumentInvalidError,
-    PaymentMethodCancelledError,
-    PaymentMethodFailedError,
-} from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';

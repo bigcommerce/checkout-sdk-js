@@ -3,13 +3,15 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import { Observable, of } from 'rxjs';
 
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { Cart } from '../../../cart';
 import { getCart } from '../../../cart/carts.mock';
 import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { OrderActionCreator, OrderActionType } from '../../../order';
 import { PaymentMethod } from '../../../payment';
-import { PaymentInvalidFormError, PaymentMethodFailedError } from '../../errors';
+import { PaymentInvalidFormError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import { getPaypalCommerce } from '../../payment-methods.mock';

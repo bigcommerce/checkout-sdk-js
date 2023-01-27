@@ -3,6 +3,8 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of } from 'rxjs';
 
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     CheckoutActionCreator,
     CheckoutRequestSender,
@@ -19,7 +21,6 @@ import {
     PaymentMethodActionCreator,
     PaymentMethodRequestSender,
 } from '../../../payment';
-import { PaymentMethodFailedError } from '../../../payment/errors';
 import { getBolt } from '../../../payment/payment-methods.mock';
 import { BoltCheckout, BoltScriptLoader } from '../../../payment/strategies/bolt';
 import { getQuote } from '../../../quote/internal-quotes.mock';
