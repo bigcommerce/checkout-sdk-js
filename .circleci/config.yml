@@ -18,7 +18,7 @@ jobs:
       - node/npm-install
       - run:
           name: "Run unit tests"
-          command: npm run test:core -- --coverage
+          command: npm run test:core
 
   test-packages:
     <<: *node_executor
