@@ -22,15 +22,21 @@ jobs:
       - store_artifacts:
           path: coverage
           destination: coverage
+    
+  lint:
+    <<: *node_executor
+    steps:
+      - ci/pre-setup
+      - node/npm install
+      - run:
+          name: "Run lint"
+          command: npm run lint
 
   build:
     <<: *node_executor
     steps:
       - ci/pre-setup
       - node/npm-install
-      - run:
-          name: "Run linter"
-          command: npm run lint
       - run:
           name: "Build distribution files"
           command: npm run build && npm run docs
