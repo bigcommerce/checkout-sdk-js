@@ -19,9 +19,6 @@ jobs:
       - run:
           name: "Run unit tests"
           command: npm run test:series -- --coverage
-      - store_artifacts:
-          path: coverage
-          destination: coverage
     
   lint:
     <<: *node_executor
@@ -94,6 +91,7 @@ workflows:
   default:
     jobs:
       - test
+      - lint
       - build
       - ci/validate-commits
 
@@ -104,6 +102,7 @@ workflows:
               ignore: /pull\/[0-9]+/
           requires:
             - test
+            - lint
             - build
             - ci/validate-commits
       - ci/build-js-artifact:
@@ -126,6 +125,7 @@ workflows:
               only: master
           requires:
             - test
+            - lint
             - build
             - ci/validate-commits
       - npm_release:
