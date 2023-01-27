@@ -60,7 +60,6 @@ describe('GoogleRecaptchaScriptLoader', () => {
             const loadPromise = googleRecaptchaScriptLoader.load();
 
             mockWindow.grecaptcha = getGoogleRecaptchaMock();
-            // tslint:disable-next-line:no-non-null-assertion
             mockWindow.initRecaptcha!();
 
             expect(loadPromise).resolves.toEqual(mockWindow.grecaptcha);
