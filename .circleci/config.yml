@@ -145,7 +145,8 @@ workflows:
             branches:
               only: master
           requires:
-            - test
+            - test-core
+            - test-packages
             - lint
             - build
             - ci/validate-commits
