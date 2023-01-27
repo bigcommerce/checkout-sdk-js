@@ -39,7 +39,6 @@ describe('InstrumentActionCreator', () => {
     let instrumentId: string;
     let currencyCode: string;
     let shippingAddress: Address;
-    let shippingAddresses: Address[];
     let vaultAccessExpiry: number;
     let vaultAccessToken: string;
 
@@ -70,8 +69,6 @@ describe('InstrumentActionCreator', () => {
         // tslint:disable-next-line:no-non-null-assertion
         customerId = state.cart.data!.customerId;
         shippingAddress = getShippingAddress();
-        // shippingAddresses equivalent to the consignments mock
-        shippingAddresses = [shippingAddress, shippingAddress];
         instrumentId = '123';
         currencyCode = 'USD';
 
@@ -88,7 +85,7 @@ describe('InstrumentActionCreator', () => {
             expect(instrumentRequestSender.getVaultAccessToken).toHaveBeenCalled();
             expect(instrumentRequestSender.loadInstruments).toHaveBeenCalledWith(
                 { storeId, customerId, currencyCode, authToken: vaultAccessToken },
-                shippingAddresses,
+                shippingAddress,
             );
         });
 
@@ -108,7 +105,7 @@ describe('InstrumentActionCreator', () => {
             expect(instrumentRequestSender.getVaultAccessToken).toHaveBeenCalled();
             expect(instrumentRequestSender.loadInstruments).toHaveBeenCalledWith(
                 { storeId, customerId, currencyCode, authToken: vaultAccessToken },
-                shippingAddresses,
+                shippingAddress,
             );
         });
 
@@ -129,7 +126,7 @@ describe('InstrumentActionCreator', () => {
             expect(instrumentRequestSender.getVaultAccessToken).not.toHaveBeenCalled();
             expect(instrumentRequestSender.loadInstruments).toHaveBeenCalledWith(
                 { storeId, customerId, currencyCode, authToken: vaultAccessToken },
-                shippingAddresses,
+                shippingAddress,
             );
         });
 

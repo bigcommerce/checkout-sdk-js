@@ -136,11 +136,10 @@ export default class InstrumentActionCreator {
             : this._instrumentRequestSender.getVaultAccessToken().then(({ body }) => body);
     }
 
-    private _getShippingAddress(store: ReadableCheckoutStore): Address | Address[] | undefined {
+    private _getShippingAddress(store: ReadableCheckoutStore): Address | undefined {
         const state = store.getState();
-        const addresses = state.shippingAddress.getShippingAddresses();
 
-        return addresses.length > 1 ? addresses : state.shippingAddress.getShippingAddress();
+        return state.shippingAddress.getShippingAddress();
     }
 
     private _getSessionContext(store: ReadableCheckoutStore): SessionContext {

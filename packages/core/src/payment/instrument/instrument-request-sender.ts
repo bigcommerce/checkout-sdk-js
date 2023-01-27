@@ -36,7 +36,7 @@ export default class InstrumentRequestSender {
 
     loadInstruments(
         requestContext: InstrumentRequestContext,
-        shippingAddress?: Address | Address[],
+        shippingAddress?: Address,
     ): Promise<Response<InstrumentsResponseBody>> {
         return shippingAddress
             ? this._loadInstrumentsWithAddress(requestContext, shippingAddress)
@@ -85,13 +85,11 @@ export default class InstrumentRequestSender {
 
     private _loadInstrumentsWithAddress(
         requestContext: InstrumentRequestContext,
-        shippingAddress: Address | Address[],
+        shippingAddress: Address,
     ): Promise<Response<InstrumentsResponseBody>> {
         const payload = {
             ...requestContext,
-            shippingAddress: Array.isArray(shippingAddress)
-                ? shippingAddress.map((address) => mapToInternalAddress(address))
-                : mapToInternalAddress(shippingAddress),
+            shippingAddress: mapToInternalAddress(shippingAddress),
         };
 
         return new Promise((resolve, reject) => {
