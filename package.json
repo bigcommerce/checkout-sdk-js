@@ -43,6 +43,8 @@
     "test": "npx nx run-many --all --target=test --parallel",
     "test:coverage": "npx nx run-many --all --target=test --parallel=5 -- --coverage",
     "test:series": "npx nx run-many --all --target=test --parallel=5 -- --runInBand",
+    "test:core": "npx nx core:test -- --runInBand",
+    "test:others": "npx nx run-many --all --target=test --exclude core --parallel=5 -- --runInBand",
     "test:watch": "npx nx run-many --all --target=test --parallel -- --watch"
   },
   "dependencies": {

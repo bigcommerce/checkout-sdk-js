@@ -11,15 +11,23 @@ orbs:
   node: bigcommerce/internal-node@volatile
 
 jobs:
-  test:
+  test-core:
     <<: *node_executor
-    parallelism: 5
     steps:
       - ci/pre-setup
       - node/npm-install
       - run:
           name: "Run unit tests"
-          command: npm run test:series -- --coverage
+          command: npm run test:core -- --coverage
+
+  test-packages:
+    <<: *node_executor
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run:
+          name: "Run unit tests"
+          command: npm run test:others -- --coverage
     
   lint:
     <<: *node_executor

@@ -1,15 +1,7 @@
-const { getJestProjects } = require('@nrwl/jest');
 const nxPreset = require('@nrwl/jest/preset');
-
-const projects = getJestProjects().map((project) => {
-    return project.replace('<rootDir>', '<rootDir>/../../');
-});
-
-console.log('Jest projects are', projects);
 
 module.exports = {
     ...nxPreset,
-    projects,
     coverageThreshold: {
         global: {
             branches: 80,
