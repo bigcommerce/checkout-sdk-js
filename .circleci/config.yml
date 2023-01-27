@@ -13,7 +13,7 @@ orbs:
 jobs:
   test:
     <<: *node_executor
-    resource_class: medium+
+    parallelism: 5
     steps:
       - ci/pre-setup
       - node/npm-install

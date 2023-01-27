@@ -8,5 +8,5 @@ module.exports = {
         },
     },
     setupFilesAfterEnv: ['../../jest-setup.js'],
-    coverageDirectory: '../../coverage/packages/core'
+    coverageDirectory: '../../coverage/packages/core',
 };

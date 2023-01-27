@@ -17,7 +17,7 @@
           "lint",
           "test"
         ],
-        "parallel": 10
+        "parallel": 5
       }
     }
   }
