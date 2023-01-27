@@ -1,11 +1,11 @@
 import { BuyNowCartRequestBody } from '../../../cart';
-import { PaypalButtonStyleOptions } from '../../../payment/strategies/paypal-commerce';
+import { PaypalStyleOptions } from '../../../payment/strategies/paypal-commerce';
 
 export interface PaypalCommerceVenmoButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: PaypalButtonStyleOptions;
+    style?: PaypalStyleOptions;
 
     /**
      * Flag which helps to detect that the strategy initializes on Checkout page

@@ -1,16 +1,14 @@
 import { isNil, omitBy } from 'lodash';
 
 import {
-    PaypalButtonStyleOptions,
-    StyleButtonColor,
-    StyleButtonLabel,
-    StyleButtonLayout,
-    StyleButtonShape,
+    PaypalStyleButtonColor,
+    PaypalStyleButtonLabel,
+    PaypalStyleButtonLayout,
+    PaypalStyleButtonShape,
+    PaypalStyleOptions,
 } from '../../../payment/strategies/paypal-commerce';
 
-export default function getValidButtonStyle(
-    style: PaypalButtonStyleOptions,
-): PaypalButtonStyleOptions {
+export default function getValidButtonStyle(style: PaypalStyleOptions): PaypalStyleOptions {
     const { label, color, layout, shape, height, tagline } = style;
 
     const validStyles = {
@@ -25,28 +23,24 @@ export default function getValidButtonStyle(
     return omitBy(validStyles, isNil);
 }
 
-function getValidColor(color?: StyleButtonColor): StyleButtonColor | undefined {
-    return color && StyleButtonColor[color] ? color : undefined;
+function getValidColor(color?: PaypalStyleButtonColor): PaypalStyleButtonColor | undefined {
+    return color && PaypalStyleButtonColor[color] ? color : undefined;
 }
 
-function getValidLabel(label?: StyleButtonLabel): StyleButtonLabel | undefined {
-    return label && StyleButtonLabel[label] ? label : undefined;
+function getValidLabel(label?: PaypalStyleButtonLabel): PaypalStyleButtonLabel | undefined {
+    return label && PaypalStyleButtonLabel[label] ? label : undefined;
 }
 
-function getValidLayout(layout?: StyleButtonLayout): StyleButtonLayout | undefined {
-    return layout && StyleButtonLayout[layout] ? layout : undefined;
+function getValidLayout(layout?: PaypalStyleButtonLayout): PaypalStyleButtonLayout | undefined {
+    return layout && PaypalStyleButtonLayout[layout] ? layout : undefined;
 }
 
-function getValidShape(shape?: StyleButtonShape): StyleButtonShape | undefined {
-    return shape && StyleButtonShape[shape] ? shape : undefined;
+function getValidShape(shape?: PaypalStyleButtonShape): PaypalStyleButtonShape | undefined {
+    return shape && PaypalStyleButtonShape[shape] ? shape : undefined;
 }
 
 function getValidTagline(tagline?: boolean, layout?: string): boolean | undefined {
-    if (
-        tagline &&
-        typeof tagline === 'boolean' &&
-        layout === StyleButtonLayout[StyleButtonLayout.horizontal]
-    ) {
+    if (tagline && typeof tagline === 'boolean' && layout === PaypalStyleButtonLayout.horizontal) {
         return tagline;
     }
 

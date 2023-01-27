@@ -1,8 +1,8 @@
 import {
-    StyleButtonColor,
-    StyleButtonLabel,
-    StyleButtonLayout,
-    StyleButtonShape,
+    PaypalStyleButtonColor,
+    PaypalStyleButtonLabel,
+    PaypalStyleButtonLayout,
+    PaypalStyleButtonShape,
 } from '../../../payment/strategies/paypal-commerce';
 
 import getValidButtonStyle from './get-valid-button-style';
@@ -10,9 +10,9 @@ import getValidButtonStyle from './get-valid-button-style';
 describe('#getValidButtonStyle()', () => {
     it('returns valid button style', () => {
         const stylesMock = {
-            color: StyleButtonColor.silver,
+            color: PaypalStyleButtonColor.silver,
             height: 55,
-            shape: StyleButtonShape.rect,
+            shape: PaypalStyleButtonShape.rect,
         };
 
         const expects = {
@@ -24,9 +24,9 @@ describe('#getValidButtonStyle()', () => {
 
     it('returns button style without shape if shape is not valid', () => {
         const stylesMock = {
-            color: StyleButtonColor.silver,
+            color: PaypalStyleButtonColor.silver,
             height: 55,
-            shape: 'ellipse' as StyleButtonShape,
+            shape: 'ellipse' as PaypalStyleButtonShape,
         };
 
         const expects = {
@@ -39,7 +39,7 @@ describe('#getValidButtonStyle()', () => {
 
     it('returns button style without color if color is not valid', () => {
         const stylesMock = {
-            color: 'red' as StyleButtonColor,
+            color: 'red' as PaypalStyleButtonColor,
             height: 55,
         };
 
@@ -54,7 +54,7 @@ describe('#getValidButtonStyle()', () => {
     it('returns button style without label if label is not valid', () => {
         const stylesMock = {
             height: 55,
-            label: 'label' as StyleButtonLabel,
+            label: 'label' as PaypalStyleButtonLabel,
         };
 
         const expects = {
@@ -68,7 +68,7 @@ describe('#getValidButtonStyle()', () => {
     it('returns button style without layout if layout is not valid', () => {
         const stylesMock = {
             height: 55,
-            layout: 'layout' as StyleButtonLayout,
+            layout: 'layout' as PaypalStyleButtonLayout,
         };
 
         const expects = {
@@ -81,9 +81,9 @@ describe('#getValidButtonStyle()', () => {
 
     it('returns styles with updated height if height value is bigger than expected', () => {
         const stylesMock = {
-            color: StyleButtonColor.silver,
+            color: PaypalStyleButtonColor.silver,
             height: 110,
-            shape: StyleButtonShape.rect,
+            shape: PaypalStyleButtonShape.rect,
         };
 
         const expects = {
@@ -96,9 +96,9 @@ describe('#getValidButtonStyle()', () => {
 
     it('returns styles with updated height if height value is less than expected', () => {
         const stylesMock = {
-            color: StyleButtonColor.silver,
+            color: PaypalStyleButtonColor.silver,
             height: 10,
-            shape: StyleButtonShape.rect,
+            shape: PaypalStyleButtonShape.rect,
         };
 
         const expects = {
@@ -111,9 +111,9 @@ describe('#getValidButtonStyle()', () => {
 
     it('returns styles with default height if height value not provided', () => {
         const stylesMock = {
-            color: StyleButtonColor.silver,
+            color: PaypalStyleButtonColor.silver,
             height: undefined,
-            shape: StyleButtonShape.rect,
+            shape: PaypalStyleButtonShape.rect,
         };
 
         const expects = {
@@ -126,10 +126,10 @@ describe('#getValidButtonStyle()', () => {
 
     it('returns styles without tagline for vertical layout', () => {
         const stylesMock = {
-            color: StyleButtonColor.silver,
+            color: PaypalStyleButtonColor.silver,
             height: 55,
-            shape: StyleButtonShape.rect,
-            layout: StyleButtonLayout.vertical,
+            shape: PaypalStyleButtonShape.rect,
+            layout: PaypalStyleButtonLayout.vertical,
             tagline: true,
         };
 
@@ -143,10 +143,10 @@ describe('#getValidButtonStyle()', () => {
 
     it('returns styles with tagline if the layout is horizontal', () => {
         const stylesMock = {
-            color: StyleButtonColor.silver,
+            color: PaypalStyleButtonColor.silver,
             height: 55,
-            shape: StyleButtonShape.rect,
-            layout: StyleButtonLayout.horizontal,
+            shape: PaypalStyleButtonShape.rect,
+            layout: PaypalStyleButtonLayout.horizontal,
             tagline: true,
         };
 

@@ -19,7 +19,6 @@ import {
     FieldsOptions,
     NON_INSTANT_PAYMENT_METHODS,
     ParamsForProvider,
-    PaypalButtonStyleOptions,
     PaypalCommerceButtons,
     PaypalCommerceFields,
     PaypalCommerceHostedFields,
@@ -34,10 +33,11 @@ import {
     PaypalCommerceSDK,
     PaypalCommerceSDKFunding,
     PaypalFieldsStyleOptions,
-    StyleButtonColor,
-    StyleButtonLabel,
-    StyleButtonLayout,
-    StyleButtonShape,
+    PaypalStyleButtonColor,
+    PaypalStyleButtonLabel,
+    PaypalStyleButtonLayout,
+    PaypalStyleButtonShape,
+    PaypalStyleOptions,
 } from './index';
 
 export interface OptionalParamsRenderButtons {
@@ -350,23 +350,23 @@ export default class PaypalCommercePaymentProcessor {
         );
     }
 
-    private _validateStyleParams = (style: PaypalButtonStyleOptions): PaypalButtonStyleOptions => {
-        const updatedStyle: PaypalButtonStyleOptions = { ...style };
+    private _validateStyleParams = (style: PaypalStyleOptions): PaypalStyleOptions => {
+        const updatedStyle: PaypalStyleOptions = { ...style };
         const { label, color, layout, shape, height, tagline } = style;
 
-        if (label && !StyleButtonLabel[label]) {
+        if (label && !PaypalStyleButtonLabel[label]) {
             delete updatedStyle.label;
         }
 
-        if (layout && !StyleButtonLayout[layout]) {
+        if (layout && !PaypalStyleButtonLayout[layout]) {
             delete updatedStyle.layout;
         }
 
-        if (color && !StyleButtonColor[color]) {
+        if (color && !PaypalStyleButtonColor[color]) {
             delete updatedStyle.color;
         }
 
-        if (shape && !StyleButtonShape[shape]) {
+        if (shape && !PaypalStyleButtonShape[shape]) {
             delete updatedStyle.shape;
         }
 
@@ -378,7 +378,7 @@ export default class PaypalCommercePaymentProcessor {
 
         if (
             typeof tagline !== 'boolean' ||
-            (tagline && updatedStyle.layout !== StyleButtonLayout[StyleButtonLayout.horizontal])
+            (tagline && updatedStyle.layout !== PaypalStyleButtonLayout.horizontal)
         ) {
             delete updatedStyle.tagline;
         }
