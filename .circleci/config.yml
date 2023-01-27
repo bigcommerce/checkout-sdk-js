@@ -28,6 +28,15 @@ jobs:
       - run:
           name: "Run unit tests"
           command: npm run test:others -- --coverage
+
+  test:
+    <<: *node_executor
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run:
+          name: "Run unit tests"
+          command: npm run test:series -- --coverage
     
   lint:
     <<: *node_executor
@@ -100,7 +109,8 @@ workflows:
 
   default:
     jobs:
-      - test
+      - test-core
+      - test-packages
       - lint
       - build
       - ci/validate-commits
@@ -111,7 +121,8 @@ workflows:
             branches:
               ignore: /pull\/[0-9]+/
           requires:
-            - test
+            - test-core
+            - test-packages
             - lint
             - build
             - ci/validate-commits
