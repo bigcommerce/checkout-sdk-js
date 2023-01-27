@@ -21,7 +21,6 @@ import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 import getValidButtonStyle from './get-valid-button-style';
-import { PaypalCommerceButtonInitializeOptions } from './paypal-commerce-button-options';
 import { PaypalCommerceVenmoButtonInitializeOptions } from './paypal-commerce-venmo-button-options';
 
 export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButtonStrategy {
@@ -128,7 +127,7 @@ export default class PaypalCommerceVenmoButtonStrategy implements CheckoutButton
     }
 
     private async _handleClick(
-        buyNowInitializeOptions: PaypalCommerceButtonInitializeOptions['buyNowInitializeOptions'],
+        buyNowInitializeOptions: PaypalCommerceVenmoButtonInitializeOptions['buyNowInitializeOptions'],
     ): Promise<void> {
         if (
             buyNowInitializeOptions &&

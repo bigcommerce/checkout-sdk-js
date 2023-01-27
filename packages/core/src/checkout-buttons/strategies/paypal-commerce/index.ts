@@ -1,10 +1,4 @@
 /**
- * PayPal Commerce strategy
- */
-export { PaypalCommerceButtonInitializeOptions } from './paypal-commerce-button-options';
-export { default as PaypalCommerceButtonStrategy } from './paypal-commerce-button-strategy';
-
-/**
  * PayPal Commerce Credit Payment Methods
  */
 export { PaypalCommerceCreditButtonInitializeOptions } from './paypal-commerce-credit-button-options';

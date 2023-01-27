@@ -61,7 +61,6 @@ import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
 import {
     PaypalCommerceAlternativeMethodsButtonStrategy,
-    PaypalCommerceButtonStrategy,
     PaypalCommerceCreditButtonStrategy,
     PaypalCommerceVenmoButtonStrategy,
 } from './strategies/paypal-commerce';
@@ -334,23 +333,6 @@ export default function createCheckoutButtonRegistry(
                 new PaypalScriptLoader(scriptLoader),
                 formPoster,
                 host,
-            ),
-    );
-
-    registry.register(
-        CheckoutButtonMethodType.PAYPALCOMMERCE,
-        () =>
-            new PaypalCommerceButtonStrategy(
-                store,
-                checkoutActionCreator,
-                cartRequestSender,
-                formPoster,
-                paypalScriptLoader,
-                paypalCommerceRequestSender,
-                consignmentActionCreator,
-                billingAddressActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
             ),
     );
 
