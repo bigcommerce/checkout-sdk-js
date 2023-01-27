@@ -7,6 +7,12 @@
             "rules": {
                 "@typescript-eslint/naming-convention": "off"
             }
+        },
+        {
+            "files": ["*.spec.ts"],
+            "rules": {
+                "@typescript-eslint/consistent-type-assertions": "off"
+            }
         }
     ]
 }
