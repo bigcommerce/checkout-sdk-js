@@ -18,7 +18,7 @@ export interface OrderStatus {
     status: 'APPROVED' | 'CREATED' | string;
 }
 
-export enum StyleButtonLabel {
+export enum PaypalStyleButtonLabel {
     paypal = 'paypal',
     checkout = 'checkout',
     buynow = 'buynow',
@@ -26,12 +26,12 @@ export enum StyleButtonLabel {
     installment = 'installment',
 }
 
-export enum StyleButtonLayout {
+export enum PaypalStyleButtonLayout {
     vertical = 'vertical',
     horizontal = 'horizontal',
 }
 
-export enum StyleButtonColor {
+export enum PaypalStyleButtonColor {
     gold = 'gold',
     blue = 'blue',
     silver = 'silver',
@@ -39,17 +39,17 @@ export enum StyleButtonColor {
     white = 'white',
 }
 
-export enum StyleButtonShape {
+export enum PaypalStyleButtonShape {
     pill = 'pill',
     rect = 'rect',
 }
 
-export interface PaypalButtonStyleOptions {
-    layout?: StyleButtonLayout;
-    color?: StyleButtonColor;
-    shape?: StyleButtonShape;
+export interface PaypalStyleOptions {
+    layout?: PaypalStyleButtonLayout;
+    color?: PaypalStyleButtonColor;
+    shape?: PaypalStyleButtonShape;
     height?: number;
-    label?: StyleButtonLabel;
+    label?: PaypalStyleButtonLabel;
     tagline?: boolean;
     custom?: {
         label?: string;
@@ -130,7 +130,7 @@ export interface PayPalOrderDetails {
 
 // TODO: this type should be merged with PayPalCheckoutButtonOptions in the future
 export interface ButtonsOptions {
-    style?: PaypalButtonStyleOptions;
+    style?: PaypalStyleOptions;
     fundingSource?: string;
     createOrder?(): Promise<string | void>; // TODO: this method should return only Promise<void>
     onApprove?(data: ApproveCallbackPayload, actions?: ApproveCallbackActions): void;
@@ -144,7 +144,7 @@ export interface ButtonsOptions {
 
 export interface PaypalCheckoutButtonOptions {
     experience: string;
-    style?: PaypalButtonStyleOptions;
+    style?: PaypalStyleOptions;
     fundingSource: string;
     createOrder(): Promise<string>;
     onError(error: Error): void;

@@ -34,7 +34,7 @@ export interface MessagingOptions {
 export interface PaypalButtonOptions {
     env?: string;
     commit?: boolean;
-    style?: PaypalButtonStyleOptions;
+    style?: PaypalStyleOptions;
     funding?: PaypalFundingType;
     fundingSource?: string;
     client?: PaypalClientToken;
@@ -86,7 +86,7 @@ export enum PaypalButtonStyleShapeOption {
     RECT = 'rect',
 }
 
-export interface PaypalButtonStyleOptions {
+export interface PaypalStyleOptions {
     layout?: PaypalButtonStyleLayoutOption;
     size?: PaypalButtonStyleSizeOption;
     color?: PaypalButtonStyleColorOption;

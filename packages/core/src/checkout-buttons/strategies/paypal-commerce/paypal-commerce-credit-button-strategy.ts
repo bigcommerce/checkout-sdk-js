@@ -17,10 +17,10 @@ import {
     ApproveCallbackActions,
     ApproveCallbackPayload,
     ButtonsOptions,
-    PaypalButtonStyleOptions,
     PaypalCommerceRequestSender,
     PaypalCommerceScriptLoader,
     PaypalCommerceSDK,
+    PaypalStyleOptions,
     ShippingAddressChangeCallbackPayload,
     ShippingOptionChangeCallbackPayload,
 } from '../../../payment/strategies/paypal-commerce';
@@ -441,7 +441,7 @@ export default class PaypalCommerceCreditButtonStrategy implements CheckoutButto
         return this._paypalCommerceSdk;
     }
 
-    private _getButtonStyle(style: PaypalButtonStyleOptions): PaypalButtonStyleOptions {
+    private _getButtonStyle(style: PaypalStyleOptions): PaypalStyleOptions {
         const { color, height, label, layout, shape } = getValidButtonStyle(style);
 
         return { color, height, label, layout, shape };

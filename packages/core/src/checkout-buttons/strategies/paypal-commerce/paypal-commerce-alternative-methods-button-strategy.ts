@@ -12,10 +12,10 @@ import { PaymentMethodClientUnavailableError } from '../../../payment/errors';
 import {
     ApproveCallbackPayload,
     ButtonsOptions,
-    PaypalButtonStyleOptions,
     PaypalCommerceRequestSender,
     PaypalCommerceScriptLoader,
     PaypalCommerceSDK,
+    PaypalStyleOptions,
 } from '../../../payment/strategies/paypal-commerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
@@ -202,7 +202,7 @@ export default class PaypalCommerceAlternativeMethodsButtonStrategy
         return this._paypalCommerceSdk;
     }
 
-    private _getButtonStyle(style: PaypalButtonStyleOptions): PaypalButtonStyleOptions {
+    private _getButtonStyle(style: PaypalStyleOptions): PaypalStyleOptions {
         const { height, label, layout, shape } = getValidButtonStyle(style);
 
         return { height, label, layout, shape };

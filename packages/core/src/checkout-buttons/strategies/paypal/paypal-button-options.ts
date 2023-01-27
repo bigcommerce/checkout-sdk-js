@@ -1,5 +1,5 @@
 import { StandardError } from '../../../common/error/errors';
-import { PaypalButtonStyleOptions } from '../../../payment/strategies/paypal';
+import { PaypalStyleOptions } from '../../../payment/strategies/paypal';
 
 export interface PaypalButtonInitializeOptions {
     /**
@@ -22,7 +22,7 @@ export interface PaypalButtonInitializeOptions {
      * A set of styling options for the checkout button.
      */
     style?: Pick<
-        PaypalButtonStyleOptions,
+        PaypalStyleOptions,
         'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'
     >;
 

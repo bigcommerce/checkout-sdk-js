@@ -2,7 +2,7 @@ import { Address } from '../../../address';
 import { BuyNowCartRequestBody } from '../../../cart';
 import { StandardError } from '../../../common/error/errors';
 import { BraintreeError } from '../../../payment/strategies/braintree';
-import { PaypalButtonStyleOptions } from '../../../payment/strategies/paypal';
+import { PaypalStyleOptions } from '../../../payment/strategies/paypal';
 
 export interface BraintreePaypalButtonInitializeOptions {
     /**
@@ -20,7 +20,7 @@ export interface BraintreePaypalButtonInitializeOptions {
      * A set of styling options for the checkout button.
      */
     style?: Pick<
-        PaypalButtonStyleOptions,
+        PaypalStyleOptions,
         'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'
     >;
 
