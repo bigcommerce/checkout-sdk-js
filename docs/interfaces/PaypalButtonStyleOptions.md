@@ -1,31 +1,40 @@
-[@bigcommerce/checkout-sdk](../README.md) / PaypalButtonStyleOptions
+[@bigcommerce/checkout-sdk](../README.md) / PayPalButtonStyleOptions
 
-# Interface: PaypalButtonStyleOptions
+# Interface: PayPalButtonStyleOptions
 
 ## Table of contents
 
 ### Properties
 
-- [color](PaypalButtonStyleOptions.md#color)
-- [fundingicons](PaypalButtonStyleOptions.md#fundingicons)
-- [height](PaypalButtonStyleOptions.md#height)
-- [label](PaypalButtonStyleOptions.md#label)
-- [layout](PaypalButtonStyleOptions.md#layout)
-- [shape](PaypalButtonStyleOptions.md#shape)
-- [size](PaypalButtonStyleOptions.md#size)
-- [tagline](PaypalButtonStyleOptions.md#tagline)
+- [color](PayPalButtonStyleOptions.md#color)
+- [custom](PayPalButtonStyleOptions.md#custom)
+- [height](PayPalButtonStyleOptions.md#height)
+- [label](PayPalButtonStyleOptions.md#label)
+- [layout](PayPalButtonStyleOptions.md#layout)
+- [shape](PayPalButtonStyleOptions.md#shape)
+- [tagline](PayPalButtonStyleOptions.md#tagline)
 
 ## Properties
 
 ### color
 
-• `Optional` **color**: [`GOLD`](../enums/PaypalButtonStyleColorOption.md#gold) \| [`BLUE`](../enums/PaypalButtonStyleColorOption.md#blue) \| [`SIlVER`](../enums/PaypalButtonStyleColorOption.md#silver) \| [`BLACK`](../enums/PaypalButtonStyleColorOption.md#black)
+• `Optional` **color**: [`GOLD`](../enums/StyleButtonColor_2.md#gold) \| [`BLUE`](../enums/StyleButtonColor_2.md#blue) \| [`SILVER`](../enums/StyleButtonColor_2.md#silver) \| [`BLACK`](../enums/StyleButtonColor_2.md#black) \| [`WHITE`](../enums/StyleButtonColor_2.md#white)
 
 ___
 
-### fundingicons
+### custom
 
-• `Optional` **fundingicons**: `boolean`
+• `Optional` **custom**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `css?` | `Object` |
+| `css.background?` | `string` |
+| `css.color?` | `string` |
+| `css.width?` | `string` |
+| `label?` | `string` |
 
 ___
 
@@ -37,25 +46,19 @@ ___
 
 ### label
 
-• `Optional` **label**: [`CHECKOUT`](../enums/PaypalButtonStyleLabelOption.md#checkout) \| [`PAY`](../enums/PaypalButtonStyleLabelOption.md#pay) \| [`BUYNOW`](../enums/PaypalButtonStyleLabelOption.md#buynow) \| [`PAYPAL`](../enums/PaypalButtonStyleLabelOption.md#paypal) \| [`CREDIT`](../enums/PaypalButtonStyleLabelOption.md#credit)
+• `Optional` **label**: [`PAYPAL`](../enums/StyleButtonLabel_2.md#paypal) \| [`CHECKOUT`](../enums/StyleButtonLabel_2.md#checkout) \| [`BUYNOW`](../enums/StyleButtonLabel_2.md#buynow) \| [`PAY`](../enums/StyleButtonLabel_2.md#pay) \| [`INSTALLMENT`](../enums/StyleButtonLabel_2.md#installment)
 
 ___
 
 ### layout
 
-• `Optional` **layout**: [`HORIZONTAL`](../enums/PaypalButtonStyleLayoutOption.md#horizontal) \| [`VERTICAL`](../enums/PaypalButtonStyleLayoutOption.md#vertical)
+• `Optional` **layout**: [`VERTICAL`](../enums/StyleButtonLayout_2.md#vertical) \| [`HORIZONTAL`](../enums/StyleButtonLayout_2.md#horizontal)
 
 ___
 
 ### shape
 
-• `Optional` **shape**: [`PILL`](../enums/PaypalButtonStyleShapeOption.md#pill) \| [`RECT`](../enums/PaypalButtonStyleShapeOption.md#rect)
-
-___
-
-### size
-
-• `Optional` **size**: [`SMALL`](../enums/PaypalButtonStyleSizeOption.md#small) \| [`MEDIUM`](../enums/PaypalButtonStyleSizeOption.md#medium) \| [`LARGE`](../enums/PaypalButtonStyleSizeOption.md#large) \| [`RESPONSIVE`](../enums/PaypalButtonStyleSizeOption.md#responsive)
+• `Optional` **shape**: [`PILL`](../enums/StyleButtonShape_2.md#pill) \| [`RECT`](../enums/StyleButtonShape_2.md#rect)
 
 ___
 

@@ -42,7 +42,7 @@
     "release:alpha": "export PRERELEASE=alpha; npm run lint && npm test && npm run build && npm run release:version",
     "test": "npx nx run-many --all --target=test --parallel",
     "test:coverage": "npx nx run-many --all --target=test --parallel -- --coverage",
-    "test:series": "npx nx run-many --all --target=test --parallel -- --runInBand",
+    "test:series": "npx nx run-many --all --target=test --parallel=10 -- --runInBand",
     "test:watch": "npx nx run-many --all --target=test --parallel -- --watch"
   },
   "dependencies": {

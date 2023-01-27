@@ -16,7 +16,8 @@
           "build-watch",
           "lint",
           "test"
-        ]
+        ],
+        "parallel": 10
       }
     }
   }
