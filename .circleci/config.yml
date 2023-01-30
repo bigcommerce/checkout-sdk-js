@@ -11,23 +11,31 @@ orbs:
   node: bigcommerce/internal-node@volatile
 
 jobs:
-  test-core:
-    <<: *node_executor
-    steps:
-      - ci/pre-setup
-      - node/npm-install
-      - run:
-          name: "Run unit tests"
-          command: npm run test:core
-
   test-packages:
     <<: *node_executor
     steps:
       - ci/pre-setup
       - node/npm-install
       - run:
-          name: "Run unit tests"
-          command: npm run test:others -- --coverage
+          name: "Run unit tests for packages"
+          command: npm run test:others
+
+  test-core:
+    <<: *node_executor
+    parallelism: 3
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run:
+          name: "Run unit tests for core package"
+          command: |
+            TEST=$(circleci tests glob "packages/core/**/*.spec.js" | circleci tests split --split-by=timings)
+            npm test $TEST
+      - store_test_results:
+          path: test_results
+      - store_artifacts:
+          path: test_results
+          destination: test_results
 
   test:
     <<: *node_executor
