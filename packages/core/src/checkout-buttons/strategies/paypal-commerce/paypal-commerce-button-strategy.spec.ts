@@ -45,7 +45,6 @@ import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../..
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
 
-import { PaypalCommerceButtonInitializeOptions } from './paypal-commerce-button-options';
 import PaypalCommerceButtonStrategy from './paypal-commerce-button-strategy';
 
 describe('PaypalCommerceButtonStrategy', () => {
@@ -75,7 +74,7 @@ describe('PaypalCommerceButtonStrategy', () => {
     const defaultButtonContainerId = 'paypal-commerce-button-mock-id';
     const approveDataOrderId = 'ORDER_ID';
 
-    const paypalCommerceOptions: PaypalCommerceButtonInitializeOptions = {
+    const paypalCommerceOptions = {
         initializesOnCheckoutPage: false,
         style: {
             height: 45,
