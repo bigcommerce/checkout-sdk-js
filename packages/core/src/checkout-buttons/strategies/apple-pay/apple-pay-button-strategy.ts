@@ -282,9 +282,11 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
               ]
             : [];
 
-        unselectedOptions
-            ?.filter((option) => option.isRecommended)
-            ?.forEach((option) =>
+        if (unselectedOptions) {
+            [
+                ...unselectedOptions.filter((option) => option.isRecommended),
+                ...unselectedOptions.filter((option) => !option.isRecommended),
+            ].forEach((option) =>
                 shippingOptions.push({
                     label: option.description,
                     amount: `${option.cost.toFixed(decimalPlaces)}`,
@@ -292,17 +294,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                     identifier: option.id,
                 }),
             );
-
-        unselectedOptions
-            ?.filter((option) => !option.isRecommended)
-            ?.forEach((option) =>
-                shippingOptions.push({
-                    label: option.description,
-                    amount: `${option.cost.toFixed(decimalPlaces)}`,
-                    detail: option.additionalDescription,
-                    identifier: option.id,
-                }),
-            );
+        }
 
         if (!isShippingOptions(availableOptions)) {
             throw new Error('Shipping options not available.');
