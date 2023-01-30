@@ -22,7 +22,8 @@ jobs:
 
   test-core:
     <<: *node_executor
-    parallelism: 3
+    parallelism: 2
+    resource_class: small
     steps:
       - ci/pre-setup
       - node/npm-install
