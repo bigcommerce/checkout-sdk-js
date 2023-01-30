@@ -31,6 +31,7 @@ jobs:
           name: "Run unit tests for core package"
           command: |
             TEST=$(circleci tests glob "packages/core/**/*.spec.ts" | circleci tests split --split-by=timings)
+            npx nx run core:generate
             npm test $TEST -- --coverage --runInBand
       - run:
           command: cp junit.xml ~/junit/
