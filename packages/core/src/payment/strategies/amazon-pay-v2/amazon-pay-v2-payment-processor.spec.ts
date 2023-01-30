@@ -1,5 +1,7 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { PaymentMethod } from '../../';
 import { getConfig, getConfigState } from '../../../../src/config/configs.mock';
 import { BuyNowCartRequestBody } from '../../../cart';
@@ -427,7 +429,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
         describe('should use the new button params from API Version 2:', () => {
             const buyNowRequestBody: BuyNowCartRequestBody = {
-                source: 'BUY_NOW',
+                source: CartSource.BuyNow,
                 lineItems: [
                     {
                         productId: 1,

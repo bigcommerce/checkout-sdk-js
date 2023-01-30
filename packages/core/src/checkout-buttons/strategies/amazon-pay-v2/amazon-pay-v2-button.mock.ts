@@ -1,3 +1,5 @@
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
 import { getAmazonPayV2ButtonParamsMock } from '../../../payment/strategies/amazon-pay-v2/amazon-pay-v2.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
@@ -13,7 +15,7 @@ export enum Mode {
 }
 
 const buyNowCartRequestBody: BuyNowCartRequestBody = {
-    source: 'BUY_NOW',
+    source: CartSource.BuyNow,
     lineItems: [
         {
             productId: 1,
