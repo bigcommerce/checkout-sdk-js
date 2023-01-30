@@ -30,7 +30,7 @@ jobs:
       - run:
           name: "Run unit tests for core package"
           command: |
-            TEST=$(circleci tests glob "packages/core/**/*.spec.js" | circleci tests split --split-by=timings)
+            TEST=$(circleci tests glob "packages/core/**/*.spec.ts" | circleci tests split --split-by=timings)
             npm test $TEST
       - run:
           command: cp junit.xml ~/junit/
