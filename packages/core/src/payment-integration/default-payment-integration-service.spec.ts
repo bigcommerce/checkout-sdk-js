@@ -46,7 +46,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let storeProjectionFactory: Pick<PaymentIntegrationStoreProjectionFactory, 'create'>;
     let checkoutActionCreator: Pick<
         CheckoutActionCreator,
-        'loadCurrentCheckout' | 'loadDefaultCheckout'
+        'loadCheckout' | 'loadCurrentCheckout' | 'loadDefaultCheckout'
     >;
     let orderActionCreator: Pick<OrderActionCreator, 'submitOrder' | 'finalizeOrder'>;
     let billingAddressActionCreator: Pick<BillingAddressActionCreator, 'updateAddress'>;
@@ -89,6 +89,7 @@ describe('DefaultPaymentIntegrationService', () => {
         };
 
         checkoutActionCreator = {
+            loadCheckout: jest.fn(async () => () => createAction('LOAD_CHECKOUT')),
             loadCurrentCheckout: jest.fn(async () => () => createAction('LOAD_CHECKOUT')),
             loadDefaultCheckout: jest.fn(async () => () => createAction('LOAD_CHECKOUT')),
         };
@@ -145,6 +146,17 @@ describe('DefaultPaymentIntegrationService', () => {
             expect(checkoutActionCreator.loadCurrentCheckout).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(
                 checkoutActionCreator.loadCurrentCheckout(),
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+
+        it('loads checkout by provided id', async () => {
+            const checkoutId = '1';
+            const output = await subject.loadCheckout(checkoutId);
+
+            expect(checkoutActionCreator.loadCheckout).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(
+                checkoutActionCreator.loadCheckout(checkoutId),
             );
             expect(output).toEqual(paymentIntegrationSelectors);
         });
