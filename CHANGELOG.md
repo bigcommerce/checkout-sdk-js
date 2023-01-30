@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.332.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.331.0...v1.332.0) (2023-01-30)
+
+
+### Features
+
+* **payment:** PAYPAL-1934 move PaymentMethodFailedError to integration package ([a9d1546](https://github.com/bigcommerce/checkout-sdk-js/commit/a9d15463989a98f211ddec6c37e47721afe983fb))
+
 ## [1.331.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.330.1...v1.331.0) (2023-01-30)
 
 
