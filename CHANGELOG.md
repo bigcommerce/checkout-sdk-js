@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.332.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.332.0...v1.332.1) (2023-01-30)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-1929 added PayPalButtonStyleOptions interface to the docs files ([#1802](https://github.com/bigcommerce/checkout-sdk-js/issues/1802)) ([fa15dd8](https://github.com/bigcommerce/checkout-sdk-js/commit/fa15dd806b0746921e4089e78ae86a07a9e35e4a))
+
 ## [1.332.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.331.0...v1.332.0) (2023-01-30)
 
 
