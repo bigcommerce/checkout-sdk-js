@@ -22,7 +22,7 @@ jobs:
 
   test-core:
     <<: *node_executor
-    parallelism: 5
+    parallelism: 3
     steps:
       - ci/pre-setup
       - node/npm-install
