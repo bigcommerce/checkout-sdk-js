@@ -2,13 +2,11 @@ import { Action, createAction } from '@bigcommerce/data-store';
 import { omit } from 'lodash';
 import { Observable, of } from 'rxjs';
 
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import {
-    InvalidArgumentError,
-    MissingDataError,
-    StandardError,
-} from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -268,7 +266,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             await expect(
                 braintreePaypalPaymentStrategy.execute(orderRequestBody, options),
-            ).rejects.toEqual(expect.any(StandardError));
+            ).rejects.toEqual(expect.any(PaymentMethodFailedError));
         });
 
         it('if paypal fails we do not submit an order', async () => {
@@ -279,7 +277,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
             try {
                 await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
             } catch (error) {
-                expect(error).toBeInstanceOf(StandardError);
+                expect(error).toBeInstanceOf(PaymentMethodFailedError);
                 expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
             }
         });

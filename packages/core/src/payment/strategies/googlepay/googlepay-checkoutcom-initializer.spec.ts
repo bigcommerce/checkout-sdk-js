@@ -1,8 +1,9 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
 
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { InvalidArgumentError } from '../../../common/error/errors';
-import { PaymentMethodFailedError } from '../../errors';
 
 import GooglePayCheckoutcomInitializer from './googlepay-checkoutcom-initializer';
 import {

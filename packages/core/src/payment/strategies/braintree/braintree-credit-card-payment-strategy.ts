@@ -1,11 +1,13 @@
 import { some } from 'lodash';
 
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { Address } from '../../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentArgumentInvalidError, PaymentMethodFailedError } from '../../errors';
+import { PaymentArgumentInvalidError } from '../../errors';
 import { isHostedInstrumentLike, PaymentMethod } from '../../index';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import {

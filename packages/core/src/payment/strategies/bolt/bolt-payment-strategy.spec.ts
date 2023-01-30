@@ -5,6 +5,8 @@ import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import localStorageFallback from 'local-storage-fallback';
 import { Observable, of } from 'rxjs';
 
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import AnalyticsExtraItemsManager from '../../../analytics/analytics-extra-items-manager';
 import {
     Checkout,
@@ -43,7 +45,6 @@ import {
 import {
     PaymentArgumentInvalidError,
     PaymentMethodCancelledError,
-    PaymentMethodFailedError,
     PaymentMethodInvalidError,
 } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';

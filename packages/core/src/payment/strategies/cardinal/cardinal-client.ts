@@ -1,5 +1,7 @@
 import { includes } from 'lodash';
 
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { Address } from '../../../address';
 import { BillingAddress } from '../../../billing';
 import {
@@ -8,7 +10,6 @@ import {
     NotInitializedError,
     NotInitializedErrorType,
 } from '../../../common/error/errors';
-import { PaymentMethodFailedError } from '../../errors';
 import { CreditCardInstrument, ThreeDSecureToken, VaultedInstrument } from '../../payment';
 import { ThreeDsResult } from '../../payment-response-body';
 

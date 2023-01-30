@@ -1,5 +1,7 @@
 import { noop, some } from 'lodash';
 
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     MissingDataError,
@@ -11,11 +13,7 @@ import {
 import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import {
-    PaymentArgumentInvalidError,
-    PaymentMethodDeclinedError,
-    PaymentMethodFailedError,
-} from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodDeclinedError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';

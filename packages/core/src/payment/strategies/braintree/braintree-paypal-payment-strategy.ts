@@ -1,3 +1,5 @@
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
@@ -8,11 +10,7 @@ import {
 } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import {
-    PaymentArgumentInvalidError,
-    PaymentMethodCancelledError,
-    PaymentMethodFailedError,
-} from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import { isHostedInstrumentLike } from '../../index';
 import isVaultedInstrument, { isHostedVaultedInstrument } from '../../is-vaulted-instrument';
 import Payment, { FormattedPayload, PaypalInstrument } from '../../payment';

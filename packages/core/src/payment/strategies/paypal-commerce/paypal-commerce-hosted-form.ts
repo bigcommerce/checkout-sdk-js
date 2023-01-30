@@ -1,12 +1,10 @@
 import { isNil, kebabCase, omitBy } from 'lodash';
 
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { Cart } from '../../../cart';
 import { HostedInstrument, PaymentMethod, VaultedInstrument } from '../../../payment';
-import {
-    PaymentInvalidFormError,
-    PaymentInvalidFormErrorDetails,
-    PaymentMethodFailedError,
-} from '../../errors';
+import { PaymentInvalidFormError, PaymentInvalidFormErrorDetails } from '../../errors';
 
 import {
     PaypalCommerceFormFieldsMap,

@@ -11,5 +11,6 @@ export { default as OrderFinalizationNotRequiredError } from './order-finalizati
 export { default as PaymentArgumentInvalidError } from './payment-argument-invalid-error';
 export { default as PaymentMethodCancelledError } from './payment-method-cancelled-error';
 export { default as PaymentMethodClientUnavailableError } from './payment-method-client-unavailable-error';
+export { default as PaymentMethodFailedError } from './payment-method-failed-error';
 export { default as RequestError } from './request-error';
 export { default as isRequestError } from './is-request-error';

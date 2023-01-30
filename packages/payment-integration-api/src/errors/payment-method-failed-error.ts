@@ -1,4 +1,4 @@
-import { StandardError } from '../../common/error/errors';
+import StandardError from './standard-error';
 
 /**
  * This error should be thrown when a payment method experiences some kind of
