@@ -16,6 +16,7 @@ export {
 } from './cart';
 export { Checkout } from './checkout';
 export { BrowserInfo, getBrowserInfo } from './common/browser-info';
+export { CancellablePromise } from './common/cancellable-promise';
 export { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from './common/http-request';
 export { Omit, PartialDeep } from './common/types';
 export { Config, StoreConfig, CheckoutSettings } from './config';

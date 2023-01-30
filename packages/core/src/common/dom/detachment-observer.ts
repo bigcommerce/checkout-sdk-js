@@ -1,4 +1,4 @@
-import { CancellablePromise } from '../utility';
+import { CancellablePromise } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { UnexpectedDetachmentError } from './errors';
 import { MutationObserverFactory } from './mutation-observer';
