@@ -32,7 +32,7 @@ jobs:
           command: |
             TEST=$(circleci tests glob "packages/core/**/*.spec.ts" | circleci tests split --split-by=timings)
             npx nx run core:generate
-            npm test $TEST -- --coverage --runInBand
+            npm test $TEST -- --runInBand
       - run:
           command: cp junit.xml ~/junit/
           when: always
