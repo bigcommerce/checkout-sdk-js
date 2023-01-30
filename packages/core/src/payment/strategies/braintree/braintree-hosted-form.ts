@@ -150,7 +150,7 @@ export default class BraintreeHostedForm {
 
             return { nonce };
         } catch (error) {
-            const errors = this._mapTokenizeError(error);
+            const errors = this._mapTokenizeError(error, true);
 
             if (errors) {
                 this._formOptions?.onValidate?.({
@@ -270,17 +270,32 @@ export default class BraintreeHostedForm {
 
     private _mapTokenizeError(
         error: BraintreeHostedFormError,
+        isStoredCard = false,
     ): BraintreeFormFieldValidateEventData['errors'] | undefined {
         if (error.code === 'HOSTED_FIELDS_FIELDS_EMPTY') {
-            return {
+            const cvvValidation = {
                 [this._mapFieldType('cvv')]: [this._createRequiredError(this._mapFieldType('cvv'))],
+            };
+
+            const expirationDateValidation = {
                 [this._mapFieldType('expirationDate')]: [
                     this._createRequiredError(this._mapFieldType('expirationDate')),
                 ],
+            };
+
+            const cardNumberValidation = {
                 [this._mapFieldType('number')]: [
                     this._createRequiredError(this._mapFieldType('number')),
                 ],
             };
+
+            return isStoredCard
+                ? cvvValidation
+                : {
+                      ...cvvValidation,
+                      ...expirationDateValidation,
+                      ...cardNumberValidation,
+                  };
         }
 
         return error.details?.invalidFieldKeys?.reduce(
