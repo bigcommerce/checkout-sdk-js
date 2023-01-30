@@ -40,7 +40,7 @@
     "release": "echo 'Please do not release locally, use CircleCi'",
     "release:version": "git add dist docs && standard-version -a",
     "release:alpha": "export PRERELEASE=alpha; npm run lint && npm test && npm run build && npm run release:version",
-    "test": "jest",
+    "test": "jest --config packages/core/jest.config.js",
     "test:coverage": "npx nx run-many --all --target=test --parallel=5 -- --coverage",
     "test:series": "npx nx run-many --all --target=test --parallel=5 -- --runInBand",
     "test:core": "npx nx run core:test -- --coverage --runInBand",
