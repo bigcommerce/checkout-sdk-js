@@ -40,21 +40,15 @@
     "release": "echo 'Please do not release locally, use CircleCi'",
     "release:version": "git add dist docs && standard-version -a",
     "release:alpha": "export PRERELEASE=alpha; npm run lint && npm test && npm run build && npm run release:version",
-    "test": "npx nx run core:test -- --coverage",
+    "test": "npx nx run core:test",
     "test:coverage": "npx nx run-many --all --target=test --parallel=5 -- --coverage",
     "test:series": "npx nx run-many --all --target=test --parallel=5 -- --runInBand",
     "test:core": "npx nx run core:test -- --coverage --runInBand",
     "test:others": "npx nx run-many --all --target=test --exclude core --parallel=5 -- --runInBand",
     "test:watch": "npx nx run-many --all --target=test --parallel -- --watch"
   },
-  "jest": {
-    "reporters": [
-      "default",
-      "jest-junit"
-    ]
-  },
   "jest-junit": {
-    "outputDirectory": "test_results/junit"
+    "addFileAttribute": "true"
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",

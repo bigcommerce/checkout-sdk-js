@@ -10,6 +10,7 @@ module.exports = {
             statements: 80,
         },
     },
+    reporters: ['default', 'jest-junit'],
     transform: {
         '^.+\\.[tj]s$': 'ts-jest',
     },
