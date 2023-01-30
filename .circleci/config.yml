@@ -26,16 +26,19 @@ jobs:
     steps:
       - ci/pre-setup
       - node/npm-install
+      - run: mkdir ~/junit
       - run:
           name: "Run unit tests for core package"
           command: |
             TEST=$(circleci tests glob "packages/core/**/*.spec.js" | circleci tests split --split-by=timings)
             npm test $TEST
+      - run:
+          command: cp junit.xml ~/junit/
+          when: always
       - store_test_results:
-          path: test_results
+          path: ~/junit
       - store_artifacts:
-          path: test_results
-          destination: test_results
+          path: ~/junit
 
   test:
     <<: *node_executor
