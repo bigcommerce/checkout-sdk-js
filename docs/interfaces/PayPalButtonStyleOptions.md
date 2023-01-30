@@ -18,7 +18,7 @@
 
 ### color
 
-• `Optional` **color**: [`GOLD`](../enums/StyleButtonColor_2.md#gold) \| [`BLUE`](../enums/StyleButtonColor_2.md#blue) \| [`SILVER`](../enums/StyleButtonColor_2.md#silver) \| [`BLACK`](../enums/StyleButtonColor_2.md#black) \| [`WHITE`](../enums/StyleButtonColor_2.md#white)
+• `Optional` **color**: [`GOLD`](../enums/StyleButtonColor.md#gold) \| [`BLUE`](../enums/StyleButtonColor.md#blue) \| [`SILVER`](../enums/StyleButtonColor.md#silver) \| [`BLACK`](../enums/StyleButtonColor.md#black) \| [`WHITE`](../enums/StyleButtonColor.md#white)
 
 ___
 
@@ -46,19 +46,19 @@ ___
 
 ### label
 
-• `Optional` **label**: [`PAYPAL`](../enums/StyleButtonLabel_2.md#paypal) \| [`CHECKOUT`](../enums/StyleButtonLabel_2.md#checkout) \| [`BUYNOW`](../enums/StyleButtonLabel_2.md#buynow) \| [`PAY`](../enums/StyleButtonLabel_2.md#pay) \| [`INSTALLMENT`](../enums/StyleButtonLabel_2.md#installment)
+• `Optional` **label**: [`PAYPAL`](../enums/StyleButtonLabel.md#paypal) \| [`CHECKOUT`](../enums/StyleButtonLabel.md#checkout) \| [`BUYNOW`](../enums/StyleButtonLabel.md#buynow) \| [`PAY`](../enums/StyleButtonLabel.md#pay) \| [`INSTALLMENT`](../enums/StyleButtonLabel.md#installment)
 
 ___
 
 ### layout
 
-• `Optional` **layout**: [`VERTICAL`](../enums/StyleButtonLayout_2.md#vertical) \| [`HORIZONTAL`](../enums/StyleButtonLayout_2.md#horizontal)
+• `Optional` **layout**: [`VERTICAL`](../enums/StyleButtonLayout.md#vertical) \| [`HORIZONTAL`](../enums/StyleButtonLayout.md#horizontal)
 
 ___
 
 ### shape
 
-• `Optional` **shape**: [`PILL`](../enums/StyleButtonShape_2.md#pill) \| [`RECT`](../enums/StyleButtonShape_2.md#rect)
+• `Optional` **shape**: [`PILL`](../enums/StyleButtonShape.md#pill) \| [`RECT`](../enums/StyleButtonShape.md#rect)
 
 ___
 

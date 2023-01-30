@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.331.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.330.1...v1.331.0) (2023-01-30)
+
+
+### Features
+
+* **payment:** PAYPAL-000 added an ability to loadCheckout by provided id in payments-integration-api ([#1803](https://github.com/bigcommerce/checkout-sdk-js/issues/1803)) ([a0e3e02](https://github.com/bigcommerce/checkout-sdk-js/commit/a0e3e02c454e92e06002ba9bf8f43aef28a723d6))
+* **payment:** PAYPAL-000 added an ability to use BuyNowCartCreationError from payment-integration-api ([#1804](https://github.com/bigcommerce/checkout-sdk-js/issues/1804)) ([0c7edca](https://github.com/bigcommerce/checkout-sdk-js/commit/0c7edca2a83ad462d185830928efe3f3003ccf7c))
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-000 updated amazon pay specs with CartSource to fix the issue with failed build ([#1806](https://github.com/bigcommerce/checkout-sdk-js/issues/1806)) ([7fa0ccd](https://github.com/bigcommerce/checkout-sdk-js/commit/7fa0ccd8aa3c9fcc04e27a37bd6cd660e3def123))
+* **payment:** PAYPAL-1635 Buy Now feature for amazon pay ([562ab38](https://github.com/bigcommerce/checkout-sdk-js/commit/562ab380046cec191067d5c68e8f2dde221aab5c))
+* **payment:** PAYPAL-1635 fix after review ([34cc8ee](https://github.com/bigcommerce/checkout-sdk-js/commit/34cc8eebfe25e2df5505c7e941550e29342ed826))
+* **payment:** PAYPAL-1635 update after review ([4696290](https://github.com/bigcommerce/checkout-sdk-js/commit/469629041125b5b200e87576ad655c2cce7cafb4))
+* **payment:** PAYPAL-1635 update after review ([0ce178e](https://github.com/bigcommerce/checkout-sdk-js/commit/0ce178e6a6d3d443e9781a7f2932e23c50f6430a))
+* **payment:** PAYPAL-1635 update after review ([e16ec75](https://github.com/bigcommerce/checkout-sdk-js/commit/e16ec75b31e19eff21bae8b700b8c729e1e84ee8))
+* **payment:** PAYPAL-1635 update after review ([651bc1f](https://github.com/bigcommerce/checkout-sdk-js/commit/651bc1fafbf5de7ed2445012b175ac4ac6edaa56))
+* **payment:** PAYPAL-1763 fixed an issue when we could not proceed checkout after trying to place order with an empty CVV for stored card ([4aea399](https://github.com/bigcommerce/checkout-sdk-js/commit/4aea399b9e483e3862f339da17d1561ac7764341))
+* **payment:** PAYPAL-1929 renamed several PayPal Commerce interfaces to fix the issue with doc files ([#1799](https://github.com/bigcommerce/checkout-sdk-js/issues/1799)) ([05df1e4](https://github.com/bigcommerce/checkout-sdk-js/commit/05df1e4437189b57f6dd05e46fcb6f6eb35d1dec))
+
 ### [1.330.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.330.0...v1.330.1) (2023-01-27)
 
 

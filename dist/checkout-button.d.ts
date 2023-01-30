@@ -64,9 +64,9 @@ declare interface AmazonPayV2ButtonConfig {
 }
 
 /**
- * The required config to render the AmazonPayV2 buttton.
+ * The required config to render the AmazonPayV2 button.
  */
-declare type AmazonPayV2ButtonInitializeOptions = AmazonPayV2ButtonParameters;
+declare type AmazonPayV2ButtonInitializeOptions = AmazonPayV2ButtonParameters | WithBuyNowFeature;
 
 declare type AmazonPayV2ButtonParameters = AmazonPayV2ButtonParams | AmazonPayV2NewButtonParams;
 
@@ -335,7 +335,7 @@ declare interface BraintreePaypalButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
+    style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
     /**
      * Address to be used for shipping.
      * If not provided, it will use the first saved address from the active customer.
@@ -375,7 +375,7 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
+    style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
     /**
      * Address to be used for shipping.
      * If not provided, it will use the first saved address from the active customer.
@@ -633,11 +633,11 @@ declare interface LineItem {
 }
 
 declare interface PayPalButtonStyleOptions {
-    layout?: StyleButtonLayout_2;
-    color?: StyleButtonColor_2;
-    shape?: StyleButtonShape_2;
+    layout?: StyleButtonLayout;
+    color?: StyleButtonColor;
+    shape?: StyleButtonShape;
     height?: number;
-    label?: StyleButtonLabel_2;
+    label?: StyleButtonLabel;
     tagline?: boolean;
     custom?: {
         label?: string;
@@ -687,7 +687,7 @@ declare interface PaypalButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
+    style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
     /**
      * A callback that gets called if unable to authorize and tokenize payment.
      *
@@ -722,34 +722,6 @@ declare enum PaypalButtonStyleLayoutOption {
     VERTICAL = "vertical"
 }
 
-declare interface PaypalButtonStyleOptions {
-    layout?: PaypalButtonStyleLayoutOption;
-    size?: PaypalButtonStyleSizeOption;
-    color?: PaypalButtonStyleColorOption;
-    label?: PaypalButtonStyleLabelOption;
-    shape?: PaypalButtonStyleShapeOption;
-    tagline?: boolean;
-    fundingicons?: boolean;
-    height?: number;
-}
-
-declare interface PaypalButtonStyleOptions_2 {
-    layout?: StyleButtonLayout;
-    color?: StyleButtonColor;
-    shape?: StyleButtonShape;
-    height?: number;
-    label?: StyleButtonLabel;
-    tagline?: boolean;
-    custom?: {
-        label?: string;
-        css?: {
-            background?: string;
-            color?: string;
-            width?: string;
-        };
-    };
-}
-
 declare enum PaypalButtonStyleShapeOption {
     PILL = "pill",
     RECT = "rect"
@@ -774,7 +746,7 @@ declare interface PaypalCommerceAlternativeMethodsButtonOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: PaypalButtonStyleOptions_2;
+    style?: PaypalStyleOptions_2;
     /**
      * The option that used to initialize a PayPal script with provided currency code.
      */
@@ -791,7 +763,7 @@ declare interface PaypalCommerceButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: PaypalButtonStyleOptions_2;
+    style?: PaypalStyleOptions_2;
     /**
      * Flag which helps to detect that the strategy initializes on Checkout page.
      */
@@ -824,7 +796,7 @@ declare interface PaypalCommerceCreditButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: PaypalButtonStyleOptions_2;
+    style?: PaypalStyleOptions_2;
     /**
      * The option that used to initialize a PayPal script with provided currency code.
      */
@@ -845,7 +817,7 @@ declare interface PaypalCommerceVenmoButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: PaypalButtonStyleOptions_2;
+    style?: PaypalStyleOptions_2;
     /**
      * Flag which helps to detect that the strategy initializes on Checkout page
      */
@@ -859,6 +831,60 @@ declare interface PaypalCommerceVenmoButtonInitializeOptions {
      */
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
+}
+
+declare enum PaypalStyleButtonColor {
+    gold = "gold",
+    blue = "blue",
+    silver = "silver",
+    black = "black",
+    white = "white"
+}
+
+declare enum PaypalStyleButtonLabel {
+    paypal = "paypal",
+    checkout = "checkout",
+    buynow = "buynow",
+    pay = "pay",
+    installment = "installment"
+}
+
+declare enum PaypalStyleButtonLayout {
+    vertical = "vertical",
+    horizontal = "horizontal"
+}
+
+declare enum PaypalStyleButtonShape {
+    pill = "pill",
+    rect = "rect"
+}
+
+declare interface PaypalStyleOptions {
+    layout?: PaypalButtonStyleLayoutOption;
+    size?: PaypalButtonStyleSizeOption;
+    color?: PaypalButtonStyleColorOption;
+    label?: PaypalButtonStyleLabelOption;
+    shape?: PaypalButtonStyleShapeOption;
+    tagline?: boolean;
+    fundingicons?: boolean;
+    height?: number;
+}
+
+declare interface PaypalStyleOptions_2 {
+    layout?: PaypalStyleButtonLayout;
+    color?: PaypalStyleButtonColor;
+    shape?: PaypalStyleButtonShape;
+    height?: number;
+    label?: PaypalStyleButtonLabel;
+    tagline?: boolean;
+    custom?: {
+        label?: string;
+        css?: {
+            background?: string;
+            color?: string;
+            width?: string;
+        };
     };
 }
 
@@ -889,14 +915,6 @@ declare abstract class StandardError extends Error implements CustomError {
 }
 
 declare enum StyleButtonColor {
-    gold = "gold",
-    blue = "blue",
-    silver = "silver",
-    black = "black",
-    white = "white"
-}
-
-declare enum StyleButtonColor_2 {
     GOLD = "gold",
     BLUE = "blue",
     SILVER = "silver",
@@ -905,14 +923,6 @@ declare enum StyleButtonColor_2 {
 }
 
 declare enum StyleButtonLabel {
-    paypal = "paypal",
-    checkout = "checkout",
-    buynow = "buynow",
-    pay = "pay",
-    installment = "installment"
-}
-
-declare enum StyleButtonLabel_2 {
     PAYPAL = "paypal",
     CHECKOUT = "checkout",
     BUYNOW = "buynow",
@@ -921,27 +931,26 @@ declare enum StyleButtonLabel_2 {
 }
 
 declare enum StyleButtonLayout {
-    vertical = "vertical",
-    horizontal = "horizontal"
-}
-
-declare enum StyleButtonLayout_2 {
     VERTICAL = "vertical",
     HORIZONTAL = "horizontal"
 }
 
 declare enum StyleButtonShape {
-    pill = "pill",
-    rect = "rect"
-}
-
-declare enum StyleButtonShape_2 {
     PILL = "pill",
     RECT = "rect"
 }
 
 declare interface WithApplePayButtonInitializeOptions {
     applepay?: ApplePayButtonInitializeOptions_2;
+}
+
+declare interface WithBuyNowFeature {
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
 }
 
 declare interface WithPayPalCommerceInlineButtonInitializeOptions {

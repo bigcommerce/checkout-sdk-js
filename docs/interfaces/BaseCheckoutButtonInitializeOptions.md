@@ -46,7 +46,7 @@
 
 ### amazonpay
 
-• `Optional` **amazonpay**: [`AmazonPayV2ButtonParams`](AmazonPayV2ButtonParams.md) \| [`AmazonPayV2NewButtonParams`](AmazonPayV2NewButtonParams.md)
+• `Optional` **amazonpay**: [`AmazonPayV2ButtonParams`](AmazonPayV2ButtonParams.md) \| [`AmazonPayV2NewButtonParams`](AmazonPayV2NewButtonParams.md) \| [`WithBuyNowFeature`](WithBuyNowFeature.md)
 
 The options that are required to facilitate AmazonPayV2. They can be
 omitted unless you need to support AmazonPayV2.

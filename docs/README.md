@@ -28,15 +28,15 @@
 - [PaypalButtonStyleShapeOption](enums/PaypalButtonStyleShapeOption.md)
 - [PaypalButtonStyleSizeOption](enums/PaypalButtonStyleSizeOption.md)
 - [PaypalCommerceFormFieldType](enums/PaypalCommerceFormFieldType.md)
+- [PaypalStyleButtonColor](enums/PaypalStyleButtonColor.md)
+- [PaypalStyleButtonLabel](enums/PaypalStyleButtonLabel.md)
+- [PaypalStyleButtonLayout](enums/PaypalStyleButtonLayout.md)
+- [PaypalStyleButtonShape](enums/PaypalStyleButtonShape.md)
 - [RadiusUnit](enums/RadiusUnit.md)
 - [StyleButtonColor](enums/StyleButtonColor.md)
-- [StyleButtonColor_2](enums/StyleButtonColor_2.md)
 - [StyleButtonLabel](enums/StyleButtonLabel.md)
-- [StyleButtonLabel_2](enums/StyleButtonLabel_2.md)
 - [StyleButtonLayout](enums/StyleButtonLayout.md)
-- [StyleButtonLayout_2](enums/StyleButtonLayout_2.md)
 - [StyleButtonShape](enums/StyleButtonShape.md)
-- [StyleButtonShape_2](enums/StyleButtonShape_2.md)
 
 ### Classes
 
@@ -291,8 +291,6 @@
 - [PaymentRequestOptions](interfaces/PaymentRequestOptions.md)
 - [PaymentSettings](interfaces/PaymentSettings.md)
 - [PaypalButtonInitializeOptions](interfaces/PaypalButtonInitializeOptions.md)
-- [PaypalButtonStyleOptions](interfaces/PaypalButtonStyleOptions.md)
-- [PaypalButtonStyleOptions_2](interfaces/PaypalButtonStyleOptions_2.md)
 - [PaypalCommerceAlternativeMethodsButtonOptions](interfaces/PaypalCommerceAlternativeMethodsButtonOptions.md)
 - [PaypalCommerceButtonInitializeOptions](interfaces/PaypalCommerceButtonInitializeOptions.md)
 - [PaypalCommerceCreditButtonInitializeOptions](interfaces/PaypalCommerceCreditButtonInitializeOptions.md)
@@ -311,6 +309,8 @@
 - [PaypalCommerceVenmoButtonInitializeOptions](interfaces/PaypalCommerceVenmoButtonInitializeOptions.md)
 - [PaypalExpressPaymentInitializeOptions](interfaces/PaypalExpressPaymentInitializeOptions.md)
 - [PaypalFieldsStyleOptions](interfaces/PaypalFieldsStyleOptions.md)
+- [PaypalStyleOptions](interfaces/PaypalStyleOptions.md)
+- [PaypalStyleOptions_2](interfaces/PaypalStyleOptions_2.md)
 - [PhysicalItem](interfaces/PhysicalItem.md)
 - [PickupMethod](interfaces/PickupMethod.md)
 - [PickupOptionRequestBody](interfaces/PickupOptionRequestBody.md)
@@ -374,6 +374,7 @@
 - [WithApplePayButtonInitializeOptions](interfaces/WithApplePayButtonInitializeOptions.md)
 - [WithApplePayCustomerInitializeOptions](interfaces/WithApplePayCustomerInitializeOptions.md)
 - [WithApplePayPaymentInitializeOptions](interfaces/WithApplePayPaymentInitializeOptions.md)
+- [WithBuyNowFeature](interfaces/WithBuyNowFeature.md)
 - [WithCheckoutcomFawryInstrument](interfaces/WithCheckoutcomFawryInstrument.md)
 - [WithCheckoutcomSEPAInstrument](interfaces/WithCheckoutcomSEPAInstrument.md)
 - [WithCheckoutcomiDealInstrument](interfaces/WithCheckoutcomiDealInstrument.md)
@@ -473,9 +474,9 @@ ___
 
 ### AmazonPayV2ButtonInitializeOptions
 
-Ƭ **AmazonPayV2ButtonInitializeOptions**: [`AmazonPayV2ButtonParameters`](README.md#amazonpayv2buttonparameters)
+Ƭ **AmazonPayV2ButtonInitializeOptions**: [`AmazonPayV2ButtonParameters`](README.md#amazonpayv2buttonparameters) \| [`WithBuyNowFeature`](interfaces/WithBuyNowFeature.md)
 
-The required config to render the AmazonPayV2 buttton.
+The required config to render the AmazonPayV2 button.
 
 ___
 
