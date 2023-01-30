@@ -1,3 +1,4 @@
+export { default as BuyNowCartCreationError } from './buy-now-cart-creation-error';
 export { default as InvalidArgumentError } from './invalid-argument-error';
 export { default as MissingDataError, MissingDataErrorType } from './missing-data-error';
 export { default as NotImplementedError } from './not-implemented-error';
