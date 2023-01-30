@@ -50,6 +50,7 @@ import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subsc
 
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
+import AmazonPayV2RequestSender from './strategies/amazon-pay-v2/amazon-pay-v2-request-sender';
 import { ApplePayButtonStrategy } from './strategies/apple-pay';
 import {
     BraintreePaypalButtonStrategy,
@@ -122,6 +123,7 @@ export default function createCheckoutButtonRegistry(
         checkoutRequestSender,
     );
     const cartRequestSender = new CartRequestSender(requestSender);
+    const amazonPayV2RequestSender = new AmazonPayV2RequestSender(requestSender);
 
     registry.register(
         CheckoutButtonMethodType.APPLEPAY,
@@ -147,6 +149,8 @@ export default function createCheckoutButtonRegistry(
                 store,
                 checkoutActionCreator,
                 createAmazonPayV2PaymentProcessor(),
+                cartRequestSender,
+                amazonPayV2RequestSender,
             ),
     );
 

@@ -10,6 +10,12 @@ export interface AmazonPayV2SDK {
     Pay: AmazonPayV2Client;
 }
 
+export interface RequestConfig {
+    createCheckoutSessionConfig: AmazonPayV2CheckoutSessionConfig;
+    estimatedOrderAmount?: AmazonPayV2Price;
+    productType?: AmazonPayV2PayOptions;
+}
+
 export interface AmazonPayV2Button {
     /**
      * Allows you to define custom actions.
@@ -19,9 +25,7 @@ export interface AmazonPayV2Button {
     /**
      * Initiates the Amazon Pay checkout.
      */
-    initCheckout(requestConfig: {
-        createCheckoutSessionConfig: AmazonPayV2CheckoutSessionConfig;
-    }): void;
+    initCheckout(requestConfig: RequestConfig): void;
 }
 
 export type AmazonPayV2ButtonParameters = AmazonPayV2ButtonParams | AmazonPayV2NewButtonParams;
@@ -53,7 +57,7 @@ export interface AmazonPayV2HostWindow extends Window {
     amazon?: AmazonPayV2SDK;
 }
 
-interface AmazonPayV2ButtonConfig {
+export interface AmazonPayV2ButtonConfig {
     /**
      * Amazon Pay merchant account identifier.
      */

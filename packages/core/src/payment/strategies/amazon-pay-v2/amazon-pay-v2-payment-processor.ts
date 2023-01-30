@@ -4,6 +4,7 @@ import { getShippableItemsCount } from '../../../../../core/src/shipping';
 import { guard } from '../../../../src/common/utility';
 import { StoreProfile } from '../../../../src/config';
 import { CheckoutSettings } from '../../../../src/config/config';
+import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
 import {
     InvalidArgumentError,
     MissingDataError,
@@ -15,6 +16,7 @@ import {
 import {
     AmazonPayV2Button,
     AmazonPayV2ButtonColor,
+    AmazonPayV2ButtonConfig,
     AmazonPayV2ButtonParameters,
     AmazonPayV2ButtonRenderingOptions,
     AmazonPayV2ChangeActionType,
@@ -22,7 +24,9 @@ import {
     AmazonPayV2NewButtonParams,
     AmazonPayV2PayOptions,
     AmazonPayV2Placement,
+    AmazonPayV2Price,
     AmazonPayV2SDK,
+    RequestConfig,
 } from './amazon-pay-v2';
 import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
 
@@ -30,6 +34,7 @@ export default class AmazonPayV2PaymentProcessor {
     private _amazonPayV2SDK?: AmazonPayV2SDK;
     private _buttonParentContainer?: HTMLDivElement;
     private _amazonPayV2Button?: AmazonPayV2Button;
+    private _buyNowCartRequestBody?: BuyNowCartRequestBody;
 
     constructor(private _amazonPayV2ScriptLoader: AmazonPayV2ScriptLoader) {}
 
@@ -66,18 +71,31 @@ export default class AmazonPayV2PaymentProcessor {
         );
     }
 
-    prepareCheckout(createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>): void {
-        const { publicKeyId, ...signedPayload } = createCheckoutSessionConfig;
+    prepareCheckout(createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>) {
+        const requestConfig = this._prepareRequestConfig(createCheckoutSessionConfig);
 
-        const requestConfig = {
-            createCheckoutSessionConfig: this._isEnvironmentSpecific(publicKeyId)
-                ? signedPayload
-                : createCheckoutSessionConfig,
-        };
+        this._getAmazonPayV2Button().onClick(() => {
+            this._getAmazonPayV2Button().initCheckout(requestConfig);
+        });
+    }
 
-        this._getAmazonPayV2Button().onClick(() =>
-            this._getAmazonPayV2Button().initCheckout(requestConfig),
-        );
+    prepareCheckoutWithCreationRequestConfig(
+        createCheckoutConfig: () => Promise<{
+            createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>;
+            estimatedOrderAmount: AmazonPayV2Price;
+            productType: AmazonPayV2PayOptions;
+        }>,
+    ) {
+        this._getAmazonPayV2Button().onClick(async () => {
+            const config = await createCheckoutConfig();
+            const requestConfig = this._prepareRequestConfig(
+                config.createCheckoutSessionConfig,
+                config.estimatedOrderAmount,
+                config.productType,
+            );
+
+            this._getAmazonPayV2Button().initCheckout(requestConfig);
+        });
     }
 
     async signout(): Promise<void> {
@@ -120,6 +138,10 @@ export default class AmazonPayV2PaymentProcessor {
         return this._getButtonParentContainer();
     }
 
+    setCartRequestBody(buyNowCartRequestBody: BuyNowCartRequestBody) {
+        this._buyNowCartRequestBody = buyNowCartRequestBody;
+    }
+
     /**
      * @internal
      */
@@ -135,6 +157,22 @@ export default class AmazonPayV2PaymentProcessor {
         }
 
         return isPh4Enabled;
+    }
+
+    private _prepareRequestConfig(
+        createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>,
+        estimatedOrderAmount?: AmazonPayV2Price,
+        productType?: AmazonPayV2PayOptions,
+    ): RequestConfig {
+        const { publicKeyId, ...signedPayload } = createCheckoutSessionConfig;
+
+        return {
+            createCheckoutSessionConfig: this._isEnvironmentSpecific(publicKeyId)
+                ? signedPayload
+                : createCheckoutSessionConfig,
+            ...(estimatedOrderAmount && { estimatedOrderAmount }),
+            ...(productType && { productType }),
+        };
     }
 
     private _createAmazonPayButtonParentContainer(): HTMLDivElement {
@@ -169,28 +207,36 @@ export default class AmazonPayV2PaymentProcessor {
             },
         } = getPaymentMethodOrThrow(methodId);
 
-        const {
-            checkoutSettings: { features },
-            storeProfile: { shopPath, storeCountryCode },
-        } = getStoreConfigOrThrow();
-
-        const cart = getCart();
-
         if (!merchantId || !ledgerCurrency) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const buttonBaseConfig = {
+        const buttonBaseConfig: AmazonPayV2ButtonConfig = {
             merchantId,
             ledgerCurrency,
             checkoutLanguage,
-            productType:
-                cart && getShippableItemsCount(cart) === 0
-                    ? AmazonPayV2PayOptions.PayOnly
-                    : AmazonPayV2PayOptions.PayAndShip,
             placement,
             buttonColor: AmazonPayV2ButtonColor.Gold,
         };
+
+        if (this._buyNowCartRequestBody) {
+            return {
+                ...buttonBaseConfig,
+                sandbox: !!testMode,
+            };
+        }
+
+        const cart = getCart();
+
+        buttonBaseConfig.productType =
+            cart && getShippableItemsCount(cart) === 0
+                ? AmazonPayV2PayOptions.PayOnly
+                : AmazonPayV2PayOptions.PayAndShip;
+
+        const {
+            checkoutSettings: { features },
+            storeProfile: { shopPath, storeCountryCode },
+        } = getStoreConfigOrThrow();
 
         if (this.isPh4Enabled(features, storeCountryCode)) {
             const amount = getCheckout()?.outstandingBalance.toString();
