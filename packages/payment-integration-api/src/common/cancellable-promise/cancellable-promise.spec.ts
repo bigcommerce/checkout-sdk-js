@@ -11,7 +11,7 @@ describe('CancellablePromise', () => {
     });
 
     it('cancels the promise when cancel is called', async () => {
-        const cancellable = new CancellablePromise(new Promise(() => {}));
+        const cancellable = new CancellablePromise(new Promise(() => undefined));
         const error = new Error('Just because!');
         // Makes sure we don't tamper with the promise.
         const { promise } = cancellable;

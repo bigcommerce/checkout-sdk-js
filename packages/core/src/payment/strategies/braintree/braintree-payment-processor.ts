@@ -1,11 +1,11 @@
 import { supportsPopups } from '@braintree/browser-detection';
 import { isEmpty } from 'lodash';
 
+import { CancellablePromise } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
 import { Address } from '../../../address';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { CancellablePromise } from '../../../common/utility';
 import { OrderPaymentRequestBody } from '../../../order';
 import {
     PaymentArgumentInvalidError,

@@ -4,11 +4,12 @@ import { noop } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { CancellablePromise } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CheckoutStore, CheckoutValidator, createCheckoutStore } from '../checkout';
 import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { CancellablePromise } from '../common/utility';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../order';
 import { getOrder } from '../order/orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
