@@ -2,11 +2,13 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { merge } from 'lodash';
 
 import {
+    CartSource,
     InvalidArgumentError,
     MissingDataError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getBuyNowCart,
     getCheckout,
     getConsignment,
     getShippingOption,
@@ -17,7 +19,10 @@ import ApplePayButtonInitializeOptions from './apple-pay-button-initialize-optio
 import ApplePayButtonMethodType from './apple-pay-button-method-type';
 import ApplePayButtonStrategy from './apple-pay-button-strategy';
 import ApplePaySessionFactory from './apple-pay-session-factory';
-import { getApplePayButtonInitializationOptions } from './mocks/apple-pay-button.mock';
+import {
+    getApplePayButtonInitializationOptions,
+    getApplePayButtonInitializationOptionsWithBuyNow,
+} from './mocks/apple-pay-button.mock';
 import { getApplePay } from './mocks/apple-pay-method.mock';
 import { MockApplePaySession } from './mocks/apple-pay-payment.mock';
 import { getContactAddress } from './mocks/apple-pay-wallet-button-mock';
@@ -199,7 +204,6 @@ describe('ApplePayButtonStrategy', () => {
 
         it('gets shipping contact selected successfully', async () => {
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
-
             await strategy.initialize(CheckoutButtonInitializeOptions);
 
             if (CheckoutButtonInitializeOptions.applepay) {
@@ -332,6 +336,89 @@ describe('ApplePayButtonStrategy', () => {
                         newTotal: expect.anything(),
                         newLineItems: expect.anything(),
                     });
+                }
+            }
+        });
+
+        it('creates buyNowCart on PDP page on button click for digital product', async () => {
+            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
+                Promise.resolve({ body: { ...getBuyNowCart() } }),
+            );
+            const CheckoutButtonInitializeOptions =
+                getApplePayButtonInitializationOptionsWithBuyNow();
+
+            await strategy.initialize(CheckoutButtonInitializeOptions);
+            if (CheckoutButtonInitializeOptions.applepay) {
+                const button = container.firstChild as HTMLElement;
+
+                if (button) {
+                    button.click();
+
+                    await applePaySession.onpaymentmethodselected();
+
+                    expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalled();
+                }
+            }
+        });
+
+        it('creates buyNowCart on PDP page on button click for physical product', async () => {
+            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
+                Promise.resolve({ body: { ...getBuyNowCart() } }),
+            );
+            const CheckoutButtonInitializeOptions =
+                getApplePayButtonInitializationOptionsWithBuyNow();
+
+            await strategy.initialize(CheckoutButtonInitializeOptions);
+            if (CheckoutButtonInitializeOptions.applepay) {
+                const button = container.firstChild as HTMLElement;
+
+                if (button) {
+                    button.click();
+                    const event = {
+                        shippingContact: getContactAddress(),
+                    } as ApplePayJS.ApplePayShippingContactSelectedEvent;
+
+                    await applePaySession.onpaymentmethodselected();
+                    await applePaySession.onshippingcontactselected(event);
+
+                    expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalled();
+                }
+            }
+        });
+
+        it('doesnt call applePaySession.onpaymentmethodselected Buy Now flow with for digital item', async () => {
+            applePaySession.onpaymentmethodselected = jest.fn();
+            const CheckoutButtonInitializeOptions = {
+                ...getApplePayButtonInitializationOptions(),
+                applepay: {
+                    onPaymentAuthorize: jest.fn(),
+                    buyNowInitializeOptions: {
+                        getBuyNowCartRequestBody: jest.fn().mockReturnValue({
+                            source: CartSource.BuyNow,
+                            lineItems: [
+                                {
+                                    productId: 1,
+                                    quantity: 2,
+                                    optionSelections: {
+                                        optionId: 11,
+                                        optionValue: 11,
+                                    },
+                                },
+                            ],
+                        }),
+                    },
+                    requiresShipping: true,
+                },
+            };
+
+            await strategy.initialize(CheckoutButtonInitializeOptions);
+            if (CheckoutButtonInitializeOptions.applepay) {
+                const button = container.firstChild as HTMLElement;
+
+                if (button) {
+                    button.click();
+
+                    expect(applePaySession.onpaymentmethodselected).not.toHaveBeenCalled();
                 }
             }
         });

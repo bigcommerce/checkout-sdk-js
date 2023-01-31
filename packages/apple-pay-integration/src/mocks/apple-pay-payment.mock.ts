@@ -6,10 +6,12 @@ export class MockApplePaySession {
 
     begin = jest.fn();
     oncancel = jest.fn();
+    onpaymentmethodselected = jest.fn();
 
     completeShippingContactSelection = jest.fn();
 
     completeShippingMethodSelection = jest.fn();
+    completePaymentMethodSelection = jest.fn();
 
     abort = jest.fn();
 
