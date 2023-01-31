@@ -11,6 +11,37 @@ orbs:
   node: bigcommerce/internal-node@volatile
 
 jobs:
+  test-packages:
+    <<: *node_executor
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run:
+          name: "Run unit tests for packages"
+          command: npm run test:others
+
+  test-core:
+    <<: *node_executor
+    parallelism: 2
+    resource_class: small
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run: mkdir ~/junit
+      - run:
+          name: "Run unit tests for core package"
+          command: |
+            TEST=$(circleci tests glob "packages/core/**/*.spec.ts" | circleci tests split --split-by=timings)
+            npx nx run core:generate
+            npm test $TEST -- --runInBand
+      - run:
+          command: cp junit.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
   test:
     <<: *node_executor
     steps:
@@ -19,18 +50,22 @@ jobs:
       - run:
           name: "Run unit tests"
           command: npm run test:series -- --coverage
-      - store_artifacts:
-          path: coverage
-          destination: coverage
+    
+  lint:
+    <<: *node_executor
+    resource_class: medium+
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run:
+          name: "Run lint"
+          command: npm run lint
 
   build:
     <<: *node_executor
     steps:
       - ci/pre-setup
       - node/npm-install
-      - run:
-          name: "Run linter"
-          command: npm run lint
       - run:
           name: "Build distribution files"
           command: npm run build && npm run docs
@@ -87,7 +122,9 @@ workflows:
 
   default:
     jobs:
-      - test
+      - test-core
+      - test-packages
+      - lint
       - build
       - ci/validate-commits
 
@@ -97,7 +134,9 @@ workflows:
             branches:
               ignore: /pull\/[0-9]+/
           requires:
-            - test
+            - test-core
+            - test-packages
+            - lint
             - build
             - ci/validate-commits
       - ci/build-js-artifact:
@@ -119,9 +158,7 @@ workflows:
             branches:
               only: master
           requires:
-            - test
-            - build
-            - ci/validate-commits
+            - ci/notify-success
       - npm_release:
           requires:
             - approve_npm_release

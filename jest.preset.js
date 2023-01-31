@@ -1,6 +1,5 @@
-
 const nxPreset = require('@nrwl/jest/preset');
-     
+
 module.exports = {
     ...nxPreset,
     coverageThreshold: {
@@ -11,18 +10,10 @@ module.exports = {
             statements: 80,
         },
     },
+    reporters: ['default', 'jest-junit'],
     transform: {
-        '^.+\\.[tj]s$': 'ts-jest'
+        '^.+\\.[tj]s$': 'ts-jest',
     },
-    moduleFileExtensions: [
-        'ts',
-        'tsx',
-        'js',
-        'jsx',
-        'json',
-    ],
-    collectCoverageFrom: [
-        'src/**/*.{js,ts}',
-        '!src/**/*.mock.ts'
-    ],
-}
+    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+    collectCoverageFrom: ['src/**/*.{js,ts}', '!src/**/*.mock.ts'],
+};

@@ -36,14 +36,19 @@
     "bundle-dts": "npx nx run core:build-dts",
     "docs": "npx nx run core:docs",
     "generate": "npx nx run core:generate",
-    "lint": "npx nx run-many --target=lint --all",
+    "lint": "npx nx run-many --target=lint --parallel=5 --all --verbose",
     "release": "echo 'Please do not release locally, use CircleCi'",
     "release:version": "git add dist docs && standard-version -a",
     "release:alpha": "export PRERELEASE=alpha; npm run lint && npm test && npm run build && npm run release:version",
-    "test": "npx nx run-many --all --target=test --parallel",
-    "test:coverage": "npx nx run-many --all --target=test --parallel -- --coverage",
-    "test:series": "npx nx run-many --all --target=test --parallel -- --runInBand",
+    "test": "jest --config packages/core/jest.config.js",
+    "test:coverage": "npx nx run-many --all --target=test --parallel=5 -- --coverage",
+    "test:series": "npx nx run-many --all --target=test --parallel=5 -- --runInBand",
+    "test:core": "npx nx run core:test -- --coverage --runInBand",
+    "test:others": "npx nx run-many --all --target=test --exclude core --parallel=5 -- --runInBand",
     "test:watch": "npx nx run-many --all --target=test --parallel -- --watch"
+  },
+  "jest-junit": {
+    "addFileAttribute": "true"
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
@@ -104,6 +109,7 @@
     "eslint-plugin-react": "^7.30.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "jest": "^24.9.0",
+    "jest-junit": "^15.0.0",
     "nx": "^13.10.3",
     "prettier": "^2.6.2",
     "request": "^2.83.0",
