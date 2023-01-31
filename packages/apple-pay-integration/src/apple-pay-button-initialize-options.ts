@@ -1,3 +1,5 @@
+import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 /**
  * A set of options that are required to initialize ApplePay in cart.
  *
@@ -5,6 +7,18 @@
  * DOM. When a customer clicks on it, it will trigger Apple sheet.
  */
 export default interface ApplePayButtonInitializeOptions {
+    /**
+     * This option indicates if product requires shipping
+     */
+    requiresShipping?: boolean;
+
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
+
     /**
      * The class name of the ApplePay button style.
      */
