@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.333.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.332.2...v1.333.0) (2023-01-31)
+
+
+### Features
+
+* **payment:** PAYPAL-1935 move CancellablePromise to integration package ([6bab047](https://github.com/bigcommerce/checkout-sdk-js/commit/6bab0477a545bcafcc75647b429dc7de5b645705))
+
 ### [1.332.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.332.1...v1.332.2) (2023-01-31)
 
 
