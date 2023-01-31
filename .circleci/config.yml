@@ -158,11 +158,7 @@ workflows:
             branches:
               only: master
           requires:
-            - test-core
-            - test-packages
-            - lint
-            - build
-            - ci/validate-commits
+            - ci/notify-success
       - npm_release:
           requires:
             - approve_npm_release
