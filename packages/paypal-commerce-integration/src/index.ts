@@ -24,3 +24,11 @@ export { WithPayPalCommerceAlternativeMethodsButtonOptions } from './paypal-comm
  */
 export { default as createPayPalCommerceInlineButtonStrategy } from './paypal-commerce-inline/create-paypal-commerce-inline-button-strategy';
 export { WithPayPalCommerceInlineButtonInitializeOptions } from './paypal-commerce-inline/paypal-commerce-inline-button-initialize-options';
+
+/**
+ *
+ * PayPalCommerce Venmo strategies
+ *
+ */
+export { default as createPayPalCommerceVenmoButtonStrategy } from './paypal-commerce-venmo/create-paypal-commerce-venmo-button-strategy';
+export { WithPayPalCommerceVenmoButtonInitializeOptions } from './paypal-commerce-venmo/paypal-commerce-venmo-button-initialize-options';
