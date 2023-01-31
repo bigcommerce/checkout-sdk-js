@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.332.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.332.1...v1.332.2) (2023-01-31)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-8239 addresses feedback ([8e816a6](https://github.com/bigcommerce/checkout-sdk-js/commit/8e816a69716c4a3457e641a9e6d60e58b73f9429))
+* **payment:** PAYMENTS-8239 sorts recommended option first for applepay ([814564b](https://github.com/bigcommerce/checkout-sdk-js/commit/814564bc497781a519e687b07d30f9c59658e47c))
+
 ### [1.332.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.332.0...v1.332.1) (2023-01-30)
 
 
