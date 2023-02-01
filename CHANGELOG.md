@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.333.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.333.0...v1.333.1) (2023-02-01)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-0000 Add skip-nx-cache build command ([#1812](https://github.com/bigcommerce/checkout-sdk-js/issues/1812)) ([c4ae24e](https://github.com/bigcommerce/checkout-sdk-js/commit/c4ae24eb6a3b70e7d4ca8a4b494fb664282cb12b))
+
 ## [1.333.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.332.2...v1.333.0) (2023-01-31)
 
 
