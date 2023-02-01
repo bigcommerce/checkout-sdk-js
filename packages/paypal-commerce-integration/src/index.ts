@@ -11,6 +11,14 @@ export { WithPayPalCommerceCustomerInitializeOptions } from './paypal-commerce/p
 
 /**
  *
+ * PayPalCommerce Credit (PayLater) strategies
+ *
+ */
+export { default as createPayPalCommerceCreditButtonStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-button-strategy';
+export { WithPayPalCommerceCreditButtonInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-button-initialize-options';
+
+/**
+ *
  * PayPalCommerce Alternative methods strategies
  *
  */
