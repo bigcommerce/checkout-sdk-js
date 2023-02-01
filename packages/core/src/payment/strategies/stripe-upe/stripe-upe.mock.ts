@@ -11,6 +11,7 @@ export function getStripeUPEJsMock(): StripeUPEClient {
             create: jest.fn(() => ({
                 mount: jest.fn(),
                 unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback()),
             })),
             getElement: jest.fn().mockReturnValue(null),
             update: jest.fn(),
