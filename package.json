@@ -27,6 +27,7 @@
   "scripts": {
     "prepare": "check-node-version --node '>=14.18' --npm '>=6'",
     "build": "npm run bundle && npm run bundle-dts",
+    "build:link": "rm -rf dist && npx nx run core:build --skip-nx-cache && npm run bundle-dts",
     "prebuild-cdn": "rm -rf dist-cdn",
     "build-cdn": "npx nx run core:build-cdn",
     "prebundle": "rm -rf dist",
