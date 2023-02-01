@@ -6,6 +6,9 @@ export { default as PayPalCommerceScriptLoader } from './paypal-commerce-script-
  * PayPalCommerce strategies
  *
  */
+export { default as createPayPalCommerceButtonStrategy } from './paypal-commerce/create-paypal-commerce-button-strategy';
+export { WithPayPalCommerceButtonInitializeOptions } from './paypal-commerce/paypal-commerce-button-initialize-options';
+
 export { default as createPayPalCommerceCustomerStrategy } from './paypal-commerce/create-paypal-commerce-customer-strategy';
 export { WithPayPalCommerceCustomerInitializeOptions } from './paypal-commerce/paypal-commerce-customer-initialize-options';
 
