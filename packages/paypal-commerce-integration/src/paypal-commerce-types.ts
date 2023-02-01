@@ -176,9 +176,19 @@ export interface PayPalCommerceButtonsOptions {
         actions: ApproveCallbackActions,
     ): Promise<boolean | void> | void;
     onComplete?(data: CompleteCallbackDataPayload): Promise<void>;
+    onClick?(data: ClickCallbackPayload, actions?: ClickCallbackActions): Promise<void>;
     onError?(error: Error): void;
     onShippingAddressChange?(data: ShippingAddressChangeCallbackPayload): Promise<void>;
     onShippingOptionsChange?(data: ShippingOptionChangeCallbackPayload): Promise<void>;
+}
+
+export interface ClickCallbackPayload {
+    fundingSource: string;
+}
+
+export interface ClickCallbackActions {
+    reject(): Promise<void>;
+    resolve(): Promise<void>;
 }
 
 export interface ShippingAddressChangeCallbackPayload {
@@ -249,29 +259,29 @@ export interface CompleteCallbackDataPayload {
 }
 
 export enum StyleButtonLabel {
-    PAYPAL = 'paypal',
-    CHECKOUT = 'checkout',
-    BUYNOW = 'buynow',
-    PAY = 'pay',
-    INSTALLMENT = 'installment',
+    paypal = 'paypal',
+    checkout = 'checkout',
+    buynow = 'buynow',
+    pay = 'pay',
+    installment = 'installment',
 }
 
 export enum StyleButtonLayout {
-    VERTICAL = 'vertical',
-    HORIZONTAL = 'horizontal',
+    vertical = 'vertical',
+    horizontal = 'horizontal',
 }
 
 export enum StyleButtonColor {
-    GOLD = 'gold',
-    BLUE = 'blue',
-    SILVER = 'silver',
-    BLACK = 'black',
-    WHITE = 'white',
+    gold = 'gold',
+    blue = 'blue',
+    silver = 'silver',
+    black = 'black',
+    white = 'white',
 }
 
 export enum StyleButtonShape {
-    PILL = 'pill',
-    RECT = 'rect',
+    pill = 'pill',
+    rect = 'rect',
 }
 
 export interface PayPalButtonStyleOptions {
