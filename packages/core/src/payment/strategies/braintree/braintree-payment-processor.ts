@@ -21,6 +21,7 @@ import {
     BraintreeShippingAddressOverride,
     BraintreeThreeDSecure,
     BraintreeTokenizePayload,
+    BraintreeVenmoCheckout,
     BraintreeVerifyPayload,
 } from './braintree';
 import BraintreeHostedForm from './braintree-hosted-form';
@@ -178,6 +179,12 @@ export default class BraintreePaymentProcessor {
         const threeDSecure = await this._braintreeSDKCreator.get3DS();
 
         return this._present3DSChallenge(threeDSecure, amount, nonce);
+    }
+
+    async getVenmoCheckout(): Promise<BraintreeVenmoCheckout> {
+        return new Promise((resolve, reject) => {
+            this._braintreeSDKCreator.getVenmoCheckout(resolve, reject);
+        });
     }
 
     private _getErrorsRequiredFields(

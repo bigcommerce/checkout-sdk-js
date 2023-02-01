@@ -60,6 +60,7 @@ import {
     BraintreePaypalPaymentStrategy,
     BraintreeScriptLoader,
     BraintreeSDKCreator,
+    BraintreeVenmoPaymentStrategy,
     BraintreeVisaCheckoutPaymentStrategy,
     createBraintreePaymentProcessor,
     createBraintreeVisaCheckoutPaymentProcessor,
@@ -377,7 +378,7 @@ export default function createPaymentStrategyRegistry(
     registry.register(
         PaymentStrategyType.BRAINTREE_VENMO,
         () =>
-            new BraintreePaypalPaymentStrategy(
+            new BraintreeVenmoPaymentStrategy(
                 store,
                 orderActionCreator,
                 paymentActionCreator,
