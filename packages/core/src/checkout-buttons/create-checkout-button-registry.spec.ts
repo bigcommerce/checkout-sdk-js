@@ -15,10 +15,6 @@ import {
     BraintreeVenmoButtonStrategy,
 } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
-import {
-    PaypalCommerceButtonStrategy,
-    PaypalCommerceVenmoButtonStrategy,
-} from './strategies/paypal-commerce';
 
 describe('createCheckoutButtonRegistry', () => {
     let registry: Registry<CheckoutButtonStrategy>;
@@ -92,15 +88,5 @@ describe('createCheckoutButtonRegistry', () => {
 
     it('returns registry with GooglePay on StripeUPE Credit registered', () => {
         expect(registry.get('googlepaystripeupe')).toEqual(expect.any(GooglePayButtonStrategy));
-    });
-
-    it('returns registry with PayPal Commerce registered', () => {
-        expect(registry.get('paypalcommerce')).toEqual(expect.any(PaypalCommerceButtonStrategy));
-    });
-
-    it('returns registry with PayPal Commerce Venmo registered', () => {
-        expect(registry.get('paypalcommercevenmo')).toEqual(
-            expect.any(PaypalCommerceVenmoButtonStrategy),
-        );
     });
 });
