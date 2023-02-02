@@ -39,10 +39,6 @@ import {
 } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
-import {
-    PaypalCommerceRequestSender,
-    PaypalCommerceScriptLoader,
-} from '../payment/strategies/paypal-commerce';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
@@ -60,12 +56,6 @@ import {
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
-import {
-    PaypalCommerceAlternativeMethodsButtonStrategy,
-    PaypalCommerceButtonStrategy,
-    PaypalCommerceCreditButtonStrategy,
-    PaypalCommerceVenmoButtonStrategy,
-} from './strategies/paypal-commerce';
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
@@ -108,8 +98,6 @@ export default function createCheckoutButtonRegistry(
         paymentHumanVerificationHandler,
     );
     const braintreeSdkCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader));
-    const paypalScriptLoader = new PaypalCommerceScriptLoader(scriptLoader);
-    const paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
     const subscriptionsRequestSender = new SubscriptionsRequestSender(requestSender);
     const subscriptionsActionCreator = new SubscriptionsActionCreator(subscriptionsRequestSender);
     const billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
@@ -338,66 +326,6 @@ export default function createCheckoutButtonRegistry(
                 new PaypalScriptLoader(scriptLoader),
                 formPoster,
                 host,
-            ),
-    );
-
-    registry.register(
-        CheckoutButtonMethodType.PAYPALCOMMERCE,
-        () =>
-            new PaypalCommerceButtonStrategy(
-                store,
-                checkoutActionCreator,
-                cartRequestSender,
-                formPoster,
-                paypalScriptLoader,
-                paypalCommerceRequestSender,
-                consignmentActionCreator,
-                billingAddressActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-            ),
-    );
-
-    registry.register(
-        CheckoutButtonMethodType.PAYPALCOMMERCE_CREDIT,
-        () =>
-            new PaypalCommerceCreditButtonStrategy(
-                store,
-                checkoutActionCreator,
-                cartRequestSender,
-                formPoster,
-                paypalScriptLoader,
-                paypalCommerceRequestSender,
-                orderActionCreator,
-                consignmentActionCreator,
-                billingAddressActionCreator,
-                paymentActionCreator,
-            ),
-    );
-
-    registry.register(
-        CheckoutButtonMethodType.PAYPALCOMMERCE_APMS,
-        () =>
-            new PaypalCommerceAlternativeMethodsButtonStrategy(
-                store,
-                checkoutActionCreator,
-                cartRequestSender,
-                formPoster,
-                paypalScriptLoader,
-                paypalCommerceRequestSender,
-            ),
-    );
-
-    registry.register(
-        CheckoutButtonMethodType.PAYPALCOMMERCE_VENMO,
-        () =>
-            new PaypalCommerceVenmoButtonStrategy(
-                store,
-                checkoutActionCreator,
-                cartRequestSender,
-                formPoster,
-                paypalScriptLoader,
-                paypalCommerceRequestSender,
             ),
     );
 
