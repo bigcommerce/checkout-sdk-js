@@ -207,7 +207,11 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
-        this._stripeElements?.getElement(StripeElementType.SHIPPING)?.unmount();
+        /* The new shipping component by StripeLink has a small bug, when the component is unmounted,
+        Stripe does not save the shipping, to solve this, we will leave it mounted,
+        and once it is fixed will be unmounted again */
+
+        // this._stripeElements?.getElement(StripeElementType.SHIPPING)?.unmount();
 
         return Promise.resolve(this._store.getState());
     }
