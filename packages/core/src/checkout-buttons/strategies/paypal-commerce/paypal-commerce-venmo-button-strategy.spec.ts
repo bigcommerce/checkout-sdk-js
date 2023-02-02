@@ -31,7 +31,6 @@ import { getPaypalCommerceMock } from '../../../payment/strategies/paypal-commer
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
 
-import { PaypalCommerceVenmoButtonInitializeOptions } from './paypal-commerce-venmo-button-options';
 import PaypalCommerceVenmoButtonStrategy from './paypal-commerce-venmo-button-strategy';
 
 describe('PaypalCommerceVenmoButtonStrategy', () => {
@@ -52,7 +51,7 @@ describe('PaypalCommerceVenmoButtonStrategy', () => {
     const defaultButtonContainerId = 'paypal-commerce-venmo-button-mock-id';
     const approveDataOrderId = 'ORDER_ID';
 
-    const paypalCommerceVenmoOptions: PaypalCommerceVenmoButtonInitializeOptions = {
+    const paypalCommerceVenmoOptions = {
         initializesOnCheckoutPage: false,
         style: {
             height: 45,
