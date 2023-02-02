@@ -1564,6 +1564,21 @@ describe('StripeV3PaymentStrategy', () => {
             expect(form.submit).toHaveBeenCalledWith(payload.payment);
         });
 
+        it('submits payment data with hosted form and client_token', async () => {
+            const payload = getOrderRequestBodyVaultedCC();
+            const expectedPayload = {
+                shouldSaveInstrument: true,
+                shouldSetAsDefaultInstrument: true,
+                instrumentId: '{"token":"1234","client_token":"myToken"}',
+            };
+
+            await strategy.initialize(initializeOptions);
+            await strategy.execute(payload);
+
+            expect(form.submit).toHaveBeenCalledWith(payload.payment);
+            expect(payload.payment?.paymentData).toEqual(expectedPayload);
+        });
+
         it('validates user input before submitting data', async () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(getOrderRequestBodyVaultedCC());

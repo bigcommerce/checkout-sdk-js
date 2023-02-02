@@ -350,6 +350,16 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         ) {
             const form = this._hostedForm;
 
+            if (payment.paymentData && isVaultedInstrument(payment.paymentData)) {
+                payment.paymentData = {
+                    ...payment.paymentData,
+                    instrumentId: JSON.stringify({
+                        token: payment.paymentData?.instrumentId || '',
+                        client_token: clientToken,
+                    }),
+                };
+            }
+
             await form.validate();
             await form.submit(payment);
 
