@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.335.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.335.0...v1.335.1) (2023-02-02)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-287 Fixed error when using vaulted card L2/L3 field appear as null on dashboard ([#1779](https://github.com/bigcommerce/checkout-sdk-js/issues/1779)) ([be221e5](https://github.com/bigcommerce/checkout-sdk-js/commit/be221e58e0ad17f9651008e47f41d4ead31fed45))
+
 ## [1.335.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.334.0...v1.335.0) (2023-02-01)
 
 
