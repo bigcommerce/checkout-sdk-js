@@ -98,7 +98,8 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
         const styles = getStyles && getStyles();
 
         const {
-            form: { getShippingAddressFields }, shippingAddress: { getShippingAddress }
+            form: { getShippingAddressFields },
+            shippingAddress: { getShippingAddress },
         } = this._store.getState();
 
         const shippingFields = getShippingAddressFields([], '');
@@ -142,7 +143,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             shipping?.stateOrProvinceCode && shipping?.countryCode
                 ? getStripeState(shipping?.countryCode, shipping?.stateOrProvinceCode)
                 : shipping?.stateOrProvinceCode;
-        const shippingPhoneField = shippingFields.find(field => field.name === 'phone');
+        const shippingPhoneField = shippingFields.find((field) => field.name === 'phone');
         const option = {
             mode: 'shipping',
             allowedCountries: [availableCountries],
@@ -153,21 +154,22 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
                 phone: shipping?.phone || '',
                 address: {
                     line1: shipping?.address1 || '',
-                    line2: shipping?.address2  || '',
-                    city: shipping?.city  || '',
-                    state: stripeState  || '',
-                    postal_code: shipping?.postalCode  || '',
-                    country: shipping?.countryCode  || ''
-                }
+                    line2: shipping?.address2 || '',
+                    city: shipping?.city || '',
+                    state: stripeState || '',
+                    postal_code: shipping?.postalCode || '',
+                    country: shipping?.countryCode || '',
+                },
             },
             fields: {
-                phone: 'always'
+                phone: 'always',
             },
             validation: {
                 phone: {
-                    required: shippingPhoneField && shippingPhoneField.required ? 'always' : 'never'
-                }
-            }
+                    required:
+                        shippingPhoneField && shippingPhoneField.required ? 'always' : 'never',
+                },
+            },
         };
 
         let shippingAddressElement = this._stripeElements.getElement(StripeElementType.SHIPPING);
@@ -189,7 +191,12 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
                 }
 
                 this.sendData = setTimeout(() => {
-                    onChangeShipping({ ...event, phoneFieldRequired: shippingPhoneField ? shippingPhoneField.required : false });
+                    onChangeShipping({
+                        ...event,
+                        phoneFieldRequired: shippingPhoneField
+                            ? shippingPhoneField.required
+                            : false,
+                    });
                 }, 1000);
             }
         });

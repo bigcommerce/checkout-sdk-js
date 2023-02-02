@@ -60,7 +60,7 @@ export interface StripeCustomerEvent extends StripeEvent {
 
 export interface StripeShippingEvent extends StripeEvent {
     isNewAddress?: boolean;
-    phoneFieldRequired: boolean
+    phoneFieldRequired: boolean;
     value: {
         address: {
             city: string;
