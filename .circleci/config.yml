@@ -23,7 +23,6 @@ jobs:
   test-core:
     <<: *node_executor
     parallelism: 2
-    resource_class: small
     steps:
       - ci/pre-setup
       - node/npm-install
@@ -158,7 +157,11 @@ workflows:
             branches:
               only: master
           requires:
-            - ci/notify-success
+            - test-core
+            - test-packages
+            - lint
+            - build
+            - ci/validate-commits
       - npm_release:
           requires:
             - approve_npm_release
