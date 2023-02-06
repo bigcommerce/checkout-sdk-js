@@ -22,12 +22,8 @@
 - [GOOGLEPAY_STRIPE](CheckoutButtonMethodType.md#googlepay_stripe)
 - [GOOGLEPAY_STRIPEUPE](CheckoutButtonMethodType.md#googlepay_stripeupe)
 - [MASTERPASS](CheckoutButtonMethodType.md#masterpass)
-- [PAYPALCOMMERCE](CheckoutButtonMethodType.md#paypalcommerce)
 - [PAYPALCOMMERCE_APMS](CheckoutButtonMethodType.md#paypalcommerce_apms)
 - [PAYPALCOMMERCE_APMS_TEMPORARY](CheckoutButtonMethodType.md#paypalcommerce_apms_temporary)
-- [PAYPALCOMMERCE_CREDIT](CheckoutButtonMethodType.md#paypalcommerce_credit)
-- [PAYPALCOMMERCE_INLINE](CheckoutButtonMethodType.md#paypalcommerce_inline)
-- [PAYPALCOMMERCE_VENMO](CheckoutButtonMethodType.md#paypalcommerce_venmo)
 - [PAYPALEXPRESS](CheckoutButtonMethodType.md#paypalexpress)
 
 ## Enumeration Members
@@ -128,12 +124,6 @@ ___
 
 ___
 
-### PAYPALCOMMERCE
-
-• **PAYPALCOMMERCE**
-
-___
-
 ### PAYPALCOMMERCE\_APMS
 
 • **PAYPALCOMMERCE\_APMS**
@@ -143,24 +133,6 @@ ___
 ### PAYPALCOMMERCE\_APMS\_TEMPORARY
 
 • **PAYPALCOMMERCE\_APMS\_TEMPORARY**
-
-___
-
-### PAYPALCOMMERCE\_CREDIT
-
-• **PAYPALCOMMERCE\_CREDIT**
-
-___
-
-### PAYPALCOMMERCE\_INLINE
-
-• **PAYPALCOMMERCE\_INLINE**
-
-___
-
-### PAYPALCOMMERCE\_VENMO
-
-• **PAYPALCOMMERCE\_VENMO**
 
 ___
 

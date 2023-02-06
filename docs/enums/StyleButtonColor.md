@@ -6,38 +6,38 @@
 
 ### Enumeration Members
 
-- [BLACK](StyleButtonColor.md#black)
-- [BLUE](StyleButtonColor.md#blue)
-- [GOLD](StyleButtonColor.md#gold)
-- [SILVER](StyleButtonColor.md#silver)
-- [WHITE](StyleButtonColor.md#white)
+- [black](StyleButtonColor.md#black)
+- [blue](StyleButtonColor.md#blue)
+- [gold](StyleButtonColor.md#gold)
+- [silver](StyleButtonColor.md#silver)
+- [white](StyleButtonColor.md#white)
 
 ## Enumeration Members
 
-### BLACK
+### black
 
-• **BLACK**
-
-___
-
-### BLUE
-
-• **BLUE**
+• **black**
 
 ___
 
-### GOLD
+### blue
 
-• **GOLD**
-
-___
-
-### SILVER
-
-• **SILVER**
+• **blue**
 
 ___
 
-### WHITE
+### gold
 
-• **WHITE**
+• **gold**
+
+___
+
+### silver
+
+• **silver**
+
+___
+
+### white
+
+• **white**

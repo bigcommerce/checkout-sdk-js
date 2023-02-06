@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.336.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.335.2...v1.336.0) (2023-02-06)
+
+
+### Features
+
+* **payment:** PAYPAL-1888 added PayPalCommerceButtonStrategy to paypal-commerce-integration package ([#1801](https://github.com/bigcommerce/checkout-sdk-js/issues/1801)) ([08d8555](https://github.com/bigcommerce/checkout-sdk-js/commit/08d855529eaae5290935aaad7df3a025a6af4d3d))
+* **payment:** PAYPAL-1892 added PayPalCommerceAlternativeMethodsButtonStrategy to paypal-commerce-integration ([#1817](https://github.com/bigcommerce/checkout-sdk-js/issues/1817)) ([4c4b51b](https://github.com/bigcommerce/checkout-sdk-js/commit/4c4b51b152d22e9965777eb882d6af8a4a03b28f))
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-000 updated paypal commerce tests to fix some issues with CI build in other pr ([#1820](https://github.com/bigcommerce/checkout-sdk-js/issues/1820)) ([8074a16](https://github.com/bigcommerce/checkout-sdk-js/commit/8074a165abbc46d7ddb5d6f385f992139861959d))
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-000 removed paypal commerce checkout button strategies from core package ([#1818](https://github.com/bigcommerce/checkout-sdk-js/issues/1818)) ([615766e](https://github.com/bigcommerce/checkout-sdk-js/commit/615766e1c104e65ec35d19e00dbc068b60aa9bdf))
+* **payment:** PAYPAL-1889 added PayPalCommerceCreditButtonStrategy to paypal-commerce-integration package ([#1815](https://github.com/bigcommerce/checkout-sdk-js/issues/1815)) ([8855fe4](https://github.com/bigcommerce/checkout-sdk-js/commit/8855fe4bbe8529352eb32620351dce5d72e4aaf3))
+* **payment:** PAYPAL-1891 added PayPalCommerceVenmoButtonStrategy to paypal commerce integration package ([#1813](https://github.com/bigcommerce/checkout-sdk-js/issues/1813)) ([a805af7](https://github.com/bigcommerce/checkout-sdk-js/commit/a805af7940d84bc26b878d6ad20af91bea492b54))
+
 ### [1.335.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.335.1...v1.335.2) (2023-02-02)
 
 ### [1.335.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.335.0...v1.335.1) (2023-02-02)

@@ -6,38 +6,38 @@
 
 ### Enumeration Members
 
-- [BUYNOW](StyleButtonLabel.md#buynow)
-- [CHECKOUT](StyleButtonLabel.md#checkout)
-- [INSTALLMENT](StyleButtonLabel.md#installment)
-- [PAY](StyleButtonLabel.md#pay)
-- [PAYPAL](StyleButtonLabel.md#paypal)
+- [buynow](StyleButtonLabel.md#buynow)
+- [checkout](StyleButtonLabel.md#checkout)
+- [installment](StyleButtonLabel.md#installment)
+- [pay](StyleButtonLabel.md#pay)
+- [paypal](StyleButtonLabel.md#paypal)
 
 ## Enumeration Members
 
-### BUYNOW
+### buynow
 
-• **BUYNOW**
-
-___
-
-### CHECKOUT
-
-• **CHECKOUT**
+• **buynow**
 
 ___
 
-### INSTALLMENT
+### checkout
 
-• **INSTALLMENT**
-
-___
-
-### PAY
-
-• **PAY**
+• **checkout**
 
 ___
 
-### PAYPAL
+### installment
 
-• **PAYPAL**
+• **installment**
+
+___
+
+### pay
+
+• **pay**
+
+___
+
+### paypal
+
+• **paypal**

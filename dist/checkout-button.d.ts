@@ -1,3 +1,4 @@
+import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Timeout } from '@bigcommerce/request-sender';
 import { createTimeout } from '@bigcommerce/request-sender';
@@ -299,26 +300,6 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
      * unless you need to support Paypal.
      */
     paypal?: PaypalButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate PayPal Commerce V2. They can be omitted
-     * unless you need to support Paypal Commerce.
-     */
-    paypalcommerce?: PaypalCommerceButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate PayPal Commerce. They can be omitted
-     * unless you need to support PayPal Commerce Credit / PayLater.
-     */
-    paypalcommercecredit?: PaypalCommerceCreditButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate PayPal Commerce. They can be omitted
-     * unless you need to support PayPal Commerce Alternative Payment Methods.
-     */
-    paypalcommercealternativemethods?: PaypalCommerceAlternativeMethodsButtonOptions;
-    /**
-     * The options that are required to facilitate PayPal Commerce Venmo. They can be omitted
-     * unless you need to support PayPal Commerce Venmo.
-     */
-    paypalcommercevenmo?: PaypalCommerceVenmoButtonInitializeOptions;
 }
 
 declare interface BraintreeError extends Error {
@@ -455,7 +436,7 @@ declare class CheckoutButtonErrorSelector {
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithPayPalCommerceInlineButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceInlineButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -565,12 +546,8 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_STRIPEUPE = "googlepaystripeupe",
     MASTERPASS = "masterpass",
     PAYPALEXPRESS = "paypalexpress",
-    PAYPALCOMMERCE = "paypalcommerce",
-    PAYPALCOMMERCE_CREDIT = "paypalcommercecredit",
     PAYPALCOMMERCE_APMS = "paypalcommercealternativemethods",
-    PAYPALCOMMERCE_APMS_TEMPORARY = "paypalcommercealternativemethodsv2",
-    PAYPALCOMMERCE_INLINE = "paypalcommerceinline",
-    PAYPALCOMMERCE_VENMO = "paypalcommercevenmo"
+    PAYPALCOMMERCE_APMS_TEMPORARY = "paypalcommercealternativemethodsv2"
 }
 
 /**
@@ -650,6 +627,66 @@ declare interface PayPalButtonStyleOptions {
 }
 
 /**
+ * A set of options that are required to initialize PayPalCommerce in cart or product details page.
+ *
+ * When PayPalCommerce is initialized, an PayPalCommerce button will be inserted into the
+ * DOM. When a customer clicks on it, it will trigger Apple sheet.
+ */
+declare interface PayPalCommerceButtonInitializeOptions {
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
+    };
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * Flag which helps to detect that the strategy initializes on Checkout page.
+     */
+    initializesOnCheckoutPage?: boolean;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PayPalButtonStyleOptions;
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
+}
+
+declare interface PayPalCommerceCreditButtonInitializeOptions {
+    /**
+     * Flag which helps to detect that the strategy initializes on Checkout page
+     */
+    initializesOnCheckoutPage?: boolean;
+    /**
+     * The ID of a container which the messaging should be inserted.
+     */
+    messagingContainerId?: string;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PayPalButtonStyleOptions;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
+    };
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
+}
+
+/**
  * A set of options that are required to initialize ApplePay in cart.
  *
  * When ApplePay is initialized, an ApplePay button will be inserted into the
@@ -673,6 +710,27 @@ declare interface PayPalCommerceInlineButtonInitializeOptions {
      * A callback that gets called on any error
      */
     onError?(): void;
+}
+
+declare interface PayPalCommerceVenmoButtonInitializeOptions {
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PayPalButtonStyleOptions;
+    /**
+     * Flag which helps to detect that the strategy initializes on Checkout page
+     */
+    initializesOnCheckoutPage?: boolean;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * The options that required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
+    };
 }
 
 declare interface PaypalButtonInitializeOptions {
@@ -734,132 +792,6 @@ declare enum PaypalButtonStyleSizeOption {
     RESPONSIVE = "responsive"
 }
 
-declare interface PaypalCommerceAlternativeMethodsButtonOptions {
-    /**
-     * Alternative payment method id what used for initialization PayPal button as funding source.
-     */
-    apm: string;
-    /**
-     * Flag which helps to detect that the strategy initializes on Checkout page.
-     */
-    initializesOnCheckoutPage?: boolean;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PaypalStyleOptions_2;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
-}
-
-declare interface PaypalCommerceButtonInitializeOptions {
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PaypalStyleOptions_2;
-    /**
-     * Flag which helps to detect that the strategy initializes on Checkout page.
-     */
-    initializesOnCheckoutPage?: boolean;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
-    /**
-     * A callback that gets called when payment complete on paypal side.
-     */
-    onComplete?(): void;
-}
-
-declare interface PaypalCommerceCreditButtonInitializeOptions {
-    /**
-     * Flag which helps to detect that the strategy initializes on Checkout page
-     */
-    initializesOnCheckoutPage?: boolean;
-    /**
-     * The ID of a container which the messaging should be inserted.
-     */
-    messagingContainerId?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PaypalStyleOptions_2;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
-    /**
-     * A callback that gets called when payment complete on paypal side.
-     */
-    onComplete?(): void;
-}
-
-declare interface PaypalCommerceVenmoButtonInitializeOptions {
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PaypalStyleOptions_2;
-    /**
-     * Flag which helps to detect that the strategy initializes on Checkout page
-     */
-    initializesOnCheckoutPage?: boolean;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
-}
-
-declare enum PaypalStyleButtonColor {
-    gold = "gold",
-    blue = "blue",
-    silver = "silver",
-    black = "black",
-    white = "white"
-}
-
-declare enum PaypalStyleButtonLabel {
-    paypal = "paypal",
-    checkout = "checkout",
-    buynow = "buynow",
-    pay = "pay",
-    installment = "installment"
-}
-
-declare enum PaypalStyleButtonLayout {
-    vertical = "vertical",
-    horizontal = "horizontal"
-}
-
-declare enum PaypalStyleButtonShape {
-    pill = "pill",
-    rect = "rect"
-}
-
 declare interface PaypalStyleOptions {
     layout?: PaypalButtonStyleLayoutOption;
     size?: PaypalButtonStyleSizeOption;
@@ -869,23 +801,6 @@ declare interface PaypalStyleOptions {
     tagline?: boolean;
     fundingicons?: boolean;
     height?: number;
-}
-
-declare interface PaypalStyleOptions_2 {
-    layout?: PaypalStyleButtonLayout;
-    color?: PaypalStyleButtonColor;
-    shape?: PaypalStyleButtonShape;
-    height?: number;
-    label?: PaypalStyleButtonLabel;
-    tagline?: boolean;
-    custom?: {
-        label?: string;
-        css?: {
-            background?: string;
-            color?: string;
-            width?: string;
-        };
-    };
 }
 
 /**
@@ -915,29 +830,29 @@ declare abstract class StandardError extends Error implements CustomError {
 }
 
 declare enum StyleButtonColor {
-    GOLD = "gold",
-    BLUE = "blue",
-    SILVER = "silver",
-    BLACK = "black",
-    WHITE = "white"
+    gold = "gold",
+    blue = "blue",
+    silver = "silver",
+    black = "black",
+    white = "white"
 }
 
 declare enum StyleButtonLabel {
-    PAYPAL = "paypal",
-    CHECKOUT = "checkout",
-    BUYNOW = "buynow",
-    PAY = "pay",
-    INSTALLMENT = "installment"
+    paypal = "paypal",
+    checkout = "checkout",
+    buynow = "buynow",
+    pay = "pay",
+    installment = "installment"
 }
 
 declare enum StyleButtonLayout {
-    VERTICAL = "vertical",
-    HORIZONTAL = "horizontal"
+    vertical = "vertical",
+    horizontal = "horizontal"
 }
 
 declare enum StyleButtonShape {
-    PILL = "pill",
-    RECT = "rect"
+    pill = "pill",
+    rect = "rect"
 }
 
 declare interface WithApplePayButtonInitializeOptions {
@@ -953,8 +868,20 @@ declare interface WithBuyNowFeature {
     };
 }
 
+declare interface WithPayPalCommerceButtonInitializeOptions {
+    paypalcommerce?: PayPalCommerceButtonInitializeOptions;
+}
+
+declare interface WithPayPalCommerceCreditButtonInitializeOptions {
+    paypalcommercecredit?: PayPalCommerceCreditButtonInitializeOptions;
+}
+
 declare interface WithPayPalCommerceInlineButtonInitializeOptions {
     paypalcommerceinline?: PayPalCommerceInlineButtonInitializeOptions;
+}
+
+declare interface WithPayPalCommerceVenmoButtonInitializeOptions {
+    paypalcommercevenmo?: PayPalCommerceVenmoButtonInitializeOptions;
 }
 
 /**

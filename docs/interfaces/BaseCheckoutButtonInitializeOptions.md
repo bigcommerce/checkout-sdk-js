@@ -36,10 +36,6 @@
 - [methodId](BaseCheckoutButtonInitializeOptions.md#methodid)
 - [params](BaseCheckoutButtonInitializeOptions.md#params)
 - [paypal](BaseCheckoutButtonInitializeOptions.md#paypal)
-- [paypalcommerce](BaseCheckoutButtonInitializeOptions.md#paypalcommerce)
-- [paypalcommercealternativemethods](BaseCheckoutButtonInitializeOptions.md#paypalcommercealternativemethods)
-- [paypalcommercecredit](BaseCheckoutButtonInitializeOptions.md#paypalcommercecredit)
-- [paypalcommercevenmo](BaseCheckoutButtonInitializeOptions.md#paypalcommercevenmo)
 - [timeout](BaseCheckoutButtonInitializeOptions.md#timeout)
 
 ## Properties
@@ -225,42 +221,6 @@ ___
 
 The options that are required to facilitate PayPal. They can be omitted
 unless you need to support Paypal.
-
-___
-
-### paypalcommerce
-
-• `Optional` **paypalcommerce**: [`PaypalCommerceButtonInitializeOptions`](PaypalCommerceButtonInitializeOptions.md)
-
-The options that are required to facilitate PayPal Commerce V2. They can be omitted
-unless you need to support Paypal Commerce.
-
-___
-
-### paypalcommercealternativemethods
-
-• `Optional` **paypalcommercealternativemethods**: [`PaypalCommerceAlternativeMethodsButtonOptions`](PaypalCommerceAlternativeMethodsButtonOptions.md)
-
-The options that are required to facilitate PayPal Commerce. They can be omitted
-unless you need to support PayPal Commerce Alternative Payment Methods.
-
-___
-
-### paypalcommercecredit
-
-• `Optional` **paypalcommercecredit**: [`PaypalCommerceCreditButtonInitializeOptions`](PaypalCommerceCreditButtonInitializeOptions.md)
-
-The options that are required to facilitate PayPal Commerce. They can be omitted
-unless you need to support PayPal Commerce Credit / PayLater.
-
-___
-
-### paypalcommercevenmo
-
-• `Optional` **paypalcommercevenmo**: [`PaypalCommerceVenmoButtonInitializeOptions`](PaypalCommerceVenmoButtonInitializeOptions.md)
-
-The options that are required to facilitate PayPal Commerce Venmo. They can be omitted
-unless you need to support PayPal Commerce Venmo.
 
 ___
 

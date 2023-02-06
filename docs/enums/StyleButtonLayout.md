@@ -6,17 +6,17 @@
 
 ### Enumeration Members
 
-- [HORIZONTAL](StyleButtonLayout.md#horizontal)
-- [VERTICAL](StyleButtonLayout.md#vertical)
+- [horizontal](StyleButtonLayout.md#horizontal)
+- [vertical](StyleButtonLayout.md#vertical)
 
 ## Enumeration Members
 
-### HORIZONTAL
+### horizontal
 
-• **HORIZONTAL**
+• **horizontal**
 
 ___
 
-### VERTICAL
+### vertical
 
-• **VERTICAL**
+• **vertical**
