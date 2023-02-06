@@ -939,6 +939,43 @@ describe('PayPalCommerceButtonStrategy', () => {
             );
         });
 
+        it('selects first available shipping option if there is no recommended option', async () => {
+            const firstShippingOption = {
+                ...getShippingOption(),
+                id: 1,
+            };
+
+            const secondShippingOption = {
+                ...getShippingOption(),
+                id: 2,
+            };
+
+            const consignment = {
+                ...getConsignment(),
+                availableShippingOptions: [firstShippingOption, secondShippingOption],
+                selectedShippingOption: null,
+            };
+
+            const updatedConsignment = {
+                ...consignment,
+                selectedShippingOption: firstShippingOption,
+            };
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getConsignmentsOrThrow')
+                .mockReturnValueOnce([consignment])
+                .mockReturnValue([updatedConsignment]);
+
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onShippingAddressChange');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
+                firstShippingOption.id,
+            );
+        });
+
         it('updates PayPal order', async () => {
             const consignment = getConsignment();
 

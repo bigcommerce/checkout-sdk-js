@@ -338,13 +338,15 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const recommendedShippingOption = availableShippingOptions.find(
             (option) => option.isRecommended,
         );
+
         const selectedShippingOption = selectedShippingOptionId
             ? availableShippingOptions.find((option) => option.id === selectedShippingOptionId)
             : availableShippingOptions.find(
                   (option) => option.id === consignment.selectedShippingOption?.id,
               );
 
-        const shippingOptionToSelect = selectedShippingOption || recommendedShippingOption;
+        const shippingOptionToSelect =
+            selectedShippingOption || recommendedShippingOption || availableShippingOptions[0];
 
         if (!shippingOptionToSelect) {
             throw new Error("Your order can't be shipped to this address");
