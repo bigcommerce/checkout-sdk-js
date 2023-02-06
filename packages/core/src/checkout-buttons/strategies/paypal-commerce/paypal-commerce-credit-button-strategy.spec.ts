@@ -46,7 +46,6 @@ import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../..
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
 
-import { PaypalCommerceCreditButtonInitializeOptions } from './paypal-commerce-credit-button-options';
 import PaypalCommerceCreditButtonStrategy from './paypal-commerce-credit-button-strategy';
 
 describe('PaypalCommerceCreditButtonStrategy', () => {
@@ -78,7 +77,7 @@ describe('PaypalCommerceCreditButtonStrategy', () => {
     const defaultMessageContainerId = 'paypal-commerce-credit-message-mock-id';
     const approveDataOrderId = 'ORDER_ID';
 
-    const paypalCommerceCreditOptions: PaypalCommerceCreditButtonInitializeOptions = {
+    const paypalCommerceCreditOptions = {
         initializesOnCheckoutPage: false,
         messagingContainerId: defaultMessageContainerId,
         style: {
