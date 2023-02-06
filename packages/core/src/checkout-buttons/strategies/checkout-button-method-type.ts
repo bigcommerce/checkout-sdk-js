@@ -17,6 +17,4 @@ export enum BaseCheckoutButtonMethodType {
     GOOGLEPAY_STRIPEUPE = 'googlepaystripeupe',
     MASTERPASS = 'masterpass',
     PAYPALEXPRESS = 'paypalexpress',
-    PAYPALCOMMERCE_APMS = 'paypalcommercealternativemethods', // TODO: this block of code should be removed in PAYPAL-1921
-    PAYPALCOMMERCE_APMS_TEMPORARY = 'paypalcommercealternativemethodsv2', // TODO: this block of code should be removed in PAYPAL-1921
 }

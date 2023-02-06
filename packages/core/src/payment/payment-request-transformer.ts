@@ -5,7 +5,6 @@ import { mapToInternalCart } from '../cart';
 import { InternalCheckoutSelectors } from '../checkout';
 import { CheckoutButtonMethodType } from '../checkout-buttons/strategies';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
-import { StoreConfig } from '../config';
 import { mapToInternalCustomer } from '../customer';
 import { HostedFormOrderData } from '../hosted-form';
 import {
@@ -72,8 +71,7 @@ export default class PaymentRequestTransformer {
             order: order && mapToInternalOrder(order, orderMeta),
             orderMeta,
             payment: payment.paymentData,
-            paymentMethod:
-                paymentMethod && this._transformPaymentMethod(paymentMethod, storeConfig),
+            paymentMethod: paymentMethod && this._transformPaymentMethod(paymentMethod),
             quoteMeta: {
                 request: {
                     ...paymentMeta,
@@ -148,10 +146,7 @@ export default class PaymentRequestTransformer {
         };
     }
 
-    private _transformPaymentMethod(
-        paymentMethod: PaymentMethod,
-        storeConfig?: StoreConfig,
-    ): PaymentMethod {
+    private _transformPaymentMethod(paymentMethod: PaymentMethod): PaymentMethod {
         if (paymentMethod.method === 'multi-option' && !paymentMethod.gateway) {
             return { ...paymentMethod, gateway: paymentMethod.id };
         }
@@ -162,17 +157,6 @@ export default class PaymentRequestTransformer {
 
         if (paymentMethod.id === CheckoutButtonMethodType.BRAINTREE_VENMO) {
             return { ...paymentMethod, id: CheckoutButtonMethodType.BRAINTREE_PAYPAL };
-        }
-
-        // TODO: this block of code should be removed in PAYPAL-1921
-        if (
-            paymentMethod.gateway === CheckoutButtonMethodType.PAYPALCOMMERCE_APMS &&
-            storeConfig?.checkoutSettings.features['PAYPAL-1883.paypal-commerce-split-gateway']
-        ) {
-            return {
-                ...paymentMethod,
-                gateway: CheckoutButtonMethodType.PAYPALCOMMERCE_APMS_TEMPORARY,
-            };
         }
 
         return paymentMethod;
