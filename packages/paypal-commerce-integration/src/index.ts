@@ -35,3 +35,11 @@ export { WithPayPalCommerceInlineButtonInitializeOptions } from './paypal-commer
  */
 export { default as createPayPalCommerceVenmoButtonStrategy } from './paypal-commerce-venmo/create-paypal-commerce-venmo-button-strategy';
 export { WithPayPalCommerceVenmoButtonInitializeOptions } from './paypal-commerce-venmo/paypal-commerce-venmo-button-initialize-options';
+
+/**
+ *
+ * PayPalCommerce Alternative methods strategies
+ *
+ */
+export { default as createPayPalCommerceAlternativeMethodsButtonStrategy } from './paypal-commerce-alternative-methods/create-paypal-commerce-alternative-methods-button-strategy';
+export { WithPayPalCommerceAlternativeMethodsButtonOptions } from './paypal-commerce-alternative-methods/paypal-commerce-alternative-methods-button-initialize-options';
