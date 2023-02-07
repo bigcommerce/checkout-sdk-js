@@ -326,7 +326,8 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
                   (option) => option.id === consignment.selectedShippingOption?.id,
               );
 
-        const shippingOptionToSelect = selectedShippingOption || recommendedShippingOption;
+        const shippingOptionToSelect =
+            selectedShippingOption || recommendedShippingOption || availableShippingOptions[0];
 
         if (!shippingOptionToSelect) {
             throw new Error("Your order can't be shipped to this address");
