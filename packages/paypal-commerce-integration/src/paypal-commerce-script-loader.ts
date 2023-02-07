@@ -80,11 +80,13 @@ export default class PayPalCommerceScriptLoader {
             intent,
             clientId,
             merchantId,
+            buyerCountry,
             attributionId,
             isVenmoEnabled,
             isHostedCheckoutEnabled,
             isInlineCheckoutEnabled,
             isPayPalCreditAvailable,
+            isDeveloperModeApplicable,
             availableAlternativePaymentMethods = [],
             enabledAlternativePaymentMethods = [],
         } = initializationData;
@@ -135,6 +137,7 @@ export default class PayPalCommerceScriptLoader {
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: currencyCode,
             intent,
+            ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
         };
     }
 }
