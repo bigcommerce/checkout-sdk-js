@@ -22,8 +22,6 @@
 - [GOOGLEPAY_STRIPE](CheckoutButtonMethodType.md#googlepay_stripe)
 - [GOOGLEPAY_STRIPEUPE](CheckoutButtonMethodType.md#googlepay_stripeupe)
 - [MASTERPASS](CheckoutButtonMethodType.md#masterpass)
-- [PAYPALCOMMERCE_APMS](CheckoutButtonMethodType.md#paypalcommerce_apms)
-- [PAYPALCOMMERCE_APMS_TEMPORARY](CheckoutButtonMethodType.md#paypalcommerce_apms_temporary)
 - [PAYPALEXPRESS](CheckoutButtonMethodType.md#paypalexpress)
 
 ## Enumeration Members
@@ -121,18 +119,6 @@ ___
 ### MASTERPASS
 
 • **MASTERPASS**
-
-___
-
-### PAYPALCOMMERCE\_APMS
-
-• **PAYPALCOMMERCE\_APMS**
-
-___
-
-### PAYPALCOMMERCE\_APMS\_TEMPORARY
-
-• **PAYPALCOMMERCE\_APMS\_TEMPORARY**
 
 ___
 

@@ -2240,9 +2240,7 @@ declare enum CheckoutButtonMethodType {
     GOOGLEPAY_STRIPE = "googlepaystripe",
     GOOGLEPAY_STRIPEUPE = "googlepaystripeupe",
     MASTERPASS = "masterpass",
-    PAYPALEXPRESS = "paypalexpress",
-    PAYPALCOMMERCE_APMS = "paypalcommercealternativemethods",
-    PAYPALCOMMERCE_APMS_TEMPORARY = "paypalcommercealternativemethodsv2"
+    PAYPALEXPRESS = "paypalexpress"
 }
 
 /**
