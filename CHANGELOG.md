@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.337.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.336.2...v1.337.0) (2023-02-07)
+
+
+### Features
+
+* **payment:** PAYPAL-1959 provided buyer-country to the paypal sdk config for dev mode ([#1823](https://github.com/bigcommerce/checkout-sdk-js/issues/1823)) ([556089d](https://github.com/bigcommerce/checkout-sdk-js/commit/556089dd9c1b4e64a10709cbdf511b853615fd49))
+* **payment:** PAYPAL-1959 provided buyer-country to the paypal sdk config for dev mode ([#1823](https://github.com/bigcommerce/checkout-sdk-js/issues/1823)) ([c74a729](https://github.com/bigcommerce/checkout-sdk-js/commit/c74a7294b4d9d79af700f9294d80dbd2bde94f04))
+
 ### [1.336.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.336.1...v1.336.2) (2023-02-07)
 
 
