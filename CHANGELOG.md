@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.336.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.336.1...v1.336.2) (2023-02-07)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-1926 added extra shipping option selection if there is no recommended options available ([#1822](https://github.com/bigcommerce/checkout-sdk-js/issues/1822)) ([aa90493](https://github.com/bigcommerce/checkout-sdk-js/commit/aa904939d07c3247d5fd9923abb47e5aff6ff96d))
+
 ### [1.336.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.336.0...v1.336.1) (2023-02-07)
 
 
