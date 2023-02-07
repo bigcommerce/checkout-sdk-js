@@ -453,6 +453,36 @@ describe('PayPalCommerceScriptLoader', () => {
         expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
     });
 
+    it('successfully loads paypal sdk with dev configuration', async () => {
+        const paymentMethodMock = {
+            ...paymentMethod,
+            id: 'paypalcommerce',
+            initializationData: {
+                ...paymentMethod.initializationData,
+                buyerCountry: 'UA',
+                isDeveloperModeApplicable: true,
+            },
+        };
+
+        await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', false);
+
+        const paypalSdkLoaderOptions = {
+            'buyer-country': 'UA',
+            'client-id': paymentMethod.initializationData.clientId,
+            'merchant-id': paymentMethod.initializationData.merchantId,
+            'data-client-token': paymentMethod.clientToken,
+            'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
+            'enable-funding': undefined,
+            commit: false,
+            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            currency: 'USD',
+            intent: 'capture',
+        };
+
+        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+    });
+
     it('throw error if unable to load Paypal script', async () => {
         const expectedError = new PaymentMethodClientUnavailableError();
 
