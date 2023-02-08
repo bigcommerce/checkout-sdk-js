@@ -13,6 +13,7 @@ import { PaymentMethodActionCreator } from '../../../payment';
 import {
     BraintreeError,
     BraintreePaypalCheckout,
+    BraintreePaypalSdkCreatorConfig,
     BraintreeSDKCreator,
     BraintreeTokenizePayload,
     mapToBraintreeShippingAddressOverride,
@@ -72,7 +73,11 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         }
 
         const currencyCode = state.cart.getCartOrThrow().currency.code;
-        const paypalCheckoutOptions = { currency: currencyCode };
+        const paypalCheckoutOptions: Partial<BraintreePaypalSdkCreatorConfig> = {
+            currency: currencyCode,
+            intent: paymentMethod.initializationData?.intent,
+        };
+
         const paypalCheckoutSuccessCallback = (
             braintreePaypalCheckout: BraintreePaypalCheckout,
         ) => {
@@ -142,7 +147,8 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
                 style: {
                     height: 40,
                 },
-                createOrder: () => this._setupPayment(braintreePaypalCheckout, braintreepaypal),
+                createOrder: () =>
+                    this._setupPayment(braintreePaypalCheckout, braintreepaypal, methodId),
                 onApprove: (authorizeData: PaypalAuthorizeData) =>
                     this._tokenizePayment(
                         authorizeData,
@@ -163,6 +169,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
     private async _setupPayment(
         braintreePaypalCheckout: BraintreePaypalCheckout,
         braintreepaypal: BraintreePaypalCustomerInitializeOptions,
+        methodId: string,
     ): Promise<string | void> {
         try {
             const state = await this._store.dispatch(
@@ -172,6 +179,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
             const amount = state.checkout.getCheckoutOrThrow().outstandingBalance;
             const currency = state.cart.getCartOrThrow().currency.code;
             const customer = state.customer.getCustomer();
+            const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
             const address = customer?.addresses[0];
             const shippingAddressOverride = address
                 ? mapToBraintreeShippingAddressOverride(address)
@@ -185,9 +193,11 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
                 amount,
                 currency,
                 offerCredit: false,
+                intent: paymentMethod.initializationData?.intent,
             });
         } catch (error) {
             const { container, onError } = braintreepaypal;
+
             this._handleError(error, container, onError);
         }
     }
@@ -218,6 +228,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
             return tokenizePayload;
         } catch (error) {
             const { container, onError } = braintreepaypal;
+
             this._handleError(error, container, onError);
         }
     }

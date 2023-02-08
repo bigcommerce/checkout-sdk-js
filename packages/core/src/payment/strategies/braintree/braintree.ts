@@ -436,6 +436,7 @@ export interface BraintreePaypalCheckout {
 export interface BraintreePaypalSdkCreatorConfig {
     components?: string;
     currency?: string;
+    intent?: string;
 }
 
 /**
