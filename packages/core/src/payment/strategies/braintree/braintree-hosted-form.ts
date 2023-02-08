@@ -37,6 +37,7 @@ export default class BraintreeHostedForm {
     private _formOptions?: BraintreeFormOptions;
     private _type?: BraintreeHostedFormType;
     private _isInitializedHostedForm = false;
+    private _submitAttempted = false;
 
     constructor(private _braintreeSDKCreator: BraintreeSDKCreator) {}
 
@@ -64,6 +65,8 @@ export default class BraintreeHostedForm {
         this._cardFields.on('focus', this._handleFocus);
         this._cardFields.on('cardTypeChange', this._handleCardTypeChange);
         this._cardFields.on('validityChange', this._handleValidityChange);
+        this._cardFields.on('blur', this._handleValidityChange);
+        this._cardFields.on('empty', this._handleValidityChange);
         this._cardFields.on('inputSubmitRequest', this._handleInputSubmitRequest);
 
         if (isBraintreeFormFieldsMap(options.fields)) {
@@ -94,6 +97,8 @@ export default class BraintreeHostedForm {
         if (!this._cardFields) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
+
+        this._submitAttempted = true;
 
         try {
             const { nonce } = await this._cardFields.tokenize(
@@ -132,6 +137,8 @@ export default class BraintreeHostedForm {
         if (!this._cardFields) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
+
+        this._submitAttempted = true;
 
         try {
             const { nonce } = await this._cardFields.tokenize(
@@ -439,12 +446,44 @@ export default class BraintreeHostedForm {
         });
     };
 
-    private _handleValidityChange: (event: BraintreeHostedFieldsState) => void = (event) => {
+    private _mapValidationErrorsBeforeSubmit(
+        fields: BraintreeHostedFieldsState['fields'],
+    ): BraintreeFormFieldValidateEventData['errors'] {
+        return (Object.keys(fields) as Array<keyof BraintreeHostedFieldsState['fields']>).reduce(
+            (result, fieldKey) => ({
+                ...result,
+                [this._mapFieldType(fieldKey)]:
+                    fields[fieldKey]?.isEmpty || fields[fieldKey]?.isValid
+                        ? undefined
+                        : [this._createInvalidError(this._mapFieldType(fieldKey))],
+            }),
+            {},
+        );
+    }
+
+    private _setErrorsBeforeSubmit: (event: BraintreeHostedFieldsState) => void = (event) => {
+        this._formOptions?.onValidate?.({
+            isValid: (
+                Object.keys(event.fields) as Array<keyof BraintreeHostedFieldsState['fields']>
+            ).every((key) => event.fields[key]?.isEmpty || event.fields[key]?.isValid),
+            errors: this._mapValidationErrorsBeforeSubmit(event.fields),
+        });
+    };
+
+    private _setErrorsAfterSubmit: (event: BraintreeHostedFieldsState) => void = (event) => {
         this._formOptions?.onValidate?.({
             isValid: (
                 Object.keys(event.fields) as Array<keyof BraintreeHostedFieldsState['fields']>
             ).every((key) => event.fields[key]?.isValid),
             errors: this._mapValidationErrors(event.fields),
         });
+    };
+
+    private _handleValidityChange: (event: BraintreeHostedFieldsState) => void = (event) => {
+        if (this._submitAttempted) {
+            this._setErrorsAfterSubmit(event);
+        } else {
+            this._setErrorsBeforeSubmit(event);
+        }
     };
 }
