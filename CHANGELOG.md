@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.338.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.337.0...v1.338.0) (2023-02-08)
+
+
+### Features
+
+* **payment:** PAYPAL-1930 added intent param to Braintree sdk and to the paypal order creation config ([#1826](https://github.com/bigcommerce/checkout-sdk-js/issues/1826)) ([5166212](https://github.com/bigcommerce/checkout-sdk-js/commit/51662123f0fc567aff9dcfabcdadfc41bde2eb42))
+
 ## [1.337.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.336.2...v1.337.0) (2023-02-07)
 
 
