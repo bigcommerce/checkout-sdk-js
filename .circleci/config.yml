@@ -25,6 +25,7 @@ jobs:
     parallelism: 2
     steps:
       - ci/pre-setup
+      - run: npm config set legacy-peer-deps true
       - node/npm-install
       - run: mkdir ~/junit
       - run:
