@@ -94,7 +94,7 @@ export type UXSettingNames = 'walletButtonsOnTop';
 export interface CheckoutSettings {
     features: { [featureName: string]: boolean };
     checkoutBillingSameAsShippingEnabled: boolean;
-    checkoutUXSettings: { [key in UXSettingNames]: boolean };
+    CheckoutUserExperienceSettings: { [key in UXSettingNames]: boolean };
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
     googleMapsApiKey: string;
