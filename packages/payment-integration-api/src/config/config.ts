@@ -88,12 +88,12 @@ export interface StoreCurrency {
     thousandsSeparator: string;
 }
 
-export type UXSettingNames = 'walletButtonsOnTop';
+export type UserExperienceSettingNames = 'walletButtonsOnTop';
 
 export interface CheckoutSettings {
     features: { [featureName: string]: boolean };
     checkoutBillingSameAsShippingEnabled: boolean;
-    CheckoutUserExperienceSettings: { [key in UXSettingNames]: boolean };
+    CheckoutUserExperienceSettings: { [key in UserExperienceSettingNames]: boolean };
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
     googleMapsApiKey: string;
