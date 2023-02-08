@@ -92,6 +92,7 @@ export interface StoreCurrency {
 export interface CheckoutSettings {
     features: { [featureName: string]: boolean };
     checkoutBillingSameAsShippingEnabled: boolean;
+    checkoutUXSettings: { [settingName: string]: boolean };
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
     googleMapsApiKey: string;
