@@ -180,14 +180,25 @@ export interface WalletOptions {
  * All available options are here https://stripe.com/docs/js/elements_object/create_payment_element
  */
 export interface StripeElementsCreateOptions {
+    mode?: string;
     fields?: FieldsOptions;
     wallets?: WalletOptions;
     allowedCountries?: string[];
     defaultValues?: ShippingDefaultValues | CustomerDefaultValues;
+    validation?: validationElement;
+}
+
+interface validationElement {
+    phone?: validationRequiredElement;
+}
+
+interface validationRequiredElement {
+    required?: string;
 }
 
 interface ShippingDefaultValues {
     name: string;
+    phone: string;
     address: {
         line1: string;
         line2: string;

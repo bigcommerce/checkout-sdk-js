@@ -8,6 +8,7 @@ import {
 import { PaymentMethodActionCreator } from '../../../payment';
 import {
     StripeElements,
+    StripeElementsCreateOptions,
     StripeElementType,
     StripeEventType,
     StripeScriptLoader,
@@ -139,28 +140,10 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
         });
 
         const shipping = getShippingAddress();
-        const stripeState =
-            shipping?.stateOrProvinceCode && shipping?.countryCode
-                ? getStripeState(shipping?.countryCode, shipping?.stateOrProvinceCode)
-                : shipping?.stateOrProvinceCode;
         const shippingPhoneField = shippingFields.find((field) => field.name === 'phone');
-        const option = {
+        let option: StripeElementsCreateOptions = {
             mode: 'shipping',
             allowedCountries: [availableCountries],
-            defaultValues: {
-                name: shipping?.lastName
-                    ? `${shipping.firstName} ${shipping.lastName}`
-                    : shipping?.firstName || '',
-                phone: shipping?.phone || '',
-                address: {
-                    line1: shipping?.address1 || '',
-                    line2: shipping?.address2 || '',
-                    city: shipping?.city || '',
-                    state: stripeState || '',
-                    postal_code: shipping?.postalCode || '',
-                    country: shipping?.countryCode || '',
-                },
-            },
             fields: {
                 phone: 'always',
             },
@@ -171,6 +154,40 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
                 },
             },
         };
+
+        if (shipping) {
+            const {
+                stateOrProvinceCode,
+                countryCode,
+                lastName,
+                firstName,
+                phone,
+                address1,
+                address2,
+                city,
+                postalCode,
+            } = shipping;
+            const stripeState =
+                shipping && stateOrProvinceCode && countryCode
+                    ? getStripeState(countryCode, stateOrProvinceCode)
+                    : stateOrProvinceCode;
+
+            option = {
+                ...option,
+                defaultValues: {
+                    name: lastName ? `${firstName} ${lastName}` : firstName,
+                    phone,
+                    address: {
+                        line1: address1,
+                        line2: address2,
+                        city,
+                        state: stripeState,
+                        postal_code: postalCode,
+                        country: countryCode,
+                    },
+                },
+            };
+        }
 
         let shippingAddressElement = this._stripeElements.getElement(StripeElementType.SHIPPING);
 
