@@ -14,6 +14,7 @@ import {
     BraintreeModule,
     BraintreePaypal,
     BraintreePaypalCheckout,
+    BraintreePaypalSdkCreatorConfig,
     BraintreeThreeDSecure,
     BraintreeVenmoCheckout,
     BraintreeVisaCheckout,
@@ -71,7 +72,7 @@ export default class BraintreeSDKCreator {
     }
 
     async getPaypalCheckout(
-        config: { currency: string },
+        config: Partial<BraintreePaypalSdkCreatorConfig>,
         onSuccess: (instance: BraintreePaypalCheckout) => void,
         onError: (error: BraintreeError) => void,
     ): Promise<BraintreePaypalCheckout> {
@@ -91,6 +92,7 @@ export default class BraintreeSDKCreator {
             const paypalSdkLoadConfig = {
                 currency: config.currency,
                 components: PAYPAL_COMPONENTS.toString(),
+                intent: config.intent,
             };
 
             if (!this._window.paypal) {
