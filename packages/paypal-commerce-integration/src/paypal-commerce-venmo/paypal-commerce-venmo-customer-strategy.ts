@@ -24,8 +24,6 @@ import {
 import { WithPayPalCommerceVenmoCustomerInitializeOptions } from './paypal-commerce-venmo-customer-initialize-options';
 
 export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStrategy {
-    private paypalSdk?: PayPalSDK;
-
     constructor(
         private formPoster: FormPoster,
         private paymentIntegrationService: PaymentIntegrationService,
@@ -56,13 +54,16 @@ export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStra
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
-
-        this.paypalSdk = await this.paypalCommerceScriptLoader.getPayPalSDK(
+        const paypalSdk = await this.paypalCommerceScriptLoader.getPayPalSDK(
             paymentMethod,
             cart.currency.code,
         );
 
-        this.renderButton(container, methodId);
+        if (!paypalSdk) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        this.renderButton(container, methodId, paypalSdk);
     }
 
     deinitialize(): Promise<void> {
@@ -83,12 +84,9 @@ export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStra
         return Promise.resolve();
     }
 
-    private renderButton(containerId: string, methodId: string): void {
-        const paypalSdk = this.getPayPalSdkOrThrow();
-        const fundingSource = paypalSdk.FUNDING.VENMO;
-
+    private renderButton(containerId: string, methodId: string, paypalSdk: PayPalSDK): void {
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {
-            fundingSource,
+            fundingSource: paypalSdk.FUNDING.VENMO,
             style: {
                 height: 40,
             },
@@ -128,14 +126,6 @@ export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStra
             provider: methodId,
             order_id: orderId,
         });
-    }
-
-    private getPayPalSdkOrThrow(): PayPalSDK {
-        if (!this.paypalSdk) {
-            throw new PaymentMethodClientUnavailableError();
-        }
-
-        return this.paypalSdk;
     }
 
     private removeElement(elementId?: string): void {
