@@ -193,9 +193,29 @@ describe('DefaultPaymentIntegrationService', () => {
         it('loads payment method', async () => {
             const output = await subject.loadPaymentMethod('braintree');
 
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith('braintree');
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(
+                'braintree',
+                undefined,
+            );
             expect(store.dispatch).toHaveBeenCalledWith(
-                paymentMethodActionCreator.loadPaymentMethod('braintree'),
+                paymentMethodActionCreator.loadPaymentMethod('braintree', undefined),
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+
+        it('loads payment method with params', async () => {
+            const output = await subject.loadPaymentMethod('bluesnapdirect', {
+                params: { method: 'cc' },
+            });
+
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(
+                'bluesnapdirect',
+                { params: { method: 'cc' } },
+            );
+            expect(store.dispatch).toHaveBeenCalledWith(
+                paymentMethodActionCreator.loadPaymentMethod('bluesnapdirect', {
+                    params: { method: 'cc' },
+                }),
             );
             expect(output).toEqual(paymentIntegrationSelectors);
         });
