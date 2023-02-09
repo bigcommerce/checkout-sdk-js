@@ -21,7 +21,7 @@ export function getConfig(): Config {
             checkoutSettings: {
                 features: {},
                 checkoutBillingSameAsShippingEnabled: true,
-                CheckoutUserExperienceSettings: {
+                checkoutUserExperienceSettings: {
                     walletButtonsOnTop: false,
                 },
                 enableOrderComments: true,
