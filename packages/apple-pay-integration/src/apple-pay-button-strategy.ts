@@ -3,6 +3,7 @@ import { noop } from 'lodash';
 
 import {
     AddressRequestBody,
+    BuyNowCartCreationError,
     Cart,
     Checkout,
     CheckoutButtonInitializeOptions,
@@ -18,7 +19,9 @@ import {
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { WithApplePayButtonInitializeOptions } from './apple-pay-button-initialize-options';
+import ApplePayButtonInitializeOptions, {
+    WithApplePayButtonInitializeOptions,
+} from './apple-pay-button-initialize-options';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
@@ -36,6 +39,8 @@ function isShippingOptions(options: ShippingOption[] | undefined): options is Sh
 export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
+    private _requiresShipping?: boolean;
+    private _buyNowInitializeOptions?: ApplePayButtonInitializeOptions['buyNowInitializeOptions'];
     private _onAuthorizeCallback = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _shippingLabel: string = DefaultLabels.Shipping;
@@ -57,11 +62,18 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { buttonClassName, onPaymentAuthorize } = applepay;
+        const { buttonClassName, onPaymentAuthorize, buyNowInitializeOptions, requiresShipping } =
+            applepay;
+
+        this._requiresShipping = requiresShipping;
+
+        this._buyNowInitializeOptions = buyNowInitializeOptions;
 
         this._onAuthorizeCallback = onPaymentAuthorize;
 
-        await this._paymentIntegrationService.loadDefaultCheckout();
+        if (!buyNowInitializeOptions) {
+            await this._paymentIntegrationService.loadDefaultCheckout();
+        }
 
         await this._paymentIntegrationService.loadPaymentMethod(methodId);
 
@@ -103,24 +115,74 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         return button;
     }
 
-    private _handleWalletButtonClick(event: Event) {
+    private async _handleWalletButtonClick(event: Event) {
         event.preventDefault();
-
-        const state = this._paymentIntegrationService.getState();
-        const cart = state.getCartOrThrow();
-        const config = state.getStoreConfigOrThrow();
-        const checkout = state.getCheckoutOrThrow();
 
         if (!this._paymentMethod || !this._paymentMethod.initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
-        const applePaySession = this._sessionFactory.create(request);
+        if (
+            this._buyNowInitializeOptions &&
+            typeof this._buyNowInitializeOptions.getBuyNowCartRequestBody === 'function'
+        ) {
+            const {
+                countryCode,
+                currencyCode,
+                merchantCapabilities,
+                supportedNetworks,
+                storeName,
+            } = this._paymentMethod.initializationData;
 
-        this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
+            const request = this._getRequestWithEmptyTotal(
+                countryCode,
+                currencyCode,
+                supportedNetworks,
+                merchantCapabilities,
+            );
 
-        applePaySession.begin();
+            if (this._requiresShipping) {
+                request.requiredShippingContactFields?.push('postalAddress');
+            }
+
+            const applePaySession = this._sessionFactory.create(request);
+
+            this._handleApplePayEvents(applePaySession, this._paymentMethod, storeName);
+
+            applePaySession.begin();
+        } else {
+            const state = this._paymentIntegrationService.getState();
+            const cart = state.getCartOrThrow();
+            const config = state.getStoreConfigOrThrow();
+            const checkout = state.getCheckoutOrThrow();
+            const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
+            const applePaySession = this._sessionFactory.create(request);
+
+            this._handleApplePayEvents(
+                applePaySession,
+                this._paymentMethod,
+                config.storeProfile.storeName,
+            );
+
+            applePaySession.begin();
+        }
+    }
+
+    private _getRequestWithEmptyTotal(
+        countryCode: string,
+        currencyCode: string,
+        supportedNetworks: string[],
+        merchantCapabilities: ApplePayJS.ApplePayMerchantCapability[],
+    ): ApplePayJS.ApplePayPaymentRequest {
+        return {
+            countryCode,
+            currencyCode,
+            supportedNetworks,
+            merchantCapabilities,
+            total: { label: '', amount: '0', type: 'pending' },
+            requiredBillingContactFields: ['postalAddress'],
+            requiredShippingContactFields: ['email', 'phone'],
+        };
     }
 
     private _getBaseRequest(
@@ -190,7 +252,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _handleApplePayEvents(
         applePaySession: ApplePaySession,
         paymentMethod: PaymentMethod,
-        config: StoreConfig,
+        storeName: string,
     ) {
         applePaySession.onvalidatemerchant = async (event) => {
             try {
@@ -205,11 +267,23 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             }
         };
 
-        applePaySession.onshippingcontactselected = async (event) =>
-            this._handleShippingContactSelected(applePaySession, config, event);
+        if (this._buyNowInitializeOptions && !this._requiresShipping) {
+            applePaySession.onpaymentmethodselected = async () => {
+                await this._createBuyNowCart();
+                this._handlePaymentMethodSelected(applePaySession);
+            };
+        }
 
-        applePaySession.onshippingmethodselected = async (event) =>
-            this._handleShippingMethodSelected(applePaySession, config, event);
+        applePaySession.onshippingcontactselected = async (event) => {
+            if (this._buyNowInitializeOptions && this._requiresShipping) {
+                await this._createBuyNowCart();
+            }
+            await this._handleShippingContactSelected(applePaySession, storeName, event);
+        };
+
+        applePaySession.onshippingmethodselected = async (event) => {
+            await this._handleShippingMethodSelected(applePaySession, storeName, event);
+        };
 
         applePaySession.oncancel = async () => {
             try {
@@ -227,9 +301,44 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             this._onPaymentAuthorized(event, applePaySession, paymentMethod);
     }
 
+    private async _createBuyNowCart() {
+        try {
+            const cartRequestBody = this._buyNowInitializeOptions?.getBuyNowCartRequestBody?.();
+
+            if (!cartRequestBody) {
+                throw new MissingDataError(MissingDataErrorType.MissingCart);
+            }
+            const buyNowCart = await this._paymentIntegrationService.createBuyNowCart(
+                cartRequestBody,
+            );
+            await this._paymentIntegrationService.loadCheckout(buyNowCart.id);
+        } catch (error) {
+            throw new BuyNowCartCreationError();
+        }
+    }
+
+    private _handlePaymentMethodSelected(applePaySession: ApplePaySession) {
+        const state = this._paymentIntegrationService.getState();
+        const cart = state.getCartOrThrow();
+        const config = state.getStoreConfigOrThrow();
+        const checkout = state.getCheckoutOrThrow();
+
+        if (!this._paymentMethod || !this._paymentMethod.initializationData) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
+        delete request.total.type;
+
+        applePaySession.completePaymentMethodSelection({
+            newTotal: request.total,
+            newLineItems: request.lineItems,
+        });
+    }
+
     private async _handleShippingContactSelected(
         applePaySession: ApplePaySession,
-        config: StoreConfig,
+        storeName: string,
         event: ApplePayJS.ApplePayShippingContactSelectedEvent,
     ) {
         const shippingAddress = this._transformContactToAddress(event.shippingContact);
@@ -242,9 +351,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             throw new Error('Shipping address update failed');
         }
 
-        const {
-            storeProfile: { storeName },
-        } = config;
         let state = this._paymentIntegrationService.getState();
         const {
             currency: { decimalPlaces },
@@ -327,12 +433,9 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
     private async _handleShippingMethodSelected(
         applePaySession: ApplePaySession,
-        config: StoreConfig,
+        storeName: string,
         event: ApplePayJS.ApplePayShippingMethodSelectedEvent,
     ) {
-        const {
-            storeProfile: { storeName },
-        } = config;
         const {
             shippingMethod: { identifier: optionId },
         } = event;
@@ -424,6 +527,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const state = this._paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         const requiresShipping = cart.lineItems.physicalItems.length > 0;
+
         const payment: Payment = {
             methodId: paymentMethod.id,
             paymentData: {
@@ -458,6 +562,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             await this._paymentIntegrationService.submitOrder({
                 useStoreCredit: false,
             });
+
             await this._paymentIntegrationService.submitPayment(payment);
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
