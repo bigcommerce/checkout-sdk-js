@@ -168,7 +168,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
                 postalCode,
             } = shipping;
             const stripeState =
-                shipping && stateOrProvinceCode && countryCode
+                stateOrProvinceCode && countryCode
                     ? getStripeState(countryCode, stateOrProvinceCode)
                     : stateOrProvinceCode;
 
