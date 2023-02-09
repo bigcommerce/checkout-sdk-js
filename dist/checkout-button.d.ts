@@ -201,6 +201,16 @@ declare interface ApplePayButtonInitializeOptions {
  */
 declare interface ApplePayButtonInitializeOptions_2 {
     /**
+     * This option indicates if product requires shipping
+     */
+    requiresShipping?: boolean;
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
+    };
+    /**
      * The class name of the ApplePay button style.
      */
     buttonClassName?: string;

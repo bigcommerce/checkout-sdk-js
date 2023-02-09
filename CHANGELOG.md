@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.341.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.340.0...v1.341.0) (2023-02-09)
+
+
+### Features
+
+* **payment:** PAYPAL-1634 added ability for applepay spb to work with buyNowCart on PDP ([#1809](https://github.com/bigcommerce/checkout-sdk-js/issues/1809)) ([0490606](https://github.com/bigcommerce/checkout-sdk-js/commit/049060659cb6bcf380177343697420b85767abf6))
+
 ## [1.340.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.339.0...v1.340.0) (2023-02-09)
 
 
