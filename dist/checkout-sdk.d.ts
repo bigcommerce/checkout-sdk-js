@@ -3296,6 +3296,9 @@ declare interface CheckoutSettings {
         [featureName: string]: boolean;
     };
     checkoutBillingSameAsShippingEnabled: boolean;
+    CheckoutUserExperienceSettings: {
+        [key in UserExperienceSettingNames]: boolean;
+    };
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
     googleMapsApiKey: string;
@@ -7484,6 +7487,8 @@ declare interface Translations {
 declare interface UnknownObject {
     [key: string]: unknown;
 }
+
+declare type UserExperienceSettingNames = 'walletButtonsOnTop';
 
 declare interface VaultedInstrument {
     instrumentId: string;

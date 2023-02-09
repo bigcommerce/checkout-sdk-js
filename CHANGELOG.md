@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.339.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.338.0...v1.339.0) (2023-02-09)
+
+
+### Features
+
+* **checkout:** CHECKOUT-7231 Add checkoutUXSettings to interface ([#1825](https://github.com/bigcommerce/checkout-sdk-js/issues/1825)) ([5191b61](https://github.com/bigcommerce/checkout-sdk-js/commit/5191b61d7aa8d0e8dbe10f28fa190c39f5a3a5cd))
+
 ## [1.338.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.337.0...v1.338.0) (2023-02-08)
 
 

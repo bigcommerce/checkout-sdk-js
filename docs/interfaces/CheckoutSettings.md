@@ -6,6 +6,7 @@
 
 ### Properties
 
+- [CheckoutUserExperienceSettings](CheckoutSettings.md#checkoutuserexperiencesettings)
 - [checkoutBillingSameAsShippingEnabled](CheckoutSettings.md#checkoutbillingsameasshippingenabled)
 - [enableOrderComments](CheckoutSettings.md#enableordercomments)
 - [enableTermsAndConditions](CheckoutSettings.md#enabletermsandconditions)
@@ -35,6 +36,18 @@
 - [shippingQuoteFailedMessage](CheckoutSettings.md#shippingquotefailedmessage)
 
 ## Properties
+
+### CheckoutUserExperienceSettings
+
+• **CheckoutUserExperienceSettings**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `walletButtonsOnTop` | `boolean` |
+
+___
 
 ### checkoutBillingSameAsShippingEnabled
 

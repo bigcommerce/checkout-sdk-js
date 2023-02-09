@@ -431,6 +431,7 @@
 - [PaypalCommerceInitializeOptions](README.md#paypalcommerceinitializeoptions)
 - [StripeElementOptions](README.md#stripeelementoptions)
 - [StripeEventType](README.md#stripeeventtype)
+- [UserExperienceSettingNames](README.md#userexperiencesettingnames)
 
 ### Functions
 
@@ -724,6 +725,12 @@ ___
 ### StripeEventType
 
 Ƭ **StripeEventType**: [`StripeShippingEvent`](interfaces/StripeShippingEvent.md) \| [`StripeCustomerEvent`](interfaces/StripeCustomerEvent.md)
+
+___
+
+### UserExperienceSettingNames
+
+Ƭ **UserExperienceSettingNames**: ``"walletButtonsOnTop"``
 
 ## Functions
 
