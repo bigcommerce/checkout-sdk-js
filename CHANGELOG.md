@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.342.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.341.0...v1.342.0) (2023-02-09)
+
+
+### Features
+
+* **payment:** INT-7044 BlueSnapDirect: Pass options to `loadPaymentMethod` ([#1810](https://github.com/bigcommerce/checkout-sdk-js/issues/1810)) ([4bf09ff](https://github.com/bigcommerce/checkout-sdk-js/commit/4bf09ffa34003283678fc4e80d27648976547e67))
+
 ## [1.341.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.340.0...v1.341.0) (2023-02-09)
 
 
