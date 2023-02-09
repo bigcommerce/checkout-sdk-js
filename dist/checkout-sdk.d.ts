@@ -3296,7 +3296,7 @@ declare interface CheckoutSettings {
         [featureName: string]: boolean;
     };
     checkoutBillingSameAsShippingEnabled: boolean;
-    CheckoutUserExperienceSettings: {
+    checkoutUserExperienceSettings: {
         [key in UserExperienceSettingNames]: boolean;
     };
     enableOrderComments: boolean;
