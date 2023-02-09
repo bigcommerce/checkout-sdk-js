@@ -48,18 +48,19 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         methodId,
         paypalcommerce,
     }: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const {
-            paymentMethods: { getPaymentMethodOrThrow },
-            cart: { getCartOrThrow },
-            billingAddress: { getBillingAddressOrThrow },
-        } = this._store.getState();
+        const state = this._store.getState();
 
-        const paymentMethod = getPaymentMethodOrThrow(methodId, gatewayId);
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId, gatewayId);
         const { initializationData } = paymentMethod;
         const { orderId, buttonStyle, shouldRenderFields } = initializationData ?? {};
 
+        // TODO: this is a part of PayPal APMs payment strategy
         this._isAPM = gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS;
 
+        // We should not to render PayPal smart payment button for cases when the customer:
+        // 1) Automatically redirected to the checkout page after clicking on PayPal Smart Payment Button on PDP or Cart page;
+        // 2) Started working with PayPal payment button but canceled it to update cart or whatever
+        // Backend returns order id if it is available in checkout session. Therefore, it is not necessary to render PayPal button
         if (orderId) {
             this._orderId = orderId;
 
@@ -86,22 +87,30 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             submitForm,
             onValidate,
         } = paypalcommerce;
-        const {
-            id: cartId,
-            currency: { code: currencyCode },
-        } = getCartOrThrow();
-        const { firstName, lastName, email } = getBillingAddressOrThrow();
 
+        const cart = state.cart.getCartOrThrow();
+        const cartId = cart.id;
+        const currencyCode = cart.currency.code;
+        const { firstName, lastName, email } = state.billingAddress.getBillingAddressOrThrow();
+
+        // TODO: should double check the container id
         const loadingIndicatorContainerId = container.split('#')[1];
 
         const buttonParams: ButtonsOptions = {
             style: buttonStyle,
             onApprove: (data) => {
+
+                // TODO: this is a part of PayPal APMs payment strategy
                 this._deinitializePollingTimer(gatewayId);
+
                 this._tokenizePayment(data, submitForm);
+
+                // TODO: should it still be here? Yes, because it showed up after smart payment button click
                 this._loadingIndicator.hide();
             },
             onClick: async (_, actions) => {
+                // TODO: this is a part of PayPal APMs payment strategy
+                // Полінг механізм потрібен для відслідковування статусу пеймента
                 this._initializePollingMechanism(submitForm, gatewayId, methodId, paypalcommerce);
 
                 const onValidationPassed = () => {
@@ -113,20 +122,28 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
                 return onValidate(onValidationPassed, actions.reject);
             },
             onCancel: () => {
+                // TODO: this is a part of PayPal APMs payment strategy
                 this._deinitializePollingTimer(gatewayId);
                 this._loadingIndicator.hide();
             },
             onError: (e: Error) => {
+                // TODO: this is a part of PayPal APMs payment strategy
                 this._deinitializePollingTimer(gatewayId);
                 this._loadingIndicator.hide();
+
                 paypalcommerce.onError?.(e);
             },
         };
 
+        // TODO: we don't need this method anymore
         await this._paypalCommercePaymentProcessor.initialize(paymentMethod, currencyCode);
 
+        // TODO:
+        // Question: Do we really need paypalCommerceFundingKeyResolver?
+        // Is there any chance to make it work without extra class?
         const fundingKey = this._paypalCommerceFundingKeyResolver.resolve(methodId, gatewayId);
 
+        // TODO: this is a part of PayPal APMs payment strategy
         if (this._isAPM && shouldRenderFields) {
             const fullName = `${firstName} ${lastName}`;
 
@@ -145,6 +162,8 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             });
         }
 
+        // This one should be done in all payment strategies
+        // but not as a method of payment processor, but like another method for that
         this._paypalCommercePaymentProcessor.renderButtons(cartId, container, buttonParams, {
             onRenderButton,
             fundingKey,
@@ -168,6 +187,12 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             throw new PaymentMethodInvalidError();
         }
 
+        // TODO: this is a part of PayPal APMs payment strategy
+        // Не моментальні пеймент методи
+        if (NON_INSTANT_PAYMENT_METHODS.indexOf(options.methodId) === -1) {
+            await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+        }
+
         const paymentData = {
             formattedPayload: {
                 vault_payment_instrument: null,
@@ -180,10 +205,6 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             },
         };
 
-        if (NON_INSTANT_PAYMENT_METHODS.indexOf(options.methodId) === -1) {
-            await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
-        }
-
         return this._store.dispatch(
             this._paymentActionCreator.submitPayment({ ...payment, paymentData }),
         );
@@ -194,6 +215,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
     }
 
     async deinitialize({ gatewayId }: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        // TODO: this is a part of PayPal APMs payment strategy
         this._deinitializePollingTimer(gatewayId);
         this._orderId = undefined;
         this._paypalCommercePaymentProcessor.deinitialize();
@@ -201,6 +223,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
+    // TODO: this is a part of PayPal APMs payment strategy
     private _initializePollingMechanism(
         submitForm: () => void,
         gatewayId?: string,
@@ -247,6 +270,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         }, POLLING_INTERVAL);
     }
 
+    // TODO: this is a part of PayPal APMs payment strategy
     private _reinitializeButtons({
         gatewayId,
         methodId,
@@ -256,6 +280,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         this.initialize({ gatewayId, methodId, paypalcommerce });
     }
 
+    // TODO: this is a part of PayPal APMs payment strategy
     private _deinitializePollingTimer(gatewayId?: string) {
         if (gatewayId === PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS) {
             clearTimeout(this._pollingInterval);
@@ -263,6 +288,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         }
     }
 
+    // TODO: this method should be removed when the APMs and other methods will have different strategies
     private _isPaypalCommerceOptionsPayments(
         options:
             | PaypalCommercePaymentInitializeOptions
@@ -271,6 +297,7 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
         return !!(options as PaypalCommercePaymentInitializeOptions).container;
     }
 
+    // TODO: ?. Why do we need to contain this order id in a global variable?
     private _tokenizePayment({ orderID }: ApproveCallbackPayload, submitForm: () => void) {
         this._orderId = orderID;
         submitForm();

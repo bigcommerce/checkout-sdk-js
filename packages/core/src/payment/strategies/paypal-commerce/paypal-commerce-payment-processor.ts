@@ -184,6 +184,7 @@ export default class PaypalCommercePaymentProcessor {
         return this._paypalFields;
     }
 
+    // TODO: трошки тупо мати такий метод в процессорі...
     getOrderId(): string {
         if (!this._orderId) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
@@ -192,6 +193,7 @@ export default class PaypalCommercePaymentProcessor {
         return this._orderId;
     }
 
+    // TODO: we dont need this method anymore
     renderMessages(cartTotal: number, container: string): PaypalCommerceMessages {
         if (!this._paypal || !this._paypal.Messages) {
             throw new PaymentMethodClientUnavailableError();
