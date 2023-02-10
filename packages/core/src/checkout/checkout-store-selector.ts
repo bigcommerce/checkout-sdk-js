@@ -541,7 +541,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
                 }
 
                 return config.checkoutSettings.checkoutUserExperienceSettings;
-        }),
+            }),
     );
 
     return memoizeOne((state: InternalCheckoutSelectors): CheckoutStoreSelector => {

@@ -7,7 +7,6 @@ import {
     PaymentIntegrationSelectors,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import {
     getBuyNowCart,
     getBuyNowCartRequestBody,
