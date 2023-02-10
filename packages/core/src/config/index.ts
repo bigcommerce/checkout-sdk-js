@@ -7,6 +7,7 @@ export {
     ShopperCurrency,
     FlashMessage,
     FlashMessageType,
+    UserExperienceSettings,
 } from './config';
 export { default as ConfigActionCreator } from './config-action-creator';
 export {

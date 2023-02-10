@@ -6,7 +6,7 @@ import { BillingAddress } from '../billing';
 import { Cart } from '../cart';
 import { createSelector } from '../common/selector';
 import { cloneResult as clone } from '../common/utility';
-import { FlashMessage, FlashMessageType, StoreConfig } from '../config';
+import { FlashMessage, FlashMessageType, StoreConfig, UserExperienceSettings } from '../config';
 import { Coupon, GiftCertificate } from '../coupon';
 import { Customer } from '../customer';
 import { FormField } from '../form';
@@ -268,6 +268,13 @@ export default interface CheckoutStoreSelector {
         consignmentId: string,
         searchArea: SearchArea,
     ): PickupOptionResult[] | undefined;
+
+    /**
+     * Gets user experience settings.
+     *
+     * @returns The object of user experience settings if it is loaded, otherwise undefined.
+     */
+    getUserExperienceSettings(): UserExperienceSettings | undefined;
 }
 
 export type CheckoutStoreSelectorFactory = (
@@ -523,6 +530,20 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         (getPickupOptions) => clone(getPickupOptions),
     );
 
+    const getUserExperienceSettings = createSelector(
+        ({ config }: InternalCheckoutSelectors) => config.getStoreConfig,
+        (getStoreConfig) =>
+            clone(() => {
+                const config = getStoreConfig();
+
+                if (!config) {
+                    return;
+                }
+
+                return config.checkoutSettings.checkoutUserExperienceSettings;
+            }),
+    );
+
     return memoizeOne((state: InternalCheckoutSelectors): CheckoutStoreSelector => {
         return {
             getCheckout: getCheckout(state),
@@ -551,6 +572,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             getBillingAddressFields: getBillingAddressFields(state),
             getShippingAddressFields: getShippingAddressFields(state),
             getPickupOptions: getPickupOptions(state),
+            getUserExperienceSettings: getUserExperienceSettings(state),
         };
     });
 }

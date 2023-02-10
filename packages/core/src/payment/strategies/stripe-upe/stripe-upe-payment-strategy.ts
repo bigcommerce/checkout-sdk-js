@@ -38,6 +38,7 @@ import {
     StripeUPEClient,
 } from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
+
 import { StripeUPEPaymentInitializeOptions } from './';
 
 const APM_REDIRECT = [

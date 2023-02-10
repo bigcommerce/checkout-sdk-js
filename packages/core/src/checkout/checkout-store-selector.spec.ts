@@ -89,6 +89,13 @@ describe('CheckoutStoreSelector', () => {
         expect(selector.getCustomer()).toEqual(internalSelectors.customer.getCustomer());
     });
 
+    it('returns user experience settings', () => {
+        expect(selector.getUserExperienceSettings()).toEqual(
+            internalSelectors.config.getStoreConfigOrThrow().checkoutSettings
+                .checkoutUserExperienceSettings,
+        );
+    });
+
     describe('#getBillingAddress()', () => {
         it('returns billing address', () => {
             expect(selector.getBillingAddress()).toEqual(
