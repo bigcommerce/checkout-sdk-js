@@ -45,13 +45,7 @@ ___
 
 ### checkoutUserExperienceSettings
 
-• **checkoutUserExperienceSettings**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `walletButtonsOnTop` | `boolean` |
+• **checkoutUserExperienceSettings**: [`UserExperienceSettings`](../README.md#userexperiencesettings)
 
 ___
 

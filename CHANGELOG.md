@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.343.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.342.0...v1.343.0) (2023-02-10)
+
+
+### Features
+
+* **checkout:** CHECKOUT-7231 Add getUserExperienceSettings selector ([#1834](https://github.com/bigcommerce/checkout-sdk-js/issues/1834)) ([c204427](https://github.com/bigcommerce/checkout-sdk-js/commit/c204427487409b4cb0848da7b228d2749bed6fd5))
+
 ## [1.342.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.341.0...v1.342.0) (2023-02-09)
 
 

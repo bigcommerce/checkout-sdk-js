@@ -3306,9 +3306,7 @@ declare interface CheckoutSettings {
         [featureName: string]: boolean;
     };
     checkoutBillingSameAsShippingEnabled: boolean;
-    checkoutUserExperienceSettings: {
-        [key in UserExperienceSettingNames]: boolean;
-    };
+    checkoutUserExperienceSettings: UserExperienceSettings;
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
     googleMapsApiKey: string;
@@ -3812,6 +3810,12 @@ declare interface CheckoutStoreSelector {
      * otherwise undefined.
      */
     getPickupOptions(consignmentId: string, searchArea: SearchArea): PickupOptionResult[] | undefined;
+    /**
+     * Gets user experience settings.
+     *
+     * @returns The object of user experience settings if it is loaded, otherwise undefined.
+     */
+    getUserExperienceSettings(): UserExperienceSettings | undefined;
 }
 
 /**
@@ -7499,6 +7503,10 @@ declare interface UnknownObject {
 }
 
 declare type UserExperienceSettingNames = 'walletButtonsOnTop';
+
+declare type UserExperienceSettings = {
+    [key in UserExperienceSettingNames]: boolean;
+};
 
 declare interface VaultedInstrument {
     instrumentId: string;

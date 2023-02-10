@@ -432,6 +432,7 @@
 - [StripeElementOptions](README.md#stripeelementoptions)
 - [StripeEventType](README.md#stripeeventtype)
 - [UserExperienceSettingNames](README.md#userexperiencesettingnames)
+- [UserExperienceSettings](README.md#userexperiencesettings)
 
 ### Functions
 
@@ -731,6 +732,12 @@ ___
 ### UserExperienceSettingNames
 
 Ƭ **UserExperienceSettingNames**: ``"walletButtonsOnTop"``
+
+___
+
+### UserExperienceSettings
+
+Ƭ **UserExperienceSettings**: { [key in UserExperienceSettingNames]: boolean }
 
 ## Functions
 

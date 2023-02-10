@@ -35,6 +35,7 @@ checkout information, such as shipping and billing details.
 - [getShippingCountries](CheckoutStoreSelector.md#getshippingcountries)
 - [getShippingOptions](CheckoutStoreSelector.md#getshippingoptions)
 - [getSignInEmail](CheckoutStoreSelector.md#getsigninemail)
+- [getUserExperienceSettings](CheckoutStoreSelector.md#getuserexperiencesettings)
 - [isPaymentDataRequired](CheckoutStoreSelector.md#ispaymentdatarequired)
 - [isPaymentDataSubmitted](CheckoutStoreSelector.md#ispaymentdatasubmitted)
 
@@ -444,6 +445,20 @@ Gets the sign-in email.
 `undefined` \| [`SignInEmail`](SignInEmail.md)
 
 The sign-in email object if sent, otherwise undefined
+
+___
+
+### getUserExperienceSettings
+
+▸ **getUserExperienceSettings**(): `undefined` \| [`UserExperienceSettings`](../README.md#userexperiencesettings)
+
+Gets user experience settings.
+
+#### Returns
+
+`undefined` \| [`UserExperienceSettings`](../README.md#userexperiencesettings)
+
+The object of user experience settings if it is loaded, otherwise undefined.
 
 ___
 
