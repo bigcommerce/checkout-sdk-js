@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.345.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.345.0...v1.345.1) (2023-02-13)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-0000 Remove ApplePay button style ([#1836](https://github.com/bigcommerce/checkout-sdk-js/issues/1836)) ([185b35a](https://github.com/bigcommerce/checkout-sdk-js/commit/185b35a9d8a92d40a40affac9796cb572be50f65))
+
 ## [1.345.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.344.0...v1.345.0) (2023-02-13)
 
 
