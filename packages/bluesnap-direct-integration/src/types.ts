@@ -1,3 +1,8 @@
+export type BluesnapDirectNocInputAllowedStyle = Pick<
+    CSSStyleDeclaration,
+    'color' | 'fontFamily' | 'fontSize' | 'fontWeight'
+>;
+
 export interface BlueSnapDirectStyleDeclaration {
     [k: string]: string;
 }
@@ -46,6 +51,7 @@ export enum BlueSnapDirectErrorCode {
 export enum BlueSnapDirectHostedFieldTagId {
     CardCode = 'cvv',
     CardExpiry = 'exp',
+    CardName = 'noc',
     CardNumber = 'ccn',
 }
 
@@ -100,6 +106,10 @@ export interface BlueSnapDirectCallbackCardData extends BlueSnapDirectCardData {
 
 interface BlueSnapDirectCallbackData extends BlueSnapDirectCallback {
     cardData: BlueSnapDirectCallbackCardData;
+}
+
+export interface WithBlueSnapDirectCardHolderName {
+    cardHolderName: string;
 }
 
 interface BlueSnapDirectSubmitError {

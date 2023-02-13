@@ -4,24 +4,22 @@ import {
     HostedInputValidateResults,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { CREDIT_CARD_ERRORS, HOSTED_FIELD_TYPES } from './bluesnap-direct-constants';
+import { BlueSnapHostedFieldType, CREDIT_CARD_ERRORS } from './bluesnap-direct-constants';
 import {
     BlueSnapDirectHostedFieldTagId as HostedFieldTagId,
     BlueSnapDirectErrorDescription as SubmitErrorDescription,
 } from './types';
 
 export default class BlueSnapHostedInputValidator {
-    private _errors: HostedInputValidateErrorDataMap = {
-        cardNumber: [CREDIT_CARD_ERRORS.empty.cardNumber],
-        cardExpiry: [CREDIT_CARD_ERRORS.empty.cardExpiry],
-        cardCode: [CREDIT_CARD_ERRORS.empty.cardCode],
-        cardName: [CREDIT_CARD_ERRORS.empty.cardName],
-    };
+    private _errors: HostedInputValidateErrorDataMap = {};
 
-    mergeErrors(errors: HostedInputValidateErrorDataMap): this {
-        this._errors = { ...this._errors, ...errors };
-
-        return this;
+    initialize(): void {
+        this._errors = {
+            cardNumber: [CREDIT_CARD_ERRORS.empty.cardNumber],
+            cardExpiry: [CREDIT_CARD_ERRORS.empty.cardExpiry],
+            cardCode: [CREDIT_CARD_ERRORS.empty.cardCode],
+            cardName: [CREDIT_CARD_ERRORS.empty.cardName],
+        };
     }
 
     validate(error?: {
@@ -44,7 +42,7 @@ export default class BlueSnapHostedInputValidator {
         tagId: HostedFieldTagId,
         errorDescription?: SubmitErrorDescription,
     ): void {
-        const fieldType = HOSTED_FIELD_TYPES[tagId];
+        const fieldType = BlueSnapHostedFieldType[tagId];
 
         this._errors[fieldType] = errorDescription
             ? [CREDIT_CARD_ERRORS[errorDescription][fieldType]]

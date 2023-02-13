@@ -3,21 +3,24 @@ import { kebabCase } from 'lodash';
 import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import {
     guard,
+    HostedCardFieldOptionsMap,
     HostedFieldBlurEventData,
     HostedFieldEnterEventData,
     HostedFieldFocusEventData,
     HostedFieldStylesMap,
     HostedFormOptions,
-    HostedInputValidateResults,
+    HostedInputValidateErrorData,
     InvalidArgumentError,
-    InvalidHostedFormValueError,
     NotInitializedError,
     NotInitializedErrorType,
+    PaymentInvalidFormError,
+    PaymentInvalidFormErrorDetails,
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { HOSTED_FIELD_TYPES } from './bluesnap-direct-constants';
+import { BlueSnapHostedFieldType } from './bluesnap-direct-constants';
 import BlueSnapHostedInputValidator from './bluesnap-direct-hosted-input-validator';
+import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input';
 import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
 import isHostedCardFieldOptionsMap from './is-hosted-card-field-options-map';
 import {
@@ -26,6 +29,7 @@ import {
     BlueSnapDirectCallbackCardData as CallbackCardData,
     BlueSnapDirectCallbackError as CallbackError,
     BlueSnapDirectCallbackResults as CallbackResults,
+    WithBlueSnapDirectCardHolderName as CardHolderName,
     BlueSnapDirectCardType as CardType,
     BlueSnapDirectCardTypeValues as CardTypeValues,
     BlueSnapDirectErrorCode as ErrorCode,
@@ -41,29 +45,45 @@ export default class BlueSnapDirectHostedForm {
 
     constructor(
         private _scriptLoader: BlueSnapDirectScriptLoader,
+        private _nameOnCardInput: BluesnapDirectNameOnCardInput,
         private _hostedInputValidator: BlueSnapHostedInputValidator,
     ) {}
 
     async initialize(testMode = false): Promise<void> {
         this._blueSnapSdk = await this._scriptLoader.load(testMode);
+        this._hostedInputValidator.initialize();
     }
 
     async attach(
         paymentFieldsToken: string,
-        { form }: CreditCardPaymentInitializeOptions,
+        { form: { fields, ...callbacksAndStyles } }: CreditCardPaymentInitializeOptions,
     ): Promise<void> {
-        this._onValidate = form.onValidate;
-        this._setCustomBlueSnapAttributes(form.fields);
+        const blueSnapSdk = this._getBlueSnapSdk();
 
-        return new Promise<void>((resolve) =>
-            this._getBlueSnapSdk().hostedPaymentFieldsCreate(
-                this._getHostedPaymentFieldsOptions(paymentFieldsToken, form, resolve),
-            ),
-        );
-    }
+        if (!isHostedCardFieldOptionsMap(fields)) {
+            throw new InvalidArgumentError(
+                'Field options must be of type HostedCardFieldOptionsMap',
+            );
+        }
 
-    onValidate(bcResults: HostedInputValidateResults): void {
-        this._onValidate?.(this._hostedInputValidator.mergeErrors(bcResults.errors).validate());
+        this._onValidate = callbacksAndStyles.onValidate;
+        this._setCustomBlueSnapAttributes(fields);
+
+        return new Promise<void>((resolve) => {
+            const options = this._getHostedPaymentFieldsOptions(
+                paymentFieldsToken,
+                fields,
+                callbacksAndStyles,
+                resolve,
+            );
+
+            blueSnapSdk.hostedPaymentFieldsCreate(options);
+            this._nameOnCardInput.attach(
+                options,
+                fields.cardName.accessibilityLabel,
+                fields.cardName.placeholder,
+            );
+        });
     }
 
     validate(): this {
@@ -72,13 +92,21 @@ export default class BlueSnapDirectHostedForm {
         this._onValidate?.(results);
 
         if (!results.isValid) {
-            throw new InvalidHostedFormValueError(results.errors);
+            const details = Object.entries(results.errors).reduce<PaymentInvalidFormErrorDetails>(
+                (result, [key, value]: [string, HostedInputValidateErrorData[]]) => ({
+                    ...result,
+                    [key]: value.map(({ message, type }) => ({ message, type })),
+                }),
+                {},
+            );
+
+            throw new PaymentInvalidFormError(details);
         }
 
         return this;
     }
 
-    submit(): Promise<CallbackCardData> {
+    submit(): Promise<CallbackCardData & CardHolderName> {
         return new Promise((resolve, reject) =>
             this._getBlueSnapSdk().hostedPaymentFieldsSubmitData((data: CallbackResults) =>
                 this._isBlueSnapDirectCallbackError(data)
@@ -89,9 +117,16 @@ export default class BlueSnapDirectHostedForm {
                               } and errors: ${JSON.stringify(data.error)}`,
                           ),
                       )
-                    : resolve(data.cardData),
+                    : resolve({
+                          ...data.cardData,
+                          cardHolderName: this._nameOnCardInput.getValue(),
+                      }),
             ),
         );
+    }
+
+    detach(): void {
+        this._nameOnCardInput.detach();
     }
 
     private _isBlueSnapDirectCallbackError(data: CallbackResults): data is CallbackError {
@@ -100,7 +135,15 @@ export default class BlueSnapDirectHostedForm {
 
     private _getHostedPaymentFieldsOptions(
         token: string,
-        { onFocus, onBlur, onValidate, onCardTypeChange, onEnter, styles }: HostedFormOptions,
+        fields: HostedCardFieldOptionsMap,
+        {
+            onFocus,
+            onBlur,
+            onValidate,
+            onCardTypeChange,
+            onEnter,
+            styles,
+        }: Omit<HostedFormOptions, 'fields'>,
         resolve: () => void,
     ): HostedPaymentFieldsOptions {
         return {
@@ -116,9 +159,9 @@ export default class BlueSnapDirectHostedForm {
                 onValid: (tagId: HostedFieldTagId) =>
                     onValidate?.(this._hostedInputValidator.validate({ tagId })),
             },
-            ccnPlaceHolder: '',
-            cvvPlaceHolder: '',
-            expPlaceHolder: 'MM / YY',
+            ccnPlaceHolder: fields.cardNumber.placeholder || '',
+            cvvPlaceHolder: fields.cardCode?.placeholder || '',
+            expPlaceHolder: fields.cardExpiry.placeholder || 'MM / YY',
             ...(styles && { style: this._mapStyles(styles) }),
         };
     }
@@ -177,7 +220,7 @@ export default class BlueSnapDirectHostedForm {
     ): (tagId: HostedFieldTagId) => void {
         return (tagId) => {
             if (callback) {
-                callback({ fieldType: HOSTED_FIELD_TYPES[tagId] });
+                callback({ fieldType: BlueSnapHostedFieldType[tagId] });
             }
         };
     }
@@ -189,20 +232,20 @@ export default class BlueSnapDirectHostedForm {
         );
     }
 
-    private _setCustomBlueSnapAttributes(fields: HostedFieldOptionsMap): void {
-        if (!isHostedCardFieldOptionsMap(fields)) {
-            throw new InvalidArgumentError(
-                'Field options must be of type HostedCardFieldOptionsMap',
-            );
-        }
-
-        const { cardNumber, cardExpiry, cardCode } = fields;
+    private _setCustomBlueSnapAttributes(fields: HostedCardFieldOptionsMap): void {
+        const { cardNumber, cardExpiry, cardCode, cardName } = fields;
 
         const cardNumberContainer = document.getElementById(cardNumber.containerId);
         const cardExpiryContainer = document.getElementById(cardExpiry.containerId);
         const cardCodeContainer = cardCode && document.getElementById(cardCode.containerId);
+        const cardNameContainer = document.getElementById(cardName.containerId);
 
-        if (!cardNumberContainer || !cardExpiryContainer || !cardCodeContainer) {
+        if (
+            !cardNumberContainer ||
+            !cardExpiryContainer ||
+            !cardCodeContainer ||
+            !cardNameContainer
+        ) {
             throw new InvalidArgumentError(
                 'Unable to create hosted payment fields to invalid HTML container elements.',
             );
@@ -211,5 +254,6 @@ export default class BlueSnapDirectHostedForm {
         cardNumberContainer.dataset.bluesnap = HostedFieldTagId.CardNumber;
         cardExpiryContainer.dataset.bluesnap = HostedFieldTagId.CardExpiry;
         cardCodeContainer.dataset.bluesnap = HostedFieldTagId.CardCode;
+        cardNameContainer.dataset.bluesnap = HostedFieldTagId.CardName;
     }
 }

@@ -1,5 +1,3 @@
-import { HostedInputValidateErrorDataMap } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { CREDIT_CARD_ERRORS } from './bluesnap-direct-constants';
 import BlueSnapHostedInputValidator from './bluesnap-direct-hosted-input-validator';
 import {
@@ -12,6 +10,7 @@ describe('BlueSnapHostedInputValidator', () => {
 
     beforeEach(() => {
         validator = new BlueSnapHostedInputValidator();
+        validator.initialize();
     });
 
     it('should return an invalid result by default', () => {
@@ -28,20 +27,6 @@ describe('BlueSnapHostedInputValidator', () => {
         expect(validator.validate()).toStrictEqual(expectedResult);
     });
 
-    it('should return the BlueSnapHostedInputValidator instance', () => {
-        const errors: HostedInputValidateErrorDataMap = {
-            cardName: [
-                {
-                    fieldType: 'cardName',
-                    message: 'Full name is required',
-                    type: 'required',
-                },
-            ],
-        };
-
-        expect(validator.mergeErrors(errors)).toBe(validator);
-    });
-
     it('should return a valid result', () => {
         const expectedResult = {
             isValid: true,
@@ -56,8 +41,9 @@ describe('BlueSnapHostedInputValidator', () => {
         validator.validate({ tagId: HostedFieldTagId.CardCode });
         validator.validate({ tagId: HostedFieldTagId.CardExpiry });
         validator.validate({ tagId: HostedFieldTagId.CardNumber });
+        validator.validate({ tagId: HostedFieldTagId.CardName });
 
-        expect(validator.mergeErrors({ cardName: [] }).validate()).toStrictEqual(expectedResult);
+        expect(validator.validate()).toStrictEqual(expectedResult);
     });
 
     it('should return an invalid result', () => {
@@ -83,13 +69,11 @@ describe('BlueSnapHostedInputValidator', () => {
             tagId: HostedFieldTagId.CardCode,
             errorDescription: SubmitErrorDescription.INVALID,
         });
+        validator.validate({
+            tagId: HostedFieldTagId.CardName,
+            errorDescription: SubmitErrorDescription.EMPTY,
+        });
 
-        expect(
-            validator
-                .mergeErrors({
-                    cardName: [CREDIT_CARD_ERRORS.empty.cardName],
-                })
-                .validate(),
-        ).toStrictEqual(expectedResult);
+        expect(validator.validate()).toStrictEqual(expectedResult);
     });
 });

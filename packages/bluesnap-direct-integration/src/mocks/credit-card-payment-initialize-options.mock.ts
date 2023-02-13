@@ -4,6 +4,7 @@ export default function getBlueSnapPaymentInitializeOptionsMocks() {
     const ccCvvContainerId = 'ccCvv';
     const ccExpiryContainerId = 'ccExpiry';
     const ccNumberContainerId = 'ccNumber';
+    const ccNameContainerId = 'ccName';
     const style = {
         color: 'rgb (51, 51, 51)',
         fontFamily: 'Montserrat, Arial, Helvetica, sans-serif',
@@ -15,6 +16,7 @@ export default function getBlueSnapPaymentInitializeOptionsMocks() {
         ccCvvContainerId,
         ccExpiryContainerId,
         ccNumberContainerId,
+        ccNameContainerId,
         ccOptions: {
             form: {
                 fields: {
@@ -25,7 +27,7 @@ export default function getBlueSnapPaymentInitializeOptionsMocks() {
                         containerId: ccExpiryContainerId,
                     },
                     [HostedFieldType.CardName]: {
-                        containerId: 'blueSnapDoesNotCare',
+                        containerId: ccNameContainerId,
                     },
                     [HostedFieldType.CardNumber]: {
                         containerId: ccNumberContainerId,

@@ -21,6 +21,7 @@ export type PaymentInstrument =
     | FormattedPayload<
           | AdyenV2Instrument
           | AppleInstrument
+          | BlueSnapDirectCreditCardInstrument
           | BoltInstrument
           | PaypalInstrument
           | FormattedHostedInstrument
@@ -194,6 +195,12 @@ interface AdyenV2Card {
         token: string;
     };
     bigpay_token?: void;
+}
+
+interface BlueSnapDirectCreditCardInstrument {
+    credit_card_token: {
+        token: string;
+    };
 }
 
 interface StripeV3Intent {

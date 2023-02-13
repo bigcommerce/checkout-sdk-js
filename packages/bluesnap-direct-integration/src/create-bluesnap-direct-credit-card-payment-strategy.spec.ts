@@ -2,7 +2,7 @@ import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-int
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import BlueSnapDirectCreditCardPaymentStrategy from './bluesnap-direct-credit-card-payment-strategy';
-import createBlueSnapDirectCreditCardPaymentStrategy from './create-bluesnap-direct-payment-strategy';
+import createBlueSnapDirectCreditCardPaymentStrategy from './create-bluesnap-direct-credit-card-payment-strategy';
 
 describe('createBlueSnapDirectCreditCardPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;

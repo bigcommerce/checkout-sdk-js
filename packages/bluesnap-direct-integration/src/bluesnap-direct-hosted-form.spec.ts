@@ -3,14 +3,15 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import {
     InvalidArgumentError,
-    InvalidHostedFormValueError,
     NotInitializedError,
+    PaymentInvalidFormError,
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { HOSTED_FIELD_TYPES } from './bluesnap-direct-constants';
+import { BlueSnapHostedFieldType } from './bluesnap-direct-constants';
 import BlueSnapDirectHostedForm from './bluesnap-direct-hosted-form';
 import BlueSnapHostedInputValidator from './bluesnap-direct-hosted-input-validator';
+import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input';
 import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
 import getBlueSnapDirectSdkMock from './mocks/bluesnap-direct-sdk.mock';
 import getBlueSnapPaymentInitializeOptionsMocks from './mocks/credit-card-payment-initialize-options.mock';
@@ -28,6 +29,7 @@ describe('BlueSnapDirectHostedForm', () => {
     let sdkMocks: ReturnType<typeof getBlueSnapDirectSdkMock>;
     let blueSnapDirectSdkMock: BlueSnapDirectSdk;
     let scriptLoader: BlueSnapDirectScriptLoader;
+    let nameOnCardInput: BluesnapDirectNameOnCardInput;
     let hostedInputValidator: BlueSnapHostedInputValidator;
     let hostedForm: BlueSnapDirectHostedForm;
 
@@ -37,6 +39,7 @@ describe('BlueSnapDirectHostedForm', () => {
     let ccCvvContainer: HTMLDivElement;
     let ccExpiryContainer: HTMLDivElement;
     let ccNumberContainer: HTMLDivElement;
+    let ccNameContainer: HTMLDivElement;
 
     beforeEach(() => {
         sdkMocks = getBlueSnapDirectSdkMock();
@@ -44,8 +47,18 @@ describe('BlueSnapDirectHostedForm', () => {
         scriptLoader = new BlueSnapDirectScriptLoader(createScriptLoader());
         jest.spyOn(scriptLoader, 'load').mockResolvedValue(blueSnapDirectSdkMock);
 
+        jest.spyOn(document, 'createElement');
+        nameOnCardInput = new BluesnapDirectNameOnCardInput();
+        jest.spyOn(nameOnCardInput, 'attach').mockReturnValue(undefined);
+        jest.spyOn(nameOnCardInput, 'detach').mockReturnValue(undefined);
+        jest.spyOn(nameOnCardInput, 'getValue').mockReturnValue('John Doe');
+
         hostedInputValidator = new BlueSnapHostedInputValidator();
-        hostedForm = new BlueSnapDirectHostedForm(scriptLoader, hostedInputValidator);
+        hostedForm = new BlueSnapDirectHostedForm(
+            scriptLoader,
+            nameOnCardInput,
+            hostedInputValidator,
+        );
 
         optionsMocks = getBlueSnapPaymentInitializeOptionsMocks();
         ccOptionsMock = optionsMocks.ccOptions;
@@ -54,18 +67,21 @@ describe('BlueSnapDirectHostedForm', () => {
         ccCvvContainer = document.createElement('div');
         ccExpiryContainer = document.createElement('div');
         ccNumberContainer = document.createElement('div');
+        ccNameContainer = document.createElement('div');
 
         ccCvvContainer.id = optionsMocks.ccCvvContainerId;
         ccExpiryContainer.id = optionsMocks.ccExpiryContainerId;
         ccNumberContainer.id = optionsMocks.ccNumberContainerId;
+        ccNameContainer.id = optionsMocks.ccNameContainerId;
 
         document.body
             .appendChild(fieldset)
-            .append(ccCvvContainer, ccExpiryContainer, ccNumberContainer);
+            .append(ccCvvContainer, ccExpiryContainer, ccNumberContainer, ccNameContainer);
     });
 
     afterEach(() => {
         document.body.removeChild(fieldset);
+        jest.spyOn(document, 'createElement').mockRestore();
     });
 
     describe('#initialize', () => {
@@ -84,6 +100,7 @@ describe('BlueSnapDirectHostedForm', () => {
             expect(ccCvvContainer.dataset.bluesnap).toBe(HostedFieldTagId.CardCode);
             expect(ccExpiryContainer.dataset.bluesnap).toBe(HostedFieldTagId.CardExpiry);
             expect(ccNumberContainer.dataset.bluesnap).toBe(HostedFieldTagId.CardNumber);
+            expect(ccNameContainer.dataset.bluesnap).toBe(HostedFieldTagId.CardName);
         });
 
         it('should create hosted payment fields', async () => {
@@ -120,6 +137,11 @@ describe('BlueSnapDirectHostedForm', () => {
             expect(blueSnapDirectSdkMock.hostedPaymentFieldsCreate).toHaveBeenCalledWith(
                 expectedOptions,
             );
+            expect(nameOnCardInput.attach).toHaveBeenCalledWith(
+                expectedOptions,
+                undefined,
+                undefined,
+            );
         });
 
         describe('should call the UI event callbacks:', () => {
@@ -137,7 +159,7 @@ describe('BlueSnapDirectHostedForm', () => {
                 triggerFocus();
 
                 expect(ccOptionsMock.form.onFocus).toHaveBeenCalledWith({
-                    fieldType: HOSTED_FIELD_TYPES.ccn,
+                    fieldType: BlueSnapHostedFieldType.ccn,
                 });
             });
 
@@ -155,7 +177,7 @@ describe('BlueSnapDirectHostedForm', () => {
                 triggerBlur();
 
                 expect(ccOptionsMock.form.onBlur).toHaveBeenCalledWith({
-                    fieldType: HOSTED_FIELD_TYPES.ccn,
+                    fieldType: BlueSnapHostedFieldType.ccn,
                 });
             });
 
@@ -173,7 +195,7 @@ describe('BlueSnapDirectHostedForm', () => {
                 triggerEnter();
 
                 expect(ccOptionsMock.form.onEnter).toHaveBeenCalledWith({
-                    fieldType: HOSTED_FIELD_TYPES.ccn,
+                    fieldType: BlueSnapHostedFieldType.ccn,
                 });
             });
 
@@ -300,40 +322,9 @@ describe('BlueSnapDirectHostedForm', () => {
         });
     });
 
-    describe('#onValidate', () => {
-        it('should call the onValidate callback with combined results', async () => {
-            const bcResults: HostedInputValidateResults = {
-                errors: {
-                    cardName: [
-                        {
-                            fieldType: 'cardName',
-                            message: 'Full name is required',
-                            type: 'required',
-                        },
-                    ],
-                },
-                isValid: false,
-            };
-
-            await hostedForm.initialize();
-            await hostedForm.attach('pfToken', ccOptionsMock);
-            hostedForm.onValidate(bcResults);
-
-            expect(ccOptionsMock.form.onValidate).toHaveBeenCalledWith(
-                hostedInputValidator.mergeErrors(bcResults.errors).validate(),
-            );
-        });
-    });
-
     describe('#validate', () => {
         it('should call the onValidate callback and return the BlueSnapDirectHostedForm instance', async () => {
             const pretendUserEntersValidData = () => {
-                const bcResults: HostedInputValidateResults = {
-                    errors: {
-                        cardName: [],
-                    },
-                    isValid: true,
-                };
                 const { onFieldEventHandler: { onValid } = {} } = (
                     blueSnapDirectSdkMock.hostedPaymentFieldsCreate as jest.Mock
                 ).mock.calls[0][0] as HostedPaymentFieldsOptions;
@@ -341,7 +332,7 @@ describe('BlueSnapDirectHostedForm', () => {
                 onValid?.(HostedFieldTagId.CardNumber);
                 onValid?.(HostedFieldTagId.CardExpiry);
                 onValid?.(HostedFieldTagId.CardCode);
-                hostedForm.onValidate(bcResults);
+                onValid?.(HostedFieldTagId.CardName);
             };
             const placeOrder = () => hostedForm.validate();
 
@@ -371,10 +362,31 @@ describe('BlueSnapDirectHostedForm', () => {
             await hostedForm.attach('pfToken', ccOptionsMock);
             pretendUserForgetsFillCcName();
 
-            expect(placeOrder).toThrow(InvalidHostedFormValueError);
+            expect(placeOrder).toThrow(PaymentInvalidFormError);
             expect(ccOptionsMock.form.onValidate).toHaveBeenCalledWith(
                 hostedInputValidator.validate(),
             );
+        });
+
+        it('should throw an error with details', async () => {
+            const expectedErrors = {
+                cardNumber: [{ message: 'Credit card number is required', type: 'required' }],
+                cardExpiry: [{ message: 'Expiration date is required', type: 'required' }],
+                cardCode: [{ message: 'CVV is required', type: 'required' }],
+                cardName: [{ message: 'Full name is required', type: 'required' }],
+            };
+            const getErrorDetails = () => {
+                try {
+                    hostedForm.validate();
+                } catch (err) {
+                    return (err as PaymentInvalidFormError).details;
+                }
+            };
+
+            await hostedForm.initialize();
+            await hostedForm.attach('pfToken', ccOptionsMock);
+
+            expect(getErrorDetails()).toStrictEqual(expectedErrors);
         });
     });
 
@@ -384,7 +396,10 @@ describe('BlueSnapDirectHostedForm', () => {
 
             await hostedForm.initialize();
 
-            await expect(placeOrder()).resolves.toBe(sdkMocks.callbackResults);
+            await expect(placeOrder()).resolves.toStrictEqual({
+                ...sdkMocks.callbackResults,
+                cardHolderName: 'John Doe',
+            });
         });
 
         it('should fail to submit data', async () => {
@@ -406,6 +421,14 @@ describe('BlueSnapDirectHostedForm', () => {
             const placeOrder = () => hostedForm.submit();
 
             await expect(placeOrder()).rejects.toThrow(NotInitializedError);
+        });
+    });
+
+    describe('#detach', () => {
+        it('should detach name on card input', () => {
+            hostedForm.detach();
+
+            expect(nameOnCardInput.detach).toHaveBeenCalled();
         });
     });
 });
