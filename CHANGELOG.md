@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.344.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.343.0...v1.344.0) (2023-02-13)
+
+
+### Features
+
+* **payment:** PAYPAL-1838 Create paypalcommercevenmo customer button strategy ([f170b1c](https://github.com/bigcommerce/checkout-sdk-js/commit/f170b1c7d5aefd318ef82b5e63b6cfde4bb29ebd))
+* **payment:** PAYPAL-1838 Create paypalcommercevenmo customer button strategy ([7c7eec7](https://github.com/bigcommerce/checkout-sdk-js/commit/7c7eec75576ce419e2f594b1d2a4366d4dce44b0))
+
 ## [1.343.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.342.0...v1.343.0) (2023-02-10)
 
 

@@ -284,6 +284,7 @@
 - [PayPalCommerceCustomerInitializeOptions](interfaces/PayPalCommerceCustomerInitializeOptions.md)
 - [PayPalCommerceInlineButtonInitializeOptions](interfaces/PayPalCommerceInlineButtonInitializeOptions.md)
 - [PayPalCommerceVenmoButtonInitializeOptions](interfaces/PayPalCommerceVenmoButtonInitializeOptions.md)
+- [PayPalCommerceVenmoCustomerInitializeOptions](interfaces/PayPalCommerceVenmoCustomerInitializeOptions.md)
 - [PayPalInstrument](interfaces/PayPalInstrument.md)
 - [PaymentMethod](interfaces/PaymentMethod.md)
 - [PaymentMethodConfig](interfaces/PaymentMethodConfig.md)
@@ -380,6 +381,7 @@
 - [WithPayPalCommerceCustomerInitializeOptions](interfaces/WithPayPalCommerceCustomerInitializeOptions.md)
 - [WithPayPalCommerceInlineButtonInitializeOptions](interfaces/WithPayPalCommerceInlineButtonInitializeOptions.md)
 - [WithPayPalCommerceVenmoButtonInitializeOptions](interfaces/WithPayPalCommerceVenmoButtonInitializeOptions.md)
+- [WithPayPalCommerceVenmoCustomerInitializeOptions](interfaces/WithPayPalCommerceVenmoCustomerInitializeOptions.md)
 - [WithSquareV2PaymentInitializeOptions](interfaces/WithSquareV2PaymentInitializeOptions.md)
 - [WorldpayAccessPaymentInitializeOptions](interfaces/WorldpayAccessPaymentInitializeOptions.md)
 - [ZipCodeElementOptions](interfaces/ZipCodeElementOptions.md)
@@ -553,7 +555,7 @@ ___
 
 ### CustomerInitializeOptions
 
-Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md) & [`WithPayPalCommerceCustomerInitializeOptions`](interfaces/WithPayPalCommerceCustomerInitializeOptions.md)
+Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md) & [`WithPayPalCommerceCustomerInitializeOptions`](interfaces/WithPayPalCommerceCustomerInitializeOptions.md) & [`WithPayPalCommerceVenmoCustomerInitializeOptions`](interfaces/WithPayPalCommerceVenmoCustomerInitializeOptions.md)
 
 ___
 

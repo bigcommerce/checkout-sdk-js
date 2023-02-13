@@ -4478,7 +4478,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -6083,6 +6083,20 @@ declare interface PayPalCommerceVenmoButtonInitializeOptions {
     };
 }
 
+declare interface PayPalCommerceVenmoCustomerInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback that gets called if unable to initialize the widget or select
+     * one of the address options provided by the widget.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error?: Error): void;
+}
+
 declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
@@ -7628,6 +7642,10 @@ declare interface WithPayPalCommerceInlineButtonInitializeOptions {
 
 declare interface WithPayPalCommerceVenmoButtonInitializeOptions {
     paypalcommercevenmo?: PayPalCommerceVenmoButtonInitializeOptions;
+}
+
+declare interface WithPayPalCommerceVenmoCustomerInitializeOptions {
+    paypalcommercevenmo?: PayPalCommerceVenmoCustomerInitializeOptions;
 }
 
 declare interface WithSquareV2PaymentInitializeOptions {
