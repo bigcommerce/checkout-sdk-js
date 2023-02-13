@@ -46,17 +46,6 @@ enum DefaultLabels {
     Shipping = 'Shipping',
 }
 
-const style = {
-    width: '160px',
-    backgroundColor: '#000',
-    backgroundPosition: '50% 50%',
-    backgroundSize: '100% 60%',
-    padding: '1.5rem',
-    backgroundImage: '-webkit-named-image(apple-pay-logo-white)',
-    borderRadius: '4px',
-    backgroundRepeat: 'no-repeat',
-};
-
 function isShippingOptions(options: ShippingOption[] | undefined): options is ShippingOption[] {
     return options instanceof Array;
 }
@@ -151,7 +140,6 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
 
         button.setAttribute('type', 'button');
         button.setAttribute('aria-label', 'Apple Pay');
-        Object.assign(button.style, style);
         container.appendChild(button);
 
         return button;
