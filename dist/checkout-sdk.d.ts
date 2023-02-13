@@ -4478,7 +4478,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -6008,6 +6008,24 @@ declare interface PayPalCommerceCreditButtonInitializeOptions {
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
     };
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
+}
+
+declare interface PayPalCommerceCreditCustomerInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback that gets called if unable to initialize the widget or select
+     * one of the address options provided by the widget.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error?: Error): void;
     /**
      * A callback that gets called when payment complete on paypal side.
      */
@@ -7626,6 +7644,10 @@ declare interface WithPayPalCommerceButtonInitializeOptions {
 
 declare interface WithPayPalCommerceCreditButtonInitializeOptions {
     paypalcommercecredit?: PayPalCommerceCreditButtonInitializeOptions;
+}
+
+declare interface WithPayPalCommerceCreditCustomerInitializeOptions {
+    paypalcommercecredit?: PayPalCommerceCreditCustomerInitializeOptions;
 }
 
 declare interface WithPayPalCommerceCustomerInitializeOptions {
