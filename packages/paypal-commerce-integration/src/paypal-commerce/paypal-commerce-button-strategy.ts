@@ -123,8 +123,8 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         const defaultCallbacks = {
             onClick: () => this.handleClick(buyNowInitializeOptions),
             createOrder: () => this.createOrder(initializesOnCheckoutPage),
-            onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this.tokenizePayment(methodId, orderID),
+            onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
+                this.tokenizePayment(data, actions, methodId),
         };
 
         const hostedCheckoutCallbacks = {
@@ -367,18 +367,35 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         return orderId;
     }
 
-    private tokenizePayment(methodId: string, orderId?: string): void {
-        const cart = this.paymentIntegrationService.getState().getCartOrThrow();
-
-        if (!orderId) {
+    private async tokenizePayment(
+        { orderID }: ApproveCallbackPayload,
+        actions: ApproveCallbackActions,
+        methodId: string,
+    ): Promise<void> {
+        if (!orderID) {
             throw new MissingDataError(MissingDataErrorType.MissingOrderId);
         }
+
+        const cart = this.paymentIntegrationService.getState().getCartOrThrow();
+        const { payer } = await actions.order.get();
+
+        const billingAddress = this.getAddress({
+            firstName: payer.name.given_name,
+            lastName: payer.name.surname,
+            email: payer.email_address,
+            address1: payer.address.address_line_1,
+            city: payer.address.admin_area_2,
+            countryCode: payer.address.country_code,
+            postalCode: payer.address.postal_code,
+            stateOrProvinceCode: payer.address.admin_area_1,
+        });
 
         return this.formPoster.postForm('/checkout.php', {
             payment_type: 'paypal',
             action: 'set_external_checkout',
             provider: methodId,
-            order_id: orderId,
+            order_id: orderID,
+            billing_address: JSON.stringify(billingAddress),
             ...(cart.source === CartSource.BuyNow && { cart_id: cart.id }),
         });
     }
