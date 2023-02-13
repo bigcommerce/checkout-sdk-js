@@ -20,6 +20,9 @@ export { WithPayPalCommerceCustomerInitializeOptions } from './paypal-commerce/p
 export { default as createPayPalCommerceCreditButtonStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-button-strategy';
 export { WithPayPalCommerceCreditButtonInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-button-initialize-options';
 
+export { default as createPayPalCommerceCreditCustomerStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-customer-strategy';
+export { WithPayPalCommerceCreditCustomerInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-customer-initialize-options';
+
 /**
  *
  * PayPalCommerce Inline (Accelerated) Checkout strategies
