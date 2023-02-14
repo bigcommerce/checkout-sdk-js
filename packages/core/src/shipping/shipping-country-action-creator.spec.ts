@@ -2,7 +2,8 @@ import { createRequestSender, Response } from '@bigcommerce/request-sender';
 import { of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { ErrorResponseBody } from '../common/error';
+import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { getCountries } from '../geography/countries.mock';
 

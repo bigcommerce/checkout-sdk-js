@@ -1,4 +1,5 @@
-import { PaymentErrorData } from '../../../common/error';
+import { PaymentErrorData } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { StandardError } from '../../../common/error/errors';
 
 export default class BoltError extends StandardError {

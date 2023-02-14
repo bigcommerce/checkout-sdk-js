@@ -1,6 +1,7 @@
 import { Response } from '@bigcommerce/request-sender';
 
-import { ErrorResponseBody } from '../common/error';
+import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
 import {

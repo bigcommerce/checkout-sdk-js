@@ -35,6 +35,8 @@ export {
 export { Discount } from './discount';
 export {
     BuyNowCartCreationError,
+    ErrorResponseBody,
+    InternalErrorResponseBody,
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
@@ -43,12 +45,15 @@ export {
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
+    PaymentErrorData,
+    PaymentErrorResponseBody,
     PaymentInvalidFormError,
     PaymentInvalidFormErrorDetails,
     PaymentMethodCancelledError,
     PaymentMethodClientUnavailableError,
     PaymentMethodFailedError,
     RequestError,
+    StorefrontErrorResponseBody,
     isRequestError,
 } from './errors';
 export { HostedForm, HostedFormOptions, HostedFieldType } from './hosted-form';

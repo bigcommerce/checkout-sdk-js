@@ -1,7 +1,8 @@
 import { Action } from '@bigcommerce/data-store';
 
+import { StorefrontErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { Checkout } from '../checkout';
-import { StorefrontErrorResponseBody } from '../common/error';
 import { RequestError } from '../common/error/errors';
 
 export enum GiftCertificateActionType {

@@ -1,6 +1,6 @@
 import { Response } from '@bigcommerce/request-sender';
 
-import { PaymentErrorResponseBody } from '../error-response-body';
+import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import RequestError from './request-error';
 

@@ -5,6 +5,8 @@ import { merge } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     CheckoutActionCreator,
     CheckoutActionType,
@@ -14,7 +16,6 @@ import {
 } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MutationObserverFactory } from '../common/dom';
-import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';

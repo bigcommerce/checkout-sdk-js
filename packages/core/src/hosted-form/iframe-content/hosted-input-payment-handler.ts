@@ -1,7 +1,8 @@
 import { Response } from '@bigcommerce/request-sender';
 import { snakeCase } from 'lodash';
 
-import { PaymentErrorResponseBody } from '../../common/error';
+import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { IframeEventPoster } from '../../common/iframe';
 import { PaymentRequestSender, PaymentRequestTransformer } from '../../payment';
 import { InvalidHostedFormValueError } from '../errors';

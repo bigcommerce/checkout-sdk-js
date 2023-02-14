@@ -2,9 +2,10 @@ import { createRequestSender, createTimeout, Response } from '@bigcommerce/reque
 import { from, merge, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
-import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import PaymentMethod from './payment-method';

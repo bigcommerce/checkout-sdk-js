@@ -1,4 +1,5 @@
-import { StorefrontErrorResponseBody } from '../common/error';
+import { StorefrontErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { RequestError } from '../common/error/errors';
 
 import GiftCertificate from './gift-certificate';

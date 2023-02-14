@@ -1,10 +1,12 @@
 import { Response } from '@bigcommerce/request-sender';
 import { last } from 'lodash';
 
-import ErrorResponseBody, {
+import {
+    ErrorResponseBody,
     InternalErrorResponseBody,
     StorefrontErrorResponseBody,
-} from './error-response-body';
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     mapFromInternalErrorResponse,
     mapFromPaymentErrorResponse,

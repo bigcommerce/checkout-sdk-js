@@ -1,6 +1,7 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
-import { StorefrontErrorResponseBody } from '../common/error';
+import { StorefrontErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
