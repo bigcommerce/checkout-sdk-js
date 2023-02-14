@@ -16,6 +16,7 @@
 - [elementType](StripeShippingEvent.md#elementtype)
 - [empty](StripeShippingEvent.md#empty)
 - [isNewAddress](StripeShippingEvent.md#isnewaddress)
+- [phoneFieldRequired](StripeShippingEvent.md#phonefieldrequired)
 - [value](StripeShippingEvent.md#value)
 
 ## Properties
@@ -56,6 +57,12 @@ ___
 
 ___
 
+### phoneFieldRequired
+
+• **phoneFieldRequired**: `boolean`
+
+___
+
 ### value
 
 • **value**: `Object`
@@ -72,3 +79,4 @@ ___
 | `address.postal_code` | `string` |
 | `address.state` | `string` |
 | `name` | `string` |
+| `phone` | `string` |

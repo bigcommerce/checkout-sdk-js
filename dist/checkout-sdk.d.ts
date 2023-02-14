@@ -7192,6 +7192,7 @@ declare type StripeEventType = StripeShippingEvent | StripeCustomerEvent;
 
 declare interface StripeShippingEvent extends StripeEvent {
     isNewAddress?: boolean;
+    phoneFieldRequired: boolean;
     value: {
         address: {
             city: string;
@@ -7202,6 +7203,7 @@ declare interface StripeShippingEvent extends StripeEvent {
             state: string;
         };
         name: string;
+        phone: string;
     };
 }
 
