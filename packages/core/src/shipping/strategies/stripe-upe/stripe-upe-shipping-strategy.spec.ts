@@ -4,8 +4,13 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable, of } from 'rxjs';
 
 import { CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    NotInitializedError,
+} from '../../../common/error/errors';
 import { getGuestCustomer } from '../../../customer/customers.mock';
+import { getAddressFormFields } from '../../../form/form.mock';
 import {
     LoadPaymentMethodAction,
     PaymentMethod,
@@ -15,13 +20,17 @@ import {
 } from '../../../payment';
 import { getStripeUPE } from '../../../payment/payment-methods.mock';
 import {
+    StripeElement,
     StripeHostWindow,
     StripeScriptLoader,
+    StripeShippingEvent,
     StripeUPEClient,
 } from '../../../payment/strategies/stripe-upe';
 import {
     getShippingStripeUPEJsMock,
     getShippingStripeUPEJsMockWithAnElementCreated,
+    getShippingStripeUPEJsOnMock,
+    getStripeUPEInitializeOptionsMockWithStyles,
     getStripeUPEShippingInitializeOptionsMock,
 } from '../../../shipping/strategies/stripe-upe/stripe-upe-shipping.mock';
 import ConsignmentActionCreator from '../../consignment-action-creator';
@@ -44,6 +53,28 @@ describe('StripeUPEShippingStrategy', () => {
     let loadPaymentMethodAction: Observable<LoadPaymentMethodAction>;
     let paymentMethodMock: PaymentMethod;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
+
+    const stripeShippingEvent = (complete = true): StripeShippingEvent => {
+        return {
+            complete,
+            elementType: '',
+            empty: false,
+            isNewAddress: true,
+            phoneFieldRequired: true,
+            value: {
+                address: {
+                    city: 'Lorem',
+                    country: 'US',
+                    line1: 'ok',
+                    line2: 'ok',
+                    postal_code: '44910',
+                    state: 'TX',
+                },
+                name: 'Alan',
+                phone: '+523333333333',
+            },
+        };
+    };
 
     beforeEach(() => {
         store = createCheckoutStore();
@@ -137,6 +168,94 @@ describe('StripeUPEShippingStrategy', () => {
             expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
         });
 
+        it('does not load stripeUPE if initialization options are not provided', () => {
+            const promise = strategy.initialize({ methodId: 'stripeupe' });
+
+            expect(promise).rejects.toThrow(NotInitializedError);
+        });
+
+        it('does not load stripeUPE if UPE options are not provided', () => {
+            const promise = strategy.initialize({
+                methodId: 'stripeupe',
+                stripeupe: {
+                    methodId: '',
+                    gatewayId: '',
+                    onChangeShipping: jest.fn(),
+                    availableCountries: 'US,MX',
+                    getStripeState: jest.fn(),
+                },
+            });
+
+            expect(promise).rejects.toThrow(InvalidArgumentError);
+        });
+
+        it('does not load stripeUPE when styles is provided', async () => {
+            const testColor = '#123456';
+            const style = {
+                labelText: testColor,
+                fieldText: testColor,
+                fieldPlaceholderText: testColor,
+                fieldErrorText: testColor,
+                fieldBackground: testColor,
+                fieldInnerShadow: testColor,
+                fieldBorder: testColor,
+            };
+
+            await expect(
+                strategy.initialize(getStripeUPEInitializeOptionsMockWithStyles(style)),
+            ).resolves.toBe(store.getState());
+            expect(stripeUPEJsMock.elements).toHaveBeenNthCalledWith(1, {
+                clientSecret: 'clientToken',
+                appearance: {
+                    rules: {
+                        '.Input': {
+                            borderColor: testColor,
+                            boxShadow: testColor,
+                            color: testColor,
+                        },
+                    },
+                    variables: {
+                        borderRadius: '4px',
+                        colorBackground: testColor,
+                        colorDanger: testColor,
+                        colorPrimary: testColor,
+                        colorText: testColor,
+                        colorTextPlaceholder: testColor,
+                        colorTextSecondary: testColor,
+                        spacingUnit: '4px',
+                    },
+                },
+            });
+        });
+
+        it('loads a single instance of StripeUPEClient without last name and phone fields', async () => {
+            jest.spyOn(store.getState().shippingAddress, 'getShippingAddress').mockReturnValue(
+                getShippingAddress(),
+            );
+
+            jest.spyOn(store.getState().form, 'getShippingAddressFields').mockReturnValue([
+                {
+                    id: 'field_7',
+                    name: 'phone',
+                    custom: false,
+                    label: 'Phone Number',
+                    required: false,
+                    default: '',
+                },
+            ]);
+            jest.spyOn(store.getState().shippingAddress, 'getShippingAddress').mockReturnValue({
+                ...getShippingAddress(),
+                lastName: '',
+            });
+
+            await expect(strategy.initialize(shippingInitialization)).resolves.toBe(
+                store.getState(),
+            );
+
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
+        });
+
         it('returns an error when methodId is not present', () => {
             const promise = strategy.initialize({
                 ...getStripeUPEShippingInitializeOptionsMock(),
@@ -155,6 +274,105 @@ describe('StripeUPEShippingStrategy', () => {
             const promise = strategy.initialize(shippingInitialization);
 
             expect(promise).rejects.toBeInstanceOf(MissingDataError);
+        });
+
+        it('triggers onChange event callback and mounts component', async () => {
+            const stripeMockElement: StripeElement = {
+                destroy: jest.fn(),
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(stripeShippingEvent(true))),
+            };
+            const stripeUPEJsMockWithElement = getShippingStripeUPEJsOnMock(stripeMockElement);
+
+            jest.spyOn(store.getState().shippingAddress, 'getShippingAddress').mockReturnValue(
+                getShippingAddress(),
+            );
+            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockResolvedValueOnce(
+                stripeUPEJsMockWithElement,
+            );
+            jest.useFakeTimers();
+
+            await expect(strategy.initialize(shippingInitialization)).resolves.toBe(
+                store.getState(),
+            );
+
+            jest.runAllTimers();
+
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeMockElement.on).toHaveBeenCalledTimes(1);
+            expect(stripeMockElement.mount).toHaveBeenCalledWith(expect.any(String));
+            expect(shippingInitialization.stripeupe?.onChangeShipping).toHaveBeenCalledTimes(1);
+        });
+
+        it('triggers onChange event callback and mounts component when event is not completed', async () => {
+            const stripeMockElement: StripeElement = {
+                destroy: jest.fn(),
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(stripeShippingEvent(false))),
+            };
+            const stripeUPEJsMockWithElement = getShippingStripeUPEJsOnMock(stripeMockElement);
+
+            jest.spyOn(store.getState().form, 'getShippingAddressFields').mockReturnValue(
+                getAddressFormFields(),
+            );
+            jest.spyOn(store.getState().shippingAddress, 'getShippingAddress').mockReturnValue({
+                ...getShippingAddress(),
+                countryCode: '',
+            });
+            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockResolvedValueOnce(
+                stripeUPEJsMockWithElement,
+            );
+            jest.useFakeTimers();
+
+            await expect(strategy.initialize(shippingInitialization)).resolves.toBe(
+                store.getState(),
+            );
+
+            jest.runAllTimers();
+
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeMockElement.on).toHaveBeenCalledTimes(1);
+            expect(stripeMockElement.mount).toHaveBeenCalledWith(expect.any(String));
+            expect(shippingInitialization.stripeupe?.onChangeShipping).toHaveBeenCalledTimes(1);
+        });
+
+        it('triggers onChange event callback and throws error if event data is missing', async () => {
+            const missingShippingEvent = (): StripeShippingEvent => {
+                return {
+                    complete: false,
+                    elementType: '',
+                    empty: false,
+                    phoneFieldRequired: false,
+                    value: {
+                        address: {
+                            city: '',
+                            country: '',
+                            line1: '',
+                            line2: '',
+                            postal_code: '',
+                            state: '',
+                        },
+                        name: '',
+                        phone: '',
+                    },
+                };
+            };
+            const stripeMockElement: StripeElement = {
+                destroy: jest.fn(),
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(missingShippingEvent)),
+            };
+
+            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockResolvedValueOnce(
+                getShippingStripeUPEJsOnMock(stripeMockElement),
+            );
+
+            const promise = strategy.initialize(shippingInitialization);
+
+            await expect(promise).rejects.toBeInstanceOf(MissingDataError);
         });
     });
 

@@ -8,6 +8,7 @@ import {
 import { PaymentMethodActionCreator } from '../../../payment';
 import {
     StripeElements,
+    StripeElementsCreateOptions,
     StripeElementType,
     StripeEventType,
     StripeScriptLoader,
@@ -97,6 +98,13 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
         let appearance: StripeUPEAppearanceOptions;
         const styles = getStyles && getStyles();
 
+        const {
+            form: { getShippingAddressFields },
+            shippingAddress: { getShippingAddress },
+        } = this._store.getState();
+
+        const shippingFields = getShippingAddressFields([], '');
+
         if (styles) {
             appearance = {
                 variables: {
@@ -131,27 +139,55 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             appearance,
         });
 
-        const shipping = this._store.getState().shippingAddress.getShippingAddress();
-        const stripeState =
-            shipping?.stateOrProvinceCode && shipping.countryCode
-                ? getStripeState(shipping.countryCode, shipping.stateOrProvinceCode)
-                : shipping?.stateOrProvinceCode;
-        const option = {
+        const shipping = getShippingAddress();
+        const shippingPhoneField = shippingFields.find((field) => field.name === 'phone');
+        let option: StripeElementsCreateOptions = {
+            mode: 'shipping',
             allowedCountries: [availableCountries],
-            defaultValues: {
-                name: shipping?.lastName
-                    ? `${shipping.firstName} ${shipping.lastName}`
-                    : shipping?.firstName || '',
-                address: {
-                    line1: shipping?.address1 || '',
-                    line2: shipping?.address2 || '',
-                    city: shipping?.city || '',
-                    state: stripeState || '',
-                    postal_code: shipping?.postalCode || '',
-                    country: shipping?.countryCode || '',
+            fields: {
+                phone: 'always',
+            },
+            validation: {
+                phone: {
+                    required:
+                        shippingPhoneField && shippingPhoneField.required ? 'always' : 'never',
                 },
             },
         };
+
+        if (shipping) {
+            const {
+                stateOrProvinceCode,
+                countryCode,
+                lastName,
+                firstName,
+                phone,
+                address1,
+                address2,
+                city,
+                postalCode,
+            } = shipping;
+            const stripeState =
+                stateOrProvinceCode && countryCode
+                    ? getStripeState(countryCode, stateOrProvinceCode)
+                    : stateOrProvinceCode;
+
+            option = {
+                ...option,
+                defaultValues: {
+                    name: lastName ? `${firstName} ${lastName}` : firstName,
+                    phone,
+                    address: {
+                        line1: address1,
+                        line2: address2,
+                        city,
+                        state: stripeState,
+                        postal_code: postalCode,
+                        country: countryCode,
+                    },
+                },
+            };
+        }
 
         let shippingAddressElement = this._stripeElements.getElement(StripeElementType.SHIPPING);
 
@@ -172,7 +208,12 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
                 }
 
                 this.sendData = setTimeout(() => {
-                    onChangeShipping(event);
+                    onChangeShipping({
+                        ...event,
+                        phoneFieldRequired: shippingPhoneField
+                            ? shippingPhoneField.required
+                            : false,
+                    });
                 }, 1000);
             }
         });
@@ -183,7 +224,11 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
-        this._stripeElements?.getElement(StripeElementType.SHIPPING)?.unmount();
+        /* The new shipping component by StripeLink has a small bug, when the component is unmounted,
+        Stripe does not save the shipping, to solve this, we will leave it mounted,
+        and once it is fixed will be unmounted again */
+
+        // this._stripeElements?.getElement(StripeElementType.SHIPPING)?.unmount();
 
         return Promise.resolve(this._store.getState());
     }

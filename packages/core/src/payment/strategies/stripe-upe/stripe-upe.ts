@@ -60,6 +60,7 @@ export interface StripeCustomerEvent extends StripeEvent {
 
 export interface StripeShippingEvent extends StripeEvent {
     isNewAddress?: boolean;
+    phoneFieldRequired: boolean;
     value: {
         address: {
             city: string;
@@ -70,6 +71,7 @@ export interface StripeShippingEvent extends StripeEvent {
             state: string;
         };
         name: string;
+        phone: string;
     };
 }
 
@@ -166,6 +168,7 @@ export interface StripeConfirmPaymentData {
 
 export interface FieldsOptions {
     billingDetails?: AutoOrNever | BillingDetailsProperties;
+    phone?: string;
 }
 
 export interface WalletOptions {
@@ -177,14 +180,25 @@ export interface WalletOptions {
  * All available options are here https://stripe.com/docs/js/elements_object/create_payment_element
  */
 export interface StripeElementsCreateOptions {
+    mode?: string;
     fields?: FieldsOptions;
     wallets?: WalletOptions;
     allowedCountries?: string[];
     defaultValues?: ShippingDefaultValues | CustomerDefaultValues;
+    validation?: validationElement;
+}
+
+interface validationElement {
+    phone?: validationRequiredElement;
+}
+
+interface validationRequiredElement {
+    required?: string;
 }
 
 interface ShippingDefaultValues {
     name: string;
+    phone: string;
     address: {
         line1: string;
         line2: string;
@@ -356,5 +370,5 @@ export enum StripeStringConstants {
 export enum StripeElementType {
     PAYMENT = 'payment',
     AUTHENTICATION = 'linkAuthentication',
-    SHIPPING = 'shippingAddress',
+    SHIPPING = 'address',
 }
