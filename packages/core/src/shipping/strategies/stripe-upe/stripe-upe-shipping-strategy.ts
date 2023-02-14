@@ -97,14 +97,19 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             stripeConnectedAccount,
         );
 
-        let appearance: StripeUPEAppearanceOptions;
-        const styles = getStyles && getStyles();
-
         const {
-            form: { getShippingAddressFields },
             shippingAddress: { getShippingAddress },
+            form: { getShippingAddressFields },
+            config: { getStoreConfig },
         } = this._store.getState();
-
+        const features = getStoreConfig()?.checkoutSettings.features;
+        let appearance: StripeUPEAppearanceOptions = {
+            variables: {
+                spacingUnit: '4px',
+                borderRadius: '4px',
+            },
+        };
+        const styles = getStyles && getStyles();
         const shippingFields = getShippingAddressFields([], '');
 
         if (styles) {
@@ -127,11 +132,22 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
                     },
                 },
             };
-        } else {
+        }
+
+        if (features && features['CHECKOUT-6879.enable_floating_labels']) {
             appearance = {
+                ...appearance,
+                labels: 'floating',
                 variables: {
-                    spacingUnit: '4px',
-                    borderRadius: '4px',
+                    ...appearance?.variables,
+                    fontSizeBase: '14px',
+                },
+                rules: {
+                    ...appearance?.rules,
+                    '.Input': {
+                        ...appearance?.rules?.['.Input'],
+                        padding: '7px 13px 5px 13px',
+                    },
                 },
             };
         }

@@ -9,6 +9,7 @@ import {
     MissingDataError,
     NotInitializedError,
 } from '../../../common/error/errors';
+import { getConfig } from '../../../config/configs.mock';
 import { getGuestCustomer } from '../../../customer/customers.mock';
 import { getAddressFormFields } from '../../../form/form.mock';
 import {
@@ -119,6 +120,7 @@ describe('StripeUPEShippingStrategy', () => {
 
     describe('#initialize()', () => {
         let shippingInitialization: ShippingInitializeOptions;
+        const storeConfigMock = getConfig().storeConfig;
 
         beforeEach(() => {
             shippingInitialization = getStripeUPEShippingInitializeOptionsMock();
@@ -393,6 +395,42 @@ describe('StripeUPEShippingStrategy', () => {
             const promise = strategy.initialize(shippingInitialization);
 
             await expect(promise).rejects.toBeInstanceOf(MissingDataError);
+        });
+
+        it('loads stripeUPE with floating labels', async () => {
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValueOnce({
+                ...storeConfigMock,
+                checkoutSettings: {
+                    ...storeConfigMock.checkoutSettings,
+                    features: {
+                        'CHECKOUT-6879.enable_floating_labels': true,
+                    },
+                },
+            });
+
+            await expect(strategy.initialize(shippingInitialization)).resolves.toBe(
+                store.getState(),
+            );
+
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
+        });
+
+        it('loads stripeUPE without floating labels', async () => {
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValueOnce({
+                ...storeConfigMock,
+                checkoutSettings: {
+                    ...storeConfigMock.checkoutSettings,
+                    features: {
+                        'CHECKOUT-6879.enable_floating_labels': false,
+                    },
+                },
+            });
+
+            await expect(strategy.initialize(shippingInitialization)).resolves.toBe(
+                store.getState(),
+            );
+
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
         });
     });
 

@@ -356,6 +356,10 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             stripeConnectedAccount,
         );
 
+        const {
+            config: { getStoreConfig },
+        } = this._store.getState();
+        const features = getStoreConfig()?.checkoutSettings.features;
         let appearance: StripeUPEAppearanceOptions | undefined;
 
         if (style) {
@@ -376,6 +380,24 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         borderColor: styles.fieldBorder,
                         color: styles.fieldText,
                         boxShadow: styles.fieldInnerShadow,
+                    },
+                },
+            };
+        }
+
+        if (features && features['CHECKOUT-6879.enable_floating_labels']) {
+            appearance = {
+                ...appearance,
+                labels: 'floating',
+                variables: {
+                    ...appearance?.variables,
+                    fontSizeBase: '14px',
+                },
+                rules: {
+                    ...appearance?.rules,
+                    '.Input': {
+                        ...appearance?.rules?.['.Input'],
+                        padding: '7px 13px 5px 13px',
                     },
                 },
             };

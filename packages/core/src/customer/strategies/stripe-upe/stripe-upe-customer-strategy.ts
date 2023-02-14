@@ -77,6 +77,12 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
             }
 
+            const {
+                billingAddress: { getBillingAddress },
+                consignments: { getConsignments },
+                config: { getStoreConfig },
+            } = this._store.getState();
+            const features = getStoreConfig()?.checkoutSettings.features;
             let appearance: StripeUPEAppearanceOptions | undefined;
             const styles = typeof getStyles === 'function' && getStyles();
 
@@ -98,8 +104,24 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                         },
                     },
                 };
-            } else {
-                appearance = {};
+            }
+
+            if (features && features['CHECKOUT-6879.enable_floating_labels']) {
+                appearance = {
+                    ...appearance,
+                    labels: 'floating',
+                    variables: {
+                        ...appearance?.variables,
+                        fontSizeBase: '14px',
+                    },
+                    rules: {
+                        ...appearance?.rules,
+                        '.Input': {
+                            ...appearance?.rules?.['.Input'],
+                            padding: '7px 13px 5px 13px',
+                        },
+                    },
+                };
             }
 
             stripeUPEClient = await this._stripeUPEScriptLoader.getStripeClient(
@@ -112,10 +134,6 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 appearance,
             });
 
-            const {
-                billingAddress: { getBillingAddress },
-                consignments: { getConsignments },
-            } = this._store.getState();
             const consignments = getConsignments();
             const id = consignments?.[0]?.id;
             const { email: billingEmail } = getBillingAddress() || {};

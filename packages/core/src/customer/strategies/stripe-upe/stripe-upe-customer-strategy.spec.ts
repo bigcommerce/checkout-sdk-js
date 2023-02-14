@@ -14,6 +14,7 @@ import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MutationObserverFactory } from '../../../common/dom';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { getConfig } from '../../../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import {
     LoadPaymentMethodAction,
@@ -147,6 +148,7 @@ describe('StripeUpeCustomerStrategy', () => {
     describe('#initialize()', () => {
         const customer = getCustomer();
         let customerInitialization: CustomerInitializeOptions;
+        const storeConfigMock = getConfig().storeConfig;
 
         beforeEach(() => {
             jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(customer);
@@ -378,6 +380,42 @@ describe('StripeUpeCustomerStrategy', () => {
             const promise = strategy.initialize(customerInitialization);
 
             expect(promise).rejects.toBeInstanceOf(MissingDataError);
+        });
+
+        it('loads stripeUPE with floating labels', async () => {
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValueOnce({
+                ...storeConfigMock,
+                checkoutSettings: {
+                    ...storeConfigMock.checkoutSettings,
+                    features: {
+                        'CHECKOUT-6879.enable_floating_labels': true,
+                    },
+                },
+            });
+
+            await expect(strategy.initialize(customerInitialization)).resolves.toBe(
+                store.getState(),
+            );
+
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
+        });
+
+        it('loads stripeUPE without floating labels', async () => {
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValueOnce({
+                ...storeConfigMock,
+                checkoutSettings: {
+                    ...storeConfigMock.checkoutSettings,
+                    features: {
+                        'CHECKOUT-6879.enable_floating_labels': false,
+                    },
+                },
+            });
+
+            await expect(strategy.initialize(customerInitialization)).resolves.toBe(
+                store.getState(),
+            );
+
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
         });
     });
 
