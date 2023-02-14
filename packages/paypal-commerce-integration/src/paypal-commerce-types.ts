@@ -1,4 +1,7 @@
-import { ShippingOption } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    BuyNowCartRequestBody,
+    ShippingOption,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
  *
@@ -81,6 +84,15 @@ export interface PayPalCommerceInitializationData {
     clientToken?: string;
     attributionId?: string;
     isVenmoEnabled?: boolean;
+}
+
+/**
+ *
+ * PayPal Commerce BuyNow
+ *
+ */
+export interface PayPalBuyNowInitializeOptions {
+    getBuyNowCartRequestBody(): BuyNowCartRequestBody;
 }
 
 /**
@@ -266,6 +278,7 @@ export enum StyleButtonLabel {
     installment = 'installment',
 }
 
+// TODO: should be removed in the future
 export enum StyleButtonLayout {
     vertical = 'vertical',
     horizontal = 'horizontal',

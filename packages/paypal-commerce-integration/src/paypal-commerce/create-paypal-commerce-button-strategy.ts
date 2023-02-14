@@ -7,7 +7,11 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { PayPalCommerceRequestSender, PayPalCommerceScriptLoader } from '../index';
+import {
+    PayPalCommerceCommon,
+    PayPalCommerceRequestSender,
+    PayPalCommerceScriptLoader,
+} from '../index';
 
 import PayPalCommerceButtonStrategy from './paypal-commerce-button-strategy';
 
@@ -16,12 +20,14 @@ const createPayPalCommerceButtonStrategy: CheckoutButtonStrategyFactory<
 > = (paymentIntegrationService) => {
     const { getHost } = paymentIntegrationService.getState();
 
-    return new PayPalCommerceButtonStrategy(
+    const paypalCommerceCommon = new PayPalCommerceCommon(
         createFormPoster(),
         paymentIntegrationService,
         new PayPalCommerceRequestSender(createRequestSender({ host: getHost() })),
         new PayPalCommerceScriptLoader(getScriptLoader()),
     );
+
+    return new PayPalCommerceButtonStrategy(paymentIntegrationService, paypalCommerceCommon);
 };
 
 export default toResolvableModule(createPayPalCommerceButtonStrategy, [{ id: 'paypalcommerce' }]);
