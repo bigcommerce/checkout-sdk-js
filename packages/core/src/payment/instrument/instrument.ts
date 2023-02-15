@@ -11,6 +11,11 @@ interface BaseInstrument {
     type: string;
 }
 
+export enum UntrustedShippingCardVerificationType {
+    CVV = 'cvv',
+    PAN = 'pan',
+}
+
 export interface CardInstrument extends BaseInstrument {
     brand: string;
     expiryMonth: string;
@@ -18,6 +23,7 @@ export interface CardInstrument extends BaseInstrument {
     iin: string;
     last4: string;
     type: 'card';
+    untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType;
 }
 
 interface BaseAccountInstrument extends BaseInstrument {
