@@ -279,6 +279,7 @@
 - [OrderShippingConsignment](interfaces/OrderShippingConsignment.md)
 - [PasswordRequirements](interfaces/PasswordRequirements.md)
 - [PayPalButtonStyleOptions](interfaces/PayPalButtonStyleOptions.md)
+- [PayPalBuyNowInitializeOptions](interfaces/PayPalBuyNowInitializeOptions.md)
 - [PayPalCommerceButtonInitializeOptions](interfaces/PayPalCommerceButtonInitializeOptions.md)
 - [PayPalCommerceCreditButtonInitializeOptions](interfaces/PayPalCommerceCreditButtonInitializeOptions.md)
 - [PayPalCommerceCreditCustomerInitializeOptions](interfaces/PayPalCommerceCreditCustomerInitializeOptions.md)

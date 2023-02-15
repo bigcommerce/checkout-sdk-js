@@ -24,15 +24,9 @@ DOM. When a customer clicks on it, it will trigger Apple sheet.
 
 ### buyNowInitializeOptions
 
-• `Optional` **buyNowInitializeOptions**: `Object`
+• `Optional` **buyNowInitializeOptions**: [`PayPalBuyNowInitializeOptions`](PayPalBuyNowInitializeOptions.md)
 
 The options that are required to initialize Buy Now functionality.
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `getBuyNowCartRequestBody?` | () => `void` \| `default` |
 
 ___
 
@@ -48,6 +42,8 @@ ___
 
 • `Optional` **initializesOnCheckoutPage**: `boolean`
 
+// TODO: this flag should be removed, because the strategy does not used on checkout page
+// and it always equals to 'false'
 Flag which helps to detect that the strategy initializes on Checkout page.
 
 ___
