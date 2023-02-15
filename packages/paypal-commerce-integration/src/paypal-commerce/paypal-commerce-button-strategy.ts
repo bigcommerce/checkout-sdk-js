@@ -205,7 +205,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         });
 
         try {
-            // Info: we use the same address to fill billing and consignment addresses to have valid quota on BE for order updating process
+            // Info: we use the same address to fill billing and shipping addresses to have valid quota on BE for order updating process
             // on this stage we don't have access to valid customer's address accept shipping data
             await this.paymentIntegrationService.updateBillingAddress(address);
             await this.paymentIntegrationService.updateShippingAddress(address);

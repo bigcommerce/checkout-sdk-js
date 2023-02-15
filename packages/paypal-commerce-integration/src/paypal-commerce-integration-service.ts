@@ -248,11 +248,7 @@ export default class PayPalCommerceIntegrationService {
      *
      */
     getValidButtonStyle(style?: PayPalButtonStyleOptions): PayPalButtonStyleOptions {
-        if (!style) {
-            return {};
-        }
-
-        const { color, height, label, layout, shape, tagline } = style;
+        const { color, height, label, layout, shape, tagline } = style || {};
 
         // TODO: remove layout and tagline properties when paypal commerce common will be added to all paypal commerce strategies
         const validStyles = {
