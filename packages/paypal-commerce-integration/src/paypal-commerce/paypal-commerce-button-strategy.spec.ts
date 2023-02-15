@@ -24,7 +24,7 @@ import getPayPalCommerceOrderDetails from '../mocks/get-paypal-commerce-order-de
 import getShippingAddressFromOrderDetails from '../mocks/get-shipping-address-from-order-details.mock';
 import { getPayPalCommercePaymentMethod } from '../mocks/paypal-commerce-payment-method.mock';
 import { getPayPalSDKMock } from '../mocks/paypal-sdk.mock';
-import PayPalCommerceCommon from '../paypal-commerce-common';
+import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 import PayPalCommerceScriptLoader from '../paypal-commerce-script-loader';
 import {
@@ -46,7 +46,7 @@ describe('PayPalCommerceButtonStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalButtonElement: HTMLDivElement;
-    let paypalCommerceCommon: PayPalCommerceCommon;
+    let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
     let paypalCommerceRequestSender: PayPalCommerceRequestSender;
     let paypalCommerceScriptLoader: PayPalCommerceScriptLoader;
     let paypalSdk: PayPalSDK;
@@ -122,7 +122,7 @@ describe('PayPalCommerceButtonStrategy', () => {
         paypalCommerceRequestSender = new PayPalCommerceRequestSender(requestSender);
         paypalCommerceScriptLoader = new PayPalCommerceScriptLoader(getScriptLoader());
 
-        paypalCommerceCommon = new PayPalCommerceCommon(
+        paypalCommerceIntegrationService = new PayPalCommerceIntegrationService(
             formPoster,
             paymentIntegrationService,
             paypalCommerceRequestSender,
@@ -131,7 +131,7 @@ describe('PayPalCommerceButtonStrategy', () => {
 
         strategy = new PayPalCommerceButtonStrategy(
             paymentIntegrationService,
-            paypalCommerceCommon,
+            paypalCommerceIntegrationService,
         );
 
         paypalButtonElement = document.createElement('div');
@@ -148,21 +148,29 @@ describe('PayPalCommerceButtonStrategy', () => {
         );
         jest.spyOn(paymentIntegrationService, 'selectShippingOption').mockImplementation(jest.fn());
 
-        jest.spyOn(paypalCommerceCommon, 'loadPayPalSdk').mockReturnValue(paypalSdk);
-        jest.spyOn(paypalCommerceCommon, 'getPayPalSdkOrThrow').mockReturnValue(paypalSdk);
-        jest.spyOn(paypalCommerceCommon, 'createBuyNowCartOrThrow').mockReturnValue(buyNowCart);
-        jest.spyOn(paypalCommerceCommon, 'createOrder').mockImplementation(jest.fn());
-        jest.spyOn(paypalCommerceCommon, 'updateOrder').mockImplementation(jest.fn());
-        jest.spyOn(paypalCommerceCommon, 'tokenizePayment').mockImplementation(jest.fn());
-        jest.spyOn(paypalCommerceCommon, 'submitPayment').mockImplementation(jest.fn());
-        jest.spyOn(paypalCommerceCommon, 'removeElement').mockImplementation(jest.fn());
-        jest.spyOn(paypalCommerceCommon, 'getBillingAddressFromOrderDetails').mockReturnValue(
-            getBillingAddressFromOrderDetails(),
+        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
+            paypalSdk,
         );
-        jest.spyOn(paypalCommerceCommon, 'getShippingAddressFromOrderDetails').mockReturnValue(
-            getShippingAddressFromOrderDetails(),
+        jest.spyOn(paypalCommerceIntegrationService, 'createBuyNowCartOrThrow').mockReturnValue(
+            buyNowCart,
         );
-        jest.spyOn(paypalCommerceCommon, 'getShippingOptionOrThrow').mockReturnValue(
+        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockImplementation(jest.fn());
+        jest.spyOn(paypalCommerceIntegrationService, 'updateOrder').mockImplementation(jest.fn());
+        jest.spyOn(paypalCommerceIntegrationService, 'tokenizePayment').mockImplementation(
+            jest.fn(),
+        );
+        jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockImplementation(jest.fn());
+        jest.spyOn(paypalCommerceIntegrationService, 'removeElement').mockImplementation(jest.fn());
+        jest.spyOn(
+            paypalCommerceIntegrationService,
+            'getBillingAddressFromOrderDetails',
+        ).mockReturnValue(getBillingAddressFromOrderDetails());
+        jest.spyOn(
+            paypalCommerceIntegrationService,
+            'getShippingAddressFromOrderDetails',
+        ).mockReturnValue(getShippingAddressFromOrderDetails());
+        jest.spyOn(paypalCommerceIntegrationService, 'getShippingOptionOrThrow').mockReturnValue(
             getShippingOption(),
         );
 
@@ -347,7 +355,7 @@ describe('PayPalCommerceButtonStrategy', () => {
         it('loads paypal commerce sdk script', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceCommon.loadPayPalSdk).toHaveBeenCalledWith(
+            expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
                 defaultMethodId,
                 cart.currency.code,
                 false,
@@ -357,7 +365,7 @@ describe('PayPalCommerceButtonStrategy', () => {
         it('loads paypal commerce sdk script with provided currency code (Buy Now flow)', async () => {
             await strategy.initialize(buyNowInitializationOptions);
 
-            expect(paypalCommerceCommon.loadPayPalSdk).toHaveBeenCalledWith(
+            expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
                 defaultMethodId,
                 buyNowPayPalCommerceOptions.currencyCode,
                 false,
@@ -451,7 +459,7 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceCommon.removeElement).toHaveBeenCalledWith(
+            expect(paypalCommerceIntegrationService.removeElement).toHaveBeenCalledWith(
                 defaultButtonContainerId,
             );
         });
@@ -465,7 +473,9 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceCommon.createOrder).toHaveBeenCalledWith('paypalcommerce');
+            expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
+                'paypalcommerce',
+            );
         });
     });
 
@@ -480,7 +490,7 @@ describe('PayPalCommerceButtonStrategy', () => {
             eventEmitter.emit('onClick');
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceCommon.createBuyNowCartOrThrow).toHaveBeenCalled();
+            expect(paypalCommerceIntegrationService.createBuyNowCartOrThrow).toHaveBeenCalled();
         });
 
         it('loads checkout related to buy now cart on button click', async () => {
@@ -501,7 +511,7 @@ describe('PayPalCommerceButtonStrategy', () => {
 
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(paypalCommerceCommon.tokenizePayment).toHaveBeenCalledWith(
+                expect(paypalCommerceIntegrationService.tokenizePayment).toHaveBeenCalledWith(
                     defaultMethodId,
                     paypalOrderId,
                 );
@@ -590,9 +600,9 @@ describe('PayPalCommerceButtonStrategy', () => {
 
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(paypalCommerceCommon.getBillingAddressFromOrderDetails).toHaveBeenCalledWith(
-                    getPayPalCommerceOrderDetails(),
-                );
+                expect(
+                    paypalCommerceIntegrationService.getBillingAddressFromOrderDetails,
+                ).toHaveBeenCalledWith(getPayPalCommerceOrderDetails());
                 expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith(
                     getBillingAddressFromOrderDetails(),
                 );
@@ -606,7 +616,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(
-                    paypalCommerceCommon.getShippingAddressFromOrderDetails,
+                    paypalCommerceIntegrationService.getShippingAddressFromOrderDetails,
                 ).toHaveBeenCalledWith(getPayPalCommerceOrderDetails());
                 expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
                     getShippingAddressFromOrderDetails(),
@@ -637,7 +647,7 @@ describe('PayPalCommerceButtonStrategy', () => {
 
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(paypalCommerceCommon.submitPayment).toHaveBeenCalledWith(
+                expect(paypalCommerceIntegrationService.submitPayment).toHaveBeenCalledWith(
                     defaultMethodId,
                     paypalOrderId,
                 );
@@ -678,7 +688,7 @@ describe('PayPalCommerceButtonStrategy', () => {
                 customFields: [],
             };
 
-            jest.spyOn(paypalCommerceCommon, 'getAddress').mockReturnValue(address);
+            jest.spyOn(paypalCommerceIntegrationService, 'getAddress').mockReturnValue(address);
 
             await strategy.initialize(initializationOptions);
 
@@ -697,7 +707,7 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceCommon.getShippingOptionOrThrow).toHaveBeenCalled();
+            expect(paypalCommerceIntegrationService.getShippingOptionOrThrow).toHaveBeenCalled();
             expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
                 getShippingOption().id,
             );
@@ -718,7 +728,7 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceCommon.updateOrder).toHaveBeenCalled();
+            expect(paypalCommerceIntegrationService.updateOrder).toHaveBeenCalled();
         });
     });
 
@@ -745,7 +755,7 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceCommon.getShippingOptionOrThrow).toHaveBeenCalled();
+            expect(paypalCommerceIntegrationService.getShippingOptionOrThrow).toHaveBeenCalled();
             expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
                 getShippingOption().id,
             );
@@ -758,7 +768,7 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceCommon.updateOrder).toHaveBeenCalled();
+            expect(paypalCommerceIntegrationService.updateOrder).toHaveBeenCalled();
         });
     });
 });

@@ -26,7 +26,7 @@ import getPayPalCommerceOrderDetails from './mocks/get-paypal-commerce-order-det
 import getShippingAddressFromOrderDetails from './mocks/get-shipping-address-from-order-details.mock';
 import { getPayPalCommercePaymentMethod } from './mocks/paypal-commerce-payment-method.mock';
 import { getPayPalSDKMock } from './mocks/paypal-sdk.mock';
-import PayPalCommerceCommon from './paypal-commerce-common';
+import PayPalCommerceIntegrationService from './paypal-commerce-integration-service';
 import PayPalCommerceRequestSender from './paypal-commerce-request-sender';
 import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
 import {
@@ -37,13 +37,13 @@ import {
     StyleButtonShape,
 } from './paypal-commerce-types';
 
-describe('PayPalCommerceCommon', () => {
+describe('PayPalCommerceIntegrationService', () => {
     let buyNowCart: Cart;
     let cart: Cart;
     let consignments: Consignment[];
     let formPoster: FormPoster;
     let requestSender: RequestSender;
-    let subject: PayPalCommerceCommon;
+    let subject: PayPalCommerceIntegrationService;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalCommerceRequestSender: PayPalCommerceRequestSender;
@@ -67,7 +67,7 @@ describe('PayPalCommerceCommon', () => {
         paypalCommerceRequestSender = new PayPalCommerceRequestSender(requestSender);
         paypalCommerceScriptLoader = new PayPalCommerceScriptLoader(getScriptLoader());
 
-        subject = new PayPalCommerceCommon(
+        subject = new PayPalCommerceIntegrationService(
             formPoster,
             paymentIntegrationService,
             paypalCommerceRequestSender,
@@ -83,8 +83,8 @@ describe('PayPalCommerceCommon', () => {
         jest.spyOn(paypalCommerceScriptLoader, 'getPayPalSDK').mockReturnValue(paypalSdk);
     });
 
-    it('creates an instance of the PayPal Commerce Common class', () => {
-        expect(subject).toBeInstanceOf(PayPalCommerceCommon);
+    it('creates an instance of the PayPalCommerceIntegrationService class', () => {
+        expect(subject).toBeInstanceOf(PayPalCommerceIntegrationService);
     });
 
     describe('#loadPayPalSdk', () => {
