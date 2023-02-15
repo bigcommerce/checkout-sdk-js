@@ -1,6 +1,4 @@
-import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { PayPalButtonStyleOptions } from '../paypal-commerce-types';
+import { PayPalButtonStyleOptions, PayPalBuyNowInitializeOptions } from '../paypal-commerce-types';
 
 /**
  * A set of options that are required to initialize PayPalCommerce in cart or product details page.
@@ -12,9 +10,7 @@ export default interface PayPalCommerceButtonInitializeOptions {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
 
     /**
      * The option that used to initialize a PayPal script with provided currency code.
@@ -22,6 +18,8 @@ export default interface PayPalCommerceButtonInitializeOptions {
     currencyCode?: string;
 
     /**
+     * // TODO: this flag should be removed, because the strategy does not used on checkout page
+     * // and it always equals to 'false'
      * Flag which helps to detect that the strategy initializes on Checkout page.
      */
     initializesOnCheckoutPage?: boolean;

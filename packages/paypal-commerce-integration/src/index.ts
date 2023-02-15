@@ -1,3 +1,4 @@
+export { default as PayPalCommerceCommon } from './paypal-commerce-common';
 export { default as PayPalCommerceRequestSender } from './paypal-commerce-request-sender';
 export { default as PayPalCommerceScriptLoader } from './paypal-commerce-script-loader';
 

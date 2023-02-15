@@ -4,11 +4,9 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
 import {
-    BuyNowCartCreationError,
     Cart,
     CheckoutButtonInitializeOptions,
     InvalidArgumentError,
-    MissingDataError,
     PaymentIntegrationService,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -21,14 +19,17 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import getBillingAddressFromOrderDetails from '../mocks/get-billing-address-from-order-details.mock';
+import getPayPalCommerceOrderDetails from '../mocks/get-paypal-commerce-order-details.mock';
+import getShippingAddressFromOrderDetails from '../mocks/get-shipping-address-from-order-details.mock';
 import { getPayPalCommercePaymentMethod } from '../mocks/paypal-commerce-payment-method.mock';
 import { getPayPalSDKMock } from '../mocks/paypal-sdk.mock';
+import PayPalCommerceCommon from '../paypal-commerce-common';
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 import PayPalCommerceScriptLoader from '../paypal-commerce-script-loader';
 import {
     PayPalCommerceButtonsOptions,
     PayPalCommerceHostWindow,
-    PayPalOrderDetails,
     PayPalSDK,
 } from '../paypal-commerce-types';
 
@@ -45,6 +46,7 @@ describe('PayPalCommerceButtonStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalButtonElement: HTMLDivElement;
+    let paypalCommerceCommon: PayPalCommerceCommon;
     let paypalCommerceRequestSender: PayPalCommerceRequestSender;
     let paypalCommerceScriptLoader: PayPalCommerceScriptLoader;
     let paypalSdk: PayPalSDK;
@@ -120,37 +122,55 @@ describe('PayPalCommerceButtonStrategy', () => {
         paypalCommerceRequestSender = new PayPalCommerceRequestSender(requestSender);
         paypalCommerceScriptLoader = new PayPalCommerceScriptLoader(getScriptLoader());
 
-        strategy = new PayPalCommerceButtonStrategy(
+        paypalCommerceCommon = new PayPalCommerceCommon(
             formPoster,
             paymentIntegrationService,
             paypalCommerceRequestSender,
             paypalCommerceScriptLoader,
         );
 
+        strategy = new PayPalCommerceButtonStrategy(
+            paymentIntegrationService,
+            paypalCommerceCommon,
+        );
+
         paypalButtonElement = document.createElement('div');
         paypalButtonElement.id = defaultButtonContainerId;
         document.body.appendChild(paypalButtonElement);
 
-        const state = paymentIntegrationService.getState();
-
-        jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethod,
+        );
         jest.spyOn(paymentIntegrationService, 'loadDefaultCheckout').mockImplementation(jest.fn());
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockImplementation(jest.fn());
         jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockImplementation(
             jest.fn(),
         );
         jest.spyOn(paymentIntegrationService, 'selectShippingOption').mockImplementation(jest.fn());
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
-        jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
-        jest.spyOn(formPoster, 'postForm').mockImplementation(jest.fn());
-        jest.spyOn(paypalCommerceScriptLoader, 'getPayPalSDK').mockReturnValue(paypalSdk);
-        jest.spyOn(paypalCommerceRequestSender, 'updateOrder').mockReturnValue(true);
+
+        jest.spyOn(paypalCommerceCommon, 'loadPayPalSdk').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalCommerceCommon, 'getPayPalSdkOrThrow').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalCommerceCommon, 'createBuyNowCartOrThrow').mockReturnValue(buyNowCart);
+        jest.spyOn(paypalCommerceCommon, 'createOrder').mockImplementation(jest.fn());
+        jest.spyOn(paypalCommerceCommon, 'updateOrder').mockImplementation(jest.fn());
+        jest.spyOn(paypalCommerceCommon, 'tokenizePayment').mockImplementation(jest.fn());
+        jest.spyOn(paypalCommerceCommon, 'submitPayment').mockImplementation(jest.fn());
+        jest.spyOn(paypalCommerceCommon, 'removeElement').mockImplementation(jest.fn());
+        jest.spyOn(paypalCommerceCommon, 'getBillingAddressFromOrderDetails').mockReturnValue(
+            getBillingAddressFromOrderDetails(),
+        );
+        jest.spyOn(paypalCommerceCommon, 'getShippingAddressFromOrderDetails').mockReturnValue(
+            getShippingAddressFromOrderDetails(),
+        );
+        jest.spyOn(paypalCommerceCommon, 'getShippingOptionOrThrow').mockReturnValue(
+            getShippingOption(),
+        );
 
         jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
             (options: PayPalCommerceButtonsOptions) => {
                 eventEmitter.on('createOrder', () => {
                     if (options.createOrder) {
-                        options.createOrder().catch(jest.fn());
+                        options.createOrder();
                     }
                 });
 
@@ -277,6 +297,41 @@ describe('PayPalCommerceButtonStrategy', () => {
             }
         });
 
+        it('throws an error if paypalcommerce.currencyCode is not provided (for buyNowFlow only)', async () => {
+            const { currencyCode, ...rest } = buyNowPayPalCommerceOptions;
+
+            const newInitializationOptions = {
+                ...buyNowInitializationOptions,
+                paypalcommerce: rest,
+            };
+
+            try {
+                await strategy.initialize(newInitializationOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
+        it('throws an error if provided buyNow callback is not a function is not provided (for buyNowFlow only)', async () => {
+            const { buyNowInitializeOptions, ...rest } = buyNowPayPalCommerceOptions;
+
+            const newInitializationOptions = {
+                ...buyNowInitializationOptions,
+                paypalcommerce: {
+                    ...rest,
+                    buyNowInitializeOptions: {
+                        getBuyNowCartRequestBody: 'string',
+                    },
+                },
+            } as CheckoutButtonInitializeOptions;
+
+            try {
+                await strategy.initialize(newInitializationOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
         it('loads default checkout', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -292,25 +347,38 @@ describe('PayPalCommerceButtonStrategy', () => {
         it('loads paypal commerce sdk script', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
-                paymentMethod,
+            expect(paypalCommerceCommon.loadPayPalSdk).toHaveBeenCalledWith(
+                defaultMethodId,
                 cart.currency.code,
-                paypalCommerceOptions.initializesOnCheckoutPage,
+                false,
             );
         });
 
         it('loads paypal commerce sdk script with provided currency code (Buy Now flow)', async () => {
             await strategy.initialize(buyNowInitializationOptions);
 
-            expect(paypalCommerceScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
-                paymentMethod,
+            expect(paypalCommerceCommon.loadPayPalSdk).toHaveBeenCalledWith(
+                defaultMethodId,
                 buyNowPayPalCommerceOptions.currencyCode,
-                buyNowPayPalCommerceOptions.initializesOnCheckoutPage,
+                false,
             );
         });
+    });
 
-        it('initializes PayPal button to render', async () => {
+    describe('#renderButton', () => {
+        it('initializes PayPal button to render (default flow)', async () => {
             await strategy.initialize(initializationOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                fundingSource: paypalSdk.FUNDING.PAYPAL,
+                style: paypalCommerceOptions.style,
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+            });
+        });
+
+        it('initializes PayPal button to render (buy now flow)', async () => {
+            await strategy.initialize(buyNowInitializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
@@ -321,54 +389,30 @@ describe('PayPalCommerceButtonStrategy', () => {
             });
         });
 
-        it('does not throw an error if onComplete method is not provided for default flow', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    isHostedCheckoutEnabled: false,
-                },
-            });
-
-            const { onComplete, ...rest } = paypalCommerceOptions;
-
-            const options = {
-                ...initializationOptions,
-                paypalcommerce: rest,
-            };
-
-            await strategy.initialize(options);
-
-            expect(paypalSdk.Buttons).toHaveBeenCalled();
-        });
-
-        it('throws an error if onComplete method is not provided for shippingOptions flow', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
+        it('initializes PayPal button to render (with shipping options feature enabled)', async () => {
+            const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
                 initializationData: {
                     ...paymentMethod.initializationData,
                     isHostedCheckoutEnabled: true,
                 },
-            });
-
-            const { onComplete, ...rest } = paypalCommerceOptions;
-
-            const options = {
-                ...initializationOptions,
-                paypalcommerce: rest,
             };
 
-            try {
-                await strategy.initialize(options);
-            } catch (error) {
-                expect(error).toBeInstanceOf(InvalidArgumentError);
-            }
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                fundingSource: paypalSdk.FUNDING.PAYPAL,
+                style: paypalCommerceOptions.style,
+                createOrder: expect.any(Function),
+                onShippingAddressChange: expect.any(Function),
+                onShippingOptionsChange: expect.any(Function),
+                onApprove: expect.any(Function),
+            });
         });
 
         it('renders PayPal button if it is eligible', async () => {
@@ -397,7 +441,7 @@ describe('PayPalCommerceButtonStrategy', () => {
             expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalled();
         });
 
-        it('removes PayPal button container if the button has not rendered', async () => {
+        it('removes PayPal button container if the button is not eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
@@ -407,374 +451,196 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(document.getElementById(defaultButtonContainerId)).toBeNull();
-        });
-
-        it('throws an error if buy now cart request body data is not provided on button click (Buy Now flow)', async () => {
-            const buyNowInitializationOptionsMock = {
-                ...buyNowInitializationOptions,
-                paypalcommerce: {
-                    ...buyNowPayPalCommerceOptions,
-                    buyNowInitializeOptions: {
-                        getBuyNowCartRequestBody: jest.fn().mockReturnValue(undefined),
-                    },
-                },
-            };
-
-            await strategy.initialize(buyNowInitializationOptionsMock);
-            eventEmitter.emit('onClick', undefined, (error: Error) => {
-                expect(error).toBeInstanceOf(MissingDataError);
-            });
-        });
-
-        it('creates buy now cart (Buy Now Flow)', async () => {
-            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(buyNowCart);
-
-            await strategy.initialize(buyNowInitializationOptions);
-
-            eventEmitter.emit('onClick', () => {
-                expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalledWith(
-                    buyNowCartRequestBody,
-                );
-            });
-        });
-
-        it('throws an error if failed to create buy now cart (Buy Now Flow)', async () => {
-            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockImplementation(() =>
-                Promise.reject(),
+            expect(paypalCommerceCommon.removeElement).toHaveBeenCalledWith(
+                defaultButtonContainerId,
             );
-
-            await strategy.initialize(buyNowInitializationOptions);
-            eventEmitter.emit('onClick', undefined, (error: Error) => {
-                expect(error).toBeInstanceOf(BuyNowCartCreationError);
-            });
         });
+    });
 
-        it('creates an order with paypalcommerce as provider id if its initializes outside checkout page', async () => {
-            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('');
-
+    describe('#createOrder', () => {
+        it('creates paypal order', async () => {
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('createOrder');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith('paypalcommerce', {
-                cartId: cart.id,
-            });
+            expect(paypalCommerceCommon.createOrder).toHaveBeenCalledWith('paypalcommerce');
         });
+    });
 
-        it('creates an order with paypalcommercecheckout as provider id if its initializes on checkout page', async () => {
-            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('');
-
-            const updatedIntializationOptions = {
-                ...initializationOptions,
-                paypalcommerce: {
-                    ...paypalCommerceOptions,
-                    initializesOnCheckoutPage: true,
-                },
-            };
-
-            await strategy.initialize(updatedIntializationOptions);
-
-            eventEmitter.emit('createOrder');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                'paypalcommercecheckout',
-                {
-                    cartId: cart.id,
-                },
-            );
-        });
-
-        it('creates order with Buy Now cart id (Buy Now flow)', async () => {
+    describe('#handleClick', () => {
+        beforeEach(() => {
             jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(buyNowCart);
-            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('');
+            jest.spyOn(paymentIntegrationService, 'loadCheckout').mockReturnValue(true);
+        });
 
+        it('creates buy now cart on button click', async () => {
             await strategy.initialize(buyNowInitializationOptions);
-
             eventEmitter.emit('onClick');
-
             await new Promise((resolve) => process.nextTick(resolve));
 
-            eventEmitter.emit('createOrder');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith('paypalcommerce', {
-                cartId: buyNowCart.id,
-            });
+            expect(paypalCommerceCommon.createBuyNowCartOrThrow).toHaveBeenCalled();
         });
 
-        it('throws an error if orderId is not provided by PayPal on approve', async () => {
-            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-                (options: PayPalCommerceButtonsOptions) => {
-                    eventEmitter.on('createOrder', () => {
-                        if (options.createOrder) {
-                            options.createOrder().catch(jest.fn());
-                        }
-                    });
-
-                    eventEmitter.on('onApprove', () => {
-                        if (options.onApprove) {
-                            options.onApprove(
-                                { orderID: undefined },
-                                {
-                                    order: {
-                                        get: jest.fn(),
-                                    },
-                                },
-                            );
-                        }
-                    });
-
-                    return {
-                        isEligible: jest.fn(() => true),
-                        render: jest.fn(),
-                    };
-                },
-            );
-
-            try {
-                await strategy.initialize(initializationOptions);
-                eventEmitter.emit('onApprove');
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
-        it('tokenizes payment on paypal approve', async () => {
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('onApprove');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(formPoster.postForm).toHaveBeenCalledWith(
-                '/checkout.php',
-                expect.objectContaining({
-                    action: 'set_external_checkout',
-                    order_id: paypalOrderId,
-                    payment_type: 'paypal',
-                    provider: paymentMethod.id,
-                }),
-            );
-        });
-
-        it('provides buy now cart_id on payment tokenization on paypal approve', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
-                buyNowCart,
-            );
-            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('111');
-
+        it('loads checkout related to buy now cart on button click', async () => {
             await strategy.initialize(buyNowInitializationOptions);
-
             eventEmitter.emit('onClick');
-
             await new Promise((resolve) => process.nextTick(resolve));
 
-            eventEmitter.emit('createOrder');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            eventEmitter.emit('onApprove');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', {
-                action: 'set_external_checkout',
-                cart_id: buyNowCart.id,
-                order_id: paypalOrderId,
-                payment_type: 'paypal',
-                provider: defaultMethodId,
-            });
+            expect(paymentIntegrationService.loadCheckout).toHaveBeenCalledWith(buyNowCart.id);
         });
     });
 
     describe('#onApprove button callback', () => {
-        const paypalOrderDetails: PayPalOrderDetails = {
-            purchase_units: [
-                {
-                    shipping: {
-                        address: {
-                            address_line_1: '2 E 61st St',
-                            admin_area_2: 'New York',
-                            admin_area_1: 'NY',
-                            postal_code: '10065',
-                            country_code: 'US',
+        describe('default flow', () => {
+            it('tokenizes payment on paypal approve', async () => {
+                await strategy.initialize(initializationOptions);
+
+                eventEmitter.emit('onApprove');
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paypalCommerceCommon.tokenizePayment).toHaveBeenCalledWith(
+                    defaultMethodId,
+                    paypalOrderId,
+                );
+            });
+        });
+
+        describe('shipping options feature flow', () => {
+            const paypalOrderDetails = getPayPalCommerceOrderDetails();
+
+            beforeEach(() => {
+                jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
+                    (options: PayPalCommerceButtonsOptions) => {
+                        eventEmitter.on('onApprove', () => {
+                            if (options.onApprove) {
+                                options.onApprove(
+                                    { orderID: paypalOrderId },
+                                    {
+                                        order: {
+                                            get: jest.fn(() => paypalOrderDetails),
+                                        },
+                                    },
+                                );
+                            }
+                        });
+
+                        return {
+                            render: jest.fn(),
+                            isEligible: jest.fn(() => true),
+                        };
+                    },
+                );
+
+                const paymentMethodWithShippingOptionsFeature = {
+                    ...paymentMethod,
+                    initializationData: {
+                        ...paymentMethod.initializationData,
+                        isHostedCheckoutEnabled: true,
+                    },
+                };
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+            });
+
+            it('takes order details data from paypal', async () => {
+                const getOrderActionMock = jest.fn(() => paypalOrderDetails);
+
+                jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
+                    (options: PayPalCommerceButtonsOptions) => {
+                        eventEmitter.on('onApprove', () => {
+                            if (options.onApprove) {
+                                options.onApprove(
+                                    { orderID: paypalOrderId },
+                                    {
+                                        order: {
+                                            get: getOrderActionMock,
+                                        },
+                                    },
+                                );
+                            }
+                        });
+
+                        return {
+                            render: jest.fn(),
+                            isEligible: jest.fn(() => true),
+                        };
+                    },
+                );
+
+                await strategy.initialize(initializationOptions);
+
+                eventEmitter.emit('onApprove');
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(getOrderActionMock).toHaveBeenCalled();
+                expect(getOrderActionMock).toHaveReturnedWith(paypalOrderDetails);
+            });
+
+            it('updates billing address with valid customers data', async () => {
+                await strategy.initialize(initializationOptions);
+
+                eventEmitter.emit('onApprove');
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paypalCommerceCommon.getBillingAddressFromOrderDetails).toHaveBeenCalledWith(
+                    getPayPalCommerceOrderDetails(),
+                );
+                expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith(
+                    getBillingAddressFromOrderDetails(),
+                );
+            });
+
+            it('updates shipping address with valid customers data if physical items are available in the cart', async () => {
+                await strategy.initialize(initializationOptions);
+
+                eventEmitter.emit('onApprove');
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(
+                    paypalCommerceCommon.getShippingAddressFromOrderDetails,
+                ).toHaveBeenCalledWith(getPayPalCommerceOrderDetails());
+                expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
+                    getShippingAddressFromOrderDetails(),
+                );
+            });
+
+            it('submits BC order with provided methodId', async () => {
+                await strategy.initialize(initializationOptions);
+
+                eventEmitter.emit('onApprove');
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
+                    {},
+                    {
+                        params: {
+                            methodId: initializationOptions.methodId,
                         },
                     },
-                },
-            ],
-            payer: {
-                name: {
-                    given_name: 'John',
-                    surname: 'Doe',
-                },
-                email_address: 'john@doe.com',
-                address: {
-                    address_line_1: '1 Main St',
-                    admin_area_2: 'San Jose',
-                    admin_area_1: 'CA',
-                    postal_code: '95131',
-                    country_code: 'US',
-                },
-            },
-        };
+                );
+            });
 
-        beforeEach(() => {
-            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-                (options: PayPalCommerceButtonsOptions) => {
-                    eventEmitter.on('onApprove', () => {
-                        if (options.onApprove) {
-                            options.onApprove(
-                                { orderID: paypalOrderId },
-                                {
-                                    order: {
-                                        get: jest.fn(() => paypalOrderDetails),
-                                    },
-                                },
-                            );
-                        }
-                    });
+            it('submits BC payment to update BC order data', async () => {
+                await strategy.initialize(initializationOptions);
 
-                    return {
-                        render: jest.fn(),
-                        isEligible: jest.fn(() => true),
-                    };
-                },
-            );
+                eventEmitter.emit('onApprove');
 
-            const paymentMethodWithShippingOptionsFeature = {
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    isHostedCheckoutEnabled: true,
-                },
-            };
+                await new Promise((resolve) => process.nextTick(resolve));
 
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
-        });
-
-        it('takes order details data from paypal', async () => {
-            const getOrderActionMock = jest.fn(() => paypalOrderDetails);
-
-            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-                (options: PayPalCommerceButtonsOptions) => {
-                    eventEmitter.on('onApprove', () => {
-                        if (options.onApprove) {
-                            options.onApprove(
-                                { orderID: paypalOrderId },
-                                {
-                                    order: {
-                                        get: getOrderActionMock,
-                                    },
-                                },
-                            );
-                        }
-                    });
-
-                    return {
-                        render: jest.fn(),
-                        isEligible: jest.fn(() => true),
-                    };
-                },
-            );
-
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('onApprove');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(getOrderActionMock).toHaveBeenCalled();
-            expect(getOrderActionMock).toHaveReturnedWith(paypalOrderDetails);
-        });
-
-        it('updates only billing address with valid customers data from order details if there is no shipping needed', async () => {
-            const defaultCart = getCart();
-            const cartWithoutShipping = {
-                ...defaultCart,
-                lineItems: {
-                    ...defaultCart.lineItems,
-                    physicalItems: [],
-                },
-            };
-
-            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
-                cartWithoutShipping,
-            );
-
-            const address = {
-                firstName: paypalOrderDetails.payer.name.given_name,
-                lastName: paypalOrderDetails.payer.name.surname,
-                email: paypalOrderDetails.payer.email_address,
-                phone: '',
-                company: '',
-                address1: paypalOrderDetails.payer.address.address_line_1,
-                address2: '',
-                city: paypalOrderDetails.payer.address.admin_area_2,
-                countryCode: paypalOrderDetails.payer.address.country_code,
-                postalCode: paypalOrderDetails.payer.address.postal_code,
-                stateOrProvince: '',
-                stateOrProvinceCode: paypalOrderDetails.payer.address.admin_area_1,
-                customFields: [],
-            };
-
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('onApprove');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith(address);
-        });
-
-        it('submits BC order with provided methodId', async () => {
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('onApprove');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
-                {},
-                {
-                    params: {
-                        methodId: initializationOptions.methodId,
-                    },
-                },
-            );
-        });
-
-        it('submits BC payment to update BC order data', async () => {
-            const methodId = initializationOptions.methodId;
-            const paymentData = {
-                formattedPayload: {
-                    vault_payment_instrument: null,
-                    set_as_default_stored_instrument: null,
-                    device_info: null,
-                    method_id: methodId,
-                    paypal_account: {
-                        order_id: paypalOrderId,
-                    },
-                },
-            };
-
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('onApprove');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                methodId,
-                paymentData,
+                expect(paypalCommerceCommon.submitPayment).toHaveBeenCalledWith(
+                    defaultMethodId,
+                    paypalOrderId,
+                );
             });
         });
     });
@@ -796,7 +662,7 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
 
         it('updates billing and shipping address with data returned from PayPal', async () => {
-            const providedAddress = {
+            const address = {
                 firstName: '',
                 lastName: '',
                 email: '',
@@ -812,90 +678,32 @@ describe('PayPalCommerceButtonStrategy', () => {
                 customFields: [],
             };
 
+            jest.spyOn(paypalCommerceCommon, 'getAddress').mockReturnValue(address);
+
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingAddressChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith(
-                providedAddress,
-            );
-            expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
-                providedAddress,
-            );
+            expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith(address);
+            expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(address);
         });
 
-        it('selects recommended shipping option if it was not selected earlier', async () => {
-            const recommendedShippingOption = {
-                ...getShippingOption(),
-                isRecommended: true,
-            };
-
-            const consignment = {
-                ...getConsignment(),
-                availableShippingOptions: [recommendedShippingOption],
-                selectedShippingOption: null,
-            };
-
-            const updatedConsignment = {
-                ...consignment,
-                selectedShippingOption: recommendedShippingOption,
-            };
-
-            jest.spyOn(paymentIntegrationService.getState(), 'getConsignmentsOrThrow')
-                .mockReturnValueOnce([consignment])
-                .mockReturnValue([updatedConsignment]);
-
+        it('selects shipping option after address update', async () => {
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingAddressChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
+            expect(paypalCommerceCommon.getShippingOptionOrThrow).toHaveBeenCalled();
             expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
-                recommendedShippingOption.id,
+                getShippingOption().id,
             );
         });
 
-        it('selects first available shipping option if there is no recommended option', async () => {
-            const firstShippingOption = {
-                ...getShippingOption(),
-                id: 1,
-            };
-
-            const secondShippingOption = {
-                ...getShippingOption(),
-                id: 2,
-            };
-
-            const consignment = {
-                ...getConsignment(),
-                availableShippingOptions: [firstShippingOption, secondShippingOption],
-                selectedShippingOption: null,
-            };
-
-            const updatedConsignment = {
-                ...consignment,
-                selectedShippingOption: firstShippingOption,
-            };
-
-            jest.spyOn(paymentIntegrationService.getState(), 'getConsignmentsOrThrow')
-                .mockReturnValueOnce([consignment])
-                .mockReturnValue([updatedConsignment]);
-
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('onShippingAddressChange');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
-                firstShippingOption.id,
-            );
-        });
-
-        it('updates PayPal order', async () => {
+        it('updates PayPal order after shipping option selection', async () => {
             const consignment = getConsignment();
 
             // INFO: lets imagine that it is a state that we get after consignmentActionCreator.selectShippingOption call
@@ -910,11 +718,7 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.updateOrder).toHaveBeenCalledWith({
-                availableShippingOptions: consignment.availableShippingOptions,
-                cartId: cart.id,
-                selectedShippingOption: consignment.selectedShippingOption,
-            });
+            expect(paypalCommerceCommon.updateOrder).toHaveBeenCalled();
         });
     });
 
@@ -935,112 +739,26 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
 
         it('selects shipping option', async () => {
-            const recommendedShippingOption = getShippingOption();
-            const shippingOptionThatShouldBeSelected = {
-                ...getShippingOption(),
-                id: paypalSelectedShippingOptionPayloadMock.id,
-                isRecommended: false,
-            };
-
-            const consignment = {
-                ...getConsignment(),
-                availableShippingOptions: [
-                    recommendedShippingOption,
-                    shippingOptionThatShouldBeSelected,
-                ],
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getConsignmentsOrThrow',
-            ).mockReturnValue([consignment]);
-
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingOptionsChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
+            expect(paypalCommerceCommon.getShippingOptionOrThrow).toHaveBeenCalled();
             expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
-                shippingOptionThatShouldBeSelected.id,
-            );
-        });
-
-        it('selects recommended shipping option if there is no match with payload from paypal', async () => {
-            const recommendedShippingOption = getShippingOption();
-            const anotherShippingOption = {
-                ...getShippingOption(),
-                id: 'asdag123',
-                isRecommended: false,
-            };
-
-            const consignment = {
-                ...getConsignment(),
-                availableShippingOptions: [recommendedShippingOption, anotherShippingOption],
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getConsignmentsOrThrow',
-            ).mockReturnValue([consignment]);
-
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('onShippingOptionsChange');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paymentIntegrationService.selectShippingOption).not.toHaveBeenCalledWith(
-                paypalSelectedShippingOptionPayloadMock.id,
-            );
-            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
-                recommendedShippingOption.id,
+                getShippingOption().id,
             );
         });
 
         it('updates PayPal order', async () => {
-            const consignment = getConsignment();
-
-            // INFO: lets imagine that it is a state that we get after consignmentActionCreator.selectShippingOption call
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getConsignmentsOrThrow',
-            ).mockReturnValue([consignment]);
-
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingOptionsChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.updateOrder).toHaveBeenCalledWith({
-                availableShippingOptions: consignment.availableShippingOptions,
-                cartId: cart.id,
-                selectedShippingOption: consignment.selectedShippingOption,
-            });
-        });
-    });
-
-    describe('#handleClick', () => {
-        beforeEach(() => {
-            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(buyNowCart);
-            jest.spyOn(paymentIntegrationService, 'loadCheckout').mockReturnValue(true);
-        });
-
-        it('creates buy now cart on button click', async () => {
-            await strategy.initialize(buyNowInitializationOptions);
-            eventEmitter.emit('onClick');
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalled();
-        });
-
-        it('loads checkout related to buy now cart on button click', async () => {
-            await strategy.initialize(buyNowInitializationOptions);
-            eventEmitter.emit('onClick');
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paymentIntegrationService.loadCheckout).toHaveBeenCalledWith(buyNowCart.id);
+            expect(paypalCommerceCommon.updateOrder).toHaveBeenCalled();
         });
     });
 });
