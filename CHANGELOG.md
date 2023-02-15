@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.348.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.347.0...v1.348.0) (2023-02-15)
+
+
+### Features
+
+* **payment:** BOLT-459 move ErrorResponseBody to paymant-integration-api package ([de7fbd7](https://github.com/bigcommerce/checkout-sdk-js/commit/de7fbd71e9df0d6cfa02fe1c7e41dd3f3010abbc))
+
 ## [1.347.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.346.0...v1.347.0) (2023-02-15)
 
 
