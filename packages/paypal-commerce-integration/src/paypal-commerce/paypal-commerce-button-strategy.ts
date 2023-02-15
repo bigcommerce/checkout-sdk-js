@@ -7,7 +7,7 @@ import {
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import PayPalCommerceCommon from '../paypal-commerce-common';
+import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
     ApproveCallbackActions,
     ApproveCallbackPayload,
@@ -24,7 +24,7 @@ import PayPalCommerceButtonInitializeOptions, {
 export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private paypalCommerceCommon: PayPalCommerceCommon,
+        private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
     ) {}
 
     async initialize(
@@ -80,7 +80,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             ? paypalcommerce.currencyCode
             : this.paymentIntegrationService.getState().getCartOrThrow().currency.code;
 
-        await this.paypalCommerceCommon.loadPayPalSdk(methodId, currencyCode, false);
+        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
 
         this.renderButton(containerId, methodId, paypalcommerce);
     }
@@ -96,15 +96,15 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
     ): void {
         const { buyNowInitializeOptions, style, onComplete } = paypalcommerce;
 
-        const paypalSdk = this.paypalCommerceCommon.getPayPalSdkOrThrow();
+        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
         const { isHostedCheckoutEnabled } = paymentMethod.initializationData;
 
         const defaultCallbacks = {
-            createOrder: () => this.paypalCommerceCommon.createOrder('paypalcommerce'),
+            createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this.paypalCommerceCommon.tokenizePayment(methodId, orderID),
+                this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
         };
 
         const buyNowFlowCallbacks = {
@@ -122,7 +122,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {
             fundingSource: paypalSdk.FUNDING.PAYPAL,
-            style: this.paypalCommerceCommon.getValidButtonStyle(style),
+            style: this.paypalCommerceIntegrationService.getValidButtonStyle(style),
             ...defaultCallbacks,
             ...(buyNowInitializeOptions && buyNowFlowCallbacks),
             ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),
@@ -133,7 +133,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         if (paypalButton.isEligible()) {
             paypalButton.render(`#${containerId}`);
         } else {
-            this.paypalCommerceCommon.removeElement(containerId);
+            this.paypalCommerceIntegrationService.removeElement(containerId);
         }
     }
 
@@ -141,7 +141,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         buyNowInitializeOptions?: PayPalBuyNowInitializeOptions,
     ): Promise<void> {
         if (buyNowInitializeOptions) {
-            const buyNowCart = await this.paypalCommerceCommon.createBuyNowCartOrThrow(
+            const buyNowCart = await this.paypalCommerceIntegrationService.createBuyNowCartOrThrow(
                 buyNowInitializeOptions,
             );
 
@@ -165,20 +165,24 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
         try {
             const billingAddress =
-                this.paypalCommerceCommon.getBillingAddressFromOrderDetails(orderDetails);
+                this.paypalCommerceIntegrationService.getBillingAddressFromOrderDetails(
+                    orderDetails,
+                );
 
             await this.paymentIntegrationService.updateBillingAddress(billingAddress);
 
             if (cart.lineItems.physicalItems.length > 0) {
                 const shippingAddress =
-                    this.paypalCommerceCommon.getShippingAddressFromOrderDetails(orderDetails);
+                    this.paypalCommerceIntegrationService.getShippingAddressFromOrderDetails(
+                        orderDetails,
+                    );
 
                 await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-                await this.paypalCommerceCommon.updateOrder();
+                await this.paypalCommerceIntegrationService.updateOrder();
             }
 
             await this.paymentIntegrationService.submitOrder({}, { params: { methodId } });
-            await this.paypalCommerceCommon.submitPayment(methodId, data.orderID);
+            await this.paypalCommerceIntegrationService.submitPayment(methodId, data.orderID);
 
             if (onComplete && typeof onComplete === 'function') {
                 onComplete();
@@ -193,7 +197,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
     private async onShippingAddressChange(
         data: ShippingAddressChangeCallbackPayload,
     ): Promise<void> {
-        const address = this.paypalCommerceCommon.getAddress({
+        const address = this.paypalCommerceIntegrationService.getAddress({
             city: data.shippingAddress.city,
             countryCode: data.shippingAddress.country_code,
             postalCode: data.shippingAddress.postal_code,
@@ -206,10 +210,10 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             await this.paymentIntegrationService.updateBillingAddress(address);
             await this.paymentIntegrationService.updateShippingAddress(address);
 
-            const shippingOption = this.paypalCommerceCommon.getShippingOptionOrThrow();
+            const shippingOption = this.paypalCommerceIntegrationService.getShippingOptionOrThrow();
 
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.paypalCommerceCommon.updateOrder();
+            await this.paypalCommerceIntegrationService.updateOrder();
         } catch (error) {
             throw new Error(error);
         }
@@ -218,13 +222,13 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
     private async onShippingOptionsChange(
         data: ShippingOptionChangeCallbackPayload,
     ): Promise<void> {
-        const shippingOption = this.paypalCommerceCommon.getShippingOptionOrThrow(
+        const shippingOption = this.paypalCommerceIntegrationService.getShippingOptionOrThrow(
             data.selectedShippingOption.id,
         );
 
         try {
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.paypalCommerceCommon.updateOrder();
+            await this.paypalCommerceIntegrationService.updateOrder();
         } catch (error) {
             throw new Error(error);
         }

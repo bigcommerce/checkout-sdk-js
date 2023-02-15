@@ -27,7 +27,7 @@ import {
     StyleButtonShape,
 } from './paypal-commerce-types';
 
-export default class PayPalCommerceCommon {
+export default class PayPalCommerceIntegrationService {
     private paypalSdk?: PayPalSDK;
 
     constructor(
