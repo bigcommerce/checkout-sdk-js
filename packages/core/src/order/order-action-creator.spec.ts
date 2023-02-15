@@ -3,6 +3,8 @@ import { merge, omit } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { getCart, getCartState } from '../cart/carts.mock';
 import {
     CheckoutRequestSender,
@@ -12,7 +14,6 @@ import {
     createCheckoutStore,
 } from '../checkout';
 import { getCheckout, getCheckoutState, getCheckoutStoreState } from '../checkout/checkouts.mock';
-import { ErrorResponseBody } from '../common/error';
 import { MissingDataError } from '../common/error/errors';
 import { InternalResponseBody } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';

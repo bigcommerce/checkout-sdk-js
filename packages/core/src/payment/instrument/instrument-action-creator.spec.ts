@@ -3,10 +3,11 @@ import { merge } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { Address } from '../../address';
 import { CheckoutStore, CheckoutStoreState, createCheckoutStore } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
-import { ErrorResponseBody } from '../../common/error';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import { getConfig, getConfigState } from '../../config/configs.mock';
 import { getShippingAddress } from '../../shipping/shipping-addresses.mock';

@@ -14,3 +14,10 @@ export { default as PaymentMethodClientUnavailableError } from './payment-method
 export { default as PaymentMethodFailedError } from './payment-method-failed-error';
 export { default as RequestError } from './request-error';
 export { default as isRequestError } from './is-request-error';
+export {
+    default as ErrorResponseBody,
+    StorefrontErrorResponseBody,
+    PaymentErrorResponseBody,
+    InternalErrorResponseBody,
+    PaymentErrorData,
+} from './error-response-body';

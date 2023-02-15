@@ -2,13 +2,14 @@ import { createRequestSender, Response } from '@bigcommerce/request-sender';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { Checkout, CheckoutStore, CheckoutStoreState, createCheckoutStore } from '../checkout';
 import {
     getCheckout,
     getCheckoutStoreState,
     getCheckoutWithGiftCertificates,
 } from '../checkout/checkouts.mock';
-import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import GiftCertificateActionCreator from './gift-certificate-action-creator';

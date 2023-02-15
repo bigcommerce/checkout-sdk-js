@@ -1,7 +1,8 @@
 import { Response } from '@bigcommerce/request-sender';
 
+import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { PaymentResponse } from '../../payment';
-import { ErrorResponseBody } from '../error';
 
 export function getResponse<T>(
     body: T,
