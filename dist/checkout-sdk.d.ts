@@ -6105,9 +6105,7 @@ declare interface PayPalCommerceVenmoButtonInitializeOptions {
     /**
      * The options that required to initialize Buy Now functionality.
      */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
-    };
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
 }
 
 declare interface PayPalCommerceVenmoCustomerInitializeOptions {

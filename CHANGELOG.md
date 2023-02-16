@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.348.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.348.3...v1.348.4) (2023-02-16)
+
+
+### Bug Fixes
+
+* **checkout:** ADYEN-588 update payment data request on wallet button click googlepay ([7e1b0af](https://github.com/bigcommerce/checkout-sdk-js/commit/7e1b0af92e448b9d439a15fc1c0a1b3a759f41b8))
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-1981 updated PayPalCommerceVenmoButtonStrategy with PayPalCommerceIntegrationService ([#1851](https://github.com/bigcommerce/checkout-sdk-js/issues/1851)) ([af741dc](https://github.com/bigcommerce/checkout-sdk-js/commit/af741dc3b87b06b952b93f3a1ec551527088d675))
+
 ### [1.348.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.348.2...v1.348.3) (2023-02-16)
 
 
