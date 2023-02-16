@@ -1,6 +1,4 @@
-import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { PayPalButtonStyleOptions } from '../paypal-commerce-types';
+import { PayPalButtonStyleOptions, PayPalBuyNowInitializeOptions } from '../paypal-commerce-types';
 
 export default interface PayPalCommerceVenmoButtonInitializeOptions {
     /**
@@ -21,9 +19,7 @@ export default interface PayPalCommerceVenmoButtonInitializeOptions {
     /**
      * The options that required to initialize Buy Now functionality.
      */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
 }
 
 export interface WithPayPalCommerceVenmoButtonInitializeOptions {

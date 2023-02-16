@@ -4,11 +4,9 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
 import {
-    BuyNowCartCreationError,
     Cart,
     CheckoutButtonInitializeOptions,
     InvalidArgumentError,
-    MissingDataError,
     PaymentIntegrationService,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -21,6 +19,7 @@ import {
 
 import { getPayPalCommercePaymentMethod } from '../mocks/paypal-commerce-payment-method.mock';
 import { getPayPalSDKMock } from '../mocks/paypal-sdk.mock';
+import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 import PayPalCommerceScriptLoader from '../paypal-commerce-script-loader';
 import {
@@ -42,6 +41,7 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalButtonElement: HTMLDivElement;
+    let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
     let paypalCommerceRequestSender: PayPalCommerceRequestSender;
     let paypalCommerceScriptLoader: PayPalCommerceScriptLoader;
     let paypalSdk: PayPalSDK;
@@ -97,29 +97,45 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
         paypalCommerceRequestSender = new PayPalCommerceRequestSender(requestSender);
         paypalCommerceScriptLoader = new PayPalCommerceScriptLoader(getScriptLoader());
 
-        strategy = new PayPalCommerceVenmoButtonStrategy(
+        paypalCommerceIntegrationService = new PayPalCommerceIntegrationService(
             formPoster,
             paymentIntegrationService,
             paypalCommerceRequestSender,
             paypalCommerceScriptLoader,
         );
 
+        strategy = new PayPalCommerceVenmoButtonStrategy(
+            paymentIntegrationService,
+            paypalCommerceIntegrationService,
+        );
+
         paypalButtonElement = document.createElement('div');
         paypalButtonElement.id = defaultButtonContainerId;
         document.body.appendChild(paypalButtonElement);
 
-        const state = paymentIntegrationService.getState();
-
-        jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
         jest.spyOn(paymentIntegrationService, 'loadDefaultCheckout').mockImplementation(jest.fn());
-        jest.spyOn(formPoster, 'postForm').mockImplementation(jest.fn());
-        jest.spyOn(paypalCommerceScriptLoader, 'getPayPalSDK').mockReturnValue(paypalSdk);
+        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethod,
+        );
+
+        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
+            paypalSdk,
+        );
+        jest.spyOn(paypalCommerceIntegrationService, 'createBuyNowCartOrThrow').mockReturnValue(
+            buyNowCart,
+        );
+        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockReturnValue(undefined);
+        jest.spyOn(paypalCommerceIntegrationService, 'tokenizePayment').mockImplementation(
+            jest.fn(),
+        );
+        jest.spyOn(paypalCommerceIntegrationService, 'removeElement').mockImplementation(jest.fn());
 
         jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
             (options: PayPalCommerceButtonsOptions) => {
                 eventEmitter.on('createOrder', () => {
                     if (options.createOrder) {
-                        options.createOrder().catch(jest.fn());
+                        options.createOrder();
                     }
                 });
 
@@ -228,6 +244,41 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
             }
         });
 
+        it('throws an error if paypalcommercevenmo.currencyCode is not provided (for buyNowFlow only)', async () => {
+            const { currencyCode, ...rest } = buyNowPayPalCommerceVenmoOptions;
+
+            const newInitializationOptions = {
+                ...buyNowInitializationOptions,
+                paypalcommercevenmo: rest,
+            };
+
+            try {
+                await strategy.initialize(newInitializationOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
+        it('throws an error if provided buyNow callback is not a function is not provided (for buyNowFlow only)', async () => {
+            const { buyNowInitializeOptions, ...rest } = buyNowPayPalCommerceVenmoOptions;
+
+            const newInitializationOptions = {
+                ...buyNowInitializationOptions,
+                paypalcommercevenmo: {
+                    ...rest,
+                    buyNowInitializeOptions: {
+                        getBuyNowCartRequestBody: 'string',
+                    },
+                },
+            } as CheckoutButtonInitializeOptions;
+
+            try {
+                await strategy.initialize(newInitializationOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
         it('loads default checkout', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -243,25 +294,38 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
         it('loads paypal commerce sdk script', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
-                paymentMethod,
+            expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
+                defaultMethodId,
                 cart.currency.code,
-                paypalCommerceVenmoOptions.initializesOnCheckoutPage,
+                false,
             );
         });
 
         it('loads paypal commerce sdk script with provided currency code (Buy Now flow)', async () => {
             await strategy.initialize(buyNowInitializationOptions);
 
-            expect(paypalCommerceScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
-                paymentMethod,
+            expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
+                defaultMethodId,
                 buyNowPayPalCommerceVenmoOptions.currencyCode,
-                buyNowPayPalCommerceVenmoOptions.initializesOnCheckoutPage,
+                false,
             );
         });
+    });
 
+    describe('#renderButton', () => {
         it('initializes PayPal Venmo button to render', async () => {
             await strategy.initialize(initializationOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                fundingSource: paypalSdk.FUNDING.VENMO,
+                style: paypalCommerceVenmoOptions.style,
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+            });
+        });
+
+        it('initializes PayPal Venmo button to render (BuyNow flow)', async () => {
+            await strategy.initialize(buyNowInitializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.VENMO,
@@ -308,143 +372,50 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(document.getElementById(defaultButtonContainerId)).toBeNull();
-        });
-
-        it('throws an error if buy now cart request body data is not provided on button click (Buy Now flow)', async () => {
-            const buyNowInitializationOptionsMock = {
-                ...buyNowInitializationOptions,
-                paypalcommercevenmo: {
-                    ...buyNowPayPalCommerceVenmoOptions,
-                    buyNowInitializeOptions: {
-                        getBuyNowCartRequestBody: jest.fn().mockReturnValue(undefined),
-                    },
-                },
-            };
-
-            await strategy.initialize(buyNowInitializationOptionsMock);
-            eventEmitter.emit('onClick', undefined, (error: Error) => {
-                expect(error).toBeInstanceOf(MissingDataError);
-            });
-        });
-
-        it('creates buy now cart (Buy Now Flow)', async () => {
-            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(buyNowCart);
-
-            await strategy.initialize(buyNowInitializationOptions);
-
-            eventEmitter.emit('onClick', () => {
-                expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalledWith(
-                    buyNowCartRequestBody,
-                );
-            });
-        });
-
-        it('throws an error if failed to create buy now cart (Buy Now Flow)', async () => {
-            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockImplementation(() =>
-                Promise.reject(),
+            expect(paypalCommerceIntegrationService.removeElement).toHaveBeenCalledWith(
+                defaultButtonContainerId,
             );
-
-            await strategy.initialize(buyNowInitializationOptions);
-            eventEmitter.emit('onClick', undefined, (error: Error) => {
-                expect(error).toBeInstanceOf(BuyNowCartCreationError);
-            });
         });
+    });
 
-        it('creates an order with paypalcommercevenmo as provider id if its initializes outside checkout page', async () => {
-            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('');
-
+    describe('#createOrder', () => {
+        it('creates paypal order', async () => {
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('createOrder');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
+            expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
                 'paypalcommercevenmo',
-                {
-                    cartId: cart.id,
-                },
             );
         });
+    });
 
-        it('creates an order with paypalcommercevenmocheckout as provider id if its initializes on checkout page', async () => {
-            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('');
-
-            const updatedIntializationOptions = {
-                ...initializationOptions,
-                paypalcommercevenmo: {
-                    ...paypalCommerceVenmoOptions,
-                    initializesOnCheckoutPage: true,
-                },
-            };
-
-            await strategy.initialize(updatedIntializationOptions);
-
-            eventEmitter.emit('createOrder');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                'paypalcommercevenmocheckout',
-                {
-                    cartId: cart.id,
-                },
-            );
-        });
-
-        it('creates order with Buy Now cart id (Buy Now flow)', async () => {
+    describe('#handleClick', () => {
+        beforeEach(() => {
             jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(buyNowCart);
-            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('');
+            jest.spyOn(paymentIntegrationService, 'loadCheckout').mockReturnValue(true);
+        });
 
+        it('creates buy now cart on button click', async () => {
             await strategy.initialize(buyNowInitializationOptions);
-
             eventEmitter.emit('onClick');
-
             await new Promise((resolve) => process.nextTick(resolve));
 
-            eventEmitter.emit('createOrder');
+            expect(paypalCommerceIntegrationService.createBuyNowCartOrThrow).toHaveBeenCalled();
+        });
 
+        it('loads checkout related to buy now cart on button click', async () => {
+            await strategy.initialize(buyNowInitializationOptions);
+            eventEmitter.emit('onClick');
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
-                'paypalcommercevenmo',
-                {
-                    cartId: buyNowCart.id,
-                },
-            );
+            expect(paymentIntegrationService.loadCheckout).toHaveBeenCalledWith(buyNowCart.id);
         });
+    });
 
-        it('throws an error if orderId is not provided by PayPal on approve', async () => {
-            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-                (options: PayPalCommerceButtonsOptions) => {
-                    eventEmitter.on('createOrder', () => {
-                        if (options.createOrder) {
-                            options.createOrder().catch(jest.fn());
-                        }
-                    });
-
-                    eventEmitter.on('onApprove', () => {
-                        if (options.onApprove) {
-                            options.onApprove({ orderID: '' });
-                        }
-                    });
-
-                    return {
-                        isEligible: jest.fn(() => true),
-                        render: jest.fn(),
-                    };
-                },
-            );
-
-            try {
-                await strategy.initialize(initializationOptions);
-                eventEmitter.emit('onApprove');
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
+    describe('#onApprove button callback', () => {
         it('tokenizes payment on paypal approve', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -452,57 +423,10 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(formPoster.postForm).toHaveBeenCalledWith(
-                '/checkout.php',
-                expect.objectContaining({
-                    action: 'set_external_checkout',
-                    order_id: paypalOrderId,
-                    payment_type: 'paypal',
-                    provider: paymentMethod.id,
-                }),
+            expect(paypalCommerceIntegrationService.tokenizePayment).toHaveBeenCalledWith(
+                defaultMethodId,
+                paypalOrderId,
             );
-        });
-
-        it('provides buy now cart_id on payment tokenization on paypal approve', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
-                buyNowCart,
-            );
-            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('111');
-
-            await strategy.initialize(buyNowInitializationOptions);
-
-            eventEmitter.emit('onClick');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            eventEmitter.emit('createOrder');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            eventEmitter.emit('onApprove');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', {
-                action: 'set_external_checkout',
-                cart_id: buyNowCart.id,
-                order_id: paypalOrderId,
-                payment_type: 'paypal',
-                provider: defaultMethodId,
-            });
-        });
-    });
-
-    describe('#handleClick', () => {
-        it('creates buy now cart on button click', async () => {
-            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(buyNowCart);
-            jest.spyOn(paymentIntegrationService, 'loadCheckout').mockReturnValue(true);
-
-            await strategy.initialize(buyNowInitializationOptions);
-            eventEmitter.emit('onClick');
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalled();
         });
     });
 });
