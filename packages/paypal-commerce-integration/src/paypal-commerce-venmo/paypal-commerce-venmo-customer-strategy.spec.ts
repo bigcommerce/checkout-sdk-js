@@ -4,21 +4,16 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
 import {
-    Cart,
-    CheckoutButtonInitializeOptions,
+    CustomerInitializeOptions,
     InvalidArgumentError,
-    MissingDataError,
     PaymentIntegrationService,
     PaymentMethod,
-    PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import {
-    getCart,
-    PaymentIntegrationServiceMock,
-} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { getPayPalCommercePaymentMethod } from '../mocks/paypal-commerce-payment-method.mock';
 import { getPayPalSDKMock } from '../mocks/paypal-sdk.mock';
+import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 import PayPalCommerceScriptLoader from '../paypal-commerce-script-loader';
 import {
@@ -31,7 +26,6 @@ import PayPalCommerceVenmoCustomerInitializeOptions from './paypal-commerce-venm
 import PayPalCommerceVenmoCustomerStrategy from './paypal-commerce-venmo-customer-strategy';
 
 describe('PayPalCommerceVenmoCustomerStrategy', () => {
-    let cart: Cart;
     let eventEmitter: EventEmitter;
     let formPoster: FormPoster;
     let requestSender: RequestSender;
@@ -39,6 +33,7 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalButtonElement: HTMLDivElement;
+    let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
     let paypalCommerceRequestSender: PayPalCommerceRequestSender;
     let paypalCommerceScriptLoader: PayPalCommerceScriptLoader;
     let paypalSdk: PayPalSDK;
@@ -52,15 +47,12 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
         onError: jest.fn(),
     };
 
-    const initializationOptions: CheckoutButtonInitializeOptions = {
+    const initializationOptions: CustomerInitializeOptions = {
         methodId: defaultMethodId,
-        containerId: defaultButtonContainerId,
         paypalcommercevenmo: paypalCommerceVenmoOptions,
     };
 
     beforeEach(() => {
-        cart = getCart();
-
         eventEmitter = new EventEmitter();
 
         paymentMethod = { ...getPayPalCommercePaymentMethod(), id: 'paypalcommercevenmo' };
@@ -72,29 +64,41 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
         paypalCommerceRequestSender = new PayPalCommerceRequestSender(requestSender);
         paypalCommerceScriptLoader = new PayPalCommerceScriptLoader(getScriptLoader());
 
-        strategy = new PayPalCommerceVenmoCustomerStrategy(
+        paypalCommerceIntegrationService = new PayPalCommerceIntegrationService(
             formPoster,
             paymentIntegrationService,
             paypalCommerceRequestSender,
             paypalCommerceScriptLoader,
         );
 
+        strategy = new PayPalCommerceVenmoCustomerStrategy(
+            paymentIntegrationService,
+            paypalCommerceIntegrationService,
+        );
+
         paypalButtonElement = document.createElement('div');
         paypalButtonElement.id = defaultButtonContainerId;
         document.body.appendChild(paypalButtonElement);
 
-        const state = paymentIntegrationService.getState();
-
-        jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
-        jest.spyOn(paymentIntegrationService, 'loadDefaultCheckout').mockImplementation(jest.fn());
-        jest.spyOn(formPoster, 'postForm').mockImplementation(jest.fn());
-        jest.spyOn(paypalCommerceScriptLoader, 'getPayPalSDK').mockReturnValue(paypalSdk);
+        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethod,
+        );
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(undefined);
+        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
+            paypalSdk,
+        );
+        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockImplementation(jest.fn());
+        jest.spyOn(paypalCommerceIntegrationService, 'tokenizePayment').mockImplementation(
+            jest.fn(),
+        );
+        jest.spyOn(paypalCommerceIntegrationService, 'removeElement').mockImplementation(jest.fn());
 
         jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
             (options: PayPalCommerceButtonsOptions) => {
                 eventEmitter.on('createOrder', () => {
                     if (options.createOrder) {
-                        options.createOrder().catch(jest.fn());
+                        options.createOrder();
                     }
                 });
 
@@ -135,7 +139,7 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
 
     describe('#initialize()', () => {
         it('throws error if methodId is not provided', async () => {
-            const options = {} as CheckoutButtonInitializeOptions;
+            const options = {} as CustomerInitializeOptions;
 
             try {
                 await strategy.initialize(options);
@@ -147,7 +151,7 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
         it('throws an error if paypalcommercevenmo is not provided', async () => {
             const options = {
                 methodId: defaultMethodId,
-            } as CheckoutButtonInitializeOptions;
+            } as CustomerInitializeOptions;
 
             try {
                 await strategy.initialize(options);
@@ -156,11 +160,13 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
             }
         });
 
-        it('throws an error if containerId is not provided', async () => {
+        it('throws an error if paypalcommercevenmo.container is not provided', async () => {
             const options = {
-                ...initializationOptions,
-                paypalcommercevenmo: {},
-            } as CheckoutButtonInitializeOptions;
+                methodId: defaultMethodId,
+                paypalcommercevenmo: {
+                    container: undefined,
+                },
+            } as CustomerInitializeOptions;
 
             try {
                 await strategy.initialize(options);
@@ -177,15 +183,16 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
             );
         });
 
-        it('loads paypal commerce sdk script', async () => {
+        it('loads paypal sdk with provided method id', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
-                paymentMethod,
-                cart.currency.code,
+            expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
+                defaultMethodId,
             );
         });
+    });
 
+    describe('#renderButton', () => {
         it('initializes PayPal Venmo button to render', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -235,80 +242,27 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(document.getElementById(defaultButtonContainerId)).toBeNull();
+            expect(paypalCommerceIntegrationService.removeElement).toHaveBeenCalledWith(
+                defaultButtonContainerId,
+            );
         });
+    });
 
-        it('creates an order with paypalcommercevenmocheckout as provider id if its initializes on checkout page', async () => {
-            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue('');
-
-            const updatedIntializationOptions = {
-                ...initializationOptions,
-                paypalcommercevenmo: {
-                    ...paypalCommerceVenmoOptions,
-                },
-            };
-
-            await strategy.initialize(updatedIntializationOptions);
+    describe('#createOrder button callback', () => {
+        it('creates an order', async () => {
+            await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('createOrder');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(
+            expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
                 'paypalcommercevenmo',
-                {
-                    cartId: cart.id,
-                },
             );
         });
+    });
 
-        it('throws an error if orderId is not provided by PayPal on approve', async () => {
-            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
-                (options: PayPalCommerceButtonsOptions) => {
-                    eventEmitter.on('createOrder', () => {
-                        if (options.createOrder) {
-                            options.createOrder().catch(jest.fn());
-                        }
-                    });
-
-                    eventEmitter.on('onApprove', () => {
-                        if (options.onApprove) {
-                            options.onApprove(
-                                { orderID: '' },
-                                {
-                                    order: {
-                                        get: jest.fn(),
-                                    },
-                                },
-                            );
-                        }
-                    });
-
-                    return {
-                        isEligible: jest.fn(() => true),
-                        render: jest.fn(),
-                    };
-                },
-            );
-
-            try {
-                await strategy.initialize(initializationOptions);
-                eventEmitter.emit('onApprove');
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
-        it('throws an error if no paypalSdk exists', async () => {
-            jest.spyOn(paypalCommerceScriptLoader, 'getPayPalSDK').mockReturnValue(undefined);
-
-            try {
-                await strategy.initialize(initializationOptions);
-            } catch (error) {
-                expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
-            }
-        });
-
+    describe('#onApprove button callback', () => {
         it('tokenizes payment on paypal approve', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -316,14 +270,9 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(formPoster.postForm).toHaveBeenCalledWith(
-                '/checkout.php',
-                expect.objectContaining({
-                    action: 'set_external_checkout',
-                    order_id: paypalOrderId,
-                    payment_type: 'paypal',
-                    provider: paymentMethod.id,
-                }),
+            expect(paypalCommerceIntegrationService.tokenizePayment).toHaveBeenCalledWith(
+                defaultMethodId,
+                paypalOrderId,
             );
         });
     });
