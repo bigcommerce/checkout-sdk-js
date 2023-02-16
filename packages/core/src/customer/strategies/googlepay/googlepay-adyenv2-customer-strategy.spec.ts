@@ -237,6 +237,9 @@ describe('GooglePayCustomerStrategy', () => {
         beforeEach(() => {
             customerInitializeOptions = getAdyenV2CustomerInitializeOptions();
 
+            jest.spyOn(paymentProcessor, 'updatePaymentDataRequest').mockReturnValue(
+                Promise.resolve(),
+            );
             jest.spyOn(paymentProcessor, 'displayWallet').mockResolvedValue(googlePaymentDataMock);
             jest.spyOn(paymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());
             jest.spyOn(paymentProcessor, 'updateShippingAddress').mockReturnValue(

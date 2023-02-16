@@ -171,6 +171,13 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         const cart = this._store.getState().cart.getCartOrThrow();
         const hasPhysicalItems = getShippableItemsCount(cart) > 0;
 
+        const payloadToUpdate = {
+            currencyCode: cart.currency.code,
+            totalPrice: String(cart.cartAmount),
+        };
+
+        this._googlePayPaymentProcessor.updatePaymentDataRequest(payloadToUpdate);
+
         try {
             const paymentData = await this._googlePayPaymentProcessor.displayWallet();
 
