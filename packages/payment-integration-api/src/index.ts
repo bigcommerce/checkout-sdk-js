@@ -51,6 +51,7 @@ export {
     PaymentInvalidFormErrorDetails,
     PaymentMethodCancelledError,
     PaymentMethodClientUnavailableError,
+    PaymentMethodInvalidError,
     PaymentMethodFailedError,
     RequestError,
     StorefrontErrorResponseBody,

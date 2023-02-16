@@ -1,5 +1,7 @@
 import { includes } from 'lodash';
 
+import { PaymentMethodInvalidError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { Address } from '../../../address';
 import { BillingAddress } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
@@ -13,7 +15,7 @@ import {
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import { PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
+import { PaymentMethodCancelledError } from '../../errors';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import { supportedCountries, supportedCountriesRequiringStates } from '../klarnav2';

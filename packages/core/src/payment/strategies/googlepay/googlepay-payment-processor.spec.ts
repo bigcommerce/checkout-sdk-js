@@ -2,6 +2,8 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { noop } from 'lodash';
 
+import { PaymentMethodInvalidError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../../../billing';
 import { getCartState } from '../../../cart/carts.mock';
 import { CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../../../checkout';
@@ -16,7 +18,6 @@ import { getConfig, getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../../../shipping';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../../../subscription';
-import { PaymentMethodInvalidError } from '../../errors';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';

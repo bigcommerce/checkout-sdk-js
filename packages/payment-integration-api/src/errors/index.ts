@@ -21,3 +21,4 @@ export {
     InternalErrorResponseBody,
     PaymentErrorData,
 } from './error-response-body';
+export { default as PaymentMethodInvalidError } from './payment-method-invalid-error';

@@ -5,6 +5,7 @@ import { EventEmitter } from 'events';
 import { omit } from 'lodash';
 import { Observable, of } from 'rxjs';
 
+import { PaymentMethodInvalidError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
@@ -14,7 +15,7 @@ import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
-import { PaymentArgumentInvalidError, PaymentMethodInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
