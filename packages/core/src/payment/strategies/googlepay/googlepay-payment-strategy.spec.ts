@@ -186,6 +186,9 @@ describe('GooglePayPaymentStrategy', () => {
         jest.spyOn(googlePayCheckoutcomPaymentProcessor, 'processAdditionalAction').mockReturnValue(
             Promise.resolve(),
         );
+        jest.spyOn(googlePayPaymentProcessor, 'updatePaymentDataRequest').mockReturnValue(
+            Promise.resolve(),
+        );
         jest.spyOn(googlePayPaymentProcessor, 'initialize').mockReturnValue(Promise.resolve());
         jest.spyOn(googlePayPaymentProcessor, 'deinitialize').mockReturnValue(Promise.resolve());
         jest.spyOn(googlePayPaymentProcessor, 'displayWallet').mockReturnValue(
