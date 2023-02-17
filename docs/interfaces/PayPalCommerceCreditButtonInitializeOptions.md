@@ -20,15 +20,9 @@
 
 ### buyNowInitializeOptions
 
-• `Optional` **buyNowInitializeOptions**: `Object`
+• `Optional` **buyNowInitializeOptions**: [`PayPalBuyNowInitializeOptions`](PayPalBuyNowInitializeOptions.md)
 
 The options that are required to initialize Buy Now functionality.
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `getBuyNowCartRequestBody?` | () => `void` \| `default` |
 
 ___
 

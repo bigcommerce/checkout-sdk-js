@@ -6014,9 +6014,7 @@ declare interface PayPalCommerceCreditButtonInitializeOptions {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
-    };
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
     /**
      * A callback that gets called when payment complete on paypal side.
      */
