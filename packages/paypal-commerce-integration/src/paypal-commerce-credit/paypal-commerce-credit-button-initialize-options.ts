@@ -1,6 +1,4 @@
-import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { PayPalButtonStyleOptions } from '../paypal-commerce-types';
+import { PayPalButtonStyleOptions, PayPalBuyNowInitializeOptions } from '../paypal-commerce-types';
 
 export default interface PayPalCommerceCreditButtonInitializeOptions {
     /**
@@ -26,9 +24,7 @@ export default interface PayPalCommerceCreditButtonInitializeOptions {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
 
     /**
      * A callback that gets called when payment complete on paypal side.

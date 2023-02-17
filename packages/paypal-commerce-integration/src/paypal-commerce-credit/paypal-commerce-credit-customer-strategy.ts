@@ -46,13 +46,13 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
 
         if (!paypalcommercecredit) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "paypalcommercecredit.containerId" argument is not provided.`,
+                `Unable to initialize payment because "paypalcommercecredit" argument is not provided.`,
             );
         }
 
         if (!paypalcommercecredit.container) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "paypalcommercecredit.containerId" argument is not provided.`,
+                `Unable to initialize payment because "paypalcommercecredit.container" argument is not provided.`,
             );
         }
 
