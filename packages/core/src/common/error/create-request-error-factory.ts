@@ -1,4 +1,4 @@
-import { PaymentMethodInvalidError } from '../../payment/errors';
+import { PaymentMethodInvalidError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { UnrecoverableError } from './errors';
 import RequestErrorFactory from './request-error-factory';

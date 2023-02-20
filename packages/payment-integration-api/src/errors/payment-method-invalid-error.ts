@@ -1,6 +1,6 @@
 import { Response } from '@bigcommerce/request-sender';
 
-import { RequestError } from '../../common/error/errors';
+import RequestError from './request-error';
 
 /**
  * Throw this error if we are unable to successfully submit a server request

@@ -1,6 +1,9 @@
 import { noop } from 'rxjs';
 
-import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    PaymentMethodFailedError,
+    PaymentMethodInvalidError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
@@ -11,7 +14,6 @@ import {
     NotInitializedErrorType,
 } from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
-import { PaymentMethodInvalidError } from '../../../payment/errors';
 import { BoltCheckout, BoltScriptLoader } from '../../../payment/strategies/bolt';
 import CustomerActionCreator from '../../customer-action-creator';
 import CustomerCredentials from '../../customer-credentials';

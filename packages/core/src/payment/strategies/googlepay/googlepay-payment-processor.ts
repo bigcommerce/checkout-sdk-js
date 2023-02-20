@@ -1,5 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
+import { PaymentMethodInvalidError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { AddressRequestBody } from '../../../address';
 import { BillingAddressActionCreator, BillingAddressUpdateRequestBody } from '../../../billing';
 import { Checkout, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
@@ -12,7 +14,6 @@ import {
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { RemoteCheckoutSynchronizationError } from '../../../remote-checkout/errors';
 import { ConsignmentActionCreator } from '../../../shipping';
-import { PaymentMethodInvalidError } from '../../errors';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 
 import {

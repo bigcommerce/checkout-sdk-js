@@ -1,6 +1,7 @@
 import { merge } from 'lodash';
 
-import { PaymentMethodInvalidError } from '../../payment/errors';
+import { PaymentMethodInvalidError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     getErrorResponse,
     getErrorResponseBody,

@@ -4,6 +4,8 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, noop, omit } from 'lodash';
 import { Observable, of } from 'rxjs';
 
+import { PaymentMethodInvalidError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     CheckoutActionCreator,
     CheckoutRequestSender,
@@ -29,7 +31,7 @@ import {
     RemoteCheckoutActionType,
     RemoteCheckoutRequestSender,
 } from '../../../remote-checkout';
-import { PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
+import { PaymentMethodCancelledError } from '../../errors';
 import PaymentMethod from '../../payment-method';
 import { getKlarna } from '../../payment-methods.mock';
 
