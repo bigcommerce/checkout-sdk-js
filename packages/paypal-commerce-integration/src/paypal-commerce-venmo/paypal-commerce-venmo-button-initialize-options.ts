@@ -7,11 +7,6 @@ export default interface PayPalCommerceVenmoButtonInitializeOptions {
     style?: PayPalButtonStyleOptions;
 
     /**
-     * Flag which helps to detect that the strategy initializes on Checkout page
-     */
-    initializesOnCheckoutPage?: boolean;
-
-    /**
      * The option that used to initialize a PayPal script with provided currency code.
      */
     currencyCode?: string;

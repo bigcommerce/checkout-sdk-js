@@ -62,7 +62,6 @@ describe('PayPalCommerceButtonStrategy', () => {
             getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody),
         },
         currencyCode: 'USD',
-        initializesOnCheckoutPage: false,
         style: {
             height: 45,
         },
@@ -76,7 +75,6 @@ describe('PayPalCommerceButtonStrategy', () => {
     };
 
     const paypalCommerceOptions: PayPalCommerceButtonInitializeOptions = {
-        initializesOnCheckoutPage: false,
         style: {
             height: 45,
         },
