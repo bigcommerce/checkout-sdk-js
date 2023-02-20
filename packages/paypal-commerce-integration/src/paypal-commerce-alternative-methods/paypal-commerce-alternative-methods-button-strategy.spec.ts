@@ -60,7 +60,6 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
                 getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody),
             },
             currencyCode: 'USD',
-            initializesOnCheckoutPage: false,
             style: {
                 height: 45,
             },
@@ -74,7 +73,6 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
 
     const paypalCommerceAlternativeMethodsOptions: PayPalCommerceAlternativeMethodsButtonOptions = {
         apm: apmProviderId,
-        initializesOnCheckoutPage: false,
         style: {
             height: 45,
         },

@@ -57,7 +57,6 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
             getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody),
         },
         currencyCode: 'USD',
-        initializesOnCheckoutPage: false,
         style: {
             height: 45,
         },
@@ -70,7 +69,6 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
     };
 
     const paypalCommerceVenmoOptions: PayPalCommerceVenmoButtonInitializeOptions = {
-        initializesOnCheckoutPage: false,
         style: {
             height: 45,
         },

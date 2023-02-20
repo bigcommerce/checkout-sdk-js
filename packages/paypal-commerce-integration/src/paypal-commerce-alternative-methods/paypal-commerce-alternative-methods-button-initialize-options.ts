@@ -17,13 +17,6 @@ export default interface PayPalCommerceAlternativeMethodsButtonOptions {
     currencyCode?: string;
 
     /**
-     * // TODO: this flag should be removed, because the strategy does not used on checkout page
-     * // and it always equals to 'false'
-     * Flag which helps to detect that the strategy initializes on Checkout page
-     */
-    initializesOnCheckoutPage?: boolean;
-
-    /**
      * A set of styling options for the checkout button.
      */
     style?: PayPalButtonStyleOptions;
