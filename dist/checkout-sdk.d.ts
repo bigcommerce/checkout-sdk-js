@@ -5938,12 +5938,10 @@ declare interface PasswordRequirements {
 }
 
 declare interface PayPalButtonStyleOptions {
-    layout?: StyleButtonLayout;
     color?: StyleButtonColor;
     shape?: StyleButtonShape;
     height?: number;
     label?: StyleButtonLabel;
-    tagline?: boolean;
     custom?: {
         label?: string;
         css?: {
@@ -5979,12 +5977,6 @@ declare interface PayPalCommerceButtonInitializeOptions {
      */
     currencyCode?: string;
     /**
-     * // TODO: this flag should be removed, because the strategy does not used on checkout page
-     * // and it always equals to 'false'
-     * Flag which helps to detect that the strategy initializes on Checkout page.
-     */
-    initializesOnCheckoutPage?: boolean;
-    /**
      * A set of styling options for the checkout button.
      */
     style?: PayPalButtonStyleOptions;
@@ -5995,10 +5987,6 @@ declare interface PayPalCommerceButtonInitializeOptions {
 }
 
 declare interface PayPalCommerceCreditButtonInitializeOptions {
-    /**
-     * Flag which helps to detect that the strategy initializes on Checkout page
-     */
-    initializesOnCheckoutPage?: boolean;
     /**
      * The ID of a container which the messaging should be inserted.
      */
@@ -6092,10 +6080,6 @@ declare interface PayPalCommerceVenmoButtonInitializeOptions {
      * A set of styling options for the checkout button.
      */
     style?: PayPalButtonStyleOptions;
-    /**
-     * Flag which helps to detect that the strategy initializes on Checkout page
-     */
-    initializesOnCheckoutPage?: boolean;
     /**
      * The option that used to initialize a PayPal script with provided currency code.
      */
@@ -7397,11 +7381,6 @@ declare enum StyleButtonLabel {
     buynow = "buynow",
     pay = "pay",
     installment = "installment"
-}
-
-declare enum StyleButtonLayout {
-    vertical = "vertical",
-    horizontal = "horizontal"
 }
 
 declare enum StyleButtonShape {

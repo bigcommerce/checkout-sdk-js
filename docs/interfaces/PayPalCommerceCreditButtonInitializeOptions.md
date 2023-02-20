@@ -8,7 +8,6 @@
 
 - [buyNowInitializeOptions](PayPalCommerceCreditButtonInitializeOptions.md#buynowinitializeoptions)
 - [currencyCode](PayPalCommerceCreditButtonInitializeOptions.md#currencycode)
-- [initializesOnCheckoutPage](PayPalCommerceCreditButtonInitializeOptions.md#initializesoncheckoutpage)
 - [messagingContainerId](PayPalCommerceCreditButtonInitializeOptions.md#messagingcontainerid)
 - [style](PayPalCommerceCreditButtonInitializeOptions.md#style)
 
@@ -31,14 +30,6 @@ ___
 • `Optional` **currencyCode**: `string`
 
 The option that used to initialize a PayPal script with provided currency code.
-
-___
-
-### initializesOnCheckoutPage
-
-• `Optional` **initializesOnCheckoutPage**: `boolean`
-
-Flag which helps to detect that the strategy initializes on Checkout page
 
 ___
 

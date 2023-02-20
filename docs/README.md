@@ -31,7 +31,6 @@
 - [RadiusUnit](enums/RadiusUnit.md)
 - [StyleButtonColor](enums/StyleButtonColor.md)
 - [StyleButtonLabel](enums/StyleButtonLabel.md)
-- [StyleButtonLayout](enums/StyleButtonLayout.md)
 - [StyleButtonShape](enums/StyleButtonShape.md)
 
 ### Classes

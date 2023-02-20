@@ -10,9 +10,7 @@
 - [custom](PayPalButtonStyleOptions.md#custom)
 - [height](PayPalButtonStyleOptions.md#height)
 - [label](PayPalButtonStyleOptions.md#label)
-- [layout](PayPalButtonStyleOptions.md#layout)
 - [shape](PayPalButtonStyleOptions.md#shape)
-- [tagline](PayPalButtonStyleOptions.md#tagline)
 
 ## Properties
 
@@ -50,18 +48,6 @@ ___
 
 ___
 
-### layout
-
-• `Optional` **layout**: [`vertical`](../enums/StyleButtonLayout.md#vertical) \| [`horizontal`](../enums/StyleButtonLayout.md#horizontal)
-
-___
-
 ### shape
 
 • `Optional` **shape**: [`pill`](../enums/StyleButtonShape.md#pill) \| [`rect`](../enums/StyleButtonShape.md#rect)
-
-___
-
-### tagline
-
-• `Optional` **tagline**: `boolean`

@@ -13,7 +13,6 @@ DOM. When a customer clicks on it, it will trigger Apple sheet.
 
 - [buyNowInitializeOptions](PayPalCommerceButtonInitializeOptions.md#buynowinitializeoptions)
 - [currencyCode](PayPalCommerceButtonInitializeOptions.md#currencycode)
-- [initializesOnCheckoutPage](PayPalCommerceButtonInitializeOptions.md#initializesoncheckoutpage)
 - [style](PayPalCommerceButtonInitializeOptions.md#style)
 
 ### Methods
@@ -35,16 +34,6 @@ ___
 • `Optional` **currencyCode**: `string`
 
 The option that used to initialize a PayPal script with provided currency code.
-
-___
-
-### initializesOnCheckoutPage
-
-• `Optional` **initializesOnCheckoutPage**: `boolean`
-
-// TODO: this flag should be removed, because the strategy does not used on checkout page
-// and it always equals to 'false'
-Flag which helps to detect that the strategy initializes on Checkout page.
 
 ___
 
