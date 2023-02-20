@@ -32,6 +32,7 @@
 - [StyleButtonColor](enums/StyleButtonColor.md)
 - [StyleButtonLabel](enums/StyleButtonLabel.md)
 - [StyleButtonShape](enums/StyleButtonShape.md)
+- [UntrustedShippingCardVerificationType](enums/UntrustedShippingCardVerificationType.md)
 
 ### Classes
 

@@ -23,6 +23,7 @@
 - [provider](CardInstrument.md#provider)
 - [trustedShippingAddress](CardInstrument.md#trustedshippingaddress)
 - [type](CardInstrument.md#type)
+- [untrustedShippingCardVerificationMode](CardInstrument.md#untrustedshippingcardverificationmode)
 
 ## Properties
 
@@ -113,3 +114,9 @@ ___
 #### Overrides
 
 [BaseInstrument](BaseInstrument.md).[type](BaseInstrument.md#type)
+
+___
+
+### untrustedShippingCardVerificationMode
+
+• **untrustedShippingCardVerificationMode**: [`UntrustedShippingCardVerificationType`](../enums/UntrustedShippingCardVerificationType.md)

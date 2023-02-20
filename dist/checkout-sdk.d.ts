@@ -1930,6 +1930,7 @@ declare interface CardInstrument extends BaseInstrument {
     iin: string;
     last4: string;
     type: 'card';
+    untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType;
 }
 
 declare interface CardNumberElementOptions extends BaseIndividualElementOptions {
@@ -7518,6 +7519,11 @@ declare interface Translations {
 
 declare interface UnknownObject {
     [key: string]: unknown;
+}
+
+declare enum UntrustedShippingCardVerificationType {
+    CVV = "cvv",
+    PAN = "pan"
 }
 
 declare type UserExperienceSettingNames = 'walletButtonsOnTop';

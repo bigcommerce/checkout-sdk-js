@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.351.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.350.1...v1.351.0) (2023-02-20)
+
+
+### Features
+
+* **payment:** PAYMENTS-8493 add untrusted shipping address card verification mode to card instrument ([1990998](https://github.com/bigcommerce/checkout-sdk-js/commit/199099807c49640fa6ab5cf6f90cd8ae0a92530e))
+
 ### [1.350.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.350.0...v1.350.1) (2023-02-20)
 
 
