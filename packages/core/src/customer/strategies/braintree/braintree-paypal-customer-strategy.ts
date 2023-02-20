@@ -140,12 +140,14 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         const fundingSource = paypal?.FUNDING.PAYPAL;
 
         if (paypal && fundingSource) {
+            const checkoutUserExperienceSettings = this._store.getState().config.getConfig()
+                ?.storeConfig.checkoutSettings.checkoutUserExperienceSettings;
             const paypalButtonRender = paypal.Buttons({
                 env: testMode ? 'sandbox' : 'production',
                 commit: false,
                 fundingSource,
                 style: {
-                    height: 40,
+                    height: checkoutUserExperienceSettings?.walletButtonsOnTop ? 36 : 40,
                 },
                 createOrder: () =>
                     this._setupPayment(braintreePaypalCheckout, braintreepaypal, methodId),

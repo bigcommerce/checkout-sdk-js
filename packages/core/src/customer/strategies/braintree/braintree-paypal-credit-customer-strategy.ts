@@ -141,9 +141,11 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
         let hasRenderedSmartButton = false;
 
         if (paypal) {
+            const checkoutUserExperienceSettings = this._store.getState().config.getConfig()
+                ?.storeConfig.checkoutSettings.checkoutUserExperienceSettings;
             const fundingSources = [paypal.FUNDING.PAYLATER, paypal.FUNDING.CREDIT];
             const commonButtonStyle = {
-                height: 40,
+                height: checkoutUserExperienceSettings?.walletButtonsOnTop ? 36 : 40,
                 color: PaypalButtonStyleColorOption.GOLD,
             };
 
