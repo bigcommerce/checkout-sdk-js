@@ -1,4 +1,5 @@
 import { noop } from 'lodash';
+
 import {
     CustomerCredentials,
     CustomerInitializeOptions,

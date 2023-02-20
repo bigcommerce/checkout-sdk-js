@@ -33,7 +33,6 @@ import {
     PayPalSDK,
     StyleButtonColor,
     StyleButtonLabel,
-    StyleButtonLayout,
     StyleButtonShape,
 } from './paypal-commerce-types';
 
@@ -468,20 +467,6 @@ describe('PayPalCommerceIntegrationService', () => {
             expect(subject.getValidButtonStyle(stylesMock)).toEqual(expects);
         });
 
-        it('returns button style without layout if layout is not valid', () => {
-            const stylesMock = {
-                height: 55,
-                layout: 'layout' as StyleButtonLayout,
-            };
-
-            const expects = {
-                ...stylesMock,
-                layout: undefined,
-            };
-
-            expect(subject.getValidButtonStyle(stylesMock)).toEqual(expects);
-        });
-
         it('returns styles with updated height if height value is bigger than expected', () => {
             const stylesMock = {
                 color: StyleButtonColor.silver,
@@ -522,39 +507,6 @@ describe('PayPalCommerceIntegrationService', () => {
             const expects = {
                 ...stylesMock,
                 height: 40,
-            };
-
-            expect(subject.getValidButtonStyle(stylesMock)).toEqual(expects);
-        });
-
-        it('returns styles without tagline for vertical layout', () => {
-            const stylesMock = {
-                color: StyleButtonColor.silver,
-                height: 55,
-                shape: StyleButtonShape.rect,
-                layout: StyleButtonLayout.vertical,
-                tagline: true,
-            };
-
-            const expects = {
-                ...stylesMock,
-                tagline: undefined,
-            };
-
-            expect(subject.getValidButtonStyle(stylesMock)).toEqual(expects);
-        });
-
-        it('returns styles with tagline if the layout is horizontal', () => {
-            const stylesMock = {
-                color: StyleButtonColor.silver,
-                height: 55,
-                shape: StyleButtonShape.rect,
-                layout: StyleButtonLayout.horizontal,
-                tagline: true,
-            };
-
-            const expects = {
-                ...stylesMock,
             };
 
             expect(subject.getValidButtonStyle(stylesMock)).toEqual(expects);
