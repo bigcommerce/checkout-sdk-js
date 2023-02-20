@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.350.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.349.0...v1.350.0) (2023-02-20)
+
+
+### Features
+
+* **payment:** BOLT-463 add applyStoreCredit to PaymentIntegrationService ([52ece0e](https://github.com/bigcommerce/checkout-sdk-js/commit/52ece0e42ad669af2667cd467d59bb77e1e79962))
+
 ## [1.349.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.348.6...v1.349.0) (2023-02-20)
 
 
