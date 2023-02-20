@@ -1,6 +1,7 @@
 import PaymentInstrument, {
     CardInstrument,
     InstrumentRequestContext,
+    UntrustedShippingCardVerificationType,
     VaultAccessToken,
 } from './instrument';
 import {
@@ -35,6 +36,7 @@ export function getInstruments(): PaymentInstrument[] {
             trustedShippingAddress: true,
             defaultInstrument: true,
             method: 'credit_card',
+            untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
             type: 'card',
         },
         {
@@ -48,6 +50,7 @@ export function getInstruments(): PaymentInstrument[] {
             trustedShippingAddress: false,
             defaultInstrument: false,
             method: 'credit_card',
+            untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
             type: 'card',
         },
         {
@@ -83,6 +86,7 @@ export function getInstruments(): PaymentInstrument[] {
             defaultInstrument: true,
             method: 'scheme',
             type: 'card',
+            untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
         },
     ];
 }
@@ -99,6 +103,7 @@ export function getCardInstrument(): CardInstrument {
         trustedShippingAddress: true,
         defaultInstrument: true,
         method: 'card',
+        untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
         type: 'card',
     };
 }
@@ -162,6 +167,8 @@ export function getInternalInstrumentsResponseBody(): InternalInstrumentsRespons
                 default_instrument: true,
                 method: 'credit_card',
                 method_type: 'card',
+                untrusted_shipping_address_card_verification_mode:
+                    UntrustedShippingCardVerificationType.PAN,
             },
             {
                 bigpay_token: '111',
@@ -175,6 +182,8 @@ export function getInternalInstrumentsResponseBody(): InternalInstrumentsRespons
                 default_instrument: false,
                 method_type: 'card',
                 method: 'credit_card',
+                untrusted_shipping_address_card_verification_mode:
+                    UntrustedShippingCardVerificationType.PAN,
             },
             {
                 bigpay_token: '31415',
@@ -209,6 +218,8 @@ export function getInternalInstrumentsResponseBody(): InternalInstrumentsRespons
                 default_instrument: true,
                 method: 'scheme',
                 method_type: 'card',
+                untrusted_shipping_address_card_verification_mode:
+                    UntrustedShippingCardVerificationType.PAN,
             },
         ],
     };

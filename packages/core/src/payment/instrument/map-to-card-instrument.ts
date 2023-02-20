@@ -12,6 +12,8 @@ export function mapToCardInstrument(instrument: CardInternalInstrument): CardIns
         expiryYear: instrument.expiry_year,
         brand: instrument.brand,
         trustedShippingAddress: instrument.trusted_shipping_address,
+        untrustedShippingCardVerificationMode:
+            instrument.untrusted_shipping_address_card_verification_mode,
         method: instrument.method,
         type: 'card',
     };

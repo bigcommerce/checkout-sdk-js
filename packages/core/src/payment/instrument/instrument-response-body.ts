@@ -1,4 +1,4 @@
-import PaymentInstrument from './instrument';
+import PaymentInstrument, { UntrustedShippingCardVerificationType } from './instrument';
 
 export interface InstrumentError {
     code: number;
@@ -35,6 +35,7 @@ export interface CardInternalInstrument extends BaseInternalInstrument {
     iin: string;
     last_4: string;
     method_type: 'card';
+    untrusted_shipping_address_card_verification_mode: UntrustedShippingCardVerificationType;
 }
 
 export interface PayPalInternalInstrument extends BaseInternalAccountInstrument {
