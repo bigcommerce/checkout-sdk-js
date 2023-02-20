@@ -278,12 +278,6 @@ export enum StyleButtonLabel {
     installment = 'installment',
 }
 
-// TODO: should be removed in the future
-export enum StyleButtonLayout {
-    vertical = 'vertical',
-    horizontal = 'horizontal',
-}
-
 export enum StyleButtonColor {
     gold = 'gold',
     blue = 'blue',
@@ -298,12 +292,10 @@ export enum StyleButtonShape {
 }
 
 export interface PayPalButtonStyleOptions {
-    layout?: StyleButtonLayout;
     color?: StyleButtonColor;
     shape?: StyleButtonShape;
     height?: number;
     label?: StyleButtonLabel;
-    tagline?: boolean;
     custom?: {
         label?: string;
         css?: {

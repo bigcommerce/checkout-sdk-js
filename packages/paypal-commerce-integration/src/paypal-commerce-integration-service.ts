@@ -23,7 +23,6 @@ import {
     PayPalSDK,
     StyleButtonColor,
     StyleButtonLabel,
-    StyleButtonLayout,
     StyleButtonShape,
 } from './paypal-commerce-types';
 
@@ -248,19 +247,13 @@ export default class PayPalCommerceIntegrationService {
      *
      */
     getValidButtonStyle(style?: PayPalButtonStyleOptions): PayPalButtonStyleOptions {
-        const { color, height, label, layout, shape, tagline } = style || {};
+        const { color, height, label, shape } = style || {};
 
-        // TODO: remove layout and tagline properties when paypal commerce common will be added to all paypal commerce strategies
         const validStyles = {
             color: color && StyleButtonColor[color] ? color : undefined,
             height: this.getValidHeight(height),
             label: label && StyleButtonLabel[label] ? label : undefined,
-            layout: layout && StyleButtonLayout[layout] ? layout : undefined,
             shape: shape && StyleButtonShape[shape] ? shape : undefined,
-            tagline:
-                tagline && typeof tagline === 'boolean' && layout === StyleButtonLayout.horizontal
-                    ? tagline
-                    : undefined,
         };
 
         return omitBy(validStyles, isNil);
