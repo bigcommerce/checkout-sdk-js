@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.349.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.348.6...v1.349.0) (2023-02-20)
+
+
+### Features
+
+* **payment:** BOLT-462 move PaymentMethodInvalidError to paymant-integration-api package ([cde7a55](https://github.com/bigcommerce/checkout-sdk-js/commit/cde7a55c171149504e71d0c8177308cf9b7d446a))
+
 ### [1.348.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.348.5...v1.348.6) (2023-02-17)
 
 
