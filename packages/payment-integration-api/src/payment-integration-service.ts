@@ -58,5 +58,10 @@ export default interface PaymentIntegrationService {
 
     signOutCustomer(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 
+    applyStoreCredit(
+        useStoreCredit: boolean,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors>;
+
     createBuyNowCart(body: BuyNowCartRequestBody, options?: RequestOptions): Promise<Cart>;
 }

@@ -27,6 +27,7 @@ import PaymentMethodActionCreator from '../payment/payment-method-action-creator
 import { getPayment } from '../payment/payments.mock';
 import { ConsignmentActionCreator } from '../shipping';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
+import { StoreCreditActionCreator } from '../store-credit';
 
 import DefaultPaymentIntegrationService from './default-payment-integration-service';
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
@@ -60,6 +61,7 @@ describe('DefaultPaymentIntegrationService', () => {
     >;
     let customerActionCreator: Pick<CustomerActionCreator, 'signInCustomer' | 'signOutCustomer'>;
     let cartRequestSender: CartRequestSender;
+    let storeCreditActionCreator: Pick<StoreCreditActionCreator, 'applyStoreCredit'>;
 
     beforeEach(() => {
         requestSender = createRequestSender();
@@ -123,6 +125,12 @@ describe('DefaultPaymentIntegrationService', () => {
             signOutCustomer: jest.fn(async () => () => createAction('SIGN_OUT_CUSTOMER')),
         };
 
+        storeCreditActionCreator = {
+            applyStoreCredit: jest.fn(
+                async () => () => createAction('APPLY_STORE_CREDIT_REQUESTED'),
+            ),
+        };
+
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
@@ -135,6 +143,7 @@ describe('DefaultPaymentIntegrationService', () => {
             paymentActionCreator as PaymentActionCreator,
             customerActionCreator as CustomerActionCreator,
             cartRequestSender,
+            storeCreditActionCreator as StoreCreditActionCreator,
         );
     });
 
@@ -347,6 +356,24 @@ describe('DefaultPaymentIntegrationService', () => {
                 undefined,
             );
             expect(output).toEqual(buyNowCart);
+        });
+    });
+
+    describe('#applyStoreCredit', () => {
+        it('applies store credits', async () => {
+            const output = await subject.applyStoreCredit(true, {
+                params: {},
+            });
+
+            expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(true, {
+                params: {},
+            });
+            expect(store.dispatch).toHaveBeenCalledWith(
+                storeCreditActionCreator.applyStoreCredit(true, {
+                    params: {},
+                }),
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
         });
     });
 });

@@ -31,6 +31,7 @@ import {
     SpamProtectionActionCreator,
     SpamProtectionRequestSender,
 } from '../spam-protection';
+import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import createPaymentIntegrationSelectors from './create-payment-integration-selectors';
@@ -93,6 +94,10 @@ export default function createPaymentIntegrationService(
         ),
     );
 
+    const storeCreditActionCreator = new StoreCreditActionCreator(
+        new StoreCreditRequestSender(requestSender),
+    );
+
     const cartRequestSender = new CartRequestSender(requestSender);
 
     return new DefaultPaymentIntegrationService(
@@ -107,5 +112,6 @@ export default function createPaymentIntegrationService(
         paymentActionCreator,
         customerActionCreator,
         cartRequestSender,
+        storeCreditActionCreator,
     );
 }

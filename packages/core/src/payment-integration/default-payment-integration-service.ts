@@ -23,6 +23,7 @@ import { OrderActionCreator } from '../order';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
 import { ConsignmentActionCreator } from '../shipping';
+import { StoreCreditActionCreator } from '../store-credit';
 
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
 
@@ -41,6 +42,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _paymentActionCreator: PaymentActionCreator,
         private _customerActionCreator: CustomerActionCreator,
         private _cartRequestSender: CartRequestSender,
+        private _storeCreditActionCreator: StoreCreditActionCreator,
     ) {
         this._storeProjection = this._storeProjectionFactory.create(this._store);
     }
@@ -178,5 +180,16 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         );
 
         return buyNowCart;
+    }
+
+    async applyStoreCredit(
+        useStoreCredit: boolean,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._storeCreditActionCreator.applyStoreCredit(useStoreCredit, options),
+        );
+
+        return this._storeProjection.getState();
     }
 }
