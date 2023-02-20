@@ -1,9 +1,11 @@
+import { ExtraItemsData } from '@bigcommerce/checkout-sdk/analytics';
+
 import { LineItemMap } from '../cart';
 import { getGiftCertificateItem } from '../cart/line-items.mock';
 import { getPhysicalItem } from '../order/line-items.mock';
 import { getOrder } from '../order/orders.mock';
 
-import { AnalyticsProduct, ExtraItemsData } from './analytics-step-tracker';
+import { AnalyticsProduct } from './analytics-step-tracker';
 import { isPayloadSizeLimitReached } from './analytics-tracker-ga';
 
 describe('analytics step tracker helpers', () => {

@@ -1,6 +1,8 @@
-import { LineItemMap } from '../cart';
+import { LineItemMap } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { ExtraItemsData } from './analytics-step-tracker';
+import { ExtraItemsData } from './extra-items-data';
+
+type StorageFallback = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 
 const ORDER_ITEMS_STORAGE_KEY = 'ORDER_ITEMS';
 

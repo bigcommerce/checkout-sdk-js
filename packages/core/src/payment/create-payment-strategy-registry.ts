@@ -7,9 +7,9 @@ import {
 } from '@bigcommerce/script-loader';
 import localStorageFallback from 'local-storage-fallback';
 
+import { AnalyticsExtraItemsManager } from '@bigcommerce/checkout-sdk/analytics';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
-import AnalyticsExtraItemsManager from '../analytics/analytics-extra-items-manager';
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import {
     CheckoutActionCreator,

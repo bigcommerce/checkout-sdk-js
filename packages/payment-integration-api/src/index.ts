@@ -12,6 +12,7 @@ export {
     CartSource,
     DigitalItem,
     GiftCertificateItem,
+    LineItemMap,
     PhysicalItem,
 } from './cart';
 export { Checkout } from './checkout';

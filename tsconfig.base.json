@@ -20,6 +20,7 @@
             "@bigcommerce/checkout-sdk/adyen-integration": [
                 "packages/adyen-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/analytics": ["packages/analytics/src/index.ts"],
             "@bigcommerce/checkout-sdk/apple-pay-integration": [
                 "packages/apple-pay-integration/src/index.ts"
             ],
