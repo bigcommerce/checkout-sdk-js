@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.352.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.351.0...v1.352.0) (2023-02-21)
+
+
+### Features
+
+* **payment:** BOLT-465 move AnalyticsExtraItemsManager to payment-integration-api package ([65450ad](https://github.com/bigcommerce/checkout-sdk-js/commit/65450ad814979e791a1761d94652f92d96c010d1))
+
 ## [1.351.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.350.1...v1.351.0) (2023-02-20)
 
 
