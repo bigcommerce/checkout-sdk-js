@@ -1,10 +1,12 @@
-import { AnalyticsExtraItemsManager } from '@bigcommerce/checkout-sdk/analytics';
+import {
+    AnalyticsExtraItemsManager,
+    isAnalyticsTrackerWindow,
+} from '@bigcommerce/checkout-sdk/analytics';
 import {
     PaymentMethodFailedError,
     PaymentMethodInvalidError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { isAnalyticsTrackerWindow } from '../../../analytics/is-analytics-step-tracker-window';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,

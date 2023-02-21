@@ -5,12 +5,7 @@
         {
             "files": ["*.ts", "*.tsx"],
             "rules": {
-                "@typescript-eslint/no-unsafe-return": "off"
-            }
-        },
-        {
-            "files": ["*.spec.ts", "*.spec.tsx"],
-            "rules": {
+                "@typescript-eslint/no-unsafe-return": "off",
                 "@typescript-eslint/consistent-type-assertions": "off"
             }
         }

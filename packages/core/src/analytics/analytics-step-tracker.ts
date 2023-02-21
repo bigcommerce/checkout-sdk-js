@@ -1,6 +1,10 @@
 import { keys } from 'lodash';
 
-import { AnalyticsExtraItemsManager, ExtraItemsData } from '@bigcommerce/checkout-sdk/analytics';
+import {
+    AnalyticsExtraItemsManager,
+    AnalyticsTracker,
+    ExtraItemsData,
+} from '@bigcommerce/checkout-sdk/analytics';
 
 import { LineItemMap } from '../cart';
 import { Checkout, CheckoutService } from '../checkout';
@@ -15,7 +19,6 @@ import {
     isPayloadSizeLimitReached,
     sendGoogleAnalytics,
 } from './analytics-tracker-ga';
-import { AnalyticsTracker } from './analytics-tracker-window';
 import StepTracker from './step-tracker';
 
 export interface StepTrackerConfig {
