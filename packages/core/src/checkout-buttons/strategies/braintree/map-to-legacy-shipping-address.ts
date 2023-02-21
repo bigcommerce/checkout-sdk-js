@@ -1,4 +1,5 @@
-import { LegacyAddress } from '../../../address';
+import { LegacyAddress } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { BraintreeDetails } from '../../../payment/strategies/braintree';
 
 export default function mapToLegacyShippingAddress(

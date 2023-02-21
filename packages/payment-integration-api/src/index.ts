@@ -1,4 +1,4 @@
-export { Address, AddressRequestBody } from './address';
+export { Address, AddressRequestBody, LegacyAddress } from './address';
 export { BillingAddress, BillingAddressRequestBody } from './billing';
 export {
     CheckoutButtonStrategy,
@@ -55,6 +55,7 @@ export {
     PaymentMethodInvalidError,
     PaymentMethodFailedError,
     RequestError,
+    StandardError,
     StorefrontErrorResponseBody,
     isRequestError,
 } from './errors';
