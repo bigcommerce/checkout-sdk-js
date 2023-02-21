@@ -19,7 +19,7 @@ const baseRequest = {
 
 export default class GooglePayAuthorizeNetInitializer implements GooglePayInitializer {
     initialize(
-        checkout: Checkout,
+        checkout: Checkout | undefined,
         paymentMethod: PaymentMethod,
         hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
@@ -52,16 +52,14 @@ export default class GooglePayAuthorizeNetInitializer implements GooglePayInitia
     }
 
     private _getGooglePaymentDataRequest(
-        checkout: Checkout,
+        checkout: Checkout | undefined,
         paymentMethod: PaymentMethod,
         hasShippingAddress: boolean,
     ): GooglePayPaymentDataRequestV2 {
-        const {
-            outstandingBalance,
-            cart: {
-                currency: { code: currencyCode },
-            },
-        } = checkout;
+        const currencyCode = checkout?.cart.currency.code || '';
+        const totalPrice = checkout?.outstandingBalance
+            ? round(checkout.outstandingBalance, 2).toFixed(2)
+            : '';
 
         const {
             initializationData: {
@@ -85,7 +83,7 @@ export default class GooglePayAuthorizeNetInitializer implements GooglePayInitia
             allowedPaymentMethods: [cardPaymentMethod],
             transactionInfo: {
                 totalPriceStatus: 'FINAL',
-                totalPrice: round(outstandingBalance, 2).toFixed(2),
+                totalPrice,
                 currencyCode,
                 countryCode,
             },
