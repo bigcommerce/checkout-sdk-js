@@ -4,7 +4,9 @@ import {
     getAuthorizeNetPaymentDataRequest,
     getAuthorizeNetPaymentMethodMock,
     getAuthorizeNetTokenizedPayload,
+    getBraintreePaymentDataPayload,
     getCheckoutMock,
+    getPaymentMethodMock,
 } from './googlepay.mock';
 
 describe('GooglePayAuthorizeNetInitializer', () => {
@@ -27,6 +29,27 @@ describe('GooglePayAuthorizeNetInitializer', () => {
             );
 
             expect(initialize).toEqual(getAuthorizeNetPaymentDataRequest());
+        });
+
+        it('initializes the google pay configuration for braintree with Buy Now Flow', async () => {
+            const paymentDataRequest = getBraintreePaymentDataPayload();
+
+            paymentDataRequest.transactionInfo.currencyCode = '';
+            paymentDataRequest.transactionInfo.totalPrice = '';
+
+            await googlePayInitializer
+                .initialize(undefined, getPaymentMethodMock(), false)
+                .then((paymentData) => {
+                    expect(paymentData).toEqual(
+                        expect.objectContaining({
+                            transactionInfo: {
+                                currencyCode: '',
+                                totalPriceStatus: 'FINAL',
+                                totalPrice: '',
+                            },
+                        }),
+                    );
+                });
         });
     });
 

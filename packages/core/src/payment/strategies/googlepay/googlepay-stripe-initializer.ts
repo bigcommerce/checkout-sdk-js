@@ -14,7 +14,7 @@ import {
 
 export default class GooglePayStripeInitializer implements GooglePayInitializer {
     initialize(
-        checkout: Checkout,
+        checkout: Checkout | undefined,
         paymentMethod: PaymentMethod,
         hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
@@ -45,17 +45,15 @@ export default class GooglePayStripeInitializer implements GooglePayInitializer 
     }
 
     private _getGooglePayPaymentDataRequest(
-        checkout: Checkout,
+        checkout: Checkout | undefined,
         paymentMethod: PaymentMethod,
         hasShippingAddress: boolean,
     ): GooglePayPaymentDataRequestV2 {
-        const {
-            outstandingBalance,
-            cart: {
-                currency: { code: currencyCode },
-            },
-            consignments,
-        } = checkout;
+        const currencyCode = checkout?.cart.currency.code || '';
+        const totalPrice = checkout?.outstandingBalance
+            ? round(checkout.outstandingBalance, 2).toFixed(2)
+            : '';
+        const consignments = checkout?.consignments || [];
 
         const {
             initializationData: {
@@ -107,7 +105,7 @@ export default class GooglePayStripeInitializer implements GooglePayInitializer 
             transactionInfo: {
                 currencyCode,
                 totalPriceStatus: 'FINAL',
-                totalPrice: round(outstandingBalance, 2).toFixed(2),
+                totalPrice,
             },
             emailRequired: true,
             shippingAddressRequired:

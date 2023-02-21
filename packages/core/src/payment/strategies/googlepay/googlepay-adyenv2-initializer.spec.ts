@@ -4,7 +4,9 @@ import {
     getAdyenV2PaymentDataRequest,
     getAdyenV2PaymentMethodMock,
     getAdyenV2TokenizedPayload,
+    getBraintreePaymentDataPayload,
     getCheckoutMock,
+    getPaymentMethodMock,
 } from './googlepay.mock';
 
 describe('GooglePayAdyenV2Initializer', () => {
@@ -27,6 +29,27 @@ describe('GooglePayAdyenV2Initializer', () => {
             );
 
             expect(initialize).toEqual(getAdyenV2PaymentDataRequest());
+        });
+
+        it('initializes the google pay configuration for adyenv2 with Buy Now Flow', async () => {
+            const paymentDataRequest = getBraintreePaymentDataPayload();
+
+            paymentDataRequest.transactionInfo.currencyCode = '';
+            paymentDataRequest.transactionInfo.totalPrice = '';
+
+            await googlePayInitializer
+                .initialize(undefined, getPaymentMethodMock(), false)
+                .then((paymentData) => {
+                    expect(paymentData).toEqual(
+                        expect.objectContaining({
+                            transactionInfo: {
+                                currencyCode: '',
+                                totalPriceStatus: 'FINAL',
+                                totalPrice: '',
+                            },
+                        }),
+                    );
+                });
         });
     });
 

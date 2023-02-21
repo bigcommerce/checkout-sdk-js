@@ -4,7 +4,9 @@ import {
     getBNZPaymentDataRequest,
     getBNZPaymentMethodMock,
     getBNZTokenizedPayload,
+    getBraintreePaymentDataPayload,
     getCheckoutMock,
+    getPaymentMethodMock,
 } from './googlepay.mock';
 
 describe('GooglePayBNZInitializer', () => {
@@ -27,6 +29,27 @@ describe('GooglePayBNZInitializer', () => {
             );
 
             expect(initialize).toEqual(getBNZPaymentDataRequest());
+        });
+
+        it('initializes the google pay configuration for BNZ with Buy Now Flow', async () => {
+            const paymentDataRequest = getBraintreePaymentDataPayload();
+
+            paymentDataRequest.transactionInfo.currencyCode = '';
+            paymentDataRequest.transactionInfo.totalPrice = '';
+
+            await googlePayInitializer
+                .initialize(undefined, getPaymentMethodMock(), false)
+                .then((paymentData) => {
+                    expect(paymentData).toEqual(
+                        expect.objectContaining({
+                            transactionInfo: {
+                                currencyCode: '',
+                                totalPriceStatus: 'FINAL',
+                                totalPrice: '',
+                            },
+                        }),
+                    );
+                });
         });
     });
 

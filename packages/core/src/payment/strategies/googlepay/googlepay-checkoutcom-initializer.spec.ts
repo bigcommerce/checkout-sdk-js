@@ -7,6 +7,7 @@ import { InvalidArgumentError } from '../../../common/error/errors';
 
 import GooglePayCheckoutcomInitializer from './googlepay-checkoutcom-initializer';
 import {
+    getBraintreePaymentDataPayload,
     getCheckoutMock,
     getGooglePayCheckoutcomPaymentDataRequestMock,
     getGooglePaymentCheckoutcomDataMock,
@@ -44,6 +45,27 @@ describe('GooglePayCheckoutcomInitializer', () => {
             expect(googlePayPaymentDataRequestV2).toEqual(
                 getGooglePayCheckoutcomPaymentDataRequestMock(),
             );
+        });
+
+        it('initializes the google pay configuration for checkoutcom with Buy Now Flow', async () => {
+            const paymentDataRequest = getBraintreePaymentDataPayload();
+
+            paymentDataRequest.transactionInfo.currencyCode = '';
+            paymentDataRequest.transactionInfo.totalPrice = '';
+
+            await googlePayCheckoutcomInitializer
+                .initialize(undefined, getPaymentMethodMock(), false)
+                .then((paymentData) => {
+                    expect(paymentData).toEqual(
+                        expect.objectContaining({
+                            transactionInfo: {
+                                currencyCode: '',
+                                totalPriceStatus: 'FINAL',
+                                totalPrice: '',
+                            },
+                        }),
+                    );
+                });
         });
     });
 
