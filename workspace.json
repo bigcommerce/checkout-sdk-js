@@ -2,6 +2,7 @@
     "version": 2,
     "projects": {
         "adyen-integration": "packages/adyen-integration",
+        "analytics": "packages/analytics",
         "apple-pay-integration": "packages/apple-pay-integration",
         "core": "packages/core",
         "credit-card-integration": "packages/credit-card-integration",

@@ -1,5 +1,7 @@
 import { keys } from 'lodash';
 
+import { AnalyticsExtraItemsManager, ExtraItemsData } from '@bigcommerce/checkout-sdk/analytics';
+
 import { LineItemMap } from '../cart';
 import { Checkout, CheckoutService } from '../checkout';
 import { InvalidArgumentError } from '../common/error/errors';
@@ -8,7 +10,6 @@ import { Coupon } from '../coupon';
 import { Order } from '../order';
 import { ShippingOption } from '../shipping';
 
-import AnalyticsExtraItemsManager from './analytics-extra-items-manager';
 import {
     isGoogleAnalyticsAvailable,
     isPayloadSizeLimitReached,
@@ -443,11 +444,4 @@ export interface AnalyticsProduct {
     category?: string;
     variant?: string;
     brand?: string;
-}
-
-export interface ExtraItemsData {
-    [productId: string]: {
-        brand: string;
-        category: string;
-    };
 }
