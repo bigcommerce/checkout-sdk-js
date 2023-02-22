@@ -105,6 +105,7 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
 
         const buyNowFlowCallbacks = {
             onClick: () => this.handleClick(buyNowInitializeOptions),
+            onCancel: () => this.paymentIntegrationService.loadDefaultCheckout(),
         };
 
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {
