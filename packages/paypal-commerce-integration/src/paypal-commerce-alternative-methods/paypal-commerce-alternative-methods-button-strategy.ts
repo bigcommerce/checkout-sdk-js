@@ -125,6 +125,7 @@ export default class PayPalCommerceAlternativeMethodsButtonStrategy
 
         const buyNowFlowCallbacks = {
             onClick: () => this.handleClick(buyNowInitializeOptions),
+            onCancel: () => this.paymentIntegrationService.loadDefaultCheckout(),
         };
 
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {
