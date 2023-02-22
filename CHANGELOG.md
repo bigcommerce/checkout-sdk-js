@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.353.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.352.0...v1.353.0) (2023-02-22)
+
+
+### Features
+
+* **payment:** BOLT-470 move LegacyAddress to payment-integration-package package ([d1677dc](https://github.com/bigcommerce/checkout-sdk-js/commit/d1677dce5d548fd876a2d507e58f35da8a07daaf))
+* **payment:** BOLT-470 move LegacyAddress to payment-integration-package package ([f92f5fe](https://github.com/bigcommerce/checkout-sdk-js/commit/f92f5fe3a697e91e2ba6fab56c0b4b7ea90743e3))
+
 ## [1.352.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.351.0...v1.352.0) (2023-02-21)
 
 
