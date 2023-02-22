@@ -242,4 +242,5 @@ export interface StripeV3FormattedPayload {
     bigpay_token?: {
         token: string;
     };
+    channel_name?: string;
 }

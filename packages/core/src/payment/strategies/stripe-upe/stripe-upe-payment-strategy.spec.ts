@@ -388,6 +388,7 @@ describe('StripeUPEPaymentStrategy', () => {
                                 confirm: false,
                                 client_token: 'myToken',
                                 set_as_default_stored_instrument: true,
+                                channel_name: 'store-k1drp8k8.bcapp.dev/',
                             },
                         },
                     });
