@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.357.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.357.0...v1.357.1) (2023-02-23)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-1991 fixed GooglePay for adyenV2 and adyenV3 ([#1863](https://github.com/bigcommerce/checkout-sdk-js/issues/1863)) ([c89471d](https://github.com/bigcommerce/checkout-sdk-js/commit/c89471d858ae2e4025913a83689bc28e76141df8))
+* **payment:** PAYPAL-1992 fixed GooglePay for BNZ ([#1864](https://github.com/bigcommerce/checkout-sdk-js/issues/1864)) ([f6d87f3](https://github.com/bigcommerce/checkout-sdk-js/commit/f6d87f3b86ee244720a51ef01d3a7f700c373bf4))
+* **payment:** PAYPAL-1995 fixed GooglePay for Authorize Net ([afdfb09](https://github.com/bigcommerce/checkout-sdk-js/commit/afdfb09aa40c3df91ace416b6f292f2bc1d73ad1))
+* **payment:** PAYPAL-1996 fixed GooglePay for CheckoutCom ([f978dfb](https://github.com/bigcommerce/checkout-sdk-js/commit/f978dfba00c519cbcf7660e384f910ad16c1b11e))
+
 ## [1.357.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.356.0...v1.357.0) (2023-02-23)
 
 
