@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.357.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.356.0...v1.357.0) (2023-02-23)
+
+
+### Features
+
+* **payment:** BOLT-469 move AnalyticsTrackerWindow to analytics package ([3cccf14](https://github.com/bigcommerce/checkout-sdk-js/commit/3cccf14eaa451c34bd328c2753a30120566f27ed))
+* **payment:** BOLT-469 move AnalyticsTrackerWindow to analytics package ([cba87f8](https://github.com/bigcommerce/checkout-sdk-js/commit/cba87f808fbc605d4c4b97ea32ea7b957876546b))
+
 ## [1.356.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.355.0...v1.356.0) (2023-02-23)
 
 
