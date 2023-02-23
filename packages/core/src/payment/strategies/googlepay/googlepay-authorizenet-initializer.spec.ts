@@ -5,6 +5,7 @@ import {
     getAuthorizeNetPaymentMethodMock,
     getAuthorizeNetTokenizedPayload,
     getCheckoutMock,
+    getPaymentMethodMock,
 } from './googlepay.mock';
 
 describe('GooglePayAuthorizeNetInitializer', () => {
@@ -27,6 +28,24 @@ describe('GooglePayAuthorizeNetInitializer', () => {
             );
 
             expect(initialize).toEqual(getAuthorizeNetPaymentDataRequest());
+        });
+
+        it('initializes the google pay configuration for authorizenet with Buy Now Flow', async () => {
+            const paymentData = await googlePayInitializer.initialize(
+                undefined,
+                getPaymentMethodMock(),
+                false,
+            );
+
+            expect(paymentData).toEqual(
+                expect.objectContaining({
+                    transactionInfo: {
+                        currencyCode: '',
+                        totalPriceStatus: 'FINAL',
+                        totalPrice: '',
+                    },
+                }),
+            );
         });
     });
 
