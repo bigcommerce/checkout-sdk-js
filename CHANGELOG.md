@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.355.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.354.0...v1.355.0) (2023-02-23)
+
+
+### Features
+
+* **payment:** PAYPAL-1998 make Orbital Google Pay compatible with Buy Now cart ([#1867](https://github.com/bigcommerce/checkout-sdk-js/issues/1867)) ([f66b3cd](https://github.com/bigcommerce/checkout-sdk-js/commit/f66b3cd6bb76b0f4f8d6ec963f5e7325d254cd16))
+
 ## [1.354.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.353.1...v1.354.0) (2023-02-23)
 
 
