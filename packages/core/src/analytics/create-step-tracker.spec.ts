@@ -1,9 +1,10 @@
+import { AnalyticsTracker, AnalyticsTrackerWindow } from '@bigcommerce/checkout-sdk/analytics';
+
 import { CheckoutService, createCheckoutService } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { StoreConfig } from '../config';
 
 import AnalyticsStepTracker from './analytics-step-tracker';
-import AnalyticsTrackerWindow, { AnalyticsTracker } from './analytics-tracker-window';
 import createStepTracker from './create-step-tracker';
 import NoopStepTracker from './noop-step-tracker';
 

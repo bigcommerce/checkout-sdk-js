@@ -81,7 +81,9 @@ describe('AnalyticsExtraItemsManager', () => {
     });
 
     it('read extra items data', () => {
-        const getItemMock = jest.fn((id: string) => `{"result": "${id}"}`);
+        const getItemMock = jest.fn(
+            () => `{"product": {"brand": "brand1", "category": "category1, category2"}}`,
+        );
         const localStorageFallbackMock = {
             ...localStorageFallback,
             getItem: getItemMock,
@@ -92,7 +94,12 @@ describe('AnalyticsExtraItemsManager', () => {
         const readResult = analyticsExtraItemsManager.readExtraItemsData('dataId');
 
         expect(getItemMock).toHaveBeenCalledWith('ORDER_ITEMS_dataId');
-        expect(readResult).toEqual({ result: 'ORDER_ITEMS_dataId' });
+        expect(readResult).toEqual({
+            product: {
+                brand: 'brand1',
+                category: 'category1, category2',
+            },
+        });
     });
 
     it('read empty extra items data', () => {
@@ -105,6 +112,36 @@ describe('AnalyticsExtraItemsManager', () => {
 
         const readResult = analyticsExtraItemsManager.readExtraItemsData('dataId');
 
+        expect(readResult).toBeNull();
+    });
+
+    it('read incorrect items data', () => {
+        const getItemMock = jest.fn(() => '123');
+        const localStorageFallbackMock = {
+            ...localStorageFallback,
+            getItem: getItemMock,
+        };
+
+        const analyticsExtraItemsManager = new AnalyticsExtraItemsManager(localStorageFallbackMock);
+
+        const readResult = analyticsExtraItemsManager.readExtraItemsData('dataId');
+
+        expect(getItemMock).toHaveBeenCalledWith('ORDER_ITEMS_dataId');
+        expect(readResult).toBeNull();
+    });
+
+    it('read items data with missed options fro ExtraItemsData', () => {
+        const getItemMock = jest.fn(() => `{"product": {"brand": "brand1"}}`);
+        const localStorageFallbackMock = {
+            ...localStorageFallback,
+            getItem: getItemMock,
+        };
+
+        const analyticsExtraItemsManager = new AnalyticsExtraItemsManager(localStorageFallbackMock);
+
+        const readResult = analyticsExtraItemsManager.readExtraItemsData('dataId');
+
+        expect(getItemMock).toHaveBeenCalledWith('ORDER_ITEMS_dataId');
         expect(readResult).toBeNull();
     });
 

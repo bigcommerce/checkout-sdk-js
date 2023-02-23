@@ -1,5 +1,5 @@
 export interface AnalyticsTracker {
-    track(step: string, data: any): void;
+    track(step: string, data: unknown): void;
 }
 
 export default interface AnalyticsTrackerWindow extends Window {

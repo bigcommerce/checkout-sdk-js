@@ -4,9 +4,7 @@
     "overrides": [
         {
             "files": ["*.ts", "*.tsx"],
-            "rules": {
-                "@typescript-eslint/no-unsafe-return": "off"
-            }
+            "rules": {}
         },
         {
             "files": ["*.spec.ts", "*.spec.tsx"],
