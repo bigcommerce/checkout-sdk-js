@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.354.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.353.1...v1.354.0) (2023-02-23)
+
+
+### Features
+
+* **payment:** PAYPAL-1997 make CyberSourceV2 Google Pay compatible with Buy Now cart ([#1862](https://github.com/bigcommerce/checkout-sdk-js/issues/1862)) ([b4e33e9](https://github.com/bigcommerce/checkout-sdk-js/commit/b4e33e966b1b260e5f68bed23df2ee0c03ff36a4))
+
 ### [1.353.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.353.0...v1.353.1) (2023-02-23)
 
 
