@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.353.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.353.0...v1.353.1) (2023-02-23)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-1993 make StripeUPE  Google Pay compatible with Buy Now cart ([#1869](https://github.com/bigcommerce/checkout-sdk-js/issues/1869)) ([bc55b0a](https://github.com/bigcommerce/checkout-sdk-js/commit/bc55b0ab8389041567c3aad605873667f25437a5))
+
 ## [1.353.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.352.0...v1.353.0) (2023-02-22)
 
 
