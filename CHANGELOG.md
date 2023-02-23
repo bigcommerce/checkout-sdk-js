@@ -2,6 +2,57 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.357.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.356.0...v1.357.0) (2023-02-23)
+
+
+### Features
+
+* **payment:** BOLT-469 move AnalyticsTrackerWindow to analytics package ([3cccf14](https://github.com/bigcommerce/checkout-sdk-js/commit/3cccf14eaa451c34bd328c2753a30120566f27ed))
+* **payment:** BOLT-469 move AnalyticsTrackerWindow to analytics package ([cba87f8](https://github.com/bigcommerce/checkout-sdk-js/commit/cba87f808fbc605d4c4b97ea32ea7b957876546b))
+
+## [1.356.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.355.0...v1.356.0) (2023-02-23)
+
+
+### Features
+
+* **payment:** PAYPAL-1999 make Stripe Google Pay compatible with BuyNow cart ([#1870](https://github.com/bigcommerce/checkout-sdk-js/issues/1870)) ([043bc85](https://github.com/bigcommerce/checkout-sdk-js/commit/043bc85d9ab635f19ec430cd34ac5f2173a0bb43))
+
+## [1.355.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.354.0...v1.355.0) (2023-02-23)
+
+
+### Features
+
+* **payment:** PAYPAL-1998 make Orbital Google Pay compatible with Buy Now cart ([#1867](https://github.com/bigcommerce/checkout-sdk-js/issues/1867)) ([f66b3cd](https://github.com/bigcommerce/checkout-sdk-js/commit/f66b3cd6bb76b0f4f8d6ec963f5e7325d254cd16))
+
+## [1.354.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.353.1...v1.354.0) (2023-02-23)
+
+
+### Features
+
+* **payment:** PAYPAL-1997 make CyberSourceV2 Google Pay compatible with Buy Now cart ([#1862](https://github.com/bigcommerce/checkout-sdk-js/issues/1862)) ([b4e33e9](https://github.com/bigcommerce/checkout-sdk-js/commit/b4e33e966b1b260e5f68bed23df2ee0c03ff36a4))
+
+### [1.353.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.353.0...v1.353.1) (2023-02-23)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-1993 make StripeUPE  Google Pay compatible with Buy Now cart ([#1869](https://github.com/bigcommerce/checkout-sdk-js/issues/1869)) ([bc55b0a](https://github.com/bigcommerce/checkout-sdk-js/commit/bc55b0ab8389041567c3aad605873667f25437a5))
+
+## [1.353.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.352.0...v1.353.0) (2023-02-22)
+
+
+### Features
+
+* **payment:** BOLT-470 move LegacyAddress to payment-integration-package package ([d1677dc](https://github.com/bigcommerce/checkout-sdk-js/commit/d1677dce5d548fd876a2d507e58f35da8a07daaf))
+* **payment:** BOLT-470 move LegacyAddress to payment-integration-package package ([f92f5fe](https://github.com/bigcommerce/checkout-sdk-js/commit/f92f5fe3a697e91e2ba6fab56c0b4b7ea90743e3))
+
+## [1.352.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.351.0...v1.352.0) (2023-02-21)
+
+
+### Features
+
+* **payment:** BOLT-465 move AnalyticsExtraItemsManager to payment-integration-api package ([65450ad](https://github.com/bigcommerce/checkout-sdk-js/commit/65450ad814979e791a1761d94652f92d96c010d1))
+
 ## [1.351.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.350.1...v1.351.0) (2023-02-20)
 
 

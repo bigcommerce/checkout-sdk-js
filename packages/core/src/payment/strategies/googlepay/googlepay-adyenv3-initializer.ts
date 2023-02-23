@@ -13,7 +13,7 @@ import {
 
 export default class GooglePayAdyenV3Initializer implements GooglePayInitializer {
     initialize(
-        checkout: Checkout,
+        checkout: Checkout | undefined,
         paymentMethod: PaymentMethod,
         hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
@@ -46,16 +46,14 @@ export default class GooglePayAdyenV3Initializer implements GooglePayInitializer
     }
 
     private _getGooglePayPaymentDataRequest(
-        checkout: Checkout,
+        checkout: Checkout | undefined,
         paymentMethod: PaymentMethod,
         hasShippingAddress: boolean,
     ): GooglePayPaymentDataRequestV2 {
-        const {
-            outstandingBalance,
-            cart: {
-                currency: { code: currencyCode },
-            },
-        } = checkout;
+        const currencyCode = checkout?.cart.currency.code || '';
+        const totalPrice = checkout?.outstandingBalance
+            ? round(checkout.outstandingBalance, 2).toFixed(2)
+            : '';
 
         const {
             initializationData: {
@@ -103,7 +101,7 @@ export default class GooglePayAdyenV3Initializer implements GooglePayInitializer
                 countryCode,
                 currencyCode,
                 totalPriceStatus: 'FINAL',
-                totalPrice: round(outstandingBalance, 2).toFixed(2),
+                totalPrice,
             },
             emailRequired: true,
             shippingAddressRequired: !hasShippingAddress,

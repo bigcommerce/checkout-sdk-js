@@ -28,6 +28,23 @@ describe('GooglePayStripeUPEInitializer', () => {
 
             expect(initialize).toEqual(getStripePaymentDataRequest());
         });
+
+        it('initializes the google pay configuration for stripe-upe with Buy Now Flow', async () => {
+            const paymentDataRequest = {
+                ...getStripePaymentDataRequest(),
+                transactionInfo: {
+                    ...getStripePaymentDataRequest().transactionInfo,
+                    currencyCode: '',
+                    totalPrice: '',
+                },
+            };
+
+            await googlePayInitializer
+                .initialize(undefined, getStripePaymentMethodMock(), false)
+                .then((response) => {
+                    expect(response).toEqual(paymentDataRequest);
+                });
+        });
     });
 
     describe('#teardown', () => {

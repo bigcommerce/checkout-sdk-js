@@ -28,6 +28,23 @@ describe('GooglePayCybersourceV2Initializer', () => {
 
             expect(initialize).toEqual(getCybersourceV2PaymentDataRequest());
         });
+
+        it('initializes the google pay configuration for cybersourcev2 with Buy Now Flow', async () => {
+            const paymentDataRequest = {
+                ...getCybersourceV2PaymentDataRequest(),
+                transactionInfo: {
+                    ...getCybersourceV2PaymentDataRequest().transactionInfo,
+                    currencyCode: '',
+                    totalPrice: '',
+                },
+            };
+
+            await googlePayInitializer
+                .initialize(undefined, getCybersourceV2PaymentMethodMock(), false)
+                .then((response) => {
+                    expect(response).toEqual(paymentDataRequest);
+                });
+        });
     });
 
     describe('#teardown', () => {

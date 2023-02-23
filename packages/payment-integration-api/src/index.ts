@@ -1,4 +1,4 @@
-export { Address, AddressRequestBody } from './address';
+export { Address, AddressRequestBody, LegacyAddress } from './address';
 export { BillingAddress, BillingAddressRequestBody } from './billing';
 export {
     CheckoutButtonStrategy,
@@ -12,6 +12,7 @@ export {
     CartSource,
     DigitalItem,
     GiftCertificateItem,
+    LineItemMap,
     PhysicalItem,
 } from './cart';
 export { Checkout } from './checkout';
@@ -54,6 +55,7 @@ export {
     PaymentMethodInvalidError,
     PaymentMethodFailedError,
     RequestError,
+    StandardError,
     StorefrontErrorResponseBody,
     isRequestError,
 } from './errors';

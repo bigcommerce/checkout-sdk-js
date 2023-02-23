@@ -1,3 +1,5 @@
+import { AnalyticsExtraItemsManager } from '@bigcommerce/checkout-sdk/analytics';
+
 import { getGiftCertificateItem } from '../cart/line-items.mock';
 import { CheckoutService, createCheckoutService } from '../checkout';
 import { getCheckoutWithCoupons } from '../checkout/checkouts.mock';
@@ -10,7 +12,6 @@ import { getOrder } from '../order/orders.mock';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
 import { getShippingOption } from '../shipping/shipping-options.mock';
 
-import AnalyticsExtraItemsManager from './analytics-extra-items-manager';
 import AnalyticsStepTracker, { AnalyticStepId, AnalyticStepType } from './analytics-step-tracker';
 import {
     isGoogleAnalyticsAvailable,
