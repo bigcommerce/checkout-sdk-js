@@ -45,6 +45,24 @@ describe('GooglePayCheckoutcomInitializer', () => {
                 getGooglePayCheckoutcomPaymentDataRequestMock(),
             );
         });
+
+        it('initializes the google pay configuration for checkoutcom with Buy Now Flow', async () => {
+            const paymentData = await googlePayCheckoutcomInitializer.initialize(
+                undefined,
+                getPaymentMethodMock(),
+                false,
+            );
+
+            expect(paymentData).toEqual(
+                expect.objectContaining({
+                    transactionInfo: {
+                        currencyCode: '',
+                        totalPriceStatus: 'FINAL',
+                        totalPrice: '',
+                    },
+                }),
+            );
+        });
     });
 
     describe('#teardown', () => {
