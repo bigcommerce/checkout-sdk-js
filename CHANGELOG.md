@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.358.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.357.1...v1.358.0) (2023-02-27)
+
+
+### Features
+
+* **payment:** INT-6312 klarnav2 increase code coverage ([0ce8c7f](https://github.com/bigcommerce/checkout-sdk-js/commit/0ce8c7fa99ae14a51e28d81be2588da57b163e58))
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-7304 Change PayPal wallet buttons height ([#1878](https://github.com/bigcommerce/checkout-sdk-js/issues/1878)) ([4089b00](https://github.com/bigcommerce/checkout-sdk-js/commit/4089b0088bb34d452866febc9f2d91f5a3a9bd8e))
+
 ### [1.357.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.357.0...v1.357.1) (2023-02-23)
 
 

@@ -1706,6 +1706,7 @@ declare interface BraintreePaypalCreditCustomerInitializeOptions {
      * The ID of a container which the checkout button should be inserted into.
      */
     container: string;
+    buttonHeight?: number;
     /**
      * A callback that gets called on any error instead of submit payment or authorization errors.
      *
@@ -1719,6 +1720,7 @@ declare interface BraintreePaypalCustomerInitializeOptions {
      * The ID of a container which the checkout button should be inserted into.
      */
     container: string;
+    buttonHeight?: number;
     /**
      * A callback that gets called on any error instead of submit payment or authorization errors.
      *
