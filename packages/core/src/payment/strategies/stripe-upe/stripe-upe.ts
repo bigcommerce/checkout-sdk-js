@@ -59,6 +59,7 @@ export interface StripeCustomerEvent extends StripeEvent {
 }
 
 export interface StripeShippingEvent extends StripeEvent {
+    mode?: string;
     isNewAddress?: boolean;
     phoneFieldRequired: boolean;
     value: {
@@ -70,8 +71,16 @@ export interface StripeShippingEvent extends StripeEvent {
             postal_code: string;
             state: string;
         };
-        name: string;
+        name?: string;
+        firstName?: string;
+        lastName?: string;
+        phone?: string;
+    };
+    fields?: {
         phone: string;
+    };
+    display?: {
+        name: string;
     };
 }
 
@@ -186,6 +195,7 @@ export interface StripeElementsCreateOptions {
     allowedCountries?: string[];
     defaultValues?: ShippingDefaultValues | CustomerDefaultValues;
     validation?: validationElement;
+    display?: { name: DisplayName };
 }
 
 interface validationElement {
@@ -197,7 +207,9 @@ interface validationRequiredElement {
 }
 
 interface ShippingDefaultValues {
-    name: string;
+    name?: string;
+    firstName?: string;
+    lastName?: string;
     phone: string;
     address: {
         line1: string;
@@ -209,8 +221,31 @@ interface ShippingDefaultValues {
     };
 }
 
+/*
+Decide which mode you are going to use the Address Element
+Shipping: is used with the Payment Element and Link Authentication Element, it will automatically pass shipping
+information when confirming Payment Intent or Setup Intent.
+Billing: is used with the Payment Element, it will automatically pass the billing information when confirming
+Payment Intent or Setup Intent.
+ */
+export enum StripeFormMode {
+    SHIPPING = 'shipping',
+    BILLING = 'billing',
+}
+
+export enum DisplayName {
+    SPLIT = 'split',
+    FULL = 'full',
+    ORGANIZATION = 'organization',
+}
+
 interface CustomerDefaultValues {
+    mode: StripeFormMode;
     email: string;
+    allowedCountries?: string[];
+    display?: {
+        name: DisplayName;
+    };
 }
 
 export interface StripeElements {
