@@ -47,7 +47,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintreepaypalcredit, methodId } = options;
-        const { container } = braintreepaypalcredit || {};
+        const { container, buttonHeight = 40 } = braintreepaypalcredit || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -88,6 +88,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
                 braintreepaypalcredit,
                 methodId,
                 Boolean(paymentMethod.config.testMode),
+                buttonHeight,
             );
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
             this._handleError(error, braintreepaypalcredit);
@@ -134,6 +135,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
         braintreepaypalcredit: BraintreePaypalCreditCustomerInitializeOptions,
         methodId: string,
         testMode: boolean,
+        buttonHeight: number,
     ): void {
         const { container } = braintreepaypalcredit;
         const { paypal } = this._window;
@@ -143,7 +145,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
         if (paypal) {
             const fundingSources = [paypal.FUNDING.PAYLATER, paypal.FUNDING.CREDIT];
             const commonButtonStyle = {
-                height: 40,
+                height: buttonHeight,
                 color: PaypalButtonStyleColorOption.GOLD,
             };
 
