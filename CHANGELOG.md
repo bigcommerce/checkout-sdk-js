@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.358.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.358.0...v1.358.1) (2023-02-27)
+
+
+### Bug Fixes
+
+* **shipping:** STRIPE-202 Split name input into First and Last name ([#1675](https://github.com/bigcommerce/checkout-sdk-js/issues/1675)) ([1b920a1](https://github.com/bigcommerce/checkout-sdk-js/commit/1b920a18cc816ccca318611e7e968a5281664560))
+
 ## [1.358.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.357.1...v1.358.0) (2023-02-27)
 
 
