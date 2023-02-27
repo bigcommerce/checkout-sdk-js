@@ -173,6 +173,7 @@ export type BraintreeFormFieldStyles = Partial<
 
 export interface BraintreeFormFieldKeyboardEventData {
     fieldType: string;
+    errors?: any;
 }
 
 export type BraintreeFormFieldBlurEventData = BraintreeFormFieldKeyboardEventData;

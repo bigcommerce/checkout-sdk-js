@@ -254,6 +254,26 @@ export default class BraintreeHostedForm {
         }
     }
 
+    private _mapErrors(fields: any): any {
+        const errors = {};
+
+        if (fields) {
+            for (const [key, value] of Object.entries(fields)) {
+                const { isValid, isEmpty, isPotentialyValid } = value as any;
+
+                (errors as any)[key] = {
+                    [key]: {
+                        isValid,
+                        isEmpty,
+                        isPotentialyValid,
+                    },
+                };
+            }
+        }
+
+        return errors;
+    }
+
     private _mapValidationErrors(
         fields: BraintreeHostedFieldsState['fields'],
     ): BraintreeFormFieldValidateEventData['errors'] {
@@ -403,6 +423,7 @@ export default class BraintreeHostedForm {
     private _handleBlur: (event: BraintreeHostedFieldsState) => void = (event) => {
         this._formOptions?.onBlur?.({
             fieldType: this._mapFieldType(event.emittedBy),
+            errors: this._mapErrors(event.fields),
         });
     };
 

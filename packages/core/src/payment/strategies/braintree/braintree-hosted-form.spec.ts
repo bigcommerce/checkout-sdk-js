@@ -316,7 +316,29 @@ describe('BraintreeHostedForm', () => {
         it('notifies when field loses focus', () => {
             cardFieldsEventEmitter.emit('blur', { emittedBy: 'cvv' });
 
-            expect(handleBlur).toHaveBeenCalledWith({ fieldType: 'cardCode' });
+            expect(handleBlur).toHaveBeenCalledWith({ fieldType: 'cardCode', errors: {} });
+        });
+
+        describe('when event fields are provided', () => {
+            it('notifies with proper errors', () => {
+                cardFieldsEventEmitter.emit('blur', {
+                    emittedBy: 'cvv',
+                    fields: { cvv: { isEmpty: true, isPotentialyValid: true, isValid: false } },
+                });
+
+                expect(handleBlur).toHaveBeenCalledWith({
+                    fieldType: 'cardCode',
+                    errors: {
+                        cvv: {
+                            cvv: {
+                                isEmpty: true,
+                                isPotentialyValid: true,
+                                isValid: false,
+                            },
+                        },
+                    },
+                });
+            });
         });
 
         it('notifies when input receives submit event', () => {
