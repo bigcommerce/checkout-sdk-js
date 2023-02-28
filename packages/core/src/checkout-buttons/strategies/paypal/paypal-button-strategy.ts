@@ -44,6 +44,7 @@ export default class PaypalButtonStrategy implements CheckoutButtonStrategy {
         if (!paypalOptions) {
             throw new InvalidArgumentError();
         }
+        console.log('A');
 
         if (!paymentMethod) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
