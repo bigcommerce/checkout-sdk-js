@@ -233,6 +233,12 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                     }
                 });
 
+                eventEmitter.on('onCancel', () => {
+                    if (options.onCancel) {
+                        options.onCancel();
+                    }
+                });
+
                 eventEmitter.on('onShippingAddressChange', () => {
                     if (options.onShippingAddressChange) {
                         options.onShippingAddressChange({
@@ -422,6 +428,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
+                onCancel: expect.any(Function),
             });
         });
 
@@ -827,6 +834,18 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
             expect(paypalCommerceSdkRenderMock).toHaveBeenCalledWith(
                 `#${defaultMessageContainerId}`,
             );
+        });
+    });
+
+    describe('#onCancel button callback', () => {
+        it('loads default checkout onCancel callback (buy now flow)', async () => {
+            await strategy.initialize(buyNowInitializationOptions);
+            eventEmitter.emit('onClick');
+            await new Promise((resolve) => process.nextTick(resolve));
+            eventEmitter.emit('onCancel');
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paymentIntegrationService.loadDefaultCheckout).toHaveBeenCalled();
         });
     });
 });

@@ -182,6 +182,12 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
                     }
                 });
 
+                eventEmitter.on('onCancel', () => {
+                    if (options.onCancel) {
+                        options.onCancel();
+                    }
+                });
+
                 return {
                     isEligible: jest.fn(() => true),
                     render: jest.fn(),
@@ -331,6 +337,7 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
+                onCancel: expect.any(Function),
             });
         });
 
@@ -425,6 +432,18 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
                 defaultMethodId,
                 paypalOrderId,
             );
+        });
+    });
+
+    describe('#onCancel button callback', () => {
+        it('loads default checkout onCancel callback (buy now flow)', async () => {
+            await strategy.initialize(buyNowInitializationOptions);
+            eventEmitter.emit('onClick');
+            await new Promise((resolve) => process.nextTick(resolve));
+            eventEmitter.emit('onCancel');
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paymentIntegrationService.loadDefaultCheckout).toHaveBeenCalled();
         });
     });
 });
