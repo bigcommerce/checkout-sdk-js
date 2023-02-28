@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.359.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.358.1...v1.359.0) (2023-02-28)
+
+
+### Features
+
+* **payment:** PAYPAL-1985 added loadDefaultCheckout onCanclel to avoid potential errors ([#1873](https://github.com/bigcommerce/checkout-sdk-js/issues/1873)) ([3902e74](https://github.com/bigcommerce/checkout-sdk-js/commit/3902e74f8f1db6df5309cb4e3523eea7f6a521d5))
+
 ### [1.358.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.358.0...v1.358.1) (2023-02-27)
 
 
