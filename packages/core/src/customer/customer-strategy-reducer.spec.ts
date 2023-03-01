@@ -53,6 +53,7 @@ describe('customerStrategyReducer()', () => {
         });
 
         expect(customerStrategyReducer(initialState, action).errors).toEqual({
+            failedMethodIds: ['foobar'],
             initializeMethodId: 'foobar',
             initializeError: action.payload,
         });
@@ -60,6 +61,27 @@ describe('customerStrategyReducer()', () => {
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
             isInitializing: false,
         });
+    });
+
+    it('saves failed methodIds if multiple methods have failed to initialize', () => {
+        const action = createErrorAction(CustomerStrategyActionType.InitializeFailed, new Error(), {
+            methodId: 'foo',
+        });
+
+        const action2 = createErrorAction(
+            CustomerStrategyActionType.InitializeFailed,
+            new Error(),
+            {
+                methodId: 'bar',
+            },
+        );
+
+        const newState = customerStrategyReducer(initialState, action);
+
+        expect(customerStrategyReducer(newState, action2).errors.failedMethodIds).toEqual([
+            'foo',
+            'bar',
+        ]);
     });
 
     it('returns pending flag as true if deinitializing customer', () => {

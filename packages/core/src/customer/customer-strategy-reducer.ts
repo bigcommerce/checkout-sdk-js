@@ -61,6 +61,10 @@ function errorsReducer(
 
         case CustomerStrategyActionType.InitializeFailed:
             return objectMerge(errors, {
+                failedMethodIds: [
+                    ...(errors.failedMethodIds ?? []),
+                    action.meta && action.meta.methodId,
+                ],
                 initializeError: action.payload,
                 initializeMethodId: action.meta && action.meta.methodId,
             });

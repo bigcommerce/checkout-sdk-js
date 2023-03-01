@@ -77,6 +77,32 @@ describe('CustomerStrategySelector', () => {
         });
     });
 
+    describe('#getWalletButtonsStatus()', () => {
+        it('returns isLoading as true when buttons are not initialized or failed', () => {
+            selector = createCustomerStrategySelector(state.customerStrategy);
+
+            expect(selector.getWalletButtonsStatus(['foo', 'bar'])).toEqual({
+                foo: { isInitialized: false, isLoading: true },
+                bar: { isInitialized: false, isLoading: true },
+            });
+        });
+
+        it('returns buttons actual initialized state when they are loaded', () => {
+            selector = createCustomerStrategySelector({
+                ...state.customerStrategy,
+                data: {
+                    foo: { isInitialized: true },
+                },
+                errors: { failedMethodIds: ['bar'] },
+            });
+
+            expect(selector.getWalletButtonsStatus(['foo', 'bar'])).toEqual({
+                foo: { isInitialized: true, isLoading: false },
+                bar: { isInitialized: false, isLoading: false },
+            });
+        });
+    });
+
     describe('#getInitializeError()', () => {
         it('returns error if unable to initialize any method', () => {
             selector = createCustomerStrategySelector({

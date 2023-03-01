@@ -96,6 +96,25 @@ describe('CheckoutStoreSelector', () => {
         );
     });
 
+    it('returns initialized wallet button methodIds', () => {
+        internalSelectors = createInternalCheckoutSelectors(state);
+
+        jest.spyOn(internalSelectors.customerStrategies, 'getWalletButtonsStatus').mockReturnValue({
+            foo: {
+                isInitialized: true,
+                isLoading: false,
+            },
+            bar: {
+                isInitialized: false,
+                isLoading: false,
+            },
+        });
+
+        selector = createCheckoutStoreSelector(internalSelectors);
+
+        expect(selector.getInitializedWalletButtons(['foo', 'bar'])).toEqual(['foo']);
+    });
+
     describe('#getBillingAddress()', () => {
         it('returns billing address', () => {
             expect(selector.getBillingAddress()).toEqual(

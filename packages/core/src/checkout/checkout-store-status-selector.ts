@@ -103,6 +103,14 @@ export default interface CheckoutStoreStatusSelector {
     isLoadingPaymentMethod(methodId?: string): boolean;
 
     /**
+     * Checks whether wallet buttons are loading.
+     *
+     * @param methodIds - The identifiers of the payment methods to check.
+     * @returns True if any provided wallet button method is loading, otherwise false.
+     */
+    isLoadingWalletButtons(methodIds?: string[]): boolean;
+
+    /**
      * Checks whether a specific or any payment method is initializing.
      *
      * The method returns true if no ID is provided and at least one payment
@@ -458,6 +466,24 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
         },
     );
 
+    const isLoadingWalletButtons = createSelector(
+        ({ customerStrategies }: InternalCheckoutSelectors) =>
+            customerStrategies.getWalletButtonsStatus,
+        (getWalletButtonsStatus) => (methodIds?: string[]) => {
+            if (methodIds) {
+                const walletButtonsStatus = getWalletButtonsStatus(methodIds);
+
+                for (const [, button] of Object.entries(walletButtonsStatus)) {
+                    if (button.isLoading) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        },
+    );
+
     return memoizeOne((state: InternalCheckoutSelectors): CheckoutStoreStatusSelector => {
         const selector = {
             isLoadingCheckout: state.checkout.isLoading,
@@ -471,6 +497,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isLoadingShippingCountries: state.shippingCountries.isLoading,
             isLoadingPaymentMethods: state.paymentMethods.isLoading,
             isLoadingPaymentMethod: state.paymentMethods.isLoadingMethod,
+            isLoadingWalletButtons: isLoadingWalletButtons(state),
             isInitializingPayment: state.paymentStrategies.isInitializing,
             isSigningIn: state.customerStrategies.isSigningIn,
             isSigningOut: state.customerStrategies.isSigningOut,
