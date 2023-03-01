@@ -6,7 +6,7 @@ import {
     TokenizePayload,
 } from '../googlepay';
 import { PaypalAuthorizeData, PaypalButtonOptions, PaypalButtonRender, PaypalSDK } from '../paypal';
-
+import { Omit } from '../../../common/types';
 import {
     VisaCheckoutInitOptions,
     VisaCheckoutPaymentSuccessPayload,
@@ -300,13 +300,30 @@ export interface BraintreeHostedFieldsCard {
     code: { name: string; size: number };
 }
 
-export interface BraintreeHostedFieldsFieldData {
-    container: HTMLElement;
+export interface BraintreeFormFieldState {
     isFocused: boolean;
     isEmpty: boolean;
     isPotentiallyValid: boolean;
     isValid: boolean;
 }
+
+export interface BraintreeHostedFieldsFieldData extends BraintreeFormFieldState {
+    container: HTMLElement;
+}
+
+export type BraintreeFormErrorData = Omit<BraintreeFormFieldState, 'isFocused'>;
+
+export type BraintreeFormErrorDataKeys =
+    | 'number'
+    | 'expirationDate'
+    | 'expirationMonth'
+    | 'expirationYear'
+    | 'cvv'
+    | 'postalCode';
+
+export type BraintreeFormErrorsData = Partial<
+    Record<BraintreeFormErrorDataKeys, BraintreeFormErrorData>
+>;
 
 export interface BraintreeHostedFieldsTokenizeOptions {
     vault?: boolean;

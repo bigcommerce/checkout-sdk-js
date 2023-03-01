@@ -323,18 +323,16 @@ describe('BraintreeHostedForm', () => {
             it('notifies with proper errors', () => {
                 cardFieldsEventEmitter.emit('blur', {
                     emittedBy: 'cvv',
-                    fields: { cvv: { isEmpty: true, isPotentialyValid: true, isValid: false } },
+                    fields: { cvv: { isEmpty: true, isPotentiallyValid: true, isValid: false } },
                 });
 
                 expect(handleBlur).toHaveBeenCalledWith({
                     fieldType: 'cardCode',
                     errors: {
                         cvv: {
-                            cvv: {
-                                isEmpty: true,
-                                isPotentialyValid: true,
-                                isValid: false,
-                            },
+                            isEmpty: true,
+                            isPotentiallyValid: true,
+                            isValid: false,
                         },
                     },
                 });

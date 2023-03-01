@@ -7,6 +7,8 @@ import { NonceInstrument } from '../../payment';
 
 import {
     BraintreeBillingAddressRequestData,
+    BraintreeFormErrorDataKeys,
+    BraintreeFormErrorsData,
     BraintreeHostedFields,
     BraintreeHostedFieldsCreatorConfig,
     BraintreeHostedFieldsState,
@@ -254,20 +256,20 @@ export default class BraintreeHostedForm {
         }
     }
 
-    private _mapErrors(fields: any): any {
-        const errors = {};
+    private _mapErrors(fields: BraintreeHostedFieldsState['fields']): BraintreeFormErrorsData {
+        const errors: BraintreeFormErrorsData = {};
 
         if (fields) {
             for (const [key, value] of Object.entries(fields)) {
-                const { isValid, isEmpty, isPotentialyValid } = value as any;
+                if (value && this._isValidParam(key)) {
+                    const { isValid, isEmpty, isPotentiallyValid } = value;
 
-                (errors as any)[key] = {
-                    [key]: {
+                    errors[key] = {
                         isValid,
                         isEmpty,
-                        isPotentialyValid,
-                    },
-                };
+                        isPotentiallyValid,
+                    };
+                }
             }
         }
 
@@ -449,7 +451,7 @@ export default class BraintreeHostedForm {
         this._formOptions?.onCardTypeChange?.({
             cardType:
                 event.cards.length === 1
-                ? event.cards[0].type.replace(/^master\-card$/, 'mastercard') /* eslint-disable-line */
+                    ? event.cards[0].type.replace(/^master\-card$/, 'mastercard',) /* eslint-disable-line */
                     : undefined,
         });
     };
@@ -468,4 +470,20 @@ export default class BraintreeHostedForm {
             errors: this._mapValidationErrors(event.fields),
         });
     };
+
+    private _isValidParam(
+        formErrorDataKey: string,
+    ): formErrorDataKey is BraintreeFormErrorDataKeys {
+        switch (formErrorDataKey) {
+            case 'number':
+            case 'cvv':
+            case 'expirationDate':
+            case 'postalCode':
+            case 'cardholderName':
+            case 'cardType':
+                return true;
+            default:
+                return false;
+        }
+    }
 }

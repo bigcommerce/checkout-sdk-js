@@ -1,4 +1,4 @@
-import { BraintreeVerifyPayload } from './braintree';
+import { BraintreeFormErrorsData, BraintreeVerifyPayload } from './braintree';
 
 /**
  * A set of options that are required to initialize the Braintree payment
@@ -173,7 +173,7 @@ export type BraintreeFormFieldStyles = Partial<
 
 export interface BraintreeFormFieldKeyboardEventData {
     fieldType: string;
-    errors?: any;
+    errors?: BraintreeFormErrorsData;
 }
 
 export type BraintreeFormFieldBlurEventData = BraintreeFormFieldKeyboardEventData;
