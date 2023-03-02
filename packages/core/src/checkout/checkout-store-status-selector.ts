@@ -103,12 +103,20 @@ export default interface CheckoutStoreStatusSelector {
     isLoadingPaymentMethod(methodId?: string): boolean;
 
     /**
-     * Checks whether wallet buttons are loading.
+     * Checks whether a wallet button is loading.
      *
-     * @param methodIds - The identifiers of the payment methods to check.
-     * @returns True if any provided wallet button method is loading, otherwise false.
+     * @param methodId - The identifier of the payment method to check.
+     * @returns True if the wallet button method is loading, otherwise false.
      */
-    isLoadingWalletButtons(methodIds?: string[]): boolean;
+    isLoadingWalletButton(methodId?: string): boolean;
+
+    /**
+     * Checks whether a wallet button is initialized.
+     *
+     * @param methodId - The identifier of the payment method to check.
+     * @returns True if the wallet button method is initialized, otherwise false.
+     */
+    isInitializedWalletButton(methodId?: string): boolean;
 
     /**
      * Checks whether a specific or any payment method is initializing.
@@ -466,24 +474,6 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
         },
     );
 
-    const isLoadingWalletButtons = createSelector(
-        ({ customerStrategies }: InternalCheckoutSelectors) =>
-            customerStrategies.getWalletButtonsStatus,
-        (getWalletButtonsStatus) => (methodIds?: string[]) => {
-            if (methodIds) {
-                const walletButtonsStatus = getWalletButtonsStatus(methodIds);
-
-                for (const [, button] of Object.entries(walletButtonsStatus)) {
-                    if (button.isLoading) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        },
-    );
-
     return memoizeOne((state: InternalCheckoutSelectors): CheckoutStoreStatusSelector => {
         const selector = {
             isLoadingCheckout: state.checkout.isLoading,
@@ -497,7 +487,8 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isLoadingShippingCountries: state.shippingCountries.isLoading,
             isLoadingPaymentMethods: state.paymentMethods.isLoading,
             isLoadingPaymentMethod: state.paymentMethods.isLoadingMethod,
-            isLoadingWalletButtons: isLoadingWalletButtons(state),
+            isLoadingWalletButton: state.customerStrategies.isLoadingWalletButton,
+            isInitializedWalletButton: state.customerStrategies.isInitialized,
             isInitializingPayment: state.paymentStrategies.isInitializing,
             isSigningIn: state.customerStrategies.isSigningIn,
             isSigningOut: state.customerStrategies.isSigningOut,

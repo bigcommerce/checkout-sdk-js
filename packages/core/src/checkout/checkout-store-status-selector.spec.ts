@@ -273,39 +273,41 @@ describe('CheckoutStoreStatusSelector', () => {
         });
     });
 
-    describe('#isLoadingWalletButtons()', () => {
-        it('returns true if loading wallet buttons', () => {
-            jest.spyOn(selectors.customerStrategies, 'getWalletButtonsStatus').mockReturnValue({
-                foo: {
-                    isInitialized: false,
-                    isLoading: true,
-                },
-                bar: {
-                    isInitialized: false,
-                    isLoading: false,
-                },
-            });
+    describe('#isLoadingWalletButton()', () => {
+        it('returns true if wallet button is loading', () => {
+            jest.spyOn(selectors.customerStrategies, 'isLoadingWalletButton').mockReturnValue(true);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingWalletButtons(['foo', 'bar'])).toBe(true);
+            expect(statuses.isLoadingWalletButton('foobar')).toBe(true);
         });
 
-        it('returns false if not loading wallet buttons', () => {
-            jest.spyOn(selectors.customerStrategies, 'getWalletButtonsStatus').mockReturnValue({
-                foo: {
-                    isInitialized: true,
-                    isLoading: false,
-                },
-                bar: {
-                    isInitialized: false,
-                    isLoading: false,
-                },
-            });
+        it('returns false if wallet button is not loading', () => {
+            jest.spyOn(selectors.customerStrategies, 'isLoadingWalletButton').mockReturnValue(
+                false,
+            );
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingWalletButtons(['foo', 'bar'])).toBe(false);
+            expect(statuses.isLoadingWalletButton('foobar')).toBe(false);
+        });
+    });
+
+    describe('#isInitializedWalletButton()', () => {
+        it('returns true if wallet button is initialized', () => {
+            jest.spyOn(selectors.customerStrategies, 'isInitialized').mockReturnValue(true);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isInitializedWalletButton('foobar')).toBe(true);
+        });
+
+        it('returns false if wallet button is not initialized', () => {
+            jest.spyOn(selectors.customerStrategies, 'isInitialized').mockReturnValue(false);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isInitializedWalletButton('foobar')).toBe(false);
         });
     });
 

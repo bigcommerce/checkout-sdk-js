@@ -125,14 +125,6 @@ export default interface CheckoutStoreSelector {
     getPaymentMethods(): PaymentMethod[] | undefined;
 
     /**
-     * Gets a list of successfully initialized wallet button methodIds.
-     *
-     * @returns The list of successfully initialized wallet button methodIds if
-     * there is any, otherwise undefined.
-     */
-    getInitializedWalletButtons(methodIds: string[]): string[] | undefined;
-
-    /**
      * Gets a payment method by an id.
      *
      * The method returns undefined if unable to find a payment method with the
@@ -552,28 +544,6 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             }),
     );
 
-    const getInitializedWalletButtons = createSelector(
-        ({ customerStrategies }: InternalCheckoutSelectors) =>
-            customerStrategies.getWalletButtonsStatus,
-        (getWalletButtonsStatus) =>
-            clone((methodIds: string[]) => {
-                const initializedMethodIds = [];
-                const walletButtonsStatus = getWalletButtonsStatus(methodIds);
-
-                for (const [methodId, button] of Object.entries(walletButtonsStatus)) {
-                    if (button.isInitialized) {
-                        initializedMethodIds.push(methodId);
-                    }
-                }
-
-                if (initializedMethodIds.length === 0) {
-                    return;
-                }
-
-                return initializedMethodIds;
-            }),
-    );
-
     return memoizeOne((state: InternalCheckoutSelectors): CheckoutStoreSelector => {
         return {
             getCheckout: getCheckout(state),
@@ -603,7 +573,6 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             getShippingAddressFields: getShippingAddressFields(state),
             getPickupOptions: getPickupOptions(state),
             getUserExperienceSettings: getUserExperienceSettings(state),
-            getInitializedWalletButtons: getInitializedWalletButtons(state),
         };
     });
 }

@@ -4,18 +4,10 @@ import { createSelector } from '../common/selector';
 
 import CustomerStrategyState, { DEFAULT_STATE } from './customer-strategy-state';
 
-export interface CustomerStrategyStatus {
-    [key: string]: {
-        isInitialized: boolean;
-        isLoading: boolean;
-    };
-}
-
 export default interface CustomerStrategySelector {
     getSignInError(methodId?: string): Error | undefined;
     getSignOutError(methodId?: string): Error | undefined;
     getExecutePaymentMethodCheckoutError(methodId?: string): Error | undefined;
-    getWalletButtonsStatus(methodIds: string[]): CustomerStrategyStatus;
     getInitializeError(methodId?: string): Error | undefined;
     getWidgetInteractionError(methodId?: string): Error | undefined;
     isSigningIn(methodId?: string): boolean;
@@ -24,6 +16,7 @@ export default interface CustomerStrategySelector {
     isInitializing(methodId?: string): boolean;
     isInitialized(methodId: string): boolean;
     isWidgetInteracting(methodId?: string): boolean;
+    isLoadingWalletButton(methodId?: string): boolean;
 }
 
 export type CustomerStrategySelectorFactory = (
@@ -89,34 +82,6 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             }
 
             return widgetInteractionError;
-        },
-    );
-
-    const getWalletButtonsStatus = createSelector(
-        (state: CustomerStrategyState) => state,
-        (state) => (methodIds: string[]) => {
-            const walletButtonsStatus: CustomerStrategyStatus = {};
-
-            methodIds.forEach((methodId) => {
-                if (state.data[methodId]) {
-                    walletButtonsStatus[methodId] = {
-                        isInitialized: true,
-                        isLoading: false,
-                    };
-                } else if (state.errors.failedMethodIds?.includes(methodId)) {
-                    walletButtonsStatus[methodId] = {
-                        isInitialized: false,
-                        isLoading: false,
-                    };
-                } else {
-                    walletButtonsStatus[methodId] = {
-                        isInitialized: false,
-                        isLoading: true,
-                    };
-                }
-            });
-
-            return walletButtonsStatus;
         },
     );
 
@@ -188,12 +153,21 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
         },
     );
 
+    const isLoadingWalletButton = createSelector(
+        (state: CustomerStrategyState) => state,
+        (state) => (methodId: string) => {
+            return !(
+                (state.data[methodId] && state.data[methodId].isInitialized) ||
+                state.errors.failedMethodIds?.includes(methodId)
+            );
+        },
+    );
+
     return memoizeOne((state: CustomerStrategyState = DEFAULT_STATE): CustomerStrategySelector => {
         return {
             getSignInError: getSignInError(state),
             getSignOutError: getSignOutError(state),
             getExecutePaymentMethodCheckoutError: getExecutePaymentMethodCheckoutError(state),
-            getWalletButtonsStatus: getWalletButtonsStatus(state),
             getInitializeError: getInitializeError(state),
             getWidgetInteractionError: getWidgetInteractionError(state),
             isSigningIn: isSigningIn(state),
@@ -202,6 +176,7 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             isInitializing: isInitializing(state),
             isInitialized: isInitialized(state),
             isWidgetInteracting: isWidgetInteracting(state),
+            isLoadingWalletButton: isLoadingWalletButton(state),
         };
     });
 }
