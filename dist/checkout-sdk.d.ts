@@ -1459,6 +1459,12 @@ declare interface BraintreeError extends Error {
     details?: unknown;
 }
 
+declare type BraintreeFormErrorData = Omit<BraintreeFormFieldState, 'isFocused'>;
+
+declare type BraintreeFormErrorDataKeys = 'number' | 'expirationDate' | 'expirationMonth' | 'expirationYear' | 'cvv' | 'postalCode';
+
+declare type BraintreeFormErrorsData = Partial<Record<BraintreeFormErrorDataKeys, BraintreeFormErrorData>>;
+
 declare type BraintreeFormFieldBlurEventData = BraintreeFormFieldKeyboardEventData;
 
 declare interface BraintreeFormFieldCardTypeChangeEventData {
@@ -1471,12 +1477,20 @@ declare type BraintreeFormFieldFocusEventData = BraintreeFormFieldKeyboardEventD
 
 declare interface BraintreeFormFieldKeyboardEventData {
     fieldType: string;
+    errors?: BraintreeFormErrorsData;
 }
 
 declare interface BraintreeFormFieldOptions {
     accessibilityLabel?: string;
     containerId: string;
     placeholder?: string;
+}
+
+declare interface BraintreeFormFieldState {
+    isFocused: boolean;
+    isEmpty: boolean;
+    isPotentiallyValid: boolean;
+    isValid: boolean;
 }
 
 declare type BraintreeFormFieldStyles = Partial<Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>>;

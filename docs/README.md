@@ -111,6 +111,7 @@
 - [BraintreeFormFieldCardTypeChangeEventData](interfaces/BraintreeFormFieldCardTypeChangeEventData.md)
 - [BraintreeFormFieldKeyboardEventData](interfaces/BraintreeFormFieldKeyboardEventData.md)
 - [BraintreeFormFieldOptions](interfaces/BraintreeFormFieldOptions.md)
+- [BraintreeFormFieldState](interfaces/BraintreeFormFieldState.md)
 - [BraintreeFormFieldStylesMap](interfaces/BraintreeFormFieldStylesMap.md)
 - [BraintreeFormFieldValidateErrorData](interfaces/BraintreeFormFieldValidateErrorData.md)
 - [BraintreeFormFieldValidateEventData](interfaces/BraintreeFormFieldValidateEventData.md)
@@ -398,6 +399,9 @@
 - [AmazonPayV2ButtonInitializeOptions](README.md#amazonpayv2buttoninitializeoptions)
 - [AmazonPayV2ButtonParameters](README.md#amazonpayv2buttonparameters)
 - [AnalyticStepType](README.md#analyticsteptype)
+- [BraintreeFormErrorData](README.md#braintreeformerrordata)
+- [BraintreeFormErrorDataKeys](README.md#braintreeformerrordatakeys)
+- [BraintreeFormErrorsData](README.md#braintreeformerrorsdata)
 - [BraintreeFormFieldBlurEventData](README.md#braintreeformfieldblureventdata)
 - [BraintreeFormFieldEnterEventData](README.md#braintreeformfieldentereventdata)
 - [BraintreeFormFieldFocusEventData](README.md#braintreeformfieldfocuseventdata)
@@ -493,6 +497,24 @@ ___
 ### AnalyticStepType
 
 Ƭ **AnalyticStepType**: ``"customer"`` \| ``"shipping"`` \| ``"billing"`` \| ``"payment"``
+
+___
+
+### BraintreeFormErrorData
+
+Ƭ **BraintreeFormErrorData**: [`Omit`](README.md#omit)<[`BraintreeFormFieldState`](interfaces/BraintreeFormFieldState.md), ``"isFocused"``\>
+
+___
+
+### BraintreeFormErrorDataKeys
+
+Ƭ **BraintreeFormErrorDataKeys**: ``"number"`` \| ``"expirationDate"`` \| ``"expirationMonth"`` \| ``"expirationYear"`` \| ``"cvv"`` \| ``"postalCode"``
+
+___
+
+### BraintreeFormErrorsData
+
+Ƭ **BraintreeFormErrorsData**: `Partial`<`Record`<[`BraintreeFormErrorDataKeys`](README.md#braintreeformerrordatakeys), [`BraintreeFormErrorData`](README.md#braintreeformerrordata)\>\>
 
 ___
 

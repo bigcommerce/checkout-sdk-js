@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.360.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.359.0...v1.360.0) (2023-03-06)
+
+
+### Features
+
+* **payment:** PAYMENTS-8527 expose interface for real time host form filed validation for braintree ([44f8012](https://github.com/bigcommerce/checkout-sdk-js/commit/44f8012afd85a81e0066aad3c9898724a867439e))
+
+
+### Code Refactoring
+
+* **common:** PAYMENTS-8527 add braintree error data interface based on pr comment ([5950a8f](https://github.com/bigcommerce/checkout-sdk-js/commit/5950a8ffe30d0af7d1d89185122c486a8ee0afff))
+
 ## [1.359.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.358.1...v1.359.0) (2023-02-28)
 
 
