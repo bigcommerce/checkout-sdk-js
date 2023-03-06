@@ -7,6 +7,8 @@ import { NonceInstrument } from '../../payment';
 
 import {
     BraintreeBillingAddressRequestData,
+    BraintreeFormErrorDataKeys,
+    BraintreeFormErrorsData,
     BraintreeHostedFields,
     BraintreeHostedFieldsCreatorConfig,
     BraintreeHostedFieldsState,
@@ -254,6 +256,26 @@ export default class BraintreeHostedForm {
         }
     }
 
+    private _mapErrors(fields: BraintreeHostedFieldsState['fields']): BraintreeFormErrorsData {
+        const errors: BraintreeFormErrorsData = {};
+
+        if (fields) {
+            for (const [key, value] of Object.entries(fields)) {
+                if (value && this._isValidParam(key)) {
+                    const { isValid, isEmpty, isPotentiallyValid } = value;
+
+                    errors[key] = {
+                        isValid,
+                        isEmpty,
+                        isPotentiallyValid,
+                    };
+                }
+            }
+        }
+
+        return errors;
+    }
+
     private _mapValidationErrors(
         fields: BraintreeHostedFieldsState['fields'],
     ): BraintreeFormFieldValidateEventData['errors'] {
@@ -403,6 +425,7 @@ export default class BraintreeHostedForm {
     private _handleBlur: (event: BraintreeHostedFieldsState) => void = (event) => {
         this._formOptions?.onBlur?.({
             fieldType: this._mapFieldType(event.emittedBy),
+            errors: this._mapErrors(event.fields),
         });
     };
 
@@ -428,7 +451,7 @@ export default class BraintreeHostedForm {
         this._formOptions?.onCardTypeChange?.({
             cardType:
                 event.cards.length === 1
-                ? event.cards[0].type.replace(/^master\-card$/, 'mastercard') /* eslint-disable-line */
+                    ? event.cards[0].type.replace(/^master\-card$/, 'mastercard',) /* eslint-disable-line */
                     : undefined,
         });
     };
@@ -447,4 +470,20 @@ export default class BraintreeHostedForm {
             errors: this._mapValidationErrors(event.fields),
         });
     };
+
+    private _isValidParam(
+        formErrorDataKey: string,
+    ): formErrorDataKey is BraintreeFormErrorDataKeys {
+        switch (formErrorDataKey) {
+            case 'number':
+            case 'cvv':
+            case 'expirationDate':
+            case 'postalCode':
+            case 'cardholderName':
+            case 'cardType':
+                return true;
+            default:
+                return false;
+        }
+    }
 }
