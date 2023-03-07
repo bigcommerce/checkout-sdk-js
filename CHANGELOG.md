@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.361.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.360.0...v1.361.0) (2023-03-07)
+
+
+### Features
+
+* **checkout:** CHECKOUT-7313 Introduce wallet button support selectors ([#1886](https://github.com/bigcommerce/checkout-sdk-js/issues/1886)) ([086298c](https://github.com/bigcommerce/checkout-sdk-js/commit/086298c345280bca532d3f1ec8258bb8a9c1792f))
+
 ## [1.360.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.359.0...v1.360.0) (2023-03-06)
 
 

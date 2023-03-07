@@ -3964,6 +3964,13 @@ declare interface CheckoutStoreStatusSelector {
      */
     isInitializingCustomer(methodId?: string): boolean;
     /**
+     * Checks whether a wallet button is initialized.
+     *
+     * @param methodId - The identifier of the payment method to check.
+     * @returns True if the wallet button method is initialized, otherwise false.
+     */
+    isInitializedCustomer(methodId?: string): boolean;
+    /**
      * Checks whether the current customer is executing payment method checkout.
      *
      * If an ID is provided, the method also checks whether the customer is
