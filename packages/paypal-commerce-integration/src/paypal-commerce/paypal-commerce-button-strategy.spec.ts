@@ -778,7 +778,7 @@ describe('PayPalCommerceButtonStrategy', () => {
     });
 
     describe('#onCancel button callback', () => {
-        it('loads default checkout onCancel callback (buy now flow)', async () => {
+        it('loads default checkout onCancel callback (buy now flow1)', async () => {
             await strategy.initialize(buyNowInitializationOptions);
             eventEmitter.emit('onClick');
             await new Promise((resolve) => process.nextTick(resolve));
