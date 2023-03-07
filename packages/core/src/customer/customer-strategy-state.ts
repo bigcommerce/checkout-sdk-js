@@ -13,7 +13,7 @@ export interface CustomerStrategyDataState {
 export interface CustomerStrategyErrorsState {
     deinitializeError?: Error;
     deinitializeMethodId?: string;
-    initializeError?: { [key: string]: Error };
+    initializeErrors?: { [key: string]: Error };
     initializeMethodId?: string;
     signInError?: Error;
     signInMethodId?: string;

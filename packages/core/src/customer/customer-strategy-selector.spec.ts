@@ -82,7 +82,7 @@ describe('CustomerStrategySelector', () => {
             selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 errors: {
-                    initializeError: {
+                    initializeErrors: {
                         foobar: getErrorResponse(),
                     },
                     initializeMethodId: 'foobar',
@@ -96,7 +96,7 @@ describe('CustomerStrategySelector', () => {
             selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 errors: {
-                    initializeError: {
+                    initializeErrors: {
                         foobar: getErrorResponse(),
                     },
                     initializeMethodId: 'foobar',

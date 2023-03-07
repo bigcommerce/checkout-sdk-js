@@ -54,7 +54,7 @@ describe('customerStrategyReducer()', () => {
 
         expect(customerStrategyReducer(initialState, action).errors).toEqual({
             initializeMethodId: 'foobar',
-            initializeError: { foobar: action.payload },
+            initializeErrors: { foobar: action.payload },
         });
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
@@ -75,7 +75,7 @@ describe('customerStrategyReducer()', () => {
 
         expect(customerStrategyReducer(newState, action2).errors).toEqual({
             initializeMethodId: 'foo',
-            initializeError: { foo: Error() },
+            initializeErrors: { foo: Error() },
         });
     });
 
@@ -94,7 +94,7 @@ describe('customerStrategyReducer()', () => {
 
         const newState = customerStrategyReducer(initialState, action);
 
-        expect(customerStrategyReducer(newState, action2).errors.initializeError).toEqual({
+        expect(customerStrategyReducer(newState, action2).errors.initializeErrors).toEqual({
             foo: Error(),
             bar: Error(),
         });

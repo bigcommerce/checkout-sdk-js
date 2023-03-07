@@ -62,17 +62,17 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
 
     const getInitializeError = createSelector(
         (state: CustomerStrategyState) => state.errors.initializeMethodId,
-        (state: CustomerStrategyState) => state.errors.initializeError,
-        (initializeMethodId, initializeError) => (methodId?: string) => {
-            if (!initializeMethodId || !initializeError) {
+        (state: CustomerStrategyState) => state.errors.initializeErrors,
+        (initializeMethodId, initializeErrors) => (methodId?: string) => {
+            if (!initializeMethodId || !initializeErrors) {
                 return;
             }
 
             if (methodId) {
-                return initializeError[methodId];
+                return initializeErrors[methodId];
             }
 
-            return initializeError[initializeMethodId];
+            return initializeErrors[initializeMethodId];
         },
     );
 
