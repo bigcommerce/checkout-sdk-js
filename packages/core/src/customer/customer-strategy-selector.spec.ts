@@ -81,7 +81,12 @@ describe('CustomerStrategySelector', () => {
         it('returns error if unable to initialize any method', () => {
             selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
-                errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
+                errors: {
+                    initializeErrors: {
+                        foobar: getErrorResponse(),
+                    },
+                    initializeMethodId: 'foobar',
+                },
             });
 
             expect(selector.getInitializeError()).toEqual(getErrorResponse());
@@ -90,7 +95,12 @@ describe('CustomerStrategySelector', () => {
         it('returns error if unable to initialize specific method', () => {
             selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
-                errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
+                errors: {
+                    initializeErrors: {
+                        foobar: getErrorResponse(),
+                    },
+                    initializeMethodId: 'foobar',
+                },
             });
 
             expect(selector.getInitializeError('foobar')).toEqual(getErrorResponse());
