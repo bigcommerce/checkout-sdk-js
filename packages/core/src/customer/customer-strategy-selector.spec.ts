@@ -224,6 +224,28 @@ describe('CustomerStrategySelector', () => {
         });
     });
 
+    describe('#isFailed()', () => {
+        it('returns true if method is initialized', () => {
+            selector = createCustomerStrategySelector({
+                ...state.customerStrategy,
+                errors: { failedMethodIds: ['foobar'] },
+            });
+
+            expect(selector.isFailed('foobar')).toBe(true);
+        });
+
+        it('returns false if method is not initialized', () => {
+            selector = createCustomerStrategySelector({
+                ...state.customerStrategy,
+                errors: { failedMethodIds: ['foo', 'bar'] },
+            });
+
+            expect(selector.isFailed('foobar')).toBe(false);
+            expect(selector.isFailed('foo')).toBe(true);
+            expect(selector.isFailed('bar')).toBe(true);
+        });
+    });
+
     describe('#isInitialized()', () => {
         it('returns true if method is initialized', () => {
             selector = createCustomerStrategySelector({
@@ -272,27 +294,6 @@ describe('CustomerStrategySelector', () => {
             });
 
             expect(selector.isWidgetInteracting()).toBe(false);
-        });
-    });
-
-    describe('#isLoadingWalletButton()', () => {
-        beforeEach(() => {
-            selector = createCustomerStrategySelector({
-                ...state.customerStrategy,
-                data: {
-                    foo: { isInitialized: true },
-                },
-                errors: { failedMethodIds: ['bar'] },
-            });
-        });
-
-        it('returns false when button is initialized or failed', () => {
-            expect(selector.isLoadingWalletButton('foo')).toBe(false);
-            expect(selector.isLoadingWalletButton('bar')).toBe(false);
-        });
-
-        it('returns true when button is not initialized or failed', () => {
-            expect(selector.isLoadingWalletButton('foobar')).toBe(true);
         });
     });
 });

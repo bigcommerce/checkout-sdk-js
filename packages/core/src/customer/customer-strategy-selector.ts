@@ -15,8 +15,8 @@ export default interface CustomerStrategySelector {
     isExecutingPaymentMethodCheckout(methodId?: string): boolean;
     isInitializing(methodId?: string): boolean;
     isInitialized(methodId: string): boolean;
+    isFailed(methodId: string): boolean;
     isWidgetInteracting(methodId?: string): boolean;
-    isLoadingWalletButton(methodId?: string): boolean;
 }
 
 export type CustomerStrategySelectorFactory = (
@@ -153,13 +153,10 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
         },
     );
 
-    const isLoadingWalletButton = createSelector(
-        (state: CustomerStrategyState) => state,
-        (state) => (methodId: string) => {
-            return !(
-                (state.data[methodId] && state.data[methodId].isInitialized) ||
-                state.errors.failedMethodIds?.includes(methodId)
-            );
+    const isFailed = createSelector(
+        (state: CustomerStrategyState) => state.errors,
+        (errors) => (methodId: string) => {
+            return errors.failedMethodIds?.includes(methodId) ?? false;
         },
     );
 
@@ -175,8 +172,8 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             isExecutingPaymentMethodCheckout: isExecutingPaymentMethodCheckout(state),
             isInitializing: isInitializing(state),
             isInitialized: isInitialized(state),
+            isFailed: isFailed(state),
             isWidgetInteracting: isWidgetInteracting(state),
-            isLoadingWalletButton: isLoadingWalletButton(state),
         };
     });
 }

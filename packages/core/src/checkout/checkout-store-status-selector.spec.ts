@@ -273,23 +273,21 @@ describe('CheckoutStoreStatusSelector', () => {
         });
     });
 
-    describe('#isLoadingWalletButton()', () => {
-        it('returns true if wallet button is loading', () => {
-            jest.spyOn(selectors.customerStrategies, 'isLoadingWalletButton').mockReturnValue(true);
+    describe('#isFailedWalletButton()', () => {
+        it('returns true if wallet button is failed', () => {
+            jest.spyOn(selectors.customerStrategies, 'isFailed').mockReturnValue(true);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingWalletButton('foobar')).toBe(true);
+            expect(statuses.isFailedWalletButton('foobar')).toBe(true);
         });
 
-        it('returns false if wallet button is not loading', () => {
-            jest.spyOn(selectors.customerStrategies, 'isLoadingWalletButton').mockReturnValue(
-                false,
-            );
+        it('returns false if wallet button is not initialized', () => {
+            jest.spyOn(selectors.customerStrategies, 'isFailed').mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
-            expect(statuses.isLoadingWalletButton('foobar')).toBe(false);
+            expect(statuses.isFailedWalletButton('foobar')).toBe(false);
         });
     });
 

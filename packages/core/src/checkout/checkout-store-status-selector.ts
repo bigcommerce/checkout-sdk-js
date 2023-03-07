@@ -103,12 +103,12 @@ export default interface CheckoutStoreStatusSelector {
     isLoadingPaymentMethod(methodId?: string): boolean;
 
     /**
-     * Checks whether a wallet button is loading.
+     * Checks whether a wallet button is failed.
      *
      * @param methodId - The identifier of the payment method to check.
-     * @returns True if the wallet button method is loading, otherwise false.
+     * @returns True if the wallet button method is failed, otherwise false.
      */
-    isLoadingWalletButton(methodId?: string): boolean;
+    isFailedWalletButton(methodId?: string): boolean;
 
     /**
      * Checks whether a wallet button is initialized.
@@ -487,7 +487,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isLoadingShippingCountries: state.shippingCountries.isLoading,
             isLoadingPaymentMethods: state.paymentMethods.isLoading,
             isLoadingPaymentMethod: state.paymentMethods.isLoadingMethod,
-            isLoadingWalletButton: state.customerStrategies.isLoadingWalletButton,
+            isFailedWalletButton: state.customerStrategies.isFailed,
             isInitializedWalletButton: state.customerStrategies.isInitialized,
             isInitializingPayment: state.paymentStrategies.isInitializing,
             isSigningIn: state.customerStrategies.isSigningIn,
