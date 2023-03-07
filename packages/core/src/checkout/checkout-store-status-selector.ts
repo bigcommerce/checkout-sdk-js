@@ -103,22 +103,6 @@ export default interface CheckoutStoreStatusSelector {
     isLoadingPaymentMethod(methodId?: string): boolean;
 
     /**
-     * Checks whether a wallet button is failed.
-     *
-     * @param methodId - The identifier of the payment method to check.
-     * @returns True if the wallet button method is failed, otherwise false.
-     */
-    isFailedWalletButton(methodId?: string): boolean;
-
-    /**
-     * Checks whether a wallet button is initialized.
-     *
-     * @param methodId - The identifier of the payment method to check.
-     * @returns True if the wallet button method is initialized, otherwise false.
-     */
-    isInitializedWalletButton(methodId?: string): boolean;
-
-    /**
      * Checks whether a specific or any payment method is initializing.
      *
      * The method returns true if no ID is provided and at least one payment
@@ -164,6 +148,14 @@ export default interface CheckoutStoreStatusSelector {
      * @returns True if the customer step is initializing, otherwise false.
      */
     isInitializingCustomer(methodId?: string): boolean;
+
+    /**
+     * Checks whether a wallet button is initialized.
+     *
+     * @param methodId - The identifier of the payment method to check.
+     * @returns True if the wallet button method is initialized, otherwise false.
+     */
+    isInitializedCustomer(methodId?: string): boolean;
 
     /**
      * Checks whether the current customer is executing payment method checkout.
@@ -487,14 +479,13 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isLoadingShippingCountries: state.shippingCountries.isLoading,
             isLoadingPaymentMethods: state.paymentMethods.isLoading,
             isLoadingPaymentMethod: state.paymentMethods.isLoadingMethod,
-            isFailedWalletButton: state.customerStrategies.isFailed,
-            isInitializedWalletButton: state.customerStrategies.isInitialized,
             isInitializingPayment: state.paymentStrategies.isInitializing,
             isSigningIn: state.customerStrategies.isSigningIn,
             isSigningOut: state.customerStrategies.isSigningOut,
             isExecutingPaymentMethodCheckout:
                 state.customerStrategies.isExecutingPaymentMethodCheckout,
             isInitializingCustomer: state.customerStrategies.isInitializing,
+            isInitializedCustomer: state.customerStrategies.isInitialized,
             isLoadingShippingOptions: state.consignments.isLoadingShippingOptions,
             isSelectingShippingOption: isSelectingShippingOption(state),
             isUpdatingBillingAddress: state.billingAddress.isUpdating,

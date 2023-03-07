@@ -15,7 +15,6 @@ export default interface CustomerStrategySelector {
     isExecutingPaymentMethodCheckout(methodId?: string): boolean;
     isInitializing(methodId?: string): boolean;
     isInitialized(methodId: string): boolean;
-    isFailed(methodId: string): boolean;
     isWidgetInteracting(methodId?: string): boolean;
 }
 
@@ -65,11 +64,15 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
         (state: CustomerStrategyState) => state.errors.initializeMethodId,
         (state: CustomerStrategyState) => state.errors.initializeError,
         (initializeMethodId, initializeError) => (methodId?: string) => {
-            if (methodId && initializeMethodId !== methodId) {
+            if (!initializeMethodId || !initializeError) {
                 return;
             }
 
-            return initializeError;
+            if (methodId) {
+                return initializeError[methodId];
+            }
+
+            return initializeError[initializeMethodId];
         },
     );
 
@@ -153,13 +156,6 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
         },
     );
 
-    const isFailed = createSelector(
-        (state: CustomerStrategyState) => state.errors,
-        (errors) => (methodId: string) => {
-            return errors.failedMethodIds?.includes(methodId) ?? false;
-        },
-    );
-
     return memoizeOne((state: CustomerStrategyState = DEFAULT_STATE): CustomerStrategySelector => {
         return {
             getSignInError: getSignInError(state),
@@ -172,7 +168,6 @@ export function createCustomerStrategySelectorFactory(): CustomerStrategySelecto
             isExecutingPaymentMethodCheckout: isExecutingPaymentMethodCheckout(state),
             isInitializing: isInitializing(state),
             isInitialized: isInitialized(state),
-            isFailed: isFailed(state),
             isWidgetInteracting: isWidgetInteracting(state),
         };
     });

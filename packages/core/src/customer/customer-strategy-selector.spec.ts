@@ -81,7 +81,12 @@ describe('CustomerStrategySelector', () => {
         it('returns error if unable to initialize any method', () => {
             selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
-                errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
+                errors: {
+                    initializeError: {
+                        foobar: getErrorResponse(),
+                    },
+                    initializeMethodId: 'foobar',
+                },
             });
 
             expect(selector.getInitializeError()).toEqual(getErrorResponse());
@@ -90,7 +95,12 @@ describe('CustomerStrategySelector', () => {
         it('returns error if unable to initialize specific method', () => {
             selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
-                errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
+                errors: {
+                    initializeError: {
+                        foobar: getErrorResponse(),
+                    },
+                    initializeMethodId: 'foobar',
+                },
             });
 
             expect(selector.getInitializeError('foobar')).toEqual(getErrorResponse());
@@ -221,28 +231,6 @@ describe('CustomerStrategySelector', () => {
             });
 
             expect(selector.isInitializing()).toBe(false);
-        });
-    });
-
-    describe('#isFailed()', () => {
-        it('returns true if method is initialized', () => {
-            selector = createCustomerStrategySelector({
-                ...state.customerStrategy,
-                errors: { failedMethodIds: ['foobar'] },
-            });
-
-            expect(selector.isFailed('foobar')).toBe(true);
-        });
-
-        it('returns false if method is not initialized', () => {
-            selector = createCustomerStrategySelector({
-                ...state.customerStrategy,
-                errors: { failedMethodIds: ['foo', 'bar'] },
-            });
-
-            expect(selector.isFailed('foobar')).toBe(false);
-            expect(selector.isFailed('foo')).toBe(true);
-            expect(selector.isFailed('bar')).toBe(true);
         });
     });
 

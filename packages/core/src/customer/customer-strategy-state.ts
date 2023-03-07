@@ -11,10 +11,9 @@ export interface CustomerStrategyDataState {
 }
 
 export interface CustomerStrategyErrorsState {
-    failedMethodIds?: string[];
     deinitializeError?: Error;
     deinitializeMethodId?: string;
-    initializeError?: Error;
+    initializeError?: { [key: string]: Error };
     initializeMethodId?: string;
     signInError?: Error;
     signInMethodId?: string;
