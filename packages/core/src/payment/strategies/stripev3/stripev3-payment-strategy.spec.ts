@@ -1499,6 +1499,7 @@ describe('StripeV3PaymentStrategy', () => {
         let initializeOptions: PaymentInitializeOptions;
         let loadOrderAction: Observable<LoadOrderSucceededAction>;
         let state: InternalCheckoutSelectors;
+        const stripeV3JsMock = getStripeV3JsMock();
 
         beforeEach(() => {
             form = {
@@ -1530,6 +1531,8 @@ describe('StripeV3PaymentStrategy', () => {
             jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(
                 loadPaymentMethodAction,
             );
+
+            jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
         });
 
         it('creates hosted form', async () => {
