@@ -14,8 +14,7 @@
             "executor": "@nrwl/jest:jest",
             "outputs": ["coverage/packages/bluesnap-direct-integration"],
             "options": {
-                "jestConfig": "packages/bluesnap-direct-integration/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/bluesnap-direct-integration/jest.config.js"
             }
         }
     },

@@ -21,6 +21,7 @@ export { default as withAccountCreation } from './with-account-creation';
 export { default as PaymentActionCreator } from './payment-action-creator';
 export {
     default as Payment,
+    BlueSnapDirectEcpInstrument,
     CreditCardInstrument,
     WithCheckoutcomiDealInstrument,
     WithCheckoutcomFawryInstrument,

@@ -1,4 +1,5 @@
 import {
+    BlueSnapDirectEcpInstrument,
     CreditCardInstrument,
     HostedCreditCardInstrument,
     HostedInstrument,
@@ -40,6 +41,7 @@ export type OrderPaymentInstrument =
     | HostedVaultedInstrument
     | NonceInstrument
     | VaultedInstrument
+    | BlueSnapDirectEcpInstrument
     | (CreditCardInstrument & WithDocumentInstrument)
     | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
     | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)

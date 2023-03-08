@@ -70,6 +70,7 @@ export {
     OrderRequestBody,
 } from './order';
 export {
+    BlueSnapDirectEcpInstrument,
     CardInstrument,
     CreditCardInstrument,
     isVaultedInstrument,

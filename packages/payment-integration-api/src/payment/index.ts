@@ -3,6 +3,7 @@ export { AccountInstrument, CardInstrument } from './instrument';
 
 export {
     default as Payment,
+    BlueSnapDirectEcpInstrument,
     CreditCardInstrument,
     WithCheckoutcomiDealInstrument,
     WithCheckoutcomFawryInstrument,

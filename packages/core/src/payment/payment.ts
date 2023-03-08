@@ -11,6 +11,7 @@ export default interface Payment {
 }
 
 export type PaymentInstrument =
+    | BlueSnapDirectEcpInstrument
     | CreditCardInstrument
     | (CreditCardInstrument & WithHostedFormNonce)
     | (CreditCardInstrument & WithDocumentInstrument)
@@ -21,6 +22,7 @@ export type PaymentInstrument =
     | FormattedPayload<
           | AdyenV2Instrument
           | AppleInstrument
+          | BlueSnapDirectEcpPayload
           | BoltInstrument
           | PaypalInstrument
           | FormattedHostedInstrument
@@ -195,6 +197,30 @@ interface AdyenV2Card {
         token: string;
     };
     bigpay_token?: void;
+}
+
+export interface BlueSnapDirectEcpInstrument {
+    accountNumber: string;
+    accountType:
+        | 'CONSUMER_CHECKING'
+        | 'CONSUMER_SAVINGS'
+        | 'CORPORATE_CHECKING'
+        | 'CORPORATE_SAVINGS';
+    shopperPermission: boolean;
+    routingNumber: string;
+}
+
+export interface BlueSnapDirectEcpPayload {
+    ecp: {
+        account_number: string;
+        account_type:
+            | 'CONSUMER_CHECKING'
+            | 'CONSUMER_SAVINGS'
+            | 'CORPORATE_CHECKING'
+            | 'CORPORATE_SAVINGS';
+        shopper_permission: boolean;
+        routing_number: string;
+    };
 }
 
 interface StripeV3Intent {
