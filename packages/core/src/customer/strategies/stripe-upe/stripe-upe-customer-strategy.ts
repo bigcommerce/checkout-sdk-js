@@ -13,9 +13,9 @@ import {
     StripeEventType,
     StripeFormMode,
     StripeScriptLoader,
-    StripeUPEAppearanceOptions,
     StripeUPEClient,
 } from '../../../payment/strategies/stripe-upe';
+import { getStripeCustomStyles } from '../../../payment/strategies/stripe-upe/stripe-upe-custom-styles';
 import { ConsignmentActionCreator } from '../../../shipping';
 import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerActionType } from '../../customer-actions';
@@ -83,46 +83,8 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 config: { getStoreConfig },
             } = this._store.getState();
             const features = getStoreConfig()?.checkoutSettings.features;
-            let appearance: StripeUPEAppearanceOptions | undefined;
             const styles = typeof getStyles === 'function' && getStyles();
-
-            if (styles) {
-                appearance = {
-                    variables: {
-                        colorPrimary: styles.fieldInnerShadow,
-                        colorBackground: styles.fieldBackground,
-                        colorText: styles.labelText,
-                        colorDanger: styles.fieldErrorText,
-                        colorTextSecondary: styles.labelText,
-                        colorTextPlaceholder: styles.fieldPlaceholderText,
-                    },
-                    rules: {
-                        '.Input': {
-                            borderColor: styles.fieldBorder,
-                            color: styles.fieldText,
-                            boxShadow: styles.fieldInnerShadow,
-                        },
-                    },
-                };
-            }
-
-            if (features && features['CHECKOUT-6879.enable_floating_labels']) {
-                appearance = {
-                    ...appearance,
-                    labels: 'floating',
-                    variables: {
-                        ...appearance?.variables,
-                        fontSizeBase: '14px',
-                    },
-                    rules: {
-                        ...appearance?.rules,
-                        '.Input': {
-                            ...appearance?.rules?.['.Input'],
-                            padding: '7px 13px 5px 13px',
-                        },
-                    },
-                };
-            }
+            const experiment = features && features['CHECKOUT-6879.enable_floating_labels'];
 
             stripeUPEClient = await this._stripeUPEScriptLoader.getStripeClient(
                 stripePublishableKey,
@@ -131,7 +93,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
 
             this._stripeElements = this._stripeUPEScriptLoader.getElements(stripeUPEClient, {
                 clientSecret: clientToken,
-                appearance,
+                appearance: getStripeCustomStyles(styles, experiment),
             });
 
             const consignments = getConsignments();

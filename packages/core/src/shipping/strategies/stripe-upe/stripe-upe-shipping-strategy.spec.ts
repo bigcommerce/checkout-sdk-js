@@ -225,6 +225,7 @@ describe('StripeUPEShippingStrategy', () => {
                         borderRadius: '4px',
                         colorBackground: testColor,
                         colorDanger: testColor,
+                        colorIcon: testColor,
                         colorPrimary: testColor,
                         colorText: testColor,
                         colorTextPlaceholder: testColor,

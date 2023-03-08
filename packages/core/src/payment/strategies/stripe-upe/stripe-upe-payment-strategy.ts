@@ -34,9 +34,9 @@ import {
     StripeError,
     StripePaymentMethodType,
     StripeStringConstants,
-    StripeUPEAppearanceOptions,
     StripeUPEClient,
 } from './stripe-upe';
+import { getStripeCustomStyles } from './stripe-upe-custom-styles';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
 import { StripeUPEPaymentInitializeOptions } from './';
@@ -360,53 +360,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             config: { getStoreConfig },
         } = this._store.getState();
         const features = getStoreConfig()?.checkoutSettings.features;
-        let appearance: StripeUPEAppearanceOptions | undefined;
-
-        if (style) {
-            const styles = style;
-
-            appearance = {
-                variables: {
-                    colorPrimary: styles.fieldInnerShadow,
-                    colorBackground: styles.fieldBackground,
-                    colorText: styles.labelText,
-                    colorDanger: styles.fieldErrorText,
-                    colorTextSecondary: styles.labelText,
-                    colorTextPlaceholder: styles.fieldPlaceholderText,
-                    colorIcon: styles.fieldPlaceholderText,
-                },
-                rules: {
-                    '.Input': {
-                        borderColor: styles.fieldBorder,
-                        color: styles.fieldText,
-                        boxShadow: styles.fieldInnerShadow,
-                    },
-                },
-            };
-        }
-
-        if (features && features['CHECKOUT-6879.enable_floating_labels']) {
-            appearance = {
-                ...appearance,
-                labels: 'floating',
-                variables: {
-                    ...appearance?.variables,
-                    fontSizeBase: '14px',
-                },
-                rules: {
-                    ...appearance?.rules,
-                    '.Input': {
-                        ...appearance?.rules?.['.Input'],
-                        padding: '7px 13px 5px 13px',
-                    },
-                },
-            };
-        }
+        const experiment = features && features['CHECKOUT-6879.enable_floating_labels'];
 
         this._stripeElements = this._stripeScriptLoader.getElements(this._stripeUPEClient, {
             clientSecret: paymentMethod.clientToken,
             locale: formatLocale(shopperLanguage),
-            appearance,
+            appearance: getStripeCustomStyles(style, experiment),
         });
 
         const {

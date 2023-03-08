@@ -14,9 +14,9 @@ import {
     StripeEventType,
     StripeFormMode,
     StripeScriptLoader,
-    StripeUPEAppearanceOptions,
     StripeUPEClient,
 } from '../../../payment/strategies/stripe-upe';
+import { getStripeCustomStyles } from '../../../payment/strategies/stripe-upe/stripe-upe-custom-styles';
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
@@ -103,58 +103,13 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             config: { getStoreConfig },
         } = this._store.getState();
         const features = getStoreConfig()?.checkoutSettings.features;
-        let appearance: StripeUPEAppearanceOptions = {
-            variables: {
-                spacingUnit: '4px',
-                borderRadius: '4px',
-            },
-        };
         const styles = getStyles && getStyles();
+        const experiment = features && features['CHECKOUT-6879.enable_floating_labels'];
         const shippingFields = getShippingAddressFields([], '');
-
-        if (styles) {
-            appearance = {
-                variables: {
-                    colorPrimary: styles.fieldInnerShadow,
-                    colorBackground: styles.fieldBackground,
-                    colorText: styles.labelText,
-                    colorDanger: styles.fieldErrorText,
-                    colorTextSecondary: styles.labelText,
-                    colorTextPlaceholder: styles.fieldPlaceholderText,
-                    spacingUnit: '4px',
-                    borderRadius: '4px',
-                },
-                rules: {
-                    '.Input': {
-                        borderColor: styles.fieldBorder,
-                        color: styles.fieldText,
-                        boxShadow: styles.fieldInnerShadow,
-                    },
-                },
-            };
-        }
-
-        if (features && features['CHECKOUT-6879.enable_floating_labels']) {
-            appearance = {
-                ...appearance,
-                labels: 'floating',
-                variables: {
-                    ...appearance?.variables,
-                    fontSizeBase: '14px',
-                },
-                rules: {
-                    ...appearance?.rules,
-                    '.Input': {
-                        ...appearance?.rules?.['.Input'],
-                        padding: '7px 13px 5px 13px',
-                    },
-                },
-            };
-        }
 
         this._stripeElements = this._stripeUPEScriptLoader.getElements(this._stripeUPEClient, {
             clientSecret: paymentMethod.clientToken,
-            appearance,
+            appearance: getStripeCustomStyles(styles, experiment, StripeFormMode.SHIPPING),
         });
 
         const shipping = getShippingAddress();
