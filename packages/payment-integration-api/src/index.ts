@@ -59,7 +59,28 @@ export {
     StorefrontErrorResponseBody,
     isRequestError,
 } from './errors';
-export { HostedForm, HostedFormOptions, HostedFieldType } from './hosted-form';
+export {
+    HostedCardFieldOptions,
+    HostedCardFieldOptionsMap,
+    HostedFieldType,
+    HostedFieldOptionsMap,
+    HostedFieldStylesMap,
+    HostedForm,
+    HostedFormOptions,
+    HostedInputBlurEvent,
+    HostedInputCardTypeChangeEvent,
+    HostedInputEventType,
+    HostedInputEnterEvent,
+    HostedInputFocusEvent,
+    HostedInputStyles,
+    HostedInputSubmitSuccessEvent,
+    HostedInputValidateErrorData,
+    HostedInputValidateErrorDataMap,
+    HostedInputValidateEvent,
+    HostedInputValidateResults,
+    HostedStoredCardFieldOptions,
+    HostedStoredCardFieldOptionsMap,
+} from './hosted-form';
 export {
     GatewayOrderPayment,
     GiftCertificateOrderPayment,
