@@ -23,6 +23,8 @@ export default class BoltScriptLoader {
         publishableKey?: string,
         testMode?: boolean,
         developerModeParams?: BoltDeveloperModeParams,
+        cartId?: string,
+        storefrontApiToken?: string,
     ): Promise<BoltCheckout> {
         if (this.boltHostWindow.BoltCheckout) {
             return this.boltHostWindow.BoltCheckout;
@@ -36,7 +38,7 @@ export default class BoltScriptLoader {
 
         await this.scriptLoader.loadScript(
             `//${this.getDomainURL(!!testMode, developerModeParams)}/connect-bigcommerce.js`,
-            this._getScriptOptions('bolt-connect', publishableKey),
+            this._getScriptOptions('bolt-connect', publishableKey, cartId, storefrontApiToken),
         );
         await this.scriptLoader.loadScript(
             `//${this.getDomainURL(!!testMode, developerModeParams)}/track.js`,
@@ -75,7 +77,7 @@ export default class BoltScriptLoader {
         return this.boltHostWindow.Bolt(publishableKey);
     }
 
-    private getDomainURL(testMode: boolean, developerModeParams?: BoltDeveloperModeParams): string {
+    getDomainURL(testMode: boolean, developerModeParams?: BoltDeveloperModeParams): string {
         if (!testMode) {
             return 'connect.bolt.com';
         }
@@ -93,12 +95,19 @@ export default class BoltScriptLoader {
         return 'connect-sandbox.bolt.com';
     }
 
-    private _getScriptOptions(id: string, publishableKey: string): LoadScriptOptions {
+    private _getScriptOptions(
+        id: string,
+        publishableKey: string,
+        cartId?: string,
+        storefrontApiToken?: string,
+    ): LoadScriptOptions {
         return {
             async: true,
             attributes: {
                 id,
                 'data-publishable-key': publishableKey,
+                ...(cartId && { 'data-shopping-cart-id': cartId }),
+                ...(storefrontApiToken && { 'data-storefront-api-token': storefrontApiToken }),
             },
         };
     }
