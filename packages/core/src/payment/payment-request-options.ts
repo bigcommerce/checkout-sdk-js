@@ -6,6 +6,7 @@ import { AmazonPayV2PaymentInitializeOptions } from './strategies/amazon-pay-v2'
 import { BlueSnapV2PaymentInitializeOptions } from './strategies/bluesnapv2';
 import { BoltPaymentInitializeOptions } from './strategies/bolt';
 import {
+    BraintreeAchPaymentInitializeOptions,
     BraintreePaymentInitializeOptions,
     BraintreeVisaCheckoutPaymentInitializeOptions,
 } from './strategies/braintree';
@@ -81,6 +82,12 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Braintree.
      */
     braintree?: BraintreePaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the Braintree ACH payment method.
+     * They can be omitted unless you need to support Braintree.
+     */
+    braintreeach?: BraintreeAchPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Visa Checkout payment

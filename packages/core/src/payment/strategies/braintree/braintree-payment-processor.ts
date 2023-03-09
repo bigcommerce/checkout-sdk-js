@@ -21,6 +21,7 @@ import {
     BraintreeShippingAddressOverride,
     BraintreeThreeDSecure,
     BraintreeTokenizePayload,
+    BraintreeUsBankAccount,
     BraintreeVenmoCheckout,
     BraintreeVerifyPayload,
 } from './braintree';
@@ -185,6 +186,10 @@ export default class BraintreePaymentProcessor {
         return new Promise((resolve, reject) => {
             this._braintreeSDKCreator.getVenmoCheckout(resolve, reject);
         });
+    }
+
+    async getUsBankAccount(): Promise<BraintreeUsBankAccount> {
+        return this._braintreeSDKCreator.getUsBankAccount();
     }
 
     private _getErrorsRequiredFields(

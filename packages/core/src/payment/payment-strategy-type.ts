@@ -55,6 +55,7 @@ enum PaymentStrategyType {
     STRIPE_UPE = 'stripeupe',
     STRIPE_UPE_GOOGLE_PAY = 'googlepaystripeupe',
     BRAINTREE = 'braintree',
+    BRAINTREEACH = 'braintreeach',
     BRAINTREE_PAYPAL = 'braintreepaypal',
     BRAINTREE_VENMO = 'braintreevenmo',
     BRAINTREE_PAYPAL_CREDIT = 'braintreepaypalcredit',

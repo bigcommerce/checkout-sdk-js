@@ -87,6 +87,10 @@ export interface BraintreePaymentInitializeOptions {
     form?: BraintreeFormOptions;
 }
 
+export interface BraintreeAchPaymentInitializeOptions {
+    mandateText: string;
+}
+
 /**
  * A set of options that are required to support 3D Secure authentication flow.
  *

@@ -16,6 +16,7 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeThreeDSecure,
+    BraintreeUsBankAccount,
     BraintreeVenmoCheckout,
     BraintreeVisaCheckout,
     GooglePayBraintreeSDK,
@@ -30,6 +31,7 @@ export default class BraintreeSDKCreator {
     private _paypalCheckout?: Promise<BraintreePaypalCheckout>;
     private _clientToken?: string;
     private _visaCheckout?: Promise<BraintreeVisaCheckout>;
+    private _usBankAccount?: Promise<BraintreeUsBankAccount>;
     private _venmoCheckout?: Promise<BraintreeVenmoCheckout>;
     private _dataCollectors: {
         default?: Promise<BraintreeDataCollector>;
@@ -210,6 +212,17 @@ export default class BraintreeSDKCreator {
         ]);
 
         return hostedFields.create({ ...options, client });
+    }
+
+    async getUsBankAccount() {
+        if (!this._usBankAccount) {
+            this._usBankAccount = Promise.all([
+                this.getClient(),
+                this._braintreeScriptLoader.loadUsBankAccount(),
+            ]).then(([client, usBankAccount]) => usBankAccount.create({ client }));
+        }
+
+        return this._usBankAccount;
     }
 
     teardown(): Promise<void> {
