@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.361.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.361.0...v1.361.1) (2023-03-09)
+
+
+### Bug Fixes
+
+* **payment:** INT-7463 Fixed problem with cards vaulted with 3ds in the hosted form flow ([7a82aeb](https://github.com/bigcommerce/checkout-sdk-js/commit/7a82aebda22b3d8776b4d121cf48fbd90da1d465))
+
 ## [1.361.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.360.0...v1.361.0) (2023-03-07)
 
 
