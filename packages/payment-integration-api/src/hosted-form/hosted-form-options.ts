@@ -20,37 +20,37 @@ export default interface HostedFormOptions {
     onValidate?(data: HostedFieldValidateEventData): void;
 }
 
-type HostedFieldBlurEventData = HostedInputBlurEvent['payload'];
-type HostedFieldCardTypeChangeEventData = HostedInputCardTypeChangeEvent['payload'];
-type HostedFieldEnterEventData = HostedInputEnterEvent['payload'];
-type HostedFieldFocusEventData = HostedInputFocusEvent['payload'];
-type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
+export type HostedFieldBlurEventData = HostedInputBlurEvent['payload'];
+export type HostedFieldCardTypeChangeEventData = HostedInputCardTypeChangeEvent['payload'];
+export type HostedFieldEnterEventData = HostedInputEnterEvent['payload'];
+export type HostedFieldFocusEventData = HostedInputFocusEvent['payload'];
+export type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
 
-type HostedFieldOptionsMap = HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap;
+export type HostedFieldOptionsMap = HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap;
 
-interface HostedCardFieldOptionsMap {
+export interface HostedCardFieldOptionsMap {
     [HostedFieldType.CardCode]?: HostedCardFieldOptions;
     [HostedFieldType.CardExpiry]: HostedCardFieldOptions;
     [HostedFieldType.CardName]: HostedCardFieldOptions;
     [HostedFieldType.CardNumber]: HostedCardFieldOptions;
 }
 
-interface HostedStoredCardFieldOptionsMap {
+export interface HostedStoredCardFieldOptionsMap {
     [HostedFieldType.CardCodeVerification]?: HostedStoredCardFieldOptions;
     [HostedFieldType.CardNumberVerification]?: HostedStoredCardFieldOptions;
 }
 
-interface HostedCardFieldOptions {
+export interface HostedCardFieldOptions {
     accessibilityLabel?: string;
     containerId: string;
     placeholder?: string;
 }
 
-interface HostedStoredCardFieldOptions extends HostedCardFieldOptions {
+export interface HostedStoredCardFieldOptions extends HostedCardFieldOptions {
     instrumentId: string;
 }
 
-interface HostedFieldStylesMap {
+export interface HostedFieldStylesMap {
     default?: HostedFieldStyles;
     error?: HostedFieldStyles;
     focus?: HostedFieldStyles;
