@@ -26,3 +26,4 @@ export {
     HostedInputValidateEvent,
     HostedInputValidateResults,
 } from './iframe-content';
+export { default as isStoredCreditCardFormFields } from './is-stored-credit-card-form-fields';
