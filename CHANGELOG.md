@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.362.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.361.1...v1.362.0) (2023-03-10)
+
+
+### Features
+
+* **payment:** PAYPAL-000 added HostedForm exports to payment-integration-api index file ([#1892](https://github.com/bigcommerce/checkout-sdk-js/issues/1892)) ([aa1ca1d](https://github.com/bigcommerce/checkout-sdk-js/commit/aa1ca1da41c7ef972745ee6ad019b74b0d2ea0aa))
+
 ### [1.361.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.361.0...v1.361.1) (2023-03-09)
 
 
