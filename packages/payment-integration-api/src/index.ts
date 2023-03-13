@@ -95,8 +95,10 @@ export {
     CreditCardInstrument,
     isVaultedInstrument,
     isHostedInstrumentLike,
+    isWithAccountCreation,
     HostedInstrument,
     InitializeOffsitePaymentConfig,
+    NonceInstrument,
     Payment,
     PaymentActionType,
     SubmitPaymentAction,
@@ -109,6 +111,7 @@ export {
     PaymentStrategyFactory,
     PaymentStrategyResolveId,
     VaultedInstrument,
+    WithAccountCreation,
 } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';

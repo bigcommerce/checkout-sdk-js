@@ -3,6 +3,7 @@ import getCart from './carts.mock';
 import getCheckout from './checkouts.mock';
 import getConfig from './config.mock';
 import getConsignment from './consignment.mock';
+import { getCustomer } from './customer.mock';
 import { getOrder } from './orders.mock';
 
 const subscribe = jest.fn();
@@ -15,11 +16,13 @@ const state = {
     getHost: jest.fn(),
     getLocale: jest.fn(),
     getOrder: jest.fn(() => getOrder()),
+    getOrderOrThrow: jest.fn(() => getOrder()),
     getStoreConfig: jest.fn(() => getConfig().storeConfig),
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
     getPaymentMethodOrThrow: jest.fn(),
     getPaymentStatus: jest.fn(),
     getBillingAddressOrThrow: jest.fn(() => getBillingAddress()),
+    getCustomer: jest.fn(() => getCustomer()),
 };
 
 const createBuyNowCart = jest.fn();
@@ -37,6 +40,7 @@ const updateShippingAddress = jest.fn();
 const signInCustomer = jest.fn();
 const signOutCustomer = jest.fn();
 const selectShippingOption = jest.fn();
+const applyStoreCredit = jest.fn();
 
 const PaymentIntegrationServiceMock = jest.fn().mockImplementation(() => {
     return {
@@ -56,6 +60,7 @@ const PaymentIntegrationServiceMock = jest.fn().mockImplementation(() => {
         signInCustomer,
         signOutCustomer,
         selectShippingOption,
+        applyStoreCredit,
     };
 });
 
