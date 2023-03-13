@@ -250,13 +250,21 @@ export default class PayPalCommerceIntegrationService {
         const { color, height, label, shape } = style || {};
 
         const validStyles = {
-            color: color && StyleButtonColor[color] ? color : undefined,
+            color: this.getValidVenmoButtonColor(color),
             height: this.getValidHeight(height),
             label: label && StyleButtonLabel[label] ? label : undefined,
             shape: shape && StyleButtonShape[shape] ? shape : undefined,
         };
 
         return omitBy(validStyles, isNil);
+    }
+
+    getValidVenmoButtonColor(color: StyleButtonColor | undefined) {
+        if(color === 'gold') {
+            return undefined;
+        }
+
+        return color && StyleButtonColor[color] ? color : undefined;
     }
 
     getValidHeight(height?: number): number {
