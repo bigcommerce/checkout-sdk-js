@@ -17,7 +17,6 @@ current checkout flow.
 
 - [amazonpay](BasePaymentInitializeOptions.md#amazonpay)
 - [bluesnapv2](BasePaymentInitializeOptions.md#bluesnapv2)
-- [bolt](BasePaymentInitializeOptions.md#bolt)
 - [braintree](BasePaymentInitializeOptions.md#braintree)
 - [braintreevisacheckout](BasePaymentInitializeOptions.md#braintreevisacheckout)
 - [chasepay](BasePaymentInitializeOptions.md#chasepay)
@@ -67,15 +66,6 @@ ___
 
 The options that are required to initialize the BlueSnapV2 payment method.
 They can be omitted unless you need to support BlueSnapV2.
-
-___
-
-### bolt
-
-• `Optional` **bolt**: [`BoltPaymentInitializeOptions`](BoltPaymentInitializeOptions.md)
-
-The options that allow Bolt to load the client script and handle the checkout.
-They can be omitted if Bolt's full checkout take over is intended.
 
 ___
 

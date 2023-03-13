@@ -366,12 +366,12 @@
 - [WechatDataPaymentMethodState_2](interfaces/WechatDataPaymentMethodState_2.md)
 - [WechatState](interfaces/WechatState.md)
 - [WechatState_2](interfaces/WechatState_2.md)
-- [WithAccountCreation](interfaces/WithAccountCreation.md)
 - [WithAdyenV2PaymentInitializeOptions](interfaces/WithAdyenV2PaymentInitializeOptions.md)
 - [WithAdyenV3PaymentInitializeOptions](interfaces/WithAdyenV3PaymentInitializeOptions.md)
 - [WithApplePayButtonInitializeOptions](interfaces/WithApplePayButtonInitializeOptions.md)
 - [WithApplePayCustomerInitializeOptions](interfaces/WithApplePayCustomerInitializeOptions.md)
 - [WithApplePayPaymentInitializeOptions](interfaces/WithApplePayPaymentInitializeOptions.md)
+- [WithBoltPaymentInitializeOptions](interfaces/WithBoltPaymentInitializeOptions.md)
 - [WithBuyNowFeature](interfaces/WithBuyNowFeature.md)
 - [WithCheckoutcomFawryInstrument](interfaces/WithCheckoutcomFawryInstrument.md)
 - [WithCheckoutcomSEPAInstrument](interfaces/WithCheckoutcomSEPAInstrument.md)
@@ -689,7 +689,7 @@ ___
 
 ### OrderPaymentInstrument
 
-Ƭ **OrderPaymentInstrument**: [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) \| [`HostedInstrument`](interfaces/HostedInstrument.md) \| [`HostedCreditCardInstrument`](README.md#hostedcreditcardinstrument) \| [`HostedVaultedInstrument`](README.md#hostedvaultedinstrument) \| [`NonceInstrument`](interfaces/NonceInstrument.md) \| [`VaultedInstrument`](interfaces/VaultedInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithDocumentInstrument`](interfaces/WithDocumentInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomFawryInstrument`](interfaces/WithCheckoutcomFawryInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomSEPAInstrument`](interfaces/WithCheckoutcomSEPAInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomiDealInstrument`](interfaces/WithCheckoutcomiDealInstrument.md) \| [`HostedInstrument`](interfaces/HostedInstrument.md) & [`WithMollieIssuerInstrument`](interfaces/WithMollieIssuerInstrument.md) \| [`WithAccountCreation`](interfaces/WithAccountCreation.md)
+Ƭ **OrderPaymentInstrument**: [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) \| [`HostedInstrument`](interfaces/HostedInstrument.md) \| [`HostedCreditCardInstrument`](README.md#hostedcreditcardinstrument) \| [`HostedVaultedInstrument`](README.md#hostedvaultedinstrument) \| [`NonceInstrument`](interfaces/NonceInstrument.md) \| [`VaultedInstrument`](interfaces/VaultedInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithDocumentInstrument`](interfaces/WithDocumentInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomFawryInstrument`](interfaces/WithCheckoutcomFawryInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomSEPAInstrument`](interfaces/WithCheckoutcomSEPAInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomiDealInstrument`](interfaces/WithCheckoutcomiDealInstrument.md) \| [`HostedInstrument`](interfaces/HostedInstrument.md) & [`WithMollieIssuerInstrument`](interfaces/WithMollieIssuerInstrument.md) \| `WithAccountCreation`
 
 ___
 
@@ -701,7 +701,7 @@ ___
 
 ### PaymentInitializeOptions
 
-Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md) & [`WithCreditCardPaymentInitializeOptions`](interfaces/WithCreditCardPaymentInitializeOptions.md) & [`WithSquareV2PaymentInitializeOptions`](interfaces/WithSquareV2PaymentInitializeOptions.md)
+Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md) & [`WithBoltPaymentInitializeOptions`](interfaces/WithBoltPaymentInitializeOptions.md) & [`WithCreditCardPaymentInitializeOptions`](interfaces/WithCreditCardPaymentInitializeOptions.md) & [`WithSquareV2PaymentInitializeOptions`](interfaces/WithSquareV2PaymentInitializeOptions.md)
 
 ___
 

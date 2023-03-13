@@ -9,6 +9,7 @@ import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-ap
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
+import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { createTimeout } from '@bigcommerce/request-sender';
 
 declare type AccountInstrument = PayPalInstrument | BankInstrument;
@@ -1144,11 +1145,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support BlueSnapV2.
      */
     bluesnapv2?: BlueSnapV2PaymentInitializeOptions;
-    /**
-     * The options that allow Bolt to load the client script and handle the checkout.
-     * They can be omitted if Bolt's full checkout take over is intended.
-     */
-    bolt?: BoltPaymentInitializeOptions;
     /**
      * The options that are required to initialize the Braintree payment method.
      * They can be omitted unless you need to support Braintree.
@@ -6132,7 +6128,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -7586,10 +7582,6 @@ declare interface WechatState_2 {
     data: WechatDataPaymentMethodState_2;
 }
 
-declare interface WithAccountCreation {
-    shouldCreateAccount?: boolean;
-}
-
 declare interface WithAdyenV2PaymentInitializeOptions {
     /**
      * The options that are required to initialize the Apple Pay payment
@@ -7624,6 +7616,14 @@ declare interface WithApplePayPaymentInitializeOptions {
      * method. They can be omitted unless you need to support Apple Pay.
      */
     applepay?: ApplePayPaymentInitializeOptions;
+}
+
+declare interface WithBoltPaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Bolt payment
+     * method. They can be omitted unless you need to support Bolt.
+     */
+    bolt?: BoltPaymentInitializeOptions;
 }
 
 declare interface WithBuyNowFeature {
