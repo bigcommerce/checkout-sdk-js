@@ -32,6 +32,7 @@ export enum Mode {
     GooglePayStripe,
     GooglePayStripeUPE,
     GooglePayBraintreeWithBuyNow,
+    GooglePayWorldpayAccess,
 }
 
 const buyNowCartRequestBody: BuyNowCartRequestBody = {
@@ -75,6 +76,7 @@ export function getCheckoutButtonOptions(
     const googlepayorbital = { googlepayorbital: { buttonType: ButtonType.Short } };
     const googlepaystripe = { googlepaystripe: { buttonType: ButtonType.Short } };
     const googlepaystripeupe = { googlepaystripeupe: { buttonType: ButtonType.Short } };
+    const googlepayworldpayaccess = { googlepayworldpayaccess: { buttonType: ButtonType.Short } };
 
     switch (mode) {
         case Mode.UndefinedContainer: {
@@ -127,6 +129,10 @@ export function getCheckoutButtonOptions(
 
         case Mode.GooglePayStripeUPE: {
             return { methodId, containerId, ...googlepaystripeupe };
+        }
+
+        case Mode.GooglePayWorldpayAccess: {
+            return { methodId, containerId, ...googlepayworldpayaccess };
         }
 
         default: {

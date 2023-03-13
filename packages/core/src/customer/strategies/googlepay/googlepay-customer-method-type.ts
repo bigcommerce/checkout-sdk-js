@@ -9,6 +9,7 @@ enum GooglePayCustomerMethodType {
     GOOGLEPAY_ORBITAL = 'googlepayorbital',
     GOOGLEPAY_STRIPE = 'googlepaystripe',
     GOOGLEPAY_STRIPEUPE = 'googlepaystripeupe',
+    GOOGLEPAY_WORLDPAYACCESS = 'googlepayworldpayaccess',
 }
 
 export default GooglePayCustomerMethodType;

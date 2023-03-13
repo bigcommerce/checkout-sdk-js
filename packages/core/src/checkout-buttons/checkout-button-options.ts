@@ -127,6 +127,12 @@ export interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptio
     googlepayauthorizenet?: GooglePayButtonInitializeOptions;
 
     /**
+     * The options that are required to facilitate Worldpay GooglePay. They can be
+     * omitted unless you need to support Worldpay GooglePay.
+     */
+    googlepayworldpayaccess?: GooglePayButtonInitializeOptions;
+
+    /**
      * The options that are required to facilitate PayPal. They can be omitted
      * unless you need to support Paypal.
      */

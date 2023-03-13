@@ -36,6 +36,7 @@ import {
     GooglePayOrbitalInitializer,
     GooglePayStripeInitializer,
     GooglePayStripeUPEInitializer,
+    GooglePayWorldpayAccessInitializer,
 } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
@@ -326,6 +327,18 @@ export default function createCheckoutButtonRegistry(
                 new PaypalScriptLoader(scriptLoader),
                 formPoster,
                 host,
+            ),
+    );
+
+    registry.register(
+        CheckoutButtonMethodType.GOOGLEPAY_WORLDPAYACCESS,
+        () =>
+            new GooglePayButtonStrategy(
+                store,
+                formPoster,
+                checkoutActionCreator,
+                createGooglePayPaymentProcessor(store, new GooglePayWorldpayAccessInitializer()),
+                cartRequestSender,
             ),
     );
 

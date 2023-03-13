@@ -131,6 +131,12 @@ export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * They can be omitted unless you need to support Customer Stripe Upe.
      */
     stripeupe?: StripeUPECustomerInitializeOptions;
+
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepayworldpayaccess?: GooglePayCustomerInitializeOptions;
 }
 
 /**

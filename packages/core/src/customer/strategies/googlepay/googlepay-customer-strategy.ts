@@ -160,6 +160,12 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         if (options.methodId === MethodType.GOOGLEPAY_STRIPEUPE && options.googlepaystripeupe) {
             return options.googlepaystripeupe;
         }
+        if (
+            options.methodId === MethodType.GOOGLEPAY_WORLDPAYACCESS &&
+            options.googlepayworldpayaccess
+        ) {
+            return options.googlepayworldpayaccess;
+        }
 
         throw new InvalidArgumentError();
     }
