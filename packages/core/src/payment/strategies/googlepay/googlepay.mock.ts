@@ -759,3 +759,76 @@ export function getOrbitalTokenizedPayload(): TokenizePayload {
         },
     };
 }
+
+export function getGooglePayWorldpayAccessPaymentMethodMock(): PaymentMethod {
+    const paymentMethodMock = getPaymentMethodMock();
+
+    paymentMethodMock.initializationData.gatewayMerchantId = 'merchantId';
+
+    return paymentMethodMock;
+}
+
+export function getGooglePayWorldpayAccessPaymentDataRequest(): GooglePayPaymentDataRequestV2 {
+    return {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        merchantInfo: {
+            authJwt: 'platformToken',
+            merchantId: '123',
+            merchantName: 'name',
+        },
+        allowedPaymentMethods: [
+            {
+                type: 'CARD',
+                parameters: {
+                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                    allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA'],
+                    billingAddressRequired: true,
+                    billingAddressParameters: {
+                        format: BillingAddressFormat.Full,
+                        phoneNumberRequired: true,
+                    },
+                },
+                tokenizationSpecification: {
+                    type: 'PAYMENT_GATEWAY',
+                    parameters: {
+                        gateway: 'worldpay',
+                        gatewayMerchantId: 'merchantId',
+                    },
+                },
+            },
+        ],
+        transactionInfo: {
+            currencyCode: 'USD',
+            totalPriceStatus: 'FINAL',
+            totalPrice: '1.00',
+        },
+        emailRequired: true,
+        shippingAddressRequired: true,
+        shippingAddressParameters: {
+            phoneNumberRequired: true,
+        },
+    };
+}
+
+export function getGooglePayWorldpayAccessTokenizedPayload(): TokenizePayload {
+    return {
+        nonce: btoa(
+            '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}',
+        ),
+        type: 'CARD',
+        details: {
+            cardType: 'MASTERCARD',
+            lastFour: '0304',
+        },
+    };
+}
+
+export function getGooglePayWorldpayAccessPaymentDataMock(): GooglePaymentData {
+    const googlePaymentDataMock = getGooglePaymentDataMock();
+
+    googlePaymentDataMock.paymentMethodData.tokenizationData.token =
+        '{"signature":"foo","protocolVersion":"ECv1","signedMessage":"{"encryptedMessage":"foo","ephemeralPublicKey":"foo"}"}';
+
+    return googlePaymentDataMock;
+}

@@ -100,6 +100,7 @@ import {
     GooglePayPaymentStrategy,
     GooglePayStripeInitializer,
     GooglePayStripeUPEInitializer,
+    GooglePayWorldpayAccessInitializer,
 } from './strategies/googlepay';
 import { HummPaymentStrategy } from './strategies/humm';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
@@ -987,6 +988,20 @@ export default function createPaymentStrategyRegistry(
                 orderActionCreator,
                 paymentActionCreator,
                 hostedFormFactory,
+            ),
+    );
+
+    registry.register(
+        PaymentStrategyType.WORLDPAYACCESS_GOOGLE_PAY,
+        () =>
+            new GooglePayPaymentStrategy(
+                store,
+                checkoutActionCreator,
+                paymentMethodActionCreator,
+                paymentStrategyActionCreator,
+                paymentActionCreator,
+                orderActionCreator,
+                createGooglePayPaymentProcessor(store, new GooglePayWorldpayAccessInitializer()),
             ),
     );
 

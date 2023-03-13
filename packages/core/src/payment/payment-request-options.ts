@@ -225,4 +225,10 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Worldpay.
      */
     worldpay?: WorldpayAccessPaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the GooglePay Worldpay Access payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepayworldpayaccess?: GooglePayPaymentInitializeOptions;
 }
