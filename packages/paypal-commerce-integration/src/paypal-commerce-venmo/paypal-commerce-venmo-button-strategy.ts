@@ -129,7 +129,6 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
             return {
                 ...style,
                 color: undefined,
-
             }
         }
 
