@@ -24,6 +24,8 @@ export default class BoltButtonStrategy implements CheckoutButtonStrategy {
         const { bolt, containerId, methodId, storefrontApiToken } = options;
         const { buyNowInitializeOptions } = bolt || {};
 
+        console.log('*** bolt button initialize options', options);
+
         if (!methodId) {
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.methodId" argument is not provided.',
@@ -60,6 +62,9 @@ export default class BoltButtonStrategy implements CheckoutButtonStrategy {
         const paymentMethod: BoltPaymentMethod = state.getPaymentMethodOrThrow(methodId);
         const { initializationData, config } = paymentMethod;
         const { publishableKey, developerConfig } = initializationData || {};
+
+        console.log('*** publishableKey -- ', publishableKey);
+        console.log('*** storefrontApiToken -- ', storefrontApiToken);
 
         await this.boltScriptLoader.loadBoltClient(
             publishableKey,
