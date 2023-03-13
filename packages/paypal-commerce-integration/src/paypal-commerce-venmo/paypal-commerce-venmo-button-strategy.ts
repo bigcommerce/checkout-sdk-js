@@ -7,7 +7,8 @@ import {
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
-    ApproveCallbackPayload, PayPalButtonStyleOptions,
+    ApproveCallbackPayload,
+    PayPalButtonStyleOptions,
     PayPalBuyNowInitializeOptions,
     PayPalCommerceButtonsOptions,
 } from '../paypal-commerce-types';
@@ -110,7 +111,9 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
 
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {
             fundingSource,
-            style: this.getValidVenmoButtonStyles(this.paypalCommerceIntegrationService.getValidButtonStyle(style)),
+            style: this.getValidVenmoButtonStyles(
+                this.paypalCommerceIntegrationService.getValidButtonStyle(style)
+            ),
             ...defaultCallbacks,
             ...(buyNowInitializeOptions && buyNowFlowCallbacks),
         };
@@ -129,7 +132,7 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
             return {
                 ...style,
                 color: undefined,
-            }
+            };
         }
 
         return style;
