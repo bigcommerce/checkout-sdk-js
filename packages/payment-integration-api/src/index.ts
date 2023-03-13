@@ -63,9 +63,14 @@ export {
 export {
     HostedCardFieldOptions,
     HostedCardFieldOptionsMap,
+    HostedFieldBlurEventData,
+    HostedFieldCardTypeChangeEventData,
+    HostedFieldEnterEventData,
+    HostedFieldFocusEventData,
     HostedFieldType,
     HostedFieldOptionsMap,
     HostedFieldStylesMap,
+    HostedFieldValidateEventData,
     HostedForm,
     HostedFormOptions,
     HostedInputBlurEvent,
@@ -81,6 +86,7 @@ export {
     HostedInputValidateResults,
     HostedStoredCardFieldOptions,
     HostedStoredCardFieldOptionsMap,
+    isStoredCreditCardFormFields,
 } from './hosted-form';
 export {
     GatewayOrderPayment,
