@@ -259,14 +259,6 @@ export default class PayPalCommerceIntegrationService {
         return omitBy(validStyles, isNil);
     }
 
-    // getValidVenmoButtonColor(color: StyleButtonColor | undefined) {
-    //     if(color === 'gold') {
-    //         return undefined;
-    //     }
-    //
-    //     return color && StyleButtonColor[color] ? color : undefined;
-    // }
-
     getValidHeight(height?: number): number {
         const defaultHeight = 40;
         const minHeight = 25;
