@@ -112,7 +112,7 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {
             fundingSource,
             style: this.getValidVenmoButtonStyles(
-                this.paypalCommerceIntegrationService.getValidButtonStyle(style)
+                this.paypalCommerceIntegrationService.getValidButtonStyle(style),
             ),
             ...defaultCallbacks,
             ...(buyNowInitializeOptions && buyNowFlowCallbacks),
