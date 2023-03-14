@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.364.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.363.0...v1.364.0) (2023-03-14)
+
+
+### Features
+
+* **payment:** PAYPAL-000 added isStoredCreditCardFormFields typeguard to payment-integration-api package ([#1894](https://github.com/bigcommerce/checkout-sdk-js/issues/1894)) ([7f4bb36](https://github.com/bigcommerce/checkout-sdk-js/commit/7f4bb36e9ff53a681c9dacbf02903ce9916f03d0))
+* **payment:** PAYPAL-000 added objectWithKebabKeys utility function to payment-integration-api package ([#1893](https://github.com/bigcommerce/checkout-sdk-js/issues/1893)) ([1b76f0b](https://github.com/bigcommerce/checkout-sdk-js/commit/1b76f0bfe8fe4c2055d26cdf78b5029b6bec0083))
+* **payment:** PAYPAL-1962 fixed paypal venmo button ([#1899](https://github.com/bigcommerce/checkout-sdk-js/issues/1899)) ([c9f2886](https://github.com/bigcommerce/checkout-sdk-js/commit/c9f28861e01631b73f5bab6ef7d30754ae22df5c))
+
 ## [1.363.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.362.0...v1.363.0) (2023-03-13)
 
 
