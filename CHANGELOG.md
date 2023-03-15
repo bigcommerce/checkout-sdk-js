@@ -2,6 +2,94 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.350.2-alpha.e3968d4c79b5f8f1b0efe90b2639a83ca133ce5f](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.324.1...v1.350.2-alpha.e3968d4c79b5f8f1b0efe90b2639a83ca133ce5f) (2023-03-15)
+
+
+### Features
+
+* **checkout:** CHECKOUT-7231 Add checkoutUXSettings to interface ([#1825](https://github.com/bigcommerce/checkout-sdk-js/issues/1825)) ([5191b61](https://github.com/bigcommerce/checkout-sdk-js/commit/5191b61d7aa8d0e8dbe10f28fa190c39f5a3a5cd))
+* **checkout:** CHECKOUT-7231 Add getUserExperienceSettings selector ([#1834](https://github.com/bigcommerce/checkout-sdk-js/issues/1834)) ([c204427](https://github.com/bigcommerce/checkout-sdk-js/commit/c204427487409b4cb0848da7b228d2749bed6fd5))
+* **checkout:** CHECKOUT-7231 Update checkoutUserExperienceSettings ([#1831](https://github.com/bigcommerce/checkout-sdk-js/issues/1831)) ([24d6f87](https://github.com/bigcommerce/checkout-sdk-js/commit/24d6f87a6bfe64eaefbf7384eb5009dc71399b5c))
+* **payment:** BOLT-459 move ErrorResponseBody to paymant-integration-api package ([de7fbd7](https://github.com/bigcommerce/checkout-sdk-js/commit/de7fbd71e9df0d6cfa02fe1c7e41dd3f3010abbc))
+* **payment:** BOLT-462 move PaymentMethodInvalidError to paymant-integration-api package ([cde7a55](https://github.com/bigcommerce/checkout-sdk-js/commit/cde7a55c171149504e71d0c8177308cf9b7d446a))
+* **payment:** BOLT-463 add applyStoreCredit to PaymentIntegrationService ([52ece0e](https://github.com/bigcommerce/checkout-sdk-js/commit/52ece0e42ad669af2667cd467d59bb77e1e79962))
+* **payment:** INT-7044 BlueSnapDirect: Pass options to `loadPaymentMethod` ([#1810](https://github.com/bigcommerce/checkout-sdk-js/issues/1810)) ([4bf09ff](https://github.com/bigcommerce/checkout-sdk-js/commit/4bf09ffa34003283678fc4e80d27648976547e67))
+* **payment:** PAYPAL-000 added an ability to loadCheckout by provided id in payments-integration-api ([#1803](https://github.com/bigcommerce/checkout-sdk-js/issues/1803)) ([a0e3e02](https://github.com/bigcommerce/checkout-sdk-js/commit/a0e3e02c454e92e06002ba9bf8f43aef28a723d6))
+* **payment:** PAYPAL-000 added an ability to use BuyNowCartCreationError from payment-integration-api ([#1804](https://github.com/bigcommerce/checkout-sdk-js/issues/1804)) ([0c7edca](https://github.com/bigcommerce/checkout-sdk-js/commit/0c7edca2a83ad462d185830928efe3f3003ccf7c))
+* **payment:** PAYPAL-1634 added ability for applepay spb to work with buyNowCart on PDP ([#1809](https://github.com/bigcommerce/checkout-sdk-js/issues/1809)) ([0490606](https://github.com/bigcommerce/checkout-sdk-js/commit/049060659cb6bcf380177343697420b85767abf6))
+* **payment:** PAYPAL-1713 braintree ach strategy ([e3968d4](https://github.com/bigcommerce/checkout-sdk-js/commit/e3968d4c79b5f8f1b0efe90b2639a83ca133ce5f))
+* **payment:** PAYPAL-1837 Create paypalcommercecredit customer button strategy ([db2d919](https://github.com/bigcommerce/checkout-sdk-js/commit/db2d919fec2b73505bb797db9951a13522ee4f1b))
+* **payment:** PAYPAL-1838 Create paypalcommercevenmo customer button strategy ([f170b1c](https://github.com/bigcommerce/checkout-sdk-js/commit/f170b1c7d5aefd318ef82b5e63b6cfde4bb29ebd))
+* **payment:** PAYPAL-1838 Create paypalcommercevenmo customer button strategy ([7c7eec7](https://github.com/bigcommerce/checkout-sdk-js/commit/7c7eec75576ce419e2f594b1d2a4366d4dce44b0))
+* **payment:** PAYPAL-1840 Create braintreepaypalcredit customer button strategy ([97bcb1b](https://github.com/bigcommerce/checkout-sdk-js/commit/97bcb1b22b84d613d2dec129f4720e8a3e99294e))
+* **payment:** PAYPAL-1882 sending PPC APM V2 gateway instead of PPC APM ([#1782](https://github.com/bigcommerce/checkout-sdk-js/issues/1782)) ([27393bc](https://github.com/bigcommerce/checkout-sdk-js/commit/27393bc09f9a2ae8d4de27fcd7cab15288d8141f))
+* **payment:** PAYPAL-1888 added PayPalCommerceButtonStrategy to paypal-commerce-integration package ([#1801](https://github.com/bigcommerce/checkout-sdk-js/issues/1801)) ([08d8555](https://github.com/bigcommerce/checkout-sdk-js/commit/08d855529eaae5290935aaad7df3a025a6af4d3d))
+* **payment:** PAYPAL-1890 added PayPalCommerceInlineButton strategy to paypal-commerce integration package ([#1776](https://github.com/bigcommerce/checkout-sdk-js/issues/1776)) ([a4eca90](https://github.com/bigcommerce/checkout-sdk-js/commit/a4eca909e77cf2b0fb55b3d9bf11590bce40ba23))
+* **payment:** PAYPAL-1892 added PayPalCommerceAlternativeMethodsButtonStrategy to paypal-commerce-integration ([#1817](https://github.com/bigcommerce/checkout-sdk-js/issues/1817)) ([4c4b51b](https://github.com/bigcommerce/checkout-sdk-js/commit/4c4b51b152d22e9965777eb882d6af8a4a03b28f))
+* **payment:** PAYPAL-1898 added CartRequestSender to payment integration api package ([#1791](https://github.com/bigcommerce/checkout-sdk-js/issues/1791)) ([84c146c](https://github.com/bigcommerce/checkout-sdk-js/commit/84c146cb993bdb2ec07f095a591f40ab100a94a0))
+* **payment:** PAYPAL-1908 Make an ability to use Overlay from core package in integration checkout-sdk packages ([fcd5e0a](https://github.com/bigcommerce/checkout-sdk-js/commit/fcd5e0a883a6f236501627b254e71e2aa5b8ee0e))
+* **payment:** PAYPAL-1913 Create braintreevenmo payment strategy ([d8a57e3](https://github.com/bigcommerce/checkout-sdk-js/commit/d8a57e310167013a80ce3a25c89f25907a09cd53))
+* **payment:** PAYPAL-1913 fix build issue with error import ([#1814](https://github.com/bigcommerce/checkout-sdk-js/issues/1814)) ([77f5d0a](https://github.com/bigcommerce/checkout-sdk-js/commit/77f5d0ae0a49ff4cee7b587dfa780ffb7bf63912))
+* **payment:** PAYPAL-1919 added PayPalCommerceCommon class with utils methods inside for paypal-commerce-integration package ([#1838](https://github.com/bigcommerce/checkout-sdk-js/issues/1838)) ([964b0c3](https://github.com/bigcommerce/checkout-sdk-js/commit/964b0c37b2fa2af13e0b1b6b1273012e37f665b3))
+* **payment:** PAYPAL-1930 added intent param to Braintree sdk and to the paypal order creation config ([#1826](https://github.com/bigcommerce/checkout-sdk-js/issues/1826)) ([5166212](https://github.com/bigcommerce/checkout-sdk-js/commit/51662123f0fc567aff9dcfabcdadfc41bde2eb42))
+* **payment:** PAYPAL-1934 move PaymentMethodFailedError to integration package ([a9d1546](https://github.com/bigcommerce/checkout-sdk-js/commit/a9d15463989a98f211ddec6c37e47721afe983fb))
+* **payment:** PAYPAL-1935 move CancellablePromise to integration package ([6bab047](https://github.com/bigcommerce/checkout-sdk-js/commit/6bab0477a545bcafcc75647b429dc7de5b645705))
+* **payment:** PAYPAL-1959 provided buyer-country to the paypal sdk config for dev mode ([#1823](https://github.com/bigcommerce/checkout-sdk-js/issues/1823)) ([556089d](https://github.com/bigcommerce/checkout-sdk-js/commit/556089dd9c1b4e64a10709cbdf511b853615fd49))
+* **payment:** PAYPAL-1959 provided buyer-country to the paypal sdk config for dev mode ([#1823](https://github.com/bigcommerce/checkout-sdk-js/issues/1823)) ([c74a729](https://github.com/bigcommerce/checkout-sdk-js/commit/c74a7294b4d9d79af700f9294d80dbd2bde94f04))
+* **payment:** STRIPE-194 keep Shipping Address Information If Shopper Logs Out Of Link ([#1760](https://github.com/bigcommerce/checkout-sdk-js/issues/1760)) ([9a661a3](https://github.com/bigcommerce/checkout-sdk-js/commit/9a661a3b3f6abbbe716f6f9227c9e6e68aad65df))
+* **payment:** STRIPE-200 add stripe phone field ([#1681](https://github.com/bigcommerce/checkout-sdk-js/issues/1681)) ([eabb2f3](https://github.com/bigcommerce/checkout-sdk-js/commit/eabb2f3faa02be36dc9beac5f4df3ee6bbedbca2))
+* **payment:** STRIPE-216 delete consignments to recover auto-step flow when reloads page for stripe link ([#1731](https://github.com/bigcommerce/checkout-sdk-js/issues/1731)) ([1e56b66](https://github.com/bigcommerce/checkout-sdk-js/commit/1e56b6627a20fb1078ffd7c2cf67b480ad4782bb))
+* **payment:** STRIPE-289 Loading Submit button after card loads ([#1763](https://github.com/bigcommerce/checkout-sdk-js/issues/1763)) ([3053eed](https://github.com/bigcommerce/checkout-sdk-js/commit/3053eed02804e2b113f13c007ca4ec34dab3186d))
+
+
+### Bug Fixes
+
+* **billing:** CHECKOUT-7214 Merge billing address as compared to replace ([#1774](https://github.com/bigcommerce/checkout-sdk-js/issues/1774)) ([5cde3c3](https://github.com/bigcommerce/checkout-sdk-js/commit/5cde3c3c557b0a6591992b3443f02ebb8fef0ea2))
+* **checkout:** ADYEN-502 hide wrong placeholder text for the vaulted validation fields ([1c93745](https://github.com/bigcommerce/checkout-sdk-js/commit/1c93745a068e38bab3b882c65d88cfe1315ff1e3))
+* **checkout:** ADYEN-588 update payment data request on wallet button click googlepay ([7e1b0af](https://github.com/bigcommerce/checkout-sdk-js/commit/7e1b0af92e448b9d439a15fc1c0a1b3a759f41b8))
+* **checkout:** CHECKOUT-0000 Add skip-nx-cache build command ([#1812](https://github.com/bigcommerce/checkout-sdk-js/issues/1812)) ([c4ae24e](https://github.com/bigcommerce/checkout-sdk-js/commit/c4ae24eb6a3b70e7d4ca8a4b494fb664282cb12b))
+* **payment:** CHECKOUT-000 Fix issue with offsite payment completion ([#1786](https://github.com/bigcommerce/checkout-sdk-js/issues/1786)) ([c1d5b79](https://github.com/bigcommerce/checkout-sdk-js/commit/c1d5b79efd17da26c553ad515f5d9ab78ee152a8))
+* **payment:** INT-7103 SquareV2: Assume that `postalCode` is valid unless it changes ([#1765](https://github.com/bigcommerce/checkout-sdk-js/issues/1765)) ([8526331](https://github.com/bigcommerce/checkout-sdk-js/commit/85263312ac4eb9dfb4d45aef19ed6f0b47e7b7e5))
+* **payment:** PAYMENTS-8239 addresses feedback ([8e816a6](https://github.com/bigcommerce/checkout-sdk-js/commit/8e816a69716c4a3457e641a9e6d60e58b73f9429))
+* **payment:** PAYMENTS-8239 sorts recommended option first for applepay ([814564b](https://github.com/bigcommerce/checkout-sdk-js/commit/814564bc497781a519e687b07d30f9c59658e47c))
+* **payment:** PAYPAL-000 updated amazon pay specs with CartSource to fix the issue with failed build ([#1806](https://github.com/bigcommerce/checkout-sdk-js/issues/1806)) ([7fa0ccd](https://github.com/bigcommerce/checkout-sdk-js/commit/7fa0ccd8aa3c9fcc04e27a37bd6cd660e3def123))
+* **payment:** PAYPAL-000 updated kyiv-payments-team codeowners data ([#1778](https://github.com/bigcommerce/checkout-sdk-js/issues/1778)) ([060cc64](https://github.com/bigcommerce/checkout-sdk-js/commit/060cc641d01bc8b32d0346416c52b0e2d8c431c6))
+* **payment:** PAYPAL-000 updated paypal commerce tests to fix some issues with CI build in other pr ([#1820](https://github.com/bigcommerce/checkout-sdk-js/issues/1820)) ([8074a16](https://github.com/bigcommerce/checkout-sdk-js/commit/8074a165abbc46d7ddb5d6f385f992139861959d))
+* **payment:** PAYPAL-1635 Buy Now feature for amazon pay ([562ab38](https://github.com/bigcommerce/checkout-sdk-js/commit/562ab380046cec191067d5c68e8f2dde221aab5c))
+* **payment:** PAYPAL-1635 fix after review ([34cc8ee](https://github.com/bigcommerce/checkout-sdk-js/commit/34cc8eebfe25e2df5505c7e941550e29342ed826))
+* **payment:** PAYPAL-1635 update after review ([4696290](https://github.com/bigcommerce/checkout-sdk-js/commit/469629041125b5b200e87576ad655c2cce7cafb4))
+* **payment:** PAYPAL-1635 update after review ([0ce178e](https://github.com/bigcommerce/checkout-sdk-js/commit/0ce178e6a6d3d443e9781a7f2932e23c50f6430a))
+* **payment:** PAYPAL-1635 update after review ([e16ec75](https://github.com/bigcommerce/checkout-sdk-js/commit/e16ec75b31e19eff21bae8b700b8c729e1e84ee8))
+* **payment:** PAYPAL-1635 update after review ([651bc1f](https://github.com/bigcommerce/checkout-sdk-js/commit/651bc1fafbf5de7ed2445012b175ac4ac6edaa56))
+* **payment:** PAYPAL-1763 fixed an issue when we could not proceed checkout after trying to place order with an empty CVV for stored card ([4aea399](https://github.com/bigcommerce/checkout-sdk-js/commit/4aea399b9e483e3862f339da17d1561ac7764341))
+* **payment:** PAYPAL-1923 fixed the issue with wrong paypal sdk configuration ([#1794](https://github.com/bigcommerce/checkout-sdk-js/issues/1794)) ([dec683d](https://github.com/bigcommerce/checkout-sdk-js/commit/dec683d258c7cf4d0e562815eb114dfe440ec19d))
+* **payment:** PAYPAL-1926 added extra shipping option selection if there is no recommended options available ([#1822](https://github.com/bigcommerce/checkout-sdk-js/issues/1822)) ([aa90493](https://github.com/bigcommerce/checkout-sdk-js/commit/aa904939d07c3247d5fd9923abb47e5aff6ff96d))
+* **payment:** PAYPAL-1929 added PayPalButtonStyleOptions interface to the docs files ([#1802](https://github.com/bigcommerce/checkout-sdk-js/issues/1802)) ([fa15dd8](https://github.com/bigcommerce/checkout-sdk-js/commit/fa15dd806b0746921e4089e78ae86a07a9e35e4a))
+* **payment:** PAYPAL-1929 renamed several PayPal Commerce interfaces to fix the issue with doc files ([#1799](https://github.com/bigcommerce/checkout-sdk-js/issues/1799)) ([05df1e4](https://github.com/bigcommerce/checkout-sdk-js/commit/05df1e4437189b57f6dd05e46fcb6f6eb35d1dec))
+* **payment:** STRIPE-287 Fixed error when using vaulted card L2/L3 field appear as null on dashboard ([#1779](https://github.com/bigcommerce/checkout-sdk-js/issues/1779)) ([be221e5](https://github.com/bigcommerce/checkout-sdk-js/commit/be221e58e0ad17f9651008e47f41d4ead31fed45))
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-0000 Remove ApplePay button style ([#1836](https://github.com/bigcommerce/checkout-sdk-js/issues/1836)) ([185b35a](https://github.com/bigcommerce/checkout-sdk-js/commit/185b35a9d8a92d40a40affac9796cb572be50f65))
+* **payment:** INT-6964 AmazonPayV1: Remove all related files ([f24e5f8](https://github.com/bigcommerce/checkout-sdk-js/commit/f24e5f8b8911eb26476aaa681e04695f6f13ea87))
+* **payment:** INT-6964 Rename `AMAZONPAYV2` to `AMAZONPAY` ([4eb2688](https://github.com/bigcommerce/checkout-sdk-js/commit/4eb2688d1c7b6c2b9c44be45ed2121942898276f))
+* **payment:** PAYPAL-000 removed paypal commerce checkout button strategies from core package ([#1818](https://github.com/bigcommerce/checkout-sdk-js/issues/1818)) ([615766e](https://github.com/bigcommerce/checkout-sdk-js/commit/615766e1c104e65ec35d19e00dbc068b60aa9bdf))
+* **payment:** PAYPAL-1889 added PayPalCommerceCreditButtonStrategy to paypal-commerce-integration package ([#1815](https://github.com/bigcommerce/checkout-sdk-js/issues/1815)) ([8855fe4](https://github.com/bigcommerce/checkout-sdk-js/commit/8855fe4bbe8529352eb32620351dce5d72e4aaf3))
+* **payment:** PAYPAL-1891 added PayPalCommerceVenmoButtonStrategy to paypal commerce integration package ([#1813](https://github.com/bigcommerce/checkout-sdk-js/issues/1813)) ([a805af7](https://github.com/bigcommerce/checkout-sdk-js/commit/a805af7940d84bc26b878d6ad20af91bea492b54))
+* **payment:** PAYPAL-1917 removed PayPalCommerceInlineCheckoutButtonStrategy from core package ([#1783](https://github.com/bigcommerce/checkout-sdk-js/issues/1783)) ([0921359](https://github.com/bigcommerce/checkout-sdk-js/commit/0921359bd2a1f9df68476a077baea0ea0c7ba8f1))
+* **payment:** PAYPAL-1918 moved LoadingIndicator from core to ui package ([#1784](https://github.com/bigcommerce/checkout-sdk-js/issues/1784)) ([926265c](https://github.com/bigcommerce/checkout-sdk-js/commit/926265ca604682d461c9b8d283ffbd50c3bacb20))
+* **payment:** PAYPAL-1919 replaced PayPalCommerceCommon name with PayPalCommerceIntegrationService ([#1842](https://github.com/bigcommerce/checkout-sdk-js/issues/1842)) ([b9e5a0f](https://github.com/bigcommerce/checkout-sdk-js/commit/b9e5a0f6a5f6a370dff42e0e1ffdb0791805941a))
+* **payment:** PAYPAL-1921 removed unnecessary PayPalCommerceAlternativeMethods v2 transformation in payment request transformer file ([#1821](https://github.com/bigcommerce/checkout-sdk-js/issues/1821)) ([9c5caf6](https://github.com/bigcommerce/checkout-sdk-js/commit/9c5caf6b9de821397ba1ea900462ff0bbd467a12))
+* **payment:** PAYPAL-1971 removed initializesOnCheckout page property from PayPalCommerce initialize button options ([#1859](https://github.com/bigcommerce/checkout-sdk-js/issues/1859)) ([bdcf195](https://github.com/bigcommerce/checkout-sdk-js/commit/bdcf1952d194b261447e46cfbcf09b1b824c615f))
+* **payment:** PAYPAL-1973 updated PayPalCommerceCustomerStrategy with PayPalCommerceIntegrationService ([#1845](https://github.com/bigcommerce/checkout-sdk-js/issues/1845)) ([13d526b](https://github.com/bigcommerce/checkout-sdk-js/commit/13d526b82450ba7e089c024fd5f5cedf471d55b0))
+* **payment:** PAYPAL-1978 updated PayPalCommerceAlternativeMethodsButtonStrategy with PayPalCommerceIntegrationService ([#1849](https://github.com/bigcommerce/checkout-sdk-js/issues/1849)) ([48aaa1d](https://github.com/bigcommerce/checkout-sdk-js/commit/48aaa1df4cdae9e2a0cf9be45a9aa84c57fc10d6))
+* **payment:** PAYPAL-1979 updated PayPalCommerceCreditButtonStrategy with PayPalCommerceIntegrationService ([#1856](https://github.com/bigcommerce/checkout-sdk-js/issues/1856)) ([694d2c2](https://github.com/bigcommerce/checkout-sdk-js/commit/694d2c214f99a65b4f0a41dcb24c31736d90b2f8))
+* **payment:** PAYPAL-1980 updated PayPalCommerceCreditCustomer strategy with PayPalCommerceIntegrationService ([#1855](https://github.com/bigcommerce/checkout-sdk-js/issues/1855)) ([35fccff](https://github.com/bigcommerce/checkout-sdk-js/commit/35fccff3e4567278013f9648cdafcdf98e861695))
+* **payment:** PAYPAL-1981 updated PayPalCommerceVenmoButtonStrategy with PayPalCommerceIntegrationService ([#1851](https://github.com/bigcommerce/checkout-sdk-js/issues/1851)) ([af741dc](https://github.com/bigcommerce/checkout-sdk-js/commit/af741dc3b87b06b952b93f3a1ec551527088d675))
+* **payment:** PAYPAL-1982 updated PayPalCommerceVenmoCustomerStrategy with PayPalCommerceIntegrationService ([#1850](https://github.com/bigcommerce/checkout-sdk-js/issues/1850)) ([27797cb](https://github.com/bigcommerce/checkout-sdk-js/commit/27797cb9fa994f648754f4f0b1cb40e6197274dd))
+* **payment:** PAYPAL-1983 removed layout and tagline styles property from PayPalCommerceButtons config ([#1858](https://github.com/bigcommerce/checkout-sdk-js/issues/1858)) ([5a1a2fd](https://github.com/bigcommerce/checkout-sdk-js/commit/5a1a2fdb5515e5a8dc1c34015b04e5c36dc72d48))
+
 ### [1.350.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.350.0...v1.350.1) (2023-02-20)
 
 

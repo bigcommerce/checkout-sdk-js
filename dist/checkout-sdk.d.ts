@@ -1155,6 +1155,11 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      */
     braintree?: BraintreePaymentInitializeOptions;
     /**
+     * The options that are required to initialize the Braintree ACH payment method.
+     * They can be omitted unless you need to support Braintree.
+     */
+    braintreeach?: BraintreeAchPaymentInitializeOptions;
+    /**
      * The options that are required to initialize the Visa Checkout payment
      * method provided by Braintree. They can be omitted unless you need to
      * support Visa Checkout.
@@ -1451,6 +1456,10 @@ declare interface BoltPaymentInitializeOptions {
      * A callback that gets called when the customer selects Bolt as payment option.
      */
     onPaymentSelect?(hasBoltAccount: boolean): void;
+}
+
+declare interface BraintreeAchPaymentInitializeOptions {
+    mandateText: string;
 }
 
 declare interface BraintreeError extends Error {
