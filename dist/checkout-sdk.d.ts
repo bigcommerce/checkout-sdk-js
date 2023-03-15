@@ -5048,6 +5048,10 @@ declare interface HostedFormErrorData {
     isValid: boolean;
 }
 
+declare type HostedFormErrorDataKeys = 'number' | 'expirationDate' | 'expirationMonth' | 'expirationYear' | 'cvv' | 'postalCode';
+
+declare type HostedFormErrorsData = Partial<Record<HostedFormErrorDataKeys, HostedFormErrorData>>;
+
 declare interface HostedFormOptions {
     fields: HostedFieldOptionsMap;
     styles?: HostedFieldStylesMap;
@@ -5062,7 +5066,7 @@ declare interface HostedInputBlurEvent {
     type: HostedInputEventType.Blurred;
     payload: {
         fieldType: HostedFieldType;
-        errors?: HostedFormErrorData;
+        errors?: HostedFormErrorsData;
     };
 }
 

@@ -40,7 +40,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `data` | `Object` |
-| `data.errors?` | [`HostedFormErrorData`](HostedFormErrorData.md) |
+| `data.errors?` | `Partial`<`Record`<[`BraintreeFormErrorDataKeys`](../README.md#braintreeformerrordatakeys), [`HostedFormErrorData`](HostedFormErrorData.md)\>\> |
 | `data.fieldType` | [`HostedFieldType`](../enums/HostedFieldType.md) |
 
 #### Returns

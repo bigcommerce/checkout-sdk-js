@@ -426,6 +426,8 @@
 - [HostedFieldOptionsMap](README.md#hostedfieldoptionsmap)
 - [HostedFieldStyles](README.md#hostedfieldstyles)
 - [HostedFieldValidateEventData](README.md#hostedfieldvalidateeventdata)
+- [HostedFormErrorDataKeys](README.md#hostedformerrordatakeys)
+- [HostedFormErrorsData](README.md#hostedformerrorsdata)
 - [HostedInputStyles](README.md#hostedinputstyles)
 - [HostedVaultedInstrument](README.md#hostedvaultedinstrument)
 - [Instrument](README.md#instrument)
@@ -654,6 +656,18 @@ ___
 ### HostedFieldValidateEventData
 
 Ƭ **HostedFieldValidateEventData**: [`HostedInputValidateEvent`](interfaces/HostedInputValidateEvent.md)[``"payload"``]
+
+___
+
+### HostedFormErrorDataKeys
+
+Ƭ **HostedFormErrorDataKeys**: ``"number"`` \| ``"expirationDate"`` \| ``"expirationMonth"`` \| ``"expirationYear"`` \| ``"cvv"`` \| ``"postalCode"``
+
+___
+
+### HostedFormErrorsData
+
+Ƭ **HostedFormErrorsData**: `Partial`<`Record`<[`HostedFormErrorDataKeys`](README.md#hostedformerrordatakeys), [`HostedFormErrorData`](interfaces/HostedFormErrorData.md)\>\>
 
 ___
 
