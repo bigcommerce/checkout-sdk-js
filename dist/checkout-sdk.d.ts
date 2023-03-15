@@ -5042,6 +5042,12 @@ declare enum HostedFieldType {
 
 declare type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
 
+declare interface HostedFormErrorData {
+    isEmpty: boolean;
+    isPotentiallyValid: boolean;
+    isValid: boolean;
+}
+
 declare interface HostedFormOptions {
     fields: HostedFieldOptionsMap;
     styles?: HostedFieldStylesMap;
@@ -5056,6 +5062,7 @@ declare interface HostedInputBlurEvent {
     type: HostedInputEventType.Blurred;
     payload: {
         fieldType: HostedFieldType;
+        errors?: HostedFormErrorData;
     };
 }
 

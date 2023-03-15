@@ -40,6 +40,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `data` | `Object` |
+| `data.errors?` | [`HostedFormErrorData`](HostedFormErrorData.md) |
 | `data.fieldType` | [`HostedFieldType`](../enums/HostedFieldType.md) |
 
 #### Returns

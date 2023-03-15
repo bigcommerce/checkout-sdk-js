@@ -224,6 +224,7 @@
 - [HostedCardFieldOptions](interfaces/HostedCardFieldOptions.md)
 - [HostedCardFieldOptionsMap](interfaces/HostedCardFieldOptionsMap.md)
 - [HostedFieldStylesMap](interfaces/HostedFieldStylesMap.md)
+- [HostedFormErrorData](interfaces/HostedFormErrorData.md)
 - [HostedFormOptions](interfaces/HostedFormOptions.md)
 - [HostedInputBlurEvent](interfaces/HostedInputBlurEvent.md)
 - [HostedInputCardTypeChangeEvent](interfaces/HostedInputCardTypeChangeEvent.md)

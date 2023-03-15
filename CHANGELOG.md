@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.364.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.364.0...v1.364.1) (2023-03-15)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-000 Expose hosted form error to exported typings ([#1903](https://github.com/bigcommerce/checkout-sdk-js/issues/1903)) ([4c691c6](https://github.com/bigcommerce/checkout-sdk-js/commit/4c691c6e7fee04390912e8a2fda2782479707a1b))
+
 ## [1.364.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.363.0...v1.364.0) (2023-03-14)
 
 

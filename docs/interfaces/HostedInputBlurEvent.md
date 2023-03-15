@@ -19,6 +19,7 @@
 
 | Name | Type |
 | :------ | :------ |
+| `errors?` | [`HostedFormErrorData`](HostedFormErrorData.md) |
 | `fieldType` | [`HostedFieldType`](../enums/HostedFieldType.md) |
 
 ___
