@@ -1,8 +1,16 @@
-import { PaymentErrorData } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { StandardError } from '../../../common/error/errors';
+import { PaymentErrorData, StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default class BoltError extends StandardError {
+    body: { errors: PaymentErrorData[] };
+
+    constructor(public errorCode: string) {
+        super();
+
+        this.name = 'BoltPaymentsFieldError';
+        this.type = 'bolt_payments_field_error';
+        this.body = { errors: [BoltError.getError(errorCode)] };
+    }
+
     private static getError(errorCode: string): PaymentErrorData {
         switch (errorCode) {
             case '1000':
@@ -28,15 +36,5 @@ export default class BoltError extends StandardError {
             default:
                 return { code: 'general_error' };
         }
-    }
-
-    body: { errors: PaymentErrorData[] };
-
-    constructor(public errorCode: string) {
-        super();
-
-        this.name = 'BoltPaymentsFieldError';
-        this.type = 'bolt_payments_field_error';
-        this.body = { errors: [BoltError.getError(errorCode)] };
     }
 }

@@ -7,6 +7,8 @@ export default interface BraintreePaypalCustomerInitializeOptions {
      */
     container: string;
 
+    buttonHeight?: number;
+
     /**
      * A callback that gets called on any error instead of submit payment or authorization errors.
      *

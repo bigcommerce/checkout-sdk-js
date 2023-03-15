@@ -116,6 +116,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
 
         const buyNowFlowCallbacks = {
             onClick: () => this.handleClick(buyNowInitializeOptions),
+            onCancel: () => this.paymentIntegrationService.loadDefaultCheckout(),
         };
 
         const hostedCheckoutCallbacks = {

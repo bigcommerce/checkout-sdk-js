@@ -1,11 +1,14 @@
 import localStorageFallback from 'local-storage-fallback';
 
+import {
+    AnalyticsExtraItemsManager,
+    isAnalyticsTrackerWindow,
+} from '@bigcommerce/checkout-sdk/analytics';
+
 import { CheckoutService } from '../checkout';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 
-import AnalyticsExtraItemsManager from './analytics-extra-items-manager';
 import AnalyticsStepTracker, { StepTrackerConfig } from './analytics-step-tracker';
-import { isAnalyticsTrackerWindow } from './is-analytics-step-tracker-window';
 import NoopStepTracker from './noop-step-tracker';
 import StepTracker from './step-tracker';
 

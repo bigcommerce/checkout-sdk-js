@@ -1,3 +1,4 @@
+import { UntrustedShippingCardVerificationType } from './instrument';
 import { mapToCardInstrument } from './map-to-card-instrument';
 
 describe('mapToCardInstrument', () => {
@@ -13,6 +14,8 @@ describe('mapToCardInstrument', () => {
             expiry_year: '2020',
             expiry_month: '12',
             default_instrument: false,
+            untrusted_shipping_address_card_verification_mode:
+                UntrustedShippingCardVerificationType.PAN,
             brand: 'VISA',
         });
 
@@ -27,6 +30,7 @@ describe('mapToCardInstrument', () => {
             expiryYear: '2020',
             expiryMonth: '12',
             defaultInstrument: false,
+            untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
             type: 'card',
         });
     });

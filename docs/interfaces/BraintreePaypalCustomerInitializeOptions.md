@@ -6,6 +6,7 @@
 
 ### Properties
 
+- [buttonHeight](BraintreePaypalCustomerInitializeOptions.md#buttonheight)
 - [container](BraintreePaypalCustomerInitializeOptions.md#container)
 
 ### Methods
@@ -13,6 +14,12 @@
 - [onError](BraintreePaypalCustomerInitializeOptions.md#onerror)
 
 ## Properties
+
+### buttonHeight
+
+• `Optional` **buttonHeight**: `number`
+
+___
 
 ### container
 

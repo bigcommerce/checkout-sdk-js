@@ -1,5 +1,7 @@
-import AnalyticsTrackerWindow from './analytics-tracker-window';
-import { isAnalyticsTrackerWindow } from './is-analytics-step-tracker-window';
+import {
+    AnalyticsTrackerWindow,
+    isAnalyticsTrackerWindow,
+} from '@bigcommerce/checkout-sdk/analytics';
 
 interface AnalyticsTrackerWindowGA extends AnalyticsTrackerWindow {
     ga(command: string, eventName: string, payload: AnalyticPayload): void;

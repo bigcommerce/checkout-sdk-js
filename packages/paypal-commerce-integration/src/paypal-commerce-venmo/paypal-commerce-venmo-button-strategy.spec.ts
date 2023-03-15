@@ -26,6 +26,7 @@ import {
     PayPalCommerceButtonsOptions,
     PayPalCommerceHostWindow,
     PayPalSDK,
+    StyleButtonColor,
 } from '../paypal-commerce-types';
 
 import PayPalCommerceVenmoButtonInitializeOptions from './paypal-commerce-venmo-button-initialize-options';
@@ -182,6 +183,12 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
                     }
                 });
 
+                eventEmitter.on('onCancel', () => {
+                    if (options.onCancel) {
+                        options.onCancel();
+                    }
+                });
+
                 return {
                     isEligible: jest.fn(() => true),
                     render: jest.fn(),
@@ -322,6 +329,32 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
             });
         });
 
+        it('render button with undefined color (uses default blue) when it receives gold color setting', async () => {
+            const initializationVenmoOptions = {
+                ...initializationOptions,
+                paypalcommercevenmo: {
+                    style: {
+                        height: 45,
+                        color: StyleButtonColor.gold,
+                    },
+                },
+            };
+
+            const expectedStyles = {
+                height: 45,
+                color: undefined,
+            };
+
+            await strategy.initialize(initializationVenmoOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                fundingSource: paypalSdk.FUNDING.VENMO,
+                style: expectedStyles,
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+            });
+        });
+
         it('initializes PayPal Venmo button to render (BuyNow flow)', async () => {
             await strategy.initialize(buyNowInitializationOptions);
 
@@ -331,6 +364,7 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
+                onCancel: expect.any(Function),
             });
         });
 
@@ -425,6 +459,18 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
                 defaultMethodId,
                 paypalOrderId,
             );
+        });
+    });
+
+    describe('#onCancel button callback', () => {
+        it('loads default checkout onCancel callback (buy now flow)', async () => {
+            await strategy.initialize(buyNowInitializationOptions);
+            eventEmitter.emit('onClick');
+            await new Promise((resolve) => process.nextTick(resolve));
+            eventEmitter.emit('onCancel');
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paymentIntegrationService.loadDefaultCheckout).toHaveBeenCalled();
         });
     });
 });

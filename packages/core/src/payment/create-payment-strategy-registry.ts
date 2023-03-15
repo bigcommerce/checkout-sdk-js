@@ -5,11 +5,9 @@ import {
     getScriptLoader,
     getStylesheetLoader,
 } from '@bigcommerce/script-loader';
-import localStorageFallback from 'local-storage-fallback';
 
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
-import AnalyticsExtraItemsManager from '../analytics/analytics-extra-items-manager';
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import {
     CheckoutActionCreator,
@@ -55,7 +53,6 @@ import {
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BNZPaymentStrategy } from './strategies/bnz';
-import { BoltPaymentStrategy, BoltScriptLoader } from './strategies/bolt';
 import {
     BraintreeAchPaymentStrategy,
     BraintreeCreditCardPaymentStrategy,
@@ -426,20 +423,6 @@ export default function createPaymentStrategyRegistry(
                 orderActionCreator,
                 createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
                 new VisaCheckoutScriptLoader(scriptLoader),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.BOLT,
-        () =>
-            new BoltPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                storeCreditActionCreator,
-                new BoltScriptLoader(scriptLoader),
-                new AnalyticsExtraItemsManager(localStorageFallback),
             ),
     );
 

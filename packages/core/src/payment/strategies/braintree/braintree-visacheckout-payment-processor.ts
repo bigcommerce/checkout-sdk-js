@@ -1,6 +1,7 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import { Address, LegacyAddress } from '../../../address';
+import { Address, LegacyAddress } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 
 import { BraintreeDataCollector } from './braintree';

@@ -9,6 +9,7 @@ import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-ap
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
+import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { createTimeout } from '@bigcommerce/request-sender';
 
 declare type AccountInstrument = PayPalInstrument | BankInstrument;
@@ -1145,11 +1146,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      */
     bluesnapv2?: BlueSnapV2PaymentInitializeOptions;
     /**
-     * The options that allow Bolt to load the client script and handle the checkout.
-     * They can be omitted if Bolt's full checkout take over is intended.
-     */
-    bolt?: BoltPaymentInitializeOptions;
-    /**
      * The options that are required to initialize the Braintree payment method.
      * They can be omitted unless you need to support Braintree.
      */
@@ -1459,6 +1455,12 @@ declare interface BraintreeError extends Error {
     details?: unknown;
 }
 
+declare type BraintreeFormErrorData = Omit<BraintreeFormFieldState, 'isFocused'>;
+
+declare type BraintreeFormErrorDataKeys = 'number' | 'expirationDate' | 'expirationMonth' | 'expirationYear' | 'cvv' | 'postalCode';
+
+declare type BraintreeFormErrorsData = Partial<Record<BraintreeFormErrorDataKeys, BraintreeFormErrorData>>;
+
 declare type BraintreeFormFieldBlurEventData = BraintreeFormFieldKeyboardEventData;
 
 declare interface BraintreeFormFieldCardTypeChangeEventData {
@@ -1471,12 +1473,20 @@ declare type BraintreeFormFieldFocusEventData = BraintreeFormFieldKeyboardEventD
 
 declare interface BraintreeFormFieldKeyboardEventData {
     fieldType: string;
+    errors?: BraintreeFormErrorsData;
 }
 
 declare interface BraintreeFormFieldOptions {
     accessibilityLabel?: string;
     containerId: string;
     placeholder?: string;
+}
+
+declare interface BraintreeFormFieldState {
+    isFocused: boolean;
+    isEmpty: boolean;
+    isPotentiallyValid: boolean;
+    isValid: boolean;
 }
 
 declare type BraintreeFormFieldStyles = Partial<Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>>;
@@ -1706,6 +1716,7 @@ declare interface BraintreePaypalCreditCustomerInitializeOptions {
      * The ID of a container which the checkout button should be inserted into.
      */
     container: string;
+    buttonHeight?: number;
     /**
      * A callback that gets called on any error instead of submit payment or authorization errors.
      *
@@ -1719,6 +1730,7 @@ declare interface BraintreePaypalCustomerInitializeOptions {
      * The ID of a container which the checkout button should be inserted into.
      */
     container: string;
+    buttonHeight?: number;
     /**
      * A callback that gets called on any error instead of submit payment or authorization errors.
      *
@@ -1930,6 +1942,7 @@ declare interface CardInstrument extends BaseInstrument {
     iin: string;
     last4: string;
     type: 'card';
+    untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType;
 }
 
 declare interface CardNumberElementOptions extends BaseIndividualElementOptions {
@@ -3946,6 +3959,13 @@ declare interface CheckoutStoreStatusSelector {
      * @returns True if the customer step is initializing, otherwise false.
      */
     isInitializingCustomer(methodId?: string): boolean;
+    /**
+     * Checks whether a wallet button is initialized.
+     *
+     * @param methodId - The identifier of the payment method to check.
+     * @returns True if the wallet button method is initialized, otherwise false.
+     */
+    isInitializedCustomer(methodId?: string): boolean;
     /**
      * Checks whether the current customer is executing payment method checkout.
      *
@@ -6108,7 +6128,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -7180,6 +7200,7 @@ declare interface StripeEvent {
 declare type StripeEventType = StripeShippingEvent | StripeCustomerEvent;
 
 declare interface StripeShippingEvent extends StripeEvent {
+    mode?: string;
     isNewAddress?: boolean;
     phoneFieldRequired: boolean;
     value: {
@@ -7191,8 +7212,16 @@ declare interface StripeShippingEvent extends StripeEvent {
             postal_code: string;
             state: string;
         };
-        name: string;
+        name?: string;
+        firstName?: string;
+        lastName?: string;
+        phone?: string;
+    };
+    fields?: {
         phone: string;
+    };
+    display?: {
+        name: string;
     };
 }
 
@@ -7520,6 +7549,11 @@ declare interface UnknownObject {
     [key: string]: unknown;
 }
 
+declare enum UntrustedShippingCardVerificationType {
+    CVV = "cvv",
+    PAN = "pan"
+}
+
 declare type UserExperienceSettingNames = 'walletButtonsOnTop';
 
 declare type UserExperienceSettings = {
@@ -7546,10 +7580,6 @@ declare interface WechatState {
 
 declare interface WechatState_2 {
     data: WechatDataPaymentMethodState_2;
-}
-
-declare interface WithAccountCreation {
-    shouldCreateAccount?: boolean;
 }
 
 declare interface WithAdyenV2PaymentInitializeOptions {
@@ -7586,6 +7616,14 @@ declare interface WithApplePayPaymentInitializeOptions {
      * method. They can be omitted unless you need to support Apple Pay.
      */
     applepay?: ApplePayPaymentInitializeOptions;
+}
+
+declare interface WithBoltPaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Bolt payment
+     * method. They can be omitted unless you need to support Bolt.
+     */
+    bolt?: BoltPaymentInitializeOptions;
 }
 
 declare interface WithBuyNowFeature {

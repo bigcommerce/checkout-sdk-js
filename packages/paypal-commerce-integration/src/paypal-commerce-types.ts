@@ -190,6 +190,7 @@ export interface PayPalCommerceButtonsOptions {
     onComplete?(data: CompleteCallbackDataPayload): Promise<void>;
     onClick?(data: ClickCallbackPayload, actions?: ClickCallbackActions): Promise<void>;
     onError?(error: Error): void;
+    onCancel?(): void;
     onShippingAddressChange?(data: ShippingAddressChangeCallbackPayload): Promise<void>;
     onShippingOptionsChange?(data: ShippingOptionChangeCallbackPayload): Promise<void>;
 }

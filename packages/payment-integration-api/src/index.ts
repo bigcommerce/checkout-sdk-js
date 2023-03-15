@@ -1,4 +1,4 @@
-export { Address, AddressRequestBody } from './address';
+export { Address, AddressRequestBody, LegacyAddress } from './address';
 export { BillingAddress, BillingAddressRequestBody } from './billing';
 export {
     CheckoutButtonStrategy,
@@ -12,6 +12,7 @@ export {
     CartSource,
     DigitalItem,
     GiftCertificateItem,
+    LineItemMap,
     PhysicalItem,
 } from './cart';
 export { Checkout } from './checkout';
@@ -19,6 +20,7 @@ export { BrowserInfo, getBrowserInfo } from './common/browser-info';
 export { CancellablePromise } from './common/cancellable-promise';
 export { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from './common/http-request';
 export { Omit, PartialDeep } from './common/types';
+export { objectWithKebabCaseKeys } from './common/utility';
 export { Config, StoreConfig, CheckoutSettings } from './config';
 export { Coupon } from './coupon';
 export { Currency } from './currency';
@@ -54,10 +56,38 @@ export {
     PaymentMethodInvalidError,
     PaymentMethodFailedError,
     RequestError,
+    StandardError,
     StorefrontErrorResponseBody,
     isRequestError,
 } from './errors';
-export { HostedForm, HostedFormOptions, HostedFieldType } from './hosted-form';
+export {
+    HostedCardFieldOptions,
+    HostedCardFieldOptionsMap,
+    HostedFieldBlurEventData,
+    HostedFieldCardTypeChangeEventData,
+    HostedFieldEnterEventData,
+    HostedFieldFocusEventData,
+    HostedFieldType,
+    HostedFieldOptionsMap,
+    HostedFieldStylesMap,
+    HostedFieldValidateEventData,
+    HostedForm,
+    HostedFormOptions,
+    HostedInputBlurEvent,
+    HostedInputCardTypeChangeEvent,
+    HostedInputEventType,
+    HostedInputEnterEvent,
+    HostedInputFocusEvent,
+    HostedInputStyles,
+    HostedInputSubmitSuccessEvent,
+    HostedInputValidateErrorData,
+    HostedInputValidateErrorDataMap,
+    HostedInputValidateEvent,
+    HostedInputValidateResults,
+    HostedStoredCardFieldOptions,
+    HostedStoredCardFieldOptionsMap,
+    isStoredCreditCardFormFields,
+} from './hosted-form';
 export {
     GatewayOrderPayment,
     GiftCertificateOrderPayment,
@@ -72,8 +102,10 @@ export {
     CreditCardInstrument,
     isVaultedInstrument,
     isHostedInstrumentLike,
+    isWithAccountCreation,
     HostedInstrument,
     InitializeOffsitePaymentConfig,
+    NonceInstrument,
     Payment,
     PaymentActionType,
     SubmitPaymentAction,
@@ -86,6 +118,7 @@ export {
     PaymentStrategyFactory,
     PaymentStrategyResolveId,
     VaultedInstrument,
+    WithAccountCreation,
 } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';

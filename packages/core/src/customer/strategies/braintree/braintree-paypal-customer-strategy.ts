@@ -43,7 +43,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintreepaypal, methodId } = options;
-        const { container, onError } = braintreepaypal || {};
+        const { container, onError, buttonHeight = 40 } = braintreepaypal || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -87,6 +87,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
                 container,
                 methodId,
                 Boolean(paymentMethod.config.testMode),
+                buttonHeight,
             );
         };
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
@@ -135,6 +136,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         containerId: string,
         methodId: string,
         testMode: boolean,
+        buttonHeight: number,
     ): void {
         const { paypal } = this._window;
         const fundingSource = paypal?.FUNDING.PAYPAL;
@@ -145,7 +147,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
                 commit: false,
                 fundingSource,
                 style: {
-                    height: 40,
+                    height: buttonHeight,
                 },
                 createOrder: () =>
                     this._setupPayment(braintreePaypalCheckout, braintreepaypal, methodId),

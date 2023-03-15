@@ -273,6 +273,24 @@ describe('CheckoutStoreStatusSelector', () => {
         });
     });
 
+    describe('#isInitializedCustomer()', () => {
+        it('returns true if wallet button is initialized', () => {
+            jest.spyOn(selectors.customerStrategies, 'isInitialized').mockReturnValue(true);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isInitializedCustomer('foobar')).toBe(true);
+        });
+
+        it('returns false if wallet button is not initialized', () => {
+            jest.spyOn(selectors.customerStrategies, 'isInitialized').mockReturnValue(false);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isInitializedCustomer('foobar')).toBe(false);
+        });
+    });
+
     describe('#isInitializingPayment()', () => {
         beforeEach(() => {
             jest.spyOn(selectors.paymentStrategies, 'isInitializing').mockReturnValue(false);

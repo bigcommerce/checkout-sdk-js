@@ -11,6 +11,7 @@ import {
     StripeElements,
     StripeElementType,
     StripeEventType,
+    StripeFormMode,
     StripeScriptLoader,
     StripeUPEAppearanceOptions,
     StripeUPEClient,
@@ -118,7 +119,9 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             const consignments = getConsignments();
             const id = consignments?.[0]?.id;
             const { email: billingEmail } = getBillingAddress() || {};
-            const options = billingEmail ? { defaultValues: { email: billingEmail } } : {};
+            const options = billingEmail
+                ? { defaultValues: { mode: StripeFormMode.SHIPPING, email: billingEmail } }
+                : {};
             const linkAuthenticationElement =
                 this._stripeElements.getElement(StripeElementType.AUTHENTICATION) ||
                 this._stripeElements.create(StripeElementType.AUTHENTICATION, options);

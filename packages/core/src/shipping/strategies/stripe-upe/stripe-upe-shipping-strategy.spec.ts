@@ -20,6 +20,7 @@ import {
 } from '../../../payment';
 import { getStripeUPE } from '../../../payment/payment-methods.mock';
 import {
+    DisplayName,
     StripeElement,
     StripeHostWindow,
     StripeScriptLoader,
@@ -70,8 +71,12 @@ describe('StripeUPEShippingStrategy', () => {
                     postal_code: '44910',
                     state: 'TX',
                 },
-                name: 'Alan',
+                firstName: 'Alan',
+                lastName: 'Muñoz',
                 phone: '+523333333333',
+            },
+            display: {
+                name: DisplayName.SPLIT,
             },
         };
     };
@@ -274,6 +279,21 @@ describe('StripeUPEShippingStrategy', () => {
             const promise = strategy.initialize(shippingInitialization);
 
             expect(promise).rejects.toBeInstanceOf(MissingDataError);
+        });
+
+        it('loads a single instance of StripeUPEClient without first and last name fields', async () => {
+            jest.spyOn(store.getState().shippingAddress, 'getShippingAddress').mockReturnValue({
+                ...getShippingAddress(),
+                firstName: '',
+                lastName: '',
+            });
+
+            await expect(strategy.initialize(shippingInitialization)).resolves.toBe(
+                store.getState(),
+            );
+
+            expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
+            expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
         });
 
         it('triggers onChange event callback and mounts component', async () => {

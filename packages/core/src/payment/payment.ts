@@ -1,3 +1,5 @@
+import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { BrowserInfo } from '../common/browser-info';
 import { Omit } from '../common/types';
 
@@ -43,10 +45,6 @@ export type PaymentInstrument =
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
-}
-
-export interface WithAccountCreation {
-    shouldCreateAccount?: boolean;
 }
 
 export interface CreditCardInstrument {

@@ -1,5 +1,11 @@
 import { keys } from 'lodash';
 
+import {
+    AnalyticsExtraItemsManager,
+    AnalyticsTracker,
+    ExtraItemsData,
+} from '@bigcommerce/checkout-sdk/analytics';
+
 import { LineItemMap } from '../cart';
 import { Checkout, CheckoutService } from '../checkout';
 import { InvalidArgumentError } from '../common/error/errors';
@@ -8,13 +14,11 @@ import { Coupon } from '../coupon';
 import { Order } from '../order';
 import { ShippingOption } from '../shipping';
 
-import AnalyticsExtraItemsManager from './analytics-extra-items-manager';
 import {
     isGoogleAnalyticsAvailable,
     isPayloadSizeLimitReached,
     sendGoogleAnalytics,
 } from './analytics-tracker-ga';
-import { AnalyticsTracker } from './analytics-tracker-window';
 import StepTracker from './step-tracker';
 
 export interface StepTrackerConfig {
@@ -443,11 +447,4 @@ export interface AnalyticsProduct {
     category?: string;
     variant?: string;
     brand?: string;
-}
-
-export interface ExtraItemsData {
-    [productId: string]: {
-        brand: string;
-        category: string;
-    };
 }

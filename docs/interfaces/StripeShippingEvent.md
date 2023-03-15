@@ -13,9 +13,12 @@
 ### Properties
 
 - [complete](StripeShippingEvent.md#complete)
+- [display](StripeShippingEvent.md#display)
 - [elementType](StripeShippingEvent.md#elementtype)
 - [empty](StripeShippingEvent.md#empty)
+- [fields](StripeShippingEvent.md#fields)
 - [isNewAddress](StripeShippingEvent.md#isnewaddress)
+- [mode](StripeShippingEvent.md#mode)
 - [phoneFieldRequired](StripeShippingEvent.md#phonefieldrequired)
 - [value](StripeShippingEvent.md#value)
 
@@ -28,6 +31,18 @@
 #### Inherited from
 
 [StripeEvent](StripeEvent.md).[complete](StripeEvent.md#complete)
+
+___
+
+### display
+
+• `Optional` **display**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `string` |
 
 ___
 
@@ -51,9 +66,27 @@ ___
 
 ___
 
+### fields
+
+• `Optional` **fields**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `phone` | `string` |
+
+___
+
 ### isNewAddress
 
 • `Optional` **isNewAddress**: `boolean`
+
+___
+
+### mode
+
+• `Optional` **mode**: `string`
 
 ___
 
@@ -78,5 +111,7 @@ ___
 | `address.line2?` | `string` |
 | `address.postal_code` | `string` |
 | `address.state` | `string` |
-| `name` | `string` |
-| `phone` | `string` |
+| `firstName?` | `string` |
+| `lastName?` | `string` |
+| `name?` | `string` |
+| `phone?` | `string` |

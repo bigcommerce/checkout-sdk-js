@@ -1,0 +1,16 @@
+{
+    "extends": ["../../.eslintrc.json"],
+    "ignorePatterns": ["!**/*"],
+    "overrides": [
+        {
+            "files": ["*.ts", "*.tsx"],
+            "rules": {}
+        },
+        {
+            "files": ["*.spec.ts", "*.spec.tsx"],
+            "rules": {
+                "@typescript-eslint/consistent-type-assertions": "off"
+            }
+        }
+    ]
+}

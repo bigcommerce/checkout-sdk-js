@@ -28,6 +28,23 @@ describe('GooglePayCybersourceV2Initializer', () => {
 
             expect(initialize).toEqual(getOrbitalPaymentDataRequest());
         });
+
+        it('initializes the google pay configuration for orbital with Buy Now Flow', async () => {
+            const paymentDataRequest = {
+                ...getOrbitalPaymentDataRequest(),
+                transactionInfo: {
+                    ...getOrbitalPaymentDataRequest().transactionInfo,
+                    currencyCode: '',
+                    totalPrice: '',
+                },
+            };
+
+            await googlePayInitializer
+                .initialize(undefined, getOrbitalPaymentMethodMock(), false)
+                .then((response) => {
+                    expect(response).toEqual(paymentDataRequest);
+                });
+        });
     });
 
     describe('#teardown', () => {

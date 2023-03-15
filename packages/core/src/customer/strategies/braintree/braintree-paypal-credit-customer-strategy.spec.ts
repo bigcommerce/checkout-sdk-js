@@ -324,6 +324,28 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
             });
         });
 
+        it('renders braintree paylater button with a customized height', async () => {
+            await strategy.initialize({
+                ...initializationOptions,
+                braintreepaypalcredit: {
+                    ...braintreePaypalCreditOptions,
+                    buttonHeight: 100,
+                },
+            });
+
+            expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
+                commit: false,
+                createOrder: expect.any(Function),
+                env: 'sandbox',
+                fundingSource: paypalSdkMock.FUNDING.PAYLATER,
+                onApprove: expect.any(Function),
+                style: {
+                    height: 100,
+                    color: PaypalButtonStyleColorOption.GOLD,
+                },
+            });
+        });
+
         it('renders braintree credit button if paylater is not eligible', async () => {
             jest.spyOn(paypalSdkMock, 'Buttons').mockImplementationOnce(() => {
                 return {

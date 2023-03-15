@@ -309,6 +309,27 @@ describe('BraintreePaypalCustomerStrategy', () => {
             });
         });
 
+        it('renders PayPal checkout button with a customized height', async () => {
+            await strategy.initialize({
+                ...initializationOptions,
+                braintreepaypal: {
+                    ...braintreePaypalOptions,
+                    buttonHeight: 100,
+                },
+            });
+
+            expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
+                env: 'sandbox',
+                commit: false,
+                fundingSource: paypalSdkMock.FUNDING.PAYPAL,
+                style: {
+                    height: 100,
+                },
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+            });
+        });
+
         it('renders PayPal checkout button in production environment if payment method is in test mode', async () => {
             paymentMethodMock.config.testMode = false;
 

@@ -1,8 +1,24 @@
-import { LineItemMap } from '../cart';
+import { isObject } from 'lodash';
 
-import { ExtraItemsData } from './analytics-step-tracker';
+import { LineItemMap } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import { ExtraItemsData } from './extra-items-data';
+
+type StorageFallback = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 
 const ORDER_ITEMS_STORAGE_KEY = 'ORDER_ITEMS';
+
+function isExtraItemsData(itemsData: unknown): itemsData is ExtraItemsData {
+    if (!isObject(itemsData)) {
+        return false;
+    }
+
+    const hasNotExtraItems = Object.values(itemsData).some(
+        (item) => !isObject(item) || !('brand' in item) || !('category' in item),
+    );
+
+    return Boolean(!hasNotExtraItems);
+}
 
 export default class AnalyticsExtraItemsManager {
     constructor(private storage: StorageFallback) {}
@@ -33,7 +49,13 @@ export default class AnalyticsExtraItemsManager {
         try {
             const item = this.storage.getItem(this.getStorageKey(id));
 
-            return item ? JSON.parse(item) : null;
+            if (!item) {
+                return null;
+            }
+
+            const data: unknown = JSON.parse(item);
+
+            return isExtraItemsData(data) ? data : null;
         } catch (err) {
             return null;
         }

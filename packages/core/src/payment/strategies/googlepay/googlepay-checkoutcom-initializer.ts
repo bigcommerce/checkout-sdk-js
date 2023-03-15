@@ -25,7 +25,7 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
     constructor(private _requestSender: RequestSender) {}
 
     async initialize(
-        checkout: Checkout,
+        checkout: Checkout | undefined,
         paymentMethod: PaymentMethod,
         hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
@@ -120,10 +120,15 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
     }
 
     private _mapGooglePayCheckoutcomDataRequestToGooglePayDataRequestV2(
-        checkout: Checkout,
+        checkout: Checkout | undefined,
         initializationData: any,
         hasShippingAddress: boolean,
     ): GooglePayPaymentDataRequestV2 {
+        const currencyCode = checkout?.cart.currency.code || '';
+        const totalPrice = checkout?.outstandingBalance
+            ? round(checkout.outstandingBalance, 2).toFixed(2)
+            : '';
+
         return {
             apiVersion: 2,
             apiVersionMinor: 0,
@@ -154,9 +159,9 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
                 },
             ],
             transactionInfo: {
-                currencyCode: checkout.cart.currency.code,
+                currencyCode,
                 totalPriceStatus: 'FINAL',
-                totalPrice: round(checkout.outstandingBalance, 2).toFixed(2),
+                totalPrice,
             },
             emailRequired: true,
             shippingAddressRequired: !hasShippingAddress,

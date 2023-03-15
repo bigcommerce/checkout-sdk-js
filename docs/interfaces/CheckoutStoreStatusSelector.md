@@ -26,6 +26,7 @@ order and waiting for the request to complete.
 - [isExecutingPaymentMethodCheckout](CheckoutStoreStatusSelector.md#isexecutingpaymentmethodcheckout)
 - [isExecutingSpamCheck](CheckoutStoreStatusSelector.md#isexecutingspamcheck)
 - [isFinalizingOrder](CheckoutStoreStatusSelector.md#isfinalizingorder)
+- [isInitializedCustomer](CheckoutStoreStatusSelector.md#isinitializedcustomer)
 - [isInitializingCustomer](CheckoutStoreStatusSelector.md#isinitializingcustomer)
 - [isInitializingPayment](CheckoutStoreStatusSelector.md#isinitializingpayment)
 - [isInitializingShipping](CheckoutStoreStatusSelector.md#isinitializingshipping)
@@ -268,6 +269,26 @@ Checks whether the current order is finalizing.
 `boolean`
 
 True if the current order is finalizing, otherwise false.
+
+___
+
+### isInitializedCustomer
+
+▸ **isInitializedCustomer**(`methodId?`): `boolean`
+
+Checks whether a wallet button is initialized.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `methodId?` | `string` | The identifier of the payment method to check. |
+
+#### Returns
+
+`boolean`
+
+True if the wallet button method is initialized, otherwise false.
 
 ___
 

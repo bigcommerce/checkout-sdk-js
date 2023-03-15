@@ -8,8 +8,10 @@ import {
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
     ApproveCallbackPayload,
+    PayPalButtonStyleOptions,
     PayPalBuyNowInitializeOptions,
     PayPalCommerceButtonsOptions,
+    StyleButtonColor,
 } from '../paypal-commerce-types';
 
 import PayPalCommerceVenmoButtonInitializeOptions, {
@@ -105,11 +107,12 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
 
         const buyNowFlowCallbacks = {
             onClick: () => this.handleClick(buyNowInitializeOptions),
+            onCancel: () => this.paymentIntegrationService.loadDefaultCheckout(),
         };
 
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {
             fundingSource,
-            style: this.paypalCommerceIntegrationService.getValidButtonStyle(style),
+            style: this.getValidVenmoButtonStyles(style),
             ...defaultCallbacks,
             ...(buyNowInitializeOptions && buyNowFlowCallbacks),
         };
@@ -121,6 +124,19 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
         } else {
             this.paypalCommerceIntegrationService.removeElement(containerId);
         }
+    }
+
+    private getValidVenmoButtonStyles(style: PayPalButtonStyleOptions | undefined) {
+        const validButtonStyle = this.paypalCommerceIntegrationService.getValidButtonStyle(style);
+
+        if (validButtonStyle.color === StyleButtonColor.gold) {
+            return {
+                ...validButtonStyle,
+                color: undefined,
+            };
+        }
+
+        return validButtonStyle;
     }
 
     private async handleClick(
