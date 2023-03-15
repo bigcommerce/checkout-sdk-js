@@ -18,6 +18,22 @@ export default interface HostedFormOptions {
     onValidate?(data: HostedFieldValidateEventData): void;
 }
 
+export type HostedFormErrorDataKeys =
+    | 'number'
+    | 'expirationDate'
+    | 'expirationMonth'
+    | 'expirationYear'
+    | 'cvv'
+    | 'postalCode';
+
+export interface HostedFormErrorData {
+    isEmpty: boolean;
+    isPotentiallyValid: boolean;
+    isValid: boolean;
+}
+
+export type HostedFormErrorsData = Partial<Record<HostedFormErrorDataKeys, HostedFormErrorData>>;
+
 export type HostedFieldBlurEventData = HostedInputBlurEvent['payload'];
 export type HostedFieldCardTypeChangeEventData = HostedInputCardTypeChangeEvent['payload'];
 export type HostedFieldEnterEventData = HostedInputEnterEvent['payload'];

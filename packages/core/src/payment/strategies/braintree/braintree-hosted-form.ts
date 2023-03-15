@@ -482,6 +482,7 @@ export default class BraintreeHostedForm {
             case 'cardholderName':
             case 'cardType':
                 return true;
+
             default:
                 return false;
         }
