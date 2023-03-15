@@ -6,7 +6,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import HostedFieldType from '../hosted-field-type';
-import { HostedFormErrorData } from '../hosted-form-options';
+import { HostedFormErrorsData } from '../hosted-form-options';
 
 import HostedInputInitializeErrorData from './hosted-input-initialize-error-data';
 import HostedInputValidateResults from './hosted-input-validate-results';
@@ -77,7 +77,7 @@ export interface HostedInputBlurEvent {
     type: HostedInputEventType.Blurred;
     payload: {
         fieldType: HostedFieldType;
-        errors?: HostedFormErrorData;
+        errors?: HostedFormErrorsData;
     };
 }
 
