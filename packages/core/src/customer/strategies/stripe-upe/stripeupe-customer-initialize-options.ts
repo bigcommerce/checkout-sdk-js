@@ -1,3 +1,5 @@
+import { StripeUPEAppearanceOptions } from '../../../payment/strategies/stripe-upe';
+
 export default interface StripeUPECustomerInitializeOptions {
     /**
      * The ID of a container which the stripe iframe should be inserted.
@@ -37,4 +39,12 @@ export default interface StripeUPECustomerInitializeOptions {
               [key: string]: string;
           }
         | undefined;
+
+    /**
+     * Get the styles applied based on the active step
+     */
+    getAppearance?(
+        styles: { [key: string]: string } | undefined | boolean,
+        step: string | undefined,
+    ): StripeUPEAppearanceOptions;
 }

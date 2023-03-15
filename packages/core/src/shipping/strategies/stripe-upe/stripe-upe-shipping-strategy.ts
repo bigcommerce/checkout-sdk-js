@@ -16,7 +16,6 @@ import {
     StripeScriptLoader,
     StripeUPEClient,
 } from '../../../payment/strategies/stripe-upe';
-import { getStripeCustomStyles } from '../../../payment/strategies/stripe-upe/stripe-upe-custom-styles';
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
@@ -64,6 +63,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             getStyles,
             availableCountries,
             getStripeState,
+            getAppearance,
         } = options.stripeupe;
 
         Object.entries(options.stripeupe).forEach(([key, value]) => {
@@ -100,16 +100,13 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
         const {
             shippingAddress: { getShippingAddress },
             form: { getShippingAddressFields },
-            config: { getStoreConfig },
         } = this._store.getState();
-        const features = getStoreConfig()?.checkoutSettings.features;
         const styles = getStyles && getStyles();
-        const experiment = features && features['CHECKOUT-6879.enable_floating_labels'];
         const shippingFields = getShippingAddressFields([], '');
 
         this._stripeElements = this._stripeUPEScriptLoader.getElements(this._stripeUPEClient, {
             clientSecret: paymentMethod.clientToken,
-            appearance: getStripeCustomStyles(styles, experiment, StripeFormMode.SHIPPING),
+            appearance: getAppearance && getAppearance(styles, StripeFormMode.SHIPPING),
         });
 
         const shipping = getShippingAddress();

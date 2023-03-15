@@ -15,7 +15,6 @@ import {
     StripeScriptLoader,
     StripeUPEClient,
 } from '../../../payment/strategies/stripe-upe';
-import { getStripeCustomStyles } from '../../../payment/strategies/stripe-upe/stripe-upe-custom-styles';
 import { ConsignmentActionCreator } from '../../../shipping';
 import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerActionType } from '../../customer-actions';
@@ -47,8 +46,15 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             );
         }
 
-        const { container, gatewayId, methodId, onEmailChange, getStyles, isLoading } =
-            options.stripeupe;
+        const {
+            container,
+            gatewayId,
+            methodId,
+            onEmailChange,
+            getStyles,
+            isLoading,
+            getAppearance,
+        } = options.stripeupe;
 
         Object.entries(options.stripeupe).forEach(([key, value]) => {
             if (!value) {
@@ -80,11 +86,8 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             const {
                 billingAddress: { getBillingAddress },
                 consignments: { getConsignments },
-                config: { getStoreConfig },
             } = this._store.getState();
-            const features = getStoreConfig()?.checkoutSettings.features;
             const styles = typeof getStyles === 'function' && getStyles();
-            const experiment = features && features['CHECKOUT-6879.enable_floating_labels'];
 
             stripeUPEClient = await this._stripeUPEScriptLoader.getStripeClient(
                 stripePublishableKey,
@@ -93,7 +96,8 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
 
             this._stripeElements = this._stripeUPEScriptLoader.getElements(stripeUPEClient, {
                 clientSecret: clientToken,
-                appearance: getStripeCustomStyles(styles, experiment),
+                appearance:
+                    getAppearance && getAppearance(styles, StripeElementType.AUTHENTICATION),
             });
 
             const consignments = getConsignments();

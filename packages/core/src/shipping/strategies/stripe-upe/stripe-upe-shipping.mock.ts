@@ -83,6 +83,26 @@ export function getStripeUPEInitializeOptionsMockWithStyles(
             availableCountries: 'US,MX',
             getStyles: () => style,
             getStripeState: jest.fn(),
+            getAppearance: jest.fn().mockReturnValue({
+                rules: {
+                    '.Input': {
+                        borderColor: '#123456',
+                        boxShadow: '#123456',
+                        color: '#123456',
+                    },
+                },
+                variables: {
+                    borderRadius: '4px',
+                    colorBackground: '#123456',
+                    colorDanger: '#123456',
+                    colorIcon: '#123456',
+                    colorPrimary: '#123456',
+                    colorText: '#123456',
+                    colorTextPlaceholder: '#123456',
+                    colorTextSecondary: '#123456',
+                    spacingUnit: '4px',
+                },
+            }),
         },
     };
 }

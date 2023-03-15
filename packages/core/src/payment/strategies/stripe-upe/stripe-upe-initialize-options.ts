@@ -1,3 +1,5 @@
+import { StripeUPEAppearanceOptions } from './stripe-upe';
+
 /**
  * A set of options that are required to initialize the Stripe payment method.
  *
@@ -35,4 +37,12 @@ export default interface StripeUPEPaymentInitializeOptions {
     onError?(error?: Error): void;
 
     render(): void;
+
+    /**
+     * Get the styles applied based on the active step
+     */
+    getAppearance?(
+        styles: { [key: string]: string } | undefined | boolean,
+        step: string | undefined,
+    ): StripeUPEAppearanceOptions;
 }

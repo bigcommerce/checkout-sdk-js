@@ -36,7 +36,6 @@ import {
     StripeStringConstants,
     StripeUPEClient,
 } from './stripe-upe';
-import { getStripeCustomStyles } from './stripe-upe-custom-styles';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
 import { StripeUPEPaymentInitializeOptions } from './';
@@ -336,7 +335,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         gatewayId: string,
         methodId: string,
     ) {
-        const { containerId, style, render } = stripeupe;
+        const { containerId, style, render, getAppearance } = stripeupe;
         const state = await this._store.dispatch(
             this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, {
                 params: { method: methodId },
@@ -356,16 +355,10 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             stripeConnectedAccount,
         );
 
-        const {
-            config: { getStoreConfig },
-        } = this._store.getState();
-        const features = getStoreConfig()?.checkoutSettings.features;
-        const experiment = features && features['CHECKOUT-6879.enable_floating_labels'];
-
         this._stripeElements = this._stripeScriptLoader.getElements(this._stripeUPEClient, {
             clientSecret: paymentMethod.clientToken,
             locale: formatLocale(shopperLanguage),
-            appearance: getStripeCustomStyles(style, experiment),
+            appearance: getAppearance && getAppearance(style, ''),
         });
 
         const {
