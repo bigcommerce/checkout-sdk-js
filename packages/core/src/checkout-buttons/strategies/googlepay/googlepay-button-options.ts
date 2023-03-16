@@ -27,8 +27,8 @@ export interface GooglePayButtonInitializeOptions {
     /**
      * This option contains button styles
      */
-        style?: {
-            color: ButtonColor;
-            size: 'string';
-        };
+    style?: {
+        color: ButtonColor;
+        size: 'string';
+    };
 }
