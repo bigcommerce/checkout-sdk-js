@@ -23,4 +23,12 @@ export interface GooglePayButtonInitializeOptions {
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
+
+    /**
+     * This option contains button styles
+     */
+    style?: {
+        color: ButtonColor;
+        size: 'string';
+    };
 }
