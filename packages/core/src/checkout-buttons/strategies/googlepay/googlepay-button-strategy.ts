@@ -82,7 +82,9 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         currencyCode?: string,
     ): HTMLElement {
         const container = document.getElementById(containerId);
-        const { buttonType, buttonColor, buyNowInitializeOptions } = buttonOptions;
+        const { buttonType, buttonColor, buyNowInitializeOptions, initializationOptions } = buttonOptions;
+        // @ts-ignore
+        const { style: { color } } = initializationOptions || {};
 
         if (!container) {
             throw new InvalidArgumentError(
@@ -96,7 +98,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         const googlePayButton = this._googlePayPaymentProcessor.createButton(
             handleValidButtonClick,
             buttonType,
-            buttonColor,
+            buttonColor || color,
         );
 
         container.appendChild(googlePayButton);
