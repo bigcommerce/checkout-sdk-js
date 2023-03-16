@@ -83,7 +83,8 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     ): HTMLElement {
         const container = document.getElementById(containerId);
         const { buttonType, buttonColor, buyNowInitializeOptions, initializationOptions } = buttonOptions;
-        const { style: { color } } = initializationOptions;
+        // @ts-ignore
+        const { style: { color } } = initializationOptions || {};
 
         if (!container) {
             throw new InvalidArgumentError(
