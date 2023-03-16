@@ -4,3 +4,5 @@ export { default as BraintreePaypalCustomerStrategy } from './braintree-paypal-c
 export { default as BraintreePaypalCustomerInitializeOptions } from './braintree-paypal-customer-options';
 export { default as BraintreePaypalCreditCustomerStrategy } from './braintree-paypal-credit-customer-strategy';
 export { default as BraintreePaypalCreditCustomerInitializeOptions } from './braintree-paypal-credit-customer-options';
+export { default as BraintreeVenmoCustomerStrategy } from './braintree-venmo-customer-strategy';
+export { default as BraintreeVenmoCustomerInitializeOptions } from './braintree-venmo-customer-initialize-options';

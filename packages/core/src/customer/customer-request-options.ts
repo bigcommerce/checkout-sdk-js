@@ -5,6 +5,7 @@ import { BoltCustomerInitializeOptions } from './strategies/bolt';
 import {
     BraintreePaypalCreditCustomerInitializeOptions,
     BraintreePaypalCustomerInitializeOptions,
+    BraintreeVenmoCustomerInitializeOptions,
     BraintreeVisaCheckoutCustomerInitializeOptions,
 } from './strategies/braintree';
 import { ChasePayCustomerInitializeOptions } from './strategies/chasepay';
@@ -61,6 +62,12 @@ export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * when using Visa Checkout provided by Braintree.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
+
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using Braintree Venmo.
+     */
+    braintreevenmo?: BraintreeVenmoCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the customer step of checkout

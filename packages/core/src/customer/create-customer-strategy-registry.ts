@@ -67,6 +67,7 @@ import { BoltCustomerStrategy } from './strategies/bolt';
 import {
     BraintreePaypalCreditCustomerStrategy,
     BraintreePaypalCustomerStrategy,
+    BraintreeVenmoCustomerStrategy,
     BraintreeVisaCheckoutCustomerStrategy,
 } from './strategies/braintree';
 import { ChasePayCustomerStrategy } from './strategies/chasepay';
@@ -204,6 +205,18 @@ export default function createCustomerStrategyRegistry(
                 braintreeSDKCreator,
                 formPoster,
                 window,
+            ),
+    );
+
+    registry.register(
+        'braintreevenmo',
+        () =>
+            new BraintreeVenmoCustomerStrategy(
+                store,
+                customerActionCreator,
+                paymentMethodActionCreator,
+                braintreeSDKCreator,
+                formPoster,
             ),
     );
 
