@@ -86,7 +86,7 @@ export {
     HostedInputValidateResults,
     HostedStoredCardFieldOptions,
     HostedStoredCardFieldOptionsMap,
-    isStoredCreditCardFormFields,
+    isCreditCardFormFields,
 } from './hosted-form';
 export {
     GatewayOrderPayment,
