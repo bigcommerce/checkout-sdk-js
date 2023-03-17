@@ -85,6 +85,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         const { buttonType, buttonColor, buyNowInitializeOptions } = buttonOptions;
 
         if (!container) {
+            console.log('MASTER');
             throw new InvalidArgumentError(
                 'Unable to create sign-in button without valid container ID.',
             );
