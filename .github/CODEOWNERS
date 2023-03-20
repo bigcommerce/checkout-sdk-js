@@ -2,6 +2,7 @@
 /packages/adyen-integration @bigcommerce/kyiv-payments-team
 /packages/apple-pay @bigcommerce/checkout
 /packages/bolt-integration @bigcommerce/kyiv-payments-team
+/packages/braintree-integration @bigcommerce/kyiv-payments-team
 /packages/core @bigcommerce/checkout
 /packages/payment-integration @bigcommerce/checkout
 /packages/payment-integration-test-utils @bigcommerce/checkout

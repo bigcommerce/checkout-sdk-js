@@ -4,7 +4,6 @@ import { AmazonPayV2CustomerInitializeOptions } from './strategies/amazon-pay-v2
 import { BoltCustomerInitializeOptions } from './strategies/bolt';
 import {
     BraintreePaypalCreditCustomerInitializeOptions,
-    BraintreePaypalCustomerInitializeOptions,
     BraintreeVisaCheckoutCustomerInitializeOptions,
 } from './strategies/braintree';
 import { ChasePayCustomerInitializeOptions } from './strategies/chasepay';
@@ -43,12 +42,6 @@ export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * when using AmazonPayV2.
      */
     amazonpay?: AmazonPayV2CustomerInitializeOptions;
-
-    /**
-     * The options that are required to initialize the customer step of checkout
-     * when using Braintree PayPal provided.
-     */
-    braintreepaypal?: BraintreePaypalCustomerInitializeOptions;
 
     /**
      * The options that are required to facilitate Braintree Credit. They can be
