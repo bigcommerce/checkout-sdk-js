@@ -132,7 +132,7 @@ export default class AmazonPayV2PaymentProcessor {
                 methodId,
                 placement,
                 decoupleCheckoutInitiation,
-                buttonColor
+                buttonColor,
             );
 
         this.createButton(parentContainerId, amazonPayV2ButtonOptions);
