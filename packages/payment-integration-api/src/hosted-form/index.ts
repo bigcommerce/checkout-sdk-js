@@ -1,4 +1,29 @@
-export { default as HostedFormOptions } from './hosted-form-options';
+export {
+    default as HostedFormOptions,
+    HostedCardFieldOptions,
+    HostedCardFieldOptionsMap,
+    HostedFieldBlurEventData,
+    HostedFieldCardTypeChangeEventData,
+    HostedFieldEnterEventData,
+    HostedFieldFocusEventData,
+    HostedFieldOptionsMap,
+    HostedFieldStylesMap,
+    HostedFieldValidateEventData,
+    HostedStoredCardFieldOptions,
+    HostedStoredCardFieldOptionsMap,
+} from './hosted-form-options';
 export { default as HostedFieldType } from './hosted-field-type';
 export { HostedForm } from './hosted-form';
-export { HostedInputEventType } from './hosted-input-events';
+export { HostedInputEventType, HostedInputSubmitSuccessEvent } from './hosted-input-events';
+export {
+    HostedInputBlurEvent,
+    HostedInputCardTypeChangeEvent,
+    HostedInputEnterEvent,
+    HostedInputFocusEvent,
+    HostedInputStyles,
+    HostedInputValidateErrorData,
+    HostedInputValidateErrorDataMap,
+    HostedInputValidateEvent,
+    HostedInputValidateResults,
+} from './iframe-content';
+export { default as isStoredCreditCardFormFields } from './is-stored-credit-card-form-fields';

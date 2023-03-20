@@ -15,3 +15,5 @@ export {
     getVaultedInstrument,
     getErrorPaymentResponseBody,
 } from './payments.mock';
+
+export { getShippingAddress, getShippingAddressWithCustomFields } from './shipping-addresses.mock';

@@ -34,6 +34,7 @@ import {
     AdyenComponentState,
     AdyenComponentType,
     AdyenError,
+    AdyenPaymentMethodInitializationData,
     AdyenPaymentMethodType,
     AdyenPlaceholderData,
     CardStateErrors,
@@ -72,25 +73,27 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
         const paymentMethod = this._paymentIntegrationService
             .getState()
-            .getPaymentMethodOrThrow(options.methodId);
+            .getPaymentMethodOrThrow<AdyenPaymentMethodInitializationData>(options.methodId);
+        const { originKey, clientKey, environment, paymentMethodsResponse } =
+            paymentMethod.initializationData || {};
         const clientSideAuthentication = {
             key: '',
             value: '',
         };
 
-        if (paymentMethod.initializationData.originKey) {
+        if (originKey) {
             clientSideAuthentication.key = 'originKey';
-            clientSideAuthentication.value = paymentMethod.initializationData.originKey;
+            clientSideAuthentication.value = originKey;
         } else {
             clientSideAuthentication.key = 'clientKey';
-            clientSideAuthentication.value = paymentMethod.initializationData.clientKey;
+            clientSideAuthentication.value = clientKey || '';
         }
 
         this._adyenClient = await this._scriptLoader.load({
-            environment: paymentMethod.initializationData.environment,
+            environment,
             locale: this._paymentIntegrationService.getState().getLocale(),
             [clientSideAuthentication.key]: clientSideAuthentication.value,
-            paymentMethodsResponse: paymentMethod.initializationData.paymentMethodsResponse,
+            paymentMethodsResponse,
             translations: {
                 es: { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },
                 'es-AR': { 'creditCard.expiryDateField.title': 'Fecha de caducidad' },

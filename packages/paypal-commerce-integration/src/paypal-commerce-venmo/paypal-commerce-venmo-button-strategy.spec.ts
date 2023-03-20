@@ -26,6 +26,7 @@ import {
     PayPalCommerceButtonsOptions,
     PayPalCommerceHostWindow,
     PayPalSDK,
+    StyleButtonColor,
 } from '../paypal-commerce-types';
 
 import PayPalCommerceVenmoButtonInitializeOptions from './paypal-commerce-venmo-button-initialize-options';
@@ -323,6 +324,32 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.VENMO,
                 style: paypalCommerceVenmoOptions.style,
+                createOrder: expect.any(Function),
+                onApprove: expect.any(Function),
+            });
+        });
+
+        it('render button with undefined color (uses default blue) when it receives gold color setting', async () => {
+            const initializationVenmoOptions = {
+                ...initializationOptions,
+                paypalcommercevenmo: {
+                    style: {
+                        height: 45,
+                        color: StyleButtonColor.gold,
+                    },
+                },
+            };
+
+            const expectedStyles = {
+                height: 45,
+                color: undefined,
+            };
+
+            await strategy.initialize(initializationVenmoOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                fundingSource: paypalSdk.FUNDING.VENMO,
+                style: expectedStyles,
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
             });

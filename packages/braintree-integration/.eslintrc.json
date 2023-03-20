@@ -1,0 +1,22 @@
+{
+    "extends": ["../../.eslintrc.json"],
+    "ignorePatterns": ["!**/*"],
+    "overrides": [
+        {
+            "files": ["*.ts", "*.tsx"],
+            "rules": {
+                "@typescript-eslint/naming-convention": "off"
+            }
+        },
+        {
+            "files": ["*.spec.ts", "*.spec.tsx"],
+            "rules": {
+                "@typescript-eslint/no-unsafe-assignment": "off",
+                "@typescript-eslint/consistent-type-assertions": "off",
+                "jest/no-conditional-expect": "off",
+                "@typescript-eslint/no-unsafe-call": "off",
+                "@typescript-eslint/no-empty-function": "off"
+            }
+        }
+    ]
+}

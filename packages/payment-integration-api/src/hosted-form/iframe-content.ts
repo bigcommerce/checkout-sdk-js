@@ -3,13 +3,13 @@
 import HostedFieldType from './hosted-field-type';
 import { HostedInputEventType } from './hosted-input-events';
 
-interface HostedInputValidateErrorData {
+export interface HostedInputValidateErrorData {
     fieldType: string;
     message: string;
     type: string;
 }
 
-interface HostedInputValidateErrorDataMap {
+export interface HostedInputValidateErrorDataMap {
     [HostedFieldType.CardCode]?: HostedInputValidateErrorData[];
     [HostedFieldType.CardCodeVerification]?: HostedInputValidateErrorData[];
     [HostedFieldType.CardExpiry]?: HostedInputValidateErrorData[];
@@ -18,7 +18,7 @@ interface HostedInputValidateErrorDataMap {
     [HostedFieldType.CardNumberVerification]?: HostedInputValidateErrorData[];
 }
 
-interface HostedInputValidateResults {
+export interface HostedInputValidateResults {
     errors: HostedInputValidateErrorDataMap;
     isValid: boolean;
 }

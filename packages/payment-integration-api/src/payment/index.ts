@@ -22,6 +22,7 @@ export {
 } from './payment';
 
 export { default as isHostedInstrumentLike } from './is-hosted-intrument-like';
+export { default as isWithAccountCreation } from './is-with-account-creation';
 
 export {
     default as isVaultedInstrument,

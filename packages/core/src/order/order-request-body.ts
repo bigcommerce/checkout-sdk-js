@@ -1,3 +1,5 @@
+import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     CreditCardInstrument,
     HostedCreditCardInstrument,
@@ -5,7 +7,6 @@ import {
     HostedVaultedInstrument,
     NonceInstrument,
     VaultedInstrument,
-    WithAccountCreation,
     WithCheckoutcomFawryInstrument,
     WithCheckoutcomiDealInstrument,
     WithCheckoutcomSEPAInstrument,

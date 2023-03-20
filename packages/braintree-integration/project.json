@@ -1,0 +1,22 @@
+{
+    "root": "packages/braintree-integration",
+    "sourceRoot": "packages/braintree-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/braintree-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/braintree-integration"],
+            "options": {
+                "jestConfig": "packages/braintree-integration/jest.config.js"
+            }
+        }
+    },
+    "tags": ["scope:integration"]
+}

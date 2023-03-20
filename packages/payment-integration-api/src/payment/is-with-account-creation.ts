@@ -1,6 +1,6 @@
 import { WithAccountCreation } from './payment';
 
-export default function withAccountCreation(
+export default function isWithAccountCreation(
     paymentData: unknown,
 ): paymentData is WithAccountCreation {
     return (

@@ -17,6 +17,7 @@ import {
     ApproveCallbackActions,
     ApproveCallbackPayload,
     PayPalCommerceButtonsOptions,
+    PayPalCommerceInitializationData,
     ShippingAddressChangeCallbackPayload,
     ShippingOptionChangeCallbackPayload,
     StyleButtonColor,
@@ -91,8 +92,9 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
-        const { isHostedCheckoutEnabled } = paymentMethod.initializationData;
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
             createOrder: () =>

@@ -96,6 +96,10 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         const form = this._getInitializeOptions().form;
 
         this._useIndividualCardFields = useIndividualCardFields;
+        this._stripeV3Client = await this._loadStripeJs(
+            stripePublishableKey,
+            stripeConnectedAccount,
+        );
 
         if (
             this._isCreditCard(methodId) &&
@@ -104,10 +108,6 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         ) {
             this._hostedForm = await this._mountCardVerificationFields(form);
         } else {
-            this._stripeV3Client = await this._loadStripeJs(
-                stripePublishableKey,
-                stripeConnectedAccount,
-            );
             this._stripeElement = await this._mountCardFields(methodId);
         }
 

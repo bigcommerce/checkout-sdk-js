@@ -55,13 +55,18 @@ function errorsReducer(
         case CustomerStrategyActionType.InitializeRequested:
         case CustomerStrategyActionType.InitializeSucceeded:
             return objectMerge(errors, {
-                initializeError: undefined,
-                initializeMethodId: undefined,
+                initializeErrors: { ...errors.initializeErrors },
+                initializeMethodId: errors.initializeMethodId
+                    ? errors.initializeMethodId
+                    : undefined,
             });
 
         case CustomerStrategyActionType.InitializeFailed:
             return objectMerge(errors, {
-                initializeError: action.payload,
+                initializeErrors: {
+                    ...errors.initializeErrors,
+                    [action.meta && action.meta.methodId]: action.payload,
+                },
                 initializeMethodId: action.meta && action.meta.methodId,
             });
 
