@@ -16,4 +16,6 @@ export {
     getCreditCardInstrument,
     getVaultedInstrument,
     getErrorPaymentResponseBody,
+    getShippingAddress,
+    getShippingAddressWithCustomFields,
 } from './test-utils';
