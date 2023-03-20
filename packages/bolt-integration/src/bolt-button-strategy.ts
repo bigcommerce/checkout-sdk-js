@@ -131,15 +131,15 @@ export default class BoltButtonStrategy implements CheckoutButtonStrategy {
         const styles = document.createElement('style');
 
         styles.id = `${methodId}-button--styles`;
-        styles.innerText = `
-            .bolt-button-wrapper,
-            .bolt-button-wrapper svg {
-                display: block;
-                max-width: 100%;
-                width: 100% !important;
-                height: 40px;
-            }
-        `;
+        // styles.innerText = `
+        //     .bolt-button-wrapper,
+        //     .bolt-button-wrapper svg {
+        //         display: block;
+        //         max-width: 100%;
+        //         width: 100% !important;
+        //         height: 40px;
+        //     }
+        // `;
 
         return styles;
     }
