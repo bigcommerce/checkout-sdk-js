@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.365.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.365.0...v1.365.1) (2023-03-20)
+
+
+### Code Refactoring
+
+* **payment:** BOLT-000 add generic type for getPaymentMethod ([e9b03e2](https://github.com/bigcommerce/checkout-sdk-js/commit/e9b03e2af6bf13b3901f10c7b93f1e1a01d0c405))
+
 ## [1.365.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.364.2...v1.365.0) (2023-03-20)
 
 
