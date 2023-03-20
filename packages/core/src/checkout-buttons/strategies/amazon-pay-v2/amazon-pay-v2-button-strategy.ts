@@ -8,7 +8,8 @@ import {
     MissingDataErrorType,
 } from '../../../common/error/errors';
 import {
-    AmazonPayV2CheckoutSessionConfig, AmazonPayV2NewButtonParams,
+    AmazonPayV2CheckoutSessionConfig,
+    AmazonPayV2NewButtonParams,
     AmazonPayV2PaymentProcessor,
     AmazonPayV2PayOptions,
     AmazonPayV2Placement,
