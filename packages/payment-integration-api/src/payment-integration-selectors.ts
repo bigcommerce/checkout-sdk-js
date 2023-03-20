@@ -48,8 +48,11 @@ export default interface PaymentIntegrationSelectors {
     getPaymentRedirectUrl(): string | undefined;
     getPaymentRedirectUrlOrThrow(): string;
 
-    getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined;
-    getPaymentMethodOrThrow(methodId: string, gatewayId?: string): PaymentMethod;
+    getPaymentMethod<T = unknown>(
+        methodId: string,
+        gatewayId?: string,
+    ): PaymentMethod<T> | undefined;
+    getPaymentMethodOrThrow<T = unknown>(methodId: string, gatewayId?: string): PaymentMethod<T>;
 
     getShippingAddress(): ShippingAddress | undefined;
     getShippingAddressOrThrow(): ShippingAddress;

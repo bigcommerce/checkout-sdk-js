@@ -19,6 +19,7 @@ import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
 import {
     PayPalButtonStyleOptions,
     PayPalBuyNowInitializeOptions,
+    PayPalCommerceInitializationData,
     PayPalOrderDetails,
     PayPalSDK,
     StyleButtonColor,
@@ -48,7 +49,8 @@ export default class PayPalCommerceIntegrationService {
     ): Promise<PayPalSDK> {
         const state = this.paymentIntegrationService.getState();
         const currencyCode = providedCurrencyCode || state.getCartOrThrow().currency.code;
-        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
         this.paypalSdk = await this.paypalCommerceScriptLoader.getPayPalSDK(
             paymentMethod,

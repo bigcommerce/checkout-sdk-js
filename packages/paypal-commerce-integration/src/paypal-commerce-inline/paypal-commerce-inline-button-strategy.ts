@@ -17,6 +17,7 @@ import {
     ApproveCallbackPayload,
     CompleteCallbackDataPayload,
     PayPalCommerceButtonsOptions,
+    PayPalCommerceInitializationData,
     PayPalCommerceIntent,
     PayPalSDK,
     ShippingAddressChangeCallbackPayload,
@@ -63,7 +64,8 @@ export default class PayPalCommerceInlineButtonStrategy implements CheckoutButto
 
         const state = this.paymentIntegrationService.getState();
         const currencyCode = state.getCartOrThrow().currency.code;
-        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
         this.paypalSdk = await this.paypalCommerceScriptLoader.getPayPalSDK(
             paymentMethod,
@@ -232,8 +234,9 @@ export default class PayPalCommerceInlineButtonStrategy implements CheckoutButto
         callback?: () => void,
     ): Promise<void> {
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
-        const { intent } = paymentMethod.initializationData;
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const { intent } = paymentMethod.initializationData || {};
 
         if (intent === PayPalCommerceIntent.CAPTURE) {
             await this.submitPayment(methodId, data.orderID);
