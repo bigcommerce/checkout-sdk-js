@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.367.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.366.0...v1.367.0) (2023-03-20)
+
+
+### Features
+
+* **payment:** PAYPAL-2006 Created paypal-express-integration Checkout sdk package ([#1882](https://github.com/bigcommerce/checkout-sdk-js/issues/1882)) ([e850965](https://github.com/bigcommerce/checkout-sdk-js/commit/e8509657f7e61f46c7eedd9db3aca50c0c10e6ba))
+
 ## [1.366.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.365.1...v1.366.0) (2023-03-20)
 
 
