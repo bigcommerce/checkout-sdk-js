@@ -5,11 +5,13 @@ import {
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
+    PaymentMethodInvalidError,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { WithSquareV2PaymentInitializeOptions } from './squarev2-payment-initialize-options';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
+import { SquarePaymentMethodInitializationData } from './types';
 
 export default class SquareV2PaymentStrategy implements PaymentStrategy {
     constructor(
@@ -29,8 +31,15 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
         const { methodId, squarev2 } = options;
         const {
             config: { testMode },
-            initializationData: { applicationId, locationId },
-        } = this._paymentIntegrationService.getState().getPaymentMethodOrThrow(methodId);
+            initializationData,
+        } = this._paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow<SquarePaymentMethodInitializationData>(methodId);
+        const { applicationId, locationId } = initializationData || {};
+
+        if (!applicationId) {
+            throw new PaymentMethodInvalidError();
+        }
 
         await this._squareV2PaymentProcessor.initialize({
             applicationId,

@@ -881,3 +881,9 @@ export function isCardState(param: unknown): param is CardState {
         typeof (param as CardState).data.paymentMethod.encryptedExpiryMonth === 'string'
     );
 }
+
+export interface AdyenPaymentMethodInitializationData {
+    clientKey?: string;
+    environment?: string;
+    paymentMethodsResponse?: PaymentMethodsResponse;
+}

@@ -894,3 +894,10 @@ export function isAccountState(param: any): param is AccountState {
 
     return bankSupported.indexOf(param.data.paymentMethod.type) !== -1;
 }
+
+export interface AdyenPaymentMethodInitializationData {
+    originKey?: string;
+    clientKey?: string;
+    environment?: string;
+    paymentMethodsResponse?: PaymentMethodsResponse;
+}
