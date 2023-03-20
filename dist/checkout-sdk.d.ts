@@ -8,6 +8,7 @@ import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
+import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Timeout } from '@bigcommerce/request-sender';
 import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { createTimeout } from '@bigcommerce/request-sender';
@@ -997,11 +998,6 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      */
     amazonpay?: AmazonPayV2CustomerInitializeOptions;
     /**
-     * The options that are required to initialize the customer step of checkout
-     * when using Braintree PayPal provided.
-     */
-    braintreepaypal?: BraintreePaypalCustomerInitializeOptions;
-    /**
      * The options that are required to facilitate Braintree Credit. They can be
      * omitted unless you need to support Braintree Credit.
      */
@@ -1455,6 +1451,12 @@ declare interface BraintreeError extends Error {
     details?: unknown;
 }
 
+declare interface BraintreeError_2 extends Error {
+    type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
+    code: string;
+    details?: unknown;
+}
+
 declare type BraintreeFormErrorData = Omit<BraintreeFormFieldState, 'isFocused'>;
 
 declare type BraintreeFormErrorDataKeys = 'number' | 'expirationDate' | 'expirationMonth' | 'expirationYear' | 'cvv' | 'postalCode';
@@ -1736,7 +1738,7 @@ declare interface BraintreePaypalCustomerInitializeOptions {
      *
      * @param error - The error object describing the failure.
      */
-    onError?(error: BraintreeError | StandardError): void;
+    onError?(error: BraintreeError_2 | StandardError_2): void;
 }
 
 declare interface BraintreeStoredCardFieldOptions extends BraintreeFormFieldOptions {
@@ -4498,7 +4500,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -7635,6 +7637,14 @@ declare interface WithBoltPaymentInitializeOptions {
      * method. They can be omitted unless you need to support Bolt.
      */
     bolt?: BoltPaymentInitializeOptions;
+}
+
+declare interface WithBraintreePaypalCustomerInitializeOptions {
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using Braintree PayPal.
+     */
+    braintreepaypal?: BraintreePaypalCustomerInitializeOptions;
 }
 
 declare interface WithBuyNowFeature {
