@@ -107,6 +107,7 @@ export default class AmazonPayV2PaymentProcessor {
     }
 
     renderAmazonPayButton({
+        buttonColor,
         checkoutState,
         containerId,
         decoupleCheckoutInitiation = false,
@@ -131,6 +132,7 @@ export default class AmazonPayV2PaymentProcessor {
                 methodId,
                 placement,
                 decoupleCheckoutInitiation,
+                buttonColor
             );
 
         this.createButton(parentContainerId, amazonPayV2ButtonOptions);
@@ -194,6 +196,7 @@ export default class AmazonPayV2PaymentProcessor {
         methodId: string,
         placement: AmazonPayV2Placement,
         decoupleCheckoutInitiation = false,
+        buttonColor = AmazonPayV2ButtonColor.Gold,
     ): AmazonPayV2ButtonParameters {
         const {
             config: { merchantId, testMode },
@@ -216,7 +219,7 @@ export default class AmazonPayV2PaymentProcessor {
             ledgerCurrency,
             checkoutLanguage,
             placement,
-            buttonColor: AmazonPayV2ButtonColor.Gold,
+            buttonColor,
         };
 
         if (this._buyNowCartRequestBody) {

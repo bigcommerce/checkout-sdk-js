@@ -8,7 +8,7 @@ import {
     MissingDataErrorType,
 } from '../../../common/error/errors';
 import {
-    AmazonPayV2CheckoutSessionConfig,
+    AmazonPayV2CheckoutSessionConfig, AmazonPayV2NewButtonParams,
     AmazonPayV2PaymentProcessor,
     AmazonPayV2PayOptions,
     AmazonPayV2Placement,
@@ -34,6 +34,7 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { methodId, containerId, amazonpay } = options;
+        const { buttonColor } = amazonpay as AmazonPayV2NewButtonParams;
 
         if (!methodId || !containerId) {
             throw new InvalidArgumentError(
@@ -73,6 +74,7 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
             methodId,
             options: initializeAmazonButtonOptions,
             placement: AmazonPayV2Placement.Cart,
+            buttonColor,
         });
 
         if (this._buyNowCartRequestBody) {
