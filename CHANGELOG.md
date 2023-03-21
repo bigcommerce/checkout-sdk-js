@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.368.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.367.2...v1.368.0) (2023-03-21)
+
+
+### Features
+
+* **checkout:** CHECKOUT-7250 Add floatingLabelEnabled UXsetting ([#1912](https://github.com/bigcommerce/checkout-sdk-js/issues/1912)) ([120253b](https://github.com/bigcommerce/checkout-sdk-js/commit/120253ba17f4fda5b95f12d8334f8ced25878a5d))
+
 ### [1.367.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.367.1...v1.367.2) (2023-03-21)
 
 

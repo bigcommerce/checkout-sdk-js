@@ -363,6 +363,7 @@
 - [TranslationData](interfaces/TranslationData.md)
 - [Translations](interfaces/Translations.md)
 - [UnknownObject](interfaces/UnknownObject.md)
+- [UserExperienceSettings](interfaces/UserExperienceSettings.md)
 - [VaultedInstrument](interfaces/VaultedInstrument.md)
 - [WechatDataPaymentMethodState](interfaces/WechatDataPaymentMethodState.md)
 - [WechatDataPaymentMethodState_2](interfaces/WechatDataPaymentMethodState_2.md)
@@ -445,8 +446,6 @@
 - [PaypalCommerceInitializeOptions](README.md#paypalcommerceinitializeoptions)
 - [StripeElementOptions](README.md#stripeelementoptions)
 - [StripeEventType](README.md#stripeeventtype)
-- [UserExperienceSettingNames](README.md#userexperiencesettingnames)
-- [UserExperienceSettings](README.md#userexperiencesettings)
 
 ### Functions
 
@@ -770,18 +769,6 @@ ___
 ### StripeEventType
 
 Ƭ **StripeEventType**: [`StripeShippingEvent`](interfaces/StripeShippingEvent.md) \| [`StripeCustomerEvent`](interfaces/StripeCustomerEvent.md)
-
-___
-
-### UserExperienceSettingNames
-
-Ƭ **UserExperienceSettingNames**: ``"walletButtonsOnTop"``
-
-___
-
-### UserExperienceSettings
-
-Ƭ **UserExperienceSettings**: { [key in UserExperienceSettingNames]: boolean }
 
 ## Functions
 

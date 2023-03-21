@@ -7568,11 +7568,10 @@ declare enum UntrustedShippingCardVerificationType {
     PAN = "pan"
 }
 
-declare type UserExperienceSettingNames = 'walletButtonsOnTop';
-
-declare type UserExperienceSettings = {
-    [key in UserExperienceSettingNames]: boolean;
-};
+declare interface UserExperienceSettings {
+    walletButtonsOnTop: boolean;
+    floatingLabelEnabled: boolean;
+}
 
 declare interface VaultedInstrument {
     instrumentId: string;

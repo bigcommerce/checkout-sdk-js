@@ -450,13 +450,13 @@ ___
 
 ### getUserExperienceSettings
 
-▸ **getUserExperienceSettings**(): `undefined` \| [`UserExperienceSettings`](../README.md#userexperiencesettings)
+▸ **getUserExperienceSettings**(): `undefined` \| [`UserExperienceSettings`](UserExperienceSettings.md)
 
 Gets user experience settings.
 
 #### Returns
 
-`undefined` \| [`UserExperienceSettings`](../README.md#userexperiencesettings)
+`undefined` \| [`UserExperienceSettings`](UserExperienceSettings.md)
 
 The object of user experience settings if it is loaded, otherwise undefined.
 
