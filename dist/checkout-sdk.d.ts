@@ -1975,6 +1975,7 @@ declare interface CardPaymentMethodState_2 {
 declare interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
+    issuer?: string;
     valid?: {
         [key: string]: boolean;
     };
