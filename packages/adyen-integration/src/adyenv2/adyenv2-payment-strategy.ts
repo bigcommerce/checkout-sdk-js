@@ -494,17 +494,20 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
             ? this._cardVerificationComponent
             : this._paymentComponent;
 
-        if (
-            cardComponent?.props?.type === 'ideal' ||
-            !cardComponent?.componentRef?.showValidation ||
-            !cardComponent.state
-        ) {
+        if (!cardComponent?.componentRef?.showValidation || !cardComponent.state) {
             return;
         }
 
         cardComponent.componentRef.showValidation();
 
-        if (Object.keys(cardComponent.state).length === 0 || !cardComponent.state.isValid) {
+        /**
+         * For some reason adyen sdk doesn't return isValid for payment methods with select field in form(iDeal for example)
+         * so we need to check state issuer field
+         */
+        if (
+            Object.keys(cardComponent.state).length === 0 ||
+            (!cardComponent.state.isValid && !cardComponent.state.issuer)
+        ) {
             throw new PaymentInvalidFormError(this._mapCardErrors(cardComponent.state.errors));
         }
     }

@@ -536,6 +536,7 @@ export interface Card {
 export interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
+    issuer?: string;
     valid?: { [key: string]: boolean };
     errors?: CardStateErrors;
 }

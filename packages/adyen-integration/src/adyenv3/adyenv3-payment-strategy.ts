@@ -413,11 +413,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             ? this._cardVerificationComponent
             : this._paymentComponent;
 
-        if (
-            cardComponent?.props?.type === 'ideal' ||
-            !cardComponent?.componentRef?.showValidation ||
-            !cardComponent.state
-        ) {
+        if (!cardComponent?.componentRef?.showValidation || !cardComponent.state) {
             return;
         }
 
