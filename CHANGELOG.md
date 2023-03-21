@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.367.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.367.1...v1.367.2) (2023-03-21)
+
+
+### Bug Fixes
+
+* **payment:** INT-7044 BlueSnapDirect: Change identifier for credit card ([#1917](https://github.com/bigcommerce/checkout-sdk-js/issues/1917)) ([214928f](https://github.com/bigcommerce/checkout-sdk-js/commit/214928f846012000ab6bc11e425ab17d6807d2bf))
+
 ### [1.367.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.367.0...v1.367.1) (2023-03-21)
 
 
