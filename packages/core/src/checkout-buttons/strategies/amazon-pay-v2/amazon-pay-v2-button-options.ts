@@ -1,5 +1,8 @@
 import { BuyNowCartRequestBody } from '../../../cart';
-import { AmazonPayV2ButtonParameters } from '../../../payment/strategies/amazon-pay-v2';
+import {
+    AmazonPayV2ButtonConfig,
+    AmazonPayV2ButtonParameters,
+} from '../../../payment/strategies/amazon-pay-v2';
 
 export function isWithBuyNowFeatures(options: unknown): options is WithBuyNowFeature {
     if (!(options instanceof Object)) {
@@ -9,7 +12,7 @@ export function isWithBuyNowFeatures(options: unknown): options is WithBuyNowFea
     return 'buyNowInitializeOptions' in options;
 }
 
-export interface WithBuyNowFeature {
+export interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
     /**
      * The options that are required to initialize Buy Now functionality.
      */

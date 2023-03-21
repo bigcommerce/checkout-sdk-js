@@ -4,6 +4,10 @@ import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
 import { getAmazonPayV2ButtonParamsMock } from '../../../payment/strategies/amazon-pay-v2/amazon-pay-v2.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
+import {
+    AmazonPayV2LedgerCurrency,
+    AmazonPayV2Placement,
+} from '../../../payment/strategies/amazon-pay-v2';
 
 export enum Mode {
     Full,
@@ -60,7 +64,16 @@ export function getAmazonPayV2CheckoutButtonOptions(
             return { ...getAmazonPayV2CheckoutButtonOptions(Mode.Full), amazonpay: undefined };
 
         case Mode.BuyNowFlow:
-            return { ...methodId, containerId, amazonpay: { ...amazonPayV2BuyNowOptions } };
+            return {
+                ...methodId,
+                containerId,
+                amazonpay: {
+                    ...amazonPayV2BuyNowOptions,
+                    merchantId: '',
+                    placement: AmazonPayV2Placement.Checkout,
+                    ledgerCurrency: AmazonPayV2LedgerCurrency.USD,
+                },
+            };
 
         default:
             return { ...methodId, containerId };

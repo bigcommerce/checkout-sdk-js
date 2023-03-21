@@ -244,6 +244,7 @@ export interface AmazonPayV2ButtonRenderingOptions {
     containerId: string;
     decoupleCheckoutInitiation?: boolean;
     methodId: string;
+    buttonColor?: AmazonPayV2ButtonColor;
     options?: AmazonPayV2ButtonParameters;
     placement: AmazonPayV2Placement;
 }
