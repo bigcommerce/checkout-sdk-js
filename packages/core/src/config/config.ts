@@ -89,9 +89,10 @@ export interface StoreCurrency {
     thousandsSeparator: string;
 }
 
-export type UserExperienceSettingNames = 'walletButtonsOnTop';
-
-export type UserExperienceSettings = { [key in UserExperienceSettingNames]: boolean };
+export interface UserExperienceSettings {
+    walletButtonsOnTop: boolean;
+    floatingLabelEnabled: boolean;
+}
 
 export interface CheckoutSettings {
     features: { [featureName: string]: boolean };

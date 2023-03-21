@@ -20,6 +20,7 @@ export default function getConfig(): Config {
                 checkoutBillingSameAsShippingEnabled: true,
                 checkoutUserExperienceSettings: {
                     walletButtonsOnTop: false,
+                    floatingLabelEnabled: false,
                 },
                 enableOrderComments: true,
                 enableTermsAndConditions: false,
