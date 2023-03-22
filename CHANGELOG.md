@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.369.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.368.0...v1.369.0) (2023-03-22)
+
+
+### Features
+
+* **payment:** PAYPAL-000 added isCreditCardFormFields typeguard instead of isStoredCreditCardFormFields ([#1909](https://github.com/bigcommerce/checkout-sdk-js/issues/1909)) ([d30187d](https://github.com/bigcommerce/checkout-sdk-js/commit/d30187d2deb3eb9dc5c62386751a956035e57308))
+
 ## [1.368.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.367.2...v1.368.0) (2023-03-21)
 
 
