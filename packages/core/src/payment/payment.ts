@@ -1,4 +1,8 @@
-import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    BlueSnapDirectEcpInstrument,
+    BlueSnapDirectEcpPayload,
+    WithAccountCreation,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BrowserInfo } from '../common/browser-info';
 import { Omit } from '../common/types';
@@ -13,6 +17,7 @@ export default interface Payment {
 }
 
 export type PaymentInstrument =
+    | BlueSnapDirectEcpInstrument
     | CreditCardInstrument
     | (CreditCardInstrument & WithHostedFormNonce)
     | (CreditCardInstrument & WithDocumentInstrument)
@@ -23,6 +28,7 @@ export type PaymentInstrument =
     | FormattedPayload<
           | AdyenV2Instrument
           | AppleInstrument
+          | BlueSnapDirectEcpPayload
           | BoltInstrument
           | PaypalInstrument
           | FormattedHostedInstrument

@@ -11,6 +11,7 @@ export default interface Payment {
 }
 
 export type PaymentInstrument =
+    | BlueSnapDirectEcpInstrument
     | CreditCardInstrument
     | (CreditCardInstrument & WithHostedFormNonce)
     | (CreditCardInstrument & WithDocumentInstrument)
@@ -22,6 +23,7 @@ export type PaymentInstrument =
           | AdyenV2Instrument
           | AppleInstrument
           | BlueSnapDirectCreditCardInstrument
+          | BlueSnapDirectEcpPayload
           | BoltInstrument
           | PaypalInstrument
           | FormattedHostedInstrument
@@ -200,6 +202,28 @@ interface AdyenV2Card {
 interface BlueSnapDirectCreditCardInstrument {
     credit_card_token: {
         token: string;
+    };
+}
+
+type BlueSnapDirectEcpAccountType =
+    | 'CONSUMER_CHECKING'
+    | 'CONSUMER_SAVINGS'
+    | 'CORPORATE_CHECKING'
+    | 'CORPORATE_SAVINGS';
+
+export interface BlueSnapDirectEcpInstrument {
+    accountNumber: string;
+    accountType: BlueSnapDirectEcpAccountType;
+    shopperPermission: boolean;
+    routingNumber: string;
+}
+
+export interface BlueSnapDirectEcpPayload {
+    ecp: {
+        account_number: string;
+        account_type: BlueSnapDirectEcpAccountType;
+        shopper_permission: boolean;
+        routing_number: string;
     };
 }
 

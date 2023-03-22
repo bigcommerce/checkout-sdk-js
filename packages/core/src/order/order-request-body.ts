@@ -1,4 +1,7 @@
-import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    BlueSnapDirectEcpInstrument,
+    WithAccountCreation,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
     CreditCardInstrument,
@@ -41,6 +44,7 @@ export type OrderPaymentInstrument =
     | HostedVaultedInstrument
     | NonceInstrument
     | VaultedInstrument
+    | BlueSnapDirectEcpInstrument
     | (CreditCardInstrument & WithDocumentInstrument)
     | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
     | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
