@@ -184,6 +184,22 @@ describe('PayPalCommerceIntegrationService', () => {
             });
             expect(output).toBe(mockedOrderId);
         });
+
+        it('successfully creates paypal order with provided instrument data', async () => {
+            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue({
+                orderId: mockedOrderId,
+            });
+
+            const vaultedInstrumentData = { instrumentId: 'vaultedInstrumentIdMock' };
+
+            const output = await subject.createOrder(defaultMethodId, vaultedInstrumentData);
+
+            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(defaultMethodId, {
+                cartId: cart.id,
+                instrumentId: vaultedInstrumentData.instrumentId,
+            });
+            expect(output).toBe(mockedOrderId);
+        });
     });
 
     describe('#updateOrder', () => {

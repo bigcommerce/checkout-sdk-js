@@ -50,3 +50,11 @@ export { WithPayPalCommerceVenmoCustomerInitializeOptions } from './paypal-comme
  */
 export { default as createPayPalCommerceAlternativeMethodsButtonStrategy } from './paypal-commerce-alternative-methods/create-paypal-commerce-alternative-methods-button-strategy';
 export { WithPayPalCommerceAlternativeMethodsButtonOptions } from './paypal-commerce-alternative-methods/paypal-commerce-alternative-methods-button-initialize-options';
+
+/**
+ *
+ * PayPalCommerce Credit Cards strategies
+ *
+ */
+export { default as createPayPalCommerceCreditCardsPaymentStrategy } from './paypal-commerce-credit-card/create-paypal-commerce-credit-cards-payment-strategy';
+export { WithPayPalCommerceCreditCardsPaymentInitializeOptions } from './paypal-commerce-credit-card/paypal-commerce-credit-cards-payment-initialize-options';
