@@ -1,15 +1,11 @@
-import { isNil, omitBy } from 'lodash';
-
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     MissingDataError,
     MissingDataErrorType,
     NotImplementedError,
-    NotInitializedError,
-    NotInitializedErrorType,
 } from '../../../common/error/errors';
 import { OrderActionCreator } from '../../../order';
-import { HostedInstrument, PaymentMethod, VaultedInstrument } from '../../../payment';
+import { PaymentMethod } from '../../../payment';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentStrategyType from '../../payment-strategy-type';
@@ -21,13 +17,7 @@ import {
     ParamsForProvider,
     PaypalCommerceButtons,
     PaypalCommerceFields,
-    PaypalCommerceHostedFields,
-    PaypalCommerceHostedFieldsApprove,
-    PaypalCommerceHostedFieldsRenderOptions,
-    PaypalCommerceHostedFieldsState,
-    PaypalCommerceHostedFieldsSubmitOptions,
     PaypalCommerceInitializationData,
-    PaypalCommerceMessages,
     PaypalCommerceRequestSender,
     PaypalCommerceScriptLoader,
     PaypalCommerceSDK,
@@ -46,19 +36,6 @@ export interface OptionalParamsRenderButtons {
     onRenderButton?(): void;
 }
 
-export interface ParamsRenderHostedFields {
-    fields: PaypalCommerceHostedFieldsRenderOptions['fields'];
-    styles?: PaypalCommerceHostedFieldsRenderOptions['styles'];
-}
-
-interface EventsHostedFields {
-    blur?(event: PaypalCommerceHostedFieldsState): void;
-    focus?(event: PaypalCommerceHostedFieldsState): void;
-    cardTypeChange?(event: PaypalCommerceHostedFieldsState): void;
-    validityChange?(event: PaypalCommerceHostedFieldsState): void;
-    inputSubmitRequest?(event: PaypalCommerceHostedFieldsState): void;
-}
-
 export interface RenderApmFieldsParams {
     apmFieldsContainer: string;
     fundingKey: keyof PaypalCommerceSDKFunding;
@@ -71,8 +48,6 @@ export default class PaypalCommercePaymentProcessor {
     private _paypal?: PaypalCommerceSDK;
     private _paypalButtons?: PaypalCommerceButtons;
     private _paypalFields?: PaypalCommerceFields;
-    private _paypalMessages?: PaypalCommerceMessages;
-    private _hostedFields?: PaypalCommerceHostedFields;
     private _fundingSource?: string;
     private _orderId?: string;
     private _gatewayId?: string;
@@ -192,102 +167,11 @@ export default class PaypalCommercePaymentProcessor {
         return this._orderId;
     }
 
-    renderMessages(cartTotal: number, container: string): PaypalCommerceMessages {
-        if (!this._paypal || !this._paypal.Messages) {
-            throw new PaymentMethodClientUnavailableError();
-        }
-
-        this._paypalMessages = this._paypal.Messages({
-            amount: cartTotal,
-            placement: 'cart',
-            style: {
-                layout: 'text',
-            },
-        });
-        this._paypalMessages.render(container);
-
-        return this._paypalMessages;
-    }
-
-    async renderHostedFields(
-        cartId: string,
-        params: ParamsRenderHostedFields,
-        events?: EventsHostedFields,
-        getInstrumentParams?: () => HostedInstrument | VaultedInstrument,
-    ): Promise<void> {
-        if (!this._paypal || !this._paypal.HostedFields) {
-            throw new PaymentMethodClientUnavailableError();
-        }
-
-        const { fields, styles } = params;
-
-        if (!this._paypal.HostedFields.isEligible()) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-        }
-
-        this._hostedFields = await this._paypal.HostedFields.render({
-            fields,
-            styles,
-            paymentsSDK: true,
-            createOrder: async () => {
-                const providerId = 'paypalcommercecreditcardscheckout';
-                const orderCreationRequestBody =
-                    getInstrumentParams && typeof getInstrumentParams === 'function'
-                        ? { cartId, ...getInstrumentParams() }
-                        : { cartId };
-
-                const { orderId } = await this._paypalCommerceRequestSender.createOrder(
-                    providerId,
-                    orderCreationRequestBody,
-                );
-
-                return orderId;
-            },
-        });
-
-        if (events) {
-            (Object.keys(events) as Array<keyof EventsHostedFields>).forEach((key) => {
-                (this._hostedFields as PaypalCommerceHostedFields).on(
-                    key,
-                    events[key] as (event: PaypalCommerceHostedFieldsState) => void,
-                );
-            });
-        }
-    }
-
-    async submitHostedFields(
-        options?: PaypalCommerceHostedFieldsSubmitOptions,
-    ): Promise<PaypalCommerceHostedFieldsApprove> {
-        if (!this._hostedFields) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-        }
-
-        return this._hostedFields.submit(omitBy(options, isNil));
-    }
-
-    getHostedFieldsValidationState(): {
-        isValid: boolean;
-        fields: PaypalCommerceHostedFieldsState['fields'];
-    } {
-        if (!this._hostedFields) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-        }
-
-        const { fields } = this._hostedFields.getState();
-
-        const isValid = (
-            Object.keys(fields) as Array<keyof PaypalCommerceHostedFieldsState['fields']>
-        ).every((key) => fields[key]?.isValid);
-
-        return { isValid, fields };
-    }
-
     deinitialize() {
         this._paypalButtons?.close();
         this._paypal = undefined;
         this._paypalButtons = undefined;
         this._fundingSource = undefined;
-        this._hostedFields = undefined;
     }
 
     private async _setupPayment(cartId: string, params: ParamsForProvider = {}): Promise<string> {

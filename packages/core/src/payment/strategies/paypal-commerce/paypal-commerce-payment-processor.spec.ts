@@ -20,9 +20,6 @@ import { getPaypalCommerceMock } from './paypal-commerce.mock';
 
 import {
     ButtonsOptions,
-    ParamsRenderHostedFields,
-    PaypalCommerceHostedFields,
-    PaypalCommerceHostedFieldsApprove,
     PaypalCommercePaymentProcessor,
     PaypalCommerceRequestSender,
     PaypalCommerceScriptLoader,
@@ -36,14 +33,10 @@ describe('PaypalCommercePaymentProcessor', () => {
     let requestSender: RequestSender;
     let paypalCommercePaymentProcessor: PaypalCommercePaymentProcessor;
     let eventEmitter: EventEmitter;
-    let cardFieldsEventEmitter: EventEmitter;
-    let hostedFormOptions: ParamsRenderHostedFields;
-    let cardFields: PaypalCommerceHostedFields;
     let cart: Cart;
     let containers: HTMLElement[];
     let render: () => void;
     let renderApmFields: (container: string) => void;
-    let submit: () => PaypalCommerceHostedFieldsApprove;
     let orderID: string;
     let fundingSource: string;
     let store: CheckoutStore;
@@ -67,33 +60,13 @@ describe('PaypalCommercePaymentProcessor', () => {
         paypalCommerceRequestSender = new PaypalCommerceRequestSender(requestSender);
         paypalScriptLoader = new PaypalCommerceScriptLoader(getScriptLoader());
         eventEmitter = new EventEmitter();
-        cardFieldsEventEmitter = new EventEmitter();
 
         orderID = 'ORDER_ID';
         fundingSource = 'paypal';
         cart = getCart();
         paymentMethodMock = getPaypalCommerce();
-        submit = jest.fn(() => ({ orderId: orderID, liabilityShift: 'POSSIBLE' }));
 
-        cardFields = {
-            submit,
-            on: jest.fn((eventName, callback) => {
-                cardFieldsEventEmitter.on(eventName, callback);
-            }),
-            getState: jest.fn(() => ({
-                cards: [],
-                emittedBy: '',
-                fields: {},
-            })),
-        };
-
-        paypal = {
-            ...getPaypalCommerceMock(),
-            HostedFields: {
-                render: jest.fn(() => Promise.resolve(cardFields)),
-                isEligible: () => true,
-            },
-        };
+        paypal = getPaypalCommerceMock();
 
         jest.spyOn(paypalCommerceRequestSender, 'setupPayment').mockImplementation(
             jest.fn().mockReturnValue(Promise.resolve({ body: orderID })),
@@ -131,26 +104,6 @@ describe('PaypalCommercePaymentProcessor', () => {
         });
 
         jest.spyOn(paypalScriptLoader, 'getPayPalSDK').mockReturnValue(Promise.resolve(paypal));
-
-        hostedFormOptions = {
-            fields: {
-                number: { selector: 'cardCode', placeholder: 'Card code' },
-                expirationDate: { selector: 'cardName', placeholder: 'Card name' },
-                cvv: { selector: 'cardNumber', placeholder: 'Card number' },
-            },
-            styles: {
-                input: {
-                    color: '#000',
-                },
-                '.invalid': {
-                    color: '#f00',
-                    fontWeight: 'bold',
-                },
-                ':focus': {
-                    color: '#00f',
-                },
-            },
-        };
 
         containers = [
             appendContainer('cardCode'),
@@ -424,140 +377,6 @@ describe('PaypalCommercePaymentProcessor', () => {
                 onClick: expect.any(Function),
                 createOrder: expect.any(Function),
                 style: {},
-            });
-        });
-    });
-
-    describe('Hosted Fields', () => {
-        it('setting and render PaypalCommerce Hosted Fields without events', async () => {
-            await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions);
-
-            expect(paypal.HostedFields.render).toHaveBeenCalledWith({
-                ...hostedFormOptions,
-                createOrder: expect.any(Function),
-                paymentsSDK: true,
-            });
-        });
-
-        it('notifies when field receives focus', async () => {
-            const handleFocus = jest.fn();
-
-            await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, {
-                focus: handleFocus,
-            });
-
-            cardFieldsEventEmitter.emit('focus', { fieldType: 'cardCode' });
-
-            expect(handleFocus).toHaveBeenCalledWith({ fieldType: 'cardCode' });
-        });
-
-        it('notifies when field loses focus', async () => {
-            const handleBlur = jest.fn();
-
-            await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, {
-                blur: handleBlur,
-            });
-
-            cardFieldsEventEmitter.emit('blur', { fieldType: 'cardCode' });
-
-            expect(handleBlur).toHaveBeenCalledWith({ fieldType: 'cardCode' });
-        });
-
-        it('notifies when input receives submit event', async () => {
-            const handleEnter = jest.fn();
-
-            await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, {
-                inputSubmitRequest: handleEnter,
-            });
-
-            cardFieldsEventEmitter.emit('inputSubmitRequest', { fieldType: 'cardCode' });
-
-            expect(handleEnter).toHaveBeenCalledWith({ fieldType: 'cardCode' });
-        });
-
-        it('notifies when card number changes', async () => {
-            const handleCardTypeChange = jest.fn();
-
-            await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, {
-                cardTypeChange: handleCardTypeChange,
-            });
-
-            cardFieldsEventEmitter.emit('cardTypeChange', { cardType: 'Visa' });
-
-            expect(handleCardTypeChange).toHaveBeenCalledWith({ cardType: 'Visa' });
-        });
-
-        it('notifies when there are validation errors', async () => {
-            const handleValidate = jest.fn();
-            const fields = {
-                cardCode: { isValid: false },
-                cardNumber: { isValid: false },
-                cardExpiry: { isValid: false },
-            };
-
-            await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions, {
-                validityChange: handleValidate,
-            });
-
-            cardFieldsEventEmitter.emit('validityChange', { fields });
-
-            expect(handleValidate).toHaveBeenCalledWith({ fields });
-        });
-
-        it('submit Hosted Fields when call submitHostedFields', async () => {
-            await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions);
-            await paypalCommercePaymentProcessor.submitHostedFields({
-                cardholderName: 'cardholderName',
-                contingencies: undefined,
-            });
-
-            expect(submit).toHaveBeenCalledWith({ cardholderName: 'cardholderName' });
-        });
-
-        it('submitHostedFields should return orderId', async () => {
-            await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions);
-
-            const result = await paypalCommercePaymentProcessor.submitHostedFields();
-
-            expect(result.orderId).toEqual(orderID);
-        });
-
-        it('getHostedFieldsValidationState should return isValid = false and fields', async () => {
-            const fields = {
-                cvv: { isValid: false },
-                expirationDate: { isValid: false },
-                number: { isValid: false },
-            };
-
-            cardFields.getState = jest.fn(() => ({
-                cards: [],
-                emittedBy: '',
-                fields,
-            }));
-            await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions);
-
-            expect(await paypalCommercePaymentProcessor.getHostedFieldsValidationState()).toEqual({
-                isValid: false,
-                fields,
-            });
-        });
-
-        it('getHostedFieldsValidationState should return isValid = true and fields', async () => {
-            await paypalCommercePaymentProcessor.initialize(paymentMethodMock, 'USD');
-            await paypalCommercePaymentProcessor.renderHostedFields(cart.id, hostedFormOptions);
-
-            expect(await paypalCommercePaymentProcessor.getHostedFieldsValidationState()).toEqual({
-                isValid: true,
-                fields: {},
             });
         });
     });
