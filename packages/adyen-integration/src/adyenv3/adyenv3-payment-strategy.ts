@@ -33,6 +33,7 @@ import {
     AdyenComponent,
     AdyenComponentType,
     AdyenError,
+    AdyenPaymentMethodInitializationData,
     AdyenPaymentMethodType,
     AdyenPlaceholderData,
     AdyenV3ComponentState,
@@ -71,10 +72,9 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
         const paymentMethod = this._paymentIntegrationService
             .getState()
-            .getPaymentMethodOrThrow(options.methodId);
-        const {
-            initializationData: { environment, clientKey, paymentMethodsResponse },
-        } = paymentMethod;
+            .getPaymentMethodOrThrow<AdyenPaymentMethodInitializationData>(options.methodId);
+        const { environment, clientKey, paymentMethodsResponse } =
+            paymentMethod.initializationData || {};
 
         this._adyenClient = await this._scriptLoader.load({
             environment,
@@ -413,11 +413,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             ? this._cardVerificationComponent
             : this._paymentComponent;
 
-        if (
-            cardComponent?.props?.type === 'ideal' ||
-            !cardComponent?.componentRef?.showValidation ||
-            !cardComponent.state
-        ) {
+        if (!cardComponent?.componentRef?.showValidation || !cardComponent.state) {
             return;
         }
 

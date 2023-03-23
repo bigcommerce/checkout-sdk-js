@@ -9,6 +9,7 @@
 - [data](CardState.md#data)
 - [errors](CardState.md#errors)
 - [isValid](CardState.md#isvalid)
+- [issuer](CardState.md#issuer)
 - [valid](CardState.md#valid)
 
 ## Properties
@@ -28,6 +29,12 @@ ___
 ### isValid
 
 • `Optional` **isValid**: `boolean`
+
+___
+
+### issuer
+
+• `Optional` **issuer**: `string`
 
 ___
 

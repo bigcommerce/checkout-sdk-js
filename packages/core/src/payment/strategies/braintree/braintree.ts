@@ -1,3 +1,4 @@
+import { Omit } from '../../../common/types';
 import {
     GooglePayBraintreeDataRequest,
     GooglePayBraintreePaymentDataRequestV1,
@@ -6,7 +7,7 @@ import {
     TokenizePayload,
 } from '../googlepay';
 import { PaypalAuthorizeData, PaypalButtonOptions, PaypalButtonRender, PaypalSDK } from '../paypal';
-import { Omit } from '../../../common/types';
+
 import {
     VisaCheckoutInitOptions,
     VisaCheckoutPaymentSuccessPayload,

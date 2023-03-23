@@ -45,7 +45,7 @@ ___
 
 ### checkoutUserExperienceSettings
 
-• **checkoutUserExperienceSettings**: [`UserExperienceSettings`](../README.md#userexperiencesettings)
+• **checkoutUserExperienceSettings**: [`UserExperienceSettings`](UserExperienceSettings.md)
 
 ___
 

@@ -2,9 +2,6 @@ import { PaypalCommerceSDK } from './paypal-commerce-sdk';
 
 export function getPaypalCommerceMock(): PaypalCommerceSDK {
     return {
-        Messages: () => ({
-            render: jest.fn(),
-        }),
         PaymentFields: () => ({
             render: jest.fn(),
         }),
@@ -32,9 +29,5 @@ export function getPaypalCommerceMock(): PaypalCommerceSDK {
             close: jest.fn(),
             isEligible: jest.fn(() => true),
         }),
-        HostedFields: {
-            isEligible: () => true,
-            render: jest.fn(),
-        },
     };
 }

@@ -120,9 +120,7 @@ import {
 } from './strategies/paypal';
 import {
     createPaypalCommercePaymentProcessor,
-    PaypalCommerceCreditCardPaymentStrategy,
     PaypalCommerceFundingKeyResolver,
-    PaypalCommerceHostedForm,
     PaypalCommercePaymentStrategy,
     PaypalCommerceRequestSender,
 } from './strategies/paypal-commerce';
@@ -831,26 +829,6 @@ export default function createPaymentStrategyRegistry(
                 new PaypalCommerceFundingKeyResolver(),
                 new PaypalCommerceRequestSender(requestSender),
                 new LoadingIndicator({ styles: { backgroundColor: 'black' } }),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.PAYPAL_COMMERCE_CREDIT_CARD,
-        () =>
-            new PaypalCommerceCreditCardPaymentStrategy(
-                store,
-                paymentMethodActionCreator,
-                new PaypalCommerceHostedForm(
-                    createPaypalCommercePaymentProcessor(
-                        scriptLoader,
-                        requestSender,
-                        store,
-                        orderActionCreator,
-                        paymentActionCreator,
-                    ),
-                ),
-                orderActionCreator,
-                paymentActionCreator,
             ),
     );
 

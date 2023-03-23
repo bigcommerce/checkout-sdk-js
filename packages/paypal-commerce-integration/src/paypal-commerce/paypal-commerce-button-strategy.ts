@@ -13,6 +13,7 @@ import {
     ApproveCallbackPayload,
     PayPalBuyNowInitializeOptions,
     PayPalCommerceButtonsOptions,
+    PayPalCommerceInitializationData,
     ShippingAddressChangeCallbackPayload,
     ShippingOptionChangeCallbackPayload,
 } from '../paypal-commerce-types';
@@ -98,8 +99,9 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
-        const { isHostedCheckoutEnabled } = paymentMethod.initializationData;
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),

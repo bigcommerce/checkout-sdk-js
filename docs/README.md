@@ -27,7 +27,6 @@
 - [PaypalButtonStyleLayoutOption](enums/PaypalButtonStyleLayoutOption.md)
 - [PaypalButtonStyleShapeOption](enums/PaypalButtonStyleShapeOption.md)
 - [PaypalButtonStyleSizeOption](enums/PaypalButtonStyleSizeOption.md)
-- [PaypalCommerceFormFieldType](enums/PaypalCommerceFormFieldType.md)
 - [RadiusUnit](enums/RadiusUnit.md)
 - [StyleButtonColor](enums/StyleButtonColor.md)
 - [StyleButtonLabel](enums/StyleButtonLabel.md)
@@ -108,6 +107,7 @@
 - [BoltCustomerInitializeOptions](interfaces/BoltCustomerInitializeOptions.md)
 - [BoltPaymentInitializeOptions](interfaces/BoltPaymentInitializeOptions.md)
 - [BraintreeError](interfaces/BraintreeError.md)
+- [BraintreeError_2](interfaces/BraintreeError_2.md)
 - [BraintreeFormFieldCardTypeChangeEventData](interfaces/BraintreeFormFieldCardTypeChangeEventData.md)
 - [BraintreeFormFieldKeyboardEventData](interfaces/BraintreeFormFieldKeyboardEventData.md)
 - [BraintreeFormFieldOptions](interfaces/BraintreeFormFieldOptions.md)
@@ -191,6 +191,7 @@
 - [CustomerGroup](interfaces/CustomerGroup.md)
 - [CustomerPasswordRequirements](interfaces/CustomerPasswordRequirements.md)
 - [CustomerRequestOptions](interfaces/CustomerRequestOptions.md)
+- [DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions](interfaces/DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions.md)
 - [DigitalItem](interfaces/DigitalItem.md)
 - [DigitalRiverElementClasses](interfaces/DigitalRiverElementClasses.md)
 - [DigitalRiverPaymentInitializeOptions](interfaces/DigitalRiverPaymentInitializeOptions.md)
@@ -224,6 +225,7 @@
 - [HostedCardFieldOptions](interfaces/HostedCardFieldOptions.md)
 - [HostedCardFieldOptionsMap](interfaces/HostedCardFieldOptionsMap.md)
 - [HostedFieldStylesMap](interfaces/HostedFieldStylesMap.md)
+- [HostedFormErrorData](interfaces/HostedFormErrorData.md)
 - [HostedFormOptions](interfaces/HostedFormOptions.md)
 - [HostedInputBlurEvent](interfaces/HostedInputBlurEvent.md)
 - [HostedInputCardTypeChangeEvent](interfaces/HostedInputCardTypeChangeEvent.md)
@@ -283,6 +285,7 @@
 - [PayPalBuyNowInitializeOptions](interfaces/PayPalBuyNowInitializeOptions.md)
 - [PayPalCommerceButtonInitializeOptions](interfaces/PayPalCommerceButtonInitializeOptions.md)
 - [PayPalCommerceCreditButtonInitializeOptions](interfaces/PayPalCommerceCreditButtonInitializeOptions.md)
+- [PayPalCommerceCreditCardsPaymentInitializeOptions](interfaces/PayPalCommerceCreditCardsPaymentInitializeOptions.md)
 - [PayPalCommerceCreditCustomerInitializeOptions](interfaces/PayPalCommerceCreditCustomerInitializeOptions.md)
 - [PayPalCommerceCustomerInitializeOptions](interfaces/PayPalCommerceCustomerInitializeOptions.md)
 - [PayPalCommerceInlineButtonInitializeOptions](interfaces/PayPalCommerceInlineButtonInitializeOptions.md)
@@ -294,18 +297,7 @@
 - [PaymentRequestOptions](interfaces/PaymentRequestOptions.md)
 - [PaymentSettings](interfaces/PaymentSettings.md)
 - [PaypalButtonInitializeOptions](interfaces/PaypalButtonInitializeOptions.md)
-- [PaypalCommerceCreditCardPaymentInitializeOptions](interfaces/PaypalCommerceCreditCardPaymentInitializeOptions.md)
-- [PaypalCommerceFormFieldCardTypeChangeEventData](interfaces/PaypalCommerceFormFieldCardTypeChangeEventData.md)
-- [PaypalCommerceFormFieldKeyboardEventData](interfaces/PaypalCommerceFormFieldKeyboardEventData.md)
-- [PaypalCommerceFormFieldOptions](interfaces/PaypalCommerceFormFieldOptions.md)
-- [PaypalCommerceFormFieldStylesMap](interfaces/PaypalCommerceFormFieldStylesMap.md)
-- [PaypalCommerceFormFieldValidateErrorData](interfaces/PaypalCommerceFormFieldValidateErrorData.md)
-- [PaypalCommerceFormFieldValidateEventData](interfaces/PaypalCommerceFormFieldValidateEventData.md)
-- [PaypalCommerceFormFieldsMap](interfaces/PaypalCommerceFormFieldsMap.md)
-- [PaypalCommerceFormOptions](interfaces/PaypalCommerceFormOptions.md)
 - [PaypalCommercePaymentInitializeOptions](interfaces/PaypalCommercePaymentInitializeOptions.md)
-- [PaypalCommerceStoredCardFieldOptions](interfaces/PaypalCommerceStoredCardFieldOptions.md)
-- [PaypalCommerceStoredCardFieldsMap](interfaces/PaypalCommerceStoredCardFieldsMap.md)
 - [PaypalExpressPaymentInitializeOptions](interfaces/PaypalExpressPaymentInitializeOptions.md)
 - [PaypalFieldsStyleOptions](interfaces/PaypalFieldsStyleOptions.md)
 - [PaypalStyleOptions](interfaces/PaypalStyleOptions.md)
@@ -361,6 +353,7 @@
 - [TranslationData](interfaces/TranslationData.md)
 - [Translations](interfaces/Translations.md)
 - [UnknownObject](interfaces/UnknownObject.md)
+- [UserExperienceSettings](interfaces/UserExperienceSettings.md)
 - [VaultedInstrument](interfaces/VaultedInstrument.md)
 - [WechatDataPaymentMethodState](interfaces/WechatDataPaymentMethodState.md)
 - [WechatDataPaymentMethodState_2](interfaces/WechatDataPaymentMethodState_2.md)
@@ -372,6 +365,7 @@
 - [WithApplePayCustomerInitializeOptions](interfaces/WithApplePayCustomerInitializeOptions.md)
 - [WithApplePayPaymentInitializeOptions](interfaces/WithApplePayPaymentInitializeOptions.md)
 - [WithBoltPaymentInitializeOptions](interfaces/WithBoltPaymentInitializeOptions.md)
+- [WithBraintreePaypalCustomerInitializeOptions](interfaces/WithBraintreePaypalCustomerInitializeOptions.md)
 - [WithBuyNowFeature](interfaces/WithBuyNowFeature.md)
 - [WithCheckoutcomFawryInstrument](interfaces/WithCheckoutcomFawryInstrument.md)
 - [WithCheckoutcomSEPAInstrument](interfaces/WithCheckoutcomSEPAInstrument.md)
@@ -381,6 +375,7 @@
 - [WithMollieIssuerInstrument](interfaces/WithMollieIssuerInstrument.md)
 - [WithPayPalCommerceButtonInitializeOptions](interfaces/WithPayPalCommerceButtonInitializeOptions.md)
 - [WithPayPalCommerceCreditButtonInitializeOptions](interfaces/WithPayPalCommerceCreditButtonInitializeOptions.md)
+- [WithPayPalCommerceCreditCardsPaymentInitializeOptions](interfaces/WithPayPalCommerceCreditCardsPaymentInitializeOptions.md)
 - [WithPayPalCommerceCreditCustomerInitializeOptions](interfaces/WithPayPalCommerceCreditCustomerInitializeOptions.md)
 - [WithPayPalCommerceCustomerInitializeOptions](interfaces/WithPayPalCommerceCustomerInitializeOptions.md)
 - [WithPayPalCommerceInlineButtonInitializeOptions](interfaces/WithPayPalCommerceInlineButtonInitializeOptions.md)
@@ -425,6 +420,8 @@
 - [HostedFieldOptionsMap](README.md#hostedfieldoptionsmap)
 - [HostedFieldStyles](README.md#hostedfieldstyles)
 - [HostedFieldValidateEventData](README.md#hostedfieldvalidateeventdata)
+- [HostedFormErrorDataKeys](README.md#hostedformerrordatakeys)
+- [HostedFormErrorsData](README.md#hostedformerrorsdata)
 - [HostedInputStyles](README.md#hostedinputstyles)
 - [HostedVaultedInstrument](README.md#hostedvaultedinstrument)
 - [Instrument](README.md#instrument)
@@ -433,15 +430,8 @@
 - [OrderPayments](README.md#orderpayments)
 - [PaymentInitializeOptions](README.md#paymentinitializeoptions)
 - [PaymentInstrument](README.md#paymentinstrument)
-- [PaypalCommerceFormFieldBlurEventData](README.md#paypalcommerceformfieldblureventdata)
-- [PaypalCommerceFormFieldEnterEventData](README.md#paypalcommerceformfieldentereventdata)
-- [PaypalCommerceFormFieldFocusEventData](README.md#paypalcommerceformfieldfocuseventdata)
-- [PaypalCommerceFormFieldStyles](README.md#paypalcommerceformfieldstyles)
-- [PaypalCommerceInitializeOptions](README.md#paypalcommerceinitializeoptions)
 - [StripeElementOptions](README.md#stripeelementoptions)
 - [StripeEventType](README.md#stripeeventtype)
-- [UserExperienceSettingNames](README.md#userexperiencesettingnames)
-- [UserExperienceSettings](README.md#userexperiencesettings)
 
 ### Functions
 
@@ -580,7 +570,7 @@ ___
 
 ### CustomerInitializeOptions
 
-Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md) & [`WithPayPalCommerceCustomerInitializeOptions`](interfaces/WithPayPalCommerceCustomerInitializeOptions.md) & [`WithPayPalCommerceCreditCustomerInitializeOptions`](interfaces/WithPayPalCommerceCreditCustomerInitializeOptions.md) & [`WithPayPalCommerceVenmoCustomerInitializeOptions`](interfaces/WithPayPalCommerceVenmoCustomerInitializeOptions.md)
+Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md) & [`WithBraintreePaypalCustomerInitializeOptions`](interfaces/WithBraintreePaypalCustomerInitializeOptions.md) & [`WithPayPalCommerceCustomerInitializeOptions`](interfaces/WithPayPalCommerceCustomerInitializeOptions.md) & [`WithPayPalCommerceCreditCustomerInitializeOptions`](interfaces/WithPayPalCommerceCreditCustomerInitializeOptions.md) & [`WithPayPalCommerceVenmoCustomerInitializeOptions`](interfaces/WithPayPalCommerceVenmoCustomerInitializeOptions.md)
 
 ___
 
@@ -656,6 +646,18 @@ ___
 
 ___
 
+### HostedFormErrorDataKeys
+
+Ƭ **HostedFormErrorDataKeys**: ``"number"`` \| ``"expirationDate"`` \| ``"expirationMonth"`` \| ``"expirationYear"`` \| ``"cvv"`` \| ``"postalCode"``
+
+___
+
+### HostedFormErrorsData
+
+Ƭ **HostedFormErrorsData**: `Partial`<`Record`<[`HostedFormErrorDataKeys`](README.md#hostedformerrordatakeys), [`HostedFormErrorData`](interfaces/HostedFormErrorData.md)\>\>
+
+___
+
 ### HostedInputStyles
 
 Ƭ **HostedInputStyles**: `Partial`<`Pick`<`CSSStyleDeclaration`, ``"color"`` \| ``"fontFamily"`` \| ``"fontSize"`` \| ``"fontWeight"``\>\>
@@ -701,46 +703,13 @@ ___
 
 ### PaymentInitializeOptions
 
-Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md) & [`WithBoltPaymentInitializeOptions`](interfaces/WithBoltPaymentInitializeOptions.md) & [`WithCreditCardPaymentInitializeOptions`](interfaces/WithCreditCardPaymentInitializeOptions.md) & [`WithSquareV2PaymentInitializeOptions`](interfaces/WithSquareV2PaymentInitializeOptions.md)
+Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md) & [`WithBoltPaymentInitializeOptions`](interfaces/WithBoltPaymentInitializeOptions.md) & [`WithCreditCardPaymentInitializeOptions`](interfaces/WithCreditCardPaymentInitializeOptions.md) & [`WithPayPalCommerceCreditCardsPaymentInitializeOptions`](interfaces/WithPayPalCommerceCreditCardsPaymentInitializeOptions.md) & [`WithSquareV2PaymentInitializeOptions`](interfaces/WithSquareV2PaymentInitializeOptions.md)
 
 ___
 
 ### PaymentInstrument
 
 Ƭ **PaymentInstrument**: [`CardInstrument`](interfaces/CardInstrument.md) \| [`AccountInstrument`](README.md#accountinstrument)
-
-___
-
-### PaypalCommerceFormFieldBlurEventData
-
-Ƭ **PaypalCommerceFormFieldBlurEventData**: [`PaypalCommerceFormFieldKeyboardEventData`](interfaces/PaypalCommerceFormFieldKeyboardEventData.md)
-
-___
-
-### PaypalCommerceFormFieldEnterEventData
-
-Ƭ **PaypalCommerceFormFieldEnterEventData**: [`PaypalCommerceFormFieldKeyboardEventData`](interfaces/PaypalCommerceFormFieldKeyboardEventData.md)
-
-___
-
-### PaypalCommerceFormFieldFocusEventData
-
-Ƭ **PaypalCommerceFormFieldFocusEventData**: [`PaypalCommerceFormFieldKeyboardEventData`](interfaces/PaypalCommerceFormFieldKeyboardEventData.md)
-
-___
-
-### PaypalCommerceFormFieldStyles
-
-Ƭ **PaypalCommerceFormFieldStyles**: `Partial`<`Pick`<`CSSStyleDeclaration`, ``"color"`` \| ``"fontFamily"`` \| ``"fontSize"`` \| ``"fontWeight"``\>\>
-
-___
-
-### PaypalCommerceInitializeOptions
-
-Ƭ **PaypalCommerceInitializeOptions**: [`PaypalCommercePaymentInitializeOptions`](interfaces/PaypalCommercePaymentInitializeOptions.md) \| [`PaypalCommerceCreditCardPaymentInitializeOptions`](interfaces/PaypalCommerceCreditCardPaymentInitializeOptions.md)
-
-A set of options that are required to initialize the PayPal Commerce payment
-method could be used for PayPal Smart Payment Buttons or PayPal Credit Card methods.
 
 ___
 
@@ -753,18 +722,6 @@ ___
 ### StripeEventType
 
 Ƭ **StripeEventType**: [`StripeShippingEvent`](interfaces/StripeShippingEvent.md) \| [`StripeCustomerEvent`](interfaces/StripeCustomerEvent.md)
-
-___
-
-### UserExperienceSettingNames
-
-Ƭ **UserExperienceSettingNames**: ``"walletButtonsOnTop"``
-
-___
-
-### UserExperienceSettings
-
-Ƭ **UserExperienceSettings**: { [key in UserExperienceSettingNames]: boolean }
 
 ## Functions
 

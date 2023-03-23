@@ -19,6 +19,8 @@ import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
 import {
     PayPalButtonStyleOptions,
     PayPalBuyNowInitializeOptions,
+    PayPalCommerceInitializationData,
+    PayPalCreateOrderRequestBody,
     PayPalOrderDetails,
     PayPalSDK,
     StyleButtonColor,
@@ -48,7 +50,8 @@ export default class PayPalCommerceIntegrationService {
     ): Promise<PayPalSDK> {
         const state = this.paymentIntegrationService.getState();
         const currencyCode = providedCurrencyCode || state.getCartOrThrow().currency.code;
-        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
         this.paypalSdk = await this.paypalCommerceScriptLoader.getPayPalSDK(
             paymentMethod,
@@ -93,11 +96,15 @@ export default class PayPalCommerceIntegrationService {
      * Order creation methods
      *
      */
-    async createOrder(providerId: string): Promise<string> {
+    async createOrder(
+        providerId: string,
+        requestBody?: Partial<PayPalCreateOrderRequestBody>,
+    ): Promise<string> {
         const cartId = this.paymentIntegrationService.getState().getCartOrThrow().id;
 
         const { orderId } = await this.paypalCommerceRequestSender.createOrder(providerId, {
             cartId,
+            ...requestBody,
         });
 
         return orderId;

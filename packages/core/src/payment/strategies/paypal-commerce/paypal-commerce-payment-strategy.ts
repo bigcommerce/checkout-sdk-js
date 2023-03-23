@@ -15,9 +15,7 @@ import {
     ApproveCallbackPayload,
     ButtonsOptions,
     NON_INSTANT_PAYMENT_METHODS,
-    PaypalCommerceCreditCardPaymentInitializeOptions,
     PaypalCommerceFundingKeyResolver,
-    PaypalCommercePaymentInitializeOptions,
     PaypalCommercePaymentProcessor,
     PaypalCommerceRequestSender,
 } from './index';
@@ -73,12 +71,6 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             );
         }
 
-        if (!this._isPaypalCommerceOptionsPayments(paypalcommerce)) {
-            throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.paypalcommerce" argument should contain "container", "onRenderButton", "submitForm".',
-            );
-        }
-
         const {
             container,
             apmFieldsContainer,
@@ -87,10 +79,12 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             submitForm,
             onValidate,
         } = paypalcommerce;
+
         const {
             id: cartId,
             currency: { code: currencyCode },
         } = getCartOrThrow();
+
         const { firstName, lastName, email } = getBillingAddressOrThrow();
 
         const loadingIndicatorContainerId = container.split('#')[1];
@@ -262,14 +256,6 @@ export default class PaypalCommercePaymentStrategy implements PaymentStrategy {
             clearTimeout(this._pollingInterval);
             this._pollingTimer = 0;
         }
-    }
-
-    private _isPaypalCommerceOptionsPayments(
-        options:
-            | PaypalCommercePaymentInitializeOptions
-            | PaypalCommerceCreditCardPaymentInitializeOptions,
-    ): options is PaypalCommercePaymentInitializeOptions {
-        return !!(options as PaypalCommercePaymentInitializeOptions).container;
     }
 
     private _tokenizePayment({ orderID }: ApproveCallbackPayload, submitForm: () => void) {

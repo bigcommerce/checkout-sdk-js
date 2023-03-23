@@ -8,6 +8,7 @@ import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
+import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Timeout } from '@bigcommerce/request-sender';
 import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { createTimeout } from '@bigcommerce/request-sender';
@@ -997,11 +998,6 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      */
     amazonpay?: AmazonPayV2CustomerInitializeOptions;
     /**
-     * The options that are required to initialize the customer step of checkout
-     * when using Braintree PayPal provided.
-     */
-    braintreepaypal?: BraintreePaypalCustomerInitializeOptions;
-    /**
      * The options that are required to facilitate Braintree Credit. They can be
      * omitted unless you need to support Braintree Credit.
      */
@@ -1195,7 +1191,7 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * The options that are required to initialize the PayPal Commerce payment method.
      * They can be omitted unless you need to support PayPal Commerce.
      */
-    paypalcommerce?: PaypalCommerceInitializeOptions;
+    paypalcommerce?: PaypalCommercePaymentInitializeOptions;
     /**
      * The options that are required to initialize the Square payment method.
      * They can be omitted unless you need to support Square.
@@ -1450,6 +1446,12 @@ declare interface BoltPaymentInitializeOptions {
 }
 
 declare interface BraintreeError extends Error {
+    type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
+    code: string;
+    details?: unknown;
+}
+
+declare interface BraintreeError_2 extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
     details?: unknown;
@@ -1736,7 +1738,7 @@ declare interface BraintreePaypalCustomerInitializeOptions {
      *
      * @param error - The error object describing the failure.
      */
-    onError?(error: BraintreeError | StandardError): void;
+    onError?(error: BraintreeError_2 | StandardError_2): void;
 }
 
 declare interface BraintreeStoredCardFieldOptions extends BraintreeFormFieldOptions {
@@ -1973,6 +1975,7 @@ declare interface CardPaymentMethodState_2 {
 declare interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
+    issuer?: string;
     valid?: {
         [key: string]: boolean;
     };
@@ -4498,7 +4501,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -4517,6 +4520,13 @@ declare interface CustomerPasswordRequirements {
  */
 declare interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
+}
+
+declare interface DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions {
+    /**
+     * The form is data for Credit Card Form
+     */
+    form?: HostedFormOptions_2;
 }
 
 declare interface DigitalItem extends LineItem {
@@ -5042,6 +5052,16 @@ declare enum HostedFieldType {
 
 declare type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
 
+declare interface HostedFormErrorData {
+    isEmpty: boolean;
+    isPotentiallyValid: boolean;
+    isValid: boolean;
+}
+
+declare type HostedFormErrorDataKeys = 'number' | 'expirationDate' | 'expirationMonth' | 'expirationYear' | 'cvv' | 'postalCode';
+
+declare type HostedFormErrorsData = Partial<Record<HostedFormErrorDataKeys, HostedFormErrorData>>;
+
 declare interface HostedFormOptions {
     fields: HostedFieldOptionsMap;
     styles?: HostedFieldStylesMap;
@@ -5056,6 +5076,7 @@ declare interface HostedInputBlurEvent {
     type: HostedInputEventType.Blurred;
     payload: {
         fieldType: HostedFieldType;
+        errors?: HostedFormErrorsData;
     };
 }
 
@@ -6029,6 +6050,87 @@ declare interface PayPalCommerceCreditButtonInitializeOptions {
     onComplete?(): void;
 }
 
+/**
+ * A set of options that are required to initialize the PayPal Commerce payment
+ * method for presenting its credit card form.
+ *
+ * ```html
+ * <!-- These containers are where the hosted (iframed) credit card fields will be inserted -->
+ * <div id="card-number"></div>
+ * <div id="card-name"></div>
+ * <div id="card-expiry"></div>
+ * <div id="card-code"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalcommercecreditcard',
+ *     paypalcommercecreditcard: {
+ *         form: {
+ *             fields: {
+ *                 cardNumber: { containerId: 'card-number' },
+ *                 cardName: { containerId: 'card-name' },
+ *                 cardExpiry: { containerId: 'card-expiry' },
+ *                 cardCode: { containerId: 'card-code' },
+ *             },
+ *         },
+ *     },
+ * });
+ * ```
+ *
+ * Additional options can be passed in to customize the fields and register
+ * event callbacks.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalcommercecreditcard',
+ *     paypalcommercecreditcard: {
+ *         form: {
+ *             fields: {
+ *                 cardNumber: { containerId: 'card-number', placeholder: 'Number of card' },
+ *                 cardName: { containerId: 'card-name', placeholder: 'Name of card' },
+ *                 cardExpiry: { containerId: 'card-expiry', placeholder: 'Expiry of card' },
+ *                 cardCode: { containerId: 'card-code', placeholder: 'Code of card' },
+ *             },
+ *             styles: {
+ *                 default: {
+ *                     color: '#000',
+ *                 },
+ *                 error: {
+ *                     color: '#f00',
+ *                 },
+ *                 focus: {
+ *                     color: '#0f0',
+ *                 },
+ *             },
+ *             onBlur({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onFocus({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onEnter({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onCardTypeChange({ cardType }) {
+ *                 console.log(cardType);
+ *             },
+ *             onValidate({ errors, isValid }) {
+ *                 console.log(errors);
+ *                 console.log(isValid);
+ *             },
+ *         },
+ *     },
+ * });
+ * ```
+ */
+declare interface PayPalCommerceCreditCardsPaymentInitializeOptions {
+    /**
+     * The form is data for Credit Card Form
+     */
+    form: HostedFormOptions_2;
+}
+
 declare interface PayPalCommerceCreditCustomerInitializeOptions {
     /**
      * The ID of a container which the checkout button should be inserted into.
@@ -6128,7 +6230,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -6249,209 +6351,6 @@ declare enum PaypalButtonStyleSizeOption {
 
 /**
  * A set of options that are required to initialize the PayPal Commerce payment
- * method for presenting its credit card form.
- *
- * ```html
- * <!-- These containers are where the hosted (iframed) credit card fields will be inserted -->
- * <div id="card-number"></div>
- * <div id="card-name"></div>
- * <div id="card-expiry"></div>
- * <div id="card-code"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'paypalcommerce',
- *     paypalcommerce: {
- *         form: {
- *             fields: {
- *                 cardNumber: { containerId: 'card-number' },
- *                 cardName: { containerId: 'card-name' },
- *                 cardExpiry: { containerId: 'card-expiry' },
- *                 cardCode: { containerId: 'card-code' },
- *             },
- *         },
- *     },
- * });
- * ```
- *
- * Additional options can be passed in to customize the fields and register
- * event callbacks.
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'paypalcommerce',
- *     creditCard: {
- *         form: {
- *             fields: {
- *                 cardNumber: { containerId: 'card-number', placeholder: 'Number of card' },
- *                 cardName: { containerId: 'card-name', placeholder: 'Name of card' },
- *                 cardExpiry: { containerId: 'card-expiry', placeholder: 'Expiry of card' },
- *                 cardCode: { containerId: 'card-code', placeholder: 'Code of card' },
- *             },
- *             styles: {
- *                 default: {
- *                     color: '#000',
- *                 },
- *                 error: {
- *                     color: '#f00',
- *                 },
- *                 focus: {
- *                     color: '#0f0',
- *                 },
- *             },
- *             onBlur({ fieldType }) {
- *                 console.log(fieldType);
- *             },
- *             onFocus({ fieldType }) {
- *                 console.log(fieldType);
- *             },
- *             onEnter({ fieldType }) {
- *                 console.log(fieldType);
- *             },
- *             onCardTypeChange({ cardType }) {
- *                 console.log(cardType);
- *             },
- *             onValidate({ errors, isValid }) {
- *                 console.log(errors);
- *                 console.log(isValid);
- *             },
- *         },
- *     },
- * });
- * ```
- */
-declare interface PaypalCommerceCreditCardPaymentInitializeOptions {
-    /**
-     * The form is data for Credit Card Form
-     */
-    form: PaypalCommerceFormOptions;
-}
-
-declare type PaypalCommerceFormFieldBlurEventData = PaypalCommerceFormFieldKeyboardEventData;
-
-declare interface PaypalCommerceFormFieldCardTypeChangeEventData {
-    cardType?: string;
-}
-
-declare type PaypalCommerceFormFieldEnterEventData = PaypalCommerceFormFieldKeyboardEventData;
-
-declare type PaypalCommerceFormFieldFocusEventData = PaypalCommerceFormFieldKeyboardEventData;
-
-declare interface PaypalCommerceFormFieldKeyboardEventData {
-    fieldType: string;
-}
-
-declare interface PaypalCommerceFormFieldOptions {
-    containerId: string;
-    placeholder?: string;
-}
-
-declare type PaypalCommerceFormFieldStyles = Partial<Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>>;
-
-declare interface PaypalCommerceFormFieldStylesMap {
-    default?: PaypalCommerceFormFieldStyles;
-    error?: PaypalCommerceFormFieldStyles;
-    focus?: PaypalCommerceFormFieldStyles;
-}
-
-declare enum PaypalCommerceFormFieldType {
-    CardCode = "cardCode",
-    CardCodeVerification = "cardCodeVerification",
-    CardExpiry = "cardExpiry",
-    CardName = "cardName",
-    CardNumber = "cardNumber",
-    CardNumberVerification = "cardNumberVerification"
-}
-
-declare interface PaypalCommerceFormFieldValidateErrorData {
-    fieldType: string;
-    message: string;
-    type: string;
-}
-
-declare interface PaypalCommerceFormFieldValidateEventData {
-    errors: {
-        [PaypalCommerceFormFieldType.CardCode]?: PaypalCommerceFormFieldValidateErrorData[];
-        [PaypalCommerceFormFieldType.CardExpiry]?: PaypalCommerceFormFieldValidateErrorData[];
-        [PaypalCommerceFormFieldType.CardName]?: PaypalCommerceFormFieldValidateErrorData[];
-        [PaypalCommerceFormFieldType.CardNumber]?: PaypalCommerceFormFieldValidateErrorData[];
-        [PaypalCommerceFormFieldType.CardCodeVerification]?: PaypalCommerceFormFieldValidateErrorData[];
-        [PaypalCommerceFormFieldType.CardNumberVerification]?: PaypalCommerceFormFieldValidateErrorData[];
-    };
-    isValid: boolean;
-}
-
-declare interface PaypalCommerceFormFieldsMap {
-    [PaypalCommerceFormFieldType.CardCode]?: PaypalCommerceFormFieldOptions;
-    [PaypalCommerceFormFieldType.CardExpiry]: PaypalCommerceFormFieldOptions;
-    [PaypalCommerceFormFieldType.CardName]: PaypalCommerceFormFieldOptions;
-    [PaypalCommerceFormFieldType.CardNumber]: PaypalCommerceFormFieldOptions;
-}
-
-declare interface PaypalCommerceFormOptions {
-    /**
-     * Containers for fields can be to present in one set of values
-     *
-     * ```js
-     * { cardNumber: { containerId: 'card-number' },
-     *   cardName: { containerId: 'card-name' },
-     *   cardExpiry: { containerId: 'card-expiry' },
-     *   cardCode: { containerId: 'card-code' }, }
-     * ```
-     *
-     *   Or in another set of values.
-     *
-     * ```js
-     * { cardCodeVerification: { containerId: 'card-number' },
-     *   cardNumberVerification: { containerId: 'card-name' }, }
-     * ```
-     */
-    fields: PaypalCommerceFormFieldsMap | PaypalCommerceStoredCardFieldsMap;
-    /**
-     * Styles for inputs. Change the width, height and other styling.
-     *
-     * ```js
-     *  default: { color: '#000' },
-     *  error: { color: '#f00' },
-     *  focus: { color: '#0f0' }
-     * ```
-     */
-    styles?: PaypalCommerceFormFieldStylesMap;
-    /**
-     * A callback that gets called when a field loses focus.
-     */
-    onBlur?(data: PaypalCommerceFormFieldBlurEventData): void;
-    /**
-     * A callback that gets called when activity within
-     * the number field has changed such that the possible
-     * card type has changed.
-     */
-    onCardTypeChange?(data: PaypalCommerceFormFieldCardTypeChangeEventData): void;
-    /**
-     * A callback that gets called when a field gains focus.
-     */
-    onFocus?(data: PaypalCommerceFormFieldFocusEventData): void;
-    /**
-     * A callback that gets called when the validity of a field has changed.
-     */
-    onValidate?(data: PaypalCommerceFormFieldValidateEventData): void;
-    /**
-     * A callback that gets called when the user requests submission
-     * of an input field, by pressing the Enter or Return key
-     * on their keyboard, or mobile equivalent.
-     */
-    onEnter?(data: PaypalCommerceFormFieldEnterEventData): void;
-}
-
-/**
- * A set of options that are required to initialize the PayPal Commerce payment
- * method could be used for PayPal Smart Payment Buttons or PayPal Credit Card methods.
- */
-declare type PaypalCommerceInitializeOptions = PaypalCommercePaymentInitializeOptions | PaypalCommerceCreditCardPaymentInitializeOptions;
-
-/**
- * A set of options that are required to initialize the PayPal Commerce payment
  * method for presenting its PayPal button.
  *
  * Please note that the minimum version of checkout-sdk is 1.100
@@ -6561,15 +6460,6 @@ declare interface PaypalCommercePaymentInitializeOptions {
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
     onError?(error: Error): void;
-}
-
-declare interface PaypalCommerceStoredCardFieldOptions extends PaypalCommerceFormFieldOptions {
-    instrumentId: string;
-}
-
-declare interface PaypalCommerceStoredCardFieldsMap {
-    [PaypalCommerceFormFieldType.CardCodeVerification]?: PaypalCommerceStoredCardFieldOptions;
-    [PaypalCommerceFormFieldType.CardNumberVerification]?: PaypalCommerceStoredCardFieldOptions;
 }
 
 /**
@@ -7554,11 +7444,10 @@ declare enum UntrustedShippingCardVerificationType {
     PAN = "pan"
 }
 
-declare type UserExperienceSettingNames = 'walletButtonsOnTop';
-
-declare type UserExperienceSettings = {
-    [key in UserExperienceSettingNames]: boolean;
-};
+declare interface UserExperienceSettings {
+    walletButtonsOnTop: boolean;
+    floatingLabelEnabled: boolean;
+}
 
 declare interface VaultedInstrument {
     instrumentId: string;
@@ -7626,6 +7515,14 @@ declare interface WithBoltPaymentInitializeOptions {
     bolt?: BoltPaymentInitializeOptions;
 }
 
+declare interface WithBraintreePaypalCustomerInitializeOptions {
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using Braintree PayPal.
+     */
+    braintreepaypal?: BraintreePaypalCustomerInitializeOptions;
+}
+
 declare interface WithBuyNowFeature {
     /**
      * The options that are required to initialize Buy Now functionality.
@@ -7668,6 +7565,11 @@ declare interface WithPayPalCommerceButtonInitializeOptions {
 
 declare interface WithPayPalCommerceCreditButtonInitializeOptions {
     paypalcommercecredit?: PayPalCommerceCreditButtonInitializeOptions;
+}
+
+declare interface WithPayPalCommerceCreditCardsPaymentInitializeOptions {
+    paypalcommercecreditcards?: PayPalCommerceCreditCardsPaymentInitializeOptions;
+    paypalcommerce?: DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions;
 }
 
 declare interface WithPayPalCommerceCreditCustomerInitializeOptions {

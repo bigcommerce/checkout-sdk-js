@@ -536,6 +536,7 @@ export interface Card {
 export interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
+    issuer?: string;
     valid?: { [key: string]: boolean };
     errors?: CardStateErrors;
 }
@@ -893,4 +894,11 @@ export function isAccountState(param: any): param is AccountState {
     const bankSupported = ['ideal', 'sepadirectdebit', 'directEbanking', 'giropay'];
 
     return bankSupported.indexOf(param.data.paymentMethod.type) !== -1;
+}
+
+export interface AdyenPaymentMethodInitializationData {
+    originKey?: string;
+    clientKey?: string;
+    environment?: string;
+    paymentMethodsResponse?: PaymentMethodsResponse;
 }
