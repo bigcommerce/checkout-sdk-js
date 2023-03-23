@@ -301,7 +301,7 @@ ___
 
 ### paypalcommerce
 
-• `Optional` **paypalcommerce**: [`PaypalCommercePaymentInitializeOptions`](PaypalCommercePaymentInitializeOptions.md) \| [`PaypalCommerceCreditCardPaymentInitializeOptions`](PaypalCommerceCreditCardPaymentInitializeOptions.md)
+• `Optional` **paypalcommerce**: [`PaypalCommercePaymentInitializeOptions`](PaypalCommercePaymentInitializeOptions.md)
 
 The options that are required to initialize the PayPal Commerce payment method.
 They can be omitted unless you need to support PayPal Commerce.

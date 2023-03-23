@@ -27,7 +27,6 @@
 - [PaypalButtonStyleLayoutOption](enums/PaypalButtonStyleLayoutOption.md)
 - [PaypalButtonStyleShapeOption](enums/PaypalButtonStyleShapeOption.md)
 - [PaypalButtonStyleSizeOption](enums/PaypalButtonStyleSizeOption.md)
-- [PaypalCommerceFormFieldType](enums/PaypalCommerceFormFieldType.md)
 - [RadiusUnit](enums/RadiusUnit.md)
 - [StyleButtonColor](enums/StyleButtonColor.md)
 - [StyleButtonLabel](enums/StyleButtonLabel.md)
@@ -298,18 +297,7 @@
 - [PaymentRequestOptions](interfaces/PaymentRequestOptions.md)
 - [PaymentSettings](interfaces/PaymentSettings.md)
 - [PaypalButtonInitializeOptions](interfaces/PaypalButtonInitializeOptions.md)
-- [PaypalCommerceCreditCardPaymentInitializeOptions](interfaces/PaypalCommerceCreditCardPaymentInitializeOptions.md)
-- [PaypalCommerceFormFieldCardTypeChangeEventData](interfaces/PaypalCommerceFormFieldCardTypeChangeEventData.md)
-- [PaypalCommerceFormFieldKeyboardEventData](interfaces/PaypalCommerceFormFieldKeyboardEventData.md)
-- [PaypalCommerceFormFieldOptions](interfaces/PaypalCommerceFormFieldOptions.md)
-- [PaypalCommerceFormFieldStylesMap](interfaces/PaypalCommerceFormFieldStylesMap.md)
-- [PaypalCommerceFormFieldValidateErrorData](interfaces/PaypalCommerceFormFieldValidateErrorData.md)
-- [PaypalCommerceFormFieldValidateEventData](interfaces/PaypalCommerceFormFieldValidateEventData.md)
-- [PaypalCommerceFormFieldsMap](interfaces/PaypalCommerceFormFieldsMap.md)
-- [PaypalCommerceFormOptions](interfaces/PaypalCommerceFormOptions.md)
 - [PaypalCommercePaymentInitializeOptions](interfaces/PaypalCommercePaymentInitializeOptions.md)
-- [PaypalCommerceStoredCardFieldOptions](interfaces/PaypalCommerceStoredCardFieldOptions.md)
-- [PaypalCommerceStoredCardFieldsMap](interfaces/PaypalCommerceStoredCardFieldsMap.md)
 - [PaypalExpressPaymentInitializeOptions](interfaces/PaypalExpressPaymentInitializeOptions.md)
 - [PaypalFieldsStyleOptions](interfaces/PaypalFieldsStyleOptions.md)
 - [PaypalStyleOptions](interfaces/PaypalStyleOptions.md)
@@ -442,11 +430,6 @@
 - [OrderPayments](README.md#orderpayments)
 - [PaymentInitializeOptions](README.md#paymentinitializeoptions)
 - [PaymentInstrument](README.md#paymentinstrument)
-- [PaypalCommerceFormFieldBlurEventData](README.md#paypalcommerceformfieldblureventdata)
-- [PaypalCommerceFormFieldEnterEventData](README.md#paypalcommerceformfieldentereventdata)
-- [PaypalCommerceFormFieldFocusEventData](README.md#paypalcommerceformfieldfocuseventdata)
-- [PaypalCommerceFormFieldStyles](README.md#paypalcommerceformfieldstyles)
-- [PaypalCommerceInitializeOptions](README.md#paypalcommerceinitializeoptions)
 - [StripeElementOptions](README.md#stripeelementoptions)
 - [StripeEventType](README.md#stripeeventtype)
 
@@ -727,39 +710,6 @@ ___
 ### PaymentInstrument
 
 Ƭ **PaymentInstrument**: [`CardInstrument`](interfaces/CardInstrument.md) \| [`AccountInstrument`](README.md#accountinstrument)
-
-___
-
-### PaypalCommerceFormFieldBlurEventData
-
-Ƭ **PaypalCommerceFormFieldBlurEventData**: [`PaypalCommerceFormFieldKeyboardEventData`](interfaces/PaypalCommerceFormFieldKeyboardEventData.md)
-
-___
-
-### PaypalCommerceFormFieldEnterEventData
-
-Ƭ **PaypalCommerceFormFieldEnterEventData**: [`PaypalCommerceFormFieldKeyboardEventData`](interfaces/PaypalCommerceFormFieldKeyboardEventData.md)
-
-___
-
-### PaypalCommerceFormFieldFocusEventData
-
-Ƭ **PaypalCommerceFormFieldFocusEventData**: [`PaypalCommerceFormFieldKeyboardEventData`](interfaces/PaypalCommerceFormFieldKeyboardEventData.md)
-
-___
-
-### PaypalCommerceFormFieldStyles
-
-Ƭ **PaypalCommerceFormFieldStyles**: `Partial`<`Pick`<`CSSStyleDeclaration`, ``"color"`` \| ``"fontFamily"`` \| ``"fontSize"`` \| ``"fontWeight"``\>\>
-
-___
-
-### PaypalCommerceInitializeOptions
-
-Ƭ **PaypalCommerceInitializeOptions**: [`PaypalCommercePaymentInitializeOptions`](interfaces/PaypalCommercePaymentInitializeOptions.md) \| [`PaypalCommerceCreditCardPaymentInitializeOptions`](interfaces/PaypalCommerceCreditCardPaymentInitializeOptions.md)
-
-A set of options that are required to initialize the PayPal Commerce payment
-method could be used for PayPal Smart Payment Buttons or PayPal Credit Card methods.
 
 ___
 
