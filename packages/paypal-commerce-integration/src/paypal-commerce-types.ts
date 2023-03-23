@@ -1,6 +1,8 @@
 import {
     BuyNowCartRequestBody,
+    HostedInstrument,
     ShippingOption,
+    VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
@@ -122,7 +124,9 @@ export interface PayPalCommerceHostedFieldOption {
 }
 
 export interface PayPalCommerceHostedFields {
-    submit(options?: PayPalCommerceHostedFieldsSubmitOptions): PayPalCommerceHostedFieldsApprove;
+    submit(
+        options?: PayPalCommerceHostedFieldsSubmitOptions,
+    ): Promise<PayPalCommerceHostedFieldsApprove>;
     getState(): PayPalCommerceHostedFieldsState;
     on(eventName: string, callback: (event: PayPalCommerceHostedFieldsState) => void): void;
 }
@@ -134,7 +138,7 @@ export interface PayPalCommerceHostedFieldsSubmitOptions {
 
 export interface PayPalCommerceHostedFieldsApprove {
     orderId: string;
-    liabilityShift: 'POSSIBLE' | 'NO' | 'UNKNOWN';
+    liabilityShift?: 'POSSIBLE' | 'NO' | 'UNKNOWN';
 }
 
 export interface PayPalCommerceHostedFieldsState {
@@ -388,6 +392,6 @@ export interface PayPalUpdateOrderRequestBody {
     selectedShippingOption?: ShippingOption;
 }
 
-export interface PayPalCreateOrderRequestBody {
+export interface PayPalCreateOrderRequestBody extends HostedInstrument, VaultedInstrument {
     cartId: string;
 }

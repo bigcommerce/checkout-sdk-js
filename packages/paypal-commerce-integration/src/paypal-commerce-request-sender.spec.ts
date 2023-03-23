@@ -27,9 +27,12 @@ describe('PayPalCommerceRequestSender', () => {
     });
 
     it('creates order with provided data', async () => {
-        await paypalCommerceRequestSender.createOrder('paypalcommerce', {
+        const requestBody = {
             cartId: 'abc',
-        });
+            instrumentId: 'vaultedInstrumentId',
+        };
+
+        await paypalCommerceRequestSender.createOrder('paypalcommerce', requestBody);
 
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,
@@ -40,7 +43,7 @@ describe('PayPalCommerceRequestSender', () => {
         expect(requestSender.post).toHaveBeenCalledWith(
             '/api/storefront/payment/paypalcommerce',
             expect.objectContaining({
-                body: { cartId: 'abc' },
+                body: requestBody,
                 headers,
             }),
         );

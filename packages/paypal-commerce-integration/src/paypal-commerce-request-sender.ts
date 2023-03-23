@@ -17,7 +17,7 @@ export default class PayPalCommerceRequestSender {
 
     async createOrder(
         providerId: string,
-        requestBody: PayPalCreateOrderRequestBody,
+        requestBody: Partial<PayPalCreateOrderRequestBody>,
     ): Promise<PayPalOrderData> {
         const url = `/api/storefront/payment/${providerId}`;
         const body = requestBody;
