@@ -1,4 +1,4 @@
-import { UsBankAccountInstrument } from '../../payment';
+import { UsBankAccountInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default function isUsBankAccountInstrumentLike(
     instrument: any,

@@ -4,6 +4,7 @@ export { AccountInstrument, CardInstrument } from './instrument';
 export {
     default as Payment,
     CreditCardInstrument,
+    UsBankAccountInstrument,
     WithCheckoutcomiDealInstrument,
     WithCheckoutcomFawryInstrument,
     WithCheckoutcomSEPAInstrument,

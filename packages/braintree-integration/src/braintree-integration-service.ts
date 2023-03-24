@@ -16,6 +16,7 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeShippingAddressOverride,
+    BraintreeUsBankAccount
 } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import isBraintreeError from './is-braintree-error';
@@ -29,6 +30,7 @@ export default class BraintreeIntegrationService {
         paypal?: BraintreeDataCollector;
     } = {};
     private paypalCheckout?: BraintreePaypalCheckout;
+    private usBankAccount?: Promise<BraintreeUsBankAccount>;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
@@ -90,6 +92,17 @@ export default class BraintreeIntegrationService {
         );
 
         return this.paypalCheckout;
+    }
+
+    async getUsBankAccount() {
+        if (!this.usBankAccount) {
+            this.usBankAccount = Promise.all([
+                this.getClient(),
+                this.braintreeScriptLoader.loadUsBankAccount(),
+            ]).then(([client, usBankAccount]) => usBankAccount.create({ client }));
+        }
+
+        return this.usBankAccount;
     }
 
     async getDataCollector(options?: { paypal: boolean }): Promise<BraintreeDataCollector> {
@@ -180,6 +193,10 @@ export default class BraintreeIntegrationService {
         if (element) {
             element.remove();
         }
+    }
+
+    getSessionId(): Promise<string | undefined> {
+        return this.getDataCollector().then(({ deviceData }) => deviceData);
     }
 
     async teardown(): Promise<void> {

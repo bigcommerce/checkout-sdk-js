@@ -1,12 +1,8 @@
 export * from './braintree';
 export * from './visacheckout';
 
-export {
-    BraintreePaymentInitializeOptions,
-    BraintreeAchPaymentInitializeOptions,
-} from './braintree-payment-options';
+export { BraintreePaymentInitializeOptions } from './braintree-payment-options';
 export { default as BraintreeCreditCardPaymentStrategy } from './braintree-credit-card-payment-strategy';
-export { default as BraintreeAchPaymentStrategy } from './braintree-ach-payment-strategy';
 export { default as BraintreePaymentProcessor } from './braintree-payment-processor';
 export { default as BraintreePaypalPaymentStrategy } from './braintree-paypal-payment-strategy';
 export { default as BraintreeVenmoPaymentStrategy } from './braintree-venmo-payment-strategy';

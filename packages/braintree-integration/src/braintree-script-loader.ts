@@ -7,6 +7,7 @@ import {
     BraintreeDataCollectorCreator,
     BraintreeHostWindow,
     BraintreePaypalCheckoutCreator,
+    BraintreeUsBankAccountCreator
 } from './braintree';
 
 const VERSION = '3.81.0';
@@ -51,5 +52,17 @@ export default class BraintreeScriptLoader {
         }
 
         return this.braintreeHostWindow.braintree.dataCollector;
+    }
+
+    async loadUsBankAccount(): Promise<BraintreeUsBankAccountCreator> {
+        await this.scriptLoader.loadScript(
+            `//js.braintreegateway.com/web/${VERSION}/js/us-bank-account.min.js`,
+        );
+
+        if (!this.braintreeHostWindow.braintree || !this.braintreeHostWindow.braintree.usBankAccount) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this.braintreeHostWindow.braintree.usBankAccount;
     }
 }

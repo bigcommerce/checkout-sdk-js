@@ -56,7 +56,6 @@ export interface BraintreeSDK {
     threeDSecure?: BraintreeThreeDSecureCreator;
     venmo?: BraintreeVenmoCheckoutCreator;
     visaCheckout?: BraintreeVisaCheckoutCreator;
-    usBankAccount?: BraintreeUsBankAccountCreator;
 }
 
 export interface BraintreePaypalRequest {
@@ -106,23 +105,6 @@ export interface BraintreeTokenizePayload {
         };
         payerAcceptance: boolean;
         cartAmountImmutable: boolean;
-    };
-}
-
-export interface UsBankAccountSuccessPayload {
-    accountNumber: string;
-    routingNumber: string;
-    ownershipType: string;
-    accountType: string;
-    firstName?: string;
-    lastName?: string;
-    businessName?: string;
-    billingAddress: {
-        streetAddress: string;
-        extendedAddress: string;
-        locality: string;
-        region: string;
-        postalCode: string;
     };
 }
 
@@ -505,21 +487,6 @@ export type BraintreeVisaCheckoutCreator = BraintreeModuleCreator<BraintreeVisaC
 export interface BraintreeVisaCheckout extends BraintreeModule {
     tokenize(payment: VisaCheckoutPaymentSuccessPayload): Promise<VisaCheckoutTokenizedPayload>;
     createInitOptions(options: Partial<VisaCheckoutInitOptions>): VisaCheckoutInitOptions;
-}
-
-/**
- *
- * Braintree US Bank Account
- *
- */
-
-export type BraintreeUsBankAccountCreator = BraintreeModuleCreator<BraintreeUsBankAccount>;
-
-export interface BraintreeUsBankAccount extends BraintreeModule {
-    tokenize(payload: {
-        bankDetails: UsBankAccountSuccessPayload;
-        mandateText: string;
-    }): Promise<{ nonce: string; details: Record<string, string> }>;
 }
 
 /**
