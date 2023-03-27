@@ -19,13 +19,13 @@
     "url": "https://github.com/bigcommerce/checkout-sdk-js/issues"
   },
   "engines": {
-    "node": ">=14.18",
-    "npm": "6"
+    "node": ">=16",
+    "npm": "8"
   },
   "prettier": "@bigcommerce/eslint-config/prettier",
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
   "scripts": {
-    "prepare": "check-node-version --node '>=14.18' --npm '>=6'",
+    "prepare": "check-node-version --node '>=16' --npm '>=8'",
     "build": "npm run bundle && npm run bundle-dts",
     "build:link": "rm -rf dist && npx nx run core:build --skip-nx-cache && npm run bundle-dts",
     "prebuild-cdn": "rm -rf dist-cdn",
