@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.370.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.369.2...v1.370.0) (2023-03-27)
+
+
+### Features
+
+* **payment:** BOLT-483 Create Bolt button strategy ([ace611f](https://github.com/bigcommerce/checkout-sdk-js/commit/ace611fb0370b555d4a8deb428f1309bd8120cbb))
+
 ### [1.369.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.369.1...v1.369.2) (2023-03-23)
 
 
