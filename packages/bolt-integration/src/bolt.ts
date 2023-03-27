@@ -1,4 +1,5 @@
 import {
+    BuyNowCartRequestBody,
     NonceInstrument,
     PaymentMethod,
     WithAccountCreation,
@@ -6,6 +7,7 @@ import {
 
 export interface BoltHostWindow extends Window {
     BoltCheckout?: BoltCheckout;
+    BoltConnect?: BoltConnect;
     Bolt?(publicKey: string): BoltEmbedded;
 }
 
@@ -16,6 +18,10 @@ export interface BoltCheckout {
     openCheckout(email: string, callbacks?: BoltOpenCheckoutCallbacks): void;
     setClientCustomCallbacks(callbacks: BoltCallbacks): void;
     setOrderId(orderId: number): Promise<void>;
+}
+
+export interface BoltConnect {
+    setupProductPageCheckout?(): void;
 }
 
 export interface BoltOpenCheckoutCallbacks {
@@ -99,3 +105,8 @@ export interface BoltInitializationData {
 }
 
 export type BoltPaymentData = WithAccountCreation & NonceInstrument;
+
+export interface BoltBuyNowInitializeOptions {
+    storefrontApiToken?: string;
+    getBuyNowCartRequestBody(): BuyNowCartRequestBody;
+}
