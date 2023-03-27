@@ -9,6 +9,7 @@ import {
     BraintreePaypalCheckoutCreator,
     BraintreeShippingAddressOverride,
     BraintreeTokenizePayload,
+    BraintreeUsBankAccount,
 } from './braintree';
 
 export function getClientMock(): BraintreeClient {
@@ -22,6 +23,13 @@ export function getDataCollectorMock(): BraintreeDataCollector {
     return {
         deviceData: getDeviceDataMock(),
         teardown: jest.fn(() => Promise.resolve()),
+    };
+}
+
+export function getBankAccountMock(): BraintreeUsBankAccount {
+    return {
+        teardown: jest.fn(() => Promise.resolve()),
+        tokenize: jest.fn(() => Promise.resolve({ nonce: 'NONCE', details: {} })),
     };
 }
 
@@ -125,6 +133,19 @@ export function getBraintree(): PaymentMethod {
             merchantId: '',
             testMode: true,
             isVisaCheckoutEnabled: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+    };
+}
+
+export function getBraintreeAch(): PaymentMethod {
+    return {
+        id: 'braintreeach',
+        logoUrl: '',
+        method: 'paypal-ach',
+        supportedCards: [],
+        config: {
+            displayName: 'Braintree ACH',
         },
         type: 'PAYMENT_TYPE_API',
     };

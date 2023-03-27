@@ -16,7 +16,7 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeShippingAddressOverride,
-    BraintreeUsBankAccount
+    BraintreeUsBankAccount,
 } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import isBraintreeError from './is-braintree-error';

@@ -4,22 +4,23 @@ import {
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
+    OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentArgumentInvalidError,
+    PaymentInitializeOptions,
+    PaymentIntegrationService,
     PaymentMethod,
-    CheckoutButtonInitializeOptions,
+    PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
     UsBankAccountInstrument,
-    OrderFinalizationNotRequiredError,
-    PaymentIntegrationService,
-    PaymentMethodFailedError
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { BraintreeError, BraintreeUsBankAccount, UsBankAccountSuccessPayload } from '../braintree';
-import isBraintreeError from '../is-braintree-error';
+import { BraintreeUsBankAccount, UsBankAccountSuccessPayload } from '../braintree';
 import BraintreeIntegrationService from '../braintree-integration-service';
+import isBraintreeError from '../is-braintree-error';
 import isUsBankAccountInstrumentLike from '../is-us-bank-account-instrument-like';
+
 import { WithBraintreePaypalAchInitializeOptions } from './braintree-paypal-ach-initialize-options';
 
 export default class BraintreePaypalAchPaymentStrategy implements PaymentStrategy {
@@ -32,8 +33,11 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         private braintreeIntegrationService: BraintreeIntegrationService,
     ) {}
 
-    async initialize(options: CheckoutButtonInitializeOptions & WithBraintreePaypalAchInitializeOptions): Promise<void> {
+    async initialize(
+        options: PaymentInitializeOptions & WithBraintreePaypalAchInitializeOptions,
+    ): Promise<void> {
         const { braintreeach } = options;
+        const { mandateText } = braintreeach || {};
 
         if (!options.methodId) {
             throw new InvalidArgumentError(
@@ -47,31 +51,28 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
             );
         }
 
-        if (!braintreeach?.mandateText) {
+        if (!mandateText) {
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.braintreeach.mandateText" argument is not provided.',
             );
         }
 
-        this.mandateText = braintreeach?.mandateText;
+        this.mandateText = mandateText;
 
         await this.paymentIntegrationService.loadPaymentMethod(options.methodId);
 
         const state = this.paymentIntegrationService.getState();
 
-        this.paymentMethod = state.getPaymentMethod(options.methodId);
+        this.paymentMethod = state.getPaymentMethodOrThrow(options.methodId);
 
-        if (!this.paymentMethod?.clientToken) {
+        if (!this.paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        await this.initializeUsBankAccount(this.paymentMethod?.clientToken);
+        await this.initializeUsBankAccount(this.paymentMethod.clientToken);
     }
 
-    async execute(
-        orderRequest: OrderRequestBody,
-        options: PaymentRequestOptions,
-    ): Promise<void> {
+    async execute(orderRequest: OrderRequestBody, options: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = orderRequest;
 
         if (!payment) {
@@ -98,12 +99,12 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
 
             const paymentPayload = {
                 formattedPayload: {
-                    vault_payment_instrument: null,
+                    vault_payment_instrument: true,
                     set_as_default_stored_instrument: null,
                     device_info: sessionId || null,
                     paypal_account: {
                         token: nonce,
-                        email: details?.email || null,
+                        email: details.email || null,
                     },
                 },
             };
@@ -124,7 +125,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
 
     async deinitialize(): Promise<void> {
         this.mandateText = '';
-        this.usBankAccount?.teardown();
+        await this.usBankAccount?.teardown();
     }
 
     private getBankDetails(paymentData: UsBankAccountInstrument): UsBankAccountSuccessPayload {
@@ -137,12 +138,12 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
             ownershipType,
             ...(ownershipType === 'personal'
                 ? {
-                    firstName: paymentData.firstName,
-                    lastName: paymentData.lastName,
-                }
+                      firstName: paymentData.firstName,
+                      lastName: paymentData.lastName,
+                  }
                 : {
-                    businessName: paymentData.businessName,
-                }),
+                      businessName: paymentData.businessName,
+                  }),
             accountType,
             billingAddress: {
                 streetAddress: paymentData.address1,
@@ -154,7 +155,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         };
     }
 
-    private handleError(error: BraintreeError | Error): never {
+    private handleError(error: unknown): never {
         if (!isBraintreeError(error)) {
             throw error;
         }

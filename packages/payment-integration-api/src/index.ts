@@ -116,6 +116,7 @@ export {
     PaymentResponseBody,
     PaymentStatusTypes,
     PaymentStrategy,
+    PaymentInstrument,
     PaymentStrategyFactory,
     PaymentStrategyResolveId,
     VaultedInstrument,

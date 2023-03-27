@@ -39,7 +39,8 @@ export type PaymentInstrument =
     | ThreeDSVaultedInstrument
     | VaultedInstrument
     | (VaultedInstrument & WithHostedFormNonce)
-    | WithAccountCreation;
+    | WithAccountCreation
+    | UsBankAccountInstrument;
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;

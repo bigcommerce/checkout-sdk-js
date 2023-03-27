@@ -41,7 +41,8 @@ export type PaymentInstrument =
     | ThreeDSVaultedInstrument
     | VaultedInstrument
     | (VaultedInstrument & WithHostedFormNonce)
-    | WithAccountCreation;
+    | WithAccountCreation
+    | UsBankAccountInstrument;
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
@@ -61,6 +62,22 @@ export interface CreditCardInstrument {
     extraData?: any;
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
     browser_info?: BrowserInfo;
+}
+
+export interface UsBankAccountInstrument {
+    accountNumber: string;
+    routingNumber: string;
+    ownershipType: 'Personal' | 'Business';
+    accountType: 'Checking' | 'Savings';
+    firstName?: string;
+    lastName?: string;
+    businessName?: string;
+    address1: string;
+    address2: string;
+    city: string;
+    countryCode: string;
+    postalCode: string;
+    stateOrProvinceCode: string;
 }
 
 export interface WithDocumentInstrument {

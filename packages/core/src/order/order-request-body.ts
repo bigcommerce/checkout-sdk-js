@@ -6,6 +6,7 @@ import {
     HostedInstrument,
     HostedVaultedInstrument,
     NonceInstrument,
+    UsBankAccountInstrument,
     VaultedInstrument,
     WithCheckoutcomFawryInstrument,
     WithCheckoutcomiDealInstrument,
@@ -35,6 +36,7 @@ export default interface OrderRequestBody {
 }
 
 export type OrderPaymentInstrument =
+    | UsBankAccountInstrument
     | CreditCardInstrument
     | HostedInstrument
     | HostedCreditCardInstrument

@@ -1,7 +1,7 @@
 export interface BraintreePaypalAchInitializeOptions {
-    mandateText?: string
+    mandateText?: string;
 }
 
 export interface WithBraintreePaypalAchInitializeOptions {
-    braintreeach: BraintreePaypalAchInitializeOptions;
+    braintreeach?: BraintreePaypalAchInitializeOptions;
 }

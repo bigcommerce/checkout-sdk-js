@@ -1,12 +1,18 @@
-import { UsBankAccountInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    PaymentInstrument,
+    UsBankAccountInstrument,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default function isUsBankAccountInstrumentLike(
-    instrument: any,
+    instrument?: PaymentInstrument,
 ): instrument is UsBankAccountInstrument {
+    if (!instrument) {
+        return false;
+    }
+
     return (
-        instrument &&
-        typeof instrument.accountNumber === 'string' &&
-        typeof instrument.routingNumber === 'string' &&
-        typeof instrument.ownershipType === 'string'
+        'accountNumber' in instrument &&
+        'routingNumber' in instrument &&
+        'ownershipType' in instrument
     );
 }
