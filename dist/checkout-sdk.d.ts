@@ -7543,7 +7543,7 @@ declare interface WithBraintreePaypalCustomerInitializeOptions {
     braintreepaypal?: BraintreePaypalCustomerInitializeOptions;
 }
 
-declare interface WithBuyNowFeature {
+declare interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
     /**
      * The options that are required to initialize Buy Now functionality.
      */

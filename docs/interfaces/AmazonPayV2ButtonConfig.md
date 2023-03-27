@@ -10,6 +10,8 @@
 
   ↳ [`AmazonPayV2NewButtonParams`](AmazonPayV2NewButtonParams.md)
 
+  ↳ [`WithBuyNowFeature`](WithBuyNowFeature.md)
+
 ## Table of contents
 
 ### Properties

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.371.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.370.0...v1.371.0) (2023-03-27)
+
+
+### Features
+
+* **payment:** PAYPAL-2004 added ability to change style for amazonpay button ([#1914](https://github.com/bigcommerce/checkout-sdk-js/issues/1914)) ([3019104](https://github.com/bigcommerce/checkout-sdk-js/commit/30191047cbc9719664680a375ce026123ab18328))
+
 ## [1.370.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.369.2...v1.370.0) (2023-03-27)
 
 
