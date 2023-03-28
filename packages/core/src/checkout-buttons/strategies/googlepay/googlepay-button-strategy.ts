@@ -65,7 +65,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         if (hasBuyNowCartOptions && !this._buyNowCart) {
             const { buyNowInitializeOptions } = googlePayOptions;
             await this._googlePayPaymentProcessor.initialize(this._getMethodId(), () =>
-                this._createBuyNowCartCallback({ buyNowInitializeOptions })
+                this._createBuyNowCartCallback({ buyNowInitializeOptions }),
             );
         } else {
             await this._googlePayPaymentProcessor.initialize(this._getMethodId());
@@ -84,8 +84,8 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     }
 
     private async _createBuyNowCartCallback(buyNowInitializeOptions: any) {
-       this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
-       console.log('BUY NOW CART', this._buyNowCart);
+        this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
+        console.log('BUY NOW CART', this._buyNowCart);
     }
 
     private _createSignInButton(
