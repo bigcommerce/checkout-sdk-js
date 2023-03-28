@@ -62,7 +62,12 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         }
 
         this._googlePayPaymentProcessor.updateBuyNowFlowFlag(hasBuyNowCartOptions);
-        await this._googlePayPaymentProcessor.initialize(this._getMethodId());
+        if (this._buyNowCart) {
+            await this._googlePayPaymentProcessor.initialize(this._getMethodId());
+        } else {
+            const { buyNowInitializeOptions } = googlePayOptions;
+            await this._googlePayPaymentProcessor.initialize(this._getMethodId(),() => this._createBuyNowCart({buyNowInitializeOptions}));
+        }
 
         this._walletButton = this._createSignInButton(containerId, googlePayOptions, currencyCode);
     }
@@ -213,26 +218,44 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     ): Promise<void> {
         event.preventDefault();
 
-        this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
-
-        const cart = this._buyNowCart || this._store.getState().cart.getCartOrThrow();
-        const hasPhysicalItems = getShippableItemsCount(cart) > 0;
-
-        if (this._buyNowCart && currencyCode) {
-            const payloadToUpdate = {
-                currencyCode,
-                totalPrice: String(cart.cartAmount),
-            };
-
-            this._googlePayPaymentProcessor.updatePaymentDataRequest(payloadToUpdate);
-
-            await this._store.dispatch(
-                this._checkoutActionCreator.loadCheckout(this._buyNowCart.id),
-            );
-        }
+        // this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
+        //
+        // const cart = this._buyNowCart || this._store.getState().cart.getCartOrThrow();
+        // const hasPhysicalItems = getShippableItemsCount(cart) > 0;
+        //
+        // if (this._buyNowCart && currencyCode) {
+        //     const payloadToUpdate = {
+        //         currencyCode,
+        //         totalPrice: String(cart.cartAmount),
+        //     };
+        //
+        //     this._googlePayPaymentProcessor.updatePaymentDataRequest(payloadToUpdate);
+        //
+        //     await this._store.dispatch(
+        //         this._checkoutActionCreator.loadCheckout(this._buyNowCart.id),
+        //     );
+        // }
 
         try {
             const paymentData = await this._googlePayPaymentProcessor.displayWallet();
+
+            this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
+
+            const cart = this._buyNowCart || this._store.getState().cart.getCartOrThrow();
+            const hasPhysicalItems = getShippableItemsCount(cart) > 0;
+
+            if (this._buyNowCart && currencyCode) {
+                const payloadToUpdate = {
+                    currencyCode,
+                    totalPrice: String(cart.cartAmount),
+                };
+
+                this._googlePayPaymentProcessor.updatePaymentDataRequest(payloadToUpdate);
+
+                await this._store.dispatch(
+                    this._checkoutActionCreator.loadCheckout(this._buyNowCart.id),
+                );
+            }
 
             await this._googlePayPaymentProcessor.handleSuccess(paymentData);
 

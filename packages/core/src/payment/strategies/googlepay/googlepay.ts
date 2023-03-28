@@ -30,6 +30,9 @@ export type GooglePayCreator = BraintreeModuleCreator<GooglePayBraintreeSDK>;
 
 export interface GooglePayPaymentOptions {
     environment: EnvironmentType;
+    paymentDataCallbacks?: {
+        onPaymentDataChanged(intermediatePaymentData: any): any;
+    }
 }
 
 export type GooglePayVerifyPayload = BraintreeVerifyPayload | undefined;
@@ -198,6 +201,7 @@ export interface GooglePayPaymentDataRequestV2 {
         totalPrice?: string;
         checkoutOption?: string;
     };
+    callbackIntents?: string[];
     emailRequired?: boolean;
     shippingAddressRequired?: boolean;
     shippingAddressParameters?: {

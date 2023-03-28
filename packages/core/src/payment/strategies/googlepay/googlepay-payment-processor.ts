@@ -47,10 +47,10 @@ export default class GooglePayPaymentProcessor {
         private _requestSender: RequestSender,
     ) {}
 
-    initialize(methodId: string): Promise<void> {
+    initialize(methodId: string, createBuynowCart?: any): Promise<void> {
         this._methodId = methodId;
 
-        return this._configureWallet();
+        return this._configureWallet(createBuynowCart);
     }
 
     deinitialize(): Promise<void> {
@@ -109,7 +109,7 @@ export default class GooglePayPaymentProcessor {
         this._isBuyNowFlow = isBuyNowFlow;
     }
 
-    private _configureWallet(): Promise<void> {
+    private _configureWallet(createBuynowCart: any): Promise<void> {
         const features = this._store.getState().config.getStoreConfig()?.checkoutSettings.features;
         const options =
             features && features['INT-5826.google_hostname_alias']
@@ -138,7 +138,7 @@ export default class GooglePayPaymentProcessor {
                         hasShippingAddress,
                     ),
                 ]).then(([googlePay, paymentDataRequest]) => {
-                    this._googlePayClient = this._getGooglePayClient(googlePay, testMode);
+                    this._googlePayClient = this._getGooglePayClient(googlePay, testMode, createBuynowCart);
                     this._paymentDataRequest = paymentDataRequest;
 
                     return this._googlePayClient
@@ -196,17 +196,51 @@ export default class GooglePayPaymentProcessor {
             throw new RemoteCheckoutSynchronizationError();
         }
 
+        this._paymentDataRequest = {
+            ...this._paymentDataRequest,
+            transactionInfo: {
+                ...this._paymentDataRequest.transactionInfo,
+                currencyCode: 'USD',
+                totalPrice: '1',
+                totalPriceStatus: 'ESTIMATED',
+            },
+            callbackIntents: ["OFFER"],
+        };
+
         return this._paymentDataRequest;
     }
 
-    private _getGooglePayClient(google: GooglePaySDK, testMode?: boolean): GooglePayClient {
+    private _getGooglePayClient(google: GooglePaySDK, testMode?: boolean, createBuyNowCart?: any): GooglePayClient {
         if (testMode === undefined) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const environment: EnvironmentType = testMode ? 'TEST' : 'PRODUCTION';
 
-        return new google.payments.api.PaymentsClient({ environment });
+        return new google.payments.api.PaymentsClient({
+            environment,
+            paymentDataCallbacks: {
+                onPaymentDataChanged: async (intermediatePaymentData: any) => {
+                    if (intermediatePaymentData.callbackTrigger == "INITIALIZE") {
+                        try {
+                            const buyNowCart = await createBuyNowCart();
+                            console.log('BUY NOW CART', buyNowCart);
+                        } catch (error) {
+                            console.log('ERROR', error);
+                        }
+                    }
+                    console.log('intermediatePaymentData', intermediatePaymentData.callbackTrigger, createBuyNowCart);
+
+                    return {
+                        newTransactionInfo: {
+                            currencyCode: 'USD',
+                            totalPrice: '225',
+                            totalPriceStatus: 'FINAL',
+                        }
+                    }
+                }
+            },
+        });
     }
 
     private _getMethodId(): string {
