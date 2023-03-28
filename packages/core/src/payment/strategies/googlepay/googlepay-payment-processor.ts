@@ -210,7 +210,11 @@ export default class GooglePayPaymentProcessor {
         return this._paymentDataRequest;
     }
 
-    private _getGooglePayClient(google: GooglePaySDK, testMode?: boolean, createBuyNowCart?: any): GooglePayClient {
+    private _getGooglePayClient(
+        google: GooglePaySDK,
+        testMode?: boolean,
+        createBuyNowCart?: any
+    ): GooglePayClient {
         if (testMode === undefined) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
@@ -221,7 +225,7 @@ export default class GooglePayPaymentProcessor {
             environment,
             paymentDataCallbacks: {
                 onPaymentDataChanged: async (intermediatePaymentData: any) => {
-                    if (intermediatePaymentData.callbackTrigger == "INITIALIZE") {
+                    if (intermediatePaymentData.callbackTrigger === 'INITIALIZE') {
                         try {
                             const buyNowCart = await createBuyNowCart();
                             console.log('BUY NOW CART', buyNowCart);
@@ -229,16 +233,16 @@ export default class GooglePayPaymentProcessor {
                             console.log('ERROR', error);
                         }
                     }
-                    console.log('intermediatePaymentData', intermediatePaymentData.callbackTrigger, createBuyNowCart);
+                    // console.log('intermediatePaymentData', intermediatePaymentData.callbackTrigger, createBuyNowCart);
 
                     return {
                         newTransactionInfo: {
                             currencyCode: 'USD',
                             totalPrice: '225',
                             totalPriceStatus: 'FINAL',
-                        }
-                    }
-                }
+                        },
+                    };
+                },
             },
         });
     }

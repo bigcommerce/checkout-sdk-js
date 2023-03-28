@@ -32,7 +32,7 @@ export interface GooglePayPaymentOptions {
     environment: EnvironmentType;
     paymentDataCallbacks?: {
         onPaymentDataChanged(intermediatePaymentData: any): any;
-    }
+    };
 }
 
 export type GooglePayVerifyPayload = BraintreeVerifyPayload | undefined;
