@@ -73,8 +73,8 @@ describe('PayPalCommerceScriptLoader', () => {
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
+            'disable-funding': ['credit', 'paylater', 'venmo'],
+            'enable-funding': ['card'],
             commit: true,
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
@@ -107,8 +107,8 @@ describe('PayPalCommerceScriptLoader', () => {
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
+            'disable-funding': ['credit', 'paylater', 'venmo'],
+            'enable-funding': ['card'],
             commit: true,
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'EUR',
@@ -146,7 +146,7 @@ describe('PayPalCommerceScriptLoader', () => {
     });
 
     it('loads PayPalCommerce script with disabled card funding', async () => {
-        await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
+        await paypalLoader.getPayPalSDK(paymentMethod, 'USD', false);
 
         const paypalSdkLoaderOptions = {
             'client-id': paymentMethod.initializationData.clientId,
@@ -180,8 +180,8 @@ describe('PayPalCommerceScriptLoader', () => {
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'venmo'],
-            'enable-funding': ['credit', 'paylater'],
+            'disable-funding': ['venmo'],
+            'enable-funding': ['card', 'credit', 'paylater'],
             commit: true,
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
@@ -207,8 +207,8 @@ describe('PayPalCommerceScriptLoader', () => {
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
+            'disable-funding': ['credit', 'paylater', 'venmo'],
+            'enable-funding': ['card'],
             commit: true,
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
@@ -234,8 +234,8 @@ describe('PayPalCommerceScriptLoader', () => {
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater'],
-            'enable-funding': ['venmo'],
+            'disable-funding': ['credit', 'paylater'],
+            'enable-funding': ['card', 'venmo'],
             commit: true,
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
@@ -261,8 +261,8 @@ describe('PayPalCommerceScriptLoader', () => {
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
+            'disable-funding': ['credit', 'paylater', 'venmo'],
+            'enable-funding': ['card'],
             commit: true,
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
@@ -296,8 +296,8 @@ describe('PayPalCommerceScriptLoader', () => {
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo', 'mybank', 'sofort', 'sepa'],
-            'enable-funding': ['bancontact', 'giropay', 'ideal'],
+            'disable-funding': ['credit', 'paylater', 'venmo', 'mybank', 'sofort', 'sepa'],
+            'enable-funding': ['card', 'bancontact', 'giropay', 'ideal'],
             commit: true,
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
@@ -362,8 +362,8 @@ describe('PayPalCommerceScriptLoader', () => {
             'merchant-id': paymentMethod.initializationData.merchantId,
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
+            'disable-funding': ['credit', 'paylater', 'venmo'],
+            'enable-funding': ['card'],
             commit: true,
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
@@ -423,7 +423,7 @@ describe('PayPalCommerceScriptLoader', () => {
     it('successfully enables all provided funding sources', async () => {
         const paymentMethodMock = {
             ...paymentMethod,
-            id: 'paypalcommercecreditcards',
+            id: 'paypalcommerce',
             initializationData: {
                 ...paymentMethod.initializationData,
                 isInlineCheckoutEnabled: false,
@@ -435,7 +435,7 @@ describe('PayPalCommerceScriptLoader', () => {
             },
         };
 
-        await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', false);
+        await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD');
 
         const paypalSdkLoaderOptions = {
             'client-id': paymentMethod.initializationData.clientId,
@@ -444,7 +444,7 @@ describe('PayPalCommerceScriptLoader', () => {
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
             'disable-funding': undefined,
             'enable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            commit: false,
+            commit: true,
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'USD',
             intent: 'capture',

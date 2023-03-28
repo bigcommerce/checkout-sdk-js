@@ -70,7 +70,7 @@ export default class PayPalCommerceScriptLoader {
         currencyCode: string,
         initializesOnCheckoutPage = true,
     ): PayPalCommerceScriptParams {
-        const { id, clientToken, initializationData } = paymentMethod;
+        const { clientToken, initializationData } = paymentMethod;
 
         if (!initializationData?.clientId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -96,7 +96,7 @@ export default class PayPalCommerceScriptLoader {
         const commit =
             shouldShowInlineCheckout || isHostedCheckoutEnabled || initializesOnCheckoutPage;
 
-        const shouldEnableCard = shouldShowInlineCheckout || id === 'paypalcommercecreditcards';
+        const shouldEnableCard = shouldShowInlineCheckout || initializesOnCheckoutPage;
         const enableCardFunding = shouldEnableCard ? ['card'] : [];
         const disableCardFunding = !shouldEnableCard ? ['card'] : [];
 
@@ -125,6 +125,22 @@ export default class PayPalCommerceScriptLoader {
             ...enableVenmoFunding,
             ...enableAPMsFunding,
         ];
+
+        const result = {
+            'client-id': clientId,
+            'data-partner-attribution-id': attributionId,
+            'data-client-token': clientToken,
+            'merchant-id': merchantId,
+            'enable-funding': enableFunding.length > 0 ? enableFunding : undefined,
+            'disable-funding': disableFunding.length > 0 ? disableFunding : undefined,
+            commit,
+            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            currency: currencyCode,
+            intent,
+            ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
+        };
+
+        console.log(result);
 
         return {
             'client-id': clientId,
