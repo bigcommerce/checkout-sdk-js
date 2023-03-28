@@ -65,7 +65,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         if (hasBuyNowCartOptions && !this._buyNowCart) {
             const { buyNowInitializeOptions } = googlePayOptions;
             await this._googlePayPaymentProcessor.initialize(this._getMethodId(), () =>
-                this._createBuyNowCart({ buyNowInitializeOptions }),
+                this._createBuyNowCartCallback({ buyNowInitializeOptions })
             );
         } else {
             await this._googlePayPaymentProcessor.initialize(this._getMethodId());
@@ -81,6 +81,11 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         }
 
         return this._googlePayPaymentProcessor.deinitialize();
+    }
+
+    private async _createBuyNowCartCallback(buyNowInitializeOptions: any) {
+       this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
+       console.log('BUY NOW CART', this._buyNowCart);
     }
 
     private _createSignInButton(
@@ -219,6 +224,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         currencyCode?: string,
     ): Promise<void> {
         event.preventDefault();
+        console.log(buyNowInitializeOptions);
 
         // this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
         //
@@ -241,7 +247,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         try {
             const paymentData = await this._googlePayPaymentProcessor.displayWallet();
 
-            this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
+            // this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
 
             const cart = this._buyNowCart || this._store.getState().cart.getCartOrThrow();
             const hasPhysicalItems = getShippableItemsCount(cart) > 0;

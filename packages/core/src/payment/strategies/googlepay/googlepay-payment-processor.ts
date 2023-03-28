@@ -228,11 +228,10 @@ export default class GooglePayPaymentProcessor {
         return new google.payments.api.PaymentsClient({
             environment,
             paymentDataCallbacks: {
-                onPaymentDataChanged: async (intermediatePaymentData: any) => {
+                onPaymentDataChanged: (intermediatePaymentData: any) => {
                     if (intermediatePaymentData.callbackTrigger === 'INITIALIZE') {
                         try {
-                            const buyNowCart = await createBuyNowCart();
-                            console.log('BUY NOW CART', buyNowCart);
+                            createBuyNowCart();
                         } catch (error) {
                             console.log('ERROR', error);
                         }
