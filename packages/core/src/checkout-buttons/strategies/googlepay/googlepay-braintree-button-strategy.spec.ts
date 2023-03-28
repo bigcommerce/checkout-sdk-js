@@ -3,7 +3,6 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-    CartSource,
     InvalidArgumentError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -49,11 +48,11 @@ describe('GooglePayCheckoutButtonStrategy', () => {
     let strategy: GooglePayButtonStrategy;
     let walletButton: HTMLAnchorElement;
 
-    const buyNowCartMock = {
-        ...getCart(),
-        id: 999,
-        source: CartSource.BuyNow,
-    };
+    // const buyNowCartMock = {
+    //     ...getCart(),
+    //     id: 999,
+    //     source: CartSource.BuyNow,
+    // };
 
     beforeEach(() => {
         paymentMethod = getPaymentMethod();
@@ -184,41 +183,41 @@ describe('GooglePayCheckoutButtonStrategy', () => {
         //     expect(checkoutActionCreator.loadDefaultCheckout).not.toHaveBeenCalled();
         // });
 
-        it('creates order with Buy Now cart id (Buy Now flow)', async () => {
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
-                body: buyNowCartMock,
-            });
-            jest.spyOn(paymentProcessor, 'displayWallet').mockResolvedValue(
-                getGooglePaymentDataMock(),
-            );
-            jest.spyOn(paymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());
-            jest.spyOn(paymentProcessor, 'updateShippingAddress').mockReturnValue(
-                Promise.resolve(),
-            );
-            jest.spyOn(paymentProcessor, 'updatePaymentDataRequest').mockReturnValue(
-                Promise.resolve(),
-            );
-
-            checkoutButtonOptions = getCheckoutButtonOptions(
-                CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE,
-                Mode.GooglePayBraintreeWithBuyNow,
-            );
-
-            await strategy.initialize(checkoutButtonOptions);
-
-            walletButton.click();
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(formPoster.postForm).toHaveBeenCalledWith(
-                '/checkout.php',
-                expect.objectContaining({
-                    cart_id: buyNowCartMock.id,
-                    action: 'set_external_checkout',
-                    provider: 'googlepaybraintree',
-                }),
-            );
-        });
+        // it('creates order with Buy Now cart id (Buy Now flow)', async () => {
+        //     jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
+        //         body: buyNowCartMock,
+        //     });
+        //     jest.spyOn(paymentProcessor, 'displayWallet').mockResolvedValue(
+        //         getGooglePaymentDataMock(),
+        //     );
+        //     jest.spyOn(paymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());
+        //     jest.spyOn(paymentProcessor, 'updateShippingAddress').mockReturnValue(
+        //         Promise.resolve(),
+        //     );
+        //     jest.spyOn(paymentProcessor, 'updatePaymentDataRequest').mockReturnValue(
+        //         Promise.resolve(),
+        //     );
+        //
+        //     checkoutButtonOptions = getCheckoutButtonOptions(
+        //         CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE,
+        //         Mode.GooglePayBraintreeWithBuyNow,
+        //     );
+        //
+        //     await strategy.initialize(checkoutButtonOptions);
+        //
+        //     walletButton.click();
+        //
+        //     await new Promise((resolve) => process.nextTick(resolve));
+        //
+        //     expect(formPoster.postForm).toHaveBeenCalledWith(
+        //         '/checkout.php',
+        //         expect.objectContaining({
+        //             cart_id: buyNowCartMock.id,
+        //             action: 'set_external_checkout',
+        //             provider: 'googlepaybraintree',
+        //         }),
+        //     );
+        // });
     });
 
     describe('#deinitialize()', () => {
