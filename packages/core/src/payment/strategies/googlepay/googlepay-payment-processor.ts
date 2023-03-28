@@ -138,7 +138,11 @@ export default class GooglePayPaymentProcessor {
                         hasShippingAddress,
                     ),
                 ]).then(([googlePay, paymentDataRequest]) => {
-                    this._googlePayClient = this._getGooglePayClient(googlePay, testMode, createBuynowCart);
+                    this._googlePayClient = this._getGooglePayClient(
+                        googlePay,
+                        testMode,
+                        createBuynowCart
+                    );
                     this._paymentDataRequest = paymentDataRequest;
 
                     return this._googlePayClient
@@ -204,7 +208,7 @@ export default class GooglePayPaymentProcessor {
                 totalPrice: '0',
                 totalPriceStatus: 'ESTIMATED',
             },
-            callbackIntents: ["OFFER"],
+            callbackIntents: ['OFFER'],
         };
 
         return this._paymentDataRequest;
@@ -213,7 +217,7 @@ export default class GooglePayPaymentProcessor {
     private _getGooglePayClient(
         google: GooglePaySDK,
         testMode?: boolean,
-        createBuyNowCart?: any
+        createBuyNowCart?: any,
     ): GooglePayClient {
         if (testMode === undefined) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
