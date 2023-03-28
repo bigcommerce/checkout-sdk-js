@@ -84,19 +84,15 @@ export default class PayPalCommerceScriptLoader {
             attributionId,
             isVenmoEnabled,
             isHostedCheckoutEnabled,
-            isInlineCheckoutEnabled,
             isPayPalCreditAvailable,
             isDeveloperModeApplicable,
             availableAlternativePaymentMethods = [],
             enabledAlternativePaymentMethods = [],
         } = initializationData;
 
-        const shouldShowInlineCheckout = !initializesOnCheckoutPage && isInlineCheckoutEnabled;
+        const commit = isHostedCheckoutEnabled || initializesOnCheckoutPage;
 
-        const commit =
-            shouldShowInlineCheckout || isHostedCheckoutEnabled || initializesOnCheckoutPage;
-
-        const shouldEnableCard = shouldShowInlineCheckout || id === 'paypalcommercecreditcards';
+        const shouldEnableCard = id === 'paypalcommercecreditcards';
         const enableCardFunding = shouldEnableCard ? ['card'] : [];
         const disableCardFunding = !shouldEnableCard ? ['card'] : [];
 

@@ -26,14 +26,6 @@ export { WithPayPalCommerceCreditCustomerInitializeOptions } from './paypal-comm
 
 /**
  *
- * PayPalCommerce Inline (Accelerated) Checkout strategies
- *
- */
-export { default as createPayPalCommerceInlineButtonStrategy } from './paypal-commerce-inline/create-paypal-commerce-inline-button-strategy';
-export { WithPayPalCommerceInlineButtonInitializeOptions } from './paypal-commerce-inline/paypal-commerce-inline-button-initialize-options';
-
-/**
- *
  * PayPalCommerce Venmo strategies
  *
  */
