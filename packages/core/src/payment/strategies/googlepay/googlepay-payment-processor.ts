@@ -109,7 +109,7 @@ export default class GooglePayPaymentProcessor {
         this._isBuyNowFlow = isBuyNowFlow;
     }
 
-    private _configureWallet(createBuynowCart: any): Promise<void> {
+    private _configureWallet(createBuynowCart?: any): Promise<void> {
         const features = this._store.getState().config.getStoreConfig()?.checkoutSettings.features;
         const options =
             features && features['INT-5826.google_hostname_alias']
@@ -201,7 +201,7 @@ export default class GooglePayPaymentProcessor {
             transactionInfo: {
                 ...this._paymentDataRequest.transactionInfo,
                 currencyCode: 'USD',
-                totalPrice: '1',
+                totalPrice: '0',
                 totalPriceStatus: 'ESTIMATED',
             },
             callbackIntents: ["OFFER"],
