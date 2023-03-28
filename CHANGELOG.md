@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.371.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.0...v1.371.1) (2023-03-28)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-2078 removed PayPalCommerceInlineCheckoutButtonStrategy ([#1922](https://github.com/bigcommerce/checkout-sdk-js/issues/1922)) ([7d586db](https://github.com/bigcommerce/checkout-sdk-js/commit/7d586db8f65cba45419cb7c29350084fc3963a15))
+
 ## [1.371.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.370.0...v1.371.0) (2023-03-27)
 
 
