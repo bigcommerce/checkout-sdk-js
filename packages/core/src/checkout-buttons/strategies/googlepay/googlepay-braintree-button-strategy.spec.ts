@@ -179,6 +179,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
 
             expect(paymentProcessor.initialize).toHaveBeenCalledWith(
                 CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE,
+                () => {}
             );
             expect(checkoutActionCreator.loadDefaultCheckout).not.toHaveBeenCalled();
         });
