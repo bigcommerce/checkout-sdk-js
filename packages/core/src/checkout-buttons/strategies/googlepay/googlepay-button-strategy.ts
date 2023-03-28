@@ -62,11 +62,11 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         }
 
         this._googlePayPaymentProcessor.updateBuyNowFlowFlag(hasBuyNowCartOptions);
-        if (this._buyNowCart) {
-            await this._googlePayPaymentProcessor.initialize(this._getMethodId());
+        if (hasBuyNowCartOptions && !this._buyNowCart) {
+            const {buyNowInitializeOptions} = googlePayOptions;
+            await this._googlePayPaymentProcessor.initialize(this._getMethodId(), () => this._createBuyNowCart({buyNowInitializeOptions}));
         } else {
-            const { buyNowInitializeOptions } = googlePayOptions;
-            await this._googlePayPaymentProcessor.initialize(this._getMethodId(),() => this._createBuyNowCart({buyNowInitializeOptions}));
+            await this._googlePayPaymentProcessor.initialize(this._getMethodId());
         }
 
         this._walletButton = this._createSignInButton(containerId, googlePayOptions, currencyCode);
