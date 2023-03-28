@@ -141,7 +141,7 @@ export default class GooglePayPaymentProcessor {
                     this._googlePayClient = this._getGooglePayClient(
                         googlePay,
                         testMode,
-                        createBuynowCart
+                        createBuynowCart,
                     );
                     this._paymentDataRequest = paymentDataRequest;
 
