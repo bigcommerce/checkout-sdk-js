@@ -22,6 +22,7 @@ import { BlueSnapHostedFieldType } from './bluesnap-direct-constants';
 import BlueSnapHostedInputValidator from './bluesnap-direct-hosted-input-validator';
 import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input';
 import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
+import isValidationErrorDescription from './is-bluesnap-direct-input-validation-error-description';
 import isHostedCardFieldOptionsMap from './is-hosted-card-field-options-map';
 import {
     BlueSnapDirectSdk,
@@ -37,6 +38,7 @@ import {
     BlueSnapDirectEventOrigin as EventOrigin,
     BlueSnapDirectHostedFieldTagId as HostedFieldTagId,
     BlueSnapDirectHostedPaymentFieldsOptions as HostedPaymentFieldsOptions,
+    BlueSnapDirectThreeDSecureData as ThreeDSecureData,
 } from './types';
 
 export default class BlueSnapDirectHostedForm {
@@ -57,6 +59,7 @@ export default class BlueSnapDirectHostedForm {
     async attach(
         paymentFieldsToken: string,
         { form: { fields, ...callbacksAndStyles } }: CreditCardPaymentInitializeOptions,
+        enable3DS = false,
     ): Promise<void> {
         const blueSnapSdk = this._getBlueSnapSdk();
 
@@ -75,6 +78,7 @@ export default class BlueSnapDirectHostedForm {
                 fields,
                 callbacksAndStyles,
                 resolve,
+                enable3DS,
             );
 
             blueSnapSdk.hostedPaymentFieldsCreate(options);
@@ -106,21 +110,25 @@ export default class BlueSnapDirectHostedForm {
         return this;
     }
 
-    submit(): Promise<CallbackCardData & CardHolderName> {
+    submit(threeDSecureData?: ThreeDSecureData): Promise<CallbackCardData & CardHolderName> {
         return new Promise((resolve, reject) =>
-            this._getBlueSnapSdk().hostedPaymentFieldsSubmitData((data: CallbackResults) =>
-                this._isBlueSnapDirectCallbackError(data)
-                    ? reject(
-                          new PaymentMethodFailedError(
-                              `Submission failed with status: ${
-                                  data.statusCode
-                              } and errors: ${JSON.stringify(data.error)}`,
-                          ),
-                      )
-                    : resolve({
-                          ...data.cardData,
-                          cardHolderName: this._nameOnCardInput.getValue(),
-                      }),
+            this._getBlueSnapSdk().hostedPaymentFieldsSubmitData(
+                (data: CallbackResults) =>
+                    this._isBlueSnapDirectCallbackError(data)
+                        ? reject(
+                              new PaymentMethodFailedError(
+                                  data.statusCode === ErrorCode.THREE_DS_AUTH_FAILED
+                                      ? data.error[0].errorDescription
+                                      : `Submission failed with status: ${
+                                            data.statusCode
+                                        } and errors: ${JSON.stringify(data.error)}`,
+                              ),
+                          )
+                        : resolve({
+                              ...data.cardData,
+                              cardHolderName: this._nameOnCardInput.getValue(),
+                          }),
+                threeDSecureData,
             ),
         );
     }
@@ -145,6 +153,7 @@ export default class BlueSnapDirectHostedForm {
             styles,
         }: Omit<HostedFormOptions, 'fields'>,
         resolve: () => void,
+        enable3DS: boolean,
     ): HostedPaymentFieldsOptions {
         return {
             token,
@@ -163,6 +172,7 @@ export default class BlueSnapDirectHostedForm {
             cvvPlaceHolder: fields.cardCode?.placeholder || '',
             expPlaceHolder: fields.cardExpiry.placeholder || 'MM / YY',
             ...(styles && { style: this._mapStyles(styles) }),
+            '3DS': enable3DS,
         };
     }
 
@@ -198,18 +208,22 @@ export default class BlueSnapDirectHostedForm {
         eventOrigin: EventOrigin | undefined,
     ) => void {
         return (tagId, errorCode, errorDescription, eventOrigin) => {
-            if (tagId === undefined || errorCode !== ErrorCode.INVALID_OR_EMPTY) {
-                throw new PaymentMethodFailedError(
-                    `An unexpected error has occurred: ${JSON.stringify({
-                        tagId,
-                        errorCode,
-                        errorDescription,
-                        eventOrigin,
-                    })}`,
-                );
+            if (errorCode === ErrorCode.INVALID_OR_EMPTY) {
+                if (tagId && isValidationErrorDescription(errorDescription)) {
+                    return onValidate?.(
+                        this._hostedInputValidator.validate({ tagId, errorDescription }),
+                    );
+                }
             }
 
-            onValidate?.(this._hostedInputValidator.validate({ tagId, errorDescription }));
+            throw new PaymentMethodFailedError(
+                `An unexpected error has occurred: ${JSON.stringify({
+                    tagId,
+                    errorCode,
+                    errorDescription,
+                    eventOrigin,
+                })}`,
+            );
         };
     }
 

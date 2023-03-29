@@ -1,4 +1,4 @@
-import { getBillingAddress } from './address.mock';
+import { getAddress, getBillingAddress } from './address.mock';
 import getCart from './carts.mock';
 import getCheckout from './checkouts.mock';
 import getConfig from './config.mock';
@@ -17,6 +17,7 @@ const state = {
     getLocale: jest.fn(),
     getOrder: jest.fn(() => getOrder()),
     getOrderOrThrow: jest.fn(() => getOrder()),
+    getShippingAddress: jest.fn(() => getAddress()),
     getStoreConfig: jest.fn(() => getConfig().storeConfig),
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
     getPaymentMethodOrThrow: jest.fn(),
