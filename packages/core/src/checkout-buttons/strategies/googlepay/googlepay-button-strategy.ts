@@ -57,12 +57,17 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                     `Unable to initialize payment because "options.currencyCode" argument is not provided.`,
                 );
             }
+
+            this._googlePayPaymentProcessor.updateBuyNowFlowFlag(hasBuyNowCartOptions);
+
+            await this._googlePayPaymentProcessor.initialize(
+                this._getMethodId(),
+                this._getGooglePayClientOptions(currencyCode, googlePayOptions?.buyNowInitializeOptions),
+            );
         } else {
             await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
+            await this._googlePayPaymentProcessor.initialize(this._getMethodId());
         }
-
-        this._googlePayPaymentProcessor.updateBuyNowFlowFlag(hasBuyNowCartOptions);
-        await this._googlePayPaymentProcessor.initialize(this._getMethodId());
 
         this._walletButton = this._createSignInButton(containerId, googlePayOptions, currencyCode);
     }
@@ -74,6 +79,48 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         }
 
         return this._googlePayPaymentProcessor.deinitialize();
+    }
+
+    private _getGooglePayClientOptions(currencyCode: string, buyNowInitializeOptions: any) {
+        return {
+            paymentDataCallbacks: {
+                onPaymentDataChanged: async (intermediatePaymentData: any) => {
+                    if (intermediatePaymentData.callbackTrigger !== 'INITIALIZE') {
+                        return;
+                    }
+
+                    try {
+                        this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
+
+
+
+                        // this._googlePayPaymentProcessor.updatePaymentDataRequest(paymentDataRequest);
+
+                        await this._store.dispatch(
+                            this._checkoutActionCreator.loadCheckout(this._buyNowCart.id),
+                        );
+
+                        const paymentDataRequest = {
+                            transactionInfo: {
+                                currencyCode,
+                                totalPrice: String(this._buyNowCart.cartAmount),
+                            },
+                        };
+
+                        // TODO: update
+                        return {
+                            newTransactionInfo: {
+                                currencyCode: currencyCode,
+                                totalPrice: '225',
+                                totalPriceStatus: 'FINAL',
+                            },
+                        };
+                    } catch (error) {
+                        console.log('ERROR', error); // TODO:
+                    }
+                },
+            },
+        };
     }
 
     private _createSignInButton(
@@ -90,11 +137,10 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             );
         }
 
-        const handleValidButtonClick = (event: Event) =>
-            this._handleWalletButtonClick(event, { buyNowInitializeOptions }, currencyCode);
+        const onClick = (event: Event) => this._handleWalletButtonClick(event, { buyNowInitializeOptions }, currencyCode);
 
         const googlePayButton = this._googlePayPaymentProcessor.createButton(
-            handleValidButtonClick,
+            onClick,
             buttonType,
             buttonColor,
         );
@@ -213,28 +259,21 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     ): Promise<void> {
         event.preventDefault();
 
-        this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
-
-        const cart = this._buyNowCart || this._store.getState().cart.getCartOrThrow();
-        const hasPhysicalItems = getShippableItemsCount(cart) > 0;
-
-        if (this._buyNowCart && currencyCode) {
-            const payloadToUpdate = {
-                currencyCode,
-                totalPrice: String(cart.cartAmount),
-            };
-
-            this._googlePayPaymentProcessor.updatePaymentDataRequest(payloadToUpdate);
-
-            await this._store.dispatch(
-                this._checkoutActionCreator.loadCheckout(this._buyNowCart.id),
-            );
-        }
-
         try {
-            const paymentData = await this._googlePayPaymentProcessor.displayWallet();
+
+            const paymentData = await this._googlePayPaymentProcessor.displayWallet(); // TODO: we have an error here
+            // Stop until pay or close the popup
+
+
+
+            if (this._buyNowCart && currencyCode) {
+
+            }
 
             await this._googlePayPaymentProcessor.handleSuccess(paymentData);
+
+            const cart = this._store.getState().cart.getCartOrThrow();
+            const hasPhysicalItems = getShippableItemsCount(cart) > 0;
 
             if (hasPhysicalItems && paymentData.shippingAddress) {
                 await this._googlePayPaymentProcessor.updateShippingAddress(
