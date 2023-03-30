@@ -48,7 +48,7 @@ export default class GooglePayPaymentProcessor {
         private _requestSender: RequestSender,
     ) {}
 
-    initialize(methodId: string, googlePayClientOptions?: any): Promise<void> {
+    initialize(methodId: string, googlePayClientOptions?: GooglePayClientOptions): Promise<void> {
         this._methodId = methodId;
 
         return this._configureWallet(googlePayClientOptions);
