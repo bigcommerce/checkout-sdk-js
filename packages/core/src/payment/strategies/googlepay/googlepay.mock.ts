@@ -19,7 +19,7 @@ import {
     TokenizePayload,
     totalPriceStatusType,
 } from './googlepay';
-import {GooglePayBraintreePaymentDataRequestV1} from './googlepay-braintree';
+import { GooglePayBraintreePaymentDataRequestV1 } from './googlepay-braintree';
 
 export function getGooglePaySDKMock(): GooglePaySDK {
     return {
