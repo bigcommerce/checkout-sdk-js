@@ -186,7 +186,7 @@ describe('StripeUPEShippingStrategy', () => {
                     methodId: '',
                     gatewayId: '',
                     onChangeShipping: jest.fn(),
-                    availableCountries: 'US,MX',
+                    availableCountries: ['US,MX'],
                     getStripeState: jest.fn(),
                 },
             });
