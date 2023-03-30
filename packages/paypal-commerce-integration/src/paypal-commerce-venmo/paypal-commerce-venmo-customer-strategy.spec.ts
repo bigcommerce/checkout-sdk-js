@@ -1,6 +1,3 @@
-import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
-import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
-import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
 import {
@@ -11,11 +8,12 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import { getPayPalCommercePaymentMethod } from '../mocks/paypal-commerce-payment-method.mock';
-import { getPayPalSDKMock } from '../mocks/paypal-sdk.mock';
+import {
+    getPayPalCommerceIntegrationServiceMock,
+    getPayPalCommercePaymentMethod,
+    getPayPalSDKMock,
+} from '../mocks';
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
-import PayPalCommerceScriptLoader from '../paypal-commerce-script-loader';
 import {
     PayPalCommerceButtonsOptions,
     PayPalCommerceHostWindow,
@@ -27,15 +25,11 @@ import PayPalCommerceVenmoCustomerStrategy from './paypal-commerce-venmo-custome
 
 describe('PayPalCommerceVenmoCustomerStrategy', () => {
     let eventEmitter: EventEmitter;
-    let formPoster: FormPoster;
-    let requestSender: RequestSender;
     let strategy: PayPalCommerceVenmoCustomerStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalButtonElement: HTMLDivElement;
     let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
-    let paypalCommerceRequestSender: PayPalCommerceRequestSender;
-    let paypalCommerceScriptLoader: PayPalCommerceScriptLoader;
     let paypalSdk: PayPalSDK;
 
     const defaultMethodId = 'paypalcommercevenmo';
@@ -54,22 +48,10 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
 
     beforeEach(() => {
         eventEmitter = new EventEmitter();
-
         paymentMethod = { ...getPayPalCommercePaymentMethod(), id: 'paypalcommercevenmo' };
         paypalSdk = getPayPalSDKMock();
-
-        formPoster = createFormPoster();
-        requestSender = createRequestSender();
+        paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
         paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
-        paypalCommerceRequestSender = new PayPalCommerceRequestSender(requestSender);
-        paypalCommerceScriptLoader = new PayPalCommerceScriptLoader(getScriptLoader());
-
-        paypalCommerceIntegrationService = new PayPalCommerceIntegrationService(
-            formPoster,
-            paymentIntegrationService,
-            paypalCommerceRequestSender,
-            paypalCommerceScriptLoader,
-        );
 
         strategy = new PayPalCommerceVenmoCustomerStrategy(
             paymentIntegrationService,

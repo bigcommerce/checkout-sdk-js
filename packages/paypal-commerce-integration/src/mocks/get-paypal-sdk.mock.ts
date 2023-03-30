@@ -1,6 +1,6 @@
 import { PayPalSDK } from '../paypal-commerce-types';
 
-export function getPayPalSDKMock(): PayPalSDK {
+export default function getPayPalSDKMock(): PayPalSDK {
     return {
         Messages: () => ({
             render: jest.fn(),
