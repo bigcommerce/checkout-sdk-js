@@ -21,7 +21,7 @@ import {
     ButtonType,
     EnvironmentType,
     GooglePayAddress,
-    GooglePayClient,
+    GooglePayClient, GooglePayClientOptions,
     GooglePayInitializer,
     GooglePaymentData,
     GooglePayPaymentDataRequestV2,
@@ -74,7 +74,7 @@ export default class GooglePayPaymentProcessor {
     }
 
     updatePaymentDataRequest(paymentDataRequest: Partial<GooglePayPaymentDataRequestV2>) {
-        const existingPaymentDataRequest = this._getPaymentDataRequest(); // global data
+        const existingPaymentDataRequest = this._getPaymentDataRequest();
 
         this._paymentDataRequest = {
             ...existingPaymentDataRequest,
@@ -83,10 +83,7 @@ export default class GooglePayPaymentProcessor {
                 ...(existingPaymentDataRequest.transactionInfo ?? {}),
                 ...(paymentDataRequest.transactionInfo ?? {}),
             },
-            allowedPaymentMethods: {
-                ...(existingPaymentDataRequest.allowedPaymentMethods ?? {}),
-                ...(paymentDataRequest.allowedPaymentMethods ?? {}),
-            },
+            allowedPaymentMethods: existingPaymentDataRequest.allowedPaymentMethods || paymentDataRequest.allowedPaymentMethods || [],
             shippingAddressParameters: {
                 ...(existingPaymentDataRequest.shippingAddressParameters ?? {}),
                 ...(paymentDataRequest.shippingAddressParameters ?? {}),
@@ -121,7 +118,7 @@ export default class GooglePayPaymentProcessor {
         this._isBuyNowFlow = isBuyNowFlow;
     }
 
-    private _configureWallet(googlePayClientOptions?: any): Promise<void> {
+    private _configureWallet(googlePayClientOptions?: GooglePayClientOptions): Promise<void> {
         const features = this._store.getState().config.getStoreConfig()?.checkoutSettings.features;
         const options =
             features && features['INT-5826.google_hostname_alias']
@@ -218,7 +215,7 @@ export default class GooglePayPaymentProcessor {
     private _getGooglePayClient(
         google: GooglePaySDK,
         testMode?: boolean,
-        googlePayClientOptions?: any,
+        googlePayClientOptions?: GooglePayClientOptions,
     ): GooglePayClient {
         if (testMode === undefined) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);

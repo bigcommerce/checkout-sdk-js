@@ -14,12 +14,17 @@ import { BuyNowCartCreationError } from '../../../cart/errors';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { bindDecorator as bind } from '../../../common/utility';
-import { GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
+import {
+    callbackTriggerType,
+    GooglePayPaymentProcessor,
+    IntermediatePaymentData, totalPriceStatusType
+} from '../../../payment/strategies/googlepay';
 import { getShippableItemsCount } from '../../../shipping';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 import { GooglePayButtonInitializeOptions } from './googlepay-button-options';
+import {PayPalBuyNowInitializeOptions} from "../../../../../paypal-commerce-integration/src/paypal-commerce-types";
 
 type BuyNowInitializeOptions = Pick<GooglePayButtonInitializeOptions, 'buyNowInitializeOptions'>;
 
@@ -82,11 +87,11 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         return this._googlePayPaymentProcessor.deinitialize();
     }
 
-    private _getGooglePayClientOptions(currencyCode: string, buyNowInitializeOptions: any) {
+    private _getGooglePayClientOptions(currencyCode: string, buyNowInitializeOptions: PayPalBuyNowInitializeOptions) {
         return {
             paymentDataCallbacks: {
-                onPaymentDataChanged: async (intermediatePaymentData: any) => {
-                    if (intermediatePaymentData.callbackTrigger !== 'INITIALIZE') {
+                onPaymentDataChanged: async (intermediatePaymentData: IntermediatePaymentData) => {
+                    if (intermediatePaymentData.callbackTrigger !== callbackTriggerType.INITIALIZE) {
                         return;
                     }
 
@@ -103,13 +108,13 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                                 newTransactionInfo: {
                                     currencyCode: currencyCode,
                                     totalPrice: String(cartAmount),
-                                    totalPriceStatus: 'FINAL',
+                                    totalPriceStatus: totalPriceStatusType.FINAL,
                                 },
                             };
                         }
 
                     } catch (error) {
-                        throw new Error(error)// TODO:
+                        throw new BuyNowCartCreationError(error);
                     }
                 },
             },
@@ -262,8 +267,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                     callbackIntents: ['OFFER'],
                 });
             }
-            const paymentData = await this._googlePayPaymentProcessor.displayWallet(); // TODO: we have an error here
-            // Stop until pay or close the popup
+            const paymentData = await this._googlePayPaymentProcessor.displayWallet();
 
             await this._googlePayPaymentProcessor.handleSuccess(paymentData);
 

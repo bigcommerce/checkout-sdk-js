@@ -7,8 +7,23 @@ import {
     GooglePayBraintreeSDK,
 } from '../braintree';
 
+export enum callbackTriggerType {
+    INITIALIZE = 'INITIALIZE',
+    SHIPPING_OPTION = 'SHIPPING_OPTION',
+    SHIPPING_ADDRESS = 'SHIPPING_ADDRESS',
+    OFFER = 'OFFER',
+}
+
+export enum totalPriceStatusType {
+    ESTIMATED = 'ESTIMATED',
+    FINAL = 'FINAL',
+    NOT_CURRENTLY_KNOWN = 'NOT_CURRENTLY_KNOWN',
+}
+
 export type EnvironmentType = 'PRODUCTION' | 'TEST';
 export type TokenizeType = 'AndroidPayCard' | 'CreditCard' | 'CARD';
+export type CallbackTrigger = callbackTriggerType.INITIALIZE | callbackTriggerType.SHIPPING_OPTION | callbackTriggerType.SHIPPING_ADDRESS | callbackTriggerType.OFFER;
+export type TotalPriceStatus = totalPriceStatusType.ESTIMATED | totalPriceStatusType.FINAL | totalPriceStatusType.NOT_CURRENTLY_KNOWN;
 
 export interface GooglePayInitializer {
     initialize(
@@ -208,6 +223,24 @@ export interface GooglePayPaymentDataRequestV2 {
         allowedCountryCodes?: string[];
         phoneNumberRequired?: boolean;
     };
+}
+
+export interface NewTransactionInfo {
+    newTransactionInfo: {
+        currencyCode: string;
+        totalPrice: string;
+        totalPriceStatus: totalPriceStatusType;
+    }
+}
+
+export interface IntermediatePaymentData {
+    callbackTrigger: CallbackTrigger
+}
+
+export interface GooglePayClientOptions {
+    paymentDataCallbacks: {
+        onPaymentDataChanged(intermediatePaymentData: IntermediatePaymentData): Promise<NewTransactionInfo> | void;
+    }
 }
 
 export type GooglePayTransactionInfo = Pick<GooglePayPaymentDataRequestV2, 'transactionInfo'>;
