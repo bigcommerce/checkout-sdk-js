@@ -15,6 +15,7 @@ import {
     GooglePaymentData,
     GooglePayPaymentDataRequestV2,
     TokenizePayload,
+    TotalPriceStatusType,
 } from './googlepay';
 
 export default class GooglePayCheckoutcomInitializer implements GooglePayInitializer {
@@ -160,7 +161,7 @@ export default class GooglePayCheckoutcomInitializer implements GooglePayInitial
             ],
             transactionInfo: {
                 currencyCode,
-                totalPriceStatus: 'FINAL',
+                totalPriceStatus: TotalPriceStatusType.FINAL,
                 totalPrice,
             },
             emailRequired: true,

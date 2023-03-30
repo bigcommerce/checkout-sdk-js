@@ -1,4 +1,5 @@
-type TotalPriceStatus = 'ESTIMATED' | 'FINAL' | 'NOT_CURRENTLY_KNOWN';
+import { TotalPriceStatusType } from './googlepay';
+
 type AddressFormat = 'FULL' | 'MIN';
 
 export interface GooglePayBraintreeDataRequest {
@@ -9,7 +10,7 @@ export interface GooglePayBraintreeDataRequest {
     };
     transactionInfo: {
         currencyCode: string;
-        totalPriceStatus: TotalPriceStatus;
+        totalPriceStatus: TotalPriceStatusType;
         totalPrice: string;
     };
     cardRequirements: {
@@ -55,6 +56,6 @@ export interface GooglePayBraintreePaymentDataRequestV1 {
     transactionInfo: {
         currencyCode: string;
         totalPrice: string;
-        totalPriceStatus: string;
+        totalPriceStatus: TotalPriceStatusType;
     };
 }

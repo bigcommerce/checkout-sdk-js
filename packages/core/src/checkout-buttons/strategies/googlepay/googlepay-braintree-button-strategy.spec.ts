@@ -27,6 +27,7 @@ import {
     createGooglePayPaymentProcessor,
     GooglePayBraintreeInitializer,
     GooglePayPaymentProcessor,
+    TotalPriceStatusType,
 } from '../../../payment/strategies/googlepay';
 import { getGooglePaymentDataMock } from '../../../payment/strategies/googlepay/googlepay.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
@@ -179,6 +180,19 @@ describe('GooglePayCheckoutButtonStrategy', () => {
 
             expect(paymentProcessor.initialize).toHaveBeenCalledWith(
                 CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE,
+                {
+                    paymentDataCallbacks: {
+                        onPaymentDataChanged: () => {
+                            return {
+                                newTransactionInfo: {
+                                    currencyCode: 'USD',
+                                    totalPrice: '225',
+                                    totalPriceStatus: TotalPriceStatusType.FINAL,
+                                },
+                            };
+                        },
+                    },
+                },
             );
             expect(checkoutActionCreator.loadDefaultCheckout).not.toHaveBeenCalled();
         });
