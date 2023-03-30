@@ -102,7 +102,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
                     try {
                         this._buyNowCart = await this._createBuyNowCart({
-                            buyNowInitializeOptions
+                            buyNowInitializeOptions,
                         });
 
                         if (this._buyNowCart) {

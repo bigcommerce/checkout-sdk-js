@@ -24,13 +24,13 @@ export type EnvironmentType = 'PRODUCTION' | 'TEST';
 export type TokenizeType = 'AndroidPayCard' | 'CreditCard' | 'CARD';
 
 export type CallbackTrigger =
-    callbackTriggerType.INITIALIZE
+    | callbackTriggerType.INITIALIZE
     | callbackTriggerType.SHIPPING_OPTION
     | callbackTriggerType.SHIPPING_ADDRESS
     | callbackTriggerType.OFFER;
 
 export type TotalPriceStatus =
-    totalPriceStatusType.ESTIMATED
+    | totalPriceStatusType.ESTIMATED
     | totalPriceStatusType.FINAL
     | totalPriceStatusType.NOT_CURRENTLY_KNOWN;
 
@@ -249,7 +249,7 @@ export interface IntermediatePaymentData {
 export interface GooglePayClientOptions {
     paymentDataCallbacks: {
         onPaymentDataChanged(
-            intermediatePaymentData: IntermediatePaymentData
+            intermediatePaymentData: IntermediatePaymentData,
         ): Promise<NewTransactionInfo> | void;
     };
 }
