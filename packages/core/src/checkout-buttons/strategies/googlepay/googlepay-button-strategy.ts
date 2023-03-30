@@ -69,8 +69,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             this._googlePayPaymentProcessor.updateBuyNowFlowFlag(this._isBuyNowFlow);
 
             await this._googlePayPaymentProcessor.initialize(
-                this._getMethodId(),
-                this._getGooglePayClientOptions(
+                this._getMethodId(), this._getGooglePayClientOptions(
                     currencyCode, {
                         buyNowInitializeOptions
                     },
@@ -95,7 +94,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
     private _getGooglePayClientOptions(
         currencyCode: string,
-        { buyNowInitializeOptions }: BuyNowInitializeOptions
+        { buyNowInitializeOptions }: BuyNowInitializeOptions,
     ) {
         return {
             paymentDataCallbacks: {
