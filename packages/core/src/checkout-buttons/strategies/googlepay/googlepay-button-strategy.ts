@@ -15,7 +15,8 @@ import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { bindDecorator as bind } from '../../../common/utility';
 import {
-    callbackTriggerType, GooglePayClientOptions,
+    callbackTriggerType,
+    GooglePayClientOptions,
     GooglePayPaymentProcessor,
     IntermediatePaymentData,
     totalPriceStatusType,
@@ -70,8 +71,9 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             await this._googlePayPaymentProcessor.initialize(
                 this._getMethodId(),
                 this._getGooglePayClientOptions(
-                    currencyCode,
-                    { buyNowInitializeOptions },
+                    currencyCode, {
+                        buyNowInitializeOptions
+                    },
                 ) as GooglePayClientOptions,
             );
         } else {
@@ -91,7 +93,10 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         return this._googlePayPaymentProcessor.deinitialize();
     }
 
-    private _getGooglePayClientOptions(currencyCode: string, {buyNowInitializeOptions}: BuyNowInitializeOptions) {
+    private _getGooglePayClientOptions(
+        currencyCode: string,
+        { buyNowInitializeOptions }: BuyNowInitializeOptions
+    ) {
         return {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async (intermediatePaymentData: IntermediatePaymentData) => {
