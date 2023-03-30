@@ -1,14 +1,14 @@
-import {Cart} from '../../../cart';
-import {Checkout} from '../../../checkout';
-import {Coupon, GiftCertificate} from '../../../coupon';
-import {Customer} from '../../../customer';
-import {Discount} from '../../../discount';
-import {OrderRequestBody} from '../../../order';
-import {Consignment} from '../../../shipping';
-import {Tax} from '../../../tax';
+import { Cart } from '../../../cart';
+import { Checkout } from '../../../checkout';
+import { Coupon, GiftCertificate } from '../../../coupon';
+import { Customer } from '../../../customer';
+import { Discount } from '../../../discount';
+import { OrderRequestBody } from '../../../order';
+import { Consignment } from '../../../shipping';
+import { Tax } from '../../../tax';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodConfig from '../../payment-method-config';
-import {GooglePayBraintreeSDK} from '../braintree';
+import { GooglePayBraintreeSDK } from '../braintree';
 
 import {
     BillingAddressFormat,
@@ -433,7 +433,7 @@ export function getBraintreePaymentDataRequest(): GooglePayBraintreePaymentDataR
         transactionInfo: {
             currencyCode: '',
             totalPrice: '',
-            totalPriceStatus: '',
+            totalPriceStatus: totalPriceStatusType.FINAL,
         },
     };
 }
