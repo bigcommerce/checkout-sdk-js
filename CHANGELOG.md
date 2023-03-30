@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.371.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.1...v1.371.2) (2023-03-30)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-000 added paypal commerce integration service mock to simplify test files ([#1926](https://github.com/bigcommerce/checkout-sdk-js/issues/1926)) ([b9265af](https://github.com/bigcommerce/checkout-sdk-js/commit/b9265af8e6b2efd16c8b8022fba63c09cb54eeeb))
+
 ### [1.371.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.0...v1.371.1) (2023-03-28)
 
 
