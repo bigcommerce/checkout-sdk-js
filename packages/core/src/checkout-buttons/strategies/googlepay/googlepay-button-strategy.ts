@@ -70,8 +70,9 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
             await this._googlePayPaymentProcessor.initialize(
                 this._getMethodId(),
-                this._getGooglePayClientOptions(currencyCode,
-                    { buyNowInitializeOptions },
+                this._getGooglePayClientOptions(currencyCode, {
+                        buyNowInitializeOptions,
+                    }
                 ) as GooglePayClientOptions,
             );
         } else {
