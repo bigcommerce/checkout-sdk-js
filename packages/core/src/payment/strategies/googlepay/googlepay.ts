@@ -221,7 +221,7 @@ export interface GooglePayPaymentDataRequestV2 {
     transactionInfo: {
         currencyCode: string;
         countryCode?: string;
-        totalPriceStatus?: string;
+        totalPriceStatus?: TotalPriceStatus;
         totalPrice?: string;
         checkoutOption?: string;
     };
@@ -238,7 +238,7 @@ export interface NewTransactionInfo {
     newTransactionInfo: {
         currencyCode: string;
         totalPrice: string;
-        totalPriceStatus: totalPriceStatusType;
+        totalPriceStatus: TotalPriceStatus;
     };
 }
 
