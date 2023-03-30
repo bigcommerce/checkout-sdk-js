@@ -10,6 +10,7 @@ import {
     GooglePayPaymentDataRequestV2,
     TokenizationSpecification,
     TokenizePayload,
+    totalPriceStatusType,
 } from './googlepay';
 
 const baseRequest = {
@@ -82,7 +83,7 @@ export default class GooglePayAuthorizeNetInitializer implements GooglePayInitia
             ...baseRequest,
             allowedPaymentMethods: [cardPaymentMethod],
             transactionInfo: {
-                totalPriceStatus: 'FINAL',
+                totalPriceStatus: totalPriceStatusType.FINAL,
                 totalPrice,
                 currencyCode,
                 countryCode,

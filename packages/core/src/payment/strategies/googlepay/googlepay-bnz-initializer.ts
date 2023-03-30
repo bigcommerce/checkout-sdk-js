@@ -9,6 +9,7 @@ import {
     GooglePaymentData,
     GooglePayPaymentDataRequestV2,
     TokenizePayload,
+    totalPriceStatusType,
 } from './googlepay';
 
 export default class GooglePayBNZInitializer implements GooglePayInitializer {
@@ -98,7 +99,7 @@ export default class GooglePayBNZInitializer implements GooglePayInitializer {
             ],
             transactionInfo: {
                 currencyCode,
-                totalPriceStatus: 'FINAL',
+                totalPriceStatus: totalPriceStatusType.FINAL,
                 totalPrice,
             },
             emailRequired: true,

@@ -1,14 +1,14 @@
-import { Cart } from '../../../cart';
-import { Checkout } from '../../../checkout';
-import { Coupon, GiftCertificate } from '../../../coupon';
-import { Customer } from '../../../customer';
-import { Discount } from '../../../discount';
-import { OrderRequestBody } from '../../../order';
-import { Consignment } from '../../../shipping';
-import { Tax } from '../../../tax';
+import {Cart} from '../../../cart';
+import {Checkout} from '../../../checkout';
+import {Coupon, GiftCertificate} from '../../../coupon';
+import {Customer} from '../../../customer';
+import {Discount} from '../../../discount';
+import {OrderRequestBody} from '../../../order';
+import {Consignment} from '../../../shipping';
+import {Tax} from '../../../tax';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodConfig from '../../payment-method-config';
-import { GooglePayBraintreeSDK } from '../braintree';
+import {GooglePayBraintreeSDK} from '../braintree';
 
 import {
     BillingAddressFormat,
@@ -17,8 +17,9 @@ import {
     GooglePayPaymentDataRequestV2,
     GooglePaySDK,
     TokenizePayload,
+    totalPriceStatusType,
 } from './googlepay';
-import { GooglePayBraintreePaymentDataRequestV1 } from './googlepay-braintree';
+import {GooglePayBraintreePaymentDataRequestV1} from './googlepay-braintree';
 
 export function getGooglePaySDKMock(): GooglePaySDK {
     return {
@@ -144,7 +145,7 @@ export function getGooglePayPaymentDataRequestMock(): GooglePayPaymentDataReques
         ],
         transactionInfo: {
             currencyCode: 'USD',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: totalPriceStatusType.FINAL,
         },
     };
 }
@@ -184,7 +185,7 @@ export function getAdyenV2PaymentDataRequest(): GooglePayPaymentDataRequestV2 {
             },
         ],
         transactionInfo: {
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: totalPriceStatusType.FINAL,
             totalPrice: '1.00',
             currencyCode: 'USD',
         },
@@ -246,7 +247,7 @@ export function getAuthorizeNetPaymentDataRequest(): GooglePayPaymentDataRequest
             },
         ],
         transactionInfo: {
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: totalPriceStatusType.FINAL,
             totalPrice: '1.00',
             currencyCode: 'USD',
             countryCode: 'US',
@@ -342,7 +343,7 @@ export function getBNZPaymentDataRequest(): GooglePayPaymentDataRequestV2 {
         ],
         transactionInfo: {
             currencyCode: 'USD',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: totalPriceStatusType.FINAL,
             totalPrice: '1.00',
         },
         emailRequired: true,
@@ -392,7 +393,7 @@ export function getBraintreePaymentDataPayload() {
         transactionInfo: {
             currencyCode: 'USD',
             totalPrice: '1.00',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: totalPriceStatusType.FINAL,
         },
     };
 }
@@ -471,7 +472,7 @@ export function getStripePaymentDataRequest(): GooglePayPaymentDataRequestV2 {
         ],
         transactionInfo: {
             currencyCode: 'USD',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: totalPriceStatusType.FINAL,
             totalPrice: '1.00',
         },
         emailRequired: true,
@@ -569,7 +570,7 @@ export function getGooglePayCheckoutcomPaymentDataRequestMock(): GooglePayPaymen
         ],
         transactionInfo: {
             currencyCode: 'USD',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: totalPriceStatusType.FINAL,
             totalPrice: '1.00',
         },
         emailRequired: true,
@@ -663,7 +664,7 @@ export function getCybersourceV2PaymentDataRequest(): GooglePayPaymentDataReques
         ],
         transactionInfo: {
             currencyCode: 'USD',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: totalPriceStatusType.FINAL,
             totalPrice: '1.00',
         },
         emailRequired: true,
@@ -736,7 +737,7 @@ export function getOrbitalPaymentDataRequest(): GooglePayPaymentDataRequestV2 {
         ],
         transactionInfo: {
             currencyCode: 'USD',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: totalPriceStatusType.FINAL,
             totalPrice: '1.00',
         },
         emailRequired: true,
