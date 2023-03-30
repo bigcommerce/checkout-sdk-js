@@ -21,11 +21,13 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import getBillingAddressFromOrderDetails from './mocks/get-billing-address-from-order-details.mock';
-import getPayPalCommerceOrderDetails from './mocks/get-paypal-commerce-order-details.mock';
-import getShippingAddressFromOrderDetails from './mocks/get-shipping-address-from-order-details.mock';
-import { getPayPalCommercePaymentMethod } from './mocks/paypal-commerce-payment-method.mock';
-import { getPayPalSDKMock } from './mocks/paypal-sdk.mock';
+import {
+    getBillingAddressFromOrderDetails,
+    getPayPalCommerceOrderDetails,
+    getPayPalCommercePaymentMethod,
+    getPayPalSDKMock,
+    getShippingAddressFromOrderDetails,
+} from './mocks';
 import PayPalCommerceIntegrationService from './paypal-commerce-integration-service';
 import PayPalCommerceRequestSender from './paypal-commerce-request-sender';
 import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';

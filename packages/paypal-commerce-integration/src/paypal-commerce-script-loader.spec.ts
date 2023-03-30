@@ -6,8 +6,7 @@ import {
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { getPayPalCommercePaymentMethod } from './mocks/paypal-commerce-payment-method.mock';
-import { getPayPalSDKMock } from './mocks/paypal-sdk.mock';
+import { getPayPalCommercePaymentMethod, getPayPalSDKMock } from './mocks';
 import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
 import {
     PayPalCommerceHostWindow,

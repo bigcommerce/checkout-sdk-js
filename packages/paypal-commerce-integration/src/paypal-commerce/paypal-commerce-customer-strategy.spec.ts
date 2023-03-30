@@ -1,6 +1,3 @@
-import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
-import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
-import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
 import {
@@ -15,14 +12,15 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import getBillingAddressFromOrderDetails from '../mocks/get-billing-address-from-order-details.mock';
-import getPayPalCommerceOrderDetails from '../mocks/get-paypal-commerce-order-details.mock';
-import getShippingAddressFromOrderDetails from '../mocks/get-shipping-address-from-order-details.mock';
-import { getPayPalCommercePaymentMethod } from '../mocks/paypal-commerce-payment-method.mock';
-import { getPayPalSDKMock } from '../mocks/paypal-sdk.mock';
+import {
+    getBillingAddressFromOrderDetails,
+    getPayPalCommerceIntegrationServiceMock,
+    getPayPalCommerceOrderDetails,
+    getPayPalCommercePaymentMethod,
+    getPayPalSDKMock,
+    getShippingAddressFromOrderDetails,
+} from '../mocks';
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
-import PayPalCommerceScriptLoader from '../paypal-commerce-script-loader';
 import { PayPalCommerceButtonsOptions, PayPalSDK } from '../paypal-commerce-types';
 
 import PayPalCommerceCustomerInitializeOptions from './paypal-commerce-customer-initialize-options';
@@ -30,14 +28,10 @@ import PayPalCommerceCustomerStrategy from './paypal-commerce-customer-strategy'
 
 describe('PayPalCommerceCustomerStrategy', () => {
     let eventEmitter: EventEmitter;
-    let formPoster: FormPoster;
-    let requestSender: RequestSender;
     let strategy: PayPalCommerceCustomerStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
-    let paypalCommerceRequestSender: PayPalCommerceRequestSender;
-    let paypalCommerceScriptLoader: PayPalCommerceScriptLoader;
     let paypalSdk: PayPalSDK;
 
     const methodId = 'paypalcommerce';
@@ -56,22 +50,10 @@ describe('PayPalCommerceCustomerStrategy', () => {
 
     beforeEach(() => {
         eventEmitter = new EventEmitter();
-
         paymentMethod = getPayPalCommercePaymentMethod();
         paypalSdk = getPayPalSDKMock();
-
-        formPoster = createFormPoster();
-        requestSender = createRequestSender();
+        paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
         paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
-        paypalCommerceRequestSender = new PayPalCommerceRequestSender(requestSender);
-        paypalCommerceScriptLoader = new PayPalCommerceScriptLoader(getScriptLoader());
-
-        paypalCommerceIntegrationService = new PayPalCommerceIntegrationService(
-            formPoster,
-            paymentIntegrationService,
-            paypalCommerceRequestSender,
-            paypalCommerceScriptLoader,
-        );
 
         strategy = new PayPalCommerceCustomerStrategy(
             paymentIntegrationService,

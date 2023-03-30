@@ -1,6 +1,6 @@
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-export function getPayPalCommercePaymentMethod(): PaymentMethod {
+export default function getPayPalCommercePaymentMethod(): PaymentMethod {
     return {
         id: 'paypalcommerce',
         logoUrl: '',
