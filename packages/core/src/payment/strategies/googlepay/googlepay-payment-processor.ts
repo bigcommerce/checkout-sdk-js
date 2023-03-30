@@ -21,7 +21,8 @@ import {
     ButtonType,
     EnvironmentType,
     GooglePayAddress,
-    GooglePayClient, GooglePayClientOptions,
+    GooglePayClient,
+    GooglePayClientOptions,
     GooglePayInitializer,
     GooglePaymentData,
     GooglePayPaymentDataRequestV2,
@@ -83,11 +84,14 @@ export default class GooglePayPaymentProcessor {
                 ...(existingPaymentDataRequest.transactionInfo ?? {}),
                 ...(paymentDataRequest.transactionInfo ?? {}),
             },
-            allowedPaymentMethods: existingPaymentDataRequest.allowedPaymentMethods || paymentDataRequest.allowedPaymentMethods || [],
+            allowedPaymentMethods:
+                existingPaymentDataRequest.allowedPaymentMethods ||
+                paymentDataRequest.allowedPaymentMethods ||
+                [],
             shippingAddressParameters: {
                 ...(existingPaymentDataRequest.shippingAddressParameters ?? {}),
                 ...(paymentDataRequest.shippingAddressParameters ?? {}),
-            }
+            },
         };
     }
 
@@ -161,11 +165,11 @@ export default class GooglePayPaymentProcessor {
                                     type: paymentDataRequest.allowedPaymentMethods[0].type,
                                     parameters: {
                                         allowedAuthMethods:
-                                        paymentDataRequest.allowedPaymentMethods[0].parameters
-                                            .allowedAuthMethods,
+                                            paymentDataRequest.allowedPaymentMethods[0].parameters
+                                                .allowedAuthMethods,
                                         allowedCardNetworks:
-                                        paymentDataRequest.allowedPaymentMethods[0].parameters
-                                            .allowedCardNetworks,
+                                            paymentDataRequest.allowedPaymentMethods[0].parameters
+                                                .allowedCardNetworks,
                                     },
                                 },
                             ],
@@ -265,7 +269,7 @@ export default class GooglePayPaymentProcessor {
             city,
             stateOrProvince: paymentData.paymentMethodData.info.billingAddress.administrativeArea,
             stateOrProvinceCode:
-            paymentData.paymentMethodData.info.billingAddress.administrativeArea,
+                paymentData.paymentMethodData.info.billingAddress.administrativeArea,
             postalCode,
             countryCode,
             phone: paymentData.paymentMethodData.info.billingAddress.phoneNumber,

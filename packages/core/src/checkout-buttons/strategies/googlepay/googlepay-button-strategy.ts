@@ -18,7 +18,7 @@ import {
     callbackTriggerType,
     GooglePayPaymentProcessor,
     IntermediatePaymentData,
-    totalPriceStatusType
+    totalPriceStatusType,
 } from '../../../payment/strategies/googlepay';
 import { getShippableItemsCount } from '../../../shipping';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
@@ -70,7 +70,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                 this._getMethodId(),
                 this._getGooglePayClientOptions(
                     currencyCode,
-                    googlePayOptions?.buyNowInitializeOptions
+                    googlePayOptions?.buyNowInitializeOptions,
                 ),
             );
         } else {
@@ -94,12 +94,16 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         return {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async (intermediatePaymentData: IntermediatePaymentData) => {
-                    if (intermediatePaymentData.callbackTrigger !== callbackTriggerType.INITIALIZE) {
+                    if (
+                        intermediatePaymentData.callbackTrigger !== callbackTriggerType.INITIALIZE
+                    ) {
                         return;
                     }
 
                     try {
-                        this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
+                        this._buyNowCart = await this._createBuyNowCart({
+                            buyNowInitializeOptions
+                        });
 
                         if (this._buyNowCart) {
                             await this._store.dispatch(
@@ -109,13 +113,12 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
                             return {
                                 newTransactionInfo: {
-                                    currencyCode: currencyCode,
+                                    currencyCode,
                                     totalPrice: String(cartAmount),
                                     totalPriceStatus: totalPriceStatusType.FINAL,
                                 },
                             };
                         }
-
                     } catch (error) {
                         throw new BuyNowCartCreationError(error);
                     }
@@ -253,10 +256,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     }
 
     @bind
-    private async _handleWalletButtonClick(
-        event: Event,
-        currencyCode?: string,
-    ): Promise<void> {
+    private async _handleWalletButtonClick(event: Event, currencyCode?: string): Promise<void> {
         event.preventDefault();
 
         try {

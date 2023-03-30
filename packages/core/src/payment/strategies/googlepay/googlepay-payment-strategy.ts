@@ -394,7 +394,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 transactionInfo: {
                     currencyCode: cart.currency.code,
                     totalPrice: String(cart.cartAmount),
-                }
+                },
             };
 
             this._googlePayPaymentProcessor.updatePaymentDataRequest(payloadToUpdate);

@@ -22,8 +22,17 @@ export enum totalPriceStatusType {
 
 export type EnvironmentType = 'PRODUCTION' | 'TEST';
 export type TokenizeType = 'AndroidPayCard' | 'CreditCard' | 'CARD';
-export type CallbackTrigger = callbackTriggerType.INITIALIZE | callbackTriggerType.SHIPPING_OPTION | callbackTriggerType.SHIPPING_ADDRESS | callbackTriggerType.OFFER;
-export type TotalPriceStatus = totalPriceStatusType.ESTIMATED | totalPriceStatusType.FINAL | totalPriceStatusType.NOT_CURRENTLY_KNOWN;
+
+export type CallbackTrigger =
+    callbackTriggerType.INITIALIZE
+    | callbackTriggerType.SHIPPING_OPTION
+    | callbackTriggerType.SHIPPING_ADDRESS
+    | callbackTriggerType.OFFER;
+
+export type TotalPriceStatus =
+    totalPriceStatusType.ESTIMATED
+    | totalPriceStatusType.FINAL
+    | totalPriceStatusType.NOT_CURRENTLY_KNOWN;
 
 export interface GooglePayInitializer {
     initialize(
@@ -230,17 +239,19 @@ export interface NewTransactionInfo {
         currencyCode: string;
         totalPrice: string;
         totalPriceStatus: totalPriceStatusType;
-    }
+    };
 }
 
 export interface IntermediatePaymentData {
-    callbackTrigger: CallbackTrigger
+    callbackTrigger: CallbackTrigger;
 }
 
 export interface GooglePayClientOptions {
     paymentDataCallbacks: {
-        onPaymentDataChanged(intermediatePaymentData: IntermediatePaymentData): Promise<NewTransactionInfo> | void;
-    }
+        onPaymentDataChanged(
+            intermediatePaymentData: IntermediatePaymentData
+        ): Promise<NewTransactionInfo> | void;
+    };
 }
 
 export type GooglePayTransactionInfo = Pick<GooglePayPaymentDataRequestV2, 'transactionInfo'>;
