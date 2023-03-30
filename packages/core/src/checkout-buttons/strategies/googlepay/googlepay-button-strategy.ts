@@ -17,14 +17,14 @@ import { bindDecorator as bind } from '../../../common/utility';
 import {
     callbackTriggerType,
     GooglePayPaymentProcessor,
-    IntermediatePaymentData, totalPriceStatusType
+    IntermediatePaymentData,
+    totalPriceStatusType
 } from '../../../payment/strategies/googlepay';
 import { getShippableItemsCount } from '../../../shipping';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 import { GooglePayButtonInitializeOptions } from './googlepay-button-options';
-import {PayPalBuyNowInitializeOptions} from "../../../../../paypal-commerce-integration/src/paypal-commerce-types";
 
 type BuyNowInitializeOptions = Pick<GooglePayButtonInitializeOptions, 'buyNowInitializeOptions'>;
 
@@ -68,7 +68,10 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
             await this._googlePayPaymentProcessor.initialize(
                 this._getMethodId(),
-                this._getGooglePayClientOptions(currencyCode, googlePayOptions?.buyNowInitializeOptions),
+                this._getGooglePayClientOptions(
+                    currencyCode,
+                    googlePayOptions?.buyNowInitializeOptions
+                ),
             );
         } else {
             await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
@@ -87,7 +90,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         return this._googlePayPaymentProcessor.deinitialize();
     }
 
-    private _getGooglePayClientOptions(currencyCode: string, buyNowInitializeOptions: PayPalBuyNowInitializeOptions) {
+    private _getGooglePayClientOptions(currencyCode: string, buyNowInitializeOptions: any) {
         return {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async (intermediatePaymentData: IntermediatePaymentData) => {
@@ -262,7 +265,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                     transactionInfo: {
                         currencyCode,
                         totalPrice: '0',
-                        totalPriceStatus: 'ESTIMATED', // TODO:
+                        totalPriceStatus: totalPriceStatusType.ESTIMATED,
                     },
                     callbackIntents: ['OFFER'],
                 });
