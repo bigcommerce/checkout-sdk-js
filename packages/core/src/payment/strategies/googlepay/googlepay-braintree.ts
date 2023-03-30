@@ -1,4 +1,4 @@
-import { totalPriceStatusType } from "./googlepay";
+import { totalPriceStatusType } from './googlepay';
 
 type TotalPriceStatus =
     | totalPriceStatusType.ESTIMATED

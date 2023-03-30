@@ -13,7 +13,10 @@ import {
     TokenizePayload,
     totalPriceStatusType,
 } from './googlepay';
-import {GooglePayBraintreeDataRequest, GooglePayBraintreePaymentDataRequestV1,} from './googlepay-braintree';
+import {
+    GooglePayBraintreeDataRequest,
+    GooglePayBraintreePaymentDataRequestV1,
+} from './googlepay-braintree';
 
 export default class GooglePayBraintreeInitializer implements GooglePayInitializer {
     private _googlePaymentInstance!: GooglePayBraintreeSDK;
