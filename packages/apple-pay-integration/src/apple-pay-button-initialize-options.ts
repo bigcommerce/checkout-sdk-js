@@ -25,6 +25,11 @@ export default interface ApplePayButtonInitializeOptions {
     buttonClassName?: string;
 
     /**
+     * The button color name of the ApplePay button.
+     */
+    buttonColor?: string;
+
+    /**
      * A callback that gets called when a payment is successfully completed.
      */
     onPaymentAuthorize(): void;

@@ -62,7 +62,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { buttonClassName, onPaymentAuthorize, buyNowInitializeOptions, requiresShipping } =
+        const { buttonClassName, onPaymentAuthorize, buyNowInitializeOptions, requiresShipping, buttonColor } =
             applepay;
 
         this._requiresShipping = requiresShipping;
@@ -81,7 +81,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
-        this._applePayButton = this._createButton(containerId, buttonClassName);
+        this._applePayButton = this._createButton(containerId, buttonClassName, buttonColor);
         this._applePayButton.addEventListener('click', this._handleWalletButtonClick.bind(this));
 
         return Promise.resolve();
@@ -94,6 +94,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _createButton(
         containerId: string,
         buttonClassName = 'apple-pay-checkout-button',
+        buttonColor = 'black',
     ): HTMLElement {
         const container = document.getElementById(containerId);
 
@@ -110,6 +111,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         button.classList.add(buttonClassName);
         button.setAttribute('role', 'button');
         button.setAttribute('aria-label', 'Apple Pay button');
+        button.setAttribute('buttonstyle', buttonColor);
         container.appendChild(button);
 
         return button;
