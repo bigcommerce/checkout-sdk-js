@@ -70,6 +70,8 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             buttonColor,
         } = applepay;
 
+        console.log('BUTTON COLOR', buttonColor);
+
         this._requiresShipping = requiresShipping;
 
         this._buyNowInitializeOptions = buyNowInitializeOptions;
@@ -102,6 +104,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         buttonColor = 'black',
     ): HTMLElement {
         const container = document.getElementById(containerId);
+        console.log('BUTTON COLOR 1', buttonColor);
 
         if (!container) {
             throw new InvalidArgumentError(
