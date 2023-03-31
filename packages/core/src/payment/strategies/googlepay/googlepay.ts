@@ -1,4 +1,5 @@
 import { PaymentInitializeOptions } from '../..';
+import { BuyNowCartRequestBody } from '../../../cart';
 import { Checkout, InternalCheckoutSelectors } from '../../../checkout';
 import PaymentMethod from '../../payment-method';
 import {
@@ -30,6 +31,10 @@ export enum CallbackIntentsType {
 export type EnvironmentType = 'PRODUCTION' | 'TEST';
 export type TokenizeType = 'AndroidPayCard' | 'CreditCard' | 'CARD';
 
+export interface GooglePayBuyNowInitializeOptions {
+    getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+}
+
 export interface GooglePayInitializer {
     initialize(
         checkout: Checkout | void,
@@ -53,7 +58,7 @@ export interface GooglePayPaymentOptions {
     paymentDataCallbacks?: {
         onPaymentDataChanged?(
             intermediatePaymentData: IntermediatePaymentData,
-        ): Promise<NewTransactionInfo> | void;
+        ): Promise<NewTransactionInfo | void>;
     };
 }
 
@@ -243,13 +248,3 @@ export interface NewTransactionInfo {
 export interface IntermediatePaymentData {
     callbackTrigger: CallbackTriggerType;
 }
-
-export interface GooglePayClientOptions {
-    paymentDataCallbacks?: {
-        onPaymentDataChanged?(
-            intermediatePaymentData: IntermediatePaymentData,
-        ): Promise<NewTransactionInfo> | void;
-    };
-}
-
-export type GooglePayTransactionInfo = Pick<GooglePayPaymentDataRequestV2, 'transactionInfo'>;

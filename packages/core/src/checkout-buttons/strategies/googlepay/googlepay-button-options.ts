@@ -1,5 +1,4 @@
-import { BuyNowCartRequestBody } from '../../../cart';
-import { ButtonColor, ButtonType } from '../../../payment/strategies/googlepay';
+import { ButtonColor, ButtonType, GooglePayBuyNowInitializeOptions } from '../../../payment/strategies/googlepay';
 
 export interface GooglePayButtonInitializeOptions {
     /**
@@ -20,7 +19,5 @@ export interface GooglePayButtonInitializeOptions {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
+    buyNowInitializeOptions?: GooglePayBuyNowInitializeOptions;
 }

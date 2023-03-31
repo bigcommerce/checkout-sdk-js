@@ -77,21 +77,25 @@ export default class GooglePayPaymentProcessor {
     updatePaymentDataRequest(paymentDataRequest: Partial<GooglePayPaymentDataRequestV2>) {
         const existingPaymentDataRequest = this._getPaymentDataRequest();
 
+        // TODO: check
         this._paymentDataRequest = {
             ...existingPaymentDataRequest,
             ...paymentDataRequest,
+            // TODO: add merchantInfo here
             transactionInfo: {
                 ...(existingPaymentDataRequest.transactionInfo ?? {}),
                 ...(paymentDataRequest.transactionInfo ?? {}),
             },
-            allowedPaymentMethods:
-                existingPaymentDataRequest.allowedPaymentMethods ||
-                paymentDataRequest.allowedPaymentMethods ||
-                [],
+            // TODO: remove this one
+            // allowedPaymentMethods:
+            //     existingPaymentDataRequest.allowedPaymentMethods ||
+            //     paymentDataRequest.allowedPaymentMethods ||
+            //     [],
             shippingAddressParameters: {
                 ...(existingPaymentDataRequest.shippingAddressParameters ?? {}),
                 ...(paymentDataRequest.shippingAddressParameters ?? {}),
             },
+
         };
     }
 
