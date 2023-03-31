@@ -62,8 +62,13 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { buttonClassName, onPaymentAuthorize, buyNowInitializeOptions, requiresShipping, buttonColor } =
-            applepay;
+        const {
+            buttonClassName,
+            onPaymentAuthorize,
+            buyNowInitializeOptions,
+            requiresShipping,
+            buttonColor,
+        } = applepay;
 
         this._requiresShipping = requiresShipping;
 
