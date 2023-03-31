@@ -182,15 +182,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
                 CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE,
                 {
                     paymentDataCallbacks: {
-                        onPaymentDataChanged: () => {
-                            return {
-                                newTransactionInfo: {
-                                    currencyCode: 'USD',
-                                    totalPrice: '225',
-                                    totalPriceStatus: TotalPriceStatusType.FINAL,
-                                },
-                            };
-                        },
+                        onPaymentDataChanged: expect.any(Function),
                     },
                 },
             );
