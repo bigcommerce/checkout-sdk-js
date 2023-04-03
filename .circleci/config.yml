@@ -23,6 +23,7 @@ jobs:
   test-core:
     <<: *node_executor
     parallelism: 2
+    resource_class: medium+
     steps:
       - ci/pre-setup
       - node/npm-install
@@ -43,6 +44,7 @@ jobs:
 
   test:
     <<: *node_executor
+    resource_class: medium+
     steps:
       - ci/pre-setup
       - node/npm-install
@@ -62,6 +64,7 @@ jobs:
 
   build:
     <<: *node_executor
+    resource_class: medium+
     steps:
       - ci/pre-setup
       - node/npm-install
@@ -76,6 +79,7 @@ jobs:
 
   npm_release:
     <<: *node_executor
+    resource_class: medium+
     steps:
       - ci/pre-setup
       - node/npm-install
@@ -104,6 +108,7 @@ jobs:
 
   build_cdn:
     <<: *node_executor
+    resource_class: medium+
     steps:
       - ci/pre-setup
       - node/npm-install
