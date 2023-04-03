@@ -13,6 +13,13 @@ export default function isUsBankAccountInstrumentLike(
     return (
         'accountNumber' in instrument &&
         'routingNumber' in instrument &&
-        'ownershipType' in instrument
+        'ownershipType' in instrument &&
+        'accountType' in instrument &&
+        'address1' in instrument &&
+        'address2' in instrument &&
+        'city' in instrument &&
+        'countryCode' in instrument &&
+        'postalCode' in instrument &&
+        'stateOrProvinceCode' in instrument
     );
 }

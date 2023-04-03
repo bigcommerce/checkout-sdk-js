@@ -9,7 +9,6 @@ import {
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
-    PaymentMethod,
     PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
@@ -24,7 +23,6 @@ import isUsBankAccountInstrumentLike from '../is-us-bank-account-instrument-like
 import { WithBraintreePaypalAchInitializeOptions } from './braintree-paypal-ach-initialize-options';
 
 export default class BraintreePaypalAchPaymentStrategy implements PaymentStrategy {
-    private paymentMethod?: PaymentMethod;
     private usBankAccount?: BraintreeUsBankAccount;
     private mandateText = '';
 
@@ -63,13 +61,18 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
 
         const state = this.paymentIntegrationService.getState();
 
-        this.paymentMethod = state.getPaymentMethodOrThrow(options.methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow(options.methodId);
 
-        if (!this.paymentMethod.clientToken) {
+        if (!paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        await this.initializeUsBankAccount(this.paymentMethod.clientToken);
+        try {
+            this.braintreeIntegrationService.initialize(paymentMethod.clientToken);
+            this.usBankAccount = await this.braintreeIntegrationService.getUsBankAccount();
+        } catch (error) {
+            this.handleError(error);
+        }
     }
 
     async execute(orderRequest: OrderRequestBody, options: PaymentRequestOptions): Promise<void> {
@@ -161,18 +164,5 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         }
 
         throw new PaymentMethodFailedError(error.message);
-    }
-
-    private async initializeUsBankAccount(clientToken?: string) {
-        if (!clientToken) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        try {
-            this.braintreeIntegrationService.initialize(clientToken);
-            this.usBankAccount = await this.braintreeIntegrationService.getUsBankAccount();
-        } catch (error) {
-            this.handleError(error);
-        }
     }
 }

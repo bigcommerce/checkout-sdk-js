@@ -1,4 +1,7 @@
-import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    UsBankAccountInstrument,
+    WithAccountCreation,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BrowserInfo } from '../common/browser-info';
 import { Omit } from '../common/types';
@@ -62,22 +65,6 @@ export interface CreditCardInstrument {
     extraData?: any;
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
     browser_info?: BrowserInfo;
-}
-
-export interface UsBankAccountInstrument {
-    accountNumber: string;
-    routingNumber: string;
-    ownershipType: 'Personal' | 'Business';
-    accountType: 'Checking' | 'Savings';
-    firstName?: string;
-    lastName?: string;
-    businessName?: string;
-    address1: string;
-    address2: string;
-    city: string;
-    countryCode: string;
-    postalCode: string;
-    stateOrProvinceCode: string;
 }
 
 export interface WithDocumentInstrument {

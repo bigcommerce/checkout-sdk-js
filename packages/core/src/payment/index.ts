@@ -35,7 +35,6 @@ export {
     ThreeDSecureToken,
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
-    UsBankAccountInstrument,
 } from './payment';
 export { default as PaymentMethod } from './payment-method';
 export { default as PaymentMethodMeta } from './payment-method-meta';

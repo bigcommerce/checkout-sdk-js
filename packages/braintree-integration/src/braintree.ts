@@ -489,7 +489,7 @@ export interface BraintreeUsBankAccount extends BraintreeModule {
     tokenize(payload: {
         bankDetails: UsBankAccountSuccessPayload;
         mandateText: string;
-    }): Promise<{ nonce: string; details: Record<string, string> }>;
+    }): Promise<{ nonce: string; details: BraintreeDetails }>;
 }
 
 /**

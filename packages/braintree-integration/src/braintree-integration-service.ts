@@ -96,10 +96,10 @@ export default class BraintreeIntegrationService {
 
     async getUsBankAccount() {
         if (!this.usBankAccount) {
-            this.usBankAccount = Promise.all([
-                this.getClient(),
-                this.braintreeScriptLoader.loadUsBankAccount(),
-            ]).then(([client, usBankAccount]) => usBankAccount.create({ client }));
+            const client = await this.getClient();
+            const usBankAccount = await this.braintreeScriptLoader.loadUsBankAccount();
+
+            this.usBankAccount = usBankAccount.create({ client });
         }
 
         return this.usBankAccount;
@@ -195,8 +195,10 @@ export default class BraintreeIntegrationService {
         }
     }
 
-    getSessionId(): Promise<string | undefined> {
-        return this.getDataCollector().then(({ deviceData }) => deviceData);
+    async getSessionId(): Promise<string | undefined> {
+        const { deviceData } = await this.getDataCollector();
+
+        return deviceData;
     }
 
     async teardown(): Promise<void> {

@@ -1,5 +1,8 @@
 export interface BraintreePaypalAchInitializeOptions {
-    mandateText?: string;
+    /**
+     * The text that should be displayed to the customer in UI for proof of authorization
+     */
+    mandateText: string;
 }
 
 export interface WithBraintreePaypalAchInitializeOptions {
