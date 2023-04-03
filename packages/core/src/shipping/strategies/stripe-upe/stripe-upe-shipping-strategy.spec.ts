@@ -264,6 +264,7 @@ describe('StripeUPEShippingStrategy', () => {
         it('returns an error when methodId is not present', () => {
             const promise = strategy.initialize({
                 ...getStripeUPEShippingInitializeOptionsMock(),
+                stripeupe: undefined,
                 methodId: '',
             });
 
