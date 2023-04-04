@@ -1,4 +1,5 @@
 import { PaymentInitializeOptions } from '../..';
+import { BuyNowCartRequestBody } from '../../../cart';
 import { Checkout, InternalCheckoutSelectors } from '../../../checkout';
 import PaymentMethod from '../../payment-method';
 import {
@@ -7,8 +8,32 @@ import {
     GooglePayBraintreeSDK,
 } from '../braintree';
 
+export enum CallbackTriggerType {
+    INITIALIZE = 'INITIALIZE',
+    SHIPPING_OPTION = 'SHIPPING_OPTION',
+    SHIPPING_ADDRESS = 'SHIPPING_ADDRESS',
+    OFFER = 'OFFER',
+}
+
+export enum TotalPriceStatusType {
+    ESTIMATED = 'ESTIMATED',
+    FINAL = 'FINAL',
+    NOT_CURRENTLY_KNOWN = 'NOT_CURRENTLY_KNOWN',
+}
+
+export enum CallbackIntentsType {
+    OFFER = 'OFFER',
+    PAYMENT_AUTHORIZATION = 'PAYMENT_AUTHORIZATION',
+    SHIPPING_ADDRESS = 'SHIPPING_ADDRESS',
+    SHIPPING_OPTION = 'SHIPPING_OPTION',
+}
+
 export type EnvironmentType = 'PRODUCTION' | 'TEST';
 export type TokenizeType = 'AndroidPayCard' | 'CreditCard' | 'CARD';
+
+export interface GooglePayBuyNowInitializeOptions {
+    getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+}
 
 export interface GooglePayInitializer {
     initialize(
@@ -30,6 +55,11 @@ export type GooglePayCreator = BraintreeModuleCreator<GooglePayBraintreeSDK>;
 
 export interface GooglePayPaymentOptions {
     environment: EnvironmentType;
+    paymentDataCallbacks?: {
+        onPaymentDataChanged?(
+            intermediatePaymentData: IntermediatePaymentData,
+        ): Promise<NewTransactionInfo | void>;
+    };
 }
 
 export type GooglePayVerifyPayload = BraintreeVerifyPayload | undefined;
@@ -194,16 +224,29 @@ export interface GooglePayPaymentDataRequestV2 {
     transactionInfo: {
         currencyCode: string;
         countryCode?: string;
-        totalPriceStatus: string;
+        totalPriceStatus?: TotalPriceStatusType;
         totalPrice?: string;
         checkoutOption?: string;
     };
+    callbackIntents?: CallbackIntentsType[];
     emailRequired?: boolean;
     shippingAddressRequired?: boolean;
     shippingAddressParameters?: {
         allowedCountryCodes?: string[];
         phoneNumberRequired?: boolean;
     };
+}
+
+export interface NewTransactionInfo {
+    newTransactionInfo: {
+        currencyCode: string;
+        totalPrice: string;
+        totalPriceStatus: TotalPriceStatusType;
+    };
+}
+
+export interface IntermediatePaymentData {
+    callbackTrigger: CallbackTriggerType;
 }
 
 export type GooglePayTransactionInfo = Pick<GooglePayPaymentDataRequestV2, 'transactionInfo'>;
