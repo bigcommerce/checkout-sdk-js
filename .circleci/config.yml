@@ -13,6 +13,7 @@ orbs:
 jobs:
   test-packages:
     <<: *node_executor
+    resource_class: medium+
     steps:
       - ci/pre-setup
       - node/npm-install
