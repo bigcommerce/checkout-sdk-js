@@ -49,7 +49,9 @@ describe('GooglePayBraintreeInitializer', () => {
             await googlePayInitializer
                 .initialize(getCheckoutMock(), getPaymentMethodMock(), false)
                 .catch((error) => {
-                    expect(error.message).toBe(`Cannot read property 'authJwt' of undefined`);
+                    expect(error.message).toBe(
+                        `Cannot read properties of undefined (reading 'authJwt')`,
+                    );
                 });
         });
 

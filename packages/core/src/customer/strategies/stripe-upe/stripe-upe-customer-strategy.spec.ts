@@ -360,9 +360,10 @@ describe('StripeUpeCustomerStrategy', () => {
             expect(customerInitialization.stripeupe?.onEmailChange).toHaveBeenCalledWith(false, '');
         });
 
-        it('returns an error when methodId is not present', () => {
+        it('returns an error when methodId is not present', async () => {
             const promise = strategy.initialize({
                 ...getStripeUPECustomerInitializeOptionsMock(),
+                stripeupe: undefined,
                 methodId: '',
             });
 
