@@ -25,8 +25,10 @@ import {
     GooglePayInitializer,
     GooglePaymentData,
     GooglePayPaymentDataRequestV2,
+    GooglePayPaymentOptions,
     GooglePaySDK,
     TokenizePayload,
+    UpdatePaymentDataRequestPayload,
 } from './googlepay';
 import { getFirstAndLastName } from './googlepay-get-first-and-last-name';
 import GooglePayScriptLoader from './googlepay-script-loader';
@@ -47,10 +49,10 @@ export default class GooglePayPaymentProcessor {
         private _requestSender: RequestSender,
     ) {}
 
-    initialize(methodId: string): Promise<void> {
+    initialize(methodId: string, googlePayClientOptions?: GooglePayPaymentOptions): Promise<void> {
         this._methodId = methodId;
 
-        return this._configureWallet();
+        return this._configureWallet(googlePayClientOptions);
     }
 
     deinitialize(): Promise<void> {
@@ -73,13 +75,25 @@ export default class GooglePayPaymentProcessor {
         });
     }
 
-    updatePaymentDataRequest(payloadToUpdate: { currencyCode: string; totalPrice: string }) {
-        const paymentDataRequest = this._getPaymentDataRequest();
+    updatePaymentDataRequest(paymentDataRequest: UpdatePaymentDataRequestPayload) {
+        const existingPaymentDataRequest = this._getPaymentDataRequest();
 
-        paymentDataRequest.transactionInfo.currencyCode = payloadToUpdate.currencyCode;
-        paymentDataRequest.transactionInfo.totalPrice = payloadToUpdate.totalPrice;
-
-        this._paymentDataRequest = paymentDataRequest;
+        this._paymentDataRequest = {
+            ...existingPaymentDataRequest,
+            ...paymentDataRequest,
+            merchantInfo: {
+                ...(existingPaymentDataRequest.merchantInfo ?? {}),
+                ...(paymentDataRequest.merchantInfo ?? {}),
+            },
+            transactionInfo: {
+                ...(existingPaymentDataRequest.transactionInfo ?? {}),
+                ...(paymentDataRequest.transactionInfo ?? {}),
+            },
+            shippingAddressParameters: {
+                ...(existingPaymentDataRequest.shippingAddressParameters ?? {}),
+                ...(paymentDataRequest.shippingAddressParameters ?? {}),
+            },
+        };
     }
 
     displayWallet(): Promise<GooglePaymentData> {
@@ -109,7 +123,9 @@ export default class GooglePayPaymentProcessor {
         this._isBuyNowFlow = isBuyNowFlow;
     }
 
-    private _configureWallet(): Promise<void> {
+    private _configureWallet(
+        googlePayClientOptions?: Partial<GooglePayPaymentOptions>,
+    ): Promise<void> {
         const features = this._store.getState().config.getStoreConfig()?.checkoutSettings.features;
         const options =
             features && features['INT-5826.google_hostname_alias']
@@ -138,7 +154,11 @@ export default class GooglePayPaymentProcessor {
                         hasShippingAddress,
                     ),
                 ]).then(([googlePay, paymentDataRequest]) => {
-                    this._googlePayClient = this._getGooglePayClient(googlePay, testMode);
+                    this._googlePayClient = this._getGooglePayClient(
+                        googlePay,
+                        testMode,
+                        googlePayClientOptions,
+                    );
                     this._paymentDataRequest = paymentDataRequest;
 
                     return this._googlePayClient
@@ -199,14 +219,21 @@ export default class GooglePayPaymentProcessor {
         return this._paymentDataRequest;
     }
 
-    private _getGooglePayClient(google: GooglePaySDK, testMode?: boolean): GooglePayClient {
+    private _getGooglePayClient(
+        google: GooglePaySDK,
+        testMode?: boolean,
+        googlePayClientOptions?: Partial<GooglePayPaymentOptions>,
+    ): GooglePayClient {
         if (testMode === undefined) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const environment: EnvironmentType = testMode ? 'TEST' : 'PRODUCTION';
 
-        return new google.payments.api.PaymentsClient({ environment });
+        return new google.payments.api.PaymentsClient({
+            environment,
+            ...(googlePayClientOptions ?? {}),
+        });
     }
 
     private _getMethodId(): string {

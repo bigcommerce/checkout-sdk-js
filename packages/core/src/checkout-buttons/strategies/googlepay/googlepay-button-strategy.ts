@@ -14,19 +14,28 @@ import { BuyNowCartCreationError } from '../../../cart/errors';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 import { bindDecorator as bind } from '../../../common/utility';
-import { GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
+import {
+    CallbackIntentsType,
+    CallbackTriggerType,
+    EnvironmentType,
+    GooglePayPaymentOptions,
+    GooglePayPaymentProcessor,
+    IntermediatePaymentData,
+    NewTransactionInfo,
+    TotalPriceStatusType,
+} from '../../../payment/strategies/googlepay';
+import { GooglePayBuyNowInitializeOptions } from './googlepay-button-types';
 import { getShippableItemsCount } from '../../../shipping';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 import { GooglePayButtonInitializeOptions } from './googlepay-button-options';
 
-type BuyNowInitializeOptions = Pick<GooglePayButtonInitializeOptions, 'buyNowInitializeOptions'>;
-
 export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     private _methodId?: string;
     private _walletButton?: HTMLElement;
     private _buyNowCart?: Cart;
+    private _isBuyNowFlow?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -40,6 +49,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         const { containerId, methodId, currencyCode } = options;
 
         const googlePayOptions = this._getGooglePayOptions(options);
+        const { buyNowInitializeOptions } = googlePayOptions;
 
         if (!containerId || !methodId) {
             throw new InvalidArgumentError(
@@ -47,22 +57,32 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             );
         }
 
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+        const { testMode } = paymentMethod?.config || {};
+
         this._methodId = methodId;
 
-        const hasBuyNowCartOptions = Boolean(googlePayOptions?.buyNowInitializeOptions);
+        this._isBuyNowFlow = !!buyNowInitializeOptions;
 
-        if (hasBuyNowCartOptions) {
+        if (this._isBuyNowFlow) {
             if (!currencyCode) {
                 throw new InvalidArgumentError(
                     `Unable to initialize payment because "options.currencyCode" argument is not provided.`,
                 );
             }
+
+            const { buyNowInitializeOptions } = googlePayOptions;
+            this._googlePayPaymentProcessor.updateBuyNowFlowFlag(this._isBuyNowFlow);
+
+            await this._googlePayPaymentProcessor.initialize(
+                this._getMethodId(),
+                this._getGooglePayClientOptions(currencyCode, testMode, buyNowInitializeOptions),
+            );
         } else {
             await this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout());
+            await this._googlePayPaymentProcessor.initialize(this._getMethodId());
         }
-
-        this._googlePayPaymentProcessor.updateBuyNowFlowFlag(hasBuyNowCartOptions);
-        await this._googlePayPaymentProcessor.initialize(this._getMethodId());
 
         this._walletButton = this._createSignInButton(containerId, googlePayOptions, currencyCode);
     }
@@ -76,13 +96,56 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         return this._googlePayPaymentProcessor.deinitialize();
     }
 
+    private _getGooglePayClientOptions(
+        currencyCode: string,
+        testMode?: boolean,
+        buyNowInitializeOptions?: GooglePayBuyNowInitializeOptions,
+    ): GooglePayPaymentOptions {
+        const environment: EnvironmentType = testMode ? 'TEST' : 'PRODUCTION';
+
+        return {
+            environment,
+            paymentDataCallbacks: {
+                onPaymentDataChanged: async ({
+                    callbackTrigger,
+                }: IntermediatePaymentData): Promise<NewTransactionInfo | void> => {
+                    if (callbackTrigger !== CallbackTriggerType.INITIALIZE) {
+                        return;
+                    }
+
+                    try {
+                        this._buyNowCart = await this._createBuyNowCart(buyNowInitializeOptions);
+
+                        if (this._buyNowCart) {
+                            const { id, cartAmount } = this._buyNowCart;
+
+                            await this._store.dispatch(
+                                this._checkoutActionCreator.loadCheckout(id),
+                            );
+
+                            return {
+                                newTransactionInfo: {
+                                    currencyCode,
+                                    totalPrice: String(cartAmount),
+                                    totalPriceStatus: TotalPriceStatusType.FINAL,
+                                },
+                            };
+                        }
+                    } catch (error) {
+                        throw new BuyNowCartCreationError(error);
+                    }
+                },
+            },
+        };
+    }
+
     private _createSignInButton(
         containerId: string,
         buttonOptions: GooglePayButtonInitializeOptions,
         currencyCode?: string,
     ): HTMLElement {
         const container = document.getElementById(containerId);
-        const { buttonType, buttonColor, buyNowInitializeOptions } = buttonOptions;
+        const { buttonType, buttonColor } = buttonOptions;
 
         if (!container) {
             throw new InvalidArgumentError(
@@ -90,11 +153,10 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             );
         }
 
-        const handleValidButtonClick = (event: Event) =>
-            this._handleWalletButtonClick(event, { buyNowInitializeOptions }, currencyCode);
+        const onClick = (event: Event) => this._handleWalletButtonClick(event, currencyCode);
 
         const googlePayButton = this._googlePayPaymentProcessor.createButton(
-            handleValidButtonClick,
+            onClick,
             buttonType,
             buttonColor,
         );
@@ -185,7 +247,9 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         throw new InvalidArgumentError();
     }
 
-    private async _createBuyNowCart({ buyNowInitializeOptions }: BuyNowInitializeOptions) {
+    private async _createBuyNowCart(
+        buyNowInitializeOptions?: GooglePayBuyNowInitializeOptions,
+    ): Promise<Cart | undefined> {
         if (typeof buyNowInitializeOptions?.getBuyNowCartRequestBody === 'function') {
             const cartRequestBody = buyNowInitializeOptions.getBuyNowCartRequestBody();
 
@@ -206,35 +270,26 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     }
 
     @bind
-    private async _handleWalletButtonClick(
-        event: Event,
-        { buyNowInitializeOptions }: BuyNowInitializeOptions,
-        currencyCode?: string,
-    ): Promise<void> {
+    private async _handleWalletButtonClick(event: Event, currencyCode?: string): Promise<void> {
         event.preventDefault();
 
-        this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
-
-        const cart = this._buyNowCart || this._store.getState().cart.getCartOrThrow();
-        const hasPhysicalItems = getShippableItemsCount(cart) > 0;
-
-        if (this._buyNowCart && currencyCode) {
-            const payloadToUpdate = {
-                currencyCode,
-                totalPrice: String(cart.cartAmount),
-            };
-
-            this._googlePayPaymentProcessor.updatePaymentDataRequest(payloadToUpdate);
-
-            await this._store.dispatch(
-                this._checkoutActionCreator.loadCheckout(this._buyNowCart.id),
-            );
-        }
-
         try {
+            if (this._isBuyNowFlow && currencyCode) {
+                this._googlePayPaymentProcessor.updatePaymentDataRequest({
+                    transactionInfo: {
+                        currencyCode,
+                        totalPrice: '0',
+                        totalPriceStatus: TotalPriceStatusType.ESTIMATED,
+                    },
+                    callbackIntents: [CallbackIntentsType.OFFER],
+                });
+            }
             const paymentData = await this._googlePayPaymentProcessor.displayWallet();
 
             await this._googlePayPaymentProcessor.handleSuccess(paymentData);
+
+            const cart = this._store.getState().cart.getCartOrThrow();
+            const hasPhysicalItems = getShippableItemsCount(cart) > 0;
 
             if (hasPhysicalItems && paymentData.shippingAddress) {
                 await this._googlePayPaymentProcessor.updateShippingAddress(

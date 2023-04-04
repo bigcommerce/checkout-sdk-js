@@ -172,8 +172,10 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         const hasPhysicalItems = getShippableItemsCount(cart) > 0;
 
         const payloadToUpdate = {
-            currencyCode: cart.currency.code,
-            totalPrice: String(cart.cartAmount),
+            transactionInfo: {
+                currencyCode: cart.currency.code,
+                totalPrice: String(cart.cartAmount),
+            },
         };
 
         this._googlePayPaymentProcessor.updatePaymentDataRequest(payloadToUpdate);
