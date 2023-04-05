@@ -34,18 +34,11 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
     async initialize(
         options: PaymentInitializeOptions & WithBraintreePaypalAchInitializeOptions,
     ): Promise<void> {
-        const { braintreeach } = options;
-        const { mandateText } = braintreeach || {};
+        const { mandateText } = options.braintreeach || {};
 
         if (!options.methodId) {
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.methodId" argument is not provided.',
-            );
-        }
-
-        if (!braintreeach) {
-            throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.braintreeach" argument is not provided.`,
             );
         }
 
