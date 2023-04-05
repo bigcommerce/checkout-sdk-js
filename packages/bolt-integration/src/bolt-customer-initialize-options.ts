@@ -11,3 +11,7 @@ export default interface BoltCustomerInitializeOptions {
      */
     onInit?(hasBoltAccount: boolean, email?: string): void;
 }
+
+export interface WithBoltCustomerInitializeOptions {
+    bolt?: BoltCustomerInitializeOptions;
+}

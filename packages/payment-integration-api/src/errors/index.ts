@@ -24,3 +24,4 @@ export {
 export { default as PaymentMethodInvalidError } from './payment-method-invalid-error';
 export { default as StandardError } from './standard-error';
 export { default as TimeoutError } from './timeout-error';
+export { isCustomError } from './custom-error';

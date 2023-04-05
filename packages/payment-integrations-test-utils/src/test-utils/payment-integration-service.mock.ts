@@ -20,6 +20,7 @@ const state = {
     getShippingAddress: jest.fn(() => getAddress()),
     getStoreConfig: jest.fn(() => getConfig().storeConfig),
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
+    getPaymentMethod: jest.fn(),
     getPaymentMethodOrThrow: jest.fn(),
     getPaymentStatus: jest.fn(),
     getBillingAddressOrThrow: jest.fn(() => getBillingAddress()),

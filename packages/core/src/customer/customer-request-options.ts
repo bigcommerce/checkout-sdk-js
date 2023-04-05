@@ -1,7 +1,6 @@
 import { RequestOptions } from '../common/http-request';
 
 import { AmazonPayV2CustomerInitializeOptions } from './strategies/amazon-pay-v2';
-import { BoltCustomerInitializeOptions } from './strategies/bolt';
 import {
     BraintreePaypalCreditCustomerInitializeOptions,
     BraintreeVisaCheckoutCustomerInitializeOptions,
@@ -54,12 +53,6 @@ export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * when using Visa Checkout provided by Braintree.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
-
-    /**
-     * The options that are required to initialize the customer step of checkout
-     * when using Bolt.
-     */
-    bolt?: BoltCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the Chasepay payment method.
