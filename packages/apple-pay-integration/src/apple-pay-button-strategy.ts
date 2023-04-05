@@ -64,6 +64,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         const { buttonClassName, onPaymentAuthorize, buyNowInitializeOptions, requiresShipping } =
             applepay;
+        console.log('BUTTON_CLASS_NAME_1', buttonClassName);
 
         this._requiresShipping = requiresShipping;
 
@@ -96,7 +97,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         buttonClassName = 'apple-pay-checkout-button',
     ): HTMLElement {
         const container = document.getElementById(containerId);
-
+        console.log('BUTTON_CLASS_NAME_2', buttonClassName);
         if (!container) {
             throw new InvalidArgumentError(
                 'Unable to create wallet button without valid container ID.',
