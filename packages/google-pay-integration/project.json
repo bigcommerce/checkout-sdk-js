@@ -1,0 +1,23 @@
+{
+    "root": "packages/google-pay-integration",
+    "sourceRoot": "packages/google-pay-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/google-pay-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/google-pay-integration"],
+            "options": {
+                "jestConfig": "packages/google-pay-integration/jest.config.js",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": ["scope:integration"]
+}

@@ -41,6 +41,9 @@
             "@bigcommerce/checkout-sdk/external-integration": [
                 "packages/external-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/google-pay-integration": [
+                "packages/google-pay-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/legacy-integration": [
                 "packages/legacy-integration/src/index.ts"
             ],
