@@ -23,3 +23,4 @@ export {
 } from './error-response-body';
 export { default as PaymentMethodInvalidError } from './payment-method-invalid-error';
 export { default as StandardError } from './standard-error';
+export { default as TimeoutError } from './timeout-error';
