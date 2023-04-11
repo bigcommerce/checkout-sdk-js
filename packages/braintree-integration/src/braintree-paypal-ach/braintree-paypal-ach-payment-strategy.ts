@@ -86,21 +86,24 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         }
 
         try {
-            const { nonce, details } = await this.usBankAccount.tokenize({
+            const { nonce } = await this.usBankAccount.tokenize({
                 bankDetails: this.getBankDetails(paymentData),
                 mandateText: this.mandateText,
             });
 
             const sessionId = await this.braintreeIntegrationService.getSessionId();
 
+            const state = this.paymentIntegrationService.getState();
+            const { email } = state.getCustomerOrThrow();
+
             const paymentPayload = {
                 formattedPayload: {
                     vault_payment_instrument: true,
                     set_as_default_stored_instrument: null,
                     device_info: sessionId || null,
-                    paypal_account: {
+                    us_bank_account: {
                         token: nonce,
-                        email: details.email || null,
+                        email: email || null,
                     },
                 },
             };

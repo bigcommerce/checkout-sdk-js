@@ -88,6 +88,10 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
             paymentMethodMock.clientToken,
         );
 
+        jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
+            { email: '' },
+        );
+
         jest.spyOn(braintreeIntegrationService, 'getUsBankAccount').mockReturnValue(
             mockBankAccount,
         );
