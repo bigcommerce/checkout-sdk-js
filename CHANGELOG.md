@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.371.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.4...v1.371.5) (2023-04-11)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-000 added billing address mock to payment-integrations-test-utils package ([#1945](https://github.com/bigcommerce/checkout-sdk-js/issues/1945)) ([734b348](https://github.com/bigcommerce/checkout-sdk-js/commit/734b34846bb434737e8a11eadc294b39b562a71d))
+* **payment:** PAYPAL-000 added timeout error to payment-integration-api package ([#1942](https://github.com/bigcommerce/checkout-sdk-js/issues/1942)) ([6c2f1dd](https://github.com/bigcommerce/checkout-sdk-js/commit/6c2f1ddd9f946e61e65b4c80c139d071e7ba9188))
+
 ### [1.371.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.3...v1.371.4) (2023-04-04)
 
 ### [1.371.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.2...v1.371.3) (2023-04-04)
