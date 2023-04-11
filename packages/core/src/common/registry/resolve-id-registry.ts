@@ -29,10 +29,12 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
 
     private _resolveToken(token: string, registeredTokens: string[]): string | undefined {
         const query = this._decodeToken(token);
+
         const results: Array<{ token: string; matches: number; default: boolean }> = [];
 
         registeredTokens.forEach((registeredToken) => {
             const resolverId = this._decodeToken(registeredToken);
+
             const result = { token: registeredToken, matches: 0, default: false };
 
             for (const [key, value] of Object.entries(resolverId)) {
@@ -45,7 +47,11 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
                 }
             }
 
-            results.push(result);
+            const keys = Object.keys(resolverId).length;
+
+            if (keys === result.matches || result.default === true) {
+                results.push(result);
+            }
         });
 
         const matched = results

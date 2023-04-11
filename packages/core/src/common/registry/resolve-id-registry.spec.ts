@@ -35,6 +35,12 @@ describe('ResolveIdRegistry', () => {
         }
     }
 
+    class StrategyA implements TestStrategy {
+        execute() {
+            return true;
+        }
+    }
+
     let subject: ResolveIdRegistry<TestStrategy, TestResolveId>;
 
     beforeEach(() => {
@@ -75,5 +81,25 @@ describe('ResolveIdRegistry', () => {
         expect(subject.get({ type: 'bigbigpay' })).toBeInstanceOf(DefaultStrategy);
         expect(subject.get({ type: 'bigpaypay' })).toBeInstanceOf(DefaultStrategy);
         expect(subject.get({ type: 'bigbigpay' })).not.toBe(subject.get({ type: 'bigpaypay' }));
+    });
+
+    it('returns new strategy instance if multiple methods fallback to default strategy', () => {
+        subject = new ResolveIdRegistry(true);
+        subject.register({ default: true }, () => new DefaultStrategy());
+
+        expect(subject.get({ type: 'bigbigpay' })).toBeInstanceOf(DefaultStrategy);
+        expect(subject.get({ type: 'bigpaypay' })).toBeInstanceOf(DefaultStrategy);
+        expect(subject.get({ type: 'bigbigpay' })).not.toBe(subject.get({ type: 'bigpaypay' }));
+    });
+
+    it('returns correct strategy for a entered resgistry', () => {
+        const subject = new ResolveIdRegistry(true);
+        const registryKey1 = { id: 'credit_card', gateway: 'bluesnap' };
+        const registryKey2 = { id: 'credit_card' };
+
+        subject.register(registryKey1, () => new StrategyA());
+
+        expect(() => subject.get(registryKey2)).toThrow();
+        expect(subject.get(registryKey1)).toBeInstanceOf(StrategyA);
     });
 });

@@ -18,10 +18,7 @@ describe('createCheckoutButtonStrategyRegistry', () => {
     it('creates registry with factories pre-registered', () => {
         const fooStrategy = {} as CheckoutButtonStrategy;
         const registry = createCheckoutButtonStrategyRegistry(paymentIntegrationService, {
-            createFooStrategy: toResolvableModule(
-                () => fooStrategy,
-                [{ id: 'foo', gateway: null, type: 'api' }],
-            ),
+            createFooStrategy: toResolvableModule(() => fooStrategy, [{ id: 'foo' }]),
         });
         const strategy = registry.get({ id: 'foo' });
 
