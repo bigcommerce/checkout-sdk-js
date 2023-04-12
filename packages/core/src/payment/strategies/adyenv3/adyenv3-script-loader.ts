@@ -25,6 +25,8 @@ export default class AdyenV3ScriptLoader {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return new this._window.AdyenCheckout(configuration);
+        const checkout = await this._window.AdyenCheckout(configuration);
+
+        return checkout;
     }
 }
