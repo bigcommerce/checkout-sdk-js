@@ -92,14 +92,24 @@ describe('ResolveIdRegistry', () => {
         expect(subject.get({ type: 'bigbigpay' })).not.toBe(subject.get({ type: 'bigpaypay' }));
     });
 
-    it('returns correct strategy for a entered resgistry', () => {
+    it('returns correct strategy for a entered registry', () => {
         const subject = new ResolveIdRegistry(true);
         const registryKey1 = { id: 'credit_card', gateway: 'bluesnap' };
-        const registryKey2 = { id: 'credit_card' };
+        const registryKey2 = { id: 'credit_card', gateway: 'barclaycard' };
 
         subject.register(registryKey1, () => new StrategyA());
 
         expect(() => subject.get(registryKey2)).toThrow();
         expect(subject.get(registryKey1)).toBeInstanceOf(StrategyA);
+    });
+
+    it('returns correct strategy for a entered registry sub query', () => {
+        const subject = new ResolveIdRegistry(true);
+        const registryKey1 = { id: 'credit_card', gateway: 'barclaycard', type: 'API' };
+
+        subject.register(registryKey1, () => new StrategyA());
+
+        expect(subject.get({ type: 'API' })).toBeInstanceOf(StrategyA);
+        expect(() => subject.get({ gateway: 'bluesnap', type: 'API' })).toThrow();
     });
 });

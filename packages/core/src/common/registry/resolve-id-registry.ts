@@ -37,21 +37,23 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
 
             const result = { token: registeredToken, matches: 0, default: false };
 
-            for (const [key, value] of Object.entries(resolverId)) {
-                if (key in query && query[key] === value) {
+            for (const [key, value] of Object.entries(query)) {
+                if (key in query && resolverId[key] !== value) {
+                    result.matches = 0;
+                    break;
+                }
+
+                if (key in query && resolverId[key] === value) {
                     result.matches++;
                 }
-
-                if (key === 'default' && value === true) {
-                    result.default = true;
-                }
             }
 
-            const keys = Object.keys(resolverId).length;
-
-            if (keys === result.matches || result.default === true) {
+            if (resolverId.default) {
+                result.default = true;
                 results.push(result);
             }
+
+            results.push(result);
         });
 
         const matched = results

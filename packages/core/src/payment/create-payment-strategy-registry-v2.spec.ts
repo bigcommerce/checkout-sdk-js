@@ -18,7 +18,10 @@ describe('createPaymentStrategyRegistry', () => {
     it('creates registry with factories pre-registered', () => {
         const fooStrategy = {} as PaymentStrategy;
         const registry = createPaymentStrategyRegistry(paymentIntegrationService, {
-            createFooStrategy: toResolvableModule(() => fooStrategy, [{ id: 'foo', type: 'api' }]),
+            createFooStrategy: toResolvableModule(
+                () => fooStrategy,
+                [{ id: 'foo', gateway: null, type: 'api' }],
+            ),
         });
         const strategy = registry.get({ id: 'foo', type: 'api' });
 
