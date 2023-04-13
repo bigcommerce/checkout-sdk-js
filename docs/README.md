@@ -222,6 +222,7 @@
 - [GiftCertificateItem](interfaces/GiftCertificateItem.md)
 - [GiftCertificateOrderPayment](interfaces/GiftCertificateOrderPayment.md)
 - [GooglePayButtonInitializeOptions](interfaces/GooglePayButtonInitializeOptions.md)
+- [GooglePayBuyNowInitializeOptions](interfaces/GooglePayBuyNowInitializeOptions.md)
 - [GooglePayCustomerInitializeOptions](interfaces/GooglePayCustomerInitializeOptions.md)
 - [GooglePayPaymentInitializeOptions](interfaces/GooglePayPaymentInitializeOptions.md)
 - [HostedCardFieldOptions](interfaces/HostedCardFieldOptions.md)

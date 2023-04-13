@@ -35,12 +35,6 @@ ___
 
 ### buyNowInitializeOptions
 
-• `Optional` **buyNowInitializeOptions**: `Object`
+• `Optional` **buyNowInitializeOptions**: [`GooglePayBuyNowInitializeOptions`](GooglePayBuyNowInitializeOptions.md)
 
 The options that are required to initialize Buy Now functionality.
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `getBuyNowCartRequestBody?` | () => `void` \| [`BuyNowCartRequestBody`](BuyNowCartRequestBody.md) |

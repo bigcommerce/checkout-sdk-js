@@ -4929,9 +4929,11 @@ declare interface GooglePayButtonInitializeOptions {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
+    buyNowInitializeOptions?: GooglePayBuyNowInitializeOptions;
+}
+
+declare interface GooglePayBuyNowInitializeOptions {
+    getBuyNowCartRequestBody?(): BuyNowCartRequestBody;
 }
 
 declare interface GooglePayCustomerInitializeOptions {
