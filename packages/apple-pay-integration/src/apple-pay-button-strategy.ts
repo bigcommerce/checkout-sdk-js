@@ -107,7 +107,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         const button = document.createElement('div');
 
-        button.classList.add(buttonClassName);
+        button.setAttribute('class', buttonClassName);
         button.setAttribute('role', 'button');
         button.setAttribute('aria-label', 'Apple Pay button');
         container.appendChild(button);
