@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.373.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.372.0...v1.373.0) (2023-04-13)
+
+
+### Features
+
+* **checkout:** ADYEN-775 update of intialization interface for Adyenv3 ([aff778f](https://github.com/bigcommerce/checkout-sdk-js/commit/aff778fa6afc3ea99ac7247470c71906b71dc5c1))
+
 ## [1.372.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.5...v1.372.0) (2023-04-13)
 
 
