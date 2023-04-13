@@ -11,6 +11,7 @@ import {
     GooglePaymentData,
     GooglePayPaymentDataRequestV2,
     TokenizePayload,
+    TotalPriceStatusType,
 } from './googlepay';
 import {
     GooglePayBraintreeDataRequest,
@@ -89,7 +90,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
             },
             transactionInfo: {
                 currencyCode,
-                totalPriceStatus: 'FINAL',
+                totalPriceStatus: TotalPriceStatusType.FINAL,
                 totalPrice,
             },
             cardRequirements: {

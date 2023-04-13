@@ -30,6 +30,7 @@ import {
     GooglePayIsReadyToPayResponse,
     GooglePaymentsError,
     TokenizePayload,
+    TotalPriceStatusType,
 } from './googlepay';
 import GooglePayBraintreeInitializer from './googlepay-braintree-initializer';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
@@ -538,12 +539,14 @@ describe('GooglePayPaymentProcessor', () => {
         it('should updates payment data request', async () => {
             const googlePaymentDataMock = getGooglePayPaymentDataRequestMock();
             const payloadToUpdate = {
-                currencyCode: 'EUR',
-                totalPrice: '1.02',
+                transactionInfo: {
+                    currencyCode: 'EUR',
+                    totalPrice: '1.02',
+                    totalPriceStatus: TotalPriceStatusType.FINAL,
+                },
             };
 
-            googlePaymentDataMock.transactionInfo.currencyCode = payloadToUpdate.currencyCode;
-            googlePaymentDataMock.transactionInfo.totalPrice = payloadToUpdate.totalPrice;
+            googlePaymentDataMock.transactionInfo = payloadToUpdate.transactionInfo;
 
             await processor.initialize('googlepay');
 
