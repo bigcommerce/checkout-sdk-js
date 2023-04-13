@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.372.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.5...v1.372.0) (2023-04-13)
+
+
+### Features
+
+* **payment:** PAYPAL-2195 added buttonClassName ([#1943](https://github.com/bigcommerce/checkout-sdk-js/issues/1943)) ([f04c277](https://github.com/bigcommerce/checkout-sdk-js/commit/f04c277b29d21968313232edce2631d438cb319c))
+
 ### [1.371.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.4...v1.371.5) (2023-04-11)
 
 
