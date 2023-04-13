@@ -312,6 +312,18 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
     paypal?: PaypalButtonInitializeOptions;
 }
 
+declare interface BoltButtonInitializeOptions {
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: BoltBuyNowInitializeOptions;
+}
+
+declare interface BoltBuyNowInitializeOptions {
+    storefrontApiToken?: string;
+    getBuyNowCartRequestBody(): BuyNowCartRequestBody_2;
+}
+
 declare interface BraintreeError extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
@@ -446,7 +458,7 @@ declare class CheckoutButtonErrorSelector {
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceInlineButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -622,14 +634,6 @@ declare interface PayPalButtonStyleOptions {
     shape?: StyleButtonShape;
     height?: number;
     label?: StyleButtonLabel;
-    custom?: {
-        label?: string;
-        css?: {
-            background?: string;
-            color?: string;
-            width?: string;
-        };
-    };
 }
 
 /**
@@ -687,32 +691,6 @@ declare interface PayPalCommerceCreditButtonInitializeOptions {
      * A callback that gets called when payment complete on paypal side.
      */
     onComplete?(): void;
-}
-
-/**
- * A set of options that are required to initialize ApplePay in cart.
- *
- * When ApplePay is initialized, an ApplePay button will be inserted into the
- * DOM. When a customer clicks on it, it will trigger Apple sheet.
- */
-declare interface PayPalCommerceInlineButtonInitializeOptions {
-    /**
-     * A class name used to add special class for container where the button will be generated in
-     * Default: 'PaypalCommerceInlineButton'
-     */
-    buttonContainerClassName?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: Pick<PayPalButtonStyleOptions, 'custom'>;
-    /**
-     * A callback that gets called when payment complete on paypal side.
-     */
-    onComplete(): void;
-    /**
-     * A callback that gets called on any error
-     */
-    onError?(): void;
 }
 
 declare interface PayPalCommerceVenmoButtonInitializeOptions {
@@ -851,7 +829,15 @@ declare interface WithApplePayButtonInitializeOptions {
     applepay?: ApplePayButtonInitializeOptions_2;
 }
 
-declare interface WithBuyNowFeature {
+declare interface WithBoltButtonInitializeOptions {
+    /**
+     * The options that are required to initialize the Bolt payment
+     * method. They can be omitted unless you need to support Bolt.
+     */
+    bolt?: BoltButtonInitializeOptions;
+}
+
+declare interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
@@ -866,10 +852,6 @@ declare interface WithPayPalCommerceButtonInitializeOptions {
 
 declare interface WithPayPalCommerceCreditButtonInitializeOptions {
     paypalcommercecredit?: PayPalCommerceCreditButtonInitializeOptions;
-}
-
-declare interface WithPayPalCommerceInlineButtonInitializeOptions {
-    paypalcommerceinline?: PayPalCommerceInlineButtonInitializeOptions;
 }
 
 declare interface WithPayPalCommerceVenmoButtonInitializeOptions {

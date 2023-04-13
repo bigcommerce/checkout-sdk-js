@@ -1370,6 +1370,18 @@ declare interface BodyStyles {
     backgroundColor?: string;
 }
 
+declare interface BoltButtonInitializeOptions {
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: BoltBuyNowInitializeOptions;
+}
+
+declare interface BoltBuyNowInitializeOptions {
+    storefrontApiToken?: string;
+    getBuyNowCartRequestBody(): BuyNowCartRequestBody_2;
+}
+
 /**
  * A set of options that are required to initialize the customer step of
  * checkout to support Bolt.
@@ -2157,7 +2169,7 @@ declare class CheckoutButtonErrorSelector {
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceInlineButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -5983,14 +5995,6 @@ declare interface PayPalButtonStyleOptions {
     shape?: StyleButtonShape;
     height?: number;
     label?: StyleButtonLabel;
-    custom?: {
-        label?: string;
-        css?: {
-            background?: string;
-            color?: string;
-            width?: string;
-        };
-    };
 }
 
 /**
@@ -6169,32 +6173,6 @@ declare interface PayPalCommerceCustomerInitializeOptions {
      * A callback that gets called when payment complete on paypal side.
      */
     onComplete?(): void;
-}
-
-/**
- * A set of options that are required to initialize ApplePay in cart.
- *
- * When ApplePay is initialized, an ApplePay button will be inserted into the
- * DOM. When a customer clicks on it, it will trigger Apple sheet.
- */
-declare interface PayPalCommerceInlineButtonInitializeOptions {
-    /**
-     * A class name used to add special class for container where the button will be generated in
-     * Default: 'PaypalCommerceInlineButton'
-     */
-    buttonContainerClassName?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: Pick<PayPalButtonStyleOptions, 'custom'>;
-    /**
-     * A callback that gets called when payment complete on paypal side.
-     */
-    onComplete(): void;
-    /**
-     * A callback that gets called on any error
-     */
-    onError?(): void;
 }
 
 declare interface PayPalCommerceVenmoButtonInitializeOptions {
@@ -7507,6 +7485,14 @@ declare interface WithApplePayPaymentInitializeOptions {
     applepay?: ApplePayPaymentInitializeOptions;
 }
 
+declare interface WithBoltButtonInitializeOptions {
+    /**
+     * The options that are required to initialize the Bolt payment
+     * method. They can be omitted unless you need to support Bolt.
+     */
+    bolt?: BoltButtonInitializeOptions;
+}
+
 declare interface WithBoltPaymentInitializeOptions {
     /**
      * The options that are required to initialize the Bolt payment
@@ -7523,7 +7509,7 @@ declare interface WithBraintreePaypalCustomerInitializeOptions {
     braintreepaypal?: BraintreePaypalCustomerInitializeOptions;
 }
 
-declare interface WithBuyNowFeature {
+declare interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
@@ -7582,10 +7568,6 @@ declare interface WithPayPalCommerceCustomerInitializeOptions {
      * when using PayPalCommerce.
      */
     paypalcommerce?: PayPalCommerceCustomerInitializeOptions;
-}
-
-declare interface WithPayPalCommerceInlineButtonInitializeOptions {
-    paypalcommerceinline?: PayPalCommerceInlineButtonInitializeOptions;
 }
 
 declare interface WithPayPalCommerceVenmoButtonInitializeOptions {

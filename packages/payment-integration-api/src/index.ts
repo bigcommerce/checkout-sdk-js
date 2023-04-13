@@ -58,6 +58,7 @@ export {
     RequestError,
     StandardError,
     StorefrontErrorResponseBody,
+    TimeoutError,
     isRequestError,
 } from './errors';
 export {

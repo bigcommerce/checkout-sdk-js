@@ -4,7 +4,7 @@ import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/p
 
 import { AdyenClient, AdyenConfiguration, AdyenHostWindow } from './adyenv2';
 
-export default class AdyenV3ScriptLoader {
+export default class AdyenV2ScriptLoader {
     constructor(
         private _scriptLoader: ScriptLoader,
         private _stylesheetLoader: StylesheetLoader,

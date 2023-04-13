@@ -79,7 +79,6 @@ export interface PayPalCommerceInitializationData {
     isDeveloperModeApplicable?: boolean;
     intent?: PayPalCommerceIntent;
     isHostedCheckoutEnabled?: boolean;
-    isInlineCheckoutEnabled?: boolean;
     isPayPalCreditAvailable?: boolean;
     availableAlternativePaymentMethods: FundingType;
     enabledAlternativePaymentMethods: FundingType;
@@ -301,14 +300,6 @@ export interface PayPalButtonStyleOptions {
     shape?: StyleButtonShape;
     height?: number;
     label?: StyleButtonLabel;
-    custom?: {
-        label?: string;
-        css?: {
-            background?: string;
-            color?: string;
-            width?: string;
-        };
-    };
 }
 
 /**

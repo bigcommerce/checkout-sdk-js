@@ -34,6 +34,7 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { methodId, containerId, amazonpay } = options;
+        const { buttonColor } = amazonpay || {};
 
         if (!methodId || !containerId) {
             throw new InvalidArgumentError(
@@ -73,6 +74,7 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
             methodId,
             options: initializeAmazonButtonOptions,
             placement: AmazonPayV2Placement.Cart,
+            buttonColor,
         });
 
         if (this._buyNowCartRequestBody) {

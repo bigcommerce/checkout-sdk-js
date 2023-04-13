@@ -2,6 +2,60 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.373.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.372.0...v1.373.0) (2023-04-13)
+
+
+### Features
+
+* **checkout:** ADYEN-775 update of intialization interface for Adyenv3 ([aff778f](https://github.com/bigcommerce/checkout-sdk-js/commit/aff778fa6afc3ea99ac7247470c71906b71dc5c1))
+
+## [1.372.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.5...v1.372.0) (2023-04-13)
+
+
+### Features
+
+* **payment:** PAYPAL-2195 added buttonClassName ([#1943](https://github.com/bigcommerce/checkout-sdk-js/issues/1943)) ([f04c277](https://github.com/bigcommerce/checkout-sdk-js/commit/f04c277b29d21968313232edce2631d438cb319c))
+
+### [1.371.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.4...v1.371.5) (2023-04-11)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-000 added billing address mock to payment-integrations-test-utils package ([#1945](https://github.com/bigcommerce/checkout-sdk-js/issues/1945)) ([734b348](https://github.com/bigcommerce/checkout-sdk-js/commit/734b34846bb434737e8a11eadc294b39b562a71d))
+* **payment:** PAYPAL-000 added timeout error to payment-integration-api package ([#1942](https://github.com/bigcommerce/checkout-sdk-js/issues/1942)) ([6c2f1dd](https://github.com/bigcommerce/checkout-sdk-js/commit/6c2f1ddd9f946e61e65b4c80c139d071e7ba9188))
+
+### [1.371.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.3...v1.371.4) (2023-04-04)
+
+### [1.371.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.2...v1.371.3) (2023-04-04)
+
+### [1.371.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.1...v1.371.2) (2023-03-30)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-000 added paypal commerce integration service mock to simplify test files ([#1926](https://github.com/bigcommerce/checkout-sdk-js/issues/1926)) ([b9265af](https://github.com/bigcommerce/checkout-sdk-js/commit/b9265af8e6b2efd16c8b8022fba63c09cb54eeeb))
+
+### [1.371.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.371.0...v1.371.1) (2023-03-28)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-2078 removed PayPalCommerceInlineCheckoutButtonStrategy ([#1922](https://github.com/bigcommerce/checkout-sdk-js/issues/1922)) ([7d586db](https://github.com/bigcommerce/checkout-sdk-js/commit/7d586db8f65cba45419cb7c29350084fc3963a15))
+
+## [1.371.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.370.0...v1.371.0) (2023-03-27)
+
+
+### Features
+
+* **payment:** PAYPAL-2004 added ability to change style for amazonpay button ([#1914](https://github.com/bigcommerce/checkout-sdk-js/issues/1914)) ([3019104](https://github.com/bigcommerce/checkout-sdk-js/commit/30191047cbc9719664680a375ce026123ab18328))
+
+## [1.370.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.369.2...v1.370.0) (2023-03-27)
+
+
+### Features
+
+* **payment:** BOLT-483 Create Bolt button strategy ([ace611f](https://github.com/bigcommerce/checkout-sdk-js/commit/ace611fb0370b555d4a8deb428f1309bd8120cbb))
+
 ### [1.369.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.369.1...v1.369.2) (2023-03-23)
 
 

@@ -6,8 +6,7 @@ import {
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { getPayPalCommercePaymentMethod } from './mocks/paypal-commerce-payment-method.mock';
-import { getPayPalSDKMock } from './mocks/paypal-sdk.mock';
+import { getPayPalCommercePaymentMethod, getPayPalSDKMock } from './mocks';
 import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
 import {
     PayPalCommerceHostWindow,
@@ -112,33 +111,6 @@ describe('PayPalCommerceScriptLoader', () => {
             commit: true,
             components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
             currency: 'EUR',
-            intent: 'capture',
-        };
-
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
-    });
-
-    it('loads PayPalCommerce script with enabled card funding for no-checkout pages', async () => {
-        const paymentMethodProp = {
-            ...paymentMethod,
-            initializationData: {
-                ...paymentMethod.initializationData,
-                isInlineCheckoutEnabled: true,
-            },
-        };
-
-        await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD', false);
-
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
-            'data-client-token': paymentMethod.clientToken,
-            'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['credit', 'paylater', 'venmo'],
-            'enable-funding': ['card'],
-            commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
-            currency: 'USD',
             intent: 'capture',
         };
 
@@ -392,12 +364,11 @@ describe('PayPalCommerceScriptLoader', () => {
         expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
     });
 
-    it('successfully loads PayPalSDK script with commit flag as false if Inline (Accelerated) Checkout and Skip Checkout feature off', async () => {
+    it('successfully loads PayPalSDK script with commit flag as false if Skip Checkout feature off', async () => {
         const paymentMethodMock = {
             ...paymentMethod,
             initializationData: {
                 ...paymentMethod.initializationData,
-                isInlineCheckoutEnabled: false,
                 isHostedFormEnabled: false,
             },
         };
@@ -426,7 +397,6 @@ describe('PayPalCommerceScriptLoader', () => {
             id: 'paypalcommercecreditcards',
             initializationData: {
                 ...paymentMethod.initializationData,
-                isInlineCheckoutEnabled: false,
                 isHostedCheckoutEnabled: false,
                 isVenmoEnabled: true,
                 isPayPalCreditAvailable: true,

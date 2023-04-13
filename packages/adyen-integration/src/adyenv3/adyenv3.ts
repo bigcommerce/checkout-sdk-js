@@ -343,7 +343,7 @@ export interface AdyenError {
     message: string;
 }
 
-type AdyenClientConstructor = new (configuration: AdyenConfiguration) => AdyenClient;
+type AdyenClientConstructor = (configuration: AdyenConfiguration) => Promise<AdyenClient>;
 
 export interface AdyenHostWindow extends Window {
     AdyenCheckout?: AdyenClientConstructor;

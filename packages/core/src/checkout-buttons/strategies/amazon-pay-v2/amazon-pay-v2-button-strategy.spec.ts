@@ -15,6 +15,7 @@ import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getAmazonPayV2, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import {
+    AmazonPayV2ButtonColor,
     AmazonPayV2PaymentProcessor,
     AmazonPayV2Placement,
     createAmazonPayV2PaymentProcessor,
@@ -127,6 +128,7 @@ describe('AmazonPayV2ButtonStrategy', () => {
             await strategy.initialize(checkoutButtonOptions);
 
             expect(paymentProcessor.renderAmazonPayButton).toHaveBeenCalledWith({
+                buttonColor: AmazonPayV2ButtonColor.Gold,
                 checkoutState: store.getState(),
                 containerId: 'amazonpayCheckoutButton',
                 methodId: 'amazonpay',
