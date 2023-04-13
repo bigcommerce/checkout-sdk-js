@@ -37,24 +37,31 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
 
             const result = { token: registeredToken, matches: 0, default: false };
 
-            for (const [key, value] of Object.entries(query)) {
-                if (key in query && resolverId[key] !== value) {
+            for (const [key, value] of Object.entries(resolverId)) {
+                if (key in query && query[key] !== value) {
                     result.matches = 0;
                     break;
                 }
 
-                if (key in query && resolverId[key] === value) {
+                if (key in query && query[key] === value) {
                     result.matches++;
                 }
-            }
 
-            if (resolverId.default) {
-                result.default = true;
-                results.push(result);
+                if (key === 'default' && value === true) {
+                    result.default = true;
+                }
             }
 
             results.push(result);
         });
+
+        const uniqueMatches = [...Array.from(new Set(results.map((result) => result.matches)))];
+
+        if (results.length > 1 && uniqueMatches.length === 1) {
+            throw new Error(
+                'Please enter a detailed query, since the existing ones can return the incorrect strategy',
+            );
+        }
 
         const matched = results
             .sort((a, b) => b.matches - a.matches)

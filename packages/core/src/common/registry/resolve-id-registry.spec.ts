@@ -95,21 +95,54 @@ describe('ResolveIdRegistry', () => {
     it('returns correct strategy for a entered registry', () => {
         const subject = new ResolveIdRegistry(true);
         const registryKey1 = { id: 'credit_card', gateway: 'bluesnap' };
-        const registryKey2 = { id: 'credit_card', gateway: 'barclaycard' };
+        const registryKey2 = { type: 'PAYMENT_TYPE_HOSTED' };
 
         subject.register(registryKey1, () => new StrategyA());
+        subject.register(registryKey2, () => new BarStrategy());
 
-        expect(() => subject.get(registryKey2)).toThrow();
-        expect(subject.get(registryKey1)).toBeInstanceOf(StrategyA);
+        const query = { id: 'credit_card', gateway: 'barclaycard', type: 'PAYMENT_TYPE_HOSTED' };
+
+        expect(subject.get(query)).toBeInstanceOf(BarStrategy);
     });
 
-    it('returns correct strategy for a entered registry sub query', () => {
+    it('returns correct strategy for a entered registry if gateway passed is null', () => {
         const subject = new ResolveIdRegistry(true);
-        const registryKey1 = { id: 'credit_card', gateway: 'barclaycard', type: 'API' };
+        const registryKey1 = { id: 'credit_card', gateway: 'bluesnap' };
+        const registryKey2 = { id: 'credit_card' };
 
         subject.register(registryKey1, () => new StrategyA());
+        subject.register(registryKey2, () => new BarStrategy());
 
-        expect(subject.get({ type: 'API' })).toBeInstanceOf(StrategyA);
-        expect(() => subject.get({ gateway: 'bluesnap', type: 'API' })).toThrow();
+        const query = { id: 'credit_card', gateway: null, type: 'PAYMENT_TYPE_HOSTED' };
+
+        expect(subject.get(query)).toBeInstanceOf(BarStrategy);
+    });
+
+    it('returns correct strategy for a entered registry when entry is with type', () => {
+        const subject = new ResolveIdRegistry(true);
+        const registryKey1 = { id: 'credit_card', gateway: 'bluesnap' };
+        const registryKey2 = { id: 'card', gateway: 'barclaycard' };
+        const registryKey3 = { type: 'PAYMENT_TYPE_HOSTED' };
+
+        subject.register(registryKey1, () => new StrategyA());
+        subject.register(registryKey2, () => new BarStrategy());
+        subject.register(registryKey3, () => new FooStrategy());
+
+        const query = { id: 'credit_card', gateway: 'barclaycard', type: 'PAYMENT_TYPE_HOSTED' };
+
+        expect(subject.get(query)).toBeInstanceOf(FooStrategy);
+    });
+
+    it('throws an error if two matches are returned with same weight', () => {
+        const subject = new ResolveIdRegistry(true);
+        const registryKey1 = { id: 'credit_card' };
+        const registryKey2 = { type: 'PAYMENT_TYPE_HOSTED' };
+
+        subject.register(registryKey1, () => new StrategyA());
+        subject.register(registryKey2, () => new BarStrategy());
+
+        const query = { id: 'credit_card', gateway: 'barclaycard', type: 'PAYMENT_TYPE_HOSTED' };
+
+        expect(() => subject.get(query)).toThrow();
     });
 });
