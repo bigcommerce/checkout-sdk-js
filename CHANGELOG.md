@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.374.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.374.0...v1.374.1) (2023-04-14)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-0000 added export for getBillingAddress method in payment-integration-test-utils ([#1949](https://github.com/bigcommerce/checkout-sdk-js/issues/1949)) ([5d3c189](https://github.com/bigcommerce/checkout-sdk-js/commit/5d3c1893c4d12b1644e75ac2ba1a828ce7daaac2))
+
 ## [1.374.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.373.0...v1.374.0) (2023-04-13)
 
 
