@@ -32,6 +32,7 @@ import PayPalCommerceIntegrationService from './paypal-commerce-integration-serv
 import PayPalCommerceRequestSender from './paypal-commerce-request-sender';
 import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
 import {
+    PayPalOrderStatus,
     PayPalSDK,
     StyleButtonColor,
     StyleButtonLabel,
@@ -224,6 +225,30 @@ describe('PayPalCommerceIntegrationService', () => {
 
             try {
                 await subject.updateOrder();
+            } catch (error) {
+                expect(error).toBeInstanceOf(RequestError);
+            }
+        });
+    });
+
+    describe('#getOrderStatus', () => {
+        it('successfully updates order', async () => {
+            jest.spyOn(paypalCommerceRequestSender, 'getOrderStatus').mockReturnValue({
+                status: PayPalOrderStatus.Approved,
+            });
+
+            await subject.getOrderStatus();
+
+            expect(paypalCommerceRequestSender.getOrderStatus).toHaveBeenCalled();
+        });
+
+        it('throws an error if something went wrong during requesting order status', async () => {
+            jest.spyOn(paypalCommerceRequestSender, 'getOrderStatus').mockImplementation(() =>
+                Promise.reject(new Error()),
+            );
+
+            try {
+                await subject.getOrderStatus();
             } catch (error) {
                 expect(error).toBeInstanceOf(RequestError);
             }

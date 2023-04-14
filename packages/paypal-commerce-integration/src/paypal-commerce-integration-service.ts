@@ -22,6 +22,7 @@ import {
     PayPalCommerceInitializationData,
     PayPalCreateOrderRequestBody,
     PayPalOrderDetails,
+    PayPalOrderStatus,
     PayPalSDK,
     StyleButtonColor,
     StyleButtonLabel,
@@ -93,7 +94,7 @@ export default class PayPalCommerceIntegrationService {
 
     /**
      *
-     * Order creation methods
+     * Order methods
      *
      */
     async createOrder(
@@ -121,6 +122,16 @@ export default class PayPalCommerceIntegrationService {
                 cartId: cart.id,
                 selectedShippingOption: consignment.selectedShippingOption,
             });
+        } catch (_error) {
+            throw new RequestError();
+        }
+    }
+
+    async getOrderStatus(): Promise<PayPalOrderStatus> {
+        try {
+            const { status } = await this.paypalCommerceRequestSender.getOrderStatus();
+
+            return status;
         } catch (_error) {
             throw new RequestError();
         }

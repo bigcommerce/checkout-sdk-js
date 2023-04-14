@@ -43,6 +43,9 @@ export { WithPayPalCommerceVenmoCustomerInitializeOptions } from './paypal-comme
 export { default as createPayPalCommerceAlternativeMethodsButtonStrategy } from './paypal-commerce-alternative-methods/create-paypal-commerce-alternative-methods-button-strategy';
 export { WithPayPalCommerceAlternativeMethodsButtonOptions } from './paypal-commerce-alternative-methods/paypal-commerce-alternative-methods-button-initialize-options';
 
+export { default as createPayPalCommerceAlternativeMethodsPaymentStrategy } from './paypal-commerce-alternative-methods/create-paypal-commerce-alternative-methods-payment-strategy';
+export { WithPayPalCommerceAlternativeMethodsPaymentOptions } from './paypal-commerce-alternative-methods/paypal-commerce-alternative-methods-payment-initialize-options';
+
 /**
  *
  * PayPalCommerce Credit Cards strategies
