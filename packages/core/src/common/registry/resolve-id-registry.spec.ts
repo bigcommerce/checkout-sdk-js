@@ -1,3 +1,5 @@
+import { getDefaultLogger } from '../log';
+
 import ResolveIdRegistry from './resolve-id-registry';
 
 describe('ResolveIdRegistry', () => {
@@ -52,11 +54,15 @@ describe('ResolveIdRegistry', () => {
     });
 
     it('returns strategy if able to resolve to one by id', () => {
-        expect(subject.get({ id: 'foo' })).toBeInstanceOf(FooStrategy);
+        expect(subject.get({ id: 'foo', gateway: null, type: undefined })).toBeInstanceOf(
+            FooStrategy,
+        );
     });
 
     it('returns strategy if able to resolve to one by type', () => {
-        expect(subject.get({ type: 'bar' })).toBeInstanceOf(BarStrategy);
+        expect(subject.get({ id: undefined, gateway: undefined, type: 'bar' })).toBeInstanceOf(
+            BarStrategy,
+        );
     });
 
     it('returns strategy if able to resolve to one by id and type', () => {
@@ -138,11 +144,18 @@ describe('ResolveIdRegistry', () => {
         const registryKey1 = { id: 'credit_card' };
         const registryKey2 = { type: 'PAYMENT_TYPE_HOSTED' };
 
+        const logger = getDefaultLogger();
+
+        jest.spyOn(logger, 'warn');
+        global.process.env.NODE_ENV = 'development';
+
         subject.register(registryKey1, () => new StrategyA());
         subject.register(registryKey2, () => new BarStrategy());
 
         const query = { id: 'credit_card', gateway: 'barclaycard', type: 'PAYMENT_TYPE_HOSTED' };
 
-        expect(() => subject.get(query)).toThrow();
+        subject.get(query);
+
+        expect(logger.warn).toHaveBeenCalled();
     });
 });

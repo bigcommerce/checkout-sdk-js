@@ -1,3 +1,6 @@
+import { getDefaultLogger } from '../log';
+import { getEnvironment } from '../utility';
+
 import Factory from './factory';
 import Registry from './registry';
 
@@ -55,17 +58,19 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
             results.push(result);
         });
 
-        const uniqueMatches = [...Array.from(new Set(results.map((result) => result.matches)))];
+        const matchedResults = results
+            .sort((a, b) => b.matches - a.matches)
+            .filter((result) => result.matches > 0);
 
-        if (results.length > 1 && uniqueMatches.length === 1) {
-            throw new Error(
-                'Please enter a detailed query, since the existing ones can return the incorrect strategy',
-            );
+        if (matchedResults.length > 1 && matchedResults[0].matches === matchedResults[1].matches) {
+            if (getEnvironment() === 'development') {
+                getDefaultLogger().warn(
+                    'The provided query matches at least two strategies with the same specificity. This warning can be resolved by making their resolve ID more specific.',
+                );
+            }
         }
 
-        const matched = results
-            .sort((a, b) => b.matches - a.matches)
-            .filter((result) => result.matches > 0)[0];
+        const matched = matchedResults[0];
 
         if (matched && matched.token) {
             return matched.token;
