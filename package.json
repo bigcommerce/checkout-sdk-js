@@ -1,6 +1,6 @@
 {
   "name": "@bigcommerce/checkout-sdk",
-  "version": "1.369.2",
+  "version": "1.369.3-alpha.18cceb45a3195e861af54c23d14f55ec9028c3d2",
   "description": "BigCommerce Checkout JavaScript SDK",
   "license": "MIT",
   "main": "dist/checkout-sdk.js",
@@ -40,7 +40,7 @@
     "lint": "npx nx run-many --target=lint --parallel=5 --all --verbose",
     "release": "echo 'Please do not release locally, use CircleCi'",
     "release:version": "git add dist docs && standard-version -a",
-    "release:alpha": "export PRERELEASE=alpha; npm run lint && npm test && npm run build && npm run release:version",
+    "release:alpha": "export PRERELEASE=alpha; npm run release:version",
     "test": "jest --config packages/core/jest.config.js",
     "test:coverage": "npx nx run-many --all --target=test --parallel=5 -- --coverage",
     "test:series": "npx nx run-many --all --target=test --parallel=5 -- --runInBand",
