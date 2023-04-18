@@ -38,6 +38,9 @@ export { WithPayPalCommerceVenmoButtonInitializeOptions } from './paypal-commerc
 export { default as createPayPalCommerceVenmoCustomerStrategy } from './paypal-commerce-venmo/create-paypal-commerce-venmo-customer-strategy';
 export { WithPayPalCommerceVenmoCustomerInitializeOptions } from './paypal-commerce-venmo/paypal-commerce-venmo-customer-initialize-options';
 
+export { default as createPayPalCommerceVenmoPaymentStrategy } from './paypal-commerce-venmo/create-paypal-commerce-venmo-payment-strategy';
+export { WithPayPalCommerceVenmoPaymentInitializeOptions } from './paypal-commerce-venmo/paypal-commerce-venmo-payment-initialize-options';
+
 /**
  *
  * PayPalCommerce Alternative methods strategies
