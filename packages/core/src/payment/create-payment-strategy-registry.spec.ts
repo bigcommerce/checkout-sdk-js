@@ -37,7 +37,6 @@ import { KlarnaPaymentStrategy } from './strategies/klarna';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
 import { OpyPaymentStrategy } from './strategies/opy';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy } from './strategies/paypal';
-import { PaypalCommercePaymentStrategy } from './strategies/paypal-commerce';
 import { PPSDKStrategy } from './strategies/ppsdk';
 import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
@@ -109,14 +108,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE);
 
         expect(paymentStrategy).toBeInstanceOf(BraintreeCreditCardPaymentStrategy);
-    });
-
-    it('can instantiate APM', () => {
-        const paymentStrategy = registry.get(
-            PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS,
-        );
-
-        expect(paymentStrategy).toBeInstanceOf(PaypalCommercePaymentStrategy);
     });
 
     it('can instantiate bluesnapv2', () => {
