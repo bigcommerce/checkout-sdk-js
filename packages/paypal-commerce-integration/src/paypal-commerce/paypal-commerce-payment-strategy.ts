@@ -21,7 +21,7 @@ import {
 } from '../paypal-commerce-types';
 
 import PayPalCommercePaymentOptions, {
-    WithPayPalCommercePaymentOptions,
+    WithPayPalCommercePaymentInitializeOptions,
 } from './paypal-commerce-payment-initialize-options';
 
 export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
@@ -36,7 +36,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
     ) {}
 
     async initialize(
-        options?: PaymentInitializeOptions & WithPayPalCommercePaymentOptions,
+        options?: PaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions,
     ): Promise<void> {
         const { methodId, paypalcommerce } = options || {};
 
@@ -118,7 +118,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         const { container, onError, onRenderButton, onValidate, submitForm } = paypalcommerce;
 
         const buttonOptions: PayPalCommerceButtonsOptions = {
-            fundingSource: methodId,
+            fundingSource: paypalSdk.FUNDING.PAYPAL,
             style: this.paypalCommerceIntegrationService.getValidButtonStyle(buttonStyle),
             createOrder: () =>
                 this.paypalCommerceIntegrationService.createOrder('paypalcommercecheckout'),

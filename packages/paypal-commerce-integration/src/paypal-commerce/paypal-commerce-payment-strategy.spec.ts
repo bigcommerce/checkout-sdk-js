@@ -24,10 +24,10 @@ import {
     PayPalSDK,
 } from '../paypal-commerce-types';
 
-import PayPalCommercePaymentOptions from './paypal-commerce-payment-initialize-options';
+import PayPalCommercePaymentInitializeOptions from './paypal-commerce-payment-initialize-options';
 import PayPalCommercePaymentStrategy from './paypal-commerce-payment-strategy';
 
-describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
+describe('PayPalCommercePaymentStrategy', () => {
     let eventEmitter: EventEmitter;
     let loadingIndicator: LoadingIndicator;
     let paymentIntegrationService: PaymentIntegrationService;
@@ -41,7 +41,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
     const defaultMethodId = 'paypalcommerce';
     const defaultContainerId = '#container';
 
-    const paypalCommerceOptions: PayPalCommercePaymentOptions = {
+    const paypalCommerceOptions: PayPalCommercePaymentInitializeOptions = {
         container: defaultContainerId,
         onValidate: jest.fn(),
         submitForm: jest.fn(),
@@ -193,7 +193,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                fundingSource: defaultMethodId,
+                fundingSource: paypalSdk.FUNDING.PAYPAL,
                 style: {
                     color: 'black',
                     height: 55,

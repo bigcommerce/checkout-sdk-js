@@ -14,7 +14,7 @@ export { default as createPayPalCommerceCustomerStrategy } from './paypal-commer
 export { WithPayPalCommerceCustomerInitializeOptions } from './paypal-commerce/paypal-commerce-customer-initialize-options';
 
 export { default as createPayPalCommercePaymentStrategy } from './paypal-commerce/create-paypal-commerce-payment-strategy';
-export { WithPayPalCommercePaymentOptions } from './paypal-commerce/paypal-commerce-payment-initialize-options';
+export { WithPayPalCommercePaymentInitializeOptions } from './paypal-commerce/paypal-commerce-payment-initialize-options';
 
 /**
  *

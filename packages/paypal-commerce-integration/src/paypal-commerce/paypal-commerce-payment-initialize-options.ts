@@ -42,7 +42,7 @@
  * });
  * ```
  */
-export default interface PayPalCommercePaymentOptions {
+export default interface PayPalCommercePaymentInitializeOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
      */
@@ -77,6 +77,6 @@ export default interface PayPalCommercePaymentOptions {
     submitForm(): void;
 }
 
-export interface WithPayPalCommercePaymentOptions {
-    paypalcommerce?: PayPalCommercePaymentOptions;
+export interface WithPayPalCommercePaymentInitializeOptions {
+    paypalcommerce?: PayPalCommercePaymentInitializeOptions;
 }
