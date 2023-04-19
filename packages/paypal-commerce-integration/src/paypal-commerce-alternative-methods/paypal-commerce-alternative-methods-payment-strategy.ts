@@ -298,7 +298,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         const { onError, submitForm } = paypalOptions;
 
         await new Promise<void>((resolve, reject) => {
-            const timeout = setTimeout(resolve, this.pollingTimer);
+            const timeout = setTimeout(resolve, this.pollingInterval);
 
             this.stopPolling = () => {
                 clearTimeout(timeout);
