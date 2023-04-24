@@ -27,6 +27,9 @@ export { WithPayPalCommerceCreditButtonInitializeOptions } from './paypal-commer
 export { default as createPayPalCommerceCreditCustomerStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-customer-strategy';
 export { WithPayPalCommerceCreditCustomerInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-customer-initialize-options';
 
+export { default as createPayPalCommerceCreditPaymentStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-payment-strategy';
+export { WithPayPalCommerceCreditPaymentInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-payment-initialize-options';
+
 /**
  *
  * PayPalCommerce Venmo strategies
