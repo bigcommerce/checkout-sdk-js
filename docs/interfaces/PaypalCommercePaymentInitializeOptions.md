@@ -1,6 +1,6 @@
-[@bigcommerce/checkout-sdk](../README.md) / PaypalCommercePaymentInitializeOptions
+[@bigcommerce/checkout-sdk](../README.md) / PayPalCommercePaymentInitializeOptions
 
-# Interface: PaypalCommercePaymentInitializeOptions
+# Interface: PayPalCommercePaymentInitializeOptions
 
 A set of options that are required to initialize the PayPal Commerce payment
 method for presenting its PayPal button.
@@ -11,8 +11,6 @@ Also, PayPal (also known as PayPal Commerce Platform) requires specific options 
 ```html
 <!-- This is where the PayPal button will be inserted -->
 <div id="container"></div>
-<!-- This is where the PayPal alternative payment methods fields will be inserted.  -->
-<div id="apm-fields-container"></div>
 ```
 
 ```js
@@ -20,28 +18,6 @@ service.initializePayment({
     methodId: 'paypalcommerce',
     paypalcommerce: {
         container: '#container',
-        apmFieldsContainer: '#apm-fields-container',
-        apmFieldsStyles: {
-            base: {
-                  backgroundColor: 'transparent',
-              },
-              input: {
-                  backgroundColor: 'white',
-                  fontSize: '1rem',
-                  color: '#333',
-                  borderColor: '#d9d9d9',
-                  borderRadius: '4px',
-                  borderWidth: '1px',
-                  padding: '1rem',
-              },
-              invalid: {
-                  color: '#ed6a6a',
-              },
-              active: {
-                  color: '#4496f6',
-              },
-        },
-        clientId: 'YOUR_CLIENT_ID',
 // Callback for submitting payment form that gets called when a buyer approves PayPal payment
         submitForm: () => {
         // Example function
@@ -73,45 +49,16 @@ service.initializePayment({
 
 ### Properties
 
-- [apmFieldsContainer](PaypalCommercePaymentInitializeOptions.md#apmfieldscontainer)
-- [apmFieldsStyles](PaypalCommercePaymentInitializeOptions.md#apmfieldsstyles)
-- [clientId](PaypalCommercePaymentInitializeOptions.md#clientid)
-- [container](PaypalCommercePaymentInitializeOptions.md#container)
+- [container](PayPalCommercePaymentInitializeOptions.md#container)
 
 ### Methods
 
-- [onError](PaypalCommercePaymentInitializeOptions.md#onerror)
-- [onRenderButton](PaypalCommercePaymentInitializeOptions.md#onrenderbutton)
-- [onValidate](PaypalCommercePaymentInitializeOptions.md#onvalidate)
-- [submitForm](PaypalCommercePaymentInitializeOptions.md#submitform)
+- [onError](PayPalCommercePaymentInitializeOptions.md#onerror)
+- [onRenderButton](PayPalCommercePaymentInitializeOptions.md#onrenderbutton)
+- [onValidate](PayPalCommercePaymentInitializeOptions.md#onvalidate)
+- [submitForm](PayPalCommercePaymentInitializeOptions.md#submitform)
 
 ## Properties
-
-### apmFieldsContainer
-
-• `Optional` **apmFieldsContainer**: `string`
-
-The CSS selector of a container where the alternative payment methods fields widget should be inserted into.
-It's necessary to specify this parameter when using Alternative Payment Methods.
-Without it alternative payment methods will not work.
-
-___
-
-### apmFieldsStyles
-
-• `Optional` **apmFieldsStyles**: [`PaypalFieldsStyleOptions`](PaypalFieldsStyleOptions.md)
-
-Object with styles to customize alternative payment methods fields.
-
-___
-
-### clientId
-
-• **clientId**: `string`
-
- The Client ID of the Paypal App
-
-___
 
 ### container
 
