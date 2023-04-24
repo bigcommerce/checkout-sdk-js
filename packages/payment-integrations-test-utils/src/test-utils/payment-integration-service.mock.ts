@@ -23,7 +23,6 @@ const state = {
     getPaymentStatus: jest.fn(),
     getBillingAddressOrThrow: jest.fn(() => getBillingAddress()),
     getCustomer: jest.fn(() => getCustomer()),
-    getCustomerOrThrow: jest.fn(() => getCustomer()),
 };
 
 const createBuyNowCart = jest.fn();

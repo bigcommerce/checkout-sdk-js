@@ -94,7 +94,8 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
             const sessionId = await this.braintreeIntegrationService.getSessionId();
 
             const state = this.paymentIntegrationService.getState();
-            const { email } = state.getCustomerOrThrow();
+
+            const { email } = state.getCheckoutOrThrow().billingAddress || { email: null };
 
             const paymentPayload = {
                 formattedPayload: {
@@ -124,7 +125,8 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
 
     async deinitialize(): Promise<void> {
         this.mandateText = '';
-        await this.usBankAccount?.teardown();
+
+        return Promise.resolve();
     }
 
     private getBankDetails(paymentData: UsBankAccountInstrument): UsBankAccountSuccessPayload {

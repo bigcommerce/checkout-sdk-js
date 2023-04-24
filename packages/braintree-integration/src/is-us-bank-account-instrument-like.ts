@@ -16,7 +16,6 @@ export default function isUsBankAccountInstrumentLike(
         'ownershipType' in instrument &&
         'accountType' in instrument &&
         'address1' in instrument &&
-        'address2' in instrument &&
         'city' in instrument &&
         'countryCode' in instrument &&
         'postalCode' in instrument &&

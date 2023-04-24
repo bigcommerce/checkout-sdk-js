@@ -11,7 +11,10 @@ import {
     PaymentMethod,
     UsBankAccountInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getCheckout,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { BraintreeUsBankAccount } from '../braintree';
 import BraintreeIntegrationService from '../braintree-integration-service';
@@ -88,8 +91,8 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
             paymentMethodMock.clientToken,
         );
 
-        jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
-            { email: '' },
+        jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
+            getCheckout(),
         );
 
         jest.spyOn(braintreeIntegrationService, 'getUsBankAccount').mockReturnValue(
