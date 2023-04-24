@@ -13,6 +13,9 @@ export { WithPayPalCommerceButtonInitializeOptions } from './paypal-commerce/pay
 export { default as createPayPalCommerceCustomerStrategy } from './paypal-commerce/create-paypal-commerce-customer-strategy';
 export { WithPayPalCommerceCustomerInitializeOptions } from './paypal-commerce/paypal-commerce-customer-initialize-options';
 
+export { default as createPayPalCommercePaymentStrategy } from './paypal-commerce/create-paypal-commerce-payment-strategy';
+export { WithPayPalCommercePaymentInitializeOptions } from './paypal-commerce/paypal-commerce-payment-initialize-options';
+
 /**
  *
  * PayPalCommerce Credit (PayLater) strategies
