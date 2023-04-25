@@ -91,7 +91,7 @@ export default class BraintreeSDKCreator {
             const paypalSdkLoadCallback = () => onSuccess(braintreePaypalCheckout);
             const paypalSdkLoadConfig = {
                 currency: config.currency,
-                'enable-funding': 'paylater',
+            ...(config.isCreditEnabled && { 'enable-funding': 'paylater' }),
                 components: PAYPAL_COMPONENTS.toString(),
                 intent: config.intent,
             };
