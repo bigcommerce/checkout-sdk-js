@@ -223,6 +223,29 @@ describe('BraintreePaypalCustomerStrategy', () => {
             expect(braintreeIntegrationService.getPaypalCheckout).toHaveBeenCalled();
         });
 
+        it('calls braintreeSdk with proper options', async () => {
+            braintreeIntegrationService.initialize = jest.fn();
+            braintreeIntegrationService.getPaypalCheckout = jest.fn();
+            paymentMethodMock.initializationData = {
+                ...paymentMethodMock.initializationData,
+                isCreditEnabled: true,
+                currency: 'USD',
+                intent: undefined,
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            expect(braintreeIntegrationService.getPaypalCheckout).toHaveBeenCalledWith(
+                {
+                    currency: 'USD',
+                    isCreditEnabled: true,
+                    intent: undefined,
+                },
+                expect.any(Function),
+                expect.any(Function),
+            );
+        });
+
         it('calls onError callback option if the error was caught on paypal checkout creation', async () => {
             braintreeIntegrationService.getPaypalCheckout = getSDKPaypalCheckoutMock();
 

@@ -76,6 +76,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         const paypalCheckoutOptions: Partial<BraintreePaypalSdkCreatorConfig> = {
             currency: currencyCode,
             intent: paymentMethod.initializationData?.intent,
+            isCreditEnabled: paymentMethod.initializationData?.isCreditEnabled,
         };
 
         const paypalCheckoutSuccessCallback = (
