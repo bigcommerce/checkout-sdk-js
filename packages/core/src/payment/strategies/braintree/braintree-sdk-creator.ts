@@ -87,7 +87,7 @@ export default class BraintreeSDKCreator {
             if (error) {
                 return onError(error);
             }
-
+            console.log('aaa');
             const paypalSdkLoadCallback = () => onSuccess(braintreePaypalCheckout);
             const paypalSdkLoadConfig = {
                 currency: config.currency,
