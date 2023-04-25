@@ -80,6 +80,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
         const paypalCheckoutOptions: Partial<BraintreePaypalSdkCreatorConfig> = {
             currency: currencyCode,
             intent: paymentMethod.initializationData?.intent,
+            isCreditEnabled: paymentMethod.initializationData?.isCreditEnabled,
         };
 
         const paypalCheckoutCallback = (braintreePaypalCheckout: BraintreePaypalCheckout) =>
