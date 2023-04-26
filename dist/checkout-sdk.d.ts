@@ -1008,11 +1008,6 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
     /**
-     * The options that are required to initialize the customer step of checkout
-     * when using Bolt.
-     */
-    bolt?: BoltCustomerInitializeOptions;
-    /**
      * The options that are required to initialize the Chasepay payment method.
      * They can be omitted unless you need to support Chasepay.
      */
@@ -4508,7 +4503,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -7577,6 +7572,10 @@ declare interface WithBoltButtonInitializeOptions {
      * method. They can be omitted unless you need to support Bolt.
      */
     bolt?: BoltButtonInitializeOptions;
+}
+
+declare interface WithBoltCustomerInitializeOptions {
+    bolt?: BoltCustomerInitializeOptions;
 }
 
 declare interface WithBoltPaymentInitializeOptions {
