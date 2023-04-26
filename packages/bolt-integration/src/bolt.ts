@@ -15,7 +15,7 @@ export interface BoltCheckout {
     configure(cart: BoltCart, hints: Record<string, never>, callbacks?: BoltCallbacks): BoltClient;
     hasBoltAccount(email: string): Promise<boolean>;
     getTransactionReference(): Promise<string | undefined>;
-    openCheckout(email: string, callbacks?: BoltOpenCheckoutCallbacks): void;
+    openCheckout(email: string, callbacks?: BoltOpenCheckoutCallbacks): Promise<void>;
     setClientCustomCallbacks(callbacks: BoltCallbacks): void;
     setOrderId(orderId: number): Promise<void>;
 }
