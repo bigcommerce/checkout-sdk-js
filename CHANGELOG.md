@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.375.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.374.8...v1.375.0) (2023-04-26)
+
+
+### Features
+
+* **payment:** INT-7557 BlueSnapDirect: Implement 3DS 2 ([#1925](https://github.com/bigcommerce/checkout-sdk-js/issues/1925)) ([6574134](https://github.com/bigcommerce/checkout-sdk-js/commit/6574134019c07124191633adf469859f987a521e))
+
 ### [1.374.8](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.374.7...v1.374.8) (2023-04-25)
 
 
