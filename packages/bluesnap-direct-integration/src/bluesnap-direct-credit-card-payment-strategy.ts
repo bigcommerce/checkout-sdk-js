@@ -14,6 +14,7 @@ import {
 
 import BlueSnapDirectHostedForm from './bluesnap-direct-hosted-form';
 import isHostedCardFieldOptionsMap from './is-hosted-card-field-options-map';
+import { BlueSnapDirectThreeDSecureData } from './types';
 
 export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentStrategy {
     private _paymentFieldsToken?: string;
@@ -37,14 +38,18 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
         });
 
         const {
-            config: { testMode },
+            config: { testMode, is3dsEnabled },
             clientToken,
         } = state.getPaymentMethodOrThrow(methodId, gatewayId);
 
         this._paymentFieldsToken = clientToken;
 
         await this._blueSnapDirectHostedForm.initialize(testMode);
-        await this._blueSnapDirectHostedForm.attach(this._getPaymentFieldsToken(), creditCard);
+        await this._blueSnapDirectHostedForm.attach(
+            this._getPaymentFieldsToken(),
+            creditCard,
+            is3dsEnabled,
+        );
     }
 
     async execute(payload: OrderRequestBody): Promise<void> {
@@ -54,7 +59,13 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
 
         const pfToken = this._getPaymentFieldsToken();
 
-        const { cardHolderName } = await this._blueSnapDirectHostedForm.validate().submit();
+        const { is3dsEnabled } = this._paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow(payload.payment.methodId, payload.payment.gatewayId).config;
+
+        const { cardHolderName } = await this._blueSnapDirectHostedForm
+            .validate()
+            .submit(is3dsEnabled ? this._getBlueSnapDirectThreeDSecureData() : undefined);
 
         await this._paymentIntegrationService.submitOrder();
         await this._paymentIntegrationService.submitPayment({
@@ -80,6 +91,45 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
         this._blueSnapDirectHostedForm.detach();
 
         return Promise.resolve();
+    }
+
+    private _getBlueSnapDirectThreeDSecureData(): BlueSnapDirectThreeDSecureData {
+        const {
+            getBillingAddress,
+            getShippingAddress,
+            getCustomer,
+            getCheckoutOrThrow,
+            getCartOrThrow,
+        } = this._paymentIntegrationService.getState();
+        const billingAddress = getBillingAddress();
+        const shippingAddress = getShippingAddress();
+        const email = getCustomer()?.email || billingAddress?.email;
+        const phone = billingAddress?.phone || shippingAddress?.phone;
+
+        return {
+            amount: getCheckoutOrThrow().outstandingBalance,
+            currency: getCartOrThrow().currency.code,
+            ...(email && { email }),
+            ...(phone && { phone }),
+            ...(billingAddress && {
+                billingFirstName: billingAddress.firstName,
+                billingLastName: billingAddress.lastName,
+                billingCountry: billingAddress.countryCode,
+                billingState: billingAddress.stateOrProvinceCode,
+                billingCity: billingAddress.city,
+                billingAddress: `${billingAddress.address1} ${billingAddress.address2}`.trim(),
+                billingZip: billingAddress.postalCode,
+            }),
+            ...(shippingAddress && {
+                shippingFirstName: shippingAddress.firstName,
+                shippingLastName: shippingAddress.lastName,
+                shippingCountry: shippingAddress.countryCode,
+                shippingState: shippingAddress.stateOrProvinceCode,
+                shippingCity: shippingAddress.city,
+                shippingAddress: `${shippingAddress.address1} ${shippingAddress.address2}`.trim(),
+                shippingZip: shippingAddress.postalCode,
+            }),
+        };
     }
 
     private _getPaymentFieldsToken(): string {
