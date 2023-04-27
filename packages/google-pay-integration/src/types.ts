@@ -98,7 +98,7 @@ interface GooglePayMinBillingAddress {
     phoneNumber?: string;
 }
 
-interface GooglePayFullBillingAddress extends GooglePayMinBillingAddress {
+export interface GooglePayFullBillingAddress extends GooglePayMinBillingAddress {
     address1: string;
     address2: string;
     address3: string;
