@@ -185,6 +185,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 currency: 'USD',
                 shouldSaveInstrument: false,
                 offerCredit: false,
+                shippingAddressEditable: false,
                 shippingAddressOverride,
             });
 
@@ -213,6 +214,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 currency: 'USD',
                 shouldSaveInstrument: false,
                 offerCredit: false,
+                shippingAddressEditable: false,
                 shippingAddressOverride,
             });
 
@@ -224,6 +226,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 locale: 'en_US',
                 currency: 'USD',
                 shouldSaveInstrument: false,
+                shippingAddressEditable: false,
                 offerCredit: false,
                 shippingAddressOverride,
             });
@@ -385,6 +388,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     currency: 'USD',
                     shouldSaveInstrument: false,
                     offerCredit: true,
+                    shippingAddressEditable: false,
                     shippingAddressOverride,
                 });
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
