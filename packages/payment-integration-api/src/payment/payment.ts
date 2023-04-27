@@ -40,7 +40,7 @@ export type PaymentInstrument =
     | VaultedInstrument
     | (VaultedInstrument & WithHostedFormNonce)
     | WithAccountCreation
-    | UsBankAccountInstrument;
+    | WithBankAccountInstrument;
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
@@ -66,7 +66,7 @@ export interface CreditCardInstrument {
     browser_info?: BrowserInfo;
 }
 
-export interface UsBankAccountInstrument {
+export interface WithBankAccountInstrument {
     accountNumber: string;
     routingNumber: string;
     ownershipType: 'Personal' | 'Business';

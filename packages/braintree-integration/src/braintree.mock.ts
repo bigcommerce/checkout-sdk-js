@@ -1,6 +1,7 @@
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    BraintreeBankAccount,
     BraintreeClient,
     BraintreeDataCollector,
     BraintreeModule,
@@ -9,7 +10,6 @@ import {
     BraintreePaypalCheckoutCreator,
     BraintreeShippingAddressOverride,
     BraintreeTokenizePayload,
-    BraintreeUsBankAccount,
 } from './braintree';
 
 export function getClientMock(): BraintreeClient {
@@ -26,7 +26,7 @@ export function getDataCollectorMock(): BraintreeDataCollector {
     };
 }
 
-export function getBankAccountMock(): BraintreeUsBankAccount {
+export function getBankAccountMock(): BraintreeBankAccount {
     return {
         teardown: jest.fn(() => Promise.resolve()),
         tokenize: jest.fn(() => Promise.resolve({ nonce: 'NONCE', details: {} })),

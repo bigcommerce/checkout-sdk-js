@@ -12,10 +12,10 @@ import {
     PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
-    UsBankAccountInstrument,
+    WithBankAccountInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { BraintreeUsBankAccount, UsBankAccountSuccessPayload } from '../braintree';
+import { BankAccountSuccessPayload, BraintreeBankAccount } from '../braintree';
 import BraintreeIntegrationService from '../braintree-integration-service';
 import isBraintreeError from '../is-braintree-error';
 import isUsBankAccountInstrumentLike from '../is-us-bank-account-instrument-like';
@@ -23,7 +23,7 @@ import isUsBankAccountInstrumentLike from '../is-us-bank-account-instrument-like
 import { WithBraintreePaypalAchInitializeOptions } from './braintree-paypal-ach-initialize-options';
 
 export default class BraintreePaypalAchPaymentStrategy implements PaymentStrategy {
-    private usBankAccount?: BraintreeUsBankAccount;
+    private usBankAccount?: BraintreeBankAccount;
     private mandateText = '';
 
     constructor(
@@ -129,7 +129,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         return Promise.resolve();
     }
 
-    private getBankDetails(paymentData: UsBankAccountInstrument): UsBankAccountSuccessPayload {
+    private getBankDetails(paymentData: WithBankAccountInstrument): BankAccountSuccessPayload {
         const ownershipType = paymentData.ownershipType.toLowerCase();
         const accountType = paymentData.accountType.toLowerCase();
 

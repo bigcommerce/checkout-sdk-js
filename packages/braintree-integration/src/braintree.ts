@@ -45,7 +45,7 @@ export interface BraintreeSDK {
     threeDSecure?: BraintreeThreeDSecureCreator;
     venmo?: BraintreeVenmoCheckoutCreator;
     // visaCheckout?: BraintreeVisaCheckoutCreator; // TODO: should be added in future migration
-    usBankAccount?: BraintreeUsBankAccountCreator;
+    usBankAccount?: BraintreeBankAccountCreator;
 }
 
 export interface BraintreeInitializationData {
@@ -466,7 +466,7 @@ export interface BraintreeVenmoCreatorConfig extends BraintreeModuleCreatorConfi
  *
  */
 
-export interface UsBankAccountSuccessPayload {
+export interface BankAccountSuccessPayload {
     accountNumber: string;
     routingNumber: string;
     ownershipType: string;
@@ -483,11 +483,11 @@ export interface UsBankAccountSuccessPayload {
     };
 }
 
-export type BraintreeUsBankAccountCreator = BraintreeModuleCreator<BraintreeUsBankAccount>;
+export type BraintreeBankAccountCreator = BraintreeModuleCreator<BraintreeBankAccount>;
 
-export interface BraintreeUsBankAccount extends BraintreeModule {
+export interface BraintreeBankAccount extends BraintreeModule {
     tokenize(payload: {
-        bankDetails: UsBankAccountSuccessPayload;
+        bankDetails: BankAccountSuccessPayload;
         mandateText: string;
     }): Promise<{ nonce: string; details: BraintreeDetails }>;
 }

@@ -4,9 +4,9 @@ import {
     HostedInstrument,
     HostedVaultedInstrument,
     NonceInstrument,
-    UsBankAccountInstrument,
     VaultedInstrument,
     WithAccountCreation,
+    WithBankAccountInstrument,
     WithCheckoutcomFawryInstrument,
     WithCheckoutcomiDealInstrument,
     WithCheckoutcomSEPAInstrument,
@@ -55,7 +55,7 @@ export interface OrderPaymentRequestBody {
      */
     paymentData?:
         | CreditCardInstrument
-        | UsBankAccountInstrument
+        | WithBankAccountInstrument
         | HostedInstrument
         | HostedCreditCardInstrument
         | HostedVaultedInstrument

@@ -9,14 +9,14 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentMethod,
-    UsBankAccountInstrument,
+    WithBankAccountInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCheckout,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import { BraintreeUsBankAccount } from '../braintree';
+import { BraintreeBankAccount } from '../braintree';
 import BraintreeIntegrationService from '../braintree-integration-service';
 import BraintreeScriptLoader from '../braintree-script-loader';
 import { getBankAccountMock, getBraintreeAch } from '../braintree.mock';
@@ -31,7 +31,7 @@ const mockOptions: PaymentInitializeOptions & WithBraintreePaypalAchInitializeOp
     },
 };
 
-const paymentData: UsBankAccountInstrument = {
+const paymentData: WithBankAccountInstrument = {
     accountNumber: '01',
     routingNumber: '02',
     ownershipType: 'Personal',
@@ -62,7 +62,7 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;
     let paymentMethodMock: PaymentMethod;
 
-    let mockBankAccount: BraintreeUsBankAccount;
+    let mockBankAccount: BraintreeBankAccount;
 
     beforeEach(() => {
         paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();

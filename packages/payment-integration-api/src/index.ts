@@ -101,7 +101,7 @@ export {
 export {
     CardInstrument,
     CreditCardInstrument,
-    UsBankAccountInstrument,
+    WithBankAccountInstrument,
     isVaultedInstrument,
     isHostedInstrumentLike,
     isWithAccountCreation,

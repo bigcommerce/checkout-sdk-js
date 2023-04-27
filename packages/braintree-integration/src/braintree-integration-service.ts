@@ -6,6 +6,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    BraintreeBankAccount,
     BraintreeClient,
     BraintreeDataCollector,
     BraintreeDetails,
@@ -16,7 +17,6 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeShippingAddressOverride,
-    BraintreeUsBankAccount,
 } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import isBraintreeError from './is-braintree-error';
@@ -30,7 +30,7 @@ export default class BraintreeIntegrationService {
         paypal?: BraintreeDataCollector;
     } = {};
     private paypalCheckout?: BraintreePaypalCheckout;
-    private usBankAccount?: Promise<BraintreeUsBankAccount>;
+    private usBankAccount?: Promise<BraintreeBankAccount>;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,

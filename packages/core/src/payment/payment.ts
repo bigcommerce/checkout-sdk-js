@@ -1,6 +1,6 @@
 import {
-    UsBankAccountInstrument,
     WithAccountCreation,
+    WithBankAccountInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BrowserInfo } from '../common/browser-info';
@@ -45,7 +45,7 @@ export type PaymentInstrument =
     | VaultedInstrument
     | (VaultedInstrument & WithHostedFormNonce)
     | WithAccountCreation
-    | UsBankAccountInstrument;
+    | WithBankAccountInstrument;
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
