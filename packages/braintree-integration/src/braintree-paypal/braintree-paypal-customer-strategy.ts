@@ -107,6 +107,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
     }
 
     async signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void> {
+        console.log('aaa');
         await this.paymentIntegrationService.signInCustomer(credentials, options);
     }
 
