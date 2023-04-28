@@ -99,7 +99,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
 
             const paymentPayload = {
                 formattedPayload: {
-                    vault_payment_instrument: true,
+                    vault_payment_instrument: false,
                     set_as_default_stored_instrument: null,
                     device_info: sessionId || null,
                     us_bank_account: {
