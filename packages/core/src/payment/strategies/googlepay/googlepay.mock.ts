@@ -802,7 +802,7 @@ export function getGooglePayWorldpayAccessPaymentDataRequest(): GooglePayPayment
         ],
         transactionInfo: {
             currencyCode: 'USD',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: TotalPriceStatusType.FINAL,
             totalPrice: '1.00',
         },
         emailRequired: true,

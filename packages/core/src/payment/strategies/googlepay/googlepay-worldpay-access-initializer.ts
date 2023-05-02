@@ -9,6 +9,7 @@ import {
     GooglePaymentData,
     GooglePayPaymentDataRequestV2,
     TokenizePayload,
+    TotalPriceStatusType,
 } from './googlepay';
 
 export default class GooglePayWorldpayAccessInitializer implements GooglePayInitializer {
@@ -100,7 +101,7 @@ export default class GooglePayWorldpayAccessInitializer implements GooglePayInit
             transactionInfo: {
                 countryCode,
                 currencyCode,
-                totalPriceStatus: 'FINAL',
+                totalPriceStatus: TotalPriceStatusType.FINAL,
                 totalPrice,
             },
             emailRequired: true,
