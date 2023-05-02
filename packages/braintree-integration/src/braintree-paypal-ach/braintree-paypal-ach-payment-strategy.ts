@@ -20,7 +20,7 @@ import BraintreeIntegrationService from '../braintree-integration-service';
 import isBraintreeError from '../is-braintree-error';
 import isUsBankAccountInstrumentLike from '../is-us-bank-account-instrument-like';
 
-import { WithBraintreePaypalAchInitializeOptions } from './braintree-paypal-ach-initialize-options';
+import { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-paypal-ach-initialize-options';
 
 export default class BraintreePaypalAchPaymentStrategy implements PaymentStrategy {
     private usBankAccount?: BraintreeBankAccount;
@@ -32,7 +32,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
     ) {}
 
     async initialize(
-        options: PaymentInitializeOptions & WithBraintreePaypalAchInitializeOptions,
+        options: PaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions,
     ): Promise<void> {
         const { mandateText } = options.braintreeach || {};
 
