@@ -14,8 +14,7 @@
             "executor": "@nrwl/jest:jest",
             "outputs": ["coverage/packages/google-pay-integration"],
             "options": {
-                "jestConfig": "packages/google-pay-integration/jest.config.js",
-                "passWithNoTests": true
+                "jestConfig": "packages/google-pay-integration/jest.config.js"
             }
         }
     },
