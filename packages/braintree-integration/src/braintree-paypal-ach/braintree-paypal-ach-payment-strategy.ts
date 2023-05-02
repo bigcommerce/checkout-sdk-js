@@ -20,11 +20,11 @@ import BraintreeIntegrationService from '../braintree-integration-service';
 import isBraintreeError from '../is-braintree-error';
 import isUsBankAccountInstrumentLike from '../is-us-bank-account-instrument-like';
 
-import { WithBraintreePaypalAchInitializeOptions } from './braintree-paypal-ach-initialize-options';
+import { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-paypal-ach-initialize-options';
 
 export default class BraintreePaypalAchPaymentStrategy implements PaymentStrategy {
     private usBankAccount?: BraintreeBankAccount;
-    private mandateText = '';
+    private mandateText? = '';
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -32,19 +32,13 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
     ) {}
 
     async initialize(
-        options: PaymentInitializeOptions & WithBraintreePaypalAchInitializeOptions,
+        options: PaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions,
     ): Promise<void> {
         const { mandateText } = options.braintreeach || {};
 
         if (!options.methodId) {
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.methodId" argument is not provided.',
-            );
-        }
-
-        if (!mandateText) {
-            throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.braintreeach.mandateText" argument is not provided.',
             );
         }
 
@@ -83,6 +77,12 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
 
         if (!this.usBankAccount) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        if (!this.mandateText) {
+            throw new InvalidArgumentError(
+                'Unable to proceed because mandateText is not provided.',
+            );
         }
 
         try {

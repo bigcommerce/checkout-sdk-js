@@ -1,7 +1,7 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-    CheckoutButtonStrategyFactory,
+    PaymentStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -11,7 +11,7 @@ import BraintreeScriptLoader from '../braintree-script-loader';
 
 import BraintreeAchPaymentStrategy from './braintree-paypal-ach-payment-strategy';
 
-const createBraintreePaypalAchPaymentStrategy: CheckoutButtonStrategyFactory<
+const createBraintreePaypalAchPaymentStrategy: PaymentStrategyFactory<
     BraintreeAchPaymentStrategy
 > = (paymentIntegrationService) => {
     const braintreeHostWindow: BraintreeHostWindow = window;

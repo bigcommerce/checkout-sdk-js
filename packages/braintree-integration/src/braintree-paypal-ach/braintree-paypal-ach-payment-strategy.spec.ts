@@ -21,10 +21,10 @@ import BraintreeIntegrationService from '../braintree-integration-service';
 import BraintreeScriptLoader from '../braintree-script-loader';
 import { getBankAccountMock, getBraintreeAch } from '../braintree.mock';
 
-import { WithBraintreePaypalAchInitializeOptions } from './braintree-paypal-ach-initialize-options';
+import { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-paypal-ach-initialize-options';
 import BraintreePaypalAchPaymentStrategy from './braintree-paypal-ach-payment-strategy';
 
-const mockOptions: PaymentInitializeOptions & WithBraintreePaypalAchInitializeOptions = {
+const mockOptions: PaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions = {
     methodId: 'ach',
     braintreeach: {
         mandateText: 'text',
@@ -117,7 +117,7 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
         });
 
         it('throws an error if braintreeach is not provided', async () => {
-            const options = { methodId: 'braintreeach' } as PaymentInitializeOptions;
+            const options = {} as PaymentInitializeOptions;
 
             try {
                 await strategy.initialize(options);
@@ -135,19 +135,6 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
         });
-
-        it('throws an error if braintreeach.mandateText is not provided', async () => {
-            const options = {
-                methodId: 'ach',
-                braintreeach: {},
-            } as PaymentInitializeOptions;
-
-            try {
-                await strategy.initialize(options);
-            } catch (error) {
-                expect(error).toBeInstanceOf(InvalidArgumentError);
-            }
-        });
     });
 
     describe('#execute', () => {
@@ -157,6 +144,20 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
             const expectedResults = await strategy.execute(payment, { methodId: 'ach' });
 
             expect(expectedResults).toBeUndefined();
+        });
+
+        it('throws an error if braintreeach.mandateText is not provided', async () => {
+            const options = {
+                methodId: 'ach',
+                braintreeach: {},
+            } as PaymentInitializeOptions;
+
+            try {
+                await strategy.initialize(options);
+                await strategy.execute({}, { methodId: 'ach' });
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
         });
 
         it('throws an error if payment is not provided', async () => {
