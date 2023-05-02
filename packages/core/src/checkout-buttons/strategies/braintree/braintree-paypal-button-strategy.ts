@@ -94,6 +94,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         const paypalCheckoutOptions: Partial<BraintreePaypalSdkCreatorConfig> = {
             currency: currencyCode,
             intent: paymentMethod.initializationData?.intent,
+            isCreditEnabled: paymentMethod.initializationData?.isCreditEnabled,
         };
 
         const paypalCheckoutSuccessCallback = (
