@@ -290,3 +290,34 @@ export function getStripeUPECustomerInitializeOptions(
         }
     }
 }
+
+export function getWorldpayAccessCustomerInitializeOptions(
+    mode: Mode = Mode.Full,
+): CustomerInitializeOptions {
+    const methodId = { methodId: 'googlepayworldpayaccess' };
+    const undefinedMethodId = { methodId: undefined };
+    const container = { container: 'googlePayCheckoutButton' };
+    const invalidContainer = { container: 'invalid_container' };
+    const googlepayWorldpayAccess = { googlepayworldpayaccess: { ...container } };
+    const googlepayWorldpayAccessWithInvalidContainer = {
+        googlepayworldpayaccess: { ...invalidContainer },
+    };
+
+    switch (mode) {
+        case Mode.Incomplete: {
+            return { ...methodId };
+        }
+
+        case Mode.UndefinedMethodId: {
+            return { ...undefinedMethodId, ...googlepayWorldpayAccess };
+        }
+
+        case Mode.InvalidContainer: {
+            return { ...methodId, ...googlepayWorldpayAccessWithInvalidContainer };
+        }
+
+        default: {
+            return { ...methodId, ...googlepayWorldpayAccess };
+        }
+    }
+}
