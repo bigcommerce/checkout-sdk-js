@@ -110,3 +110,19 @@ export interface BoltBuyNowInitializeOptions {
     storefrontApiToken?: string;
     getBuyNowCartRequestBody(): BuyNowCartRequestBody;
 }
+
+export enum StyleButtonSize {
+    Small = 'small',
+    Medium = 'medium',
+    Large = 'large',
+}
+
+export enum StyleButtonShape {
+    Pill = 'pill',
+    Rect = 'rect',
+}
+
+export interface BoltButtonStyleOptions {
+    shape?: StyleButtonShape;
+    size?: StyleButtonSize;
+}

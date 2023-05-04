@@ -1,3 +1,5 @@
+import { stringify } from 'query-string';
+
 import {
     CheckoutButtonInitializeOptions,
     CheckoutButtonStrategy,
@@ -6,7 +8,13 @@ import {
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { BoltHostWindow, BoltPaymentMethod } from './bolt';
+import {
+    BoltButtonStyleOptions,
+    BoltHostWindow,
+    BoltPaymentMethod,
+    StyleButtonShape,
+    StyleButtonSize,
+} from './bolt';
 import { WithBoltButtonInitializeOptions } from './bolt-button-initialize-options';
 import BoltScriptLoader from './bolt-script-loader';
 
@@ -21,7 +29,7 @@ export default class BoltButtonStrategy implements CheckoutButtonStrategy {
         options: CheckoutButtonInitializeOptions & WithBoltButtonInitializeOptions,
     ): Promise<void> {
         const { bolt, containerId, methodId } = options;
-        const { buyNowInitializeOptions } = bolt || {};
+        const { buyNowInitializeOptions, style } = bolt || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -69,23 +77,31 @@ export default class BoltButtonStrategy implements CheckoutButtonStrategy {
             buyNowInitializeOptions.storefrontApiToken,
         );
 
-        this.renderButton(containerId, paymentMethod);
+        this.renderButton(containerId, paymentMethod, style);
     }
 
     deinitialize(): Promise<void> {
         return Promise.resolve();
     }
 
-    private renderButton(containerId: string, paymentMethod: BoltPaymentMethod): void {
+    private renderButton(
+        containerId: string,
+        paymentMethod: BoltPaymentMethod,
+        style?: BoltButtonStyleOptions,
+    ): void {
         if (typeof this.boltHostWindow.BoltConnect?.setupProductPageCheckout !== 'function') {
             return;
         }
 
-        this.addButtonContainer(containerId, paymentMethod);
+        this.addButtonContainer(containerId, paymentMethod, style);
         this.boltHostWindow.BoltConnect.setupProductPageCheckout();
     }
 
-    private addButtonContainer(containerId: string, paymentMethod: BoltPaymentMethod): void {
+    private addButtonContainer(
+        containerId: string,
+        paymentMethod: BoltPaymentMethod,
+        style?: BoltButtonStyleOptions,
+    ): void {
         const container = document.getElementById(containerId);
 
         if (!container) {
@@ -100,7 +116,7 @@ export default class BoltButtonStrategy implements CheckoutButtonStrategy {
         boltButtonContainer.setAttribute('style', 'display:none');
         boltButtonContainer.setAttribute('data-tid', 'product-page-checkout-wrapper');
 
-        boltButtonObject.setAttribute('data', this.getBoltObjectData(paymentMethod));
+        boltButtonObject.setAttribute('data', this.getBoltObjectData(paymentMethod, style));
         boltButtonObject.setAttribute('class', 'bolt-product-checkout-button');
 
         boltButtonContainer.append(boltButtonObject);
@@ -108,12 +124,59 @@ export default class BoltButtonStrategy implements CheckoutButtonStrategy {
         container.append(boltButtonContainer);
     }
 
-    private getBoltObjectData(paymentMethod: BoltPaymentMethod): string {
+    private getBoltObjectData(
+        paymentMethod: BoltPaymentMethod,
+        style?: BoltButtonStyleOptions,
+    ): string {
         const { initializationData, config } = paymentMethod;
         const { publishableKey, developerConfig } = initializationData || {};
 
         const domainUrl = this.boltScriptLoader.getDomainURL(!!config.testMode, developerConfig);
+        const buttonHeight = this.getButtonHeight(style?.size);
+        const buttonBorderRadius = this.getButtonBorderRadius(style?.shape, buttonHeight);
+        const urlParameters = stringify({
+            publishable_key: publishableKey,
+            variant: 'ppc',
+            ...(buttonHeight && { height: buttonHeight }),
+            ...(buttonBorderRadius && { border_radius: buttonBorderRadius }),
+        });
 
-        return `https://${domainUrl}/v1/checkout_button?publishable_key=${publishableKey!}`;
+        return `https://${domainUrl}/v1/checkout_button?${urlParameters}`;
+    }
+
+    private getButtonHeight(buttonSize?: StyleButtonSize): number | undefined {
+        if (!buttonSize) {
+            return;
+        }
+
+        switch (buttonSize) {
+            case StyleButtonSize.Small:
+                return 25;
+
+            case StyleButtonSize.Large:
+                return 45;
+
+            case StyleButtonSize.Medium:
+            default:
+                return 40;
+        }
+    }
+
+    private getButtonBorderRadius(
+        buttonShape?: StyleButtonShape,
+        buttonHeight?: number,
+    ): number | undefined {
+        if (!buttonShape) {
+            return;
+        }
+
+        switch (buttonShape) {
+            case StyleButtonShape.Pill:
+                return buttonHeight ? Math.round(buttonHeight / 2) : undefined;
+
+            case StyleButtonShape.Rect:
+            default:
+                return 4;
+        }
     }
 }
