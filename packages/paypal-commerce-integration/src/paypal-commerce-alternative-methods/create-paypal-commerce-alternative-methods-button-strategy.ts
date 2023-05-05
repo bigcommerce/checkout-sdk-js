@@ -1,37 +1,19 @@
-import { createFormPoster } from '@bigcommerce/form-poster';
-import { createRequestSender } from '@bigcommerce/request-sender';
-import { getScriptLoader } from '@bigcommerce/script-loader';
-
 import {
     CheckoutButtonStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import {
-    PayPalCommerceIntegrationService,
-    PayPalCommerceRequestSender,
-    PayPalCommerceScriptLoader,
-} from '../index';
+import createPayPalCommerceIntegrationService from '../create-paypal-commerce-integration-service';
 
 import PayPalCommerceAlternativeMethodsButtonStrategy from './paypal-commerce-alternative-methods-button-strategy';
 
 const createPayPalCommerceAlternativeMethodsButtonStrategy: CheckoutButtonStrategyFactory<
     PayPalCommerceAlternativeMethodsButtonStrategy
-> = (paymentIntegrationService) => {
-    const { getHost } = paymentIntegrationService.getState();
-
-    const paypalCommerceIntegrationService = new PayPalCommerceIntegrationService(
-        createFormPoster(),
+> = (paymentIntegrationService) =>
+    new PayPalCommerceAlternativeMethodsButtonStrategy(
         paymentIntegrationService,
-        new PayPalCommerceRequestSender(createRequestSender({ host: getHost() })),
-        new PayPalCommerceScriptLoader(getScriptLoader()),
+        createPayPalCommerceIntegrationService(paymentIntegrationService),
     );
-
-    return new PayPalCommerceAlternativeMethodsButtonStrategy(
-        paymentIntegrationService,
-        paypalCommerceIntegrationService,
-    );
-};
 
 export default toResolvableModule(createPayPalCommerceAlternativeMethodsButtonStrategy, [
     { id: 'paypalcommercealternativemethods' },

@@ -1,36 +1,18 @@
-import { createFormPoster } from '@bigcommerce/form-poster';
-import { createRequestSender } from '@bigcommerce/request-sender';
-import { getScriptLoader } from '@bigcommerce/script-loader';
-
 import {
     CustomerStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import {
-    PayPalCommerceIntegrationService,
-    PayPalCommerceRequestSender,
-    PayPalCommerceScriptLoader,
-} from '../index';
+import createPayPalCommerceIntegrationService from '../create-paypal-commerce-integration-service';
 
 import PayPalCommerceCustomerStrategy from './paypal-commerce-customer-strategy';
 
 const createPayPalCommerceCustomerStrategy: CustomerStrategyFactory<
     PayPalCommerceCustomerStrategy
-> = (paymentIntegrationService) => {
-    const { getHost } = paymentIntegrationService.getState();
-
-    const paypalCommerceIntegrationService = new PayPalCommerceIntegrationService(
-        createFormPoster(),
+> = (paymentIntegrationService) =>
+    new PayPalCommerceCustomerStrategy(
         paymentIntegrationService,
-        new PayPalCommerceRequestSender(createRequestSender({ host: getHost() })),
-        new PayPalCommerceScriptLoader(getScriptLoader()),
+        createPayPalCommerceIntegrationService(paymentIntegrationService),
     );
-
-    return new PayPalCommerceCustomerStrategy(
-        paymentIntegrationService,
-        paypalCommerceIntegrationService,
-    );
-};
 
 export default toResolvableModule(createPayPalCommerceCustomerStrategy, [{ id: 'paypalcommerce' }]);
