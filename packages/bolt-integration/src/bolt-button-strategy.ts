@@ -1,4 +1,4 @@
-import { stringify } from 'query-string';
+import { stringifyUrl } from 'query-string';
 
 import {
     CheckoutButtonInitializeOptions,
@@ -134,14 +134,16 @@ export default class BoltButtonStrategy implements CheckoutButtonStrategy {
         const domainUrl = this.boltScriptLoader.getDomainURL(!!config.testMode, developerConfig);
         const buttonHeight = this.getButtonHeight(style?.size);
         const buttonBorderRadius = this.getButtonBorderRadius(style?.shape, buttonHeight);
-        const urlParameters = stringify({
-            publishable_key: publishableKey,
-            variant: 'ppc',
-            ...(buttonHeight && { height: buttonHeight }),
-            ...(buttonBorderRadius && { border_radius: buttonBorderRadius }),
-        });
 
-        return `https://${domainUrl}/v1/checkout_button?${urlParameters}`;
+        return stringifyUrl({
+            url: `https://${domainUrl}/v1/checkout_button`,
+            query: {
+                publishable_key: publishableKey,
+                variant: 'ppc',
+                height: buttonHeight,
+                border_radius: buttonBorderRadius,
+            },
+        });
     }
 
     private getButtonHeight(buttonSize?: StyleButtonSize): number | undefined {
