@@ -129,7 +129,8 @@ export default class SquareV2PaymentProcessor {
         card: Card,
         observer: Required<SquareV2PaymentInitializeOptions>['onValidationChange'],
     ): Subscription {
-        const invalidFields = new Set<string>(['cardNumber', 'expirationDate', 'cvv']);
+        const blacklist = ['cardNumber', 'cvv'];
+        const invalidFields = new Set<string>(blacklist);
         const eventObservables = [
             'focusClassAdded',
             'focusClassRemoved',
@@ -149,7 +150,9 @@ export default class SquareV2PaymentProcessor {
                         },
                     } = event;
 
-                    invalidFields[isCompletelyValid ? 'delete' : 'add'](field);
+                    if (blacklist.includes(field)) {
+                        invalidFields[isCompletelyValid ? 'delete' : 'add'](field);
+                    }
 
                     return invalidFields.size === 0;
                 }),

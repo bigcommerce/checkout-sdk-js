@@ -120,9 +120,24 @@ describe('SquareV2PaymentProcessor', () => {
                 onValidationChange,
             });
             squareV2MockFunctions.simulateEvent('focusClassAdded', 'cardNumber', true);
-            squareV2MockFunctions.simulateEvent('focusClassRemoved', 'expirationDate', true);
             squareV2MockFunctions.simulateEvent('errorClassRemoved', 'cvv', true);
-            squareV2MockFunctions.simulateEvent('postalCodeChanged', 'postalCode', true);
+
+            expect(onValidationChange).toHaveBeenCalledTimes(2);
+            expect(onValidationChange).toHaveBeenNthCalledWith(1, false);
+            expect(onValidationChange).toHaveBeenNthCalledWith(2, true);
+        });
+
+        it('should validate only blacklisted fields', async () => {
+            const onValidationChange = jest.fn();
+
+            await processor.initializeCard({
+                containerId: 'card-container',
+                onValidationChange,
+            });
+            squareV2MockFunctions.simulateEvent('focusClassAdded', 'cardNumber', true);
+            squareV2MockFunctions.simulateEvent('focusClassRemoved', 'expirationDate', false);
+            squareV2MockFunctions.simulateEvent('errorClassRemoved', 'cvv', true);
+            squareV2MockFunctions.simulateEvent('postalCodeChanged', 'postalCode', false);
 
             expect(onValidationChange).toHaveBeenCalledTimes(2);
             expect(onValidationChange).toHaveBeenNthCalledWith(1, false);
@@ -137,31 +152,13 @@ describe('SquareV2PaymentProcessor', () => {
                 onValidationChange,
             });
             squareV2MockFunctions.simulateEvent('focusClassAdded', 'cardNumber', true);
-            squareV2MockFunctions.simulateEvent('focusClassRemoved', 'expirationDate', true);
             squareV2MockFunctions.simulateEvent('errorClassRemoved', 'cvv', true);
-            squareV2MockFunctions.simulateEvent('postalCodeChanged', 'postalCode', true);
             squareV2MockFunctions.simulateEvent('cardBrandChanged', 'cardNumber', false);
 
             expect(onValidationChange).toHaveBeenCalledTimes(3);
             expect(onValidationChange).toHaveBeenNthCalledWith(1, false);
             expect(onValidationChange).toHaveBeenNthCalledWith(2, true);
             expect(onValidationChange).toHaveBeenNthCalledWith(3, false);
-        });
-
-        it("should exempt postalCode from validation if it hasn't been rendered yet", async () => {
-            const onValidationChange = jest.fn();
-
-            await processor.initializeCard({
-                containerId: 'card-container',
-                onValidationChange,
-            });
-            squareV2MockFunctions.simulateEvent('focusClassAdded', 'cardNumber', true);
-            squareV2MockFunctions.simulateEvent('focusClassRemoved', 'expirationDate', true);
-            squareV2MockFunctions.simulateEvent('errorClassRemoved', 'cvv', true);
-
-            expect(onValidationChange).toHaveBeenCalledTimes(2);
-            expect(onValidationChange).toHaveBeenNthCalledWith(1, false);
-            expect(onValidationChange).toHaveBeenNthCalledWith(2, true);
         });
     });
 
