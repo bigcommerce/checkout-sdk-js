@@ -68,11 +68,13 @@ export interface CreditCardInstrument {
     browser_info?: BrowserInfo;
 }
 
+type BankAccountType = 'Checking' | 'Savings';
+
 export interface WithBankAccountInstrument {
     accountNumber: string;
     routingNumber: string;
     ownershipType: 'Personal' | 'Business';
-    accountType: 'Checking' | 'Savings';
+    accountType: BankAccountType | BlueSnapDirectEcpAccountType;
     firstName?: string;
     lastName?: string;
     businessName?: string;
@@ -230,7 +232,7 @@ type BlueSnapDirectEcpAccountType =
 
 export interface BlueSnapDirectEcpInstrument {
     accountNumber: string;
-    accountType: BlueSnapDirectEcpAccountType;
+    accountType: BankAccountType | BlueSnapDirectEcpAccountType;
     shopperPermission: boolean;
     routingNumber: string;
 }
@@ -238,7 +240,7 @@ export interface BlueSnapDirectEcpInstrument {
 export interface BlueSnapDirectEcpPayload {
     ecp: {
         account_number: string;
-        account_type: BlueSnapDirectEcpAccountType;
+        account_type: BlueSnapDirectEcpAccountType | BankAccountType;
         shopper_permission: boolean;
         routing_number: string;
     };
