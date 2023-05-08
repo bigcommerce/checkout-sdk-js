@@ -6,6 +6,7 @@ import {
     guard,
     NotInitializedError,
     NotInitializedErrorType,
+    PaymentExecuteError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -95,7 +96,11 @@ export default class SquareV2PaymentProcessor {
                 errorMessage += ` and errors: ${JSON.stringify(result.errors)}`;
             }
 
-            throw new Error(errorMessage);
+            throw new PaymentExecuteError(
+                'payment.errors.card_error',
+                'SquareV2TokenizationError',
+                errorMessage,
+            );
         }
 
         return result.token;

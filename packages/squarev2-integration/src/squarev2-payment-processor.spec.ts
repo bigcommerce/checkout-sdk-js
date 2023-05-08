@@ -197,9 +197,25 @@ describe('SquareV2PaymentProcessor', () => {
 
             const nonce = processor.tokenize();
 
-            await expect(nonce).rejects.toThrow(
-                'Tokenization failed with status: FOO and errors: [{"err1":"bar"},{"err2":"baz"}]',
-            );
+            await expect(nonce).rejects.toThrow();
+        });
+
+        it('should throw a PaymentExecuteError', async () => {
+            squareV2MockFunctions.tokenize.mockResolvedValue({
+                status: 'FOO',
+                errors: [{ err1: 'bar' }, { err2: 'baz' }],
+            });
+
+            try {
+                await processor.tokenize();
+            } catch (error) {
+                expect(error.name).toBe('SquareV2TokenizationError');
+                expect(error.type).toBe('custom_provider_execute_error');
+                expect(error.subtype).toBe('payment.errors.card_error');
+                expect(error.message).toBe(
+                    'Tokenization failed with status: FOO and errors: [{"err1":"bar"},{"err2":"baz"}]',
+                );
+            }
         });
     });
 
