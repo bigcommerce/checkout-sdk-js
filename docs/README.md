@@ -31,6 +31,8 @@
 - [StyleButtonColor](enums/StyleButtonColor.md)
 - [StyleButtonLabel](enums/StyleButtonLabel.md)
 - [StyleButtonShape](enums/StyleButtonShape.md)
+- [StyleButtonShape_2](enums/StyleButtonShape_2.md)
+- [StyleButtonSize](enums/StyleButtonSize.md)
 - [UntrustedShippingCardVerificationType](enums/UntrustedShippingCardVerificationType.md)
 
 ### Classes
@@ -105,6 +107,7 @@
 - [BodlService](interfaces/BodlService.md)
 - [BodyStyles](interfaces/BodyStyles.md)
 - [BoltButtonInitializeOptions](interfaces/BoltButtonInitializeOptions.md)
+- [BoltButtonStyleOptions](interfaces/BoltButtonStyleOptions.md)
 - [BoltBuyNowInitializeOptions](interfaces/BoltBuyNowInitializeOptions.md)
 - [BoltCustomerInitializeOptions](interfaces/BoltCustomerInitializeOptions.md)
 - [BoltPaymentInitializeOptions](interfaces/BoltPaymentInitializeOptions.md)

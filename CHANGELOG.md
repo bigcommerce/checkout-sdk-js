@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.378.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.377.0...v1.378.0) (2023-05-08)
+
+
+### Features
+
+* **payment:** BOLT-484 Add styling for Bolt Button on PDP ([7837d94](https://github.com/bigcommerce/checkout-sdk-js/commit/7837d9435dac0c7e0d4d075b7fb0b67477f3027f))
+* **payment:** BOLT-484 Add styling for Bolt Button on PDP ([6ead002](https://github.com/bigcommerce/checkout-sdk-js/commit/6ead002167a27552502ca3001df5437ab6222542))
+
 ## [1.377.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.376.1...v1.377.0) (2023-05-02)
 
 

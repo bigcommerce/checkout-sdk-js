@@ -7,6 +7,7 @@
 ### Properties
 
 - [buyNowInitializeOptions](BoltButtonInitializeOptions.md#buynowinitializeoptions)
+- [style](BoltButtonInitializeOptions.md#style)
 
 ## Properties
 
@@ -15,3 +16,9 @@
 • `Optional` **buyNowInitializeOptions**: [`BoltBuyNowInitializeOptions`](BoltBuyNowInitializeOptions.md)
 
 The options that are required to initialize Buy Now functionality.
+
+___
+
+### style
+
+• `Optional` **style**: [`BoltButtonStyleOptions`](BoltButtonStyleOptions.md)

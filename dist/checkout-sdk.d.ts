@@ -1366,6 +1366,12 @@ declare interface BoltButtonInitializeOptions {
      * The options that are required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: BoltBuyNowInitializeOptions;
+    style?: BoltButtonStyleOptions;
+}
+
+declare interface BoltButtonStyleOptions {
+    shape?: StyleButtonShape;
+    size?: StyleButtonSize;
 }
 
 declare interface BoltBuyNowInitializeOptions {
@@ -5985,7 +5991,7 @@ declare interface PasswordRequirements {
 
 declare interface PayPalButtonStyleOptions {
     color?: StyleButtonColor;
-    shape?: StyleButtonShape;
+    shape?: StyleButtonShape_2;
     height?: number;
     label?: StyleButtonLabel;
 }
@@ -7363,8 +7369,19 @@ declare enum StyleButtonLabel {
 }
 
 declare enum StyleButtonShape {
+    Pill = "pill",
+    Rect = "rect"
+}
+
+declare enum StyleButtonShape_2 {
     pill = "pill",
     rect = "rect"
+}
+
+declare enum StyleButtonSize {
+    Small = "small",
+    Medium = "medium",
+    Large = "large"
 }
 
 declare interface StyleOptions {
