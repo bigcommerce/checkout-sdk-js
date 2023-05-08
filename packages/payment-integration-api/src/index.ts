@@ -50,6 +50,7 @@ export {
     PaymentArgumentInvalidError,
     PaymentErrorData,
     PaymentErrorResponseBody,
+    PaymentExecuteError,
     PaymentInvalidFormError,
     PaymentInvalidFormErrorDetails,
     PaymentMethodCancelledError,

@@ -6,6 +6,8 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable, of } from 'rxjs';
 
+import { PaymentExecuteError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     CheckoutRequestSender,
     CheckoutStore,
@@ -23,7 +25,7 @@ import {
 } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { PaymentArgumentInvalidError, PaymentExecuteError } from '../../errors';
+import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';

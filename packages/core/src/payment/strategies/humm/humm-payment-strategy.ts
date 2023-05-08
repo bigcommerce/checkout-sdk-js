@@ -1,11 +1,13 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 
+import { PaymentExecuteError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { PaymentStrategy } from '..';
 import { PaymentActionCreator } from '../..';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentArgumentInvalidError, PaymentExecuteError } from '../../errors';
+import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentRequestOptions } from '../../payment-request-options';
 
