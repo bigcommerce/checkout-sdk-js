@@ -1,10 +1,12 @@
-import { BoltBuyNowInitializeOptions } from './bolt';
+import { BoltButtonStyleOptions, BoltBuyNowInitializeOptions } from './bolt';
 
 export default interface BoltButtonInitializeOptions {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: BoltBuyNowInitializeOptions;
+
+    style?: BoltButtonStyleOptions;
 }
 
 export interface WithBoltButtonInitializeOptions {

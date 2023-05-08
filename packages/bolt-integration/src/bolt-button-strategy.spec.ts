@@ -9,7 +9,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import { BoltCheckout, BoltHostWindow } from './bolt';
+import { BoltCheckout, BoltHostWindow, StyleButtonShape, StyleButtonSize } from './bolt';
 import BoltButtonInitializeOptions from './bolt-button-initialize-options';
 import BoltButtonStrategy from './bolt-button-strategy';
 import BoltScriptLoader from './bolt-script-loader';
@@ -30,6 +30,10 @@ describe('BoltButtonStrategy', () => {
         buyNowInitializeOptions: {
             storefrontApiToken: 'storefrontApiToken',
             getBuyNowCartRequestBody: jest.fn(),
+        },
+        style: {
+            size: StyleButtonSize.Medium,
+            shape: StyleButtonShape.Rect,
         },
     };
     const initializationOptions: CheckoutButtonInitializeOptions = {
@@ -149,14 +153,83 @@ describe('BoltButtonStrategy', () => {
             expect(document.getElementById('product-page-checkout-wrapper')).toBeNull();
         });
 
-        it('render bolt smart payment button', async () => {
+        it('render default bolt smart payment button', async () => {
             (window as BoltHostWindow).BoltConnect = {
                 setupProductPageCheckout: jest.fn(),
             };
 
             await strategy.initialize(initializationOptions);
 
-            expect(document.getElementById('product-page-checkout-wrapper')).not.toBeNull();
+            const objectElement = document.getElementsByClassName(
+                'bolt-product-checkout-button',
+            )[0];
+            const objectData = objectElement.getAttribute('data');
+
+            expect(objectElement).not.toBeNull();
+            expect(objectData).toContain('publishable_key=publishableKey');
+            expect(objectData).toContain('variant=ppc');
+            expect(objectData).toContain('height=40');
+            expect(objectData).toContain('border_radius=4');
+        });
+
+        it('render small bolt smart payment button with shape pill', async () => {
+            (window as BoltHostWindow).BoltConnect = {
+                setupProductPageCheckout: jest.fn(),
+            };
+
+            boltOptions.style = {
+                size: StyleButtonSize.Small,
+                shape: StyleButtonShape.Pill,
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            const objectElement = document.getElementsByClassName(
+                'bolt-product-checkout-button',
+            )[0];
+            const objectData = objectElement.getAttribute('data');
+
+            expect(objectData).toContain('height=25');
+            expect(objectData).toContain('border_radius=13');
+        });
+
+        it('render large bolt smart payment button', async () => {
+            (window as BoltHostWindow).BoltConnect = {
+                setupProductPageCheckout: jest.fn(),
+            };
+
+            boltOptions.style = {
+                size: StyleButtonSize.Large,
+                shape: StyleButtonShape.Rect,
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            const objectElement = document.getElementsByClassName(
+                'bolt-product-checkout-button',
+            )[0];
+            const objectData = objectElement.getAttribute('data');
+
+            expect(objectData).toContain('height=45');
+            expect(objectData).toContain('border_radius=4');
+        });
+
+        it('render bolt smart payment button without styles', async () => {
+            (window as BoltHostWindow).BoltConnect = {
+                setupProductPageCheckout: jest.fn(),
+            };
+
+            boltOptions.style = undefined;
+
+            await strategy.initialize(initializationOptions);
+
+            const objectElement = document.getElementsByClassName(
+                'bolt-product-checkout-button',
+            )[0];
+            const objectData = objectElement.getAttribute('data');
+
+            expect(objectData).not.toContain('height');
+            expect(objectData).not.toContain('border_radius');
         });
     });
 });
