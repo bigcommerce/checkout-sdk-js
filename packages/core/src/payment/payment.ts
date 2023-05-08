@@ -2,7 +2,7 @@ import {
     BlueSnapDirectEcpInstrument,
     BlueSnapDirectEcpPayload,
     WithAccountCreation,
-    WithBankAccountInstrument
+    WithBankAccountInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BrowserInfo } from '../common/browser-info';

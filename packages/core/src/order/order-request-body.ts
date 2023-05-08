@@ -1,7 +1,7 @@
 import {
     BlueSnapDirectEcpInstrument,
     WithAccountCreation,
-    WithBankAccountInstrument
+    WithBankAccountInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
