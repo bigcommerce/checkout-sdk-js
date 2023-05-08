@@ -23,7 +23,6 @@ import {
 import { createPaymentIntegrationService } from '../payment-integration';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
 import { ApplePaySessionFactory } from '../payment/strategies/apple-pay';
-import { BoltScriptLoader } from '../payment/strategies/bolt';
 import {
     BraintreeScriptLoader,
     BraintreeSDKCreator,
@@ -63,7 +62,6 @@ import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategy } from './strategies';
 import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
 import { ApplePayCustomerStrategy } from './strategies/apple-pay';
-import { BoltCustomerStrategy } from './strategies/bolt';
 import {
     BraintreePaypalCreditCustomerStrategy,
     BraintreeVisaCheckoutCustomerStrategy,
@@ -189,17 +187,6 @@ export default function createCustomerStrategyRegistry(
                 braintreeSDKCreator,
                 formPoster,
                 window,
-            ),
-    );
-
-    registry.register(
-        'bolt',
-        () =>
-            new BoltCustomerStrategy(
-                store,
-                new BoltScriptLoader(scriptLoader),
-                customerActionCreator,
-                paymentMethodActionCreator,
             ),
     );
 

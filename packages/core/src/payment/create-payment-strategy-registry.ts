@@ -6,8 +6,6 @@ import {
     getStylesheetLoader,
 } from '@bigcommerce/script-loader';
 
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import {
     CheckoutActionCreator,
@@ -117,12 +115,6 @@ import {
     PaypalProPaymentStrategy,
     PaypalScriptLoader,
 } from './strategies/paypal';
-import {
-    createPaypalCommercePaymentProcessor,
-    PaypalCommerceFundingKeyResolver,
-    PaypalCommercePaymentStrategy,
-    PaypalCommerceRequestSender,
-} from './strategies/paypal-commerce';
 import {
     createStepHandler,
     createSubStrategyRegistry,
@@ -756,66 +748,6 @@ export default function createPaymentStrategyRegistry(
                 store,
                 orderActionCreator,
                 new PaypalScriptLoader(scriptLoader),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.PAYPAL_COMMERCE,
-        () =>
-            new PaypalCommercePaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                createPaypalCommercePaymentProcessor(
-                    scriptLoader,
-                    requestSender,
-                    store,
-                    orderActionCreator,
-                    paymentActionCreator,
-                ),
-                new PaypalCommerceFundingKeyResolver(),
-                new PaypalCommerceRequestSender(requestSender),
-                new LoadingIndicator({ styles: { backgroundColor: 'black' } }),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.PAYPAL_COMMERCE_ALTERNATIVE_METHODS,
-        () =>
-            new PaypalCommercePaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                createPaypalCommercePaymentProcessor(
-                    scriptLoader,
-                    requestSender,
-                    store,
-                    orderActionCreator,
-                    paymentActionCreator,
-                ),
-                new PaypalCommerceFundingKeyResolver(),
-                new PaypalCommerceRequestSender(requestSender),
-                new LoadingIndicator({ styles: { backgroundColor: 'black' } }),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.PAYPAL_COMMERCE_VENMO,
-        () =>
-            new PaypalCommercePaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                createPaypalCommercePaymentProcessor(
-                    scriptLoader,
-                    requestSender,
-                    store,
-                    orderActionCreator,
-                    paymentActionCreator,
-                ),
-                new PaypalCommerceFundingKeyResolver(),
-                new PaypalCommerceRequestSender(requestSender),
-                new LoadingIndicator({ styles: { backgroundColor: 'black' } }),
             ),
     );
 

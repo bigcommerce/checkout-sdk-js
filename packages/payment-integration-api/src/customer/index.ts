@@ -7,5 +7,6 @@ export {
     CustomerRequestOptions,
     CustomerInitializeOptions,
     ExecutePaymentMethodCheckoutOptions,
+    CheckoutPaymentMethodExecutedOptions,
 } from './customer-request-options';
 export { default as InternalCustomer } from './internal-customer';

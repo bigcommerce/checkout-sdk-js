@@ -17,6 +17,7 @@ import {
     GooglePayPaymentDataRequestV2,
     GooglePaySDK,
     TokenizePayload,
+    TotalPriceStatusType,
 } from './googlepay';
 import { GooglePayBraintreePaymentDataRequestV1 } from './googlepay-braintree';
 
@@ -133,6 +134,7 @@ export function getGooglePayPaymentDataRequestMock(): GooglePayPaymentDataReques
         apiVersion: 2,
         apiVersionMinor: 0,
         merchantInfo: {},
+        shippingAddressParameters: {},
         allowedPaymentMethods: [
             {
                 type: 'type',
@@ -144,7 +146,7 @@ export function getGooglePayPaymentDataRequestMock(): GooglePayPaymentDataReques
         ],
         transactionInfo: {
             currencyCode: 'USD',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: TotalPriceStatusType.FINAL,
         },
     };
 }
@@ -184,7 +186,7 @@ export function getAdyenV2PaymentDataRequest(): GooglePayPaymentDataRequestV2 {
             },
         ],
         transactionInfo: {
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: TotalPriceStatusType.FINAL,
             totalPrice: '1.00',
             currencyCode: 'USD',
         },
@@ -246,7 +248,7 @@ export function getAuthorizeNetPaymentDataRequest(): GooglePayPaymentDataRequest
             },
         ],
         transactionInfo: {
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: TotalPriceStatusType.FINAL,
             totalPrice: '1.00',
             currencyCode: 'USD',
             countryCode: 'US',
@@ -342,7 +344,7 @@ export function getBNZPaymentDataRequest(): GooglePayPaymentDataRequestV2 {
         ],
         transactionInfo: {
             currencyCode: 'USD',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: TotalPriceStatusType.FINAL,
             totalPrice: '1.00',
         },
         emailRequired: true,
@@ -392,7 +394,7 @@ export function getBraintreePaymentDataPayload() {
         transactionInfo: {
             currencyCode: 'USD',
             totalPrice: '1.00',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: TotalPriceStatusType.FINAL,
         },
     };
 }
@@ -432,7 +434,7 @@ export function getBraintreePaymentDataRequest(): GooglePayBraintreePaymentDataR
         transactionInfo: {
             currencyCode: '',
             totalPrice: '',
-            totalPriceStatus: '',
+            totalPriceStatus: TotalPriceStatusType.FINAL,
         },
     };
 }
@@ -471,7 +473,7 @@ export function getStripePaymentDataRequest(): GooglePayPaymentDataRequestV2 {
         ],
         transactionInfo: {
             currencyCode: 'USD',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: TotalPriceStatusType.FINAL,
             totalPrice: '1.00',
         },
         emailRequired: true,
@@ -569,7 +571,7 @@ export function getGooglePayCheckoutcomPaymentDataRequestMock(): GooglePayPaymen
         ],
         transactionInfo: {
             currencyCode: 'USD',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: TotalPriceStatusType.FINAL,
             totalPrice: '1.00',
         },
         emailRequired: true,
@@ -663,7 +665,7 @@ export function getCybersourceV2PaymentDataRequest(): GooglePayPaymentDataReques
         ],
         transactionInfo: {
             currencyCode: 'USD',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: TotalPriceStatusType.FINAL,
             totalPrice: '1.00',
         },
         emailRequired: true,
@@ -736,7 +738,7 @@ export function getOrbitalPaymentDataRequest(): GooglePayPaymentDataRequestV2 {
         ],
         transactionInfo: {
             currencyCode: 'USD',
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: TotalPriceStatusType.FINAL,
             totalPrice: '1.00',
         },
         emailRequired: true,

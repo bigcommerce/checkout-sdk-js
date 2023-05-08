@@ -25,6 +25,7 @@ export { Config, StoreConfig, CheckoutSettings } from './config';
 export { Coupon } from './coupon';
 export { Currency } from './currency';
 export {
+    CheckoutPaymentMethodExecutedOptions,
     CustomerCredentials,
     CustomerStrategy,
     CustomerStrategyFactory,
@@ -60,6 +61,7 @@ export {
     StorefrontErrorResponseBody,
     TimeoutError,
     isRequestError,
+    isCustomError,
 } from './errors';
 export {
     HostedCardFieldOptions,
@@ -99,6 +101,8 @@ export {
     OrderRequestBody,
 } from './order';
 export {
+    BlueSnapDirectEcpInstrument,
+    BlueSnapDirectEcpPayload,
     CardInstrument,
     CreditCardInstrument,
     WithBankAccountInstrument,

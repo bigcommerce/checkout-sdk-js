@@ -1,5 +1,6 @@
 export {
     PaymentIntegrationServiceMock,
+    getBillingAddress,
     getBuyNowCart,
     getBuyNowCartRequestBody,
     getCart,
@@ -7,6 +8,7 @@ export {
     getCheckoutWithBuyNowCart,
     getConfig,
     getConsignment,
+    getCustomer,
     getOrder,
     getOrderRequestBody,
     getShippingOption,

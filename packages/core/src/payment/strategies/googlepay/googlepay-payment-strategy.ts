@@ -391,8 +391,10 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             const cart = this._store.getState().cart.getCartOrThrow();
 
             const payloadToUpdate = {
-                currencyCode: cart.currency.code,
-                totalPrice: String(cart.cartAmount),
+                transactionInfo: {
+                    currencyCode: cart.currency.code,
+                    totalPrice: String(cart.cartAmount),
+                },
             };
 
             this._googlePayPaymentProcessor.updatePaymentDataRequest(payloadToUpdate);

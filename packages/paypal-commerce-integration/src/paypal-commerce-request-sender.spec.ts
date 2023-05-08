@@ -22,6 +22,7 @@ describe('PayPalCommerceRequestSender', () => {
             },
         };
 
+        jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(requestResponseMock));
         jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(requestResponseMock));
         jest.spyOn(requestSender, 'put').mockReturnValue(Promise.resolve(requestResponseMock));
     });
@@ -79,6 +80,23 @@ describe('PayPalCommerceRequestSender', () => {
             '/api/storefront/initialization/paypalcommerce',
             expect.objectContaining({
                 body: updateOrderRequestBody,
+                headers,
+            }),
+        );
+    });
+
+    it('requests order status', async () => {
+        const headers = {
+            'X-API-INTERNAL': INTERNAL_USE_ONLY,
+            'Content-Type': ContentType.Json,
+            ...SDK_VERSION_HEADERS,
+        };
+
+        await paypalCommerceRequestSender.getOrderStatus();
+
+        expect(requestSender.get).toHaveBeenCalledWith(
+            '/api/storefront/initialization/paypalcommerce',
+            expect.objectContaining({
                 headers,
             }),
         );

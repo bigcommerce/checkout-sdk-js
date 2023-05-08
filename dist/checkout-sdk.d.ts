@@ -1,4 +1,5 @@
 /// <reference types="applepayjs" />
+import { BlueSnapDirectEcpInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -1008,11 +1009,6 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
     /**
-     * The options that are required to initialize the customer step of checkout
-     * when using Bolt.
-     */
-    bolt?: BoltCustomerInitializeOptions;
-    /**
      * The options that are required to initialize the Chasepay payment method.
      * They can be omitted unless you need to support Chasepay.
      */
@@ -1187,11 +1183,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support PayPal Express.
      */
     paypalexpress?: PaypalExpressPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the PayPal Commerce payment method.
-     * They can be omitted unless you need to support PayPal Commerce.
-     */
-    paypalcommerce?: PaypalCommercePaymentInitializeOptions;
     /**
      * The options that are required to initialize the Square payment method.
      * They can be omitted unless you need to support Square.
@@ -4513,7 +4504,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -4929,9 +4920,11 @@ declare interface GooglePayButtonInitializeOptions {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
+    buyNowInitializeOptions?: GooglePayBuyNowInitializeOptions;
+}
+
+declare interface GooglePayBuyNowInitializeOptions {
+    getBuyNowCartRequestBody?(): BuyNowCartRequestBody;
 }
 
 declare interface GooglePayCustomerInitializeOptions {
@@ -5902,7 +5895,7 @@ declare interface OrderPayment {
     amount: number;
 }
 
-declare type OrderPaymentInstrument = CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithCheckoutcomiDealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
+declare type OrderPaymentInstrument = CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | BlueSnapDirectEcpInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithCheckoutcomiDealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
 
 /**
  * An object that contains the payment information required for submitting an
@@ -6154,6 +6147,81 @@ declare interface PayPalCommerceCreditCustomerInitializeOptions {
 }
 
 /**
+ * A set of options that are required to initialize the PayPal Commerce payment
+ * method for presenting its PayPal button.
+ *
+ * Please note that the minimum version of checkout-sdk is 1.100
+ *
+ * Also, PayPal (also known as PayPal Commerce Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
+ * ```html
+ * <!-- This is where the PayPal button will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalcommercecredit',
+ *     paypalcommercecredit: {
+ *         container: '#container',
+ * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
+ *         submitForm: () => {
+ *         // Example function
+ *             this.submitOrder(
+ *                {
+ *                   payment: { methodId: 'paypalcommercecredit', }
+ *               }
+ *            );
+ *         },
+ * // Callback is used to define the state of the payment form, validate if it is applicable for submit.
+ *         onValidate: (resolve, reject) => {
+ *         // Example function
+ *             const isValid = this.validatePaymentForm();
+ *             if (isValid) {
+ *                 return resolve();
+ *             }
+ *             return reject();
+ *         },
+ * // Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular PayPal method. This callback can be used to hide the standard submit button.
+ *         onRenderButton: () => {
+ *         // Example function
+ *             this.hidePaymentSubmitButton();
+ *         }
+ *     },
+ * });
+ * ```
+ */
+declare interface PayPalCommerceCreditPaymentInitializeOptions {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: Error): void;
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback that gets called when a buyer click on Smart Payment Button
+     * and should validate payment form.
+     *
+     * @param resolve - A function, that gets called if form is valid.
+     * @param reject - A function, that gets called if form is not valid.
+     *
+     * @returns reject() or resolve()
+     */
+    onValidate(resolve: () => void, reject: () => void): Promise<void>;
+    /**
+     * A callback for submitting payment form that gets called
+     * when buyer approved PayPal account.
+     */
+    submitForm(): void;
+}
+
+/**
  * A set of options that are required to initialize the customer step of
  * checkout to support PayPalCommerce.
  */
@@ -6173,6 +6241,81 @@ declare interface PayPalCommerceCustomerInitializeOptions {
      * A callback that gets called when payment complete on paypal side.
      */
     onComplete?(): void;
+}
+
+/**
+ * A set of options that are required to initialize the PayPal Commerce payment
+ * method for presenting its PayPal button.
+ *
+ * Please note that the minimum version of checkout-sdk is 1.100
+ *
+ * Also, PayPal (also known as PayPal Commerce Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
+ * ```html
+ * <!-- This is where the PayPal button will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalcommerce',
+ *     paypalcommerce: {
+ *         container: '#container',
+ * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
+ *         submitForm: () => {
+ *         // Example function
+ *             this.submitOrder(
+ *                {
+ *                   payment: { methodId: 'paypalcommerce', }
+ *               }
+ *            );
+ *         },
+ * // Callback is used to define the state of the payment form, validate if it is applicable for submit.
+ *         onValidate: (resolve, reject) => {
+ *         // Example function
+ *             const isValid = this.validatePaymentForm();
+ *             if (isValid) {
+ *                 return resolve();
+ *             }
+ *             return reject();
+ *         },
+ * // Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular PayPal method. This callback can be used to hide the standard submit button.
+ *         onRenderButton: () => {
+ *         // Example function
+ *             this.hidePaymentSubmitButton();
+ *         }
+ *     },
+ * });
+ * ```
+ */
+declare interface PayPalCommercePaymentInitializeOptions {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: Error): void;
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback that gets called when a buyer click on Smart Payment Button
+     * and should validate payment form.
+     *
+     * @param resolve - A function, that gets called if form is valid.
+     * @param reject - A function, that gets called if form is not valid.
+     *
+     * @returns reject() or resolve()
+     */
+    onValidate(resolve: () => void, reject: () => void): Promise<void>;
+    /**
+     * A callback for submitting payment form that gets called
+     * when buyer approved PayPal account.
+     */
+    submitForm(): void;
 }
 
 declare interface PayPalCommerceVenmoButtonInitializeOptions {
@@ -6204,11 +6347,86 @@ declare interface PayPalCommerceVenmoCustomerInitializeOptions {
     onError?(error?: Error): void;
 }
 
+/**
+ * A set of options that are required to initialize the PayPal Commerce payment
+ * method for presenting its PayPal button.
+ *
+ * Please note that the minimum version of checkout-sdk is 1.100
+ *
+ * Also, PayPal (also known as PayPal Commerce Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
+ * ```html
+ * <!-- This is where the PayPal button will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalcommercevenmo',
+ *     paypalcommercevenmo: {
+ *         container: '#container',
+ * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
+ *         submitForm: () => {
+ *         // Example function
+ *             this.submitOrder(
+ *                {
+ *                   payment: { methodId: 'paypalcommercevenmo', }
+ *               }
+ *            );
+ *         },
+ * // Callback is used to define the state of the payment form, validate if it is applicable for submit.
+ *         onValidate: (resolve, reject) => {
+ *         // Example function
+ *             const isValid = this.validatePaymentForm();
+ *             if (isValid) {
+ *                 return resolve();
+ *             }
+ *             return reject();
+ *         },
+ * // Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular PayPal method. This callback can be used to hide the standard submit button.
+ *         onRenderButton: () => {
+ *         // Example function
+ *             this.hidePaymentSubmitButton();
+ *         }
+ *     },
+ * });
+ * ```
+ */
+declare interface PayPalCommerceVenmoPaymentInitializeOptions {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: Error): void;
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback that gets called when a buyer click on Smart Payment Button
+     * and should validate payment form.
+     *
+     * @param resolve - A function, that gets called if form is valid.
+     * @param reject - A function, that gets called if form is not valid.
+     *
+     * @returns reject() or resolve()
+     */
+    onValidate(resolve: () => void, reject: () => void): Promise<void>;
+    /**
+     * A callback for submitting payment form that gets called
+     * when buyer approved PayPal account.
+     */
+    submitForm(): void;
+}
+
 declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -6328,119 +6546,6 @@ declare enum PaypalButtonStyleSizeOption {
 }
 
 /**
- * A set of options that are required to initialize the PayPal Commerce payment
- * method for presenting its PayPal button.
- *
- * Please note that the minimum version of checkout-sdk is 1.100
- *
- * Also, PayPal (also known as PayPal Commerce Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
- * ```html
- * <!-- This is where the PayPal button will be inserted -->
- * <div id="container"></div>
- * <!-- This is where the PayPal alternative payment methods fields will be inserted.  -->
- * <div id="apm-fields-container"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'paypalcommerce',
- *     paypalcommerce: {
- *         container: '#container',
- *         apmFieldsContainer: '#apm-fields-container',
- *         apmFieldsStyles: {
- *             base: {
- *                   backgroundColor: 'transparent',
- *               },
- *               input: {
- *                   backgroundColor: 'white',
- *                   fontSize: '1rem',
- *                   color: '#333',
- *                   borderColor: '#d9d9d9',
- *                   borderRadius: '4px',
- *                   borderWidth: '1px',
- *                   padding: '1rem',
- *               },
- *               invalid: {
- *                   color: '#ed6a6a',
- *               },
- *               active: {
- *                   color: '#4496f6',
- *               },
- *         },
- *         clientId: 'YOUR_CLIENT_ID',
- * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
- *         submitForm: () => {
- *         // Example function
- *             this.submitOrder(
- *                {
- *                   payment: { methodId: 'paypalcommerce', }
- *               }
- *            );
- *         },
- * // Callback is used to define the state of the payment form, validate if it is applicable for submit.
- *         onValidate: (resolve, reject) => {
- *         // Example function
- *             const isValid = this.validatePaymentForm();
- *             if (isValid) {
- *                 return resolve();
- *             }
- *             return reject();
- *         },
- * // Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular PayPal method. This callback can be used to hide the standard submit button.
- *         onRenderButton: () => {
- *         // Example function
- *             this.hidePaymentSubmitButton();
- *         }
- *     },
- * });
- * ```
- */
-declare interface PaypalCommercePaymentInitializeOptions {
-    /**
-     * The CSS selector of a container where the payment widget should be inserted into.
-     */
-    container: string;
-    /**
-     *  The Client ID of the Paypal App
-     */
-    clientId: string;
-    /**
-     * The CSS selector of a container where the alternative payment methods fields widget should be inserted into.
-     * It's necessary to specify this parameter when using Alternative Payment Methods.
-     * Without it alternative payment methods will not work.
-     */
-    apmFieldsContainer?: string;
-    /**
-     * Object with styles to customize alternative payment methods fields.
-     */
-    apmFieldsStyles?: PaypalFieldsStyleOptions;
-    /**
-     * A callback that gets called when a buyer click on Smart Payment Button
-     * and should validate payment form.
-     *
-     * @param resolve - A function, that gets called if form is valid.
-     * @param reject - A function, that gets called if form is not valid.
-     *
-     * @returns reject() or resolve()
-     */
-    onValidate(resolve: () => void, reject: () => void): Promise<void>;
-    /**
-     * A callback for submitting payment form that gets called
-     * when buyer approved PayPal account.
-     */
-    submitForm(): void;
-    /**
-     * A callback right before render Smart Payment Button that gets called when
-     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
-     */
-    onRenderButton?(): void;
-    /**
-     * A callback for displaying error popup. This callback requires error object as parameter.
-     */
-    onError?(error: Error): void;
-}
-
-/**
  * A set of options that are required to initialize the PayPal Express payment
  * method.
  *
@@ -6464,29 +6569,6 @@ declare interface PaypalCommercePaymentInitializeOptions {
  */
 declare interface PaypalExpressPaymentInitializeOptions {
     useRedirectFlow?: boolean;
-}
-
-declare interface PaypalFieldsStyleOptions {
-    variables?: {
-        fontFamily?: string;
-        fontSizeBase?: string;
-        fontSizeSm?: string;
-        fontSizeM?: string;
-        fontSizeLg?: string;
-        textColor?: string;
-        colorTextPlaceholder?: string;
-        colorBackground?: string;
-        colorInfo?: string;
-        colorDanger?: string;
-        borderRadius?: string;
-        borderColor?: string;
-        borderWidth?: string;
-        borderFocusColor?: string;
-        spacingUnit?: string;
-    };
-    rules?: {
-        [key: string]: any;
-    };
 }
 
 declare interface PaypalStyleOptions {
@@ -7493,6 +7575,10 @@ declare interface WithBoltButtonInitializeOptions {
     bolt?: BoltButtonInitializeOptions;
 }
 
+declare interface WithBoltCustomerInitializeOptions {
+    bolt?: BoltCustomerInitializeOptions;
+}
+
 declare interface WithBoltPaymentInitializeOptions {
     /**
      * The options that are required to initialize the Bolt payment
@@ -7562,6 +7648,11 @@ declare interface WithPayPalCommerceCreditCustomerInitializeOptions {
     paypalcommercecredit?: PayPalCommerceCreditCustomerInitializeOptions;
 }
 
+declare interface WithPayPalCommerceCreditPaymentInitializeOptions {
+    paypalcommerce?: PayPalCommerceCreditPaymentInitializeOptions;
+    paypalcommercecredit?: PayPalCommerceCreditPaymentInitializeOptions;
+}
+
 declare interface WithPayPalCommerceCustomerInitializeOptions {
     /**
      * The options that are required to initialize the customer step of checkout
@@ -7570,12 +7661,21 @@ declare interface WithPayPalCommerceCustomerInitializeOptions {
     paypalcommerce?: PayPalCommerceCustomerInitializeOptions;
 }
 
+declare interface WithPayPalCommercePaymentInitializeOptions {
+    paypalcommerce?: PayPalCommercePaymentInitializeOptions;
+}
+
 declare interface WithPayPalCommerceVenmoButtonInitializeOptions {
     paypalcommercevenmo?: PayPalCommerceVenmoButtonInitializeOptions;
 }
 
 declare interface WithPayPalCommerceVenmoCustomerInitializeOptions {
     paypalcommercevenmo?: PayPalCommerceVenmoCustomerInitializeOptions;
+}
+
+declare interface WithPayPalCommerceVenmoPaymentInitializeOptions {
+    paypalcommerce?: PayPalCommerceVenmoPaymentInitializeOptions;
+    paypalcommercevenmo?: PayPalCommerceVenmoPaymentInitializeOptions;
 }
 
 declare interface WithSquareV2PaymentInitializeOptions {

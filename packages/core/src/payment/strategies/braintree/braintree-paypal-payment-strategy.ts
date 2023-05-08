@@ -188,6 +188,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 offerCredit: this._credit,
                 shippingAddressOverride,
                 shouldSaveInstrument: shouldSaveInstrument || false,
+                shippingAddressEditable: false,
             }),
             this._braintreePaymentProcessor.getSessionId(),
         ]).then(([{ nonce, details } = {} as any, sessionId]) => ({

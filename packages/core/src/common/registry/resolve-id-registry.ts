@@ -1,3 +1,6 @@
+import { getDefaultLogger } from '../log';
+import { getEnvironment } from '../utility';
+
 import Factory from './factory';
 import Registry from './registry';
 
@@ -29,13 +32,20 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
 
     private _resolveToken(token: string, registeredTokens: string[]): string | undefined {
         const query = this._decodeToken(token);
+
         const results: Array<{ token: string; matches: number; default: boolean }> = [];
 
         registeredTokens.forEach((registeredToken) => {
             const resolverId = this._decodeToken(registeredToken);
+
             const result = { token: registeredToken, matches: 0, default: false };
 
             for (const [key, value] of Object.entries(resolverId)) {
+                if (key in query && query[key] !== value) {
+                    result.matches = 0;
+                    break;
+                }
+
                 if (key in query && query[key] === value) {
                     result.matches++;
                 }
@@ -48,9 +58,19 @@ export default class ResolveIdRegistry<TType, TToken extends { [key: string]: un
             results.push(result);
         });
 
-        const matched = results
+        const matchedResults = results
             .sort((a, b) => b.matches - a.matches)
-            .filter((result) => result.matches > 0)[0];
+            .filter((result) => result.matches > 0);
+
+        if (matchedResults.length > 1 && matchedResults[0].matches === matchedResults[1].matches) {
+            if (getEnvironment() === 'development') {
+                getDefaultLogger().warn(
+                    'The provided query matches at least two strategies with the same specificity. This warning can be resolved by making their resolve ID more specific.',
+                );
+            }
+        }
+
+        const matched = matchedResults[0];
 
         if (matched && matched.token) {
             return matched.token;

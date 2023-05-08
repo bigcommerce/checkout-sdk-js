@@ -38,6 +38,7 @@ export interface PaypalConfig {
     currency: string;
     locale: string;
     offerCredit?: boolean;
+    shippingAddressEditable?: boolean;
     shippingAddressOverride?: BraintreeShippingAddressOverride;
     shouldSaveInstrument?: boolean;
 }

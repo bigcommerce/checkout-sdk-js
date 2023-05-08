@@ -41,7 +41,6 @@ current checkout flow.
 - [moneris](BasePaymentInitializeOptions.md#moneris)
 - [opy](BasePaymentInitializeOptions.md#opy)
 - [params](BasePaymentInitializeOptions.md#params)
-- [paypalcommerce](BasePaymentInitializeOptions.md#paypalcommerce)
 - [paypalexpress](BasePaymentInitializeOptions.md#paypalexpress)
 - [square](BasePaymentInitializeOptions.md#square)
 - [stripeupe](BasePaymentInitializeOptions.md#stripeupe)
@@ -296,15 +295,6 @@ The parameters of the request, if required.
 #### Inherited from
 
 [PaymentRequestOptions](PaymentRequestOptions.md).[params](PaymentRequestOptions.md#params)
-
-___
-
-### paypalcommerce
-
-• `Optional` **paypalcommerce**: [`PaypalCommercePaymentInitializeOptions`](PaypalCommercePaymentInitializeOptions.md)
-
-The options that are required to initialize the PayPal Commerce payment method.
-They can be omitted unless you need to support PayPal Commerce.
 
 ___
 

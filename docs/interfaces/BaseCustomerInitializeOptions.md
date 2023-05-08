@@ -25,7 +25,6 @@ information in order to initialize the customer step of checkout.
 ### Properties
 
 - [amazonpay](BaseCustomerInitializeOptions.md#amazonpay)
-- [bolt](BaseCustomerInitializeOptions.md#bolt)
 - [braintreepaypalcredit](BaseCustomerInitializeOptions.md#braintreepaypalcredit)
 - [braintreevisacheckout](BaseCustomerInitializeOptions.md#braintreevisacheckout)
 - [chasepay](BaseCustomerInitializeOptions.md#chasepay)
@@ -53,15 +52,6 @@ information in order to initialize the customer step of checkout.
 
 The options that are required to initialize the customer step of checkout
 when using AmazonPayV2.
-
-___
-
-### bolt
-
-• `Optional` **bolt**: [`BoltCustomerInitializeOptions`](BoltCustomerInitializeOptions.md)
-
-The options that are required to initialize the customer step of checkout
-when using Bolt.
 
 ___
 

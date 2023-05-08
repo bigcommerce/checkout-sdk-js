@@ -73,18 +73,21 @@ export interface PayPalCommerceHostWindow extends Window {
  *
  */
 export interface PayPalCommerceInitializationData {
-    clientId: string;
-    merchantId?: string;
+    attributionId?: string;
+    availableAlternativePaymentMethods: FundingType;
+    buttonStyle?: PayPalButtonStyleOptions;
     buyerCountry?: string;
+    clientId: string;
+    clientToken?: string;
+    enabledAlternativePaymentMethods: FundingType;
     isDeveloperModeApplicable?: boolean;
     intent?: PayPalCommerceIntent;
     isHostedCheckoutEnabled?: boolean;
     isPayPalCreditAvailable?: boolean;
-    availableAlternativePaymentMethods: FundingType;
-    enabledAlternativePaymentMethods: FundingType;
-    clientToken?: string;
-    attributionId?: string;
     isVenmoEnabled?: boolean;
+    merchantId?: string;
+    orderId?: string;
+    shouldRenderFields?: boolean;
 }
 
 /**
@@ -191,7 +194,7 @@ export interface PayPalCommerceButtonsOptions {
         actions: ApproveCallbackActions,
     ): Promise<boolean | void> | void;
     onComplete?(data: CompleteCallbackDataPayload): Promise<void>;
-    onClick?(data: ClickCallbackPayload, actions?: ClickCallbackActions): Promise<void>;
+    onClick?(data: ClickCallbackPayload, actions: ClickCallbackActions): Promise<void>;
     onError?(error: Error): void;
     onCancel?(): void;
     onShippingAddressChange?(data: ShippingAddressChangeCallbackPayload): Promise<void>;
@@ -203,8 +206,8 @@ export interface ClickCallbackPayload {
 }
 
 export interface ClickCallbackActions {
-    reject(): Promise<void>;
-    resolve(): Promise<void>;
+    reject(): void;
+    resolve(): void;
 }
 
 export interface ShippingAddressChangeCallbackPayload {
@@ -372,6 +375,10 @@ export interface PayPalCommerceMessagesStyleOptions {
  * Other
  *
  */
+export enum NonInstantAlternativePaymentMethods {
+    OXXO = 'oxxo',
+}
+
 export interface PayPalOrderData {
     orderId: string;
     approveUrl: string;
@@ -385,4 +392,14 @@ export interface PayPalUpdateOrderRequestBody {
 
 export interface PayPalCreateOrderRequestBody extends HostedInstrument, VaultedInstrument {
     cartId: string;
+}
+
+export enum PayPalOrderStatus {
+    Approved = 'APPROVED',
+    Created = 'CREATED',
+    PayerActionRequired = 'PAYER_ACTION_REQUIRED',
+}
+
+export interface PayPalOrderStatusData {
+    status: PayPalOrderStatus;
 }

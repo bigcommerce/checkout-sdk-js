@@ -50,6 +50,7 @@ export interface BraintreeSDK {
 
 export interface BraintreeInitializationData {
     intent?: 'authorize' | 'order' | 'sale';
+    isCreditEnabled?: boolean;
 }
 
 export interface BraintreePaypalRequest {
@@ -425,6 +426,7 @@ export interface BraintreePaypalSdkCreatorConfig {
     components?: string;
     currency?: string;
     intent?: string;
+    isCreditEnabled?: boolean;
 }
 
 /**
