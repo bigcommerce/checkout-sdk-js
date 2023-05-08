@@ -3,6 +3,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    BraintreeBankAccountCreator,
     BraintreeClientCreator,
     BraintreeDataCollectorCreator,
     BraintreeHostWindow,
@@ -51,5 +52,20 @@ export default class BraintreeScriptLoader {
         }
 
         return this.braintreeHostWindow.braintree.dataCollector;
+    }
+
+    async loadUsBankAccount(): Promise<BraintreeBankAccountCreator> {
+        await this.scriptLoader.loadScript(
+            `//js.braintreegateway.com/web/${VERSION}/js/us-bank-account.min.js`,
+        );
+
+        if (
+            !this.braintreeHostWindow.braintree ||
+            !this.braintreeHostWindow.braintree.usBankAccount
+        ) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this.braintreeHostWindow.braintree.usBankAccount;
     }
 }

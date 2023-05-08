@@ -6,6 +6,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    BraintreeBankAccount,
     BraintreeClient,
     BraintreeDataCollector,
     BraintreeDetails,
@@ -29,6 +30,7 @@ export default class BraintreeIntegrationService {
         paypal?: BraintreeDataCollector;
     } = {};
     private paypalCheckout?: BraintreePaypalCheckout;
+    private usBankAccount?: Promise<BraintreeBankAccount>;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
@@ -91,6 +93,17 @@ export default class BraintreeIntegrationService {
         );
 
         return this.paypalCheckout;
+    }
+
+    async getUsBankAccount() {
+        if (!this.usBankAccount) {
+            const client = await this.getClient();
+            const usBankAccount = await this.braintreeScriptLoader.loadUsBankAccount();
+
+            this.usBankAccount = usBankAccount.create({ client });
+        }
+
+        return this.usBankAccount;
     }
 
     async getDataCollector(options?: { paypal: boolean }): Promise<BraintreeDataCollector> {
@@ -181,6 +194,12 @@ export default class BraintreeIntegrationService {
         if (element) {
             element.remove();
         }
+    }
+
+    async getSessionId(): Promise<string | undefined> {
+        const { deviceData } = await this.getDataCollector();
+
+        return deviceData;
     }
 
     async teardown(): Promise<void> {
