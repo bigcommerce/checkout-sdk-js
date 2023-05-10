@@ -1,55 +1,39 @@
 import { creditCardType, cvv, expirationDate, number } from 'card-validator';
-import { includes } from 'lodash';
-import { object, string, StringSchema, ValidationError } from 'yup';
+import { object, ObjectShape, string, StringSchema, ValidationError } from 'yup';
 
 import { CardInstrument } from '../../payment/instrument';
-import HostedFieldType from '../hosted-field-type';
 
 import { HostedInputValidateErrorDataMap } from './hosted-input-validate-error-data';
 import HostedInputValidateResults from './hosted-input-validate-results';
 import HostedInputValues from './hosted-input-values';
 
 export default class HostedInputValidator {
+    private readonly _completeSchema: ObjectShape = {
+        cardCode: this._getCardCodeSchema(),
+        cardCodeVerification: this._getCardCodeVerificationSchema(),
+        cardExpiry: this._getCardExpirySchema(),
+        cardName: this._getCardNameSchema(),
+        cardNumber: this._getCardNumberSchema(),
+        cardNumberVerification: this._getCardNumberVerificationSchema(),
+    };
+
     constructor(private _cardInstrument?: CardInstrument) {
         this._configureCardValidator();
     }
 
     async validate(values: HostedInputValues): Promise<HostedInputValidateResults> {
-        const requiredFields = Object.keys(values);
-        const schemas: { [key in keyof HostedInputValues]: StringSchema } = {};
+        const schemas: ObjectShape = {};
         const results: HostedInputValidateResults = {
             errors: {},
             isValid: true,
         };
 
-        if (includes(requiredFields, HostedFieldType.CardCode)) {
-            schemas.cardCode = this._getCardCodeSchema();
-            results.errors.cardCode = [];
-        }
-
-        if (includes(requiredFields, HostedFieldType.CardCodeVerification)) {
-            schemas.cardCodeVerification = this._getCardCodeVerificationSchema();
-            results.errors.cardCodeVerification = [];
-        }
-
-        if (includes(requiredFields, HostedFieldType.CardExpiry)) {
-            schemas.cardExpiry = this._getCardExpirySchema();
-            results.errors.cardExpiry = [];
-        }
-
-        if (includes(requiredFields, HostedFieldType.CardName)) {
-            schemas.cardName = this._getCardNameSchema();
-            results.errors.cardName = [];
-        }
-
-        if (includes(requiredFields, HostedFieldType.CardNumber)) {
-            schemas.cardNumber = this._getCardNumberSchema();
-            results.errors.cardNumber = [];
-        }
-
-        if (includes(requiredFields, HostedFieldType.CardNumberVerification)) {
-            schemas.cardNumberVerification = this._getCardNumberVerificationSchema();
-            results.errors.cardNumberVerification = [];
+        let requiredField: keyof HostedInputValues;
+        for (requiredField in values) {
+            if (Object.prototype.hasOwnProperty.call(values, requiredField)) {
+                schemas[requiredField] = this._completeSchema[requiredField];
+                results.errors[requiredField] = [];
+            }
         }
 
         try {
