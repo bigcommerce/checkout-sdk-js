@@ -120,9 +120,24 @@ describe('SquareV2PaymentProcessor', () => {
                 onValidationChange,
             });
             squareV2MockFunctions.simulateEvent('focusClassAdded', 'cardNumber', true);
-            squareV2MockFunctions.simulateEvent('focusClassRemoved', 'expirationDate', true);
             squareV2MockFunctions.simulateEvent('errorClassRemoved', 'cvv', true);
-            squareV2MockFunctions.simulateEvent('postalCodeChanged', 'postalCode', true);
+
+            expect(onValidationChange).toHaveBeenCalledTimes(2);
+            expect(onValidationChange).toHaveBeenNthCalledWith(1, false);
+            expect(onValidationChange).toHaveBeenNthCalledWith(2, true);
+        });
+
+        it('should validate only blacklisted fields', async () => {
+            const onValidationChange = jest.fn();
+
+            await processor.initializeCard({
+                containerId: 'card-container',
+                onValidationChange,
+            });
+            squareV2MockFunctions.simulateEvent('focusClassAdded', 'cardNumber', true);
+            squareV2MockFunctions.simulateEvent('focusClassRemoved', 'expirationDate', false);
+            squareV2MockFunctions.simulateEvent('errorClassRemoved', 'cvv', true);
+            squareV2MockFunctions.simulateEvent('postalCodeChanged', 'postalCode', false);
 
             expect(onValidationChange).toHaveBeenCalledTimes(2);
             expect(onValidationChange).toHaveBeenNthCalledWith(1, false);
@@ -137,31 +152,13 @@ describe('SquareV2PaymentProcessor', () => {
                 onValidationChange,
             });
             squareV2MockFunctions.simulateEvent('focusClassAdded', 'cardNumber', true);
-            squareV2MockFunctions.simulateEvent('focusClassRemoved', 'expirationDate', true);
             squareV2MockFunctions.simulateEvent('errorClassRemoved', 'cvv', true);
-            squareV2MockFunctions.simulateEvent('postalCodeChanged', 'postalCode', true);
             squareV2MockFunctions.simulateEvent('cardBrandChanged', 'cardNumber', false);
 
             expect(onValidationChange).toHaveBeenCalledTimes(3);
             expect(onValidationChange).toHaveBeenNthCalledWith(1, false);
             expect(onValidationChange).toHaveBeenNthCalledWith(2, true);
             expect(onValidationChange).toHaveBeenNthCalledWith(3, false);
-        });
-
-        it("should exempt postalCode from validation if it hasn't been rendered yet", async () => {
-            const onValidationChange = jest.fn();
-
-            await processor.initializeCard({
-                containerId: 'card-container',
-                onValidationChange,
-            });
-            squareV2MockFunctions.simulateEvent('focusClassAdded', 'cardNumber', true);
-            squareV2MockFunctions.simulateEvent('focusClassRemoved', 'expirationDate', true);
-            squareV2MockFunctions.simulateEvent('errorClassRemoved', 'cvv', true);
-
-            expect(onValidationChange).toHaveBeenCalledTimes(2);
-            expect(onValidationChange).toHaveBeenNthCalledWith(1, false);
-            expect(onValidationChange).toHaveBeenNthCalledWith(2, true);
         });
     });
 
@@ -200,9 +197,25 @@ describe('SquareV2PaymentProcessor', () => {
 
             const nonce = processor.tokenize();
 
-            await expect(nonce).rejects.toThrow(
-                'Tokenization failed with status: FOO and errors: [{"err1":"bar"},{"err2":"baz"}]',
-            );
+            await expect(nonce).rejects.toThrow();
+        });
+
+        it('should throw a PaymentExecuteError', async () => {
+            squareV2MockFunctions.tokenize.mockResolvedValue({
+                status: 'FOO',
+                errors: [{ err1: 'bar' }, { err2: 'baz' }],
+            });
+
+            try {
+                await processor.tokenize();
+            } catch (error) {
+                expect(error.name).toBe('SquareV2TokenizationError');
+                expect(error.type).toBe('custom_provider_execute_error');
+                expect(error.subtype).toBe('payment.errors.card_error');
+                expect(error.message).toBe(
+                    'Tokenization failed with status: FOO and errors: [{"err1":"bar"},{"err2":"baz"}]',
+                );
+            }
         });
     });
 
