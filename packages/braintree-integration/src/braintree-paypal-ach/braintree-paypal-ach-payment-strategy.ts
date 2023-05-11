@@ -24,7 +24,7 @@ import { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-payp
 
 export default class BraintreePaypalAchPaymentStrategy implements PaymentStrategy {
     private usBankAccount?: BraintreeBankAccount;
-    private mandateText? = '';
+    private getMandateText?: () => string | undefined;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -34,7 +34,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
     async initialize(
         options: PaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions,
     ): Promise<void> {
-        const { mandateText } = options.braintreeach || {};
+        const { getMandateText } = options.braintreeach || {};
 
         if (!options.methodId) {
             throw new InvalidArgumentError(
@@ -42,7 +42,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
             );
         }
 
-        this.mandateText = mandateText;
+        this.getMandateText = getMandateText;
 
         await this.paymentIntegrationService.loadPaymentMethod(options.methodId);
 
@@ -79,16 +79,18 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        if (!this.mandateText) {
+        const mandateText = this.getMandateText && this.getMandateText();
+
+        if (!mandateText) {
             throw new InvalidArgumentError(
-                'Unable to proceed because mandateText is not provided.',
+                'Unable to proceed because getMandateText is not provided or returned undefined value.',
             );
         }
 
         try {
             const { nonce } = await this.usBankAccount.tokenize({
                 bankDetails: this.getBankDetails(paymentData),
-                mandateText: this.mandateText,
+                mandateText,
             });
 
             const sessionId = await this.braintreeIntegrationService.getSessionId();
@@ -124,7 +126,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
     }
 
     async deinitialize(): Promise<void> {
-        this.mandateText = '';
+        this.getMandateText = undefined;
 
         return Promise.resolve();
     }
