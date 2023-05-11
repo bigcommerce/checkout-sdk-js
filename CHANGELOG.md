@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.380.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.379.0...v1.380.0) (2023-05-11)
+
+
+### Features
+
+* **payment:** INT-7516 SquareV2: Throw a `PaymentExecuteError` if tokenization fails ([#1971](https://github.com/bigcommerce/checkout-sdk-js/issues/1971)) ([663f8b7](https://github.com/bigcommerce/checkout-sdk-js/commit/663f8b7bad8d9b7497af5e38853fee44960154e5))
+
 ## [1.379.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.378.0...v1.379.0) (2023-05-08)
 
 
