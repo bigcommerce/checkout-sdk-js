@@ -5,7 +5,6 @@ import {
     InvalidArgumentError,
     NotInitializedError,
     PaymentInvalidFormError,
-    PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BlueSnapHostedFieldType } from './bluesnap-direct-constants';
@@ -129,10 +128,27 @@ describe('BlueSnapDirectHostedForm', () => {
                     '.invalid': expectedStyle,
                     ':focus': expectedStyle,
                 },
+                '3DS': false,
             };
 
             await hostedForm.initialize();
             await hostedForm.attach('pfToken', ccOptionsMock);
+
+            expect(blueSnapDirectSdkMock.hostedPaymentFieldsCreate).toHaveBeenCalledWith(
+                expectedOptions,
+            );
+            expect(nameOnCardInput.attach).toHaveBeenCalledWith(
+                expectedOptions,
+                undefined,
+                undefined,
+            );
+        });
+
+        it('should create hosted payment fields with 3DS enabled', async () => {
+            const expectedOptions = expect.objectContaining({ '3DS': true });
+
+            await hostedForm.initialize();
+            await hostedForm.attach('pfToken', ccOptionsMock, true);
 
             expect(blueSnapDirectSdkMock.hostedPaymentFieldsCreate).toHaveBeenCalledWith(
                 expectedOptions,
@@ -307,16 +323,18 @@ describe('BlueSnapDirectHostedForm', () => {
 
                     onError?.(
                         HostedFieldTagId.CardNumber,
-                        ErrorCode.ERROR_500,
-                        ErrorDescription.INVALID,
-                        EventOrigin.ON_BLUR,
+                        ErrorCode.THREE_DS_NOT_ENABLED,
+                        ErrorDescription.THREE_DS_NOT_ENABLED,
+                        undefined,
                     );
                 };
 
                 await hostedForm.initialize();
                 await hostedForm.attach('pfToken', ccOptionsMock);
 
-                expect(triggerError).toThrow(Error);
+                expect(triggerError).toThrow(
+                    'An unexpected error has occurred: {"tagId":"ccn","errorCode":"14100","errorDescription":"3D Secure is not enabled"}',
+                );
                 expect(ccOptionsMock.form.onValidate).not.toHaveBeenCalled();
             });
         });
@@ -391,7 +409,7 @@ describe('BlueSnapDirectHostedForm', () => {
     });
 
     describe('#submit', () => {
-        it('should submit data successfully', async () => {
+        it('should submit payment data successfully', async () => {
             const placeOrder = () => hostedForm.submit();
 
             await hostedForm.initialize();
@@ -402,9 +420,9 @@ describe('BlueSnapDirectHostedForm', () => {
             });
         });
 
-        it('should fail to submit data', async () => {
+        it('should fail to submit payment data', async () => {
             const initialize = () => {
-                const sdkWithErrors = getBlueSnapDirectSdkMock(true).sdk;
+                const sdkWithErrors = getBlueSnapDirectSdkMock('0').sdk;
 
                 jest.spyOn(scriptLoader, 'load').mockResolvedValue(sdkWithErrors);
 
@@ -414,7 +432,24 @@ describe('BlueSnapDirectHostedForm', () => {
 
             await initialize();
 
-            await expect(placeOrder()).rejects.toThrow(PaymentMethodFailedError);
+            await expect(placeOrder()).rejects.toThrow(
+                'Submission failed with status: 0 and errors: [{"errorCode":"0","errorDescription":"unknown","eventType":"Server Error","tagId":"cvv"}]',
+            );
+        });
+
+        it('should fail to submit payment data if 3DS auth fails', async () => {
+            const initialize = () => {
+                const sdkWithErrors = getBlueSnapDirectSdkMock('14101').sdk;
+
+                jest.spyOn(scriptLoader, 'load').mockResolvedValue(sdkWithErrors);
+
+                return hostedForm.initialize();
+            };
+            const placeOrder = () => hostedForm.submit();
+
+            await initialize();
+
+            await expect(placeOrder()).rejects.toThrow('3D Secure authentication failed');
         });
 
         it('throws an error if hosted form has not been initialized', async () => {

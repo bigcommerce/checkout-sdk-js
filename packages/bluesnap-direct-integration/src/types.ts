@@ -34,7 +34,13 @@ export enum BlueSnapDirectEventOrigin {
 export enum BlueSnapDirectErrorDescription {
     EMPTY = 'empty',
     INVALID = 'invalid',
+    THREE_DS_NOT_ENABLED = '3D Secure is not enabled',
 }
+
+export type BlueSnapDirectInputValidationErrorDescription = Extract<
+    BlueSnapDirectErrorDescription,
+    BlueSnapDirectErrorDescription.EMPTY | BlueSnapDirectErrorDescription.INVALID
+>;
 
 export enum BlueSnapDirectErrorCode {
     CC_NOT_SUPORTED = '22013',
@@ -43,6 +49,10 @@ export enum BlueSnapDirectErrorCode {
     ERROR_500 = '500',
     INVALID_OR_EMPTY = '10',
     SESSION_EXPIRED = '400',
+    THREE_DS_AUTH_FAILED = '14101',
+    THREE_DS_CLIENT_ERROR = '14103',
+    THREE_DS_MISSING_FIELDS = '14102',
+    THREE_DS_NOT_ENABLED = '14100',
     TOKEN_EXPIRED = '14040',
     TOKEN_NOT_ASSOCIATED = '14042',
     TOKEN_NOT_FOUND = '14041',
@@ -80,6 +90,7 @@ export interface BlueSnapDirectHostedPaymentFieldsOptions {
     cvvPlaceHolder?: string;
     expPlaceHolder?: string;
     style?: BlueSnapDirectStyle;
+    '3DS'?: boolean;
 }
 
 interface BlueSnapDirectCallback {
@@ -127,9 +138,33 @@ export type BlueSnapDirectCallbackResults =
     | BlueSnapDirectCallbackData
     | BlueSnapDirectCallbackError;
 
+export interface BlueSnapDirectThreeDSecureData {
+    amount: number;
+    currency: string;
+    billingFirstName?: string;
+    billingLastName?: string;
+    billingCountry?: string;
+    billingState?: string;
+    billingCity?: string;
+    billingAddress?: string;
+    billingZip?: string;
+    shippingFirstName?: string;
+    shippingLastName?: string;
+    shippingCountry?: string;
+    shippingState?: string;
+    shippingCity?: string;
+    shippingAddress?: string;
+    shippingZip?: string;
+    email?: string;
+    phone?: string;
+}
+
 export interface BlueSnapDirectSdk {
     hostedPaymentFieldsCreate(options: BlueSnapDirectHostedPaymentFieldsOptions): void;
-    hostedPaymentFieldsSubmitData(callback: (results: BlueSnapDirectCallbackResults) => void): void;
+    hostedPaymentFieldsSubmitData(
+        callback: (results: BlueSnapDirectCallbackResults) => void,
+        threeDSecureData?: BlueSnapDirectThreeDSecureData,
+    ): void;
 }
 
 export interface BlueSnapDirectHostWindow extends Window {

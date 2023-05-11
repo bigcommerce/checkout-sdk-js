@@ -25,6 +25,7 @@ export { Config, StoreConfig, CheckoutSettings } from './config';
 export { Coupon } from './coupon';
 export { Currency } from './currency';
 export {
+    CheckoutPaymentMethodExecutedOptions,
     CustomerCredentials,
     CustomerStrategy,
     CustomerStrategyFactory,
@@ -49,6 +50,7 @@ export {
     PaymentArgumentInvalidError,
     PaymentErrorData,
     PaymentErrorResponseBody,
+    PaymentExecuteError,
     PaymentInvalidFormError,
     PaymentInvalidFormErrorDetails,
     PaymentMethodCancelledError,
@@ -60,6 +62,7 @@ export {
     StorefrontErrorResponseBody,
     TimeoutError,
     isRequestError,
+    isCustomError,
 } from './errors';
 export {
     HostedCardFieldOptions,
@@ -99,8 +102,11 @@ export {
     OrderRequestBody,
 } from './order';
 export {
+    BlueSnapDirectEcpInstrument,
+    BlueSnapDirectEcpPayload,
     CardInstrument,
     CreditCardInstrument,
+    WithBankAccountInstrument,
     isVaultedInstrument,
     isHostedInstrumentLike,
     isWithAccountCreation,
@@ -116,6 +122,7 @@ export {
     PaymentResponseBody,
     PaymentStatusTypes,
     PaymentStrategy,
+    PaymentInstrument,
     PaymentStrategyFactory,
     PaymentStrategyResolveId,
     VaultedInstrument,

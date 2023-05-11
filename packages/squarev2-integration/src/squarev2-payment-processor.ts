@@ -6,6 +6,7 @@ import {
     guard,
     NotInitializedError,
     NotInitializedErrorType,
+    PaymentExecuteError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -95,7 +96,11 @@ export default class SquareV2PaymentProcessor {
                 errorMessage += ` and errors: ${JSON.stringify(result.errors)}`;
             }
 
-            throw new Error(errorMessage);
+            throw new PaymentExecuteError(
+                'payment.errors.card_error',
+                'SquareV2TokenizationError',
+                errorMessage,
+            );
         }
 
         return result.token;
@@ -129,7 +134,8 @@ export default class SquareV2PaymentProcessor {
         card: Card,
         observer: Required<SquareV2PaymentInitializeOptions>['onValidationChange'],
     ): Subscription {
-        const invalidFields = new Set<string>(['cardNumber', 'expirationDate', 'cvv']);
+        const blacklist = ['cardNumber', 'cvv'];
+        const invalidFields = new Set<string>(blacklist);
         const eventObservables = [
             'focusClassAdded',
             'focusClassRemoved',
@@ -149,7 +155,9 @@ export default class SquareV2PaymentProcessor {
                         },
                     } = event;
 
-                    invalidFields[isCompletelyValid ? 'delete' : 'add'](field);
+                    if (blacklist.includes(field)) {
+                        invalidFields[isCompletelyValid ? 'delete' : 'add'](field);
+                    }
 
                     return invalidFields.size === 0;
                 }),

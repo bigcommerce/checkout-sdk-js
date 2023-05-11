@@ -97,7 +97,30 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
         it('should attach BlueSnap hosted form', async () => {
             await strategy.initialize(options);
 
-            expect(hostedForm.attach).toHaveBeenCalledWith('pfToken', options.creditCard);
+            expect(hostedForm.attach).toHaveBeenCalledWith(
+                'pfToken',
+                options.creditCard,
+                undefined,
+            );
+        });
+
+        it('should attach BlueSnap hosted form with 3DS enabled', async () => {
+            const initialize = () => {
+                const method = getBlueSnapDirect();
+
+                method.config.is3dsEnabled = true;
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(method);
+
+                return strategy.initialize(options);
+            };
+
+            await initialize();
+
+            expect(hostedForm.attach).toHaveBeenCalledWith('pfToken', options.creditCard, true);
         });
 
         describe('should fail if...', () => {
@@ -176,11 +199,50 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
             await expect(execute).resolves.toBeUndefined();
         });
 
-        it('should submit validated data to BlueSnap servers', async () => {
+        it('should submit validated payment data to BlueSnap servers', async () => {
             await strategy.execute(payload);
 
             expect(hostedForm.validate).toHaveBeenCalled();
             expect(hostedForm.submit).toHaveBeenCalled();
+        });
+
+        it('should submit payment data to BlueSnap servers and include 3DS data', async () => {
+            const expectedData = {
+                amount: 190,
+                currency: 'USD',
+                billingFirstName: 'Test',
+                billingLastName: 'Tester',
+                billingCountry: 'US',
+                billingState: 'CA',
+                billingCity: 'Some City',
+                billingAddress: '12345 Testing Way',
+                billingZip: '95555',
+                shippingFirstName: 'Test',
+                shippingLastName: 'Tester',
+                shippingCountry: 'US',
+                shippingState: 'CA',
+                shippingCity: 'Some City',
+                shippingAddress: '12345 Testing Way',
+                shippingZip: '95555',
+                email: 'test@bigcommerce.com',
+                phone: '555-555-5555',
+            };
+            const execute = () => {
+                const method = getBlueSnapDirect();
+
+                method.config.is3dsEnabled = true;
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(method);
+
+                return strategy.execute(payload);
+            };
+
+            await execute();
+
+            expect(hostedForm.submit).toHaveBeenCalledWith(expectedData);
         });
 
         it('should submit the order', async () => {

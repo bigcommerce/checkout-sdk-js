@@ -15,7 +15,7 @@ export interface BoltCheckout {
     configure(cart: BoltCart, hints: Record<string, never>, callbacks?: BoltCallbacks): BoltClient;
     hasBoltAccount(email: string): Promise<boolean>;
     getTransactionReference(): Promise<string | undefined>;
-    openCheckout(email: string, callbacks?: BoltOpenCheckoutCallbacks): void;
+    openCheckout(email: string, callbacks?: BoltOpenCheckoutCallbacks): Promise<void>;
     setClientCustomCallbacks(callbacks: BoltCallbacks): void;
     setOrderId(orderId: number): Promise<void>;
 }
@@ -109,4 +109,20 @@ export type BoltPaymentData = WithAccountCreation & NonceInstrument;
 export interface BoltBuyNowInitializeOptions {
     storefrontApiToken?: string;
     getBuyNowCartRequestBody(): BuyNowCartRequestBody;
+}
+
+export enum StyleButtonSize {
+    Small = 'small',
+    Medium = 'medium',
+    Large = 'large',
+}
+
+export enum StyleButtonShape {
+    Pill = 'pill',
+    Rect = 'rect',
+}
+
+export interface BoltButtonStyleOptions {
+    shape?: StyleButtonShape;
+    size?: StyleButtonSize;
 }

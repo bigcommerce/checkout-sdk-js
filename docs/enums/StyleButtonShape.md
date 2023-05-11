@@ -6,17 +6,17 @@
 
 ### Enumeration Members
 
-- [pill](StyleButtonShape.md#pill)
-- [rect](StyleButtonShape.md#rect)
+- [Pill](StyleButtonShape.md#pill)
+- [Rect](StyleButtonShape.md#rect)
 
 ## Enumeration Members
 
-### pill
+### Pill
 
-• **pill**
+• **Pill**
 
 ___
 
-### rect
+### Rect
 
-• **rect**
+• **Rect**

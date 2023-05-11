@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.380.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.379.0...v1.380.0) (2023-05-11)
+
+
+### Features
+
+* **payment:** INT-7516 SquareV2: Throw a `PaymentExecuteError` if tokenization fails ([#1971](https://github.com/bigcommerce/checkout-sdk-js/issues/1971)) ([663f8b7](https://github.com/bigcommerce/checkout-sdk-js/commit/663f8b7bad8d9b7497af5e38853fee44960154e5))
+
+## [1.379.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.378.0...v1.379.0) (2023-05-08)
+
+
+### Features
+
+* **payment:** PAYPAL-1713 braintree ach strategy ([#1891](https://github.com/bigcommerce/checkout-sdk-js/issues/1891)) ([9f262be](https://github.com/bigcommerce/checkout-sdk-js/commit/9f262bef7290709c6f522465ab7bca54f9bfe2c8))
+
+## [1.378.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.377.0...v1.378.0) (2023-05-08)
+
+
+### Features
+
+* **payment:** BOLT-484 Add styling for Bolt Button on PDP ([7837d94](https://github.com/bigcommerce/checkout-sdk-js/commit/7837d9435dac0c7e0d4d075b7fb0b67477f3027f))
+* **payment:** BOLT-484 Add styling for Bolt Button on PDP ([6ead002](https://github.com/bigcommerce/checkout-sdk-js/commit/6ead002167a27552502ca3001df5437ab6222542))
+
+## [1.377.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.376.1...v1.377.0) (2023-05-02)
+
+
+### Features
+
+* **payment:** INT-7173 BlueSnapDirect: Create payment strategy for ACH/ECP ([756a4c6](https://github.com/bigcommerce/checkout-sdk-js/commit/756a4c6956aac9586e82a0a3bb7c07930c35e44b))
+* **payment:** PAYPAL-2013 added enable-funding to properly display paylater button ([#1958](https://github.com/bigcommerce/checkout-sdk-js/issues/1958)) ([ad4d9ee](https://github.com/bigcommerce/checkout-sdk-js/commit/ad4d9ee939bfa72068b9e018435fecfa6a940d56))
+
+
+### Bug Fixes
+
+* **payment:** INT-7173 BlueSnapDirect: Revert [#1917](https://github.com/bigcommerce/checkout-sdk-js/issues/1917) ([b9dd694](https://github.com/bigcommerce/checkout-sdk-js/commit/b9dd6947e899d5a5d563279795450f6969750bb9))
+
+### [1.376.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.376.0...v1.376.1) (2023-04-27)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2036 added shippingAddressEditable option to Braintree payment configuration ([#1962](https://github.com/bigcommerce/checkout-sdk-js/issues/1962)) ([98c189a](https://github.com/bigcommerce/checkout-sdk-js/commit/98c189a05d1802dd02a75e6751f92bda1a644d57))
+
+## [1.376.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.375.0...v1.376.0) (2023-04-26)
+
+
+### Features
+
+* **payment:** BOLT-458 Move Bolt customer strategy to new Bolt package ([f8508d9](https://github.com/bigcommerce/checkout-sdk-js/commit/f8508d9366714d1b1bc7078335f78d1b4254b0fe))
+
+## [1.375.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.374.8...v1.375.0) (2023-04-26)
+
+
+### Features
+
+* **payment:** INT-7557 BlueSnapDirect: Implement 3DS 2 ([#1925](https://github.com/bigcommerce/checkout-sdk-js/issues/1925)) ([6574134](https://github.com/bigcommerce/checkout-sdk-js/commit/6574134019c07124191633adf469859f987a521e))
+
 ### [1.374.8](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.374.7...v1.374.8) (2023-04-25)
 
 

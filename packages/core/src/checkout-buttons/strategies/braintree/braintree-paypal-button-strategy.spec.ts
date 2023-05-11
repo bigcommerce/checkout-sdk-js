@@ -287,6 +287,29 @@ describe('BraintreePaypalButtonStrategy', () => {
             expect(braintreeSDKCreator.getPaypalCheckout).toHaveBeenCalled();
         });
 
+        it('calls braintreeSdk with proper options', async () => {
+            braintreeSDKCreator.initialize = jest.fn();
+            braintreeSDKCreator.getPaypalCheckout = jest.fn();
+            paymentMethodMock.initializationData = {
+                ...paymentMethodMock.initializationData,
+                isCreditEnabled: true,
+                currency: 'USD',
+                intent: undefined,
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            expect(braintreeSDKCreator.getPaypalCheckout).toHaveBeenCalledWith(
+                {
+                    currency: 'USD',
+                    isCreditEnabled: true,
+                    intent: undefined,
+                },
+                expect.any(Function),
+                expect.any(Function),
+            );
+        });
+
         it('does not load default checkout for BuyNowFlow', async () => {
             await strategy.initialize(buyNowInitializationOptions);
 

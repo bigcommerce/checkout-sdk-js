@@ -1,4 +1,5 @@
 /// <reference types="applepayjs" />
+import { BlueSnapDirectEcpInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -11,6 +12,7 @@ import { Response } from '@bigcommerce/request-sender';
 import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Timeout } from '@bigcommerce/request-sender';
 import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { WithBankAccountInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { createTimeout } from '@bigcommerce/request-sender';
 
 declare type AccountInstrument = PayPalInstrument | BankInstrument;
@@ -1008,11 +1010,6 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
     /**
-     * The options that are required to initialize the customer step of checkout
-     * when using Bolt.
-     */
-    bolt?: BoltCustomerInitializeOptions;
-    /**
      * The options that are required to initialize the Chasepay payment method.
      * They can be omitted unless you need to support Chasepay.
      */
@@ -1370,6 +1367,12 @@ declare interface BoltButtonInitializeOptions {
      * The options that are required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: BoltBuyNowInitializeOptions;
+    style?: BoltButtonStyleOptions;
+}
+
+declare interface BoltButtonStyleOptions {
+    shape?: StyleButtonShape;
+    size?: StyleButtonSize;
 }
 
 declare interface BoltBuyNowInitializeOptions {
@@ -1634,6 +1637,13 @@ declare interface BraintreePaymentInitializeOptions {
      * consumption.
      */
     form?: BraintreeFormOptions;
+}
+
+declare interface BraintreePaypalAchInitializeOptions {
+    /**
+     * The text that should be displayed to the customer in UI for proof of authorization
+     */
+    mandateText: string;
 }
 
 declare interface BraintreePaypalButtonInitializeOptions {
@@ -4508,7 +4518,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -5899,7 +5909,7 @@ declare interface OrderPayment {
     amount: number;
 }
 
-declare type OrderPaymentInstrument = CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithCheckoutcomiDealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
+declare type OrderPaymentInstrument = WithBankAccountInstrument | CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | BlueSnapDirectEcpInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithCheckoutcomiDealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
 
 /**
  * An object that contains the payment information required for submitting an
@@ -5989,7 +5999,7 @@ declare interface PasswordRequirements {
 
 declare interface PayPalButtonStyleOptions {
     color?: StyleButtonColor;
-    shape?: StyleButtonShape;
+    shape?: StyleButtonShape_2;
     height?: number;
     label?: StyleButtonLabel;
 }
@@ -6430,7 +6440,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -7367,8 +7377,19 @@ declare enum StyleButtonLabel {
 }
 
 declare enum StyleButtonShape {
+    Pill = "pill",
+    Rect = "rect"
+}
+
+declare enum StyleButtonShape_2 {
     pill = "pill",
     rect = "rect"
+}
+
+declare enum StyleButtonSize {
+    Small = "small",
+    Medium = "medium",
+    Large = "large"
 }
 
 declare interface StyleOptions {
@@ -7579,12 +7600,24 @@ declare interface WithBoltButtonInitializeOptions {
     bolt?: BoltButtonInitializeOptions;
 }
 
+declare interface WithBoltCustomerInitializeOptions {
+    bolt?: BoltCustomerInitializeOptions;
+}
+
 declare interface WithBoltPaymentInitializeOptions {
     /**
      * The options that are required to initialize the Bolt payment
      * method. They can be omitted unless you need to support Bolt.
      */
     bolt?: BoltPaymentInitializeOptions;
+}
+
+declare interface WithBraintreePaypalAchPaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Braintree ACH payment
+     * method. They can be omitted unless you need to support Apple Pay.
+     */
+    braintreeach?: BraintreePaypalAchInitializeOptions;
 }
 
 declare interface WithBraintreePaypalCustomerInitializeOptions {

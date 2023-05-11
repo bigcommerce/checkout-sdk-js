@@ -33,4 +33,4 @@ ___
 
 ### shape
 
-• `Optional` **shape**: [`pill`](../enums/StyleButtonShape.md#pill) \| [`rect`](../enums/StyleButtonShape.md#rect)
+• `Optional` **shape**: [`pill`](../enums/StyleButtonShape_2.md#pill) \| [`rect`](../enums/StyleButtonShape_2.md#rect)

@@ -19,21 +19,37 @@ const data = {
 };
 
 const errors = {
-    error: [
-        {
-            errorCode: '0',
-            errorDescription: 'unknown',
-            eventType: 'Server Error',
-            tagId: 'cvv',
+    '0': {
+        error: [
+            {
+                errorCode: '0',
+                errorDescription: 'unknown',
+                eventType: 'Server Error',
+                tagId: 'cvv',
+            },
+        ],
+        statusCode: '0',
+        transactionFraudInfo: {
+            fraudSessionId: 'qwerty123',
         },
-    ],
-    statusCode: '0',
-    transactionFraudInfo: {
-        fraudSessionId: 'qwerty123',
+    },
+    '14101': {
+        error: [
+            {
+                errorCode: '14101',
+                errorDescription: '3D Secure authentication failed',
+                eventType: 'Server Error',
+                tagId: 'ccn',
+            },
+        ],
+        statusCode: '14101',
+        transactionFraudInfo: {
+            fraudSessionId: 'qwerty123',
+        },
     },
 };
 
-export default function getBlueSnapDirectSdkMock(withErrors = false) {
+export default function getBlueSnapDirectSdkMock(errorCode?: keyof typeof errors) {
     return {
         sdk: {
             hostedPaymentFieldsCreate: jest.fn(
@@ -43,9 +59,9 @@ export default function getBlueSnapDirectSdkMock(withErrors = false) {
             ),
             hostedPaymentFieldsSubmitData: jest.fn(
                 (callback: (results: BlueSnapDirectCallbackResults) => void) =>
-                    callback(withErrors ? errors : data),
+                    callback(errorCode ? errors[errorCode] : data),
             ),
         },
-        callbackResults: withErrors ? errors.error : data.cardData,
+        callbackResults: errorCode ? errors[errorCode].error : data.cardData,
     };
 }

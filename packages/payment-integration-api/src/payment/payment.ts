@@ -11,6 +11,7 @@ export default interface Payment {
 }
 
 export type PaymentInstrument =
+    | BlueSnapDirectEcpInstrument
     | CreditCardInstrument
     | (CreditCardInstrument & WithHostedFormNonce)
     | (CreditCardInstrument & WithDocumentInstrument)
@@ -22,6 +23,7 @@ export type PaymentInstrument =
           | AdyenV2Instrument
           | AppleInstrument
           | BlueSnapDirectCreditCardInstrument
+          | BlueSnapDirectEcpPayload
           | BoltInstrument
           | PaypalInstrument
           | FormattedHostedInstrument
@@ -39,7 +41,8 @@ export type PaymentInstrument =
     | ThreeDSVaultedInstrument
     | VaultedInstrument
     | (VaultedInstrument & WithHostedFormNonce)
-    | WithAccountCreation;
+    | WithAccountCreation
+    | WithBankAccountInstrument;
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
@@ -63,6 +66,24 @@ export interface CreditCardInstrument {
     extraData?: any;
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
     browser_info?: BrowserInfo;
+}
+
+type BankAccountType = 'Checking' | 'Savings';
+
+export interface WithBankAccountInstrument {
+    accountNumber: string;
+    routingNumber: string;
+    ownershipType: 'Personal' | 'Business';
+    accountType: BankAccountType | BlueSnapDirectEcpAccountType;
+    firstName?: string;
+    lastName?: string;
+    businessName?: string;
+    address1: string;
+    address2: string;
+    city: string;
+    countryCode: string;
+    postalCode: string;
+    stateOrProvinceCode: string;
 }
 
 export interface WithDocumentInstrument {
@@ -200,6 +221,28 @@ interface AdyenV2Card {
 interface BlueSnapDirectCreditCardInstrument {
     credit_card_token: {
         token: string;
+    };
+}
+
+type BlueSnapDirectEcpAccountType =
+    | 'CONSUMER_CHECKING'
+    | 'CONSUMER_SAVINGS'
+    | 'CORPORATE_CHECKING'
+    | 'CORPORATE_SAVINGS';
+
+export interface BlueSnapDirectEcpInstrument {
+    accountNumber: string;
+    accountType: BankAccountType | BlueSnapDirectEcpAccountType;
+    shopperPermission: boolean;
+    routingNumber: string;
+}
+
+export interface BlueSnapDirectEcpPayload {
+    ecp: {
+        account_number: string;
+        account_type: BlueSnapDirectEcpAccountType | BankAccountType;
+        shopper_permission: boolean;
+        routing_number: string;
     };
 }
 

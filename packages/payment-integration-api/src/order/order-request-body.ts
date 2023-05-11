@@ -1,4 +1,5 @@
 import {
+    BlueSnapDirectEcpInstrument,
     CreditCardInstrument,
     HostedCreditCardInstrument,
     HostedInstrument,
@@ -6,6 +7,7 @@ import {
     NonceInstrument,
     VaultedInstrument,
     WithAccountCreation,
+    WithBankAccountInstrument,
     WithCheckoutcomFawryInstrument,
     WithCheckoutcomiDealInstrument,
     WithCheckoutcomSEPAInstrument,
@@ -54,11 +56,13 @@ export interface OrderPaymentRequestBody {
      */
     paymentData?:
         | CreditCardInstrument
+        | WithBankAccountInstrument
         | HostedInstrument
         | HostedCreditCardInstrument
         | HostedVaultedInstrument
         | NonceInstrument
         | VaultedInstrument
+        | BlueSnapDirectEcpInstrument
         | (CreditCardInstrument & WithDocumentInstrument)
         | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
         | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)

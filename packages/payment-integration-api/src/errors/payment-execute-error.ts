@@ -1,4 +1,4 @@
-import { StandardError } from '../../common/error/errors';
+import StandardError from './standard-error';
 
 const defaultMessage =
     'Payment cannot be processed for this order, please select another payment method';

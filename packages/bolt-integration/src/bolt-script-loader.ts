@@ -38,11 +38,11 @@ export default class BoltScriptLoader {
 
         await this.scriptLoader.loadScript(
             `//${this.getDomainURL(!!testMode, developerModeParams)}/connect-bigcommerce.js`,
-            this._getScriptOptions('bolt-connect', publishableKey, cartId, storefrontApiToken),
+            this.getScriptOptions('bolt-connect', publishableKey, cartId, storefrontApiToken),
         );
         await this.scriptLoader.loadScript(
             `//${this.getDomainURL(!!testMode, developerModeParams)}/track.js`,
-            this._getScriptOptions('bolt-track', publishableKey),
+            this.getScriptOptions('bolt-track', publishableKey),
         );
 
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -95,7 +95,7 @@ export default class BoltScriptLoader {
         return 'connect-sandbox.bolt.com';
     }
 
-    private _getScriptOptions(
+    private getScriptOptions(
         id: string,
         publishableKey: string,
         cartId?: string,
