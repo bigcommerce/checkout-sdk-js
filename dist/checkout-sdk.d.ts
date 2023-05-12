@@ -1641,9 +1641,9 @@ declare interface BraintreePaymentInitializeOptions {
 
 declare interface BraintreePaypalAchInitializeOptions {
     /**
-     * The text that should be displayed to the customer in UI for proof of authorization
+     * A callback that returns text that should be displayed to the customer in UI for proof of authorization
      */
-    mandateText: string;
+    getMandateText: () => string;
 }
 
 declare interface BraintreePaypalButtonInitializeOptions {

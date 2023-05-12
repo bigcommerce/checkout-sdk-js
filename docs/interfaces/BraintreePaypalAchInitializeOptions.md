@@ -4,14 +4,18 @@
 
 ## Table of contents
 
-### Properties
+### Methods
 
-- [mandateText](BraintreePaypalAchInitializeOptions.md#mandatetext)
+- [getMandateText](BraintreePaypalAchInitializeOptions.md#getmandatetext)
 
-## Properties
+## Methods
 
-### mandateText
+### getMandateText
 
-• **mandateText**: `string`
+▸ **getMandateText**(): `string`
 
-The text that should be displayed to the customer in UI for proof of authorization
+A callback that returns text that should be displayed to the customer in UI for proof of authorization
+
+#### Returns
+
+`string`
