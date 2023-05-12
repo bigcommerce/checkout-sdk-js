@@ -20,9 +20,11 @@ import {
     GooglePayGatewayParameters,
     GooglePayInitializationData,
     GooglePayMerchantInfo,
+    GooglePayRequiredPaymentData,
     GooglePaySetExternalCheckoutData,
     GooglePayTransactionInfo,
 } from '../types';
+import itemsRequireShipping from '../utils/items-require-shipping';
 
 export default class GooglePayGateway {
     private _getPaymentMethodFn?: () => PaymentMethod<GooglePayInitializationData>;
@@ -80,6 +82,25 @@ export default class GooglePayGateway {
             nonce,
             card_information: { type, number },
         });
+    }
+
+    async getRequiredData(): Promise<GooglePayRequiredPaymentData> {
+        const data: GooglePayRequiredPaymentData = { emailRequired: true };
+
+        if (this._isShippingAddressRequired()) {
+            const state = await this._paymentIntegrationService.loadShippingCountries();
+            const allowedCountryCodes = state
+                .getShippingCountries()
+                ?.map((country) => country.code);
+
+            data.shippingAddressRequired = true;
+            data.shippingAddressParameters = {
+                phoneNumberRequired: true,
+                ...(allowedCountryCodes && { allowedCountryCodes }),
+            };
+        }
+
+        return data;
     }
 
     getMerchantInfo(): GooglePayMerchantInfo {
@@ -159,6 +180,16 @@ export default class GooglePayGateway {
 
     protected getGatewayIdentifier(): string {
         return this._gatewayIdentifier;
+    }
+
+    private _isShippingAddressRequired(): boolean {
+        const { getCartOrThrow, getStoreConfig, getShippingAddress } =
+            this._paymentIntegrationService.getState();
+
+        return (
+            getShippingAddress() === undefined &&
+            itemsRequireShipping(getCartOrThrow(), getStoreConfig())
+        );
     }
 
     private _mapToAddressRequestBody(

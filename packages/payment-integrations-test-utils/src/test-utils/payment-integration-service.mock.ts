@@ -8,6 +8,7 @@ import getConsignment from './consignment.mock';
 import getCountries from './countries.mock';
 import { getCustomer } from './customer.mock';
 import { getOrder } from './orders.mock';
+import getPaymentId from './payment-id.mock';
 import { getCardInstrument } from './payments.mock';
 
 const subscribe = jest.fn();
@@ -33,6 +34,7 @@ const state = {
     getShippingCountries: jest.fn(() => getCountries()),
     getStoreConfig: jest.fn(() => getConfig().storeConfig),
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
+    getPaymentId: jest.fn(() => getPaymentId()),
     getPaymentMethod: jest.fn(),
     getPaymentMethodOrThrow: jest.fn(),
     getPaymentProviderCustomer: jest.fn(),
