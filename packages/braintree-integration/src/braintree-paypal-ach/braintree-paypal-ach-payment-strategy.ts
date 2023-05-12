@@ -24,7 +24,7 @@ import { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-payp
 
 export default class BraintreePaypalAchPaymentStrategy implements PaymentStrategy {
     private usBankAccount?: BraintreeBankAccount;
-    private getMandateText?: () => string | undefined;
+    private getMandateText?: () => string;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -79,7 +79,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const mandateText = this.getMandateText && this.getMandateText();
+        const mandateText = typeof this.getMandateText === 'function' && this.getMandateText();
 
         if (!mandateText) {
             throw new InvalidArgumentError(
