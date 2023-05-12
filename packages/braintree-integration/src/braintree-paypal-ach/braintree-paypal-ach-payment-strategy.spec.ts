@@ -27,7 +27,7 @@ import BraintreePaypalAchPaymentStrategy from './braintree-paypal-ach-payment-st
 const mockOptions: PaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions = {
     methodId: 'ach',
     braintreeach: {
-        mandateText: 'text',
+        getMandateText: () => 'text',
     },
 };
 
@@ -146,7 +146,7 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
             expect(expectedResults).toBeUndefined();
         });
 
-        it('throws an error if braintreeach.mandateText is not provided', async () => {
+        it('throws an error if braintreeach.getMandateText is not provided or returned undefined value', async () => {
             const options = {
                 methodId: 'ach',
                 braintreeach: {},
