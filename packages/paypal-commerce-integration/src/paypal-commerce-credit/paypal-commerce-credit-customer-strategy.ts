@@ -21,6 +21,7 @@ import {
     ShippingAddressChangeCallbackPayload,
     ShippingOptionChangeCallbackPayload,
     StyleButtonColor,
+    StyleButtonLabel,
 } from '../paypal-commerce-types';
 
 import PayPalCommerceCreditCustomerInitializeOptions, {
@@ -94,8 +95,8 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-        const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
-
+        const { isHostedCheckoutEnabled, walletButtonStyle } =
+            paymentMethod.initializationData || {};
         const defaultCallbacks = {
             createOrder: () =>
                 this.paypalCommerceIntegrationService.createOrder('paypalcommercecredit'),
@@ -120,7 +121,8 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
                 const buttonRenderOptions: PayPalCommerceButtonsOptions = {
                     fundingSource,
                     style: this.paypalCommerceIntegrationService.getValidButtonStyle({
-                        color: StyleButtonColor.gold,
+                        color: walletButtonStyle?.color || StyleButtonColor.gold,
+                        label: walletButtonStyle?.label || StyleButtonLabel.checkout,
                     }),
                     ...defaultCallbacks,
                     ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),

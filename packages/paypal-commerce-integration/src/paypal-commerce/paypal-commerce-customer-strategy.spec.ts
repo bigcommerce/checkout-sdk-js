@@ -21,7 +21,12 @@ import {
     getShippingAddressFromOrderDetails,
 } from '../mocks';
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import { PayPalCommerceButtonsOptions, PayPalSDK } from '../paypal-commerce-types';
+import {
+    PayPalCommerceButtonsOptions,
+    PayPalSDK,
+    StyleButtonColor,
+    StyleButtonLabel,
+} from '../paypal-commerce-types';
 
 import PayPalCommerceCustomerInitializeOptions from './paypal-commerce-customer-initialize-options';
 import PayPalCommerceCustomerStrategy from './paypal-commerce-customer-strategy';
@@ -213,7 +218,11 @@ describe('PayPalCommerceCustomerStrategy', () => {
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
-                style: { height: 40 },
+                style: {
+                    color: StyleButtonColor.gold,
+                    label: StyleButtonLabel.checkout,
+                    height: 40,
+                },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
             });
@@ -235,7 +244,11 @@ describe('PayPalCommerceCustomerStrategy', () => {
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
-                style: { height: 40 },
+                style: {
+                    color: StyleButtonColor.gold,
+                    label: StyleButtonLabel.checkout,
+                    height: 40,
+                },
                 createOrder: expect.any(Function),
                 onShippingAddressChange: expect.any(Function),
                 onShippingOptionsChange: expect.any(Function),

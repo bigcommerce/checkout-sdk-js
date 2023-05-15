@@ -76,6 +76,7 @@ export interface PayPalCommerceInitializationData {
     attributionId?: string;
     availableAlternativePaymentMethods: FundingType;
     buttonStyle?: PayPalButtonStyleOptions;
+    walletButtonStyle?: PayPalButtonStyleOptions;
     buyerCountry?: string;
     clientId: string;
     clientToken?: string;

@@ -20,6 +20,8 @@ import {
     PayPalCommerceInitializationData,
     ShippingAddressChangeCallbackPayload,
     ShippingOptionChangeCallbackPayload,
+    StyleButtonColor,
+    StyleButtonLabel,
 } from '../paypal-commerce-types';
 
 import PayPalCommerceCustomerInitializeOptions, {
@@ -97,7 +99,8 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-        const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
+        const { isHostedCheckoutEnabled, walletButtonStyle } =
+            paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
@@ -116,7 +119,10 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
 
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {
             fundingSource: paypalSdk.FUNDING.PAYPAL,
-            style: this.paypalCommerceIntegrationService.getValidButtonStyle(),
+            style: this.paypalCommerceIntegrationService.getValidButtonStyle({
+                color: walletButtonStyle?.color || StyleButtonColor.gold,
+                label: walletButtonStyle?.label || StyleButtonLabel.checkout,
+            }),
             ...defaultCallbacks,
             ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),
         };

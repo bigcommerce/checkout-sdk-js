@@ -25,6 +25,7 @@ import {
     PayPalCommerceButtonsOptions,
     PayPalSDK,
     StyleButtonColor,
+    StyleButtonLabel,
 } from '../paypal-commerce-types';
 
 import PayPalCommerceCreditCustomerInitializeOptions from './paypal-commerce-credit-customer-initialize-options';
@@ -221,6 +222,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 style: {
                     height: 40,
                     color: StyleButtonColor.gold,
+                    label: StyleButtonLabel.checkout,
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
@@ -246,6 +248,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 style: {
                     height: 40,
                     color: StyleButtonColor.gold,
+                    label: StyleButtonLabel.checkout,
                 },
                 createOrder: expect.any(Function),
                 onShippingAddressChange: expect.any(Function),
@@ -286,6 +289,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 style: {
                     height: 40,
                     color: StyleButtonColor.gold,
+                    label: StyleButtonLabel.checkout,
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
