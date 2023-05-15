@@ -27,7 +27,7 @@ import { PaymentProviderCustomerActionCreator } from '../payment-provider-custom
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
 import { getPayment } from '../payment/payments.mock';
-import { ConsignmentActionCreator } from '../shipping';
+import { ConsignmentActionCreator, ShippingCountryActionCreator } from '../shipping';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { SpamProtectionActionCreator } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
@@ -73,6 +73,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let cartRequestSender: CartRequestSender;
     let storeCreditActionCreator: Pick<StoreCreditActionCreator, 'applyStoreCredit'>;
     let paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator;
+    let shippingCountryActionCreator: Pick<ShippingCountryActionCreator, 'loadCountries'>;
 
     beforeEach(() => {
         requestSender = createRequestSender();
@@ -160,6 +161,12 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
+        shippingCountryActionCreator = {
+            loadCountries: jest.fn(
+                async () => () => createAction('LOAD_SHIPPING_COUNTRIES_REQUESTED'),
+            ),
+        };
+
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
@@ -175,6 +182,7 @@ describe('DefaultPaymentIntegrationService', () => {
             storeCreditActionCreator as StoreCreditActionCreator,
             spamProtectionActionCreator as SpamProtectionActionCreator,
             paymentProviderCustomerActionCreator,
+            shippingCountryActionCreator as ShippingCountryActionCreator,
         );
     });
 
@@ -426,6 +434,18 @@ describe('DefaultPaymentIntegrationService', () => {
 
             expect(orderActionCreator.loadCurrentOrder).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(orderActionCreator.loadCurrentOrder());
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#loadShippingCountries', () => {
+        it('loads shipping countries', async () => {
+            const output = await subject.loadShippingCountries();
+
+            expect(shippingCountryActionCreator.loadCountries).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(
+                shippingCountryActionCreator.loadCountries(),
+            );
             expect(output).toEqual(paymentIntegrationSelectors);
         });
     });

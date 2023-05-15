@@ -26,7 +26,7 @@ import {
 } from '../payment-provider-customer';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
-import { ConsignmentActionCreator } from '../shipping';
+import { ConsignmentActionCreator, ShippingCountryActionCreator } from '../shipping';
 import { SpamProtectionActionCreator } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
 
@@ -50,6 +50,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
         private _paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator,
+        private _shippingCountryActionCreator: ShippingCountryActionCreator,
     ) {
         this._storeProjection = this._storeProjectionFactory.create(this._store);
     }
@@ -227,6 +228,12 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
                 paymentProviderCustomer,
             ),
         );
+
+        return this._storeProjection.getState();
+    }
+
+    async loadShippingCountries(options?: RequestOptions): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(this._shippingCountryActionCreator.loadCountries(options));
 
         return this._storeProjection.getState();
     }

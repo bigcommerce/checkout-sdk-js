@@ -30,6 +30,7 @@ const state = {
     getOrderOrThrow: jest.fn(() => getOrder()),
     getShippingAddress: jest.fn(() => getAddress()),
     getShippingAddressOrThrow: jest.fn(() => getAddress()),
+    getShippingCountries: jest.fn(() => getCountries()),
     getStoreConfig: jest.fn(() => getConfig().storeConfig),
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
     getPaymentMethod: jest.fn(),
@@ -47,6 +48,7 @@ const initializeOffsitePayment = jest.fn();
 const loadCheckout = jest.fn();
 const loadDefaultCheckout = jest.fn();
 const loadPaymentMethod = jest.fn();
+const loadShippingCountries = jest.fn(() => state);
 const loadCurrentOrder = jest.fn();
 const submitOrder = jest.fn();
 const submitPayment = jest.fn();
@@ -72,6 +74,7 @@ const PaymentIntegrationServiceMock = jest
             loadCheckout,
             loadDefaultCheckout,
             loadPaymentMethod,
+            loadShippingCountries,
             loadCurrentOrder,
             submitOrder,
             submitPayment,

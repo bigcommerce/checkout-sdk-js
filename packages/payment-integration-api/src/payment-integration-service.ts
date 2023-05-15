@@ -73,4 +73,6 @@ export default interface PaymentIntegrationService {
     updatePaymentProviderCustomer(
         paymentProviderCustomer: PaymentProviderCustomer,
     ): Promise<PaymentIntegrationSelectors>;
+
+    loadShippingCountries(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 }
