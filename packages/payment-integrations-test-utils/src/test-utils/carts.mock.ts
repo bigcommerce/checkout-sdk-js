@@ -3,7 +3,12 @@ import { Cart, CartSource } from '@bigcommerce/checkout-sdk/payment-integration-
 import { getCoupon } from './coupons.mock';
 import { getCurrency } from './currency.mock';
 import { getDiscount } from './discounts.mock';
-import { getDigitalItem, getGiftCertificateItem, getPhysicalItem } from './line-items.mock';
+import {
+    getCustomItem,
+    getDigitalItem,
+    getGiftCertificateItem,
+    getPhysicalItem,
+} from './line-items.mock';
 
 export default function getCart(): Cart {
     return {
@@ -21,7 +26,7 @@ export default function getCart(): Cart {
             physicalItems: [getPhysicalItem()],
             digitalItems: [getDigitalItem()],
             giftCertificates: [getGiftCertificateItem()],
-            customItems: [],
+            customItems: [getCustomItem()],
         },
         createdTime: '2018-03-06T04:41:49+00:00',
         updatedTime: '2018-03-07T03:44:51+00:00',
