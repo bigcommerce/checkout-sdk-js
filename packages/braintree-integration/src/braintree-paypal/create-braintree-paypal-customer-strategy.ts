@@ -20,7 +20,7 @@ const createBraintreePaypalCustomerStrategy: CustomerStrategyFactory<
         new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
         braintreeHostWindow,
     );
-
+console.log('sdsd');
     return new BraintreePaypalCustomerStrategy(
         paymentIntegrationService,
         createFormPoster(),
