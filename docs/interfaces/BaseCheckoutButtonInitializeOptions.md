@@ -33,6 +33,7 @@
 - [googlepayorbital](BaseCheckoutButtonInitializeOptions.md#googlepayorbital)
 - [googlepaystripe](BaseCheckoutButtonInitializeOptions.md#googlepaystripe)
 - [googlepaystripeupe](BaseCheckoutButtonInitializeOptions.md#googlepaystripeupe)
+- [googlepayworldpayaccess](BaseCheckoutButtonInitializeOptions.md#googlepayworldpayaccess)
 - [methodId](BaseCheckoutButtonInitializeOptions.md#methodid)
 - [params](BaseCheckoutButtonInitializeOptions.md#params)
 - [paypal](BaseCheckoutButtonInitializeOptions.md#paypal)
@@ -188,6 +189,15 @@ ___
 
 The options that are required to facilitate Stripe GooglePay. They can be
 omitted unless you need to support Stripe GooglePay.
+
+___
+
+### googlepayworldpayaccess
+
+• `Optional` **googlepayworldpayaccess**: [`GooglePayButtonInitializeOptions`](GooglePayButtonInitializeOptions.md)
+
+The options that are required to facilitate Worldpay GooglePay. They can be
+omitted unless you need to support Worldpay GooglePay.
 
 ___
 

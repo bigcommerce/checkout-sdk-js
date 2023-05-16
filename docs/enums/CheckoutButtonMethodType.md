@@ -21,6 +21,7 @@
 - [GOOGLEPAY_ORBITAL](CheckoutButtonMethodType.md#googlepay_orbital)
 - [GOOGLEPAY_STRIPE](CheckoutButtonMethodType.md#googlepay_stripe)
 - [GOOGLEPAY_STRIPEUPE](CheckoutButtonMethodType.md#googlepay_stripeupe)
+- [GOOGLEPAY_WORLDPAYACCESS](CheckoutButtonMethodType.md#googlepay_worldpayaccess)
 - [MASTERPASS](CheckoutButtonMethodType.md#masterpass)
 - [PAYPALEXPRESS](CheckoutButtonMethodType.md#paypalexpress)
 
@@ -113,6 +114,12 @@ ___
 ### GOOGLEPAY\_STRIPEUPE
 
 • **GOOGLEPAY\_STRIPEUPE**
+
+___
+
+### GOOGLEPAY\_WORLDPAYACCESS
+
+• **GOOGLEPAY\_WORLDPAYACCESS**
 
 ___
 

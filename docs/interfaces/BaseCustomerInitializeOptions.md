@@ -38,6 +38,7 @@ information in order to initialize the customer step of checkout.
 - [googlepayorbital](BaseCustomerInitializeOptions.md#googlepayorbital)
 - [googlepaystripe](BaseCustomerInitializeOptions.md#googlepaystripe)
 - [googlepaystripeupe](BaseCustomerInitializeOptions.md#googlepaystripeupe)
+- [googlepayworldpayaccess](BaseCustomerInitializeOptions.md#googlepayworldpayaccess)
 - [masterpass](BaseCustomerInitializeOptions.md#masterpass)
 - [methodId](BaseCustomerInitializeOptions.md#methodid)
 - [params](BaseCustomerInitializeOptions.md#params)
@@ -166,6 +167,15 @@ ___
 ### googlepaystripeupe
 
 • `Optional` **googlepaystripeupe**: [`GooglePayCustomerInitializeOptions`](GooglePayCustomerInitializeOptions.md)
+
+The options that are required to initialize the GooglePay payment method.
+They can be omitted unless you need to support GooglePay.
+
+___
+
+### googlepayworldpayaccess
+
+• `Optional` **googlepayworldpayaccess**: [`GooglePayCustomerInitializeOptions`](GooglePayCustomerInitializeOptions.md)
 
 The options that are required to initialize the GooglePay payment method.
 They can be omitted unless you need to support GooglePay.

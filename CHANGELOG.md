@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.381.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.380.1...v1.381.0) (2023-05-16)
+
+
+### Features
+
+* **payment:** INT-7573 Create Access Worldpay GooglePay strategy ([#1966](https://github.com/bigcommerce/checkout-sdk-js/issues/1966)) ([e5134f4](https://github.com/bigcommerce/checkout-sdk-js/commit/e5134f48df85706fa7c7e56f6297c23d803356ef))
+
+
+### Bug Fixes
+
+* **payment:** BOLT-577 Bolt initialization error on customer step ([404bde5](https://github.com/bigcommerce/checkout-sdk-js/commit/404bde535861fd7d4d6945591e2b07208194d182))
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-2414 added PayPalCommerceIntegrationService method creation ([#1970](https://github.com/bigcommerce/checkout-sdk-js/issues/1970)) ([2130c3e](https://github.com/bigcommerce/checkout-sdk-js/commit/2130c3e474210c4b580a8ea808d38bea55348cec))
+
 ### [1.380.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.380.0...v1.380.1) (2023-05-12)
 
 

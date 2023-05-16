@@ -33,6 +33,7 @@ current checkout flow.
 - [googlepayorbital](BasePaymentInitializeOptions.md#googlepayorbital)
 - [googlepaystripe](BasePaymentInitializeOptions.md#googlepaystripe)
 - [googlepaystripeupe](BasePaymentInitializeOptions.md#googlepaystripeupe)
+- [googlepayworldpayaccess](BasePaymentInitializeOptions.md#googlepayworldpayaccess)
 - [klarna](BasePaymentInitializeOptions.md#klarna)
 - [klarnav2](BasePaymentInitializeOptions.md#klarnav2)
 - [masterpass](BasePaymentInitializeOptions.md#masterpass)
@@ -216,6 +217,15 @@ ___
 • `Optional` **googlepaystripeupe**: [`GooglePayPaymentInitializeOptions`](GooglePayPaymentInitializeOptions.md)
 
 The options that are required to initialize the GooglePay Stripe payment method.
+They can be omitted unless you need to support GooglePay.
+
+___
+
+### googlepayworldpayaccess
+
+• `Optional` **googlepayworldpayaccess**: [`GooglePayPaymentInitializeOptions`](GooglePayPaymentInitializeOptions.md)
+
+The options that are required to initialize the GooglePay Worldpay Access payment method.
 They can be omitted unless you need to support GooglePay.
 
 ___
