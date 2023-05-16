@@ -19,12 +19,13 @@ import {
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { BoltCheckout, BoltInitializationData } from './bolt';
+import { BoltCheckout, BoltHostWindow, BoltInitializationData } from './bolt';
 import { WithBoltCustomerInitializeOptions } from './bolt-customer-initialize-options';
 import BoltScriptLoader from './bolt-script-loader';
 
 export default class BoltCustomerStrategy implements CustomerStrategy {
     private boltClient?: BoltCheckout;
+    private boltHostWindow: BoltHostWindow = window;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -170,7 +171,7 @@ export default class BoltCustomerStrategy implements CustomerStrategy {
     }
 
     private getBoltClientOrThrow() {
-        const boltClient = this.boltClient;
+        const boltClient = this.boltClient || this.boltHostWindow.BoltCheckout;
 
         if (!boltClient) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
