@@ -305,6 +305,13 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             return options.googlepaystripeupe;
         }
 
+        if (
+            options.methodId === PaymentStrategyType.WORLDPAYACCESS_GOOGLE_PAY &&
+            options.googlepayworldpayaccess
+        ) {
+            return options.googlepayworldpayaccess;
+        }
+
         throw new InvalidArgumentError(
             'Unable to initialize payment because "options.googlepay" argument is not provided.',
         );

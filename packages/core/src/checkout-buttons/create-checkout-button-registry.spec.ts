@@ -89,4 +89,10 @@ describe('createCheckoutButtonRegistry', () => {
     it('returns registry with GooglePay on StripeUPE Credit registered', () => {
         expect(registry.get('googlepaystripeupe')).toEqual(expect.any(GooglePayButtonStrategy));
     });
+
+    it('returns registry with GooglePay on WorldpayAccess Credit registered', () => {
+        expect(registry.get('googlepayworldpayaccess')).toEqual(
+            expect.any(GooglePayButtonStrategy),
+        );
+    });
 });

@@ -15,6 +15,7 @@ export enum BaseCheckoutButtonMethodType {
     GOOGLEPAY_ORBITAL = 'googlepayorbital',
     GOOGLEPAY_STRIPE = 'googlepaystripe',
     GOOGLEPAY_STRIPEUPE = 'googlepaystripeupe',
+    GOOGLEPAY_WORLDPAYACCESS = 'googlepayworldpayaccess',
     MASTERPASS = 'masterpass',
     PAYPALEXPRESS = 'paypalexpress',
 }

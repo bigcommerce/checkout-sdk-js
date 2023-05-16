@@ -331,4 +331,10 @@ describe('CreatePaymentStrategyRegistry', () => {
 
         expect(paymentStrategy).toBeInstanceOf(CBAMPGSPaymentStrategy);
     });
+
+    it('can instantiate googlepayworldpayaccess', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.WORLDPAYACCESS_GOOGLE_PAY);
+
+        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
+    });
 });
