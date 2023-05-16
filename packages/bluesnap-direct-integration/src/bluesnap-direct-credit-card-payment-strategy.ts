@@ -2,6 +2,7 @@ import { WithCreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sd
 import {
     guard,
     InvalidArgumentError,
+    isHostedInstrumentLike,
     MissingDataError,
     MissingDataErrorType,
     OrderFinalizationNotRequiredError,
@@ -67,6 +68,12 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
             .validate()
             .submit(is3dsEnabled ? this._getBlueSnapDirectThreeDSecureData() : undefined);
 
+        const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = isHostedInstrumentLike(
+            payload.payment.paymentData,
+        )
+            ? payload.payment.paymentData
+            : { shouldSaveInstrument: false, shouldSetAsDefaultInstrument: false };
+
         await this._paymentIntegrationService.submitOrder();
         await this._paymentIntegrationService.submitPayment({
             ...payload.payment,
@@ -78,6 +85,8 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
                             cardHolderName,
                         }),
                     },
+                    vault_payment_instrument: shouldSaveInstrument,
+                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
                 },
             },
         });

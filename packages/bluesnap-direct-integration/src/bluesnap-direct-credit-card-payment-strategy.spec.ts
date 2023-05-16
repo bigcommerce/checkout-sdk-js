@@ -262,6 +262,36 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
                         credit_card_token: {
                             token: '{"pfToken":"pfToken","cardHolderName":"John Doe"}',
                         },
+                        vault_payment_instrument: false,
+                        set_as_default_stored_instrument: false,
+                    },
+                },
+            });
+        });
+
+        it('should submit the payment and save card', async () => {
+            payload = {
+                payment: {
+                    gatewayId: 'bluesnapdirect',
+                    methodId: 'credit_card',
+                    paymentData: {
+                        shouldSaveInstrument: true,
+                        shouldSetAsDefaultInstrument: true,
+                    },
+                },
+            };
+            await strategy.execute(payload);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                gatewayId: 'bluesnapdirect',
+                methodId: 'credit_card',
+                paymentData: {
+                    formattedPayload: {
+                        credit_card_token: {
+                            token: '{"pfToken":"pfToken","cardHolderName":"John Doe"}',
+                        },
+                        vault_payment_instrument: true,
+                        set_as_default_stored_instrument: true,
                     },
                 },
             });
