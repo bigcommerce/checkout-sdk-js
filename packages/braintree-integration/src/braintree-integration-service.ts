@@ -31,6 +31,7 @@ export default class BraintreeIntegrationService {
     } = {};
     private paypalCheckout?: BraintreePaypalCheckout;
     private usBankAccount?: Promise<BraintreeBankAccount>;
+    private braintreeLocalMethods?: any; //TODO: FIX
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
@@ -93,6 +94,21 @@ export default class BraintreeIntegrationService {
         );
 
         return this.paypalCheckout;
+    }
+
+
+    async loadBraintreeLocalMethods() {
+        const client = await this.getClient();
+        const braintreeLocalMethods = await this.braintreeScriptLoader.loadBraintreeLocalMethods();
+
+        if (!this.braintreeLocalMethods) {
+            this.braintreeLocalMethods = braintreeLocalMethods.create({
+                client,
+                merchantAccountId: 'EUR_local', // TODO: FIX
+            })
+        }
+
+        return this.braintreeLocalMethods;
     }
 
     async getUsBankAccount() {
