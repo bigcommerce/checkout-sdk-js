@@ -24,6 +24,11 @@ export enum AdyenActionType {
      * The Component displays the voucher which the shopper uses to complete the payment.
      * */
     Voucher = 'voucher',
+
+    /*
+     * The Component displays the widget which the shopper uses to complete the payment.
+     * */
+    Sdk = 'sdk',
 }
 
 export enum AdyenComponentType {
@@ -177,6 +182,11 @@ export interface AdyenComponentEvents {
     onChange?(state: AdyenV3ComponentState, component: AdyenComponent): void;
 
     /**
+     * Called when the shopper selects the Pay button and payment details are valid.
+     */
+    onSubmit?(state: AdyenV3ComponentState, component: AdyenComponent): void;
+
+    /**
      * Called in case of an invalid card number, invalid expiry date, or
      *  incomplete field. Called again when errors are cleared.
      */
@@ -206,6 +216,7 @@ export interface AdyenComponent {
     state?: CardState;
     mount(containerId: string): HTMLElement;
     unmount(): void;
+    submit(): void;
 }
 
 export interface AdyenConfiguration {
@@ -236,6 +247,21 @@ export interface AdyenConfiguration {
      * Component.
      */
     paymentMethodsResponse?: PaymentMethodsResponse;
+
+    /**
+     * Configuration for specific payment methods.
+     */
+    paymentMethodsConfiguration: {
+        klarna: {
+            useKlarnaWidget: boolean;
+        };
+        klarna_account: {
+            useKlarnaWidget: boolean;
+        };
+        klarna_paynow: {
+            useKlarnaWidget: boolean;
+        };
+    };
 
     showPayButton?: boolean;
 

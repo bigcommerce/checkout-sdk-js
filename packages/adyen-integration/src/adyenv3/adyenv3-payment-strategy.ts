@@ -77,6 +77,17 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             paymentMethod.initializationData || {};
 
         this._adyenClient = await this._scriptLoader.load({
+            paymentMethodsConfiguration: {
+                klarna: {
+                    useKlarnaWidget: true,
+                },
+                klarna_account: {
+                    useKlarnaWidget: true,
+                },
+                klarna_paynow: {
+                    useKlarnaWidget: true,
+                },
+            },
             environment,
             locale: this._paymentIntegrationService.getState().getLocale(),
             clientKey,
@@ -121,6 +132,8 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             : { shouldSaveInstrument: false, shouldSetAsDefaultInstrument: false };
 
         this._validateCardData();
+
+        this._paymentComponent?.submit();
 
         await this._paymentIntegrationService.submitOrder(order, options);
 
@@ -273,7 +286,8 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             if (onBeforeLoad) {
                 onBeforeLoad(
                     adyenAction.type === AdyenActionType.ThreeDS2 ||
-                        adyenAction.type === AdyenActionType.QRCode,
+                        adyenAction.type === AdyenActionType.QRCode ||
+                        adyenAction.type === AdyenActionType.Sdk,
                 );
             }
 
@@ -363,6 +377,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 showBrandsUnderCardNumber: false,
                 onChange: (componentState) => this._updateComponentState(componentState),
                 ...(billingAddress ? { data: this._mapAdyenPlaceholderData(billingAddress) } : {}),
+                onSubmit: (componentState) => this._updateComponentState(componentState),
             });
 
             try {
