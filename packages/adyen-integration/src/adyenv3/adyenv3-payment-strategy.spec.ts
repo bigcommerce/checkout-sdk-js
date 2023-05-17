@@ -83,6 +83,7 @@ describe('AdyenV3PaymentStrategy', () => {
                     handleOnChange(getComponentState());
                 }),
                 unmount: jest.fn(),
+                submit: jest.fn(),
             };
 
             cardVerificationComponent = {
@@ -91,6 +92,7 @@ describe('AdyenV3PaymentStrategy', () => {
                     handleOnError(getComponentState(false));
                 }),
                 unmount: jest.fn(),
+                submit: jest.fn(),
             };
 
             jest.spyOn(
@@ -171,6 +173,7 @@ describe('AdyenV3PaymentStrategy', () => {
                         });
                     }),
                     unmount: jest.fn(),
+                    submit: jest.fn(),
                 };
 
                 jest.spyOn(adyenCheckout, 'createFromAction').mockImplementation(
@@ -346,6 +349,7 @@ describe('AdyenV3PaymentStrategy', () => {
                         handleOnError(adyenError);
                     }),
                     unmount: jest.fn(),
+                    submit: jest.fn(),
                 };
 
                 jest.spyOn(adyenCheckout, 'createFromAction').mockImplementation(
@@ -437,6 +441,7 @@ describe('AdyenV3PaymentStrategy', () => {
                 additionalActionComponent = {
                     mount: jest.fn(),
                     unmount: jest.fn(),
+                    submit: jest.fn(),
                 };
 
                 jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
