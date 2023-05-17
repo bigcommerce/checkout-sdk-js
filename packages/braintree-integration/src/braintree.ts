@@ -46,6 +46,7 @@ export interface BraintreeSDK {
     venmo?: BraintreeVenmoCheckoutCreator;
     // visaCheckout?: BraintreeVisaCheckoutCreator; // TODO: should be added in future migration
     usBankAccount?: BraintreeBankAccountCreator;
+    localPayment?: any; // TODO: FIX
 }
 
 export interface BraintreeInitializationData {

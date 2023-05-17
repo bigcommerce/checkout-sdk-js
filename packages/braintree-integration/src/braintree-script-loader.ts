@@ -42,6 +42,18 @@ export default class BraintreeScriptLoader {
         return this.braintreeHostWindow.braintree.paypalCheckout;
     }
 
+    async loadBraintreeLocalMethods() {
+        await this.scriptLoader.loadScript(
+            `js.braintreegateway.com/web/${VERSION}/js/local-payment.min.js`,
+        );
+
+        if (!this.braintreeHostWindow.braintree?.localPayment) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this.braintreeHostWindow.braintree?.localPayment;
+    }
+
     async loadDataCollector(): Promise<BraintreeDataCollectorCreator> {
         await this.scriptLoader.loadScript(
             `//js.braintreegateway.com/web/${VERSION}/js/data-collector.min.js`,
