@@ -16,7 +16,7 @@ import BraintreeScriptLoader from "../braintree-script-loader";
 import {getScriptLoader} from "@bigcommerce/script-loader";
 
 
-const createBraintreeAlternativeMethodsPaymentStrategy: PaymentStrategyFactory<
+const createBraintreeLocalMethodsPaymentStrategy: PaymentStrategyFactory<
     BraintreeLocalMethodsPaymentStrategy
 > = (paymentIntegrationService) => {
     const braintreeHostWindow: BraintreeHostWindow = window;
@@ -33,6 +33,6 @@ const createBraintreeAlternativeMethodsPaymentStrategy: PaymentStrategyFactory<
 }
 
 
-export default toResolvableModule(createBraintreeAlternativeMethodsPaymentStrategy, [
+export default toResolvableModule(createBraintreeLocalMethodsPaymentStrategy, [
     { gateway: 'braintreelocalmethods' },
 ]);
