@@ -13,7 +13,7 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import { BoltCheckout, BoltInitializationData } from './bolt';
+import { BoltCheckout, BoltHostWindow, BoltInitializationData } from './bolt';
 import BoltCustomerStrategy from './bolt-customer-strategy';
 import BoltScriptLoader from './bolt-script-loader';
 import { getBolt } from './bolt.mock';
@@ -36,7 +36,11 @@ describe('BoltCustomerStrategy', () => {
         boltCheckout.openCheckout = jest.fn();
         boltCheckout.hasBoltAccount = jest.fn();
         boltScriptLoader = new BoltScriptLoader(scriptLoader);
-        boltScriptLoader.loadBoltClient = jest.fn(() => Promise.resolve(boltCheckout));
+        boltScriptLoader.loadBoltClient = jest.fn(() => {
+            (window as BoltHostWindow).BoltCheckout = boltCheckout;
+
+            return Promise.resolve(boltCheckout);
+        });
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,

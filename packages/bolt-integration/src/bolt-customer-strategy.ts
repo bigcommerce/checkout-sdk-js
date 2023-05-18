@@ -24,7 +24,6 @@ import { WithBoltCustomerInitializeOptions } from './bolt-customer-initialize-op
 import BoltScriptLoader from './bolt-script-loader';
 
 export default class BoltCustomerStrategy implements CustomerStrategy {
-    private boltClient?: BoltCheckout;
     private boltHostWindow: BoltHostWindow = window;
 
     constructor(
@@ -56,7 +55,7 @@ export default class BoltCustomerStrategy implements CustomerStrategy {
 
         const { developerConfig, publishableKey } = paymentMethod.initializationData;
 
-        this.boltClient = await this.boltScriptLoader.loadBoltClient(
+        await this.boltScriptLoader.loadBoltClient(
             publishableKey,
             paymentMethod.config.testMode,
             developerConfig,
@@ -71,8 +70,6 @@ export default class BoltCustomerStrategy implements CustomerStrategy {
     }
 
     deinitialize(): Promise<void> {
-        this.boltClient = undefined;
-
         return Promise.resolve();
     }
 
@@ -170,8 +167,8 @@ export default class BoltCustomerStrategy implements CustomerStrategy {
         }
     }
 
-    private getBoltClientOrThrow() {
-        const boltClient = this.boltClient || this.boltHostWindow.BoltCheckout;
+    private getBoltClientOrThrow(): BoltCheckout {
+        const boltClient = this.boltHostWindow.BoltCheckout;
 
         if (!boltClient) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
