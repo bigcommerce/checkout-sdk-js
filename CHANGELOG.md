@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.381.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.381.0...v1.381.1) (2023-05-18)
+
+
+### Bug Fixes
+
+* **payment:** BOLT-577 Bolt initialization error on customer step ([0be07d0](https://github.com/bigcommerce/checkout-sdk-js/commit/0be07d0eda509d15199fad5aa1a30f13e5f6361d))
+
 ## [1.381.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.380.1...v1.381.0) (2023-05-16)
 
 
