@@ -287,4 +287,19 @@ describe('GooglePayButtonStrategy', () => {
             });
         });
     });
+
+    describe('#deinitialize', () => {
+        it('should deinitialize the strategy', async () => {
+            const deinitialize = buttonStrategy.deinitialize();
+
+            await expect(deinitialize).resolves.toBeUndefined();
+        });
+
+        it('should remove payment button', async () => {
+            await buttonStrategy.initialize(options);
+            await buttonStrategy.deinitialize();
+
+            expect(button.remove).toHaveBeenCalled();
+        });
+    });
 });
