@@ -20,7 +20,6 @@ import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
-import { AdyenPaymentMethodType } from '../adyenv2';
 import {
     BraintreeGooglePayThreeDSecure,
     BraintreeSDKCreator,
@@ -355,16 +354,19 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     private async _encodeNonce(methodId: string, nonce: string) {
         if (methodId === PaymentStrategyType.ADYENV2_GOOGLEPAY) {
             return JSON.stringify({
-                type: AdyenPaymentMethodType.GooglePay,
+                type: this._paymentMethod?.method,
                 googlePayToken: nonce,
                 browser_info: getBrowserInfo(),
+                origin: window.location.origin,
             });
         }
 
         if (methodId === PaymentStrategyType.ADYENV3_GOOGLEPAY) {
             return JSON.stringify({
-                type: AdyenPaymentMethodType.GooglePay,
+                type: this._paymentMethod?.method,
                 googlePayToken: nonce,
+                browser_info: getBrowserInfo(),
+                origin: window.location.origin,
             });
         }
 
