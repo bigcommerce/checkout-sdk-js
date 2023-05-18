@@ -40,7 +40,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintree: braintreeOptions, methodId } = options;
-
+        console.log('INIT111111');
         if (!this._paymentMethod || !this._paymentMethod.nonce) {
             this._paymentMethod = this._store
                 .getState()

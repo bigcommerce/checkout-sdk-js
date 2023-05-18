@@ -147,18 +147,106 @@ export default class PaymentStrategyActionCreator {
         return (store) =>
             defer(() => {
                 const state = store.getState();
-                const method = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
+                let method;
+                const giropayMock = {
+                    id: "giropay",
+                    gateway: "braintreelocalmethods",
+                    logoUrl: "",
+                    method: "multi-option",
+                    supportedCards: [],
+                    providesShippingAddress: false,
+                    config: {
+                        displayName: "giropay",
+                        cardCode: true,
+                        helpText: "",
+                        enablePaypal: true,
+                        merchantId: '',
+                        is3dsEnabled: false,
+                        testMode: true,
+                        isVisaCheckoutEnabled: false,
+                        requireCustomerCode: false,
+                        isVaultingEnabled: true,
+                        isVaultingCvvEnabled: false,
+                        hasDefaultStoredInstrument: false,
+                        isHostedFormEnabled: false,
+                        logo: '',
+                    },
+                    type: "PAYMENT_TYPE_API",
+                    initializationStrategy: {
+                        type: "not_applicable"
+                    },
+                    nonce: '',
+                    initializationData: {
+                        isBraintreeVenmoEnabled: 0,
+                        intent: "capture",
+                        isComplete: false,
+                        isCreditEnabled: true,
+                        enabledLocalPaymentMethods: [
+                            "bancontact",
+                            "eps",
+                            "giropay",
+                            "ideal",
+                            "sofort",
+                            "mybank",
+                            "p24"
+                        ],
+                        availableLocalPaymentMethods: [
+                            {
+                                id: "bancontact",
+                                name: "Bancontact"
+                            },
+                            {
+                                id: "eps",
+                                name: "eps"
+                            },
+                            {
+                                id: "giropay",
+                                name: "giropay"
+                            },
+                            {
+                                id: "ideal",
+                                name: "iDEAL"
+                            },
+                            {
+                                id: "sofort",
+                                name: "Klarna Pay Now \/ SOFORT"
+                            },
+                            {
+                                id: "mybank",
+                                name: "MyBank"
+                            },
+                            {
+                                id: "p24",
+                                name: "P24"
+                            }
+                        ]
+                    },
+                    clientToken: '',
+                    returnUrl: ''
+                }
+
+                console.log('GATEWAY', gatewayId);
+                if (gatewayId === 'braintreelocalmethods') {
+                    method = giropayMock;
+                } else {
+                    method = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
+                }
+
+                console.log('METHOD', method);
 
                 if (!method) {
+                    console.log('!method ERROR');
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
                 if (methodId && state.paymentStrategies.isInitialized(methodId)) {
+                    console.log('dsdsds');
                     return empty();
                 }
 
                 const strategy = this._getStrategy(method);
-
+                console.log('STRATEGY', strategy);
+                console.log('OPTIONS', options, method, gatewayId);
                 const promise: Promise<InternalCheckoutSelectors | void> = strategy.initialize({
                     ...options,
                     methodId,
@@ -263,12 +351,15 @@ export default class PaymentStrategyActionCreator {
 
         try {
             strategy = this._strategyRegistry.getByMethod(method);
+            console.log('STRATEGY1', strategy);
         } catch {
+            console.log('STRATEGY METHODID', method);
             strategy = this._strategyRegistryV2.get({
                 id: method.id,
                 gateway: method.gateway,
                 type: method.type,
             });
+            console.log('STRATEGY2', strategy);
         }
 
         return strategy;

@@ -1,15 +1,19 @@
 import {
-    InvalidArgumentError, MissingDataError, MissingDataErrorType,
+    InvalidArgumentError,
     OrderFinalizationNotRequiredError,
-    PaymentInitializeOptions, PaymentIntegrationService, PaymentMethod,
+    OrderRequestBody,
+    PaymentArgumentInvalidError,
+    PaymentInitializeOptions,
+    PaymentIntegrationService,
+    PaymentMethodInvalidError,
     PaymentStrategy
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import BraintreeIntegrationService from "../braintree-integration-service";
-import {BraintreeInitializationData} from "../braintree";
-
+import {PayPalCommerceInitializationData} from "../../../paypal-commerce-integration/src/paypal-commerce-types";
 
 export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStrategy {
-
+    private orderId?: string;
+    private localPaymentInstance?: any;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -20,13 +24,11 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
     async initialize(
         options: PaymentInitializeOptions
     ): Promise<void> {
-        console.log('INITIALIZE', options, this.paymentIntegrationService);
         const {
             gatewayId,
             methodId,
             braintreelocalmethods,
         } = options;
-
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -34,13 +36,11 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
             );
         }
 
-
         if (!gatewayId) {
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.gatewayId" argument is not provided.',
             );
         }
-
 
         if (!braintreelocalmethods) {
             throw new InvalidArgumentError(
@@ -48,25 +48,96 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
             );
         }
 
-
-        await this.paymentIntegrationService.loadPaymentMethod(methodId);
-
-
+        await this.paymentIntegrationService.loadPaymentMethod(gatewayId);
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod: PaymentMethod<BraintreeInitializationData> =
-            state.getPaymentMethodOrThrow(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
+            methodId,
+            gatewayId,
+        );
+        const { orderId } = paymentMethod.initializationData || {};
 
+        if (orderId) {
+            this.orderId = orderId;
 
-        if (!paymentMethod.clientToken) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            return;
         }
+        await this.braintreeIntegrationService.loadBraintreeLocalMethods(this.startPaymentCallback);
 
-
-        await this.braintreeIntegrationService.loadBraintreeLocalMethods();
+        this.renderButton(methodId, braintreelocalmethods);
     }
 
+    private startPaymentCallback(localPaymentInstance: any) {
+        console.log('START PAYMENT');
+        console.log('LOCAL', localPaymentInstance);
+        this.localPaymentInstance = localPaymentInstance;
+    }
 
+    private renderButton(methodId: string, braintreelocalmethods: any) {
+        const { container, onRenderButton } = braintreelocalmethods;
+        const localMethodButton = this.createButtonElement(methodId);
+        const buttonContainerElement = document.getElementById(container);
 
+        if (onRenderButton && typeof onRenderButton === 'function') {
+            onRenderButton();
+        }
+
+        buttonContainerElement?.appendChild(localMethodButton);
+    }
+
+    private createButtonElement(methodId: string) {
+        const localMethodButtonElement = document.createElement('div');
+        localMethodButtonElement.setAttribute('id', methodId);
+        localMethodButtonElement.addEventListener('click', () => this.handleClick(methodId));
+
+        return localMethodButtonElement;
+    }
+
+    private handleClick(methodId: string) {
+        console.log('CLICK', methodId);
+        return  (event: any) => {
+            event.preventDefault();
+
+            this.localPaymentInstance.startPayment({
+                paymentType: methodId,
+                amount: '10.67',
+                fallback: { // see Fallback section for details on these params
+                    url: 'https://your-domain.com/page-to-complete-checkout',
+                    buttonText: 'Complete Payment'
+                },
+                currencyCode: 'EUR',
+                shippingAddressRequired: false,
+                email: 'joe@getbraintree.com',
+                phone: '5101231234',
+                givenName: 'Joe',
+                surname: 'Doe',
+                address: {
+                    countryCode: 'NL'
+                },
+                onPaymentStart: function (data: any, start: any) {
+                    // NOTE: It is critical here to store data.paymentId on your server
+                    //       so it can be mapped to a webhook sent by Braintree once the
+                    //       buyer completes their payment. See Start the payment
+                    //       section for details.
+
+                    // Call start to initiate the popup
+                    console.log('ON PAYMENT START DATA', data);
+                    start();
+                }
+            }, function (startPaymentError: any, payload: any) {
+                if (startPaymentError) {
+                    if (startPaymentError.code === 'LOCAL_PAYMENT_POPUP_CLOSED') {
+                        console.error('Customer closed Local Payment popup.');
+                    } else {
+                        console.error('Error!', startPaymentError);
+                    }
+                } else {
+                    // Send the nonce to your server to create a transaction
+                    console.log(payload.nonce);
+                }
+            });
+        };
+
+    }
 
     finalize(): Promise<void> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
@@ -74,13 +145,23 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
 
 
     async deinitialize(): Promise<void> {
-
+        this.orderId = undefined;
 
         return Promise.resolve();
     }
 
 
-    async execute() {
-        console.log('EXECUTE');
+    async execute(payload: OrderRequestBody): Promise<void> {
+        const { payment } = payload;
+
+        if (!payment) {
+            throw new PaymentArgumentInvalidError(['payment']);
+        }
+
+        if (!this.orderId) {
+            throw new PaymentMethodInvalidError();
+        }
+
+        // await this.braintreeIntegrationService.submitPayment(payment.methodId, this.orderId); // TODO: FIX
     }
 }
