@@ -806,6 +806,10 @@ describe('GooglePayPaymentStrategy', () => {
         };
 
         beforeEach(() => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
+                initializationData,
+                method: 'googlepay',
+            });
             strategy = new GooglePayPaymentStrategy(
                 store,
                 checkoutActionCreator,
@@ -831,7 +835,7 @@ describe('GooglePayPaymentStrategy', () => {
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                 methodId: 'googlepayadyenv2',
                 paymentData: {
-                    nonce: `{"type":"paywithgoogle","googlePayToken":"nonce","browser_info":{"color_depth":24,"java_enabled":false,"language":"en-US","screen_height":0,"screen_width":0,"time_zone_offset":"${new Date()
+                    nonce: `{"type":"googlepay","googlePayToken":"nonce","browser_info":{"color_depth":24,"java_enabled":false,"language":"en-US","screen_height":0,"screen_width":0,"time_zone_offset":"${new Date()
                         .getTimezoneOffset()
                         .toString()}"}}`,
                     method: 'googlepayadyenv2',
