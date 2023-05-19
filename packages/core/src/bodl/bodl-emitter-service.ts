@@ -212,10 +212,16 @@ export default class BodlEmitterService implements BodlService {
                 brand_name: item.brand,
                 currency: currencyCode,
                 category_names: item.categoryNames || [],
+                retail_price: item.retailPrice,
             };
         });
 
-        return [...customItems, ...physicalAndDigitalItems, ...giftCertificateItems];
+        return [...customItems, ...physicalAndDigitalItems, ...giftCertificateItems].map(
+            (item) => ({
+                ...item,
+                product_id: String(item.product_id),
+            }),
+        );
     }
 
     private _trackCompletedStep(step: AnalyticStepType) {
