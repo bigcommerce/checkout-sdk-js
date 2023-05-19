@@ -13,7 +13,7 @@ import {
 } from '../paypal-commerce-types';
 
 import PayPalCommerceAlternativeMethodsButtonOptions, {
-    WithPayPalCommerceAlternativeMethodsButtonOptions,
+    WithPayPalCommerceAlternativeMethodsButtonInitializeOptions,
 } from './paypal-commerce-alternative-methods-button-initialize-options';
 
 export default class PayPalCommerceAlternativeMethodsButtonStrategy
@@ -26,7 +26,7 @@ export default class PayPalCommerceAlternativeMethodsButtonStrategy
 
     async initialize(
         options: CheckoutButtonInitializeOptions &
-            WithPayPalCommerceAlternativeMethodsButtonOptions,
+            WithPayPalCommerceAlternativeMethodsButtonInitializeOptions,
     ): Promise<void> {
         const { paypalcommercealternativemethods, containerId, methodId } = options;
         const {

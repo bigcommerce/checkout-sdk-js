@@ -26,7 +26,7 @@ import {
 } from '../paypal-commerce-types';
 
 import PayPalCommerceAlternativeMethodsPaymentOptions, {
-    WithPayPalCommerceAlternativeMethodsPaymentOptions,
+    WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions,
 } from './paypal-commerce-alternative-methods-payment-initialize-options';
 
 export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements PaymentStrategy {
@@ -45,7 +45,8 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
     ) {}
 
     async initialize(
-        options: PaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentOptions,
+        options: PaymentInitializeOptions &
+            WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions,
     ): Promise<void> {
         const {
             gatewayId,
@@ -142,7 +143,8 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
     }
 
     private async reinitializeStrategy(
-        options: PaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentOptions,
+        options: PaymentInitializeOptions &
+            WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions,
     ): Promise<void> {
         await this.deinitialize();
         await this.initialize(options);

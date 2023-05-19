@@ -22,6 +22,6 @@ export default interface PayPalCommerceAlternativeMethodsButtonOptions {
     style?: PayPalButtonStyleOptions;
 }
 
-export interface WithPayPalCommerceAlternativeMethodsButtonOptions {
+export interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {
     paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsButtonOptions;
 }

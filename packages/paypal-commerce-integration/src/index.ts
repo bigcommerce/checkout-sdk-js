@@ -50,10 +50,10 @@ export { WithPayPalCommerceVenmoPaymentInitializeOptions } from './paypal-commer
  *
  */
 export { default as createPayPalCommerceAlternativeMethodsButtonStrategy } from './paypal-commerce-alternative-methods/create-paypal-commerce-alternative-methods-button-strategy';
-export { WithPayPalCommerceAlternativeMethodsButtonOptions } from './paypal-commerce-alternative-methods/paypal-commerce-alternative-methods-button-initialize-options';
+export { WithPayPalCommerceAlternativeMethodsButtonInitializeOptions } from './paypal-commerce-alternative-methods/paypal-commerce-alternative-methods-button-initialize-options';
 
 export { default as createPayPalCommerceAlternativeMethodsPaymentStrategy } from './paypal-commerce-alternative-methods/create-paypal-commerce-alternative-methods-payment-strategy';
-export { WithPayPalCommerceAlternativeMethodsPaymentOptions } from './paypal-commerce-alternative-methods/paypal-commerce-alternative-methods-payment-initialize-options';
+export { WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions } from './paypal-commerce-alternative-methods/paypal-commerce-alternative-methods-payment-initialize-options';
 
 /**
  *
