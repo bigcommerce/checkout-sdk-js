@@ -76,6 +76,13 @@ export default interface PayPalCommerceAlternativeMethodsPaymentOptions {
     container: string;
 
     /**
+     * The CSS selector of a container where the alternative payment methods widget's legal text should be inserted into.
+     * It's necessary to specify this parameter when using Alternative Payment Methods Pay Upon Invoice with Ratepay.
+     * Without it Alternative Payment Methods Pay Upon Invoice with Ratepay will not work.
+     */
+    apmLegalTextContainer?: string;
+
+    /**
      * The CSS selector of a container where the alternative payment methods fields widget should be inserted into.
      * It's necessary to specify this parameter when using Alternative Payment Methods.
      * Without it alternative payment methods will not work.

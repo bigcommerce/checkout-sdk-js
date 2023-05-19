@@ -36,6 +36,7 @@ export interface PayPalSDK {
     };
     Buttons(options: PayPalCommerceButtonsOptions): PayPalCommerceButtons;
     PaymentFields(options: PayPalCommercePaymentFieldsOptions): PayPalCommercePaymentFields;
+    Legal(options: PayPalCommerceLegalOptions): PayPalCommerceLegal;
     Messages(options: PayPalCommerceMessagesOptions): PayPalCommerceMessages;
 }
 
@@ -59,7 +60,7 @@ export enum PayPalCommerceIntent {
 }
 
 export type ComponentsScriptType = Array<
-    'buttons' | 'funding-eligibility' | 'hosted-fields' | 'messages' | 'payment-fields'
+    'buttons' | 'funding-eligibility' | 'hosted-fields' | 'legal' | 'messages' | 'payment-fields'
 >;
 
 export interface PayPalCommerceHostWindow extends Window {
@@ -307,6 +308,19 @@ export interface PayPalButtonStyleOptions {
 
 /**
  *
+ * PayPal Commerce Legal
+ *
+ */
+export interface PayPalCommerceLegalOptions {
+    fundingSource: string;
+}
+
+export interface PayPalCommerceLegal {
+    render(id: string): void;
+}
+
+/**
+ *
  * PayPal Commerce Payment fields
  *
  */
@@ -322,6 +336,9 @@ export interface PayPalCommercePaymentFieldsOptions {
             value?: string;
         };
         email?: {
+            value?: string;
+        };
+        birthDate?: {
             value?: string;
         };
     };
@@ -392,6 +409,7 @@ export interface PayPalUpdateOrderRequestBody {
 
 export interface PayPalCreateOrderRequestBody extends HostedInstrument, VaultedInstrument {
     cartId: string;
+    clientMetadataId?: string; // this param is used for PUI RetePay APM implementation
 }
 
 export enum PayPalOrderStatus {
