@@ -1,14 +1,18 @@
 import {
     InvalidArgumentError,
+    isVaultedInstrument,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
+    OrderPaymentRequestBody,
     OrderRequestBody,
+    Payment,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
+    PaymentMethod,
     PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
@@ -25,6 +29,7 @@ import { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-payp
 export default class BraintreePaypalAchPaymentStrategy implements PaymentStrategy {
     private usBankAccount?: BraintreeBankAccount;
     private getMandateText?: () => string;
+    private paymentMethod?: PaymentMethod;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -48,14 +53,14 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
 
         const state = this.paymentIntegrationService.getState();
 
-        const paymentMethod = state.getPaymentMethodOrThrow(options.methodId);
+        this.paymentMethod = state.getPaymentMethodOrThrow(options.methodId);
 
-        if (!paymentMethod.clientToken) {
+        if (!this.paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         try {
-            this.braintreeIntegrationService.initialize(paymentMethod.clientToken);
+            this.braintreeIntegrationService.initialize(this.paymentMethod.clientToken);
             this.usBankAccount = await this.braintreeIntegrationService.getUsBankAccount();
         } catch (error) {
             this.handleError(error);
@@ -69,7 +74,103 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const { paymentData } = payment;
+        if (!this.paymentMethod) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        try {
+            const nonce = await this.tokenizePayment(payment);
+            const submitPaymentPayload = await this.preparePaymentData(nonce, payment);
+
+            await this.paymentIntegrationService.submitOrder(order, options);
+            await this.paymentIntegrationService.submitPayment(submitPaymentPayload);
+        } catch (error) {
+            this.handleError(error);
+        }
+    }
+
+    finalize(): Promise<void> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
+    }
+
+    async deinitialize(): Promise<void> {
+        this.getMandateText = undefined;
+
+        return Promise.resolve();
+    }
+
+    private async preparePaymentData(
+        nonce: string | null,
+        payment: OrderPaymentRequestBody,
+    ): Promise<Payment> {
+        const { paymentData = {} } = payment;
+
+        if (!nonce) {
+            if (!isVaultedInstrument(paymentData)) {
+                throw new PaymentArgumentInvalidError(['payment.paymentData']);
+            }
+
+            return {
+                methodId: payment.methodId,
+                paymentData: {
+                    instrumentId: paymentData.instrumentId,
+                },
+            };
+        }
+
+        if (!isUsBankAccountInstrumentLike(paymentData)) {
+            throw new PaymentArgumentInvalidError(['payment.paymentData']);
+        }
+
+        const sessionId = await this.braintreeIntegrationService.getSessionId();
+
+        const state = this.paymentIntegrationService.getState();
+
+        const { email } = state.getCheckoutOrThrow().billingAddress || { email: null };
+
+        const { shouldSaveInstrument, shouldSetAsDefaultInstrument, routingNumber, accountNumber } =
+            paymentData;
+
+        const paymentPayload = {
+            formattedPayload: {
+                vault_payment_instrument: shouldSaveInstrument || null,
+                set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
+                device_info: sessionId || null,
+                ach_account: {
+                    routing_number: routingNumber,
+                    last4: accountNumber.substr(-4),
+                    token: nonce,
+                    email: email || null,
+                },
+            },
+        };
+
+        return {
+            methodId: payment.methodId,
+            paymentData: paymentPayload,
+        };
+    }
+
+    private async tokenizePayment(payment: OrderPaymentRequestBody) {
+        const { paymentData = {} } = payment;
+
+        if (isVaultedInstrument(paymentData)) {
+            if (!this.paymentMethod) {
+                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            }
+
+            const {
+                config: { isVaultingEnabled },
+            } = this.paymentMethod;
+
+            if (!isVaultingEnabled) {
+                throw new InvalidArgumentError(
+                    'Vaulting is disabled but a vaulted instrument was being used for this transaction',
+                );
+            }
+
+            return null;
+        }
 
         if (!isUsBankAccountInstrumentLike(paymentData)) {
             throw new PaymentArgumentInvalidError(['payment.paymentData']);
@@ -93,42 +194,10 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
                 mandateText,
             });
 
-            const sessionId = await this.braintreeIntegrationService.getSessionId();
-
-            const state = this.paymentIntegrationService.getState();
-
-            const { email } = state.getCheckoutOrThrow().billingAddress || { email: null };
-
-            const paymentPayload = {
-                formattedPayload: {
-                    vault_payment_instrument: false,
-                    set_as_default_stored_instrument: null,
-                    device_info: sessionId || null,
-                    us_bank_account: {
-                        token: nonce,
-                        email: email || null,
-                    },
-                },
-            };
-
-            await this.paymentIntegrationService.submitOrder(order, options);
-            await this.paymentIntegrationService.submitPayment({
-                methodId: payment.methodId,
-                paymentData: paymentPayload,
-            });
+            return nonce;
         } catch (error) {
             this.handleError(error);
         }
-    }
-
-    finalize(): Promise<void> {
-        return Promise.reject(new OrderFinalizationNotRequiredError());
-    }
-
-    async deinitialize(): Promise<void> {
-        this.getMandateText = undefined;
-
-        return Promise.resolve();
     }
 
     private getBankDetails(paymentData: WithBankAccountInstrument): BankAccountSuccessPayload {
