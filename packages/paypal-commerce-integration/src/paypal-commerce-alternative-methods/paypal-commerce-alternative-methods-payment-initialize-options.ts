@@ -116,7 +116,7 @@ export default interface PayPalCommerceAlternativeMethodsPaymentOptions {
     submitForm(): void;
 }
 
-export interface WithPayPalCommerceAlternativeMethodsPaymentOptions {
+export interface WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions {
     paypalcommerce?: PayPalCommerceAlternativeMethodsPaymentOptions; // FIXME: this option is deprecated
     paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsPaymentOptions;
 }
