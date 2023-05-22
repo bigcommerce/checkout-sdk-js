@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.381.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.381.1...v1.381.2) (2023-05-22)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-0000 fixed the issue with PPCP APMs interfaces generation by updating names of the interfaces ([#1985](https://github.com/bigcommerce/checkout-sdk-js/issues/1985)) ([17854d4](https://github.com/bigcommerce/checkout-sdk-js/commit/17854d47200282eecfdf64fc891578841e658fec))
+
 ### [1.381.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.381.0...v1.381.1) (2023-05-18)
 
 

@@ -469,7 +469,7 @@ declare class CheckoutButtonErrorSelector {
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -657,6 +657,25 @@ declare interface PayPalButtonStyleOptions {
  */
 declare interface PayPalBuyNowInitializeOptions {
     getBuyNowCartRequestBody(): BuyNowCartRequestBody_2;
+}
+
+declare interface PayPalCommerceAlternativeMethodsButtonOptions {
+    /**
+     * Alternative payment method id what used for initialization PayPal button as funding source.
+     */
+    apm: string;
+    /**
+     * The options that required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PayPalButtonStyleOptions;
 }
 
 /**
@@ -869,6 +888,10 @@ declare interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
+}
+
+declare interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {
+    paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsButtonOptions;
 }
 
 declare interface WithPayPalCommerceButtonInitializeOptions {
