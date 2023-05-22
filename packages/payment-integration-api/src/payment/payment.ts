@@ -84,6 +84,9 @@ export interface WithBankAccountInstrument {
     countryCode: string;
     postalCode: string;
     stateOrProvinceCode: string;
+    shouldSaveInstrument?: boolean;
+    shouldSetAsDefaultInstrument?: boolean;
+    instrumentId?: string;
 }
 
 export interface WithDocumentInstrument {
