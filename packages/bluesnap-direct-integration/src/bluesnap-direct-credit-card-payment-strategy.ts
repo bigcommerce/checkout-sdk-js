@@ -3,6 +3,7 @@ import {
     guard,
     InvalidArgumentError,
     isHostedInstrumentLike,
+    isVaultedInstrument,
     MissingDataError,
     MissingDataErrorType,
     OrderFinalizationNotRequiredError,
@@ -30,7 +31,7 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
     ): Promise<void> {
         const { methodId, gatewayId, creditCard } = options;
 
-        if (!gatewayId || !creditCard || !isHostedCardFieldOptionsMap(creditCard.form.fields)) {
+        if (!gatewayId || !creditCard) {
             throw new InvalidArgumentError();
         }
 
@@ -45,17 +46,47 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
 
         this._paymentFieldsToken = clientToken;
 
-        await this._blueSnapDirectHostedForm.initialize(testMode);
-        await this._blueSnapDirectHostedForm.attach(
-            this._getPaymentFieldsToken(),
-            creditCard,
-            is3dsEnabled,
-        );
+        if (isHostedCardFieldOptionsMap(creditCard.form.fields)) {
+            await this._blueSnapDirectHostedForm.initialize(testMode);
+            await this._blueSnapDirectHostedForm.attach(
+                this._getPaymentFieldsToken(),
+                creditCard,
+                is3dsEnabled,
+            );
+        }
     }
 
     async execute(payload: OrderRequestBody): Promise<void> {
         if (!payload.payment) {
             throw new PaymentArgumentInvalidError(['payment']);
+        }
+
+        const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = isHostedInstrumentLike(
+            payload.payment.paymentData,
+        )
+            ? payload.payment.paymentData
+            : { shouldSaveInstrument: false, shouldSetAsDefaultInstrument: false };
+
+        await this._paymentIntegrationService.submitOrder();
+
+        if (
+            isHostedInstrumentLike(payload.payment.paymentData) &&
+            isVaultedInstrument(payload.payment.paymentData) &&
+            payload.payment.paymentData.instrumentId
+        ) {
+            await this._paymentIntegrationService.submitPayment({
+                ...payload.payment,
+                paymentData: {
+                    formattedPayload: {
+                        bigpay_token: {
+                            token: payload.payment.paymentData.instrumentId,
+                        },
+                        set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
+                    },
+                },
+            });
+
+            return;
         }
 
         const pfToken = this._getPaymentFieldsToken();
@@ -68,13 +99,6 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
             .validate()
             .submit(is3dsEnabled ? this._getBlueSnapDirectThreeDSecureData() : undefined);
 
-        const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = isHostedInstrumentLike(
-            payload.payment.paymentData,
-        )
-            ? payload.payment.paymentData
-            : { shouldSaveInstrument: false, shouldSetAsDefaultInstrument: false };
-
-        await this._paymentIntegrationService.submitOrder();
         await this._paymentIntegrationService.submitPayment({
             ...payload.payment,
             paymentData: {

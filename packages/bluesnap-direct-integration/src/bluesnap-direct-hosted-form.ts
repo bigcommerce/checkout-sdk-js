@@ -134,7 +134,9 @@ export default class BlueSnapDirectHostedForm {
     }
 
     detach(): void {
-        this._nameOnCardInput.detach();
+        if (this._blueSnapSdk) {
+            this._nameOnCardInput.detach();
+        }
     }
 
     private _isBlueSnapDirectCallbackError(data: CallbackResults): data is CallbackError {
