@@ -1,4 +1,9 @@
-export { default as PaymentInstrument, AccountInstrument, CardInstrument } from './instrument';
+export {
+    default as PaymentInstrument,
+    AccountInstrument,
+    CardInstrument,
+    BraintreeAchInstrument,
+} from './instrument';
 export { default as InstrumentActionCreator } from './instrument-action-creator';
 export { default as InstrumentRequestSender } from './instrument-request-sender';
 export {
