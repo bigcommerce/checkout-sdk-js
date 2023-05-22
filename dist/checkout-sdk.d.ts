@@ -1470,6 +1470,13 @@ declare interface BoltPaymentInitializeOptions {
     onPaymentSelect?(hasBoltAccount: boolean): void;
 }
 
+declare interface BraintreeAchInstrument extends BaseInstrument {
+    issuer: string;
+    accountNumber: string;
+    type: 'bank';
+    method: 'ach';
+}
+
 declare interface BraintreeError extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
@@ -6610,7 +6617,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
 
 declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
-declare type PaymentInstrument = CardInstrument | AccountInstrument;
+declare type PaymentInstrument = CardInstrument | AccountInstrument | BraintreeAchInstrument;
 
 declare interface PaymentMethod<T = any> {
     id: string;

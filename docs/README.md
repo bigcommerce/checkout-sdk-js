@@ -111,6 +111,7 @@
 - [BoltBuyNowInitializeOptions](interfaces/BoltBuyNowInitializeOptions.md)
 - [BoltCustomerInitializeOptions](interfaces/BoltCustomerInitializeOptions.md)
 - [BoltPaymentInitializeOptions](interfaces/BoltPaymentInitializeOptions.md)
+- [BraintreeAchInstrument](interfaces/BraintreeAchInstrument.md)
 - [BraintreeError](interfaces/BraintreeError.md)
 - [BraintreeError_2](interfaces/BraintreeError_2.md)
 - [BraintreeFormFieldCardTypeChangeEventData](interfaces/BraintreeFormFieldCardTypeChangeEventData.md)
@@ -726,7 +727,7 @@ ___
 
 ### PaymentInstrument
 
-Ƭ **PaymentInstrument**: [`CardInstrument`](interfaces/CardInstrument.md) \| [`AccountInstrument`](README.md#accountinstrument)
+Ƭ **PaymentInstrument**: [`CardInstrument`](interfaces/CardInstrument.md) \| [`AccountInstrument`](README.md#accountinstrument) \| [`BraintreeAchInstrument`](interfaces/BraintreeAchInstrument.md)
 
 ___
 
