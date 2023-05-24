@@ -19,6 +19,7 @@ export function getStripeUPEJsMock(): StripeUPEClient {
         })),
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
+        retrievePaymentIntent: jest.fn(),
     };
 }
 
@@ -37,6 +38,7 @@ export function getFailingStripeUPEJsMock(): StripeUPEClient {
         })),
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
+        retrievePaymentIntent: jest.fn(),
     };
 }
 
@@ -115,6 +117,14 @@ export function getOrderRequestBodyVaultedCC(): OrderRequestBody {
 }
 
 export function getConfirmPaymentResponse(): unknown {
+    return {
+        paymentIntent: {
+            id: 'pi_1234',
+        },
+    };
+}
+
+export function getRetrievePaymentIntentResponse(): unknown {
     return {
         paymentIntent: {
             id: 'pi_1234',

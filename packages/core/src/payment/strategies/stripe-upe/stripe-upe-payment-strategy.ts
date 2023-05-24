@@ -472,7 +472,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 try {
                     result = await this._stripeUPEClient.confirmPayment(stripePaymentData);
                 } catch (error) {
-                    catchedConfirmError = true;
+                    try {
+                        result = await this._stripeUPEClient.retrievePaymentIntent(token);
+                    } catch (error) {
+                        catchedConfirmError = true;
+                    }
                 }
 
                 if (result?.error) {
@@ -533,7 +537,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             try {
                 result = await this._stripeUPEClient.confirmCardPayment(clientSecret);
             } catch (error) {
-                catchedConfirmError = true;
+                try {
+                    result = await this._stripeUPEClient.retrievePaymentIntent(clientSecret);
+                } catch (error) {
+                    catchedConfirmError = true;
+                }
             }
 
             if (result?.error) {

@@ -71,6 +71,7 @@ import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import {
     getConfirmPaymentResponse,
     getFailingStripeUPEJsMock,
+    getRetrievePaymentIntentResponse,
     getStripeUPEInitializeOptionsMock,
     getStripeUPEJsMock,
     getStripeUPEOrderRequestBodyMock,
@@ -910,6 +911,10 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(new Error('Error with 3ds')),
                         );
 
+                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
+                            Promise.resolve(getRetrievePaymentIntentResponse()),
+                        );
+
                         await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
                         expect(orderActionCreator.submitOrder).toHaveBeenCalled();
@@ -1154,6 +1159,10 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(new Error('Error with 3ds')),
                         );
 
+                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
+                            Promise.resolve(getRetrievePaymentIntentResponse()),
+                        );
+
                         await strategy.execute(getStripeUPEOrderRequestBodyVaultMock());
 
                         expect(orderActionCreator.submitOrder).toHaveBeenCalled();
@@ -1172,12 +1181,13 @@ describe('StripeUPEPaymentStrategy', () => {
                             expect.objectContaining({
                                 paymentData: expect.objectContaining({
                                     formattedPayload: expect.objectContaining({
-                                        credit_card_token: { token: 'token' },
+                                        credit_card_token: { token: 'pi_1234' },
                                     }),
                                 }),
                             }),
                         );
                         expect(stripeUPEJsMock.confirmCardPayment).toHaveBeenCalled();
+                        expect(stripeUPEJsMock.retrievePaymentIntent).toHaveBeenCalled();
                     });
                 });
 

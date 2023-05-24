@@ -322,21 +322,27 @@ export interface StripeUPEClient {
      * When called, confirmPayment will attempt to complete any required actions,
      * such as authenticating your user by displaying a 3DS dialog or redirecting them to a bank authorization page.
      */
-    confirmPayment(
-        options: StripeConfirmPaymentData,
-    ): Promise<{ paymentIntent?: PaymentIntent; error?: StripeError }>;
+    confirmPayment(options: StripeConfirmPaymentData): Promise<StripeUpeResult>;
 
     /**
      * When called, it will confirm the PaymentIntent with data you provide and carry out 3DS or other next actions if they are required.
      */
-    confirmCardPayment(
-        clientSecret: string,
-    ): Promise<{ paymentIntent?: PaymentIntent; error?: StripeError }>;
+    confirmCardPayment(clientSecret: string): Promise<StripeUpeResult>;
+
+    /**
+     * Retrieve a PaymentIntent using its client secret.
+     */
+    retrievePaymentIntent(clientSecret: string): Promise<StripeUpeResult>;
 
     /**
      * Create an `Elements` instance, which manages a group of elements.
      */
     elements(options: StripeElementsOptions): StripeElements;
+}
+
+interface StripeUpeResult {
+    paymentIntent?: PaymentIntent;
+    error?: StripeError;
 }
 
 export interface StripeHostWindow extends Window {
