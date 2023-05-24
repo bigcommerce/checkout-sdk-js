@@ -1,4 +1,4 @@
-type PaymentInstrument = CardInstrument | AccountInstrument | BraintreeAchInstrument;
+type PaymentInstrument = CardInstrument | AccountInstrument;
 
 export default PaymentInstrument;
 
@@ -27,16 +27,16 @@ export interface CardInstrument extends BaseInstrument {
 }
 
 interface BaseAccountInstrument extends BaseInstrument {
-    externalId: string;
     method: string;
     type: 'account' | 'bank';
 }
 
 export interface PayPalInstrument extends BaseAccountInstrument {
+    externalId: string;
     method: 'paypal';
 }
 
-export interface BraintreeAchInstrument extends BaseInstrument {
+export interface BraintreeAchInstrument extends BaseAccountInstrument {
     issuer: string;
     accountNumber: string;
     type: 'bank';
@@ -51,7 +51,7 @@ export interface BankInstrument extends BaseAccountInstrument {
     type: 'bank';
 }
 
-export type AccountInstrument = PayPalInstrument | BankInstrument;
+export type AccountInstrument = PayPalInstrument | BankInstrument | BraintreeAchInstrument;
 
 export interface VaultAccessToken {
     vaultAccessToken: string;

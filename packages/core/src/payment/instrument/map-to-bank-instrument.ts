@@ -6,7 +6,6 @@ export function mapToBankInstrument(instrument: BankInternalInstrument): BankIns
         bigpayToken: instrument.bigpay_token,
         defaultInstrument: instrument.default_instrument,
         provider: instrument.provider,
-        externalId: instrument.external_id,
         trustedShippingAddress: instrument.trusted_shipping_address,
         accountNumber: instrument.account_number,
         issuer: instrument.issuer,
