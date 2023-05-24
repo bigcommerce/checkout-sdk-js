@@ -15,14 +15,7 @@ import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integrati
 import { WithBankAccountInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { createTimeout } from '@bigcommerce/request-sender';
 
-declare type AccountInstrument = PayPalInstrument | BankInstrument | AchInstrument;
-
-declare interface AchInstrument extends BaseAccountInstrument {
-    issuer: string;
-    accountNumber: string;
-    type: 'bank';
-    method: 'ach';
-}
+declare type AccountInstrument = PayPalInstrument | BankInstrument;
 
 declare interface Address extends AddressRequestBody {
     country: string;
@@ -893,6 +886,7 @@ declare interface Banner {
 }
 
 declare interface BaseAccountInstrument extends BaseInstrument {
+    externalId: string;
     method: string;
     type: 'account' | 'bank';
 }
@@ -2195,7 +2189,7 @@ declare class CheckoutButtonErrorSelector {
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -6035,135 +6029,6 @@ declare interface PayPalBuyNowInitializeOptions {
     getBuyNowCartRequestBody(): BuyNowCartRequestBody_2;
 }
 
-declare interface PayPalCommerceAlternativeMethodsButtonOptions {
-    /**
-     * Alternative payment method id what used for initialization PayPal button as funding source.
-     */
-    apm: string;
-    /**
-     * The options that required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: PayPalButtonStyleOptions;
-}
-
-/**
- * A set of options that are required to initialize the PayPal Commerce payment
- * method for presenting its PayPal button.
- *
- * Please note that the minimum version of checkout-sdk is 1.100
- *
- * Also, PayPal (also known as PayPal Commerce Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
- * ```html
- * <!-- This is where the PayPal button will be inserted -->
- * <div id="container"></div>
- * <!-- This is where the PayPal alternative payment methods fields will be inserted.  -->
- * <div id="apm-fields-container"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     gatewayId: 'paypalcommercealternativemethods',
- *     methodId: 'sepa',
- *     paypalcommercealternativemethods: {
- *         container: '#container',
- *         apmFieldsContainer: '#apm-fields-container',
- *         apmFieldsStyles: {
- *             base: {
- *                 backgroundColor: 'transparent',
- *             },
- *             input: {
- *                 backgroundColor: 'white',
- *                 fontSize: '1rem',
- *                 color: '#333',
- *                 borderColor: '#d9d9d9',
- *                 borderRadius: '4px',
- *                 borderWidth: '1px',
- *                 padding: '1rem',
- *             },
- *             invalid: {
- *                 color: '#ed6a6a',
- *             },
- *             active: {
- *                 color: '#4496f6',
- *             },
- *         },
- *         clientId: 'YOUR_CLIENT_ID',
- * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
- *         submitForm: () => {
- *         // Example function
- *             this.submitOrder(
- *                {
- *                   payment: { methodId: 'paypalcommercealternativemethods', }
- *               }
- *            );
- *         },
- * // Callback is used to define the state of the payment form, validate if it is applicable for submit.
- *         onValidate: (resolve, reject) => {
- *         // Example function
- *             const isValid = this.validatePaymentForm();
- *             if (isValid) {
- *                 return resolve();
- *             }
- *             return reject();
- *         },
- * // Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular PayPal method. This callback can be used to hide the standard submit button.
- *         onRenderButton: () => {
- *         // Example function
- *             this.hidePaymentSubmitButton();
- *         }
- *     },
- * });
- * ```
- */
-declare interface PayPalCommerceAlternativeMethodsPaymentOptions {
-    /**
-     * The CSS selector of a container where the payment widget should be inserted into.
-     */
-    container: string;
-    /**
-     * The CSS selector of a container where the alternative payment methods fields widget should be inserted into.
-     * It's necessary to specify this parameter when using Alternative Payment Methods.
-     * Without it alternative payment methods will not work.
-     */
-    apmFieldsContainer?: string;
-    /**
-     * Object with styles to customize alternative payment methods fields.
-     */
-    apmFieldsStyles?: PayPalCommerceFieldsStyleOptions;
-    /**
-     * A callback for displaying error popup. This callback requires error object as parameter.
-     */
-    onError?(error: Error): void;
-    /**
-     * A callback right before render Smart Payment Button that gets called when
-     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
-     */
-    onRenderButton?(): void;
-    /**
-     * A callback that gets called when a buyer click on Smart Payment Button
-     * and should validate payment form.
-     *
-     * @param resolve - A function, that gets called if form is valid.
-     * @param reject - A function, that gets called if form is not valid.
-     *
-     * @returns reject() or resolve()
-     */
-    onValidate(resolve: () => void, reject: () => void): Promise<void>;
-    /**
-     * A callback for submitting payment form that gets called
-     * when buyer approved PayPal account.
-     */
-    submitForm(): void;
-}
-
 /**
  * A set of options that are required to initialize PayPalCommerce in cart or product details page.
  *
@@ -6408,29 +6273,6 @@ declare interface PayPalCommerceCustomerInitializeOptions {
     onComplete?(): void;
 }
 
-declare interface PayPalCommerceFieldsStyleOptions {
-    variables?: {
-        fontFamily?: string;
-        fontSizeBase?: string;
-        fontSizeSm?: string;
-        fontSizeM?: string;
-        fontSizeLg?: string;
-        textColor?: string;
-        colorTextPlaceholder?: string;
-        colorBackground?: string;
-        colorInfo?: string;
-        colorDanger?: string;
-        borderRadius?: string;
-        borderColor?: string;
-        borderWidth?: string;
-        borderFocusColor?: string;
-        spacingUnit?: string;
-    };
-    rules?: {
-        [key: string]: any;
-    };
-}
-
 /**
  * A set of options that are required to initialize the PayPal Commerce payment
  * method for presenting its PayPal button.
@@ -6611,11 +6453,10 @@ declare interface PayPalCommerceVenmoPaymentInitializeOptions {
 }
 
 declare interface PayPalInstrument extends BaseAccountInstrument {
-    externalId: string;
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -7787,6 +7628,10 @@ declare interface WithBoltPaymentInitializeOptions {
     bolt?: BoltPaymentInitializeOptions;
 }
 
+declare interface WithBraintreeLocalMethodsPaymentInitializeOptions {
+    braintrelocalmethods?: any;
+}
+
 declare interface WithBraintreePaypalAchPaymentInitializeOptions {
     /**
      * The options that are required to initialize the Braintree ACH payment
@@ -7837,15 +7682,6 @@ declare interface WithDocumentInstrument {
 declare interface WithMollieIssuerInstrument {
     issuer: string;
     shopper_locale: string;
-}
-
-declare interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {
-    paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsButtonOptions;
-}
-
-declare interface WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions {
-    paypalcommerce?: PayPalCommerceAlternativeMethodsPaymentOptions;
-    paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsPaymentOptions;
 }
 
 declare interface WithPayPalCommerceButtonInitializeOptions {

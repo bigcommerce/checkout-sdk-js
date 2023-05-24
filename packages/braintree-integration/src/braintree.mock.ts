@@ -151,6 +151,28 @@ export function getBraintreeAch(): PaymentMethod {
     };
 }
 
+export function getBraintreeLocalMethodsObject() {
+    return {
+        container: '#container',
+        onRenderButton: jest.fn(),
+        submitForm: jest.fn(),
+        onValidate: jest.fn(),
+        onError: jest.fn(),
+    };
+}
+
+export function getBraintreeLocalMethods() {
+    return {
+        id: 'braintreelocalmethods',
+        logoUrl: '',
+        method: 'giropay',
+        supportedCards: [],
+        config: {
+            displayName: 'Giropay',
+        },
+        type: 'PAYMENT_TYPE_API',
+    };
+}
 export function getBraintreeAddress(): BraintreeShippingAddressOverride {
     return {
         line1: '12345 Testing Way',

@@ -1,4 +1,8 @@
 import { PaypalAuthorizeData, PaypalButtonOptions, PaypalButtonRender, PaypalSDK } from './paypal';
+import {
+    BraintreeLocalMethods,
+    LocalPaymentInstance
+} from "./braintree-local-payment-methods/braintree-local-methods-options";
 
 /**
  *
@@ -46,7 +50,18 @@ export interface BraintreeSDK {
     venmo?: BraintreeVenmoCheckoutCreator;
     // visaCheckout?: BraintreeVisaCheckoutCreator; // TODO: should be added in future migration
     usBankAccount?: BraintreeBankAccountCreator;
-    localPayment?: any; // TODO: FIX
+    localPayment?: BraintreeLocalPayment; // TODO: FIX
+}
+
+export interface BraintreeLocalPayment {
+    create(config: BraintreeLocalPaymentCreateConfig, callback: BraintreeLocalPaymentCallback): BraintreeLocalMethods;
+}
+
+export type BraintreeLocalPaymentCallback = (localPaymentError: any, localPaymentInstance: LocalPaymentInstance) => void;
+
+export interface BraintreeLocalPaymentCreateConfig {
+    client: BraintreeClient;
+    merchantAccountId: string;
 }
 
 export interface BraintreeInitializationData {

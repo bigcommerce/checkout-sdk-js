@@ -44,7 +44,7 @@ export default class BraintreeScriptLoader {
 
     async loadBraintreeLocalMethods() {
         await this.scriptLoader.loadScript(
-            `js.braintreegateway.com/web/${VERSION}/js/local-payment.min.js`,
+            `//js.braintreegateway.com/web/${VERSION}/js/local-payment.min.js`,
         );
 
         if (!this.braintreeHostWindow.braintree?.localPayment) {
