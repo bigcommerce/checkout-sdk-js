@@ -6456,7 +6456,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -7626,6 +7626,10 @@ declare interface WithBoltPaymentInitializeOptions {
      * method. They can be omitted unless you need to support Bolt.
      */
     bolt?: BoltPaymentInitializeOptions;
+}
+
+declare interface WithBraintreeLocalMethodsPaymentInitializeOptions {
+    braintrelocalmethods?: any;
 }
 
 declare interface WithBraintreePaypalAchPaymentInitializeOptions {

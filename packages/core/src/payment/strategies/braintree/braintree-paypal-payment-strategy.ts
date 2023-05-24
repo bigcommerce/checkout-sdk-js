@@ -40,7 +40,6 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintree: braintreeOptions, methodId } = options;
-        console.log('INIT111111');
         if (!this._paymentMethod || !this._paymentMethod.nonce) {
             this._paymentMethod = this._store
                 .getState()
@@ -85,8 +84,10 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                     this._store.dispatch(this._orderActionCreator.submitOrder(order, options)),
                 ]),
             )
-            .then(([payment]) =>
-                this._store.dispatch(this._paymentActionCreator.submitPayment(payment)),
+            .then(([payment]) => {
+                console.log('%c PAYMENT', 'color: magenta', payment);
+                   return  this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
+                }
             )
             .catch((error: Error) => this._handleError(error));
     }

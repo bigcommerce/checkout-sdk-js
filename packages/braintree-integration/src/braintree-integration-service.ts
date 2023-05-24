@@ -21,6 +21,11 @@ import {
 import BraintreeScriptLoader from './braintree-script-loader';
 import isBraintreeError from './is-braintree-error';
 import { PAYPAL_COMPONENTS } from './paypal';
+import {
+    BraintreeLocalMethods,
+    GetLocalPaymentInstance,
+    LocalPaymentInstance
+} from './braintree-local-payment-methods/braintree-local-methods-options';
 
 export default class BraintreeIntegrationService {
     private client?: Promise<BraintreeClient>;
@@ -31,7 +36,7 @@ export default class BraintreeIntegrationService {
     } = {};
     private paypalCheckout?: BraintreePaypalCheckout;
     private usBankAccount?: Promise<BraintreeBankAccount>;
-    private braintreeLocalMethods?: any; //TODO: FIX
+    private braintreeLocalMethods?: BraintreeLocalMethods;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
@@ -97,20 +102,22 @@ export default class BraintreeIntegrationService {
     }
 
 
-    async loadBraintreeLocalMethods(callback: any) {
+    async loadBraintreeLocalMethods(getLocalPaymentInstance: GetLocalPaymentInstance) {
         const client = await this.getClient();
         const braintreeLocalMethods = await this.braintreeScriptLoader.loadBraintreeLocalMethods();
 
         if (!this.braintreeLocalMethods) {
             this.braintreeLocalMethods = braintreeLocalMethods.create({
                 client,
-            }, (localPaymentErr: any, localPaymentInstance: any) => {
+                merchantAccountId: 'EUR_local', // TODO: Fix
+            }, (localPaymentErr: any, localPaymentInstance: LocalPaymentInstance) => {
                 if (localPaymentErr) {
                     throw new Error(localPaymentErr);
                 }
 
-                callback(localPaymentInstance);
-
+                if (localPaymentInstance) {
+                getLocalPaymentInstance(localPaymentInstance);
+                    }
             });
         }
 
