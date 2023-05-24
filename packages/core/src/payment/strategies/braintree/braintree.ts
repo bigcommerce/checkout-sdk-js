@@ -280,6 +280,7 @@ export interface BraintreeHostedFieldOption {
     prefill?: string;
     rejectUnsupportedCards?: boolean;
     supportedCardBrands?: { [key: string]: boolean };
+    internalLabel?: string;
 }
 
 export interface BraintreeHostedFieldsState {
