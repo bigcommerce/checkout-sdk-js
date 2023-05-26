@@ -80,8 +80,6 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             );
         }
 
-        await this.paymentIntegrationService.loadPaymentMethod(gatewayId);
-
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
             methodId,
