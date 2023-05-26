@@ -14,8 +14,6 @@ import {BraintreeHostWindow} from "../braintree";
 import BraintreeIntegrationService from "../braintree-integration-service";
 import BraintreeScriptLoader from "../braintree-script-loader";
 import {getScriptLoader} from "@bigcommerce/script-loader";
-import {LoadingIndicator} from "@bigcommerce/checkout-sdk/ui";
-
 
 const createBraintreeLocalMethodsPaymentStrategy: PaymentStrategyFactory<
     BraintreeLocalMethodsPaymentStrategy
@@ -30,7 +28,6 @@ const createBraintreeLocalMethodsPaymentStrategy: PaymentStrategyFactory<
     return new BraintreeLocalMethodsPaymentStrategy(
         paymentIntegrationService,
         braintreeIntegrationService,
-        new LoadingIndicator({ styles: { backgroundColor: 'black' } }),
     );
 }
 

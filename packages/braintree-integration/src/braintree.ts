@@ -50,10 +50,11 @@ export interface BraintreeSDK {
     venmo?: BraintreeVenmoCheckoutCreator;
     // visaCheckout?: BraintreeVisaCheckoutCreator; // TODO: should be added in future migration
     usBankAccount?: BraintreeBankAccountCreator;
-    localPayment?: BraintreeLocalPayment; // TODO: FIX
+    localPayment?: BraintreeLocalPayment;
 }
 
 export interface BraintreeLocalPayment {
+    VERSION: string;
     create(config: BraintreeLocalPaymentCreateConfig, callback: BraintreeLocalPaymentCallback): BraintreeLocalMethods;
 }
 
