@@ -14,7 +14,6 @@ import BraintreeIntegrationService from '../braintree-integration-service';
 import BraintreeScriptLoader from '../braintree-script-loader';
 import {getBraintreeLocalMethods, getBraintreeLocalMethodsObject} from '../braintree.mock';
 import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-payment-strategy';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 describe('BraintreeLocalMethods', () => {
     let strategy: BraintreeLocalMethodsPaymentStrategy;
@@ -23,7 +22,6 @@ describe('BraintreeLocalMethods', () => {
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
     let paymentMethodMock: PaymentMethod;
-    let loadingIndicator: LoadingIndicator;
 
     const initializationOptions: PaymentInitializeOptions = {
         methodId: 'giropay',
@@ -39,11 +37,9 @@ describe('BraintreeLocalMethods', () => {
             braintreeScriptLoader,
             window,
         );
-        loadingIndicator = new LoadingIndicator();
         strategy = new BraintreeLocalMethodsPaymentStrategy(
             paymentIntegrationService,
             braintreeIntegrationService,
-            loadingIndicator
         );
 
         paymentMethodMock = {
@@ -125,14 +121,6 @@ describe('BraintreeLocalMethods', () => {
             const button =  document.getElementById('giropay');
             expect(button).toBeDefined();
         });
-    });
-
-    describe('#handleClick()', async () => {
-        it('clicks', async () => {
-            await strategy.initialize(initializationOptions);
-            const button =  document.getElementById('giropay');
-        });
-
     });
 
     describe('#execute()', () => {

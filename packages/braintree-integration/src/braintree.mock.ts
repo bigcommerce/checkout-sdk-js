@@ -3,7 +3,7 @@ import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api
 import {
     BraintreeBankAccount,
     BraintreeClient,
-    BraintreeDataCollector,
+    BraintreeDataCollector, BraintreeLocalPayment,
     BraintreeModule,
     BraintreeModuleCreator,
     BraintreePaypalCheckout,
@@ -24,6 +24,13 @@ export function getDataCollectorMock(): BraintreeDataCollector {
         deviceData: getDeviceDataMock(),
         teardown: jest.fn(() => Promise.resolve()),
     };
+}
+
+export function getLocalPaymentMock(): BraintreeLocalPayment {
+    return {
+        VERSION: '3.81.0',
+        create: jest.fn(),
+    }
 }
 
 export function getBankAccountMock(): BraintreeBankAccount {

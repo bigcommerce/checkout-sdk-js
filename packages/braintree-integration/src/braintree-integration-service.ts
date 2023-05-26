@@ -102,14 +102,14 @@ export default class BraintreeIntegrationService {
     }
 
 
-    async loadBraintreeLocalMethods(getLocalPaymentInstance: GetLocalPaymentInstance) {
+    async loadBraintreeLocalMethods(getLocalPaymentInstance: GetLocalPaymentInstance, merchantAccountId: string) {
         const client = await this.getClient();
         const braintreeLocalMethods = await this.braintreeScriptLoader.loadBraintreeLocalMethods();
 
         if (!this.braintreeLocalMethods) {
             this.braintreeLocalMethods = braintreeLocalMethods.create({
                 client,
-                merchantAccountId: 'EUR_local', // TODO: Fix
+                merchantAccountId,
             }, (localPaymentErr: any, localPaymentInstance: LocalPaymentInstance) => {
                 if (localPaymentErr) {
                     throw new Error(localPaymentErr);

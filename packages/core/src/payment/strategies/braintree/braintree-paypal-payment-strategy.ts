@@ -85,7 +85,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 ]),
             )
             .then(([payment]) => {
-                console.log('%c PAYMENT', 'color: magenta', payment);
+
                    return  this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
                 }
             )

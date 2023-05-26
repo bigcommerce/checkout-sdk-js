@@ -32,10 +32,10 @@ export interface BraintreeLocalMethods {
 export interface LocalPaymentInstanceConfig {
     paymentType: string;
     amount: number;
-    fallback: {
-        url: string;
-        buttonText: string;
-    };
+    // fallback: {
+    //     url: string;
+    //     buttonText: string;
+    // };
     currencyCode: string;
     shippingAddressRequired: boolean;
     email: string;
