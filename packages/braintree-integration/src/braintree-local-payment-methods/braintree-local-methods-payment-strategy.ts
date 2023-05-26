@@ -25,7 +25,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
     private orderId?: string;
     private localPaymentInstance?: LocalPaymentInstance;
     private braintreeLocalMethods?: BraintreeLocalMethods;
-    // private nonce?: string;
+    private nonce?: string;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -59,6 +59,8 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
             );
         }
 
+        this.braintreeLocalMethods = braintreelocalmethods;
+
         await this.paymentIntegrationService.loadPaymentMethod(gatewayId);
 
         const state = this.paymentIntegrationService.getState();
@@ -74,6 +76,8 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         } catch (error) {
             throw new Error(error);
         }
+
+        this.renderButton(methodId);
     }
 
     private getLocalPaymentInstance(localPaymentInstance: LocalPaymentInstance) {
@@ -82,12 +86,69 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         }
     }
 
-    private renderButton() {
+    private renderButton(methodId: string) {
+        if (this.braintreeLocalMethods) {
+            const { buttonText, container, classNames, onRenderButton } = this.braintreeLocalMethods;
+            const buttonContainerId = container.split('#')[1];
+            const buttonContainer = document.getElementById(buttonContainerId);
+            const lpmButton = document.createElement('button');
+            lpmButton.setAttribute('class', classNames);
+            lpmButton.setAttribute('id', methodId);
+            lpmButton.innerText = buttonText;
+            lpmButton.addEventListener('click', (e) => this.handleClick(e, methodId))
 
+            if (onRenderButton && typeof onRenderButton === 'function') {
+                onRenderButton();
+            }
+
+            if (buttonContainer) {
+                buttonContainer.innerHTML = '';
+                buttonContainer.append(lpmButton);
+            }
+        }
     }
 
-    private handleClick() {
+    private handleClick(e: Event, methodId: string) {
+        e.preventDefault();
+        const state = this.paymentIntegrationService.getState();
+        const cart = state.getCartOrThrow();
+        const consignments = state.getConsignmentsOrThrow();
+        const { shippingAddress: { firstName, lastName, countryCode} } = consignments[0];
+        const { baseAmount, currency, email } = cart;
+        const isShippingRequired = cart.lineItems.physicalItems.length > 0;
+        const { submitForm } = this.braintreeLocalMethods || {};
 
+        this.localPaymentInstance?.startPayment({
+            paymentType: methodId,
+            amount: baseAmount,
+            fallback: { // see Fallback section for details on these params
+                url: 'https://your-domain.com/page-to-complete-checkout',
+                buttonText: 'Complete Payment'
+            },
+            currencyCode: currency.code,
+            shippingAddressRequired: isShippingRequired,
+            email: email,
+            givenName: firstName,
+            surname: lastName,
+            address: {
+                countryCode: countryCode,
+            },
+            onPaymentStart: (data: onPaymentStartData, start: () => void) => {
+                // Call start to initiate the popup
+                this.orderId = data.paymentId;
+                start();
+            }
+        }, async (startPaymentError: StartPaymentError, payload: LocalPaymentsPayload) => {
+            if (startPaymentError) {
+                this.handleError(startPaymentError);
+            } else {
+                this.nonce = payload.nonce;
+                console.log('%c NONCE', 'color: magenta', payload.nonce);
+                if (submitForm && typeof submitForm === 'function') {
+                    submitForm();
+                }
+            }
+        });
     }
 
     private handleError(error: any) {
@@ -111,65 +172,38 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         const {payment, ...order} = payload;
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
-        const consignments = state.getConsignmentsOrThrow();
-        const { shippingAddress: { firstName, lastName, countryCode} } = consignments[0];
-        const { baseAmount, currency, email } = cart;
         const sessionId = await this.braintreeIntegrationService.getSessionId();
-        const isShippingRequired = cart.lineItems.physicalItems.length > 0;
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        this.localPaymentInstance?.startPayment({
-            paymentType: payment.methodId,
-            amount: baseAmount,
-            currencyCode: currency.code,
-            shippingAddressRequired: isShippingRequired,
-            email: email,
-            givenName: firstName,
-            surname: lastName,
-            address: {
-                countryCode: countryCode,
+        if (!this.orderId) {
+            throw PaymentMethodInvalidError;
+        }
+
+        const paymentData = {
+            formattedPayload: {
+                device_info: sessionId || null,
+                braintree_local_method_account: {
+                    email: cart.email,
+                    token: this.nonce,
+                },
+                vault_payment_instrument: null,
+                set_as_default_stored_instrument: null,
+                local_method_id: payment?.methodId,
             },
-            onPaymentStart: (data: onPaymentStartData, start: () => void) => {
-                // Call start to initiate the popup
-                this.orderId = data.paymentId;
-                start();
-            }
-        }, async (startPaymentError: StartPaymentError, payload: LocalPaymentsPayload) => {
-            if (startPaymentError) {
-                this.handleError(startPaymentError);
-            } else {
+        };
 
-                if (!this.orderId) {
-                    throw PaymentMethodInvalidError;
-                }
+        try {
+            await this.paymentIntegrationService.submitOrder(order, options);
+            await this.paymentIntegrationService.submitPayment({
+                methodId: payment.methodId,
+                paymentData,
+            });
+        } catch (error) {
+            this.handleError(error);
+        }
 
-                // this.nonce = payload.nonce;
-                const paymentData = {
-                    formattedPayload: {
-                        device_info: sessionId || null,
-                        braintree_local_method_account: {
-                            email: cart.email,
-                            token: payload.nonce,
-                        },
-                        vault_payment_instrument: null,
-                        set_as_default_stored_instrument: null,
-                        local_method_id: payment?.methodId,
-                    },
-                };
-
-                try {
-                    await this.paymentIntegrationService.submitOrder(order, options);
-                    await this.paymentIntegrationService.submitPayment({
-                        methodId: payment.methodId,
-                        paymentData,
-                    });
-                } catch (error) {
-                    this.handleError(error);
-                }
-            }
-        });
     }
 }

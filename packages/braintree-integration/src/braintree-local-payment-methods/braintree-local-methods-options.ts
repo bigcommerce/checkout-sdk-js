@@ -8,6 +8,14 @@ export interface BraintreeLocalMethods {
      */
     container: string;
     /**
+     * Text that will be displayed on lpm button
+     */
+    buttonText: string;
+    /**
+     * Css classes of lpm button
+     */
+    classNames: string;
+    /**
      * A callback right before render Smart Payment Button that gets called when
      * This callback can be used to hide the standard submit button.
      */
@@ -32,10 +40,10 @@ export interface BraintreeLocalMethods {
 export interface LocalPaymentInstanceConfig {
     paymentType: string;
     amount: number;
-    // fallback: {
-    //     url: string;
-    //     buttonText: string;
-    // };
+    fallback: {
+        url: string;
+        buttonText: string;
+    };
     currencyCode: string;
     shippingAddressRequired: boolean;
     email: string;
