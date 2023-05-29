@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.381.1-alpha.0e2cc6f9fff9580a2d6e6f88dcd5e2b07ae48866](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.374.6...v1.381.1-alpha.0e2cc6f9fff9580a2d6e6f88dcd5e2b07ae48866) (2023-05-29)
+
+
+### Features
+
+* **payment:** BOLT-458 Move Bolt customer strategy to new Bolt package ([f8508d9](https://github.com/bigcommerce/checkout-sdk-js/commit/f8508d9366714d1b1bc7078335f78d1b4254b0fe))
+* **payment:** BOLT-484 Add styling for Bolt Button on PDP ([7837d94](https://github.com/bigcommerce/checkout-sdk-js/commit/7837d9435dac0c7e0d4d075b7fb0b67477f3027f))
+* **payment:** BOLT-484 Add styling for Bolt Button on PDP ([6ead002](https://github.com/bigcommerce/checkout-sdk-js/commit/6ead002167a27552502ca3001df5437ab6222542))
+* **payment:** INT-7173 BlueSnapDirect: Create payment strategy for ACH/ECP ([756a4c6](https://github.com/bigcommerce/checkout-sdk-js/commit/756a4c6956aac9586e82a0a3bb7c07930c35e44b))
+* **payment:** INT-7516 SquareV2: Throw a `PaymentExecuteError` if tokenization fails ([#1971](https://github.com/bigcommerce/checkout-sdk-js/issues/1971)) ([663f8b7](https://github.com/bigcommerce/checkout-sdk-js/commit/663f8b7bad8d9b7497af5e38853fee44960154e5))
+* **payment:** INT-7557 BlueSnapDirect: Implement 3DS 2 ([#1925](https://github.com/bigcommerce/checkout-sdk-js/issues/1925)) ([6574134](https://github.com/bigcommerce/checkout-sdk-js/commit/6574134019c07124191633adf469859f987a521e))
+* **payment:** INT-7573 Create Access Worldpay GooglePay strategy ([#1966](https://github.com/bigcommerce/checkout-sdk-js/issues/1966)) ([e5134f4](https://github.com/bigcommerce/checkout-sdk-js/commit/e5134f48df85706fa7c7e56f6297c23d803356ef))
+* **payment:** PAYPAL-1713 braintree ach strategy ([#1891](https://github.com/bigcommerce/checkout-sdk-js/issues/1891)) ([9f262be](https://github.com/bigcommerce/checkout-sdk-js/commit/9f262bef7290709c6f522465ab7bca54f9bfe2c8))
+* **payment:** PAYPAL-2013 added enable-funding to properly display paylater button ([#1958](https://github.com/bigcommerce/checkout-sdk-js/issues/1958)) ([ad4d9ee](https://github.com/bigcommerce/checkout-sdk-js/commit/ad4d9ee939bfa72068b9e018435fecfa6a940d56))
+* **payment:** PAYPAL-2449 in progress ([0e2cc6f](https://github.com/bigcommerce/checkout-sdk-js/commit/0e2cc6f9fff9580a2d6e6f88dcd5e2b07ae48866))
+* **payment:** PAYPAL-2449 in progress ([d1ab6e6](https://github.com/bigcommerce/checkout-sdk-js/commit/d1ab6e655402319dd95a70a0dfd91cb5243ec645))
+* **payment:** PAYPAL-2449 in progress ([182d254](https://github.com/bigcommerce/checkout-sdk-js/commit/182d254daf35e2f63919cd0813b2e3d37ea62bc1))
+* **payment:** PAYPAL-2449 in progress ([bc024bb](https://github.com/bigcommerce/checkout-sdk-js/commit/bc024bbab3eda53e58cb19d5b69edf783acc42d4))
+* **payment:** PAYPAL-2449 in progress ([e9b08bc](https://github.com/bigcommerce/checkout-sdk-js/commit/e9b08bc2e9396b5aed8f44c5aac11ce252a165ac))
+* **payment:** PAYPAL-2449 test ([519ade0](https://github.com/bigcommerce/checkout-sdk-js/commit/519ade0847b585e588b99158f0d9d8153c5da5e7))
+* **payment:** PAYPAL-2449 test ([ad82d01](https://github.com/bigcommerce/checkout-sdk-js/commit/ad82d01bc0a63f331031c15bebcfa03b111f56b3))
+* **payment:** PAYPAL-2449 test ([5d2dba4](https://github.com/bigcommerce/checkout-sdk-js/commit/5d2dba4a598bd6bae635546dec7e8dd7950e3eea))
+
+
+### Bug Fixes
+
+* **payment:** BOLT-577 Bolt initialization error on customer step ([404bde5](https://github.com/bigcommerce/checkout-sdk-js/commit/404bde535861fd7d4d6945591e2b07208194d182))
+* **payment:** INT-7173 BlueSnapDirect: Revert [#1917](https://github.com/bigcommerce/checkout-sdk-js/issues/1917) ([b9dd694](https://github.com/bigcommerce/checkout-sdk-js/commit/b9dd6947e899d5a5d563279795450f6969750bb9))
+* **payment:** PAYPAL-2036 added shippingAddressEditable option to Braintree payment configuration ([#1962](https://github.com/bigcommerce/checkout-sdk-js/issues/1962)) ([98c189a](https://github.com/bigcommerce/checkout-sdk-js/commit/98c189a05d1802dd02a75e6751f92bda1a644d57))
+* **payment:** PAYPAL-2370 updated incoming parameters for ACH ([#1973](https://github.com/bigcommerce/checkout-sdk-js/issues/1973)) ([74d17be](https://github.com/bigcommerce/checkout-sdk-js/commit/74d17be3cb24e197a5d1aeedb19add98041ccc19))
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-1895 removed paypal commerce code from core package ([#1960](https://github.com/bigcommerce/checkout-sdk-js/issues/1960)) ([87cfdc4](https://github.com/bigcommerce/checkout-sdk-js/commit/87cfdc4754be9e52fdf06afc7257e3601c3cf664))
+* **payment:** PAYPAL-2365 added PayPalCommerceVenmo payment strategy to paypal-commerce-integration package ([#1955](https://github.com/bigcommerce/checkout-sdk-js/issues/1955)) ([abf339a](https://github.com/bigcommerce/checkout-sdk-js/commit/abf339a619b137a4e34e32f1e164bde9d05c48d1))
+* **payment:** PAYPAL-2414 added PayPalCommerceIntegrationService method creation ([#1970](https://github.com/bigcommerce/checkout-sdk-js/issues/1970)) ([2130c3e](https://github.com/bigcommerce/checkout-sdk-js/commit/2130c3e474210c4b580a8ea808d38bea55348cec))
+
 ## [1.381.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.380.1...v1.381.0) (2023-05-16)
 
 
