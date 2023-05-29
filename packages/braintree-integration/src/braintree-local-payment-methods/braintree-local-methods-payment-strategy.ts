@@ -9,7 +9,7 @@ import {
     PaymentIntegrationService,
     PaymentMethodInvalidError,
     PaymentRequestOptions,
-    PaymentStrategy
+    PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import BraintreeIntegrationService from '../braintree-integration-service';
 import {
@@ -18,7 +18,7 @@ import {
     LocalPaymentsPayload,
     onPaymentStartData,
     StartPaymentError,
-    WithBraintreeLocalMethodsPaymentInitializeOptions
+    WithBraintreeLocalMethodsPaymentInitializeOptions,
 } from './braintree-local-methods-options';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
@@ -38,7 +38,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
     async initialize(
         options: PaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions,
     ): Promise<void> {
-        const { gatewayId , methodId, braintreelocalmethods } = options;
+        const { gatewayId, methodId, braintreelocalmethods } = options;
         if (!methodId) {
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.methodId" argument is not provided.',
