@@ -25,7 +25,6 @@ describe('mapToBankInstrument', () => {
             accountNumber: '1234',
             iban: 'ZXY',
             issuer: 'Some Issuer',
-            externalId: 'test@external-id.com',
         });
     });
 });

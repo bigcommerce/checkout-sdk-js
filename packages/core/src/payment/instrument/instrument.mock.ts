@@ -72,7 +72,6 @@ export function getInstruments(): PaymentInstrument[] {
             type: 'bank',
             method: 'bank',
             iban: 'DEFDEF',
-            externalId: 'test@external-id.com',
         },
         {
             bigpayToken: '56789',

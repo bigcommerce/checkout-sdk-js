@@ -46,10 +46,6 @@ ___
 
 • **externalId**: `string`
 
-#### Inherited from
-
-[BaseAccountInstrument](BaseAccountInstrument.md).[externalId](BaseAccountInstrument.md#externalid)
-
 ___
 
 ### method

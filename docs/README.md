@@ -466,7 +466,7 @@
 
 ### AccountInstrument
 
-Ƭ **AccountInstrument**: [`PayPalInstrument`](interfaces/PayPalInstrument.md) \| [`BankInstrument`](interfaces/BankInstrument.md)
+Ƭ **AccountInstrument**: [`PayPalInstrument`](interfaces/PayPalInstrument.md) \| [`BankInstrument`](interfaces/BankInstrument.md) \| [`BraintreeAchInstrument`](interfaces/BraintreeAchInstrument.md)
 
 ___
 
@@ -727,7 +727,7 @@ ___
 
 ### PaymentInstrument
 
-Ƭ **PaymentInstrument**: [`CardInstrument`](interfaces/CardInstrument.md) \| [`AccountInstrument`](README.md#accountinstrument) \| [`BraintreeAchInstrument`](interfaces/BraintreeAchInstrument.md)
+Ƭ **PaymentInstrument**: [`CardInstrument`](interfaces/CardInstrument.md) \| [`AccountInstrument`](README.md#accountinstrument)
 
 ___
 

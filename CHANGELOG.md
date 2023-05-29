@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.382.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.381.4...v1.382.0) (2023-05-29)
+
+
+### Features
+
+* **payment:** PAYPAL-2451 fixed an instrument ([10ae303](https://github.com/bigcommerce/checkout-sdk-js/commit/10ae30323f3efc5e946e5ca8c1164fa6c2e6e355))
+
+### [1.381.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.381.3...v1.381.4) (2023-05-24)
+
+
+### Bug Fixes
+
+* **checkout:** PI-101 3ds2 redirect flow for the adyen v3 ([6615f3a](https://github.com/bigcommerce/checkout-sdk-js/commit/6615f3ac539521f624418db77a98c64e8489fbe8))
+
 ### [1.381.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.381.2...v1.381.3) (2023-05-22)
 
 
