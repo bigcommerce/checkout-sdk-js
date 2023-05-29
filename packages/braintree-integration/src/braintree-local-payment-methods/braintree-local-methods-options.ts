@@ -12,29 +12,19 @@ export interface BraintreeLocalMethods {
      */
     buttonText: string;
     /**
-     * Css classes of lpm button
-     */
-    classNames: string;
-    /**
      * A callback right before render Smart Payment Button that gets called when
      * This callback can be used to hide the standard submit button.
      */
-    onRenderButton(): void;
+    onRenderButton?(): void;
     /**
      * A callback for submitting payment form that gets called
      * when buyer approved PayPal account.
      */
-    submitForm(): void;
+    submitForm?(): void;
     /**
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
-    onError(error: any): void;
-    /**
-     * A callback that gets called when a buyer click on Smart Payment Button
-     * and should validate payment form.
-     * @returns reject() or resolve()
-     */
-    onValidate(): Promise<void>;
+    onError(error: unknown): void;
 }
 
 export interface LocalPaymentInstanceConfig {
@@ -51,7 +41,7 @@ export interface LocalPaymentInstanceConfig {
     surname: string;
     address: {
         countryCode: string;
-    }
+    };
     onPaymentStart(data: onPaymentStartData, start: () => Promise<void>): void;
 }
 
@@ -70,10 +60,7 @@ export interface LocalPaymentsPayload {
 export interface LocalPaymentInstance {
     startPayment(
         config: LocalPaymentInstanceConfig,
-        callback: (
-            startPaymentError: StartPaymentError,
-            payload: LocalPaymentsPayload
-        ) => void
+        callback: (startPaymentError: StartPaymentError, payload: LocalPaymentsPayload) => void,
     ): void;
 }
 

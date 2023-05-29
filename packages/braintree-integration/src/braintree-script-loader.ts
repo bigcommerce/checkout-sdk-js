@@ -51,7 +51,7 @@ export default class BraintreeScriptLoader {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this.braintreeHostWindow.braintree?.localPayment;
+        return this.braintreeHostWindow.braintree.localPayment;
     }
 
     async loadDataCollector(): Promise<BraintreeDataCollectorCreator> {

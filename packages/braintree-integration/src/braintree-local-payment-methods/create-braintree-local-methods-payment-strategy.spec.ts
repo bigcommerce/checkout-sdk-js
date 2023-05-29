@@ -2,7 +2,7 @@ import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-int
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import createBraintreeLocalMethodsPaymentStrategy from './create-braintree-local-methods-payment-strategy';
-import BraintreeLocalMethodsPaymentStrategy from "./braintree-local-methods-payment-strategy";
+import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-payment-strategy';
 
 describe('createBraintreePaypalCustomerStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;

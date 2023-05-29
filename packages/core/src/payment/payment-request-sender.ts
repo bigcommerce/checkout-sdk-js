@@ -14,7 +14,7 @@ export default class PaymentRequestSender {
 
     submitPayment(payload: PaymentRequestBody): Promise<Response<any>> {
         return new Promise((resolve, reject) => {
-            this._client.submitPayment({...payload, paymentMethod: {...payload.paymentMethod, gateway: 'braintreepaypal'}}, (error: any, response: any) => {
+            this._client.submitPayment(payload, (error: any, response: any) => {
                 if (error) {
                     reject(this._transformResponse(error));
                 } else {

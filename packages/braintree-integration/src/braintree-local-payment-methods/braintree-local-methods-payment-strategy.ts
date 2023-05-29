@@ -20,27 +20,25 @@ import {
     StartPaymentError,
     WithBraintreeLocalMethodsPaymentInitializeOptions
 } from './braintree-local-methods-options';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStrategy {
     private orderId?: string;
     private localPaymentInstance?: LocalPaymentInstance;
     private braintreeLocalMethods?: BraintreeLocalMethods;
     private nonce?: string;
+    private loadingIndicatorContainer?: string;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeIntegrationService: BraintreeIntegrationService,
+        private loadingIndicator: LoadingIndicator,
     ) {}
 
-
     async initialize(
-        options: PaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions
+        options: PaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions,
     ): Promise<void> {
-        const {
-            gatewayId,
-            methodId,
-            braintreelocalmethods,
-        } = options;
+        const { gatewayId , methodId, braintreelocalmethods } = options;
         if (!methodId) {
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.methodId" argument is not provided.',
@@ -61,6 +59,10 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
 
         this.braintreeLocalMethods = braintreelocalmethods;
 
+        const loadingIndicatorContainer = braintreelocalmethods.container.split('#')[1];
+
+        this.loadingIndicatorContainer = loadingIndicatorContainer;
+
         await this.paymentIntegrationService.loadPaymentMethod(gatewayId);
 
         const state = this.paymentIntegrationService.getState();
@@ -71,91 +73,16 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         }
 
         try {
-            await this.braintreeIntegrationService.initialize(paymentMethod.clientToken);
-            await this.braintreeIntegrationService.loadBraintreeLocalMethods(this.getLocalPaymentInstance.bind(this), 'EUR_local');
-        } catch (error) {
-            throw new Error(error);
+            this.braintreeIntegrationService.initialize(paymentMethod.clientToken);
+            await this.braintreeIntegrationService.loadBraintreeLocalMethods(
+                this.getLocalPaymentInstance.bind(this),
+                'EUR_local',
+            );
+        } catch (error: unknown) {
+            this.handleError(error);
         }
 
         this.renderButton(methodId);
-    }
-
-    private getLocalPaymentInstance(localPaymentInstance: LocalPaymentInstance) {
-        if (!this.localPaymentInstance) {
-            this.localPaymentInstance = localPaymentInstance;
-        }
-    }
-
-    private renderButton(methodId: string) {
-        if (this.braintreeLocalMethods) {
-            const { buttonText, container, classNames, onRenderButton } = this.braintreeLocalMethods;
-            const buttonContainerId = container.split('#')[1];
-            const buttonContainer = document.getElementById(buttonContainerId);
-            const lpmButton = document.createElement('button');
-            lpmButton.setAttribute('class', classNames);
-            lpmButton.setAttribute('id', methodId);
-            lpmButton.innerText = buttonText;
-            lpmButton.addEventListener('click', (e) => this.handleClick(e, methodId))
-
-            if (onRenderButton && typeof onRenderButton === 'function') {
-                onRenderButton();
-            }
-
-            if (buttonContainer) {
-                buttonContainer.innerHTML = '';
-                buttonContainer.append(lpmButton);
-            }
-        }
-    }
-
-    private handleClick(e: Event, methodId: string) {
-        e.preventDefault();
-        const state = this.paymentIntegrationService.getState();
-        const cart = state.getCartOrThrow();
-        const consignments = state.getConsignmentsOrThrow();
-        const { shippingAddress: { firstName, lastName, countryCode} } = consignments[0];
-        const { baseAmount, currency, email } = cart;
-        const isShippingRequired = cart.lineItems.physicalItems.length > 0;
-        const { submitForm } = this.braintreeLocalMethods || {};
-
-        this.localPaymentInstance?.startPayment({
-            paymentType: methodId,
-            amount: baseAmount,
-            fallback: { // see Fallback section for details on these params
-                url: 'https://your-domain.com/page-to-complete-checkout',
-                buttonText: 'Complete Payment'
-            },
-            currencyCode: currency.code,
-            shippingAddressRequired: isShippingRequired,
-            email: email,
-            givenName: firstName,
-            surname: lastName,
-            address: {
-                countryCode: countryCode,
-            },
-            onPaymentStart: (data: onPaymentStartData, start: () => void) => {
-                // Call start to initiate the popup
-                this.orderId = data.paymentId;
-                start();
-            }
-        }, async (startPaymentError: StartPaymentError, payload: LocalPaymentsPayload) => {
-            if (startPaymentError) {
-                this.handleError(startPaymentError);
-            } else {
-                this.nonce = payload.nonce;
-                console.log('%c NONCE', 'color: magenta', payload.nonce);
-                if (submitForm && typeof submitForm === 'function') {
-                    submitForm();
-                }
-            }
-        });
-    }
-
-    private handleError(error: any) {
-        const { onError } = this.braintreeLocalMethods || {};
-        if(onError && typeof onError === 'function') {
-            onError(error);
-        }
     }
 
     finalize(): Promise<void> {
@@ -164,12 +91,13 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
 
     async deinitialize(): Promise<void> {
         this.orderId = undefined;
+        this.toggleLoadingIndicator(false);
 
         return Promise.resolve();
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
-        const {payment, ...order} = payload;
+        const { payment, ...order } = payload;
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         const sessionId = await this.braintreeIntegrationService.getSessionId();
@@ -191,7 +119,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 },
                 vault_payment_instrument: null,
                 set_as_default_stored_instrument: null,
-                local_method_id: payment?.methodId,
+                local_method_id: payment.methodId,
             },
         };
 
@@ -201,9 +129,111 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 methodId: payment.methodId,
                 paymentData,
             });
-        } catch (error) {
+        } catch (error: unknown) {
             this.handleError(error);
         }
+    }
 
+    private getLocalPaymentInstance(localPaymentInstance: LocalPaymentInstance) {
+        if (!this.localPaymentInstance) {
+            this.localPaymentInstance = localPaymentInstance;
+        }
+    }
+
+    private renderButton(methodId: string) {
+        if (this.braintreeLocalMethods) {
+            let buttonContainer;
+            const { buttonText, container, onRenderButton } = this.braintreeLocalMethods;
+            const buttonContainerId = container.split('#')[1];
+            const lpmButton = document.createElement('button');
+            buttonContainer = document.getElementById(buttonContainerId);
+            const className = buttonContainer?.getAttribute('class');
+            lpmButton.setAttribute('class', className || '');
+            lpmButton.setAttribute('id', methodId);
+            lpmButton.innerText = buttonText;
+            lpmButton.addEventListener('click', (e) => this.handleClick(e, methodId));
+
+            if (onRenderButton && typeof onRenderButton === 'function') {
+                onRenderButton();
+            }
+
+            buttonContainer = document.getElementById(buttonContainerId);
+
+            if (buttonContainer) {
+                buttonContainer.append(lpmButton);
+            }
+        }
+    }
+
+    /**
+     *
+     * Loading Indicator methods
+     *
+     * */
+    private toggleLoadingIndicator(isLoading: boolean): void {
+        if (isLoading && this.loadingIndicatorContainer) {
+            this.loadingIndicator.show(this.loadingIndicatorContainer);
+        } else {
+            this.loadingIndicator.hide();
+        }
+    }
+
+    private handleClick(e: Event, methodId: string) {
+        e.preventDefault();
+        this.toggleLoadingIndicator(true);
+        const state = this.paymentIntegrationService.getState();
+        const cart = state.getCartOrThrow();
+        const consignments = state.getConsignmentsOrThrow();
+        const {
+            shippingAddress: { firstName, lastName, countryCode },
+        } = consignments[0]; // TODO: BILLING
+        const { baseAmount, currency, email } = cart;
+        const isShippingRequired = cart.lineItems.physicalItems.length > 0;
+        const { submitForm } = this.braintreeLocalMethods || {};
+
+        this.localPaymentInstance?.startPayment(
+            {
+                paymentType: methodId,
+                amount: baseAmount,
+                fallback: {
+                    // see Fallback section for details on these params // TODO
+                    url: 'https://your-domain.com/page-to-complete-checkout',
+                    buttonText: 'Complete Payment',
+                },
+                currencyCode: currency.code,
+                shippingAddressRequired: isShippingRequired,
+                email,
+                givenName: firstName,
+                surname: lastName,
+                address: {
+                    countryCode,
+                },
+                onPaymentStart: (data: onPaymentStartData, start: () => void) => {
+                    // Call start to initiate the popup
+                    this.orderId = data.paymentId;
+                    start();
+                },
+            },
+            (startPaymentError: StartPaymentError, payload: LocalPaymentsPayload) => {
+                if (!payload.nonce) {
+                    this.handleError(startPaymentError.code);
+                } else {
+                    this.nonce = payload.nonce;
+
+                    if (submitForm && typeof submitForm === 'function') {
+                        submitForm();
+                    }
+                }
+            },
+        );
+    }
+
+    private handleError(error: unknown) {
+        const { onError } = this.braintreeLocalMethods || {};
+
+        if (onError && typeof onError === 'function') {
+            this.toggleLoadingIndicator(false);
+            onError(error);
+        }
     }
 }
