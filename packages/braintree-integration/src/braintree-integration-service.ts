@@ -24,7 +24,7 @@ import { PAYPAL_COMPONENTS } from './paypal';
 import {
     BraintreeLocalMethods,
     GetLocalPaymentInstance,
-    LocalPaymentInstance
+    LocalPaymentInstance,
 } from './braintree-local-payment-methods/braintree-local-methods-options';
 
 export default class BraintreeIntegrationService {
@@ -101,24 +101,26 @@ export default class BraintreeIntegrationService {
         return this.paypalCheckout;
     }
 
-
-    async loadBraintreeLocalMethods(getLocalPaymentInstance: GetLocalPaymentInstance, merchantAccountId: string) {
+    async loadBraintreeLocalMethods(
+        getLocalPaymentInstance: GetLocalPaymentInstance,
+        merchantAccountId: string,
+    ) {
         const client = await this.getClient();
         const braintreeLocalMethods = await this.braintreeScriptLoader.loadBraintreeLocalMethods();
 
         if (!this.braintreeLocalMethods) {
-            this.braintreeLocalMethods = braintreeLocalMethods.create({
-                client,
-                merchantAccountId,
-            }, (localPaymentErr: any, localPaymentInstance: LocalPaymentInstance) => {
-                if (localPaymentErr) {
-                    throw new Error(localPaymentErr);
-                }
-
-                if (localPaymentInstance) {
-                getLocalPaymentInstance(localPaymentInstance);
+            this.braintreeLocalMethods = braintreeLocalMethods.create(
+                {
+                    client,
+                    merchantAccountId,
+                },
+                (localPaymentErr: string, localPaymentInstance: LocalPaymentInstance) => {
+                    if (localPaymentErr) {
+                        throw new Error(localPaymentErr);
                     }
-            });
+                    getLocalPaymentInstance(localPaymentInstance);
+                },
+            );
         }
 
         return this.braintreeLocalMethods;

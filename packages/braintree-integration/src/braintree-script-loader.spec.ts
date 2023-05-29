@@ -5,7 +5,8 @@ import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/p
 import {
     BraintreeClientCreator,
     BraintreeDataCollector,
-    BraintreeHostWindow, BraintreeLocalPayment,
+    BraintreeHostWindow,
+    BraintreeLocalPayment,
     BraintreeModuleCreator,
     BraintreePaypalCheckoutCreator,
 } from './braintree';
@@ -142,7 +143,7 @@ describe('BraintreeScriptLoader', () => {
             });
         });
 
-        it ('loads local payment methods', async () => {
+        it('loads local payment methods', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
             await braintreeScriptLoader.loadBraintreeLocalMethods();
 

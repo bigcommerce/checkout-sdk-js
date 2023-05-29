@@ -1,10 +1,13 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-    InvalidArgumentError, OrderFinalizationNotRequiredError, PaymentArgumentInvalidError,
+    InvalidArgumentError,
+    OrderFinalizationNotRequiredError,
+    PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
-    PaymentMethod, PaymentMethodInvalidError,
+    PaymentMethod,
+    PaymentMethodInvalidError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCheckout,
@@ -12,8 +15,9 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import BraintreeIntegrationService from '../braintree-integration-service';
 import BraintreeScriptLoader from '../braintree-script-loader';
-import {getBraintreeLocalMethods, getBraintreeLocalMethodsObject} from '../braintree.mock';
+import { getBraintreeLocalMethods, getBraintreeLocalMethodsObject } from '../braintree.mock';
 import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-payment-strategy';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 describe('BraintreeLocalMethods', () => {
     let strategy: BraintreeLocalMethodsPaymentStrategy;
@@ -29,7 +33,6 @@ describe('BraintreeLocalMethods', () => {
         braintreelocalmethods: getBraintreeLocalMethodsObject(),
     };
 
-
     beforeEach(() => {
         paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
@@ -40,12 +43,13 @@ describe('BraintreeLocalMethods', () => {
         strategy = new BraintreeLocalMethodsPaymentStrategy(
             paymentIntegrationService,
             braintreeIntegrationService,
+            new LoadingIndicator(),
         );
 
         paymentMethodMock = {
             ...getBraintreeLocalMethods(),
             clientToken: 'token',
-        }
+        };
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,
@@ -118,7 +122,7 @@ describe('BraintreeLocalMethods', () => {
     describe('#renderButton()', () => {
         it('creates button element with id', async () => {
             await strategy.initialize(initializationOptions);
-            const button =  document.getElementById('giropay');
+            const button = document.getElementById('giropay');
             expect(button).toBeDefined();
         });
     });

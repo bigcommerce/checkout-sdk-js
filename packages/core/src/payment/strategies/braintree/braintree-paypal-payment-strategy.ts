@@ -85,10 +85,8 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 ]),
             )
             .then(([payment]) => {
-
-                   return  this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
-                }
-            )
+                return this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
+            })
             .catch((error: Error) => this._handleError(error));
     }
 

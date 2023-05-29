@@ -94,7 +94,6 @@ export default class PaymentMethodActionCreator {
                             ),
                         );
                         observer.complete();
-
                     })
                     .catch((response) => {
                         observer.error(
