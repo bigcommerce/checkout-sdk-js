@@ -8,8 +8,6 @@
 
   ↳ [`BaseAccountInstrument`](BaseAccountInstrument.md)
 
-  ↳ [`BraintreeAchInstrument`](BraintreeAchInstrument.md)
-
   ↳ [`CardInstrument`](CardInstrument.md)
 
 ## Table of contents

@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
-- [`BaseInstrument`](BaseInstrument.md)
+- [`BaseAccountInstrument`](BaseAccountInstrument.md)
 
   ↳ **`BraintreeAchInstrument`**
 
@@ -35,7 +35,7 @@ ___
 
 #### Inherited from
 
-[BaseInstrument](BaseInstrument.md).[bigpayToken](BaseInstrument.md#bigpaytoken)
+[BaseAccountInstrument](BaseAccountInstrument.md).[bigpayToken](BaseAccountInstrument.md#bigpaytoken)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Inherited from
 
-[BaseInstrument](BaseInstrument.md).[defaultInstrument](BaseInstrument.md#defaultinstrument)
+[BaseAccountInstrument](BaseAccountInstrument.md).[defaultInstrument](BaseAccountInstrument.md#defaultinstrument)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 #### Overrides
 
-[BaseInstrument](BaseInstrument.md).[method](BaseInstrument.md#method)
+[BaseAccountInstrument](BaseAccountInstrument.md).[method](BaseAccountInstrument.md#method)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Inherited from
 
-[BaseInstrument](BaseInstrument.md).[provider](BaseInstrument.md#provider)
+[BaseAccountInstrument](BaseAccountInstrument.md).[provider](BaseAccountInstrument.md#provider)
 
 ___
 
@@ -81,7 +81,7 @@ ___
 
 #### Inherited from
 
-[BaseInstrument](BaseInstrument.md).[trustedShippingAddress](BaseInstrument.md#trustedshippingaddress)
+[BaseAccountInstrument](BaseAccountInstrument.md).[trustedShippingAddress](BaseAccountInstrument.md#trustedshippingaddress)
 
 ___
 
@@ -91,4 +91,4 @@ ___
 
 #### Overrides
 
-[BaseInstrument](BaseInstrument.md).[type](BaseInstrument.md#type)
+[BaseAccountInstrument](BaseAccountInstrument.md).[type](BaseAccountInstrument.md#type)

@@ -10,6 +10,8 @@
 
   ↳↳ [`BankInstrument`](BankInstrument.md)
 
+  ↳↳ [`BraintreeAchInstrument`](BraintreeAchInstrument.md)
+
   ↳↳ [`PayPalInstrument`](PayPalInstrument.md)
 
 ## Table of contents
@@ -18,7 +20,6 @@
 
 - [bigpayToken](BaseAccountInstrument.md#bigpaytoken)
 - [defaultInstrument](BaseAccountInstrument.md#defaultinstrument)
-- [externalId](BaseAccountInstrument.md#externalid)
 - [method](BaseAccountInstrument.md#method)
 - [provider](BaseAccountInstrument.md#provider)
 - [trustedShippingAddress](BaseAccountInstrument.md#trustedshippingaddress)
@@ -43,12 +44,6 @@ ___
 #### Inherited from
 
 [BaseInstrument](BaseInstrument.md).[defaultInstrument](BaseInstrument.md#defaultinstrument)
-
-___
-
-### externalId
-
-• **externalId**: `string`
 
 ___
 

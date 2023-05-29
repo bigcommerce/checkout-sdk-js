@@ -15,7 +15,6 @@
 - [accountNumber](BankInstrument.md#accountnumber)
 - [bigpayToken](BankInstrument.md#bigpaytoken)
 - [defaultInstrument](BankInstrument.md#defaultinstrument)
-- [externalId](BankInstrument.md#externalid)
 - [iban](BankInstrument.md#iban)
 - [issuer](BankInstrument.md#issuer)
 - [method](BankInstrument.md#method)
@@ -48,16 +47,6 @@ ___
 #### Inherited from
 
 [BaseAccountInstrument](BaseAccountInstrument.md).[defaultInstrument](BaseAccountInstrument.md#defaultinstrument)
-
-___
-
-### externalId
-
-• **externalId**: `string`
-
-#### Inherited from
-
-[BaseAccountInstrument](BaseAccountInstrument.md).[externalId](BaseAccountInstrument.md#externalid)
 
 ___
 

@@ -15,7 +15,7 @@ import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integrati
 import { WithBankAccountInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { createTimeout } from '@bigcommerce/request-sender';
 
-declare type AccountInstrument = PayPalInstrument | BankInstrument;
+declare type AccountInstrument = PayPalInstrument | BankInstrument | BraintreeAchInstrument;
 
 declare interface Address extends AddressRequestBody {
     country: string;
@@ -886,7 +886,6 @@ declare interface Banner {
 }
 
 declare interface BaseAccountInstrument extends BaseInstrument {
-    externalId: string;
     method: string;
     type: 'account' | 'bank';
 }
@@ -1470,7 +1469,7 @@ declare interface BoltPaymentInitializeOptions {
     onPaymentSelect?(hasBoltAccount: boolean): void;
 }
 
-declare interface BraintreeAchInstrument extends BaseInstrument {
+declare interface BraintreeAchInstrument extends BaseAccountInstrument {
     issuer: string;
     accountNumber: string;
     type: 'bank';
@@ -6612,12 +6611,13 @@ declare interface PayPalCommerceVenmoPaymentInitializeOptions {
 }
 
 declare interface PayPalInstrument extends BaseAccountInstrument {
+    externalId: string;
     method: 'paypal';
 }
 
 declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
-declare type PaymentInstrument = CardInstrument | AccountInstrument | BraintreeAchInstrument;
+declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
 declare interface PaymentMethod<T = any> {
     id: string;
