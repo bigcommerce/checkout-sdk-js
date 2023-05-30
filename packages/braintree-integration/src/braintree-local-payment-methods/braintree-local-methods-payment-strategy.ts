@@ -112,6 +112,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         const paymentData = {
             formattedPayload: {
                 device_info: sessionId || null,
+                method: payment.methodId,
                 [`${payment.methodId}_account`]: {
                     email: cart.email,
                     token: this.nonce,
@@ -212,8 +213,11 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 },
             },
             (startPaymentError: StartPaymentError, payload: LocalPaymentsPayload) => {
-                if (startPaymentError && startPaymentError.code !== 'LOCAL_PAYMENT_WINDOW_CLOSED') {
-                    this.handleError(startPaymentError.code);
+                if (startPaymentError) {
+                    if (startPaymentError.code !== 'LOCAL_PAYMENT_WINDOW_CLOSED') {
+                        this.handleError(startPaymentError.code);
+                    }
+                    this.toggleLoadingIndicator(false);
                 } else {
                     this.nonce = payload.nonce;
 
