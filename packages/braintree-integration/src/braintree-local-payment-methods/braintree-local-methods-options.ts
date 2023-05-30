@@ -31,8 +31,8 @@ export interface LocalPaymentInstanceConfig {
     paymentType: string;
     amount: number;
     fallback: {
-        url: string;
-        buttonText: string;
+        // url: string;
+        // buttonText: string;
     };
     currencyCode: string;
     shippingAddressRequired: boolean;
