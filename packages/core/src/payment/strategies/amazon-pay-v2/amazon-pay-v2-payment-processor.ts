@@ -125,6 +125,10 @@ export default class AmazonPayV2PaymentProcessor {
 
         const { id: parentContainerId } = container.appendChild(this._getButtonParentContainer());
 
+        if (options) {
+            options.design = 'C0001';
+        }
+
         const amazonPayV2ButtonOptions =
             options ??
             this._getAmazonPayV2ButtonOptions(
@@ -220,6 +224,7 @@ export default class AmazonPayV2PaymentProcessor {
             checkoutLanguage,
             placement,
             buttonColor,
+            design: 'C0001',
         };
 
         if (this._buyNowCartRequestBody) {

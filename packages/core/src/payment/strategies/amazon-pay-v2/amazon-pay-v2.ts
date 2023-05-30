@@ -93,6 +93,8 @@ export interface AmazonPayV2ButtonConfig {
      * if your `publicKeyId` has an environment prefix. Default is false.
      */
     sandbox?: boolean;
+
+    design?: string;
 }
 
 export interface AmazonPayV2ButtonParams extends AmazonPayV2ButtonConfig {
