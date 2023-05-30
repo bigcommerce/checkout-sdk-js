@@ -3,7 +3,6 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import {
     InvalidArgumentError,
     MissingDataError,
-    NotInitializedError,
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
@@ -243,7 +242,7 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
             try {
                 await strategy.execute(requestBody, { methodId: 'ach' });
             } catch (error) {
-                expect(error).toBeInstanceOf(NotInitializedError);
+                expect(error).toBeInstanceOf(PaymentMethodFailedError);
             }
         });
     });

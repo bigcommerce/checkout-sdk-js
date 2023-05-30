@@ -12,7 +12,6 @@ import {
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
-    PaymentMethod,
     PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
@@ -29,7 +28,6 @@ import { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-payp
 export default class BraintreePaypalAchPaymentStrategy implements PaymentStrategy {
     private usBankAccount?: BraintreeBankAccount;
     private getMandateText?: () => string;
-    private paymentMethod?: PaymentMethod;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -53,14 +51,14 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
 
         const state = this.paymentIntegrationService.getState();
 
-        this.paymentMethod = state.getPaymentMethodOrThrow(options.methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow(options.methodId);
 
-        if (!this.paymentMethod.clientToken) {
+        if (!paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         try {
-            this.braintreeIntegrationService.initialize(this.paymentMethod.clientToken);
+            this.braintreeIntegrationService.initialize(paymentMethod.clientToken);
             this.usBankAccount = await this.braintreeIntegrationService.getUsBankAccount();
         } catch (error) {
             this.handleError(error);
@@ -72,10 +70,6 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
-        }
-
-        if (!this.paymentMethod) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         try {
@@ -126,7 +120,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
 
         const state = this.paymentIntegrationService.getState();
 
-        const { email } = state.getCheckoutOrThrow().billingAddress || { email: null };
+        const { email } = state.getBillingAddressOrThrow();
 
         const { shouldSaveInstrument, shouldSetAsDefaultInstrument, routingNumber, accountNumber } =
             paymentData;
@@ -152,18 +146,13 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
     }
 
     private async tokenizePayment(payment: OrderPaymentRequestBody) {
-        const { paymentData = {} } = payment;
+        const { methodId, paymentData = {} } = payment;
 
         if (isVaultedInstrument(paymentData)) {
-            if (!this.paymentMethod) {
-                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-            }
+            const state = this.paymentIntegrationService.getState();
+            const { config } = state.getPaymentMethodOrThrow(methodId);
 
-            const {
-                config: { isVaultingEnabled },
-            } = this.paymentMethod;
-
-            if (!isVaultingEnabled) {
+            if (!config.isVaultingEnabled) {
                 throw new InvalidArgumentError(
                     'Vaulting is disabled but a vaulted instrument was being used for this transaction',
                 );
