@@ -36,7 +36,7 @@ export interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-export interface BraintreeAchInstrument extends BaseAccountInstrument {
+export interface AchInstrument extends BaseAccountInstrument {
     issuer: string;
     accountNumber: string;
     type: 'bank';
@@ -51,7 +51,7 @@ export interface BankInstrument extends BaseAccountInstrument {
     type: 'bank';
 }
 
-export type AccountInstrument = PayPalInstrument | BankInstrument | BraintreeAchInstrument;
+export type AccountInstrument = PayPalInstrument | BankInstrument | AchInstrument;
 
 export interface VaultAccessToken {
     vaultAccessToken: string;
