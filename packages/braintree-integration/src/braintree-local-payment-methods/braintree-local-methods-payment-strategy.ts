@@ -59,14 +59,13 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
 
         this.braintreeLocalMethods = braintreelocalmethods;
 
-        const loadingIndicatorContainer = braintreelocalmethods.container.split('#')[1];
-
-        this.loadingIndicatorContainer = loadingIndicatorContainer;
+        this.loadingIndicatorContainer = braintreelocalmethods.container.split('#')[1];
 
         await this.paymentIntegrationService.loadPaymentMethod(gatewayId);
 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow(gatewayId);
+        const { merchantId } = paymentMethod.config;
 
         if (!paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -76,7 +75,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
             this.braintreeIntegrationService.initialize(paymentMethod.clientToken);
             await this.braintreeIntegrationService.loadBraintreeLocalMethods(
                 this.getLocalPaymentInstance.bind(this),
-                'EUR_local',
+                merchantId || '',
             );
         } catch (error: unknown) {
             this.handleError(error);
@@ -113,13 +112,13 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         const paymentData = {
             formattedPayload: {
                 device_info: sessionId || null,
-                braintree_local_method_account: {
+                [`${payment.methodId}_account`]: {
                     email: cart.email,
                     token: this.nonce,
+                    order_id: this.orderId
                 },
                 vault_payment_instrument: null,
                 set_as_default_stored_instrument: null,
-                local_method_id: payment.methodId,
             },
         };
 
@@ -183,10 +182,8 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         this.toggleLoadingIndicator(true);
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
-        const consignments = state.getConsignmentsOrThrow();
-        const {
-            shippingAddress: { firstName, lastName, countryCode },
-        } = consignments[0]; // TODO: BILLING
+        const billing = state.getBillingAddressOrThrow();
+        const { firstName, lastName, countryCode } = billing;
         const { baseAmount, currency, email } = cart;
         const isShippingRequired = cart.lineItems.physicalItems.length > 0;
         const { submitForm } = this.braintreeLocalMethods || {};
@@ -215,7 +212,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 },
             },
             (startPaymentError: StartPaymentError, payload: LocalPaymentsPayload) => {
-                if (!payload.nonce) {
+                if (startPaymentError && startPaymentError.code !== 'LOCAL_PAYMENT_WINDOW_CLOSED') {
                     this.handleError(startPaymentError.code);
                 } else {
                     this.nonce = payload.nonce;
@@ -230,9 +227,9 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
 
     private handleError(error: unknown) {
         const { onError } = this.braintreeLocalMethods || {};
+        this.toggleLoadingIndicator(false);
 
         if (onError && typeof onError === 'function') {
-            this.toggleLoadingIndicator(false);
             onError(error);
         }
     }
