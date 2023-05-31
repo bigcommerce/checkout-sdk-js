@@ -1,5 +1,6 @@
 import {
     InvalidArgumentError,
+    isHostedInstrumentLike,
     isVaultedInstrument,
     MissingDataError,
     MissingDataErrorType,
@@ -100,7 +101,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         const { paymentData = {} } = payment;
 
         if (!nonce) {
-            if (!isVaultedInstrument(paymentData)) {
+            if (!isVaultedInstrument(paymentData) || !isHostedInstrumentLike(paymentData)) {
                 throw new PaymentArgumentInvalidError(['payment.paymentData']);
             }
 
@@ -108,6 +109,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
                 methodId: payment.methodId,
                 paymentData: {
                     instrumentId: paymentData.instrumentId,
+                    shouldSetAsDefaultInstrument: paymentData.shouldSetAsDefaultInstrument,
                 },
             };
         }

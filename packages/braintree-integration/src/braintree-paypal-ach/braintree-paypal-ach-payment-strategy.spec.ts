@@ -171,6 +171,9 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
         it('execution with the Vaulting Flow was successful', async () => {
             (requestBody.payment?.paymentData as WithBankAccountInstrument).instrumentId =
                 'bigpayToken';
+            (
+                requestBody.payment?.paymentData as WithBankAccountInstrument
+            ).shouldSetAsDefaultInstrument = true;
 
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -193,6 +196,7 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
                         methodId: 'ach',
                         paymentData: {
                             instrumentId: 'bigpayToken',
+                            shouldSetAsDefaultInstrument: true,
                         },
                     }),
                 );
