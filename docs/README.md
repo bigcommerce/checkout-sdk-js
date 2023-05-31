@@ -51,6 +51,7 @@
 
 ### Interfaces
 
+- [AchInstrument](interfaces/AchInstrument.md)
 - [Address](interfaces/Address.md)
 - [AddressRequestBody](interfaces/AddressRequestBody.md)
 - [AdyenAdditionalActionCallbacks](interfaces/AdyenAdditionalActionCallbacks.md)
@@ -111,7 +112,6 @@
 - [BoltBuyNowInitializeOptions](interfaces/BoltBuyNowInitializeOptions.md)
 - [BoltCustomerInitializeOptions](interfaces/BoltCustomerInitializeOptions.md)
 - [BoltPaymentInitializeOptions](interfaces/BoltPaymentInitializeOptions.md)
-- [BraintreeAchInstrument](interfaces/BraintreeAchInstrument.md)
 - [BraintreeError](interfaces/BraintreeError.md)
 - [BraintreeError_2](interfaces/BraintreeError_2.md)
 - [BraintreeFormFieldCardTypeChangeEventData](interfaces/BraintreeFormFieldCardTypeChangeEventData.md)
@@ -466,7 +466,7 @@
 
 ### AccountInstrument
 
-Ƭ **AccountInstrument**: [`PayPalInstrument`](interfaces/PayPalInstrument.md) \| [`BankInstrument`](interfaces/BankInstrument.md) \| [`BraintreeAchInstrument`](interfaces/BraintreeAchInstrument.md)
+Ƭ **AccountInstrument**: [`PayPalInstrument`](interfaces/PayPalInstrument.md) \| [`BankInstrument`](interfaces/BankInstrument.md) \| [`AchInstrument`](interfaces/AchInstrument.md)
 
 ___
 

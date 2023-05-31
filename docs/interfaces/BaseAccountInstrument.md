@@ -8,9 +8,9 @@
 
   ↳ **`BaseAccountInstrument`**
 
-  ↳↳ [`BankInstrument`](BankInstrument.md)
+  ↳↳ [`AchInstrument`](AchInstrument.md)
 
-  ↳↳ [`BraintreeAchInstrument`](BraintreeAchInstrument.md)
+  ↳↳ [`BankInstrument`](BankInstrument.md)
 
   ↳↳ [`PayPalInstrument`](PayPalInstrument.md)
 

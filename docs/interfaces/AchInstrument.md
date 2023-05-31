@@ -1,25 +1,25 @@
-[@bigcommerce/checkout-sdk](../README.md) / BraintreeAchInstrument
+[@bigcommerce/checkout-sdk](../README.md) / AchInstrument
 
-# Interface: BraintreeAchInstrument
+# Interface: AchInstrument
 
 ## Hierarchy
 
 - [`BaseAccountInstrument`](BaseAccountInstrument.md)
 
-  ↳ **`BraintreeAchInstrument`**
+  ↳ **`AchInstrument`**
 
 ## Table of contents
 
 ### Properties
 
-- [accountNumber](BraintreeAchInstrument.md#accountnumber)
-- [bigpayToken](BraintreeAchInstrument.md#bigpaytoken)
-- [defaultInstrument](BraintreeAchInstrument.md#defaultinstrument)
-- [issuer](BraintreeAchInstrument.md#issuer)
-- [method](BraintreeAchInstrument.md#method)
-- [provider](BraintreeAchInstrument.md#provider)
-- [trustedShippingAddress](BraintreeAchInstrument.md#trustedshippingaddress)
-- [type](BraintreeAchInstrument.md#type)
+- [accountNumber](AchInstrument.md#accountnumber)
+- [bigpayToken](AchInstrument.md#bigpaytoken)
+- [defaultInstrument](AchInstrument.md#defaultinstrument)
+- [issuer](AchInstrument.md#issuer)
+- [method](AchInstrument.md#method)
+- [provider](AchInstrument.md#provider)
+- [trustedShippingAddress](AchInstrument.md#trustedshippingaddress)
+- [type](AchInstrument.md#type)
 
 ## Properties
 

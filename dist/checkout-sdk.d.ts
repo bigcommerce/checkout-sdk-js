@@ -15,7 +15,14 @@ import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integrati
 import { WithBankAccountInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { createTimeout } from '@bigcommerce/request-sender';
 
-declare type AccountInstrument = PayPalInstrument | BankInstrument | BraintreeAchInstrument;
+declare type AccountInstrument = PayPalInstrument | BankInstrument | AchInstrument;
+
+declare interface AchInstrument extends BaseAccountInstrument {
+    issuer: string;
+    accountNumber: string;
+    type: 'bank';
+    method: 'ach';
+}
 
 declare interface Address extends AddressRequestBody {
     country: string;
@@ -1467,13 +1474,6 @@ declare interface BoltPaymentInitializeOptions {
      * A callback that gets called when the customer selects Bolt as payment option.
      */
     onPaymentSelect?(hasBoltAccount: boolean): void;
-}
-
-declare interface BraintreeAchInstrument extends BaseAccountInstrument {
-    issuer: string;
-    accountNumber: string;
-    type: 'bank';
-    method: 'ach';
 }
 
 declare interface BraintreeError extends Error {
