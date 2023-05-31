@@ -110,7 +110,11 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
 
         this._unsubscribe = this._store.subscribe(
             async (state) => {
-                if (state.paymentStrategies.isInitialized(methodId)) {
+                const key = options.gatewayId
+                    ? options.methodId + options.gatewayId
+                    : options.methodId;
+
+                if (state.paymentStrategies.isInitialized(key)) {
                     const element = document.getElementById(`${gatewayId}-${methodId}-paragraph`);
 
                     if (element) {

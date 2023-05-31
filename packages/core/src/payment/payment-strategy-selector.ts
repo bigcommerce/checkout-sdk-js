@@ -10,7 +10,7 @@ export default interface PaymentStrategySelector {
     getFinalizeError(methodId?: string): Error | undefined;
     getWidgetInteractingError(methodId?: string): Error | undefined;
     isInitializing(methodId?: string): boolean;
-    isInitialized(methodId: string): boolean;
+    isInitialized(key: string): boolean;
     isExecuting(methodId?: string): boolean;
     isFinalizing(methodId?: string): boolean;
     isWidgetInteracting(methodId?: string): boolean;
@@ -72,8 +72,8 @@ export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorF
     const isInitializing = createSelector(
         (state: PaymentStrategyState) => state.statuses.initializeMethodId,
         (state: PaymentStrategyState) => state.statuses.isInitializing,
-        (initializeMethodId, isInitializing) => (methodId?: string) => {
-            if (methodId && initializeMethodId !== methodId) {
+        (initializeMethodId, isInitializing) => (key?: string) => {
+            if (key && initializeMethodId !== key) {
                 return false;
             }
 
@@ -83,8 +83,8 @@ export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorF
 
     const isInitialized = createSelector(
         (state: PaymentStrategyState) => state.data,
-        (data) => (methodId: string) => {
-            return !!(data[methodId] && data[methodId].isInitialized);
+        (data) => (key: string) => {
+            return !!(data[key] && data[key].isInitialized);
         },
     );
 

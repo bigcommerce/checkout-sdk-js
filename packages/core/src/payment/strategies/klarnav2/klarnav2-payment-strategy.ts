@@ -45,6 +45,8 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
     ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        const key = options.gatewayId ? options.methodId + options.gatewayId : options.methodId;
+
         return this._klarnav2ScriptLoader
             .load()
             .then((klarnaPayments) => {
@@ -53,7 +55,7 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
             .then(() => {
                 this._unsubscribe = this._store.subscribe(
                     (state) => {
-                        if (state.paymentStrategies.isInitialized(options.methodId)) {
+                        if (state.paymentStrategies.isInitialized(key)) {
                             this._loadPaymentsWidget(options);
                         }
                     },

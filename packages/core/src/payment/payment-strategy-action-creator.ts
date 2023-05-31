@@ -143,6 +143,7 @@ export default class PaymentStrategyActionCreator {
         options: PaymentInitializeOptions,
     ): ThunkAction<PaymentStrategyInitializeAction, InternalCheckoutSelectors> {
         const { methodId, gatewayId } = options;
+        const key = gatewayId ? methodId + gatewayId : methodId;
 
         return (store) =>
             defer(() => {
@@ -153,7 +154,7 @@ export default class PaymentStrategyActionCreator {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
-                if (methodId && state.paymentStrategies.isInitialized(methodId)) {
+                if (key && state.paymentStrategies.isInitialized(key)) {
                     return empty();
                 }
 
@@ -168,19 +169,19 @@ export default class PaymentStrategyActionCreator {
                 return concat(
                     of(
                         createAction(PaymentStrategyActionType.InitializeRequested, undefined, {
-                            methodId,
+                            key,
                         }),
                     ),
                     promise.then(() =>
                         createAction(PaymentStrategyActionType.InitializeSucceeded, undefined, {
-                            methodId,
+                            key,
                         }),
                     ),
                 );
             }).pipe(
                 catchError((error) =>
                     throwErrorAction(PaymentStrategyActionType.InitializeFailed, error, {
-                        methodId,
+                        key,
                     }),
                 ),
             );
@@ -190,6 +191,7 @@ export default class PaymentStrategyActionCreator {
         options: PaymentRequestOptions,
     ): ThunkAction<PaymentStrategyDeinitializeAction, InternalCheckoutSelectors> {
         const { methodId, gatewayId } = options;
+        const key = gatewayId ? methodId + gatewayId : methodId;
 
         return (store) =>
             defer(() => {
@@ -200,7 +202,7 @@ export default class PaymentStrategyActionCreator {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
-                if (methodId && !state.paymentStrategies.isInitialized(methodId)) {
+                if (key && !state.paymentStrategies.isInitialized(key)) {
                     return empty();
                 }
 
@@ -215,19 +217,19 @@ export default class PaymentStrategyActionCreator {
                 return concat(
                     of(
                         createAction(PaymentStrategyActionType.DeinitializeRequested, undefined, {
-                            methodId,
+                            key,
                         }),
                     ),
                     promise.then(() =>
                         createAction(PaymentStrategyActionType.DeinitializeSucceeded, undefined, {
-                            methodId,
+                            key,
                         }),
                     ),
                 );
             }).pipe(
                 catchError((error) =>
                     throwErrorAction(PaymentStrategyActionType.DeinitializeFailed, error, {
-                        methodId,
+                        key,
                     }),
                 ),
             );
