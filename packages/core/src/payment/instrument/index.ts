@@ -2,7 +2,7 @@ export {
     default as PaymentInstrument,
     AccountInstrument,
     CardInstrument,
-    BraintreeAchInstrument,
+    AchInstrument,
 } from './instrument';
 export { default as InstrumentActionCreator } from './instrument-action-creator';
 export { default as InstrumentRequestSender } from './instrument-request-sender';
