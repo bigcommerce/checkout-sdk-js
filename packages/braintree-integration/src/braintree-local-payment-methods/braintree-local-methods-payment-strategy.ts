@@ -116,7 +116,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 [`${payment.methodId}_account`]: {
                     email: cart.email,
                     token: this.nonce,
-                    order_id: this.orderId
+                    order_id: this.orderId,
                 },
                 vault_payment_instrument: null,
                 set_as_default_stored_instrument: null,
@@ -213,7 +213,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 },
             },
             (startPaymentError: StartPaymentError, payload: LocalPaymentsPayload) => {
-                if (startPaymentError) {
+                if (startPaymentError !== undefined) {
                     if (startPaymentError.code !== 'LOCAL_PAYMENT_WINDOW_CLOSED') {
                         this.handleError(startPaymentError.code);
                     }
