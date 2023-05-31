@@ -31,14 +31,14 @@ function dataReducer(
     switch (action.type) {
         case PaymentStrategyActionType.InitializeSucceeded:
             return objectMerge(data, {
-                [action.meta && action.meta.methodId]: {
+                [action.meta && action.meta.key]: {
                     isInitialized: true,
                 },
             });
 
         case PaymentStrategyActionType.DeinitializeSucceeded:
             return objectMerge(data, {
-                [action.meta && action.meta.methodId]: {
+                [action.meta && action.meta.key]: {
                     isInitialized: false,
                 },
             });
@@ -62,7 +62,7 @@ function errorsReducer(
         case PaymentStrategyActionType.InitializeFailed:
             return objectMerge(errors, {
                 initializeError: action.payload,
-                initializeMethodId: action.meta && action.meta.methodId,
+                initializeMethodId: action.meta && action.meta.key,
             });
 
         case PaymentStrategyActionType.DeinitializeRequested:
@@ -75,7 +75,7 @@ function errorsReducer(
         case PaymentStrategyActionType.DeinitializeFailed:
             return objectMerge(errors, {
                 deinitializeError: action.payload,
-                deinitializeMethodId: action.meta && action.meta.methodId,
+                deinitializeMethodId: action.meta && action.meta.key,
             });
 
         case PaymentStrategyActionType.ExecuteRequested:
@@ -130,7 +130,7 @@ function statusesReducer(
         case PaymentStrategyActionType.InitializeRequested:
             return objectMerge(statuses, {
                 isInitializing: true,
-                initializeMethodId: action.meta && action.meta.methodId,
+                initializeMethodId: action.meta && action.meta.key,
             });
 
         case PaymentStrategyActionType.InitializeFailed:
@@ -143,7 +143,7 @@ function statusesReducer(
         case PaymentStrategyActionType.DeinitializeRequested:
             return objectMerge(statuses, {
                 isDeinitializing: true,
-                deinitializeMethodId: action.meta && action.meta.methodId,
+                deinitializeMethodId: action.meta && action.meta.key,
             });
 
         case PaymentStrategyActionType.DeinitializeFailed:
