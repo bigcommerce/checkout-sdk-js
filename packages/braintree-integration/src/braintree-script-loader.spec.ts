@@ -6,6 +6,7 @@ import {
     BraintreeClientCreator,
     BraintreeDataCollector,
     BraintreeHostWindow,
+    BraintreeLocalPayment,
     BraintreeModuleCreator,
     BraintreePaypalCheckoutCreator,
 } from './braintree';
@@ -13,6 +14,7 @@ import BraintreeScriptLoader from './braintree-script-loader';
 import {
     getClientMock,
     getDataCollectorMock,
+    getLocalPaymentMock,
     getModuleCreatorMock,
     getPaypalCheckoutMock,
 } from './braintree.mock';
@@ -125,6 +127,29 @@ describe('BraintreeScriptLoader', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
+        });
+    });
+
+    describe('#loadBraintreeLocalMethods', () => {
+        let localPayment: BraintreeLocalPayment;
+        beforeEach(() => {
+            localPayment = getLocalPaymentMock();
+            scriptLoader.loadScript = jest.fn(() => {
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.localPayment = localPayment;
+                }
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads local payment methods', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            await braintreeScriptLoader.loadBraintreeLocalMethods();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${VERSION}/js/local-payment.min.js`,
+            );
         });
     });
 

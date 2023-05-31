@@ -4,6 +4,7 @@ import {
     BraintreeBankAccount,
     BraintreeClient,
     BraintreeDataCollector,
+    BraintreeLocalPayment,
     BraintreeModule,
     BraintreeModuleCreator,
     BraintreePaypalCheckout,
@@ -23,6 +24,13 @@ export function getDataCollectorMock(): BraintreeDataCollector {
     return {
         deviceData: getDeviceDataMock(),
         teardown: jest.fn(() => Promise.resolve()),
+    };
+}
+
+export function getLocalPaymentMock(): BraintreeLocalPayment {
+    return {
+        VERSION: '3.81.0',
+        create: jest.fn(),
     };
 }
 
@@ -69,23 +77,23 @@ export function getPayPalCheckoutCreatorMock(
     return {
         create: shouldThrowError
             ? jest.fn(
-                  (
-                      _config,
-                      callback: (
-                          err: Error,
-                          braintreePaypalCheckout: BraintreePaypalCheckout | undefined,
-                      ) => void,
-                  ) => callback(new Error('test'), undefined),
-              )
+                (
+                    _config,
+                    callback: (
+                        err: Error,
+                        braintreePaypalCheckout: BraintreePaypalCheckout | undefined,
+                    ) => void,
+                ) => callback(new Error('test'), undefined),
+            )
             : jest.fn(
-                  (
-                      _config,
-                      callback: (
-                          _err: Error | undefined,
-                          braintreePaypalCheckout: BraintreePaypalCheckout,
-                      ) => void,
-                  ) => callback(undefined, braintreePaypalCheckoutMock),
-              ),
+                (
+                    _config,
+                    callback: (
+                        _err: Error | undefined,
+                        braintreePaypalCheckout: BraintreePaypalCheckout,
+                    ) => void,
+                ) => callback(undefined, braintreePaypalCheckoutMock),
+            ),
     };
 }
 
@@ -151,6 +159,28 @@ export function getBraintreeAch(): PaymentMethod {
     };
 }
 
+export function getBraintreeLocalMethodsObject() {
+    return {
+        container: '#container',
+        onRenderButton: jest.fn(),
+        submitForm: jest.fn(),
+        onValidate: jest.fn(),
+        onError: jest.fn(),
+    };
+}
+
+export function getBraintreeLocalMethods() {
+    return {
+        id: 'braintreelocalmethods',
+        logoUrl: '',
+        method: 'giropay',
+        supportedCards: [],
+        config: {
+            displayName: 'Giropay',
+        },
+        type: 'PAYMENT_TYPE_API',
+    };
+}
 export function getBraintreeAddress(): BraintreeShippingAddressOverride {
     return {
         line1: '12345 Testing Way',
