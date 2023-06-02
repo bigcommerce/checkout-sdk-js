@@ -80,8 +80,6 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             );
         }
 
-        await this.paymentIntegrationService.loadPaymentMethod(gatewayId);
-
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
             methodId,
@@ -99,7 +97,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             return;
         }
 
-        await this.paypalCommerceIntegrationService.loadPayPalSdk(gatewayId);
+        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
 
         this.loadingIndicatorContainer = paypalOptions.container.split('#')[1];
 

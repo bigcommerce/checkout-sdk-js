@@ -233,7 +233,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
-                defaultGatewayId,
+                defaultMethodId,
             );
         });
     });
