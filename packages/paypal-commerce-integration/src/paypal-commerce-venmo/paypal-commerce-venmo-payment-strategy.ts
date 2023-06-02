@@ -1,5 +1,6 @@
 import {
     InvalidArgumentError,
+    NotImplementedError,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentArgumentInvalidError,
@@ -142,7 +143,9 @@ export default class PayPalCommerceVenmoPaymentStrategy implements PaymentStrate
         this.paypalButton = paypalSdk.Buttons(buttonOptions);
 
         if (!this.paypalButton.isEligible()) {
-            return;
+            throw new NotImplementedError(
+                `PayPal Venmo is not available for your region. Please use PayPal Checkout instead.`,
+            );
         }
 
         if (onRenderButton && typeof onRenderButton === 'function') {
