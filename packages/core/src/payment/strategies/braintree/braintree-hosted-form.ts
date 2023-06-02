@@ -186,14 +186,17 @@ export default class BraintreeHostedForm {
                     number: {
                         container: `#${fields.cardNumber.containerId}`,
                         placeholder: fields.cardNumber.placeholder,
+                        internalLabel: fields.cardNumber.accessibilityLabel,
                     },
                     expirationDate: {
                         container: `#${fields.cardExpiry.containerId}`,
                         placeholder: fields.cardExpiry.placeholder,
+                        internalLabel: fields.cardExpiry.accessibilityLabel,
                     },
                     cvv: fields.cardCode && {
                         container: `#${fields.cardCode.containerId}`,
                         placeholder: fields.cardCode.placeholder,
+                        internalLabel: fields.cardCode.accessibilityLabel,
                     },
                 },
                 isNil,
