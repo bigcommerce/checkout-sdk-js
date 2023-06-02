@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 
 import {
     InvalidArgumentError,
+    NotImplementedError,
     OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
@@ -223,7 +224,7 @@ describe('PayPalCommerceVenmoPaymentStrategy', () => {
             });
         });
 
-        it('does not render paypal button if it is not eligible', async () => {
+        it('throws an error if paypal button is not eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
@@ -231,9 +232,11 @@ describe('PayPalCommerceVenmoPaymentStrategy', () => {
                 render: paypalCommerceSdkRenderMock,
             }));
 
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalled();
+            try {
+                await strategy.initialize(initializationOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(NotImplementedError);
+            }
         });
 
         it('renders paypal button if it is eligible', async () => {
@@ -433,7 +436,7 @@ describe('PayPalCommerceVenmoPaymentStrategy', () => {
             const paypalCommerceSdkCloseMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
-                isEligible: jest.fn(() => false),
+                isEligible: jest.fn(() => true),
                 render: jest.fn(),
                 close: paypalCommerceSdkCloseMock,
             }));
