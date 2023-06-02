@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.383.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.383.0...v1.383.1) (2023-06-02)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2575 fixed the issue with PayPalCommerceVenmo button eligibility ([#2007](https://github.com/bigcommerce/checkout-sdk-js/issues/2007)) ([9c135ea](https://github.com/bigcommerce/checkout-sdk-js/commit/9c135eae74882ab61fa4ab1882bde6e9937f1da8))
+
 ## [1.383.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.382.1...v1.383.0) (2023-06-02)
 
 
