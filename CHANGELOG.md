@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.383.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.382.1...v1.383.0) (2023-06-02)
+
+
+### Features
+
+* **payment:** PAYPAL-2560 internalLabel ([ef99560](https://github.com/bigcommerce/checkout-sdk-js/commit/ef99560b92775783b3a2379c28f71a4c232fce43))
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2552 removed unnecessary code ([a733414](https://github.com/bigcommerce/checkout-sdk-js/commit/a733414b4c3df998b9af303d95166e58d21c2522))
+
 ### [1.382.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.382.0...v1.382.1) (2023-05-31)
 
 
