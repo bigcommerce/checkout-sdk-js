@@ -13,7 +13,7 @@ describe('paymentStrategyReducer()', () => {
 
     it('returns pending flag as true if initializing payment', () => {
         const action = createAction(PaymentStrategyActionType.InitializeRequested, undefined, {
-            key: 'foobar',
+            methodId: 'foobar',
         });
 
         expect(paymentStrategyReducer(initialState, action).statuses).toEqual({
@@ -24,7 +24,7 @@ describe('paymentStrategyReducer()', () => {
 
     it('returns pending flag as false if payment has initialized successfully', () => {
         const action = createAction(PaymentStrategyActionType.InitializeSucceeded, undefined, {
-            key: 'foobar',
+            methodId: 'foobar',
         });
 
         expect(paymentStrategyReducer(initialState, action).statuses).toEqual({
@@ -35,7 +35,7 @@ describe('paymentStrategyReducer()', () => {
 
     it('returns error if payment has failed to initialize', () => {
         const action = createErrorAction(PaymentStrategyActionType.InitializeFailed, new Error(), {
-            key: 'foobar',
+            methodId: 'foobar',
         });
 
         expect(paymentStrategyReducer(initialState, action).errors).toEqual({
@@ -46,7 +46,7 @@ describe('paymentStrategyReducer()', () => {
 
     it('returns pending flag as true if deinitializing payment', () => {
         const action = createAction(PaymentStrategyActionType.DeinitializeRequested, undefined, {
-            key: 'foobar',
+            methodId: 'foobar',
         });
 
         expect(paymentStrategyReducer(initialState, action).statuses).toEqual({
@@ -57,7 +57,7 @@ describe('paymentStrategyReducer()', () => {
 
     it('returns pending flag as false if payment has deinitialized successfully', () => {
         const action = createAction(PaymentStrategyActionType.DeinitializeSucceeded, undefined, {
-            key: 'foobar',
+            methodId: 'foobar',
         });
 
         expect(paymentStrategyReducer(initialState, action).statuses).toEqual({
@@ -70,7 +70,7 @@ describe('paymentStrategyReducer()', () => {
         const action = createErrorAction(
             PaymentStrategyActionType.DeinitializeFailed,
             new Error(),
-            { key: 'foobar' },
+            { methodId: 'foobar' },
         );
 
         expect(paymentStrategyReducer(initialState, action).errors).toEqual({

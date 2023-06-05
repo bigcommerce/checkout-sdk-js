@@ -217,16 +217,14 @@ describe('PaymentStrategyActionCreator', () => {
                 .pipe(toArray())
                 .toPromise();
 
-            const key = method.gateway ? method.id + method.gateway : method.id;
-
             expect(actions).toEqual([
                 {
                     type: PaymentStrategyActionType.InitializeRequested,
-                    meta: { key },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
                 {
                     type: PaymentStrategyActionType.InitializeSucceeded,
-                    meta: { key },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
             ]);
         });
@@ -237,8 +235,6 @@ describe('PaymentStrategyActionCreator', () => {
             const errorHandler = jest.fn((action) => of(action));
 
             jest.spyOn(strategy, 'initialize').mockReturnValue(Promise.reject(initializeError));
-
-            const key = method.gateway ? method.id + method.gateway : method.id;
 
             const actions = await from(
                 actionCreator.initialize({
@@ -253,13 +249,13 @@ describe('PaymentStrategyActionCreator', () => {
             expect(actions).toEqual([
                 {
                     type: PaymentStrategyActionType.InitializeRequested,
-                    meta: { key },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
                 {
                     type: PaymentStrategyActionType.InitializeFailed,
                     error: true,
                     payload: initializeError,
-                    meta: { key },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
             ]);
         });
@@ -347,16 +343,14 @@ describe('PaymentStrategyActionCreator', () => {
                 .pipe(toArray())
                 .toPromise();
 
-            const key = method.gateway ? method.id + method.gateway : method.id;
-
             expect(actions).toEqual([
                 {
                     type: PaymentStrategyActionType.DeinitializeRequested,
-                    meta: { key },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
                 {
                     type: PaymentStrategyActionType.DeinitializeSucceeded,
-                    meta: { key },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
             ]);
         });
@@ -376,19 +370,17 @@ describe('PaymentStrategyActionCreator', () => {
                 .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
-            const key = method.gateway ? method.id + method.gateway : method.id;
-
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 {
                     type: PaymentStrategyActionType.DeinitializeRequested,
-                    meta: { key },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
                 {
                     type: PaymentStrategyActionType.DeinitializeFailed,
                     error: true,
                     payload: deinitializeError,
-                    meta: { key },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
             ]);
         });

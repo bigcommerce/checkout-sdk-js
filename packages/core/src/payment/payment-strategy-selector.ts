@@ -4,13 +4,18 @@ import { createSelector } from '../common/selector';
 
 import PaymentStrategyState, { DEFAULT_STATE } from './payment-strategy-state';
 
+interface InitiaizedQuery {
+    methodId: string;
+    gatewayId?: string;
+}
+
 export default interface PaymentStrategySelector {
     getInitializeError(methodId?: string): Error | undefined;
     getExecuteError(methodId?: string): Error | undefined;
     getFinalizeError(methodId?: string): Error | undefined;
     getWidgetInteractingError(methodId?: string): Error | undefined;
     isInitializing(methodId?: string): boolean;
-    isInitialized(key: string): boolean;
+    isInitialized(query: InitiaizedQuery): boolean;
     isExecuting(methodId?: string): boolean;
     isFinalizing(methodId?: string): boolean;
     isWidgetInteracting(methodId?: string): boolean;
@@ -83,7 +88,9 @@ export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorF
 
     const isInitialized = createSelector(
         (state: PaymentStrategyState) => state.data,
-        (data) => (key: string) => {
+        (data) => (query: InitiaizedQuery) => {
+            const key = query.gatewayId ? `${query.methodId}.${query.gatewayId}` : query.methodId;
+
             return !!(data[key] && data[key].isInitialized);
         },
     );
