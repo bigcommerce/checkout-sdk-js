@@ -40,6 +40,8 @@ function dataReducer(
                     },
                 });
             }
+
+            break;
         }
 
         case PaymentStrategyActionType.DeinitializeSucceeded: {
@@ -72,15 +74,18 @@ function errorsReducer(
             });
 
         case PaymentStrategyActionType.InitializeFailed: {
+            let initializeMethodId = action.meta && action.meta.methodId;
+
             if (action.meta) {
                 const { methodId, gatewayId } = action.meta;
-                const initializeMethodId = gatewayId ? `${methodId}.${gatewayId}` : methodId;
 
-                return objectMerge(errors, {
-                    initializeError: action.payload,
-                    initializeMethodId,
-                });
+                initializeMethodId = gatewayId ? `${methodId}.${gatewayId}` : methodId;
             }
+
+            return objectMerge(errors, {
+                initializeError: action.payload,
+                initializeMethodId,
+            });
         }
 
         case PaymentStrategyActionType.DeinitializeRequested:
@@ -91,15 +96,18 @@ function errorsReducer(
             });
 
         case PaymentStrategyActionType.DeinitializeFailed: {
+            let deinitializeMethodId = action.meta && action.meta.methodId;
+
             if (action.meta) {
                 const { methodId, gatewayId } = action.meta;
-                const deinitializeMethodId = gatewayId ? `${methodId}.${gatewayId}` : methodId;
-    
-                return objectMerge(errors, {
-                    deinitializeError: action.payload,
-                    deinitializeMethodId,
-                });
+
+                deinitializeMethodId = gatewayId ? `${methodId}.${gatewayId}` : methodId;
             }
+
+            return objectMerge(errors, {
+                deinitializeError: action.payload,
+                deinitializeMethodId,
+            });
         }
 
         case PaymentStrategyActionType.ExecuteRequested:
@@ -152,15 +160,18 @@ function statusesReducer(
 ): PaymentStrategyStatusesState {
     switch (action.type) {
         case PaymentStrategyActionType.InitializeRequested: {
-            if (action.meta) { 
-                const { methodId, gatewayId } = action.meta;
-                const initializeMethodId = gatewayId ? `${methodId}.${gatewayId}` : methodId;
+            let initializeMethodId = action.meta && action.meta.methodId;
 
-                return objectMerge(statuses, {
-                    isInitializing: true,
-                    initializeMethodId,
-                });
+            if (action.meta) {
+                const { methodId, gatewayId } = action.meta;
+
+                initializeMethodId = gatewayId ? `${methodId}.${gatewayId}` : methodId;
             }
+
+            return objectMerge(statuses, {
+                isInitializing: true,
+                initializeMethodId,
+            });
         }
 
         case PaymentStrategyActionType.InitializeFailed:
@@ -171,15 +182,18 @@ function statusesReducer(
             });
 
         case PaymentStrategyActionType.DeinitializeRequested: {
-            if (action.meta) { 
-                const { methodId, gatewayId } = action.meta;
-                const deinitializeMethodId = gatewayId ? `${methodId}.${gatewayId}` : methodId;
+            let deinitializeMethodId = action.meta && action.meta.methodId;
 
-                return objectMerge(statuses, {
-                    isDeinitializing: true,
-                    deinitializeMethodId,
-                });
+            if (action.meta) {
+                const { methodId, gatewayId } = action.meta;
+
+                deinitializeMethodId = gatewayId ? `${methodId}.${gatewayId}` : methodId;
             }
+
+            return objectMerge(statuses, {
+                isDeinitializing: true,
+                deinitializeMethodId,
+            });
         }
 
         case PaymentStrategyActionType.DeinitializeFailed:
