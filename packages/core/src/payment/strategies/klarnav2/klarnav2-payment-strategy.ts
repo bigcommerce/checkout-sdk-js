@@ -53,7 +53,12 @@ export default class KlarnaV2PaymentStrategy implements PaymentStrategy {
             .then(() => {
                 this._unsubscribe = this._store.subscribe(
                     (state) => {
-                        if (state.paymentStrategies.isInitialized(options.methodId)) {
+                        if (
+                            state.paymentStrategies.isInitialized({
+                                methodId: options.methodId,
+                                gatewayId: options.gatewayId,
+                            })
+                        ) {
                             this._loadPaymentsWidget(options);
                         }
                     },

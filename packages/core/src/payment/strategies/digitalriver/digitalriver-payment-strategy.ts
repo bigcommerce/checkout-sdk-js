@@ -67,7 +67,12 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
 
         this._unsubscribe = await this._store.subscribe(
             async (state) => {
-                if (state.paymentStrategies.isInitialized(options.methodId)) {
+                if (
+                    state.paymentStrategies.isInitialized({
+                        methodId: options.methodId,
+                        gatewayId: options.gatewayId,
+                    })
+                ) {
                     const container = document.getElementById(containerId);
 
                     if (container) {

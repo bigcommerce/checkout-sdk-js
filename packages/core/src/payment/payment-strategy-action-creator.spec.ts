@@ -220,11 +220,11 @@ describe('PaymentStrategyActionCreator', () => {
             expect(actions).toEqual([
                 {
                     type: PaymentStrategyActionType.InitializeRequested,
-                    meta: { methodId: method.id },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
                 {
                     type: PaymentStrategyActionType.InitializeSucceeded,
-                    meta: { methodId: method.id },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
             ]);
         });
@@ -249,13 +249,13 @@ describe('PaymentStrategyActionCreator', () => {
             expect(actions).toEqual([
                 {
                     type: PaymentStrategyActionType.InitializeRequested,
-                    meta: { methodId: method.id },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
                 {
                     type: PaymentStrategyActionType.InitializeFailed,
                     error: true,
                     payload: initializeError,
-                    meta: { methodId: method.id },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
             ]);
         });
@@ -346,11 +346,11 @@ describe('PaymentStrategyActionCreator', () => {
             expect(actions).toEqual([
                 {
                     type: PaymentStrategyActionType.DeinitializeRequested,
-                    meta: { methodId: method.id },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
                 {
                     type: PaymentStrategyActionType.DeinitializeSucceeded,
-                    meta: { methodId: method.id },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
             ]);
         });
@@ -374,13 +374,13 @@ describe('PaymentStrategyActionCreator', () => {
             expect(actions).toEqual([
                 {
                     type: PaymentStrategyActionType.DeinitializeRequested,
-                    meta: { methodId: method.id },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
                 {
                     type: PaymentStrategyActionType.DeinitializeFailed,
                     error: true,
                     payload: deinitializeError,
-                    meta: { methodId: method.id },
+                    meta: { methodId: method.id, gatewayId: method.gateway },
                 },
             ]);
         });

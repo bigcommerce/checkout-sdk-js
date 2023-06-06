@@ -153,7 +153,7 @@ export default class PaymentStrategyActionCreator {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
-                if (methodId && state.paymentStrategies.isInitialized(methodId)) {
+                if (methodId && state.paymentStrategies.isInitialized({ methodId, gatewayId })) {
                     return empty();
                 }
 
@@ -169,11 +169,13 @@ export default class PaymentStrategyActionCreator {
                     of(
                         createAction(PaymentStrategyActionType.InitializeRequested, undefined, {
                             methodId,
+                            gatewayId,
                         }),
                     ),
                     promise.then(() =>
                         createAction(PaymentStrategyActionType.InitializeSucceeded, undefined, {
                             methodId,
+                            gatewayId,
                         }),
                     ),
                 );
@@ -181,6 +183,7 @@ export default class PaymentStrategyActionCreator {
                 catchError((error) =>
                     throwErrorAction(PaymentStrategyActionType.InitializeFailed, error, {
                         methodId,
+                        gatewayId,
                     }),
                 ),
             );
@@ -200,7 +203,7 @@ export default class PaymentStrategyActionCreator {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
-                if (methodId && !state.paymentStrategies.isInitialized(methodId)) {
+                if (methodId && !state.paymentStrategies.isInitialized({ methodId, gatewayId })) {
                     return empty();
                 }
 
@@ -216,11 +219,13 @@ export default class PaymentStrategyActionCreator {
                     of(
                         createAction(PaymentStrategyActionType.DeinitializeRequested, undefined, {
                             methodId,
+                            gatewayId,
                         }),
                     ),
                     promise.then(() =>
                         createAction(PaymentStrategyActionType.DeinitializeSucceeded, undefined, {
                             methodId,
+                            gatewayId,
                         }),
                     ),
                 );
@@ -228,6 +233,7 @@ export default class PaymentStrategyActionCreator {
                 catchError((error) =>
                     throwErrorAction(PaymentStrategyActionType.DeinitializeFailed, error, {
                         methodId,
+                        gatewayId,
                     }),
                 ),
             );

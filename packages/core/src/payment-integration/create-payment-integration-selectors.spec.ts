@@ -314,9 +314,11 @@ describe('createPaymentIntegrationSelectors', () => {
         });
 
         it('returns is payment data initialized', () => {
-            const output = subject.isPaymentMethodInitialized('braintree');
+            const output = subject.isPaymentMethodInitialized({ methodId: 'braintree' });
 
-            expect(output).toEqual(internalSelectors.paymentStrategies.isInitialized('braintree'));
+            expect(output).toEqual(
+                internalSelectors.paymentStrategies.isInitialized({ methodId: 'braintree' }),
+            );
         });
     });
 });
