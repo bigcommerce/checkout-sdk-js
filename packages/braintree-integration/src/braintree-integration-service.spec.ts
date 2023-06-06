@@ -293,6 +293,19 @@ describe('BraintreeIntegrationService', () => {
         });
     });
 
+    describe('loadBraintreeLocalMethods', () => {
+        it('loads local payment methods', async () => {
+            braintreeScriptLoader.loadBraintreeLocalMethods = jest
+                .fn()
+                .mockReturnValue({ create: jest.fn() });
+            braintreeScriptLoader.loadClient = jest.fn().mockReturnValue({ create: jest.fn() });
+            braintreeIntegrationService.initialize('client-token');
+            await braintreeIntegrationService.loadBraintreeLocalMethods(jest.fn(), '');
+
+            expect(braintreeScriptLoader.loadBraintreeLocalMethods).toHaveBeenCalled();
+        });
+    });
+
     describe('mapToLegacyBillingAddress()', () => {
         const detailsMock = {
             username: 'johndoe',
