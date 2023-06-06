@@ -52,8 +52,10 @@ export default class BluesnapDirectNameOnCardInput {
     }
 
     detach(): void {
-        this._getInput().remove();
-        this._input = undefined;
+        if (this._input) {
+            this._input.remove();
+            this._input = undefined;
+        }
     }
 
     private _handleFocus(

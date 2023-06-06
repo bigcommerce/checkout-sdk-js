@@ -248,11 +248,5 @@ describe('BluesnapDirectNameOnCardInput', () => {
 
             expect(getInputElement().remove).toHaveBeenCalled();
         });
-
-        it('should fail if not attached yet', () => {
-            const detach = () => nameOnCardInput.detach();
-
-            expect(detach).toThrow(NotInitializedError);
-        });
     });
 });

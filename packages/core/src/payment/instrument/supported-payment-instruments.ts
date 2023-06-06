@@ -109,6 +109,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'bluesnapv2',
         method: 'credit_card',
     },
+    'bluesnapdirect.credit_card': {
+        provider: 'bluesnapdirect',
+        method: 'credit_card',
+    },
     orbital: {
         provider: 'orbital',
         method: 'credit_card',
