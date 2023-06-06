@@ -21,12 +21,22 @@ export const CREDIT_CARD_ERRORS = {
             message: 'Credit card number is required',
             type: 'required',
         },
+        [HostedFieldType.CardNumberVerification]: {
+            fieldType: 'cardNumber',
+            message: 'Credit card number is required',
+            type: 'required',
+        },
         [HostedFieldType.CardExpiry]: {
             fieldType: 'cardExpiry',
             message: 'Expiration date is required',
             type: 'required',
         },
         [HostedFieldType.CardCode]: {
+            fieldType: 'cardCode',
+            message: 'CVV is required',
+            type: 'required',
+        },
+        [HostedFieldType.CardCodeVerification]: {
             fieldType: 'cardCode',
             message: 'CVV is required',
             type: 'required',
@@ -43,12 +53,22 @@ export const CREDIT_CARD_ERRORS = {
             message: 'Credit card number must be valid',
             type: 'invalid_card_number',
         },
+        [HostedFieldType.CardNumberVerification]: {
+            fieldType: 'cardNumber',
+            message: 'Credit card number must be valid',
+            type: 'invalid_card_number',
+        },
         [HostedFieldType.CardExpiry]: {
             fieldType: 'cardExpiry',
             message: 'Expiration date must be a valid future date in MM / YY format',
             type: 'invalid_card_expiry',
         },
         [HostedFieldType.CardCode]: {
+            fieldType: 'cardCode',
+            message: 'CVV must be valid',
+            type: 'invalid_card_code',
+        },
+        [HostedFieldType.CardCodeVerification]: {
             fieldType: 'cardCode',
             message: 'CVV must be valid',
             type: 'invalid_card_code',

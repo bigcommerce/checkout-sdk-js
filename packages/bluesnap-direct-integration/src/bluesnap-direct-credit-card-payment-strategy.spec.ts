@@ -29,6 +29,9 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
     let hostedForm: BlueSnapDirectHostedForm;
     let strategy: BlueSnapDirectCreditCardPaymentStrategy;
     let options: PaymentInitializeOptions & WithCreditCardPaymentInitializeOptions;
+    let optionsCardValidation: PaymentInitializeOptions & WithCreditCardPaymentInitializeOptions;
+    let optionsCardValidationWithoutFields: PaymentInitializeOptions &
+        WithCreditCardPaymentInitializeOptions;
 
     beforeEach(() => {
         paymentIntegrationService =
@@ -61,6 +64,38 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
             hostedForm,
         );
 
+        optionsCardValidationWithoutFields = {
+            creditCard: {
+                form: {
+                    fields: {
+                        [HostedFieldType.CardNumberVerification]: undefined,
+                        [HostedFieldType.CardCodeVerification]: undefined,
+                    },
+                },
+            },
+            gatewayId: 'bluesnapdirect',
+            methodId: 'credit_card',
+        };
+
+        optionsCardValidation = {
+            creditCard: {
+                form: {
+                    fields: {
+                        [HostedFieldType.CardNumberVerification]: {
+                            containerId: 'card-number',
+                            instrumentId: 'card-number-instrumentId',
+                        },
+                        [HostedFieldType.CardCodeVerification]: {
+                            containerId: 'card-code',
+                            instrumentId: 'card-code-instrumentId',
+                        },
+                    },
+                },
+            },
+            gatewayId: 'bluesnapdirect',
+            methodId: 'credit_card',
+        };
+
         options = {
             creditCard: {
                 form: {
@@ -91,10 +126,13 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
         it('should initialize BlueSnap hosted form', async () => {
             await strategy.initialize(options);
 
-            expect(hostedForm.initialize).toHaveBeenCalledWith(true);
+            expect(hostedForm.initialize).toHaveBeenCalledWith(
+                true,
+                options.creditCard?.form.fields,
+            );
         });
 
-        it('should attach BlueSnap hosted form', async () => {
+        it('should attach BlueSnap hosted form for credit card form', async () => {
             await strategy.initialize(options);
 
             expect(hostedForm.attach).toHaveBeenCalledWith(
@@ -102,6 +140,22 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
                 options.creditCard,
                 undefined,
             );
+        });
+
+        it('should attach BlueSnap hosted form for credit card validation form', async () => {
+            await strategy.initialize(optionsCardValidation);
+
+            expect(hostedForm.attach).toHaveBeenCalledWith(
+                'pfToken',
+                optionsCardValidation.creditCard,
+                undefined,
+            );
+        });
+
+        it("shouldn't attach BlueSnap hosted form for credit card validation form", async () => {
+            await strategy.initialize(optionsCardValidationWithoutFields);
+
+            expect(hostedForm.attach).not.toHaveBeenCalled();
         });
 
         it('should attach BlueSnap hosted form with 3DS enabled', async () => {
@@ -138,20 +192,6 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
             test('creditCard is not provided', async () => {
                 const initialize = () => {
                     options.creditCard = undefined;
-
-                    return strategy.initialize(options);
-                };
-
-                await expect(initialize()).rejects.toThrow(InvalidArgumentError);
-                expect(paymentIntegrationService.createHostedForm).not.toHaveBeenCalled();
-            });
-
-            test('fields is not a HostedCardFieldOptionsMap', async () => {
-                const initialize = () => {
-                    options = {
-                        ...options,
-                        creditCard: { form: { fields: {} } },
-                    };
 
                     return strategy.initialize(options);
                 };
@@ -206,6 +246,14 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
             expect(hostedForm.submit).toHaveBeenCalled();
         });
 
+        it("shouldn't submit validated payment data to BlueSnap servers when hosted fields isn't mounted", async () => {
+            await strategy.initialize(optionsCardValidationWithoutFields);
+            await strategy.execute(payload);
+
+            expect(hostedForm.validate).not.toHaveBeenCalled();
+            expect(hostedForm.submit).not.toHaveBeenCalled();
+        });
+
         it('should submit payment data to BlueSnap servers and include 3DS data', async () => {
             const expectedData = {
                 amount: 190,
@@ -242,7 +290,7 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
 
             await execute();
 
-            expect(hostedForm.submit).toHaveBeenCalledWith(expectedData);
+            expect(hostedForm.submit).toHaveBeenCalledWith(expectedData, true);
         });
 
         it('should submit the order', async () => {
@@ -251,7 +299,7 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
         });
 
-        it('should submit the payment', async () => {
+        it('should submit the payment with cardHolderName for credit card form', async () => {
             await strategy.execute(payload);
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
@@ -262,6 +310,99 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
                         credit_card_token: {
                             token: '{"pfToken":"pfToken","cardHolderName":"John Doe"}',
                         },
+                        vault_payment_instrument: false,
+                        set_as_default_stored_instrument: false,
+                    },
+                },
+            });
+        });
+
+        it('should submit the payment without cardHolderName for validate credit card form', async () => {
+            await strategy.initialize(optionsCardValidation);
+            await strategy.execute(payload);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                gatewayId: 'bluesnapdirect',
+                methodId: 'credit_card',
+                paymentData: {
+                    formattedPayload: {
+                        credit_card_token: {
+                            token: '{"pfToken":"pfToken"}',
+                        },
+                        vault_payment_instrument: false,
+                        set_as_default_stored_instrument: false,
+                    },
+                },
+            });
+        });
+
+        it('should submit the payment with stored card with card validation form', async () => {
+            payload = {
+                payment: {
+                    gatewayId: 'bluesnapdirect',
+                    methodId: 'credit_card',
+                    paymentData: { shouldSetAsDefaultInstrument: false, instrumentId: 'id' },
+                },
+            };
+
+            await strategy.execute(payload);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                gatewayId: 'bluesnapdirect',
+                methodId: 'credit_card',
+                paymentData: {
+                    instrumentId: 'id',
+                    nonce: 'pfToken',
+                    shouldSetAsDefaultInstrument: false,
+                },
+            });
+        });
+
+        it('should submit the payment with stored card without card validation form', async () => {
+            await strategy.initialize(optionsCardValidationWithoutFields);
+            payload = {
+                payment: {
+                    gatewayId: 'bluesnapdirect',
+                    methodId: 'credit_card',
+                    paymentData: { shouldSetAsDefaultInstrument: false, instrumentId: 'id' },
+                },
+            };
+
+            await strategy.execute(payload);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                gatewayId: 'bluesnapdirect',
+                methodId: 'credit_card',
+                paymentData: {
+                    instrumentId: 'id',
+                    shouldSetAsDefaultInstrument: false,
+                },
+            });
+        });
+
+        it('should submit the payment and save card', async () => {
+            payload = {
+                payment: {
+                    gatewayId: 'bluesnapdirect',
+                    methodId: 'credit_card',
+                    paymentData: {
+                        shouldSaveInstrument: true,
+                        shouldSetAsDefaultInstrument: true,
+                    },
+                },
+            };
+            await strategy.execute(payload);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                gatewayId: 'bluesnapdirect',
+                methodId: 'credit_card',
+                paymentData: {
+                    formattedPayload: {
+                        credit_card_token: {
+                            token: '{"pfToken":"pfToken","cardHolderName":"John Doe"}',
+                        },
+                        vault_payment_instrument: true,
+                        set_as_default_stored_instrument: true,
                     },
                 },
             });
@@ -292,9 +433,17 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
         });
 
         it('should detach BlueSnap hosted form', async () => {
+            await strategy.initialize(options);
             await strategy.deinitialize();
 
             expect(hostedForm.detach).toHaveBeenCalled();
+        });
+
+        it("shouldn't detach BlueSnap hosted form if not initialized", async () => {
+            await strategy.initialize(optionsCardValidationWithoutFields);
+            await strategy.deinitialize();
+
+            expect(hostedForm.detach).not.toHaveBeenCalled();
         });
     });
 });

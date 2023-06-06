@@ -120,7 +120,7 @@ interface BlueSnapDirectCallbackData extends BlueSnapDirectCallback {
 }
 
 export interface WithBlueSnapDirectCardHolderName {
-    cardHolderName: string;
+    cardHolderName?: string;
 }
 
 interface BlueSnapDirectSubmitError {

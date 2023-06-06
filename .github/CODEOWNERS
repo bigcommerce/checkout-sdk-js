@@ -9,4 +9,4 @@
 /packages/paypal-commerce-integration @bigcommerce/kyiv-payments-team
 /packages/squarev2-integration @bigcommerce/apex-leads
 /packages/paypal-express-integration @bigcommerce/kyiv-payments-team
-/packages/bluesnap-direct-integration @bigcommerce/apex-leads
+/packages/bluesnap-direct-integration @bigcommerce/apex-leads @bigcommerce/kyiv-payments-team
