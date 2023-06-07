@@ -1574,6 +1574,31 @@ declare interface BraintreeFormOptions {
     onEnter?(data: BraintreeFormFieldEnterEventData): void;
 }
 
+declare interface BraintreeLocalMethods {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    container: string;
+    /**
+     * Text that will be displayed on lpm button
+     */
+    buttonText: string;
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback for submitting payment form that gets called
+     * when buyer approved PayPal account.
+     */
+    submitForm?(): void;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError(error: unknown): void;
+}
+
 /**
  * A set of options that are required to initialize the Braintree payment
  * method. You need to provide the options if you want to support 3D Secure
@@ -6615,7 +6640,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -7785,6 +7810,10 @@ declare interface WithBoltPaymentInitializeOptions {
      * method. They can be omitted unless you need to support Bolt.
      */
     bolt?: BoltPaymentInitializeOptions;
+}
+
+declare interface WithBraintreeLocalMethodsPaymentInitializeOptions {
+    braintreelocalmethods?: BraintreeLocalMethods;
 }
 
 declare interface WithBraintreePaypalAchPaymentInitializeOptions {
