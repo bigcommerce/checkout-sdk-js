@@ -535,6 +535,7 @@ declare interface LineItem {
     couponAmount: number;
     listPrice: number;
     salePrice: number;
+    retailPrice: number;
     comparisonPrice: number;
     extendedListPrice: number;
     extendedSalePrice: number;

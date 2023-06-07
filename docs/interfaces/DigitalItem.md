@@ -35,6 +35,7 @@
 - [parentId](DigitalItem.md#parentid)
 - [productId](DigitalItem.md#productid)
 - [quantity](DigitalItem.md#quantity)
+- [retailPrice](DigitalItem.md#retailprice)
 - [salePrice](DigitalItem.md#saleprice)
 - [sku](DigitalItem.md#sku)
 - [socialMedia](DigitalItem.md#socialmedia)
@@ -258,6 +259,16 @@ ___
 #### Inherited from
 
 [LineItem](LineItem.md).[quantity](LineItem.md#quantity)
+
+___
+
+### retailPrice
+
+• **retailPrice**: `number`
+
+#### Inherited from
+
+[LineItem](LineItem.md).[retailPrice](LineItem.md#retailprice)
 
 ___
 

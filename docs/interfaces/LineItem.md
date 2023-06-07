@@ -34,6 +34,7 @@
 - [parentId](LineItem.md#parentid)
 - [productId](LineItem.md#productid)
 - [quantity](LineItem.md#quantity)
+- [retailPrice](LineItem.md#retailprice)
 - [salePrice](LineItem.md#saleprice)
 - [sku](LineItem.md#sku)
 - [socialMedia](LineItem.md#socialmedia)
@@ -159,6 +160,12 @@ ___
 ### quantity
 
 • **quantity**: `number`
+
+___
+
+### retailPrice
+
+• **retailPrice**: `number`
 
 ___
 
