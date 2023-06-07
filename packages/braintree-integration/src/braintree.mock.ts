@@ -154,6 +154,7 @@ export function getBraintreeAch(): PaymentMethod {
         supportedCards: [],
         config: {
             displayName: 'Braintree ACH',
+            isVaultingEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
     };
