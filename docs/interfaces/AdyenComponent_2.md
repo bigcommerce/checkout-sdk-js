@@ -13,6 +13,7 @@
 ### Methods
 
 - [mount](AdyenComponent_2.md#mount)
+- [submit](AdyenComponent_2.md#submit)
 - [unmount](AdyenComponent_2.md#unmount)
 
 ## Properties
@@ -60,6 +61,16 @@ ___
 #### Returns
 
 `HTMLElement`
+
+___
+
+### submit
+
+▸ **submit**(): `void`
+
+#### Returns
+
+`void`
 
 ___
 

@@ -177,6 +177,10 @@ declare interface AdyenComponentEvents_2 {
      */
     onChange?(state: AdyenV3ComponentState, component: AdyenComponent_2): void;
     /**
+     * Called when the shopper selects the Pay button and payment details are valid.
+     */
+    onSubmit?(state: AdyenV3ComponentState, component: AdyenComponent_2): void;
+    /**
      * Called in case of an invalid card number, invalid expiry date, or
      *  incomplete field. Called again when errors are cleared.
      */
@@ -196,6 +200,7 @@ declare interface AdyenComponent_2 {
     state?: CardState_2;
     mount(containerId: string): HTMLElement;
     unmount(): void;
+    submit(): void;
 }
 
 declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {

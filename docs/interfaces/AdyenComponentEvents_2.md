@@ -15,6 +15,7 @@
 - [onChange](AdyenComponentEvents_2.md#onchange)
 - [onError](AdyenComponentEvents_2.md#onerror)
 - [onFieldValid](AdyenComponentEvents_2.md#onfieldvalid)
+- [onSubmit](AdyenComponentEvents_2.md#onsubmit)
 
 ## Methods
 
@@ -67,6 +68,25 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `state` | [`AdyenV3ValidationState`](AdyenV3ValidationState.md) |
+| `component` | [`AdyenComponent_2`](AdyenComponent_2.md) |
+
+#### Returns
+
+`void`
+
+___
+
+### onSubmit
+
+▸ `Optional` **onSubmit**(`state`, `component`): `void`
+
+Called when the shopper selects the Pay button and payment details are valid.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `state` | [`AdyenV3ComponentState`](../README.md#adyenv3componentstate) |
 | `component` | [`AdyenComponent_2`](AdyenComponent_2.md) |
 
 #### Returns

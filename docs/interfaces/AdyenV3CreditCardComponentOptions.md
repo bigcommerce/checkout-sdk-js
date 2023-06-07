@@ -30,6 +30,7 @@
 - [onChange](AdyenV3CreditCardComponentOptions.md#onchange)
 - [onError](AdyenV3CreditCardComponentOptions.md#onerror)
 - [onFieldValid](AdyenV3CreditCardComponentOptions.md#onfieldvalid)
+- [onSubmit](AdyenV3CreditCardComponentOptions.md#onsubmit)
 
 ## Properties
 
@@ -194,3 +195,26 @@ ___
 #### Inherited from
 
 [AdyenComponentEvents_2](AdyenComponentEvents_2.md).[onFieldValid](AdyenComponentEvents_2.md#onfieldvalid)
+
+___
+
+### onSubmit
+
+▸ `Optional` **onSubmit**(`state`, `component`): `void`
+
+Called when the shopper selects the Pay button and payment details are valid.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `state` | [`AdyenV3ComponentState`](../README.md#adyenv3componentstate) |
+| `component` | [`AdyenComponent_2`](AdyenComponent_2.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[AdyenComponentEvents_2](AdyenComponentEvents_2.md).[onSubmit](AdyenComponentEvents_2.md#onsubmit)

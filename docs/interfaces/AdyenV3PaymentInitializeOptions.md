@@ -108,7 +108,7 @@ ___
 
 ### options
 
-• `Optional` **options**: `Pick`<[`AdyenV3CreditCardComponentOptions`](AdyenV3CreditCardComponentOptions.md), ``"details"`` \| ``"enableStoreDetails"`` \| ``"hasHolderName"`` \| ``"holderNameRequired"`` \| ``"data"`` \| ``"groupTypes"`` \| ``"placeholders"`` \| ``"brands"`` \| ``"styles"`` \| ``"onError"`` \| ``"onFieldValid"`` \| ``"showBrandsUnderCardNumber"``\>
+• `Optional` **options**: `Pick`<[`AdyenV3CreditCardComponentOptions`](AdyenV3CreditCardComponentOptions.md), ``"details"`` \| ``"enableStoreDetails"`` \| ``"hasHolderName"`` \| ``"holderNameRequired"`` \| ``"data"`` \| ``"groupTypes"`` \| ``"placeholders"`` \| ``"brands"`` \| ``"styles"`` \| ``"onError"`` \| ``"onFieldValid"`` \| ``"showBrandsUnderCardNumber"`` \| ``"onSubmit"``\>
 
 Optional. Overwriting the default options
 
