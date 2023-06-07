@@ -98,11 +98,12 @@ describe('BodlEmitterService', () => {
                     event_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                     line_items: [
                         {
-                            product_id: 103,
+                            product_id: '103',
                             sku: 'CLC',
                             product_name: 'Canvas Laundry Cart',
                             base_price: 200,
                             sale_price: 190,
+                            retail_price: 210,
                             purchase_price: 190,
                             quantity: 1,
                             brand_name: 'OFS',
@@ -112,12 +113,13 @@ describe('BodlEmitterService', () => {
                             currency: 'USD',
                         },
                         {
-                            product_id: 104,
+                            product_id: '104',
                             sku: 'CLX',
                             product_name: 'Digital Book',
                             base_price: 200,
                             purchase_price: 200,
                             sale_price: 200,
+                            retail_price: 210,
                             quantity: 1,
                             discount: 0,
                             brand_name: 'Digitalia',
@@ -219,12 +221,13 @@ describe('BodlEmitterService', () => {
                 expect.objectContaining({
                     line_items: [
                         {
-                            product_id: 103,
+                            product_id: '103',
                             sku: 'CLC',
                             product_name: 'Canvas Laundry Cart',
                             base_price: 200,
                             sale_price: 190,
                             purchase_price: 190,
+                            retail_price: 210,
                             quantity: 1,
                             brand_name: 'OFS',
                             discount: 10,
