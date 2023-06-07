@@ -124,13 +124,16 @@ export default class PayPalCommerceVenmoPaymentStrategy implements PaymentStrate
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-        const { buttonStyle } = paymentMethod.initializationData || {};
+        const { paymentButtonStyles } = paymentMethod.initializationData || {};
+        const { checkoutPaymentButtonStyles } = paymentButtonStyles || {};
 
         const { container, onError, onRenderButton, onValidate, submitForm } = paypalcommercevenmo;
 
         const buttonOptions: PayPalCommerceButtonsOptions = {
             fundingSource: paypalSdk.FUNDING.VENMO,
-            style: this.paypalCommerceIntegrationService.getValidButtonStyle(buttonStyle),
+            style: this.paypalCommerceIntegrationService.getValidButtonStyle(
+                checkoutPaymentButtonStyles,
+            ),
             createOrder: () =>
                 this.paypalCommerceIntegrationService.createOrder('paypalcommercevenmocheckout'),
             onClick: (_, actions) => this.handleClick(actions, onValidate),

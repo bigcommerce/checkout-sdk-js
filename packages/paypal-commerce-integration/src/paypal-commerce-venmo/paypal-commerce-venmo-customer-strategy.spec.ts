@@ -181,7 +181,9 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.VENMO,
                 style: {
-                    height: 40,
+                    color: 'silver',
+                    height: 36,
+                    label: 'checkout',
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
