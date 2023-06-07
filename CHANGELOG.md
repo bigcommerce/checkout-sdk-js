@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.386.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.385.0...v1.386.0) (2023-06-07)
+
+
+### Features
+
+* **payment:** PAYPAL-2451 ACH vaulting ([#1990](https://github.com/bigcommerce/checkout-sdk-js/issues/1990)) ([7dc4660](https://github.com/bigcommerce/checkout-sdk-js/commit/7dc4660f77b71dd22221c5fc5d427920b488e3ad))
+
 ## [1.385.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.384.1...v1.385.0) (2023-06-07)
 
 
