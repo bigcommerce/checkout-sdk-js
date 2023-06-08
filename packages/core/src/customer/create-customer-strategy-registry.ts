@@ -62,7 +62,6 @@ import CustomerRequestSender from './customer-request-sender';
 import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategy } from './strategies';
 import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
-import { ApplePayCustomerStrategy } from './strategies/apple-pay';
 import {
     BraintreePaypalCreditCustomerStrategy,
     BraintreeVisaCheckoutCustomerStrategy,
@@ -327,23 +326,6 @@ export default function createCustomerStrategyRegistry(
                 remoteCheckoutActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayWorldpayAccessInitializer()),
                 formPoster,
-            ),
-    );
-
-    registry.register(
-        'applepay',
-        () =>
-            new ApplePayCustomerStrategy(
-                store,
-                checkoutActionCreator,
-                requestSender,
-                paymentMethodActionCreator,
-                consignmentActionCreator,
-                billingAddressActionCreator,
-                paymentActionCreator,
-                remoteCheckoutActionCreator,
-                orderActionCreator,
-                new ApplePaySessionFactory(),
             ),
     );
 
