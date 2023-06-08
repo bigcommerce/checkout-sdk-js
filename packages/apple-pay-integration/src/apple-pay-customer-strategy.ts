@@ -473,9 +473,12 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
                 );
             }
 
+            await this._paymentIntegrationService.verifyCheckoutSpamProtection();
+
             await this._paymentIntegrationService.submitOrder({
                 useStoreCredit: false,
             });
+
             await this._paymentIntegrationService.submitPayment(payment);
             applePaySession.completePayment(ApplePaySession.STATUS_SUCCESS);
 
