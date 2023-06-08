@@ -204,6 +204,7 @@ describe('ApplePayButtonStrategy', () => {
 
         it('gets shipping contact selected successfully', async () => {
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
             await strategy.initialize(CheckoutButtonInitializeOptions);
 
             if (CheckoutButtonInitializeOptions.applepay) {
@@ -344,10 +345,12 @@ describe('ApplePayButtonStrategy', () => {
             jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
                 Promise.resolve({ body: { ...getBuyNowCart() } }),
             );
+
             const CheckoutButtonInitializeOptions =
                 getApplePayButtonInitializationOptionsWithBuyNow();
 
             await strategy.initialize(CheckoutButtonInitializeOptions);
+
             if (CheckoutButtonInitializeOptions.applepay) {
                 const button = container.firstChild as HTMLElement;
 
@@ -365,15 +368,18 @@ describe('ApplePayButtonStrategy', () => {
             jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
                 Promise.resolve({ body: { ...getBuyNowCart() } }),
             );
+
             const CheckoutButtonInitializeOptions =
                 getApplePayButtonInitializationOptionsWithBuyNow();
 
             await strategy.initialize(CheckoutButtonInitializeOptions);
+
             if (CheckoutButtonInitializeOptions.applepay) {
                 const button = container.firstChild as HTMLElement;
 
                 if (button) {
                     button.click();
+
                     const event = {
                         shippingContact: getContactAddress(),
                     } as ApplePayJS.ApplePayShippingContactSelectedEvent;
@@ -388,6 +394,7 @@ describe('ApplePayButtonStrategy', () => {
 
         it('doesnt call applePaySession.onpaymentmethodselected Buy Now flow with for digital item', async () => {
             applePaySession.onpaymentmethodselected = jest.fn();
+
             const CheckoutButtonInitializeOptions = {
                 ...getApplePayButtonInitializationOptions(),
                 applepay: {
@@ -412,6 +419,7 @@ describe('ApplePayButtonStrategy', () => {
             };
 
             await strategy.initialize(CheckoutButtonInitializeOptions);
+
             if (CheckoutButtonInitializeOptions.applepay) {
                 const button = container.firstChild as HTMLElement;
 
@@ -548,6 +556,9 @@ describe('ApplePayButtonStrategy', () => {
                     button.click();
                     await applePaySession.onpaymentauthorized(authEvent);
 
+                    expect(
+                        paymentIntegrationService.verifyCheckoutSpamProtection,
+                    ).toHaveBeenCalled();
                     expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
                     expect(applePaySession.completePayment).toHaveBeenCalled();
                     expect(
