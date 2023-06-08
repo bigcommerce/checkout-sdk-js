@@ -691,6 +691,9 @@ describe('ApplePayCustomerStrategy', () => {
                     button.click();
                     await applePaySession.onpaymentauthorized(authEvent);
 
+                    expect(
+                        paymentIntegrationService.verifyCheckoutSpamProtection,
+                    ).toHaveBeenCalled();
                     expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalled();
                     expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
                 }
