@@ -3,12 +3,10 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { createCheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
-import { createPaymentClient } from '../payment';
 
 import createCheckoutButtonRegistry from './create-checkout-button-registry';
 import { CheckoutButtonStrategy } from './strategies';
 import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
-import { ApplePayButtonStrategy } from './strategies/apple-pay';
 import {
     BraintreePaypalButtonStrategy,
     BraintreePaypalCreditButtonStrategy,
@@ -21,19 +19,13 @@ describe('createCheckoutButtonRegistry', () => {
 
     beforeEach(() => {
         const store = createCheckoutStore();
-        const paymentClient = createPaymentClient(store);
 
         registry = createCheckoutButtonRegistry(
             store,
-            paymentClient,
             createRequestSender(),
             createFormPoster(),
             'en',
         );
-    });
-
-    it('returns registry with ApplePay registered', () => {
-        expect(registry.get('applepay')).toEqual(expect.any(ApplePayButtonStrategy));
     });
 
     it('returns registry with AmazonPayV2 registered', () => {

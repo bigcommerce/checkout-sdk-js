@@ -154,7 +154,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new CountryActionCreator(new CountryRequestSender(requestSender, { locale })),
         new CouponActionCreator(new CouponRequestSender(requestSender)),
         new CustomerStrategyActionCreator(
-            createCustomerStrategyRegistry(store, paymentClient, requestSender, locale),
+            createCustomerStrategyRegistry(store, requestSender, locale),
             customerRegistryV2,
         ),
         new ErrorActionCreator(),

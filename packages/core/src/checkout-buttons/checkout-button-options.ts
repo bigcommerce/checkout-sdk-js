@@ -2,7 +2,6 @@ import { RequestOptions } from '../common/http-request';
 
 import { CheckoutButtonMethodType } from './strategies';
 import { AmazonPayV2ButtonInitializeOptions } from './strategies/amazon-pay-v2';
-import { ApplePayButtonInitializeOptions } from './strategies/apple-pay';
 import {
     BraintreePaypalButtonInitializeOptions,
     BraintreePaypalCreditButtonInitializeOptions,
@@ -25,12 +24,6 @@ export interface CheckoutButtonOptions extends RequestOptions {
 
 export interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     [key: string]: unknown;
-
-    /**
-     * The options that are required to initialize the ApplePay payment method.
-     * They can be omitted unless you need to support ApplePay in cart.
-     */
-    applepay?: ApplePayButtonInitializeOptions;
 
     /**
      * The options that are required to facilitate AmazonPayV2. They can be
