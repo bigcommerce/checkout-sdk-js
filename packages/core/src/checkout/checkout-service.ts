@@ -20,6 +20,7 @@ import {
     ExecutePaymentMethodCheckoutOptions,
     GuestCredentials,
 } from '../customer';
+import { ExtensionActionCreator } from '../extension';
 import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
@@ -98,6 +99,7 @@ export default class CheckoutService {
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _subscriptionsActionCreator: SubscriptionsActionCreator,
         private _formFieldsActionCreator: FormFieldsActionCreator,
+        private _extensionActionCreator: ExtensionActionCreator,
     ) {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
         this._selectorsFactory = createCheckoutSelectorsFactory();
@@ -1360,6 +1362,26 @@ export default class CheckoutService {
         const action = this._spamProtectionActionCreator.verifyCheckoutSpamProtection();
 
         return this._dispatch(action, { queueId: 'spamProtection' });
+    }
+
+    /**
+     * Loads a list of extensions available for checkout.
+     *
+     * ```js
+     * const state = service.loadExtensions();
+     *
+     * console.log(state.data.getExtensions());
+     * ```
+     *
+     * @alpha
+     * @param options - Options for loading the extensions that are
+     * available to the current customer.
+     * @returns A promise that resolves to the current state.
+     */
+    loadExtensions(options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._extensionActionCreator.loadExtensions(options);
+
+        return this._dispatch(action, { queueId: 'extensions' });
     }
 
     /**

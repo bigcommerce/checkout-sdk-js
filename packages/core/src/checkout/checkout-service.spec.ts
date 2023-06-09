@@ -32,6 +32,7 @@ import {
     CustomerStrategyActionCreator,
 } from '../customer';
 import CustomerStrategyRegistryV2 from '../customer/customer-strategy-registry-v2';
+import { ExtensionActionCreator, ExtensionRequestSender, getExtensions } from '../extension';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { getAddressFormFields, getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -113,6 +114,8 @@ describe('CheckoutService', () => {
     let formFieldsRequestSender: FormFieldsRequestSender;
     let couponRequestSender: CouponRequestSender;
     let customerStrategyActionCreator: CustomerStrategyActionCreator;
+    let extensionRequestSender: ExtensionRequestSender;
+    let extensionActionCreator: ExtensionActionCreator;
     let errorActionCreator: ErrorActionCreator;
     let giftCertificateRequestSender: GiftCertificateRequestSender;
     let instrumentActionCreator: InstrumentActionCreator;
@@ -216,6 +219,13 @@ describe('CheckoutService', () => {
         customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
 
         jest.spyOn(paymentStrategyRegistry, 'getByMethod').mockReturnValue(paymentStrategy);
+
+        extensionRequestSender = new ExtensionRequestSender(requestSender);
+        extensionActionCreator = new ExtensionActionCreator(extensionRequestSender);
+
+        jest.spyOn(extensionRequestSender, 'loadExtensions').mockResolvedValue(
+            getResponse(getExtensions()),
+        );
 
         orderRequestSender = new OrderRequestSender(requestSender);
 
@@ -382,6 +392,7 @@ describe('CheckoutService', () => {
             new StoreCreditActionCreator(storeCreditRequestSender),
             subscriptionsActionCreator,
             formFieldsActionCreator,
+            extensionActionCreator,
         );
     });
 
@@ -1426,6 +1437,45 @@ describe('CheckoutService', () => {
             await checkoutService.executeSpamCheck();
 
             expect(spamProtectionActionCreator.verifyCheckoutSpamProtection).toHaveBeenCalled();
+        });
+    });
+
+    describe('#loadExtensions()', () => {
+        it('loads extensions', async () => {
+            const options = {
+                params: { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7' },
+            };
+
+            await checkoutService.loadExtensions();
+
+            expect(extensionRequestSender.loadExtensions).toHaveBeenCalledWith(options);
+        });
+
+        it('loads extensions with timeout', async () => {
+            const options = {
+                timeout: createTimeout(),
+                params: { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7' },
+            };
+
+            await checkoutService.loadExtensions(options);
+
+            expect(extensionRequestSender.loadExtensions).toHaveBeenCalledWith(options);
+        });
+
+        it('returns extensions', async () => {
+            const state = await checkoutService.loadExtensions();
+
+            expect(state.data.getExtensions()).toEqual(getExtensions());
+        });
+
+        it('dispatches action with queue id', async () => {
+            jest.spyOn(store, 'dispatch');
+
+            await checkoutService.loadExtensions();
+
+            expect(store.dispatch).toHaveBeenCalledWith(expect.any(Function), {
+                queueId: 'extensions',
+            });
         });
     });
 });

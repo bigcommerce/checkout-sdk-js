@@ -5,6 +5,7 @@ import { createFreezeProxies } from '../common/utility';
 import { createConfigSelectorFactory } from '../config';
 import { createCouponSelectorFactory, createGiftCertificateSelectorFactory } from '../coupon';
 import { createCustomerSelectorFactory, createCustomerStrategySelectorFactory } from '../customer';
+import { createExtensionSelectorFactory } from '../extension';
 import { createFormSelectorFactory } from '../form';
 import { createCountrySelectorFactory } from '../geography';
 import { createOrderSelectorFactory } from '../order';
@@ -64,6 +65,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createStoreCreditSelector = createStoreCreditSelectorFactory();
     const createSubscriptionsSelector = createSubscriptionsSelectorFactory();
     const createSignInEmailSelector = createSignInEmailSelectorFactory();
+    const createExtensionSelector = createExtensionSelectorFactory();
 
     return (state, options = {}) => {
         const billingAddress = createBillingAddressSelector(state.billingAddress);
@@ -73,6 +75,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const coupons = createCouponSelector(state.coupons);
         const customer = createCustomerSelector(state.customer);
         const customerStrategies = createCustomerStrategySelector(state.customerStrategies);
+        const extensions = createExtensionSelector(state.extensions);
         const form = createFormSelector(state.formFields);
         const giftCertificates = createGiftCertificateSelector(state.giftCertificates);
         const instruments = createInstrumentSelector(state.instruments);
@@ -114,6 +117,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
             coupons,
             customer,
             customerStrategies,
+            extensions,
             form,
             giftCertificates,
             instruments,

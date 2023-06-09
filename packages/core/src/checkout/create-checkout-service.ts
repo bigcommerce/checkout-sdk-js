@@ -19,6 +19,7 @@ import {
     CustomerRequestSender,
     CustomerStrategyActionCreator,
 } from '../customer';
+import { ExtensionActionCreator, ExtensionRequestSender } from '../extension';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import * as defaultPaymentStrategyFactories from '../generated/payment-strategies';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -133,6 +134,9 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         { useFallback: true },
     );
     const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
+    const extensionActionCreator = new ExtensionActionCreator(
+        new ExtensionRequestSender(requestSender),
+    );
 
     return new CheckoutService(
         store,
@@ -184,6 +188,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new StoreCreditActionCreator(new StoreCreditRequestSender(requestSender)),
         subscriptionsActionCreator,
         formFieldsActionCreator,
+        extensionActionCreator,
     );
 }
 

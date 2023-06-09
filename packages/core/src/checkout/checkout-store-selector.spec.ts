@@ -286,4 +286,8 @@ describe('CheckoutStoreSelector', () => {
         // tslint:disable-next-line:no-non-null-assertion
         expect(privateCheckout!.customer.email).not.toBe('should@notchange.com');
     });
+
+    it('returns extensions', () => {
+        expect(selector.getExtensions()).toEqual(internalSelectors.extensions.getExtensions());
+    });
 });
