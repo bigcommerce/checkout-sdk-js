@@ -187,6 +187,9 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
     }
 
     private getBankDetails(paymentData: WithBankAccountInstrument): BankAccountSuccessPayload {
+        const state = this.paymentIntegrationService.getState();
+        const billingAddress = state.getBillingAddressOrThrow();
+
         const ownershipType = paymentData.ownershipType.toLowerCase();
         const accountType = paymentData.accountType.toLowerCase();
 
@@ -204,11 +207,11 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
                   }),
             accountType,
             billingAddress: {
-                streetAddress: paymentData.address1,
-                extendedAddress: paymentData.address2,
-                locality: paymentData.city,
-                region: paymentData.stateOrProvinceCode,
-                postalCode: paymentData.postalCode,
+                streetAddress: billingAddress.address1,
+                extendedAddress: billingAddress.address2,
+                locality: billingAddress.city,
+                region: billingAddress.stateOrProvinceCode,
+                postalCode: billingAddress.postalCode,
             },
         };
     }
