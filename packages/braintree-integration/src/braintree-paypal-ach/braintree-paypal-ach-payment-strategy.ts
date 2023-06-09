@@ -120,10 +120,6 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
 
         const sessionId = await this.braintreeIntegrationService.getSessionId();
 
-        const state = this.paymentIntegrationService.getState();
-
-        const { email } = state.getBillingAddressOrThrow();
-
         const { shouldSaveInstrument, shouldSetAsDefaultInstrument, routingNumber, accountNumber } =
             paymentData;
 
@@ -132,11 +128,10 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
                 vault_payment_instrument: shouldSaveInstrument || null,
                 set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
                 device_info: sessionId || null,
-                ach_account: {
-                    routing_number: routingNumber,
-                    last4: accountNumber.substr(-4),
+                tokenized_bank_account: {
+                    issuer: routingNumber,
+                    masked_account_number: accountNumber.substr(-4),
                     token: nonce,
-                    email: email || null,
                 },
             },
         };
