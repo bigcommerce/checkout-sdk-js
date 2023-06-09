@@ -37,6 +37,8 @@ export interface PayPalSDK {
     Buttons(options: PayPalCommerceButtonsOptions): PayPalCommerceButtons;
     PaymentFields(options: PayPalCommercePaymentFieldsOptions): PayPalCommercePaymentFields;
     Messages(options: PayPalCommerceMessagesOptions): PayPalCommerceMessages;
+
+    Legal: any // TODO: FIX
 }
 
 export interface PayPalCommerceScriptParams {

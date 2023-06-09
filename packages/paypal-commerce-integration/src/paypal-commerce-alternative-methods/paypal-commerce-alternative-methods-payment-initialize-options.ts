@@ -119,4 +119,5 @@ export default interface PayPalCommerceAlternativeMethodsPaymentOptions {
 export interface WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions {
     paypalcommerce?: PayPalCommerceAlternativeMethodsPaymentOptions; // FIXME: this option is deprecated
     paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsPaymentOptions;
+    paypalcommercealternativemethodratepay?: any // TODO: FIX
 }
