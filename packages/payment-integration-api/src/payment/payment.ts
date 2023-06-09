@@ -78,12 +78,6 @@ export interface WithBankAccountInstrument {
     firstName?: string;
     lastName?: string;
     businessName?: string;
-    address1: string;
-    address2: string;
-    city: string;
-    countryCode: string;
-    postalCode: string;
-    stateOrProvinceCode: string;
     shouldSaveInstrument?: boolean;
     shouldSetAsDefaultInstrument?: boolean;
     instrumentId?: string;
