@@ -154,11 +154,10 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
                             vault_payment_instrument: null,
                             set_as_default_stored_instrument: null,
                             device_info: 'token',
-                            ach_account: {
-                                routing_number: '000000001',
-                                last4: '0004',
+                            tokenized_bank_account: {
+                                issuer: '000000001',
+                                masked_account_number: '0004',
                                 token: 'NONCE',
-                                email: null,
                             },
                         },
                     },
