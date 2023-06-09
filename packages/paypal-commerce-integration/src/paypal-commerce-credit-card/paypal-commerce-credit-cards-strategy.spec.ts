@@ -99,7 +99,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         paymentMethod = { ...getPayPalCommercePaymentMethod(), id: methodId };
         paypalSdk = getPayPalSDKMock();
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         strategy = new PayPalCommerceCreditCardsPaymentStrategy(
             paymentIntegrationService,

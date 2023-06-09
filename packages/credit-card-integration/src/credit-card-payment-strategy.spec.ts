@@ -23,8 +23,7 @@ describe('CreditCardPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
-        paymentIntegrationService =
-            new PaymentIntegrationServiceMock() as PaymentIntegrationService;
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
         strategy = new CreditCardPaymentStrategy(paymentIntegrationService);
         form = {
             attach: jest.fn(() => Promise.resolve()),

@@ -69,7 +69,7 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
             },
         };
 
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
         mockBankAccount = getBankAccountMock();
 
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);

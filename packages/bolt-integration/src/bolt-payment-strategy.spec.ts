@@ -52,8 +52,7 @@ describe('BoltPaymentStrategy', () => {
     let checkoutMock: Checkout;
 
     beforeEach(() => {
-        paymentIntegrationService =
-            new PaymentIntegrationServiceMock() as PaymentIntegrationService;
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
         scriptLoader = createScriptLoader();
         boltScriptLoader = new BoltScriptLoader(scriptLoader);
         paymentMethodMock = getBolt();

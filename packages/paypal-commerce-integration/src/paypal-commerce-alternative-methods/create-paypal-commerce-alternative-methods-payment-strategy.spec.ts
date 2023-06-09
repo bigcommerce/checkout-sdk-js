@@ -8,7 +8,7 @@ describe('createPayPalCommerceAlternativeMethodsPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
     });
 
     it('instantiates paypal commerce alternative methods payment strategy', () => {

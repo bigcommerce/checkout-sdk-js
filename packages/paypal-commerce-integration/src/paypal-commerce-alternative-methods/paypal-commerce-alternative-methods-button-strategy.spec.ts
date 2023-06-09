@@ -88,7 +88,7 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
         paymentMethod = { ...getPayPalCommercePaymentMethod(), id: defaultMethodId };
         paypalSdk = getPayPalSDKMock();
 
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         strategy = new PayPalCommerceAlternativeMethodsButtonStrategy(
             paymentIntegrationService,

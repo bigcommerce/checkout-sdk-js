@@ -8,8 +8,7 @@ describe('createBlueSnapDirectEcpPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
-        paymentIntegrationService =
-            new PaymentIntegrationServiceMock() as PaymentIntegrationService;
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
     });
 
     it('instantiates bluesnapdirect ecp payment strategy', () => {

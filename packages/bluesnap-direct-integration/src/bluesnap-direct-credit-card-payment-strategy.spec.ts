@@ -31,8 +31,7 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
     let options: PaymentInitializeOptions & WithCreditCardPaymentInitializeOptions;
 
     beforeEach(() => {
-        paymentIntegrationService =
-            new PaymentIntegrationServiceMock() as PaymentIntegrationService;
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
             paymentIntegrationService.getState(),

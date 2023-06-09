@@ -53,7 +53,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
         paymentMethod = getPayPalCommercePaymentMethod();
         paypalSdk = getPayPalSDKMock();
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         strategy = new PayPalCommerceCustomerStrategy(
             paymentIntegrationService,

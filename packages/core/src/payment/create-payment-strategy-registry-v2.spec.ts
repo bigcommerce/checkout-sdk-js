@@ -11,8 +11,7 @@ describe('createPaymentStrategyRegistry', () => {
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
-        paymentIntegrationService =
-            new PaymentIntegrationServiceMock() as PaymentIntegrationService;
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
     });
 
     it('creates registry with factories pre-registered', () => {

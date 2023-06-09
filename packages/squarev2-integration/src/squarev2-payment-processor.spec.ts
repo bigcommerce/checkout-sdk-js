@@ -27,8 +27,7 @@ describe('SquareV2PaymentProcessor', () => {
 
         jest.spyOn(squareV2ScriptLoader, 'load').mockResolvedValue(squareWebPaymentsSdkMock);
 
-        paymentIntegrationService =
-            new PaymentIntegrationServiceMock() as PaymentIntegrationService;
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         processor = new SquareV2PaymentProcessor(squareV2ScriptLoader, paymentIntegrationService);
 

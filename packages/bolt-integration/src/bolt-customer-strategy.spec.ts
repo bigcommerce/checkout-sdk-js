@@ -29,7 +29,7 @@ describe('BoltCustomerStrategy', () => {
         const scriptLoader = createScriptLoader();
 
         paymentMethodMock = getBolt();
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
         boltCheckout = {} as BoltCheckout;
         boltCheckout.configure = jest.fn();
         boltCheckout.setClientCustomCallbacks = jest.fn();

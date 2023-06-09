@@ -75,7 +75,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
 
         loadingIndicator = new LoadingIndicator();
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         strategy = new PayPalCommerceAlternativeMethodsPaymentStrategy(
             paymentIntegrationService,
