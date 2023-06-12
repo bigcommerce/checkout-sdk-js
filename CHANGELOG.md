@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.386.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.386.0...v1.386.1) (2023-06-12)
+
+
+### Bug Fixes
+
+* **payment:** INT-7650 retrieve payment intent if an error is caught at the time of confirming the payment ([c0bd053](https://github.com/bigcommerce/checkout-sdk-js/commit/c0bd0538a5ec22d6a46b64149700caa6b89acb21))
+
 ## [1.386.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.385.0...v1.386.0) (2023-06-07)
 
 
