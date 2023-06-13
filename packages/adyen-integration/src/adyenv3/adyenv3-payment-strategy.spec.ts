@@ -482,6 +482,71 @@ describe('AdyenV3PaymentStrategy', () => {
                 expect(additionalActionComponent.unmount).toHaveBeenCalledTimes(1);
             });
 
+            it('prefills holderName with billingAddress data if prefillCardHolderName is true', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...getAdyenV3(),
+                    initializationData: {
+                        ...getAdyenV3().initializationData,
+                        prefillCardHolderName: true,
+                    },
+                });
+                await strategy.initialize(options);
+
+                expect(adyenCheckout.create).toHaveBeenNthCalledWith(
+                    1,
+                    'scheme',
+                    expect.objectContaining({
+                        data: {
+                            billingAddress: {
+                                city: 'Some City',
+                                country: 'US',
+                                houseNumberOrName: '',
+                                postalCode: '95555',
+                                stateOrProvince: 'CA',
+                                street: '12345 Testing Way',
+                            },
+                            holderName: 'Test Tester',
+                        },
+                    }),
+                );
+            });
+
+            it('does not prefill holderName with billingAddress data if prefillCardHolderName is false', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...getAdyenV3(),
+                    initializationData: {
+                        ...getAdyenV3().initializationData,
+                        prefillCardHolderName: false,
+                    },
+                });
+
+                await strategy.initialize(options);
+
+                expect(adyenCheckout.create).toHaveBeenNthCalledWith(
+                    1,
+                    'scheme',
+                    expect.objectContaining({
+                        data: {
+                            billingAddress: {
+                                city: 'Some City',
+                                country: 'US',
+                                houseNumberOrName: '',
+                                postalCode: '95555',
+                                stateOrProvince: 'CA',
+                                street: '12345 Testing Way',
+                            },
+                            holderName: '',
+                        },
+                    }),
+                );
+            });
+
             describe('submitPayment fails with identifyShopperError', () => {
                 beforeEach(async () => {
                     await strategy.initialize(options);

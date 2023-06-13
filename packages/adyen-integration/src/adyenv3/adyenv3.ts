@@ -297,6 +297,7 @@ export interface AdyenConfiguration {
 
 export interface AdyenPlaceholderData {
     holderName?: string;
+    prefillCardHolderName?: boolean;
     billingAddress?: {
         street: string;
         houseNumberOrName: string;
@@ -912,4 +913,5 @@ export interface AdyenPaymentMethodInitializationData {
     clientKey?: string;
     environment?: string;
     paymentMethodsResponse?: PaymentMethodsResponse;
+    prefillCardHolderName?: boolean;
 }
