@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.388.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.387.0...v1.388.0) (2023-06-13)
+
+
+### Features
+
+* **checkout:** PI-42 bluesnap direct credit card vaulting ([8c4de76](https://github.com/bigcommerce/checkout-sdk-js/commit/8c4de76df61dcc0e72365629ae5dbad15ce24031))
+
 ## [1.387.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.386.1...v1.387.0) (2023-06-13)
 
 
