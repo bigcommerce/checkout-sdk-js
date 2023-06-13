@@ -18,5 +18,5 @@ const createPayPalCommerceAlternativeMethodRatePayPaymentStrategy: PaymentStrate
     );
 
 export default toResolvableModule(createPayPalCommerceAlternativeMethodRatePayPaymentStrategy, [
-    { gateway: 'paypalcommercealternativemethodsratepay' },
+    { gateway: 'paypalcommercealternativemethods', id:'ratepay' },
 ]);

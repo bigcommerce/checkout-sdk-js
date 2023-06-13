@@ -61,7 +61,7 @@ export enum PayPalCommerceIntent {
 }
 
 export type ComponentsScriptType = Array<
-    'buttons' | 'funding-eligibility' | 'hosted-fields' | 'messages' | 'payment-fields'
+    'buttons' | 'funding-eligibility' | 'hosted-fields' | 'messages' | 'payment-fields' | 'legal'
 >;
 
 export interface PayPalCommerceHostWindow extends Window {

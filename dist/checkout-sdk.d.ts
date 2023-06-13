@@ -7881,6 +7881,7 @@ declare interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {
 declare interface WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions {
     paypalcommerce?: PayPalCommerceAlternativeMethodsPaymentOptions;
     paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsPaymentOptions;
+    paypalcommerceratepay?: any;
 }
 
 declare interface WithPayPalCommerceButtonInitializeOptions {

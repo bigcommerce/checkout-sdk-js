@@ -34,7 +34,7 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
         const {
             gatewayId,
             methodId,
-            paypalcommercealternativemethodratepay
+            paypalcommerceratepay
         } = options;
 
         console.log(
@@ -44,7 +44,7 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
             this.toggleLoadingIndicator,
             gatewayId,
             methodId,
-            paypalcommercealternativemethodratepay,
+            paypalcommerceratepay,
             this.orderId,
         ); // TODO: REMOVE
 
@@ -60,17 +60,19 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
             );
         }
 
-        if (!paypalcommercealternativemethodratepay) {
+        if (!paypalcommerceratepay) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.paypalcommercealternativemethodratepay" argument is not provided.`,
+                `Unable to initialize payment because "options.paypalcommerceratepay" argument is not provided.`,
             );
         }
 
+        console.log('PAYPALCOMMERCERATEPAY', paypalcommerceratepay);
+
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
 
-        this.loadingIndicatorContainer = paypalcommercealternativemethodratepay.container.split('#')[1];
+        this.loadingIndicatorContainer = paypalcommerceratepay.container.split('#')[1];
 
-        this.renderButton(methodId, gatewayId, paypalcommercealternativemethodratepay);
+        this.renderButton(methodId, gatewayId, paypalcommerceratepay);
         this.renderFields();
     }
 
@@ -91,6 +93,9 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
         console.log('RENDER BUTTON', methodId, gatewayId, paypalcommercealternativemethodratepay);
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const { container, onError, onRenderButton, submitForm } = paypalcommercealternativemethodratepay;
+        console.log(onError, submitForm);
+
+        console.log('PAYPAL SDK', paypalSdk);
 
         // const buttonOptions: PayPalCommerceButtonsOptions = {
         //     fundingSource: methodId,
