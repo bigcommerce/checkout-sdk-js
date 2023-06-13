@@ -308,7 +308,10 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         });
     }
 
-    private _mapAdyenPlaceholderData(billingAddress?: BillingAddress): AdyenPlaceholderData {
+    private _mapAdyenPlaceholderData(
+        billingAddress?: BillingAddress,
+        prefillCardHolderName?: boolean,
+    ): AdyenPlaceholderData {
         if (!billingAddress) {
             return {};
         }
@@ -325,7 +328,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         } = billingAddress;
 
         return {
-            holderName: `${firstName} ${lastName}`,
+            holderName: prefillCardHolderName ? `${firstName} ${lastName}` : '',
             billingAddress: {
                 street,
                 houseNumberOrName,
@@ -383,11 +386,11 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                     const billingAddress = this._paymentIntegrationService
                         .getState()
                         .getBillingAddress();
-
+                    const { prefillCardHolderName } = paymentMethod.initializationData;
                     paymentComponent = adyenClient.create(paymentMethod.method, {
                         ...adyenv2.options,
                         onChange: (componentState) => this._updateComponentState(componentState),
-                        data: this._mapAdyenPlaceholderData(billingAddress),
+                        data: this._mapAdyenPlaceholderData(billingAddress, prefillCardHolderName),
                     });
 
                     try {

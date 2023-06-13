@@ -443,6 +443,71 @@ describe('AdyenV2PaymentStrategy', () => {
                 );
             });
 
+            it('prefills holderName with billingAddress data if prefillCardHolderName is true', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...getAdyenV2(),
+                    initializationData: {
+                        ...getAdyenV2().initializationData,
+                        prefillCardHolderName: true,
+                    },
+                });
+                await strategy.initialize(options);
+
+                expect(adyenCheckout.create).toHaveBeenNthCalledWith(
+                    1,
+                    'scheme',
+                    expect.objectContaining({
+                        data: {
+                            billingAddress: {
+                                city: 'Some City',
+                                country: 'US',
+                                houseNumberOrName: '',
+                                postalCode: '95555',
+                                stateOrProvince: 'CA',
+                                street: '12345 Testing Way',
+                            },
+                            holderName: 'Test Tester',
+                        },
+                    }),
+                );
+            });
+
+            it('does not prefill holderName with billingAddress data if prefillCardHolderName is false', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...getAdyenV2(),
+                    initializationData: {
+                        ...getAdyenV2().initializationData,
+                        prefillCardHolderName: false,
+                    },
+                });
+
+                await strategy.initialize(options);
+
+                expect(adyenCheckout.create).toHaveBeenNthCalledWith(
+                    1,
+                    'scheme',
+                    expect.objectContaining({
+                        data: {
+                            billingAddress: {
+                                city: 'Some City',
+                                country: 'US',
+                                houseNumberOrName: '',
+                                postalCode: '95555',
+                                stateOrProvince: 'CA',
+                                street: '12345 Testing Way',
+                            },
+                            holderName: '',
+                        },
+                    }),
+                );
+            });
+
             it('additional action component fires back onError', async () => {
                 const adyenError = getAdyenError();
                 let handleOnError: (error: AdyenError) => unknown;
@@ -510,11 +575,16 @@ describe('AdyenV2PaymentStrategy', () => {
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getPaymentMethodOrThrow',
-                ).mockReturnValue(getAdyenV2(AdyenPaymentMethodType.ACH));
+                ).mockReturnValue({
+                    ...getAdyenV2(AdyenPaymentMethodType.ACH),
+                    initializationData: {
+                        ...getAdyenV2().initializationData,
+                        prefillCardHolderName: true,
+                    },
+                });
 
                 await strategy.initialize(options);
                 await strategy.execute(getOrderRequestBody(AdyenPaymentMethodType.ACH));
-
                 expect(adyenCheckout.create).toHaveBeenCalledTimes(1);
                 expect(adyenCheckout.create).toHaveBeenCalledWith('ach', {
                     hasHolderName: expect.any(Boolean),
@@ -522,7 +592,6 @@ describe('AdyenV2PaymentStrategy', () => {
                     placeholders: expect.any(Object),
                     onChange: expect.any(Function),
                     data: {
-                        holderName: 'Test Tester',
                         billingAddress: {
                             street: '12345 Testing Way',
                             houseNumberOrName: '',
@@ -531,6 +600,7 @@ describe('AdyenV2PaymentStrategy', () => {
                             stateOrProvince: 'CA',
                             country: 'US',
                         },
+                        holderName: 'Test Tester',
                     },
                 });
             });
