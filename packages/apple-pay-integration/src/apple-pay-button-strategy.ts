@@ -81,6 +81,8 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
+        await this._paymentIntegrationService.verifyCheckoutSpamProtection();
+
         this._applePayButton = this._createButton(containerId, buttonClassName);
         this._applePayButton.addEventListener('click', this._handleWalletButtonClick.bind(this));
 
@@ -562,8 +564,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
                     transformedShippingAddress,
                 );
             }
-
-            await this._paymentIntegrationService.verifyCheckoutSpamProtection();
 
             await this._paymentIntegrationService.submitOrder({
                 useStoreCredit: false,
