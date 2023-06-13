@@ -215,10 +215,12 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                     start();
                 },
             },
-            (startPaymentError: StartPaymentError, payload: LocalPaymentsPayload) => {
-                if (startPaymentError.code !== 'LOCAL_PAYMENT_WINDOW_CLOSED') {
+            (startPaymentError: StartPaymentError | null, payload: LocalPaymentsPayload) => {
+                if (startPaymentError) {
+                    if (startPaymentError.code !== 'LOCAL_PAYMENT_WINDOW_CLOSED') {
+                        this.handleError(startPaymentError.code);
+                    }
                     this.toggleLoadingIndicator(false);
-                    this.handleError(startPaymentError.code);
                 } else {
                     this.nonce = payload.nonce;
 
