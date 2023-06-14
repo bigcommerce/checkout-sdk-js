@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.388.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.388.1...v1.388.2) (2023-06-14)
+
+
+### Bug Fixes
+
+* **checkout:** PI-294 adyen v3 stored card pay fix, after adding klarna pay widget ([58c7936](https://github.com/bigcommerce/checkout-sdk-js/commit/58c79366059947f5aa9dcb52bdcf3b24f3fb1364))
+
 ### [1.388.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.388.0...v1.388.1) (2023-06-14)
 
 
