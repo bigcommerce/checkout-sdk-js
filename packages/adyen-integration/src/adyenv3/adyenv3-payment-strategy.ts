@@ -133,13 +133,19 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
         this._validateCardData();
 
-        this._paymentComponent?.submit();
-
-        await this._paymentIntegrationService.submitOrder(order, options);
-
         const componentState = this._componentState || {
             data: { paymentMethod: { type: payment.methodId } },
         };
+
+        if (
+            payment.methodId === 'klarna' ||
+            payment.methodId === 'klarna_account' ||
+            payment.methodId === 'klarna_paynow'
+        ) {
+            this._paymentComponent?.submit();
+        }
+
+        await this._paymentIntegrationService.submitOrder(order, options);
 
         if (paymentData && isVaultedInstrument(paymentData)) {
             let bigpayToken = {};
