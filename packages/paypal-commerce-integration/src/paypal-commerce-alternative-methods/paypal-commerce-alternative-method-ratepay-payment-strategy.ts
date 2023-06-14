@@ -72,13 +72,13 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
 
         this.loadingIndicatorContainer = paypalcommerceratepay.container.split('#')[1];
 
-        this.renderLegalText(paypalcommerceratepay);
         this.renderButton(methodId, gatewayId, paypalcommerceratepay);
-        this.renderFields();
+        this.renderFields(methodId, paypalcommerceratepay);
+        this.renderLegalText(paypalcommerceratepay);
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
-        console.log(payload, options);
+        console.log('EXECUTE', payload, options);
     }
 
     finalize(): Promise<void> {
@@ -90,57 +90,50 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
         return Promise.resolve();
     }
 
-    private renderButton(methodId: string, gatewayId: string, paypalcommerceratepay: any) { // TODO: FIX
-        console.log('RENDER BUTTON', methodId, gatewayId, paypalcommerceratepay);
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
-        const { container, onError, onRenderButton, submitForm } = paypalcommerceratepay;
-        console.log(onError, submitForm, container);
+    private renderButton(methodId: string, _gatewayId: string, paypalcommerceratepay: any) { // TODO: FIX
+        if (paypalcommerceratepay) {
+            let buttonContainer;
+            const { buttonText, container, onRenderButton } = paypalcommerceratepay;
+            const buttonContainerId = container.split('#')[1];
+            const ratepayButton = document.createElement('button');
+            buttonContainer = document.getElementById(buttonContainerId);
+            const className = buttonContainer?.getAttribute('class');
+            ratepayButton.setAttribute('class', className || '');
+            ratepayButton.setAttribute('id', methodId);
+            ratepayButton.innerText = buttonText || 'Place Order';
+            ratepayButton.addEventListener('click', () => this.handleClick(paypalcommerceratepay));
 
-        console.log('PAYPAL SDK', paypalSdk);
+            if (onRenderButton && typeof onRenderButton === 'function') {
+                onRenderButton();
+            }
 
-        const buttonOptions: any = {
-            fundingSource: methodId,
-            style: {},
-            createOrder: () => {
-              return this.paypalCommerceIntegrationService.createOrder(  // TODO: FIX
-                    'paypalcommercealternativemethodscheckout',
-                )
-            },
-            onClick: () => {},
-            onApprove: () => {},
-            // onCancel: () => this.resetPollingMechanism(),
-            onError: () => {},
-        };
+            buttonContainer = document.getElementById(buttonContainerId);
 
-        this.ratePayButton = paypalSdk.Legal({ fundingSource: paypalSdk.Legal.FUNDING.PAY_UPON_INVOICE });
-        console.log('RATE PAY BUTTON', this.ratePayButton);
-        console.log(paypalSdk.Buttons(buttonOptions));
-
-        if (onRenderButton && typeof onRenderButton === 'function') {
-            onRenderButton();
+            if (buttonContainer) {
+                buttonContainer.append(ratepayButton);
+            }
         }
-
-
-        // paypalSdk.Buttons(buttonOptions).render(container);
     }
 
-    private renderLegalText(paypalcommerceratepay: any) { //TODO: FIX
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
-        const { container } = paypalcommerceratepay;
-        this.ratePayButton = paypalSdk.Legal({ fundingSource: paypalSdk.Legal.FUNDING.PAY_UPON_INVOICE });
-        this.ratePayButton.render(container);
+    private renderLegalText(_paypalcommerceratepay: any) { //TODO: FIX
+        console.log(this.ratePayButton);
+        // const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        // const { container } = paypalcommerceratepay;
+        // this.ratePayButton = paypalSdk.Legal({ fundingSource: paypalSdk.Legal.FUNDING.PAY_UPON_INVOICE });
+        // this.ratePayButton.render(container);
     }
+
     private renderFields(
         methodId: string,
-        paypalOptions: PayPalCommerceAlternativeMethodsPaymentOptions,
+        paypalcommerceratepay: PayPalCommerceAlternativeMethodsPaymentOptions,
     ): void {
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
 
-        const { apmFieldsContainer, apmFieldsStyles } = paypalOptions;
+        const { apmFieldsContainer, apmFieldsStyles } = paypalcommerceratepay;
 
         if (!apmFieldsContainer) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.paypalcommercealternativemethods" argument should contain "apmFieldsContainer".',
+                'Unable to initialize payment because "options.paypalcommerceratepay" argument should contain "apmFieldsContainer".',
             );
         }
 
@@ -160,20 +153,18 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
             },
         };
 
-        // @ts-ignore
         const paypalPaymentFields = paypalSdk.PaymentFields(fieldsOptions);
 
         paypalPaymentFields.render(apmFieldsContainer);
     }
 
-    // private handleClick(methodId: string, gatewayId: string, paypalcommercealternativemethodratepay: any, actions: any) { // TODO: FIX
-    //     console.log('HANDLE CLICK', methodId, gatewayId, paypalcommercealternativemethodratepay, actions);
-    //     return Promise.resolve(); // TODO: REMOVE
-    // }
-    //
-    // private handleApprove(data: any, submitForm: any) { // TODO: FIX
-    //     console.log('HANDLE APPROVE', data, submitForm);
-    // }
+    private handleClick(paypalcommerceratepay: any) { // TODO: FIX
+        const { submitForm } = paypalcommerceratepay;
+
+        if(submitForm && typeof submitForm === 'function') {
+            submitForm();
+        }
+    }
 
     private handleError(
         error: Error,

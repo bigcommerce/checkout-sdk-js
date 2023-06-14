@@ -326,6 +326,9 @@ export interface PayPalCommercePaymentFieldsOptions {
         email?: {
             value?: string;
         };
+        birthDate?: {
+            value?: string;
+        }
     };
 }
 
