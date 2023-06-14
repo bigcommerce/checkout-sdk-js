@@ -72,6 +72,7 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
 
         this.loadingIndicatorContainer = paypalcommerceratepay.container.split('#')[1];
 
+        this.renderLegalText(paypalcommerceratepay);
         this.renderButton(methodId, gatewayId, paypalcommerceratepay);
         this.renderFields();
     }
@@ -89,43 +90,80 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
         return Promise.resolve();
     }
 
-    private renderButton(methodId: string, gatewayId: string, paypalcommercealternativemethodratepay: any) { // TODO: FIX
-        console.log('RENDER BUTTON', methodId, gatewayId, paypalcommercealternativemethodratepay);
+    private renderButton(methodId: string, gatewayId: string, paypalcommerceratepay: any) { // TODO: FIX
+        console.log('RENDER BUTTON', methodId, gatewayId, paypalcommerceratepay);
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
-        const { container, onError, onRenderButton, submitForm } = paypalcommercealternativemethodratepay;
-        console.log(onError, submitForm);
+        const { container, onError, onRenderButton, submitForm } = paypalcommerceratepay;
+        console.log(onError, submitForm, container);
 
         console.log('PAYPAL SDK', paypalSdk);
 
-        // const buttonOptions: PayPalCommerceButtonsOptions = {
-        //     fundingSource: methodId,
-        //     style: {},
-        //     createOrder: () => {
-        //       return this.paypalCommerceIntegrationService.createOrder(  // TODO: FIX
-        //             'paypalcommercealternativemethodscheckout',
-        //         )
-        //     },
-        //     onClick: (_, actions) => this.handleClick(methodId, gatewayId, paypalcommercealternativemethodratepay, actions),
-        //     onApprove: (data) => this.handleApprove(data, submitForm),
-        //     // onCancel: () => this.resetPollingMechanism(),
-        //     onError: (error) => this.handleError(error, onError),
-        // };
+        const buttonOptions: any = {
+            fundingSource: methodId,
+            style: {},
+            createOrder: () => {
+              return this.paypalCommerceIntegrationService.createOrder(  // TODO: FIX
+                    'paypalcommercealternativemethodscheckout',
+                )
+            },
+            onClick: () => {},
+            onApprove: () => {},
+            // onCancel: () => this.resetPollingMechanism(),
+            onError: () => {},
+        };
 
         this.ratePayButton = paypalSdk.Legal({ fundingSource: paypalSdk.Legal.FUNDING.PAY_UPON_INVOICE });
-
-        if (!this.ratePayButton.isEligible()) {
-            return;
-        }
+        console.log('RATE PAY BUTTON', this.ratePayButton);
+        console.log(paypalSdk.Buttons(buttonOptions));
 
         if (onRenderButton && typeof onRenderButton === 'function') {
             onRenderButton();
         }
 
-        this.ratePayButton.Legal.render(container);
+
+        // paypalSdk.Buttons(buttonOptions).render(container);
     }
 
-    private renderFields() {
-        console.log('RENDER FIELDS');
+    private renderLegalText(paypalcommerceratepay: any) { //TODO: FIX
+        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const { container } = paypalcommerceratepay;
+        this.ratePayButton = paypalSdk.Legal({ fundingSource: paypalSdk.Legal.FUNDING.PAY_UPON_INVOICE });
+        this.ratePayButton.render(container);
+    }
+    private renderFields(
+        methodId: string,
+        paypalOptions: PayPalCommerceAlternativeMethodsPaymentOptions,
+    ): void {
+        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+
+        const { apmFieldsContainer, apmFieldsStyles } = paypalOptions;
+
+        if (!apmFieldsContainer) {
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "options.paypalcommercealternativemethods" argument should contain "apmFieldsContainer".',
+            );
+        }
+
+        const fieldContainerElement = document.querySelector(apmFieldsContainer);
+
+        if (fieldContainerElement) {
+            fieldContainerElement.innerHTML = '';
+        }
+
+        const fieldsOptions = {
+            fundingSource: methodId,
+            style: apmFieldsStyles || {},
+            fields: {
+                birthDate: {
+                    value: '',
+                },
+            },
+        };
+
+        // @ts-ignore
+        const paypalPaymentFields = paypalSdk.PaymentFields(fieldsOptions);
+
+        paypalPaymentFields.render(apmFieldsContainer);
     }
 
     // private handleClick(methodId: string, gatewayId: string, paypalcommercealternativemethodratepay: any, actions: any) { // TODO: FIX
