@@ -84,6 +84,8 @@ describe('ApplePayButtonStrategy', () => {
             await strategy.initialize(checkoutButtonInitializeOptions);
             children = container.children;
 
+            expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalled();
+
             expect(children).toHaveLength(1);
 
             expect(Boolean(container.getElementsByClassName('apple-pay-checkout-button')[0])).toBe(
@@ -556,9 +558,6 @@ describe('ApplePayButtonStrategy', () => {
                     button.click();
                     await applePaySession.onpaymentauthorized(authEvent);
 
-                    expect(
-                        paymentIntegrationService.verifyCheckoutSpamProtection,
-                    ).toHaveBeenCalled();
                     expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
                     expect(applePaySession.completePayment).toHaveBeenCalled();
                     expect(
