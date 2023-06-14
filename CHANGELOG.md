@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.388.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.388.0...v1.388.1) (2023-06-14)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2602 changed getting the billing address ([2bf81ed](https://github.com/bigcommerce/checkout-sdk-js/commit/2bf81ed5cff0f2aacb4f65039bbfc3b0b15bfe1f))
+* **payment:** PAYPAL-2618 updated payment payload ([46e375b](https://github.com/bigcommerce/checkout-sdk-js/commit/46e375b02e034d805774a85d92cd78f3ddf1247a))
+
 ## [1.388.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.387.0...v1.388.0) (2023-06-13)
 
 
