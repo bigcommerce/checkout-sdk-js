@@ -10,6 +10,7 @@ import {
 import {
     getBuyNowCart,
     getBuyNowCartRequestBody,
+    getCheckout,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { BillingAddressActionCreator } from '../billing';
@@ -77,6 +78,11 @@ describe('DefaultPaymentIntegrationService', () => {
         internalCheckoutSelectors = {
             order: {
                 getOrderOrThrow: () => getOrder(),
+            },
+            checkout: {
+                getCheckoutOrThrow: () => {
+                    return { ...getCheckout(), shouldExecuteSpamCheck: true };
+                },
             },
         } as InternalCheckoutSelectors;
 
