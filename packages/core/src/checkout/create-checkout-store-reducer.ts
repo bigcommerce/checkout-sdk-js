@@ -6,7 +6,7 @@ import { checkoutButtonReducer } from '../checkout-buttons';
 import { configReducer } from '../config';
 import { couponReducer, giftCertificateReducer } from '../coupon';
 import { customerReducer, customerStrategyReducer } from '../customer';
-import { extensionReducer } from '../extension/extension-reducer';
+import { extensionReducer } from '../extension';
 import { formFieldsReducer } from '../form';
 import { countryReducer } from '../geography';
 import { orderReducer } from '../order';

@@ -280,6 +280,7 @@ export default interface CheckoutStoreSelector {
     /**
      * Gets a list of extensions available for checkout.
      *
+     * @alpha
      * @returns The list of extensions if it is loaded, otherwise undefined.
      */
     getExtensions(): Extension[] | undefined;

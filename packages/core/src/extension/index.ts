@@ -1,5 +1,6 @@
 export { Extension } from './extension';
 export { ExtensionActionCreator } from './extension-action-creator';
+export { extensionReducer } from './extension-reducer';
 export { ExtensionRequestSender } from './extension-request-sender';
 export {
     ExtensionSelector,

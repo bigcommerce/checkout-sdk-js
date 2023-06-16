@@ -300,6 +300,12 @@ export default interface CheckoutStoreErrorSelector {
      */
     getPickupOptionsError(): Error | undefined;
 
+    /**
+     * Returns an error if unable to fetch extensions.
+     *
+     * @alpha
+     * @returns The error object if unable to fetch extensions, otherwise undefined.
+     */
     getLoadExtensionsError(): Error | undefined;
 }
 
