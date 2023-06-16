@@ -60,7 +60,10 @@ export interface LocalPaymentsPayload {
 export interface LocalPaymentInstance {
     startPayment(
         config: LocalPaymentInstanceConfig,
-        callback: (startPaymentError: StartPaymentError, payload: LocalPaymentsPayload) => void,
+        callback: (
+            startPaymentError: StartPaymentError,
+            payload: LocalPaymentsPayload,
+        ) => Promise<void>,
     ): void;
 }
 

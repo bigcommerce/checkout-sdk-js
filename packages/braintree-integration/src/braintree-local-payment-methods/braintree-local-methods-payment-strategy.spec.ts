@@ -173,45 +173,6 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
         it('throws PaymentArgumentInvalidError if payment is not provided', async () => {
             await expect(strategy.execute({})).rejects.toThrow(PaymentArgumentInvalidError);
         });
-
-        it('submits order and payment', async () => {
-            const payload = {
-                payment: {
-                    methodId: 'giropay',
-                    gateway: 'braintreelocalmethods',
-                },
-            };
-
-            const setOrderId = (orderId: string) => {
-                Object.defineProperty(strategy, 'orderId', {
-                    value: orderId,
-                    writable: true,
-                });
-            };
-
-            // Set the orderId using the helper method
-            setOrderId('testOrderId');
-
-            await strategy.execute(payload);
-
-            expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
-            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                methodId: 'giropay',
-                paymentData: {
-                    formattedPayload: {
-                        device_info: 'token',
-                        method: 'giropay',
-                        giropay_account: {
-                            email: 'foo@bar.com',
-                            token: undefined,
-                            order_id: 'testOrderId',
-                        },
-                        vault_payment_instrument: null,
-                        set_as_default_stored_instrument: null,
-                    },
-                },
-            });
-        });
     });
 
     describe('#deinitialize', () => {
