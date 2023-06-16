@@ -158,13 +158,19 @@ export default class PayPalCommerceIntegrationService {
         });
     }
 
-    async submitPayment(methodId: string, orderId: string): Promise<void> {
+    async submitPayment(methodId: string, orderId: string, ratePay?: any): Promise<void> { // TODO: FIX
         const paymentData = {
             formattedPayload: {
                 vault_payment_instrument: null,
                 set_as_default_stored_instrument: null,
                 device_info: null,
                 method_id: methodId,
+            ...(ratePay && {
+                rate_pay: {
+                    birth_date: ratePay.birthDate,
+                }
+            }
+            ),
                 paypal_account: {
                     order_id: orderId,
                 },

@@ -397,6 +397,7 @@ export interface PayPalUpdateOrderRequestBody {
 
 export interface PayPalCreateOrderRequestBody extends HostedInstrument, VaultedInstrument {
     cartId: string;
+    metadataId?: string;
 }
 
 export enum PayPalOrderStatus {
