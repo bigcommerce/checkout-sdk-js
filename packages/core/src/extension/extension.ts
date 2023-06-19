@@ -9,6 +9,4 @@ export interface Extension {
 export enum ExtensionRegions {
     ShippingShippingAddressFormBefore = 'shipping.shippingAddressForm.before',
     ShippingShippingAddressFormAfter = 'shipping.shippingAddressForm.after',
-    ShippingShippingMethodsBefore = 'shipping.shippingMethods.before',
-    ShippingShippingMethodsAfter = 'shipping.shippingMethods.after',
 }
