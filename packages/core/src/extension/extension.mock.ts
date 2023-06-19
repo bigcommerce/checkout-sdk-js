@@ -6,14 +6,14 @@ export function getExtensions(): Extension[] {
         {
             id: '123',
             name: 'Foo',
-            region: ExtensionRegions.ShippingFulfillmentMethodsBefore,
+            region: ExtensionRegions.ShippingShippingMethodsBefore,
             origin: 'https://widget.foo.com/',
             url: 'https://widget.foo.com/',
         },
         {
             id: '456',
             name: 'Bar',
-            region: ExtensionRegions.ShippingFulfillmentMethodsAfter,
+            region: ExtensionRegions.ShippingShippingMethodsAfter,
             origin: 'https://widget.bar.com/',
             url: 'https://widget.bar.com/',
         },
