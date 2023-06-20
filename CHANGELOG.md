@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.390.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.389.0...v1.390.0) (2023-06-20)
+
+
+### Features
+
+* **payment:** PI-120 Autofilling of holderName to be configurable ([a6ae531](https://github.com/bigcommerce/checkout-sdk-js/commit/a6ae5315d003d748b539371af19835a38c56e3ef))
+
 ## [1.389.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.388.2...v1.389.0) (2023-06-20)
 
 

@@ -255,6 +255,7 @@ declare interface AdyenPaymentMethodState_2 {
 
 declare interface AdyenPlaceholderData {
     holderName?: string;
+    prefillCardHolderName?: boolean;
     billingAddress?: {
         street: string;
         houseNumberOrName: string;
@@ -267,6 +268,7 @@ declare interface AdyenPlaceholderData {
 
 declare interface AdyenPlaceholderData_2 {
     holderName?: string;
+    prefillCardHolderName?: boolean;
     billingAddress?: {
         street: string;
         houseNumberOrName: string;
