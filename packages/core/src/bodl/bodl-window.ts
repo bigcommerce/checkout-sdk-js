@@ -17,7 +17,7 @@ export interface BODLProduct {
     currency?: string;
 }
 
-export interface CheckoutBeginData {
+export interface CommonCheckoutData {
     event_id: string;
     currency: string;
     channel_id: number;
@@ -26,20 +26,24 @@ export interface CheckoutBeginData {
     line_items: BODLProduct[];
 }
 
-export interface OrderPurchasedData {
-    event_id: string;
-    currency: string;
+export interface OrderPurchasedData extends CommonCheckoutData {
     tax: number;
-    channel_id: number;
     order_id: number;
-    cart_value: number;
-    coupon_codes: string[];
     shipping_cost: number;
-    line_items: BODLProduct[];
+}
+
+export interface ShippingDetailsProvidedData extends CommonCheckoutData {
+    shipping_method: string;
+}
+
+export interface BillingDetailsProvidedData extends CommonCheckoutData {
+    payment_type: string;
 }
 
 export interface BodlEventsCheckout {
-    emitCheckoutBeginEvent(data: CheckoutBeginData): boolean;
+    emitShippingDetailsProvidedEvent(data: ShippingDetailsProvidedData): boolean;
+    emitPaymentDetailsProvidedEvent(data: BillingDetailsProvidedData): boolean;
+    emitCheckoutBeginEvent(data: CommonCheckoutData): boolean;
     emitOrderPurchasedEvent(data: OrderPurchasedData): boolean;
     emit(name: string, data?: BodlEventsPayload): void;
 }
