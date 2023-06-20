@@ -93,6 +93,11 @@ export interface AmazonPayV2ButtonConfig {
      * if your `publicKeyId` has an environment prefix. Default is false.
      */
     sandbox?: boolean;
+
+    /**
+     * Sets Amazon Pay button design.
+     */
+    design?: AmazonPayV2ButtonDesign;
 }
 
 export interface AmazonPayV2ButtonParams extends AmazonPayV2ButtonConfig {
@@ -237,6 +242,10 @@ export enum AmazonPayV2ButtonColor {
     Gold = 'Gold',
     LightGray = 'LightGray',
     DarkGray = 'DarkGray',
+}
+
+export enum AmazonPayV2ButtonDesign {
+    C0001 = 'C0001',
 }
 
 export interface AmazonPayV2ButtonRenderingOptions {
