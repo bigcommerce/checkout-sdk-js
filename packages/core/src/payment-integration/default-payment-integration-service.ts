@@ -23,6 +23,7 @@ import { OrderActionCreator } from '../order';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
 import { ConsignmentActionCreator } from '../shipping';
+import { SpamProtectionActionCreator } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
 
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
@@ -43,6 +44,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _customerActionCreator: CustomerActionCreator,
         private _cartRequestSender: CartRequestSender,
         private _storeCreditActionCreator: StoreCreditActionCreator,
+        private _spamProtectionActionCreator: SpamProtectionActionCreator,
     ) {
         this._storeProjection = this._storeProjectionFactory.create(this._store);
     }
@@ -189,6 +191,19 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         await this._store.dispatch(
             this._storeCreditActionCreator.applyStoreCredit(useStoreCredit, options),
         );
+
+        return this._storeProjection.getState();
+    }
+
+    async verifyCheckoutSpamProtection(): Promise<PaymentIntegrationSelectors> {
+        const { checkout } = this._store.getState();
+        const { shouldExecuteSpamCheck } = checkout.getCheckoutOrThrow();
+
+        if (shouldExecuteSpamCheck) {
+            await this._store.dispatch(
+                this._spamProtectionActionCreator.verifyCheckoutSpamProtection(),
+            );
+        }
 
         return this._storeProjection.getState();
     }

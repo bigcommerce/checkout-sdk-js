@@ -45,6 +45,8 @@ export default interface PaymentIntegrationService {
         options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors>;
 
+    verifyCheckoutSpamProtection(): Promise<PaymentIntegrationSelectors>;
+
     updateBillingAddress(payload: BillingAddressRequestBody): Promise<PaymentIntegrationSelectors>;
 
     updateShippingAddress(

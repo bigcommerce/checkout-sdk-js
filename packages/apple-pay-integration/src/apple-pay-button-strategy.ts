@@ -81,6 +81,8 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
+        await this._paymentIntegrationService.verifyCheckoutSpamProtection();
+
         this._applePayButton = this._createButton(containerId, buttonClassName);
         this._applePayButton.addEventListener('click', this._handleWalletButtonClick.bind(this));
 
@@ -278,6 +280,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             if (this._buyNowInitializeOptions && this._requiresShipping) {
                 await this._createBuyNowCart();
             }
+
             await this._handleShippingContactSelected(applePaySession, storeName, event);
         };
 
@@ -308,9 +311,11 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             if (!cartRequestBody) {
                 throw new MissingDataError(MissingDataErrorType.MissingCart);
             }
+
             const buyNowCart = await this._paymentIntegrationService.createBuyNowCart(
                 cartRequestBody,
             );
+
             await this._paymentIntegrationService.loadCheckout(buyNowCart.id);
         } catch (error) {
             throw new BuyNowCartCreationError();
@@ -328,6 +333,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         }
 
         const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
+
         delete request.total.type;
 
         applePaySession.completePaymentMethodSelection({

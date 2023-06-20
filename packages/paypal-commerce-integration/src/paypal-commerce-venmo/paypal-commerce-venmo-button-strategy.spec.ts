@@ -84,7 +84,7 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
         paymentMethod = { ...getPayPalCommercePaymentMethod(), id: 'paypalcommercevenmo' };
         paypalSdk = getPayPalSDKMock();
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         strategy = new PayPalCommerceVenmoButtonStrategy(
             paymentIntegrationService,

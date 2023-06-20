@@ -4,11 +4,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { of } from 'rxjs';
 
 import { CheckoutStore, createCheckoutStore } from '../checkout';
-import {
-    createPaymentClient,
-    PaymentMethodActionCreator,
-    PaymentMethodRequestSender,
-} from '../payment';
+import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
 
 import { CheckoutButtonActionType } from './checkout-button-actions';
@@ -28,16 +24,8 @@ describe('CheckoutButtonInitializer', () => {
     beforeEach(() => {
         store = createCheckoutStore();
 
-        const paymentClient = createPaymentClient(store);
-
         buttonActionCreator = new CheckoutButtonStrategyActionCreator(
-            createCheckoutButtonRegistry(
-                store,
-                paymentClient,
-                createRequestSender(),
-                createFormPoster(),
-                'en',
-            ),
+            createCheckoutButtonRegistry(store, createRequestSender(), createFormPoster(), 'en'),
             createCheckoutButtonRegistryV2(createPaymentIntegrationService(store)),
             new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender())),
         );

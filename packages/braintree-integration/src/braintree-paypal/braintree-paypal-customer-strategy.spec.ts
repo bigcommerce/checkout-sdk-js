@@ -93,7 +93,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
         );
         paypalSdkMock = getPaypalSDKMock();
         (window as BraintreeHostWindow).paypal = paypalSdkMock;
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
         formPoster = createFormPoster();
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
         braintreeIntegrationService = new BraintreeIntegrationService(

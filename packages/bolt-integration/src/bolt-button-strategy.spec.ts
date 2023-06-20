@@ -47,7 +47,7 @@ describe('BoltButtonStrategy', () => {
         boltButtonElement.id = defaultButtonContainerId;
         document.body.appendChild(boltButtonElement);
 
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
         scriptLoader = createScriptLoader();
         boltScriptLoader = new BoltScriptLoader(scriptLoader);
         boltClient = getBoltClientScriptMock(true);

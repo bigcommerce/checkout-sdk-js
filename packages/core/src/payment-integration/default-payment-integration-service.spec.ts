@@ -10,6 +10,7 @@ import {
 import {
     getBuyNowCart,
     getBuyNowCartRequestBody,
+    getCheckout,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { BillingAddressActionCreator } from '../billing';
@@ -27,6 +28,7 @@ import PaymentMethodActionCreator from '../payment/payment-method-action-creator
 import { getPayment } from '../payment/payments.mock';
 import { ConsignmentActionCreator } from '../shipping';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
+import { SpamProtectionActionCreator } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
 
 import DefaultPaymentIntegrationService from './default-payment-integration-service';
@@ -59,6 +61,10 @@ describe('DefaultPaymentIntegrationService', () => {
         PaymentActionCreator,
         'submitPayment' | 'initializeOffsitePayment'
     >;
+    let spamProtectionActionCreator: Pick<
+        SpamProtectionActionCreator,
+        'verifyCheckoutSpamProtection'
+    >;
     let customerActionCreator: Pick<CustomerActionCreator, 'signInCustomer' | 'signOutCustomer'>;
     let cartRequestSender: CartRequestSender;
     let storeCreditActionCreator: Pick<StoreCreditActionCreator, 'applyStoreCredit'>;
@@ -72,6 +78,11 @@ describe('DefaultPaymentIntegrationService', () => {
         internalCheckoutSelectors = {
             order: {
                 getOrderOrThrow: () => getOrder(),
+            },
+            checkout: {
+                getCheckoutOrThrow: () => {
+                    return { ...getCheckout(), shouldExecuteSpamCheck: true };
+                },
             },
         } as InternalCheckoutSelectors;
 
@@ -131,6 +142,12 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
+        spamProtectionActionCreator = {
+            verifyCheckoutSpamProtection: jest.fn(
+                async () => () => createAction('SPAM_PROTECTION_CHECKOUT_VERIFY_REQUESTED'),
+            ),
+        };
+
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
@@ -144,6 +161,7 @@ describe('DefaultPaymentIntegrationService', () => {
             customerActionCreator as CustomerActionCreator,
             cartRequestSender,
             storeCreditActionCreator as StoreCreditActionCreator,
+            spamProtectionActionCreator as SpamProtectionActionCreator,
         );
     });
 
@@ -337,6 +355,18 @@ describe('DefaultPaymentIntegrationService', () => {
 
             expect(customerActionCreator.signOutCustomer).toHaveBeenCalledWith({});
             expect(store.dispatch).toHaveBeenCalledWith(customerActionCreator.signOutCustomer({}));
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#verifyCheckoutSpamProtection', () => {
+        it('verify spam protection', async () => {
+            const output = await subject.verifyCheckoutSpamProtection();
+
+            expect(spamProtectionActionCreator.verifyCheckoutSpamProtection).toHaveBeenCalledWith();
+            expect(store.dispatch).toHaveBeenCalledWith(
+                spamProtectionActionCreator.verifyCheckoutSpamProtection(),
+            );
             expect(output).toEqual(paymentIntegrationSelectors);
         });
     });

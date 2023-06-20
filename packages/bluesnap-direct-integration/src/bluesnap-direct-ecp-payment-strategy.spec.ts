@@ -13,8 +13,7 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
     let strategy: BlueSnapDirectEcpPaymentStrategy;
 
     beforeEach(() => {
-        paymentIntegrationService =
-            new PaymentIntegrationServiceMock() as PaymentIntegrationService;
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         strategy = new BlueSnapDirectEcpPaymentStrategy(paymentIntegrationService);
     });

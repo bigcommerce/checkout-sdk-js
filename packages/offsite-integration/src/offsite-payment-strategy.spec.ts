@@ -22,8 +22,7 @@ describe('OffsitePaymentStrategy', () => {
     let options: PaymentRequestOptions;
 
     beforeEach(() => {
-        paymentIntegrationService =
-            new PaymentIntegrationServiceMock() as PaymentIntegrationService;
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         options = { methodId: 'foobar' };
         payload = merge(getOrderRequestBody(), {

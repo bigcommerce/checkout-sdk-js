@@ -98,6 +98,13 @@ export default function createPaymentIntegrationService(
         new StoreCreditRequestSender(requestSender),
     );
 
+    const spamProtection = createSpamProtection(createScriptLoader());
+    const spamProtectionRequestSender = new SpamProtectionRequestSender(requestSender);
+    const spamProtectionActionCreator = new SpamProtectionActionCreator(
+        spamProtection,
+        spamProtectionRequestSender,
+    );
+
     const cartRequestSender = new CartRequestSender(requestSender);
 
     return new DefaultPaymentIntegrationService(
@@ -113,5 +120,6 @@ export default function createPaymentIntegrationService(
         customerActionCreator,
         cartRequestSender,
         storeCreditActionCreator,
+        spamProtectionActionCreator,
     );
 }

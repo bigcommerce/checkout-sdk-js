@@ -112,7 +112,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
         paymentMethod = getPayPalCommercePaymentMethod();
         paypalSdk = getPayPalSDKMock();
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         strategy = new PayPalCommerceCreditButtonStrategy(
             paymentIntegrationService,

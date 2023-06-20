@@ -8,7 +8,7 @@ describe('createBraintreePaypalAchStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
     });
 
     it('instantiates braintree paypal ach payment strategy', () => {

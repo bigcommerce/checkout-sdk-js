@@ -2,11 +2,7 @@ import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { createCheckoutStore } from '../checkout';
-import {
-    createPaymentClient,
-    PaymentMethodActionCreator,
-    PaymentMethodRequestSender,
-} from '../payment';
+import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
 
 import CheckoutButtonInitializer from './checkout-button-initializer';
@@ -43,7 +39,6 @@ export default function createCheckoutButtonInitializer(
 ): CheckoutButtonInitializer {
     const { host, locale = 'en' } = options ?? {};
     const store = createCheckoutStore();
-    const paymentClient = createPaymentClient(store);
     const requestSender = createRequestSender({ host });
     const formPoster = createFormPoster({ host });
     const paymentIntegrationService = createPaymentIntegrationService(store);
@@ -52,14 +47,7 @@ export default function createCheckoutButtonInitializer(
     return new CheckoutButtonInitializer(
         store,
         new CheckoutButtonStrategyActionCreator(
-            createCheckoutButtonRegistry(
-                store,
-                paymentClient,
-                requestSender,
-                formPoster,
-                locale,
-                host,
-            ),
+            createCheckoutButtonRegistry(store, requestSender, formPoster, locale, host),
             registryV2,
             new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
         ),

@@ -42,7 +42,7 @@ describe('PaypalExpressButtonStrategy', () => {
     let paymentMethod: PaymentMethod;
 
     beforeEach(() => {
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
         paypalExpressScriptLoader = new PaypalExpressScriptLoader(new ScriptLoader());
         formPoster = createFormPoster();
         paymentMethod = getPaypalExpress();

@@ -14,8 +14,7 @@ describe('LegacyPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
-        paymentIntegrationService =
-            new PaymentIntegrationServiceMock() as PaymentIntegrationService;
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
         strategy = new LegacyPaymentStrategy(paymentIntegrationService);
     });
 

@@ -65,7 +65,7 @@ describe('PayPalCommerceIntegrationService', () => {
 
         formPoster = createFormPoster();
         requestSender = createRequestSender();
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
         paypalCommerceRequestSender = new PayPalCommerceRequestSender(requestSender);
         paypalCommerceScriptLoader = new PayPalCommerceScriptLoader(getScriptLoader());
 

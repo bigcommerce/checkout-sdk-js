@@ -82,6 +82,7 @@ describe('ApplePayCustomerStrategy', () => {
             await strategy.initialize(customerInitializeOptions);
             children = container.children;
 
+            expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalled();
             expect(children).toHaveLength(1);
         });
 
@@ -691,6 +692,9 @@ describe('ApplePayCustomerStrategy', () => {
                     button.click();
                     await applePaySession.onpaymentauthorized(authEvent);
 
+                    expect(
+                        paymentIntegrationService.verifyCheckoutSpamProtection,
+                    ).toHaveBeenCalled();
                     expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalled();
                     expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
                 }

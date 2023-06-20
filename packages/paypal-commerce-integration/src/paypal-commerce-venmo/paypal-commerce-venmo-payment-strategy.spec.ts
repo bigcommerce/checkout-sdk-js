@@ -64,7 +64,7 @@ describe('PayPalCommerceVenmoPaymentStrategy', () => {
 
         loadingIndicator = new LoadingIndicator();
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         strategy = new PayPalCommerceVenmoPaymentStrategy(
             paymentIntegrationService,

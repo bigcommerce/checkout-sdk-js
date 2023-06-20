@@ -323,7 +323,7 @@ describe('CheckoutService', () => {
         );
 
         customerStrategyActionCreator = new CustomerStrategyActionCreator(
-            createCustomerStrategyRegistry(store, paymentClient, requestSender, locale),
+            createCustomerStrategyRegistry(store, requestSender, locale),
             customerRegistryV2,
         );
 

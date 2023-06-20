@@ -60,8 +60,7 @@ describe('AdyenV3PaymentStrategy', () => {
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         adyenV3ScriptLoader = new AdyenV3ScriptLoader(scriptLoader, stylesheetLoader);
-        paymentIntegrationService =
-            new PaymentIntegrationServiceMock() as PaymentIntegrationService;
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         strategy = new AdyenV3PaymentStrategy(paymentIntegrationService, adyenV3ScriptLoader);
     });

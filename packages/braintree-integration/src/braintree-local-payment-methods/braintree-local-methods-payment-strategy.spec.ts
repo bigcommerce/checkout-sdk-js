@@ -1,4 +1,5 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
+
 import {
     InvalidArgumentError,
     MissingDataError,
@@ -12,15 +13,17 @@ import {
     getCheckout,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+
 import BraintreeIntegrationService from '../braintree-integration-service';
 import BraintreeScriptLoader from '../braintree-script-loader';
 import {
     getBraintreeLocalMethods,
     getBraintreeLocalMethodsInitializationOptions,
 } from '../braintree.mock';
-import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-payment-strategy';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+
 import { LocalPaymentInstance } from './braintree-local-methods-options';
+import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-payment-strategy';
 
 describe('BraintreeLocalMethodsPaymentStrategy', () => {
     let strategy: BraintreeLocalMethodsPaymentStrategy;
@@ -38,7 +41,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
     };
 
     beforeEach(() => {
-        paymentIntegrationService = <PaymentIntegrationService>new PaymentIntegrationServiceMock();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
         braintreeIntegrationService = new BraintreeIntegrationService(
             braintreeScriptLoader,
@@ -156,7 +159,9 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
     describe('#renderButton', () => {
         it('creates button element with id', async () => {
             await strategy.initialize(initializationOptions);
+
             const button = document.getElementById('giropay');
+
             expect(button).toBeDefined();
         });
     });
