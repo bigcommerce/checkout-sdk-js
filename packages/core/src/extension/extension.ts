@@ -2,7 +2,6 @@ export interface Extension {
     id: string;
     name: string;
     region: ExtensionRegions;
-    origin: string;
     url: string;
 }
 

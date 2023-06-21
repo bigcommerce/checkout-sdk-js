@@ -7,14 +7,12 @@ export function getExtensions(): Extension[] {
             id: '123',
             name: 'Foo',
             region: ExtensionRegions.ShippingShippingAddressFormBefore,
-            origin: 'https://widget.foo.com/',
             url: 'https://widget.foo.com/',
         },
         {
             id: '456',
             name: 'Bar',
             region: ExtensionRegions.ShippingShippingAddressFormAfter,
-            origin: 'https://widget.bar.com/',
             url: 'https://widget.bar.com/',
         },
     ];
