@@ -17,7 +17,6 @@
 ### Properties
 
 - [amazonpay](BaseCheckoutButtonInitializeOptions.md#amazonpay)
-- [applepay](BaseCheckoutButtonInitializeOptions.md#applepay)
 - [braintreepaypal](BaseCheckoutButtonInitializeOptions.md#braintreepaypal)
 - [braintreepaypalcredit](BaseCheckoutButtonInitializeOptions.md#braintreepaypalcredit)
 - [braintreevenmo](BaseCheckoutButtonInitializeOptions.md#braintreevenmo)
@@ -47,15 +46,6 @@
 
 The options that are required to facilitate AmazonPayV2. They can be
 omitted unless you need to support AmazonPayV2.
-
-___
-
-### applepay
-
-• `Optional` **applepay**: [`ApplePayButtonInitializeOptions`](ApplePayButtonInitializeOptions.md)
-
-The options that are required to initialize the ApplePay payment method.
-They can be omitted unless you need to support ApplePay in cart.
 
 ___
 

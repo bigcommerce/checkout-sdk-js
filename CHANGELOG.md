@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.391.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.390.0...v1.391.0) (2023-06-21)
+
+
+### Features
+
+* **checkout:** DATA-10908 DATA-10928 Add shipping and payment detailsprovided events for BODL ([#2019](https://github.com/bigcommerce/checkout-sdk-js/issues/2019)) ([e7040f9](https://github.com/bigcommerce/checkout-sdk-js/commit/e7040f9a5eeec564b4ab6514960c786ee6dc3749))
+* **payment:** CHECKOUT-7504 Enable recaptcha for apple pay ([#2011](https://github.com/bigcommerce/checkout-sdk-js/issues/2011)) ([5c2cc35](https://github.com/bigcommerce/checkout-sdk-js/commit/5c2cc352ee7eb49b904080836ad0a9838ef24dd2))
+
+
+### Bug Fixes
+
+* **checkout:** DATA-10908 Fix failing bodl unit tests ([#2024](https://github.com/bigcommerce/checkout-sdk-js/issues/2024)) ([4ace117](https://github.com/bigcommerce/checkout-sdk-js/commit/4ace117bb7946609bf67ea18ad80e18800efdb41))
+
 ## [1.390.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.389.0...v1.390.0) (2023-06-20)
 
 

@@ -12,4 +12,4 @@
 
 ### applepay
 
-• `Optional` **applepay**: [`ApplePayButtonInitializeOptions_2`](ApplePayButtonInitializeOptions_2.md)
+• `Optional` **applepay**: [`ApplePayButtonInitializeOptions`](ApplePayButtonInitializeOptions.md)

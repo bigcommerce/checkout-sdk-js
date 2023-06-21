@@ -86,7 +86,6 @@
 - [AmazonPayV2Price](interfaces/AmazonPayV2Price.md)
 - [AmazonPayV2ShippingInitializeOptions](interfaces/AmazonPayV2ShippingInitializeOptions.md)
 - [ApplePayButtonInitializeOptions](interfaces/ApplePayButtonInitializeOptions.md)
-- [ApplePayButtonInitializeOptions_2](interfaces/ApplePayButtonInitializeOptions_2.md)
 - [ApplePayCustomerInitializeOptions](interfaces/ApplePayCustomerInitializeOptions.md)
 - [ApplePayPaymentInitializeOptions](interfaces/ApplePayPaymentInitializeOptions.md)
 - [BankInstrument](interfaces/BankInstrument.md)

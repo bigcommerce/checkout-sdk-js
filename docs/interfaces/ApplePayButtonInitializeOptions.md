@@ -12,6 +12,8 @@ DOM. When a customer clicks on it, it will trigger Apple sheet.
 ### Properties
 
 - [buttonClassName](ApplePayButtonInitializeOptions.md#buttonclassname)
+- [buyNowInitializeOptions](ApplePayButtonInitializeOptions.md#buynowinitializeoptions)
+- [requiresShipping](ApplePayButtonInitializeOptions.md#requiresshipping)
 
 ### Methods
 
@@ -24,6 +26,28 @@ DOM. When a customer clicks on it, it will trigger Apple sheet.
 • `Optional` **buttonClassName**: `string`
 
 The class name of the ApplePay button style.
+
+___
+
+### buyNowInitializeOptions
+
+• `Optional` **buyNowInitializeOptions**: `Object`
+
+The options that are required to initialize Buy Now functionality.
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `getBuyNowCartRequestBody?` | () => `void` \| `default` |
+
+___
+
+### requiresShipping
+
+• `Optional` **requiresShipping**: `boolean`
+
+This option indicates if product requires shipping
 
 ## Methods
 

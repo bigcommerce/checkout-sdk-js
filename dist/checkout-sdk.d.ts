@@ -791,23 +791,6 @@ declare type AnalyticStepType = 'customer' | 'shipping' | 'billing' | 'payment';
  */
 declare interface ApplePayButtonInitializeOptions {
     /**
-     * The class name of the ApplePay button style.
-     */
-    buttonClassName?: string;
-    /**
-     * A callback that gets called when a payment is successfully completed.
-     */
-    onPaymentAuthorize(): void;
-}
-
-/**
- * A set of options that are required to initialize ApplePay in cart.
- *
- * When ApplePay is initialized, an ApplePay button will be inserted into the
- * DOM. When a customer clicks on it, it will trigger Apple sheet.
- */
-declare interface ApplePayButtonInitializeOptions_2 {
-    /**
      * This option indicates if product requires shipping
      */
     requiresShipping?: boolean;
@@ -906,11 +889,6 @@ declare interface BaseAccountInstrument extends BaseInstrument {
 
 declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     [key: string]: unknown;
-    /**
-     * The options that are required to initialize the ApplePay payment method.
-     * They can be omitted unless you need to support ApplePay in cart.
-     */
-    applepay?: ApplePayButtonInitializeOptions;
     /**
      * The options that are required to facilitate AmazonPayV2. They can be
      * omitted unless you need to support AmazonPayV2.
@@ -7781,7 +7759,7 @@ declare interface WithAdyenV3PaymentInitializeOptions {
 }
 
 declare interface WithApplePayButtonInitializeOptions {
-    applepay?: ApplePayButtonInitializeOptions_2;
+    applepay?: ApplePayButtonInitializeOptions;
 }
 
 declare interface WithApplePayCustomerInitializeOptions {
