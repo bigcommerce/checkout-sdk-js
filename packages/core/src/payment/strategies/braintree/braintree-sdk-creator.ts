@@ -233,6 +233,14 @@ export default class BraintreeSDKCreator {
     }
 
     private _teardown(module?: Promise<BraintreeModule>) {
-        return module ? module.then((mod) => mod.teardown()) : Promise.resolve();
+        return module
+            ? module.then((mod) =>
+                  mod.teardown().catch((error) => {
+                      if (error.code !== 'METHOD_CALLED_AFTER_TEARDOWN') {
+                          throw error;
+                      }
+                  }),
+              )
+            : Promise.resolve();
     }
 }
