@@ -327,19 +327,16 @@ describe('BodlEmitterService', () => {
             it('tracks products', () => {
                 expect(bodlEvents.emitShippingDetailsProvidedEvent).toHaveBeenCalledWith(
                     expect.objectContaining({
-                        coupon_codes: ['SAVEBIG2015', '279F507D817E3E7'],
-                        cart_value: 190,
-                        currency: 'USD',
-                        event_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                         line_items: [
                             {
-                                product_id: 103,
+                                product_id: '103',
                                 sku: 'CLC',
                                 product_name: 'Canvas Laundry Cart',
                                 base_price: 200,
                                 sale_price: 190,
                                 purchase_price: 190,
                                 quantity: 1,
+                                retail_price: 210,
                                 brand_name: 'OFS',
                                 discount: 10,
                                 category_names: ['Cat 1'],
@@ -347,13 +344,14 @@ describe('BodlEmitterService', () => {
                                 currency: 'USD',
                             },
                             {
-                                product_id: 104,
+                                product_id: '104',
                                 sku: 'CLX',
                                 product_name: 'Digital Book',
                                 base_price: 200,
                                 purchase_price: 200,
                                 sale_price: 200,
                                 quantity: 1,
+                                retail_price: 210,
                                 discount: 0,
                                 brand_name: 'Digitalia',
                                 category_names: ['Ebooks', 'Audio Books'],
@@ -373,6 +371,7 @@ describe('BodlEmitterService', () => {
                                 currency: 'USD',
                             },
                         ],
+                        shipping_method: 'foo',
                     }),
                 );
             });
@@ -509,19 +508,16 @@ describe('BodlEmitterService', () => {
         it('tracks products', () => {
             expect(bodlEvents.emitPaymentDetailsProvidedEvent).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    coupon_codes: ['SAVEBIG2015', '279F507D817E3E7'],
-                    cart_value: 190,
-                    currency: 'USD',
-                    event_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                     line_items: [
                         {
-                            product_id: 103,
+                            product_id: '103',
                             sku: 'CLC',
                             product_name: 'Canvas Laundry Cart',
                             base_price: 200,
                             sale_price: 190,
                             purchase_price: 190,
                             quantity: 1,
+                            retail_price: 210,
                             brand_name: 'OFS',
                             discount: 10,
                             category_names: ['Cat 1'],
@@ -529,13 +525,14 @@ describe('BodlEmitterService', () => {
                             currency: 'USD',
                         },
                         {
-                            product_id: 104,
+                            product_id: '104',
                             sku: 'CLX',
                             product_name: 'Digital Book',
                             base_price: 200,
                             purchase_price: 200,
                             sale_price: 200,
                             quantity: 1,
+                            retail_price: 210,
                             discount: 0,
                             brand_name: 'Digitalia',
                             category_names: ['Ebooks', 'Audio Books'],
@@ -555,6 +552,7 @@ describe('BodlEmitterService', () => {
                             currency: 'USD',
                         },
                     ],
+                    payment_type: 'Credit Card',
                 }),
             );
         });
