@@ -1,11 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import {
-    ContentType,
-    INTERNAL_USE_ONLY,
-    RequestOptions,
-    SDK_VERSION_HEADERS,
-} from '../common/http-request';
+import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
 import { Extension } from './extension';
 
@@ -19,7 +14,6 @@ export class ExtensionRequestSender {
             timeout,
             headers: {
                 Accept: ContentType.JsonV1,
-                'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 ...SDK_VERSION_HEADERS,
             },
             params,

@@ -1442,13 +1442,9 @@ describe('CheckoutService', () => {
 
     describe('#loadExtensions()', () => {
         it('loads extensions', async () => {
-            const options = {
-                params: { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7' },
-            };
-
             await checkoutService.loadExtensions();
 
-            expect(extensionRequestSender.loadExtensions).toHaveBeenCalledWith(options);
+            expect(extensionRequestSender.loadExtensions).toHaveBeenCalled();
         });
 
         it('loads extensions with timeout', async () => {

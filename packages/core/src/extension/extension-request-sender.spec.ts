@@ -5,7 +5,7 @@ import {
     Response,
 } from '@bigcommerce/request-sender';
 
-import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../common/http-request';
+import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import { Extension } from './extension';
@@ -36,7 +36,6 @@ describe('ExtensionRequestSender', () => {
                 timeout: undefined,
                 headers: {
                     Accept: ContentType.JsonV1,
-                    'X-API-INTERNAL': INTERNAL_USE_ONLY,
                     ...SDK_VERSION_HEADERS,
                 },
             });
@@ -52,7 +51,6 @@ describe('ExtensionRequestSender', () => {
                 ...options,
                 headers: {
                     Accept: ContentType.JsonV1,
-                    'X-API-INTERNAL': INTERNAL_USE_ONLY,
                     ...SDK_VERSION_HEADERS,
                 },
             });
@@ -68,7 +66,6 @@ describe('ExtensionRequestSender', () => {
                 ...options,
                 headers: {
                     Accept: ContentType.JsonV1,
-                    'X-API-INTERNAL': INTERNAL_USE_ONLY,
                     ...SDK_VERSION_HEADERS,
                 },
             });

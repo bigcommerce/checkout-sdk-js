@@ -13,18 +13,12 @@ export class ExtensionActionCreator {
     loadExtensions(
         options?: RequestOptions,
     ): ThunkAction<ExtensionAction, InternalCheckoutSelectors> {
-        return (store) =>
+        return () =>
             Observable.create((observer: Observer<ExtensionAction>) => {
-                const state = store.getState();
-                const cart = state.cart.getCartOrThrow();
-
                 observer.next(createAction(ExtensionActionType.LoadExtensionsRequested));
 
                 this._requestSender
-                    .loadExtensions({
-                        ...options,
-                        params: { ...options?.params, cartId: cart.id },
-                    })
+                    .loadExtensions(options)
                     .then((response) => {
                         const extensions = response.body;
 
