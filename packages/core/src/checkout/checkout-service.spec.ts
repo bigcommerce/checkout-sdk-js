@@ -32,7 +32,13 @@ import {
     CustomerStrategyActionCreator,
 } from '../customer';
 import CustomerStrategyRegistryV2 from '../customer/customer-strategy-registry-v2';
-import { ExtensionActionCreator, ExtensionRequestSender, getExtensions } from '../extension';
+import {
+    ExtensionActionCreator,
+    ExtensionRegions,
+    ExtensionRequestSender,
+    getExtensions,
+} from '../extension';
+import { ExtensionActionType } from '../extension/extension-actions';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { getAddressFormFields, getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -1472,6 +1478,21 @@ describe('CheckoutService', () => {
             expect(store.dispatch).toHaveBeenCalledWith(expect.any(Function), {
                 queueId: 'extensions',
             });
+        });
+    });
+
+    describe('#renderExtension()', () => {
+        it('render extensions', async () => {
+            jest.spyOn(extensionActionCreator, 'renderExtension').mockReturnValue(
+                of(createAction(ExtensionActionType.RenderExtensionSucceeded)),
+            );
+
+            const container = 'checkout.extension';
+            const region = ExtensionRegions.ShippingShippingAddressFormBefore;
+
+            await checkoutService.renderExtension(container, region);
+
+            expect(extensionActionCreator.renderExtension).toHaveBeenCalledWith(container, region);
         });
     });
 });

@@ -1,4 +1,4 @@
-export { Extension } from './extension';
+export { Extension, ExtensionRegions } from './extension';
 export { ExtensionActionCreator } from './extension-action-creator';
 export { extensionReducer } from './extension-reducer';
 export { ExtensionRequestSender } from './extension-request-sender';
@@ -9,3 +9,4 @@ export {
 } from './extension-selector';
 export { ExtensionState } from './extension-state';
 export { getExtensions } from './extension.mock';
+export { ExtensionIframe } from './extension-iframe';

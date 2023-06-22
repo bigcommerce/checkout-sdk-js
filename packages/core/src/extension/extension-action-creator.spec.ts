@@ -8,7 +8,8 @@ import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
-import { Extension } from './extension';
+import { ExtensionNotFoundError, InvalidExtensionConfigError } from './errors';
+import { Extension, ExtensionRegions } from './extension';
 import { ExtensionActionCreator } from './extension-action-creator';
 import { ExtensionActionType } from './extension-actions';
 import { ExtensionRequestSender } from './extension-request-sender';
@@ -73,6 +74,70 @@ describe('ExtensionActionCreator', () => {
                 {
                     type: ExtensionActionType.LoadExtensionsFailed,
                     payload: errorResponse,
+                    error: true,
+                },
+            ]);
+        });
+    });
+
+    describe('#renderExtension()', () => {
+        it('throws error if unable to find an extension', async () => {
+            jest.spyOn(store.getState().extensions, 'getExtensions').mockReturnValue(
+                getExtensions().slice(0, 1),
+            );
+
+            const errorHandler = jest.fn((action) => of(action));
+            const actions = await from(
+                extensionActionCreator.renderExtension(
+                    'foo',
+                    ExtensionRegions.ShippingShippingAddressFormAfter,
+                )(store),
+            )
+                .pipe(catchError(errorHandler))
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toBeInstanceOf(ExtensionNotFoundError);
+        });
+
+        it('emits actions if able to render an extension', async () => {
+            const mockElement = document.createElement('div');
+
+            jest.spyOn(document, 'getElementById').mockReturnValue(mockElement);
+
+            const actions = await from(
+                extensionActionCreator.renderExtension(
+                    'foo',
+                    ExtensionRegions.ShippingShippingAddressFormAfter,
+                )(store),
+            )
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: ExtensionActionType.RenderExtensionRequested },
+                { type: ExtensionActionType.RenderExtensionSucceeded },
+            ]);
+        });
+
+        it('emits error actions if unable to render an extension', async () => {
+            jest.spyOn(document, 'getElementById').mockReturnValue(null);
+
+            const errorHandler = jest.fn((action) => of(action));
+            const actions = await from(
+                extensionActionCreator.renderExtension(
+                    'foo',
+                    ExtensionRegions.ShippingShippingAddressFormAfter,
+                )(store),
+            )
+                .pipe(catchError(errorHandler), toArray())
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: ExtensionActionType.RenderExtensionRequested },
+                {
+                    type: ExtensionActionType.RenderExtensionFailed,
+                    payload: expect.any(InvalidExtensionConfigError),
                     error: true,
                 },
             ]);
