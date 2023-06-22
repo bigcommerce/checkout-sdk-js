@@ -29,7 +29,7 @@ export function getDataCollectorMock(): BraintreeDataCollector {
 
 export function getBraintreeLocalPaymentMock(): BraintreeLocalPayment {
     return {
-        VERSION: '3.81.0',
+        VERSION: '3.94.0',
         create: jest.fn(),
     };
 }
