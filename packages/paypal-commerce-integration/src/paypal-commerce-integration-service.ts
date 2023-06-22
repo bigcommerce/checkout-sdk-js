@@ -28,6 +28,7 @@ import {
     StyleButtonLabel,
     StyleButtonShape,
 } from './paypal-commerce-types';
+import { RatePay } from './paypal-commerce-types';
 
 export default class PayPalCommerceIntegrationService {
     private paypalSdk?: PayPalSDK;
@@ -158,7 +159,7 @@ export default class PayPalCommerceIntegrationService {
         });
     }
 
-    async submitPayment(methodId: string, orderId: string, ratePay?: any): Promise<void> { // TODO: FIX
+    async submitPayment(methodId: string, orderId: string, ratePay?: RatePay): Promise<void> {
         const paymentData = {
             formattedPayload: {
                 vault_payment_instrument: null,
@@ -167,7 +168,11 @@ export default class PayPalCommerceIntegrationService {
                 method_id: methodId,
             ...(ratePay && {
                 rate_pay: {
-                    birth_date: ratePay.birthDate,
+                    birth_date: '1990-01-01',
+                    phone: {
+                        national_number: '6912345678',
+                        country_code: '49',
+                    },
                 }
             }
             ),

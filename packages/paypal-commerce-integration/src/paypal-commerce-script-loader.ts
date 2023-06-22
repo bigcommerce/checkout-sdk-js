@@ -140,7 +140,7 @@ export default class PayPalCommerceScriptLoader {
             'enable-funding': enableFunding.length > 0 ? enableFunding : undefined,
             'disable-funding': disableFunding.length > 0 ? disableFunding : undefined,
             commit,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'], //TODO: FIX
+            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
             currency: currencyCode,
             intent,
             ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),

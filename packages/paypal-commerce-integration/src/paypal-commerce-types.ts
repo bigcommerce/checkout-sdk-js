@@ -37,8 +37,23 @@ export interface PayPalSDK {
     Buttons(options: PayPalCommerceButtonsOptions): PayPalCommerceButtons;
     PaymentFields(options: PayPalCommercePaymentFieldsOptions): PayPalCommercePaymentFields;
     Messages(options: PayPalCommerceMessagesOptions): PayPalCommerceMessages;
+    Legal: PayPalLegal;
+}
 
-    Legal: any // TODO: FIX
+interface PayPalLegalConfig {
+    fundingSource: string;
+}
+
+interface PayPalLegal {
+    FUNDING: {
+        PAY_UPON_INVOICE: string;
+    }
+    (config: PayPalLegalConfig): PayPalLegal;
+    render(container: string): void;
+}
+
+export interface RatePay {
+    birthDate: string;
 }
 
 export interface PayPalCommerceScriptParams {

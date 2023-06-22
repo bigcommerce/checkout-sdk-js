@@ -14,13 +14,13 @@ import PayPalCommerceIntegrationService from '../paypal-commerce-integration-ser
 import {
     WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-integration';
-import {PayPalCommerceInitializationData} from "../paypal-commerce-types";
+import { PayPalCommerceInitializationData } from "../paypal-commerce-types";
+import { PaypalCommerceRatePay } from './paypal-commerce-alternative-methods-payment-initialize-options';
 
 export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy implements PaymentStrategy {
-    private ratePayButton?: any; // TODO: FIX
     private loadingIndicatorContainer?: string;
     private guid?: string;
-    private paypalcommerceratepay?: any; // TODO: FIX
+    private paypalcommerceratepay?: PaypalCommerceRatePay;
     private orderId?: string;
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -37,8 +37,6 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
             methodId,
             paypalcommerceratepay
         } = options;
-
-        console.log(paypalcommerceratepay); // TODO: REMOVE
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -67,6 +65,8 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
             gatewayId,
         );
 
+        console.log('PAYMENT METHOD', paymentMethod);
+
         const { merchantId } = paymentMethod.initializationData || {};
 
         this.loadingIndicatorContainer = paypalcommerceratepay.container.split('#')[1];
@@ -75,11 +75,21 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
         this.loadFraudnetConfig();
 
         this.renderLegalText();
-        this.renderButton(methodId, gatewayId);
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = payload;
+
+        this.toggleLoadingIndicator(true);
+
+        try {
+            this.orderId = await this.paypalCommerceIntegrationService.createOrder(
+                'paypalcommercealternativemethodscheckout',
+                {metadataId: this.guid}
+            );
+        } catch (error: unknown) {
+            this.handleError(error);
+        }
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
@@ -91,15 +101,16 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
 
         const { dateOfBirthContainer } = this.paypalcommerceratepay || {};
 
-        const dateOfBirthValue = document.getElementById(dateOfBirthContainer)?.innerText;
+        if (dateOfBirthContainer) {
+            const dateOfBirthInput = document.getElementsByName(dateOfBirthContainer)[0];
+            const ratePay = {
+                // @ts-ignore // TODO: FIX
+                birthDate: dateOfBirthInput.value,
+            };
 
-        const ratePay = {
-            birthDate: dateOfBirthValue,
-        };
-
-        await this.paymentIntegrationService.submitOrder(order, options);
-
-        await this.paypalCommerceIntegrationService.submitPayment(payment.methodId, this.orderId, ratePay);
+            await this.paymentIntegrationService.submitOrder(order, options);
+            await this.paypalCommerceIntegrationService.submitPayment(payment.methodId, this.orderId, ratePay);
+        }
     }
 
     finalize(): Promise<void> {
@@ -107,79 +118,50 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
     }
 
     deinitialize(): Promise<void> {
-        const legalTextContainer = document.getElementById('legal-text-container'); //TODO: FIX
-        legalTextContainer?.remove();
+        const { legalTextContainer } = this.paypalcommerceratepay || {};
+        if (legalTextContainer) {
+            const legalTextContainerElement = document.getElementById(legalTextContainer);
+            legalTextContainerElement?.remove();
+        }
 
         return Promise.resolve();
     }
 
-    private renderButton(methodId: string, _gatewayId: string) { // TODO: FIX
+    private renderLegalText() {
         if (this.paypalcommerceratepay) {
-            let buttonContainer;
-            const { buttonText, container, onRenderButton } = this.paypalcommerceratepay;
+            const legalTextContainerId = this.paypalcommerceratepay.legalTextContainer;
+            const {container} = this.paypalcommerceratepay;
             const buttonContainerId = container.split('#')[1];
-            const ratepayButton = document.createElement('button');
-            buttonContainer = document.getElementById(buttonContainerId);
-            ratepayButton.setAttribute('class', 'button button--action button--large button--slab optimizedCheckout-buttonPrimary');
-            ratepayButton.setAttribute('id', methodId);
-            ratepayButton.innerText = buttonText || 'Continue with Ratepay';
-            ratepayButton.addEventListener('click', (e) => this.handleClick(e));
+            const buttonContainer = document.getElementById(buttonContainerId);
+            const buttonContainerParent = buttonContainer?.parentNode;
+            const legalTextContainer = document.createElement('div');
+            legalTextContainer.style.marginBottom = '20px';
+            legalTextContainer.setAttribute('id', legalTextContainerId);
+            buttonContainerParent?.prepend(legalTextContainer);
+            const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+            const ratePayButton = paypalSdk.Legal({ fundingSource: paypalSdk.Legal.FUNDING.PAY_UPON_INVOICE });
+            const legalTextContainerElement = document.getElementById(legalTextContainerId);
 
-            if (onRenderButton && typeof onRenderButton === 'function') {
-                onRenderButton();
-            }
-
-            buttonContainer = document.getElementById(buttonContainerId);
-
-            if (buttonContainer) {
-                buttonContainer.append(ratepayButton);
+            if (legalTextContainerElement) {
+                ratePayButton.render(`#${legalTextContainerId}`);
             }
         }
     }
-
-    private renderLegalText() { //TODO: FIX
-        const { container } = this.paypalcommerceratepay;
-        const buttonContainerId = container.split('#')[1];
-        const buttonContainer = document.getElementById(buttonContainerId);
-        const buttonContainerParent = buttonContainer?.parentNode;
-        const legalTextContainer = document.createElement('div');
-        legalTextContainer.style.marginBottom = '20px'; // TODO: FIX
-        legalTextContainer.setAttribute('id', 'legal-text-container');
-        buttonContainerParent?.prepend(legalTextContainer);
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
-        this.ratePayButton = paypalSdk.Legal({fundingSource: paypalSdk.Legal.FUNDING.PAY_UPON_INVOICE});
-        console.log('RATE PAY', this.ratePayButton);
-        this.ratePayButton.render('#legal-text-container'); // TODO: FIX
-    }
-
-    private async handleClick(e: any): Promise<void> { // TODO: FIX
-        e.preventDefault();
-        const { submitForm } = this.paypalcommerceratepay;
-        try {
-            await this.paypalCommerceIntegrationService.createOrder(
-                'paypalcommercealternativemethodscheckout',
-                { metadataId: this.guid }
-            );
-
-            if (submitForm && typeof submitForm === 'function') {
-                submitForm();
-            }
-
-        } catch (error: unknown) {
-            this.handleError(error);
-        }
-    }
-
     private handleError(
         error: unknown
     ): void {
-        const { onError } = this.paypalcommerceratepay;
+        const { onError } = this.paypalcommerceratepay || {};
+        this.toggleLoadingIndicator(false);
+
         if (onError && typeof onError === 'function') {
             onError(error);
         }
     }
 
     private createFraudNetScript(merchantId: string) {
+        const state = this.paymentIntegrationService.getState();
+        const a = state.getStoreConfig();
+        console.log('A', a);
         const scriptElement = document.createElement('script');
         scriptElement.setAttribute('type', 'application/json');
         scriptElement.setAttribute('fncls', 'fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99');

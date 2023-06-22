@@ -9,7 +9,7 @@ import PayPalCommerceAlternativeMethodRatePayPaymentStrategy from './paypal-comm
 
 
 const createPayPalCommerceAlternativeMethodRatePayPaymentStrategy: PaymentStrategyFactory<
-    any // TODO: FIX
+    PayPalCommerceAlternativeMethodRatePayPaymentStrategy
 > = (paymentIntegrationService) =>
     new PayPalCommerceAlternativeMethodRatePayPaymentStrategy(
         paymentIntegrationService,
