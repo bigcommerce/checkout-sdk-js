@@ -31,6 +31,7 @@ you can use this object to retrieve the reason for the failure.
 - [getLoadCartError](CheckoutStoreErrorSelector.md#getloadcarterror)
 - [getLoadCheckoutError](CheckoutStoreErrorSelector.md#getloadcheckouterror)
 - [getLoadConfigError](CheckoutStoreErrorSelector.md#getloadconfigerror)
+- [getLoadExtensionsError](CheckoutStoreErrorSelector.md#getloadextensionserror)
 - [getLoadInstrumentsError](CheckoutStoreErrorSelector.md#getloadinstrumentserror)
 - [getLoadOrderError](CheckoutStoreErrorSelector.md#getloadordererror)
 - [getLoadPaymentMethodError](CheckoutStoreErrorSelector.md#getloadpaymentmethoderror)
@@ -344,6 +345,22 @@ Returns an error if unable to load the checkout configuration of a store.
 `undefined` \| `Error`
 
 The error object if unable to load, otherwise undefined.
+
+___
+
+### getLoadExtensionsError
+
+▸ **getLoadExtensionsError**(): `undefined` \| `Error`
+
+Returns an error if unable to fetch extensions.
+
+**`alpha`**
+
+#### Returns
+
+`undefined` \| `Error`
+
+The error object if unable to fetch extensions, otherwise undefined.
 
 ___
 

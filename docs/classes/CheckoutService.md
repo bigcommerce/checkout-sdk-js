@@ -41,6 +41,7 @@ retrieve the current checkout state and subscribe to its changes.
 - [loadBillingAddressFields](CheckoutService.md#loadbillingaddressfields)
 - [loadBillingCountries](CheckoutService.md#loadbillingcountries)
 - [loadCheckout](CheckoutService.md#loadcheckout)
+- [loadExtensions](CheckoutService.md#loadextensions)
 - [loadInstruments](CheckoutService.md#loadinstruments)
 - [loadOrder](CheckoutService.md#loadorder)
 - [loadPaymentMethods](CheckoutService.md#loadpaymentmethods)
@@ -856,6 +857,34 @@ console.log(state.data.getCheckout());
 | :------ | :------ | :------ |
 | `id?` | `string` | The identifier of the checkout to load, or the default checkout if not provided. |
 | `options?` | [`RequestOptions`](../interfaces/RequestOptions.md)<[`CheckoutParams`](../interfaces/CheckoutParams.md)\> | Options for loading the current checkout. |
+
+#### Returns
+
+`Promise`<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+A promise that resolves to the current state.
+
+___
+
+### loadExtensions
+
+▸ **loadExtensions**(`options?`): `Promise`<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+Loads a list of extensions available for checkout.
+
+```js
+const state = service.loadExtensions();
+
+console.log(state.data.getExtensions());
+```
+
+**`alpha`**
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options?` | [`RequestOptions`](../interfaces/RequestOptions.md)<`Object`\> | Options for loading the extensions that are available to the current customer. |
 
 #### Returns
 

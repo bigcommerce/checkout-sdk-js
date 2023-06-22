@@ -21,6 +21,7 @@ checkout information, such as shipping and billing details.
 - [getCoupons](CheckoutStoreSelector.md#getcoupons)
 - [getCustomer](CheckoutStoreSelector.md#getcustomer)
 - [getCustomerAccountFields](CheckoutStoreSelector.md#getcustomeraccountfields)
+- [getExtensions](CheckoutStoreSelector.md#getextensions)
 - [getFlashMessages](CheckoutStoreSelector.md#getflashmessages)
 - [getGiftCertificates](CheckoutStoreSelector.md#getgiftcertificates)
 - [getInstruments](CheckoutStoreSelector.md#getinstruments)
@@ -191,6 +192,22 @@ Gets a set of form fields that should be presented in order to create a customer
 
 The set of customer account form fields if it is loaded,
 otherwise undefined.
+
+___
+
+### getExtensions
+
+▸ **getExtensions**(): `undefined` \| [`Extension`](Extension.md)[]
+
+Gets a list of extensions available for checkout.
+
+**`alpha`**
+
+#### Returns
+
+`undefined` \| [`Extension`](Extension.md)[]
+
+The list of extensions if it is loaded, otherwise undefined.
 
 ___
 

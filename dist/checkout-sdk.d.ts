@@ -2407,6 +2407,7 @@ declare class CheckoutService {
     private _storeCreditActionCreator;
     private _subscriptionsActionCreator;
     private _formFieldsActionCreator;
+    private _extensionActionCreator;
     private _storeProjection;
     private _errorTransformer;
     private _selectorsFactory;
@@ -3350,6 +3351,21 @@ declare class CheckoutService {
      */
     executeSpamCheck(): Promise<CheckoutSelectors>;
     /**
+     * Loads a list of extensions available for checkout.
+     *
+     * ```js
+     * const state = service.loadExtensions();
+     *
+     * console.log(state.data.getExtensions());
+     * ```
+     *
+     * @alpha
+     * @param options - Options for loading the extensions that are
+     * available to the current customer.
+     * @returns A promise that resolves to the current state.
+     */
+    loadExtensions(options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
      * Dispatches an action through the data store and returns the current state
      * once the action is dispatched.
      *
@@ -3655,6 +3671,13 @@ declare interface CheckoutStoreErrorSelector {
      * @returns The error object if unable to fetch pickup options, otherwise undefined.
      */
     getPickupOptionsError(): Error | undefined;
+    /**
+     * Returns an error if unable to fetch extensions.
+     *
+     * @alpha
+     * @returns The error object if unable to fetch extensions, otherwise undefined.
+     */
+    getLoadExtensionsError(): Error | undefined;
 }
 
 /**
@@ -3881,6 +3904,13 @@ declare interface CheckoutStoreSelector {
      * @returns The object of user experience settings if it is loaded, otherwise undefined.
      */
     getUserExperienceSettings(): UserExperienceSettings | undefined;
+    /**
+     * Gets a list of extensions available for checkout.
+     *
+     * @alpha
+     * @returns The list of extensions if it is loaded, otherwise undefined.
+     */
+    getExtensions(): Extension[] | undefined;
 }
 
 /**
@@ -4857,6 +4887,18 @@ declare interface EmbeddedContentOptions {
 declare interface ExecutePaymentMethodCheckoutOptions extends CustomerRequestOptions {
     checkoutPaymentMethodExecuted?(data?: CheckoutPaymentMethodExecutedOptions): void;
     continueWithCheckoutCallback?(): void;
+}
+
+declare interface Extension {
+    id: string;
+    name: string;
+    region: ExtensionRegions;
+    url: string;
+}
+
+declare enum ExtensionRegions {
+    ShippingShippingAddressFormBefore = "shipping.shippingAddressForm.before",
+    ShippingShippingAddressFormAfter = "shipping.shippingAddressForm.after"
 }
 
 declare interface FlashMessage {
