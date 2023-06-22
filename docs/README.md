@@ -9,6 +9,7 @@
 - [AdyenV2CardFields](enums/AdyenV2CardFields.md)
 - [AdyenV3CardFields](enums/AdyenV3CardFields.md)
 - [AmazonPayV2ButtonColor](enums/AmazonPayV2ButtonColor.md)
+- [AmazonPayV2ButtonDesign](enums/AmazonPayV2ButtonDesign.md)
 - [AmazonPayV2CheckoutLanguage](enums/AmazonPayV2CheckoutLanguage.md)
 - [AmazonPayV2LedgerCurrency](enums/AmazonPayV2LedgerCurrency.md)
 - [AmazonPayV2PayOptions](enums/AmazonPayV2PayOptions.md)

@@ -15,6 +15,7 @@
 - [buttonColor](WithBuyNowFeature.md#buttoncolor)
 - [buyNowInitializeOptions](WithBuyNowFeature.md#buynowinitializeoptions)
 - [checkoutLanguage](WithBuyNowFeature.md#checkoutlanguage)
+- [design](WithBuyNowFeature.md#design)
 - [ledgerCurrency](WithBuyNowFeature.md#ledgercurrency)
 - [merchantId](WithBuyNowFeature.md#merchantid)
 - [placement](WithBuyNowFeature.md#placement)
@@ -58,6 +59,18 @@ Language used to render the button and text on Amazon Pay hosted pages.
 #### Inherited from
 
 [AmazonPayV2ButtonConfig](AmazonPayV2ButtonConfig.md).[checkoutLanguage](AmazonPayV2ButtonConfig.md#checkoutlanguage)
+
+___
+
+### design
+
+• `Optional` **design**: [`C0001`](../enums/AmazonPayV2ButtonDesign.md#c0001)
+
+Sets Amazon Pay button design.
+
+#### Inherited from
+
+[AmazonPayV2ButtonConfig](AmazonPayV2ButtonConfig.md).[design](AmazonPayV2ButtonConfig.md#design)
 
 ___
 

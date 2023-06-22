@@ -18,6 +18,7 @@
 
 - [buttonColor](AmazonPayV2ButtonConfig.md#buttoncolor)
 - [checkoutLanguage](AmazonPayV2ButtonConfig.md#checkoutlanguage)
+- [design](AmazonPayV2ButtonConfig.md#design)
 - [ledgerCurrency](AmazonPayV2ButtonConfig.md#ledgercurrency)
 - [merchantId](AmazonPayV2ButtonConfig.md#merchantid)
 - [placement](AmazonPayV2ButtonConfig.md#placement)
@@ -39,6 +40,14 @@ ___
 • `Optional` **checkoutLanguage**: [`en_US`](../enums/AmazonPayV2CheckoutLanguage.md#en_us) \| [`en_GB`](../enums/AmazonPayV2CheckoutLanguage.md#en_gb) \| [`de_DE`](../enums/AmazonPayV2CheckoutLanguage.md#de_de) \| [`fr_FR`](../enums/AmazonPayV2CheckoutLanguage.md#fr_fr) \| [`it_IT`](../enums/AmazonPayV2CheckoutLanguage.md#it_it) \| [`es_ES`](../enums/AmazonPayV2CheckoutLanguage.md#es_es) \| [`ja_JP`](../enums/AmazonPayV2CheckoutLanguage.md#ja_jp)
 
 Language used to render the button and text on Amazon Pay hosted pages.
+
+___
+
+### design
+
+• `Optional` **design**: [`C0001`](../enums/AmazonPayV2ButtonDesign.md#c0001)
+
+Sets Amazon Pay button design.
 
 ___
 

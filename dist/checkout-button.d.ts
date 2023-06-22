@@ -62,6 +62,14 @@ declare interface AmazonPayV2ButtonConfig {
      * if your `publicKeyId` has an environment prefix. Default is false.
      */
     sandbox?: boolean;
+    /**
+     * Sets Amazon Pay button design.
+     */
+    design?: AmazonPayV2ButtonDesign;
+}
+
+declare enum AmazonPayV2ButtonDesign {
+    C0001 = "C0001"
 }
 
 /**

@@ -15,6 +15,7 @@
 - [buttonColor](AmazonPayV2NewButtonParams.md#buttoncolor)
 - [checkoutLanguage](AmazonPayV2NewButtonParams.md#checkoutlanguage)
 - [createCheckoutSessionConfig](AmazonPayV2NewButtonParams.md#createcheckoutsessionconfig)
+- [design](AmazonPayV2NewButtonParams.md#design)
 - [estimatedOrderAmount](AmazonPayV2NewButtonParams.md#estimatedorderamount)
 - [ledgerCurrency](AmazonPayV2NewButtonParams.md#ledgercurrency)
 - [merchantId](AmazonPayV2NewButtonParams.md#merchantid)
@@ -54,6 +55,18 @@ ___
 • `Optional` **createCheckoutSessionConfig**: [`AmazonPayV2CheckoutSessionConfig`](AmazonPayV2CheckoutSessionConfig.md)
 
 Create Checkout Session configuration.
+
+___
+
+### design
+
+• `Optional` **design**: [`C0001`](../enums/AmazonPayV2ButtonDesign.md#c0001)
+
+Sets Amazon Pay button design.
+
+#### Inherited from
+
+[AmazonPayV2ButtonConfig](AmazonPayV2ButtonConfig.md).[design](AmazonPayV2ButtonConfig.md#design)
 
 ___
 
