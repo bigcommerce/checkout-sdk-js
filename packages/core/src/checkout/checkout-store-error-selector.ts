@@ -299,6 +299,14 @@ export default interface CheckoutStoreErrorSelector {
      * @returns The error object if unable to fetch pickup options, otherwise undefined.
      */
     getPickupOptionsError(): Error | undefined;
+
+    /**
+     * Returns an error if unable to fetch extensions.
+     *
+     * @alpha
+     * @returns The error object if unable to fetch extensions, otherwise undefined.
+     */
+    getLoadExtensionsError(): Error | undefined;
 }
 
 export type CheckoutStoreErrorSelectorFactory = (
@@ -368,6 +376,7 @@ export function createCheckoutStoreErrorSelectorFactory(): CheckoutStoreErrorSel
             getCreateCustomerAccountError: state.customer.getCreateAccountError,
             getCreateCustomerAddressError: state.customer.getCreateAddressError,
             getPickupOptionsError: state.pickupOptions.getLoadError,
+            getLoadExtensionsError: state.extensions.getLoadError,
         };
 
         return {

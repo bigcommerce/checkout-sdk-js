@@ -4,6 +4,7 @@ import { CheckoutButtonSelector } from '../checkout-buttons';
 import { ConfigSelector } from '../config';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
 import { CustomerSelector, CustomerStrategySelector } from '../customer';
+import { ExtensionSelector } from '../extension';
 import { FormSelector } from '../form';
 import { CountrySelector } from '../geography';
 import { OrderSelector } from '../order';
@@ -35,6 +36,7 @@ export default interface InternalCheckoutSelectors {
     coupons: CouponSelector;
     customer: CustomerSelector;
     customerStrategies: CustomerStrategySelector;
+    extensions: ExtensionSelector;
     form: FormSelector;
     giftCertificates: GiftCertificateSelector;
     instruments: InstrumentSelector;

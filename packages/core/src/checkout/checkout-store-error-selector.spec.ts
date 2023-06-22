@@ -747,4 +747,24 @@ describe('CheckoutStoreErrorSelector', () => {
             expect(selectors.config.getLoadError).toHaveBeenCalled();
         });
     });
+
+    describe('#getLoadExtensionsError()', () => {
+        it('returns error if there is an error when loading extensions', () => {
+            jest.spyOn(selectors.extensions, 'getLoadError').mockReturnValue(errorResponse);
+
+            const errors = createCheckoutStoreErrorSelector(selectors);
+
+            expect(errors.getLoadExtensionsError()).toEqual(errorResponse);
+            expect(selectors.extensions.getLoadError).toHaveBeenCalled();
+        });
+
+        it('returns undefined if there is no error when loading extensions', () => {
+            jest.spyOn(selectors.extensions, 'getLoadError').mockReturnValue(undefined);
+
+            const errors = createCheckoutStoreErrorSelector(selectors);
+
+            expect(errors.getLoadExtensionsError()).toBeUndefined();
+            expect(selectors.extensions.getLoadError).toHaveBeenCalled();
+        });
+    });
 });

@@ -9,6 +9,7 @@ import { cloneResult as clone } from '../common/utility';
 import { FlashMessage, FlashMessageType, StoreConfig, UserExperienceSettings } from '../config';
 import { Coupon, GiftCertificate } from '../coupon';
 import { Customer } from '../customer';
+import { Extension } from '../extension';
 import { FormField } from '../form';
 import { Country } from '../geography';
 import { Order } from '../order';
@@ -275,6 +276,14 @@ export default interface CheckoutStoreSelector {
      * @returns The object of user experience settings if it is loaded, otherwise undefined.
      */
     getUserExperienceSettings(): UserExperienceSettings | undefined;
+
+    /**
+     * Gets a list of extensions available for checkout.
+     *
+     * @alpha
+     * @returns The list of extensions if it is loaded, otherwise undefined.
+     */
+    getExtensions(): Extension[] | undefined;
 }
 
 export type CheckoutStoreSelectorFactory = (
@@ -544,11 +553,17 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             }),
     );
 
+    const getExtensions = createSelector(
+        ({ extensions }: InternalCheckoutSelectors) => extensions.getExtensions,
+        (getExtensions) => clone(getExtensions),
+    );
+
     return memoizeOne((state: InternalCheckoutSelectors): CheckoutStoreSelector => {
         return {
             getCheckout: getCheckout(state),
             getOrder: getOrder(state),
             getConfig: getConfig(state),
+            getExtensions: getExtensions(state),
             getFlashMessages: getFlashMessages(state),
             getShippingAddress: getShippingAddress(state),
             getShippingOptions: getShippingOptions(state),
