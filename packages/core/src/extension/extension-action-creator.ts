@@ -46,8 +46,7 @@ export class ExtensionActionCreator {
             Observable.create((observer: Observer<ExtensionAction>) => {
                 const state = store.getState();
                 const { id: cartId } = state.cart.getCartOrThrow();
-                const extensions = state.extensions.getExtensions();
-                const extension = extensions?.filter((e) => e.region === region)[0];
+                const extension = state.extensions.getExtensionByRegion(region);
 
                 if (!extension) {
                     throw new ExtensionNotFoundError(

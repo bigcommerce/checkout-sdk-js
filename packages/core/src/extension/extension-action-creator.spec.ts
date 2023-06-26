@@ -13,7 +13,7 @@ import { Extension, ExtensionRegions } from './extension';
 import { ExtensionActionCreator } from './extension-action-creator';
 import { ExtensionActionType } from './extension-actions';
 import { ExtensionRequestSender } from './extension-request-sender';
-import { getExtensions } from './extension.mock';
+import { getExtensions, getExtensionState } from './extension.mock';
 
 describe('ExtensionActionCreator', () => {
     let errorResponse: Response<ErrorResponseBody>;
@@ -82,9 +82,13 @@ describe('ExtensionActionCreator', () => {
 
     describe('#renderExtension()', () => {
         it('throws error if unable to find an extension', async () => {
-            jest.spyOn(store.getState().extensions, 'getExtensions').mockReturnValue(
-                getExtensions().slice(0, 1),
-            );
+            store = createCheckoutStore({
+                ...getCheckoutStoreState(),
+                extensions: {
+                    ...getExtensionState(),
+                    data: getExtensions().slice(0, 1),
+                },
+            });
 
             const errorHandler = jest.fn((action) => of(action));
             const actions = await from(
