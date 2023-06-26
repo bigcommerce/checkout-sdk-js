@@ -58,7 +58,7 @@ export class ExtensionActionCreator {
                 observer.next(createAction(ExtensionActionType.RenderExtensionRequested));
 
                 try {
-                    const iframe = new ExtensionIframe(container, extension, cart.id);
+                    const iframe = new ExtensionIframe(container, extension, cartId);
 
                     iframe.attach();
 
