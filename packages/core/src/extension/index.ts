@@ -1,4 +1,4 @@
-export { Extension, ExtensionRegions } from './extension';
+export { Extension, ExtensionRegion } from './extension';
 export { ExtensionActionCreator } from './extension-action-creator';
 export { extensionReducer } from './extension-reducer';
 export { ExtensionRequestSender } from './extension-request-sender';

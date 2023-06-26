@@ -34,7 +34,7 @@ import {
 import CustomerStrategyRegistryV2 from '../customer/customer-strategy-registry-v2';
 import {
     ExtensionActionCreator,
-    ExtensionRegions,
+    ExtensionRegion,
     ExtensionRequestSender,
     getExtensions,
 } from '../extension';
@@ -1488,7 +1488,7 @@ describe('CheckoutService', () => {
             );
 
             const container = 'checkout.extension';
-            const region = ExtensionRegions.ShippingShippingAddressFormBefore;
+            const region = ExtensionRegion.ShippingShippingAddressFormBefore;
 
             await checkoutService.renderExtension(container, region);
 

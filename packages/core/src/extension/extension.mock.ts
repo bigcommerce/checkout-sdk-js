@@ -1,4 +1,4 @@
-import { Extension, ExtensionRegions } from './extension';
+import { Extension, ExtensionRegion } from './extension';
 import { ExtensionState } from './extension-state';
 
 export function getExtensions(): Extension[] {
@@ -6,13 +6,13 @@ export function getExtensions(): Extension[] {
         {
             id: '123',
             name: 'Foo',
-            region: ExtensionRegions.ShippingShippingAddressFormBefore,
+            region: ExtensionRegion.ShippingShippingAddressFormBefore,
             url: 'https://widget.foo.com/',
         },
         {
             id: '456',
             name: 'Bar',
-            region: ExtensionRegions.ShippingShippingAddressFormAfter,
+            region: ExtensionRegion.ShippingShippingAddressFormAfter,
             url: 'https://widget.bar.com/',
         },
     ];

@@ -9,7 +9,7 @@ import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import { ExtensionNotFoundError, InvalidExtensionConfigError } from './errors';
-import { Extension, ExtensionRegions } from './extension';
+import { Extension, ExtensionRegion } from './extension';
 import { ExtensionActionCreator } from './extension-action-creator';
 import { ExtensionActionType } from './extension-actions';
 import { ExtensionRequestSender } from './extension-request-sender';
@@ -94,7 +94,7 @@ describe('ExtensionActionCreator', () => {
             const actions = await from(
                 extensionActionCreator.renderExtension(
                     'foo',
-                    ExtensionRegions.ShippingShippingAddressFormAfter,
+                    ExtensionRegion.ShippingShippingAddressFormAfter,
                 )(store),
             )
                 .pipe(catchError(errorHandler))
@@ -112,7 +112,7 @@ describe('ExtensionActionCreator', () => {
             const actions = await from(
                 extensionActionCreator.renderExtension(
                     'foo',
-                    ExtensionRegions.ShippingShippingAddressFormAfter,
+                    ExtensionRegion.ShippingShippingAddressFormAfter,
                 )(store),
             )
                 .pipe(toArray())
@@ -131,7 +131,7 @@ describe('ExtensionActionCreator', () => {
             const actions = await from(
                 extensionActionCreator.renderExtension(
                     'foo',
-                    ExtensionRegions.ShippingShippingAddressFormAfter,
+                    ExtensionRegion.ShippingShippingAddressFormAfter,
                 )(store),
             )
                 .pipe(catchError(errorHandler), toArray())

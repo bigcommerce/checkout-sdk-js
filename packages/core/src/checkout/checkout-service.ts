@@ -20,7 +20,7 @@ import {
     ExecutePaymentMethodCheckoutOptions,
     GuestCredentials,
 } from '../customer';
-import { ExtensionActionCreator, ExtensionRegions } from '../extension';
+import { ExtensionActionCreator, ExtensionRegion } from '../extension';
 import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
@@ -1393,7 +1393,7 @@ export default class CheckoutService {
      * @param region The name of an area where the extension should be presented.
      * @returns A promise that resolves to the current state.
      */
-    renderExtension(container: string, region: ExtensionRegions): Promise<CheckoutSelectors> {
+    renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors> {
         const action = this._extensionActionCreator.renderExtension(container, region);
 
         return this._dispatch(action, { queueId: 'renderExtension' });

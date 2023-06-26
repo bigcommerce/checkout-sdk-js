@@ -5,7 +5,7 @@ import { InternalCheckoutSelectors } from '../checkout';
 import { RequestOptions } from '../common/http-request';
 
 import { ExtensionNotFoundError } from './errors';
-import { ExtensionRegions } from './extension';
+import { ExtensionRegion } from './extension';
 import { ExtensionAction, ExtensionActionType } from './extension-actions';
 import { ExtensionIframe } from './extension-iframe';
 import { ExtensionRequestSender } from './extension-request-sender';
@@ -40,7 +40,7 @@ export class ExtensionActionCreator {
 
     renderExtension(
         container: string,
-        region: ExtensionRegions,
+        region: ExtensionRegion,
     ): ThunkAction<ExtensionAction, InternalCheckoutSelectors> {
         return (store) =>
             Observable.create((observer: Observer<ExtensionAction>) => {

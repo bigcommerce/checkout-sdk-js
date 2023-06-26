@@ -2,12 +2,12 @@ import { memoizeOne } from '@bigcommerce/memoize';
 
 import { createSelector } from '../common/selector';
 
-import { Extension, ExtensionRegions } from './extension';
+import { Extension, ExtensionRegion } from './extension';
 import { DEFAULT_STATE, ExtensionState } from './extension-state';
 
 export interface ExtensionSelector {
     getExtensions(): Extension[] | undefined;
-    getExtensionByRegion(region: ExtensionRegions): Extension | undefined;
+    getExtensionByRegion(region: ExtensionRegion): Extension | undefined;
     getLoadError(): Error | undefined;
     isLoading(): boolean;
 }
@@ -22,7 +22,7 @@ export function createExtensionSelectorFactory(): ExtensionSelectorFactory {
 
     const getExtensionByRegion = createSelector(
         (state: ExtensionState) => state.data,
-        (data) => (region: ExtensionRegions) => data?.filter((e) => e.region === region)[0],
+        (data) => (region: ExtensionRegion) => data?.filter((e) => e.region === region)[0],
     );
 
     const getLoadError = createSelector(
