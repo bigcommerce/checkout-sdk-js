@@ -1396,7 +1396,7 @@ export default class CheckoutService {
     renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors> {
         const action = this._extensionActionCreator.renderExtension(container, region);
 
-        return this._dispatch(action, { queueId: 'renderExtension' });
+        return this._dispatch(action, { queueId: 'extensions' });
     }
 
     /**
