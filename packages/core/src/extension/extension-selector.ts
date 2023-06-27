@@ -22,7 +22,7 @@ export function createExtensionSelectorFactory(): ExtensionSelectorFactory {
 
     const getExtensionByRegion = createSelector(
         (state: ExtensionState) => state.data,
-        (data) => (region: ExtensionRegion) => data?.filter((e) => e.region === region)[0],
+        (data) => (region: ExtensionRegion) => data?.find((e) => e.region === region),
     );
 
     const getLoadError = createSelector(

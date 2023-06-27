@@ -3,7 +3,7 @@ import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import { ExtensionRegion } from './extension';
+import { Extension, ExtensionRegion } from './extension';
 import {
     createExtensionSelectorFactory,
     ExtensionSelector,
@@ -43,14 +43,20 @@ describe('ExtensionSelector', () => {
             extensionSelector = createExtensionSelector(state.extensions);
 
             const extension = extensionSelector.getExtensionByRegion(
-                ExtensionRegion.ShippingShippingAddressFormBefore,
+                ExtensionRegion.ShippingShippingAddressFormAfter,
             );
 
-            expect(extension).toEqual(getExtensions()[0]);
+            expect(extension).toEqual(getExtensions()[1]);
         });
 
         it('returns the first extension if multiple extensions match the region', () => {
-            const extensions = getExtensions().slice(0, 1);
+            const extensions = [
+                ...getExtensions().slice(0, 1),
+                {
+                    ...getExtensions().slice(0, 1),
+                    id: '789',
+                },
+            ] as Extension[];
 
             extensionSelector = createExtensionSelector({
                 ...state.extensions,
