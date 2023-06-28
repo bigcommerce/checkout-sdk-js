@@ -3,11 +3,13 @@ import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
+import { Extension, ExtensionRegion } from './extension';
 import {
     createExtensionSelectorFactory,
     ExtensionSelector,
     ExtensionSelectorFactory,
 } from './extension-selector';
+import { getExtensions } from './extension.mock';
 
 describe('ExtensionSelector', () => {
     let createExtensionSelector: ExtensionSelectorFactory;
@@ -33,6 +35,52 @@ describe('ExtensionSelector', () => {
             });
 
             expect(extensionSelector.getExtensions()).toEqual([]);
+        });
+    });
+
+    describe('#getExtensionByRegion()', () => {
+        it('returns the extension for the specified region', () => {
+            extensionSelector = createExtensionSelector(state.extensions);
+
+            const extension = extensionSelector.getExtensionByRegion(
+                ExtensionRegion.ShippingShippingAddressFormAfter,
+            );
+
+            expect(extension).toEqual(getExtensions()[1]);
+        });
+
+        it('returns the first extension if multiple extensions match the region', () => {
+            const extensions = [
+                ...getExtensions().slice(0, 1),
+                {
+                    ...getExtensions().slice(0, 1),
+                    id: '789',
+                },
+            ] as Extension[];
+
+            extensionSelector = createExtensionSelector({
+                ...state.extensions,
+                data: extensions,
+            });
+
+            const extension = extensionSelector.getExtensionByRegion(
+                ExtensionRegion.ShippingShippingAddressFormBefore,
+            );
+
+            expect(extension).toEqual(extensions[0]);
+        });
+
+        it('returns undefined if no extension matches the region', () => {
+            extensionSelector = createExtensionSelector({
+                ...state.extensions,
+                data: getExtensions().slice(0, 1),
+            });
+
+            const extension = extensionSelector.getExtensionByRegion(
+                ExtensionRegion.ShippingShippingAddressFormAfter,
+            );
+
+            expect(extension).toBeUndefined();
         });
     });
 

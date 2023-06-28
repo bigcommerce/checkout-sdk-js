@@ -20,7 +20,7 @@ import {
     ExecutePaymentMethodCheckoutOptions,
     GuestCredentials,
 } from '../customer';
-import { ExtensionActionCreator } from '../extension';
+import { ExtensionActionCreator, ExtensionRegion } from '../extension';
 import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
@@ -1368,7 +1368,7 @@ export default class CheckoutService {
      * Loads a list of extensions available for checkout.
      *
      * ```js
-     * const state = service.loadExtensions();
+     * const state = await service.loadExtensions();
      *
      * console.log(state.data.getExtensions());
      * ```
@@ -1380,6 +1380,21 @@ export default class CheckoutService {
      */
     loadExtensions(options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._extensionActionCreator.loadExtensions(options);
+
+        return this._dispatch(action, { queueId: 'extensions' });
+    }
+
+    /**
+     * Renders an extension for a checkout extension region.
+     * Currently, only one extension is allowed per region.
+     *
+     * @alpha
+     * @param container The ID of a container which the extension should be inserted.
+     * @param region The name of an area where the extension should be presented.
+     * @returns A promise that resolves to the current state.
+     */
+    renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors> {
+        const action = this._extensionActionCreator.renderExtension(container, region);
 
         return this._dispatch(action, { queueId: 'extensions' });
     }
