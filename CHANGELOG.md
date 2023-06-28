@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.395.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.395.0...v1.395.1) (2023-06-28)
+
+
+### Bug Fixes
+
+* **order:** DATA-11056 Populate category names for BODL purchase event ([#2032](https://github.com/bigcommerce/checkout-sdk-js/issues/2032)) ([3afd61a](https://github.com/bigcommerce/checkout-sdk-js/commit/3afd61a3228760f1aa3ae84e9074a58ecd210194))
+
 ## [1.395.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.394.1...v1.395.0) (2023-06-28)
 
 
