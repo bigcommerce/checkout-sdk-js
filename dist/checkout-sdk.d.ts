@@ -3362,7 +3362,7 @@ declare class CheckoutService {
      * Loads a list of extensions available for checkout.
      *
      * ```js
-     * const state = service.loadExtensions();
+     * const state = await service.loadExtensions();
      *
      * console.log(state.data.getExtensions());
      * ```
@@ -3373,6 +3373,16 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     loadExtensions(options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
+     * Renders an extension for a checkout extension region.
+     * Currently, only one extension is allowed per region.
+     *
+     * @alpha
+     * @param container The ID of a container which the extension should be inserted.
+     * @param region The name of an area where the extension should be presented.
+     * @returns A promise that resolves to the current state.
+     */
+    renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors>;
     /**
      * Dispatches an action through the data store and returns the current state
      * once the action is dispatched.
@@ -4900,11 +4910,11 @@ declare interface ExecutePaymentMethodCheckoutOptions extends CustomerRequestOpt
 declare interface Extension {
     id: string;
     name: string;
-    region: ExtensionRegions;
+    region: ExtensionRegion;
     url: string;
 }
 
-declare enum ExtensionRegions {
+declare enum ExtensionRegion {
     ShippingShippingAddressFormBefore = "shipping.shippingAddressForm.before",
     ShippingShippingAddressFormAfter = "shipping.shippingAddressForm.after"
 }

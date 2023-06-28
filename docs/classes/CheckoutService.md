@@ -52,6 +52,7 @@ retrieve the current checkout state and subscribe to its changes.
 - [notifyState](CheckoutService.md#notifystate)
 - [removeCoupon](CheckoutService.md#removecoupon)
 - [removeGiftCertificate](CheckoutService.md#removegiftcertificate)
+- [renderExtension](CheckoutService.md#renderextension)
 - [selectConsignmentShippingOption](CheckoutService.md#selectconsignmentshippingoption)
 - [selectShippingOption](CheckoutService.md#selectshippingoption)
 - [sendSignInEmail](CheckoutService.md#sendsigninemail)
@@ -873,7 +874,7 @@ ___
 Loads a list of extensions available for checkout.
 
 ```js
-const state = service.loadExtensions();
+const state = await service.loadExtensions();
 
 console.log(state.data.getExtensions());
 ```
@@ -1180,6 +1181,30 @@ await service.removeGiftCertificate('GIFT_CERTIFICATE');
 | :------ | :------ | :------ |
 | `code` | `string` | The gift certificate to remove from the current checkout. |
 | `options?` | [`RequestOptions`](../interfaces/RequestOptions.md)<`Object`\> | Options for removing the gift certificate. |
+
+#### Returns
+
+`Promise`<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+A promise that resolves to the current state.
+
+___
+
+### renderExtension
+
+▸ **renderExtension**(`container`, `region`): `Promise`<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+Renders an extension for a checkout extension region.
+Currently, only one extension is allowed per region.
+
+**`alpha`**
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `container` | `string` | The ID of a container which the extension should be inserted. |
+| `region` | [`ExtensionRegion`](../enums/ExtensionRegion.md) | The name of an area where the extension should be presented. |
 
 #### Returns
 

@@ -20,7 +20,7 @@
 - [CheckoutButtonMethodType](enums/CheckoutButtonMethodType.md)
 - [CheckoutIncludes](enums/CheckoutIncludes.md)
 - [EmbeddedCheckoutEventType](enums/EmbeddedCheckoutEventType.md)
-- [ExtensionRegions](enums/ExtensionRegions.md)
+- [ExtensionRegion](enums/ExtensionRegion.md)
 - [HostedFieldType](enums/HostedFieldType.md)
 - [HostedInputEventType](enums/HostedInputEventType.md)
 - [IconStyle](enums/IconStyle.md)

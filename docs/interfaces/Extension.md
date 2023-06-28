@@ -27,7 +27,7 @@ ___
 
 ### region
 
-• **region**: [`ExtensionRegions`](../enums/ExtensionRegions.md)
+• **region**: [`ExtensionRegion`](../enums/ExtensionRegion.md)
 
 ___
 

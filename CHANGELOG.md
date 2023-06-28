@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.395.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.394.1...v1.395.0) (2023-06-28)
+
+
+### Features
+
+* **checkout:** CHECKOUT-7537 Render extensions ([#2028](https://github.com/bigcommerce/checkout-sdk-js/issues/2028)) ([c52e6cd](https://github.com/bigcommerce/checkout-sdk-js/commit/c52e6cdb3c0c93dc8d7a2fe51bf2680fa9b31126))
+
 ### [1.394.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.394.0...v1.394.1) (2023-06-27)
 
 
