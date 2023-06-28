@@ -1,4 +1,4 @@
-import { LineItemMap } from '../cart';
+import { LineItem, LineItemMap } from '../cart';
 import { CheckoutSelectors, CheckoutStoreSelector } from '../checkout';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 
@@ -241,6 +241,18 @@ export default class BodlEmitterService implements BodlService {
             ...lineItems.physicalItems,
             ...lineItems.digitalItems,
         ].map((item) => {
+            const getCategoryNames = (lineItem: LineItem): string[] => {
+                if (Array.isArray(lineItem.categoryNames)) {
+                    return lineItem.categoryNames;
+                } else if (Array.isArray(lineItem.categories)) {
+                    return Array.prototype.concat
+                        .apply([], lineItem.categories)
+                        .map(({ name }) => name);
+                }
+
+                return [];
+            };
+
             let itemAttributes;
 
             if (item.options && item.options.length) {
@@ -260,7 +272,7 @@ export default class BodlEmitterService implements BodlService {
                 discount: item.discountAmount,
                 brand_name: item.brand,
                 currency: currencyCode,
-                category_names: item.categoryNames || [],
+                category_names: getCategoryNames(item),
                 retail_price: item.retailPrice,
             };
         });
