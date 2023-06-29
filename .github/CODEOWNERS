@@ -1,11 +1,11 @@
-* @bigcommerce/checkout
+* @bigcommerce/team-checkout
 /packages/adyen-integration @bigcommerce/kyiv-payments-team
-/packages/apple-pay @bigcommerce/checkout
+/packages/apple-pay @bigcommerce/team-checkout
 /packages/bolt-integration @bigcommerce/kyiv-payments-team
 /packages/braintree-integration @bigcommerce/kyiv-payments-team
-/packages/core @bigcommerce/checkout
-/packages/payment-integration @bigcommerce/checkout
-/packages/payment-integration-test-utils @bigcommerce/checkout
+/packages/core @bigcommerce/team-checkout
+/packages/payment-integration @bigcommerce/team-checkout
+/packages/payment-integration-test-utils @bigcommerce/team-checkout
 /packages/paypal-commerce-integration @bigcommerce/kyiv-payments-team
 /packages/squarev2-integration @bigcommerce/apex-leads
 /packages/paypal-express-integration @bigcommerce/kyiv-payments-team
