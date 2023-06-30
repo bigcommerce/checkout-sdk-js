@@ -16,6 +16,7 @@ import {
 } from './paypal-commerce-types';
 
 const PAYPAL_SDK_VERSION = '5.0.5';
+const REMOVE_APMS_FUNDING = ['ratepay'];
 
 export default class PayPalCommerceScriptLoader {
     private window: PayPalCommerceHostWindow;
@@ -65,6 +66,10 @@ export default class PayPalCommerceScriptLoader {
         return this.window.paypal;
     }
 
+    private removeElements(fundingTypes: string[]): string[] {
+        return fundingTypes.filter((item) => !REMOVE_APMS_FUNDING.includes(item));
+    }
+
     private getPayPalSdkScriptConfigOrThrow(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
@@ -90,6 +95,12 @@ export default class PayPalCommerceScriptLoader {
             enabledAlternativePaymentMethods = [],
         } = initializationData;
 
+        // Remove method from enableFunding array, because ,for example,
+        // if we add ratepay to enable-funding query param it will cause error. RatePay loads separately
+        const enabledAlternativePaymentMethodsWithoutRemoved = this.removeElements(
+            enabledAlternativePaymentMethods,
+        );
+
         const commit = isHostedCheckoutEnabled || initializesOnCheckoutPage;
 
         const shouldEnableCard = id === 'paypalcommercecreditcards';
@@ -102,7 +113,9 @@ export default class PayPalCommerceScriptLoader {
         const shouldEnableAPMs = initializesOnCheckoutPage || !commit;
         const enableVenmoFunding = shouldEnableAPMs && isVenmoEnabled ? ['venmo'] : [];
         const disableVenmoFunding = !shouldEnableAPMs || !isVenmoEnabled ? ['venmo'] : [];
-        const enableAPMsFunding = shouldEnableAPMs ? enabledAlternativePaymentMethods : [];
+        const enableAPMsFunding = shouldEnableAPMs
+            ? enabledAlternativePaymentMethodsWithoutRemoved
+            : [];
         const disableAPMsFunding = shouldEnableAPMs
             ? availableAlternativePaymentMethods.filter(
                   (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
@@ -130,7 +143,7 @@ export default class PayPalCommerceScriptLoader {
             'enable-funding': enableFunding.length > 0 ? enableFunding : undefined,
             'disable-funding': disableFunding.length > 0 ? disableFunding : undefined,
             commit,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
             currency: currencyCode,
             intent,
             ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
