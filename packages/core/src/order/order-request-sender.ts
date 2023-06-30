@@ -13,6 +13,7 @@ import { OrderTaxProviderUnavailableError } from './errors';
 import InternalOrderRequestBody from './internal-order-request-body';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import Order from './order';
+import OrderParams from './order-params';
 
 export interface SubmitOrderRequestOptions extends RequestOptions {
     headers?: {
@@ -23,7 +24,10 @@ export interface SubmitOrderRequestOptions extends RequestOptions {
 export default class OrderRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
-    loadOrder(orderId: number, { timeout }: RequestOptions = {}): Promise<Response<Order>> {
+    loadOrder(
+        orderId: number,
+        { timeout, params }: RequestOptions<OrderParams> = {},
+    ): Promise<Response<Order>> {
         const url = `/api/storefront/orders/${orderId}`;
         const headers = {
             Accept: ContentType.JsonV1,
@@ -33,15 +37,13 @@ export default class OrderRequestSender {
             'payments',
             'lineItems.physicalItems.socialMedia',
             'lineItems.physicalItems.options',
-            'lineItems.physicalItems.categories',
             'lineItems.digitalItems.socialMedia',
             'lineItems.digitalItems.options',
-            'lineItems.digitalItems.categories',
         ];
 
         return this._requestSender.get(url, {
             params: {
-                include: joinIncludes(include),
+                include: joinIncludes([...include, ...((params && params.include) || [])]),
             },
             headers,
             timeout,
