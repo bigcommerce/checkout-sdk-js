@@ -168,10 +168,10 @@ export default class PayPalCommerceIntegrationService {
                 method_id: methodId,
             ...(ratePay && {
                 rate_pay: {
-                    birth_date: '1990-01-01',
+                    birth_date: ratePay.birth_date,
                     phone: {
-                        national_number: '6912345678',
-                        country_code: '49',
+                        national_number: ratePay.phone.national_number,
+                        country_code: ratePay.phone.country_code,
                     },
                 }
             }

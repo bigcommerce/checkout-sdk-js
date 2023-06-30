@@ -53,7 +53,17 @@ interface PayPalLegal {
 }
 
 export interface RatePay {
-    birthDate: string;
+    birth_date: string | undefined;
+    phone: {
+        national_number: string | undefined;
+        country_code: string | undefined;
+    }
+}
+
+export interface BirthDate {
+    getFullYear(): number;
+    getDate(): number;
+    getMonth(): number;
 }
 
 export interface PayPalCommerceScriptParams {

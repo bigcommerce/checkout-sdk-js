@@ -14,11 +14,11 @@ import PayPalCommerceIntegrationService from '../paypal-commerce-integration-ser
 import {
     WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-integration';
-import { PayPalCommerceInitializationData } from "../paypal-commerce-types";
+import {BirthDate, PayPalCommerceInitializationData} from "../paypal-commerce-types";
 import { PaypalCommerceRatePay } from './paypal-commerce-alternative-methods-payment-initialize-options';
 
 export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy implements PaymentStrategy {
-    private loadingIndicatorContainer?: string;
+    private loadingIndicatorContainer?: string
     private guid?: string;
     private paypalcommerceratepay?: PaypalCommerceRatePay;
     private orderId?: string;
@@ -56,22 +56,28 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
             );
         }
 
-        this.paypalcommerceratepay = paypalcommerceratepay;
-
-        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
             methodId,
             gatewayId,
         );
 
-        console.log('PAYMENT METHOD', paymentMethod);
+        const { orderId } = paymentMethod.initializationData || {};
+
+        if (orderId) {
+            this.orderId = orderId;
+            return;
+        }
+
+        this.paypalcommerceratepay = paypalcommerceratepay;
+
+        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
 
         const { merchantId } = paymentMethod.initializationData || {};
 
         this.loadingIndicatorContainer = paypalcommerceratepay.container.split('#')[1];
 
-        this.createFraudNetScript(merchantId || '');
+        this.createFraudNetScript(merchantId || '', methodId, gatewayId);
         this.loadFraudnetConfig();
 
         this.renderLegalText();
@@ -79,13 +85,14 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = payload;
-
         this.toggleLoadingIndicator(true);
+
+        const { getFieldsValues } = this.paypalcommerceratepay || {};
 
         try {
             this.orderId = await this.paypalCommerceIntegrationService.createOrder(
                 'paypalcommercealternativemethodscheckout',
-                {metadataId: this.guid}
+                { metadataId: this.guid }
             );
         } catch (error: unknown) {
             this.handleError(error);
@@ -99,18 +106,22 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
             throw new PaymentMethodInvalidError();
         }
 
-        const { dateOfBirthContainer } = this.paypalcommerceratepay || {};
+        if (getFieldsValues && typeof getFieldsValues === 'function') {
+            const { ratepay_birth_date, ratepay_phone_number, ratepay_phone_country_code } = getFieldsValues();
 
-        if (dateOfBirthContainer) {
-            const dateOfBirthInput = document.getElementsByName(dateOfBirthContainer)[0];
             const ratePay = {
-                // @ts-ignore // TODO: FIX
-                birthDate: dateOfBirthInput.value,
+                birth_date: this.normalizeDate(ratepay_birth_date),
+                phone: {
+                    national_number: ratepay_phone_number,
+                    country_code: ratepay_phone_country_code,
+                }
             };
+
 
             await this.paymentIntegrationService.submitOrder(order, options);
             await this.paypalCommerceIntegrationService.submitPayment(payment.methodId, this.orderId, ratePay);
         }
+
     }
 
     finalize(): Promise<void> {
@@ -127,10 +138,17 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
         return Promise.resolve();
     }
 
+    private normalizeDate(date: BirthDate) {
+        const formattedDate = date.getDate() < 10 ? '0' + date.getDate() : date.getDate().toString();
+        const formattedMonth = date.getMonth() < 10 ? '0' + (date.getMonth() + 1) : date.getMonth().toString();
+
+        return `${date.getFullYear()}-${formattedMonth}-${formattedDate}`;
+    }
+
     private renderLegalText() {
         if (this.paypalcommerceratepay) {
             const legalTextContainerId = this.paypalcommerceratepay.legalTextContainer;
-            const {container} = this.paypalcommerceratepay;
+            const { container } = this.paypalcommerceratepay;
             const buttonContainerId = container.split('#')[1];
             const buttonContainer = document.getElementById(buttonContainerId);
             const buttonContainerParent = buttonContainer?.parentNode;
@@ -158,10 +176,13 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
         }
     }
 
-    private createFraudNetScript(merchantId: string) {
+    private createFraudNetScript(merchantId: string, methodId: string, gatewayId: string) {
         const state = this.paymentIntegrationService.getState();
-        const a = state.getStoreConfig();
-        console.log('A', a);
+        const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
+            methodId,
+            gatewayId,
+        );
+        const { testMode } = paymentMethod.config;
         const scriptElement = document.createElement('script');
         scriptElement.setAttribute('type', 'application/json');
         scriptElement.setAttribute('fncls', 'fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99');
@@ -169,7 +190,7 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
         const jsonObject = {
             f: this.guid,
             s: `${merchantId}_checkout-page`,
-            sandbox: 'true' // TODO: FIX make dynamic
+            sandbox: testMode
         };
 
         scriptElement.innerHTML = JSON.stringify(jsonObject);
@@ -200,7 +221,6 @@ export default class PayPalCommerceAlternativeMethodRatePayPaymentStrategy imple
      * Loading Indicator methods
      *
      * */
-    // @ts-ignore
     private toggleLoadingIndicator(isLoading: boolean): void {
         if (isLoading && this.loadingIndicatorContainer) {
             this.loadingIndicator.show(this.loadingIndicatorContainer);

@@ -1301,6 +1301,12 @@ declare interface BillingAddressRequestBody extends AddressRequestBody {
     email?: string;
 }
 
+declare interface BirthDate {
+    getFullYear(): number;
+    getDate(): number;
+    getMonth(): number;
+}
+
 declare interface BlockElementStyles extends InlineElementStyles {
     backgroundColor?: string;
     boxShadow?: string;
@@ -6771,23 +6777,22 @@ declare interface PaypalCommerceRatePay {
      */
     container: string;
     /**
-     * The CSS selector of a container where the date of birth field should be inserted into.
-     */
-    dateOfBirthContainer: string;
-    /**
      * The CSS selector of a container where the legal text should be inserted into.
      */
     legalTextContainer: string;
+    /**
+     * A callback that gets form values
+     */
+    getFieldsValues?(): {
+        ratepay_birth_date: BirthDate;
+        ratepay_phone_number: string;
+        ratepay_phone_country_code: string;
+    };
     /**
      * A callback right before render Smart Payment Button that gets called when
      * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
      */
     onRenderButton?(): void;
-    /**
-     * A callback for submitting payment form that gets called
-     * when buyer approved PayPal account.
-     */
-    submitForm(): void;
     /**
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
