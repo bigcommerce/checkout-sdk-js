@@ -10,6 +10,7 @@ export {
 export { default as InternalOrderRequestBody } from './internal-order-request-body';
 
 export { default as OrderActionCreator } from './order-action-creator';
+export { default as OrderParams, OrderIncludes } from './order-params';
 export { default as orderReducer } from './order-reducer';
 export {
     default as OrderRequestBody,

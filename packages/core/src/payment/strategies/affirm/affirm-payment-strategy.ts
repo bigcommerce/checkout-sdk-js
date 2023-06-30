@@ -9,7 +9,7 @@ import {
     NotInitializedErrorType,
 } from '../../../common/error/errors';
 import { AmountTransformer } from '../../../common/utility';
-import { Order, OrderActionCreator, OrderRequestBody } from '../../../order';
+import { Order, OrderActionCreator, OrderIncludes, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { Consignment } from '../../../shipping';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
@@ -80,8 +80,18 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment.methodId']);
         }
 
+        const requestOptions = {
+            ...options,
+            params: {
+                include: [
+                    OrderIncludes.PhysicalItemsCategories,
+                    OrderIncludes.DigitalItemsCategories,
+                ],
+            },
+        };
+
         return this._store
-            .dispatch(this._orderActionCreator.submitOrder({ useStoreCredit }, options))
+            .dispatch(this._orderActionCreator.submitOrder({ useStoreCredit }, requestOptions))
             .then<AffirmSuccessResponse>(() => {
                 _affirm.checkout(this._getCheckoutInformation());
 

@@ -8,6 +8,7 @@ import { OrderTaxProviderUnavailableError } from './errors';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import { getCompleteOrderResponseBody } from './internal-orders.mock';
 import Order from './order';
+import { OrderIncludes } from './order-params';
 import OrderRequestSender from './order-request-sender';
 import { getOrder } from './orders.mock';
 
@@ -17,10 +18,8 @@ describe('OrderRequestSender', () => {
         'payments',
         'lineItems.physicalItems.socialMedia',
         'lineItems.physicalItems.options',
-        'lineItems.physicalItems.categories',
         'lineItems.digitalItems.socialMedia',
         'lineItems.digitalItems.options',
-        'lineItems.digitalItems.categories',
     ].join(',');
 
     const requestSender = createRequestSender();
@@ -75,6 +74,33 @@ describe('OrderRequestSender', () => {
                     ...SDK_VERSION_HEADERS,
                 },
                 params: { include },
+                timeout: undefined,
+            });
+        });
+
+        it('loads order including item categories', async () => {
+            const categoryIncludes = [
+                OrderIncludes.PhysicalItemsCategories,
+                OrderIncludes.DigitalItemsCategories,
+            ].join(',');
+
+            await orderRequestSender.loadOrder(295, {
+                params: {
+                    include: [
+                        OrderIncludes.PhysicalItemsCategories,
+                        OrderIncludes.DigitalItemsCategories,
+                    ],
+                },
+            });
+
+            const expectedInclude = `${include},${categoryIncludes}`;
+
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                    ...SDK_VERSION_HEADERS,
+                },
+                params: { include: expectedInclude },
                 timeout: undefined,
             });
         });
