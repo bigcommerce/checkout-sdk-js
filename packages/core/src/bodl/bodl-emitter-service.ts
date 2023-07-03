@@ -1,6 +1,7 @@
 import { LineItem, LineItemMap } from '../cart';
 import { CheckoutSelectors, CheckoutStoreSelector } from '../checkout';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
+import { flatten } from 'lodash';
 
 import { AnalyticStepOrder, AnalyticStepType } from './analytics-steps';
 import BodlService from './bodl-service';
@@ -245,9 +246,7 @@ export default class BodlEmitterService implements BodlService {
                 if (Array.isArray(lineItem.categoryNames)) {
                     return lineItem.categoryNames;
                 } else if (Array.isArray(lineItem.categories)) {
-                    return Array.prototype.concat
-                        .apply([], lineItem.categories)
-                        .map(({ name }) => name);
+                    return flatten(lineItem.categories).map(({ name }) => name);
                 }
 
                 return [];
