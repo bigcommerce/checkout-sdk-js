@@ -42,7 +42,7 @@ export default interface Checkout {
     updatedTime: string;
     payments?: CheckoutPayment[];
     channelId: number;
-    fees?: Fee[];
+    fees: Fee[];
 }
 
 export interface CheckoutRequestBody {
