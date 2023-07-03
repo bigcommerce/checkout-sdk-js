@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.395.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.395.3...v1.395.4) (2023-07-03)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2634 fixed issue when teardown is called twice ([61792c7](https://github.com/bigcommerce/checkout-sdk-js/commit/61792c7db01f983bee5beb0b7a8f87e4716832e0))
+
 ### [1.395.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.395.2...v1.395.3) (2023-06-30)
 
 ### [1.395.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.395.1...v1.395.2) (2023-06-29)
