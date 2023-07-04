@@ -3,6 +3,7 @@ import { Cart } from '../cart';
 import { Coupon, GiftCertificate } from '../coupon';
 import { Customer } from '../customer';
 import { Discount } from '../discount';
+import { Fee } from '../fee';
 import { Promotion } from '../promotion';
 import { Consignment } from '../shipping';
 import { Tax } from '../tax';
@@ -41,6 +42,7 @@ export default interface Checkout {
     updatedTime: string;
     payments?: CheckoutPayment[];
     channelId: number;
+    fees: Fee[];
 }
 
 export interface CheckoutRequestBody {

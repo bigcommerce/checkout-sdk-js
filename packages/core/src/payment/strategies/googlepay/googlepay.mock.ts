@@ -61,6 +61,7 @@ export function getCheckoutMock(): Checkout {
         updatedTime: '',
         giftWrappingCostTotal: 0,
         channelId: 1,
+        fees: [],
     };
 }
 
