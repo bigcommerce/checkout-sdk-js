@@ -104,6 +104,7 @@ declare interface Checkout {
     updatedTime: string;
     payments?: CheckoutPayment[];
     channelId: number;
+    fees: Fee[];
 }
 
 declare interface CheckoutPayment {
@@ -203,6 +204,15 @@ declare interface DiscountNotification {
     messageHtml: string;
     discountType: string | null;
     placeholders: string[];
+}
+
+declare interface Fee {
+    id: string;
+    type: string;
+    name: string;
+    displayName: string;
+    cost: number;
+    source: string;
 }
 
 declare interface GatewayOrderPayment extends OrderPayment {

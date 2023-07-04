@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.396.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.395.4...v1.396.0) (2023-07-04)
+
+
+### Features
+
+* **checkout:** CHECKOUT-7534 Add fees field ([e19484a](https://github.com/bigcommerce/checkout-sdk-js/commit/e19484a8b7a751e5fa8bb8df065752d91367d13d))
+* **checkout:** CHECKOUT-7534 removed optional ([783e498](https://github.com/bigcommerce/checkout-sdk-js/commit/783e4983e9553842988b9b3f507b9da4524e5cae))
+
 ### [1.395.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.395.3...v1.395.4) (2023-07-03)
 
 

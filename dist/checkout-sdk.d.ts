@@ -2205,6 +2205,7 @@ declare interface Checkout {
     updatedTime: string;
     payments?: CheckoutPayment[];
     channelId: number;
+    fees: Fee[];
 }
 
 declare class CheckoutButtonErrorSelector {
@@ -4917,6 +4918,15 @@ declare interface Extension {
 declare enum ExtensionRegion {
     ShippingShippingAddressFormBefore = "shipping.shippingAddressForm.before",
     ShippingShippingAddressFormAfter = "shipping.shippingAddressForm.after"
+}
+
+declare interface Fee {
+    id: string;
+    type: string;
+    name: string;
+    displayName: string;
+    cost: number;
+    source: string;
 }
 
 declare interface FlashMessage {

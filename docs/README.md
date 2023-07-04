@@ -220,6 +220,7 @@
 - [EmbeddedContentOptions](interfaces/EmbeddedContentOptions.md)
 - [ExecutePaymentMethodCheckoutOptions](interfaces/ExecutePaymentMethodCheckoutOptions.md)
 - [Extension](interfaces/Extension.md)
+- [Fee](interfaces/Fee.md)
 - [FlashMessage](interfaces/FlashMessage.md)
 - [FormField](interfaces/FormField.md)
 - [FormFieldItem](interfaces/FormFieldItem.md)

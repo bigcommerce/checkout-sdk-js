@@ -16,6 +16,7 @@
 - [customer](Checkout.md#customer)
 - [customerMessage](Checkout.md#customermessage)
 - [discounts](Checkout.md#discounts)
+- [fees](Checkout.md#fees)
 - [giftCertificates](Checkout.md#giftcertificates)
 - [giftWrappingCostTotal](Checkout.md#giftwrappingcosttotal)
 - [grandTotal](Checkout.md#grandtotal)
@@ -93,6 +94,12 @@ ___
 ### discounts
 
 • **discounts**: [`Discount`](Discount.md)[]
+
+___
+
+### fees
+
+• **fees**: [`Fee`](Fee.md)[]
 
 ___
 
