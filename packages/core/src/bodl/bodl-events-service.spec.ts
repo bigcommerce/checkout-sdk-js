@@ -155,7 +155,10 @@ describe('BodlEmitterService', () => {
 
     describe('#orderPurchased()', () => {
         beforeEach(() => {
-            jest.spyOn(checkoutService.getState().data, 'getOrder').mockReturnValue(getOrder());
+            const orderMock = getOrder();
+            delete orderMock.lineItems.physicalItems[0].categoryNames;
+
+            jest.spyOn(checkoutService.getState().data, 'getOrder').mockReturnValue(orderMock);
 
             bodlEmitterService.orderPurchased();
         });
@@ -239,7 +242,7 @@ describe('BodlEmitterService', () => {
                             quantity: 1,
                             brand_name: 'OFS',
                             discount: 10,
-                            category_names: ['Cat 1'],
+                            category_names: ['Cat 1', 'Furniture', 'Bed'],
                             variant_id: 71,
                             currency: 'USD',
                         },
