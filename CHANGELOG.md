@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.398.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.397.0...v1.398.0) (2023-07-05)
+
+
+### Features
+
+* **payment:** PAYPAL-2690 added braintree ach vaulting instrument confirmation feature ([#2044](https://github.com/bigcommerce/checkout-sdk-js/issues/2044)) ([f15657d](https://github.com/bigcommerce/checkout-sdk-js/commit/f15657d0c0648f8d1749fa1f4e0d2b5e5c257074))
+
 ## [1.397.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.396.1...v1.397.0) (2023-07-04)
 
 
