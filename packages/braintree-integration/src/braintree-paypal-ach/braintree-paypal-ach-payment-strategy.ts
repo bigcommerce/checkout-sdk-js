@@ -66,22 +66,25 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         }
     }
 
-    async execute(orderRequest: OrderRequestBody, options: PaymentRequestOptions): Promise<void> {
+    async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = orderRequest;
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        try {
-            const nonce = await this.tokenizePayment(payment);
-            const submitPaymentPayload = await this.preparePaymentData(nonce, payment);
+        const isSubmittingWithVaultingInstrument = isVaultedInstrument(payment.paymentData || {});
 
-            await this.paymentIntegrationService.submitOrder(order, options);
-            await this.paymentIntegrationService.submitPayment(submitPaymentPayload);
-        } catch (error) {
-            this.handleError(error);
-        }
+        const nonce = isSubmittingWithVaultingInstrument
+            ? await this.tokenizePaymentForVaultedInstrument(payment)
+            : await this.tokenizePayment(payment);
+
+        const submitPaymentPayload = isSubmittingWithVaultingInstrument
+            ? await this.preparePaymentDataForVaultedInstrument(nonce, payment)
+            : await this.preparePaymentData(nonce, payment);
+
+        await this.paymentIntegrationService.submitOrder(order, options);
+        await this.paymentIntegrationService.submitPayment(submitPaymentPayload);
     }
 
     finalize(): Promise<void> {
@@ -99,20 +102,6 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         payment: OrderPaymentRequestBody,
     ): Promise<Payment> {
         const { paymentData = {} } = payment;
-
-        if (!nonce) {
-            if (!isVaultedInstrument(paymentData) || !isHostedInstrumentLike(paymentData)) {
-                throw new PaymentArgumentInvalidError(['payment.paymentData']);
-            }
-
-            return {
-                methodId: payment.methodId,
-                paymentData: {
-                    instrumentId: paymentData.instrumentId,
-                    shouldSetAsDefaultInstrument: paymentData.shouldSetAsDefaultInstrument,
-                },
-            };
-        }
 
         if (!isUsBankAccountInstrumentLike(paymentData)) {
             throw new PaymentArgumentInvalidError(['payment.paymentData']);
@@ -142,31 +131,39 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         };
     }
 
-    private async tokenizePayment(payment: OrderPaymentRequestBody) {
-        const { methodId, paymentData = {} } = payment;
+    private async preparePaymentDataForVaultedInstrument(
+        nonce: string | null,
+        payment: OrderPaymentRequestBody,
+    ): Promise<Payment> {
+        const { paymentData = {} } = payment;
 
-        if (isVaultedInstrument(paymentData)) {
-            const state = this.paymentIntegrationService.getState();
-            const { config } = state.getPaymentMethodOrThrow(methodId);
-
-            if (!config.isVaultingEnabled) {
-                throw new InvalidArgumentError(
-                    'Vaulting is disabled but a vaulted instrument was being used for this transaction',
-                );
-            }
-
-            return null;
+        if (!isVaultedInstrument(paymentData) || !isHostedInstrumentLike(paymentData)) {
+            throw new PaymentArgumentInvalidError(['payment.paymentData']);
         }
+
+        const sessionId = await this.braintreeIntegrationService.getSessionId();
+
+        return {
+            methodId: payment.methodId,
+            paymentData: {
+                deviceSessionId: sessionId,
+                instrumentId: paymentData.instrumentId,
+                shouldSetAsDefaultInstrument: paymentData.shouldSetAsDefaultInstrument,
+                ...(nonce && { nonce }),
+            },
+        };
+    }
+
+    private async tokenizePayment({ paymentData }: OrderPaymentRequestBody): Promise<string> {
+        const usBankAccount = this.getUsBankAccountOrThrow();
 
         if (!isUsBankAccountInstrumentLike(paymentData)) {
             throw new PaymentArgumentInvalidError(['payment.paymentData']);
         }
 
-        if (!this.usBankAccount) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-        }
-
-        const mandateText = typeof this.getMandateText === 'function' && this.getMandateText();
+        const mandateText = isVaultedInstrument(paymentData)
+            ? 'The data are used for stored instrument verification'
+            : typeof this.getMandateText === 'function' && this.getMandateText();
 
         if (!mandateText) {
             throw new InvalidArgumentError(
@@ -175,7 +172,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         }
 
         try {
-            const { nonce } = await this.usBankAccount.tokenize({
+            const { nonce } = await usBankAccount.tokenize({
                 bankDetails: this.getBankDetails(paymentData),
                 mandateText,
             });
@@ -184,6 +181,25 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         } catch (error) {
             this.handleError(error);
         }
+    }
+
+    private async tokenizePaymentForVaultedInstrument(
+        payment: OrderPaymentRequestBody,
+    ): Promise<string | null> {
+        const { methodId, paymentData = {} } = payment;
+
+        const state = this.paymentIntegrationService.getState();
+        const { config } = state.getPaymentMethodOrThrow(methodId);
+
+        if (!config.isVaultingEnabled) {
+            throw new InvalidArgumentError(
+                'Vaulting is disabled but a vaulted instrument was being used for this transaction',
+            );
+        }
+
+        const shouldVerifyVaultingInstrument = isUsBankAccountInstrumentLike(paymentData);
+
+        return shouldVerifyVaultingInstrument ? this.tokenizePayment(payment) : null;
     }
 
     private getBankDetails(paymentData: WithBankAccountInstrument): BankAccountSuccessPayload {
@@ -214,6 +230,14 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
                 postalCode: billingAddress.postalCode,
             },
         };
+    }
+
+    private getUsBankAccountOrThrow(): BraintreeBankAccount {
+        if (!this.usBankAccount) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return this.usBankAccount;
     }
 
     private handleError(error: unknown): never {
