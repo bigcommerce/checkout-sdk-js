@@ -63,7 +63,6 @@
     "@types/iframe-resizer": "^3.5.9",
     "@types/reselect": "^2.2.0",
     "@types/shallowequal": "^1.1.1",
-    "@types/yup": "^0.26.24",
     "card-validator": "^6.2.0",
     "core-js": "^3.25.2",
     "current-script-polyfill": "^1.0.0",
@@ -76,7 +75,7 @@
     "rxjs": "^6.6.7",
     "shallowequal": "^1.1.0",
     "tslib": "^1.10.0",
-    "yup": "^0.27.0"
+    "yup": "^1.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
@@ -112,6 +111,7 @@
     "jest-junit": "^15.0.0",
     "nx": "^13.10.3",
     "prettier": "^2.6.2",
+    "regenerator-runtime": "^0.13.3",
     "request": "^2.83.0",
     "semver": "^7.1.1",
     "source-map-loader": "^0.2.4",
