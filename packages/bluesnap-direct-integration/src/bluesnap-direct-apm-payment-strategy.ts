@@ -1,4 +1,7 @@
+import { noop } from 'lodash';
+
 import {
+    CancellablePromise,
     InvalidArgumentError,
     NotInitializedError,
     NotInitializedErrorType,
@@ -6,7 +9,6 @@ import {
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
-    PaymentIntegrationSelectors,
     PaymentIntegrationService,
     PaymentMethodCancelledError,
     PaymentStrategy,
@@ -67,9 +69,15 @@ export default class BlueSnapDirectAPMPaymentStrategy implements PaymentStrategy
                 if (isBlueSnapDirectRedirectResponseProviderData(providerData)) {
                     const providerDataQuery = new URLSearchParams(providerData).toString();
 
-                    await this._mountAPMFrame(
-                        `${error.body.additional_action_required.data.redirect_url}&${providerDataQuery}`,
-                    );
+                    const frameUrl = `${error.body.additional_action_required.data.redirect_url}&${providerDataQuery}`;
+                    const { onLoad, style } = this._initializeOptions;
+                    const frame = createIframe(IFRAME_NAME, frameUrl, style);
+
+                    const promise = new CancellablePromise<undefined>(new Promise(noop));
+
+                    onLoad(frame, () => promise.cancel(new PaymentMethodCancelledError()));
+
+                    return Promise.reject();
                 }
             }
 
@@ -83,21 +91,6 @@ export default class BlueSnapDirectAPMPaymentStrategy implements PaymentStrategy
 
     deinitialize(): Promise<void> {
         return Promise.resolve();
-    }
-
-    private _mountAPMFrame(url: string): Promise<PaymentIntegrationSelectors> {
-        return new Promise((_, reject) => {
-            if (!this._initializeOptions) {
-                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-            }
-
-            const { onLoad, style } = this._initializeOptions;
-            const frame = createIframe(IFRAME_NAME, url, style);
-
-            onLoad(frame, () => {
-                reject(new PaymentMethodCancelledError());
-            });
-        });
     }
 
     private _isBlueSnapDirectRedirectResponse(
