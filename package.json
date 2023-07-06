@@ -58,7 +58,7 @@
     "@bigcommerce/memoize": "^1.0.0",
     "@bigcommerce/request-sender": "^1.2.1",
     "@bigcommerce/script-loader": "^2.2.2",
-    "@braintree/browser-detection": "^1.14.0",
+    "@braintree/browser-detection": "^1.16.0",
     "@types/card-validator": "^4.1.0",
     "@types/iframe-resizer": "^3.5.9",
     "@types/reselect": "^2.2.0",
