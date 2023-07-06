@@ -20,7 +20,12 @@ import {
     ExecutePaymentMethodCheckoutOptions,
     GuestCredentials,
 } from '../customer';
-import { ExtensionActionCreator, ExtensionRegion } from '../extension';
+import {
+    ExtensionActionCreator,
+    ExtensionCommandHandlers,
+    ExtensionPostEvent,
+    ExtensionRegion,
+} from '../extension';
 import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
@@ -1389,14 +1394,45 @@ export default class CheckoutService {
      * Currently, only one extension is allowed per region.
      *
      * @alpha
-     * @param container The ID of a container which the extension should be inserted.
-     * @param region The name of an area where the extension should be presented.
+     * @param container - The ID of a container which the extension should be inserted.
+     * @param region - The name of an area where the extension should be presented.
      * @returns A promise that resolves to the current state.
      */
     renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors> {
         const action = this._extensionActionCreator.renderExtension(container, region);
 
         return this._dispatch(action, { queueId: 'extensions' });
+    }
+
+    /**
+     * Registers command handlers. Works on both host and extension sides.
+     *
+     * @alpha
+     * @param handlers - a set of handlers for checkout extension commands
+     * @returns A promise that resolves to the current state.
+     */
+    handleExtensionCommand(handlers: ExtensionCommandHandlers): Promise<CheckoutSelectors> {
+        const action = this._extensionActionCreator.handleExtensionCommand(handlers);
+
+        return this._dispatch(action);
+    }
+
+    /**
+     * Posts a message to checkout or an extension.
+     *
+     * @alpha
+     * @param event - A message event that strictly adheres to the ExtensionPostEvent type definition.
+     * @param extensionId - The ID of the extension to which the message will be sent. If no extension ID is provided,
+     * the message will be sent to the host.
+     * @returns A promise that resolves to the current state.
+     */
+    postExtensionMessage(
+        event: ExtensionPostEvent,
+        extensionId?: string,
+    ): Promise<CheckoutSelectors> {
+        const action = this._extensionActionCreator.postExtensionMessage(event, extensionId);
+
+        return this._dispatch(action);
     }
 
     /**

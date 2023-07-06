@@ -34,11 +34,12 @@ import {
 import CustomerStrategyRegistryV2 from '../customer/customer-strategy-registry-v2';
 import {
     ExtensionActionCreator,
-    ExtensionRegion,
+    ExtensionActionType,
     ExtensionRequestSender,
+    getExtensionCommandHandlers,
     getExtensions,
 } from '../extension';
-import { ExtensionActionType } from '../extension/extension-actions';
+import { getExtensionMessageEvent } from '../extension/extension.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { getAddressFormFields, getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -1488,11 +1489,42 @@ describe('CheckoutService', () => {
             );
 
             const container = 'checkout.extension';
-            const region = ExtensionRegion.ShippingShippingAddressFormBefore;
+            const region = 'shipping.shippingAddressForm.before';
 
             await checkoutService.renderExtension(container, region);
 
             expect(extensionActionCreator.renderExtension).toHaveBeenCalledWith(container, region);
+        });
+    });
+
+    describe('#handleExtensionCommand()', () => {
+        it('handles extension command', async () => {
+            jest.spyOn(extensionActionCreator, 'handleExtensionCommand').mockReturnValue(
+                of(createAction(ExtensionActionType.ListenCommandSucceeded)),
+            );
+
+            const handlers = getExtensionCommandHandlers();
+
+            await checkoutService.handleExtensionCommand(handlers);
+
+            expect(extensionActionCreator.handleExtensionCommand).toHaveBeenCalledWith(handlers);
+        });
+    });
+
+    describe('#postExtensionMessage()', () => {
+        it('posts message', async () => {
+            jest.spyOn(extensionActionCreator, 'postExtensionMessage').mockReturnValue(
+                of(createAction(ExtensionActionType.PostMessageSucceeded)),
+            );
+
+            const event = getExtensionMessageEvent();
+
+            await checkoutService.postExtensionMessage(event.data, '123');
+
+            expect(extensionActionCreator.postExtensionMessage).toHaveBeenCalledWith(
+                event.data,
+                '123',
+            );
         });
     });
 });
