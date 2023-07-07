@@ -23,7 +23,7 @@ import {
     getVisaCheckoutMock,
 } from './braintree.mock';
 
-const version = '3.81.0';
+const version = '3.95.0';
 
 describe('BraintreeScriptLoader', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;

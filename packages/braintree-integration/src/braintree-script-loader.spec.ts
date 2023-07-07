@@ -19,7 +19,7 @@ import {
     getPaypalCheckoutMock,
 } from './braintree.mock';
 
-const VERSION = '3.81.0';
+const VERSION = '3.95.0';
 
 describe('BraintreeScriptLoader', () => {
     let scriptLoader: ScriptLoader;

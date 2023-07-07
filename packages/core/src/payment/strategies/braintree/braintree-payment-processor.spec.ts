@@ -119,7 +119,10 @@ describe('BraintreePaymentProcessor', () => {
                 getBillingAddress(),
             );
 
-            expect(tokenizedCard).toEqual({ nonce: 'demo_nonce' });
+            expect(tokenizedCard).toEqual({
+                nonce: 'demo_nonce',
+                bin: 'demo_bin',
+            });
         });
 
         it('calls the braintree client request with the correct information', async () => {
@@ -548,17 +551,28 @@ describe('BraintreePaymentProcessor', () => {
             braintreePaymentProcessor.initialize('clientToken', {});
 
             return expect(
-                braintreePaymentProcessor.challenge3DSVerification('tokenization_nonce', 122),
+                braintreePaymentProcessor.challenge3DSVerification(
+                    {
+                        nonce: 'tokenization_nonce',
+                        bin: '123456',
+                    },
+                    122,
+                ),
             ).rejects.toThrow(NotInitializedError);
         });
 
         it('challenges 3DS verifies the card using 3DS', async () => {
             jest.spyOn(threeDSecureMock, 'verifyCard').mockReturnValue(
-                Promise.resolve({ nonce: 'three_ds_nonce' }),
+                Promise.resolve({
+                    nonce: 'three_ds_nonce',
+                }),
             );
 
             const verifiedCard = await braintreePaymentProcessor.challenge3DSVerification(
-                'tokenization_nonce',
+                {
+                    nonce: 'tokenization_nonce',
+                    bin: '123456',
+                },
                 122,
             );
 
@@ -566,13 +580,20 @@ describe('BraintreePaymentProcessor', () => {
         });
 
         it('calls the verification service with the right values', async () => {
-            await braintreePaymentProcessor.challenge3DSVerification('tokenization_nonce', 122);
+            await braintreePaymentProcessor.challenge3DSVerification(
+                {
+                    nonce: 'tokenization_nonce',
+                    bin: '123456',
+                },
+                122,
+            );
 
             expect(threeDSecureMock.verifyCard).toHaveBeenCalledWith({
                 addFrame: expect.any(Function),
                 removeFrame: expect.any(Function),
                 challengeRequested: true,
                 amount: 122,
+                bin: '123456',
                 nonce: 'tokenization_nonce',
                 onLookupComplete: expect.any(Function),
             });
@@ -593,7 +614,13 @@ describe('BraintreePaymentProcessor', () => {
 
             it('cancels card verification', async () => {
                 braintreePaymentProcessor
-                    .challenge3DSVerification('tokenization_nonce', 122)
+                    .challenge3DSVerification(
+                        {
+                            nonce: 'tokenization_nonce',
+                            bin: '123456',
+                        },
+                        122,
+                    )
                     .catch(noop);
 
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -604,7 +631,10 @@ describe('BraintreePaymentProcessor', () => {
 
             it('rejects the return promise', async () => {
                 const promise = braintreePaymentProcessor.challenge3DSVerification(
-                    'tokenization_nonce',
+                    {
+                        nonce: 'tokenization_nonce',
+                        bin: '123456',
+                    },
                     122,
                 );
 
@@ -615,7 +645,13 @@ describe('BraintreePaymentProcessor', () => {
             });
 
             it('resolves with verify payload', async () => {
-                braintreePaymentProcessor.challenge3DSVerification('tokenization_nonce', 122);
+                braintreePaymentProcessor.challenge3DSVerification(
+                    {
+                        nonce: 'tokenization_nonce',
+                        bin: '123456',
+                    },
+                    122,
+                );
 
                 await new Promise((resolve) => process.nextTick(resolve));
 

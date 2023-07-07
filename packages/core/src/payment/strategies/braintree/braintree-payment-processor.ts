@@ -23,6 +23,7 @@ import {
     BraintreeTokenizePayload,
     BraintreeVenmoCheckout,
     BraintreeVerifyPayload,
+    TokenizationPayload,
 } from './braintree';
 import BraintreeHostedForm from './braintree-hosted-form';
 import {
@@ -68,7 +69,7 @@ export default class BraintreePaymentProcessor {
     async tokenizeCard(
         payment: OrderPaymentRequestBody,
         billingAddress: Address,
-    ): Promise<NonceInstrument> {
+    ): Promise<TokenizationPayload> {
         const { paymentData } = payment;
 
         if (!isCreditCardInstrumentLike(paymentData)) {
@@ -85,7 +86,10 @@ export default class BraintreePaymentProcessor {
         const client = await this._braintreeSDKCreator.getClient();
         const { creditCards } = await client.request(requestData);
 
-        return { nonce: creditCards[0].nonce };
+        return {
+            nonce: creditCards[0].nonce,
+            bin: creditCards[0].details?.bin,
+        };
     }
 
     async verifyCard(
@@ -93,9 +97,9 @@ export default class BraintreePaymentProcessor {
         billingAddress: Address,
         amount: number,
     ): Promise<NonceInstrument> {
-        const { nonce } = await this.tokenizeCard(payment, billingAddress);
+        const tokenizationPayload = await this.tokenizeCard(payment, billingAddress);
 
-        return this.challenge3DSVerification(nonce, amount);
+        return this.challenge3DSVerification(tokenizationPayload, amount);
     }
 
     paypal({ shouldSaveInstrument, ...config }: PaypalConfig): Promise<BraintreeTokenizePayload> {
@@ -171,15 +175,18 @@ export default class BraintreePaymentProcessor {
         billingAddress: Address,
         amount: number,
     ): Promise<NonceInstrument> {
-        const { nonce } = await this._braintreeHostedForm.tokenize(billingAddress);
+        const tokenizationPayload = await this._braintreeHostedForm.tokenize(billingAddress);
 
-        return this.challenge3DSVerification(nonce, amount);
+        return this.challenge3DSVerification(tokenizationPayload, amount);
     }
 
-    async challenge3DSVerification(nonce: string, amount: number): Promise<NonceInstrument> {
+    async challenge3DSVerification(
+        tokenizationPayload: TokenizationPayload,
+        amount: number,
+    ): Promise<NonceInstrument> {
         const threeDSecure = await this._braintreeSDKCreator.get3DS();
 
-        return this._present3DSChallenge(threeDSecure, amount, nonce);
+        return this._present3DSChallenge(threeDSecure, amount, tokenizationPayload);
     }
 
     async getVenmoCheckout(): Promise<BraintreeVenmoCheckout> {
@@ -218,8 +225,10 @@ export default class BraintreePaymentProcessor {
     private _present3DSChallenge(
         threeDSecure: BraintreeThreeDSecure,
         amount: number,
-        nonce: string,
+        tokenizationPayload: TokenizationPayload,
     ): Promise<BraintreeVerifyPayload> {
+        const { nonce, bin } = tokenizationPayload;
+
         if (!this._threeDSecureOptions || !nonce) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -241,6 +250,7 @@ export default class BraintreePaymentProcessor {
                     addFrame(error, iframe, cancelVerifyCard);
                 },
                 amount: Number(roundedAmount),
+                bin,
                 challengeRequested: true,
                 nonce,
                 removeFrame,
