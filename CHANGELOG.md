@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.399.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.398.2...v1.399.0) (2023-07-10)
+
+
+### Features
+
+* **payment:** PAYPAL-2476 added TS interface for updateOrder method in PPCP request sender ([#2033](https://github.com/bigcommerce/checkout-sdk-js/issues/2033)) ([10c2e8f](https://github.com/bigcommerce/checkout-sdk-js/commit/10c2e8faeb397cee1e9cc3104f1a5cb939c38356))
+
 ### [1.398.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.398.1...v1.398.2) (2023-07-06)
 
 
