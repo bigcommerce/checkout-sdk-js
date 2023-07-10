@@ -390,6 +390,10 @@ export interface PayPalUpdateOrderRequestBody {
     selectedShippingOption?: ShippingOption;
 }
 
+export interface PayPalUpdateOrderResponse {
+    statusCode: number;
+}
+
 export interface PayPalCreateOrderRequestBody extends HostedInstrument, VaultedInstrument {
     cartId: string;
 }

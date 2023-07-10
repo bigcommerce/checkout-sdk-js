@@ -11,6 +11,7 @@ import {
     PayPalOrderData,
     PayPalOrderStatusData,
     PayPalUpdateOrderRequestBody,
+    PayPalUpdateOrderResponse,
 } from './paypal-commerce-types';
 
 export default class PayPalCommerceRequestSender {
@@ -33,8 +34,9 @@ export default class PayPalCommerceRequestSender {
         return res.body;
     }
 
-    // TODO: add response type interface Promise<something> in another task
-    async updateOrder(requestBody: PayPalUpdateOrderRequestBody) {
+    async updateOrder(
+        requestBody: PayPalUpdateOrderRequestBody,
+    ): Promise<PayPalUpdateOrderResponse> {
         const url = `/api/storefront/initialization/paypalcommerce`;
         const body = requestBody;
         const headers = {
@@ -43,7 +45,7 @@ export default class PayPalCommerceRequestSender {
             ...SDK_VERSION_HEADERS,
         };
 
-        const res = await this.requestSender.put(url, { headers, body });
+        const res = await this.requestSender.put<PayPalUpdateOrderResponse>(url, { headers, body });
 
         return res.body;
     }
