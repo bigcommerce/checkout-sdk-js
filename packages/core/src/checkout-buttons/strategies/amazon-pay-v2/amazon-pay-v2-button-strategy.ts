@@ -1,5 +1,4 @@
 import { CartRequestSender } from '../../../cart';
-import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
 import { BuyNowCartCreationError } from '../../../cart/errors';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import {
@@ -17,12 +16,12 @@ import { getShippableItemsCount } from '../../../shipping';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
-import { isWithBuyNowFeatures } from './amazon-pay-v2-button-options';
+import { isWithBuyNowFeatures, WithBuyNowFeature } from './amazon-pay-v2-button-options';
 import AmazonPayV2RequestSender from './amazon-pay-v2-request-sender';
 import AmazonPayV2ConfigCreationError from './errors/amazon-pay-v2-config-creation-error';
 
 export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy {
-    private _buyNowCartRequestBody?: BuyNowCartRequestBody | void;
+    private _buyNowInitializeOptions: WithBuyNowFeature['buyNowInitializeOptions'];
 
     constructor(
         private _store: CheckoutStore,
@@ -60,11 +59,10 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
             isWithBuyNowFeatures(amazonpay) &&
             typeof amazonpay?.buyNowInitializeOptions?.getBuyNowCartRequestBody === 'function'
         ) {
-            this._buyNowCartRequestBody =
-                amazonpay.buyNowInitializeOptions.getBuyNowCartRequestBody();
+            this._buyNowInitializeOptions = amazonpay.buyNowInitializeOptions;
 
-            if (this._buyNowCartRequestBody) {
-                this._amazonPayV2PaymentProcessor.setCartRequestBody(this._buyNowCartRequestBody);
+            if (this._buyNowInitializeOptions) {
+                this._amazonPayV2PaymentProcessor.updateBuyNowFlowFlag(true);
             }
         }
 
@@ -77,7 +75,7 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
             buttonColor,
         });
 
-        if (this._buyNowCartRequestBody) {
+        if (this._buyNowInitializeOptions) {
             this._amazonPayV2PaymentProcessor.prepareCheckoutWithCreationRequestConfig(
                 this._getCheckoutCreationRequestConfig.bind(this),
             );
@@ -89,13 +87,15 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
     }
 
     private async _createBuyNowCart() {
-        if (!this._buyNowCartRequestBody) {
+        const buyNowCartRequestBody = this._buyNowInitializeOptions?.getBuyNowCartRequestBody?.();
+
+        if (!buyNowCartRequestBody) {
             throw new MissingDataError(MissingDataErrorType.MissingCart);
         }
 
         try {
             const { body: buyNowCart } = await this._cartRequestSender.createBuyNowCart(
-                this._buyNowCartRequestBody,
+                buyNowCartRequestBody,
             );
 
             return buyNowCart;
@@ -125,20 +125,22 @@ export default class AmazonPayV2ButtonStrategy implements CheckoutButtonStrategy
     private async _getCheckoutCreationRequestConfig() {
         const buyNowCart = await this._createBuyNowCart();
 
-        const estimatedOrderAmount = {
-            amount: String(buyNowCart.baseAmount),
-            currencyCode: buyNowCart.currency.code,
-        };
+        if (buyNowCart) {
+            const estimatedOrderAmount = {
+                amount: String(buyNowCart.baseAmount),
+                currencyCode: buyNowCart.currency.code,
+            };
 
-        const createCheckoutSessionConfig = await this._createCheckoutConfig(buyNowCart.id);
+            const createCheckoutSessionConfig = await this._createCheckoutConfig(buyNowCart.id);
 
-        return {
-            createCheckoutSessionConfig,
-            estimatedOrderAmount,
-            productType:
-                getShippableItemsCount(buyNowCart) === 0
-                    ? AmazonPayV2PayOptions.PayOnly
-                    : AmazonPayV2PayOptions.PayAndShip,
-        };
+            return {
+                createCheckoutSessionConfig,
+                estimatedOrderAmount,
+                productType:
+                    getShippableItemsCount(buyNowCart) === 0
+                        ? AmazonPayV2PayOptions.PayOnly
+                        : AmazonPayV2PayOptions.PayAndShip,
+            };
+        }
     }
 }

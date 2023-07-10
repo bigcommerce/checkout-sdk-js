@@ -1,10 +1,7 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { PaymentMethod } from '../../';
 import { getConfig, getConfigState } from '../../../../src/config/configs.mock';
-import { BuyNowCartRequestBody } from '../../../cart';
 import { getCart } from '../../../cart/carts.mock';
 import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
@@ -428,20 +425,6 @@ describe('AmazonPayV2PaymentProcessor', () => {
         });
 
         describe('should use the new button params from API Version 2:', () => {
-            const buyNowRequestBody: BuyNowCartRequestBody = {
-                source: CartSource.BuyNow,
-                lineItems: [
-                    {
-                        productId: 1,
-                        quantity: 2,
-                        optionSelections: {
-                            optionId: 11,
-                            optionValue: 11,
-                        },
-                    },
-                ],
-            };
-
             beforeEach(() => {
                 const storeConfigMock = getConfig().storeConfig;
 
@@ -465,7 +448,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
                 );
 
                 await processor.initialize(amazonPayV2Mock);
-                processor.setCartRequestBody(buyNowRequestBody);
+                processor.updateBuyNowFlowFlag(true);
                 renderAmazonPayButton();
 
                 expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith(

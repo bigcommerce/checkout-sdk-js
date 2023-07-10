@@ -4,7 +4,6 @@ import { getShippableItemsCount } from '../../../../../core/src/shipping';
 import { guard } from '../../../../src/common/utility';
 import { StoreProfile } from '../../../../src/config';
 import { CheckoutSettings } from '../../../../src/config/config';
-import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
 import {
     InvalidArgumentError,
     MissingDataError,
@@ -35,7 +34,7 @@ export default class AmazonPayV2PaymentProcessor {
     private _amazonPayV2SDK?: AmazonPayV2SDK;
     private _buttonParentContainer?: HTMLDivElement;
     private _amazonPayV2Button?: AmazonPayV2Button;
-    private _buyNowCartRequestBody?: BuyNowCartRequestBody;
+    private _isBuyNowFlow?: boolean;
 
     constructor(private _amazonPayV2ScriptLoader: AmazonPayV2ScriptLoader) {}
 
@@ -81,21 +80,27 @@ export default class AmazonPayV2PaymentProcessor {
     }
 
     prepareCheckoutWithCreationRequestConfig(
-        createCheckoutConfig: () => Promise<{
-            createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>;
-            estimatedOrderAmount: AmazonPayV2Price;
-            productType: AmazonPayV2PayOptions;
-        }>,
+        createCheckoutConfig: () => Promise<
+            | {
+                  createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>;
+                  estimatedOrderAmount: AmazonPayV2Price;
+                  productType: AmazonPayV2PayOptions;
+              }
+            | undefined
+        >,
     ) {
         this._getAmazonPayV2Button().onClick(async () => {
             const config = await createCheckoutConfig();
-            const requestConfig = this._prepareRequestConfig(
-                config.createCheckoutSessionConfig,
-                config.estimatedOrderAmount,
-                config.productType,
-            );
 
-            this._getAmazonPayV2Button().initCheckout(requestConfig);
+            if (config) {
+                const requestConfig = this._prepareRequestConfig(
+                    config.createCheckoutSessionConfig,
+                    config.estimatedOrderAmount,
+                    config.productType,
+                );
+
+                this._getAmazonPayV2Button().initCheckout(requestConfig);
+            }
         });
     }
 
@@ -145,8 +150,8 @@ export default class AmazonPayV2PaymentProcessor {
         return this._getButtonParentContainer();
     }
 
-    setCartRequestBody(buyNowCartRequestBody: BuyNowCartRequestBody) {
-        this._buyNowCartRequestBody = buyNowCartRequestBody;
+    updateBuyNowFlowFlag(isBuyNowFlow?: boolean) {
+        this._isBuyNowFlow = Boolean(isBuyNowFlow);
     }
 
     /**
@@ -228,7 +233,7 @@ export default class AmazonPayV2PaymentProcessor {
             design: AmazonPayV2ButtonDesign.C0001,
         };
 
-        if (this._buyNowCartRequestBody) {
+        if (this._isBuyNowFlow) {
             return {
                 ...buttonBaseConfig,
                 sandbox: !!testMode,
