@@ -49,18 +49,3 @@ export function getExtensionMessageEvent(): {
         },
     };
 }
-
-export function getHostMessageEvent(): {
-    origin: string;
-    data: ExtensionOriginEvent;
-} {
-    return {
-        origin: 'https://store.url',
-        data: {
-            type: 'HOST_COMMAND',
-            payload: {
-                message: 'sample',
-            },
-        },
-    };
-}

@@ -67,6 +67,7 @@ describe('ExtensionMessenger', () => {
 
         it('should post to an extension', () => {
             const extensionMessengerMock: any = extensionMessenger;
+
             extensionMessengerMock._posters['123'] = jest.fn();
             extensionMessengerMock._posters['123'].post = jest.fn();
 

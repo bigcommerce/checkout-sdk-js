@@ -21,7 +21,6 @@ import {
     GuestCredentials,
 } from '../customer';
 import {
-    Extension,
     ExtensionActionCreator,
     ExtensionCommandHandlers,
     ExtensionMessenger,

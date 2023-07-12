@@ -9,9 +9,6 @@ export enum ExtensionActionType {
     RenderExtensionRequested = 'RENDER_EXTENSION_REQUESTED',
     RenderExtensionSucceeded = 'RENDER_EXTENSION_SUCCEEDED',
     RenderExtensionFailed = 'RENDER_EXTENSION_FAILED',
-    ListenCommandSucceeded = 'LISTEN_COMMAND_SUCCEED',
-    PostMessageSucceeded = 'POST_MESSAGE_SUCCEEDED',
-    PostMessageFailed = 'POST_MESSAGE_FAILED',
 }
 
 export type ExtensionAction =
@@ -20,10 +17,7 @@ export type ExtensionAction =
     | LoadExtensionsFailedAction
     | RenderExtensionRequestedAction
     | RenderExtensionSucceededAction
-    | RenderExtensionFailedAction
-    | ListenCommandSucceeded
-    | PostMessageSucceeded
-    | PostMessageFailed;
+    | RenderExtensionFailedAction;
 
 export interface LoadExtensionsRequestedAction extends Action {
     type: ExtensionActionType.LoadExtensionsRequested;
@@ -47,16 +41,4 @@ export interface RenderExtensionSucceededAction extends Action {
 
 export interface RenderExtensionFailedAction extends Action<Error> {
     type: ExtensionActionType.RenderExtensionFailed;
-}
-
-export interface ListenCommandSucceeded extends Action {
-    type: ExtensionActionType.ListenCommandSucceeded;
-}
-
-export interface PostMessageSucceeded extends Action {
-    type: ExtensionActionType.PostMessageSucceeded;
-}
-
-export interface PostMessageFailed extends Action<Error> {
-    type: ExtensionActionType.PostMessageFailed;
 }

@@ -1500,6 +1500,7 @@ describe('CheckoutService', () => {
         it('handles extension command', async () => {
             const checkoutServiceMock: any = checkoutService;
             const listenMock = jest.fn();
+
             checkoutServiceMock._extensionMessenger = {
                 listen: listenMock,
             };
