@@ -6,12 +6,13 @@ import { ExtensionNotFoundError } from './errors';
 import { Extension } from './extension';
 import { ExtensionCommandHandlers } from './extension-command-handler';
 import { ExtensionOriginEvent } from './extension-origin-event';
+import { HostOriginEvent } from './host-origin-event';
 
 export class ExtensionMessenger {
-    _isListening = false;
+    private _isListening = false;
     private _extensions: Extension[] | undefined;
     private _extensionCommandHandlers: ExtensionCommandHandlers = {};
-    private _posters: { [extensionId: string]: IframeEventPoster<ExtensionOriginEvent> } = {};
+    private _posters: { [extensionId: string]: IframeEventPoster<HostOriginEvent> } = {};
 
     listen(extensions: Extension[], extensionCommandHandlers: ExtensionCommandHandlers): void {
         this._extensions = extensions;
@@ -26,7 +27,7 @@ export class ExtensionMessenger {
         window.addEventListener('message', this._handleMessage);
     }
 
-    post(extensionId: string, event: ExtensionOriginEvent): void {
+    post(extensionId: string, event: HostOriginEvent): void {
         if (!this._extensions) {
             throw new ExtensionNotFoundError(
                 `Extension configurations not found or listen() not utilized prior.`,
