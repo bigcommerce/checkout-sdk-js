@@ -1,5 +1,7 @@
 // imports types
 
+import { noop } from 'lodash';
+
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
 import {
@@ -17,6 +19,10 @@ export default class ExtensionService {
     ) {}
 
     initialize(extensionId: number) {
+        if (!extensionId) {
+            throw new Error('Extension Id not found.');
+        }
+
         this._extensionId = extensionId;
 
         this._eventListener.listen();
@@ -24,7 +30,7 @@ export default class ExtensionService {
 
     post(event: ExtensionPostEvent): void {
         if (!this._extensionId) {
-            throw new Error('Extension Id not found.');
+            return;
         }
 
         this._eventPoster.setTarget(window.parent);
@@ -37,7 +43,7 @@ export default class ExtensionService {
         this._eventPoster.post({ ...event, payload });
     }
 
-    addListener(eventType: ExtensionListenEventType, callback: () => void): void {
+    addListener(eventType: ExtensionListenEventType, callback: () => void = noop): void {
         this._eventListener.addListener(eventType, callback);
     }
 }

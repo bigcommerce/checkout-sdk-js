@@ -7,7 +7,7 @@ export interface CreateExtensionServiceOptions {
     parentOrigin: string;
 }
 
-export enum ExtensionListenEventType {
+export const enum ExtensionListenEventType {
     BroadcastCart = 'BROADCAST_CART',
     ShippingCountryChange = 'SHIPPING_COUNTRY_CHANGE',
 }
@@ -24,7 +24,7 @@ export interface ExtensionListenEventMap {
     };
 }
 
-export enum ExtensionPostEventType {
+export const enum ExtensionPostEventType {
     FRAME_LOADED = 'FRAME_LOADED',
     RELOAD_CHECKOUT = 'RELOAD_CHECKOUT',
     SHOW_LOADING_INDICATOR = 'SHOW_LOADING_INDICATOR',
@@ -32,22 +32,16 @@ export enum ExtensionPostEventType {
 
 export interface BaseEventPayload {
     payload: {
-        extensionId: number;
+        extensionId?: number;
     };
 }
 
 export interface ExtensionReloadEvent extends BaseEventPayload {
     type: ExtensionPostEventType.RELOAD_CHECKOUT;
-    payload: {
-        extensionId: number;
-    };
 }
 
 export interface ExtensionShowLoadingIndicatorEvent extends BaseEventPayload {
     type: ExtensionPostEventType.SHOW_LOADING_INDICATOR;
-    payload: {
-        extensionId: number;
-    };
 }
 
 export interface ExtensionFrameLoadedEvent extends BaseEventPayload {
