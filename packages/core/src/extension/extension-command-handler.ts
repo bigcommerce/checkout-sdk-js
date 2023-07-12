@@ -1,7 +1,5 @@
-import { ExtensionCommand, ExtensionPostEvent, HostCommand } from './extension-post-event';
+import { ExtensionCommand, ExtensionOriginEvent } from './extension-origin-event';
 
-export type ExtensionCommandHandler = (data: ExtensionPostEvent) => void;
+export type ExtensionCommandHandler = (data: ExtensionOriginEvent) => void;
 
-export type ExtensionCommandHandlers = Partial<
-    Record<ExtensionCommand | HostCommand, ExtensionCommandHandler>
->;
+export type ExtensionCommandHandlers = Partial<Record<ExtensionCommand, ExtensionCommandHandler>>;

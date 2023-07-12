@@ -11,19 +11,11 @@ import { getErrorResponse, getResponse } from '../common/http-request/responses.
 import { EmbeddedCheckoutEventType } from '../embedded-checkout/embedded-checkout-events';
 import { NotEmbeddableError } from '../embedded-checkout/errors';
 
-import { ExtensionNotFoundError } from './errors';
 import { Extension } from './extension';
 import { ExtensionActionCreator } from './extension-action-creator';
 import { ExtensionActionType } from './extension-actions';
-import { ExtensionCommandHandlers } from './extension-command-handler';
 import { ExtensionRequestSender } from './extension-request-sender';
-import {
-    getExtensionCommandHandlers,
-    getExtensionMessageEvent,
-    getExtensions,
-    getExtensionState,
-    getHostMessageEvent,
-} from './extension.mock';
+import { getExtensionMessageEvent, getExtensions, getExtensionState } from './extension.mock';
 
 describe('ExtensionActionCreator', () => {
     let errorResponse: Response<ErrorResponseBody>;
@@ -169,78 +161,6 @@ describe('ExtensionActionCreator', () => {
                     error: true,
                 },
             ]);
-        });
-    });
-
-    describe('#handleExtensionCommand()', () => {
-        let extensionCommandHandlers: ExtensionCommandHandlers;
-
-        const addEventListener = jest.spyOn(window, 'addEventListener');
-
-        beforeEach(() => {
-            extensionCommandHandlers = getExtensionCommandHandlers();
-        });
-
-        afterEach(() => {
-            addEventListener.mockRestore();
-        });
-
-        it('emits actions if able to apply extension command handlers', async () => {
-            const actions = await from(
-                extensionActionCreator.handleExtensionCommand(extensionCommandHandlers)(store),
-            ).toPromise();
-
-            expect(addEventListener).toHaveBeenCalled();
-            expect(actions).toEqual({ type: ExtensionActionType.ListenCommandSucceeded });
-        });
-
-        it('does nothing if no extension exists', async () => {
-            store = createCheckoutStore({
-                ...getCheckoutStoreState(),
-                extensions: {
-                    ...getExtensionState(),
-                    data: [],
-                },
-            });
-
-            const actions = await from(
-                extensionActionCreator.handleExtensionCommand(extensionCommandHandlers)(store),
-            ).toPromise();
-
-            expect(addEventListener).not.toHaveBeenCalled();
-            expect(actions).toEqual({ type: ExtensionActionType.ListenCommandSucceeded });
-        });
-    });
-
-    describe('#postExtensionMessage()', () => {
-        it('emits actions if able to post a message', async () => {
-            Object.defineProperty(window.document, 'referrer', {
-                value: 'https://checkout.store',
-            });
-
-            const event = getHostMessageEvent();
-            const actions = await from(
-                extensionActionCreator.postExtensionMessage(event.data)(store),
-            ).toPromise();
-
-            expect(actions).toEqual({ type: ExtensionActionType.PostMessageSucceeded });
-        });
-
-        it('emits error actions if unable to post a message', async () => {
-            const event = getExtensionMessageEvent();
-            const errorHandler = jest.fn((action) => of(action));
-            const actions = await from(
-                extensionActionCreator.postExtensionMessage(event.data, '123')(store),
-            )
-                .pipe(catchError(errorHandler))
-                .toPromise();
-
-            expect(errorHandler).toHaveBeenCalled();
-            expect(actions).toEqual({
-                type: ExtensionActionType.PostMessageFailed,
-                payload: expect.any(ExtensionNotFoundError),
-                error: true,
-            });
         });
     });
 });

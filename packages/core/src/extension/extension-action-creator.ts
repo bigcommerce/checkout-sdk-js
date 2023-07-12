@@ -3,20 +3,14 @@ import { Observable, Observer } from 'rxjs';
 
 import { InternalCheckoutSelectors } from '../checkout';
 import { RequestOptions } from '../common/http-request';
-import { IframeEventPoster } from '../common/iframe';
 
 import { ExtensionNotFoundError } from './errors';
 import { ExtensionRegion } from './extension';
 import { ExtensionAction, ExtensionActionType } from './extension-actions';
-import { ExtensionCommandHandlers } from './extension-command-handler';
 import { ExtensionIframe } from './extension-iframe';
-import { ExtensionMessenger } from './extension-messenger';
-import { ExtensionPostEvent } from './extension-post-event';
 import { ExtensionRequestSender } from './extension-request-sender';
 
 export class ExtensionActionCreator {
-    private _extensionMessenger: ExtensionMessenger | undefined;
-
     constructor(private _requestSender: ExtensionRequestSender) {}
 
     loadExtensions(
@@ -73,50 +67,6 @@ export class ExtensionActionCreator {
                     observer.error(
                         createErrorAction(ExtensionActionType.RenderExtensionFailed, error),
                     );
-                }
-            });
-    }
-
-    handleExtensionCommand(
-        handlers: ExtensionCommandHandlers,
-    ): ThunkAction<ExtensionAction, InternalCheckoutSelectors> {
-        return (store) =>
-            Observable.create((observer: Observer<ExtensionAction>) => {
-                const extensions = store.getState().extensions.getExtensions();
-
-                if (extensions && extensions.length > 0) {
-                    this._extensionMessenger = new ExtensionMessenger(
-                        new IframeEventPoster<ExtensionPostEvent>('*'),
-                        extensions,
-                    );
-                    this._extensionMessenger.listen(handlers);
-                }
-
-                observer.next(createAction(ExtensionActionType.ListenCommandSucceeded));
-                observer.complete();
-            });
-    }
-
-    postExtensionMessage(
-        event: ExtensionPostEvent,
-        extensionId?: string,
-    ): ThunkAction<ExtensionAction, InternalCheckoutSelectors> {
-        return () =>
-            Observable.create((observer: Observer<ExtensionAction>) => {
-                if (!this._extensionMessenger) {
-                    this._extensionMessenger = new ExtensionMessenger(
-                        new IframeEventPoster<ExtensionPostEvent>('*'),
-                        [],
-                    );
-                }
-
-                try {
-                    this._extensionMessenger.post(event, extensionId);
-
-                    observer.next(createAction(ExtensionActionType.PostMessageSucceeded));
-                    observer.complete();
-                } catch (error) {
-                    observer.error(createErrorAction(ExtensionActionType.PostMessageFailed, error));
                 }
             });
     }

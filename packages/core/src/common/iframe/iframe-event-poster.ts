@@ -15,10 +15,10 @@ export interface IframeEventPostOptions<
 }
 
 export default class IframeEventPoster<TEvent> {
-    private _targetOrigin = '*';
+    private _targetOrigin: string;
 
     constructor(targetOrigin: string, private _targetWindow?: Window) {
-        this.setTargetOrigin(targetOrigin);
+        this._targetOrigin = targetOrigin === '*' ? '*' : parseUrl(targetOrigin).origin;
     }
 
     post(event: TEvent): void;
@@ -75,9 +75,5 @@ export default class IframeEventPoster<TEvent> {
 
     setTarget(window: Window) {
         this._targetWindow = window;
-    }
-
-    setTargetOrigin(targetOrigin: string) {
-        this._targetOrigin = targetOrigin === '*' ? '*' : parseUrl(targetOrigin).origin;
     }
 }

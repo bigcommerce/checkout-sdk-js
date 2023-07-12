@@ -1,6 +1,6 @@
 import { Extension } from './extension';
 import { ExtensionCommandHandlers } from './extension-command-handler';
-import { ExtensionPostEvent } from './extension-post-event';
+import { ExtensionOriginEvent } from './extension-origin-event';
 import { ExtensionState } from './extension-state';
 
 export function getExtensions(): Extension[] {
@@ -37,7 +37,7 @@ export function getExtensionCommandHandlers(): ExtensionCommandHandlers {
 
 export function getExtensionMessageEvent(): {
     origin: string;
-    data: ExtensionPostEvent;
+    data: ExtensionOriginEvent;
 } {
     return {
         origin: 'https://widget.foo.com',
@@ -52,7 +52,7 @@ export function getExtensionMessageEvent(): {
 
 export function getHostMessageEvent(): {
     origin: string;
-    data: ExtensionPostEvent;
+    data: ExtensionOriginEvent;
 } {
     return {
         origin: 'https://store.url',

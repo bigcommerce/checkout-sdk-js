@@ -39,7 +39,6 @@ import {
     getExtensionCommandHandlers,
     getExtensions,
 } from '../extension';
-import { getExtensionMessageEvent } from '../extension/extension.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { getAddressFormFields, getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -1499,32 +1498,18 @@ describe('CheckoutService', () => {
 
     describe('#handleExtensionCommand()', () => {
         it('handles extension command', async () => {
-            jest.spyOn(extensionActionCreator, 'handleExtensionCommand').mockReturnValue(
-                of(createAction(ExtensionActionType.ListenCommandSucceeded)),
-            );
+            const checkoutServiceMock: any = checkoutService;
+            const listenMock = jest.fn();
+            checkoutServiceMock._extensionMessenger = {
+                listen: listenMock,
+            };
 
+            const extensions = getExtensions();
             const handlers = getExtensionCommandHandlers();
 
-            await checkoutService.handleExtensionCommand(handlers);
+            checkoutService.handleExtensionCommand(handlers);
 
-            expect(extensionActionCreator.handleExtensionCommand).toHaveBeenCalledWith(handlers);
-        });
-    });
-
-    describe('#postExtensionMessage()', () => {
-        it('posts message', async () => {
-            jest.spyOn(extensionActionCreator, 'postExtensionMessage').mockReturnValue(
-                of(createAction(ExtensionActionType.PostMessageSucceeded)),
-            );
-
-            const event = getExtensionMessageEvent();
-
-            await checkoutService.postExtensionMessage(event.data, '123');
-
-            expect(extensionActionCreator.postExtensionMessage).toHaveBeenCalledWith(
-                event.data,
-                '123',
-            );
+            expect(listenMock).toHaveBeenCalledWith(extensions, handlers);
         });
     });
 });

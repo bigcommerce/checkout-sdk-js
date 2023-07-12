@@ -1,12 +1,10 @@
 import { EventEmitter } from 'events';
 
-import { IframeEventPoster } from '../common/iframe';
-
 import { ExtensionNotFoundError } from './errors';
 import { Extension } from './extension';
 import { ExtensionCommandHandlers } from './extension-command-handler';
 import { ExtensionMessenger } from './extension-messenger';
-import { ExtensionPostEvent } from './extension-post-event';
+import { ExtensionOriginEvent } from './extension-origin-event';
 import {
     getExtensionCommandHandlers,
     getExtensionMessageEvent,
@@ -20,14 +18,12 @@ describe('ExtensionMessenger', () => {
     let eventEmitter: EventEmitter;
     let event: {
         origin: string;
-        data: ExtensionPostEvent;
+        data: ExtensionOriginEvent;
     };
-    let poster: IframeEventPoster<ExtensionPostEvent>;
 
     beforeEach(() => {
         extensions = getExtensions();
-        poster = new IframeEventPoster<ExtensionPostEvent>('*');
-        extensionMessenger = new ExtensionMessenger(poster, extensions);
+        extensionMessenger = new ExtensionMessenger();
         extensionCommandHandlers = getExtensionCommandHandlers();
         eventEmitter = new EventEmitter();
         event = getExtensionMessageEvent();
@@ -39,14 +35,14 @@ describe('ExtensionMessenger', () => {
         });
 
         it('should add event listener', () => {
-            extensionMessenger.listen(extensionCommandHandlers);
+            extensionMessenger.listen(extensions, extensionCommandHandlers);
 
             expect(window.addEventListener).toHaveBeenCalledTimes(1);
         });
 
         it('should not add event listener if already listening', () => {
-            extensionMessenger.listen(extensionCommandHandlers);
-            extensionMessenger.listen(extensionCommandHandlers);
+            extensionMessenger.listen(extensions, extensionCommandHandlers);
+            extensionMessenger.listen(extensions, extensionCommandHandlers);
 
             expect(window.addEventListener).toHaveBeenCalledTimes(1);
         });
@@ -54,24 +50,26 @@ describe('ExtensionMessenger', () => {
 
     describe('#post()', () => {
         beforeEach(() => {
-            jest.spyOn(poster, 'post');
-            jest.spyOn(poster, 'setTargetOrigin');
+            extensionMessenger.listen(extensions, extensionCommandHandlers);
         });
 
-        it('should post to the host if no extensionId is provided', () => {
-            Object.defineProperty(window.document, 'referrer', {
-                value: 'https://checkout.store',
-            });
-
-            extensionMessenger.post(event.data);
-
-            expect(poster.setTargetOrigin).toHaveBeenCalledWith(window.document.referrer);
-            expect(poster.post).toHaveBeenCalledWith(event.data);
-
-            jest.resetAllMocks();
+        it('should throw ExtensionNotFoundError if extensionId is provided but no extension is found', () => {
+            expect(() => extensionMessenger.post('567', event.data)).toThrow(
+                ExtensionNotFoundError,
+            );
         });
 
-        it('should post to an extension if extensionId is provided', () => {
+        it('should throw ExtensionNotFoundError if the extension is not rendered yet', () => {
+            expect(() => extensionMessenger.post('123', event.data)).toThrow(
+                ExtensionNotFoundError,
+            );
+        });
+
+        it('should post to an extension', () => {
+            const extensionMessengerMock: any = extensionMessenger;
+            extensionMessengerMock._posters['123'] = jest.fn();
+            extensionMessengerMock._posters['123'].post = jest.fn();
+
             const container = document.createElement('div');
             const iframe = document.createElement('iframe');
 
@@ -80,45 +78,9 @@ describe('ExtensionMessenger', () => {
             document.querySelector = jest.fn().mockReturnValue(container);
             jest.spyOn(iframe, 'contentWindow', 'get').mockReturnValue(window);
 
-            extensionMessenger.post(event.data, '123');
+            extensionMessenger.post('123', event.data);
 
-            expect(poster.setTargetOrigin).not.toHaveBeenCalledWith(window.parent.origin);
-            expect(poster.post).toHaveBeenCalledWith(event.data);
-
-            jest.resetAllMocks();
-        });
-
-        it('should throw ExtensionNotFoundError if extensionId is provided but no extension is found', () => {
-            expect(() => extensionMessenger.post(event.data, '567')).toThrow(
-                ExtensionNotFoundError,
-            );
-        });
-
-        it('should throw ExtensionNotFoundError if the extension is not rendered yet', () => {
-            expect(() => extensionMessenger.post(event.data, '123')).toThrow(
-                ExtensionNotFoundError,
-            );
-        });
-
-        it('should post to host if no extensionId is provided', () => {
-            Object.defineProperty(window.document, 'referrer', {
-                value: 'https://checkout.store',
-            });
-
-            event = {
-                ...event,
-                data: {
-                    type: 'HOST_COMMAND',
-                    payload: {
-                        message: 'SAMPLE',
-                    },
-                },
-            };
-
-            extensionMessenger.post(event.data);
-
-            expect(poster.setTargetOrigin).toHaveBeenCalledWith(window.document.referrer);
-            expect(poster.post).toHaveBeenCalledWith(event.data);
+            expect(extensionMessengerMock._posters['123'].post).toHaveBeenCalledWith(event.data);
         });
     });
 
@@ -128,7 +90,7 @@ describe('ExtensionMessenger', () => {
                 return eventEmitter.addListener(type, listener);
             });
 
-            extensionMessenger.listen(extensionCommandHandlers);
+            extensionMessenger.listen(extensions, extensionCommandHandlers);
         });
 
         it('should trigger extension command handler if extension and origin match', () => {
