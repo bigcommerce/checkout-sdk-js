@@ -7,7 +7,7 @@ import {
     ExtensionListenEventType,
     ExtensionPostEvent,
     ExtensionPostEventType,
-} from './create-extension-service';
+} from './extension-client';
 import ExtensionService from './extension-service';
 
 describe('ExtensionService', () => {

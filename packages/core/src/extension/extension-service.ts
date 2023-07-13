@@ -1,5 +1,3 @@
-// imports types
-
 import { noop } from 'lodash';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
@@ -8,7 +6,7 @@ import {
     ExtensionListenEventMap,
     ExtensionListenEventType,
     ExtensionPostEvent,
-} from './create-extension-service';
+} from './extension-client';
 
 export default class ExtensionService {
     private _extensionId?: number;

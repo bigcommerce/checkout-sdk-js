@@ -1,8 +1,4 @@
-import { IframeEventListener, IframeEventPoster } from '../common/iframe';
-
-import ExtensionService from './extension-service';
-
-export interface CreateExtensionServiceOptions {
+export interface InitializeExtensionServiceOptions {
     extensionId: number;
     parentOrigin: string;
 }
@@ -52,17 +48,3 @@ export type ExtensionPostEvent =
     | ExtensionReloadEvent
     | ExtensionShowLoadingIndicatorEvent
     | ExtensionFrameLoadedEvent;
-
-export default function initializeExtensionService(options: CreateExtensionServiceOptions) {
-    const { extensionId, parentOrigin } = options;
-
-    const extension = new ExtensionService(
-        new IframeEventListener<ExtensionListenEventMap>(parentOrigin),
-        new IframeEventPoster<ExtensionPostEvent>(parentOrigin),
-    );
-
-    extension.initialize(extensionId);
-    extension.post({ type: ExtensionPostEventType.FRAME_LOADED, payload: { extensionId } });
-
-    return extension;
-}
