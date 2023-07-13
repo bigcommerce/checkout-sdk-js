@@ -1509,7 +1509,7 @@ describe('CheckoutService', () => {
 
             jest.spyOn(extensionMessenger, 'listen');
 
-            checkoutService.handleExtensionCommand(extensions[0].id, handlers);
+            checkoutService.addExtensionCommandHandlers(extensions[0].id, handlers);
 
             expect(extensionMessenger.listen).toHaveBeenCalledWith(
                 extensions,
@@ -1524,8 +1524,8 @@ describe('CheckoutService', () => {
 
             jest.spyOn(extensionMessenger, 'stopListen');
 
-            checkoutService.handleExtensionCommand(extensions[0].id, handlers);
-            checkoutService.stopHandleExtensionCommand(extensions[0].id, handlers);
+            checkoutService.addExtensionCommandHandlers(extensions[0].id, handlers);
+            checkoutService.removeExtensionCommandHandlers(extensions[0].id, handlers);
 
             expect(extensionMessenger.stopListen).toHaveBeenCalledWith(extensions[0].id, handlers);
         });

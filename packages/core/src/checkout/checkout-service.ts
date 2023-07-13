@@ -1412,7 +1412,7 @@ export default class CheckoutService {
      * @param extensionId - The ID of an extension sending the commands.
      * @param handlers - A set of handlers for the extension commands.
      */
-    handleExtensionCommand(extensionId: string, handlers: ExtensionCommandHandlers): void {
+    addExtensionCommandHandlers(extensionId: string, handlers: ExtensionCommandHandlers): void {
         const extensions = this.getState().data.getExtensions() || [];
 
         this._extensionMessenger.listen(extensions, extensionId, handlers);
@@ -1425,7 +1425,7 @@ export default class CheckoutService {
      * @param extensionId - The ID of the extension that originally sent the commands.
      * @param handlers - The set of handlers to be removed for the extension commands.
      */
-    stopHandleExtensionCommand(extensionId: string, handlers: ExtensionCommandHandlers): void {
+    removeExtensionCommandHandlers(extensionId: string, handlers: ExtensionCommandHandlers): void {
         this._extensionMessenger.stopListen(extensionId, handlers);
     }
 
