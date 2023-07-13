@@ -3,7 +3,7 @@ export interface InitializeExtensionServiceOptions {
     parentOrigin: string;
 }
 
-export const enum ExtensionListenEventType {
+export enum ExtensionListenEventType {
     BroadcastCart = 'BROADCAST_CART',
     ShippingCountryChange = 'SHIPPING_COUNTRY_CHANGE',
 }
@@ -20,7 +20,7 @@ export interface ExtensionListenEventMap {
     };
 }
 
-export const enum ExtensionPostEventType {
+export enum ExtensionPostEventType {
     FRAME_LOADED = 'FRAME_LOADED',
     RELOAD_CHECKOUT = 'RELOAD_CHECKOUT',
     SHOW_LOADING_INDICATOR = 'SHOW_LOADING_INDICATOR',

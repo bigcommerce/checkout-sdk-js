@@ -6,6 +6,7 @@ import {
     ExtensionListenEventMap,
     ExtensionListenEventType,
     ExtensionPostEvent,
+    ExtensionPostEventType,
 } from './extension-client';
 
 export default class ExtensionService {
@@ -33,6 +34,10 @@ export default class ExtensionService {
 
         this._eventPoster.setTarget(window.parent);
 
+        if (!Object.values(ExtensionPostEventType).includes(event.type)) {
+            throw new Error(`${event.type} is not supported.`);
+        }
+
         const payload = {
             ...event.payload,
             extensionId: this._extensionId,
@@ -42,6 +47,10 @@ export default class ExtensionService {
     }
 
     addListener(eventType: ExtensionListenEventType, callback: () => void = noop): void {
+        if (!Object.values(ExtensionListenEventType).includes(eventType)) {
+            return;
+        }
+
         this._eventListener.addListener(eventType, callback);
     }
 }

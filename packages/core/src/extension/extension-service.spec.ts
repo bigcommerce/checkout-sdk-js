@@ -52,9 +52,20 @@ describe('ExtensionService', () => {
         expect(eventPoster.post).toHaveBeenCalledWith({
             type: ExtensionPostEventType.FRAME_LOADED,
             payload: {
-                extensionId: 1,
+                extensionId: 'test',
             },
         });
+    });
+
+    it('#post throws error if event name is not passed correctly', () => {
+        extensionService.initialize('test');
+
+        const event: ExtensionPostEvent = {
+            type: 'some-event' as ExtensionPostEventType,
+            payload: {},
+        };
+
+        expect(() => extensionService.post(event)).toThrow('some-event is not supported.');
     });
 
     it('#addListener adds callback as noop if no callback method is passed', () => {
@@ -66,6 +77,14 @@ describe('ExtensionService', () => {
             ExtensionListenEventType.BroadcastCart,
             noop,
         );
+    });
+
+    it('#addListener is not called if event name is not correct', () => {
+        extensionService.initialize('test');
+
+        extensionService.addListener('someevent' as ExtensionListenEventType);
+
+        expect(eventListener.addListener).not.toHaveBeenCalled();
     });
 
     it('#addListener is called correctly with params', () => {
