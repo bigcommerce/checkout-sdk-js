@@ -3,7 +3,7 @@ import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import { Extension } from './extension';
+import { Extension, ExtensionRegion } from './extension';
 import {
     createExtensionSelectorFactory,
     ExtensionSelector,
@@ -43,7 +43,7 @@ describe('ExtensionSelector', () => {
             extensionSelector = createExtensionSelector(state.extensions);
 
             const extension = extensionSelector.getExtensionByRegion(
-                'shipping.shippingAddressForm.after',
+                ExtensionRegion.ShippingShippingAddressFormAfter,
             );
 
             expect(extension).toEqual(getExtensions()[1]);
@@ -64,7 +64,7 @@ describe('ExtensionSelector', () => {
             });
 
             const extension = extensionSelector.getExtensionByRegion(
-                'shipping.shippingAddressForm.before',
+                ExtensionRegion.ShippingShippingAddressFormBefore,
             );
 
             expect(extension).toEqual(extensions[0]);
@@ -77,7 +77,7 @@ describe('ExtensionSelector', () => {
             });
 
             const extension = extensionSelector.getExtensionByRegion(
-                'shipping.shippingAddressForm.after',
+                ExtensionRegion.ShippingShippingAddressFormAfter,
             );
 
             expect(extension).toBeUndefined();

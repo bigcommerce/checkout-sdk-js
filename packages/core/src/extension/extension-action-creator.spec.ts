@@ -11,7 +11,7 @@ import { getErrorResponse, getResponse } from '../common/http-request/responses.
 import { EmbeddedCheckoutEventType } from '../embedded-checkout/embedded-checkout-events';
 import { NotEmbeddableError } from '../embedded-checkout/errors';
 
-import { Extension } from './extension';
+import { Extension, ExtensionRegion } from './extension';
 import { ExtensionActionCreator } from './extension-action-creator';
 import { ExtensionActionType } from './extension-actions';
 import { ExtensionRequestSender } from './extension-request-sender';
@@ -97,7 +97,7 @@ describe('ExtensionActionCreator', () => {
             await from(
                 extensionActionCreator.renderExtension(
                     'foo',
-                    'shipping.shippingAddressForm.after',
+                    ExtensionRegion.ShippingShippingAddressFormAfter,
                 )(store),
             )
                 .pipe(catchError(errorHandler))
@@ -128,7 +128,7 @@ describe('ExtensionActionCreator', () => {
             const actions = await from(
                 extensionActionCreator.renderExtension(
                     'foo',
-                    'shipping.shippingAddressForm.before',
+                    ExtensionRegion.ShippingShippingAddressFormBefore,
                 )(store),
             )
                 .pipe(toArray())
@@ -147,7 +147,7 @@ describe('ExtensionActionCreator', () => {
             const actions = await from(
                 extensionActionCreator.renderExtension(
                     'foo',
-                    'shipping.shippingAddressForm.after',
+                    ExtensionRegion.ShippingShippingAddressFormAfter,
                 )(store),
             )
                 .pipe(catchError(errorHandler), toArray())

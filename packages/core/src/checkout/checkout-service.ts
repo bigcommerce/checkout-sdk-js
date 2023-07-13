@@ -76,13 +76,13 @@ export default class CheckoutService {
     private _storeProjection: DataStoreProjection<CheckoutSelectors>;
     private _errorTransformer: ErrorMessageTransformer;
     private _selectorsFactory: CheckoutSelectorsFactory;
-    private _extensionMessenger: ExtensionMessenger;
 
     /**
      * @internal
      */
     constructor(
         private _store: CheckoutStore,
+        private _extensionMessenger: ExtensionMessenger,
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _configActionCreator: ConfigActionCreator,
@@ -110,7 +110,6 @@ export default class CheckoutService {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
         this._selectorsFactory = createCheckoutSelectorsFactory();
         this._storeProjection = createDataStoreProjection(this._store, this._selectorsFactory);
-        this._extensionMessenger = new ExtensionMessenger();
     }
 
     /**
@@ -1407,15 +1406,27 @@ export default class CheckoutService {
     }
 
     /**
-     * Registers command handlers.
+     * Registers an extension's command handlers.
      *
      * @alpha
-     * @param handlers - a set of handlers for checkout extension commands
+     * @param extensionId - The ID of an extension sending the commands.
+     * @param handlers - A set of handlers for the extension commands.
      */
-    handleExtensionCommand(handlers: ExtensionCommandHandlers): void {
+    handleExtensionCommand(extensionId: string, handlers: ExtensionCommandHandlers): void {
         const extensions = this.getState().data.getExtensions() || [];
 
-        this._extensionMessenger.listen(extensions, handlers);
+        this._extensionMessenger.listen(extensions, extensionId, handlers);
+    }
+
+    /**
+     * Deregisters an extension's command handlers.
+     *
+     * @alpha
+     * @param extensionId - The ID of the extension that originally sent the commands.
+     * @param handlers - The set of handlers to be removed for the extension commands.
+     */
+    stopHandleExtensionCommand(extensionId: string, handlers: ExtensionCommandHandlers): void {
+        this._extensionMessenger.stopListen(extensionId, handlers);
     }
 
     /**

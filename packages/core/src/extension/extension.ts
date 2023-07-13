@@ -5,6 +5,7 @@ export interface Extension {
     url: string;
 }
 
-export type ExtensionRegion =
-    | 'shipping.shippingAddressForm.before'
-    | 'shipping.shippingAddressForm.after';
+export const enum ExtensionRegion {
+    ShippingShippingAddressFormBefore = 'shipping.shippingAddressForm.before',
+    ShippingShippingAddressFormAfter = 'shipping.shippingAddressForm.after',
+}

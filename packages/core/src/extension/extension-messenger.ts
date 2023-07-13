@@ -1,46 +1,63 @@
-import { IframeEventPoster } from '../common/iframe';
-import { appendWww, parseUrl } from '../common/url';
-import { bindDecorator as bind } from '../common/utility';
+import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
 import { ExtensionNotFoundError } from './errors';
 import { Extension } from './extension';
 import { ExtensionCommandHandlers } from './extension-command-handler';
-import { ExtensionOriginEvent } from './extension-origin-event';
+import { ExtensionOriginEventMap, stringToExtensionCommand } from './extension-origin-event';
 import { HostOriginEvent } from './host-origin-event';
 
 export class ExtensionMessenger {
-    private _isListening = false;
     private _extensions: Extension[] | undefined;
-    private _extensionCommandHandlers: ExtensionCommandHandlers = {};
+    private _listeners: { [extensionId: string]: IframeEventListener<ExtensionOriginEventMap> } =
+        {};
     private _posters: { [extensionId: string]: IframeEventPoster<HostOriginEvent> } = {};
 
-    listen(extensions: Extension[], extensionCommandHandlers: ExtensionCommandHandlers): void {
+    listen(
+        extensions: Extension[],
+        extensionId: string,
+        extensionCommandHandlers: ExtensionCommandHandlers,
+    ): void {
         this._extensions = extensions;
-        this._extensionCommandHandlers = extensionCommandHandlers;
 
-        if (this._isListening) {
+        const extension = this._getExtensionById(extensionId);
+
+        if (!this._listeners[extensionId]) {
+            this._listeners[extensionId] = new IframeEventListener(extension.url);
+        }
+
+        const listener = this._listeners[extensionId];
+
+        listener.listen();
+
+        Object.entries(extensionCommandHandlers).forEach(([command, handler]) => {
+            const extensionCommand = stringToExtensionCommand(command);
+
+            if (extensionCommand && handler) {
+                listener.addListener(extensionCommand, handler);
+            }
+        });
+    }
+
+    stopListen(extensionId: string, extensionCommandHandlers: ExtensionCommandHandlers): void {
+        if (!this._listeners[extensionId]) {
             return;
         }
 
-        this._isListening = true;
+        const listener = this._listeners[extensionId];
 
-        window.addEventListener('message', this._handleMessage);
+        Object.entries(extensionCommandHandlers).forEach(([command, handler]) => {
+            const extensionCommand = stringToExtensionCommand(command);
+
+            if (extensionCommand && handler) {
+                listener.removeListener(extensionCommand, handler);
+            }
+        });
+
+        listener.stopListen();
     }
 
     post(extensionId: string, event: HostOriginEvent): void {
-        if (!this._extensions) {
-            throw new ExtensionNotFoundError(
-                `Extension configurations not found or listen() not utilized prior.`,
-            );
-        }
-
-        const extension = this._extensions.find((e) => e.id === extensionId);
-
-        if (!extension) {
-            throw new ExtensionNotFoundError(
-                `Unable to post due to no extension found for ID: ${extensionId}.`,
-            );
-        }
+        const extension = this._getExtensionById(extensionId);
 
         const iframe = document
             .querySelector(`[data-extension-id="${extensionId}"]`)
@@ -59,43 +76,21 @@ export class ExtensionMessenger {
         this._posters[extensionId].post(event);
     }
 
-    @bind
-    private _handleMessage(event: MessageEvent): void {
-        const extensionId = event.data.payload?.extensionId;
-
-        if (!extensionId || !this._extensions) {
-            return;
+    private _getExtensionById(extensionId: string): Extension {
+        if (!this._extensions) {
+            throw new ExtensionNotFoundError(
+                `Extension configurations not found or listen() not utilized prior.`,
+            );
         }
 
         const extension = this._extensions.find((e) => e.id === extensionId);
 
         if (!extension) {
-            return;
+            throw new ExtensionNotFoundError(
+                `Unable to post due to no extension found for ID: ${extensionId}.`,
+            );
         }
 
-        const extensionOrigin = [
-            parseUrl(extension.url).origin,
-            appendWww(parseUrl(extension.url)).origin,
-        ];
-
-        if (extensionOrigin.indexOf(event.origin) === -1) {
-            return;
-        }
-
-        this._trigger(event.data);
-    }
-
-    private _trigger(data: ExtensionOriginEvent): void {
-        if (!this._extensionCommandHandlers) {
-            return;
-        }
-
-        const handler = this._extensionCommandHandlers[data.type];
-
-        if (!handler) {
-            return;
-        }
-
-        handler(data);
+        return extension;
     }
 }

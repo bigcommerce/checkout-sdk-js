@@ -1,6 +1,6 @@
-import { Extension } from './extension';
+import { Extension, ExtensionRegion } from './extension';
 import { ExtensionCommandHandlers } from './extension-command-handler';
-import { ExtensionOriginEvent } from './extension-origin-event';
+import { ExtensionCommand, ExtensionOriginEvent } from './extension-origin-event';
 import { ExtensionState } from './extension-state';
 
 export function getExtensions(): Extension[] {
@@ -8,13 +8,13 @@ export function getExtensions(): Extension[] {
         {
             id: '123',
             name: 'Foo',
-            region: 'shipping.shippingAddressForm.before',
+            region: ExtensionRegion.ShippingShippingAddressFormBefore,
             url: 'https://widget.foo.com/',
         },
         {
             id: '456',
             name: 'Bar',
-            region: 'shipping.shippingAddressForm.after',
+            region: ExtensionRegion.ShippingShippingAddressFormAfter,
             url: 'https://widget.bar.com/',
         },
     ];
@@ -30,8 +30,9 @@ export function getExtensionState(): ExtensionState {
 
 export function getExtensionCommandHandlers(): ExtensionCommandHandlers {
     return {
-        RELOAD_CHECKOUT: jest.fn(),
-        SHOW_LOADING_INDICATOR: jest.fn(),
+        [ExtensionCommand.ReloadCheckout]: jest.fn(),
+        [ExtensionCommand.ShowLoadingIndicator]: jest.fn(),
+        [ExtensionCommand.SetIframeStyle]: jest.fn(),
     };
 }
 
@@ -42,7 +43,7 @@ export function getExtensionMessageEvent(): {
     return {
         origin: 'https://widget.foo.com',
         data: {
-            type: 'RELOAD_CHECKOUT',
+            type: ExtensionCommand.ReloadCheckout,
             payload: {
                 extensionId: '123',
             },

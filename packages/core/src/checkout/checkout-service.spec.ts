@@ -35,6 +35,8 @@ import CustomerStrategyRegistryV2 from '../customer/customer-strategy-registry-v
 import {
     ExtensionActionCreator,
     ExtensionActionType,
+    ExtensionMessenger,
+    ExtensionRegion,
     ExtensionRequestSender,
     getExtensionCommandHandlers,
     getExtensions,
@@ -143,9 +145,12 @@ describe('CheckoutService', () => {
     let spamProtectionActionCreator: SpamProtectionActionCreator;
     let store: CheckoutStore;
     let storeCreditRequestSender: StoreCreditRequestSender;
+    let extensionMessenger: ExtensionMessenger;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
+
+        extensionMessenger = new ExtensionMessenger();
 
         const locale = 'en';
         const requestSender = createRequestSender();
@@ -369,6 +374,7 @@ describe('CheckoutService', () => {
 
         checkoutService = new CheckoutService(
             store,
+            extensionMessenger,
             billingAddressActionCreator,
             checkoutActionCreator,
             configActionCreator,
@@ -1488,7 +1494,7 @@ describe('CheckoutService', () => {
             );
 
             const container = 'checkout.extension';
-            const region = 'shipping.shippingAddressForm.before';
+            const region = ExtensionRegion.ShippingShippingAddressFormBefore;
 
             await checkoutService.renderExtension(container, region);
 
@@ -1498,19 +1504,30 @@ describe('CheckoutService', () => {
 
     describe('#handleExtensionCommand()', () => {
         it('handles extension command', async () => {
-            const checkoutServiceMock: any = checkoutService;
-            const listenMock = jest.fn();
-
-            checkoutServiceMock._extensionMessenger = {
-                listen: listenMock,
-            };
-
             const extensions = getExtensions();
             const handlers = getExtensionCommandHandlers();
 
-            checkoutService.handleExtensionCommand(handlers);
+            jest.spyOn(extensionMessenger, 'listen');
 
-            expect(listenMock).toHaveBeenCalledWith(extensions, handlers);
+            checkoutService.handleExtensionCommand(extensions[0].id, handlers);
+
+            expect(extensionMessenger.listen).toHaveBeenCalledWith(
+                extensions,
+                extensions[0].id,
+                handlers,
+            );
+        });
+
+        it('stops handling extension command', async () => {
+            const extensions = getExtensions();
+            const handlers = getExtensionCommandHandlers();
+
+            jest.spyOn(extensionMessenger, 'stopListen');
+
+            checkoutService.handleExtensionCommand(extensions[0].id, handlers);
+            checkoutService.stopHandleExtensionCommand(extensions[0].id, handlers);
+
+            expect(extensionMessenger.stopListen).toHaveBeenCalledWith(extensions[0].id, handlers);
         });
     });
 });

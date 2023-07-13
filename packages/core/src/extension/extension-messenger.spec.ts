@@ -1,5 +1,3 @@
-import { EventEmitter } from 'events';
-
 import { ExtensionNotFoundError } from './errors';
 import { Extension } from './extension';
 import { ExtensionCommandHandlers } from './extension-command-handler';
@@ -15,7 +13,6 @@ describe('ExtensionMessenger', () => {
     let extensionMessenger: ExtensionMessenger;
     let extensions: Extension[];
     let extensionCommandHandlers: ExtensionCommandHandlers;
-    let eventEmitter: EventEmitter;
     let event: {
         origin: string;
         data: ExtensionOriginEvent;
@@ -25,32 +22,31 @@ describe('ExtensionMessenger', () => {
         extensions = getExtensions();
         extensionMessenger = new ExtensionMessenger();
         extensionCommandHandlers = getExtensionCommandHandlers();
-        eventEmitter = new EventEmitter();
         event = getExtensionMessageEvent();
     });
 
-    describe('#listen()', () => {
-        beforeEach(() => {
-            window.addEventListener = jest.fn();
-        });
-
+    describe('#listen() and #stopListen()', () => {
         it('should add event listener', () => {
-            extensionMessenger.listen(extensions, extensionCommandHandlers);
+            window.addEventListener = jest.fn();
 
-            expect(window.addEventListener).toHaveBeenCalledTimes(1);
+            extensionMessenger.listen(extensions, extensions[0].id, extensionCommandHandlers);
+
+            expect(window.addEventListener).toHaveBeenCalled();
         });
 
-        it('should not add event listener if already listening', () => {
-            extensionMessenger.listen(extensions, extensionCommandHandlers);
-            extensionMessenger.listen(extensions, extensionCommandHandlers);
+        it('should remove event listener', () => {
+            window.removeEventListener = jest.fn();
 
-            expect(window.addEventListener).toHaveBeenCalledTimes(1);
+            extensionMessenger.listen(extensions, extensions[0].id, extensionCommandHandlers);
+            extensionMessenger.stopListen(extensions[0].id, extensionCommandHandlers);
+
+            expect(window.removeEventListener).toHaveBeenCalled();
         });
     });
 
     describe('#post()', () => {
         beforeEach(() => {
-            extensionMessenger.listen(extensions, extensionCommandHandlers);
+            extensionMessenger.listen(extensions, extensions[0].id, extensionCommandHandlers);
         });
 
         it('should throw ExtensionNotFoundError if extensionId is provided but no extension is found', () => {
@@ -60,16 +56,17 @@ describe('ExtensionMessenger', () => {
         });
 
         it('should throw ExtensionNotFoundError if the extension is not rendered yet', () => {
-            expect(() => extensionMessenger.post('123', event.data)).toThrow(
+            expect(() => extensionMessenger.post(extensions[0].id, event.data)).toThrow(
                 ExtensionNotFoundError,
             );
         });
 
         it('should post to an extension', () => {
+            const extensionId = extensions[0].id;
             const extensionMessengerMock: any = extensionMessenger;
 
-            extensionMessengerMock._posters['123'] = jest.fn();
-            extensionMessengerMock._posters['123'].post = jest.fn();
+            extensionMessengerMock._posters[extensionId] = jest.fn();
+            extensionMessengerMock._posters[extensionId].post = jest.fn();
 
             const container = document.createElement('div');
             const iframe = document.createElement('iframe');
@@ -79,60 +76,11 @@ describe('ExtensionMessenger', () => {
             document.querySelector = jest.fn().mockReturnValue(container);
             jest.spyOn(iframe, 'contentWindow', 'get').mockReturnValue(window);
 
-            extensionMessenger.post('123', event.data);
+            extensionMessenger.post(extensionId, event.data);
 
-            expect(extensionMessengerMock._posters['123'].post).toHaveBeenCalledWith(event.data);
-        });
-    });
-
-    describe('#handleMessage() and #trigger()', () => {
-        beforeEach(() => {
-            jest.spyOn(window, 'addEventListener').mockImplementation((type, listener) => {
-                return eventEmitter.addListener(type, listener);
-            });
-
-            extensionMessenger.listen(extensions, extensionCommandHandlers);
-        });
-
-        it('should trigger extension command handler if extension and origin match', () => {
-            eventEmitter.emit('message', event);
-
-            expect(extensionCommandHandlers[event.data.type]).toHaveBeenCalledWith(event.data);
-        });
-
-        it('should not trigger extension command handler if extension does not exist', () => {
-            eventEmitter.emit('message', {
-                ...event,
-                data: {
-                    ...event.data,
-                    payload: {
-                        extensionId: 'not exist',
-                    },
-                },
-            });
-
-            expect(extensionCommandHandlers[event.data.type]).not.toHaveBeenCalled();
-        });
-
-        it('should not trigger extension command handler if origin does not match', () => {
-            eventEmitter.emit('message', {
-                ...event,
-                origin: 'not.right',
-            });
-
-            expect(extensionCommandHandlers[event.data.type]).not.toHaveBeenCalled();
-        });
-
-        it('should not trigger extension command handler if extensionId is missing', () => {
-            eventEmitter.emit('message', {
-                ...event,
-                data: {
-                    ...event.data,
-                    payload: {},
-                },
-            });
-
-            expect(extensionCommandHandlers[event.data.type]).not.toHaveBeenCalled();
+            expect(extensionMessengerMock._posters[extensionId].post).toHaveBeenCalledWith(
+                event.data,
+            );
         });
     });
 });
