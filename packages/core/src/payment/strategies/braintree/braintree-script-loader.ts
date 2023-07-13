@@ -15,7 +15,7 @@ import {
     BraintreeVisaCheckoutCreator,
 } from './braintree';
 
-const version = '3.81.0';
+const version = '3.95.0';
 
 export default class BraintreeScriptLoader {
     constructor(

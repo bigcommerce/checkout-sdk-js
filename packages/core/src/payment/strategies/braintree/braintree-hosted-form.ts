@@ -3,7 +3,6 @@ import { Dictionary, isEmpty, isNil, omitBy } from 'lodash';
 import { Address } from '../../../address';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { PaymentInvalidFormError, PaymentInvalidFormErrorDetails } from '../../errors';
-import { NonceInstrument } from '../../payment';
 
 import {
     BraintreeBillingAddressRequestData,
@@ -13,6 +12,7 @@ import {
     BraintreeHostedFieldsCreatorConfig,
     BraintreeHostedFieldsState,
     BraintreeHostedFormError,
+    TokenizationPayload,
 } from './braintree';
 import {
     BraintreeFormFieldsMap,
@@ -92,13 +92,13 @@ export default class BraintreeHostedForm {
         this._cardNameField?.detach();
     }
 
-    async tokenize(billingAddress: Address): Promise<NonceInstrument> {
+    async tokenize(billingAddress: Address): Promise<TokenizationPayload> {
         if (!this._cardFields) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         try {
-            const { nonce } = await this._cardFields.tokenize(
+            const tokenizationPayload = await this._cardFields.tokenize(
                 omitBy(
                     {
                         billingAddress: billingAddress && this._mapBillingAddress(billingAddress),
@@ -113,7 +113,10 @@ export default class BraintreeHostedForm {
                 errors: {},
             });
 
-            return { nonce };
+            return {
+                nonce: tokenizationPayload.nonce,
+                bin: tokenizationPayload.details?.bin,
+            };
         } catch (error) {
             const errors = this._mapTokenizeError(error);
 
@@ -130,13 +133,13 @@ export default class BraintreeHostedForm {
         }
     }
 
-    async tokenizeForStoredCardVerification(): Promise<NonceInstrument> {
+    async tokenizeForStoredCardVerification(): Promise<TokenizationPayload> {
         if (!this._cardFields) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         try {
-            const { nonce } = await this._cardFields.tokenize(
+            const tokenizationPayload = await this._cardFields.tokenize(
                 omitBy(
                     {
                         cardholderName: this._cardNameField?.getValue(),
@@ -150,7 +153,10 @@ export default class BraintreeHostedForm {
                 errors: {},
             });
 
-            return { nonce };
+            return {
+                nonce: tokenizationPayload.nonce,
+                bin: tokenizationPayload.details?.bin,
+            };
         } catch (error) {
             const errors = this._mapTokenizeError(error, true);
 

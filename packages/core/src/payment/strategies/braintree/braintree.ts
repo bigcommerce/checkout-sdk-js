@@ -187,7 +187,7 @@ export interface BraintreeRequestData {
 }
 
 export interface BraintreeTokenizeResponse {
-    creditCards: Array<{ nonce: string }>;
+    creditCards: BraintreeHostedFieldsTokenizePayload[];
 }
 
 /**
@@ -359,6 +359,11 @@ export interface BraintreeHostedFieldsTokenizePayload {
     };
 }
 
+export interface TokenizationPayload {
+    nonce: string;
+    bin: string;
+}
+
 export interface BraintreeBillingAddressRequestData {
     postalCode?: string;
     firstName?: string;
@@ -402,6 +407,7 @@ export interface BraintreeThreeDSecureCreatorConfig extends BraintreeModuleCreat
 export interface BraintreeThreeDSecureOptions {
     nonce: string;
     amount: number;
+    bin?: string;
     challengeRequested: boolean;
     showLoader?: boolean;
     addFrame(error: Error | undefined, iframe: HTMLIFrameElement): void;

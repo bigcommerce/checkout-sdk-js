@@ -10,7 +10,7 @@ import {
     BraintreePaypalCheckoutCreator,
 } from './braintree';
 
-const VERSION = '3.81.0';
+const VERSION = '3.95.0';
 
 export default class BraintreeScriptLoader {
     constructor(

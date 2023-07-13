@@ -40,6 +40,7 @@ import PaymentRequestTransformer from '../../payment-request-transformer';
 import BraintreeCreditCardPaymentStrategy from './braintree-credit-card-payment-strategy';
 import { BraintreePaymentInitializeOptions } from './braintree-payment-options';
 import BraintreePaymentProcessor from './braintree-payment-processor';
+import { getTokenizeResponseBody } from './braintree.mock';
 
 describe('BraintreeCreditCardPaymentStrategy', () => {
     let order: Order;
@@ -587,6 +588,11 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                     },
                 };
 
+                jest.spyOn(
+                    store.getState().instruments,
+                    'getCardInstrumentOrThrow',
+                ).mockImplementation(jest.fn(() => getTokenizeResponseBody()));
+
                 await braintreeCreditCardPaymentStrategy.initialize({
                     methodId: paymentMethodMock.id,
                 });
@@ -594,7 +600,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
                 expect(braintreePaymentProcessorMock.challenge3DSVerification).toHaveBeenCalledWith(
-                    threeDSecureNonce,
+                    { nonce: threeDSecureNonce },
                     getOrder().orderAmount,
                 );
             });

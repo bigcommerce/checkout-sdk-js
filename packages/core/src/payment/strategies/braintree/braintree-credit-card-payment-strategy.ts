@@ -216,9 +216,22 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         }
 
         try {
+            const {
+                instruments: { getCardInstrumentOrThrow },
+            } = this._store.getState();
             const { payer_auth_request: storedCreditCardNonce } = error.body.three_ds_result || {};
+            const { paymentData } = payment;
+
+            if (!paymentData || !isVaultedInstrument(paymentData)) {
+                throw new PaymentArgumentInvalidError(['instrumentId']);
+            }
+
+            const instrument = getCardInstrumentOrThrow(paymentData.instrumentId);
             const { nonce } = await this._braintreePaymentProcessor.challenge3DSVerification(
-                storedCreditCardNonce,
+                {
+                    nonce: storedCreditCardNonce,
+                    bin: instrument.iin,
+                },
                 orderAmount,
             );
 

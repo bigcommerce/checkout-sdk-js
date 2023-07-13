@@ -109,7 +109,32 @@ export function getModuleCreatorNewMock<T>(
 
 export function getTokenizeResponseBody(): BraintreeTokenizeResponse {
     return {
-        creditCards: [{ nonce: 'demo_nonce' }],
+        creditCards: [
+            {
+                nonce: 'demo_nonce',
+                details: {
+                    bin: 'demo_bin',
+                    cardType: 'Visa',
+                    expirationMonth: '01',
+                    expirationYear: '2025',
+                    lastFour: '0001',
+                    lastTwo: '01',
+                },
+                description: 'ending in 01',
+                type: 'CreditCard',
+                binData: {
+                    commercial: 'bin_data_commercial',
+                    countryOfIssuance: 'bin_data_country_of_issuance',
+                    debit: 'bin_data_debit',
+                    durbinRegulated: 'bin_data_durbin_regulated',
+                    healthcare: 'bin_data_healthcare',
+                    issuingBank: 'bin_data_issuing_bank',
+                    payroll: 'bin_data_payroll',
+                    prepaid: 'bin_data_prepaid',
+                    productId: 'bin_data_product_id',
+                },
+            },
+        ],
     };
 }
 
