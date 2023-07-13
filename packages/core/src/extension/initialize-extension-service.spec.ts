@@ -5,7 +5,7 @@ import initializeExtensionService from './initialize-extension-service';
 describe('initializeExtensionService', () => {
     it('initializes extension service correctly', () => {
         const options: InitializeExtensionServiceOptions = {
-            extensionId: 1,
+            extensionId: 'test',
             parentOrigin: 'https://test.com',
         };
 

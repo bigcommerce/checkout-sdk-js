@@ -28,19 +28,19 @@ describe('ExtensionService', () => {
     });
 
     it('#initializes success fully', () => {
-        extensionService.initialize(1);
+        extensionService.initialize('test');
 
         expect(eventListener.listen).toHaveBeenCalled();
     });
 
     it('#initialize throws error if no extension Id is passed', () => {
-        expect(() => extensionService.initialize(undefined as unknown as number)).toThrow(
+        expect(() => extensionService.initialize(undefined as unknown as string)).toThrow(
             new Error('Extension Id not found.'),
         );
     });
 
     it('#post throws error if extension id is not set', () => {
-        extensionService.initialize(1);
+        extensionService.initialize('test');
 
         const event: ExtensionPostEvent = {
             type: ExtensionPostEventType.FRAME_LOADED,
@@ -58,7 +58,7 @@ describe('ExtensionService', () => {
     });
 
     it('#addListener adds callback as noop if no callback method is passed', () => {
-        extensionService.initialize(1);
+        extensionService.initialize('test');
 
         extensionService.addListener(ExtensionListenEventType.BroadcastCart);
 
@@ -69,7 +69,7 @@ describe('ExtensionService', () => {
     });
 
     it('#addListener is called correctly with params', () => {
-        extensionService.initialize(1);
+        extensionService.initialize('test');
 
         const callbackFn = jest.fn();
 

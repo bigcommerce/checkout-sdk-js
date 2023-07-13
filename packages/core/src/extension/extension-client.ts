@@ -1,5 +1,5 @@
 export interface InitializeExtensionServiceOptions {
-    extensionId: number;
+    extensionId: string;
     parentOrigin: string;
 }
 
@@ -28,7 +28,7 @@ export const enum ExtensionPostEventType {
 
 export interface BaseEventPayload {
     payload: {
-        extensionId?: number;
+        extensionId?: string;
     };
 }
 

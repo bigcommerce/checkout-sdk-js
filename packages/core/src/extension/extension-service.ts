@@ -9,14 +9,14 @@ import {
 } from './extension-client';
 
 export default class ExtensionService {
-    private _extensionId?: number;
+    private _extensionId?: string;
 
     constructor(
         private _eventListener: IframeEventListener<ExtensionListenEventMap>,
         private _eventPoster: IframeEventPoster<ExtensionPostEvent>,
     ) {}
 
-    initialize(extensionId: number) {
+    initialize(extensionId: string) {
         if (!extensionId) {
             throw new Error('Extension Id not found.');
         }
