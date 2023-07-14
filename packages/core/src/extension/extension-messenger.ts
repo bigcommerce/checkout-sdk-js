@@ -1,4 +1,4 @@
-import { ReadableCheckoutStore } from '../checkout/checkout-store';
+import { ReadableCheckoutStore } from '../checkout';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
 import { ExtensionNotFoundError } from './errors';

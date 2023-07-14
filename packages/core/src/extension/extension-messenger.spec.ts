@@ -1,6 +1,5 @@
-import { ReadableCheckoutStore } from '../checkout/checkout-store';
+import { createCheckoutStore, ReadableCheckoutStore } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
-import createCheckoutStore from '../checkout/create-checkout-store';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
 import { ExtensionNotFoundError } from './errors';
