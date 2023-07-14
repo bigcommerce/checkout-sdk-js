@@ -35,10 +35,10 @@ import CustomerStrategyRegistryV2 from '../customer/customer-strategy-registry-v
 import {
     ExtensionActionCreator,
     ExtensionActionType,
+    ExtensionCommand,
     ExtensionMessenger,
     ExtensionRegion,
     ExtensionRequestSender,
-    getExtensionCommandHandlers,
     getExtensions,
 } from '../extension';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
@@ -150,7 +150,7 @@ describe('CheckoutService', () => {
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
 
-        extensionMessenger = new ExtensionMessenger();
+        extensionMessenger = new ExtensionMessenger(store, {}, {});
 
         const locale = 'en';
         const requestSender = createRequestSender();
@@ -1502,32 +1502,36 @@ describe('CheckoutService', () => {
         });
     });
 
-    describe('#handleExtensionCommand()', () => {
-        it('handles extension command', async () => {
+    describe('#listenExtensionCommand()', () => {
+        it('listens for extension commands', () => {
             const extensions = getExtensions();
-            const handlers = getExtensionCommandHandlers();
+            const handler = jest.fn();
 
             jest.spyOn(extensionMessenger, 'listen');
 
-            checkoutService.addExtensionCommandHandlers(extensions[0].id, handlers);
+            checkoutService.listenExtensionCommand(
+                extensions[0].id,
+                ExtensionCommand.ReloadCheckout,
+                handler,
+            );
 
             expect(extensionMessenger.listen).toHaveBeenCalledWith(
-                extensions,
                 extensions[0].id,
-                handlers,
+                ExtensionCommand.ReloadCheckout,
+                handler,
             );
         });
+    });
 
-        it('stops handling extension command', async () => {
+    describe('#stopListenExtensionCommand()', () => {
+        it('stops listening for extension commands', () => {
             const extensions = getExtensions();
-            const handlers = getExtensionCommandHandlers();
 
             jest.spyOn(extensionMessenger, 'stopListen');
 
-            checkoutService.addExtensionCommandHandlers(extensions[0].id, handlers);
-            checkoutService.removeExtensionCommandHandlers(extensions[0].id, handlers);
+            checkoutService.stopListenExtensionCommand(extensions[0].id);
 
-            expect(extensionMessenger.stopListen).toHaveBeenCalledWith(extensions[0].id, handlers);
+            expect(extensionMessenger.stopListen).toHaveBeenCalledWith(extensions[0].id);
         });
     });
 });

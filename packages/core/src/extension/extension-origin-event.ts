@@ -39,19 +39,3 @@ export interface SetIframeStylePayload {
         };
     };
 }
-
-export function stringToExtensionCommand(command: string): ExtensionCommand | undefined {
-    switch (command) {
-        case 'RELOAD_CHECKOUT':
-            return ExtensionCommand.ReloadCheckout;
-
-        case 'SHOW_LOADING_INDICATOR':
-            return ExtensionCommand.ShowLoadingIndicator;
-
-        case 'SET_IFRAME_STYLE':
-            return ExtensionCommand.SetIframeStyle;
-
-        default:
-            return undefined;
-    }
-}

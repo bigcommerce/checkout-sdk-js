@@ -1,5 +1,4 @@
 import { Extension, ExtensionRegion } from './extension';
-import { ExtensionCommandHandlers } from './extension-command-handler';
 import { ExtensionCommand, ExtensionOriginEvent } from './extension-origin-event';
 import { ExtensionState } from './extension-state';
 
@@ -25,14 +24,6 @@ export function getExtensionState(): ExtensionState {
         data: getExtensions(),
         errors: {},
         statuses: {},
-    };
-}
-
-export function getExtensionCommandHandlers(): ExtensionCommandHandlers {
-    return {
-        [ExtensionCommand.ReloadCheckout]: jest.fn(),
-        [ExtensionCommand.ShowLoadingIndicator]: jest.fn(),
-        [ExtensionCommand.SetIframeStyle]: jest.fn(),
     };
 }
 

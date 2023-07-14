@@ -1,8 +1,8 @@
 export { ExtensionRegion, Extension } from './extension';
-export { getExtensions, getExtensionCommandHandlers } from './extension.mock';
+export { getExtensions } from './extension.mock';
 export { ExtensionActionType } from './extension-actions';
 export { ExtensionActionCreator } from './extension-action-creator';
-export { ExtensionCommandHandler, ExtensionCommandHandlers } from './extension-command-handler';
+export { ExtensionCommandHandler } from './extension-command-handler';
 export { ExtensionIframe } from './extension-iframe';
 export { ExtensionMessenger } from './extension-messenger';
 export { ExtensionCommand, ExtensionOriginEvent } from './extension-origin-event';

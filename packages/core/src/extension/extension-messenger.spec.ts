@@ -1,86 +1,154 @@
+import CheckoutStore from '../checkout/checkout-store';
+import { getCheckoutStoreState } from '../checkout/checkouts.mock';
+import createCheckoutStore from '../checkout/create-checkout-store';
+import { IframeEventListener, IframeEventPoster } from '../common/iframe';
+
 import { ExtensionNotFoundError } from './errors';
+import { UnsupportedExtensionCommandError } from './errors/unsupported-extension-command-error';
 import { Extension } from './extension';
-import { ExtensionCommandHandlers } from './extension-command-handler';
+import { ExtensionCommandHandler } from './extension-command-handler';
 import { ExtensionMessenger } from './extension-messenger';
-import { ExtensionOriginEvent } from './extension-origin-event';
 import {
-    getExtensionCommandHandlers,
-    getExtensionMessageEvent,
-    getExtensions,
-} from './extension.mock';
+    ExtensionCommand,
+    ExtensionOriginEvent,
+    ExtensionOriginEventMap,
+} from './extension-origin-event';
+import { getExtensionMessageEvent, getExtensions } from './extension.mock';
 
 describe('ExtensionMessenger', () => {
+    let extension: Extension;
+    let extensionCommandHandler: ExtensionCommandHandler;
     let extensionMessenger: ExtensionMessenger;
-    let extensions: Extension[];
-    let extensionCommandHandlers: ExtensionCommandHandlers;
     let event: {
         origin: string;
         data: ExtensionOriginEvent;
     };
+    let store: CheckoutStore;
 
     beforeEach(() => {
-        extensions = getExtensions();
-        extensionMessenger = new ExtensionMessenger();
-        extensionCommandHandlers = getExtensionCommandHandlers();
+        store = createCheckoutStore(getCheckoutStoreState());
+        extension = getExtensions()[0];
         event = getExtensionMessageEvent();
+
+        extensionCommandHandler = jest.fn();
     });
 
     describe('#listen() and #stopListen()', () => {
-        it('should add event listener', () => {
-            window.addEventListener = jest.fn();
+        let listener: IframeEventListener<ExtensionOriginEventMap>;
 
-            extensionMessenger.listen(extensions, extensions[0].id, extensionCommandHandlers);
+        beforeEach(() => {
+            listener = new IframeEventListener(extension.url);
 
-            expect(window.addEventListener).toHaveBeenCalled();
+            const listeners = {
+                [extension.id]: listener,
+            };
+
+            extensionMessenger = new ExtensionMessenger(store, listeners, {});
         });
 
-        it('should remove event listener', () => {
-            window.removeEventListener = jest.fn();
+        it('should throw if unable to find the extensiion', () => {
+            expect(() =>
+                extensionMessenger.listen(
+                    'xxx',
+                    ExtensionCommand.ReloadCheckout,
+                    extensionCommandHandler,
+                ),
+            ).toThrow(ExtensionNotFoundError);
+        });
 
-            extensionMessenger.listen(extensions, extensions[0].id, extensionCommandHandlers);
-            extensionMessenger.stopListen(extensions[0].id, extensionCommandHandlers);
+        it('should throw if trying to listen for an unsupported command', () => {
+            expect(() =>
+                extensionMessenger.listen(
+                    extension.id,
+                    'INVALID_COMMAND' as ExtensionCommand,
+                    extensionCommandHandler,
+                ),
+            ).toThrow(UnsupportedExtensionCommandError);
+        });
 
-            expect(window.removeEventListener).toHaveBeenCalled();
+        it('should listen and add an event listener', () => {
+            jest.spyOn(listener, 'listen');
+            jest.spyOn(listener, 'addListener');
+
+            extensionMessenger.listen(
+                extension.id,
+                ExtensionCommand.ReloadCheckout,
+                extensionCommandHandler,
+            );
+
+            expect(listener.listen).toHaveBeenCalled();
+            expect(listener.addListener).toHaveBeenCalledWith(
+                ExtensionCommand.ReloadCheckout,
+                extensionCommandHandler,
+            );
+        });
+
+        it('should remove the event listener', () => {
+            jest.spyOn(listener, 'removeListener');
+
+            const remover = extensionMessenger.listen(
+                extension.id,
+                ExtensionCommand.ReloadCheckout,
+                extensionCommandHandler,
+            );
+
+            remover();
+
+            expect(listener.removeListener).toHaveBeenCalledWith(
+                ExtensionCommand.ReloadCheckout,
+                extensionCommandHandler,
+            );
+        });
+
+        it('should stop listening', () => {
+            jest.spyOn(listener, 'stopListen');
+
+            extensionMessenger.listen(
+                extension.id,
+                ExtensionCommand.ReloadCheckout,
+                extensionCommandHandler,
+            );
+
+            extensionMessenger.stopListen(extension.id);
+
+            expect(listener.stopListen).toHaveBeenCalled();
         });
     });
 
     describe('#post()', () => {
-        beforeEach(() => {
-            extensionMessenger.listen(extensions, extensions[0].id, extensionCommandHandlers);
-        });
-
-        it('should throw ExtensionNotFoundError if extensionId is provided but no extension is found', () => {
-            expect(() => extensionMessenger.post('567', event.data)).toThrow(
-                ExtensionNotFoundError,
-            );
-        });
-
         it('should throw ExtensionNotFoundError if the extension is not rendered yet', () => {
-            expect(() => extensionMessenger.post(extensions[0].id, event.data)).toThrow(
+            const container = document.createElement('div');
+
+            document.querySelector = jest.fn().mockReturnValue(container);
+
+            extensionMessenger = new ExtensionMessenger(store, {}, {});
+
+            expect(() => extensionMessenger.post(extension.id, event.data)).toThrow(
                 ExtensionNotFoundError,
             );
         });
 
         it('should post to an extension', () => {
-            const extensionId = extensions[0].id;
-            const extensionMessengerMock: any = extensionMessenger;
-
-            extensionMessengerMock._posters[extensionId] = jest.fn();
-            extensionMessengerMock._posters[extensionId].post = jest.fn();
-
             const container = document.createElement('div');
             const iframe = document.createElement('iframe');
 
             container.appendChild(iframe);
 
+            const poster = new IframeEventPoster(extension.url, window);
+            const posters = {
+                [extension.id]: poster,
+            };
+
+            extensionMessenger = new ExtensionMessenger(store, {}, posters);
+
             document.querySelector = jest.fn().mockReturnValue(container);
+
             jest.spyOn(iframe, 'contentWindow', 'get').mockReturnValue(window);
+            jest.spyOn(poster, 'post');
 
-            extensionMessenger.post(extensionId, event.data);
+            extensionMessenger.post(extension.id, event.data);
 
-            expect(extensionMessengerMock._posters[extensionId].post).toHaveBeenCalledWith(
-                event.data,
-            );
+            expect(poster.post).toHaveBeenCalledWith(event.data);
         });
     });
 });

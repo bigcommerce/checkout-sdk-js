@@ -140,7 +140,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
 
     return new CheckoutService(
         store,
-        new ExtensionMessenger(),
+        new ExtensionMessenger(store, {}, {}),
         new BillingAddressActionCreator(
             new BillingAddressRequestSender(requestSender),
             subscriptionsActionCreator,

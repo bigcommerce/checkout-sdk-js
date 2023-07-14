@@ -22,7 +22,8 @@ import {
 } from '../customer';
 import {
     ExtensionActionCreator,
-    ExtensionCommandHandlers,
+    ExtensionCommand,
+    ExtensionCommandHandler,
     ExtensionMessenger,
     ExtensionRegion,
 } from '../extension';
@@ -1406,27 +1407,30 @@ export default class CheckoutService {
     }
 
     /**
-     * Registers an extension's command handlers.
+     * Manages the command handler for an extension.
      *
      * @alpha
-     * @param extensionId - The ID of an extension sending the commands.
-     * @param handlers - A set of handlers for the extension commands.
+     * @param extensionId - The ID of the extension sending the command.
+     * @param command - The command to be handled.
+     * @param handler - The handler function for the extension command.
+     * @returns A function that, when called, will deregister the command handler.
      */
-    addExtensionCommandHandlers(extensionId: string, handlers: ExtensionCommandHandlers): void {
-        const extensions = this.getState().data.getExtensions() || [];
-
-        this._extensionMessenger.listen(extensions, extensionId, handlers);
+    listenExtensionCommand(
+        extensionId: string,
+        command: ExtensionCommand,
+        handler: ExtensionCommandHandler,
+    ): () => void {
+        return this._extensionMessenger.listen(extensionId, command, handler);
     }
 
     /**
-     * Deregisters an extension's command handlers.
+     * Stops handling commands for an extension.
      *
      * @alpha
      * @param extensionId - The ID of the extension that originally sent the commands.
-     * @param handlers - The set of handlers to be removed for the extension commands.
      */
-    removeExtensionCommandHandlers(extensionId: string, handlers: ExtensionCommandHandlers): void {
-        this._extensionMessenger.stopListen(extensionId, handlers);
+    stopListenExtensionCommand(extensionId: string): void {
+        this._extensionMessenger.stopListen(extensionId);
     }
 
     /**
