@@ -193,7 +193,6 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
 
     private handleError(error: unknown): void {
         const { onError } = this.paypalcommerceratepay || {};
-        // this.toggleLoadingIndicator(false);
 
         if (onError && typeof onError === 'function') {
             onError(error);
