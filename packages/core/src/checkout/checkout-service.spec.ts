@@ -1522,16 +1522,4 @@ describe('CheckoutService', () => {
             );
         });
     });
-
-    describe('#stopListenExtensionCommand()', () => {
-        it('stops listening for extension commands', () => {
-            const extensions = getExtensions();
-
-            jest.spyOn(extensionMessenger, 'stopListen');
-
-            checkoutService.stopListenExtensionCommand(extensions[0].id);
-
-            expect(extensionMessenger.stopListen).toHaveBeenCalledWith(extensions[0].id);
-        });
-    });
 });

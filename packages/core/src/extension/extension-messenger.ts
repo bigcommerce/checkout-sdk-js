@@ -1,4 +1,4 @@
-import CheckoutStore from '../checkout/checkout-store';
+import { ReadableCheckoutStore } from '../checkout/checkout-store';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
 import { ExtensionNotFoundError } from './errors';
@@ -12,7 +12,7 @@ export class ExtensionMessenger {
     private _extensions: Extension[] | undefined;
 
     constructor(
-        private _store: CheckoutStore,
+        private _store: ReadableCheckoutStore,
         private _listeners: { [extensionId: string]: IframeEventListener<ExtensionOriginEventMap> },
         private _posters: { [extensionId: string]: IframeEventPoster<HostOriginEvent> },
     ) {}

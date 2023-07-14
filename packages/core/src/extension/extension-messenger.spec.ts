@@ -1,4 +1,4 @@
-import CheckoutStore from '../checkout/checkout-store';
+import { ReadableCheckoutStore } from '../checkout/checkout-store';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import createCheckoutStore from '../checkout/create-checkout-store';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
@@ -23,7 +23,7 @@ describe('ExtensionMessenger', () => {
         origin: string;
         data: ExtensionOriginEvent;
     };
-    let store: CheckoutStore;
+    let store: ReadableCheckoutStore;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());

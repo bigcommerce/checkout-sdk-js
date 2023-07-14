@@ -1424,16 +1424,6 @@ export default class CheckoutService {
     }
 
     /**
-     * Stops handling commands for an extension.
-     *
-     * @alpha
-     * @param extensionId - The ID of the extension that originally sent the commands.
-     */
-    stopListenExtensionCommand(extensionId: string): void {
-        this._extensionMessenger.stopListen(extensionId);
-    }
-
-    /**
      * Dispatches an action through the data store and returns the current state
      * once the action is dispatched.
      *
