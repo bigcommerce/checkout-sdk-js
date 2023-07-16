@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.401.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.400.0...v1.401.0) (2023-07-16)
+
+
+### Features
+
+* **checkout:** CHECKOUT-7538 Introduce extension messenger and command handler ([#2050](https://github.com/bigcommerce/checkout-sdk-js/issues/2050)) ([b43adec](https://github.com/bigcommerce/checkout-sdk-js/commit/b43adecf32105a6a7bf9451e4c80fd0beb77eae2))
+
 ## [1.400.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.399.2...v1.400.0) (2023-07-13)
 
 

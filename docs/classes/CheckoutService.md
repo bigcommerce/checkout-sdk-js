@@ -38,6 +38,7 @@ retrieve the current checkout state and subscribe to its changes.
 - [initializePayment](CheckoutService.md#initializepayment)
 - [initializeShipping](CheckoutService.md#initializeshipping)
 - [initializeSpamProtection](CheckoutService.md#initializespamprotection)
+- [listenExtensionCommand](CheckoutService.md#listenextensioncommand)
 - [loadBillingAddressFields](CheckoutService.md#loadbillingaddressfields)
 - [loadBillingCountries](CheckoutService.md#loadbillingcountries)
 - [loadCheckout](CheckoutService.md#loadcheckout)
@@ -772,6 +773,42 @@ await service.initializeSpamProtection();
 `Promise`<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
 
 A promise that resolves to the current state.
+
+___
+
+### listenExtensionCommand
+
+▸ **listenExtensionCommand**(`extensionId`, `command`, `handler`): () => `void`
+
+Manages the command handler for an extension.
+
+**`alpha`**
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `extensionId` | `string` | The ID of the extension sending the command. |
+| `command` | [`ExtensionCommand`](../enums/ExtensionCommand.md) | The command to be handled. |
+| `handler` | [`ExtensionCommandHandler`](../README.md#extensioncommandhandler) | The handler function for the extension command. |
+
+#### Returns
+
+`fn`
+
+A function that, when called, will deregister the command handler.
+
+▸ (): `void`
+
+Manages the command handler for an extension.
+
+**`alpha`**
+
+##### Returns
+
+`void`
+
+A function that, when called, will deregister the command handler.
 
 ___
 

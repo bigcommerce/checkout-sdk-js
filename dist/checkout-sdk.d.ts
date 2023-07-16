@@ -2450,6 +2450,7 @@ declare interface CheckoutSelectors {
  */
 declare class CheckoutService {
     private _store;
+    private _extensionMessenger;
     private _billingAddressActionCreator;
     private _checkoutActionCreator;
     private _configActionCreator;
@@ -3435,11 +3436,21 @@ declare class CheckoutService {
      * Currently, only one extension is allowed per region.
      *
      * @alpha
-     * @param container The ID of a container which the extension should be inserted.
-     * @param region The name of an area where the extension should be presented.
+     * @param container - The ID of a container which the extension should be inserted.
+     * @param region - The name of an area where the extension should be presented.
      * @returns A promise that resolves to the current state.
      */
     renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors>;
+    /**
+     * Manages the command handler for an extension.
+     *
+     * @alpha
+     * @param extensionId - The ID of the extension sending the command.
+     * @param command - The command to be handled.
+     * @param handler - The handler function for the extension command.
+     * @returns A function that, when called, will deregister the command handler.
+     */
+    listenExtensionCommand(extensionId: string, command: ExtensionCommand, handler: ExtensionCommandHandler): () => void;
     /**
      * Dispatches an action through the data store and returns the current state
      * once the action is dispatched.
@@ -4971,7 +4982,17 @@ declare interface Extension {
     url: string;
 }
 
-declare enum ExtensionRegion {
+declare const enum ExtensionCommand {
+    ReloadCheckout = "RELOAD_CHECKOUT",
+    ShowLoadingIndicator = "SHOW_LOADING_INDICATOR",
+    SetIframeStyle = "SET_IFRAME_STYLE"
+}
+
+declare type ExtensionCommandHandler = (data: ExtensionOriginEvent) => void;
+
+declare type ExtensionOriginEvent = ReloadCheckoutEvent | ShowLoadingIndicatorEvent | SetIframeStylePayload;
+
+declare const enum ExtensionRegion {
     ShippingShippingAddressFormBefore = "shipping.shippingAddressForm.before",
     ShippingShippingAddressFormAfter = "shipping.shippingAddressForm.after"
 }
@@ -6953,6 +6974,13 @@ declare interface Region {
     name: string;
 }
 
+declare interface ReloadCheckoutEvent {
+    type: ExtensionCommand.ReloadCheckout;
+    payload: {
+        extensionId: string;
+    };
+}
+
 /**
  * Throw this error if we are unable to make a request to the server. It wraps
  * any server response into a JS error object.
@@ -7005,6 +7033,16 @@ declare interface SepaPlaceHolder {
 declare interface SepaPlaceHolder_2 {
     ownerName?: string;
     ibanNumber?: string;
+}
+
+declare interface SetIframeStylePayload {
+    type: ExtensionCommand.ReloadCheckout;
+    payload: {
+        extensionId: string;
+        style: {
+            [key: string]: string | number | null;
+        };
+    };
 }
 
 /**
@@ -7063,6 +7101,14 @@ declare interface ShopperConfig {
 declare interface ShopperCurrency extends StoreCurrency {
     exchangeRate: number;
     isTransactional: boolean;
+}
+
+declare interface ShowLoadingIndicatorEvent {
+    type: ExtensionCommand.ReloadCheckout;
+    payload: {
+        extensionId: string;
+        show: boolean;
+    };
 }
 
 declare interface SignInEmail {

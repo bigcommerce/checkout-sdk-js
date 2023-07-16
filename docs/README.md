@@ -20,6 +20,7 @@
 - [CheckoutButtonMethodType](enums/CheckoutButtonMethodType.md)
 - [CheckoutIncludes](enums/CheckoutIncludes.md)
 - [EmbeddedCheckoutEventType](enums/EmbeddedCheckoutEventType.md)
+- [ExtensionCommand](enums/ExtensionCommand.md)
 - [ExtensionRegion](enums/ExtensionRegion.md)
 - [HostedFieldType](enums/HostedFieldType.md)
 - [HostedInputEventType](enums/HostedInputEventType.md)
@@ -325,15 +326,18 @@
 - [Promotion](interfaces/Promotion.md)
 - [Radius](interfaces/Radius.md)
 - [Region](interfaces/Region.md)
+- [ReloadCheckoutEvent](interfaces/ReloadCheckoutEvent.md)
 - [RequestOptions](interfaces/RequestOptions.md)
 - [SearchArea](interfaces/SearchArea.md)
 - [SepaPlaceHolder](interfaces/SepaPlaceHolder.md)
 - [SepaPlaceHolder_2](interfaces/SepaPlaceHolder_2.md)
+- [SetIframeStylePayload](interfaces/SetIframeStylePayload.md)
 - [ShippingInitializeOptions](interfaces/ShippingInitializeOptions.md)
 - [ShippingOption](interfaces/ShippingOption.md)
 - [ShippingRequestOptions](interfaces/ShippingRequestOptions.md)
 - [ShopperConfig](interfaces/ShopperConfig.md)
 - [ShopperCurrency](interfaces/ShopperCurrency.md)
+- [ShowLoadingIndicatorEvent](interfaces/ShowLoadingIndicatorEvent.md)
 - [SignInEmail](interfaces/SignInEmail.md)
 - [SignInEmailRequestBody](interfaces/SignInEmailRequestBody.md)
 - [SpamProtectionOptions](interfaces/SpamProtectionOptions.md)
@@ -434,6 +438,8 @@
 - [ConsignmentsRequestBody](README.md#consignmentsrequestbody)
 - [CustomerAddressRequestBody](README.md#customeraddressrequestbody)
 - [CustomerInitializeOptions](README.md#customerinitializeoptions)
+- [ExtensionCommandHandler](README.md#extensioncommandhandler)
+- [ExtensionOriginEvent](README.md#extensionoriginevent)
 - [FlashMessageType](README.md#flashmessagetype)
 - [FormFieldFieldType](README.md#formfieldfieldtype)
 - [FormFieldType](README.md#formfieldtype)
@@ -597,6 +603,32 @@ ___
 ### CustomerInitializeOptions
 
 Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md) & [`WithBoltCustomerInitializeOptions`](interfaces/WithBoltCustomerInitializeOptions.md) & [`WithBraintreePaypalCustomerInitializeOptions`](interfaces/WithBraintreePaypalCustomerInitializeOptions.md) & [`WithPayPalCommerceCustomerInitializeOptions`](interfaces/WithPayPalCommerceCustomerInitializeOptions.md) & [`WithPayPalCommerceCreditCustomerInitializeOptions`](interfaces/WithPayPalCommerceCreditCustomerInitializeOptions.md) & [`WithPayPalCommerceVenmoCustomerInitializeOptions`](interfaces/WithPayPalCommerceVenmoCustomerInitializeOptions.md)
+
+___
+
+### ExtensionCommandHandler
+
+Ƭ **ExtensionCommandHandler**: (`data`: [`ExtensionOriginEvent`](README.md#extensionoriginevent)) => `void`
+
+#### Type declaration
+
+▸ (`data`): `void`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `data` | [`ExtensionOriginEvent`](README.md#extensionoriginevent) |
+
+##### Returns
+
+`void`
+
+___
+
+### ExtensionOriginEvent
+
+Ƭ **ExtensionOriginEvent**: [`ReloadCheckoutEvent`](interfaces/ReloadCheckoutEvent.md) \| [`ShowLoadingIndicatorEvent`](interfaces/ShowLoadingIndicatorEvent.md) \| [`SetIframeStylePayload`](interfaces/SetIframeStylePayload.md)
 
 ___
 
