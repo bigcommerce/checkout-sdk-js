@@ -35,7 +35,7 @@ export interface RenderExtensionRequestedAction extends Action {
     type: ExtensionActionType.RenderExtensionRequested;
 }
 
-export interface RenderExtensionSucceededAction extends Action<Extension> {
+export interface RenderExtensionSucceededAction extends Action {
     type: ExtensionActionType.RenderExtensionSucceeded;
 }
 

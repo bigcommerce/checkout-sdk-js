@@ -1,44 +1,35 @@
-import { InvalidExtensionConfigError } from './errors';
+import ResizableIframeCreator from '../embedded-checkout/resizable-iframe-creator';
+
 import { Extension } from './extension';
 
 export class ExtensionIframe {
-    private _iframe: HTMLIFrameElement;
+    private _iframe: HTMLIFrameElement | undefined;
+    private _url: URL;
 
     constructor(
         private _containerId: string,
         private _extension: Extension,
         private _cartId: string,
     ) {
-        const url = new URL(this._extension.url);
+        this._url = new URL(this._extension.url);
 
-        url.searchParams.set('extensionId', this._extension.id);
-        url.searchParams.set('cartId', this._cartId);
-
-        this._iframe = document.createElement('iframe');
-        this._iframe.src = url.toString();
-        this._iframe.style.border = 'none';
-        this._iframe.style.height = '100%';
-        this._iframe.style.overflow = 'hidden';
-        this._iframe.style.width = '100%';
+        this._url.searchParams.set('extensionId', this._extension.id);
+        this._url.searchParams.set('cartId', this._cartId);
     }
 
-    attach(): void {
+    async attach(): Promise<void> {
+        const iframeCreator = new ResizableIframeCreator();
+
+        this._iframe = await iframeCreator.createFrame(this._url.toString(), this._containerId);
+
         const container = document.getElementById(this._containerId);
 
-        if (!container) {
-            throw new InvalidExtensionConfigError(
-                'Unable to proceed because the provided container ID is invalid.',
-            );
-        }
-
-        container.appendChild(this._iframe);
+        container?.setAttribute('data-extension-id', this._extension.id);
     }
 
     detach(): void {
-        if (!this._iframe.parentElement) {
-            return;
+        if (this._iframe && this._iframe.parentElement) {
+            this._iframe.parentElement.removeChild(this._iframe);
         }
-
-        this._iframe.parentElement.removeChild(this._iframe);
     }
 }

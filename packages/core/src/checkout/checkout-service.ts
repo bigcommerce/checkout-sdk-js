@@ -20,7 +20,13 @@ import {
     ExecutePaymentMethodCheckoutOptions,
     GuestCredentials,
 } from '../customer';
-import { ExtensionActionCreator, ExtensionRegion } from '../extension';
+import {
+    ExtensionActionCreator,
+    ExtensionCommand,
+    ExtensionCommandHandler,
+    ExtensionMessenger,
+    ExtensionRegion,
+} from '../extension';
 import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
@@ -77,6 +83,7 @@ export default class CheckoutService {
      */
     constructor(
         private _store: CheckoutStore,
+        private _extensionMessenger: ExtensionMessenger,
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _configActionCreator: ConfigActionCreator,
@@ -1389,14 +1396,31 @@ export default class CheckoutService {
      * Currently, only one extension is allowed per region.
      *
      * @alpha
-     * @param container The ID of a container which the extension should be inserted.
-     * @param region The name of an area where the extension should be presented.
+     * @param container - The ID of a container which the extension should be inserted.
+     * @param region - The name of an area where the extension should be presented.
      * @returns A promise that resolves to the current state.
      */
     renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors> {
         const action = this._extensionActionCreator.renderExtension(container, region);
 
         return this._dispatch(action, { queueId: 'extensions' });
+    }
+
+    /**
+     * Manages the command handler for an extension.
+     *
+     * @alpha
+     * @param extensionId - The ID of the extension sending the command.
+     * @param command - The command to be handled.
+     * @param handler - The handler function for the extension command.
+     * @returns A function that, when called, will deregister the command handler.
+     */
+    listenExtensionCommand(
+        extensionId: string,
+        command: ExtensionCommand,
+        handler: ExtensionCommandHandler,
+    ): () => void {
+        return this._extensionMessenger.listen(extensionId, command, handler);
     }
 
     /**

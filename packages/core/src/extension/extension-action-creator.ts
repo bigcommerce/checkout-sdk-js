@@ -43,23 +43,23 @@ export class ExtensionActionCreator {
         region: ExtensionRegion,
     ): ThunkAction<ExtensionAction, InternalCheckoutSelectors> {
         return (store) =>
-            Observable.create((observer: Observer<ExtensionAction>) => {
+            Observable.create(async (observer: Observer<ExtensionAction>) => {
                 const state = store.getState();
                 const { id: cartId } = state.cart.getCartOrThrow();
                 const extension = state.extensions.getExtensionByRegion(region);
 
-                if (!extension) {
-                    throw new ExtensionNotFoundError(
-                        `Unable to proceed due to no extension configured for ${region}.`,
-                    );
-                }
-
-                observer.next(createAction(ExtensionActionType.RenderExtensionRequested));
-
                 try {
+                    if (!extension) {
+                        throw new ExtensionNotFoundError(
+                            `Unable to proceed due to no extension configured for the region: ${region}.`,
+                        );
+                    }
+
+                    observer.next(createAction(ExtensionActionType.RenderExtensionRequested));
+
                     const iframe = new ExtensionIframe(container, extension, cartId);
 
-                    iframe.attach();
+                    await iframe.attach();
 
                     observer.next(createAction(ExtensionActionType.RenderExtensionSucceeded));
                     observer.complete();

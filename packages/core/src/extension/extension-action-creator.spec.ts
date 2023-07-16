@@ -1,4 +1,5 @@
 import { createRequestSender, Response } from '@bigcommerce/request-sender';
+import { EventEmitter } from 'events';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
@@ -7,13 +8,14 @@ import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration
 import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { EmbeddedCheckoutEventType } from '../embedded-checkout/embedded-checkout-events';
+import { NotEmbeddableError } from '../embedded-checkout/errors';
 
-import { ExtensionNotFoundError, InvalidExtensionConfigError } from './errors';
 import { Extension, ExtensionRegion } from './extension';
 import { ExtensionActionCreator } from './extension-action-creator';
 import { ExtensionActionType } from './extension-actions';
 import { ExtensionRequestSender } from './extension-request-sender';
-import { getExtensions, getExtensionState } from './extension.mock';
+import { getExtensionMessageEvent, getExtensions, getExtensionState } from './extension.mock';
 
 describe('ExtensionActionCreator', () => {
     let errorResponse: Response<ErrorResponseBody>;
@@ -91,7 +93,8 @@ describe('ExtensionActionCreator', () => {
             });
 
             const errorHandler = jest.fn((action) => of(action));
-            const actions = await from(
+
+            await from(
                 extensionActionCreator.renderExtension(
                     'foo',
                     ExtensionRegion.ShippingShippingAddressFormAfter,
@@ -101,18 +104,31 @@ describe('ExtensionActionCreator', () => {
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
-            expect(actions).toBeInstanceOf(ExtensionNotFoundError);
         });
 
         it('emits actions if able to render an extension', async () => {
+            const event = getExtensionMessageEvent();
+            const eventEmitter = new EventEmitter();
             const mockElement = document.createElement('div');
 
             jest.spyOn(document, 'getElementById').mockReturnValue(mockElement);
+            jest.spyOn(window, 'addEventListener').mockImplementation((type, listener) => {
+                return eventEmitter.addListener(type, listener);
+            });
+
+            setTimeout(() => {
+                eventEmitter.emit('message', {
+                    ...event,
+                    data: {
+                        type: EmbeddedCheckoutEventType.FrameLoaded,
+                    },
+                });
+            });
 
             const actions = await from(
                 extensionActionCreator.renderExtension(
                     'foo',
-                    ExtensionRegion.ShippingShippingAddressFormAfter,
+                    ExtensionRegion.ShippingShippingAddressFormBefore,
                 )(store),
             )
                 .pipe(toArray())
@@ -141,7 +157,7 @@ describe('ExtensionActionCreator', () => {
                 { type: ExtensionActionType.RenderExtensionRequested },
                 {
                     type: ExtensionActionType.RenderExtensionFailed,
-                    payload: expect.any(InvalidExtensionConfigError),
+                    payload: expect.any(NotEmbeddableError),
                     error: true,
                 },
             ]);

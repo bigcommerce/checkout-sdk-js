@@ -1,4 +1,5 @@
 import { Extension, ExtensionRegion } from './extension';
+import { ExtensionCommand, ExtensionOriginEvent } from './extension-origin-event';
 import { ExtensionState } from './extension-state';
 
 export function getExtensions(): Extension[] {
@@ -23,5 +24,20 @@ export function getExtensionState(): ExtensionState {
         data: getExtensions(),
         errors: {},
         statuses: {},
+    };
+}
+
+export function getExtensionMessageEvent(): {
+    origin: string;
+    data: ExtensionOriginEvent;
+} {
+    return {
+        origin: 'https://widget.foo.com',
+        data: {
+            type: ExtensionCommand.ReloadCheckout,
+            payload: {
+                extensionId: '123',
+            },
+        },
     };
 }

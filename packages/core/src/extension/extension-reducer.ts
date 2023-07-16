@@ -45,8 +45,15 @@ function errorsReducer(
         case ExtensionActionType.LoadExtensionsSucceeded:
             return objectSet(errors, 'loadError', undefined);
 
+        case ExtensionActionType.RenderExtensionRequested:
+        case ExtensionActionType.RenderExtensionSucceeded:
+            return objectSet(errors, 'renderError', undefined);
+
         case ExtensionActionType.LoadExtensionsFailed:
             return objectSet(errors, 'loadError', action.payload);
+
+        case ExtensionActionType.RenderExtensionFailed:
+            return objectSet(errors, 'renderError', action.payload);
 
         default:
             return errors;

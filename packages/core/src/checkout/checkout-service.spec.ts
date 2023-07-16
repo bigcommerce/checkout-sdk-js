@@ -34,11 +34,13 @@ import {
 import CustomerStrategyRegistryV2 from '../customer/customer-strategy-registry-v2';
 import {
     ExtensionActionCreator,
+    ExtensionActionType,
+    ExtensionCommand,
+    ExtensionMessenger,
     ExtensionRegion,
     ExtensionRequestSender,
     getExtensions,
 } from '../extension';
-import { ExtensionActionType } from '../extension/extension-actions';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { getAddressFormFields, getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -143,9 +145,12 @@ describe('CheckoutService', () => {
     let spamProtectionActionCreator: SpamProtectionActionCreator;
     let store: CheckoutStore;
     let storeCreditRequestSender: StoreCreditRequestSender;
+    let extensionMessenger: ExtensionMessenger;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
+
+        extensionMessenger = new ExtensionMessenger(store, {}, {});
 
         const locale = 'en';
         const requestSender = createRequestSender();
@@ -369,6 +374,7 @@ describe('CheckoutService', () => {
 
         checkoutService = new CheckoutService(
             store,
+            extensionMessenger,
             billingAddressActionCreator,
             checkoutActionCreator,
             configActionCreator,
@@ -1493,6 +1499,27 @@ describe('CheckoutService', () => {
             await checkoutService.renderExtension(container, region);
 
             expect(extensionActionCreator.renderExtension).toHaveBeenCalledWith(container, region);
+        });
+    });
+
+    describe('#listenExtensionCommand()', () => {
+        it('listens for extension commands', () => {
+            const extensions = getExtensions();
+            const handler = jest.fn();
+
+            jest.spyOn(extensionMessenger, 'listen');
+
+            checkoutService.listenExtensionCommand(
+                extensions[0].id,
+                ExtensionCommand.ReloadCheckout,
+                handler,
+            );
+
+            expect(extensionMessenger.listen).toHaveBeenCalledWith(
+                extensions[0].id,
+                ExtensionCommand.ReloadCheckout,
+                handler,
+            );
         });
     });
 });

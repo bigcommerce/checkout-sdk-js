@@ -8,6 +8,7 @@ export interface ExtensionState {
 
 export interface ExtensionErrorsState {
     loadError?: Error;
+    renderError?: Error;
 }
 
 export interface ExtensionStatusesState {
