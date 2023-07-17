@@ -99,7 +99,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         const sessionId = await this.braintreeIntegrationService.getSessionId();
         const billing = state.getBillingAddressOrThrow();
         const { firstName, lastName, countryCode } = billing;
-        const { baseAmount, currency, email, lineItems } = cart;
+        const { cartAmount, currency, email, lineItems } = cart;
         const isShippingRequired = lineItems.physicalItems.length > 0;
 
         if (!payment) {
@@ -116,7 +116,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
             this.localPaymentInstance?.startPayment(
                 {
                     paymentType: payment.methodId,
-                    amount: baseAmount,
+                    amount: cartAmount,
                     fallback: {
                         url: 'url-placeholder',
                         buttonText: 'button placeholder',
