@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.402.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.402.0...v1.402.1) (2023-07-17)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2719 fix amazon pay button ([de1cb81](https://github.com/bigcommerce/checkout-sdk-js/commit/de1cb81bd278fbb81782d4dfb32db6b1370291c8))
+
 ## [1.402.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.401.0...v1.402.0) (2023-07-17)
 
 
