@@ -46,11 +46,13 @@ export default class ExtensionService {
         this._eventPoster.post({ ...event, payload });
     }
 
-    addListener(eventType: ExtensionListenEventType, callback: () => void = noop): void {
+    addListener(eventType: ExtensionListenEventType, callback: () => void = noop): () => void {
         if (!Object.values(ExtensionListenEventType).includes(eventType)) {
-            return;
+            return noop;
         }
 
         this._eventListener.addListener(eventType, callback);
+
+        return () => this._eventListener.removeListener(eventType, callback);
     }
 }
