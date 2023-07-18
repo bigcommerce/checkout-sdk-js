@@ -1,3 +1,5 @@
+import { Action } from '@bigcommerce/data-store';
+
 import {
     BillingAddressRequestBody,
     BuyNowCartRequestBody,
@@ -47,6 +49,12 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
     ) {
         this._storeProjection = this._storeProjectionFactory.create(this._store);
+    }
+
+    async dispatch(action: Action) {
+        await this._store.dispatch(action);
+
+        return this._storeProjection.getState();
     }
 
     createHostedForm(host: string, options: HostedFormOptions): HostedForm {

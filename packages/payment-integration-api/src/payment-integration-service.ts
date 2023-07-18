@@ -1,3 +1,5 @@
+import { Action } from '@bigcommerce/data-store';
+
 import { BillingAddressRequestBody } from './billing';
 import { BuyNowCartRequestBody, Cart } from './cart';
 import { CustomerCredentials } from './customer';
@@ -9,6 +11,8 @@ import { ShippingAddressRequestBody } from './shipping';
 import { RequestOptions } from './util-types';
 
 export default interface PaymentIntegrationService {
+    dispatch(action: Action): Promise<PaymentIntegrationSelectors>;
+
     createHostedForm(host: string, options: HostedFormOptions): HostedForm;
 
     subscribe(

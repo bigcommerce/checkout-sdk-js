@@ -18,12 +18,16 @@ export default interface Customer {
      * Note: You need to enable "Prompt existing accounts to sign in" in your Checkout Settings.
      */
     shouldEncourageSignIn: boolean;
+    isStripeLinkAuthenticated?: boolean;
+    isPayPalConnectAuthenticated?: boolean;
+    isPayPalConnectCanceled?: boolean;
     customerGroup?: CustomerGroup;
 }
 
 export interface CustomerAddress extends Address {
     id: number;
     type: string;
+    poweredBy?: string;
 }
 
 export interface CustomerGroup {

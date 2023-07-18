@@ -24,6 +24,9 @@ export enum CustomerActionType {
     CreateCustomerAddressFailed = 'CREATE_CUSTOMER_ADDRESS_FAILED',
 
     StripeLinkAuthenticated = 'STRIPE_LINK_AUTHENTICATED',
+
+    PayPalConnectAuthenticated = 'PAYPAL_CONNECT_AUTHENTICATED',
+    PayPalConnectCanceled = 'PAYPAL_CONNECT_CANCELED',
 }
 
 export type CustomerAction =
@@ -107,4 +110,12 @@ export interface CreateCustomerAddressSucceededAction extends Action<Customer> {
 
 export interface CreateCustomerAddressFailedAction extends Action<Error> {
     type: CustomerActionType.CreateCustomerAddressFailed;
+}
+
+export interface PayPalConnectAuthenticatedAction extends Action<Customer> {
+    type: CustomerActionType.PayPalConnectAuthenticated;
+}
+
+export interface PayPalConnectCanceledAction extends Action {
+    type: CustomerActionType.PayPalConnectCanceled;
 }

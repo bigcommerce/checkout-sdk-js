@@ -10,6 +10,8 @@ import {
     CustomerAction,
     CustomerActionType,
     StripeLinkAuthenticatedAction,
+    PayPalConnectAuthenticatedAction,
+    PayPalConnectCanceledAction,
 } from './customer-actions';
 import CustomerState, {
     CustomerErrorsState,
@@ -21,6 +23,8 @@ type ReducerActionType =
     | CheckoutAction
     | ContinueAsGuestAction
     | CustomerAction
+    | PayPalConnectAuthenticatedAction
+    | PayPalConnectCanceledAction
     | StripeLinkAuthenticatedAction;
 
 export default function customerReducer(
@@ -43,7 +47,11 @@ function dataReducer(data: Customer | undefined, action: ReducerActionType): Cus
             return objectMerge(data, action.payload && action.payload.customer);
 
         case CustomerActionType.CreateCustomerAddressSucceeded:
+        case CustomerActionType.PayPalConnectAuthenticated: // TODO: Think about generic name for updating customer state
             return objectMerge(data, action.payload);
+
+        case CustomerActionType.PayPalConnectCanceled:
+            return objectSet(data, 'isPayPalConnectCanceled', action.payload);
 
         case CustomerActionType.StripeLinkAuthenticated:
             return objectSet(data, 'isStripeLinkAuthenticated', action.payload);

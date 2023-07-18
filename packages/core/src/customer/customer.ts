@@ -19,6 +19,8 @@ export default interface Customer {
      */
     shouldEncourageSignIn: boolean;
     isStripeLinkAuthenticated?: boolean;
+    isPayPalConnectAuthenticated?: boolean;
+    isPayPalConnectCanceled?: boolean;
     customerGroup?: CustomerGroup;
 }
 

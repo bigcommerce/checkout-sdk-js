@@ -8,6 +8,7 @@ import {
 import {
     BraintreeBankAccount,
     BraintreeClient,
+    BraintreeConnect,
     BraintreeDataCollector,
     BraintreeDetails,
     BraintreeEnv,
@@ -37,6 +38,7 @@ export default class BraintreeIntegrationService {
     private paypalCheckout?: BraintreePaypalCheckout;
     private usBankAccount?: Promise<BraintreeBankAccount>;
     private braintreeLocalMethods?: BraintreeLocalMethods;
+    private braintreeConnect?: BraintreeConnect;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
@@ -45,6 +47,36 @@ export default class BraintreeIntegrationService {
 
     initialize(clientToken: string) {
         this.clientToken = clientToken;
+    }
+
+    getClientTokenOrThrow(): string {
+        if (!this.clientToken) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return this.clientToken;
+    }
+
+    async getBraintreeConnect() {
+        // TODO: should be removed for prod
+        // Set the Connect component in mocked mode
+        window.localStorage.setItem("axoEnv", "mock");
+
+        if (!this.braintreeConnect) {
+            const clientToken = this.getClientTokenOrThrow();
+            const client = await this.getClient();
+            const deviceData = await this.getSessionId();
+
+            const braintreeConnectCreator = await this.braintreeScriptLoader.loadConnect();
+
+            this.braintreeConnect = await braintreeConnectCreator.create({
+                authorization: clientToken,
+                client: client,
+                deviceData: deviceData,
+            });
+        }
+
+        return this.braintreeConnect;
     }
 
     async getClient(): Promise<BraintreeClient> {
@@ -236,6 +268,8 @@ export default class BraintreeIntegrationService {
     async teardown(): Promise<void> {
         await this.teardownModule(this.dataCollectors.default);
         await this.teardownModule(this.dataCollectors.paypal);
+        // TODO: check do I need to add connect here?
+
         this.dataCollectors = {};
 
         await this.teardownModule(this.paypalCheckout);

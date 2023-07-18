@@ -26,6 +26,8 @@ export { Coupon } from './coupon';
 export { Currency } from './currency';
 export {
     CheckoutPaymentMethodExecutedOptions,
+    CustomerActionType,
+    CustomerAddress,
     CustomerCredentials,
     CustomerStrategy,
     CustomerStrategyFactory,
