@@ -19,7 +19,7 @@ import { CartRequestSender } from '../cart';
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
 import { getResponse } from '../common/http-request/responses.mock';
-import { CustomerActionCreator } from '../customer';
+import { CustomerActionCreator, CustomerActionType } from '../customer';
 import { HostedForm, HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
 import { getOrder } from '../order/orders.mock';
@@ -163,6 +163,16 @@ describe('DefaultPaymentIntegrationService', () => {
             storeCreditActionCreator as StoreCreditActionCreator,
             spamProtectionActionCreator as SpamProtectionActionCreator,
         );
+    });
+
+    describe('#dispatch', () => {
+        it('triggers store dispatch method with custom action', async () => {
+            const action = createAction(CustomerActionType.StripeLinkAuthenticated, false);
+            const output = await subject.dispatch(action);
+
+            expect(store.dispatch).toHaveBeenCalledWith(action);
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
     });
 
     describe('#loadCheckout', () => {
