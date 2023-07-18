@@ -13,19 +13,20 @@ import {
     BraintreeEnv,
     BraintreeError,
     BraintreeHostWindow,
+    BraintreeInitializationData,
     BraintreeModule,
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeShippingAddressOverride,
 } from './braintree';
-import BraintreeScriptLoader from './braintree-script-loader';
-import isBraintreeError from './is-braintree-error';
-import { PAYPAL_COMPONENTS } from './paypal';
 import {
     BraintreeLocalMethods,
     GetLocalPaymentInstance,
     LocalPaymentInstance,
 } from './braintree-local-payment-methods/braintree-local-methods-options';
+import BraintreeScriptLoader from './braintree-script-loader';
+import isBraintreeError from './is-braintree-error';
+import { PAYPAL_COMPONENTS } from './paypal';
 
 export default class BraintreeIntegrationService {
     private client?: Promise<BraintreeClient>;
@@ -43,8 +44,9 @@ export default class BraintreeIntegrationService {
         private braintreeHostWindow: BraintreeHostWindow,
     ) {}
 
-    initialize(clientToken: string) {
+    initialize(clientToken: string, initializationData: BraintreeInitializationData) {
         this.clientToken = clientToken;
+        this.braintreeScriptLoader.initialize(initializationData);
     }
 
     async getClient(): Promise<BraintreeClient> {
@@ -118,6 +120,7 @@ export default class BraintreeIntegrationService {
                     if (localPaymentErr) {
                         throw new Error(localPaymentErr);
                     }
+
                     getLocalPaymentInstance(localPaymentInstance);
                 },
             );

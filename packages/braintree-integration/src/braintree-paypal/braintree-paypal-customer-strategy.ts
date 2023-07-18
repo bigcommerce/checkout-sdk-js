@@ -68,15 +68,17 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         const paymentMethod: PaymentMethod<BraintreeInitializationData> =
             state.getPaymentMethodOrThrow(methodId);
 
-        if (!paymentMethod.clientToken) {
+        const { clientToken, config, initializationData } = paymentMethod;
+
+        if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const currencyCode = state.getCartOrThrow().currency.code;
         const paypalCheckoutOptions: Partial<BraintreePaypalSdkCreatorConfig> = {
             currency: currencyCode,
-            intent: paymentMethod.initializationData?.intent,
-            isCreditEnabled: paymentMethod.initializationData?.isCreditEnabled,
+            intent: initializationData.intent,
+            isCreditEnabled: initializationData.isCreditEnabled,
         };
 
         const paypalCheckoutSuccessCallback = (
@@ -87,14 +89,14 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
                 braintreepaypal,
                 container,
                 methodId,
-                Boolean(paymentMethod.config.testMode),
+                Boolean(config.testMode),
                 buttonHeight,
             );
         };
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
             this.handleError(error, container, onError);
 
-        this.braintreeIntegrationService.initialize(paymentMethod.clientToken);
+        this.braintreeIntegrationService.initialize(clientToken, initializationData);
         await this.braintreeIntegrationService.getPaypalCheckout(
             paypalCheckoutOptions,
             paypalCheckoutSuccessCallback,

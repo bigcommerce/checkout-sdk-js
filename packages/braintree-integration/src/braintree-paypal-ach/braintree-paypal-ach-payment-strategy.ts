@@ -19,7 +19,11 @@ import {
     WithBankAccountInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { BankAccountSuccessPayload, BraintreeBankAccount } from '../braintree';
+import {
+    BankAccountSuccessPayload,
+    BraintreeBankAccount,
+    BraintreeInitializationData,
+} from '../braintree';
 import BraintreeIntegrationService from '../braintree-integration-service';
 import isBraintreeError from '../is-braintree-error';
 import isUsBankAccountInstrumentLike from '../is-us-bank-account-instrument-like';
@@ -52,14 +56,17 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
 
         const state = this.paymentIntegrationService.getState();
 
-        const paymentMethod = state.getPaymentMethodOrThrow(options.methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(
+            options.methodId,
+        );
+        const { clientToken, initializationData } = paymentMethod;
 
-        if (!paymentMethod.clientToken) {
+        if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         try {
-            this.braintreeIntegrationService.initialize(paymentMethod.clientToken);
+            this.braintreeIntegrationService.initialize(clientToken, initializationData);
             this.usBankAccount = await this.braintreeIntegrationService.getUsBankAccount();
         } catch (error) {
             this.handleError(error);
