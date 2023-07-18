@@ -23,7 +23,7 @@ export interface ReloadCheckoutEvent {
 }
 
 export interface ShowLoadingIndicatorEvent {
-    type: ExtensionCommand.ReloadCheckout;
+    type: ExtensionCommand.ShowLoadingIndicator;
     payload: {
         extensionId: string;
         show: boolean;
@@ -31,7 +31,7 @@ export interface ShowLoadingIndicatorEvent {
 }
 
 export interface SetIframeStylePayload {
-    type: ExtensionCommand.ReloadCheckout;
+    type: ExtensionCommand.SetIframeStyle;
     payload: {
         extensionId: string;
         style: {
