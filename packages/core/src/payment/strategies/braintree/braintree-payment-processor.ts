@@ -16,6 +16,7 @@ import {
 import { CreditCardInstrument, NonceInstrument } from '../../payment';
 
 import {
+    BraintreeInitializationData,
     BraintreePaypal,
     BraintreeRequestData,
     BraintreeShippingAddressOverride,
@@ -53,8 +54,12 @@ export default class BraintreePaymentProcessor {
         private _overlay: Overlay,
     ) {}
 
-    initialize(clientToken: string, options?: BraintreePaymentInitializeOptions): void {
-        this._braintreeSDKCreator.initialize(clientToken);
+    initialize(
+        clientToken: string,
+        initializationData: BraintreeInitializationData,
+        options?: BraintreePaymentInitializeOptions,
+    ): void {
+        this._braintreeSDKCreator.initialize(clientToken, initializationData);
         this._threeDSecureOptions = options?.threeDSecure;
     }
 

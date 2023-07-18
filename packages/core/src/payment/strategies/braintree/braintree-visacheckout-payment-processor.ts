@@ -4,7 +4,7 @@ import { Address, LegacyAddress } from '@bigcommerce/checkout-sdk/payment-integr
 
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
 
-import { BraintreeDataCollector } from './braintree';
+import { BraintreeDataCollector, BraintreeInitializationData } from './braintree';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import {
     VisaCheckoutAddress,
@@ -21,9 +21,10 @@ export default class BraintreeVisaCheckoutPaymentProcessor {
 
     initialize(
         clientToken: string,
+        initializationData: BraintreeInitializationData,
         options: VisaCheckoutInitializeOptions,
     ): Promise<VisaCheckoutInitOptions> {
-        this._braintreeSDKCreator.initialize(clientToken);
+        this._braintreeSDKCreator.initialize(clientToken, initializationData);
 
         return this._braintreeSDKCreator.getVisaCheckout().then((visaCheckout) =>
             visaCheckout.createInitOptions({

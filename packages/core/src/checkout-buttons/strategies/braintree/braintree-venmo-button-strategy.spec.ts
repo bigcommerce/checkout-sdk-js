@@ -211,6 +211,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
             expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
+                paymentMethodMock.initializationData,
             );
         });
 
@@ -224,6 +225,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
             expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
+                paymentMethodMock.initializationData,
             );
             expect(braintreeSDKCreator.getVenmoCheckout).toHaveBeenCalled();
         });

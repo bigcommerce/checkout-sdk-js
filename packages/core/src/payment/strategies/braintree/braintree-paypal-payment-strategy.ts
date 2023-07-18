@@ -226,13 +226,16 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     private _loadPaypal(
         braintreeOptions?: BraintreePaymentInitializeOptions,
     ): Promise<InternalCheckoutSelectors> {
-        if (!this._paymentMethod || !this._paymentMethod.clientToken) {
+        const { clientToken, initializationData } = this._paymentMethod || {};
+
+        if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         try {
             this._braintreePaymentProcessor.initialize(
-                this._paymentMethod.clientToken,
+                clientToken,
+                initializationData,
                 braintreeOptions,
             );
 

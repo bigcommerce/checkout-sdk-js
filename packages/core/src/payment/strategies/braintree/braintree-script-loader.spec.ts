@@ -23,12 +23,17 @@ import {
     getVisaCheckoutMock,
 } from './braintree.mock';
 
-const version = '3.95.0';
+const VERSION = '3.95.0';
+const ALPHA_VERSION = '3.95.0-connect-alpha.7';
 
 describe('BraintreeScriptLoader', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;
     let scriptLoader: ScriptLoader;
     let mockWindow: BraintreeHostWindow;
+
+    const initializationData = {
+        isAcceleratedCheckoutEnabled: true,
+    };
 
     beforeEach(() => {
         mockWindow = { braintree: {} } as BraintreeHostWindow;
@@ -54,7 +59,17 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadClient();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${version}/js/client.min.js`,
+                `//js.braintreegateway.com/web/${VERSION}/js/client.min.js`,
+            );
+        });
+
+        it('loads the client with braintree sdk alpha version', async () => {
+            braintreeScriptLoader.initialize(initializationData);
+
+            await braintreeScriptLoader.loadClient();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/client.min.js`,
             );
         });
 
@@ -83,7 +98,17 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.load3DS();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${version}/js/three-d-secure.min.js`,
+                `//js.braintreegateway.com/web/${VERSION}/js/three-d-secure.min.js`,
+            );
+        });
+
+        it('loads the ThreeDSecure library with braintree sdk alpha version', async () => {
+            braintreeScriptLoader.initialize(initializationData);
+
+            await braintreeScriptLoader.load3DS();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/three-d-secure.min.js`,
             );
         });
 
@@ -112,7 +137,17 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadDataCollector();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${version}/js/data-collector.min.js`,
+                `//js.braintreegateway.com/web/${VERSION}/js/data-collector.min.js`,
+            );
+        });
+
+        it('loads the data collector library with braintree sdk alpha version', async () => {
+            braintreeScriptLoader.initialize(initializationData);
+
+            await braintreeScriptLoader.loadDataCollector();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/data-collector.min.js`,
             );
         });
 
@@ -141,7 +176,17 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadVisaCheckout();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${version}/js/visa-checkout.min.js`,
+                `//js.braintreegateway.com/web/${VERSION}/js/visa-checkout.min.js`,
+            );
+        });
+
+        it('loads the VisaCheckout library with braintree sdk alpha version', async () => {
+            braintreeScriptLoader.initialize(initializationData);
+
+            await braintreeScriptLoader.loadVisaCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/visa-checkout.min.js`,
             );
         });
 
@@ -170,7 +215,17 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadGooglePayment();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${version}/js/google-payment.min.js`,
+                `//js.braintreegateway.com/web/${VERSION}/js/google-payment.min.js`,
+            );
+        });
+
+        it('loads the GooglePay library with braintree sdk alpha version', async () => {
+            braintreeScriptLoader.initialize(initializationData);
+
+            await braintreeScriptLoader.loadGooglePayment();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/google-payment.min.js`,
             );
         });
 
@@ -216,7 +271,17 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadHostedFields();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${version}/js/hosted-fields.min.js`,
+                `//js.braintreegateway.com/web/${VERSION}/js/hosted-fields.min.js`,
+            );
+        });
+
+        it('loads hosted fields module with braintree sdk alpha version', async () => {
+            braintreeScriptLoader.initialize(initializationData);
+
+            await braintreeScriptLoader.loadHostedFields();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/hosted-fields.min.js`,
             );
         });
 

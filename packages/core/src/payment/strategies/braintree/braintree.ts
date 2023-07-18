@@ -506,3 +506,9 @@ export interface BraintreeHostWindow extends Window {
     braintree?: BraintreeSDK;
     paypal?: PaypalSDK;
 }
+
+export interface BraintreeInitializationData {
+    intent?: 'authorize' | 'order' | 'sale';
+    isCreditEnabled?: boolean;
+    isAcceleratedCheckoutEnabled?: boolean;
+}

@@ -49,7 +49,8 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         return this._store
             .dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then((state) => {
-                this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+                this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+                const { clientToken, initializationData } = this._paymentMethod;
 
                 const checkout = state.checkout.getCheckout();
                 const storeConfig = state.config.getStoreConfig();
@@ -62,7 +63,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
                     throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                 }
 
-                if (!this._paymentMethod || !this._paymentMethod.clientToken) {
+                if (!clientToken || !initializationData) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
@@ -78,7 +79,8 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
                 return Promise.all([
                     this._visaCheckoutScriptLoader.load(this._paymentMethod.config.testMode),
                     this._braintreeVisaCheckoutPaymentProcessor.initialize(
-                        this._paymentMethod.clientToken,
+                        clientToken,
+                        initializationData,
                         initOptions,
                     ),
                 ])

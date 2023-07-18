@@ -72,8 +72,15 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
         this._buttonClickEventHandler = this._handleButtonClickedEvent(methodId);
 
-        if (this._paymentMethod.clientToken) {
-            this._braintreeSDKCreator?.initialize(this._paymentMethod.clientToken);
+        if (
+            this._braintreeSDKCreator &&
+            this._paymentMethod.clientToken &&
+            this._paymentMethod.initializationData
+        ) {
+            this._braintreeSDKCreator.initialize(
+                this._paymentMethod.clientToken,
+                this._paymentMethod.initializationData,
+            );
         }
 
         await this._googlePayPaymentProcessor.initialize(methodId);

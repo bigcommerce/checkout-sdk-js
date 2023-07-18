@@ -56,9 +56,9 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
 
         it('initializes the sdk creator with the client token', () => {
             braintreeSDKCreator.initialize = jest.fn();
-            visaCheckoutPaymentProcessor.initialize('clientToken', {});
+            visaCheckoutPaymentProcessor.initialize('clientToken', {}, {});
 
-            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith('clientToken');
+            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith('clientToken', {});
         });
 
         it('maps the init options to the ones required by the braintree visacheckout module', async () => {
@@ -67,12 +67,16 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
                 requestSender,
             );
 
-            await visaCheckoutPaymentProcessor.initialize('clientToken', {
-                locale: 'es_ES',
-                collectShipping: true,
-                subtotal: 15,
-                currencyCode: '$',
-            });
+            await visaCheckoutPaymentProcessor.initialize(
+                'clientToken',
+                {},
+                {
+                    locale: 'es_ES',
+                    collectShipping: true,
+                    subtotal: 15,
+                    currencyCode: '$',
+                },
+            );
 
             expect(visaCheckoutMock.createInitOptions).toHaveBeenCalledWith({
                 paymentRequest: {

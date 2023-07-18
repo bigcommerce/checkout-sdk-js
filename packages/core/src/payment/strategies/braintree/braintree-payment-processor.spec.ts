@@ -32,6 +32,11 @@ describe('BraintreePaymentProcessor', () => {
     let braintreeHostedForm: BraintreeHostedForm;
     let overlay: Overlay;
 
+    const clientToken = 'clientToken';
+    const initializationData = {
+        isAcceleratedCheckoutEnabled: false,
+    };
+
     beforeEach(() => {
         braintreeSDKCreator = {} as BraintreeSDKCreator;
         braintreeHostedForm = {} as BraintreeHostedForm;
@@ -58,9 +63,12 @@ describe('BraintreePaymentProcessor', () => {
                 overlay,
             );
 
-            braintreePaymentProcessor.initialize('clientToken');
+            braintreePaymentProcessor.initialize(clientToken, initializationData);
 
-            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith('clientToken');
+            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
+                clientToken,
+                initializationData,
+            );
         });
     });
 
@@ -537,7 +545,7 @@ describe('BraintreePaymentProcessor', () => {
                 overlay,
             );
 
-            braintreePaymentProcessor.initialize('clientToken', {
+            braintreePaymentProcessor.initialize(clientToken, initializationData, {
                 threeDSecure: {
                     ...getThreeDSecureOptionsMock(),
                     addFrame: (_error, _iframe, cancel) => {

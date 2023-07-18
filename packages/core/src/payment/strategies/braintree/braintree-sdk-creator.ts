@@ -11,6 +11,7 @@ import {
     BraintreeError,
     BraintreeHostedFields,
     BraintreeHostedFieldsCreatorConfig,
+    BraintreeInitializationData,
     BraintreeModule,
     BraintreePaypal,
     BraintreePaypalCheckout,
@@ -42,8 +43,9 @@ export default class BraintreeSDKCreator {
         this._window = window;
     }
 
-    initialize(clientToken: string) {
+    initialize(clientToken: string, initializationData: BraintreeInitializationData) {
         this._clientToken = clientToken;
+        this._braintreeScriptLoader.initialize(initializationData);
     }
 
     getClient(): Promise<BraintreeClient> {

@@ -189,6 +189,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
 
             expect(braintreeVisaCheckoutPaymentProcessor.initialize).toHaveBeenCalledWith(
                 'clientToken',
+                {},
                 {
                     collectShipping: false,
                     currencyCode: 'USD',

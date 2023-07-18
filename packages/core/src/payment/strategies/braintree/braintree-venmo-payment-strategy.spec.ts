@@ -106,7 +106,10 @@ describe('BraintreeVenmoPaymentStrategy', () => {
 
             await braintreeVenmoPaymentStrategy.initialize(options);
 
-            expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith('myToken');
+            expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith(
+                paymentMethodMock.clientToken,
+                paymentMethodMock.initializationData,
+            );
             expect(braintreePaymentProcessorMock.getVenmoCheckout).toHaveBeenCalled();
         });
 
