@@ -15,7 +15,9 @@ export default class ExtensionService {
     constructor(
         private _eventListener: IframeEventListener<ExtensionListenEventMap>,
         private _eventPoster: IframeEventPoster<ExtensionPostEvent>,
-    ) {}
+    ) {
+        this._eventPoster.setTarget(window.parent);
+    }
 
     initialize(extensionId: string) {
         if (!extensionId) {
@@ -31,8 +33,6 @@ export default class ExtensionService {
         if (!this._extensionId) {
             return;
         }
-
-        this._eventPoster.setTarget(window.parent);
 
         if (!Object.values(ExtensionPostEventType).includes(event.type)) {
             throw new Error(`${event.type} is not supported.`);

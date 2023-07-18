@@ -8,16 +8,20 @@ export enum ExtensionListenEventType {
     ShippingCountryChange = 'SHIPPING_COUNTRY_CHANGE',
 }
 
+export interface BroadcastCartEvent {
+    type: ExtensionListenEventType.BroadcastCart;
+}
+
+export interface ShippingCountryChangeEvent {
+    type: ExtensionListenEventType.BroadcastCart;
+    payload: {
+        countryCode: string;
+    };
+}
+
 export interface ExtensionListenEventMap {
-    [ExtensionListenEventType.BroadcastCart]: {
-        type: ExtensionListenEventType.BroadcastCart;
-    };
-    [ExtensionListenEventType.ShippingCountryChange]: {
-        type: ExtensionListenEventType.ShippingCountryChange;
-        payload: {
-            countryCode: string;
-        };
-    };
+    [ExtensionListenEventType.BroadcastCart]: BroadcastCartEvent;
+    [ExtensionListenEventType.ShippingCountryChange]: ShippingCountryChangeEvent;
 }
 
 export enum ExtensionPostEventType {
