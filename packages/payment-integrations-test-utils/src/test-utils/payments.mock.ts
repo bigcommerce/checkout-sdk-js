@@ -1,4 +1,5 @@
 import {
+    CardInstrument,
     CreditCardInstrument,
     Payment,
     PaymentMethod,
@@ -36,6 +37,22 @@ export function getCreditCardInstrument(): CreditCardInstrument {
         ccName: 'BigCommerce',
         ccNumber: '4111111111111111',
         ccCvv: '123',
+    };
+}
+
+export function getCardInstrument(): CardInstrument {
+    return {
+        bigpayToken: '123',
+        defaultInstrument: true,
+        provider: 'bigcommerce',
+        trustedShippingAddress: true,
+        method: 'bigcommerce',
+        brand: 'visa',
+        expiryMonth: '04',
+        expiryYear: '30',
+        iin: '1234',
+        last4: '1111',
+        type: 'card',
     };
 }
 
