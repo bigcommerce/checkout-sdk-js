@@ -3,10 +3,10 @@ import { noop } from 'lodash';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
 import {
+    ExtensionCommandType,
     ExtensionListenEventMap,
     ExtensionListenEventType,
-    ExtensionPostEvent,
-    ExtensionPostEventType,
+    ExtensionPostCommand,
 } from './extension-client';
 
 export default class ExtensionService {
@@ -14,7 +14,7 @@ export default class ExtensionService {
 
     constructor(
         private _eventListener: IframeEventListener<ExtensionListenEventMap>,
-        private _eventPoster: IframeEventPoster<ExtensionPostEvent>,
+        private _eventPoster: IframeEventPoster<ExtensionPostCommand>,
     ) {
         this._eventPoster.setTarget(window.parent);
     }
@@ -29,12 +29,12 @@ export default class ExtensionService {
         this._eventListener.listen();
     }
 
-    post(event: ExtensionPostEvent): void {
+    post(event: ExtensionPostCommand): void {
         if (!this._extensionId) {
             return;
         }
 
-        if (!Object.values(ExtensionPostEventType).includes(event.type)) {
+        if (!Object.values(ExtensionCommandType).includes(event.type)) {
             throw new Error(`${event.type} is not supported.`);
         }
 

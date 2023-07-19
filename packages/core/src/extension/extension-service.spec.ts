@@ -3,17 +3,17 @@ import { noop } from 'lodash';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
 import {
+    ExtensionCommandType,
     ExtensionListenEventMap,
     ExtensionListenEventType,
-    ExtensionPostEvent,
-    ExtensionPostEventType,
+    ExtensionPostCommand,
 } from './extension-client';
 import ExtensionService from './extension-service';
 
 describe('ExtensionService', () => {
     let extensionService: ExtensionService;
     let eventListener: IframeEventListener<ExtensionListenEventMap>;
-    let eventPoster: IframeEventPoster<ExtensionPostEvent>;
+    let eventPoster: IframeEventPoster<ExtensionPostCommand>;
 
     beforeEach(() => {
         eventListener = new IframeEventListener('https://mybigcommerce.com');
@@ -42,15 +42,15 @@ describe('ExtensionService', () => {
     it('#post throws error if extension id is not set', () => {
         extensionService.initialize('test');
 
-        const event: ExtensionPostEvent = {
-            type: ExtensionPostEventType.FRAME_LOADED,
+        const event: ExtensionPostCommand = {
+            type: ExtensionCommandType.FRAME_LOADED,
             payload: {},
         };
 
         extensionService.post(event);
 
         expect(eventPoster.post).toHaveBeenCalledWith({
-            type: ExtensionPostEventType.FRAME_LOADED,
+            type: ExtensionCommandType.FRAME_LOADED,
             payload: {
                 extensionId: 'test',
             },
@@ -60,8 +60,8 @@ describe('ExtensionService', () => {
     it('#post throws error if event name is not passed correctly', () => {
         extensionService.initialize('test');
 
-        const event: ExtensionPostEvent = {
-            type: 'some-event' as ExtensionPostEventType,
+        const event: ExtensionPostCommand = {
+            type: 'some-event' as ExtensionCommandType,
             payload: {},
         };
 
@@ -71,10 +71,10 @@ describe('ExtensionService', () => {
     it('#addListener adds callback as noop if no callback method is passed', () => {
         extensionService.initialize('test');
 
-        extensionService.addListener(ExtensionListenEventType.BroadcastCart);
+        extensionService.addListener(ExtensionListenEventType.CheckoutLoaded);
 
         expect(eventListener.addListener).toHaveBeenCalledWith(
-            ExtensionListenEventType.BroadcastCart,
+            ExtensionListenEventType.CheckoutLoaded,
             noop,
         );
     });
@@ -92,10 +92,10 @@ describe('ExtensionService', () => {
 
         const callbackFn = jest.fn();
 
-        extensionService.addListener(ExtensionListenEventType.BroadcastCart, callbackFn);
+        extensionService.addListener(ExtensionListenEventType.CheckoutLoaded, callbackFn);
 
         expect(eventListener.addListener).toHaveBeenCalledWith(
-            ExtensionListenEventType.BroadcastCart,
+            ExtensionListenEventType.CheckoutLoaded,
             callbackFn,
         );
     });
