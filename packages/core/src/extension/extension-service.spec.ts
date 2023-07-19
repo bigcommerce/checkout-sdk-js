@@ -3,17 +3,17 @@ import { noop } from 'lodash';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
 import {
+    ExtensionCommand,
     ExtensionCommandType,
-    ExtensionListenEventMap,
-    ExtensionListenEventType,
-    ExtensionPostCommand,
+    ExtensionEventMap,
+    ExtensionEventType,
 } from './extension-client';
 import ExtensionService from './extension-service';
 
 describe('ExtensionService', () => {
     let extensionService: ExtensionService;
-    let eventListener: IframeEventListener<ExtensionListenEventMap>;
-    let eventPoster: IframeEventPoster<ExtensionPostCommand>;
+    let eventListener: IframeEventListener<ExtensionEventMap>;
+    let eventPoster: IframeEventPoster<ExtensionCommand>;
 
     beforeEach(() => {
         eventListener = new IframeEventListener('https://mybigcommerce.com');
@@ -42,7 +42,7 @@ describe('ExtensionService', () => {
     it('#post throws error if extension id is not set', () => {
         extensionService.initialize('test');
 
-        const event: ExtensionPostCommand = {
+        const event: ExtensionCommand = {
             type: ExtensionCommandType.FRAME_LOADED,
             payload: {},
         };
@@ -60,7 +60,7 @@ describe('ExtensionService', () => {
     it('#post throws error if event name is not passed correctly', () => {
         extensionService.initialize('test');
 
-        const event: ExtensionPostCommand = {
+        const event: ExtensionCommand = {
             type: 'some-event' as ExtensionCommandType,
             payload: {},
         };
@@ -71,10 +71,10 @@ describe('ExtensionService', () => {
     it('#addListener adds callback as noop if no callback method is passed', () => {
         extensionService.initialize('test');
 
-        extensionService.addListener(ExtensionListenEventType.CheckoutLoaded);
+        extensionService.addListener(ExtensionEventType.CheckoutLoaded);
 
         expect(eventListener.addListener).toHaveBeenCalledWith(
-            ExtensionListenEventType.CheckoutLoaded,
+            ExtensionEventType.CheckoutLoaded,
             noop,
         );
     });
@@ -82,7 +82,7 @@ describe('ExtensionService', () => {
     it('#addListener is not called if event name is not correct', () => {
         extensionService.initialize('test');
 
-        expect(() => extensionService.addListener('someevent' as ExtensionListenEventType)).toThrow(
+        expect(() => extensionService.addListener('someevent' as ExtensionEventType)).toThrow(
             'someevent is not supported.',
         );
     });
@@ -92,10 +92,10 @@ describe('ExtensionService', () => {
 
         const callbackFn = jest.fn();
 
-        extensionService.addListener(ExtensionListenEventType.CheckoutLoaded, callbackFn);
+        extensionService.addListener(ExtensionEventType.CheckoutLoaded, callbackFn);
 
         expect(eventListener.addListener).toHaveBeenCalledWith(
-            ExtensionListenEventType.CheckoutLoaded,
+            ExtensionEventType.CheckoutLoaded,
             callbackFn,
         );
     });

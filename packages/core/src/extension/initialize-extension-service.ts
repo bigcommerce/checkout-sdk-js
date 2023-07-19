@@ -1,9 +1,9 @@
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
 import {
-    ExtensionListenEventMap,
-    ExtensionPostEvent,
-    ExtensionPostEventType,
+    ExtensionCommand,
+    ExtensionCommandType,
+    ExtensionEventMap,
     InitializeExtensionServiceOptions,
 } from './extension-client';
 import ExtensionService from './extension-service';
@@ -12,12 +12,12 @@ export default function initializeExtensionService(options: InitializeExtensionS
     const { extensionId, parentOrigin } = options;
 
     const extension = new ExtensionService(
-        new IframeEventListener<ExtensionListenEventMap>(parentOrigin),
-        new IframeEventPoster<ExtensionPostEvent>(parentOrigin),
+        new IframeEventListener<ExtensionEventMap>(parentOrigin),
+        new IframeEventPoster<ExtensionCommand>(parentOrigin),
     );
 
     extension.initialize(extensionId);
-    extension.post({ type: ExtensionPostEventType.FRAME_LOADED, payload: { extensionId } });
+    extension.post({ type: ExtensionCommandType.FRAME_LOADED, payload: { extensionId } });
 
     return extension;
 }

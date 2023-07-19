@@ -3,25 +3,25 @@ export interface InitializeExtensionServiceOptions {
     parentOrigin: string;
 }
 
-export enum ExtensionListenEventType {
+export enum ExtensionEventType {
     CheckoutLoaded = 'CHECKOUT_LOADED',
     ShippingCountryChange = 'SHIPPING_COUNTRY_CHANGE',
 }
 
 export interface CheckoutLoadedEvent {
-    type: ExtensionListenEventType.CheckoutLoaded;
+    type: ExtensionEventType.CheckoutLoaded;
 }
 
 export interface ShippingCountryChangeEvent {
-    type: ExtensionListenEventType.CheckoutLoaded;
+    type: ExtensionEventType.ShippingCountryChange;
     payload: {
         countryCode: string;
     };
 }
 
-export interface ExtensionListenEventMap {
-    [ExtensionListenEventType.CheckoutLoaded]: CheckoutLoadedEvent;
-    [ExtensionListenEventType.ShippingCountryChange]: ShippingCountryChangeEvent;
+export interface ExtensionEventMap {
+    [ExtensionEventType.CheckoutLoaded]: CheckoutLoadedEvent;
+    [ExtensionEventType.ShippingCountryChange]: ShippingCountryChangeEvent;
 }
 
 export enum ExtensionCommandType {
@@ -48,7 +48,7 @@ export interface ExtensionFrameLoadedCommand extends BaseEventPayload {
     type: ExtensionCommandType.FRAME_LOADED;
 }
 
-export type ExtensionPostCommand =
+export type ExtensionCommand =
     | ExtensionReloadCommand
     | ExtensionShowLoadingIndicatorCommand
     | ExtensionFrameLoadedCommand;
