@@ -34,6 +34,15 @@ export default interface Order {
     taxes: Tax[];
     taxTotal: number;
     channelId: number;
+    fees: OrderFee[];
+}
+
+export interface OrderFee {
+    id: number;
+    type: string;
+    customerDisplayName: string;
+    cost: number;
+    source: string;
 }
 
 export type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
