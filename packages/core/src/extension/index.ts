@@ -13,5 +13,6 @@ export {
     ExtensionSelectorFactory,
     createExtensionSelectorFactory,
 } from './extension-selector';
+export { default as initializeExtensionService } from './initialize-extension-service';
 export { ExtensionState } from './extension-state';
 export { HostOriginEvent } from './host-origin-event';

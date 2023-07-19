@@ -1,7 +1,10 @@
 const path = require('path');
 const { DefinePlugin } = require('webpack');
 
-const { getNextVersion, packageLoaderRules : { aliasMap: alias, tsSrcPackages } } = require('./scripts/webpack');
+const {
+    getNextVersion,
+    packageLoaderRules: { aliasMap: alias, tsSrcPackages },
+} = require('./scripts/webpack');
 
 const libraryName = 'checkoutKit';
 
@@ -11,6 +14,7 @@ const libraryEntries = {
     'checkout-sdk': path.join(coreSrcPath, 'bundles', 'checkout-sdk.ts'),
     'checkout-button': path.join(coreSrcPath, 'bundles', 'checkout-button.ts'),
     'embedded-checkout': path.join(coreSrcPath, 'bundles', 'embedded-checkout.ts'),
+    extension: path.join(coreSrcPath, 'bundles', 'extension.ts'),
     'hosted-form': path.join(coreSrcPath, 'bundles', 'hosted-form.ts'),
     'internal-mappers': path.join(coreSrcPath, 'bundles', 'internal-mappers.ts'),
 };
@@ -19,7 +23,7 @@ async function getBaseConfig() {
     return {
         stats: {
             errorDetails: true,
-            logging: 'verbose'
+            logging: 'verbose',
         },
         devtool: 'source-map',
         mode: 'production',
@@ -39,25 +43,22 @@ async function getBaseConfig() {
                     enforce: 'pre',
                     loader: require.resolve('source-map-loader'),
                 },
-                ...tsSrcPackages
+                ...tsSrcPackages,
             ],
         },
         plugins: [
             new DefinePlugin({
-                'LIBRARY_VERSION': JSON.stringify(await getNextVersion()),
+                LIBRARY_VERSION: JSON.stringify(await getNextVersion()),
             }),
         ],
     };
-};
+}
 
 const babelEnvPreset = [
     '@babel/preset-env',
     {
         corejs: 3,
-        targets: [
-            'defaults',
-            'ie 11',
-        ],
+        targets: ['defaults', 'ie 11'],
         useBuiltIns: 'usage',
     },
 ];
@@ -68,25 +69,18 @@ const babelLoaderRules = [
         loader: 'babel-loader',
         include: coreSrcPath,
         options: {
-            presets: [
-                babelEnvPreset,
-            ],
+            presets: [babelEnvPreset],
         },
     },
     {
         test: /\.js$/,
         loader: 'babel-loader',
         include: path.join(__dirname, 'node_modules'),
-        exclude: [
-            /\/node_modules\/core-js\//,
-            /\/node_modules\/webpack\//,
-        ],
+        exclude: [/\/node_modules\/core-js\//, /\/node_modules\/webpack\//],
         options: {
-            presets: [
-                babelEnvPreset,
-            ],
+            presets: [babelEnvPreset],
             sourceType: 'unambiguous',
-        }
+        },
     },
 ];
 

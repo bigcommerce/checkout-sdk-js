@@ -2,7 +2,12 @@ const path = require('path');
 const { DefinePlugin } = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 
-const { babelLoaderRules, getBaseConfig, libraryEntries, libraryName } = require('./webpack-common.config');
+const {
+    babelLoaderRules,
+    getBaseConfig,
+    libraryEntries,
+    libraryName,
+} = require('./webpack-common.config');
 
 const outputPath = path.join(__dirname, 'dist');
 
@@ -20,10 +25,7 @@ async function getUmdConfig(options, argv) {
             path: outputPath,
         },
         module: {
-            rules: [
-                ...babelLoaderRules,
-                ...baseConfig.module.rules,
-            ],
+            rules: [...babelLoaderRules, ...baseConfig.module.rules],
         },
     };
 }
@@ -35,9 +37,7 @@ async function getCjsConfig(options, argv) {
         ...baseConfig,
         name: 'cjs',
         entry: libraryEntries,
-        externals: [
-            nodeExternals()
-        ],
+        externals: [nodeExternals()],
         output: {
             filename: '[name].js',
             libraryTarget: 'commonjs2',
@@ -53,10 +53,7 @@ async function getCjsConfig(options, argv) {
 }
 
 async function getConfigs(options, argv) {
-    return [
-        await getCjsConfig(options, argv),
-        await getUmdConfig(options, argv),
-    ];
+    return [await getCjsConfig(options, argv), await getUmdConfig(options, argv)];
 }
 
 module.exports = getConfigs;
