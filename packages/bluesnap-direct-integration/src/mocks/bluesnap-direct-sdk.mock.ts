@@ -1,4 +1,8 @@
-import { BlueSnapDirectCallbackResults, BlueSnapDirectHostedPaymentFieldsOptions } from '../types';
+import {
+    BlueSnapDirect3dsCallbackResponse,
+    BlueSnapDirectCallbackResults,
+    BlueSnapDirectHostedPaymentFieldsOptions,
+} from '../types';
 
 const data = {
     cardData: {
@@ -15,6 +19,31 @@ const data = {
     statusCode: '1',
     transactionFraudInfo: {
         fraudSessionId: 'qwerty123',
+    },
+};
+
+export const previouslyUsedCardDataMock = {
+    last4Digits: '1111',
+    ccType: 'visa',
+    amount: 10,
+    currency: 'USD',
+    billingFirstName: 'string',
+    billingLastName: 'string',
+    billingCountry: 'string',
+    billingState: 'string',
+    billingCity: 'string',
+    billingAddress: 'string',
+    billingZip: 'string',
+    email: 'string',
+    phone: '11111111111',
+};
+
+export const threeDSdata = {
+    code: '1',
+    cardData: data.cardData,
+    threeDSecure: {
+        authResult: 'string',
+        threeDSecureReferenceId: '1111',
     },
 };
 
@@ -61,6 +90,18 @@ export default function getBlueSnapDirectSdkMock(errorCode?: keyof typeof errors
                 (callback: (results: BlueSnapDirectCallbackResults) => void) =>
                     callback(errorCode ? errors[errorCode] : data),
             ),
+            threeDsPaymentsSetup: jest.fn(
+                (
+                    _token: string,
+                    callback: (results: BlueSnapDirect3dsCallbackResponse) => void,
+                ) => {
+                    return setTimeout(
+                        () => callback(errorCode ? { ...threeDSdata, code: '0' } : threeDSdata),
+                        0,
+                    );
+                },
+            ),
+            threeDsPaymentsSubmitData: jest.fn(),
         },
         callbackResults: errorCode ? errors[errorCode].error : data.cardData,
     };

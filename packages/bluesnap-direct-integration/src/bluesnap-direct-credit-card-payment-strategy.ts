@@ -14,6 +14,7 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import BlueSnapDirect3ds from './bluesnap-direct-3ds';
 import BlueSnapDirectHostedForm from './bluesnap-direct-hosted-form';
 import isHostedCardFieldOptionsMap from './is-hosted-card-field-options-map';
 import isHostedStoredCardFieldOptionsMap from './is-hosted-stored-card-field-options-map';
@@ -26,6 +27,7 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
     constructor(
         private _paymentIntegrationService: PaymentIntegrationService,
         private _blueSnapDirectHostedForm: BlueSnapDirectHostedForm,
+        private _blueSnapDirect3ds: BlueSnapDirect3ds,
     ) {}
 
     async initialize(
@@ -50,8 +52,7 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
         this._shouldUseHostedFields =
             isHostedCardFieldOptionsMap(creditCard.form.fields) ||
             (isHostedStoredCardFieldOptionsMap(creditCard.form.fields) &&
-                (!!creditCard.form.fields.cardNumberVerification ||
-                    !!creditCard.form.fields.cardCodeVerification));
+                !!creditCard.form.fields.cardNumberVerification);
 
         if (this._shouldUseHostedFields) {
             await this._blueSnapDirectHostedForm.initialize(testMode, creditCard.form.fields);
@@ -77,6 +78,7 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
             : { shouldSaveInstrument: false, shouldSetAsDefaultInstrument: false };
 
         const pfToken = this._getPaymentFieldsToken();
+        let threeDSecureReferenceId;
 
         const { is3dsEnabled } = this._paymentIntegrationService
             .getState()
@@ -96,13 +98,36 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
         if (
             isHostedInstrumentLike(paymentData) &&
             isVaultedInstrument(paymentData) &&
+            this._paymentFieldsToken &&
             paymentData.instrumentId
         ) {
+            if (is3dsEnabled && !this._shouldUseHostedFields) {
+                await this._blueSnapDirect3ds.initialize();
+
+                const { last4, brand } = this._paymentIntegrationService
+                    .getState()
+                    .getCardInstrumentOrThrow(paymentData.instrumentId);
+
+                const previouslyUsedCard = {
+                    last4Digits: last4,
+                    ccType: brand.toUpperCase(),
+                    ...this._getBlueSnapDirectThreeDSecureData(),
+                };
+
+                threeDSecureReferenceId = await this._blueSnapDirect3ds.initialize3ds(
+                    this._paymentFieldsToken,
+                    previouslyUsedCard,
+                );
+            }
+
             await this._paymentIntegrationService.submitPayment({
                 ...payload.payment,
                 paymentData: {
                     instrumentId: paymentData.instrumentId,
                     ...(this._shouldUseHostedFields ? { nonce: pfToken } : {}),
+                    ...(threeDSecureReferenceId
+                        ? { deviceSessionId: threeDSecureReferenceId }
+                        : {}),
                     shouldSetAsDefaultInstrument: !!shouldSetAsDefaultInstrument,
                 },
             });

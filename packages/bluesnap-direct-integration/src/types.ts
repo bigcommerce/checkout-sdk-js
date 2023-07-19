@@ -165,6 +165,43 @@ export interface BlueSnapDirectSdk {
         callback: (results: BlueSnapDirectCallbackResults) => void,
         threeDSecureData?: BlueSnapDirectThreeDSecureData,
     ): void;
+    threeDsPaymentsSetup(
+        token: string,
+        callback: (reponse: BlueSnapDirect3dsCallbackResponse) => void,
+    ): void;
+    threeDsPaymentsSubmitData(cardData: BlueSnapDirectPreviouslyUsedCard): void;
+}
+
+export interface BlueSnapDirectPreviouslyUsedCard {
+    last4Digits?: string;
+    ccType?: string;
+    amount: number;
+    currency: string;
+    billingFirstName?: string;
+    billingLastName?: string;
+    billingCountry?: string;
+    billingState?: string;
+    billingCity?: string;
+    billingAddress?: string;
+    billingZip?: string;
+    shippingFirstName?: string;
+    shippingLastName?: string;
+    shippingCountry?: string;
+    shippingState?: string;
+    shippingCity?: string;
+    shippingAddress?: string;
+    shippingZip?: string;
+    email?: string;
+    phone?: string;
+}
+
+export interface BlueSnapDirect3dsCallbackResponse {
+    code: string;
+    cardData: BlueSnapDirectCallbackCardData;
+    threeDSecure: {
+        authResult: string;
+        threeDSecureReferenceId: string;
+    };
 }
 
 export interface BlueSnapDirectHostWindow extends Window {

@@ -14,12 +14,14 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import BlueSnapDirect3ds from './bluesnap-direct-3ds';
 import BlueSnapDirectCreditCardPaymentStrategy from './bluesnap-direct-credit-card-payment-strategy';
 import BlueSnapDirectHostedForm from './bluesnap-direct-hosted-form';
 import BlueSnapHostedInputValidator from './bluesnap-direct-hosted-input-validator';
 import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input';
 import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
 import { getBlueSnapDirect } from './mocks/bluesnap-direct-method.mock';
+import { previouslyUsedCardDataMock } from './mocks/bluesnap-direct-sdk.mock';
 
 describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
@@ -27,6 +29,7 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
     let nameOnCardInput: BluesnapDirectNameOnCardInput;
     let hostedInputValidator: BlueSnapHostedInputValidator;
     let hostedForm: BlueSnapDirectHostedForm;
+    let bluesnapdirect3ds: BlueSnapDirect3ds;
     let strategy: BlueSnapDirectCreditCardPaymentStrategy;
     let options: PaymentInitializeOptions & WithCreditCardPaymentInitializeOptions;
     let optionsCardValidation: PaymentInitializeOptions & WithCreditCardPaymentInitializeOptions;
@@ -51,16 +54,20 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
             nameOnCardInput,
             hostedInputValidator,
         );
+        bluesnapdirect3ds = new BlueSnapDirect3ds(scriptLoader);
 
         jest.spyOn(hostedForm, 'initialize').mockResolvedValue(undefined);
         jest.spyOn(hostedForm, 'attach').mockResolvedValue(undefined);
         jest.spyOn(hostedForm, 'validate').mockReturnValue(hostedForm);
         jest.spyOn(hostedForm, 'submit').mockResolvedValue({ cardHolderName: 'John Doe' });
-        jest.spyOn(hostedForm, 'detach').mockReturnValue(undefined);
+        jest.spyOn(hostedForm, 'detach').mockResolvedValue(undefined);
+        jest.spyOn(bluesnapdirect3ds, 'initialize').mockResolvedValue(undefined);
+        jest.spyOn(bluesnapdirect3ds, 'initialize3ds').mockResolvedValue('3dsId');
 
         strategy = new BlueSnapDirectCreditCardPaymentStrategy(
             paymentIntegrationService,
             hostedForm,
+            bluesnapdirect3ds,
         );
 
         optionsCardValidationWithoutFields = {
@@ -368,6 +375,91 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
             };
 
             await strategy.execute(payload);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                gatewayId: 'bluesnapdirect',
+                methodId: 'credit_card',
+                paymentData: {
+                    instrumentId: 'id',
+                    shouldSetAsDefaultInstrument: false,
+                },
+            });
+        });
+
+        it('should submit the payment with stored card with 3ds enabled', async () => {
+            const execute = async () => {
+                const method = getBlueSnapDirect();
+
+                method.config.is3dsEnabled = true;
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(method);
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getCardInstrumentOrThrow',
+                ).mockReturnValue({
+                    last4: previouslyUsedCardDataMock.last4Digits,
+                    brand: previouslyUsedCardDataMock.ccType,
+                });
+
+                await strategy.execute({
+                    payment: {
+                        gatewayId: 'bluesnapdirect',
+                        methodId: 'credit_card',
+                        paymentData: { shouldSetAsDefaultInstrument: false, instrumentId: 'id' },
+                    },
+                });
+            };
+
+            await strategy.initialize(optionsCardValidationWithoutFields);
+
+            await execute();
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                gatewayId: 'bluesnapdirect',
+                methodId: 'credit_card',
+                paymentData: {
+                    deviceSessionId: '3dsId',
+                    instrumentId: 'id',
+                    shouldSetAsDefaultInstrument: false,
+                },
+            });
+        });
+
+        it('should submit the payment with stored card with 3ds disabled', async () => {
+            const execute = async () => {
+                const method = getBlueSnapDirect();
+
+                method.config.is3dsEnabled = false;
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(method);
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getCardInstrumentOrThrow',
+                ).mockReturnValue({
+                    last4: previouslyUsedCardDataMock.last4Digits,
+                    brand: previouslyUsedCardDataMock.ccType,
+                });
+
+                await strategy.execute({
+                    payment: {
+                        gatewayId: 'bluesnapdirect',
+                        methodId: 'credit_card',
+                        paymentData: { shouldSetAsDefaultInstrument: false, instrumentId: 'id' },
+                    },
+                });
+            };
+
+            await strategy.initialize(optionsCardValidationWithoutFields);
+
+            await execute();
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 gatewayId: 'bluesnapdirect',
