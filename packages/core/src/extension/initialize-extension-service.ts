@@ -1,4 +1,8 @@
-import { IframeEventListener, IframeEventPoster } from '../common/iframe';
+import {
+    IframeEventListener,
+    IframeEventPoster,
+    setupContentWindowForIframeResizer,
+} from '../common/iframe';
 
 import {
     ExtensionCommand,
@@ -10,6 +14,8 @@ import ExtensionService from './extension-service';
 
 export default function initializeExtensionService(options: InitializeExtensionServiceOptions) {
     const { extensionId, parentOrigin } = options;
+
+    setupContentWindowForIframeResizer();
 
     const extension = new ExtensionService(
         new IframeEventListener<ExtensionEventMap>(parentOrigin),
