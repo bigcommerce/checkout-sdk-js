@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.403.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.402.1...v1.403.0) (2023-07-19)
+
+
+### Features
+
+* **order:** ORDERS-5715 add OrderFee interface, add fees field to Order interface ([#2066](https://github.com/bigcommerce/checkout-sdk-js/issues/2066)) ([9b09886](https://github.com/bigcommerce/checkout-sdk-js/commit/9b0988619bca9c690f853ab9089d64c74643f885))
+
 ### [1.402.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.402.0...v1.402.1) (2023-07-17)
 
 

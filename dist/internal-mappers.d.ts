@@ -609,6 +609,7 @@ declare interface Order {
     taxes: Tax[];
     taxTotal: number;
     channelId: number;
+    fees: OrderFee[];
 }
 
 declare interface OrderBillingAddress extends Address {
@@ -617,6 +618,14 @@ declare interface OrderBillingAddress extends Address {
 
 declare interface OrderConsignment {
     shipping: OrderShippingConsignment[];
+}
+
+declare interface OrderFee {
+    id: number;
+    type: string;
+    customerDisplayName: string;
+    cost: number;
+    source: string;
 }
 
 declare interface OrderMetaState extends InternalOrderMeta {

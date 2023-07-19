@@ -291,6 +291,7 @@
 - [Order](interfaces/Order.md)
 - [OrderBillingAddress](interfaces/OrderBillingAddress.md)
 - [OrderConsignment](interfaces/OrderConsignment.md)
+- [OrderFee](interfaces/OrderFee.md)
 - [OrderPayment](interfaces/OrderPayment.md)
 - [OrderPaymentRequestBody](interfaces/OrderPaymentRequestBody.md)
 - [OrderRequestBody](interfaces/OrderRequestBody.md)

@@ -17,6 +17,7 @@
 - [customerId](Order.md#customerid)
 - [customerMessage](Order.md#customermessage)
 - [discountAmount](Order.md#discountamount)
+- [fees](Order.md#fees)
 - [giftWrappingCostTotal](Order.md#giftwrappingcosttotal)
 - [handlingCostTotal](Order.md#handlingcosttotal)
 - [hasDigitalItems](Order.md#hasdigitalitems)
@@ -99,6 +100,12 @@ ___
 ### discountAmount
 
 • **discountAmount**: `number`
+
+___
+
+### fees
+
+• **fees**: [`OrderFee`](OrderFee.md)[]
 
 ___
 
