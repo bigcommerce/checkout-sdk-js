@@ -82,9 +82,9 @@ describe('ExtensionService', () => {
     it('#addListener is not called if event name is not correct', () => {
         extensionService.initialize('test');
 
-        extensionService.addListener('someevent' as ExtensionListenEventType);
-
-        expect(eventListener.addListener).not.toHaveBeenCalled();
+        expect(() => extensionService.addListener('someevent' as ExtensionListenEventType)).toThrow(
+            'someevent is not supported.',
+        );
     });
 
     it('#addListener is called correctly with params', () => {

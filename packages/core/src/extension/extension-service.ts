@@ -19,7 +19,7 @@ export default class ExtensionService {
         this._eventPoster.setTarget(window.parent);
     }
 
-    initialize(extensionId: string) {
+    initialize(extensionId: string): void {
         if (!extensionId) {
             throw new Error('Extension Id not found.');
         }
@@ -48,7 +48,7 @@ export default class ExtensionService {
 
     addListener(eventType: ExtensionListenEventType, callback: () => void = noop): () => void {
         if (!Object.values(ExtensionListenEventType).includes(eventType)) {
-            return noop;
+            throw new Error(`${eventType} is not supported.`);
         }
 
         this._eventListener.addListener(eventType, callback);
