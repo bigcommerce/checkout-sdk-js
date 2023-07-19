@@ -7045,7 +7045,7 @@ declare interface SepaPlaceHolder_2 {
 }
 
 declare interface SetIframeStylePayload {
-    type: ExtensionCommand.ReloadCheckout;
+    type: ExtensionCommand.SetIframeStyle;
     payload: {
         extensionId: string;
         style: {
@@ -7113,7 +7113,7 @@ declare interface ShopperCurrency extends StoreCurrency {
 }
 
 declare interface ShowLoadingIndicatorEvent {
-    type: ExtensionCommand.ReloadCheckout;
+    type: ExtensionCommand.ShowLoadingIndicator;
     payload: {
         extensionId: string;
         show: boolean;

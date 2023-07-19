@@ -26,4 +26,4 @@ ___
 
 ### type
 
-• **type**: [`ReloadCheckout`](../enums/ExtensionCommand.md#reloadcheckout)
+• **type**: [`ShowLoadingIndicator`](../enums/ExtensionCommand.md#showloadingindicator)

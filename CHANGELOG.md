@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.404.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.403.0...v1.404.0) (2023-07-19)
+
+
+### Features
+
+* **checkout:** CHECKOUT-7595 Add client extension service ([#2056](https://github.com/bigcommerce/checkout-sdk-js/issues/2056)) ([c04106a](https://github.com/bigcommerce/checkout-sdk-js/commit/c04106afba0c341b9a76d4341cc98542d32dc7a7))
+
 ## [1.403.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.402.1...v1.403.0) (2023-07-19)
 
 
