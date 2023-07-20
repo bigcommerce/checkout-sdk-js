@@ -42,15 +42,18 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             this._paymentMethodActionCreator.loadPaymentMethod(options.methodId),
         );
 
-        this._paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
+        this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
 
-        if (!this._paymentMethod?.clientToken) {
+        const { clientToken, initializationData } = this._paymentMethod;
+
+        if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         try {
             this._braintreePaymentProcessor.initialize(
-                this._paymentMethod.clientToken,
+                clientToken,
+                initializationData,
                 options.braintree,
             );
 

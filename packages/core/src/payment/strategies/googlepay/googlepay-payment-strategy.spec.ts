@@ -326,10 +326,7 @@ describe('GooglePayPaymentStrategy', () => {
             });
 
             it('initialize brainTreeSDK on clientToken', async () => {
-                jest.spyOn(
-                    store.getState().paymentMethods,
-                    'getPaymentMethodOrThrow',
-                ).mockReturnValue({
+                const updatedPaymentMethod = {
                     initializationData: {
                         ...initializationData,
                         card_information: {
@@ -339,11 +336,19 @@ describe('GooglePayPaymentStrategy', () => {
                         isThreeDSecureEnabled: false,
                     },
                     clientToken: 'clienttoken',
-                });
+                };
+
+                jest.spyOn(
+                    store.getState().paymentMethods,
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(updatedPaymentMethod);
 
                 await strategy.initialize(googlePayOptions);
 
-                expect(initializeBraintreeSDK).toHaveBeenCalledWith('clienttoken');
+                expect(initializeBraintreeSDK).toHaveBeenCalledWith(
+                    'clienttoken',
+                    updatedPaymentMethod.initializationData,
+                );
             });
 
             it('throws error if element doesnt exist in the DOM', async () => {

@@ -36,7 +36,6 @@ import { CustomerInitializeOptions } from '../../customer-request-options';
 import CustomerStrategyActionCreator from '../../customer-strategy-action-creator';
 import { CustomerStrategyActionType } from '../../customer-strategy-actions';
 import { getRemoteCustomer } from '../../internal-customers.mock';
-import CustomerStrategy from '../customer-strategy';
 
 import BraintreeVisaCheckoutCustomerStrategy from './braintree-visacheckout-customer-strategy';
 
@@ -49,7 +48,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
     let paymentMethodMock: PaymentMethod;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let store: CheckoutStore;
-    let strategy: CustomerStrategy;
+    let strategy: BraintreeVisaCheckoutCustomerStrategy;
     let visaCheckoutScriptLoader: VisaCheckoutScriptLoader;
     let visaCheckoutSDK: VisaCheckoutSDK;
     let formPoster: FormPoster;
@@ -65,12 +64,12 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         braintreeVisaCheckoutPaymentProcessor.initialize = jest.fn(() => Promise.resolve());
         braintreeVisaCheckoutPaymentProcessor.handleSuccess = jest.fn(() => Promise.resolve());
 
-        paymentMethodMock = { ...getBraintreeVisaCheckout(), clientToken: 'clientToken' };
+        paymentMethodMock = getBraintreeVisaCheckout();
 
         store = createCheckoutStore(getCheckoutStoreState());
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,
         );
 
@@ -181,6 +180,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
 
             expect(braintreeVisaCheckoutPaymentProcessor.initialize).toHaveBeenCalledWith(
                 'clientToken',
+                {},
                 {
                     collectShipping: true,
                     currencyCode: 'USD',
@@ -292,7 +292,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         });
 
         it('throws error if trying to sign in programmatically', () => {
-            expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrow();
+            expect(() => strategy.signIn()).toThrow();
         });
     });
 

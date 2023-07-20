@@ -90,14 +90,16 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
             currencyCode = state.cart.getCartOrThrow().currency.code;
         }
 
-        if (!paymentMethod.clientToken) {
+        const { clientToken, initializationData } = paymentMethod;
+
+        if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const paypalCheckoutOptions: Partial<BraintreePaypalSdkCreatorConfig> = {
             currency: currencyCode,
-            intent: paymentMethod.initializationData?.intent,
-            isCreditEnabled: paymentMethod.initializationData?.isCreditEnabled,
+            intent: initializationData.intent,
+            isCreditEnabled: initializationData.isCreditEnabled,
         };
 
         const paypalCheckoutCallback = (braintreePaypalCheckout: BraintreePaypalCheckout) =>
@@ -111,7 +113,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
             this._handleError(error, containerId, braintreepaypalcredit.onError);
 
-        this._braintreeSDKCreator.initialize(paymentMethod.clientToken);
+        this._braintreeSDKCreator.initialize(clientToken, initializationData);
         await this._braintreeSDKCreator.getPaypalCheckout(
             paypalCheckoutOptions,
             paypalCheckoutCallback,

@@ -47,7 +47,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
         braintreePaymentProcessorMock.getSessionId = jest.fn(() => 'my_session_id');
         braintreePaymentProcessorMock.deinitialize = jest.fn();
 
-        paymentMethodMock = { ...getBraintreePaypal(), clientToken: 'myToken' };
+        paymentMethodMock = getBraintreePaypal();
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         loadPaymentMethodAction = of(
@@ -89,7 +89,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
             await braintreePaypalPaymentStrategy.initialize(options);
 
             expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith(
-                'foo',
+                paymentMethodMock.clientToken,
+                paymentMethodMock.initializationData,
                 options.braintree,
             );
         });

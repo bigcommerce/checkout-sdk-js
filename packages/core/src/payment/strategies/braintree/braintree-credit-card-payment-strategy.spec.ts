@@ -86,13 +86,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             Promise.resolve('my_session_id'),
         );
 
-        paymentMethodMock = {
-            ...getBraintree(),
-            clientToken: 'myToken',
-            initializationData: {
-                merchantAccountId: '100000',
-            },
-        };
+        paymentMethodMock = getBraintree();
 
         store = createCheckoutStore(getCheckoutStoreState());
 
@@ -132,6 +126,10 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             loadPaymentMethodAction,
         );
 
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethodMock,
+        );
+
         braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(
             store,
             orderActionCreator,
@@ -169,6 +167,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
             expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
+                paymentMethodMock.initializationData,
                 options.braintree,
             );
             expect(braintreePaymentProcessorMock.initializeHostedForm).not.toHaveBeenCalled();
@@ -196,6 +195,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
             expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
+                paymentMethodMock.initializationData,
                 options.braintree,
             );
             expect(braintreePaymentProcessorMock.initializeHostedForm).toHaveBeenCalledWith(

@@ -28,11 +28,13 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         paymentMethod: PaymentMethod,
         hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
-        if (!paymentMethod.clientToken) {
+        const { clientToken, initializationData } = paymentMethod;
+
+        if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this._braintreeSDKCreator.initialize(paymentMethod.clientToken);
+        this._braintreeSDKCreator.initialize(clientToken, initializationData);
 
         return this._braintreeSDKCreator
             .getGooglePaymentComponent()

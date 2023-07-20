@@ -4,6 +4,7 @@ import PaymentMethodState from './payment-method-state';
 export function getBraintree(): PaymentMethod {
     return {
         id: 'braintree',
+        clientToken: 'clientToken',
         logoUrl:
             'https://cdn.bcapp.dev/rHEAD/modules/checkout/braintree/images/paypal_powered_braintree_horizontal.png',
         method: 'credit-card',
@@ -17,6 +18,10 @@ export function getBraintree(): PaymentMethod {
             isVisaCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
+        initializationData: {
+            isAcceleratedCheckoutEnabled: false,
+            merchantAccountId: '100000',
+        },
     };
 }
 
@@ -74,6 +79,7 @@ export function getBraintreePaypalCredit(): PaymentMethod {
 export function getBraintreeVisaCheckout(): PaymentMethod {
     return {
         id: 'braintreevisacheckout',
+        clientToken: 'clientToken',
         logoUrl: '',
         method: 'paypal',
         supportedCards: [],
@@ -81,6 +87,7 @@ export function getBraintreeVisaCheckout(): PaymentMethod {
             testMode: false,
             isVisaCheckoutEnabled: true,
         },
+        initializationData: {},
         type: 'PAYMENT_TYPE_API',
     };
 }
