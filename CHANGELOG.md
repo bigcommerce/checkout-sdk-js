@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.405.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.404.0...v1.405.0) (2023-07-20)
+
+
+### Features
+
+* **payment:** PAYPAL-2725 added an ability to switch braintree sdk version (core part) ([#2065](https://github.com/bigcommerce/checkout-sdk-js/issues/2065)) ([29d5451](https://github.com/bigcommerce/checkout-sdk-js/commit/29d54510ef69590bfd697b580594784ed487b5f7))
+* **payment:** PAYPAL-2725 added an ability to switch braintree sdk version to alpha due to the settings in cp ([#2063](https://github.com/bigcommerce/checkout-sdk-js/issues/2063)) ([94a4ce3](https://github.com/bigcommerce/checkout-sdk-js/commit/94a4ce3093b770fdfc6a21d96b6ee2908255adc5))
+
 ## [1.404.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.403.0...v1.404.0) (2023-07-19)
 
 
