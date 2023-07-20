@@ -5,7 +5,7 @@ export { ExtensionActionCreator } from './extension-action-creator';
 export { ExtensionCommandHandler } from './extension-command-handler';
 export { ExtensionIframe } from './extension-iframe';
 export { ExtensionMessenger } from './extension-messenger';
-export { ExtensionCommand, ExtensionOriginEvent } from './extension-origin-event';
+export { ExtensionCommandType, ExtensionCommand } from './extension-command';
 export { extensionReducer } from './extension-reducer';
 export { ExtensionRequestSender } from './extension-request-sender';
 export {
@@ -15,4 +15,3 @@ export {
 } from './extension-selector';
 export { default as initializeExtensionService } from './initialize-extension-service';
 export { ExtensionState } from './extension-state';
-export { HostOriginEvent } from './host-origin-event';

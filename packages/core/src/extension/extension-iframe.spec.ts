@@ -57,6 +57,20 @@ describe('ExtensionIframe', () => {
         expect(url.searchParams.get('cartId')).toBe(cart.id);
     });
 
+    it('only attaches iframe once for an extension', async () => {
+        await extensionIframe.attach();
+
+        document.querySelector = jest.fn().mockReturnValue(container);
+        container.querySelector = jest.fn().mockReturnValue(document.createElement('iframe'));
+
+        await extensionIframe.attach();
+        await extensionIframe.attach();
+
+        expect(container.querySelectorAll('iframe')).toHaveLength(1);
+
+        jest.resetAllMocks();
+    });
+
     it('detaches the iframe from its parent', async () => {
         const removeChild = jest.spyOn(container, 'removeChild');
 

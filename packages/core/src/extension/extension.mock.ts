@@ -1,5 +1,6 @@
 import { Extension, ExtensionRegion } from './extension';
-import { ExtensionCommand, ExtensionOriginEvent } from './extension-origin-event';
+import { ExtensionEvent, ExtensionEventType } from './extension-client';
+import { ExtensionCommand, ExtensionCommandType } from './extension-command';
 import { ExtensionState } from './extension-state';
 
 export function getExtensions(): Extension[] {
@@ -27,17 +28,29 @@ export function getExtensionState(): ExtensionState {
     };
 }
 
-export function getExtensionMessageEvent(): {
+export function getExtensionCommand(): {
     origin: string;
-    data: ExtensionOriginEvent;
+    data: ExtensionCommand;
 } {
     return {
         origin: 'https://widget.foo.com',
         data: {
-            type: ExtensionCommand.ReloadCheckout,
+            type: ExtensionCommandType.ReloadCheckout,
             payload: {
                 extensionId: '123',
             },
+        },
+    };
+}
+
+export function getExtensionEvent(): {
+    origin: string;
+    data: ExtensionEvent;
+} {
+    return {
+        origin: 'https://host.store',
+        data: {
+            type: ExtensionEventType.CheckoutLoaded,
         },
     };
 }

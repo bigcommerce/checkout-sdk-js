@@ -5,14 +5,11 @@ import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { ExtensionNotFoundError } from './errors';
 import { UnsupportedExtensionCommandError } from './errors/unsupported-extension-command-error';
 import { Extension } from './extension';
+import { ExtensionEvent } from './extension-client';
+import { ExtensionCommandMap, ExtensionCommandType } from './extension-command';
 import { ExtensionCommandHandler } from './extension-command-handler';
 import { ExtensionMessenger } from './extension-messenger';
-import {
-    ExtensionCommand,
-    ExtensionOriginEvent,
-    ExtensionOriginEventMap,
-} from './extension-origin-event';
-import { getExtensionMessageEvent, getExtensions } from './extension.mock';
+import { getExtensionEvent, getExtensions } from './extension.mock';
 
 describe('ExtensionMessenger', () => {
     let extension: Extension;
@@ -20,20 +17,20 @@ describe('ExtensionMessenger', () => {
     let extensionMessenger: ExtensionMessenger;
     let event: {
         origin: string;
-        data: ExtensionOriginEvent;
+        data: ExtensionEvent;
     };
     let store: ReadableCheckoutStore;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
         extension = getExtensions()[0];
-        event = getExtensionMessageEvent();
+        event = getExtensionEvent();
 
         extensionCommandHandler = jest.fn();
     });
 
     describe('#listen() and #stopListen()', () => {
-        let listener: IframeEventListener<ExtensionOriginEventMap>;
+        let listener: IframeEventListener<ExtensionCommandMap>;
 
         beforeEach(() => {
             listener = new IframeEventListener(extension.url);
@@ -49,7 +46,7 @@ describe('ExtensionMessenger', () => {
             expect(() =>
                 extensionMessenger.listen(
                     'xxx',
-                    ExtensionCommand.ReloadCheckout,
+                    ExtensionCommandType.ReloadCheckout,
                     extensionCommandHandler,
                 ),
             ).toThrow(ExtensionNotFoundError);
@@ -59,7 +56,7 @@ describe('ExtensionMessenger', () => {
             expect(() =>
                 extensionMessenger.listen(
                     extension.id,
-                    'INVALID_COMMAND' as ExtensionCommand,
+                    'INVALID_COMMAND' as ExtensionCommandType,
                     extensionCommandHandler,
                 ),
             ).toThrow(UnsupportedExtensionCommandError);
@@ -71,13 +68,13 @@ describe('ExtensionMessenger', () => {
 
             extensionMessenger.listen(
                 extension.id,
-                ExtensionCommand.ReloadCheckout,
+                ExtensionCommandType.ReloadCheckout,
                 extensionCommandHandler,
             );
 
             expect(listener.listen).toHaveBeenCalled();
             expect(listener.addListener).toHaveBeenCalledWith(
-                ExtensionCommand.ReloadCheckout,
+                ExtensionCommandType.ReloadCheckout,
                 extensionCommandHandler,
             );
         });
@@ -87,14 +84,14 @@ describe('ExtensionMessenger', () => {
 
             const remover = extensionMessenger.listen(
                 extension.id,
-                ExtensionCommand.ReloadCheckout,
+                ExtensionCommandType.ReloadCheckout,
                 extensionCommandHandler,
             );
 
             remover();
 
             expect(listener.removeListener).toHaveBeenCalledWith(
-                ExtensionCommand.ReloadCheckout,
+                ExtensionCommandType.ReloadCheckout,
                 extensionCommandHandler,
             );
         });
@@ -104,7 +101,7 @@ describe('ExtensionMessenger', () => {
 
             extensionMessenger.listen(
                 extension.id,
-                ExtensionCommand.ReloadCheckout,
+                ExtensionCommandType.ReloadCheckout,
                 extensionCommandHandler,
             );
 

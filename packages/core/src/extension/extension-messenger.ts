@@ -4,22 +4,22 @@ import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { ExtensionNotFoundError } from './errors';
 import { UnsupportedExtensionCommandError } from './errors/unsupported-extension-command-error';
 import { Extension } from './extension';
+import { ExtensionEvent } from './extension-client';
+import { ExtensionCommandMap, ExtensionCommandType } from './extension-command';
 import { ExtensionCommandHandler } from './extension-command-handler';
-import { ExtensionCommand, ExtensionOriginEventMap } from './extension-origin-event';
-import { HostOriginEvent } from './host-origin-event';
 
 export class ExtensionMessenger {
     private _extensions: Extension[] | undefined;
 
     constructor(
         private _store: ReadableCheckoutStore,
-        private _listeners: { [extensionId: string]: IframeEventListener<ExtensionOriginEventMap> },
-        private _posters: { [extensionId: string]: IframeEventPoster<HostOriginEvent> },
+        private _listeners: { [extensionId: string]: IframeEventListener<ExtensionCommandMap> },
+        private _posters: { [extensionId: string]: IframeEventPoster<ExtensionEvent> },
     ) {}
 
     listen(
         extensionId: string,
-        command: ExtensionCommand,
+        command: ExtensionCommandType,
         extensionCommandHandler: ExtensionCommandHandler,
     ): () => void {
         const extension = this._getExtensionById(extensionId);
@@ -32,12 +32,12 @@ export class ExtensionMessenger {
 
         listener.listen();
 
-        const validCommand = this._validateCommand(command);
+        const validCommandType = this._validateCommand(command);
 
-        listener.addListener(validCommand, extensionCommandHandler);
+        listener.addListener(validCommandType, extensionCommandHandler);
 
         return () => {
-            listener.removeListener(validCommand, extensionCommandHandler);
+            listener.removeListener(validCommandType, extensionCommandHandler);
         };
     }
 
@@ -51,7 +51,7 @@ export class ExtensionMessenger {
         listener.stopListen();
     }
 
-    post(extensionId: string, event: HostOriginEvent): void {
+    post(extensionId: string, event: ExtensionEvent): void {
         if (!this._posters[extensionId]) {
             const extension = this._getExtensionById(extensionId);
 
@@ -93,16 +93,16 @@ export class ExtensionMessenger {
         return extension;
     }
 
-    private _validateCommand(command: string): ExtensionCommand {
+    private _validateCommand(command: string): ExtensionCommandType {
         switch (command) {
             case 'RELOAD_CHECKOUT':
-                return ExtensionCommand.ReloadCheckout;
+                return ExtensionCommandType.ReloadCheckout;
 
             case 'SHOW_LOADING_INDICATOR':
-                return ExtensionCommand.ShowLoadingIndicator;
+                return ExtensionCommandType.ShowLoadingIndicator;
 
             case 'SET_IFRAME_STYLE':
-                return ExtensionCommand.SetIframeStyle;
+                return ExtensionCommandType.SetIframeStyle;
 
             default:
                 throw new UnsupportedExtensionCommandError();

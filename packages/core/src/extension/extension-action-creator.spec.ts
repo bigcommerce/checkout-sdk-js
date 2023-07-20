@@ -15,7 +15,7 @@ import { Extension, ExtensionRegion } from './extension';
 import { ExtensionActionCreator } from './extension-action-creator';
 import { ExtensionActionType } from './extension-actions';
 import { ExtensionRequestSender } from './extension-request-sender';
-import { getExtensionMessageEvent, getExtensions, getExtensionState } from './extension.mock';
+import { getExtensionCommand, getExtensions, getExtensionState } from './extension.mock';
 
 describe('ExtensionActionCreator', () => {
     let errorResponse: Response<ErrorResponseBody>;
@@ -107,7 +107,7 @@ describe('ExtensionActionCreator', () => {
         });
 
         it('emits actions if able to render an extension', async () => {
-            const event = getExtensionMessageEvent();
+            const event = getExtensionCommand();
             const eventEmitter = new EventEmitter();
             const mockElement = document.createElement('div');
 
