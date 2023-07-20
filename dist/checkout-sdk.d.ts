@@ -3450,7 +3450,7 @@ declare class CheckoutService {
      * @param handler - The handler function for the extension command.
      * @returns A function that, when called, will deregister the command handler.
      */
-    listenExtensionCommand(extensionId: string, command: ExtensionCommand, handler: ExtensionCommandHandler): () => void;
+    handleExtensionCommand(extensionId: string, command: ExtensionCommandType, handler: ExtensionCommandHandler): () => void;
     /**
      * Dispatches an action through the data store and returns the current state
      * once the action is dispatched.
@@ -4982,15 +4982,15 @@ declare interface Extension {
     url: string;
 }
 
-declare const enum ExtensionCommand {
+declare type ExtensionCommand = ReloadCheckoutCommand | ShowLoadingIndicatorCommand | SetIframeStyleCommand;
+
+declare type ExtensionCommandHandler = (data: ExtensionCommand) => void;
+
+declare const enum ExtensionCommandType {
     ReloadCheckout = "RELOAD_CHECKOUT",
     ShowLoadingIndicator = "SHOW_LOADING_INDICATOR",
     SetIframeStyle = "SET_IFRAME_STYLE"
 }
-
-declare type ExtensionCommandHandler = (data: ExtensionOriginEvent) => void;
-
-declare type ExtensionOriginEvent = ReloadCheckoutEvent | ShowLoadingIndicatorEvent | SetIframeStylePayload;
 
 declare const enum ExtensionRegion {
     ShippingShippingAddressFormBefore = "shipping.shippingAddressForm.before",
@@ -6983,8 +6983,8 @@ declare interface Region {
     name: string;
 }
 
-declare interface ReloadCheckoutEvent {
-    type: ExtensionCommand.ReloadCheckout;
+declare interface ReloadCheckoutCommand {
+    type: ExtensionCommandType.ReloadCheckout;
     payload: {
         extensionId: string;
     };
@@ -7044,8 +7044,8 @@ declare interface SepaPlaceHolder_2 {
     ibanNumber?: string;
 }
 
-declare interface SetIframeStylePayload {
-    type: ExtensionCommand.SetIframeStyle;
+declare interface SetIframeStyleCommand {
+    type: ExtensionCommandType.SetIframeStyle;
     payload: {
         extensionId: string;
         style: {
@@ -7112,8 +7112,8 @@ declare interface ShopperCurrency extends StoreCurrency {
     isTransactional: boolean;
 }
 
-declare interface ShowLoadingIndicatorEvent {
-    type: ExtensionCommand.ShowLoadingIndicator;
+declare interface ShowLoadingIndicatorCommand {
+    type: ExtensionCommandType.ShowLoadingIndicator;
     payload: {
         extensionId: string;
         show: boolean;

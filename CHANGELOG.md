@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.405.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.405.1...v1.405.2) (2023-07-20)
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-7624 Update extension-related naming ([#2069](https://github.com/bigcommerce/checkout-sdk-js/issues/2069)) ([41af8df](https://github.com/bigcommerce/checkout-sdk-js/commit/41af8df893c19183ea5feb31a4afd4229803220c))
+
 ### [1.405.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.405.0...v1.405.1) (2023-07-20)
 
 ## [1.405.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.404.0...v1.405.0) (2023-07-20)
