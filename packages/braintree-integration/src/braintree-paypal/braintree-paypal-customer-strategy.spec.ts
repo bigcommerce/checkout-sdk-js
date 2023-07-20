@@ -211,6 +211,16 @@ describe('BraintreePaypalCustomerStrategy', () => {
             }
         });
 
+        it('throws error if initialization data is missing', async () => {
+            paymentMethodMock.initializationData = undefined;
+
+            try {
+                await strategy.initialize(initializationOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
         it('initializes braintree paypal checkout', async () => {
             braintreeIntegrationService.initialize = jest.fn();
             braintreeIntegrationService.getPaypalCheckout = jest.fn();
@@ -219,6 +229,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
 
             expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
+                paymentMethodMock.initializationData,
             );
             expect(braintreeIntegrationService.getPaypalCheckout).toHaveBeenCalled();
         });

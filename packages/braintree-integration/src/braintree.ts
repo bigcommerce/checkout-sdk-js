@@ -1,8 +1,8 @@
-import { PaypalAuthorizeData, PaypalButtonOptions, PaypalButtonRender, PaypalSDK } from './paypal';
 import {
     BraintreeLocalMethods,
     LocalPaymentInstance,
 } from './braintree-local-payment-methods/braintree-local-methods-options';
+import { PaypalAuthorizeData, PaypalButtonOptions, PaypalButtonRender, PaypalSDK } from './paypal';
 
 /**
  *
@@ -54,7 +54,6 @@ export interface BraintreeSDK {
 }
 
 export interface BraintreeLocalPayment {
-    VERSION: string;
     create(
         config: BraintreeLocalPaymentCreateConfig,
         callback: BraintreeLocalPaymentCallback,
@@ -74,6 +73,7 @@ export interface BraintreeLocalPaymentCreateConfig {
 export interface BraintreeInitializationData {
     intent?: 'authorize' | 'order' | 'sale';
     isCreditEnabled?: boolean;
+    isAcceleratedCheckoutEnabled?: boolean;
 }
 
 export interface BraintreePaypalRequest {

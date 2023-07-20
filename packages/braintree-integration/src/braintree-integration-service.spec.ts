@@ -30,6 +30,11 @@ describe('BraintreeIntegrationService', () => {
     let braintreeHostWindowMock: BraintreeHostWindow;
     let braintreeIntegrationService: BraintreeIntegrationService;
 
+    const clientToken = 'clientToken';
+    const initializationData = {
+        isAcceleratedCheckoutEnabled: false,
+    };
+
     beforeEach(() => {
         clientMock = getClientMock();
         braintreeScriptLoader = {} as BraintreeScriptLoader;
@@ -39,6 +44,16 @@ describe('BraintreeIntegrationService', () => {
             braintreeScriptLoader,
             braintreeHostWindowMock,
         );
+
+        braintreeScriptLoader.initialize = jest.fn();
+    });
+
+    describe('#initialize()', () => {
+        it('initializes braintree script loader with provided initialization data', () => {
+            braintreeIntegrationService.initialize(clientToken, initializationData);
+
+            expect(braintreeScriptLoader.initialize).toHaveBeenCalledWith(initializationData);
+        });
     });
 
     describe('#getClient()', () => {
@@ -50,7 +65,7 @@ describe('BraintreeIntegrationService', () => {
         });
 
         it('uses the right arguments to create the client', async () => {
-            braintreeIntegrationService.initialize('clientToken');
+            braintreeIntegrationService.initialize(clientToken, initializationData);
 
             const client = await braintreeIntegrationService.getClient();
 
@@ -59,7 +74,7 @@ describe('BraintreeIntegrationService', () => {
         });
 
         it('always returns the same instance of the client', async () => {
-            braintreeIntegrationService.initialize('clientToken');
+            braintreeIntegrationService.initialize(clientToken, initializationData);
 
             const client1 = await braintreeIntegrationService.getClient();
             const client2 = await braintreeIntegrationService.getClient();
@@ -299,7 +314,7 @@ describe('BraintreeIntegrationService', () => {
                 .fn()
                 .mockReturnValue({ create: jest.fn() });
             braintreeScriptLoader.loadClient = jest.fn().mockReturnValue({ create: jest.fn() });
-            braintreeIntegrationService.initialize('client-token');
+            braintreeIntegrationService.initialize(clientToken, initializationData);
             await braintreeIntegrationService.loadBraintreeLocalMethods(jest.fn(), '');
 
             expect(braintreeScriptLoader.loadBraintreeLocalMethods).toHaveBeenCalled();
@@ -415,7 +430,7 @@ describe('BraintreeIntegrationService', () => {
                 .fn()
                 .mockReturnValue(Promise.resolve(getModuleCreatorMock(clientMock)));
 
-            braintreeIntegrationService.initialize('clientToken');
+            braintreeIntegrationService.initialize(clientToken, initializationData);
         });
 
         it('calls teardown in all the dependencies', async () => {

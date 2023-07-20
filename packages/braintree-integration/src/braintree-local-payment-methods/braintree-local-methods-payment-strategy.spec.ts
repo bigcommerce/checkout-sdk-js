@@ -73,19 +73,17 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,
         );
-
-        jest.spyOn(braintreeIntegrationService, 'getClient').mockReturnValue(
-            paymentMethodMock.clientToken,
-        );
-
-        jest.spyOn(braintreeIntegrationService, 'getSessionId').mockReturnValue(
-            paymentMethodMock.clientToken,
-        );
-
         jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
             getCheckout(),
         );
 
+        jest.spyOn(braintreeIntegrationService, 'initialize');
+        jest.spyOn(braintreeIntegrationService, 'getClient').mockReturnValue(
+            paymentMethodMock.clientToken,
+        );
+        jest.spyOn(braintreeIntegrationService, 'getSessionId').mockReturnValue(
+            paymentMethodMock.clientToken,
+        );
         jest.spyOn(braintreeIntegrationService, 'loadBraintreeLocalMethods').mockReturnValue(
             localPaymentInstanceMock,
         );
@@ -124,6 +122,20 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
             }
         });
 
+        it('throws error if initializationData is not provided', async () => {
+            paymentMethodMock.initializationData = null;
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodMock);
+
+            try {
+                await strategy.initialize(initializationOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
         it('throws error if gatewayId is not provided', async () => {
             const options = {
                 methodId: 'giropay',
@@ -147,6 +159,15 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(InvalidArgumentError);
             }
+        });
+
+        it('initializes braintree integration service', async () => {
+            await strategy.initialize(initializationOptions);
+
+            expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
+                paymentMethodMock.clientToken,
+                paymentMethodMock.initializationData,
+            );
         });
 
         it('loads Braintree Local Methods', async () => {

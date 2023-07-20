@@ -161,12 +161,23 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
             }
         });
 
+        it('throws error if initialization data is missing', async () => {
+            paymentMethodMock.initializationData = undefined;
+
+            try {
+                await strategy.initialize(mockOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
         it('successfully initialization payment strategy', async () => {
             await strategy.initialize(mockOptions);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
             expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
+                paymentMethodMock.initializationData,
             );
             expect(braintreeIntegrationService.getUsBankAccount).toHaveBeenCalled();
         });

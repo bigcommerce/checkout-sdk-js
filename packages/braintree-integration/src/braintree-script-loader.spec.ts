@@ -20,10 +20,15 @@ import {
 } from './braintree.mock';
 
 const VERSION = '3.95.0';
+const ALPHA_VERSION = '3.95.0-connect-alpha.7';
 
 describe('BraintreeScriptLoader', () => {
     let scriptLoader: ScriptLoader;
     let mockWindow: BraintreeHostWindow;
+
+    const braintreeInitializationData = {
+        isAcceleratedCheckoutEnabled: true,
+    };
 
     beforeEach(() => {
         mockWindow = { braintree: {} } as BraintreeHostWindow;
@@ -50,6 +55,19 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${VERSION}/js/client.min.js`,
+            );
+            expect(client).toBe(clientMock);
+        });
+
+        it('loads the client with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(braintreeInitializationData);
+
+            const client = await braintreeScriptLoader.loadClient();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/client.min.js`,
             );
             expect(client).toBe(clientMock);
         });
@@ -104,6 +122,19 @@ describe('BraintreeScriptLoader', () => {
             expect(paypalCheckout).toBe(paypalCheckoutMock);
         });
 
+        it('loads PayPal checkout with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(braintreeInitializationData);
+
+            const paypalCheckout = await braintreeScriptLoader.loadPaypalCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/paypal-checkout.min.js`,
+            );
+            expect(paypalCheckout).toBe(paypalCheckoutMock);
+        });
+
         it('loads PayPal checkout throw error if braintree does not exist in window', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(
                 scriptLoader,
@@ -132,6 +163,7 @@ describe('BraintreeScriptLoader', () => {
 
     describe('#loadBraintreeLocalMethods', () => {
         let localPayment: BraintreeLocalPayment;
+
         beforeEach(() => {
             localPayment = getBraintreeLocalPaymentMock();
             scriptLoader.loadScript = jest.fn(() => {
@@ -145,10 +177,23 @@ describe('BraintreeScriptLoader', () => {
 
         it('loads local payment methods', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
             await braintreeScriptLoader.loadBraintreeLocalMethods();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${VERSION}/js/local-payment.min.js`,
+            );
+        });
+
+        it('loads local payment methods with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(braintreeInitializationData);
+
+            await braintreeScriptLoader.loadBraintreeLocalMethods();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/local-payment.min.js`,
             );
         });
     });
@@ -173,6 +218,19 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${VERSION}/js/data-collector.min.js`,
+            );
+            expect(dataCollector).toBe(dataCollectorMock);
+        });
+
+        it('loads the data collector library with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(braintreeInitializationData);
+
+            const dataCollector = await braintreeScriptLoader.loadDataCollector();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/data-collector.min.js`,
             );
             expect(dataCollector).toBe(dataCollectorMock);
         });

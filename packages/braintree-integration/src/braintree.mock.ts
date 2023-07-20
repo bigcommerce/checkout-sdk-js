@@ -29,7 +29,6 @@ export function getDataCollectorMock(): BraintreeDataCollector {
 
 export function getBraintreeLocalPaymentMock(): BraintreeLocalPayment {
     return {
-        VERSION: '3.81.0',
         create: jest.fn(),
     };
 }
@@ -142,6 +141,9 @@ export function getBraintree(): PaymentMethod {
             testMode: true,
             isVisaCheckoutEnabled: false,
         },
+        initializationData: {
+            isAcceleratedCheckoutEnabled: false,
+        },
         type: 'PAYMENT_TYPE_API',
     };
 }
@@ -155,6 +157,9 @@ export function getBraintreeAch(): PaymentMethod {
         config: {
             displayName: 'Braintree ACH',
             isVaultingEnabled: true,
+        },
+        initializationData: {
+            isAcceleratedCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
     };
@@ -179,9 +184,13 @@ export function getBraintreeLocalMethods() {
         config: {
             displayName: 'Giropay',
         },
+        initializationData: {
+            isAcceleratedCheckoutEnabled: false,
+        },
         type: 'PAYMENT_TYPE_API',
     };
 }
+
 export function getBraintreeAddress(): BraintreeShippingAddressOverride {
     return {
         line1: '12345 Testing Way',

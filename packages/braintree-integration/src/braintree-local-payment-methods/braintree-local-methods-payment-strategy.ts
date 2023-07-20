@@ -11,7 +11,11 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+
+import { BraintreeInitializationData } from '../braintree';
 import BraintreeIntegrationService from '../braintree-integration-service';
+
 import {
     BraintreeLocalMethods,
     LocalPaymentInstance,
@@ -20,7 +24,6 @@ import {
     StartPaymentError,
     WithBraintreeLocalMethodsPaymentInitializeOptions,
 } from './braintree-local-methods-options';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStrategy {
     private orderId?: string;
@@ -38,6 +41,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         options: PaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions,
     ): Promise<void> {
         const { gatewayId, methodId, braintreelocalmethods } = options;
+
         if (!methodId) {
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.methodId" argument is not provided.',
@@ -63,18 +67,18 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         await this.paymentIntegrationService.loadPaymentMethod(gatewayId);
 
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow(gatewayId);
-        const { merchantId } = paymentMethod.config;
+        const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(gatewayId);
+        const { clientToken, config, initializationData } = paymentMethod;
 
-        if (!paymentMethod.clientToken) {
+        if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         try {
-            this.braintreeIntegrationService.initialize(paymentMethod.clientToken);
+            this.braintreeIntegrationService.initialize(clientToken, initializationData);
             await this.braintreeIntegrationService.loadBraintreeLocalMethods(
                 this.getLocalPaymentInstance.bind(this),
-                merchantId || '',
+                config.merchantId || '',
             );
         } catch (error: unknown) {
             this.handleError(error);
@@ -143,6 +147,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                         if (startPaymentError.code !== 'LOCAL_PAYMENT_WINDOW_CLOSED') {
                             reject(() => this.handleError(startPaymentError));
                         }
+
                         this.toggleLoadingIndicator(false);
                         reject();
                     } else {
@@ -201,6 +206,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
 
     private handleError(error: unknown) {
         const { onError } = this.braintreeLocalMethods || {};
+
         this.toggleLoadingIndicator(false);
 
         if (onError && typeof onError === 'function') {
