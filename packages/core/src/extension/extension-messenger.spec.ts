@@ -5,11 +5,11 @@ import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { ExtensionNotFoundError } from './errors';
 import { UnsupportedExtensionCommandError } from './errors/unsupported-extension-command-error';
 import { Extension } from './extension';
-import { ExtensionEventType } from './extension-client';
-import { ExtensionCommand, ExtensionCommandMap, ExtensionCommandType } from './extension-command';
+import { ExtensionEvent } from './extension-client';
+import { ExtensionCommandMap, ExtensionCommandType } from './extension-command';
 import { ExtensionCommandHandler } from './extension-command-handler';
 import { ExtensionMessenger } from './extension-messenger';
-import { getExtensionMessageEvent, getExtensions } from './extension.mock';
+import { getExtensionEvent, getExtensions } from './extension.mock';
 
 describe('ExtensionMessenger', () => {
     let extension: Extension;
@@ -17,14 +17,14 @@ describe('ExtensionMessenger', () => {
     let extensionMessenger: ExtensionMessenger;
     let event: {
         origin: string;
-        data: ExtensionCommand;
+        data: ExtensionEvent;
     };
     let store: ReadableCheckoutStore;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
         extension = getExtensions()[0];
-        event = getExtensionMessageEvent();
+        event = getExtensionEvent();
 
         extensionCommandHandler = jest.fn();
     });
@@ -119,9 +119,9 @@ describe('ExtensionMessenger', () => {
 
             extensionMessenger = new ExtensionMessenger(store, {}, {});
 
-            expect(() =>
-                extensionMessenger.post(extension.id, { type: ExtensionEventType.CheckoutLoaded }),
-            ).toThrow(ExtensionNotFoundError);
+            expect(() => extensionMessenger.post(extension.id, event.data)).toThrow(
+                ExtensionNotFoundError,
+            );
         });
 
         it('should post to an extension', () => {
@@ -142,7 +142,7 @@ describe('ExtensionMessenger', () => {
             jest.spyOn(iframe, 'contentWindow', 'get').mockReturnValue(window);
             jest.spyOn(poster, 'post');
 
-            extensionMessenger.post(extension.id, { type: ExtensionEventType.CheckoutLoaded });
+            extensionMessenger.post(extension.id, event.data);
 
             expect(poster.post).toHaveBeenCalledWith(event.data);
         });

@@ -1,5 +1,6 @@
 import { Extension, ExtensionRegion } from './extension';
-import { ExtensionCommandType, ExtensionCommand } from './extension-command';
+import { ExtensionEvent, ExtensionEventType } from './extension-client';
+import { ExtensionCommand, ExtensionCommandType } from './extension-command';
 import { ExtensionState } from './extension-state';
 
 export function getExtensions(): Extension[] {
@@ -27,7 +28,7 @@ export function getExtensionState(): ExtensionState {
     };
 }
 
-export function getExtensionMessageEvent(): {
+export function getExtensionCommand(): {
     origin: string;
     data: ExtensionCommand;
 } {
@@ -38,6 +39,18 @@ export function getExtensionMessageEvent(): {
             payload: {
                 extensionId: '123',
             },
+        },
+    };
+}
+
+export function getExtensionEvent(): {
+    origin: string;
+    data: ExtensionEvent;
+} {
+    return {
+        origin: 'https://host.store',
+        data: {
+            type: ExtensionEventType.CheckoutLoaded,
         },
     };
 }

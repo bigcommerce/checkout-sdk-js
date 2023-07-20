@@ -22,8 +22,8 @@ import {
 } from '../customer';
 import {
     ExtensionActionCreator,
-    ExtensionCommandType,
     ExtensionCommandHandler,
+    ExtensionCommandType,
     ExtensionMessenger,
     ExtensionRegion,
 } from '../extension';
