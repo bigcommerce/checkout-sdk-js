@@ -22,7 +22,7 @@ import {
 } from '../customer';
 import {
     ExtensionActionCreator,
-    ExtensionCommand,
+    ExtensionCommandType,
     ExtensionCommandHandler,
     ExtensionMessenger,
     ExtensionRegion,
@@ -1415,9 +1415,9 @@ export default class CheckoutService {
      * @param handler - The handler function for the extension command.
      * @returns A function that, when called, will deregister the command handler.
      */
-    listenExtensionCommand(
+    handleExtensionCommand(
         extensionId: string,
-        command: ExtensionCommand,
+        command: ExtensionCommandType,
         handler: ExtensionCommandHandler,
     ): () => void {
         return this._extensionMessenger.listen(extensionId, command, handler);

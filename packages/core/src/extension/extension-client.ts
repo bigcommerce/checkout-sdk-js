@@ -18,6 +18,7 @@ export interface ShippingCountryChangeEvent {
         countryCode: string;
     };
 }
+export type ExtensionEvent = CheckoutLoadedEvent | ShippingCountryChangeEvent;
 
 export interface ExtensionEventMap {
     [ExtensionEventType.CheckoutLoaded]: CheckoutLoadedEvent;

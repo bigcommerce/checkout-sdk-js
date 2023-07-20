@@ -18,6 +18,14 @@ export class ExtensionIframe {
     }
 
     async attach(): Promise<void> {
+        if (
+            document
+                .querySelector(`[data-extension-id="${this._extension.id}"]`)
+                ?.querySelector('iframe')
+        ) {
+            return;
+        }
+
         const iframeCreator = new ResizableIframeCreator();
 
         this._iframe = await iframeCreator.createFrame(this._url.toString(), this._containerId);

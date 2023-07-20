@@ -35,7 +35,7 @@ import CustomerStrategyRegistryV2 from '../customer/customer-strategy-registry-v
 import {
     ExtensionActionCreator,
     ExtensionActionType,
-    ExtensionCommand,
+    ExtensionCommandType,
     ExtensionMessenger,
     ExtensionRegion,
     ExtensionRequestSender,
@@ -1509,15 +1509,15 @@ describe('CheckoutService', () => {
 
             jest.spyOn(extensionMessenger, 'listen');
 
-            checkoutService.listenExtensionCommand(
+            checkoutService.handleExtensionCommand(
                 extensions[0].id,
-                ExtensionCommand.ReloadCheckout,
+                ExtensionCommandType.ReloadCheckout,
                 handler,
             );
 
             expect(extensionMessenger.listen).toHaveBeenCalledWith(
                 extensions[0].id,
-                ExtensionCommand.ReloadCheckout,
+                ExtensionCommandType.ReloadCheckout,
                 handler,
             );
         });

@@ -1,3 +1,3 @@
-import { ExtensionOriginEvent } from './extension-origin-event';
+import { ExtensionCommand } from './extension-command';
 
-export type ExtensionCommandHandler = (data: ExtensionOriginEvent) => void;
+export type ExtensionCommandHandler = (data: ExtensionCommand) => void;
