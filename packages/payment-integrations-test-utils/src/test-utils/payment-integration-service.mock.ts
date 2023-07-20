@@ -11,22 +11,26 @@ import { getOrder } from './orders.mock';
 const subscribe = jest.fn();
 const state = {
     getBillingAddress: jest.fn(() => getBillingAddress()),
+    getBillingAddressOrThrow: jest.fn(() => getBillingAddress()),
+    getCart: jest.fn(() => getCart()),
     getCartOrThrow: jest.fn(() => getCart()),
+    getCheckout: jest.fn(() => getCheckout()),
     getCheckoutOrThrow: jest.fn(() => getCheckout()),
     getConsignments: jest.fn(() => [getConsignment()]),
     getConsignmentsOrThrow: jest.fn(() => [getConsignment()]),
+    getCustomer: jest.fn(() => getCustomer()),
+    getCustomerOrThrow: jest.fn(() => getCustomer()),
     getHost: jest.fn(),
     getLocale: jest.fn(),
     getOrder: jest.fn(() => getOrder()),
     getOrderOrThrow: jest.fn(() => getOrder()),
     getShippingAddress: jest.fn(() => getAddress()),
+    getShippingAddressOrThrow: jest.fn(() => getAddress()),
     getStoreConfig: jest.fn(() => getConfig().storeConfig),
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
     getPaymentMethod: jest.fn(),
     getPaymentMethodOrThrow: jest.fn(),
     getPaymentStatus: jest.fn(),
-    getBillingAddressOrThrow: jest.fn(() => getBillingAddress()),
-    getCustomer: jest.fn(() => getCustomer()),
 };
 
 const createBuyNowCart = jest.fn();
