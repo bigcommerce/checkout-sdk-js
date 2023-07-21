@@ -10,16 +10,20 @@ import {
     getCheckoutWithPayments,
 } from '../checkout/checkouts.mock';
 import { Registry } from '../common/registry';
+import { createPaymentIntegrationService } from '../payment-integration';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
 
 import createShippingStrategyRegistry from './create-shipping-strategy-registry';
+import createShippingStrategyRegistryV2 from './create-shipping-strategy-registry-v2';
 import { getShippingAddress } from './shipping-addresses.mock';
 import ShippingStrategyActionCreator from './shipping-strategy-action-creator';
 import { ShippingStrategyActionType } from './shipping-strategy-actions';
+import ShippingStrategyRegistryV2 from './shipping-strategy-registry-v2';
 import { ShippingStrategy } from './strategies';
 
 describe('ShippingStrategyActionCreator', () => {
     let registry: Registry<ShippingStrategy>;
+    let registryV2: ShippingStrategyRegistryV2;
     let requestSender: RequestSender;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
@@ -29,6 +33,7 @@ describe('ShippingStrategyActionCreator', () => {
         store = createCheckoutStore(state);
         requestSender = createRequestSender();
         registry = createShippingStrategyRegistry(store, requestSender);
+        registryV2 = createShippingStrategyRegistryV2(createPaymentIntegrationService(store));
     });
 
     describe('#initialize()', () => {
@@ -46,7 +51,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('finds shipping strategy by id', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const methodId = 'default';
 
             jest.spyOn(registry, 'get');
@@ -57,7 +62,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('finds remote shipping strategy if available', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const methodId = getPaymentMethod().id;
 
             store = createCheckoutStore({
@@ -73,7 +78,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('initializes default shipping strategy by default', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const strategy = registry.get();
 
             await from(actionCreator.initialize()(store)).toPromise();
@@ -82,7 +87,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('does not initialize if strategy is already initialized', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const strategy = registry.get('amazon');
 
             jest.spyOn(strategy, 'initialize').mockReturnValue(Promise.resolve(store.getState()));
@@ -93,7 +98,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('emits action to notify initialization progress', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const methodId = 'default';
             const actions = await from(actionCreator.initialize({ methodId })(store))
                 .pipe(toArray())
@@ -106,7 +111,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('emits error action if unable to initialize', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const initializeError = new Error();
             const methodId = 'default';
             const errorHandler = jest.fn((action) => of(action));
@@ -145,7 +150,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('finds shipping strategy by id', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const methodId = 'default';
 
             jest.spyOn(registry, 'get');
@@ -156,7 +161,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('deinitializes shipping strategy by default', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
 
             await from(actionCreator.deinitialize()(store)).toPromise();
 
@@ -164,7 +169,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('does not deinitialize if strategy is not initialized', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const strategy = registry.get('amazon');
 
             jest.spyOn(strategy, 'deinitialize').mockReturnValue(Promise.resolve(store.getState()));
@@ -175,7 +180,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('emits action to notify initialization progress', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const methodId = 'default';
             const actions = await from(actionCreator.deinitialize({ methodId })(store))
                 .pipe(toArray())
@@ -188,7 +193,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('emits error action if unable to deinitialize', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const deinitializeError = new Error();
             const methodId = 'default';
             const errorHandler = jest.fn((action) => of(action));
@@ -224,7 +229,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('finds shipping strategy by id', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const methodId = 'default';
 
             jest.spyOn(registry, 'get');
@@ -237,7 +242,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('executes shipping strategy', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const options = { methodId: 'default' };
             const address = getShippingAddress();
 
@@ -247,7 +252,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('emits action to notify sign-in progress', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const methodId = 'default';
             const actions = await from(
                 actionCreator.updateAddress(getShippingAddress(), { methodId })(store),
@@ -262,7 +267,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('emits error action if unable to sign in', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const updateAddressError = new Error();
             const errorHandler = jest.fn((action) => of(action));
 
@@ -304,7 +309,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('finds shipping strategy by id', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const methodId = 'default';
 
             jest.spyOn(registry, 'get');
@@ -317,7 +322,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('executes shipping strategy by default', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
 
             await from(actionCreator.selectOption(shippingOptionId)(store)).toPromise();
 
@@ -327,7 +332,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('emits action to notify sign-out progress', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const actions = await from(
                 actionCreator.selectOption(shippingOptionId, { methodId: 'default' })(store),
             )
@@ -347,7 +352,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('emits error action if unable to sign out', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const selectOptionError = new Error();
             const errorHandler = jest.fn((action) => of(action));
 
@@ -377,7 +382,7 @@ describe('ShippingStrategyActionCreator', () => {
 
     describe('#widgetInteraction()', () => {
         it('executes widget interaction callback', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const options = { methodId: 'default' };
             const fakeMethod = jest.fn(() => Promise.resolve());
 
@@ -387,7 +392,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('emits action to notify widget interaction in progress', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const actions = await actionCreator
                 .widgetInteraction(
                     jest.fn(() => Promise.resolve()),
@@ -409,7 +414,7 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('emits error action if widget interaction fails', async () => {
-            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const actionCreator = new ShippingStrategyActionCreator(registry, registryV2);
             const signInError = new Error();
             const errorHandler = jest.fn((action) => of(action));
 

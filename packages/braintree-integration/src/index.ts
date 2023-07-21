@@ -10,3 +10,5 @@ export { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-payp
 
 export { default as createBraintreeLocalMethodsPaymentStrategy } from './braintree-local-payment-methods/create-braintree-local-methods-payment-strategy';
 export { WithBraintreeLocalMethodsPaymentInitializeOptions } from './braintree-local-payment-methods/braintree-local-methods-options';
+
+export { default as createBraintreeAcceleratedCheckoutShippingStrategy } from './braintree-accelerated-checkout/create-braintree-accelerated-checkout-shipping-strategy';

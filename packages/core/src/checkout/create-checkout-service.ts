@@ -38,6 +38,7 @@ import {
     ConsignmentActionCreator,
     ConsignmentRequestSender,
     createShippingStrategyRegistry,
+    createShippingStrategyRegistryV2,
     PickupOptionActionCreator,
     PickupOptionRequestSender,
     ShippingCountryActionCreator,
@@ -128,12 +129,13 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         formFieldsActionCreator,
     );
     const paymentIntegrationService = createPaymentIntegrationService(store);
-    const registryV2 = createPaymentStrategyRegistryV2(
+    const paymentRegistryV2 = createPaymentStrategyRegistryV2(
         paymentIntegrationService,
         defaultPaymentStrategyFactories,
         { useFallback: true },
     );
     const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
+    const shippingRegistryV2 = createShippingStrategyRegistryV2(paymentIntegrationService);
     const extensionActionCreator = new ExtensionActionCreator(
         new ExtensionRequestSender(requestSender),
     );
@@ -175,7 +177,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
                 spamProtection,
                 locale,
             ),
-            registryV2,
+            paymentRegistryV2,
             orderActionCreator,
             spamProtectionActionCreator,
         ),
@@ -183,7 +185,10 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new ShippingCountryActionCreator(
             new ShippingCountryRequestSender(requestSender, { locale }),
         ),
-        new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, requestSender)),
+        new ShippingStrategyActionCreator(
+            createShippingStrategyRegistry(store, requestSender),
+            shippingRegistryV2,
+        ),
         new SignInEmailActionCreator(new SignInEmailRequestSender(requestSender)),
         spamProtectionActionCreator,
         new StoreCreditActionCreator(new StoreCreditRequestSender(requestSender)),

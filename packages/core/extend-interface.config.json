@@ -23,6 +23,14 @@
             "memberPattern": "^With.+ButtonInitializeOptions$",
             "targetPath": "packages/core/src/checkout-buttons/index.ts",
             "targetMemberName": "BaseCheckoutButtonInitializeOptions"
+        },
+        {
+            "inputPath": "packages/*/src/index.ts",
+            "outputPath": "packages/core/src/generated/shipping-initialize-options.ts",
+            "outputMemberName": "ShippingInitializeOptions",
+            "memberPattern": "^With.+ShippingInitializeOptions$",
+            "targetPath": "packages/core/src/shipping/index.ts",
+            "targetMemberName": "BaseShippingInitializeOptions"
         }
     ]
 }

@@ -72,6 +72,7 @@ import {
     ConsignmentActionCreator,
     ConsignmentRequestSender,
     createShippingStrategyRegistry,
+    createShippingStrategyRegistryV2,
     PickupOptionActionCreator,
     PickupOptionRequestSender,
     ShippingCountryActionCreator,
@@ -368,6 +369,7 @@ describe('CheckoutService', () => {
 
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(
             createShippingStrategyRegistry(store, requestSender),
+            createShippingStrategyRegistryV2(paymentIntegrationService),
         );
 
         errorActionCreator = new ErrorActionCreator();

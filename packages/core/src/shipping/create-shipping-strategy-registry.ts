@@ -4,11 +4,13 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
+import { createPaymentIntegrationService } from '../payment-integration';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
 import { StripeScriptLoader } from '../payment/strategies/stripe-upe';
 
 import ConsignmentActionCreator from './consignment-action-creator';
 import ConsignmentRequestSender from './consignment-request-sender';
+import createShippingStrategyRegistryV2 from './create-shipping-strategy-registry-v2';
 import ShippingStrategyActionCreator from './shipping-strategy-action-creator';
 import { ShippingStrategy } from './strategies';
 import { AmazonPayV2ShippingStrategy } from './strategies/amazon-pay-v2';
@@ -19,7 +21,9 @@ export default function createShippingStrategyRegistry(
     store: CheckoutStore,
     requestSender: RequestSender,
 ): Registry<ShippingStrategy> {
+    const paymentIntegrationService = createPaymentIntegrationService(store);
     const registry = new Registry<ShippingStrategy>();
+    const registryV2 = createShippingStrategyRegistryV2(paymentIntegrationService);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     const consignmentActionCreator = new ConsignmentActionCreator(
@@ -39,7 +43,7 @@ export default function createShippingStrategyRegistry(
                 consignmentActionCreator,
                 new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
                 createAmazonPayV2PaymentProcessor(),
-                new ShippingStrategyActionCreator(registry),
+                new ShippingStrategyActionCreator(registry, registryV2),
             ),
     );
 

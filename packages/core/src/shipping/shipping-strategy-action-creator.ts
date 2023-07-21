@@ -1,6 +1,8 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable, Observer } from 'rxjs';
 
+import { ShippingStrategy as ShippingStrategyV2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { AddressRequestBody } from '../address';
 import { InternalCheckoutSelectors } from '../checkout';
 import { Registry } from '../common/registry';
@@ -14,10 +16,14 @@ import {
     ShippingStrategySelectOptionAction,
     ShippingStrategyUpdateAddressAction,
 } from './shipping-strategy-actions';
+import ShippingStrategyRegistryV2 from './shipping-strategy-registry-v2';
 import { ShippingStrategy } from './strategies';
 
 export default class ShippingStrategyActionCreator {
-    constructor(private _strategyRegistry: Registry<ShippingStrategy>) {}
+    constructor(
+        private _strategyRegistry: Registry<ShippingStrategy>,
+        private _strategyRegistryV2: ShippingStrategyRegistryV2,
+    ) {}
 
     updateAddress(
         address: Partial<AddressRequestBody>,
@@ -34,9 +40,11 @@ export default class ShippingStrategyActionCreator {
                     }),
                 );
 
-                this._strategyRegistry
-                    .get(methodId)
-                    .updateAddress(address, { ...options, methodId })
+                const promise: Promise<InternalCheckoutSelectors | void> = this._getStrategy(
+                    methodId,
+                ).updateAddress(address, { ...options, methodId });
+
+                promise
                     .then(() => {
                         observer.next(
                             createAction(
@@ -74,9 +82,11 @@ export default class ShippingStrategyActionCreator {
                     }),
                 );
 
-                this._strategyRegistry
-                    .get(methodId)
-                    .selectOption(shippingOptionId, { ...options, methodId })
+                const promise: Promise<InternalCheckoutSelectors | void> = this._getStrategy(
+                    methodId,
+                ).selectOption(shippingOptionId, { ...options, methodId });
+
+                promise
                     .then(() => {
                         observer.next(
                             createAction(
@@ -119,9 +129,10 @@ export default class ShippingStrategyActionCreator {
                     }),
                 );
 
-                this._strategyRegistry
-                    .get(methodId)
-                    .initialize(mergedOptions)
+                const promise: Promise<InternalCheckoutSelectors | void> =
+                    this._getStrategy(methodId).initialize(mergedOptions);
+
+                promise
                     .then(() => {
                         observer.next(
                             createAction(
@@ -161,9 +172,11 @@ export default class ShippingStrategyActionCreator {
                     }),
                 );
 
-                this._strategyRegistry
-                    .get(methodId)
-                    .deinitialize({ ...options, methodId })
+                const promise: Promise<InternalCheckoutSelectors | void> = this._getStrategy(
+                    methodId,
+                ).deinitialize({ ...options, methodId });
+
+                promise
                     .then(() => {
                         observer.next(
                             createAction(
@@ -219,5 +232,17 @@ export default class ShippingStrategyActionCreator {
                     );
                 });
         });
+    }
+
+    private _getStrategy(methodId?: string): ShippingStrategy | ShippingStrategyV2 {
+        let strategy: ShippingStrategy | ShippingStrategyV2;
+
+        try {
+            strategy = this._strategyRegistryV2.get({ id: methodId || '' });
+        } catch {
+            strategy = this._strategyRegistry.get(methodId);
+        }
+
+        return strategy;
     }
 }

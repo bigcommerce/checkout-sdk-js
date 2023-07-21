@@ -133,8 +133,13 @@ export { default as PaymentIntegrationService } from './payment-integration-serv
 export {
     Consignment,
     ShippingAddress,
+    ShippingInitializeOptions,
     ShippingOption,
     ShippingAddressRequestBody,
+    ShippingRequestOptions,
+    ShippingStrategy,
+    ShippingStrategyFactory,
+    ShippingStrategyResolveId,
 } from './shipping';
 export { RequestOptions, guard } from './util-types';
 export { default as ResolvableModule } from './resolvable-module';

@@ -9,6 +9,7 @@ import {
     ConsignmentActionType,
     ConsignmentRequestSender,
     createShippingStrategyRegistry,
+    createShippingStrategyRegistryV2,
     ShippingStrategyActionCreator,
 } from '../..';
 import { CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../../../checkout';
@@ -24,6 +25,7 @@ import {
     AmazonPayV2PaymentProcessor,
     createAmazonPayV2PaymentProcessor,
 } from '../../../payment/strategies/amazon-pay-v2';
+import { createPaymentIntegrationService } from '../../../payment-integration';
 import { getFlatRateOption } from '../../internal-shipping-options.mock';
 import {
     getShippingAddress,
@@ -54,6 +56,7 @@ describe('AmazonPayV2ShippingStrategy', () => {
         );
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(
             createShippingStrategyRegistry(store, requestSender),
+            createShippingStrategyRegistryV2(createPaymentIntegrationService(store)),
         );
         amazonPayV2PaymentProcessor = createAmazonPayV2PaymentProcessor();
         requestSender = createRequestSender();
