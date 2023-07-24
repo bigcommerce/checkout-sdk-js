@@ -50,7 +50,10 @@ describe('DefaultPaymentIntegrationService', () => {
         CheckoutActionCreator,
         'loadCheckout' | 'loadCurrentCheckout' | 'loadDefaultCheckout'
     >;
-    let orderActionCreator: Pick<OrderActionCreator, 'submitOrder' | 'finalizeOrder'>;
+    let orderActionCreator: Pick<
+        OrderActionCreator,
+        'submitOrder' | 'finalizeOrder' | 'loadCurrentOrder'
+    >;
     let billingAddressActionCreator: Pick<BillingAddressActionCreator, 'updateAddress'>;
     let consignmentActionCreator: Pick<
         ConsignmentActionCreator,
@@ -109,6 +112,7 @@ describe('DefaultPaymentIntegrationService', () => {
         orderActionCreator = {
             submitOrder: jest.fn(async () => () => createAction('SUBMIT_ORDER')),
             finalizeOrder: jest.fn(async () => () => createAction('FINALIZE_ORDER')),
+            loadCurrentOrder: jest.fn(async () => () => createAction('LOAD_CURRENT_ORDER')),
         };
 
         billingAddressActionCreator = {
@@ -403,6 +407,16 @@ describe('DefaultPaymentIntegrationService', () => {
                     params: {},
                 }),
             );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#loadCurrentOrder', () => {
+        it('loads current order', async () => {
+            const output = await subject.loadCurrentOrder();
+
+            expect(orderActionCreator.loadCurrentOrder).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(orderActionCreator.loadCurrentOrder());
             expect(output).toEqual(paymentIntegrationSelectors);
         });
     });
