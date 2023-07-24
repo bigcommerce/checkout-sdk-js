@@ -1,3 +1,5 @@
+import { AddressRequestBody, CardInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     BraintreeLocalMethods,
     LocalPaymentInstance,
@@ -588,7 +590,7 @@ interface BraintreeConnectStylesOption {
 
 export interface BraintreeConnectAuthenticationCustomerResult {
     authenticationState: string; // 'succeeded'|'failed'|'canceled'
-    profileData?: BraintreeConnectProfileData;
+    profileData: BraintreeConnectProfileData;
 }
 
 export interface BraintreeConnectProfileData {
@@ -613,12 +615,10 @@ export interface BraintreeConnectAddress {
 }
 
 export interface BraintreeConnectCardPaymentSource {
-    // type: 'card'; // removed on PP side
     brand: string;
     expiry: string; // "YYYY-MM"
-    lastDigits: string; // "1111"
+    lastDigits: string;
     name?: string;
-    // isPreferred: boolean; // removed on PP side
     billingAddress: BraintreeConnectAddress;
 }
 
@@ -679,6 +679,12 @@ export interface BraintreeConnectCardComponent {
     (options: BraintreeConnectCardComponentOptions): BraintreeConnectCardComponent;
     tokenize(options: BraintreeConnectTokenizeOptions): Promise<BraintreeConnectTokenizeResult>;
     render(element: string): void;
+}
+
+export interface BraintreeProviderCustomerData {
+    authentication: string;
+    addresses: AddressRequestBody[];
+    instruments: CardInstrument[];
 }
 
 /**

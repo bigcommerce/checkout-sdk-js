@@ -25,9 +25,9 @@ import {
     getDataCollectorMock,
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
-} from '../braintree.mock';
+} from '../mocks/braintree.mock';
 import { PaypalButtonOptions, PaypalSDK } from '../paypal';
-import { getPaypalSDKMock } from '../paypal.mock';
+import { getPaypalSDKMock } from '../mocks/paypal.mock';
 
 import BraintreePaypalCustomerInitializeOptions from './braintree-paypal-customer-options';
 import BraintreePaypalCustomerStrategy from './braintree-paypal-customer-strategy';

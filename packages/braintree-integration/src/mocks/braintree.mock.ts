@@ -13,7 +13,7 @@ import {
     BraintreePaypalCheckoutCreator,
     BraintreeShippingAddressOverride,
     BraintreeTokenizePayload,
-} from './braintree';
+} from '../braintree';
 
 export function getClientMock(): BraintreeClient {
     return {
@@ -81,9 +81,6 @@ export function getConnectMock(): BraintreeConnect {
         },
         ConnectCardComponent: jest.fn(),
     };
-
-    connectMock.ConnectCardComponent.tokenize = jest.fn();
-    connectMock.ConnectCardComponent.render = jest.fn();
 
     return connectMock;
 }
