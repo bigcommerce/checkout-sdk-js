@@ -3,6 +3,8 @@ import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api
 import {
     BraintreeBankAccount,
     BraintreeClient,
+    BraintreeConnect,
+    BraintreeConnectProfileData,
     BraintreeDataCollector,
     BraintreeLocalPayment,
     BraintreeModule,
@@ -18,6 +20,72 @@ export function getClientMock(): BraintreeClient {
         request: jest.fn(),
         getVersion: jest.fn(),
     };
+}
+
+export function getBraintreeConnectProfileDataMock(): BraintreeConnectProfileData {
+    return {
+        connectCustomerAuthAssertionToken: 'some_token',
+        connectCustomerId: 'asdasd',
+        addresses: [
+            {
+                company: undefined,
+                extendedAddress: undefined,
+                firstName: 'John',
+                lastName: 'Doe',
+                streetAddress: 'Hello World Address',
+                locality: 'Bellingham',
+                region: 'WA',
+                postalCode: '98225',
+                countryCodeNumeric: 0,
+                countryCodeAlpha2: 'US',
+                countryCodeAlpha3: '',
+            },
+        ],
+        cards: [
+            {
+                id: 'pp-vaulted-instrument-id',
+                paymentSource: {
+                    card: {
+                        brand: 'VISA',
+                        expiry: '02/2037',
+                        lastDigits: '1111',
+                        billingAddress: {
+                            company: undefined,
+                            extendedAddress: undefined,
+                            firstName: undefined,
+                            lastName: undefined,
+                            streetAddress: 'Hello World Address',
+                            locality: 'Bellingham',
+                            region: 'WA',
+                            postalCode: '98225',
+                            countryCodeNumeric: 0,
+                            countryCodeAlpha2: 'US',
+                            countryCodeAlpha3: '',
+                        },
+                    },
+                },
+            },
+        ],
+    };
+}
+
+export function getConnectMock(): BraintreeConnect {
+    const connectMock = {
+        identity: {
+            lookupCustomerByEmail: () => Promise.resolve({ customerId: 'customerId' }),
+            triggerAuthenticationFlow: () =>
+                Promise.resolve({
+                    authenticationState: 'succeeded',
+                    profileData: getBraintreeConnectProfileDataMock(),
+                }),
+        },
+        ConnectCardComponent: jest.fn(),
+    };
+
+    connectMock.ConnectCardComponent.tokenize = jest.fn();
+    connectMock.ConnectCardComponent.render = jest.fn();
+
+    return connectMock;
 }
 
 export function getDataCollectorMock(): BraintreeDataCollector {
@@ -45,10 +113,10 @@ export function getDeviceDataMock(): string {
 }
 
 export function getModuleCreatorMock<T>(
-    module: BraintreeModule | BraintreeClient,
+    module?: BraintreeModule | BraintreeClient | BraintreeConnect,
 ): BraintreeModuleCreator<T> {
     return {
-        create: jest.fn(() => Promise.resolve(module)),
+        create: jest.fn(() => Promise.resolve(module || {})),
     };
 }
 
@@ -141,6 +209,24 @@ export function getBraintree(): PaymentMethod {
             testMode: true,
             isVisaCheckoutEnabled: false,
         },
+        initializationData: {
+            isAcceleratedCheckoutEnabled: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+    };
+}
+
+export function getBraintreeAcceleratedCheckoutPaymentMethod(): PaymentMethod {
+    return {
+        id: 'braintreeacceleratedcheckout',
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: ['VISA', 'MC', 'AMEX', 'DISCOVER', 'JCB', 'DINERS'],
+        config: {
+            displayName: 'Credit Card',
+            testMode: false,
+        },
+        clientToken: 'asdasd',
         initializationData: {
             isAcceleratedCheckoutEnabled: false,
         },

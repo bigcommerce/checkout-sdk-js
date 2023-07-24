@@ -5,6 +5,7 @@ import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/p
 import {
     BraintreeBankAccountCreator,
     BraintreeClientCreator,
+    BraintreeConnectCreator,
     BraintreeDataCollectorCreator,
     BraintreeHostWindow,
     BraintreeInitializationData,
@@ -39,6 +40,18 @@ export default class BraintreeScriptLoader {
         }
 
         return this.braintreeHostWindow.braintree.client;
+    }
+
+    async loadConnect(): Promise<BraintreeConnectCreator> {
+        await this.scriptLoader.loadScript(
+            `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/connect.min.js`,
+        );
+
+        if (!this.braintreeHostWindow.braintree?.connect) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this.braintreeHostWindow.braintree.connect;
     }
 
     async loadPaypalCheckout(): Promise<BraintreePaypalCheckoutCreator> {

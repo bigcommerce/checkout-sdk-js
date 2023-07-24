@@ -1,34 +1,43 @@
+import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
+
 import { NotInitializedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { getShippingAddress } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import {
     BraintreeClient,
+    BraintreeConnect,
     BraintreeDataCollector,
     BraintreeHostWindow,
     BraintreeModuleCreator,
     BraintreePaypalCheckout,
-    BraintreePaypalCheckoutCreator,
 } from './braintree';
 import BraintreeIntegrationService from './braintree-integration-service';
 import BraintreeScriptLoader from './braintree-script-loader';
 import {
     getBraintreeAddress,
     getClientMock,
+    getConnectMock,
     getDataCollectorMock,
     getDeviceDataMock,
     getModuleCreatorMock,
-    getModuleCreatorNewMock,
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
 } from './braintree.mock';
 import { PaypalSDK } from './paypal';
 
 describe('BraintreeIntegrationService', () => {
+    let braintreeConnectMock: BraintreeConnect;
+    let braintreeConnectCreatorMock: BraintreeModuleCreator<BraintreeConnect>;
+    let braintreeHostWindowMock: BraintreeHostWindow;
+    let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
     let clientMock: BraintreeClient;
     let clientCreatorMock: BraintreeModuleCreator<BraintreeClient>;
-    let braintreeHostWindowMock: BraintreeHostWindow;
-    let braintreeIntegrationService: BraintreeIntegrationService;
+    let dataCollectorMock: BraintreeDataCollector;
+    let dataCollectorCreatorMock: BraintreeModuleCreator<BraintreeDataCollector>;
+    let paypalCheckoutMock: BraintreePaypalCheckout;
+    let paypalCheckoutCreatorMock: BraintreeModuleCreator<BraintreePaypalCheckout>;
+    let loader: ScriptLoader;
 
     const clientToken = 'clientToken';
     const initializationData = {
@@ -36,16 +45,37 @@ describe('BraintreeIntegrationService', () => {
     };
 
     beforeEach(() => {
+        braintreeConnectMock = getConnectMock();
+        braintreeConnectCreatorMock = getModuleCreatorMock(braintreeConnectMock);
         clientMock = getClientMock();
-        braintreeScriptLoader = {} as BraintreeScriptLoader;
-        braintreeHostWindowMock = {} as BraintreeHostWindow;
+        clientCreatorMock = getModuleCreatorMock(clientMock);
+        dataCollectorMock = getDataCollectorMock();
+        dataCollectorCreatorMock = getModuleCreatorMock(dataCollectorMock);
+        paypalCheckoutMock = getPaypalCheckoutMock();
+        paypalCheckoutCreatorMock = getPayPalCheckoutCreatorMock(paypalCheckoutMock, false);
+        loader = createScriptLoader();
 
+        braintreeHostWindowMock = window as BraintreeHostWindow;
+        braintreeScriptLoader = new BraintreeScriptLoader(loader, braintreeHostWindowMock);
         braintreeIntegrationService = new BraintreeIntegrationService(
             braintreeScriptLoader,
             braintreeHostWindowMock,
         );
 
-        braintreeScriptLoader.initialize = jest.fn();
+        jest.spyOn(braintreeScriptLoader, 'initialize');
+        jest.spyOn(braintreeScriptLoader, 'loadClient').mockImplementation(() => clientCreatorMock);
+        jest.spyOn(braintreeScriptLoader, 'loadConnect').mockImplementation(
+            () => braintreeConnectCreatorMock,
+        );
+        jest.spyOn(braintreeScriptLoader, 'loadDataCollector').mockImplementation(
+            () => dataCollectorCreatorMock,
+        );
+        jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockImplementation(
+            () => paypalCheckoutCreatorMock,
+        );
+        jest.spyOn(braintreeScriptLoader, 'loadBraintreeLocalMethods').mockImplementation(() =>
+            getModuleCreatorMock(),
+        );
     });
 
     describe('#initialize()', () => {
@@ -57,13 +87,6 @@ describe('BraintreeIntegrationService', () => {
     });
 
     describe('#getClient()', () => {
-        beforeEach(() => {
-            clientCreatorMock = getModuleCreatorMock(clientMock);
-            braintreeScriptLoader.loadClient = jest
-                .fn()
-                .mockReturnValue(Promise.resolve(clientCreatorMock));
-        });
-
         it('uses the right arguments to create the client', async () => {
             braintreeIntegrationService.initialize(clientToken, initializationData);
 
@@ -93,26 +116,36 @@ describe('BraintreeIntegrationService', () => {
         });
     });
 
-    describe('getPaypalCheckout', () => {
-        let paypalCheckoutMock: BraintreePaypalCheckout;
-        let paypalCheckoutCreatorMock: BraintreePaypalCheckoutCreator;
+    describe('#getBraintreeConnect()', () => {
+        it('throws an error if client token is not provided', async () => {
+            braintreeIntegrationService.initialize('', initializationData);
 
-        beforeEach(() => {
-            paypalCheckoutMock = getPaypalCheckoutMock();
+            try {
+                await braintreeIntegrationService.getBraintreeConnect();
+            } catch (error) {
+                expect(error).toBeInstanceOf(NotInitializedError);
+            }
         });
 
+        it('loads braintree connect and creates an instance of connect object', async () => {
+            braintreeIntegrationService.initialize(clientToken, initializationData);
+
+            const result = await braintreeIntegrationService.getBraintreeConnect();
+
+            expect(braintreeScriptLoader.loadClient).toHaveBeenCalled();
+            expect(braintreeScriptLoader.loadDataCollector).toHaveBeenCalled();
+            expect(braintreeScriptLoader.loadConnect).toHaveBeenCalled();
+
+            expect(result).toEqual(braintreeConnectMock);
+        });
+    });
+
+    describe('#getPaypalCheckout()', () => {
         it('get paypal checkout', async () => {
             const onSuccess = jest.fn();
             const onError = jest.fn();
 
-            paypalCheckoutCreatorMock = getPayPalCheckoutCreatorMock(paypalCheckoutMock, false);
-            braintreeScriptLoader.loadPaypalCheckout = jest
-                .fn()
-                .mockReturnValue(Promise.resolve(paypalCheckoutCreatorMock));
-
-            jest.spyOn(braintreeIntegrationService, 'getClient').mockReturnValue(
-                Promise.resolve(clientMock),
-            );
+            braintreeIntegrationService.initialize(clientToken, initializationData);
 
             await braintreeIntegrationService.getPaypalCheckout({}, onSuccess, onError);
 
@@ -122,21 +155,12 @@ describe('BraintreeIntegrationService', () => {
         });
 
         it('get paypal checkout when paypal exists in window', async () => {
+            (window as BraintreeHostWindow).paypal = {} as PaypalSDK;
+
             const onSuccess = jest.fn();
             const onError = jest.fn();
 
-            paypalCheckoutCreatorMock = getPayPalCheckoutCreatorMock(paypalCheckoutMock, false);
-            braintreeScriptLoader.loadPaypalCheckout = jest
-                .fn()
-                .mockReturnValue(Promise.resolve(paypalCheckoutCreatorMock));
-            braintreeIntegrationService = new BraintreeIntegrationService(braintreeScriptLoader, {
-                ...braintreeHostWindowMock,
-                paypal: {} as PaypalSDK,
-            });
-
-            jest.spyOn(braintreeIntegrationService, 'getClient').mockReturnValue(
-                Promise.resolve(clientMock),
-            );
+            braintreeIntegrationService.initialize(clientToken, initializationData);
 
             await braintreeIntegrationService.getPaypalCheckout({}, onSuccess, onError);
 
@@ -149,14 +173,16 @@ describe('BraintreeIntegrationService', () => {
             const onSuccess = jest.fn();
             const onError = jest.fn();
 
-            paypalCheckoutCreatorMock = getPayPalCheckoutCreatorMock(paypalCheckoutMock, true);
-            braintreeScriptLoader.loadPaypalCheckout = jest
-                .fn()
-                .mockReturnValue(Promise.resolve(paypalCheckoutCreatorMock));
-
-            jest.spyOn(braintreeIntegrationService, 'getClient').mockReturnValue(
-                Promise.resolve(clientMock),
+            const newPaypalCheckoutCreatorMock = getPayPalCheckoutCreatorMock(
+                paypalCheckoutMock,
+                true,
             );
+
+            jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockImplementation(
+                () => newPaypalCheckoutCreatorMock,
+            );
+
+            braintreeIntegrationService.initialize(clientToken, initializationData);
 
             await braintreeIntegrationService.getPaypalCheckout({}, onSuccess, onError);
 
@@ -166,22 +192,9 @@ describe('BraintreeIntegrationService', () => {
     });
 
     describe('#getDataCollector()', () => {
-        let dataCollectorMock: BraintreeDataCollector;
-        let dataCollectorCreatorMock: BraintreeModuleCreator<BraintreeDataCollector>;
-
-        beforeEach(() => {
-            dataCollectorMock = getDataCollectorMock();
-            dataCollectorCreatorMock = getModuleCreatorNewMock(dataCollectorMock);
-            braintreeScriptLoader.loadDataCollector = jest
-                .fn()
-                .mockReturnValue(Promise.resolve(dataCollectorCreatorMock));
-
-            jest.spyOn(braintreeIntegrationService, 'getClient').mockReturnValue(
-                Promise.resolve(clientMock),
-            );
-        });
-
         it('uses the right parameters to instantiate a data collector', async () => {
+            braintreeIntegrationService.initialize(clientToken, initializationData);
+
             await braintreeIntegrationService.getDataCollector();
 
             expect(dataCollectorCreatorMock.create).toHaveBeenCalledWith({
@@ -199,6 +212,8 @@ describe('BraintreeIntegrationService', () => {
         });
 
         it('always returns the same instance of the data collector', async () => {
+            braintreeIntegrationService.initialize(clientToken, initializationData);
+
             const dataCollector1 = await braintreeIntegrationService.getDataCollector();
             const dataCollector2 = await braintreeIntegrationService.getDataCollector();
 
@@ -208,12 +223,13 @@ describe('BraintreeIntegrationService', () => {
         });
 
         it('returns different data collector instance if it is used for PayPal', async () => {
+            braintreeIntegrationService.initialize(clientToken, initializationData);
+
             const dataCollector = await braintreeIntegrationService.getDataCollector();
             const paypalDataCollector = await braintreeIntegrationService.getDataCollector({
                 paypal: true,
             });
 
-            expect(dataCollector).not.toBe(paypalDataCollector);
             expect(await braintreeIntegrationService.getDataCollector()).toBe(dataCollector);
             expect(await braintreeIntegrationService.getDataCollector({ paypal: true })).toBe(
                 paypalDataCollector,
@@ -221,6 +237,8 @@ describe('BraintreeIntegrationService', () => {
         });
 
         it('returns the data collector information', async () => {
+            braintreeIntegrationService.initialize(clientToken, initializationData);
+
             const dataCollector = await braintreeIntegrationService.getDataCollector();
 
             expect(dataCollector).toEqual(
@@ -233,6 +251,8 @@ describe('BraintreeIntegrationService', () => {
                 Promise.reject({ code: 'DATA_COLLECTOR_KOUNT_NOT_ENABLED' }),
             );
 
+            braintreeIntegrationService.initialize(clientToken, initializationData);
+
             await expect(braintreeIntegrationService.getDataCollector()).resolves.toEqual(
                 expect.objectContaining({ deviceData: undefined }),
             );
@@ -243,13 +263,15 @@ describe('BraintreeIntegrationService', () => {
                 Promise.reject({ code: 'OTHER_RANDOM_ERROR' }),
             );
 
+            braintreeIntegrationService.initialize(clientToken, initializationData);
+
             await expect(braintreeIntegrationService.getDataCollector()).rejects.toEqual({
                 code: 'OTHER_RANDOM_ERROR',
             });
         });
     });
 
-    describe('getBraintreeEnv', () => {
+    describe('#getBraintreeEnv()', () => {
         it('get Braintree env - production', () => {
             expect(braintreeIntegrationService.getBraintreeEnv()).toBe('production');
             expect(braintreeIntegrationService.getBraintreeEnv(false)).toBe('production');
@@ -260,7 +282,7 @@ describe('BraintreeIntegrationService', () => {
         });
     });
 
-    describe('mapToBraintreeAddress()', () => {
+    describe('#mapToBraintreeAddress()', () => {
         it('maps shipping address to braintree address', () => {
             expect(
                 braintreeIntegrationService.mapToBraintreeShippingAddressOverride(
@@ -270,7 +292,7 @@ describe('BraintreeIntegrationService', () => {
         });
     });
 
-    describe('mapToLegacyShippingAddress()', () => {
+    describe('#mapToLegacyShippingAddress()', () => {
         const detailsMock = {
             email: 'test@test.com',
             phone: '55555555555',
@@ -308,13 +330,10 @@ describe('BraintreeIntegrationService', () => {
         });
     });
 
-    describe('loadBraintreeLocalMethods', () => {
+    describe('#loadBraintreeLocalMethods()', () => {
         it('loads local payment methods', async () => {
-            braintreeScriptLoader.loadBraintreeLocalMethods = jest
-                .fn()
-                .mockReturnValue({ create: jest.fn() });
-            braintreeScriptLoader.loadClient = jest.fn().mockReturnValue({ create: jest.fn() });
             braintreeIntegrationService.initialize(clientToken, initializationData);
+
             await braintreeIntegrationService.loadBraintreeLocalMethods(jest.fn(), '');
 
             expect(braintreeScriptLoader.loadBraintreeLocalMethods).toHaveBeenCalled();
@@ -418,22 +437,9 @@ describe('BraintreeIntegrationService', () => {
     });
 
     describe('#teardown()', () => {
-        let dataCollectorMock: BraintreeDataCollector;
-
-        beforeEach(() => {
-            dataCollectorMock = getDataCollectorMock();
-
-            braintreeScriptLoader.loadDataCollector = jest
-                .fn()
-                .mockReturnValue(Promise.resolve(getModuleCreatorMock(dataCollectorMock)));
-            braintreeScriptLoader.loadClient = jest
-                .fn()
-                .mockReturnValue(Promise.resolve(getModuleCreatorMock(clientMock)));
-
-            braintreeIntegrationService.initialize(clientToken, initializationData);
-        });
-
         it('calls teardown in all the dependencies', async () => {
+            braintreeIntegrationService.initialize(clientToken, initializationData);
+
             await braintreeIntegrationService.getDataCollector();
 
             await braintreeIntegrationService.teardown();
