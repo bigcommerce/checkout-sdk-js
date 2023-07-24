@@ -37,6 +37,7 @@ import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subsc
 import createPaymentIntegrationSelectors from './create-payment-integration-selectors';
 import DefaultPaymentIntegrationService from './default-payment-integration-service';
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
+import ProviderCustomerDataActionCreator from '../provider/provider-actions-creator';
 
 export default function createPaymentIntegrationService(
     store: CheckoutStore,
@@ -107,6 +108,8 @@ export default function createPaymentIntegrationService(
 
     const cartRequestSender = new CartRequestSender(requestSender);
 
+    const providerCustomerDataActionCreator = new ProviderCustomerDataActionCreator();
+
     return new DefaultPaymentIntegrationService(
         store,
         storeProjectionFactory,
@@ -121,5 +124,6 @@ export default function createPaymentIntegrationService(
         cartRequestSender,
         storeCreditActionCreator,
         spamProtectionActionCreator,
+        providerCustomerDataActionCreator,
     );
 }

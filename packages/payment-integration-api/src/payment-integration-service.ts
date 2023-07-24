@@ -66,4 +66,6 @@ export default interface PaymentIntegrationService {
     ): Promise<PaymentIntegrationSelectors>;
 
     createBuyNowCart(body: BuyNowCartRequestBody, options?: RequestOptions): Promise<Cart>;
+
+    updateProviderCustomerData<T>(providerCustomerData: T): Promise<PaymentIntegrationSelectors>;
 }

@@ -22,6 +22,7 @@ import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
+import ProviderCustomerDataActionCreator from '../provider/provider-actions-creator';
 import { ConsignmentActionCreator } from '../shipping';
 import { SpamProtectionActionCreator } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
@@ -45,6 +46,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _cartRequestSender: CartRequestSender,
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
+        private _providerCustomerDataActionCreator: ProviderCustomerDataActionCreator,
     ) {
         this._storeProjection = this._storeProjectionFactory.create(this._store);
     }
@@ -204,6 +206,18 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
                 this._spamProtectionActionCreator.verifyCheckoutSpamProtection(),
             );
         }
+
+        return this._storeProjection.getState();
+    }
+
+    async updateProviderCustomerData<T>(
+        providerCustomerData: T,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._providerCustomerDataActionCreator.updateProviderCustomerData<T>(
+                providerCustomerData,
+            ),
+        );
 
         return this._storeProjection.getState();
     }

@@ -26,6 +26,7 @@ import { getOrder } from '../order/orders.mock';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
 import { getPayment } from '../payment/payments.mock';
+import ProviderCustomerDataActionCreator from '../provider/provider-actions-creator';
 import { ConsignmentActionCreator } from '../shipping';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { SpamProtectionActionCreator } from '../spam-protection';
@@ -68,6 +69,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let customerActionCreator: Pick<CustomerActionCreator, 'signInCustomer' | 'signOutCustomer'>;
     let cartRequestSender: CartRequestSender;
     let storeCreditActionCreator: Pick<StoreCreditActionCreator, 'applyStoreCredit'>;
+    let providerCustomerDataActionCreator: ProviderCustomerDataActionCreator;
 
     beforeEach(() => {
         requestSender = createRequestSender();
@@ -148,6 +150,12 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
+        providerCustomerDataActionCreator = {
+            updateProviderCustomerData: jest.fn(
+                async () => () => createAction('PROVIDER_CUSTOMER_DATA_TYPE_COLLECTED'),
+            ),
+        };
+
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
@@ -162,6 +170,7 @@ describe('DefaultPaymentIntegrationService', () => {
             cartRequestSender,
             storeCreditActionCreator as StoreCreditActionCreator,
             spamProtectionActionCreator as SpamProtectionActionCreator,
+            providerCustomerDataActionCreator,
         );
     });
 

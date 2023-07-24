@@ -54,6 +54,9 @@ export default interface PaymentIntegrationSelectors {
     ): PaymentMethod<T> | undefined;
     getPaymentMethodOrThrow<T = unknown>(methodId: string, gatewayId?: string): PaymentMethod<T>;
 
+    getProviderCustomerData<T = object>(): T | undefined;
+    getProviderCustomerDataOrThrow<T = object>(): T;
+
     getShippingAddress(): ShippingAddress | undefined;
     getShippingAddressOrThrow(): ShippingAddress;
     getShippingAddresses(): ShippingAddress[];

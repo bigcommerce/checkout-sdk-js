@@ -25,6 +25,7 @@ export default function createPaymentIntegrationSelectors({
     },
     paymentMethods: { getPaymentMethod, getPaymentMethodOrThrow },
     paymentStrategies: { isInitialized: isPaymentMethodInitialized },
+    providerCustomerData: { getProviderCustomerData, getProviderCustomerDataOrThrow },
     shippingAddress: {
         getShippingAddress,
         getShippingAddressOrThrow,
@@ -61,6 +62,8 @@ export default function createPaymentIntegrationSelectors({
         getPaymentRedirectUrlOrThrow,
         getPaymentMethod: clone(getPaymentMethod),
         getPaymentMethodOrThrow: clone(getPaymentMethodOrThrow),
+        getProviderCustomerData: clone(getProviderCustomerData),
+        getProviderCustomerDataOrThrow: clone(getProviderCustomerDataOrThrow),
         getShippingAddress: clone(getShippingAddress),
         getShippingAddressOrThrow: clone(getShippingAddressOrThrow),
         getShippingAddresses: clone(getShippingAddresses),

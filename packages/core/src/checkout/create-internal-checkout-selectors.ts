@@ -16,6 +16,7 @@ import {
     createPaymentStrategySelectorFactory,
 } from '../payment';
 import { createInstrumentSelectorFactory } from '../payment/instrument';
+import { createProviderCustomerDataSelectorFactory } from '../provider';
 import { createRemoteCheckoutSelectorFactory } from '../remote-checkout';
 import {
     createConsignmentSelectorFactory,
@@ -53,6 +54,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createPaymentMethodSelector = createPaymentMethodSelectorFactory();
     const createPaymentStrategySelector = createPaymentStrategySelectorFactory();
     const createPickupOptionSelector = createPickupOptionSelectorFactory();
+    const createProviderCustomerDataSelector = createProviderCustomerDataSelectorFactory();
     const createRemoteCheckoutSelector = createRemoteCheckoutSelectorFactory();
     const createShippingAddressSelector = createShippingAddressSelectorFactory();
     const createShippingCountrySelector = createShippingCountrySelectorFactory();
@@ -83,6 +85,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const paymentMethods = createPaymentMethodSelector(state.paymentMethods);
         const paymentStrategies = createPaymentStrategySelector(state.paymentStrategies);
         const pickupOptions = createPickupOptionSelector(state.pickupOptions);
+        const providerCustomerData = createProviderCustomerDataSelector(state.providerCustomerData);
         const remoteCheckout = createRemoteCheckoutSelector(state.remoteCheckout);
         const shippingAddress = createShippingAddressSelector(state.consignments);
         const shippingCountries = createShippingCountrySelector(state.shippingCountries);
@@ -127,6 +130,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
             paymentMethods,
             paymentStrategies,
             pickupOptions,
+            providerCustomerData,
             remoteCheckout,
             shippingAddress,
             shippingCountries,

@@ -17,6 +17,7 @@ export enum MissingDataErrorType {
     MissingPaymentRedirectUrl,
     MissingPaymentStatus,
     MissingPaymentToken,
+    MissingProviderCustomerData,
     MissingShippingAddress,
 }
 
@@ -69,6 +70,9 @@ function getErrorMessage(type: MissingDataErrorType): string {
 
         case MissingDataErrorType.MissingPaymentMethod:
             return 'Unable to proceed because payment method data is unavailable or not properly configured.';
+
+        case MissingDataErrorType.MissingProviderCustomerData:
+            return 'Unable to proceed because provider customer data is unavailable.';
 
         case MissingDataErrorType.MissingShippingAddress:
             return 'Unable to proceed because shipping address data is unavailable.';

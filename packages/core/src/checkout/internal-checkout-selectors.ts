@@ -11,6 +11,7 @@ import { OrderSelector } from '../order';
 import OrderBillingAddressSelector from '../order-billing-address/order-billing-address-selector';
 import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
+import { ProviderCustomerDataSelector } from '../provider';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import {
     ConsignmentSelector,
@@ -45,6 +46,7 @@ export default interface InternalCheckoutSelectors {
     payment: PaymentSelector;
     paymentMethods: PaymentMethodSelector;
     paymentStrategies: PaymentStrategySelector;
+    providerCustomerData: ProviderCustomerDataSelector;
     pickupOptions: PickupOptionSelector;
     remoteCheckout: RemoteCheckoutSelector;
     shippingAddress: ShippingAddressSelector;

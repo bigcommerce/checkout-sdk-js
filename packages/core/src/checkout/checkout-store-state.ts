@@ -11,6 +11,7 @@ import { OrderState } from '../order';
 import { OrderBillingAddressState } from '../order-billing-address';
 import { PaymentMethodState, PaymentState, PaymentStrategyState } from '../payment';
 import { InstrumentState } from '../payment/instrument';
+import { ProviderCustomerDataState } from '../provider';
 import { RemoteCheckoutState } from '../remote-checkout';
 import {
     ConsignmentState,
@@ -45,6 +46,7 @@ export default interface CheckoutStoreState {
     paymentMethods: PaymentMethodState;
     paymentStrategies: PaymentStrategyState;
     pickupOptions: PickupOptionState;
+    providerCustomerData: ProviderCustomerDataState;
     remoteCheckout: RemoteCheckoutState;
     shippingCountries: ShippingCountryState;
     shippingStrategies: ShippingStrategyState;
