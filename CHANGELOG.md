@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.407.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.406.1...v1.407.0) (2023-07-25)
+
+
+### Features
+
+* **payment:** PAYPAL-2744 fixed cart amout for order for BT LPM ([#2080](https://github.com/bigcommerce/checkout-sdk-js/issues/2080)) ([ae738f3](https://github.com/bigcommerce/checkout-sdk-js/commit/ae738f3fd6afab902afdd8429c08a6fde50a9b71))
+
 ### [1.406.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.406.0...v1.406.1) (2023-07-25)
 
 
