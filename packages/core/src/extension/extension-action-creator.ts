@@ -3,6 +3,7 @@ import { Observable, Observer } from 'rxjs';
 
 import { InternalCheckoutSelectors } from '../checkout';
 import { RequestOptions } from '../common/http-request';
+import { parseUrl } from '../common/url';
 
 import { ExtensionNotFoundError } from './errors';
 import { ExtensionRegion } from './extension';
@@ -62,7 +63,7 @@ export class ExtensionActionCreator {
 
                     const iframe = new ExtensionIframe(container, extension, {
                         cartId,
-                        parentOrigin: checkoutLink,
+                        parentOrigin: parseUrl(checkoutLink).origin,
                     });
 
                     await iframe.attach();
