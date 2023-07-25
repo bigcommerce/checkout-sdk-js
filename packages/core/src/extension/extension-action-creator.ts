@@ -46,6 +46,9 @@ export class ExtensionActionCreator {
             Observable.create(async (observer: Observer<ExtensionAction>) => {
                 const state = store.getState();
                 const { id: cartId } = state.cart.getCartOrThrow();
+                const {
+                    links: { checkoutLink },
+                } = state.config.getStoreConfigOrThrow();
                 const extension = state.extensions.getExtensionByRegion(region);
 
                 try {
@@ -57,7 +60,10 @@ export class ExtensionActionCreator {
 
                     observer.next(createAction(ExtensionActionType.RenderExtensionRequested));
 
-                    const iframe = new ExtensionIframe(container, extension, cartId);
+                    const iframe = new ExtensionIframe(container, extension, {
+                        cartId,
+                        parentOrigin: checkoutLink,
+                    });
 
                     await iframe.attach();
 
