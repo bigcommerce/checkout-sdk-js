@@ -38,6 +38,7 @@ export default class GooglePayPaymentProcessor {
     private _methodId?: string;
     private _paymentDataRequest?: GooglePayPaymentDataRequestV2;
     private _isBuyNowFlow = false;
+    private _shouldThrowError = true;
 
     constructor(
         private _store: CheckoutStore,
@@ -49,7 +50,10 @@ export default class GooglePayPaymentProcessor {
         private _requestSender: RequestSender,
     ) {}
 
-    initialize(methodId: string, googlePayClientOptions?: GooglePayPaymentOptions): Promise<void> {
+    initialize(
+        methodId: string,
+        googlePayClientOptions?: GooglePayPaymentOptions,
+    ): Promise<boolean> {
         this._methodId = methodId;
 
         return this._configureWallet(googlePayClientOptions);
@@ -123,9 +127,13 @@ export default class GooglePayPaymentProcessor {
         this._isBuyNowFlow = isBuyNowFlow;
     }
 
+    updateShouldThrowInvalidError(shouldThrowPaymentInvalidError: boolean) {
+        this._shouldThrowError = shouldThrowPaymentInvalidError;
+    }
+
     private _configureWallet(
         googlePayClientOptions?: Partial<GooglePayPaymentOptions>,
-    ): Promise<void> {
+    ): Promise<boolean> {
         const features = this._store.getState().config.getStoreConfig()?.checkoutSettings.features;
         const options =
             features && features['INT-5826.google_hostname_alias']
@@ -179,9 +187,13 @@ export default class GooglePayPaymentProcessor {
                             apiVersion: paymentDataRequest.apiVersion,
                             apiVersionMinor: paymentDataRequest.apiVersionMinor,
                         })
-                        .then((response) => {
-                            if (response.result) {
-                                return;
+                        .then(({ result: isReadyToPay }) => {
+                            if (isReadyToPay) {
+                                return isReadyToPay;
+                            }
+
+                            if (!this._shouldThrowError) {
+                                return isReadyToPay;
                             }
 
                             throw new PaymentMethodInvalidError();
