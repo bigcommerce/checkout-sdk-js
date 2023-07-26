@@ -22,7 +22,7 @@ import {
 } from './mocks/braintree.mock';
 
 const VERSION = '3.95.0';
-const ALPHA_VERSION = '3.95.0-connect-alpha.7';
+const ALPHA_VERSION = '3.95.0-connect-alpha.11';
 
 describe('BraintreeScriptLoader', () => {
     let scriptLoader: ScriptLoader;
