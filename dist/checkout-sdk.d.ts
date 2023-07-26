@@ -5009,11 +5009,12 @@ declare interface Extension {
     url: string;
 }
 
-declare type ExtensionCommand = ReloadCheckoutCommand | ShowLoadingIndicatorCommand | SetIframeStyleCommand;
+declare type ExtensionCommand = ReloadCheckoutCommand | ShowLoadingIndicatorCommand | SetIframeStyleCommand | FrameLoadedCommand;
 
 declare type ExtensionCommandHandler = (data: ExtensionCommand) => void;
 
 declare const enum ExtensionCommandType {
+    FrameLoaded = "FRAME_LOADED",
     ReloadCheckout = "RELOAD_CHECKOUT",
     ShowLoadingIndicator = "SHOW_LOADING_INDICATOR",
     SetIframeStyle = "SET_IFRAME_STYLE"
@@ -5078,6 +5079,13 @@ declare interface FormFields {
     customerAccount: FormField[];
     shippingAddress: FormField[];
     billingAddress: FormField[];
+}
+
+declare interface FrameLoadedCommand {
+    type: ExtensionCommandType.FrameLoaded;
+    payload: {
+        extensionId: string;
+    };
 }
 
 declare interface GatewayOrderPayment extends OrderPayment {

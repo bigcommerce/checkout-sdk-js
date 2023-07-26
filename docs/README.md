@@ -230,6 +230,7 @@
 - [FormFieldItem](interfaces/FormFieldItem.md)
 - [FormFieldOptions](interfaces/FormFieldOptions.md)
 - [FormFields](interfaces/FormFields.md)
+- [FrameLoadedCommand](interfaces/FrameLoadedCommand.md)
 - [GatewayOrderPayment](interfaces/GatewayOrderPayment.md)
 - [GiftCertificate](interfaces/GiftCertificate.md)
 - [GiftCertificateItem](interfaces/GiftCertificateItem.md)
@@ -611,7 +612,7 @@ ___
 
 ### ExtensionCommand
 
-Ƭ **ExtensionCommand**: [`ReloadCheckoutCommand`](interfaces/ReloadCheckoutCommand.md) \| [`ShowLoadingIndicatorCommand`](interfaces/ShowLoadingIndicatorCommand.md) \| [`SetIframeStyleCommand`](interfaces/SetIframeStyleCommand.md)
+Ƭ **ExtensionCommand**: [`ReloadCheckoutCommand`](interfaces/ReloadCheckoutCommand.md) \| [`ShowLoadingIndicatorCommand`](interfaces/ShowLoadingIndicatorCommand.md) \| [`SetIframeStyleCommand`](interfaces/SetIframeStyleCommand.md) \| [`FrameLoadedCommand`](interfaces/FrameLoadedCommand.md)
 
 ___
 

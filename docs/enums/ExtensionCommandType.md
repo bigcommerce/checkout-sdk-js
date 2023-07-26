@@ -6,11 +6,18 @@
 
 ### Enumeration Members
 
+- [FrameLoaded](ExtensionCommandType.md#frameloaded)
 - [ReloadCheckout](ExtensionCommandType.md#reloadcheckout)
 - [SetIframeStyle](ExtensionCommandType.md#setiframestyle)
 - [ShowLoadingIndicator](ExtensionCommandType.md#showloadingindicator)
 
 ## Enumeration Members
+
+### FrameLoaded
+
+• **FrameLoaded**
+
+___
 
 ### ReloadCheckout
 
