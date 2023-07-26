@@ -3,6 +3,7 @@ import { Observable, Observer } from 'rxjs';
 
 import { InternalCheckoutSelectors } from '../checkout';
 import { RequestOptions } from '../common/http-request';
+import { parseUrl } from '../common/url';
 
 import { ExtensionNotFoundError } from './errors';
 import { ExtensionRegion } from './extension';
@@ -46,6 +47,9 @@ export class ExtensionActionCreator {
             Observable.create(async (observer: Observer<ExtensionAction>) => {
                 const state = store.getState();
                 const { id: cartId } = state.cart.getCartOrThrow();
+                const {
+                    links: { checkoutLink },
+                } = state.config.getStoreConfigOrThrow();
                 const extension = state.extensions.getExtensionByRegion(region);
 
                 try {
@@ -57,7 +61,10 @@ export class ExtensionActionCreator {
 
                     observer.next(createAction(ExtensionActionType.RenderExtensionRequested));
 
-                    const iframe = new ExtensionIframe(container, extension, cartId);
+                    const iframe = new ExtensionIframe(container, extension, {
+                        cartId,
+                        parentOrigin: parseUrl(checkoutLink).origin,
+                    });
 
                     await iframe.attach();
 
