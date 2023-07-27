@@ -603,7 +603,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         return {
             elements: this._stripeElements,
-            redirect: StripeStringConstants.IF_REQUIRED,
+            redirect: StripeStringConstants.ALWAYS,
             confirmParams: {
                 payment_method_data: {
                     billing_details: {
