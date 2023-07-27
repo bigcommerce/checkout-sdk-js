@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.409.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.408.0...v1.409.0) (2023-07-27)
+
+
+### Features
+
+* **payment:** PI-585 Make an ability to use loadCurrentOrder action from core package in integration checkout-sdk packages ([#2077](https://github.com/bigcommerce/checkout-sdk-js/issues/2077)) ([56daa7a](https://github.com/bigcommerce/checkout-sdk-js/commit/56daa7a6d4ff02ec4d30b02da4be35fe088c8e7c))
+
 ## [1.408.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.407.0...v1.408.0) (2023-07-26)
 
 
