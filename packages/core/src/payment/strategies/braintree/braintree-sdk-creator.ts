@@ -91,15 +91,12 @@ export default class BraintreeSDKCreator {
             }
 
             const paypalSdkLoadCallback = () => onSuccess(braintreePaypalCheckout);
-            const paypalSdkLoadConfig = {
-                currency: config.currency,
-                ...(config.isCreditEnabled && { 'enable-funding': 'paylater' }),
-                components: PAYPAL_COMPONENTS.toString(),
-                intent: config.intent,
-            };
 
             if (!this._window.paypal) {
-                braintreePaypalCheckout.loadPayPalSDK(paypalSdkLoadConfig, paypalSdkLoadCallback);
+                braintreePaypalCheckout.loadPayPalSDK(
+                    this._getPayPalSDKConfig(config),
+                    paypalSdkLoadCallback,
+                );
             } else {
                 onSuccess(braintreePaypalCheckout);
             }
@@ -244,5 +241,14 @@ export default class BraintreeSDKCreator {
                       }
                   })
             : Promise.resolve();
+    }
+
+    private _getPayPalSDKConfig(config: Partial<BraintreePaypalSdkCreatorConfig>) {
+        return {
+            currency: config.currency,
+            ...(config.isCreditEnabled && { 'enable-funding': 'paylater' }),
+            components: PAYPAL_COMPONENTS.toString(),
+            intent: config.intent,
+        };
     }
 }

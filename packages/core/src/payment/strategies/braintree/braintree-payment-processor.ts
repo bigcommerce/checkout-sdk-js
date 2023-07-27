@@ -16,8 +16,11 @@ import {
 import { CreditCardInstrument, NonceInstrument } from '../../payment';
 
 import {
+    BraintreeError,
     BraintreeInitializationData,
     BraintreePaypal,
+    BraintreePaypalCheckout,
+    BraintreePaypalSdkCreatorConfig,
     BraintreeRequestData,
     BraintreeShippingAddressOverride,
     BraintreeThreeDSecure,
@@ -69,6 +72,18 @@ export default class BraintreePaymentProcessor {
 
     preloadPaypal(): Promise<BraintreePaypal> {
         return this._braintreeSDKCreator.getPaypal();
+    }
+
+    preloadPaypalCheckout(
+        paypalCheckoutConfig: Partial<BraintreePaypalSdkCreatorConfig>,
+        onSuccess: (instance: BraintreePaypalCheckout) => void,
+        onError: (error: BraintreeError) => void,
+    ) {
+        return this._braintreeSDKCreator.getPaypalCheckout(
+            paypalCheckoutConfig,
+            onSuccess,
+            onError,
+        );
     }
 
     async tokenizeCard(
