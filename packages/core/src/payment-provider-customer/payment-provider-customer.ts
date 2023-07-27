@@ -1,1 +1,1 @@
-export type PaymentProviderCustomer<T = {}> = T;
+export type PaymentProviderCustomer<T = any> = T;
