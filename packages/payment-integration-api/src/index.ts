@@ -130,6 +130,7 @@ export {
 } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
+export { PaymentProviderCustomer } from './payment-provider-customer';
 export {
     Consignment,
     ShippingAddress,

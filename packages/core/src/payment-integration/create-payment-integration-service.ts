@@ -24,6 +24,7 @@ import {
     PaymentRequestSender,
     PaymentRequestTransformer,
 } from '../payment';
+import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
 import {
     createSpamProtection,
@@ -107,6 +108,8 @@ export default function createPaymentIntegrationService(
 
     const cartRequestSender = new CartRequestSender(requestSender);
 
+    const paymentProviderCustomerActionCreator = new PaymentProviderCustomerActionCreator();
+
     return new DefaultPaymentIntegrationService(
         store,
         storeProjectionFactory,
@@ -121,5 +124,6 @@ export default function createPaymentIntegrationService(
         cartRequestSender,
         storeCreditActionCreator,
         spamProtectionActionCreator,
+        paymentProviderCustomerActionCreator,
     );
 }

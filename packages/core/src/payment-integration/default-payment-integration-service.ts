@@ -20,6 +20,7 @@ import { DataStoreProjection } from '../common/data-store';
 import { CustomerActionCreator, CustomerCredentials } from '../customer';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
+import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
 import { ConsignmentActionCreator } from '../shipping';
@@ -45,6 +46,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _cartRequestSender: CartRequestSender,
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
+        private _paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator,
     ) {
         this._storeProjection = this._storeProjectionFactory.create(this._store);
     }
@@ -210,6 +212,18 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
 
     async loadCurrentOrder(options?: RequestOptions): Promise<PaymentIntegrationSelectors> {
         await this._store.dispatch(this._orderActionCreator.loadCurrentOrder(options));
+
+        return this._storeProjection.getState();
+    }
+
+    async updatePaymentProviderCustomer<T>(
+        paymentProviderCustomer: T,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._paymentProviderCustomerActionCreator.updatePaymentProviderCustomer<T>(
+                paymentProviderCustomer,
+            ),
+        );
 
         return this._storeProjection.getState();
     }

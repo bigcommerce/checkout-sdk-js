@@ -4,6 +4,7 @@ import { Checkout } from './checkout';
 import { StoreConfig } from './config';
 import { Customer } from './customer';
 import { Order } from './order';
+import { PaymentProviderCustomer } from './payment-provider-customer';
 import { CardInstrument } from './payment/instrument';
 import PaymentMethod from './payment/payment-method';
 import { Consignment, ShippingAddress } from './shipping';
@@ -53,6 +54,9 @@ export default interface PaymentIntegrationSelectors {
         gatewayId?: string,
     ): PaymentMethod<T> | undefined;
     getPaymentMethodOrThrow<T = unknown>(methodId: string, gatewayId?: string): PaymentMethod<T>;
+
+    getPaymentProviderCustomer<T>(): PaymentProviderCustomer<T> | undefined;
+    getPaymentProviderCustomerOrThrow<T>(): PaymentProviderCustomer<T>;
 
     getShippingAddress(): ShippingAddress | undefined;
     getShippingAddressOrThrow(): ShippingAddress;
