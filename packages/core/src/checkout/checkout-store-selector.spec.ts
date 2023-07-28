@@ -15,6 +15,7 @@ import CheckoutStoreState from './checkout-store-state';
 import { getCheckoutStoreStateWithOrder } from './checkouts.mock';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
+import { ExtensionRegion } from '../extension';
 
 describe('CheckoutStoreSelector', () => {
     let createCheckoutStoreSelector: CheckoutStoreSelectorFactory;
@@ -294,6 +295,16 @@ describe('CheckoutStoreSelector', () => {
     it('returns payment provider customer data', () => {
         expect(selector.getPaymentProviderCustomer()).toEqual(
             internalSelectors.paymentProviderCustomer.getPaymentProviderCustomer(),
+        );
+    });
+
+    it('returns the extension of a given region', () => {
+        expect(
+            selector.getExtensionByRegion(ExtensionRegion.ShippingShippingAddressFormBefore),
+        ).toEqual(
+            internalSelectors.extensions.getExtensionByRegion(
+                ExtensionRegion.ShippingShippingAddressFormBefore,
+            ),
         );
     });
 });

@@ -1502,8 +1502,8 @@ describe('CheckoutService', () => {
         });
     });
 
-    describe('#listenExtensionCommand()', () => {
-        it('listens for extension commands', () => {
+    describe('#handleExtensionCommand()', () => {
+        it('handles extension commands', () => {
             const extensions = getExtensions();
             const handler = jest.fn();
 

@@ -9,7 +9,7 @@ import { cloneResult as clone } from '../common/utility';
 import { FlashMessage, FlashMessageType, StoreConfig, UserExperienceSettings } from '../config';
 import { Coupon, GiftCertificate } from '../coupon';
 import { Customer } from '../customer';
-import { Extension } from '../extension';
+import { Extension, ExtensionRegion } from '../extension';
 import { FormField } from '../form';
 import { Country } from '../geography';
 import { Order } from '../order';
@@ -293,6 +293,15 @@ export default interface CheckoutStoreSelector {
      * @returns The object with payment provider customer data
      */
     getPaymentProviderCustomer(): PaymentProviderCustomer | undefined;
+
+    /**
+     * Gets the extension associated with a given region.
+     *
+     * @alpha
+     * @param region - A checkout extension region.
+     * @returns The extension corresponding to the specified region, otherwise undefined.
+     */
+    getExtensionByRegion(region: ExtensionRegion): Extension | undefined;
 }
 
 export type CheckoutStoreSelectorFactory = (
@@ -573,12 +582,18 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         (getPaymentProviderCustomer) => clone(getPaymentProviderCustomer),
     );
 
+    const getExtensionByRegion = createSelector(
+        ({ extensions }: InternalCheckoutSelectors) => extensions.getExtensionByRegion,
+        (getExtensionByRegion) => clone(getExtensionByRegion),
+    );
+
     return memoizeOne((state: InternalCheckoutSelectors): CheckoutStoreSelector => {
         return {
             getCheckout: getCheckout(state),
             getOrder: getOrder(state),
             getConfig: getConfig(state),
             getExtensions: getExtensions(state),
+            getExtensionByRegion: getExtensionByRegion(state),
             getFlashMessages: getFlashMessages(state),
             getShippingAddress: getShippingAddress(state),
             getShippingOptions: getShippingOptions(state),
