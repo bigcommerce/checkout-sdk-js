@@ -130,6 +130,7 @@ export function getCheckoutStoreState(): CheckoutStoreState {
         orderBillingAddress: getOrderBillingAddressState(),
         payment: getPaymentState(),
         paymentMethods: getPaymentMethodsState(),
+        paymentProviderCustomer: { data: {} },
         paymentStrategies: { data: {}, errors: {}, statuses: {} },
         pickupOptions: getPickupOptionsState(),
         remoteCheckout: getRemoteCheckoutState(),

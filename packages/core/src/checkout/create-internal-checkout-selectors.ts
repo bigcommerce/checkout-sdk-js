@@ -15,6 +15,7 @@ import {
     createPaymentSelectorFactory,
     createPaymentStrategySelectorFactory,
 } from '../payment';
+import { createPaymentProviderCustomerSelectorFactory } from '../payment-provider-customer';
 import { createInstrumentSelectorFactory } from '../payment/instrument';
 import { createRemoteCheckoutSelectorFactory } from '../remote-checkout';
 import {
@@ -53,6 +54,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createPaymentMethodSelector = createPaymentMethodSelectorFactory();
     const createPaymentStrategySelector = createPaymentStrategySelectorFactory();
     const createPickupOptionSelector = createPickupOptionSelectorFactory();
+    const createPaymentProviderCustomerSelector = createPaymentProviderCustomerSelectorFactory();
     const createRemoteCheckoutSelector = createRemoteCheckoutSelectorFactory();
     const createShippingAddressSelector = createShippingAddressSelectorFactory();
     const createShippingCountrySelector = createShippingCountrySelectorFactory();
@@ -81,6 +83,9 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const instruments = createInstrumentSelector(state.instruments);
         const orderBillingAddress = createOrderBillingAddressSelector(state.orderBillingAddress);
         const paymentMethods = createPaymentMethodSelector(state.paymentMethods);
+        const paymentProviderCustomer = createPaymentProviderCustomerSelector(
+            state.paymentProviderCustomer,
+        );
         const paymentStrategies = createPaymentStrategySelector(state.paymentStrategies);
         const pickupOptions = createPickupOptionSelector(state.pickupOptions);
         const remoteCheckout = createRemoteCheckoutSelector(state.remoteCheckout);
@@ -125,6 +130,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
             orderBillingAddress,
             payment,
             paymentMethods,
+            paymentProviderCustomer,
             paymentStrategies,
             pickupOptions,
             remoteCheckout,

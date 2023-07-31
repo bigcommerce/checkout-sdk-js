@@ -23,6 +23,7 @@ import { CustomerActionCreator } from '../customer';
 import { HostedForm, HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
 import { getOrder } from '../order/orders.mock';
+import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
 import { getPayment } from '../payment/payments.mock';
@@ -71,6 +72,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let customerActionCreator: Pick<CustomerActionCreator, 'signInCustomer' | 'signOutCustomer'>;
     let cartRequestSender: CartRequestSender;
     let storeCreditActionCreator: Pick<StoreCreditActionCreator, 'applyStoreCredit'>;
+    let paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator;
 
     beforeEach(() => {
         requestSender = createRequestSender();
@@ -152,6 +154,12 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
+        paymentProviderCustomerActionCreator = {
+            updatePaymentProviderCustomer: jest.fn(
+                async () => () => createAction('UPDATE_PAYMENT_PROVIDER_CUSTOMER'),
+            ),
+        };
+
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
@@ -166,6 +174,7 @@ describe('DefaultPaymentIntegrationService', () => {
             cartRequestSender,
             storeCreditActionCreator as StoreCreditActionCreator,
             spamProtectionActionCreator as SpamProtectionActionCreator,
+            paymentProviderCustomerActionCreator,
         );
     });
 
