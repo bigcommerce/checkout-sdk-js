@@ -136,7 +136,6 @@ export {
     ShippingOption,
     ShippingAddressRequestBody,
 } from './shipping';
-export { BrowserStorage } from './storage';
 export { RequestOptions, guard } from './util-types';
 export { default as ResolvableModule } from './resolvable-module';
 export { default as isResolvableModule } from './is-resolvable-module';
