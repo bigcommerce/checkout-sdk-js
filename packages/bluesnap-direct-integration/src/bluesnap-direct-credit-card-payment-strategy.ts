@@ -40,7 +40,7 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
         }
 
         const state = await this._paymentIntegrationService.loadPaymentMethod(gatewayId, {
-            params: { method: methodId },
+            params: { method: methodId, bigpayToken: creditCard.bigpayToken },
         });
 
         const {

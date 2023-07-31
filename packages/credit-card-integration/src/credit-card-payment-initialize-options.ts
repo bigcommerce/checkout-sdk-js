@@ -79,6 +79,7 @@ import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration
  */
 export interface CreditCardPaymentInitializeOptions {
     form: HostedFormOptions;
+    bigpayToken?: string;
 }
 
 export interface WithCreditCardPaymentInitializeOptions {
