@@ -23,6 +23,7 @@ import {
 import {
     ExtensionActionCreator,
     ExtensionCommandMap,
+    ExtensionEventBroadcaster,
     ExtensionMessenger,
     ExtensionRegion,
 } from '../extension';
@@ -83,6 +84,7 @@ export default class CheckoutService {
     constructor(
         private _store: CheckoutStore,
         private _extensionMessenger: ExtensionMessenger,
+        private _extensionEventBroadcaster: ExtensionEventBroadcaster,
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _configActionCreator: ConfigActionCreator,
@@ -1399,10 +1401,13 @@ export default class CheckoutService {
      * @param region - The name of an area where the extension should be presented.
      * @returns A promise that resolves to the current state.
      */
-    renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors> {
+    async renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors> {
         const action = this._extensionActionCreator.renderExtension(container, region);
+        const state = await this._dispatch(action, { queueId: 'extensions' });
 
-        return this._dispatch(action, { queueId: 'extensions' });
+        this._extensionEventBroadcaster.listen();
+
+        return state;
     }
 
     /**

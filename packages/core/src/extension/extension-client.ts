@@ -4,25 +4,21 @@ export interface InitializeExtensionServiceOptions {
 }
 
 export enum ExtensionEventType {
-    CheckoutLoaded = 'CHECKOUT_LOADED',
-    ShippingCountryChange = 'SHIPPING_COUNTRY_CHANGE',
+    ShippingCountryChanged = 'EXTENSION:SHIPPING_COUNTRY_CHANGED',
 }
 
-export interface CheckoutLoadedEvent {
-    type: ExtensionEventType.CheckoutLoaded;
-}
-
-export interface ShippingCountryChangeEvent {
-    type: ExtensionEventType.ShippingCountryChange;
+export interface ShippingCountryChangedEvent {
+    type: ExtensionEventType.ShippingCountryChanged;
     payload: {
+        consignmentId: string;
         countryCode: string;
     };
 }
-export type ExtensionEvent = CheckoutLoadedEvent | ShippingCountryChangeEvent;
+
+export type ExtensionEvent = ShippingCountryChangedEvent;
 
 export interface ExtensionEventMap {
-    [ExtensionEventType.CheckoutLoaded]: CheckoutLoadedEvent;
-    [ExtensionEventType.ShippingCountryChange]: ShippingCountryChangeEvent;
+    [ExtensionEventType.ShippingCountryChanged]: ShippingCountryChangedEvent;
 }
 
 export enum ExtensionCommandType {

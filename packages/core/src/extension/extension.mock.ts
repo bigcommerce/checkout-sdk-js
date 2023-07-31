@@ -50,7 +50,11 @@ export function getExtensionEvent(): {
     return {
         origin: 'https://host.store',
         data: {
-            type: ExtensionEventType.CheckoutLoaded,
+            type: ExtensionEventType.ShippingCountryChanged,
+            payload: {
+                countryCode: 'AU',
+                consignmentId: '55c96cda6f04c',
+            },
         },
     };
 }

@@ -33,9 +33,11 @@ import {
 } from '../customer';
 import CustomerStrategyRegistryV2 from '../customer/customer-strategy-registry-v2';
 import {
+    createExtensionEventBroadcaster,
     ExtensionActionCreator,
     ExtensionActionType,
     ExtensionCommandType,
+    ExtensionEventBroadcaster,
     ExtensionMessenger,
     ExtensionRegion,
     ExtensionRequestSender,
@@ -146,6 +148,7 @@ describe('CheckoutService', () => {
     let store: CheckoutStore;
     let storeCreditRequestSender: StoreCreditRequestSender;
     let extensionMessenger: ExtensionMessenger;
+    let extensionEventBroadcaster: ExtensionEventBroadcaster;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
@@ -372,9 +375,12 @@ describe('CheckoutService', () => {
 
         errorActionCreator = new ErrorActionCreator();
 
+        extensionEventBroadcaster = createExtensionEventBroadcaster(store);
+
         checkoutService = new CheckoutService(
             store,
             extensionMessenger,
+            extensionEventBroadcaster,
             billingAddressActionCreator,
             checkoutActionCreator,
             configActionCreator,
@@ -1493,12 +1499,15 @@ describe('CheckoutService', () => {
                 of(createAction(ExtensionActionType.RenderExtensionSucceeded)),
             );
 
+            jest.spyOn(extensionEventBroadcaster, 'listen');
+
             const container = 'checkout.extension';
             const region = ExtensionRegion.ShippingShippingAddressFormBefore;
 
             await checkoutService.renderExtension(container, region);
 
             expect(extensionActionCreator.renderExtension).toHaveBeenCalledWith(container, region);
+            expect(extensionEventBroadcaster.listen).toHaveBeenCalled();
         });
     });
 

@@ -19,7 +19,12 @@ import {
     CustomerRequestSender,
     CustomerStrategyActionCreator,
 } from '../customer';
-import { ExtensionActionCreator, ExtensionMessenger, ExtensionRequestSender } from '../extension';
+import {
+    createExtensionEventBroadcaster,
+    ExtensionActionCreator,
+    ExtensionMessenger,
+    ExtensionRequestSender,
+} from '../extension';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import * as defaultPaymentStrategyFactories from '../generated/payment-strategies';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -140,7 +145,8 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
 
     return new CheckoutService(
         store,
-        new ExtensionMessenger(store, {}, {}),
+        new ExtensionMessenger(store),
+        createExtensionEventBroadcaster(store),
         new BillingAddressActionCreator(
             new BillingAddressRequestSender(requestSender),
             subscriptionsActionCreator,
