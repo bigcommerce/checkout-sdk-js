@@ -23,9 +23,9 @@ export default function paymentProviderCustomerReducer(
 }
 
 function dataReducer(
-    data: PaymentProviderCustomer | undefined,
+    data: PaymentProviderCustomer = DEFAULT_STATE.data,
     action: ReducerActionType,
-): PaymentProviderCustomer | undefined {
+): PaymentProviderCustomer {
     switch (action.type) {
         case PaymentProviderCustomerType.UpdatePaymentProviderCustomer:
             return objectMerge(data, action.payload);

@@ -8,8 +8,8 @@ import {
 } from './payment-provider-customer-actions';
 
 export default class PaymentProviderCustomerActionCreator {
-    updatePaymentProviderCustomer<T>(
-        providerCustomerData: PaymentProviderCustomer<T>,
+    updatePaymentProviderCustomer(
+        providerCustomerData: PaymentProviderCustomer,
     ): Observable<PaymentProviderCustomerAction> {
         return of(
             createAction(

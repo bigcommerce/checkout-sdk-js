@@ -1,4 +1,7 @@
-export { PaymentProviderCustomer } from './payment-provider-customer';
+export {
+    PaymentProviderCustomer,
+    BraintreeAcceleratedCheckoutCustomer,
+} from './payment-provider-customer';
 export {
     PaymentProviderCustomerType,
     PaymentProviderCustomerAction,

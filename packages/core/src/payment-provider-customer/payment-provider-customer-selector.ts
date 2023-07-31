@@ -8,8 +8,8 @@ import PaymentProviderCustomerState, { DEFAULT_STATE } from './payment-provider-
 import { PaymentProviderCustomer } from './payment-provider-customer';
 
 export default interface PaymentProviderCustomerSelector {
-    getPaymentProviderCustomer<T>(): PaymentProviderCustomer<T> | undefined;
-    getPaymentProviderCustomerOrThrow<T>(): PaymentProviderCustomer<T>;
+    getPaymentProviderCustomer(): PaymentProviderCustomer | undefined;
+    getPaymentProviderCustomerOrThrow(): PaymentProviderCustomer;
 }
 
 export type PaymentProviderCustomerSelectorFactory = (

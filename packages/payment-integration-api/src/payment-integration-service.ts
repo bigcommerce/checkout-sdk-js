@@ -70,7 +70,7 @@ export default interface PaymentIntegrationService {
 
     createBuyNowCart(body: BuyNowCartRequestBody, options?: RequestOptions): Promise<Cart>;
 
-    updatePaymentProviderCustomer<T>(
-        paymentProviderCustomer: PaymentProviderCustomer<T>,
+    updatePaymentProviderCustomer(
+        paymentProviderCustomer: PaymentProviderCustomer,
     ): Promise<PaymentIntegrationSelectors>;
 }
