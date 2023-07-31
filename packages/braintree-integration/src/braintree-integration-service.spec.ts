@@ -22,7 +22,7 @@ import {
     getModuleCreatorMock,
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
-} from './braintree.mock';
+} from './mocks/braintree.mock';
 import { PaypalSDK } from './paypal';
 
 describe('BraintreeIntegrationService', () => {

@@ -17,7 +17,10 @@ import {
 import { BraintreeConnect } from '../braintree';
 import BraintreeIntegrationService from '../braintree-integration-service';
 import BraintreeScriptLoader from '../braintree-script-loader';
-import { getBraintreeAcceleratedCheckoutPaymentMethod, getConnectMock } from '../braintree.mock';
+import {
+    getBraintreeAcceleratedCheckoutPaymentMethod,
+    getConnectMock,
+} from '../mocks/braintree.mock';
 
 import BraintreeAcceleratedCheckoutPaymentStrategy from './braintree-accelerated-checkout-payment-strategy';
 

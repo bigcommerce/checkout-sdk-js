@@ -1,4 +1,4 @@
-import { PaypalSDK } from './paypal';
+import { PaypalSDK } from '../paypal';
 
 export function getPaypalSDKMock(): PaypalSDK {
     return {

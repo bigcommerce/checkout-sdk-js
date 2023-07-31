@@ -20,7 +20,7 @@ import BraintreeScriptLoader from '../braintree-script-loader';
 import {
     getBraintreeLocalMethods,
     getBraintreeLocalMethodsInitializationOptions,
-} from '../braintree.mock';
+} from '../mocks/braintree.mock';
 
 import { LocalPaymentInstance } from './braintree-local-methods-options';
 import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-payment-strategy';

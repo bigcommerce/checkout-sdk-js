@@ -8,7 +8,6 @@ import {
 import {
     BraintreeBankAccount,
     BraintreeClient,
-    BraintreeConnect,
     BraintreeDataCollector,
     BraintreeDetails,
     BraintreeEnv,
@@ -39,7 +38,6 @@ export default class BraintreeIntegrationService {
     private paypalCheckout?: BraintreePaypalCheckout;
     private usBankAccount?: Promise<BraintreeBankAccount>;
     private braintreeLocalMethods?: BraintreeLocalMethods;
-    private braintreeConnect?: BraintreeConnect;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
@@ -55,21 +53,21 @@ export default class BraintreeIntegrationService {
         // TODO: should be removed after PayPal prepare stable Braintree SDK version with AXO implementation
         window.localStorage.setItem('axoEnv', 'test67');
 
-        if (!this.braintreeConnect) {
+        if (!this.braintreeHostWindow.braintreeConnect) {
             const clientToken = this.getClientTokenOrThrow();
             const client = await this.getClient();
             const deviceData = await this.getSessionId();
 
             const braintreeConnectCreator = await this.braintreeScriptLoader.loadConnect();
 
-            this.braintreeConnect = await braintreeConnectCreator.create({
+            this.braintreeHostWindow.braintreeConnect = await braintreeConnectCreator.create({
                 authorization: clientToken,
                 client,
                 deviceData,
             });
         }
 
-        return this.braintreeConnect;
+        return this.braintreeHostWindow.braintreeConnect;
     }
 
     async getClient(): Promise<BraintreeClient> {
