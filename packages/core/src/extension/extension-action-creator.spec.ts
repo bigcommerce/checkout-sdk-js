@@ -166,5 +166,23 @@ describe('ExtensionActionCreator', () => {
                 },
             ]);
         });
+
+        it('does nothing if the experiment is off', async () => {
+            storeConfig.checkoutSettings.features = {};
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+                storeConfig,
+            );
+
+            const actions = await from(
+                extensionActionCreator.renderExtension(
+                    'foo',
+                    ExtensionRegion.ShippingShippingAddressFormBefore,
+                )(store),
+            )
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([]);
+        });
     });
 });
