@@ -53,6 +53,8 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
 
         if (this._paymentMethod.clientToken && braintreeOptions?.bannerContainerId) {
+            await this._loadPaypal(braintreeOptions);
+
             return this._loadPaypalCheckoutInstance(braintreeOptions);
         }
 
