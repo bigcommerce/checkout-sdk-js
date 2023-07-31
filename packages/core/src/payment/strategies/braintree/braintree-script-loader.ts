@@ -30,7 +30,7 @@ export default class BraintreeScriptLoader {
     // So can be removed after Beta stage
     initialize({ isAcceleratedCheckoutEnabled }: BraintreeInitializationData) {
         this.braintreeSdkVersion = isAcceleratedCheckoutEnabled
-            ? '3.95.0-connect-alpha.7'
+            ? '3.95.0-connect-alpha.11'
             : BraintreeSdkVersionStable;
     }
 
