@@ -290,4 +290,10 @@ describe('CheckoutStoreSelector', () => {
     it('returns extensions', () => {
         expect(selector.getExtensions()).toEqual(internalSelectors.extensions.getExtensions());
     });
+
+    it('returns payment provider customer data', () => {
+        expect(selector.getPaymentProviderCustomer()).toEqual(
+            internalSelectors.paymentProviderCustomer.getPaymentProviderCustomer(),
+        );
+    });
 });
