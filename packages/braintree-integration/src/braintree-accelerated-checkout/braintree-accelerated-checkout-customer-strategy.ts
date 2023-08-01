@@ -110,13 +110,13 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
             );
 
             await this.paymentIntegrationService.updatePaymentProviderCustomer({
-                authorizationStatus: 'succeeded',
+                authenticationState: 'succeeded',
                 addresses,
                 instruments,
             });
         } else {
             await this.paymentIntegrationService.updatePaymentProviderCustomer({
-                authorizationStatus: 'canceled',
+                authenticationState: 'canceled',
                 addresses: [],
                 instruments: [],
             });

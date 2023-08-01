@@ -223,7 +223,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
 
             expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
-                authorizationStatus: 'succeeded',
+                authenticationState: 'succeeded',
                 addresses: [
                     {
                         firstName: 'John',
@@ -269,7 +269,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
 
             expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
-                authorizationStatus: 'canceled',
+                authenticationState: 'canceled',
                 addresses: [],
                 instruments: [],
             });
