@@ -19,7 +19,7 @@ import {
     getDataCollectorMock,
     getModuleCreatorMock,
     getPaypalCheckoutMock,
-} from './braintree.mock';
+} from './mocks/braintree.mock';
 
 const VERSION = '3.95.0';
 const ALPHA_VERSION = '3.95.0-connect-alpha.11';

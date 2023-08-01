@@ -19,7 +19,7 @@ import {
 import { BraintreeBankAccount } from '../braintree';
 import BraintreeIntegrationService from '../braintree-integration-service';
 import BraintreeScriptLoader from '../braintree-script-loader';
-import { getBankAccountMock, getBraintreeAch } from '../braintree.mock';
+import { getBankAccountMock, getBraintreeAch } from '../mocks/braintree.mock';
 
 import { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-paypal-ach-initialize-options';
 import BraintreePaypalAchPaymentStrategy from './braintree-paypal-ach-payment-strategy';

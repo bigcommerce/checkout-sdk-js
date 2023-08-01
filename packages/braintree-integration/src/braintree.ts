@@ -586,9 +586,15 @@ interface BraintreeConnectStylesOption {
     branding: 'light' | 'dark'; // default: 'light',
 }
 
+export enum BraintreeConnectAuthenticationState {
+    SUCCEEDED = 'succeeded',
+    FAILED = 'failed',
+    CANCELED = 'canceled',
+}
+
 export interface BraintreeConnectAuthenticationCustomerResult {
-    authenticationState: string; // 'succeeded'|'failed'|'canceled'
-    profileData?: BraintreeConnectProfileData;
+    authenticationState: BraintreeConnectAuthenticationState;
+    profileData: BraintreeConnectProfileData;
 }
 
 export interface BraintreeConnectProfileData {
@@ -613,12 +619,10 @@ export interface BraintreeConnectAddress {
 }
 
 export interface BraintreeConnectCardPaymentSource {
-    // type: 'card'; // removed on PP side
     brand: string;
-    expiry: string; // "YYYY-MM"
-    lastDigits: string; // "1111"
+    expiry: string;
+    lastDigits: string;
     name?: string;
-    // isPreferred: boolean; // removed on PP side
     billingAddress: BraintreeConnectAddress;
 }
 
@@ -689,4 +693,5 @@ export interface BraintreeConnectCardComponent {
 export interface BraintreeHostWindow extends Window {
     braintree?: BraintreeSDK;
     paypal?: PaypalSDK;
+    braintreeConnect?: BraintreeConnect;
 }
