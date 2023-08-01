@@ -15,6 +15,7 @@ import {
 import {
     BraintreeConnect,
     BraintreeConnectAddress,
+    BraintreeConnectAuthenticationState,
     BraintreeConnectVaultedInstrument,
     BraintreeInitializationData,
 } from '../braintree';
@@ -103,20 +104,20 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
 
         const { authenticationState, profileData } = await triggerAuthenticationFlow(customerId);
 
-        if (authenticationState === 'succeeded') {
+        if (authenticationState === BraintreeConnectAuthenticationState.SUCCEEDED) {
             const addresses = profileData.addresses.map(this.mapPayPalConnectToBcAddress);
             const instruments = profileData.cards.map((instrument) =>
                 this.mapPayPalConnectToBcInstrument(instrument, methodId),
             );
 
             await this.paymentIntegrationService.updatePaymentProviderCustomer({
-                authenticationState: 'succeeded',
+                authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
                 addresses,
                 instruments,
             });
         } else {
             await this.paymentIntegrationService.updatePaymentProviderCustomer({
-                authenticationState: 'canceled',
+                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
                 addresses: [],
                 instruments: [],
             });

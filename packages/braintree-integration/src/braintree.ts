@@ -586,8 +586,14 @@ interface BraintreeConnectStylesOption {
     branding: 'light' | 'dark'; // default: 'light',
 }
 
+export enum BraintreeConnectAuthenticationState {
+    SUCCEEDED = 'succeeded',
+    FAILED = 'failed',
+    CANCELED = 'canceled',
+}
+
 export interface BraintreeConnectAuthenticationCustomerResult {
-    authenticationState: string; // 'succeeded'|'failed'|'canceled'
+    authenticationState: BraintreeConnectAuthenticationState;
     profileData: BraintreeConnectProfileData;
 }
 
