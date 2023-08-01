@@ -4,7 +4,7 @@ import { CardInstrument } from '../payment/instrument/instrument';
 export type PaymentProviderCustomer = BraintreeAcceleratedCheckoutCustomer;
 
 export interface BraintreeAcceleratedCheckoutCustomer {
-    authorizationStatus?: string;
+    authenticationState?: string;
     addresses?: AddressRequestBody[];
     instruments?: CardInstrument[];
 }
