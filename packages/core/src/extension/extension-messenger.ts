@@ -93,18 +93,21 @@ export class ExtensionMessenger {
     }
 
     private _validateCommand<T extends keyof ExtensionCommandMap>(command: string): T {
-        switch (command) {
-            case 'RELOAD_CHECKOUT':
-                return ExtensionCommandType.ReloadCheckout as T;
-
-            case 'SHOW_LOADING_INDICATOR':
-                return ExtensionCommandType.ShowLoadingIndicator as T;
-
-            case 'SET_IFRAME_STYLE':
-                return ExtensionCommandType.SetIframeStyle as T;
-
-            default:
-                throw new UnsupportedExtensionCommandError();
+        if (this._isExtensionCommandType<T>(command)) {
+            return command;
         }
+
+        throw new UnsupportedExtensionCommandError();
+    }
+
+    private _isExtensionCommandType<T extends keyof ExtensionCommandMap>(
+        command: string,
+    ): command is T {
+        return (
+            command === ExtensionCommandType.FrameLoaded ||
+            command === ExtensionCommandType.ReloadCheckout ||
+            command === ExtensionCommandType.ShowLoadingIndicator ||
+            command === ExtensionCommandType.SetIframeStyle
+        );
     }
 }
