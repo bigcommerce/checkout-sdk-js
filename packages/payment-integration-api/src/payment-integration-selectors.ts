@@ -3,6 +3,7 @@ import { Cart } from './cart';
 import { Checkout } from './checkout';
 import { StoreConfig } from './config';
 import { Customer } from './customer';
+import { Country } from './geography';
 import { Order } from './order';
 import { PaymentProviderCustomer } from './payment-provider-customer';
 import { CardInstrument } from './payment/instrument';
@@ -15,6 +16,8 @@ export default interface PaymentIntegrationSelectors {
 
     getBillingAddress(): BillingAddress | undefined;
     getBillingAddressOrThrow(): BillingAddress;
+
+    getCountries(): Country[] | undefined;
 
     getCart(): Cart | undefined;
     getCartOrThrow(): Cart;

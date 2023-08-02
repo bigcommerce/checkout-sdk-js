@@ -122,6 +122,13 @@ describe('createPaymentIntegrationSelectors', () => {
             expect(() => subject.getConsignmentsOrThrow()).toThrow();
         });
 
+        it('returns copy of countries', () => {
+            const output = subject.getCountries();
+
+            expect(output).toEqual(internalSelectors.countries.getCountries());
+            expect(output).not.toBe(internalSelectors.countries.getCountries());
+        });
+
         it('returns copy of customer', () => {
             const output = subject.getCustomer();
 
