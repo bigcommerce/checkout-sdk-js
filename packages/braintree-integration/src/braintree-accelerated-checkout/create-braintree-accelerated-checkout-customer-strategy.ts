@@ -4,6 +4,7 @@ import {
     CustomerStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { BraintreeHostWindow } from '../braintree';
 import BraintreeIntegrationService from '../braintree-integration-service';
@@ -19,10 +20,12 @@ const createBraintreeAcceleratedCheckoutCustomerStrategy: CustomerStrategyFactor
         new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
         braintreeHostWindow,
     );
+    const browserStorage = new BrowserStorage('paypal-connect');
 
     return new BraintreeAcceleratedCheckoutCustomerStrategy(
         paymentIntegrationService,
         braintreeIntegrationService,
+        browserStorage,
     );
 };
 

@@ -12,6 +12,7 @@ import {
     getCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { BraintreeConnect } from '../braintree';
 import BraintreeIntegrationService from '../braintree-integration-service';
@@ -28,6 +29,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
     let braintreeConnectMock: BraintreeConnect;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
+    let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeAcceleratedCheckoutCustomerStrategy;
 
@@ -46,6 +48,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
     beforeEach(() => {
         braintreeConnectMock = getConnectMock();
 
+        browserStorage = new BrowserStorage('braintree-accelerated-checkout-mock');
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
         braintreeIntegrationService = new BraintreeIntegrationService(
             braintreeScriptLoader,
@@ -56,7 +59,10 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
         strategy = new BraintreeAcceleratedCheckoutCustomerStrategy(
             paymentIntegrationService,
             braintreeIntegrationService,
+            browserStorage,
         );
+
+        jest.spyOn(browserStorage, 'setItem').mockImplementation(jest.fn);
 
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
         jest.spyOn(paymentIntegrationService, 'updatePaymentProviderCustomer').mockImplementation(
@@ -221,11 +227,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
         });
 
         it('successfully authenticate customer with PP Connect', async () => {
-            await strategy.initialize(initializationOptions);
-            await strategy.executePaymentMethodCheckout(executionOptions);
-
-            expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
-            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
+            const updatePaymentProviderCustomerPayload = {
                 authenticationState: 'succeeded',
                 addresses: [
                     {
@@ -259,6 +261,18 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
                         type: 'card',
                     },
                 ],
+            };
+
+            await strategy.initialize(initializationOptions);
+            await strategy.executePaymentMethodCheckout(executionOptions);
+
+            expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
+            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
+                updatePaymentProviderCustomerPayload,
+            );
+            expect(browserStorage.setItem).toHaveBeenCalledWith('customer', {
+                email: customer.email,
+                ...updatePaymentProviderCustomerPayload,
             });
         });
 
@@ -268,14 +282,23 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
                 profileData: {},
             });
 
+            const updatePaymentProviderCustomerPayload = {
+                authenticationState: 'canceled',
+                addresses: [],
+                instruments: [],
+            };
+
             await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout(executionOptions);
 
             expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
-            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
-                authenticationState: 'canceled',
-                addresses: [],
-                instruments: [],
+            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
+                updatePaymentProviderCustomerPayload,
+            );
+
+            expect(browserStorage.setItem).toHaveBeenCalledWith('customer', {
+                email: customer.email,
+                ...updatePaymentProviderCustomerPayload,
             });
         });
     });
