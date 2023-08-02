@@ -74,16 +74,16 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         if (!buyNowInitializeOptions) {
             await this._paymentIntegrationService.loadDefaultCheckout();
         }
-
+        console.log('LOG1');
         await this._paymentIntegrationService.loadPaymentMethod(methodId);
+        console.log('LOG2');
 
         const state = this._paymentIntegrationService.getState();
 
         this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
-
-        await this._paymentIntegrationService.verifyCheckoutSpamProtection();
-
+        console.log('LOG3');
         this._applePayButton = this._createButton(containerId, buttonClassName);
+        console.log('LOG4');
         this._applePayButton.addEventListener('click', this._handleWalletButtonClick.bind(this));
 
         return Promise.resolve();
@@ -98,7 +98,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         buttonClassName = 'apple-pay-checkout-button',
     ): HTMLElement {
         const container = document.getElementById(containerId);
-
+        console.log('LOG5', container);
         if (!container) {
             throw new InvalidArgumentError(
                 'Unable to create wallet button without valid container ID.',
@@ -280,7 +280,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             if (this._buyNowInitializeOptions && this._requiresShipping) {
                 await this._createBuyNowCart();
             }
-
             await this._handleShippingContactSelected(applePaySession, storeName, event);
         };
 
@@ -311,11 +310,9 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             if (!cartRequestBody) {
                 throw new MissingDataError(MissingDataErrorType.MissingCart);
             }
-
             const buyNowCart = await this._paymentIntegrationService.createBuyNowCart(
                 cartRequestBody,
             );
-
             await this._paymentIntegrationService.loadCheckout(buyNowCart.id);
         } catch (error) {
             throw new BuyNowCartCreationError();
@@ -333,7 +330,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         }
 
         const request = this._getBaseRequest(cart, checkout, config, this._paymentMethod);
-
         delete request.total.type;
 
         applePaySession.completePaymentMethodSelection({
