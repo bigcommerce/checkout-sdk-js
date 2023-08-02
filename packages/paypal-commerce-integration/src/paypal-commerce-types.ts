@@ -34,9 +34,26 @@ export interface PayPalSDK {
         isEligible(): boolean;
         render(data: PayPalCommerceHostedFieldsRenderOptions): Promise<PayPalCommerceHostedFields>;
     };
+    Legal: PayPalLegal & LegalFunding;
     Buttons(options: PayPalCommerceButtonsOptions): PayPalCommerceButtons;
     PaymentFields(options: PayPalCommercePaymentFieldsOptions): PayPalCommercePaymentFields;
     Messages(options: PayPalCommerceMessagesOptions): PayPalCommerceMessages;
+}
+
+export type PayPalLegal = (params: { fundingSource: string }) => {
+    render(container: string): void;
+};
+
+export interface LegalFunding {
+    FUNDING: {
+        PAY_UPON_INVOICE: string;
+    };
+}
+
+export interface BirthDate {
+    getFullYear(): number;
+    getDate(): number;
+    getMonth(): number;
 }
 
 export interface PayPalCommerceScriptParams {
@@ -59,7 +76,7 @@ export enum PayPalCommerceIntent {
 }
 
 export type ComponentsScriptType = Array<
-    'buttons' | 'funding-eligibility' | 'hosted-fields' | 'messages' | 'payment-fields'
+    'buttons' | 'funding-eligibility' | 'hosted-fields' | 'messages' | 'payment-fields' | 'legal'
 >;
 
 export interface PayPalCommerceHostWindow extends Window {
@@ -396,6 +413,7 @@ export interface PayPalUpdateOrderResponse {
 
 export interface PayPalCreateOrderRequestBody extends HostedInstrument, VaultedInstrument {
     cartId: string;
+    metadataId?: string;
 }
 
 export enum PayPalOrderStatus {
