@@ -64,6 +64,7 @@ export {
     isRequestError,
     isCustomError,
 } from './errors';
+export { Country, Region } from './geography';
 export {
     HostedCardFieldOptions,
     HostedCardFieldOptionsMap,

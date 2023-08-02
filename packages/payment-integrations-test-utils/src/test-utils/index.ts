@@ -6,6 +6,7 @@ export { getCustomer } from './customer.mock';
 export { default as getCheckout, getCheckoutWithBuyNowCart } from './checkouts.mock';
 export { default as getConfig } from './config.mock';
 export { default as getConsignment } from './consignment.mock';
+export { default as getCountries } from './countries.mock';
 export { default as getOrderRequestBody } from './internal-orders.mock';
 export { getOrder } from './orders.mock';
 export { getResponse } from './responses.mock';

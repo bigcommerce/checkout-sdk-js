@@ -5,6 +5,7 @@ import getCart from './carts.mock';
 import getCheckout from './checkouts.mock';
 import getConfig from './config.mock';
 import getConsignment from './consignment.mock';
+import getCountries from './countries.mock';
 import { getCustomer } from './customer.mock';
 import { getOrder } from './orders.mock';
 
@@ -18,6 +19,7 @@ const state = {
     getCheckoutOrThrow: jest.fn(() => getCheckout()),
     getConsignments: jest.fn(() => [getConsignment()]),
     getConsignmentsOrThrow: jest.fn(() => [getConsignment()]),
+    getCountries: jest.fn(() => getCountries()),
     getCustomer: jest.fn(() => getCustomer()),
     getCustomerOrThrow: jest.fn(() => getCustomer()),
     getHost: jest.fn(),
