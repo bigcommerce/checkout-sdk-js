@@ -8,6 +8,7 @@ export {
     getCheckoutWithBuyNowCart,
     getConfig,
     getConsignment,
+    getCountries,
     getCustomer,
     getOrder,
     getOrderRequestBody,
