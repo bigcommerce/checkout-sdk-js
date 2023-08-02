@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.415.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.414.0...v1.415.0) (2023-08-02)
+
+
+### Features
+
+* **payment:** PAYPAL-2803 made an ability to use getCountries method in integration packages ([#2093](https://github.com/bigcommerce/checkout-sdk-js/issues/2093)) ([ce1419f](https://github.com/bigcommerce/checkout-sdk-js/commit/ce1419fa5d380da9aca8de803374fc01508413f3))
+
 ## [1.414.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.413.0...v1.414.0) (2023-08-02)
 
 
