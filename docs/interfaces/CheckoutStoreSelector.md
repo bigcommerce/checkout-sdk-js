@@ -28,6 +28,7 @@ checkout information, such as shipping and billing details.
 - [getOrder](CheckoutStoreSelector.md#getorder)
 - [getPaymentMethod](CheckoutStoreSelector.md#getpaymentmethod)
 - [getPaymentMethods](CheckoutStoreSelector.md#getpaymentmethods)
+- [getPaymentProviderCustomer](CheckoutStoreSelector.md#getpaymentprovidercustomer)
 - [getPickupOptions](CheckoutStoreSelector.md#getpickupoptions)
 - [getSelectedPaymentMethod](CheckoutStoreSelector.md#getselectedpaymentmethod)
 - [getSelectedShippingOption](CheckoutStoreSelector.md#getselectedshippingoption)
@@ -325,6 +326,22 @@ Gets a list of payment methods available for checkout.
 `undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>[]
 
 The list of payment methods if it is loaded, otherwise undefined.
+
+___
+
+### getPaymentProviderCustomer
+
+▸ **getPaymentProviderCustomer**(): `undefined` \| [`BraintreeAcceleratedCheckoutCustomer`](BraintreeAcceleratedCheckoutCustomer.md)
+
+Gets payment provider customers data.
+
+**`alpha`**
+
+#### Returns
+
+`undefined` \| [`BraintreeAcceleratedCheckoutCustomer`](BraintreeAcceleratedCheckoutCustomer.md)
+
+The object with payment provider customer data
 
 ___
 

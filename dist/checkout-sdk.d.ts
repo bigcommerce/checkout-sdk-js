@@ -1525,6 +1525,12 @@ declare interface BoltPaymentInitializeOptions {
     onPaymentSelect?(hasBoltAccount: boolean): void;
 }
 
+declare interface BraintreeAcceleratedCheckoutCustomer {
+    authenticationState?: string;
+    addresses?: AddressRequestBody[];
+    instruments?: CardInstrument[];
+}
+
 /**
  * A set of options that are required to initialize the Braintree Accelerated Checkout payment
  * method for presenting on the page.
@@ -4024,6 +4030,13 @@ declare interface CheckoutStoreSelector {
      * @returns The list of extensions if it is loaded, otherwise undefined.
      */
     getExtensions(): Extension[] | undefined;
+    /**
+     * Gets payment provider customers data.
+     *
+     * @alpha
+     * @returns The object with payment provider customer data
+     */
+    getPaymentProviderCustomer(): PaymentProviderCustomer | undefined;
 }
 
 /**
@@ -6854,6 +6867,8 @@ declare interface PaymentMethodConfig {
     returnUrl?: string;
     testMode?: boolean;
 }
+
+declare type PaymentProviderCustomer = BraintreeAcceleratedCheckoutCustomer;
 
 /**
  * The set of options for configuring any requests related to the payment step of

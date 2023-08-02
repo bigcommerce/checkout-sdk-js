@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.413.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.412.0...v1.413.0) (2023-08-02)
+
+
+### Features
+
+* **payment:** PAYPAL-000 add an ability to use getPaymentProviderCustomer method on the client side ([#2090](https://github.com/bigcommerce/checkout-sdk-js/issues/2090)) ([8be3788](https://github.com/bigcommerce/checkout-sdk-js/commit/8be3788a3ba55c0531d7b99340416f05045bbb57))
+
 ## [1.412.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.411.0...v1.412.0) (2023-08-01)
 
 
