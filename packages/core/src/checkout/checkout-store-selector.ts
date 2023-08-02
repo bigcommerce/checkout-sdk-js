@@ -14,6 +14,7 @@ import { FormField } from '../form';
 import { Country } from '../geography';
 import { Order } from '../order';
 import { PaymentMethod } from '../payment';
+import { PaymentProviderCustomer } from '../payment-provider-customer';
 import { CardInstrument, PaymentInstrument } from '../payment/instrument';
 import { Consignment, PickupOptionResult, SearchArea, ShippingOption } from '../shipping';
 import { SignInEmail } from '../signin-email';
@@ -284,6 +285,14 @@ export default interface CheckoutStoreSelector {
      * @returns The list of extensions if it is loaded, otherwise undefined.
      */
     getExtensions(): Extension[] | undefined;
+
+    /**
+     * Gets payment provider customers data.
+     *
+     * @alpha
+     * @returns The object with payment provider customer data
+     */
+    getPaymentProviderCustomer(): PaymentProviderCustomer | undefined;
 }
 
 export type CheckoutStoreSelectorFactory = (
@@ -558,6 +567,12 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
         (getExtensions) => clone(getExtensions),
     );
 
+    const getPaymentProviderCustomer = createSelector(
+        ({ paymentProviderCustomer }: InternalCheckoutSelectors) =>
+            paymentProviderCustomer.getPaymentProviderCustomer,
+        (getPaymentProviderCustomer) => clone(getPaymentProviderCustomer),
+    );
+
     return memoizeOne((state: InternalCheckoutSelectors): CheckoutStoreSelector => {
         return {
             getCheckout: getCheckout(state),
@@ -588,6 +603,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
             getShippingAddressFields: getShippingAddressFields(state),
             getPickupOptions: getPickupOptions(state),
             getUserExperienceSettings: getUserExperienceSettings(state),
+            getPaymentProviderCustomer: getPaymentProviderCustomer(state),
         };
     });
 }
