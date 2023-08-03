@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.416.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.415.1...v1.416.0) (2023-08-03)
+
+
+### Features
+
+* **payment:** PAYPAL-2804 added country to each PayPal Connect customer address to use it on client side for BT AXO ([#2094](https://github.com/bigcommerce/checkout-sdk-js/issues/2094)) ([c695c5a](https://github.com/bigcommerce/checkout-sdk-js/commit/c695c5a4ba23adf6c3571c02ac262008617cccdc))
+
 ### [1.415.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.415.0...v1.415.1) (2023-08-03)
 
 

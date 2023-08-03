@@ -14,7 +14,7 @@
 
 ### addresses
 
-• `Optional` **addresses**: [`AddressRequestBody`](AddressRequestBody.md)[]
+• `Optional` **addresses**: [`Address`](Address.md)[]
 
 ___
 

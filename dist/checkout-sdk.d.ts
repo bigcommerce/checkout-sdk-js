@@ -1533,7 +1533,7 @@ declare interface BoltPaymentInitializeOptions {
 
 declare interface BraintreeAcceleratedCheckoutCustomer {
     authenticationState?: string;
-    addresses?: AddressRequestBody[];
+    addresses?: Address[];
     instruments?: CardInstrument[];
 }
 
