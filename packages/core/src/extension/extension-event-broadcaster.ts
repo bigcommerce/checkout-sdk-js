@@ -1,4 +1,5 @@
-import { ReadableCheckoutStore } from '../checkout';
+import { CheckoutSelectors } from '../checkout';
+import { DataStoreProjection } from '../common/data-store';
 import { IframeEventListener } from '../common/iframe';
 
 import { ExtensionEvent, ExtensionEventType } from './extension-client';
@@ -17,14 +18,14 @@ export class ExtensionEventBroadcaster {
     private _listeners: { [id: string]: IframeEventListener<ExtensionInternalCommandMap> } = {};
 
     constructor(
-        private _store: ReadableCheckoutStore,
+        private _store: DataStoreProjection<CheckoutSelectors>,
         private _extensionMessenger: ExtensionMessenger,
         private _subscribers: Record<ExtensionEventType, ExtensionChangeSubscriber>,
     ) {}
 
     listen(): void {
         const {
-            extensions: { getExtensions },
+            data: { getExtensions },
         } = this._store.getState();
 
         getExtensions()?.forEach((extension) => {
@@ -54,7 +55,7 @@ export class ExtensionEventBroadcaster {
 
     broadcast(event: ExtensionEvent): void {
         const {
-            extensions: { getExtensions },
+            data: { getExtensions },
         } = this._store.getState();
 
         getExtensions()?.forEach((extension) => {

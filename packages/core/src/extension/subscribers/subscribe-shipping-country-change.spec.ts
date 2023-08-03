@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 
-import { ReadableCheckoutStore } from '../../checkout';
+import { CheckoutSelectors } from '../../checkout';
+import { DataStoreProjection } from '../../common/data-store';
 import { getConsignment } from '../../shipping/consignments.mock';
 import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
 import { ExtensionEventType } from '../extension-client';
@@ -9,7 +10,7 @@ import { ExtensionEventBroadcaster } from '../extension-event-broadcaster';
 import { subscribeShippingCountryChange } from './subscribe-shipping-country-change';
 
 describe('subscribeShippingCountryChange', () => {
-    let store: Pick<ReadableCheckoutStore, 'getState' | 'subscribe'>;
+    let store: Pick<DataStoreProjection<CheckoutSelectors>, 'getState' | 'subscribe'>;
     let broadcaster: Pick<ExtensionEventBroadcaster, 'broadcast'>;
     let eventEmitter: EventEmitter;
 
@@ -18,7 +19,7 @@ describe('subscribeShippingCountryChange', () => {
 
         store = {
             getState: jest.fn(() => ({
-                consignments: {
+                data: {
                     getConsignments: () => [getConsignment()],
                 },
             })),
@@ -40,14 +41,14 @@ describe('subscribeShippingCountryChange', () => {
         const consignment = getConsignment();
 
         subscribeShippingCountryChange(
-            store as ReadableCheckoutStore,
+            store as DataStoreProjection<CheckoutSelectors>,
             broadcaster as ExtensionEventBroadcaster,
         );
 
         expect(store.subscribe).toHaveBeenCalled();
 
         eventEmitter.emit('change', {
-            consignments: {
+            data: {
                 getConsignments: () => [
                     {
                         ...consignment,

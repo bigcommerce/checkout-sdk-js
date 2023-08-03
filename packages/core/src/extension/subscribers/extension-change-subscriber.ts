@@ -1,8 +1,9 @@
-import { ReadableCheckoutStore } from '../../checkout';
+import { CheckoutSelectors } from '../../checkout';
+import { DataStoreProjection } from '../../common/data-store';
 import { ExtensionEventBroadcaster } from '../extension-event-broadcaster';
 
 export type ExtensionChangeSubscriber = (
-    store: ReadableCheckoutStore,
+    store: DataStoreProjection<CheckoutSelectors>,
     broadcaster: ExtensionEventBroadcaster,
 ) => ExtensionChangeUnsubscriber;
 

@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 
-import { ReadableCheckoutStore } from '../checkout';
+import { CheckoutSelectors } from '../checkout';
+import { DataStoreProjection } from '../common/data-store';
 
 import { ExtensionEventType } from './extension-client';
 import { ExtensionEventBroadcaster } from './extension-event-broadcaster';
@@ -10,7 +11,7 @@ import { getExtensions } from './extension.mock';
 import { ExtensionChangeSubscriber } from './subscribers';
 
 describe('ExtensionEventBroadcaster', () => {
-    let store: Pick<ReadableCheckoutStore, 'getState'>;
+    let store: Pick<DataStoreProjection<CheckoutSelectors>, 'getState'>;
     let messenger: Pick<ExtensionMessenger, 'post'>;
     let subscriber: ExtensionChangeSubscriber;
     let subject: ExtensionEventBroadcaster;
@@ -19,7 +20,7 @@ describe('ExtensionEventBroadcaster', () => {
     beforeEach(() => {
         store = {
             getState: jest.fn(() => ({
-                extensions: {
+                data: {
                     getExtensions,
                 },
             })),
@@ -28,7 +29,7 @@ describe('ExtensionEventBroadcaster', () => {
         subscriber = jest.fn();
 
         subject = new ExtensionEventBroadcaster(
-            store as ReadableCheckoutStore,
+            store as DataStoreProjection<CheckoutSelectors>,
             messenger as ExtensionMessenger,
             {
                 [ExtensionEventType.ShippingCountryChanged]: subscriber,

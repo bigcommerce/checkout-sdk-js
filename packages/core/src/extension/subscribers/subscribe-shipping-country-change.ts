@@ -1,11 +1,12 @@
-import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../../checkout';
+import { CheckoutSelectors } from '../../checkout';
+import { DataStoreProjection } from '../../common/data-store';
 import { ExtensionEventType } from '../extension-client';
 import { ExtensionEventBroadcaster } from '../extension-event-broadcaster';
 
 import { ExtensionChangeSubscriber } from './extension-change-subscriber';
 
 export const subscribeShippingCountryChange: ExtensionChangeSubscriber = (
-    store: ReadableCheckoutStore,
+    store: DataStoreProjection<CheckoutSelectors>,
     broadcaster: ExtensionEventBroadcaster,
 ) => {
     let countryCodes: Record<string, string> = getShippingCountryCodes(store.getState());
@@ -30,11 +31,11 @@ export const subscribeShippingCountryChange: ExtensionChangeSubscriber = (
 
             countryCodes = currentCountryCodes;
         },
-        ({ consignments: { getConsignments } }) => getConsignments(),
+        ({ data: { getConsignments } }) => getConsignments(),
     );
 };
 
-function getShippingCountryCodes({ consignments: { getConsignments } }: InternalCheckoutSelectors) {
+function getShippingCountryCodes({ data: { getConsignments } }: CheckoutSelectors) {
     return (getConsignments() ?? []).reduce(
         (carry: Record<string, string>, consignment) =>
             consignment.selectedPickupOption
