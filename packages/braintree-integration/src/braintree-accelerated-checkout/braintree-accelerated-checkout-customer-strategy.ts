@@ -1,5 +1,6 @@
 import {
     Address,
+    BraintreeAcceleratedCheckoutCustomer,
     CardInstrument,
     CustomerCredentials,
     CustomerInitializeOptions,
@@ -11,6 +12,7 @@ import {
     PaymentIntegrationService,
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import {
     BraintreeConnect,
@@ -28,6 +30,7 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeIntegrationService: BraintreeIntegrationService,
+        private browserStorage: BrowserStorage,
     ) {}
 
     async initialize(options: CustomerInitializeOptions): Promise<void> {
@@ -112,18 +115,30 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
                 this.mapPayPalConnectToBcInstrument(instrument, methodId),
             );
 
-            await this.paymentIntegrationService.updatePaymentProviderCustomer({
+            await this.updateCustomerData(customerEmail, {
                 authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
                 addresses,
                 instruments,
             });
         } else {
-            await this.paymentIntegrationService.updatePaymentProviderCustomer({
+            await this.updateCustomerData(customerEmail, {
                 authenticationState: BraintreeConnectAuthenticationState.CANCELED,
                 addresses: [],
                 instruments: [],
             });
         }
+    }
+
+    private async updateCustomerData(
+        email: string,
+        customer: BraintreeAcceleratedCheckoutCustomer,
+    ): Promise<void> {
+        await this.paymentIntegrationService.updatePaymentProviderCustomer(customer);
+
+        this.browserStorage.setItem('customer', {
+            email,
+            ...customer,
+        });
     }
 
     private getEmail(): string {
