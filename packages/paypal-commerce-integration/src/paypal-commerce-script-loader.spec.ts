@@ -85,7 +85,7 @@ describe('PayPalCommerceScriptLoader', () => {
         expect(output).toEqual(paypalSdk);
     });
 
-    it('loads PayPalSDK script only once even if it calls couple times', async () => {
+    it('loads PayPalSDK script every time even if it calls couple times', async () => {
         const paypalCommerceCreditPaymentMethod = {
             ...paymentMethod,
             id: 'paypalcommercecredit',
@@ -95,7 +95,7 @@ describe('PayPalCommerceScriptLoader', () => {
         await paypalLoader.getPayPalSDK(paypalCommerceCreditPaymentMethod, 'USD');
 
         expect(loader.loadScript).toHaveBeenCalledTimes(1);
-        expect(paypalLoadScript).toHaveBeenCalledTimes(1);
+        expect(paypalLoadScript).toHaveBeenCalledTimes(2);
     });
 
     it('loads PayPalSDK script with EUR currency', async () => {
