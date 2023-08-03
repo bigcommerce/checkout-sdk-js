@@ -1,5 +1,5 @@
 import {
-    AddressRequestBody,
+    Address,
     CardInstrument,
     CustomerCredentials,
     CustomerInitializeOptions,
@@ -105,7 +105,9 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
         const { authenticationState, profileData } = await triggerAuthenticationFlow(customerId);
 
         if (authenticationState === BraintreeConnectAuthenticationState.SUCCEEDED) {
-            const addresses = profileData.addresses.map(this.mapPayPalConnectToBcAddress);
+            const addresses = profileData.addresses.map((address) =>
+                this.mapPayPalConnectToBcAddress(address),
+            );
             const instruments = profileData.cards.map((instrument) =>
                 this.mapPayPalConnectToBcInstrument(instrument, methodId),
             );
@@ -148,7 +150,14 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
         return this.getMethodIdOrThrow();
     }
 
-    private mapPayPalConnectToBcAddress(address: BraintreeConnectAddress): AddressRequestBody {
+    private mapPayPalConnectToBcAddress(address: BraintreeConnectAddress): Address {
+        const state = this.paymentIntegrationService.getState();
+
+        const countries = state.getCountries() || [];
+        const addressCountry = countries.find((country) => {
+            return country.code === address.countryCodeAlpha2;
+        });
+
         return {
             firstName: address.firstName || '',
             lastName: address.lastName || '',
@@ -158,6 +167,7 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
             city: address.locality,
             stateOrProvince: address.region,
             stateOrProvinceCode: address.region,
+            country: addressCountry?.name || '',
             countryCode: address.countryCodeAlpha2,
             postalCode: address.postalCode,
             phone: '',

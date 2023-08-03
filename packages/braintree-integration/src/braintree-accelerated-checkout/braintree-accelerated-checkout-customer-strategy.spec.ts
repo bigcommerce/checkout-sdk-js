@@ -8,6 +8,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
+    getCountries,
     getCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -30,6 +31,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeAcceleratedCheckoutCustomerStrategy;
 
+    const countries = getCountries();
     const customer = getCustomer();
     const billingAddress = getBillingAddress();
     const methodId = 'braintreeacceleratedcheckout';
@@ -61,6 +63,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             jest.fn,
         );
         jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(customer);
+        jest.spyOn(paymentIntegrationService.getState(), 'getCountries').mockReturnValue(countries);
         jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
             billingAddress,
         );
@@ -234,6 +237,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
                         city: 'Bellingham',
                         stateOrProvince: 'WA',
                         stateOrProvinceCode: 'WA',
+                        country: 'United States',
                         countryCode: 'US',
                         postalCode: '98225',
                         phone: '',
