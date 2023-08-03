@@ -49,7 +49,13 @@ export class ExtensionActionCreator {
                 const { id: cartId } = state.cart.getCartOrThrow();
                 const {
                     links: { checkoutLink },
+                    checkoutSettings: { features },
                 } = state.config.getStoreConfigOrThrow();
+
+                if (!features['PROJECT-5029.checkout_extension']) {
+                    return observer.complete();
+                }
+
                 const extension = state.extensions.getExtensionByRegion(region);
 
                 try {

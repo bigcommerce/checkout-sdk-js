@@ -7,13 +7,13 @@ import { UnsupportedExtensionCommandError } from './errors/unsupported-extension
 import { Extension } from './extension';
 import { ExtensionEvent } from './extension-client';
 import { ExtensionCommandMap, ExtensionCommandType } from './extension-command';
-import { ExtensionCommandHandler } from './extension-command-handler';
 import { ExtensionMessenger } from './extension-messenger';
 import { getExtensionEvent, getExtensions } from './extension.mock';
 
 describe('ExtensionMessenger', () => {
+    const extensionCommandHandler = jest.fn();
+
     let extension: Extension;
-    let extensionCommandHandler: ExtensionCommandHandler;
     let extensionMessenger: ExtensionMessenger;
     let event: {
         origin: string;
@@ -25,8 +25,6 @@ describe('ExtensionMessenger', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         extension = getExtensions()[0];
         event = getExtensionEvent();
-
-        extensionCommandHandler = jest.fn();
     });
 
     describe('#listen() and #stopListen()', () => {

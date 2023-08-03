@@ -22,8 +22,7 @@ import {
 } from '../customer';
 import {
     ExtensionActionCreator,
-    ExtensionCommandHandler,
-    ExtensionCommandType,
+    ExtensionCommandMap,
     ExtensionMessenger,
     ExtensionRegion,
 } from '../extension';
@@ -1415,10 +1414,10 @@ export default class CheckoutService {
      * @param handler - The handler function for the extension command.
      * @returns A function that, when called, will deregister the command handler.
      */
-    handleExtensionCommand(
+    handleExtensionCommand<T extends keyof ExtensionCommandMap>(
         extensionId: string,
-        command: ExtensionCommandType,
-        handler: ExtensionCommandHandler,
+        command: T,
+        handler: (command: ExtensionCommandMap[T]) => void,
     ): () => void {
         return this._extensionMessenger.listen(extensionId, command, handler);
     }

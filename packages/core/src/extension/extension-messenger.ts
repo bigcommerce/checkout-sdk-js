@@ -6,7 +6,6 @@ import { UnsupportedExtensionCommandError } from './errors/unsupported-extension
 import { Extension } from './extension';
 import { ExtensionEvent } from './extension-client';
 import { ExtensionCommandMap, ExtensionCommandType } from './extension-command';
-import { ExtensionCommandHandler } from './extension-command-handler';
 
 export class ExtensionMessenger {
     private _extensions: Extension[] | undefined;
@@ -17,10 +16,10 @@ export class ExtensionMessenger {
         private _posters: { [extensionId: string]: IframeEventPoster<ExtensionEvent> },
     ) {}
 
-    listen(
+    listen<T extends keyof ExtensionCommandMap>(
         extensionId: string,
-        command: ExtensionCommandType,
-        extensionCommandHandler: ExtensionCommandHandler,
+        command: T,
+        extensionCommandHandler: (command: ExtensionCommandMap[T]) => void,
     ): () => void {
         const extension = this._getExtensionById(extensionId);
 
@@ -32,7 +31,7 @@ export class ExtensionMessenger {
 
         listener.listen();
 
-        const validCommandType = this._validateCommand(command);
+        const validCommandType = this._validateCommand<T>(command);
 
         listener.addListener(validCommandType, extensionCommandHandler);
 
@@ -93,19 +92,22 @@ export class ExtensionMessenger {
         return extension;
     }
 
-    private _validateCommand(command: string): ExtensionCommandType {
-        switch (command) {
-            case 'RELOAD_CHECKOUT':
-                return ExtensionCommandType.ReloadCheckout;
-
-            case 'SHOW_LOADING_INDICATOR':
-                return ExtensionCommandType.ShowLoadingIndicator;
-
-            case 'SET_IFRAME_STYLE':
-                return ExtensionCommandType.SetIframeStyle;
-
-            default:
-                throw new UnsupportedExtensionCommandError();
+    private _validateCommand<T extends keyof ExtensionCommandMap>(command: string): T {
+        if (this._isExtensionCommandType<T>(command)) {
+            return command;
         }
+
+        throw new UnsupportedExtensionCommandError();
+    }
+
+    private _isExtensionCommandType<T extends keyof ExtensionCommandMap>(
+        command: string,
+    ): command is T {
+        return (
+            command === ExtensionCommandType.FrameLoaded ||
+            command === ExtensionCommandType.ReloadCheckout ||
+            command === ExtensionCommandType.ShowLoadingIndicator ||
+            command === ExtensionCommandType.SetIframeStyle
+        );
     }
 }
