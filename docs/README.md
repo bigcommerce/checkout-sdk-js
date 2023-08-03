@@ -226,6 +226,7 @@
 - [EmbeddedContentOptions](interfaces/EmbeddedContentOptions.md)
 - [ExecutePaymentMethodCheckoutOptions](interfaces/ExecutePaymentMethodCheckoutOptions.md)
 - [Extension](interfaces/Extension.md)
+- [ExtensionCommandMap](interfaces/ExtensionCommandMap.md)
 - [Fee](interfaces/Fee.md)
 - [FlashMessage](interfaces/FlashMessage.md)
 - [FormField](interfaces/FormField.md)
@@ -445,8 +446,6 @@
 - [ConsignmentsRequestBody](README.md#consignmentsrequestbody)
 - [CustomerAddressRequestBody](README.md#customeraddressrequestbody)
 - [CustomerInitializeOptions](README.md#customerinitializeoptions)
-- [ExtensionCommand](README.md#extensioncommand)
-- [ExtensionCommandHandler](README.md#extensioncommandhandler)
 - [FlashMessageType](README.md#flashmessagetype)
 - [FormFieldFieldType](README.md#formfieldfieldtype)
 - [FormFieldType](README.md#formfieldtype)
@@ -611,32 +610,6 @@ ___
 ### CustomerInitializeOptions
 
 Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md) & [`WithBoltCustomerInitializeOptions`](interfaces/WithBoltCustomerInitializeOptions.md) & [`WithBraintreePaypalCustomerInitializeOptions`](interfaces/WithBraintreePaypalCustomerInitializeOptions.md) & [`WithPayPalCommerceCustomerInitializeOptions`](interfaces/WithPayPalCommerceCustomerInitializeOptions.md) & [`WithPayPalCommerceCreditCustomerInitializeOptions`](interfaces/WithPayPalCommerceCreditCustomerInitializeOptions.md) & [`WithPayPalCommerceVenmoCustomerInitializeOptions`](interfaces/WithPayPalCommerceVenmoCustomerInitializeOptions.md)
-
-___
-
-### ExtensionCommand
-
-Ƭ **ExtensionCommand**: [`ReloadCheckoutCommand`](interfaces/ReloadCheckoutCommand.md) \| [`ShowLoadingIndicatorCommand`](interfaces/ShowLoadingIndicatorCommand.md) \| [`SetIframeStyleCommand`](interfaces/SetIframeStyleCommand.md) \| [`FrameLoadedCommand`](interfaces/FrameLoadedCommand.md)
-
-___
-
-### ExtensionCommandHandler
-
-Ƭ **ExtensionCommandHandler**: (`data`: [`ExtensionCommand`](README.md#extensioncommand)) => `void`
-
-#### Type declaration
-
-▸ (`data`): `void`
-
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `data` | [`ExtensionCommand`](README.md#extensioncommand) |
-
-##### Returns
-
-`void`
 
 ___
 

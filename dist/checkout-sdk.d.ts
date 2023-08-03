@@ -3489,7 +3489,7 @@ declare class CheckoutService {
      * @param handler - The handler function for the extension command.
      * @returns A function that, when called, will deregister the command handler.
      */
-    handleExtensionCommand(extensionId: string, command: ExtensionCommandType, handler: ExtensionCommandHandler): () => void;
+    handleExtensionCommand<T extends keyof ExtensionCommandMap>(extensionId: string, command: T, handler: (command: ExtensionCommandMap[T]) => void): () => void;
     /**
      * Dispatches an action through the data store and returns the current state
      * once the action is dispatched.
@@ -4043,6 +4043,14 @@ declare interface CheckoutStoreSelector {
      * @returns The object with payment provider customer data
      */
     getPaymentProviderCustomer(): PaymentProviderCustomer | undefined;
+    /**
+     * Gets the extension associated with a given region.
+     *
+     * @alpha
+     * @param region - A checkout extension region.
+     * @returns The extension corresponding to the specified region, otherwise undefined.
+     */
+    getExtensionByRegion(region: ExtensionRegion): Extension | undefined;
 }
 
 /**
@@ -5028,9 +5036,12 @@ declare interface Extension {
     url: string;
 }
 
-declare type ExtensionCommand = ReloadCheckoutCommand | ShowLoadingIndicatorCommand | SetIframeStyleCommand | FrameLoadedCommand;
-
-declare type ExtensionCommandHandler = (data: ExtensionCommand) => void;
+declare interface ExtensionCommandMap {
+    [ExtensionCommandType.FrameLoaded]: FrameLoadedCommand;
+    [ExtensionCommandType.ReloadCheckout]: ReloadCheckoutCommand;
+    [ExtensionCommandType.ShowLoadingIndicator]: ShowLoadingIndicatorCommand;
+    [ExtensionCommandType.SetIframeStyle]: SetIframeStyleCommand;
+}
 
 declare const enum ExtensionCommandType {
     FrameLoaded = "FRAME_LOADED",

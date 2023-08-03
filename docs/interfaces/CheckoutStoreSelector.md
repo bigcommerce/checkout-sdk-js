@@ -21,6 +21,7 @@ checkout information, such as shipping and billing details.
 - [getCoupons](CheckoutStoreSelector.md#getcoupons)
 - [getCustomer](CheckoutStoreSelector.md#getcustomer)
 - [getCustomerAccountFields](CheckoutStoreSelector.md#getcustomeraccountfields)
+- [getExtensionByRegion](CheckoutStoreSelector.md#getextensionbyregion)
 - [getExtensions](CheckoutStoreSelector.md#getextensions)
 - [getFlashMessages](CheckoutStoreSelector.md#getflashmessages)
 - [getGiftCertificates](CheckoutStoreSelector.md#getgiftcertificates)
@@ -193,6 +194,28 @@ Gets a set of form fields that should be presented in order to create a customer
 
 The set of customer account form fields if it is loaded,
 otherwise undefined.
+
+___
+
+### getExtensionByRegion
+
+▸ **getExtensionByRegion**(`region`): `undefined` \| [`Extension`](Extension.md)
+
+Gets the extension associated with a given region.
+
+**`alpha`**
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `region` | [`ExtensionRegion`](../enums/ExtensionRegion.md) | A checkout extension region. |
+
+#### Returns
+
+`undefined` \| [`Extension`](Extension.md)
+
+The extension corresponding to the specified region, otherwise undefined.
 
 ___
 

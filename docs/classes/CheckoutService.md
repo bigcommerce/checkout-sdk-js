@@ -644,19 +644,25 @@ ___
 
 ### handleExtensionCommand
 
-▸ **handleExtensionCommand**(`extensionId`, `command`, `handler`): () => `void`
+▸ **handleExtensionCommand**<`T`\>(`extensionId`, `command`, `handler`): () => `void`
 
 Manages the command handler for an extension.
 
 **`alpha`**
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends `ExtensionCommandType` |
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `extensionId` | `string` | The ID of the extension sending the command. |
-| `command` | [`ExtensionCommandType`](../enums/ExtensionCommandType.md) | The command to be handled. |
-| `handler` | [`ExtensionCommandHandler`](../README.md#extensioncommandhandler) | The handler function for the extension command. |
+| `command` | `T` | The command to be handled. |
+| `handler` | (`command`: [`ExtensionCommandMap`](../interfaces/ExtensionCommandMap.md)[`T`]) => `void` | The handler function for the extension command. |
 
 #### Returns
 
