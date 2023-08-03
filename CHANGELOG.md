@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.417.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.416.0...v1.417.0) (2023-08-03)
+
+
+### Features
+
+* **payment:** PAYPAL-2797 pass customers data to local storage after authentication (Braintree AXO) ([#2092](https://github.com/bigcommerce/checkout-sdk-js/issues/2092)) ([1d2f287](https://github.com/bigcommerce/checkout-sdk-js/commit/1d2f287997b3808b2ac04c36bf38c0b6447172fa))
+
 ## [1.416.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.415.1...v1.416.0) (2023-08-03)
 
 
