@@ -6,16 +6,7 @@ export interface InitializeExtensionServiceOptions {
 }
 
 export enum ExtensionEventType {
-    ShippingCountryChanged = 'EXTENSION:SHIPPING_COUNTRY_CHANGED',
     ConsignmentsChanged = 'EXTENSION:CONSIGNMENTS_CHANGED',
-}
-
-export interface ShippingCountryChangedEvent {
-    type: ExtensionEventType.ShippingCountryChanged;
-    payload: {
-        consignmentId: string;
-        countryCode: string;
-    };
 }
 
 export interface ConsignmentsChangedEvent {
@@ -26,10 +17,9 @@ export interface ConsignmentsChangedEvent {
     };
 }
 
-export type ExtensionEvent = ShippingCountryChangedEvent | ConsignmentsChangedEvent;
+export type ExtensionEvent = ConsignmentsChangedEvent;
 
 export interface ExtensionEventMap {
-    [ExtensionEventType.ShippingCountryChanged]: ShippingCountryChangedEvent;
     [ExtensionEventType.ConsignmentsChanged]: ConsignmentsChangedEvent;
 }
 

@@ -4,7 +4,7 @@ import { DataStoreProjection } from '../common/data-store';
 import { ExtensionEventType } from './extension-client';
 import { ExtensionEventBroadcaster } from './extension-event-broadcaster';
 import { ExtensionMessenger } from './extension-messenger';
-import { subscribeConsignmentsChange, subscribeShippingCountryChange } from './subscribers';
+import { subscribeConsignmentsChange } from './subscribers';
 
 export function createExtensionEventBroadcaster(
     store: DataStoreProjection<CheckoutSelectors>,
@@ -12,7 +12,6 @@ export function createExtensionEventBroadcaster(
 ): ExtensionEventBroadcaster {
     const subscribers = {
         [ExtensionEventType.ConsignmentsChanged]: subscribeConsignmentsChange,
-        [ExtensionEventType.ShippingCountryChanged]: subscribeShippingCountryChange,
     };
 
     return new ExtensionEventBroadcaster(store, messenger, subscribers);
