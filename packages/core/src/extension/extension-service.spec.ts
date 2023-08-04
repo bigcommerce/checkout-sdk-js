@@ -74,10 +74,10 @@ describe('ExtensionService', () => {
     it('#addListener adds callback as noop if no callback method is passed', () => {
         extensionService.initialize('test');
 
-        extensionService.addListener(ExtensionEventType.ShippingCountryChanged);
+        extensionService.addListener(ExtensionEventType.ConsignmentsChanged);
 
         expect(eventListener.addListener).toHaveBeenCalledWith(
-            ExtensionEventType.ShippingCountryChanged,
+            ExtensionEventType.ConsignmentsChanged,
             noop,
         );
     });
@@ -95,10 +95,10 @@ describe('ExtensionService', () => {
 
         const callbackFn = jest.fn();
 
-        extensionService.addListener(ExtensionEventType.ShippingCountryChanged, callbackFn);
+        extensionService.addListener(ExtensionEventType.ConsignmentsChanged, callbackFn);
 
         expect(eventListener.addListener).toHaveBeenCalledWith(
-            ExtensionEventType.ShippingCountryChanged,
+            ExtensionEventType.ConsignmentsChanged,
             callbackFn,
         );
     });

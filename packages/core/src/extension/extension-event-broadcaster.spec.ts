@@ -2,6 +2,7 @@ import EventEmitter from 'events';
 
 import { CheckoutSelectors } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
+import { getConsignments } from '../shipping/consignments.mock';
 
 import { ExtensionEventType } from './extension-client';
 import { ExtensionEventBroadcaster } from './extension-event-broadcaster';
@@ -32,7 +33,7 @@ describe('ExtensionEventBroadcaster', () => {
             store as DataStoreProjection<CheckoutSelectors>,
             messenger as ExtensionMessenger,
             {
-                [ExtensionEventType.ShippingCountryChanged]: subscriber,
+                [ExtensionEventType.ConsignmentsChanged]: subscriber,
             },
         );
 
@@ -59,7 +60,7 @@ describe('ExtensionEventBroadcaster', () => {
             data: {
                 type: ExtensionInternalCommandType.Subscribe,
                 payload: {
-                    eventType: ExtensionEventType.ShippingCountryChanged,
+                    eventType: ExtensionEventType.ConsignmentsChanged,
                     extensionId: extensions[0].id,
                 },
             },
@@ -78,17 +79,17 @@ describe('ExtensionEventBroadcaster', () => {
             data: {
                 type: ExtensionInternalCommandType.Subscribe,
                 payload: {
-                    eventType: ExtensionEventType.ShippingCountryChanged,
+                    eventType: ExtensionEventType.ConsignmentsChanged,
                     extensionId: extensions[0].id,
                 },
             },
         });
 
         const event = {
-            type: ExtensionEventType.ShippingCountryChanged,
+            type: ExtensionEventType.ConsignmentsChanged,
             payload: {
-                countryCode: 'AU',
-                consignmentId: '55c96cda6f04c',
+                consignments: getConsignments(),
+                previousConsignments: [],
             },
         };
 
@@ -107,7 +108,7 @@ describe('ExtensionEventBroadcaster', () => {
             data: {
                 type: ExtensionInternalCommandType.Subscribe,
                 payload: {
-                    eventType: ExtensionEventType.ShippingCountryChanged,
+                    eventType: ExtensionEventType.ConsignmentsChanged,
                     extensionId: extensions[0].id,
                 },
             },
@@ -118,17 +119,17 @@ describe('ExtensionEventBroadcaster', () => {
             data: {
                 type: ExtensionInternalCommandType.Unsubscribe,
                 payload: {
-                    eventType: ExtensionEventType.ShippingCountryChanged,
+                    eventType: ExtensionEventType.ConsignmentsChanged,
                     extensionId: extensions[0].id,
                 },
             },
         });
 
         const event = {
-            type: ExtensionEventType.ShippingCountryChanged,
+            type: ExtensionEventType.ConsignmentsChanged,
             payload: {
-                countryCode: 'AU',
-                consignmentId: '55c96cda6f04c',
+                consignments: getConsignments(),
+                previousConsignments: [],
             },
         };
 

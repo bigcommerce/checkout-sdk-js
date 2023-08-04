@@ -1,3 +1,5 @@
+import { getConsignments } from '../shipping/consignments.mock';
+
 import { Extension, ExtensionRegion } from './extension';
 import { ExtensionEvent, ExtensionEventType } from './extension-client';
 import { ExtensionCommand, ExtensionCommandType } from './extension-command';
@@ -50,10 +52,10 @@ export function getExtensionEvent(): {
     return {
         origin: 'https://host.store',
         data: {
-            type: ExtensionEventType.ShippingCountryChanged,
+            type: ExtensionEventType.ConsignmentsChanged,
             payload: {
-                countryCode: 'AU',
-                consignmentId: '55c96cda6f04c',
+                consignments: getConsignments(),
+                previousConsignments: [],
             },
         },
     };
