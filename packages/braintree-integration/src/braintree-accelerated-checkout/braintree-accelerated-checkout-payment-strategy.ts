@@ -2,8 +2,6 @@ import {
     Address,
     InvalidArgumentError,
     isHostedInstrumentLike,
-    MissingDataError,
-    MissingDataErrorType,
     OrderFinalizationNotRequiredError,
     OrderPaymentRequestBody,
     OrderRequestBody,
@@ -19,20 +17,24 @@ import {
     BraintreeConnectAddress,
     BraintreeConnectCardComponent,
     BraintreeConnectCardComponentOptions,
-    BraintreeInitializationData,
 } from '../braintree';
-import BraintreeIntegrationService from '../braintree-integration-service';
 
 import { WithBraintreeAcceleratedCheckoutPaymentInitializeOptions } from './braintree-accelerated-checkout-payment-initialize-options';
+import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
 
 export default class BraintreeAcceleratedCheckoutPaymentStrategy implements PaymentStrategy {
     private braintreeConnectCardComponent?: BraintreeConnectCardComponent;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private braintreeIntegrationService: BraintreeIntegrationService,
+        private braintreeAcceleratedCheckoutUtils: BraintreeAcceleratedCheckoutUtils,
     ) {}
 
+    /**
+     *
+     * Default methods
+     *
+     * */
     async initialize(
         options: PaymentInitializeOptions &
             WithBraintreeAcceleratedCheckoutPaymentInitializeOptions,
@@ -58,33 +60,9 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
         }
 
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
+        await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(methodId);
 
-        const state = this.paymentIntegrationService.getState();
-        const { phone } = state.getBillingAddressOrThrow();
-        const { clientToken, initializationData } =
-            state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
-
-        if (!clientToken || !initializationData) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        this.braintreeIntegrationService.initialize(clientToken, initializationData);
-
-        const cardComponentOptions: BraintreeConnectCardComponentOptions = {
-            fields: {
-                ...(phone && {
-                    phoneNumber: {
-                        prefill: phone,
-                    },
-                }),
-            },
-        };
-
-        const { ConnectCardComponent } =
-            await this.braintreeIntegrationService.getBraintreeConnect();
-
-        this.braintreeConnectCardComponent = ConnectCardComponent(cardComponentOptions);
-        this.braintreeConnectCardComponent.render(braintreeacceleratedcheckout.container);
+        this.renderBraintreeAXOComponent(braintreeacceleratedcheckout.container);
     }
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -107,11 +85,40 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
     async deinitialize(): Promise<void> {
         this.braintreeConnectCardComponent = undefined;
 
-        await this.braintreeIntegrationService.teardown();
-
         return Promise.resolve();
     }
 
+    /**
+     *
+     * Braintree AXO Component rendering method
+     *
+     */
+    private renderBraintreeAXOComponent(container: string) {
+        const state = this.paymentIntegrationService.getState();
+        const { phone } = state.getBillingAddressOrThrow();
+
+        const cardComponentOptions: BraintreeConnectCardComponentOptions = {
+            fields: {
+                ...(phone && {
+                    phoneNumber: {
+                        prefill: phone,
+                    },
+                }),
+            },
+        };
+
+        const { ConnectCardComponent } =
+            this.braintreeAcceleratedCheckoutUtils.getBraintreeConnectOrThrow();
+
+        this.braintreeConnectCardComponent = ConnectCardComponent(cardComponentOptions);
+        this.braintreeConnectCardComponent.render(container);
+    }
+
+    /**
+     *
+     * Payment Payload preparation methods
+     *
+     */
     private async preparePaymentPayload(payment: OrderPaymentRequestBody) {
         const { methodId, paymentData } = payment;
 
@@ -154,6 +161,11 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
         };
     }
 
+    /**
+     *
+     * Other methods
+     *
+     */
     private getBraintreeCardComponentOrThrow() {
         if (!this.braintreeConnectCardComponent) {
             throw new PaymentMethodClientUnavailableError();

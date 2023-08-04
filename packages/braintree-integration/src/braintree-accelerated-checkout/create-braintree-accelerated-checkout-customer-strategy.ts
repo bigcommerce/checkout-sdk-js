@@ -11,6 +11,7 @@ import BraintreeIntegrationService from '../braintree-integration-service';
 import BraintreeScriptLoader from '../braintree-script-loader';
 
 import BraintreeAcceleratedCheckoutCustomerStrategy from './braintree-accelerated-checkout-customer-strategy';
+import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
 
 const createBraintreeAcceleratedCheckoutCustomerStrategy: CustomerStrategyFactory<
     BraintreeAcceleratedCheckoutCustomerStrategy
@@ -21,11 +22,15 @@ const createBraintreeAcceleratedCheckoutCustomerStrategy: CustomerStrategyFactor
         braintreeHostWindow,
     );
     const browserStorage = new BrowserStorage('paypal-connect');
-
-    return new BraintreeAcceleratedCheckoutCustomerStrategy(
+    const braintreeAcceleratedCheckoutUtils = new BraintreeAcceleratedCheckoutUtils(
         paymentIntegrationService,
         braintreeIntegrationService,
         browserStorage,
+    );
+
+    return new BraintreeAcceleratedCheckoutCustomerStrategy(
+        paymentIntegrationService,
+        braintreeAcceleratedCheckoutUtils,
     );
 };
 

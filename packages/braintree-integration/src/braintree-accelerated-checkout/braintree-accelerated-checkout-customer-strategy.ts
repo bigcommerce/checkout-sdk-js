@@ -1,63 +1,46 @@
 import {
-    Address,
-    BraintreeAcceleratedCheckoutCustomer,
-    CardInstrument,
     CustomerCredentials,
     CustomerInitializeOptions,
     CustomerStrategy,
     ExecutePaymentMethodCheckoutOptions,
     InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
     PaymentIntegrationService,
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
-import {
-    BraintreeConnect,
-    BraintreeConnectAddress,
-    BraintreeConnectAuthenticationState,
-    BraintreeConnectVaultedInstrument,
-    BraintreeInitializationData,
-} from '../braintree';
-import BraintreeIntegrationService from '../braintree-integration-service';
+import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
 
 export default class BraintreeAcceleratedCheckoutCustomerStrategy implements CustomerStrategy {
-    private braintreeConnect?: BraintreeConnect;
-    private methodId?: string;
-
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private braintreeIntegrationService: BraintreeIntegrationService,
-        private browserStorage: BrowserStorage,
+        private braintreeAcceleratedCheckoutUtils: BraintreeAcceleratedCheckoutUtils,
     ) {}
 
-    async initialize(options: CustomerInitializeOptions): Promise<void> {
-        const methodId = this.setMethodIdOrThrow(options.methodId);
-
-        await this.paymentIntegrationService.loadPaymentMethod(methodId);
-
-        const state = this.paymentIntegrationService.getState();
-        const { clientToken, initializationData } =
-            state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
-
-        if (!clientToken || !initializationData) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+    /**
+     *
+     * Default methods
+     *
+     */
+    async initialize({ methodId }: CustomerInitializeOptions): Promise<void> {
+        if (!methodId) {
+            throw new InvalidArgumentError(
+                'Unable to proceed because "methodId" argument is not provided.',
+            );
         }
 
-        this.braintreeIntegrationService.initialize(clientToken, initializationData);
-        this.braintreeConnect = await this.braintreeIntegrationService.getBraintreeConnect();
+        await this.paymentIntegrationService.loadPaymentMethod(methodId);
+        await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(methodId);
     }
 
     async deinitialize(): Promise<void> {
-        await this.braintreeIntegrationService.teardown();
+        return Promise.resolve();
     }
 
     async signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void> {
         await this.paymentIntegrationService.signInCustomer(credentials, options);
-
-        await this.authenticatePayPalConnectUserOrThrow(credentials.email);
+        await this.braintreeAcceleratedCheckoutUtils.authenticatePayPalConnectUserOrThrow(
+            credentials.email,
+        );
     }
 
     async signOut(options?: RequestOptions): Promise<void> {
@@ -75,142 +58,8 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
             );
         }
 
-        await this.authenticatePayPalConnectUserOrThrow();
+        await this.braintreeAcceleratedCheckoutUtils.authenticatePayPalConnectUserOrThrow();
 
         continueWithCheckoutCallback();
-    }
-
-    private async authenticatePayPalConnectUserOrThrow(email?: string): Promise<void> {
-        try {
-            await this.authenticatePayPalConnectUser(email);
-        } catch (error) {
-            // TODO: we should figure out what to do here
-            // TODO: because we should not to stop the flow if the error occurs on paypal side
-        }
-    }
-
-    private async authenticatePayPalConnectUser(email?: string): Promise<void> {
-        const methodId = this.getMethodIdOrThrow();
-
-        const customerEmail = email || this.getEmail();
-
-        if (!this.braintreeConnect || !customerEmail) {
-            return;
-        }
-
-        const { lookupCustomerByEmail, triggerAuthenticationFlow } = this.braintreeConnect.identity;
-        const { customerId } = await lookupCustomerByEmail(customerEmail);
-
-        if (!customerId) {
-            return;
-        }
-
-        const { authenticationState, profileData } = await triggerAuthenticationFlow(customerId);
-
-        if (authenticationState === BraintreeConnectAuthenticationState.SUCCEEDED) {
-            const addresses = profileData.addresses.map((address) =>
-                this.mapPayPalConnectToBcAddress(address),
-            );
-            const instruments = profileData.cards.map((instrument) =>
-                this.mapPayPalConnectToBcInstrument(instrument, methodId),
-            );
-
-            await this.updateCustomerData(customerEmail, {
-                authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
-                addresses,
-                instruments,
-            });
-        } else {
-            await this.updateCustomerData(customerEmail, {
-                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
-                addresses: [],
-                instruments: [],
-            });
-        }
-    }
-
-    private async updateCustomerData(
-        email: string,
-        customer: BraintreeAcceleratedCheckoutCustomer,
-    ): Promise<void> {
-        await this.paymentIntegrationService.updatePaymentProviderCustomer(customer);
-
-        this.browserStorage.setItem('customer', {
-            email,
-            ...customer,
-        });
-    }
-
-    private getEmail(): string {
-        const state = this.paymentIntegrationService.getState();
-        const customer = state.getCustomer();
-        const billingAddress = state.getBillingAddress();
-
-        return customer?.email || billingAddress?.email || '';
-    }
-
-    private getMethodIdOrThrow(): string {
-        if (!this.methodId) {
-            throw new InvalidArgumentError(
-                'Unable to proceed because "methodId" argument is not provided.',
-            );
-        }
-
-        return this.methodId;
-    }
-
-    private setMethodIdOrThrow(methodId?: string): string {
-        this.methodId = methodId;
-
-        return this.getMethodIdOrThrow();
-    }
-
-    private mapPayPalConnectToBcAddress(address: BraintreeConnectAddress): Address {
-        const state = this.paymentIntegrationService.getState();
-
-        const countries = state.getCountries() || [];
-        const addressCountry = countries.find((country) => {
-            return country.code === address.countryCodeAlpha2;
-        });
-
-        return {
-            firstName: address.firstName || '',
-            lastName: address.lastName || '',
-            company: address.company || '',
-            address1: address.streetAddress,
-            address2: address.extendedAddress || '',
-            city: address.locality,
-            stateOrProvince: address.region,
-            stateOrProvinceCode: address.region,
-            country: addressCountry?.name || '',
-            countryCode: address.countryCodeAlpha2,
-            postalCode: address.postalCode,
-            phone: '',
-            customFields: [],
-        };
-    }
-
-    private mapPayPalConnectToBcInstrument(
-        instrument: BraintreeConnectVaultedInstrument,
-        methodId: string,
-    ): CardInstrument {
-        const { id, paymentSource } = instrument;
-        const { brand, expiry, lastDigits } = paymentSource.card;
-
-        const [expiryYear, expiryMonth] = expiry.split('-');
-
-        return {
-            bigpayToken: id,
-            brand,
-            defaultInstrument: false,
-            expiryMonth,
-            expiryYear,
-            iin: '',
-            last4: lastDigits,
-            method: methodId,
-            provider: methodId,
-            trustedShippingAddress: false,
-            type: 'card',
-        };
     }
 }
