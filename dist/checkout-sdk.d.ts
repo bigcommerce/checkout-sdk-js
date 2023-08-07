@@ -2489,7 +2489,9 @@ declare interface CheckoutSelectors {
  */
 declare class CheckoutService {
     private _store;
+    private _storeProjection;
     private _extensionMessenger;
+    private _extensionEventBroadcaster;
     private _billingAddressActionCreator;
     private _checkoutActionCreator;
     private _configActionCreator;
@@ -2513,9 +2515,7 @@ declare class CheckoutService {
     private _subscriptionsActionCreator;
     private _formFieldsActionCreator;
     private _extensionActionCreator;
-    private _storeProjection;
     private _errorTransformer;
-    private _selectorsFactory;
     /**
      * Returns a snapshot of the current checkout state.
      *

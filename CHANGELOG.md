@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.418.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.417.0...v1.418.0) (2023-08-07)
+
+
+### Features
+
+* **extension:** CHECKOUT-7611 Notify extension when consignment changes ([61c0626](https://github.com/bigcommerce/checkout-sdk-js/commit/61c0626a5408a8edaed6832b16c1fd6a115fe65e))
+* **extension:** CHECKOUT-7611 Notify extension when shipping country changes ([cf181b2](https://github.com/bigcommerce/checkout-sdk-js/commit/cf181b2533c62b9ca6dd089e3112b29fbc058456))
+
+
+### Code Refactoring
+
+* **extension:** CHECKOUT-7611 Pass public selectors to state change subscribers ([8128e92](https://github.com/bigcommerce/checkout-sdk-js/commit/8128e927a040d62892e99c295733515a9f05368d))
+* **extension:** CHECKOUT-7611 Remove shipping country change event ([d170b3a](https://github.com/bigcommerce/checkout-sdk-js/commit/d170b3a6a7cd31743e247544b837049dcf6c2cd9))
+* **payment:** PAYPAL-2813 created BraintreeAcceleratedCheckoutUtils class ([#2096](https://github.com/bigcommerce/checkout-sdk-js/issues/2096)) ([b7b053b](https://github.com/bigcommerce/checkout-sdk-js/commit/b7b053bbaa0e86c1f4f5de83566c159871efe29e))
+
 ## [1.417.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.416.0...v1.417.0) (2023-08-03)
 
 
