@@ -2,7 +2,6 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
     InvalidArgumentError,
-    MissingDataError,
     OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
@@ -13,21 +12,22 @@ import {
     getShippingAddress,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { BraintreeConnect } from '../braintree';
 import BraintreeIntegrationService from '../braintree-integration-service';
 import BraintreeScriptLoader from '../braintree-script-loader';
-import {
-    getBraintreeAcceleratedCheckoutPaymentMethod,
-    getConnectMock,
-} from '../mocks/braintree.mock';
+import { getConnectMock } from '../mocks/braintree.mock';
 
 import BraintreeAcceleratedCheckoutPaymentStrategy from './braintree-accelerated-checkout-payment-strategy';
+import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
 
 describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
+    let braintreeAcceleratedCheckoutUtils: BraintreeAcceleratedCheckoutUtils;
     let braintreeConnectMock: BraintreeConnect;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
+    let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeAcceleratedCheckoutPaymentStrategy;
 
@@ -40,7 +40,6 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
         },
     };
 
-    const paymentMethod = getBraintreeAcceleratedCheckoutPaymentMethod();
     const billingAddress = getBillingAddress();
     const shippingAddress = getShippingAddress();
 
@@ -52,6 +51,7 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
     };
 
     beforeEach(() => {
+        browserStorage = new BrowserStorage('braintree-accelerated-checkout-mock');
         braintreeConnectMock = getConnectMock();
 
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
@@ -60,18 +60,20 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
             window,
         );
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+        braintreeAcceleratedCheckoutUtils = new BraintreeAcceleratedCheckoutUtils(
+            paymentIntegrationService,
+            braintreeIntegrationService,
+            browserStorage,
+        );
 
         strategy = new BraintreeAcceleratedCheckoutPaymentStrategy(
             paymentIntegrationService,
-            braintreeIntegrationService,
+            braintreeAcceleratedCheckoutUtils,
         );
 
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
         jest.spyOn(paymentIntegrationService, 'submitOrder');
         jest.spyOn(paymentIntegrationService, 'submitPayment');
-        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
-            paymentMethod,
-        );
         jest.spyOn(
             paymentIntegrationService.getState(),
             'getBillingAddressOrThrow',
@@ -80,14 +82,22 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
             shippingAddress,
         );
 
-        jest.spyOn(braintreeIntegrationService, 'initialize');
-        jest.spyOn(braintreeIntegrationService, 'getBraintreeConnect').mockImplementation(
-            () => braintreeConnectMock,
-        );
+        jest.spyOn(
+            braintreeAcceleratedCheckoutUtils,
+            'initializeBraintreeConnectOrThrow',
+        ).mockImplementation(jest.fn);
+        jest.spyOn(
+            braintreeAcceleratedCheckoutUtils,
+            'getBraintreeConnectOrThrow',
+        ).mockImplementation(() => braintreeConnectMock);
         jest.spyOn(braintreeConnectMock, 'ConnectCardComponent').mockImplementation(() => ({
             tokenize: () => ({ nonce: 'nonce' }),
             render: jest.fn(),
         }));
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     describe('#initialize()', () => {
@@ -132,46 +142,12 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
         });
 
-        it('throws an error if client token does not exist in payment method', async () => {
-            const state = paymentIntegrationService.getState();
-            const invalidPaymentMethod = {
-                ...paymentMethod,
-                clientToken: '',
-            };
-
-            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(invalidPaymentMethod);
-
-            try {
-                await strategy.initialize(initializationOptions);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
-        it('throws an error if initialization data does not exist in payment method', async () => {
-            const state = paymentIntegrationService.getState();
-            const invalidPaymentMethod = {
-                ...paymentMethod,
-                initializationData: null,
-            };
-
-            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(invalidPaymentMethod);
-
-            try {
-                await strategy.initialize(initializationOptions);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
-        it('loads braintree connect', async () => {
+        it('initializes braintree connect', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
-                paymentMethod.clientToken,
-                paymentMethod.initializationData,
-            );
-            expect(braintreeIntegrationService.getBraintreeConnect).toHaveBeenCalled();
+            expect(
+                braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
+            ).toHaveBeenCalledWith(methodId);
         });
 
         it('renders braintree connect card component', async () => {
@@ -246,13 +222,8 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
     });
 
     describe('#deinitialize()', () => {
-        it('runs teardown process for braintree connect', async () => {
-            jest.spyOn(braintreeIntegrationService, 'teardown');
-
-            await strategy.initialize(initializationOptions);
-            await strategy.deinitialize();
-
-            expect(braintreeIntegrationService.teardown).toHaveBeenCalled();
+        it('deinitializes strategy', async () => {
+            await expect(strategy.deinitialize()).resolves.not.toThrow();
         });
     });
 
