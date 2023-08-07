@@ -12,8 +12,10 @@ export class ExtensionMessenger {
 
     constructor(
         private _store: ReadableCheckoutStore,
-        private _listeners: { [extensionId: string]: IframeEventListener<ExtensionCommandMap> },
-        private _posters: { [extensionId: string]: IframeEventPoster<ExtensionEvent> },
+        private _listeners: {
+            [extensionId: string]: IframeEventListener<ExtensionCommandMap>;
+        } = {},
+        private _posters: { [extensionId: string]: IframeEventPoster<ExtensionEvent> } = {},
     ) {}
 
     listen<T extends keyof ExtensionCommandMap>(

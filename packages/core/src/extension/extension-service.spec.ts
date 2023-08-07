@@ -8,23 +8,26 @@ import {
     ExtensionEventMap,
     ExtensionEventType,
 } from './extension-client';
+import { ExtensionInternalCommand } from './extension-internal-commands';
 import ExtensionService from './extension-service';
 
 describe('ExtensionService', () => {
     let extensionService: ExtensionService;
     let eventListener: IframeEventListener<ExtensionEventMap>;
     let eventPoster: IframeEventPoster<ExtensionCommand>;
+    let internalEventPoster: IframeEventPoster<ExtensionInternalCommand>;
 
     beforeEach(() => {
         eventListener = new IframeEventListener('https://mybigcommerce.com');
         eventPoster = new IframeEventPoster('https://mybigcommerce.com');
+        internalEventPoster = new IframeEventPoster('https://mybigcommerce.com');
 
         jest.spyOn(eventListener, 'listen');
         jest.spyOn(eventListener, 'addListener');
         jest.spyOn(eventPoster, 'post');
-        jest.spyOn(eventPoster, 'post');
+        jest.spyOn(internalEventPoster, 'post');
 
-        extensionService = new ExtensionService(eventListener, eventPoster);
+        extensionService = new ExtensionService(eventListener, eventPoster, internalEventPoster);
     });
 
     it('#initializes success fully', () => {
@@ -71,10 +74,10 @@ describe('ExtensionService', () => {
     it('#addListener adds callback as noop if no callback method is passed', () => {
         extensionService.initialize('test');
 
-        extensionService.addListener(ExtensionEventType.CheckoutLoaded);
+        extensionService.addListener(ExtensionEventType.ConsignmentsChanged);
 
         expect(eventListener.addListener).toHaveBeenCalledWith(
-            ExtensionEventType.CheckoutLoaded,
+            ExtensionEventType.ConsignmentsChanged,
             noop,
         );
     });
@@ -92,10 +95,10 @@ describe('ExtensionService', () => {
 
         const callbackFn = jest.fn();
 
-        extensionService.addListener(ExtensionEventType.CheckoutLoaded, callbackFn);
+        extensionService.addListener(ExtensionEventType.ConsignmentsChanged, callbackFn);
 
         expect(eventListener.addListener).toHaveBeenCalledWith(
-            ExtensionEventType.CheckoutLoaded,
+            ExtensionEventType.ConsignmentsChanged,
             callbackFn,
         );
     });

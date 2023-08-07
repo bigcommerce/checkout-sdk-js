@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { AddressRequestBody } from '../address';
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../billing';
-import { createDataStoreProjection, DataStoreProjection } from '../common/data-store';
+import { DataStoreProjection } from '../common/data-store';
 import { ErrorActionCreator, ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 import { bindDecorator as bind } from '../common/utility';
@@ -23,6 +23,7 @@ import {
 import {
     ExtensionActionCreator,
     ExtensionCommandMap,
+    ExtensionEventBroadcaster,
     ExtensionMessenger,
     ExtensionRegion,
 } from '../extension';
@@ -58,10 +59,6 @@ import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutParams from './checkout-params';
 import CheckoutSelectors from './checkout-selectors';
 import CheckoutStore from './checkout-store';
-import {
-    CheckoutSelectorsFactory,
-    createCheckoutSelectorsFactory,
-} from './create-checkout-selectors';
 import createCheckoutServiceErrorTransformer from './create-checkout-service-error-transformer';
 
 /**
@@ -73,16 +70,16 @@ import createCheckoutServiceErrorTransformer from './create-checkout-service-err
  */
 @bind
 export default class CheckoutService {
-    private _storeProjection: DataStoreProjection<CheckoutSelectors>;
     private _errorTransformer: ErrorMessageTransformer;
-    private _selectorsFactory: CheckoutSelectorsFactory;
 
     /**
      * @internal
      */
     constructor(
         private _store: CheckoutStore,
+        private _storeProjection: DataStoreProjection<CheckoutSelectors>,
         private _extensionMessenger: ExtensionMessenger,
+        private _extensionEventBroadcaster: ExtensionEventBroadcaster,
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _configActionCreator: ConfigActionCreator,
@@ -108,8 +105,6 @@ export default class CheckoutService {
         private _extensionActionCreator: ExtensionActionCreator,
     ) {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
-        this._selectorsFactory = createCheckoutSelectorsFactory();
-        this._storeProjection = createDataStoreProjection(this._store, this._selectorsFactory);
     }
 
     /**
@@ -1399,10 +1394,13 @@ export default class CheckoutService {
      * @param region - The name of an area where the extension should be presented.
      * @returns A promise that resolves to the current state.
      */
-    renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors> {
+    async renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors> {
         const action = this._extensionActionCreator.renderExtension(container, region);
+        const state = await this._dispatch(action, { queueId: 'extensions' });
 
-        return this._dispatch(action, { queueId: 'extensions' });
+        this._extensionEventBroadcaster.listen();
+
+        return state;
     }
 
     /**

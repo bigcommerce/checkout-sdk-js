@@ -11,6 +11,7 @@
         "payment",
         "shipping",
         "shopper",
-        "spam-protection"
+        "spam-protection",
+        "extension"
     ]
 }

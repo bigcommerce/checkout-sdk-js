@@ -13,6 +13,7 @@ import {
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
+import { createDataStoreProjection, DataStoreProjection } from '../common/data-store';
 import { ErrorActionCreator } from '../common/error';
 import { getResponse } from '../common/http-request/responses.mock';
 import { ResolveIdRegistry } from '../common/registry';
@@ -33,9 +34,11 @@ import {
 } from '../customer';
 import CustomerStrategyRegistryV2 from '../customer/customer-strategy-registry-v2';
 import {
+    createExtensionEventBroadcaster,
     ExtensionActionCreator,
     ExtensionActionType,
     ExtensionCommandType,
+    ExtensionEventBroadcaster,
     ExtensionMessenger,
     ExtensionRegion,
     ExtensionRequestSender,
@@ -93,6 +96,7 @@ import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subsc
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutRequestSender from './checkout-request-sender';
+import CheckoutSelectors from './checkout-selectors';
 import CheckoutService from './checkout-service';
 import CheckoutStore from './checkout-store';
 import CheckoutValidator from './checkout-validator';
@@ -102,6 +106,7 @@ import {
     getCheckoutWithCoupons,
     getCheckoutWithPayments,
 } from './checkouts.mock';
+import { createCheckoutSelectorsFactory } from './create-checkout-selectors';
 import createCheckoutStore from './create-checkout-store';
 
 describe('CheckoutService', () => {
@@ -144,11 +149,14 @@ describe('CheckoutService', () => {
     let subscriptionsActionCreator: SubscriptionsActionCreator;
     let spamProtectionActionCreator: SpamProtectionActionCreator;
     let store: CheckoutStore;
+    let storeProjection: DataStoreProjection<CheckoutSelectors>;
     let storeCreditRequestSender: StoreCreditRequestSender;
     let extensionMessenger: ExtensionMessenger;
+    let extensionEventBroadcaster: ExtensionEventBroadcaster;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
+        storeProjection = createDataStoreProjection(store, createCheckoutSelectorsFactory());
 
         extensionMessenger = new ExtensionMessenger(store, {}, {});
 
@@ -372,9 +380,16 @@ describe('CheckoutService', () => {
 
         errorActionCreator = new ErrorActionCreator();
 
+        extensionEventBroadcaster = createExtensionEventBroadcaster(
+            storeProjection,
+            extensionMessenger,
+        );
+
         checkoutService = new CheckoutService(
             store,
+            storeProjection,
             extensionMessenger,
+            extensionEventBroadcaster,
             billingAddressActionCreator,
             checkoutActionCreator,
             configActionCreator,
@@ -1493,12 +1508,15 @@ describe('CheckoutService', () => {
                 of(createAction(ExtensionActionType.RenderExtensionSucceeded)),
             );
 
+            jest.spyOn(extensionEventBroadcaster, 'listen');
+
             const container = 'checkout.extension';
             const region = ExtensionRegion.ShippingShippingAddressFormBefore;
 
             await checkoutService.renderExtension(container, region);
 
             expect(extensionActionCreator.renderExtension).toHaveBeenCalledWith(container, region);
+            expect(extensionEventBroadcaster.listen).toHaveBeenCalled();
         });
     });
 
