@@ -104,6 +104,31 @@ describe('BraintreePaymentProcessor', () => {
         });
     });
 
+    describe('#preloadPaypalCheckout', () => {
+        it('loading paypal sdk via paypal checkout', async () => {
+            braintreeSDKCreator.getPaypalCheckout = jest.fn();
+
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(
+                braintreeSDKCreator,
+                braintreeHostedForm,
+                overlay,
+            );
+
+            const config = {
+                isCreditEnabled: true,
+                currency: 'USD',
+                intent: undefined,
+            };
+
+            const onSuccess = jest.fn();
+            const handleError = jest.fn();
+
+            await braintreePaymentProcessor.preloadPaypalCheckout(config, onSuccess, handleError);
+
+            expect(braintreeSDKCreator.getPaypalCheckout).toHaveBeenCalled();
+        });
+    });
+
     describe('#tokenizeCard()', () => {
         let clientMock: BraintreeClient;
         let braintreePaymentProcessor: BraintreePaymentProcessor;

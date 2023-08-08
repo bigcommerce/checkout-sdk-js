@@ -286,11 +286,15 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
         if (this._braintreeHostWindow.paypal && isMessageContainerAvailable) {
             const state = this._store.getState();
-            const cart = state.cart.getCartOrThrow();
+            const checkout = state.checkout.getCheckout();
+
+            if (!checkout) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+            }
 
             this._braintreeHostWindow.paypal
                 .Messages({
-                    amount: cart.cartAmount,
+                    amount: checkout.subtotal,
                     placement: 'payment',
                     style: {
                         layout: 'text',
