@@ -2,15 +2,18 @@ import {
     Address,
     InvalidArgumentError,
     isHostedInstrumentLike,
+    isVaultedInstrument,
     OrderFinalizationNotRequiredError,
     OrderPaymentRequestBody,
     OrderRequestBody,
+    Payment,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentMethodClientUnavailableError,
     PaymentRequestOptions,
     PaymentStrategy,
+    VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
@@ -53,16 +56,23 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
             );
         }
 
-        if (!braintreeacceleratedcheckout.container) {
+        if (
+            !braintreeacceleratedcheckout.onInit ||
+            typeof braintreeacceleratedcheckout.onInit !== 'function'
+        ) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.braintreeacceleratedcheckout.container" argument is not provided.',
+                'Unable to initialize payment because "options.braintreeacceleratedcheckout.onInit" argument is not provided or it is not a function.',
             );
         }
 
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
         await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(methodId);
 
-        this.renderBraintreeAXOComponent(braintreeacceleratedcheckout.container);
+        this.initializeConnectCardComponent();
+
+        braintreeacceleratedcheckout.onInit((container) =>
+            this.renderBraintreeAXOComponent(container),
+        );
     }
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -72,7 +82,12 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const paymentPayload = await this.preparePaymentPayload(payment);
+        const { paymentData, methodId } = payment;
+
+        const paymentPayload =
+            paymentData && isVaultedInstrument(paymentData)
+                ? await this.prepareVaultedInstrumentPaymentPayload(methodId, paymentData)
+                : await this.preparePaymentPayload(methodId, paymentData);
 
         await this.paymentIntegrationService.submitOrder(order, options);
         await this.paymentIntegrationService.submitPayment(paymentPayload);
@@ -93,7 +108,7 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
      * Braintree AXO Component rendering method
      *
      */
-    private renderBraintreeAXOComponent(container: string) {
+    private initializeConnectCardComponent() {
         const state = this.paymentIntegrationService.getState();
         const { phone } = state.getBillingAddressOrThrow();
 
@@ -111,7 +126,18 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
             this.braintreeAcceleratedCheckoutUtils.getBraintreeConnectOrThrow();
 
         this.braintreeConnectCardComponent = ConnectCardComponent(cardComponentOptions);
-        this.braintreeConnectCardComponent.render(container);
+    }
+
+    private renderBraintreeAXOComponent(container?: string) {
+        const braintreeConnectCardComponent = this.getBraintreeCardComponentOrThrow();
+
+        if (!container) {
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "container" argument is not provided.',
+            );
+        }
+
+        braintreeConnectCardComponent.render(container);
     }
 
     /**
@@ -119,9 +145,31 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
      * Payment Payload preparation methods
      *
      */
-    private async preparePaymentPayload(payment: OrderPaymentRequestBody) {
-        const { methodId, paymentData } = payment;
+    private async prepareVaultedInstrumentPaymentPayload(
+        methodId: string,
+        paymentData: VaultedInstrument,
+    ): Promise<Payment> {
+        const deviceSessionId = await this.braintreeAcceleratedCheckoutUtils.getDeviceSessionId();
 
+        const { instrumentId } = paymentData;
+
+        return {
+            methodId,
+            paymentData: {
+                ...paymentData,
+                instrumentId,
+                deviceSessionId,
+                ...(this.isPayPalCommerceInstrument(instrumentId) && {
+                    tokenType: 'paypal_connect',
+                }),
+            },
+        };
+    }
+
+    private async preparePaymentPayload(
+        methodId: string,
+        paymentData: OrderPaymentRequestBody['paymentData'],
+    ): Promise<Payment> {
         const state = this.paymentIntegrationService.getState();
         const billingAddress = state.getBillingAddressOrThrow();
         // Info: shipping can be unavailable for carts with digital items
@@ -172,5 +220,16 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
         }
 
         return this.braintreeConnectCardComponent;
+    }
+
+    private isPayPalCommerceInstrument(instrumentId: string): boolean {
+        const state = this.paymentIntegrationService.getState();
+        const { instruments } = state.getPaymentProviderCustomerOrThrow();
+
+        const paypalConnectInstruments = instruments || [];
+
+        return !!paypalConnectInstruments.find(
+            (instrument) => instrument.bigpayToken === instrumentId,
+        );
     }
 }
