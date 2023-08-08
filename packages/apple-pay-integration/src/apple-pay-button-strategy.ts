@@ -54,6 +54,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     async initialize(
         options: CheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions,
     ): Promise<void> {
+        console.log('LOG0');
         const { methodId, containerId, applepay } = options;
 
         assertApplePayWindow(window);

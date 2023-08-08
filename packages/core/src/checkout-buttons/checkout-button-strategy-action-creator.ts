@@ -49,7 +49,7 @@ export default class CheckoutButtonStrategyActionCreator {
                 timeout: options.timeout,
                 useCache: true,
             };
-
+            console.log('INIT BUTTON');
             return concat(
                 of(
                     createAction(

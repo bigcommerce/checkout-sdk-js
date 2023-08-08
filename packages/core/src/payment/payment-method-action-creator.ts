@@ -93,6 +93,7 @@ export default class PaymentMethodActionCreator {
                                 { methodId },
                             ),
                         );
+                        console.log('BEFORE OBSERVER COMPLETE');
                         observer.complete();
                     })
                     .catch((response) => {
