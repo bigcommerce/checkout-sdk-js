@@ -6,4 +6,10 @@ export {
     OrderShippingConsignment,
 } from './order';
 export { default as OrderRequestBody, OrderPaymentRequestBody } from './order-request-body';
-export { LoadOrderAction } from './order-actions';
+export {
+    LoadOrderAction,
+    FinalizeOrderAction,
+    LoadOrderSucceededAction,
+    OrderActionType,
+    SubmitOrderAction,
+} from './order-actions';

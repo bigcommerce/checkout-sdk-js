@@ -22,6 +22,7 @@ export {
     WithAccountCreation,
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
+    StripeV3FormattedPayload,
 } from './payment';
 
 export { default as isHostedInstrumentLike } from './is-hosted-intrument-like';
@@ -34,6 +35,7 @@ export {
 } from './is-vaulted-instrument';
 
 export { PaymentActionType, SubmitPaymentAction } from './payment-actions';
+export { LoadPaymentMethodAction, PaymentMethodActionType } from './payment-method-actions';
 export { default as PaymentAdditionalAction } from './payment-additional-action';
 export { PaymentInitializeOptions } from './payment-initialize-options';
 export { PaymentRequestOptions } from './payment-request-options';

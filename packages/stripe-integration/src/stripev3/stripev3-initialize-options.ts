@@ -1,4 +1,4 @@
-import { HostedFormOptions } from '../../../hosted-form';
+import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { IndividualCardElementOptions, StripeElementOptions } from './stripev3';
 
@@ -59,4 +59,8 @@ export default interface StripeV3PaymentInitializeOptions {
      * Hosted Form Validation Options
      */
     form?: HostedFormOptions;
+}
+
+export interface WithStripeV3PaymentInitializeOptions {
+    stripev3?: StripeV3PaymentInitializeOptions;
 }

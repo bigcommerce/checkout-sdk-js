@@ -128,10 +128,6 @@ import {
     StripeUPEPaymentStrategy,
     StripeScriptLoader as StripeUPEScriptLoader,
 } from './strategies/stripe-upe';
-import {
-    StripeV3PaymentStrategy,
-    StripeScriptLoader as StripeV3ScriptLoader,
-} from './strategies/stripev3';
 import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
 import { WorldpayaccessPaymetStrategy } from './strategies/worldpayaccess';
 import { ZipPaymentStrategy } from './strategies/zip';
@@ -833,21 +829,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 orderActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayStripeUPEInitializer()),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.STRIPEV3,
-        () =>
-            new StripeV3PaymentStrategy(
-                store,
-                paymentMethodActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                new StripeV3ScriptLoader(scriptLoader),
-                storeCreditActionCreator,
-                hostedFormFactory,
-                locale,
             ),
     );
 
