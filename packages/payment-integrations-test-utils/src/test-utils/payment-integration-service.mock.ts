@@ -32,6 +32,8 @@ const state = {
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
     getPaymentMethod: jest.fn(),
     getPaymentMethodOrThrow: jest.fn(),
+    getPaymentProviderCustomer: jest.fn(),
+    getPaymentProviderCustomerOrThrow: jest.fn(),
     getPaymentStatus: jest.fn(),
 };
 
