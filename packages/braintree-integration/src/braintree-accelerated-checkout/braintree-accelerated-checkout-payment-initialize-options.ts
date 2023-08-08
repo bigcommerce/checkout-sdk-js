@@ -13,7 +13,7 @@
  * service.initializePayment({
  *     methodId: 'braintreeacceleratedcheckout',
  *     braintreeacceleratedcheckout: {
- *         container: '#container',
+ *         onInit: (renderPayPalComponentMethod) => renderPayPalComponentMethod('#container-id');
  *     },
  * });
  * ```
@@ -22,7 +22,7 @@ export default interface BraintreeAcceleratedCheckoutPaymentInitializeOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
      */
-    container: string;
+    onInit?: (renderPayPalComponentMethod: (container: string) => void) => void;
 }
 
 export interface WithBraintreeAcceleratedCheckoutPaymentInitializeOptions {

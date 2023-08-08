@@ -28,6 +28,10 @@ export default class BraintreeAcceleratedCheckoutUtils {
         private browserStorage: BrowserStorage,
     ) {}
 
+    async getDeviceSessionId(): Promise<string | undefined> {
+        return this.braintreeIntegrationService.getSessionId();
+    }
+
     getBraintreeConnectOrThrow(): BraintreeConnect {
         if (!this.braintreeConnect) {
             throw new PaymentMethodClientUnavailableError();

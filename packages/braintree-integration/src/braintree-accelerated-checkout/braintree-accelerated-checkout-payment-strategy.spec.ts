@@ -1,4 +1,5 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
+import { noop } from 'lodash';
 
 import {
     InvalidArgumentError,
@@ -31,22 +32,33 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeAcceleratedCheckoutPaymentStrategy;
 
-    const container = '#braintree-cc-component-container';
     const methodId = 'braintreeacceleratedcheckout';
-    const initializationOptions = {
-        methodId,
-        braintreeacceleratedcheckout: {
-            container,
-        },
-    };
+    const deviceSessionId = 'device_session_id_mock';
+    const instrumentId = 'asd123';
 
     const billingAddress = getBillingAddress();
     const shippingAddress = getShippingAddress();
 
-    const execureOptions = {
+    const defaultInitializationOptions = {
+        methodId,
+        braintreeacceleratedcheckout: {
+            onInit: jest.fn(),
+        },
+    };
+
+    const executeOptions = {
         payment: {
             methodId,
             paymentData: {},
+        },
+    };
+
+    const executeOptionsWithVaultedInstrument = {
+        payment: {
+            methodId,
+            paymentData: {
+                instrumentId,
+            },
         },
     };
 
@@ -81,6 +93,10 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getShippingAddress').mockReturnValue(
             shippingAddress,
         );
+        jest.spyOn(
+            paymentIntegrationService.getState(),
+            'getPaymentProviderCustomerOrThrow',
+        ).mockImplementation(jest.fn);
 
         jest.spyOn(
             braintreeAcceleratedCheckoutUtils,
@@ -90,6 +106,9 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
             braintreeAcceleratedCheckoutUtils,
             'getBraintreeConnectOrThrow',
         ).mockImplementation(() => braintreeConnectMock);
+        jest.spyOn(braintreeAcceleratedCheckoutUtils, 'getDeviceSessionId').mockImplementation(
+            () => deviceSessionId,
+        );
         jest.spyOn(braintreeConnectMock, 'ConnectCardComponent').mockImplementation(() => ({
             tokenize: () => ({ nonce: 'nonce' }),
             render: jest.fn(),
@@ -135,15 +154,53 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
                 expect(error).toBeInstanceOf(InvalidArgumentError);
             }
         });
+    });
+
+    describe('#renderBraintreeAXOComponent', () => {
+        let container: HTMLElement;
+        let callback: (containerId: string) => void = noop;
+
+        const initializationOptions = {
+            methodId,
+            braintreeacceleratedcheckout: {
+                onInit: (renderComponent: (containerId: string) => void) => {
+                    callback = renderComponent;
+                },
+            },
+        };
+
+        beforeEach(() => {
+            container = document.createElement('div');
+            container.id = 'pp-connect-container-id';
+            document.body.appendChild(container);
+        });
+
+        afterEach(() => {
+            document.body.removeChild(container);
+        });
+
+        it('throws an error if container id is not provided (or it has a falsy value) in callback call', async () => {
+            await strategy.initialize(initializationOptions);
+
+            try {
+                callback('');
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
 
         it('loads braintreeacceleratedcheckout payment method', async () => {
             await strategy.initialize(initializationOptions);
+
+            callback(container.id);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
         });
 
         it('initializes braintree connect', async () => {
             await strategy.initialize(initializationOptions);
+
+            callback(container.id);
 
             expect(
                 braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
@@ -159,13 +216,17 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(renderMethodMock).toHaveBeenCalledWith(container);
+            if (container.id) {
+                callback(container.id);
+            }
+
+            expect(renderMethodMock).toHaveBeenCalledWith(container.id);
         });
     });
 
     describe('#execute()', () => {
         it('throws an error is payment is not provided', async () => {
-            await strategy.initialize(initializationOptions);
+            await strategy.initialize(defaultInitializationOptions);
 
             try {
                 await strategy.execute({});
@@ -175,8 +236,8 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
         });
 
         it('submits payment and order with prepared data', async () => {
-            await strategy.initialize(initializationOptions);
-            await strategy.execute(execureOptions);
+            await strategy.initialize(defaultInitializationOptions);
+            await strategy.execute(executeOptions);
 
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith({}, undefined);
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
@@ -185,6 +246,72 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
                     shouldSaveInstrument: false,
                     shouldSetAsDefaultInstrument: false,
                     nonce: 'nonce',
+                },
+            });
+        });
+
+        it('submits payment and order with stored instrument data', async () => {
+            await strategy.initialize(defaultInitializationOptions);
+            await strategy.execute(executeOptions);
+
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith({}, undefined);
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId: 'braintreeacceleratedcheckout',
+                paymentData: {
+                    shouldSaveInstrument: false,
+                    shouldSetAsDefaultInstrument: false,
+                    nonce: 'nonce',
+                },
+            });
+        });
+    });
+
+    describe('#prepareVaultedInstrumentPaymentPayload()', () => {
+        it('prepares payment payload with BC vaulted instrument', async () => {
+            await strategy.initialize(defaultInitializationOptions);
+            await strategy.execute(executeOptionsWithVaultedInstrument);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId: 'braintreeacceleratedcheckout',
+                paymentData: {
+                    deviceSessionId,
+                    instrumentId,
+                },
+            });
+        });
+
+        it('prepares payment payload with PayPal Connect vaulted instrument', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentProviderCustomerOrThrow',
+            ).mockImplementation(() => ({
+                authenticationState: 'succeeded',
+                instruments: [
+                    {
+                        brand: 'visa',
+                        expiryMonth: '12',
+                        expiryYear: '33',
+                        iin: '411111',
+                        last4: '1111',
+                        type: 'card',
+                        bigpayToken: instrumentId,
+                        defaultInstrument: false,
+                        provider: methodId,
+                        trustedShippingAddress: false,
+                        method: methodId,
+                    },
+                ],
+            }));
+
+            await strategy.initialize(defaultInitializationOptions);
+            await strategy.execute(executeOptionsWithVaultedInstrument);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId: 'braintreeacceleratedcheckout',
+                paymentData: {
+                    deviceSessionId,
+                    instrumentId,
+                    tokenType: 'paypal_connect',
                 },
             });
         });
@@ -199,8 +326,8 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
                 render: jest.fn,
             }));
 
-            await strategy.initialize(initializationOptions);
-            await strategy.execute(execureOptions);
+            await strategy.initialize(defaultInitializationOptions);
+            await strategy.execute(executeOptions);
 
             expect(tokenizeMethodMock).toHaveBeenCalledWith({
                 billingAddress: {

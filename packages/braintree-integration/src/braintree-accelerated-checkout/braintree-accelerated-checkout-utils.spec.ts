@@ -70,6 +70,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
         );
 
         jest.spyOn(braintreeIntegrationService, 'initialize');
+        jest.spyOn(braintreeIntegrationService, 'getSessionId').mockImplementation(jest.fn);
         jest.spyOn(braintreeIntegrationService, 'getBraintreeConnect').mockImplementation(
             () => braintreeConnectMock,
         );
@@ -255,6 +256,15 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                 email: customer.email,
                 ...updatePaymentProviderCustomerPayload,
             });
+        });
+    });
+
+    describe('#getDeviceSessionId', () => {
+        it('returns device session id', async () => {
+            await subject.initializeBraintreeConnectOrThrow(methodId);
+            await subject.getDeviceSessionId();
+
+            expect(braintreeIntegrationService.getSessionId).toHaveBeenCalled();
         });
     });
 });
