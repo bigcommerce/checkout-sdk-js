@@ -37,7 +37,11 @@ export function createPaymentMethodSelectorFactory(): PaymentMethodSelectorFacto
         (state: PaymentMethodState) => state.data,
         (paymentMethods) => (methodId: string, gatewayId?: string) => {
             if (gatewayId) {
-                console.log('GATEWAY', gatewayId, find(paymentMethods, { id: methodId, gateway: gatewayId }));
+                console.log(
+                    'GATEWAY',
+                    gatewayId,
+                    find(paymentMethods, { id: methodId, gateway: gatewayId })
+                );
             } else {
                 console.log('GATEWAY1', gatewayId, find(paymentMethods, { id: methodId }));
             }
