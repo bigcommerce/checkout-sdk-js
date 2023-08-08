@@ -97,6 +97,7 @@ export default class PaymentMethodActionCreator {
                         observer.complete();
                     })
                     .catch((response) => {
+                        console.log('CATCH', response);
                         observer.error(
                             createErrorAction(
                                 PaymentMethodActionType.LoadPaymentMethodFailed,
