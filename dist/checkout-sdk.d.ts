@@ -6029,6 +6029,7 @@ declare interface NonceInstrument {
     shouldSaveInstrument?: boolean;
     shouldSetAsDefaultInstrument?: boolean;
     deviceSessionId?: string;
+    tokenType?: string;
 }
 
 declare type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
