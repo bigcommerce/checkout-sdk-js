@@ -187,6 +187,8 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                 authenticationState: 'succeeded',
                 addresses: [
                     {
+                        id: 123123,
+                        type: 'paypal-address',
                         firstName: 'John',
                         lastName: 'Doe',
                         company: '',

@@ -1,10 +1,10 @@
-import { Address } from '../address';
+import { CustomerAddress } from '../customer';
 import { CardInstrument } from '../payment/instrument/instrument';
 
 export type PaymentProviderCustomer = BraintreeAcceleratedCheckoutCustomer;
 
 export interface BraintreeAcceleratedCheckoutCustomer {
     authenticationState?: string;
-    addresses?: Address[];
+    addresses?: CustomerAddress[];
     instruments?: CardInstrument[];
 }

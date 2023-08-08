@@ -1,4 +1,4 @@
-export { default as Customer } from './customer';
+export { default as Customer, CustomerAddress } from './customer';
 export { default as CustomerCredentials } from './customer-credentials';
 export { default as CustomerStrategy } from './customer-strategy';
 export { default as CustomerStrategyFactory } from './customer-strategy-factory';

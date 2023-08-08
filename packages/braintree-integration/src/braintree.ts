@@ -605,6 +605,7 @@ export interface BraintreeConnectProfileData {
 }
 
 export interface BraintreeConnectAddress {
+    id?: string;
     firstName?: string;
     lastName?: string;
     company?: string;
