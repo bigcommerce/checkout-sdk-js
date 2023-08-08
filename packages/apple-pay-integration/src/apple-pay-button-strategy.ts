@@ -79,7 +79,11 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         const state = this._paymentIntegrationService.getState();
 
+        console.log('BEFORE PAYMENT METHOD');
+
         this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
+
+        console.log('AFTER PAYMENT METHOD');
 
         await this._paymentIntegrationService.verifyCheckoutSpamProtection();
 
