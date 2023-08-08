@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.420.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.419.0...v1.420.0) (2023-08-08)
+
+
+### Features
+
+* **payment:** PAYPAL-2692 removed this.paypalSdk ([f2b56f3](https://github.com/bigcommerce/checkout-sdk-js/commit/f2b56f3c636ca3e43083945b6d24aed64aeea254))
+
 ## [1.419.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.418.1...v1.419.0) (2023-08-08)
 
 
