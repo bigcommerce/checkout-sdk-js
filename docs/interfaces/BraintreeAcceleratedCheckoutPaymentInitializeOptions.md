@@ -15,21 +15,31 @@ Also, Braintree requires specific options to initialize Braintree Accelerated Ch
 service.initializePayment({
     methodId: 'braintreeacceleratedcheckout',
     braintreeacceleratedcheckout: {
-        container: '#container',
+        onInit: (renderPayPalComponentMethod) => renderPayPalComponentMethod('#container-id');
     },
 });
 ```
 
 ## Table of contents
 
-### Properties
+### Methods
 
-- [container](BraintreeAcceleratedCheckoutPaymentInitializeOptions.md#container)
+- [onInit](BraintreeAcceleratedCheckoutPaymentInitializeOptions.md#oninit)
 
-## Properties
+## Methods
 
-### container
+### onInit
 
-• **container**: `string`
+▸ `Optional` **onInit**(`renderPayPalComponentMethod`): `void`
 
 The CSS selector of a container where the payment widget should be inserted into.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `renderPayPalComponentMethod` | (`container`: `string`) => `void` |
+
+#### Returns
+
+`void`
