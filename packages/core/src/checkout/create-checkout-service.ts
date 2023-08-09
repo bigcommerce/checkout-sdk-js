@@ -19,7 +19,12 @@ import {
     CustomerRequestSender,
     CustomerStrategyActionCreator,
 } from '../customer';
-import { ExtensionActionCreator, ExtensionMessenger, ExtensionRequestSender } from '../extension';
+import {
+    createExtensionEventBroadcaster,
+    ExtensionActionCreator,
+    ExtensionMessenger,
+    ExtensionRequestSender,
+} from '../extension';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import * as defaultPaymentStrategyFactories from '../generated/payment-strategies';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -58,6 +63,8 @@ import CheckoutRequestSender from './checkout-request-sender';
 import CheckoutService from './checkout-service';
 import CheckoutValidator from './checkout-validator';
 import createCheckoutStore from './create-checkout-store';
+import { createCheckoutSelectorsFactory } from './create-checkout-selectors';
+import { createDataStoreProjection } from '../common/data-store';
 
 /**
  * Creates an instance of `CheckoutService`.
@@ -137,10 +144,14 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const extensionActionCreator = new ExtensionActionCreator(
         new ExtensionRequestSender(requestSender),
     );
+    const extensionMessenger = new ExtensionMessenger(store);
+    const storeProjection = createDataStoreProjection(store, createCheckoutSelectorsFactory());
 
     return new CheckoutService(
         store,
-        new ExtensionMessenger(store, {}, {}),
+        storeProjection,
+        extensionMessenger,
+        createExtensionEventBroadcaster(storeProjection, extensionMessenger),
         new BillingAddressActionCreator(
             new BillingAddressRequestSender(requestSender),
             subscriptionsActionCreator,

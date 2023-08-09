@@ -3,7 +3,8 @@ import { EventEmitter } from 'events';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ErrorResponseBody, StoreConfig } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { getConfig } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
@@ -15,7 +16,7 @@ import { Extension, ExtensionRegion } from './extension';
 import { ExtensionActionCreator } from './extension-action-creator';
 import { ExtensionActionType } from './extension-actions';
 import { ExtensionRequestSender } from './extension-request-sender';
-import { getExtensionCommand, getExtensions, getExtensionState } from './extension.mock';
+import { getExtensionCommand, getExtensions } from './extension.mock';
 
 describe('ExtensionActionCreator', () => {
     let errorResponse: Response<ErrorResponseBody>;
@@ -23,15 +24,22 @@ describe('ExtensionActionCreator', () => {
     let extensionRequestSender: ExtensionRequestSender;
     let extensionsResponse: Response<Extension[]>;
     let store: CheckoutStore;
+    let storeConfig: StoreConfig;
 
     beforeEach(() => {
         errorResponse = getErrorResponse();
         extensionsResponse = getResponse(getExtensions());
         store = createCheckoutStore(getCheckoutStoreState());
+        storeConfig = getConfig().storeConfig;
+
+        storeConfig.checkoutSettings.features = {
+            'PROJECT-5029.checkout_extension': true,
+        };
 
         extensionRequestSender = new ExtensionRequestSender(createRequestSender());
         extensionActionCreator = new ExtensionActionCreator(extensionRequestSender);
 
+        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(storeConfig);
         jest.spyOn(extensionRequestSender, 'loadExtensions').mockReturnValue(
             Promise.resolve(extensionsResponse),
         );
@@ -84,13 +92,9 @@ describe('ExtensionActionCreator', () => {
 
     describe('#renderExtension()', () => {
         it('throws error if unable to find an extension', async () => {
-            store = createCheckoutStore({
-                ...getCheckoutStoreState(),
-                extensions: {
-                    ...getExtensionState(),
-                    data: getExtensions().slice(0, 1),
-                },
-            });
+            jest.spyOn(store.getState().extensions, 'getExtensionByRegion').mockReturnValue(
+                undefined,
+            );
 
             const errorHandler = jest.fn((action) => of(action));
 
@@ -161,6 +165,24 @@ describe('ExtensionActionCreator', () => {
                     error: true,
                 },
             ]);
+        });
+
+        it('does nothing if the experiment is off', async () => {
+            storeConfig.checkoutSettings.features = {};
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+                storeConfig,
+            );
+
+            const actions = await from(
+                extensionActionCreator.renderExtension(
+                    'foo',
+                    ExtensionRegion.ShippingShippingAddressFormBefore,
+                )(store),
+            )
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([]);
         });
     });
 });

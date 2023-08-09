@@ -1,6 +1,6 @@
 import ResizableIframeCreator from '../embedded-checkout/resizable-iframe-creator';
 
-import { Extension } from './extension';
+import { Extension, ExtensionIframeConfig } from './extension';
 
 export class ExtensionIframe {
     private _iframe: HTMLIFrameElement | undefined;
@@ -9,12 +9,15 @@ export class ExtensionIframe {
     constructor(
         private _containerId: string,
         private _extension: Extension,
-        private _cartId: string,
+        private _config: ExtensionIframeConfig,
     ) {
+        const { cartId, parentOrigin } = this._config;
+
         this._url = new URL(this._extension.url);
 
         this._url.searchParams.set('extensionId', this._extension.id);
-        this._url.searchParams.set('cartId', this._cartId);
+        this._url.searchParams.set('cartId', cartId);
+        this._url.searchParams.set('parentOrigin', parentOrigin);
     }
 
     async attach(): Promise<void> {

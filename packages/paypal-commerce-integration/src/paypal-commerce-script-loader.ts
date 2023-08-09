@@ -19,7 +19,6 @@ const PAYPAL_SDK_VERSION = '5.0.5';
 
 export default class PayPalCommerceScriptLoader {
     private window: PayPalCommerceHostWindow;
-    private paypalSdk?: PayPalSDK;
 
     constructor(private scriptLoader: ScriptLoader) {
         this.window = window;
@@ -30,17 +29,13 @@ export default class PayPalCommerceScriptLoader {
         currencyCode: string,
         initializesOnCheckoutPage?: boolean,
     ): Promise<PayPalSDK> {
-        if (!this.paypalSdk) {
-            this.paypalSdk = await this.loadPayPalSDK(
-                this.getPayPalSdkScriptConfigOrThrow(
-                    paymentMethod,
-                    currencyCode,
-                    initializesOnCheckoutPage,
-                ),
-            );
-        }
-
-        return this.paypalSdk;
+        return this.loadPayPalSDK(
+            this.getPayPalSdkScriptConfigOrThrow(
+                paymentMethod,
+                currencyCode,
+                initializesOnCheckoutPage,
+            ),
+        );
     }
 
     private async loadPayPalSDK(
@@ -130,7 +125,7 @@ export default class PayPalCommerceScriptLoader {
             'enable-funding': enableFunding.length > 0 ? enableFunding : undefined,
             'disable-funding': disableFunding.length > 0 ? disableFunding : undefined,
             commit,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields'],
+            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
             currency: currencyCode,
             intent,
             ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),

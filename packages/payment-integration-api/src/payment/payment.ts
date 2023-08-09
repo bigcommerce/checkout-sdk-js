@@ -124,6 +124,7 @@ export interface NonceInstrument {
     shouldSaveInstrument?: boolean;
     shouldSetAsDefaultInstrument?: boolean;
     deviceSessionId?: string;
+    tokenType?: string;
 }
 
 export interface VaultedInstrument {

@@ -5,6 +5,7 @@ import getCart from './carts.mock';
 import getCheckout from './checkouts.mock';
 import getConfig from './config.mock';
 import getConsignment from './consignment.mock';
+import getCountries from './countries.mock';
 import { getCustomer } from './customer.mock';
 import { getOrder } from './orders.mock';
 
@@ -18,6 +19,7 @@ const state = {
     getCheckoutOrThrow: jest.fn(() => getCheckout()),
     getConsignments: jest.fn(() => [getConsignment()]),
     getConsignmentsOrThrow: jest.fn(() => [getConsignment()]),
+    getCountries: jest.fn(() => getCountries()),
     getCustomer: jest.fn(() => getCustomer()),
     getCustomerOrThrow: jest.fn(() => getCustomer()),
     getHost: jest.fn(),
@@ -30,6 +32,8 @@ const state = {
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
     getPaymentMethod: jest.fn(),
     getPaymentMethodOrThrow: jest.fn(),
+    getPaymentProviderCustomer: jest.fn(),
+    getPaymentProviderCustomerOrThrow: jest.fn(),
     getPaymentStatus: jest.fn(),
 };
 
@@ -50,6 +54,7 @@ const signOutCustomer = jest.fn();
 const selectShippingOption = jest.fn();
 const applyStoreCredit = jest.fn();
 const verifyCheckoutSpamProtection = jest.fn();
+const updatePaymentProviderCustomer = jest.fn();
 
 const PaymentIntegrationServiceMock = jest
     .fn<PaymentIntegrationService>()
@@ -73,6 +78,7 @@ const PaymentIntegrationServiceMock = jest
             selectShippingOption,
             applyStoreCredit,
             verifyCheckoutSpamProtection,
+            updatePaymentProviderCustomer,
         };
     });
 

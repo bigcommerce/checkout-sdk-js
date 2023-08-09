@@ -1,3 +1,5 @@
+import { getConsignments } from '../shipping/consignments.mock';
+
 import { Extension, ExtensionRegion } from './extension';
 import { ExtensionEvent, ExtensionEventType } from './extension-client';
 import { ExtensionCommand, ExtensionCommandType } from './extension-command';
@@ -50,7 +52,11 @@ export function getExtensionEvent(): {
     return {
         origin: 'https://host.store',
         data: {
-            type: ExtensionEventType.CheckoutLoaded,
+            type: ExtensionEventType.ConsignmentsChanged,
+            payload: {
+                consignments: getConsignments(),
+                previousConsignments: [],
+            },
         },
     };
 }

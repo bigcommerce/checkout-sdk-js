@@ -10,6 +10,7 @@ import {
     ExtensionEventMap,
     InitializeExtensionServiceOptions,
 } from './extension-client';
+import { ExtensionInternalCommand } from './extension-internal-commands';
 import ExtensionService from './extension-service';
 
 export default function initializeExtensionService(options: InitializeExtensionServiceOptions) {
@@ -20,6 +21,7 @@ export default function initializeExtensionService(options: InitializeExtensionS
     const extension = new ExtensionService(
         new IframeEventListener<ExtensionEventMap>(parentOrigin),
         new IframeEventPoster<ExtensionCommand>(parentOrigin),
+        new IframeEventPoster<ExtensionInternalCommand>(parentOrigin),
     );
 
     extension.initialize(extensionId);

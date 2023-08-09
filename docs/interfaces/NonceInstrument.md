@@ -10,6 +10,7 @@
 - [nonce](NonceInstrument.md#nonce)
 - [shouldSaveInstrument](NonceInstrument.md#shouldsaveinstrument)
 - [shouldSetAsDefaultInstrument](NonceInstrument.md#shouldsetasdefaultinstrument)
+- [tokenType](NonceInstrument.md#tokentype)
 
 ## Properties
 
@@ -34,3 +35,9 @@ ___
 ### shouldSetAsDefaultInstrument
 
 • `Optional` **shouldSetAsDefaultInstrument**: `boolean`
+
+___
+
+### tokenType
+
+• `Optional` **tokenType**: `string`

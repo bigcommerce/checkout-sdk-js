@@ -1,5 +1,5 @@
 module.exports = {
-    displayName: 'fortis-integration',
+    displayName: 'storage',
     preset: '../../jest.preset.js',
     globals: {
         'ts-jest': {
@@ -7,6 +7,6 @@ module.exports = {
             diagnostics: false,
         },
     },
-    setupFilesAfterEnv: ['../../jest-setup.js'],
-    coverageDirectory: '../../coverage/packages/fortis-integration',
+    setupFilesAfterEnv: ["../../jest-setup.js"],
+    coverageDirectory: '../../coverage/packages/storage',
 };

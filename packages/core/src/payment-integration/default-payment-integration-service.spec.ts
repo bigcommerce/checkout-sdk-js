@@ -23,6 +23,7 @@ import { CustomerActionCreator } from '../customer';
 import { HostedForm, HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
 import { getOrder } from '../order/orders.mock';
+import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
 import { getPayment } from '../payment/payments.mock';
@@ -50,7 +51,10 @@ describe('DefaultPaymentIntegrationService', () => {
         CheckoutActionCreator,
         'loadCheckout' | 'loadCurrentCheckout' | 'loadDefaultCheckout'
     >;
-    let orderActionCreator: Pick<OrderActionCreator, 'submitOrder' | 'finalizeOrder'>;
+    let orderActionCreator: Pick<
+        OrderActionCreator,
+        'submitOrder' | 'finalizeOrder' | 'loadCurrentOrder'
+    >;
     let billingAddressActionCreator: Pick<BillingAddressActionCreator, 'updateAddress'>;
     let consignmentActionCreator: Pick<
         ConsignmentActionCreator,
@@ -68,6 +72,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let customerActionCreator: Pick<CustomerActionCreator, 'signInCustomer' | 'signOutCustomer'>;
     let cartRequestSender: CartRequestSender;
     let storeCreditActionCreator: Pick<StoreCreditActionCreator, 'applyStoreCredit'>;
+    let paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator;
 
     beforeEach(() => {
         requestSender = createRequestSender();
@@ -109,6 +114,7 @@ describe('DefaultPaymentIntegrationService', () => {
         orderActionCreator = {
             submitOrder: jest.fn(async () => () => createAction('SUBMIT_ORDER')),
             finalizeOrder: jest.fn(async () => () => createAction('FINALIZE_ORDER')),
+            loadCurrentOrder: jest.fn(async () => () => createAction('LOAD_CURRENT_ORDER')),
         };
 
         billingAddressActionCreator = {
@@ -148,6 +154,12 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
+        paymentProviderCustomerActionCreator = {
+            updatePaymentProviderCustomer: jest.fn(
+                async () => () => createAction('UPDATE_PAYMENT_PROVIDER_CUSTOMER'),
+            ),
+        };
+
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
@@ -162,6 +174,7 @@ describe('DefaultPaymentIntegrationService', () => {
             cartRequestSender,
             storeCreditActionCreator as StoreCreditActionCreator,
             spamProtectionActionCreator as SpamProtectionActionCreator,
+            paymentProviderCustomerActionCreator,
         );
     });
 
@@ -403,6 +416,16 @@ describe('DefaultPaymentIntegrationService', () => {
                     params: {},
                 }),
             );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#loadCurrentOrder', () => {
+        it('loads current order', async () => {
+            const output = await subject.loadCurrentOrder();
+
+            expect(orderActionCreator.loadCurrentOrder).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(orderActionCreator.loadCurrentOrder());
             expect(output).toEqual(paymentIntegrationSelectors);
         });
     });

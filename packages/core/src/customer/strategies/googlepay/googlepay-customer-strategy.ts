@@ -41,13 +41,17 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
+        this._googlePayPaymentProcessor.updateShouldThrowInvalidError(false);
+
         return this._googlePayPaymentProcessor
             .initialize(methodId)
-            .then(() => {
-                this._walletButton = this._createSignInButton(
-                    googlePayOptions.container,
-                    googlePayOptions,
-                );
+            .then((isReadyToPay: boolean) => {
+                if (isReadyToPay) {
+                    this._walletButton = this._createSignInButton(
+                        googlePayOptions.container,
+                        googlePayOptions,
+                    );
+                }
             })
             .then(() => this._store.getState());
     }
@@ -160,6 +164,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         if (options.methodId === MethodType.GOOGLEPAY_STRIPEUPE && options.googlepaystripeupe) {
             return options.googlepaystripeupe;
         }
+
         if (
             options.methodId === MethodType.GOOGLEPAY_WORLDPAYACCESS &&
             options.googlepayworldpayaccess

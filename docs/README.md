@@ -103,6 +103,7 @@
 - [BasePaymentInitializeOptions](interfaces/BasePaymentInitializeOptions.md)
 - [BillingAddress](interfaces/BillingAddress.md)
 - [BillingAddressRequestBody](interfaces/BillingAddressRequestBody.md)
+- [BirthDate](interfaces/BirthDate.md)
 - [BlockElementStyles](interfaces/BlockElementStyles.md)
 - [BlueSnapDirectAPMInitializeOptions](interfaces/BlueSnapDirectAPMInitializeOptions.md)
 - [BlueSnapDirectStyleProps](interfaces/BlueSnapDirectStyleProps.md)
@@ -116,6 +117,8 @@
 - [BoltBuyNowInitializeOptions](interfaces/BoltBuyNowInitializeOptions.md)
 - [BoltCustomerInitializeOptions](interfaces/BoltCustomerInitializeOptions.md)
 - [BoltPaymentInitializeOptions](interfaces/BoltPaymentInitializeOptions.md)
+- [BraintreeAcceleratedCheckoutCustomer](interfaces/BraintreeAcceleratedCheckoutCustomer.md)
+- [BraintreeAcceleratedCheckoutPaymentInitializeOptions](interfaces/BraintreeAcceleratedCheckoutPaymentInitializeOptions.md)
 - [BraintreeError](interfaces/BraintreeError.md)
 - [BraintreeError_2](interfaces/BraintreeError_2.md)
 - [BraintreeFormFieldCardTypeChangeEventData](interfaces/BraintreeFormFieldCardTypeChangeEventData.md)
@@ -223,12 +226,14 @@
 - [EmbeddedContentOptions](interfaces/EmbeddedContentOptions.md)
 - [ExecutePaymentMethodCheckoutOptions](interfaces/ExecutePaymentMethodCheckoutOptions.md)
 - [Extension](interfaces/Extension.md)
+- [ExtensionCommandMap](interfaces/ExtensionCommandMap.md)
 - [Fee](interfaces/Fee.md)
 - [FlashMessage](interfaces/FlashMessage.md)
 - [FormField](interfaces/FormField.md)
 - [FormFieldItem](interfaces/FormFieldItem.md)
 - [FormFieldOptions](interfaces/FormFieldOptions.md)
 - [FormFields](interfaces/FormFields.md)
+- [FrameLoadedCommand](interfaces/FrameLoadedCommand.md)
 - [GatewayOrderPayment](interfaces/GatewayOrderPayment.md)
 - [GiftCertificate](interfaces/GiftCertificate.md)
 - [GiftCertificateItem](interfaces/GiftCertificateItem.md)
@@ -318,6 +323,7 @@
 - [PaymentRequestOptions](interfaces/PaymentRequestOptions.md)
 - [PaymentSettings](interfaces/PaymentSettings.md)
 - [PaypalButtonInitializeOptions](interfaces/PaypalButtonInitializeOptions.md)
+- [PaypalCommerceRatePay](interfaces/PaypalCommerceRatePay.md)
 - [PaypalExpressPaymentInitializeOptions](interfaces/PaypalExpressPaymentInitializeOptions.md)
 - [PaypalStyleOptions](interfaces/PaypalStyleOptions.md)
 - [PhysicalItem](interfaces/PhysicalItem.md)
@@ -390,6 +396,7 @@
 - [WithBoltButtonInitializeOptions](interfaces/WithBoltButtonInitializeOptions.md)
 - [WithBoltCustomerInitializeOptions](interfaces/WithBoltCustomerInitializeOptions.md)
 - [WithBoltPaymentInitializeOptions](interfaces/WithBoltPaymentInitializeOptions.md)
+- [WithBraintreeAcceleratedCheckoutPaymentInitializeOptions](interfaces/WithBraintreeAcceleratedCheckoutPaymentInitializeOptions.md)
 - [WithBraintreeLocalMethodsPaymentInitializeOptions](interfaces/WithBraintreeLocalMethodsPaymentInitializeOptions.md)
 - [WithBraintreePaypalAchPaymentInitializeOptions](interfaces/WithBraintreePaypalAchPaymentInitializeOptions.md)
 - [WithBraintreePaypalCustomerInitializeOptions](interfaces/WithBraintreePaypalCustomerInitializeOptions.md)
@@ -439,8 +446,6 @@
 - [ConsignmentsRequestBody](README.md#consignmentsrequestbody)
 - [CustomerAddressRequestBody](README.md#customeraddressrequestbody)
 - [CustomerInitializeOptions](README.md#customerinitializeoptions)
-- [ExtensionCommand](README.md#extensioncommand)
-- [ExtensionCommandHandler](README.md#extensioncommandhandler)
 - [FlashMessageType](README.md#flashmessagetype)
 - [FormFieldFieldType](README.md#formfieldfieldtype)
 - [FormFieldType](README.md#formfieldtype)
@@ -463,6 +468,7 @@
 - [OrderPayments](README.md#orderpayments)
 - [PaymentInitializeOptions](README.md#paymentinitializeoptions)
 - [PaymentInstrument](README.md#paymentinstrument)
+- [PaymentProviderCustomer](README.md#paymentprovidercustomer)
 - [StripeElementOptions](README.md#stripeelementoptions)
 - [StripeEventType](README.md#stripeeventtype)
 
@@ -607,32 +613,6 @@ ___
 
 ___
 
-### ExtensionCommand
-
-Ƭ **ExtensionCommand**: [`ReloadCheckoutCommand`](interfaces/ReloadCheckoutCommand.md) \| [`ShowLoadingIndicatorCommand`](interfaces/ShowLoadingIndicatorCommand.md) \| [`SetIframeStyleCommand`](interfaces/SetIframeStyleCommand.md)
-
-___
-
-### ExtensionCommandHandler
-
-Ƭ **ExtensionCommandHandler**: (`data`: [`ExtensionCommand`](README.md#extensioncommand)) => `void`
-
-#### Type declaration
-
-▸ (`data`): `void`
-
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `data` | [`ExtensionCommand`](README.md#extensioncommand) |
-
-##### Returns
-
-`void`
-
-___
-
 ### FlashMessageType
 
 Ƭ **FlashMessageType**: ``"error"`` \| ``"info"`` \| ``"warning"`` \| ``"success"``
@@ -762,13 +742,19 @@ ___
 
 ### PaymentInitializeOptions
 
-Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md) & [`WithBlueSnapDirectAPMPaymentInitializeOptions`](interfaces/WithBlueSnapDirectAPMPaymentInitializeOptions.md) & [`WithBoltPaymentInitializeOptions`](interfaces/WithBoltPaymentInitializeOptions.md) & [`WithBraintreePaypalAchPaymentInitializeOptions`](interfaces/WithBraintreePaypalAchPaymentInitializeOptions.md) & [`WithBraintreeLocalMethodsPaymentInitializeOptions`](interfaces/WithBraintreeLocalMethodsPaymentInitializeOptions.md) & [`WithCreditCardPaymentInitializeOptions`](interfaces/WithCreditCardPaymentInitializeOptions.md) & [`WithPayPalCommercePaymentInitializeOptions`](interfaces/WithPayPalCommercePaymentInitializeOptions.md) & [`WithPayPalCommerceCreditPaymentInitializeOptions`](interfaces/WithPayPalCommerceCreditPaymentInitializeOptions.md) & [`WithPayPalCommerceVenmoPaymentInitializeOptions`](interfaces/WithPayPalCommerceVenmoPaymentInitializeOptions.md) & [`WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions`](interfaces/WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions.md) & [`WithPayPalCommerceCreditCardsPaymentInitializeOptions`](interfaces/WithPayPalCommerceCreditCardsPaymentInitializeOptions.md) & [`WithSquareV2PaymentInitializeOptions`](interfaces/WithSquareV2PaymentInitializeOptions.md)
+Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md) & [`WithBlueSnapDirectAPMPaymentInitializeOptions`](interfaces/WithBlueSnapDirectAPMPaymentInitializeOptions.md) & [`WithBoltPaymentInitializeOptions`](interfaces/WithBoltPaymentInitializeOptions.md) & [`WithBraintreePaypalAchPaymentInitializeOptions`](interfaces/WithBraintreePaypalAchPaymentInitializeOptions.md) & [`WithBraintreeLocalMethodsPaymentInitializeOptions`](interfaces/WithBraintreeLocalMethodsPaymentInitializeOptions.md) & [`WithBraintreeAcceleratedCheckoutPaymentInitializeOptions`](interfaces/WithBraintreeAcceleratedCheckoutPaymentInitializeOptions.md) & [`WithCreditCardPaymentInitializeOptions`](interfaces/WithCreditCardPaymentInitializeOptions.md) & [`WithPayPalCommercePaymentInitializeOptions`](interfaces/WithPayPalCommercePaymentInitializeOptions.md) & [`WithPayPalCommerceCreditPaymentInitializeOptions`](interfaces/WithPayPalCommerceCreditPaymentInitializeOptions.md) & [`WithPayPalCommerceVenmoPaymentInitializeOptions`](interfaces/WithPayPalCommerceVenmoPaymentInitializeOptions.md) & [`WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions`](interfaces/WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions.md) & [`WithPayPalCommerceCreditCardsPaymentInitializeOptions`](interfaces/WithPayPalCommerceCreditCardsPaymentInitializeOptions.md) & [`WithSquareV2PaymentInitializeOptions`](interfaces/WithSquareV2PaymentInitializeOptions.md)
 
 ___
 
 ### PaymentInstrument
 
 Ƭ **PaymentInstrument**: [`CardInstrument`](interfaces/CardInstrument.md) \| [`AccountInstrument`](README.md#accountinstrument)
+
+___
+
+### PaymentProviderCustomer
+
+Ƭ **PaymentProviderCustomer**: [`BraintreeAcceleratedCheckoutCustomer`](interfaces/BraintreeAcceleratedCheckoutCustomer.md)
 
 ___
 

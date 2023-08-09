@@ -1289,6 +1289,12 @@ declare interface BillingAddressRequestBody extends AddressRequestBody {
     email?: string;
 }
 
+declare interface BirthDate {
+    getFullYear(): number;
+    getDate(): number;
+    getMonth(): number;
+}
+
 declare interface BlockElementStyles extends InlineElementStyles {
     backgroundColor?: string;
     boxShadow?: string;
@@ -1523,6 +1529,39 @@ declare interface BoltPaymentInitializeOptions {
      * A callback that gets called when the customer selects Bolt as payment option.
      */
     onPaymentSelect?(hasBoltAccount: boolean): void;
+}
+
+declare interface BraintreeAcceleratedCheckoutCustomer {
+    authenticationState?: string;
+    addresses?: CustomerAddress[];
+    instruments?: CardInstrument[];
+}
+
+/**
+ * A set of options that are required to initialize the Braintree Accelerated Checkout payment
+ * method for presenting on the page.
+ *
+ *
+ * Also, Braintree requires specific options to initialize Braintree Accelerated Checkout Credit Card Component
+ * ```html
+ * <!-- This is where the Braintree Credit Card Component will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'braintreeacceleratedcheckout',
+ *     braintreeacceleratedcheckout: {
+ *         onInit: (renderPayPalComponentMethod) => renderPayPalComponentMethod('#container-id');
+ *     },
+ * });
+ * ```
+ */
+declare interface BraintreeAcceleratedCheckoutPaymentInitializeOptions {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    onInit?: (renderPayPalComponentMethod: (container: string) => void) => void;
 }
 
 declare interface BraintreeError extends Error {
@@ -2450,7 +2489,9 @@ declare interface CheckoutSelectors {
  */
 declare class CheckoutService {
     private _store;
+    private _storeProjection;
     private _extensionMessenger;
+    private _extensionEventBroadcaster;
     private _billingAddressActionCreator;
     private _checkoutActionCreator;
     private _configActionCreator;
@@ -2474,9 +2515,7 @@ declare class CheckoutService {
     private _subscriptionsActionCreator;
     private _formFieldsActionCreator;
     private _extensionActionCreator;
-    private _storeProjection;
     private _errorTransformer;
-    private _selectorsFactory;
     /**
      * Returns a snapshot of the current checkout state.
      *
@@ -3450,7 +3489,7 @@ declare class CheckoutService {
      * @param handler - The handler function for the extension command.
      * @returns A function that, when called, will deregister the command handler.
      */
-    handleExtensionCommand(extensionId: string, command: ExtensionCommandType, handler: ExtensionCommandHandler): () => void;
+    handleExtensionCommand<T extends keyof ExtensionCommandMap>(extensionId: string, command: T, handler: (command: ExtensionCommandMap[T]) => void): () => void;
     /**
      * Dispatches an action through the data store and returns the current state
      * once the action is dispatched.
@@ -3997,6 +4036,21 @@ declare interface CheckoutStoreSelector {
      * @returns The list of extensions if it is loaded, otherwise undefined.
      */
     getExtensions(): Extension[] | undefined;
+    /**
+     * Gets payment provider customers data.
+     *
+     * @alpha
+     * @returns The object with payment provider customer data
+     */
+    getPaymentProviderCustomer(): PaymentProviderCustomer | undefined;
+    /**
+     * Gets the extension associated with a given region.
+     *
+     * @alpha
+     * @param region - A checkout extension region.
+     * @returns The extension corresponding to the specified region, otherwise undefined.
+     */
+    getExtensionByRegion(region: ExtensionRegion): Extension | undefined;
 }
 
 /**
@@ -4982,11 +5036,15 @@ declare interface Extension {
     url: string;
 }
 
-declare type ExtensionCommand = ReloadCheckoutCommand | ShowLoadingIndicatorCommand | SetIframeStyleCommand;
-
-declare type ExtensionCommandHandler = (data: ExtensionCommand) => void;
+declare interface ExtensionCommandMap {
+    [ExtensionCommandType.FrameLoaded]: FrameLoadedCommand;
+    [ExtensionCommandType.ReloadCheckout]: ReloadCheckoutCommand;
+    [ExtensionCommandType.ShowLoadingIndicator]: ShowLoadingIndicatorCommand;
+    [ExtensionCommandType.SetIframeStyle]: SetIframeStyleCommand;
+}
 
 declare const enum ExtensionCommandType {
+    FrameLoaded = "FRAME_LOADED",
     ReloadCheckout = "RELOAD_CHECKOUT",
     ShowLoadingIndicator = "SHOW_LOADING_INDICATOR",
     SetIframeStyle = "SET_IFRAME_STYLE"
@@ -5051,6 +5109,13 @@ declare interface FormFields {
     customerAccount: FormField[];
     shippingAddress: FormField[];
     billingAddress: FormField[];
+}
+
+declare interface FrameLoadedCommand {
+    type: ExtensionCommandType.FrameLoaded;
+    payload: {
+        extensionId: string;
+    };
 }
 
 declare interface GatewayOrderPayment extends OrderPayment {
@@ -5964,6 +6029,7 @@ declare interface NonceInstrument {
     shouldSaveInstrument?: boolean;
     shouldSetAsDefaultInstrument?: boolean;
     deviceSessionId?: string;
+    tokenType?: string;
 }
 
 declare type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
@@ -6782,7 +6848,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -6819,6 +6885,8 @@ declare interface PaymentMethodConfig {
     returnUrl?: string;
     testMode?: boolean;
 }
+
+declare type PaymentProviderCustomer = BraintreeAcceleratedCheckoutCustomer;
 
 /**
  * The set of options for configuring any requests related to the payment step of
@@ -6899,6 +6967,34 @@ declare enum PaypalButtonStyleSizeOption {
     MEDIUM = "medium",
     LARGE = "large",
     RESPONSIVE = "responsive"
+}
+
+declare interface PaypalCommerceRatePay {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    container: string;
+    /**
+     * The CSS selector of a container where the legal text should be inserted into.
+     */
+    legalTextContainer: string;
+    /**
+     * A callback that gets form values
+     */
+    getFieldsValues?(): {
+        ratepayBirthDate: BirthDate;
+        ratepayPhoneNumber: string;
+        ratepayPhoneCountryCode: string;
+    };
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: unknown): void;
 }
 
 /**
@@ -7987,6 +8083,10 @@ declare interface WithBoltPaymentInitializeOptions {
     bolt?: BoltPaymentInitializeOptions;
 }
 
+declare interface WithBraintreeAcceleratedCheckoutPaymentInitializeOptions {
+    braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutPaymentInitializeOptions;
+}
+
 declare interface WithBraintreeLocalMethodsPaymentInitializeOptions {
     braintreelocalmethods?: BraintreeLocalMethods;
 }
@@ -8050,6 +8150,7 @@ declare interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {
 declare interface WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions {
     paypalcommerce?: PayPalCommerceAlternativeMethodsPaymentOptions;
     paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsPaymentOptions;
+    paypalcommerceratepay?: PaypalCommerceRatePay;
 }
 
 declare interface WithPayPalCommerceButtonInitializeOptions {

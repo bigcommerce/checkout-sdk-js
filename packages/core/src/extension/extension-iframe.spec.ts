@@ -23,7 +23,10 @@ describe('ExtensionIframe', () => {
         container.id = 'containerId';
         cart = getCart();
         extension = getExtensions()[0];
-        extensionIframe = new ExtensionIframe('containerId', extension, cart.id);
+        extensionIframe = new ExtensionIframe('containerId', extension, {
+            cartId: cart.id,
+            parentOrigin: parseUrl('https://www.test.com').origin,
+        });
         extensionOrigin = parseUrl(extension.url).origin;
         eventEmitter = new EventEmitter();
 
@@ -55,6 +58,7 @@ describe('ExtensionIframe', () => {
         expect(url.origin).toBe(extensionOrigin);
         expect(url.searchParams.get('extensionId')).toBe(extension.id);
         expect(url.searchParams.get('cartId')).toBe(cart.id);
+        expect(url.searchParams.get('parentOrigin')).toBe('https://www.test.com');
     });
 
     it('only attaches iframe once for an extension', async () => {

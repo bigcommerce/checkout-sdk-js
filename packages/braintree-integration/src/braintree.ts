@@ -41,6 +41,7 @@ export interface BraintreeModule {
 
 export interface BraintreeSDK {
     client?: BraintreeClientCreator;
+    connect?: BraintreeConnectCreator;
     dataCollector?: BraintreeDataCollectorCreator;
     // googlePayment?: GooglePayCreator; // TODO: should be added in future migration
     hostedFields?: BraintreeHostedFieldsCreator;
@@ -519,10 +520,179 @@ export interface BraintreeBankAccount extends BraintreeModule {
 
 /**
  *
+ * Braintree Connect
+ *
+ */
+export type BraintreeConnectCreator = BraintreeModuleCreator<
+    BraintreeConnect,
+    BraintreeConnectConfig
+>;
+
+export interface BraintreeConnectConfig {
+    authorization: string;
+    client: BraintreeClient;
+    deviceData?: string;
+}
+
+export interface BraintreeConnect {
+    identity: BraintreeConnectIdentity;
+    ConnectCardComponent: (
+        options: BraintreeConnectCardComponentOptions,
+    ) => BraintreeConnectCardComponent;
+}
+
+export interface BraintreeConnectIdentity {
+    lookupCustomerByEmail(email: string): Promise<BraintreeConnectLookupCustomerByEmailResult>;
+    triggerAuthenticationFlow(
+        customerId: string,
+        options?: BraintreeConnectAuthenticationOptions,
+    ): Promise<BraintreeConnectAuthenticationCustomerResult>;
+}
+
+export interface BraintreeConnectLookupCustomerByEmailResult {
+    customerId?: string;
+}
+
+export interface BraintreeConnectAuthenticationOptions {
+    styles?: BraintreeConnectStylesOption;
+    fetchFullProfileData?: boolean; // default: true
+}
+
+interface BraintreeConnectStylesOption {
+    root: {
+        backgroundColorPrimary: string; // default: #ffffff,
+        errorColor: string; // default: #C40B0B
+        fontFamily: string; // default: "Helvetica, Arial, sans-serif"
+    };
+    input: {
+        borderRadius: string; // default: 0.25rem
+        borderColor: string; // default: #9E9E9E
+        focusBorderColor: string; // default: #4496F6
+    };
+    toggle: {
+        colorPrimary: string; // default: #0F005E
+        colorSecondary: string; // default: #ffffff
+    };
+    text: {
+        body: {
+            color: string; // default: #222222
+            fontSize: string; // default: 1rem
+        };
+        caption: {
+            color: string; // default: #515151
+            fontSize: string; // default: 0.875rem
+        };
+    };
+    branding: 'light' | 'dark'; // default: 'light',
+}
+
+export enum BraintreeConnectAuthenticationState {
+    SUCCEEDED = 'succeeded',
+    FAILED = 'failed',
+    CANCELED = 'canceled',
+}
+
+export interface BraintreeConnectAuthenticationCustomerResult {
+    authenticationState: BraintreeConnectAuthenticationState;
+    profileData: BraintreeConnectProfileData;
+}
+
+export interface BraintreeConnectProfileData {
+    connectCustomerAuthAssertionToken: string;
+    connectCustomerId: string;
+    addresses: BraintreeConnectAddress[];
+    cards: BraintreeConnectVaultedInstrument[];
+}
+
+export interface BraintreeConnectAddress {
+    id?: string;
+    firstName?: string;
+    lastName?: string;
+    company?: string;
+    streetAddress: string;
+    extendedAddress?: string;
+    locality: string;
+    region: string;
+    postalCode: string;
+    countryCodeNumeric?: number;
+    countryCodeAlpha2: string;
+    countryCodeAlpha3?: string;
+}
+
+export interface BraintreeConnectCardPaymentSource {
+    brand: string;
+    expiry: string;
+    lastDigits: string;
+    name?: string;
+    billingAddress: BraintreeConnectAddress;
+}
+
+export interface BraintreeConnectPaymentSource {
+    card: BraintreeConnectCardPaymentSource;
+}
+
+export interface BraintreeConnectVaultedInstrument {
+    id: string; // This is the nonce / token
+    paymentSource: BraintreeConnectPaymentSource;
+}
+
+export interface BraintreeConnectCardComponentOptions {
+    styles?: BraintreeConnectStylesOption;
+    fields: BraintreeConnectCardComponentFields;
+}
+
+export interface BraintreeConnectCardComponentFields {
+    [key: string]: BraintreeConnectCardComponentField;
+}
+export interface BraintreeConnectCardComponentField {
+    placeholder?: string;
+    prefill?: string;
+}
+
+export interface BraintreeConnectTokenizeResult {
+    nonce: string;
+    details: BraintreeConnectTokenizeDetails;
+    description: string;
+    type: string;
+}
+
+export interface BraintreeConnectTokenizeDetails {
+    bin: string;
+    cardType: string;
+    expirationMoth: string;
+    expirationYear: string;
+    cardholderName: string;
+    lastFour: string;
+    lastTwo: string;
+}
+
+export interface BraintreeConnectTokenizeOptions {
+    billingAddress?: BraintreeConnectAddress;
+    shippingAddress?: BraintreeConnectAddress;
+}
+
+export interface Card {
+    type: string;
+    niceType: string;
+    code: {
+        name: 'CVV' | 'CID' | 'CVC';
+        size: number;
+    };
+}
+
+export interface BraintreeConnectCardComponent {
+    (options: BraintreeConnectCardComponentOptions): BraintreeConnectCardComponent;
+    tokenize(options: BraintreeConnectTokenizeOptions): Promise<BraintreeConnectTokenizeResult>;
+    render(element: string): void;
+}
+
+/**
+ *
  * Other
  *
  */
 export interface BraintreeHostWindow extends Window {
     braintree?: BraintreeSDK;
     paypal?: PaypalSDK;
+    braintreeConnect?: BraintreeConnect;
 }

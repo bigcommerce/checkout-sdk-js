@@ -4,6 +4,7 @@ import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/p
 
 import {
     BraintreeClientCreator,
+    BraintreeConnect,
     BraintreeDataCollector,
     BraintreeHostWindow,
     BraintreeLocalPayment,
@@ -14,13 +15,14 @@ import BraintreeScriptLoader from './braintree-script-loader';
 import {
     getBraintreeLocalPaymentMock,
     getClientMock,
+    getConnectMock,
     getDataCollectorMock,
     getModuleCreatorMock,
     getPaypalCheckoutMock,
-} from './braintree.mock';
+} from './mocks/braintree.mock';
 
 const VERSION = '3.95.0';
-const ALPHA_VERSION = '3.95.0-connect-alpha.7';
+const ALPHA_VERSION = '3.95.0-connect-alpha.11';
 
 describe('BraintreeScriptLoader', () => {
     let scriptLoader: ScriptLoader;
@@ -92,6 +94,69 @@ describe('BraintreeScriptLoader', () => {
 
             try {
                 await braintreeScriptLoader.loadClient();
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
+            }
+        });
+    });
+
+    describe('#loadConnect()', () => {
+        let connectCreatorMock: BraintreeModuleCreator<BraintreeConnect>;
+
+        beforeEach(() => {
+            connectCreatorMock = getModuleCreatorMock(getConnectMock());
+            scriptLoader.loadScript = jest.fn(() => {
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.connect = connectCreatorMock;
+                }
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads the connect', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const connect = await braintreeScriptLoader.loadConnect();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${VERSION}/js/connect.min.js`,
+            );
+            expect(connect).toBe(connectCreatorMock);
+        });
+
+        it('loads the connect with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(braintreeInitializationData);
+
+            const connect = await braintreeScriptLoader.loadConnect();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/connect.min.js`,
+            );
+            expect(connect).toBe(connectCreatorMock);
+        });
+
+        it('loads the connect throw error if braintree does not exist in window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                {} as BraintreeHostWindow,
+            );
+
+            try {
+                await braintreeScriptLoader.loadConnect();
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
+            }
+        });
+
+        it('loads the client throw error if connect does not exist in window.braintree', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, {
+                braintree: {},
+            } as BraintreeHostWindow);
+
+            try {
+                await braintreeScriptLoader.loadConnect();
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }

@@ -26,5 +26,10 @@ export default function getPayPalSDKMock(): PayPalSDK {
             isEligible: () => true,
             render: jest.fn(),
         },
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        Legal: () => ({
+            render: jest.fn(),
+        }),
     };
 }

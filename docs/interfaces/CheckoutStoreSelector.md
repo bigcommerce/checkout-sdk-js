@@ -21,6 +21,7 @@ checkout information, such as shipping and billing details.
 - [getCoupons](CheckoutStoreSelector.md#getcoupons)
 - [getCustomer](CheckoutStoreSelector.md#getcustomer)
 - [getCustomerAccountFields](CheckoutStoreSelector.md#getcustomeraccountfields)
+- [getExtensionByRegion](CheckoutStoreSelector.md#getextensionbyregion)
 - [getExtensions](CheckoutStoreSelector.md#getextensions)
 - [getFlashMessages](CheckoutStoreSelector.md#getflashmessages)
 - [getGiftCertificates](CheckoutStoreSelector.md#getgiftcertificates)
@@ -28,6 +29,7 @@ checkout information, such as shipping and billing details.
 - [getOrder](CheckoutStoreSelector.md#getorder)
 - [getPaymentMethod](CheckoutStoreSelector.md#getpaymentmethod)
 - [getPaymentMethods](CheckoutStoreSelector.md#getpaymentmethods)
+- [getPaymentProviderCustomer](CheckoutStoreSelector.md#getpaymentprovidercustomer)
 - [getPickupOptions](CheckoutStoreSelector.md#getpickupoptions)
 - [getSelectedPaymentMethod](CheckoutStoreSelector.md#getselectedpaymentmethod)
 - [getSelectedShippingOption](CheckoutStoreSelector.md#getselectedshippingoption)
@@ -195,6 +197,28 @@ otherwise undefined.
 
 ___
 
+### getExtensionByRegion
+
+▸ **getExtensionByRegion**(`region`): `undefined` \| [`Extension`](Extension.md)
+
+Gets the extension associated with a given region.
+
+**`alpha`**
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `region` | [`ExtensionRegion`](../enums/ExtensionRegion.md) | A checkout extension region. |
+
+#### Returns
+
+`undefined` \| [`Extension`](Extension.md)
+
+The extension corresponding to the specified region, otherwise undefined.
+
+___
+
 ### getExtensions
 
 ▸ **getExtensions**(): `undefined` \| [`Extension`](Extension.md)[]
@@ -325,6 +349,22 @@ Gets a list of payment methods available for checkout.
 `undefined` \| [`PaymentMethod`](PaymentMethod.md)<`any`\>[]
 
 The list of payment methods if it is loaded, otherwise undefined.
+
+___
+
+### getPaymentProviderCustomer
+
+▸ **getPaymentProviderCustomer**(): `undefined` \| [`BraintreeAcceleratedCheckoutCustomer`](BraintreeAcceleratedCheckoutCustomer.md)
+
+Gets payment provider customers data.
+
+**`alpha`**
+
+#### Returns
+
+`undefined` \| [`BraintreeAcceleratedCheckoutCustomer`](BraintreeAcceleratedCheckoutCustomer.md)
+
+The object with payment provider customer data
 
 ___
 

@@ -75,7 +75,7 @@ describe('GooglePayCustomerStrategy', () => {
 
         jest.spyOn(formPoster, 'postForm').mockReturnValue(Promise.resolve());
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
-        jest.spyOn(paymentProcessor, 'initialize').mockReturnValue(Promise.resolve());
+        jest.spyOn(paymentProcessor, 'initialize').mockReturnValue(Promise.resolve(true));
 
         walletButton = document.createElement('a');
         walletButton.setAttribute('id', 'mockButton');

@@ -3,7 +3,9 @@ import { Cart } from './cart';
 import { Checkout } from './checkout';
 import { StoreConfig } from './config';
 import { Customer } from './customer';
+import { Country } from './geography';
 import { Order } from './order';
+import { PaymentProviderCustomer } from './payment-provider-customer';
 import { CardInstrument } from './payment/instrument';
 import PaymentMethod from './payment/payment-method';
 import { Consignment, ShippingAddress } from './shipping';
@@ -14,6 +16,8 @@ export default interface PaymentIntegrationSelectors {
 
     getBillingAddress(): BillingAddress | undefined;
     getBillingAddressOrThrow(): BillingAddress;
+
+    getCountries(): Country[] | undefined;
 
     getCart(): Cart | undefined;
     getCartOrThrow(): Cart;
@@ -53,6 +57,9 @@ export default interface PaymentIntegrationSelectors {
         gatewayId?: string,
     ): PaymentMethod<T> | undefined;
     getPaymentMethodOrThrow<T = unknown>(methodId: string, gatewayId?: string): PaymentMethod<T>;
+
+    getPaymentProviderCustomer(): PaymentProviderCustomer | undefined;
+    getPaymentProviderCustomerOrThrow(): PaymentProviderCustomer;
 
     getShippingAddress(): ShippingAddress | undefined;
     getShippingAddressOrThrow(): ShippingAddress;
