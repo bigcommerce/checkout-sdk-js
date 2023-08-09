@@ -2,7 +2,7 @@ aliases:
   - &node_executor
       executor:
         name: node/node
-        node-version: "16.19"
+        node-version: "18.17"
 
 version: 2.1
 
