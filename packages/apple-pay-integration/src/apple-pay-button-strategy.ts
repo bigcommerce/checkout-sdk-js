@@ -83,8 +83,8 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
-        console.log('CONFIG', state.getStoreConfigOrThrow());
-        console.log('PAYMENT METHOD', this._paymentMethod);
+        // console.log('CONFIG', state.getStoreConfigOrThrow());
+        // console.log('PAYMENT METHOD', this._paymentMethod);
 
         console.log('AFTER PAYMENT METHOD');
 
