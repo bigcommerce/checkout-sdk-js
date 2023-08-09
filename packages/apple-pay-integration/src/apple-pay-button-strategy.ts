@@ -85,7 +85,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         console.log('AFTER PAYMENT METHOD');
 
-        await this._paymentIntegrationService.verifyCheckoutSpamProtection();
+        // await this._paymentIntegrationService.verifyCheckoutSpamProtection();
 
         this._applePayButton = this._createButton(containerId, buttonClassName);
         this._applePayButton.addEventListener('click', this._handleWalletButtonClick.bind(this));
