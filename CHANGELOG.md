@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.421.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.420.0...v1.421.0) (2023-08-09)
+
+
+### Features
+
+* **payment:** PAYPAL-000 updated paypal connect address mapper to receive CustomerAddress instead of Address ([#2101](https://github.com/bigcommerce/checkout-sdk-js/issues/2101)) ([bb01b20](https://github.com/bigcommerce/checkout-sdk-js/commit/bb01b201d84abe0d6ee9d088b916bf074dab4744))
+
 ## [1.420.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.419.0...v1.420.0) (2023-08-08)
 
 

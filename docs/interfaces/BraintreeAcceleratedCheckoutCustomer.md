@@ -14,7 +14,7 @@
 
 ### addresses
 
-• `Optional` **addresses**: [`Address`](Address.md)[]
+• `Optional` **addresses**: [`CustomerAddress`](CustomerAddress.md)[]
 
 ___
 
