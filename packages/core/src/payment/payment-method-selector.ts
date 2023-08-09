@@ -54,6 +54,8 @@ export function createPaymentMethodSelectorFactory(): PaymentMethodSelectorFacto
     const getPaymentMethodOrThrow = createSelector(
         getPaymentMethod,
         (getPaymentMethod) => (methodId: string, gatewayId?: string) => {
+            console.log('GETPAYMENTMETHODORTHROW', getPaymentMethod(methodId, gatewayId));
+
             return guard(
                 getPaymentMethod(methodId, gatewayId),
                 () => new MissingDataError(MissingDataErrorType.MissingPaymentMethod),
