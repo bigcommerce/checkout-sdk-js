@@ -1,4 +1,5 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 
 import {
@@ -14,9 +15,18 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import { ApplePayGatewayType, HostWindow } from './apple-pay';
 import ApplePayPaymentStrategy from './apple-pay-payment-strategy';
+import ApplePayScriptLoader from './apple-pay-script-loader';
 import ApplePaySessionFactory from './apple-pay-session-factory';
-import { getApplePay } from './mocks/apple-pay-method.mock';
+import {
+    getApplePay,
+    getBraintree,
+    getBraintreeClientMock,
+    getBraintreeDataCollectorMock,
+    getDeviceDataMock,
+    getModuleCreatorMock,
+} from './mocks/apple-pay-method.mock';
 import { MockApplePaySession } from './mocks/apple-pay-payment.mock';
 
 describe('ApplePayPaymentStrategy', () => {
@@ -26,9 +36,13 @@ describe('ApplePayPaymentStrategy', () => {
     let strategy: ApplePayPaymentStrategy;
     let paymentMethod: PaymentMethod;
     let applePaySession: MockApplePaySession;
+    let applePayScriptLoader: ApplePayScriptLoader;
+    let scriptLoader: ScriptLoader;
+    let mockWindow: HostWindow;
 
     beforeEach(() => {
         applePaySession = new MockApplePaySession();
+        scriptLoader = {} as ScriptLoader;
 
         Object.defineProperty(window, 'ApplePaySession', {
             writable: true,
@@ -45,14 +59,28 @@ describe('ApplePayPaymentStrategy', () => {
 
         jest.spyOn(applePayFactory, 'create').mockReturnValue(applePaySession);
 
+        applePayScriptLoader = new ApplePayScriptLoader(scriptLoader, mockWindow);
+
         strategy = new ApplePayPaymentStrategy(
             requestSender,
             paymentIntegrationService,
             applePayFactory,
+            applePayScriptLoader,
         );
     });
 
     describe('#initialize()', () => {
+        beforeEach(() => {
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+                paymentIntegrationService.getState(),
+            );
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(getApplePay());
+        });
+
         it('throws invalid argument error if no method id', async () => {
             await expect(strategy.initialize()).rejects.toBeInstanceOf(InvalidArgumentError);
         });
@@ -66,6 +94,10 @@ describe('ApplePayPaymentStrategy', () => {
 
     describe('#execute()', () => {
         beforeEach(() => {
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+                paymentIntegrationService.getState(),
+            );
+
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -152,6 +184,69 @@ describe('ApplePayPaymentStrategy', () => {
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
             expect(applePaySession.completePayment).toHaveBeenCalled();
+        });
+
+        describe('braintree gateway', () => {
+            beforeEach(() => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockImplementation((methodId) => {
+                    if (methodId === 'applepay') {
+                        const applePayPaymentMethod = getApplePay();
+                        applePayPaymentMethod.initializationData.gateway = 'braintree';
+
+                        return applePayPaymentMethod;
+                    }
+
+                    if (methodId === 'braintree') {
+                        return getBraintree();
+                    }
+
+                    return {};
+                });
+
+                jest.spyOn(applePayScriptLoader, 'loadBraintreeClient').mockImplementation(() =>
+                    getModuleCreatorMock(getBraintreeClientMock()),
+                );
+
+                jest.spyOn(applePayScriptLoader, 'loadBraintreeDataCollector').mockImplementation(
+                    () => getModuleCreatorMock(getBraintreeDataCollectorMock()),
+                );
+            });
+
+            it('submits payment with deviceSessionId', async () => {
+                await strategy.initialize({ methodId: 'applepay' });
+
+                const payload = merge({}, getOrderRequestBody(), {
+                    payment: { methodId: paymentMethod.id },
+                });
+                const authEvent = {
+                    payment: {
+                        token: {
+                            paymentData: {},
+                            paymentMethod: {},
+                            transactionIdentifier: {},
+                        },
+                    },
+                } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
+
+                strategy.execute(payload);
+                await new Promise((resolve) => process.nextTick(resolve));
+                await applePaySession.onpaymentauthorized(authEvent);
+
+                expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                    ApplePayGatewayType.BRAINTREE,
+                );
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            deviceSessionId: getDeviceDataMock(),
+                        }),
+                    }),
+                );
+            });
         });
     });
 

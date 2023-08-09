@@ -52,6 +52,7 @@ import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 import { AdyenV2ScriptLoader } from '../adyenv2';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../braintree';
+import { getDeviceDataMock } from '../braintree/braintree.mock';
 
 import createGooglePayPaymentProcessor from './create-googlepay-payment-processor';
 import GooglePayAdyenV2PaymentProcessor from './googlepay-adyenv2-payment-processor';
@@ -81,7 +82,6 @@ describe('GooglePayPaymentStrategy', () => {
 
         return { nonce: 'verificationNonce' };
     });
-    const initializeBraintreeSDK: jest.Mock = jest.fn();
     const initializationData = {
         nonce: 'nonce',
         card_information: 'card_info',
@@ -195,10 +195,9 @@ describe('GooglePayPaymentStrategy', () => {
             Promise.resolve(getGooglePaymentDataMock()),
         );
         jest.spyOn(googlePayPaymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());
-        jest.spyOn(braintreeSDKCreator, 'initialize').mockImplementationOnce(
-            initializeBraintreeSDK,
-        );
+        jest.spyOn(braintreeSDKCreator, 'initialize').mockReturnValue(undefined);
         jest.spyOn(braintreeSDKCreator, 'get3DS').mockResolvedValue({ verifyCard });
+        jest.spyOn(braintreeSDKCreator, 'getSessionId').mockResolvedValue(getDeviceDataMock());
         jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(
             Promise.resolve(store.getState()),
         );
@@ -345,7 +344,7 @@ describe('GooglePayPaymentStrategy', () => {
 
                 await strategy.initialize(googlePayOptions);
 
-                expect(initializeBraintreeSDK).toHaveBeenCalledWith(
+                expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
                     'clienttoken',
                     updatedPaymentMethod.initializationData,
                 );
@@ -508,6 +507,40 @@ describe('GooglePayPaymentStrategy', () => {
                         nonce: 'newNonce',
                     },
                 });
+            });
+
+            it('gets again the payment information with deviceSessionId', async () => {
+                jest.spyOn(googlePayPaymentProcessor, 'displayWallet').mockReturnValue(
+                    getGooglePaymentDataMock(),
+                );
+
+                const updatedPaymentMethod = {
+                    initializationData: {
+                        ...initializationData,
+                        card_information: {
+                            type: 'type',
+                            number: 'number',
+                        },
+                        isThreeDSecureEnabled: false,
+                    },
+                    clientToken: 'clienttoken',
+                };
+
+                jest.spyOn(
+                    store.getState().paymentMethods,
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(updatedPaymentMethod);
+
+                await strategy.initialize(googlePayOptions);
+                await strategy.execute(getGoogleOrderRequestBody());
+
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            deviceSessionId: getDeviceDataMock(),
+                        }),
+                    }),
+                );
             });
 
             it('gets again the payment information and user closes widget', async () => {
