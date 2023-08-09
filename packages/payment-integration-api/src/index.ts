@@ -31,6 +31,7 @@ export {
     CustomerStrategyFactory,
     CustomerStrategyResolveId,
     Customer,
+    CustomerAddress,
     CustomerRequestOptions,
     CustomerInitializeOptions,
     ExecutePaymentMethodCheckoutOptions,

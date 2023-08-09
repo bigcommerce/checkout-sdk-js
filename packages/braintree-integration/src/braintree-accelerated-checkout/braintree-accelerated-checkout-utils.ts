@@ -1,7 +1,7 @@
 import {
-    Address,
     BraintreeAcceleratedCheckoutCustomer,
     CardInstrument,
+    CustomerAddress,
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
@@ -124,7 +124,9 @@ export default class BraintreeAcceleratedCheckoutUtils {
      * PayPal to BC data mappers
      *
      * */
-    private mapPayPalToBcAddress(addresses?: BraintreeConnectAddress[]): Address[] | undefined {
+    private mapPayPalToBcAddress(
+        addresses?: BraintreeConnectAddress[],
+    ): CustomerAddress[] | undefined {
         if (!addresses) {
             return;
         }
@@ -138,6 +140,8 @@ export default class BraintreeAcceleratedCheckoutUtils {
         };
 
         return addresses.map((address) => ({
+            id: Number(address.id),
+            type: 'paypal-address',
             firstName: address.firstName || '',
             lastName: address.lastName || '',
             company: address.company || '',

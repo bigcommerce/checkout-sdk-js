@@ -28,6 +28,7 @@ export function getBraintreeConnectProfileDataMock(): BraintreeConnectProfileDat
         connectCustomerId: 'asdasd',
         addresses: [
             {
+                id: '123123',
                 company: undefined,
                 extendedAddress: undefined,
                 firstName: 'John',
