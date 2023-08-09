@@ -93,6 +93,18 @@ describe('ApplePayButtonStrategy', () => {
             );
         });
 
+        it('doesnt call verifyCheckoutSpamProtection if checkout undefined', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCheckout').mockReturnValue(
+                undefined,
+            );
+            paymentIntegrationService.verifyCheckoutSpamProtection = jest.fn();
+            const checkoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
+            await strategy.initialize(checkoutButtonInitializeOptions);
+
+            expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalledTimes(0);
+        });
+
         it('creates the button with a custom style class name', async () => {
             const customClass = 'testClassName';
             const CheckoutButtonInitializeOptions = merge(
