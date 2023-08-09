@@ -40,7 +40,7 @@ export function createPaymentMethodSelectorFactory(): PaymentMethodSelectorFacto
                 console.log(
                     'GATEWAY',
                     gatewayId,
-                    find(paymentMethods, { id: methodId, gateway: gatewayId })
+                    find(paymentMethods, { id: methodId, gateway: gatewayId }),
                 );
             } else {
                 console.log('GATEWAY1', gatewayId, find(paymentMethods, { id: methodId }));
