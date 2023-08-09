@@ -201,14 +201,18 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
     }
 
     async verifyCheckoutSpamProtection(): Promise<PaymentIntegrationSelectors> {
+        console.log('SPAM');
         const { checkout } = this._store.getState();
         const { shouldExecuteSpamCheck } = checkout.getCheckoutOrThrow();
+        console.log('SPAM1');
 
         if (shouldExecuteSpamCheck) {
+            console.log('SPAM2');
             await this._store.dispatch(
                 this._spamProtectionActionCreator.verifyCheckoutSpamProtection(),
             );
         }
+        console.log('SPAM3');
 
         return this._storeProjection.getState();
     }
