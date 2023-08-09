@@ -247,7 +247,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        if (!initializationData.enablePaypalPaywallBanner) {
+        if (!initializationData.enableCheckoutPaywallBanner) {
             return Promise.resolve(this._store.getState());
         }
 

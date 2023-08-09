@@ -134,7 +134,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
         });
 
         it('paypal checkout is initialized successfully', async () => {
-            paymentMethodMock.initializationData.enablePaypalPaywallBanner = true;
+            paymentMethodMock.initializationData.enableCheckoutPaywallBanner = true;
 
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
                 paymentMethodMock,
@@ -159,7 +159,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
         });
 
         it('renders PayPal checkout message', async () => {
-            paymentMethodMock.initializationData.enablePaypalPaywallBanner = true;
+            paymentMethodMock.initializationData.enableCheckoutPaywallBanner = true;
 
             const cartMock = getCart();
 

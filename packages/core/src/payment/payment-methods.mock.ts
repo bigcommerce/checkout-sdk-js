@@ -55,7 +55,7 @@ export function getBraintreePaypal(): PaymentMethod {
         clientToken: 'foo',
         initializationData: {
             isBrainteeVenmoEnabled: false,
-            enablePaypalPaywallBanner: false,
+            enableCheckoutPaywallBanner: false,
         },
     };
 }
