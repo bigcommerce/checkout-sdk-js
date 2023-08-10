@@ -104,8 +104,8 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
         ).mockImplementation(jest.fn);
         jest.spyOn(
             braintreeAcceleratedCheckoutUtils,
-            'getBraintreeConnectOrThrow',
-        ).mockImplementation(() => braintreeConnectMock);
+            'getBraintreeConnectComponentOrThrow',
+        ).mockImplementation(() => braintreeConnectMock.ConnectCardComponent);
         jest.spyOn(braintreeAcceleratedCheckoutUtils, 'getDeviceSessionId').mockImplementation(
             () => deviceSessionId,
         );

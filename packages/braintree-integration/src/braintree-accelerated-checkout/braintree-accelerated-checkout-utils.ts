@@ -32,14 +32,6 @@ export default class BraintreeAcceleratedCheckoutUtils {
         return this.braintreeIntegrationService.getSessionId();
     }
 
-    getBraintreeConnectOrThrow(): BraintreeConnect {
-        if (!this.braintreeConnect) {
-            throw new PaymentMethodClientUnavailableError();
-        }
-
-        return this.braintreeConnect;
-    }
-
     /**
      *
      * Initialization method
@@ -62,41 +54,58 @@ export default class BraintreeAcceleratedCheckoutUtils {
 
     /**
      *
+     * Braintree Connect methods
+     *
+     */
+    getBraintreeConnectOrThrow(): BraintreeConnect {
+        if (!this.braintreeConnect) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this.braintreeConnect;
+    }
+
+    getBraintreeConnectComponentOrThrow(): BraintreeConnect['ConnectCardComponent'] {
+        const braintreeConnect = this.getBraintreeConnectOrThrow();
+
+        return braintreeConnect.ConnectCardComponent;
+    }
+
+    /**
+     *
      * Authentication methods
      *
      * */
-    async authenticatePayPalConnectUserOrThrow(email?: string): Promise<void> {
+    async runPayPalConnectAuthenticationFlowOrThrow(email?: string): Promise<void> {
         try {
-            await this.authenticatePayPalConnectUser(email);
+            const methodId = this.getMethodIdOrThrow();
+
+            const braintreeConnect = this.getBraintreeConnectOrThrow();
+            const { lookupCustomerByEmail, triggerAuthenticationFlow } = braintreeConnect.identity;
+
+            const state = this.paymentIntegrationService.getState();
+            const customer = state.getCustomer();
+            const billingAddress = state.getBillingAddress();
+
+            const customerEmail = email || customer?.email || billingAddress?.email || '';
+
+            const { customerId } = await lookupCustomerByEmail(customerEmail);
+
+            if (customerId) {
+                const { authenticationState, profileData } = await triggerAuthenticationFlow(customerId);
+
+                await this.updateCustomerData(customerEmail, {
+                    authenticationState,
+                    addresses: this.mapPayPalToBcAddress(profileData.addresses),
+                    instruments: this.mapPayPalToBcInstrument(methodId, profileData.cards),
+                });
+            } else {
+                // TODO: should we add some data to let us know that user is unrecognised?
+            }
         } catch (error) {
             // TODO: we should figure out what to do here
             // TODO: because we should not to stop the flow if the error occurs on paypal side
         }
-    }
-
-    private async authenticatePayPalConnectUser(email?: string): Promise<void> {
-        const methodId = this.getMethodIdOrThrow();
-
-        const customerEmail = email || this.getEmail();
-
-        if (!this.braintreeConnect || !customerEmail) {
-            return;
-        }
-
-        const { lookupCustomerByEmail, triggerAuthenticationFlow } = this.braintreeConnect.identity;
-        const { customerId } = await lookupCustomerByEmail(customerEmail);
-
-        if (!customerId) {
-            return;
-        }
-
-        const { authenticationState, profileData } = await triggerAuthenticationFlow(customerId);
-
-        await this.updateCustomerData(customerEmail, {
-            authenticationState,
-            addresses: this.mapPayPalToBcAddress(profileData.addresses),
-            instruments: this.mapPayPalToBcInstrument(methodId, profileData.cards),
-        });
     }
 
     private async updateCustomerData(
@@ -109,14 +118,6 @@ export default class BraintreeAcceleratedCheckoutUtils {
             email,
             ...customer,
         });
-    }
-
-    private getEmail(): string {
-        const state = this.paymentIntegrationService.getState();
-        const customer = state.getCustomer();
-        const billingAddress = state.getBillingAddress();
-
-        return customer?.email || billingAddress?.email || '';
     }
 
     /**

@@ -132,9 +132,9 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
         });
     });
 
-    describe('#authenticatePayPalConnectUserOrThrow()', () => {
+    describe('#runPayPalConnectAuthenticationFlowOrThrow()', () => {
         it('does not authenticate user if braintree connect is not loaded', async () => {
-            await subject.authenticatePayPalConnectUserOrThrow();
+            await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
             expect(paymentIntegrationService.updatePaymentProviderCustomer).not.toHaveBeenCalled();
         });
@@ -151,7 +151,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             );
 
             await subject.initializeBraintreeConnectOrThrow(methodId);
-            await subject.authenticatePayPalConnectUserOrThrow();
+            await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
             expect(paymentIntegrationService.updatePaymentProviderCustomer).not.toHaveBeenCalled();
         });
@@ -160,7 +160,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             jest.spyOn(braintreeConnectMock.identity, 'lookupCustomerByEmail').mockReturnValue({});
 
             await subject.initializeBraintreeConnectOrThrow(methodId);
-            await subject.authenticatePayPalConnectUserOrThrow();
+            await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
             expect(braintreeConnectMock.identity.lookupCustomerByEmail).toHaveBeenCalled();
         });
@@ -169,14 +169,14 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             jest.spyOn(braintreeConnectMock.identity, 'lookupCustomerByEmail').mockReturnValue({});
 
             await subject.initializeBraintreeConnectOrThrow(methodId);
-            await subject.authenticatePayPalConnectUserOrThrow();
+            await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
             expect(paymentIntegrationService.updatePaymentProviderCustomer).not.toHaveBeenCalled();
         });
 
         it('triggers PP Connect authentication flow if customer is detected as PP Connect user', async () => {
             await subject.initializeBraintreeConnectOrThrow(methodId);
-            await subject.authenticatePayPalConnectUserOrThrow();
+            await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
             expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalled();
@@ -222,7 +222,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             };
 
             await subject.initializeBraintreeConnectOrThrow(methodId);
-            await subject.authenticatePayPalConnectUserOrThrow();
+            await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
             expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
@@ -247,7 +247,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             };
 
             await subject.initializeBraintreeConnectOrThrow(methodId);
-            await subject.authenticatePayPalConnectUserOrThrow();
+            await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
             expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(

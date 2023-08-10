@@ -38,7 +38,7 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
 
     async signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void> {
         await this.paymentIntegrationService.signInCustomer(credentials, options);
-        await this.braintreeAcceleratedCheckoutUtils.authenticatePayPalConnectUserOrThrow(
+        await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow(
             credentials.email,
         );
     }
@@ -58,7 +58,7 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
             );
         }
 
-        await this.braintreeAcceleratedCheckoutUtils.authenticatePayPalConnectUserOrThrow();
+        await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow();
 
         continueWithCheckoutCallback();
     }
