@@ -687,6 +687,38 @@ describe('StripeUPEPaymentStrategy', () => {
                         expect(response).toBe(store.getState());
                     });
 
+                    it('with a guest user with line1', async () => {
+                        jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(
+                            undefined,
+                        );
+                        jest.spyOn(
+                            store.getState().shippingAddress,
+                            'getShippingAddress',
+                        ).mockReturnValue({
+                            ...getShippingAddress(),
+                            line1: '12345 Testing Way',
+                        });
+
+                        const response = await strategy.execute(getStripeUPEOrderRequestBodyMock());
+
+                        expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                        expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
+                        expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
+                        expect(response).toBe(store.getState());
+                    });
+
+                    it('with a guest user with line2', async () => {
+                        jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(
+                            undefined,
+                        );
+                        jest.spyOn(
+                            store.getState().shippingAddress,
+                            'getShippingAddress',
+                        ).mockReturnValue({
+                            ...getShippingAddress(),
+                            line2: '123456 Testing Way',
+                        });
+
                     it('without shipping address if there is not physical items in cart', async () => {
                         jest.spyOn(store.getState().cart, 'getCart').mockReturnValue({
                             ...store.getState().cart.getCart(),
