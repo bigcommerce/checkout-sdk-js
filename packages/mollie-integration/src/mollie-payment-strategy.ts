@@ -131,8 +131,6 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             }
         };
 
-        this.unsubscribe();
-
         this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId);
 
         return Promise.resolve();
