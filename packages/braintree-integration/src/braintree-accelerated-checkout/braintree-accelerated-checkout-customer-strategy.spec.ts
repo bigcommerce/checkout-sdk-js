@@ -56,7 +56,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
         ).mockImplementation(jest.fn);
         jest.spyOn(
             braintreeAcceleratedCheckoutUtils,
-            'authenticatePayPalConnectUserOrThrow',
+            'runPayPalConnectAuthenticationFlowOrThrow',
         ).mockImplementation(jest.fn);
     });
 
@@ -93,10 +93,13 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             }
         });
 
-        it('calls continueWithCheckoutCallback callback', async () => {
+        it('authenticates user with PayPal Connect and calls continueWithCheckoutCallback', async () => {
             await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout(executionOptions);
 
+            expect(
+                braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
+            ).toHaveBeenCalled();
             expect(executionOptions.continueWithCheckoutCallback).toHaveBeenCalled();
         });
     });
@@ -133,7 +136,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             await strategy.signIn(credentials);
 
             expect(
-                braintreeAcceleratedCheckoutUtils.authenticatePayPalConnectUserOrThrow,
+                braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
             ).toHaveBeenCalledWith(credentials.email);
         });
     });
