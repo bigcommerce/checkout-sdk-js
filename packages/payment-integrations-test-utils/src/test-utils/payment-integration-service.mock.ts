@@ -35,6 +35,7 @@ const state = {
     getPaymentProviderCustomer: jest.fn(),
     getPaymentProviderCustomerOrThrow: jest.fn(),
     getPaymentStatus: jest.fn(),
+    isPaymentMethodInitialized: jest.fn(),
 };
 
 const createBuyNowCart = jest.fn();
@@ -44,6 +45,7 @@ const initializeOffsitePayment = jest.fn();
 const loadCheckout = jest.fn();
 const loadDefaultCheckout = jest.fn();
 const loadPaymentMethod = jest.fn();
+const loadCurrentOrder = jest.fn();
 const submitOrder = jest.fn();
 const submitPayment = jest.fn();
 const finalizeOrder = jest.fn();
@@ -68,6 +70,7 @@ const PaymentIntegrationServiceMock = jest
             loadCheckout,
             loadDefaultCheckout,
             loadPaymentMethod,
+            loadCurrentOrder,
             submitOrder,
             submitPayment,
             finalizeOrder,

@@ -11,6 +11,7 @@
         "credit-card-integration": "packages/credit-card-integration",
         "external-integration": "packages/external-integration",
         "legacy-integration": "packages/legacy-integration",
+        "mollie-integration": "packages/mollie-integration",
         "no-payment-integration": "packages/no-payment-integration",
         "offline-integration": "packages/offline-integration",
         "offsite-integration": "packages/offsite-integration",
