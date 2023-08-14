@@ -5,8 +5,8 @@ import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { ExtensionNotFoundError } from './errors';
 import { UnsupportedExtensionCommandError } from './errors/unsupported-extension-command-error';
 import { Extension } from './extension';
-import { ExtensionEvent } from './extension-client';
-import { ExtensionCommandMap, ExtensionCommandType } from './extension-command';
+import { ExtensionCommandMap, ExtensionCommandType } from './extension-commands';
+import { ExtensionEvent } from './extension-events';
 import { ExtensionMessenger } from './extension-messenger';
 import { getExtensionEvent, getExtensions } from './extension.mock';
 

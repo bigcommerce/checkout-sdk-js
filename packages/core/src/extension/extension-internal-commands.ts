@@ -1,4 +1,4 @@
-import { ExtensionEventType } from './extension-client';
+import { ExtensionEventType } from './extension-events';
 
 export enum ExtensionInternalCommandType {
     Subscribe = 'EXTENSION_INTERNAL:SUBSCRIBE',

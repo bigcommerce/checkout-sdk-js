@@ -2,12 +2,8 @@ import { noop } from 'lodash';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
-import {
-    ExtensionCommand,
-    ExtensionCommandType,
-    ExtensionEventMap,
-    ExtensionEventType,
-} from './extension-client';
+import { ExtensionCommand, ExtensionCommandType } from './extension-commands';
+import { ExtensionEventMap, ExtensionEventType } from './extension-events';
 import { ExtensionInternalCommand } from './extension-internal-commands';
 import ExtensionService from './extension-service';
 
@@ -46,14 +42,14 @@ describe('ExtensionService', () => {
         extensionService.initialize('test');
 
         const event: ExtensionCommand = {
-            type: ExtensionCommandType.FRAME_LOADED,
-            payload: {},
+            type: ExtensionCommandType.FrameLoaded,
+            payload: { extensionId: 'test' },
         };
 
         extensionService.post(event);
 
         expect(eventPoster.post).toHaveBeenCalledWith({
-            type: ExtensionCommandType.FRAME_LOADED,
+            type: ExtensionCommandType.FrameLoaded,
             payload: {
                 extensionId: 'test',
             },
@@ -63,10 +59,9 @@ describe('ExtensionService', () => {
     it('#post throws error if event name is not passed correctly', () => {
         extensionService.initialize('test');
 
-        const event: ExtensionCommand = {
-            type: 'some-event' as ExtensionCommandType,
-            payload: {},
-        };
+        const event = {
+            type: 'some-event',
+        } as unknown as ExtensionCommand;
 
         expect(() => extensionService.post(event)).toThrow('some-event is not supported.');
     });

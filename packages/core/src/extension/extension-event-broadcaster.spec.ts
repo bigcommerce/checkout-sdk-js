@@ -4,8 +4,8 @@ import { CheckoutSelectors } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
 import { getConsignments } from '../shipping/consignments.mock';
 
-import { ExtensionEventType } from './extension-client';
 import { ExtensionEventBroadcaster } from './extension-event-broadcaster';
+import { ExtensionEventType } from './extension-events';
 import { ExtensionInternalCommandType } from './extension-internal-commands';
 import { ExtensionMessenger } from './extension-messenger';
 import { getExtensions } from './extension.mock';

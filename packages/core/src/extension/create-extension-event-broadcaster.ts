@@ -1,8 +1,8 @@
 import { CheckoutSelectors } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
 
-import { ExtensionEventType } from './extension-client';
 import { ExtensionEventBroadcaster } from './extension-event-broadcaster';
+import { ExtensionEventType } from './extension-events';
 import { ExtensionMessenger } from './extension-messenger';
 import { subscribeConsignmentsChange } from './subscribers';
 

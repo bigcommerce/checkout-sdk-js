@@ -4,8 +4,8 @@ import { CheckoutSelectors } from '../../checkout';
 import { DataStoreProjection } from '../../common/data-store';
 import { getConsignment } from '../../shipping/consignments.mock';
 import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
-import { ExtensionEventType } from '../extension-client';
 import { ExtensionEventBroadcaster } from '../extension-event-broadcaster';
+import { ExtensionEventType } from '../extension-events';
 
 import { subscribeConsignmentsChange } from './subscribe-consignments-change';
 

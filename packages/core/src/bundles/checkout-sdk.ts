@@ -8,3 +8,4 @@ export { createLanguageService } from '../locale';
 export { createCurrencyService } from '../currency';
 export { createStepTracker } from '../analytics';
 export { createBodlService } from '../bodl';
+export { ExtensionCommandType } from '../extension';
