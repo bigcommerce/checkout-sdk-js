@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.422.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.421.1...v1.422.0) (2023-08-14)
+
+
+### Features
+
+* **payment:** PAYPAL-2828 added shipping and billing address selected with PayPal AXO address after OTP ([#2112](https://github.com/bigcommerce/checkout-sdk-js/issues/2112)) ([2363a3e](https://github.com/bigcommerce/checkout-sdk-js/commit/2363a3efd6f8f198733585ca3319f153a95b0091))
+
 ### [1.421.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.421.0...v1.421.1) (2023-08-10)
 
 ## [1.421.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.420.0...v1.421.0) (2023-08-09)
