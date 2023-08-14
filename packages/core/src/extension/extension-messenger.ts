@@ -94,22 +94,11 @@ export class ExtensionMessenger {
         return extension;
     }
 
-    private _validateCommand<T extends keyof ExtensionCommandMap>(command: string): T {
-        if (this._isExtensionCommandType<T>(command)) {
+    private _validateCommand<T extends keyof ExtensionCommandMap>(command: T): T {
+        if (Object.values(ExtensionCommandType).includes(command)) {
             return command;
         }
 
         throw new UnsupportedExtensionCommandError();
-    }
-
-    private _isExtensionCommandType<T extends keyof ExtensionCommandMap>(
-        command: string,
-    ): command is T {
-        return (
-            command === ExtensionCommandType.FrameLoaded ||
-            command === ExtensionCommandType.ReloadCheckout ||
-            command === ExtensionCommandType.ShowLoadingIndicator ||
-            command === ExtensionCommandType.SetIframeStyle
-        );
     }
 }

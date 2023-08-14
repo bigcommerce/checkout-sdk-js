@@ -29,6 +29,10 @@ export default class ExtensionService {
         this._extensionId = extensionId;
 
         this._eventListener.listen();
+        this._internalCommandPoster.post({
+            type: ExtensionInternalCommandType.ResizeIframe,
+            payload: { extensionId },
+        });
     }
 
     post(command: ExtensionCommand): void {

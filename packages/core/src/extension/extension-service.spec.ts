@@ -2,9 +2,12 @@ import { noop } from 'lodash';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
-import { ExtensionCommand, ExtensionCommandType } from './extension-commands';
+import { ExtensionCommand } from './extension-commands';
 import { ExtensionEventMap, ExtensionEventType } from './extension-events';
-import { ExtensionInternalCommand } from './extension-internal-commands';
+import {
+    ExtensionInternalCommand,
+    ExtensionInternalCommandType,
+} from './extension-internal-commands';
 import ExtensionService from './extension-service';
 
 describe('ExtensionService', () => {
@@ -38,21 +41,12 @@ describe('ExtensionService', () => {
         );
     });
 
-    it('#post throws error if extension id is not set', () => {
+    it('posts internal resize iframe command to host', () => {
         extensionService.initialize('test');
 
-        const event: ExtensionCommand = {
-            type: ExtensionCommandType.FrameLoaded,
+        expect(internalEventPoster.post).toHaveBeenCalledWith({
+            type: ExtensionInternalCommandType.ResizeIframe,
             payload: { extensionId: 'test' },
-        };
-
-        extensionService.post(event);
-
-        expect(eventPoster.post).toHaveBeenCalledWith({
-            type: ExtensionCommandType.FrameLoaded,
-            payload: {
-                extensionId: 'test',
-            },
         });
     });
 

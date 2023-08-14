@@ -1,6 +1,5 @@
-import ResizableIframeCreator from '../embedded-checkout/resizable-iframe-creator';
-
 import { Extension, ExtensionIframeConfig } from './extension';
+import ResizableIframeCreator from './resizable-iframe-creator';
 
 export class ExtensionIframe {
     private _iframe: HTMLIFrameElement | undefined;

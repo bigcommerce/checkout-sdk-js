@@ -1,13 +1,12 @@
 import { EventEmitter } from 'events';
 
-import { Cart } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { getCart } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-
+import { Cart } from '../cart';
+import { getCart } from '../cart/carts.mock';
 import { parseUrl } from '../common/url';
-import { EmbeddedCheckoutEventType } from '../embedded-checkout/embedded-checkout-events';
 
 import { Extension } from './extension';
 import { ExtensionIframe } from './extension-iframe';
+import { ExtensionInternalCommandType } from './extension-internal-commands';
 import { getExtensions } from './extension.mock';
 
 describe('ExtensionIframe', () => {
@@ -35,7 +34,7 @@ describe('ExtensionIframe', () => {
         setTimeout(() => {
             eventEmitter.emit('message', {
                 origin: extensionOrigin,
-                data: { type: EmbeddedCheckoutEventType.FrameLoaded },
+                data: { type: ExtensionInternalCommandType.ResizeIframe },
             });
         });
 

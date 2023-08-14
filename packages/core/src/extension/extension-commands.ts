@@ -1,18 +1,12 @@
 export type ExtensionCommand =
     | ReloadCheckoutCommand
     | ShowLoadingIndicatorCommand
-    | SetIframeStyleCommand
-    | FrameLoadedCommand;
+    | SetIframeStyleCommand;
 
 export enum ExtensionCommandType {
-    FrameLoaded = 'FRAME_LOADED', // TODO: Define this as internal command/event
     ReloadCheckout = 'EXTENSION:RELOAD_CHECKOUT',
     ShowLoadingIndicator = 'EXTENSION:SHOW_LOADING_INDICATOR',
     SetIframeStyle = 'EXTENSION:SET_IFRAME_STYLE',
-}
-
-export interface FrameLoadedCommand {
-    type: ExtensionCommandType.FrameLoaded;
 }
 
 export interface ReloadCheckoutCommand {
@@ -36,7 +30,6 @@ export interface SetIframeStyleCommand {
 }
 
 export interface ExtensionCommandMap {
-    [ExtensionCommandType.FrameLoaded]: FrameLoadedCommand;
     [ExtensionCommandType.ReloadCheckout]: ReloadCheckoutCommand;
     [ExtensionCommandType.ShowLoadingIndicator]: ShowLoadingIndicatorCommand;
     [ExtensionCommandType.SetIframeStyle]: SetIframeStyleCommand;
