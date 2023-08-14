@@ -3,6 +3,7 @@
 /packages/apple-pay @bigcommerce/team-checkout
 /packages/bolt-integration @bigcommerce/kyiv-payments-team
 /packages/braintree-integration @bigcommerce/kyiv-payments-team
+/packages/braintree-utils @bigcommerce/kyiv-payments-team
 /packages/core @bigcommerce/team-checkout
 /packages/payment-integration @bigcommerce/team-checkout
 /packages/payment-integration-test-utils @bigcommerce/team-checkout
