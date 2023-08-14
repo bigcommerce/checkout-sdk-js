@@ -122,10 +122,10 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
             },
         };
 
-        const { ConnectCardComponent } =
-            this.braintreeAcceleratedCheckoutUtils.getBraintreeConnectOrThrow();
+        const paypalConnectCreditCardComponent =
+            this.braintreeAcceleratedCheckoutUtils.getBraintreeConnectComponentOrThrow();
 
-        this.braintreeConnectCardComponent = ConnectCardComponent(cardComponentOptions);
+        this.braintreeConnectCardComponent = paypalConnectCreditCardComponent(cardComponentOptions);
     }
 
     private renderBraintreeAXOComponent(container?: string) {
