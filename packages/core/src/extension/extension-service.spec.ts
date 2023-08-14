@@ -2,7 +2,7 @@ import { noop } from 'lodash';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
-import { ExtensionCommand } from './extension-commands';
+import { ExtensionCommand, ExtensionCommandContext } from './extension-commands';
 import { ExtensionEventMap, ExtensionEventType } from './extension-events';
 import {
     ExtensionInternalCommand,
@@ -13,7 +13,7 @@ import ExtensionService from './extension-service';
 describe('ExtensionService', () => {
     let extensionService: ExtensionService;
     let eventListener: IframeEventListener<ExtensionEventMap>;
-    let eventPoster: IframeEventPoster<ExtensionCommand>;
+    let eventPoster: IframeEventPoster<ExtensionCommand, ExtensionCommandContext>;
     let internalEventPoster: IframeEventPoster<ExtensionInternalCommand>;
 
     beforeEach(() => {

@@ -9,6 +9,10 @@ export enum ExtensionCommandType {
     SetIframeStyle = 'EXTENSION:SET_IFRAME_STYLE',
 }
 
+export interface ExtensionCommandContext {
+    extensionId: string;
+}
+
 export interface ReloadCheckoutCommand {
     type: ExtensionCommandType.ReloadCheckout;
 }

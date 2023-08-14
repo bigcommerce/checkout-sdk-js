@@ -28,6 +28,22 @@ describe('IframeEventPoster', () => {
         expect(targetWindow.postMessage).toHaveBeenCalledWith(message, origin);
     });
 
+    it('posts event with context data if provided', () => {
+        const message = { type: 'FOOBAR' };
+        const targetWindow = Object.create(window);
+        const poster = new IframeEventPoster<IframeEvent, { id: string }>(origin, targetWindow);
+
+        jest.spyOn(targetWindow, 'postMessage');
+
+        poster.setContext({ id: '123' });
+        poster.post(message);
+
+        expect(targetWindow.postMessage).toHaveBeenCalledWith(
+            { ...message, context: { id: '123' } },
+            origin,
+        );
+    });
+
     it('strips out irrelevant information from origin URL', () => {
         const message = { type: 'FOOBAR' };
         const targetWindow = Object.create(window);

@@ -4,7 +4,11 @@ import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { ExtensionNotFoundError } from './errors';
 import { UnsupportedExtensionCommandError } from './errors/unsupported-extension-command-error';
 import { Extension } from './extension';
-import { ExtensionCommandMap, ExtensionCommandType } from './extension-commands';
+import {
+    ExtensionCommandContext,
+    ExtensionCommandMap,
+    ExtensionCommandType,
+} from './extension-commands';
 import { ExtensionEvent } from './extension-events';
 
 export class ExtensionMessenger {
@@ -21,7 +25,10 @@ export class ExtensionMessenger {
     listen<T extends keyof ExtensionCommandMap>(
         extensionId: string,
         command: T,
-        extensionCommandHandler: (command: ExtensionCommandMap[T]) => void,
+        commandHandler: (
+            command: ExtensionCommandMap[T],
+            context?: ExtensionCommandContext,
+        ) => void,
     ): () => void {
         const extension = this._getExtensionById(extensionId);
 
@@ -35,10 +42,19 @@ export class ExtensionMessenger {
 
         const validCommandType = this._validateCommand<T>(command);
 
-        listener.addListener(validCommandType, extensionCommandHandler);
+        const commandHandlerProxy = (
+            command: ExtensionCommandMap[T],
+            context?: ExtensionCommandContext,
+        ) => {
+            if (context?.extensionId === extensionId) {
+                commandHandler(command, context);
+            }
+        };
+
+        listener.addListener(validCommandType, commandHandlerProxy);
 
         return () => {
-            listener.removeListener(validCommandType, extensionCommandHandler);
+            listener.removeListener(validCommandType, commandHandlerProxy);
         };
     }
 

@@ -4,9 +4,12 @@ import { bindDecorator as bind } from '../utility';
 import { IframeEventMap } from './iframe-event';
 import isIframeEvent from './is-iframe-event';
 
-export default class IframeEventListener<TEventMap extends IframeEventMap<keyof TEventMap>> {
+export default class IframeEventListener<
+    TEventMap extends IframeEventMap<keyof TEventMap>,
+    TContext = undefined,
+> {
     private _isListening: boolean;
-    private _listeners: EventListeners<TEventMap>;
+    private _listeners: EventListeners<TEventMap, TContext>;
     private _sourceOrigins: string[];
 
     constructor(sourceOrigin: string) {
@@ -40,7 +43,7 @@ export default class IframeEventListener<TEventMap extends IframeEventMap<keyof 
 
     addListener<TType extends keyof TEventMap>(
         type: TType,
-        listener: (event: TEventMap[TType]) => void,
+        listener: (event: TEventMap[TType], context?: TContext) => void,
     ): void {
         let listeners = this._listeners[type];
 
@@ -55,7 +58,7 @@ export default class IframeEventListener<TEventMap extends IframeEventMap<keyof 
 
     removeListener<TType extends keyof TEventMap>(
         type: TType,
-        listener: (event: TEventMap[TType]) => void,
+        listener: (event: TEventMap[TType], context?: TContext) => void,
     ): void {
         const listeners = this._listeners[type];
 
@@ -70,29 +73,31 @@ export default class IframeEventListener<TEventMap extends IframeEventMap<keyof 
         }
     }
 
-    trigger<TType extends keyof TEventMap>(event: TEventMap[TType]): void {
+    trigger<TType extends keyof TEventMap>(event: TEventMap[TType], context?: TContext): void {
         const listeners = this._listeners[event.type];
 
         if (!listeners) {
             return;
         }
 
-        listeners.forEach((listener) => listener(event));
+        listeners.forEach((listener) => (context ? listener(event, context) : listener(event)));
     }
 
     @bind
-    private _handleMessage(event: MessageEvent): void {
+    private _handleMessage(messageEvent: MessageEvent): void {
         if (
-            this._sourceOrigins.indexOf(event.origin) === -1 ||
-            !isIframeEvent(event.data as TEventMap[keyof TEventMap], event.data.type)
+            this._sourceOrigins.indexOf(messageEvent.origin) === -1 ||
+            !isIframeEvent(messageEvent.data as TEventMap[keyof TEventMap], messageEvent.data.type)
         ) {
             return;
         }
 
-        this.trigger(event.data);
+        const { context, ...event } = messageEvent.data;
+
+        this.trigger(event, context);
     }
 }
 
-type EventListeners<TEventMap> = {
-    [key in keyof TEventMap]?: Array<(event: TEventMap[key]) => void>;
+type EventListeners<TEventMap, TContext = undefined> = {
+    [key in keyof TEventMap]?: Array<(event: TEventMap[key], context?: TContext) => void>;
 };

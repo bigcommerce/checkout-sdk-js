@@ -2,7 +2,11 @@ import { noop } from 'lodash';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
-import { ExtensionCommand, ExtensionCommandType } from './extension-commands';
+import {
+    ExtensionCommand,
+    ExtensionCommandContext,
+    ExtensionCommandType,
+} from './extension-commands';
 import { ExtensionEventMap, ExtensionEventType } from './extension-events';
 import {
     ExtensionInternalCommand,
@@ -14,7 +18,7 @@ export default class ExtensionService {
 
     constructor(
         private _eventListener: IframeEventListener<ExtensionEventMap>,
-        private _commandPoster: IframeEventPoster<ExtensionCommand>,
+        private _commandPoster: IframeEventPoster<ExtensionCommand, ExtensionCommandContext>,
         private _internalCommandPoster: IframeEventPoster<ExtensionInternalCommand>,
     ) {
         this._commandPoster.setTarget(window.parent);
@@ -29,6 +33,7 @@ export default class ExtensionService {
         this._extensionId = extensionId;
 
         this._eventListener.listen();
+        this._commandPoster.setContext({ extensionId });
         this._internalCommandPoster.post({
             type: ExtensionInternalCommandType.ResizeIframe,
             payload: { extensionId },
@@ -40,7 +45,6 @@ export default class ExtensionService {
             throw new Error(`${command.type} is not supported.`);
         }
 
-        // TODO: Restore the passing of extension ID
         this._commandPoster.post(command);
     }
 

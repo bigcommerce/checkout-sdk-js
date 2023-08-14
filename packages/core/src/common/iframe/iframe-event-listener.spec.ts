@@ -48,6 +48,15 @@ describe('IframeEventListener', () => {
         expect(handleComplete).not.toHaveBeenCalled();
     });
 
+    it('triggers relevant listeners with context data if provided', () => {
+        eventEmitter.emit('message', {
+            origin,
+            data: { type: TestEventType.Loaded, context: { id: '123' } },
+        });
+
+        expect(handleLoaded).toHaveBeenCalledWith({ type: TestEventType.Loaded }, { id: '123' });
+    });
+
     it('responds to event with www subdomain', () => {
         eventEmitter.emit('message', {
             origin: origin.replace('http://', 'http://www.'),

@@ -14,10 +14,10 @@ export interface IframeEventPostOptions<
     successType?: TSuccessEvent['type'];
 }
 
-export default class IframeEventPoster<TEvent> {
+export default class IframeEventPoster<TEvent, TContext = undefined> {
     private _targetOrigin: string;
 
-    constructor(targetOrigin: string, private _targetWindow?: Window) {
+    constructor(targetOrigin: string, private _targetWindow?: Window, private _context?: TContext) {
         this._targetOrigin = targetOrigin === '*' ? '*' : parseUrl(targetOrigin).origin;
     }
 
@@ -68,12 +68,16 @@ export default class IframeEventPoster<TEvent> {
                 )
                 .toPromise();
 
-        targetWindow.postMessage(event, this._targetOrigin);
+        targetWindow.postMessage({ ...event, context: this._context }, this._targetOrigin);
 
         return result;
     }
 
     setTarget(window: Window) {
         this._targetWindow = window;
+    }
+
+    setContext(context: TContext) {
+        this._context = context;
     }
 }
