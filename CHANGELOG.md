@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.424.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.423.0...v1.424.0) (2023-08-15)
+
+
+### Features
+
+* **payment:** PAYPAL-2827 add a condition to check when to run PayPal Connect authentication flow in BT customer strategy (A/B testing coverage) ([#2108](https://github.com/bigcommerce/checkout-sdk-js/issues/2108)) ([e46bfa6](https://github.com/bigcommerce/checkout-sdk-js/commit/e46bfa69cd2a3678746cda5f6a55e43c6e1a4edf))
+
 ## [1.423.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.422.0...v1.423.0) (2023-08-14)
 
 
