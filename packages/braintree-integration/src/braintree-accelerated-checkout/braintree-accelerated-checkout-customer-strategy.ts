@@ -70,12 +70,27 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
     // when the A/B testing finished, we can move paymentIntegrationService.loadPaymentMethod and
     // braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow to the initialize method
     private async shouldRunAuthenticationFlow(): Promise<boolean> {
-        const methodId = this.getMethodIdOrThrow();
+        let isBackupPaymentMethodLoaded = false;
 
-        await this.paymentIntegrationService.loadPaymentMethod(methodId);
+        const methodId = this.getMethodIdOrThrow();
+        const backupMethodId =
+            methodId === 'braintree' ? 'braintreeacceleratedcheckout' : 'braintree';
+
+        try {
+            await this.paymentIntegrationService.loadPaymentMethod(methodId);
+        } catch (error) {
+            // Info: we should load backup payment method for cases when major one was disabled
+            // due to the A/B testing flow (customer enters another email that
+            // triggers another A/B testing flow).
+            await this.paymentIntegrationService.loadPaymentMethod(backupMethodId);
+
+            isBackupPaymentMethodLoaded = true;
+        }
 
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(
+            isBackupPaymentMethodLoaded ? backupMethodId : methodId,
+        );
         const { shouldRunAcceleratedCheckout, isAcceleratedCheckoutEnabled } =
             paymentMethod.initializationData || {};
 

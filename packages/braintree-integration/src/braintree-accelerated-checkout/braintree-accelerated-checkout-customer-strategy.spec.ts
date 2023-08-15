@@ -23,6 +23,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
     let strategy: BraintreeAcceleratedCheckoutCustomerStrategy;
 
     const methodId = 'braintreeacceleratedcheckout';
+    const backuptMethodId = 'braintree';
 
     const initializationOptions = { methodId };
     const executionOptions = {
@@ -201,6 +202,31 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             await strategy.signIn(credentials);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+            expect(
+                braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
+            ).toHaveBeenCalledWith(methodId);
+            expect(
+                braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
+            ).toHaveBeenCalledWith(credentials.email);
+        });
+
+        it('loads different payment method due to the A/B testing flow', async () => {
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockRejectedValueOnce(
+                new Error(),
+            );
+
+            const credentials = {
+                email: 'test@test.com',
+                password: '123',
+            };
+
+            await strategy.initialize({ methodId });
+            await strategy.signIn(credentials);
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                backuptMethodId,
+            );
             expect(
                 braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
             ).toHaveBeenCalledWith(methodId);
