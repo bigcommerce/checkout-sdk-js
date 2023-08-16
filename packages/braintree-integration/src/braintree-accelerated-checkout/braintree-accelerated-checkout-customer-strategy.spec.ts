@@ -23,7 +23,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
     let strategy: BraintreeAcceleratedCheckoutCustomerStrategy;
 
     const methodId = 'braintreeacceleratedcheckout';
-    const backuptMethodId = 'braintree';
+    const backupMethodId = 'braintree';
 
     const initializationOptions = { methodId };
     const executionOptions = {
@@ -225,11 +225,11 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
-                backuptMethodId,
+                backupMethodId,
             );
             expect(
                 braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
-            ).toHaveBeenCalledWith(methodId);
+            ).toHaveBeenCalledWith(backupMethodId);
             expect(
                 braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
             ).toHaveBeenCalledWith(credentials.email);
