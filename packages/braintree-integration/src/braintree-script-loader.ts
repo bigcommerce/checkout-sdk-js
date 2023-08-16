@@ -1,5 +1,9 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
+import {
+    BRAINTREE_SDK_ALPHA_VERSION,
+    BRAINTREE_SDK_STABLE_VERSION,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
@@ -12,10 +16,8 @@ import {
     BraintreePaypalCheckoutCreator,
 } from './braintree';
 
-const BraintreeSdkVersionStable = '3.95.0';
-
 export default class BraintreeScriptLoader {
-    private braintreeSdkVersion = BraintreeSdkVersionStable;
+    private braintreeSdkVersion = BRAINTREE_SDK_STABLE_VERSION;
 
     constructor(
         private scriptLoader: ScriptLoader,
@@ -26,8 +28,8 @@ export default class BraintreeScriptLoader {
     // So can be removed after Beta state
     initialize({ isAcceleratedCheckoutEnabled }: BraintreeInitializationData) {
         this.braintreeSdkVersion = isAcceleratedCheckoutEnabled
-            ? '3.95.0-connect-alpha.11'
-            : BraintreeSdkVersionStable;
+            ? BRAINTREE_SDK_ALPHA_VERSION
+            : BRAINTREE_SDK_STABLE_VERSION;
     }
 
     async loadClient(): Promise<BraintreeClientCreator> {

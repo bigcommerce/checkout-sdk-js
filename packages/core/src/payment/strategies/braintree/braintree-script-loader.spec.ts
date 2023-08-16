@@ -1,5 +1,10 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
+import {
+    BRAINTREE_SDK_ALPHA_VERSION,
+    BRAINTREE_SDK_STABLE_VERSION,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+
 import { StandardError } from '../../../common/error/errors';
 
 import {
@@ -22,9 +27,6 @@ import {
     getThreeDSecureMock,
     getVisaCheckoutMock,
 } from './braintree.mock';
-
-const VERSION = '3.95.0';
-const ALPHA_VERSION = '3.95.0-connect-alpha.11';
 
 describe('BraintreeScriptLoader', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;
@@ -59,7 +61,7 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadClient();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${VERSION}/js/client.min.js`,
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/client.min.js`,
             );
         });
 
@@ -69,7 +71,7 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadClient();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/client.min.js`,
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/client.min.js`,
             );
         });
 
@@ -98,7 +100,7 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.load3DS();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${VERSION}/js/three-d-secure.min.js`,
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/three-d-secure.min.js`,
             );
         });
 
@@ -108,7 +110,7 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.load3DS();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/three-d-secure.min.js`,
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/three-d-secure.min.js`,
             );
         });
 
@@ -137,7 +139,7 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadDataCollector();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${VERSION}/js/data-collector.min.js`,
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/data-collector.min.js`,
             );
         });
 
@@ -147,7 +149,7 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadDataCollector();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/data-collector.min.js`,
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/data-collector.min.js`,
             );
         });
 
@@ -176,7 +178,7 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadVisaCheckout();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${VERSION}/js/visa-checkout.min.js`,
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/visa-checkout.min.js`,
             );
         });
 
@@ -186,7 +188,7 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadVisaCheckout();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/visa-checkout.min.js`,
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/visa-checkout.min.js`,
             );
         });
 
@@ -215,7 +217,7 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadGooglePayment();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${VERSION}/js/google-payment.min.js`,
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/google-payment.min.js`,
             );
         });
 
@@ -225,7 +227,7 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadGooglePayment();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/google-payment.min.js`,
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/google-payment.min.js`,
             );
         });
 
@@ -271,7 +273,7 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadHostedFields();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${VERSION}/js/hosted-fields.min.js`,
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/hosted-fields.min.js`,
             );
         });
 
@@ -281,7 +283,7 @@ describe('BraintreeScriptLoader', () => {
             await braintreeScriptLoader.loadHostedFields();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${ALPHA_VERSION}/js/hosted-fields.min.js`,
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/hosted-fields.min.js`,
             );
         });
 
