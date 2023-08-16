@@ -17,6 +17,7 @@ import {
     BraintreeTokenizePayload,
     BraintreeVenmoCheckout,
 } from '../../../payment/strategies/braintree';
+import { PaypalStyleOptions } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 import { CheckoutButtonMethodType } from '../index';
@@ -24,19 +25,34 @@ import { CheckoutButtonMethodType } from '../index';
 import mapToLegacyBillingAddress from './map-to-legacy-billing-address';
 import mapToLegacyShippingAddress from './map-to-legacy-shipping-address';
 
-const venmoButtonStyle = {
-    backgroundColor: '#3D95CE',
-    backgroundPosition: '50% 50%',
-    backgroundSize: '80px auto',
-    backgroundImage: 'url("/app/assets/img/payment-providers/venmo-logo-white.svg")',
-    backgroundRepeat: 'no-repeat',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    transition: '0.2s ease',
-    minHeight: '40px',
-    minWidth: '150px',
-    height: '100%',
-    width: '100%',
+const getVenmoButtonStyle = (styles: PaypalStyleOptions): Record<string, string> => {
+    const { color } = styles;
+
+    const colorParser = (c: string) => {
+        if (c === 'white') {
+            return '#FFFFF';
+        }
+
+        return '#3D95CE';
+    };
+
+    return {
+        backgroundColor: colorParser(color || ''),
+        backgroundPosition: '50% 50%',
+        backgroundSize: '80px auto',
+        backgroundImage: `url("/app/assets/img/payment-providers/venmo-logo-${
+            color === 'white' ? 'blue' : 'white'
+        }.svg")`,
+        backgroundRepeat: 'no-repeat',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        transition: '0.2s ease',
+        minHeight: '40px',
+        minWidth: '150px',
+        height: '100%',
+        width: '100%',
+        border: color === 'white' ? '1px solid black' : 'none',
+    };
 };
 
 const venmoButtonStyleHover = {
@@ -72,6 +88,9 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         );
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         const { clientToken, initializationData } = paymentMethod;
+        const { paymentButtonStyles } = initializationData;
+        const { cartButtonStyles } = paymentButtonStyles || {};
+        const styles = braintreevenmo?.style || cartButtonStyles;
 
         if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -92,6 +111,7 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
                     braintreeVenmoCheckout,
                     containerId,
                     braintreevenmo?.buyNowInitializeOptions,
+                    styles,
                 ),
             (error) => this._handleInitializationVenmoError(error, containerId),
         );
@@ -111,11 +131,13 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         braintreeVenmoCheckout: BraintreeVenmoCheckout,
         parentContainerId: string,
         buyNowInitializeOptions?: BuyNowInitializeOptions,
+        buttonsStyles?: PaypalStyleOptions,
     ): void {
         return this._renderVenmoButton(
             braintreeVenmoCheckout,
             parentContainerId,
             buyNowInitializeOptions,
+            buttonsStyles,
         );
     }
 
@@ -140,8 +162,10 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         braintreeVenmoCheckout: BraintreeVenmoCheckout,
         containerId: string,
         buyNowInitializeOptions?: BuyNowInitializeOptions,
+        buttonStyles?: PaypalStyleOptions,
     ): void {
         const venmoButton = document.getElementById(containerId);
+        const { color } = buttonStyles || {};
 
         if (!venmoButton) {
             throw new InvalidArgumentError(
@@ -150,7 +174,7 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         }
 
         venmoButton.setAttribute('aria-label', 'Venmo');
-        Object.assign(venmoButton.style, venmoButtonStyle);
+        Object.assign(venmoButton.style, getVenmoButtonStyle(buttonStyles || {}));
 
         venmoButton.addEventListener('click', async () => {
             venmoButton.setAttribute('disabled', 'true');
@@ -172,13 +196,17 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
             }
         });
 
-        venmoButton.addEventListener('mouseenter', () => {
-            venmoButton.style.backgroundColor = venmoButtonStyleHover.backgroundColor;
-        });
+        if (color === 'blue') {
+            venmoButton.addEventListener('mouseenter', () => {
+                venmoButton.style.backgroundColor = venmoButtonStyleHover.backgroundColor;
+            });
 
-        venmoButton.addEventListener('mouseleave', () => {
-            venmoButton.style.backgroundColor = venmoButtonStyle.backgroundColor;
-        });
+            venmoButton.addEventListener('mouseleave', () => {
+                venmoButton.style.backgroundColor = getVenmoButtonStyle(
+                    buttonStyles || {},
+                ).backgroundColor;
+            });
+        }
     }
 
     private async _createBuyNowCart(buyNowInitializeOptions?: BuyNowInitializeOptions) {

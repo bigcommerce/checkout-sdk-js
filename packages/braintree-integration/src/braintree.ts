@@ -2,7 +2,13 @@ import {
     BraintreeLocalMethods,
     LocalPaymentInstance,
 } from './braintree-local-payment-methods/braintree-local-methods-options';
-import { PaypalAuthorizeData, PaypalButtonOptions, PaypalButtonRender, PaypalSDK } from './paypal';
+import {
+    PaypalAuthorizeData,
+    PaypalButtonOptions,
+    PaypalButtonRender,
+    PaypalSDK,
+    PaypalStyleOptions,
+} from './paypal';
 
 /**
  *
@@ -76,6 +82,7 @@ export interface BraintreeInitializationData {
     isCreditEnabled?: boolean;
     isAcceleratedCheckoutEnabled?: boolean;
     shouldRunAcceleratedCheckout?: boolean; // TODO: only for BT AXO A/B testing purposes, hence should be removed after testing
+    paymentButtonStyles?: Record<string, PaypalStyleOptions>;
 }
 
 export interface BraintreePaypalRequest {

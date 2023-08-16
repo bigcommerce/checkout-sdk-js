@@ -19,9 +19,8 @@ import {
 } from '../../../payment/strategies/braintree';
 import {
     PaypalAuthorizeData,
-    PaypalButtonStyleColorOption,
-    PaypalButtonStyleLabelOption,
     PaypalHostWindow,
+    PaypalStyleOptions,
 } from '../../../payment/strategies/paypal';
 import CustomerActionCreator from '../../customer-action-creator';
 import CustomerCredentials from '../../customer-credentials';
@@ -47,7 +46,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintreepaypalcredit, methodId } = options;
-        const { container, buttonHeight = 40 } = braintreepaypalcredit || {};
+        const { container = 40 } = braintreepaypalcredit || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -72,6 +71,8 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
         );
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         const { clientToken, initializationData } = paymentMethod;
+        const { paymentButtonStyles } = initializationData || {};
+        const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -90,7 +91,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
                 braintreepaypalcredit,
                 methodId,
                 Boolean(paymentMethod.config.testMode),
-                buttonHeight,
+                { ...checkoutTopButtonStyles, height: 36 },
             );
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
             this._handleError(error, braintreepaypalcredit);
@@ -137,7 +138,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
         braintreepaypalcredit: BraintreePaypalCreditCustomerInitializeOptions,
         methodId: string,
         testMode: boolean,
-        buttonHeight: number,
+        buttonStyles: PaypalStyleOptions,
     ): void {
         const { container } = braintreepaypalcredit;
         const { paypal } = this._window;
@@ -146,23 +147,14 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
 
         if (paypal) {
             const fundingSources = [paypal.FUNDING.PAYLATER, paypal.FUNDING.CREDIT];
-            const commonButtonStyle = {
-                height: buttonHeight,
-                color: PaypalButtonStyleColorOption.GOLD,
-            };
 
             fundingSources.forEach((fundingSource) => {
-                const buttonStyle =
-                    fundingSource === paypal.FUNDING.CREDIT
-                        ? { label: PaypalButtonStyleLabelOption.CREDIT, ...commonButtonStyle }
-                        : commonButtonStyle;
-
                 if (!hasRenderedSmartButton) {
                     const paypalButtonRender = paypal.Buttons({
                         env: testMode ? 'sandbox' : 'production',
                         commit: false,
                         fundingSource,
-                        style: buttonStyle,
+                        style: buttonStyles,
                         createOrder: () =>
                             this._setupPayment(
                                 braintreePaypalCheckout,

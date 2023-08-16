@@ -24,7 +24,7 @@ import {
 } from '../braintree';
 import BraintreeIntegrationService from '../braintree-integration-service';
 import isBraintreeError from '../is-braintree-error';
-import { PaypalAuthorizeData } from '../paypal';
+import { PaypalAuthorizeData, PaypalStyleOptions } from '../paypal';
 
 import BraintreePaypalCustomerInitializeOptions, {
     WithBraintreePaypalCustomerInitializeOptions,
@@ -42,7 +42,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         options: CustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions,
     ): Promise<void> {
         const { braintreepaypal, methodId } = options;
-        const { container, buttonHeight, onError } = braintreepaypal || {};
+        const { container, onError } = braintreepaypal || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -69,6 +69,8 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
             state.getPaymentMethodOrThrow(methodId);
 
         const { clientToken, config, initializationData } = paymentMethod;
+        const { paymentButtonStyles } = initializationData || {};
+        const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -90,7 +92,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
                 container,
                 methodId,
                 Boolean(config.testMode),
-                buttonHeight,
+                checkoutTopButtonStyles,
             );
         };
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
@@ -128,7 +130,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         containerId: string,
         methodId: string,
         testMode: boolean,
-        buttonHeight = 40,
+        buttonStyles: PaypalStyleOptions,
     ): void {
         const { paypal } = this.braintreeHostWindow;
         const fundingSource = paypal?.FUNDING.PAYPAL;
@@ -138,9 +140,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
                 env: this.braintreeIntegrationService.getBraintreeEnv(testMode),
                 commit: false,
                 fundingSource,
-                style: {
-                    height: buttonHeight,
-                },
+                style: { ...buttonStyles, height: 36 },
                 createOrder: () =>
                     this.setupPayment(braintreePaypalCheckout, braintreepaypal, methodId),
                 onApprove: (authorizeData: PaypalAuthorizeData) =>

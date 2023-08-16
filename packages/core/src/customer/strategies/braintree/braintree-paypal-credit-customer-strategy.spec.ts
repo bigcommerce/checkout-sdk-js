@@ -330,8 +330,9 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
                 onApprove: expect.any(Function),
                 style: {
-                    height: 40,
-                    color: PaypalButtonStyleColorOption.GOLD,
+                    color: PaypalButtonStyleColorOption.BLUE,
+                    label: 'checkout',
+                    height: 36,
                 },
             });
 
@@ -365,8 +366,9 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
                 onApprove: expect.any(Function),
                 style: {
-                    height: 100,
-                    color: PaypalButtonStyleColorOption.GOLD,
+                    color: PaypalButtonStyleColorOption.BLUE,
+                    label: 'checkout',
+                    height: 36,
                 },
             });
         });
@@ -387,8 +389,9 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
                 onApprove: expect.any(Function),
                 style: {
-                    height: 40,
-                    color: PaypalButtonStyleColorOption.GOLD,
+                    color: PaypalButtonStyleColorOption.BLUE,
+                    label: 'checkout',
+                    height: 36,
                 },
             });
 
@@ -401,9 +404,9 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                 fundingSource: paypalSdkMock.FUNDING.CREDIT,
                 onApprove: expect.any(Function),
                 style: {
-                    height: 40,
-                    label: 'credit',
-                    color: PaypalButtonStyleColorOption.GOLD,
+                    color: PaypalButtonStyleColorOption.BLUE,
+                    label: 'checkout',
+                    height: 36,
                 },
             });
         });

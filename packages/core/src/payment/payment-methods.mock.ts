@@ -21,6 +21,13 @@ export function getBraintree(): PaymentMethod {
         initializationData: {
             isAcceleratedCheckoutEnabled: false,
             merchantAccountId: '100000',
+            paymentButtonStyles: {
+                checkoutTopButtonStyles: {
+                    color: 'blue',
+                    label: 'checkout',
+                    height: 40,
+                },
+            },
         },
     };
 }
@@ -56,6 +63,13 @@ export function getBraintreePaypal(): PaymentMethod {
         initializationData: {
             isBrainteeVenmoEnabled: false,
             enableCheckoutPaywallBanner: false,
+            paymentButtonStyles: {
+                checkoutTopButtonStyles: {
+                    color: 'blue',
+                    label: 'checkout',
+                    height: 40,
+                },
+            },
         },
     };
 }
@@ -73,6 +87,13 @@ export function getBraintreePaypalCredit(): PaymentMethod {
         clientToken: 'foo',
         initializationData: {
             isBraintreeVenmoEnabled: false,
+            paymentButtonStyles: {
+                checkoutTopButtonStyles: {
+                    color: 'blue',
+                    label: 'checkout',
+                    height: 40,
+                },
+            },
         },
     };
 }
