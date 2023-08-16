@@ -82,9 +82,16 @@ service.initializePayment({
 
 ### Properties
 
+- [bigpayToken](CreditCardPaymentInitializeOptions_2.md#bigpaytoken)
 - [form](CreditCardPaymentInitializeOptions_2.md#form)
 
 ## Properties
+
+### bigpayToken
+
+• `Optional` **bigpayToken**: `string`
+
+___
 
 ### form
 

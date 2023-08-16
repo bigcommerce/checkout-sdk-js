@@ -4560,6 +4560,7 @@ declare interface CreditCardInstrument {
  */
 declare interface CreditCardPaymentInitializeOptions_2 {
     form: HostedFormOptions_2;
+    bigpayToken?: string;
 }
 
 declare interface CreditCardPlaceHolder {

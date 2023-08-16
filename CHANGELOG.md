@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.426.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.425.0...v1.426.0) (2023-08-16)
+
+
+### Features
+
+* **checkout:** PI-286 added bigpayToken to the loadPaymentMethod params ([497920e](https://github.com/bigcommerce/checkout-sdk-js/commit/497920e0edcd91fe4434b15b9e09ee13dabc6de4))
+* **checkout:** PI-286 bluesnapdirect 3ds for stored cards without hosted fields ([2999e44](https://github.com/bigcommerce/checkout-sdk-js/commit/2999e442ccbddb6582c4b0af3f1b8c500f39243d))
+
 ## [1.425.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.424.0...v1.425.0) (2023-08-16)
 
 
