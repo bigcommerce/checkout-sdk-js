@@ -95,9 +95,9 @@ export default class BraintreeAcceleratedCheckoutUtils {
                 return;
             }
 
-            const { customerId } = await lookupCustomerByEmail(customerEmail);
+            const { customerContextId } = await lookupCustomerByEmail(customerEmail);
 
-            if (!customerId) {
+            if (!customerContextId) {
                 await this.updateCustomerData(customerEmail, {
                     authenticationState: BraintreeConnectAuthenticationState.UNRECOGNIZED,
                     addresses: undefined,
@@ -108,7 +108,7 @@ export default class BraintreeAcceleratedCheckoutUtils {
             }
 
             const { authenticationState, profileData } = await triggerAuthenticationFlow(
-                customerId,
+                customerContextId,
             );
 
             const addresses = this.mapPayPalToBcAddress(profileData.addresses) || [];
