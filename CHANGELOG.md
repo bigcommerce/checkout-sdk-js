@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.426.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.426.0...v1.426.1) (2023-08-16)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-000 fixed backup payment method loading for braintree accelerated checkout strategies ([#2118](https://github.com/bigcommerce/checkout-sdk-js/issues/2118)) ([94d3297](https://github.com/bigcommerce/checkout-sdk-js/commit/94d32973d50b55116672374a5115cae0818f85ce))
+
 ## [1.426.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.425.0...v1.426.0) (2023-08-16)
 
 
