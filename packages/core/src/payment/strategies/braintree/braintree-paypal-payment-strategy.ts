@@ -18,7 +18,11 @@ import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
-import { BraintreePaymentInitializeOptions } from '../../strategies/braintree';
+import {
+    BraintreeHostWindow,
+    BraintreePaymentInitializeOptions,
+    BraintreePaypalSdkCreatorConfig,
+} from '../../strategies/braintree';
 import PaymentStrategy from '../payment-strategy';
 
 import { BraintreeError } from './braintree';
@@ -28,6 +32,7 @@ import mapToBraintreeShippingAddressOverride from './map-to-braintree-shipping-a
 
 export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     private _paymentMethod?: PaymentMethod;
+    private _braintreeHostWindow: BraintreeHostWindow = window;
 
     constructor(
         private _store: CheckoutStore,
@@ -47,6 +52,12 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 .paymentMethods.getPaymentMethodOrThrow(methodId);
         }
 
+        if (this._paymentMethod.clientToken && braintreeOptions?.bannerContainerId) {
+            await this._loadPaypal(braintreeOptions);
+
+            return this._loadPaypalCheckoutInstance(braintreeOptions);
+        }
+
         if (this._paymentMethod.clientToken) {
             return this._loadPaypal(braintreeOptions);
         }
@@ -56,6 +67,10 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         );
 
         this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+
+        if (braintreeOptions?.bannerContainerId) {
+            return this._loadPaypalCheckoutInstance(braintreeOptions);
+        }
 
         if (!this._paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -221,6 +236,75 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 },
             },
         };
+    }
+
+    private async _loadPaypalCheckoutInstance(
+        braintreeOptions?: BraintreePaymentInitializeOptions,
+    ) {
+        const { clientToken, initializationData } = this._paymentMethod || {};
+
+        if (!clientToken || !initializationData) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        if (!initializationData.enableCheckoutPaywallBanner) {
+            return Promise.resolve(this._store.getState());
+        }
+
+        try {
+            this._braintreePaymentProcessor.initialize(
+                clientToken,
+                initializationData,
+                braintreeOptions,
+            );
+
+            const currencyCode = this._store.getState().cart.getCartOrThrow().currency.code;
+
+            const paypalCheckoutConfig: Partial<BraintreePaypalSdkCreatorConfig> = {
+                currency: currencyCode,
+                intent: initializationData?.intent,
+                isCreditEnabled: initializationData?.isCreditEnabled,
+            };
+
+            await this._braintreePaymentProcessor.preloadPaypalCheckout(
+                paypalCheckoutConfig,
+                () => {
+                    this._renderPayPalMessages(braintreeOptions?.bannerContainerId);
+                },
+                this._handleError,
+            );
+        } catch (error) {
+            this._handleError(error);
+        }
+
+        return Promise.resolve(this._store.getState());
+    }
+
+    private _renderPayPalMessages(containerId = '') {
+        const isMessageContainerAvailable =
+            containerId && Boolean(document.getElementById(containerId));
+
+        if (this._braintreeHostWindow.paypal && isMessageContainerAvailable) {
+            const state = this._store.getState();
+            const checkout = state.checkout.getCheckout();
+
+            if (!checkout) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+            }
+
+            this._braintreeHostWindow.paypal
+                .Messages({
+                    amount: checkout.subtotal,
+                    placement: 'payment',
+                    style: {
+                        layout: 'text',
+                        logo: {
+                            type: 'none',
+                        },
+                    },
+                })
+                .render(`#${containerId}`);
+        }
     }
 
     private _loadPaypal(

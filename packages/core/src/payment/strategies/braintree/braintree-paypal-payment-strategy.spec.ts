@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 
 import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { getCart } from '../../../cart/carts.mock';
 import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
@@ -20,6 +21,8 @@ import { PaymentMethodActionType } from '../../payment-method-actions';
 import { getBraintreePaypal } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
+import { PaypalHostWindow, PaypalSDK } from '../paypal';
+import { getPaypalMock } from '../paypal/paypal.mock';
 
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreePaypalPaymentStrategy from './braintree-paypal-payment-strategy';
@@ -36,11 +39,22 @@ describe('BraintreePaypalPaymentStrategy', () => {
     let store: CheckoutStore;
     let submitOrderAction: Observable<Action>;
     let submitPaymentAction: Observable<Action>;
+    let paypalSdkMock: PaypalSDK;
+    let paypalMessageElement: HTMLDivElement;
 
     beforeEach(() => {
+        paypalMessageElement = document.createElement('div');
+        paypalMessageElement.id = 'banner-container-id';
+        document.body.appendChild(paypalMessageElement);
+
         braintreePaymentProcessorMock = {} as BraintreePaymentProcessor;
         braintreePaymentProcessorMock.initialize = jest.fn();
         braintreePaymentProcessorMock.preloadPaypal = jest.fn(() => Promise.resolve());
+        braintreePaymentProcessorMock.preloadPaypalCheckout = jest.fn((_, onSuccess) => {
+            onSuccess();
+
+            return Promise.resolve();
+        });
         braintreePaymentProcessorMock.paypal = jest.fn(() =>
             Promise.resolve({ nonce: 'my_tokenized_card', details: { email: 'random@email.com' } }),
         );
@@ -55,6 +69,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 methodId: paymentMethodMock.id,
             }),
         );
+        paypalSdkMock = getPaypalMock();
 
         store = createCheckoutStore(getCheckoutStoreState());
 
@@ -69,6 +84,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
         paymentMethodActionCreator = {} as PaymentMethodActionCreator;
         paymentMethodActionCreator.loadPaymentMethod = jest.fn(() => loadPaymentMethodAction);
 
+        (window as PaypalHostWindow).paypal = paypalSdkMock;
+
         braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(
             store,
             orderActionCreator,
@@ -76,6 +93,10 @@ describe('BraintreePaypalPaymentStrategy', () => {
             paymentMethodActionCreator,
             braintreePaymentProcessorMock,
         );
+
+        jest.spyOn(paypalSdkMock, 'Messages').mockImplementation(() => ({
+            render: jest.fn(),
+        }));
     });
 
     it('creates an instance of the braintree payment strategy', () => {
@@ -99,6 +120,72 @@ describe('BraintreePaypalPaymentStrategy', () => {
             await braintreePaypalPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
 
             expect(braintreePaymentProcessorMock.preloadPaypal).toHaveBeenCalled();
+        });
+
+        it('paypal checkout is not initialized', async () => {
+            const options = {
+                methodId: paymentMethodMock.id,
+                braintree: { bannerContainerId: 'banner-container-id' },
+            };
+
+            await braintreePaypalPaymentStrategy.initialize(options);
+
+            expect(braintreePaymentProcessorMock.preloadPaypalCheckout).not.toHaveBeenCalled();
+        });
+
+        it('paypal checkout is initialized successfully', async () => {
+            paymentMethodMock.initializationData.enableCheckoutPaywallBanner = true;
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodMock,
+            );
+
+            const options = {
+                methodId: paymentMethodMock.id,
+                braintree: { bannerContainerId: 'banner-container-id' },
+            };
+
+            await braintreePaypalPaymentStrategy.initialize(options);
+
+            expect(braintreePaymentProcessorMock.preloadPaypalCheckout).toHaveBeenCalledWith(
+                {
+                    currency: 'USD',
+                    isCreditEnabled: undefined,
+                    intent: undefined,
+                },
+                expect.any(Function),
+                expect.any(Function),
+            );
+        });
+
+        it('renders PayPal checkout message', async () => {
+            paymentMethodMock.initializationData.enableCheckoutPaywallBanner = true;
+
+            const cartMock = getCart();
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodMock,
+            );
+
+            jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartMock);
+
+            const options = {
+                methodId: paymentMethodMock.id,
+                braintree: { bannerContainerId: 'banner-container-id' },
+            };
+
+            await braintreePaypalPaymentStrategy.initialize(options);
+
+            expect(paypalSdkMock.Messages).toHaveBeenCalledWith({
+                amount: 190,
+                placement: 'payment',
+                style: {
+                    layout: 'text',
+                    logo: {
+                        type: 'none',
+                    },
+                },
+            });
         });
 
         it('throws error if unable to initialize', async () => {
