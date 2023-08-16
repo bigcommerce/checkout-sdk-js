@@ -80,10 +80,19 @@ service.initializePayment({
 
 ### Properties
 
+- [bannerContainerId](BraintreePaymentInitializeOptions.md#bannercontainerid)
 - [form](BraintreePaymentInitializeOptions.md#form)
 - [threeDSecure](BraintreePaymentInitializeOptions.md#threedsecure)
 
 ## Properties
+
+### bannerContainerId
+
+• `Optional` **bannerContainerId**: `string`
+
+The location to insert the Pay Later Messages.
+
+___
 
 ### form
 

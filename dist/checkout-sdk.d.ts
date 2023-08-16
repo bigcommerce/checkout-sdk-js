@@ -1771,6 +1771,10 @@ declare interface BraintreePaymentInitializeOptions {
      * consumption.
      */
     form?: BraintreeFormOptions;
+    /**
+     * The location to insert the Pay Later Messages.
+     */
+    bannerContainerId?: string;
 }
 
 declare interface BraintreePaypalAchInitializeOptions {
