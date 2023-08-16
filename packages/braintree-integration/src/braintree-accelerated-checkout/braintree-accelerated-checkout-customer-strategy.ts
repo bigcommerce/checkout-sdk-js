@@ -27,7 +27,7 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
             );
         }
 
-        this.methodId = methodId;
+        this.setMethodId(methodId);
 
         return Promise.resolve();
     }
@@ -70,26 +70,11 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
     // when the A/B testing finished, we can move paymentIntegrationService.loadPaymentMethod and
     // braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow to the initialize method
     private async shouldRunAuthenticationFlow(): Promise<boolean> {
-        let isBackupPaymentMethodLoaded = false;
-
-        const methodId = this.getMethodIdOrThrow();
-        const backupMethodId =
-            methodId === 'braintree' ? 'braintreeacceleratedcheckout' : 'braintree';
-
-        try {
-            await this.paymentIntegrationService.loadPaymentMethod(methodId);
-        } catch (error) {
-            // Info: we should load backup payment method for cases when major one was disabled
-            // due to the A/B testing flow (customer enters another email that
-            // triggers another A/B testing flow).
-            await this.paymentIntegrationService.loadPaymentMethod(backupMethodId);
-
-            isBackupPaymentMethodLoaded = true;
-        }
+        await this.loadMainOrBackupPaymentMethod();
 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(
-            isBackupPaymentMethodLoaded ? backupMethodId : methodId,
+            this.getMethodIdOrThrow(),
         );
         const { shouldRunAcceleratedCheckout, isAcceleratedCheckoutEnabled } =
             paymentMethod.initializationData || {};
@@ -106,6 +91,27 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
         );
     }
 
+    private async loadMainOrBackupPaymentMethod(): Promise<void> {
+        try {
+            const methodId = this.getMethodIdOrThrow();
+
+            await this.paymentIntegrationService.loadPaymentMethod(methodId);
+        } catch (error) {
+            // Info: we should load backup payment method for cases when major one was disabled
+            // due to the A/B testing flow (customer enters another email that
+            // triggers another A/B testing flow).
+            const backupMethodId = this.getBackupMethodId();
+
+            await this.paymentIntegrationService.loadPaymentMethod(backupMethodId);
+
+            this.setMethodId(backupMethodId);
+        }
+    }
+
+    private setMethodId(methodId: string): void {
+        this.methodId = methodId;
+    }
+
     private getMethodIdOrThrow(): string {
         if (!this.methodId) {
             throw new InvalidArgumentError(
@@ -114,5 +120,11 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
         }
 
         return this.methodId;
+    }
+
+    private getBackupMethodId(): string {
+        const methodId = this.getMethodIdOrThrow();
+
+        return methodId === 'braintree' ? 'braintreeacceleratedcheckout' : 'braintree';
     }
 }
