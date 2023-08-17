@@ -9,7 +9,6 @@ import {
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { getBraintree } from '../mocks/braintree.mock';
 
@@ -20,7 +19,6 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
     let braintreeAcceleratedCheckoutUtils: BraintreeAcceleratedCheckoutUtils;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
-    let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeAcceleratedCheckoutCustomerStrategy;
 
@@ -42,7 +40,6 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
     };
 
     beforeEach(() => {
-        browserStorage = new BrowserStorage('braintree-accelerated-checkout-mock');
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
         braintreeIntegrationService = new BraintreeIntegrationService(
             braintreeScriptLoader,
@@ -52,7 +49,6 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
         braintreeAcceleratedCheckoutUtils = new BraintreeAcceleratedCheckoutUtils(
             paymentIntegrationService,
             braintreeIntegrationService,
-            browserStorage,
         );
 
         strategy = new BraintreeAcceleratedCheckoutCustomerStrategy(
