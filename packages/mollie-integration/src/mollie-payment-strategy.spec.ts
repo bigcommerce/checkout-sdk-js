@@ -1,40 +1,18 @@
-import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction } from '@bigcommerce/data-store';
-import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { Observable, of } from 'rxjs';
 
-import { PaymentActionCreator } from '../..';
-import { getCart } from '../../../cart/carts.mock';
 import {
-    CheckoutRequestSender,
-    CheckoutStore,
-    CheckoutValidator,
-    createCheckoutStore,
-    InternalCheckoutSelectors,
-} from '../../../checkout';
-import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import {
+    HostedForm,
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
-} from '../../../common/error/errors';
-import { HostedForm, HostedFormFactory } from '../../../hosted-form';
+    PaymentArgumentInvalidError,
+    PaymentInitializeOptions,
+    PaymentIntegrationService,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    FinalizeOrderAction,
-    LoadOrderSucceededAction,
-    OrderActionCreator,
-    OrderActionType,
-    OrderRequestSender,
-} from '../../../order';
-import { getOrder } from '../../../order/orders.mock';
-import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { PaymentArgumentInvalidError } from '../../errors';
-import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
-import { getMollie } from '../../payment-methods.mock';
-import { PaymentInitializeOptions } from '../../payment-request-options';
-import PaymentRequestSender from '../../payment-request-sender';
-import PaymentRequestTransformer from '../../payment-request-transformer';
+    getCart,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { MollieClient, MollieElement, MollieHostWindow } from './mollie';
 import MolliePaymentStrategy from './mollie-payment-strategy';
@@ -42,6 +20,7 @@ import MollieScriptLoader from './mollie-script-loader';
 import {
     getHostedFormInitializeOptions,
     getInitializeOptions,
+    getMollie,
     getMollieClient,
     getOrderRequestBodyAPMs,
     getOrderRequestBodyVaultAPMs,
@@ -52,73 +31,39 @@ import {
 } from './mollie.mock';
 
 describe('MolliePaymentStrategy', () => {
-    let orderRequestSender: OrderRequestSender;
-    let orderActionCreator: OrderActionCreator;
-    let paymentActionCreator: PaymentActionCreator;
-    let mollieScriptLoader: MollieScriptLoader;
     let mockWindow: MollieHostWindow;
-    let store: CheckoutStore;
-    let finalizeOrderAction: Observable<FinalizeOrderAction>;
-    let submitPaymentAction: Observable<SubmitPaymentAction>;
-    let strategy: MolliePaymentStrategy;
     let mollieClient: MollieClient;
     let mollieElement: MollieElement;
-    let formFactory: HostedFormFactory;
+    let mollieScriptLoader: MollieScriptLoader;
+    let paymentIntegrationService: PaymentIntegrationService;
+    let strategy: MolliePaymentStrategy;
 
     beforeEach(() => {
         mollieClient = getMollieClient();
+
         mollieElement = {
             mount: jest.fn(),
             unmount: jest.fn(),
             addEventListener: jest.fn(),
         };
 
-        const scriptLoader = createScriptLoader();
-        const requestSender = createRequestSender();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
+        const scriptLoader = createScriptLoader();
+
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         mockWindow = {} as MollieHostWindow;
-        orderRequestSender = new OrderRequestSender(requestSender);
-        orderActionCreator = new OrderActionCreator(
-            orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(requestSender)),
-        );
-        paymentActionCreator = new PaymentActionCreator(
-            new PaymentRequestSender(createPaymentClient()),
-            orderActionCreator,
-            new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
-        );
 
         mollieScriptLoader = new MollieScriptLoader(scriptLoader, mockWindow);
 
-        store = createCheckoutStore(getCheckoutStoreState());
-
-        finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
-        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
-
         jest.useFakeTimers();
-
-        jest.spyOn(store, 'dispatch');
-
-        jest.spyOn(orderActionCreator, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
-
-        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitPaymentAction);
-
-        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
         jest.spyOn(mollieScriptLoader, 'load').mockReturnValue(Promise.resolve(mollieClient));
 
         jest.spyOn(mollieClient, 'createComponent').mockReturnValue(mollieElement);
         jest.spyOn(document, 'querySelectorAll');
 
-        formFactory = new HostedFormFactory(store);
-        strategy = new MolliePaymentStrategy(
-            formFactory,
-            store,
-            mollieScriptLoader,
-            orderActionCreator,
-            paymentActionCreator,
-        );
+        strategy = new MolliePaymentStrategy(mollieScriptLoader, paymentIntegrationService);
     });
 
     describe('#Initialize & #Execute', () => {
@@ -127,11 +72,12 @@ describe('MolliePaymentStrategy', () => {
         beforeEach(() => {
             options = getInitializeOptions();
 
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
-                getMollie(),
-            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(getMollie());
 
-            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
                 storeProfile: { storeLanguage: 'en_US' },
             });
         });
@@ -141,12 +87,30 @@ describe('MolliePaymentStrategy', () => {
         });
 
         describe('Initialize', () => {
-            it('does not load Mollie if initialization options are not provided', () => {
+            it('does not load Mollie if initialization options are not provided', async () => {
                 options.mollie = undefined;
 
                 const response = strategy.initialize(options);
 
-                return expect(response).rejects.toThrow(InvalidArgumentError);
+                await expect(response).rejects.toThrow(InvalidArgumentError);
+            });
+
+            it('does not load Mollie if gatewayId is not provided', async () => {
+                options.gatewayId = undefined;
+
+                const response = strategy.initialize(options);
+
+                await expect(response).rejects.toThrow(InvalidArgumentError);
+            });
+
+            it('does not load Mollie if store config is not provided', async () => {
+                jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
+                    undefined,
+                );
+
+                const response = strategy.initialize(options);
+
+                await expect(response).rejects.toThrow(MissingDataError);
             });
 
             it('does initialize mollie and create 4 components', async () => {
@@ -211,16 +175,18 @@ describe('MolliePaymentStrategy', () => {
                 };
 
                 jest.spyOn(
-                    store.getState().paymentMethods,
+                    paymentIntegrationService.getState(),
                     'getPaymentMethodOrThrow',
                 ).mockReturnValue(mollieMethod);
-                jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartMock);
+                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                    cartMock,
+                );
                 jest.spyOn(document, 'createElement').mockReturnValue(paragraph);
                 jest.spyOn(document, 'getElementById').mockReturnValue(container);
 
                 await strategy.initialize(optionsMock);
 
-                expect(store.getState().cart.getCartOrThrow).toHaveBeenCalled();
+                expect(paymentIntegrationService.getState().getCartOrThrow).toHaveBeenCalled();
                 expect(document.getElementById).toHaveBeenCalledWith(options.mollie?.containerId);
                 expect(document.createElement).toHaveBeenCalledWith('p');
                 expect(paragraph.setAttribute).toHaveBeenCalled();
@@ -268,16 +234,18 @@ describe('MolliePaymentStrategy', () => {
                 };
 
                 jest.spyOn(
-                    store.getState().paymentMethods,
+                    paymentIntegrationService.getState(),
                     'getPaymentMethodOrThrow',
                 ).mockReturnValue(mollieMethod);
-                jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cartMock);
+                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                    cartMock,
+                );
                 jest.spyOn(document, 'createElement');
                 jest.spyOn(document, 'getElementById');
 
                 await strategy.initialize(optionsMock);
 
-                expect(store.getState().cart.getCartOrThrow).toHaveBeenCalled();
+                expect(paymentIntegrationService.getState().getCartOrThrow).toHaveBeenCalled();
                 expect(document.getElementById).not.toHaveBeenCalledWith('mollie-element');
                 expect(document.createElement).not.toHaveBeenCalledWith('p');
                 expect(paragraph.setAttribute).not.toHaveBeenCalled();
@@ -318,17 +286,18 @@ describe('MolliePaymentStrategy', () => {
                 };
 
                 jest.spyOn(
-                    store.getState().paymentMethods,
+                    paymentIntegrationService.getState(),
                     'getPaymentMethodOrThrow',
                 ).mockReturnValue(mollieMethod);
-                jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(rejection);
+                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                    rejection,
+                );
                 jest.spyOn(document, 'createElement');
                 jest.spyOn(document, 'getElementById');
 
-                const response = strategy.initialize(optionsMock);
+                await strategy.initialize(optionsMock);
 
-                expect(response).rejects.toThrow(rejection);
-                expect(store.getState().cart.getCartOrThrow).toHaveBeenCalled();
+                expect(paymentIntegrationService.getState().getCartOrThrow).toHaveBeenCalled();
                 expect(document.getElementById).not.toHaveBeenCalledWith('mollie-element');
                 expect(document.createElement).not.toHaveBeenCalledWith('p');
                 expect(paragraph.setAttribute).not.toHaveBeenCalled();
@@ -358,14 +327,17 @@ describe('MolliePaymentStrategy', () => {
                     appendChild: jest.fn(),
                 };
 
-                jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(
-                    true,
-                );
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'isPaymentMethodInitialized',
+                ).mockReturnValue(true);
+
                 jest.spyOn(document, 'getElementById').mockReturnValue(container);
 
                 await strategy.initialize(optionsMock);
 
                 expect(document.getElementById).toHaveBeenCalledWith(
+                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                     `${optionsMock.gatewayId}-${optionsMock.methodId}-paragraph`,
                 );
                 expect(container.remove).toHaveBeenCalled();
@@ -376,12 +348,17 @@ describe('MolliePaymentStrategy', () => {
         describe('#execute', () => {
             beforeEach(() => {
                 jest.spyOn(mollieClient, 'createToken').mockResolvedValue({ token: 'tkn_test' });
+
+                jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue(
+                    'en-US',
+                );
             });
 
             it('throws an error when payment is not present', async () => {
                 try {
                     await strategy.execute(getOrderRequestBodyWithoutPayment());
                 } catch (err) {
+                    // eslint-disable-next-line jest/no-conditional-expect
                     expect(err).toBeInstanceOf(PaymentArgumentInvalidError);
                 }
             });
@@ -392,11 +369,12 @@ describe('MolliePaymentStrategy', () => {
                 await strategy.execute(getOrderRequestBodyWithCreditCard());
 
                 expect(mollieClient.createToken).toHaveBeenCalled();
-                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                     gatewayId: 'mollie',
                     methodId: 'credit_card',
                     paymentData: {
                         formattedPayload: {
+                            /* eslint-disable */
                             browser_info: {
                                 color_depth: 24,
                                 java_enabled: false,
@@ -409,6 +387,7 @@ describe('MolliePaymentStrategy', () => {
                                 token: 'tkn_test',
                             },
                             shopper_locale: 'en-US',
+                            /* eslint-enable */
                         },
                     },
                 });
@@ -422,11 +401,12 @@ describe('MolliePaymentStrategy', () => {
 
                 await strategy.execute({ payment });
 
-                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                     gatewayId: 'mollie',
                     methodId: 'credit_card',
                     paymentData: {
                         formattedPayload: {
+                            /* eslint-disable */
                             browser_info: {
                                 color_depth: 24,
                                 java_enabled: false,
@@ -441,6 +421,7 @@ describe('MolliePaymentStrategy', () => {
                             set_as_default_stored_instrument: true,
                             shopper_locale: 'en-US',
                             vault_payment_instrument: true,
+                            /* eslint-enable */
                         },
                     },
                 });
@@ -450,16 +431,18 @@ describe('MolliePaymentStrategy', () => {
                 await strategy.initialize(options);
                 await strategy.execute(getOrderRequestBodyAPMs());
 
-                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                     gatewayId: 'mollie',
                     methodId: 'belfius',
                     paymentData: {
+                        /* eslint-disable */
                         formattedPayload: {
                             issuer: 'foo',
                             shopper_locale: 'en-US',
                         },
                         issuer: 'foo',
                         shopper_locale: 'en-US',
+                        /* eslint-enable */
                     },
                 });
             });
@@ -468,13 +451,15 @@ describe('MolliePaymentStrategy', () => {
                 await strategy.initialize(options);
                 await strategy.execute(getOrderRequestBodyVaultAPMs());
 
-                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                     gatewayId: 'mollie',
                     methodId: 'belfius',
                     paymentData: {
                         formattedPayload: {
+                            /* eslint-disable */
                             issuer: '',
                             shopper_locale: 'en-US',
+                            /* eslint-enable */
                         },
                         shouldSaveInstrument: true,
                         shouldSetAsDefaultInstrument: false,
@@ -487,8 +472,6 @@ describe('MolliePaymentStrategy', () => {
     describe('When Hosted Form is enabled', () => {
         let form: Pick<HostedForm, 'attach' | 'submit' | 'validate' | 'detach'>;
         let initializeOptions: PaymentInitializeOptions;
-        let loadOrderAction: Observable<LoadOrderSucceededAction>;
-        let state: InternalCheckoutSelectors;
 
         beforeEach(() => {
             form = {
@@ -498,16 +481,21 @@ describe('MolliePaymentStrategy', () => {
                 detach: jest.fn(),
             };
             initializeOptions = getHostedFormInitializeOptions();
-            loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
-            state = store.getState();
 
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
-                getMollie(),
-            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(getMollie());
 
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
-
-            jest.spyOn(formFactory, 'create').mockReturnValue(form);
+            jest.spyOn(paymentIntegrationService, 'createHostedForm').mockReturnValue(form);
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
+                paymentSettings: {
+                    bigpayBaseUrl: 'https://bigpay.integration.zone',
+                },
+                storeProfile: {
+                    storeLanguage: 'en_US',
+                },
+            });
         });
 
         afterEach(() => {
@@ -517,7 +505,7 @@ describe('MolliePaymentStrategy', () => {
         it('creates hosted form', async () => {
             await strategy.initialize(initializeOptions);
 
-            expect(formFactory.create).toHaveBeenCalledWith(
+            expect(paymentIntegrationService.createHostedForm).toHaveBeenCalledWith(
                 'https://bigpay.integration.zone',
                 initializeOptions.mollie?.form,
             );
@@ -552,6 +540,7 @@ describe('MolliePaymentStrategy', () => {
                 await strategy.initialize(initializeOptions);
                 await strategy.execute(getOrderRequestBodyVaultedCC());
             } catch (error) {
+                // eslint-disable-next-line jest/no-conditional-expect
                 expect(form.submit).not.toHaveBeenCalled();
             }
         });
@@ -587,10 +576,10 @@ describe('MolliePaymentStrategy', () => {
     });
 
     describe('#finalize()', () => {
-        it('finalize mollie', () => {
+        it('finalize mollie', async () => {
             const promise = strategy.finalize();
 
-            expect(promise).resolves.toBe(store.getState());
+            await expect(promise).resolves.toBeUndefined();
         });
     });
 
@@ -601,11 +590,12 @@ describe('MolliePaymentStrategy', () => {
         beforeEach(() => {
             options = getInitializeOptions();
 
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
-                getMollie(),
-            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(getMollie());
 
-            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
                 storeProfile: { storeLanguage: 'en_US' },
             });
         });
@@ -622,16 +612,12 @@ describe('MolliePaymentStrategy', () => {
 
             const promise = strategy.deinitialize(initializeOptions);
 
-            expect(document.getElementById).toHaveBeenNthCalledWith(
-                1,
-                `${options.gatewayId}-${options.methodId}`,
-            );
             expect(document.querySelectorAll).toHaveBeenNthCalledWith(
                 1,
                 '.mollie-components-controller',
             );
 
-            return expect(promise).resolves.toBe(store.getState());
+            await expect(promise).resolves.toBeUndefined();
         });
     });
 });

@@ -1,4 +1,4 @@
-import { HostedFormOptions } from '../../../hosted-form';
+import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
  * A set of options that are required to initialize the Mollie payment method.
@@ -66,4 +66,12 @@ export default interface MolliePaymentInitializeOptions {
     unsupportedMethodMessage?: string;
 
     disableButton(disabled: boolean): void;
+}
+
+export interface WithMolliePaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Mollie payment
+     * method. They can be omitted unless you need to support Mollie.
+     */
+    mollie?: MolliePaymentInitializeOptions;
 }

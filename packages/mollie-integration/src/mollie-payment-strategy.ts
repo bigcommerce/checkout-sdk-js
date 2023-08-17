@@ -1,56 +1,59 @@
 import { each, some } from 'lodash';
 
-import { PaymentActionCreator } from '../..';
-import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { getBrowserInfo } from '../../../common/browser-info';
 import {
+    getBrowserInfo,
+    HostedForm,
+    HostedFormOptions,
+    HostedInstrument,
     InvalidArgumentError,
+    isVaultedInstrument,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
+    OrderPaymentRequestBody,
+    OrderRequestBody,
+    PaymentArgumentInvalidError,
+    PaymentInitializeOptions,
+    PaymentIntegrationService,
+    PaymentRequestOptions,
+    PaymentStrategy,
     RequestError,
-} from '../../../common/error/errors';
-import { HostedForm, HostedFormFactory, HostedFormOptions } from '../../../hosted-form';
-import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
-import { PaymentArgumentInvalidError } from '../../errors';
-import isVaultedInstrument from '../../is-vaulted-instrument';
-import { HostedInstrument } from '../../payment';
-import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
-import PaymentStrategy from '../payment-strategy';
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { MollieClient, MollieElement } from './mollie';
-import MolliePaymentInitializeOptions from './mollie-initialize-options';
+import MolliePaymentInitializeOptions, {
+    WithMolliePaymentInitializeOptions,
+} from './mollie-payment-initialize-options';
 import MollieScriptLoader from './mollie-script-loader';
 
 export enum MolliePaymentMethodType {
-    creditcard = 'credit_card',
+    CREDIT_CARD = 'credit_card',
 }
 
 const methodsNotAllowedWhenDigitalOrder = ['klarnapaylater', 'klarnasliceit'];
 
 export default class MolliePaymentStrategy implements PaymentStrategy {
-    private _initializeOptions?: MolliePaymentInitializeOptions;
-    private _mollieClient?: MollieClient;
-    private _cardHolderElement?: MollieElement;
-    private _cardNumberElement?: MollieElement;
-    private _verificationCodeElement?: MollieElement;
-    private _expiryDateElement?: MollieElement;
-    private _locale?: string;
+    private initializeOptions?: MolliePaymentInitializeOptions;
+    private mollieClient?: MollieClient;
+    private cardHolderElement?: MollieElement;
+    private cardNumberElement?: MollieElement;
+    private verificationCodeElement?: MollieElement;
+    private expiryDateElement?: MollieElement;
+    private locale?: string;
 
-    private _hostedForm?: HostedForm;
+    private hostedForm?: HostedForm;
 
-    private _unsubscribe?: () => void;
+    private unsubscribe?: () => void;
 
     constructor(
-        private _hostedFormFactory: HostedFormFactory,
-        private _store: CheckoutStore,
-        private _mollieScriptLoader: MollieScriptLoader,
-        private _orderActionCreator: OrderActionCreator,
-        private _paymentActionCreator: PaymentActionCreator,
+        private mollieScriptLoader: MollieScriptLoader,
+        private paymentIntegrationService: PaymentIntegrationService,
     ) {}
 
-    async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(
+        options: PaymentInitializeOptions & WithMolliePaymentInitializeOptions,
+    ): Promise<void> {
         const { mollie, methodId, gatewayId } = options;
 
         if (!mollie) {
@@ -69,23 +72,23 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
 
         each(controllers, (controller) => controller.remove());
 
-        const state = this._store.getState();
-        const storeConfig = state.config.getStoreConfig();
+        const storeConfig = this.paymentIntegrationService.getState().getStoreConfig();
 
         if (!storeConfig) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
-        this._initializeOptions = mollie;
+        this.initializeOptions = mollie;
 
-        const paymentMethods = state.paymentMethods;
-        const paymentMethod = paymentMethods.getPaymentMethodOrThrow(methodId, gatewayId);
+        const paymentMethod = this.paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow(methodId, gatewayId);
+
         const {
             config: { merchantId, testMode },
         } = paymentMethod;
-        const { locale } = paymentMethod.initializationData;
 
-        this._locale = locale;
+        this.locale = this.paymentIntegrationService.getState().getLocale();
 
         if (!merchantId) {
             throw new InvalidArgumentError(
@@ -98,9 +101,9 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             mollie.form &&
             this.shouldShowTSVHostedForm(methodId, gatewayId)
         ) {
-            this._hostedForm = await this._mountCardVerificationfields(mollie.form);
+            this.hostedForm = await this.mountCardVerificationfields(mollie.form);
         } else if (this.isCreditCard(methodId)) {
-            this._mollieClient = await this._loadMollieJs(
+            this.mollieClient = await this._loadMollieJs(
                 merchantId,
                 storeConfig.storeProfile.storeLanguage,
                 testMode,
@@ -108,46 +111,33 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             this._mountElements();
         }
 
-        this._unsubscribe = this._store.subscribe(
-            async (state) => {
-                if (
-                    state.paymentStrategies.isInitialized({
-                        methodId: options.methodId,
-                        gatewayId: options.gatewayId,
-                    })
-                ) {
-                    const element = document.getElementById(`${gatewayId}-${methodId}-paragraph`);
+        this.unsubscribe = () => {
+            if (
+                this.paymentIntegrationService.getState().isPaymentMethodInitialized({
+                    methodId: options.methodId,
+                    gatewayId: options.gatewayId,
+                })
+            ) {
+                const element = document.getElementById(`${gatewayId}-${methodId}-paragraph`);
 
-                    if (element) {
-                        element.remove();
-                    }
-
-                    mollie.disableButton(false);
-
-                    this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId, state);
+                if (element) {
+                    element.remove();
                 }
-            },
-            (state) => {
-                const checkout = state.checkout.getCheckout();
 
-                return checkout && checkout.outstandingBalance;
-            },
-            (state) => {
-                const checkout = state.checkout.getCheckout();
+                mollie.disableButton(false);
 
-                return checkout && checkout.coupons;
-            },
-        );
+                this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId);
+            }
+        };
 
-        this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId, state);
+        this.unsubscribe();
 
-        return Promise.resolve(this._store.getState());
+        this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId);
+
+        return Promise.resolve();
     }
 
-    async execute(
-        payload: OrderRequestBody,
-        options?: PaymentRequestOptions,
-    ): Promise<InternalCheckoutSelectors> {
+    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = payload;
         const paymentData = payment?.paymentData;
 
@@ -156,7 +146,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         }
 
         try {
-            await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
+            await this.paymentIntegrationService.submitOrder(order, options);
 
             if (isVaultedInstrument(paymentData)) {
                 return await this.executeWithVaulted(payment);
@@ -168,24 +158,24 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
 
             return await this.executeWithAPM(payment);
         } catch (error) {
-            return this._processAdditionalAction(error);
+            await this._processAdditionalAction(error);
         }
     }
 
-    finalize(): Promise<InternalCheckoutSelectors> {
-        return Promise.resolve(this._store.getState());
+    finalize(): Promise<void> {
+        return Promise.resolve();
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        if (this._unsubscribe) {
-            this._unsubscribe();
+    deinitialize(options?: PaymentRequestOptions): Promise<void> {
+        if (this.unsubscribe) {
+            this.unsubscribe();
         }
 
-        if (this._hostedForm) {
-            this._hostedForm.detach();
+        if (this.hostedForm) {
+            this.hostedForm.detach();
         }
 
-        if (options && options.methodId && options.gatewayId && !this._hostedForm) {
+        if (options && options.methodId && options.gatewayId && !this.hostedForm) {
             const element = document.getElementById(`${options.gatewayId}-${options.methodId}`);
 
             if (element) {
@@ -193,34 +183,33 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             }
         } else if (options && options.methodId && this.isCreditCard(options.methodId)) {
             if (
-                this._cardHolderElement &&
-                this._cardNumberElement &&
-                this._verificationCodeElement &&
-                this._expiryDateElement
+                this.cardHolderElement &&
+                this.cardNumberElement &&
+                this.verificationCodeElement &&
+                this.expiryDateElement
             ) {
-                this._cardHolderElement.unmount();
-                this._cardHolderElement = undefined;
+                this.cardHolderElement.unmount();
+                this.cardHolderElement = undefined;
 
-                this._cardNumberElement.unmount();
-                this._cardNumberElement = undefined;
+                this.cardNumberElement.unmount();
+                this.cardNumberElement = undefined;
 
-                this._verificationCodeElement.unmount();
-                this._verificationCodeElement = undefined;
+                this.verificationCodeElement.unmount();
+                this.verificationCodeElement = undefined;
 
-                this._expiryDateElement.unmount();
-                this._expiryDateElement = undefined;
+                this.expiryDateElement.unmount();
+                this.expiryDateElement = undefined;
             }
         }
 
-        this._mollieClient = undefined;
+        this.mollieClient = undefined;
 
-        return Promise.resolve(this._store.getState());
+        return Promise.resolve();
     }
 
-    protected async executeWithCC(
-        payment: OrderPaymentRequestBody,
-    ): Promise<InternalCheckoutSelectors> {
+    protected async executeWithCC(payment: OrderPaymentRequestBody): Promise<void> {
         const paymentData = payment.paymentData;
+        /* eslint-disable */
         const shouldSaveInstrument = (paymentData as HostedInstrument).shouldSaveInstrument;
         const shouldSetAsDefaultInstrument = (paymentData as HostedInstrument)
             .shouldSetAsDefaultInstrument;
@@ -240,22 +229,19 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             browser_info: getBrowserInfo(),
             shopper_locale: this._getShopperLocale(),
         };
+        /* eslint-enable */
 
-        return this._store.dispatch(
-            this._paymentActionCreator.submitPayment({
-                ...payment,
-                paymentData: {
-                    formattedPayload,
-                },
-            }),
-        );
+        await this.paymentIntegrationService.submitPayment({
+            ...payment,
+            paymentData: {
+                formattedPayload,
+            },
+        });
     }
 
-    protected async executeWithVaulted(
-        payment: OrderPaymentRequestBody,
-    ): Promise<InternalCheckoutSelectors> {
+    protected async executeWithVaulted(payment: OrderPaymentRequestBody): Promise<void> {
         if (this._isHostedPaymentFormEnabled(payment.methodId, payment.gatewayId)) {
-            const form = this._hostedForm;
+            const form = this.hostedForm;
 
             if (!form) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -264,34 +250,31 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             await form.validate();
             await form.submit(payment);
 
-            return this._store.dispatch(this._orderActionCreator.loadCurrentOrder());
+            await this.paymentIntegrationService.loadCurrentOrder();
         }
 
-        return this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
+        await this.paymentIntegrationService.submitPayment(payment);
     }
 
-    protected async executeWithAPM(
-        payment: OrderPaymentRequestBody,
-    ): Promise<InternalCheckoutSelectors> {
+    protected async executeWithAPM(payment: OrderPaymentRequestBody): Promise<void> {
         const paymentData = payment.paymentData;
         const issuer = paymentData && 'issuer' in paymentData ? paymentData.issuer : '';
 
-        return this._store.dispatch(
-            this._paymentActionCreator.submitPayment({
-                ...payment,
-                paymentData: {
-                    ...paymentData,
-                    formattedPayload: {
-                        issuer,
-                        shopper_locale: this._getShopperLocale(),
-                    },
+        await this.paymentIntegrationService.submitPayment({
+            ...payment,
+            paymentData: {
+                ...paymentData,
+                formattedPayload: {
+                    issuer,
+                    // eslint-disable-next-line @typescript-eslint/naming-convention
+                    shopper_locale: this._getShopperLocale(),
                 },
-            }),
-        );
+            },
+        });
     }
 
     private isCreditCard(methodId: string): boolean {
-        return methodId === MolliePaymentMethodType.creditcard;
+        return methodId === MolliePaymentMethodType.CREDIT_CARD;
     }
 
     private shouldShowTSVHostedForm(methodId: string, gatewayId: string): boolean {
@@ -300,18 +283,18 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         );
     }
 
-    private _mountCardVerificationfields(formOptions: HostedFormOptions): Promise<HostedForm> {
+    private mountCardVerificationfields(formOptions: HostedFormOptions): Promise<HostedForm> {
         /* eslint-disable */
-        return new Promise(async (resolve , reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
-                const { config } = this._store.getState();
-                const bigpayBaseUrl = config.getStoreConfig()?.paymentSettings.bigpayBaseUrl;
+                const config = this.paymentIntegrationService.getState().getStoreConfig();
+                const bigpayBaseUrl = config?.paymentSettings.bigpayBaseUrl;
 
                 if (!bigpayBaseUrl) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                 }
 
-                const form = this._hostedFormFactory.create(bigpayBaseUrl, formOptions);
+                const form = this.paymentIntegrationService.createHostedForm(bigpayBaseUrl, formOptions);
 
                 await form.attach();
 
@@ -323,7 +306,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
     }
 
     private _isHostedPaymentFormEnabled(methodId: string, gatewayId?: string): boolean {
-        const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const { getPaymentMethodOrThrow } = this.paymentIntegrationService.getState();
         const paymentMethod = getPaymentMethodOrThrow(methodId, gatewayId);
 
         return paymentMethod.config.isHostedFormEnabled === true;
@@ -335,8 +318,8 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         return !!options.form?.fields;
     }
 
-    private _processAdditionalAction(error: any): Promise<InternalCheckoutSelectors> {
-        if (!(error instanceof RequestError) || !some(error.body.errors, {code: 'additional_action_required'})) {
+    private _processAdditionalAction(error: any): Promise<any> {
+        if (!(error instanceof RequestError) && !some(error.body.errors, {code: 'additional_action_required'})) {
             return Promise.reject(error);
         }
         const { additional_action_required: { data : { redirect_url } } } = error.body;
@@ -345,36 +328,36 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
     }
 
     private _getInitializeOptions(): MolliePaymentInitializeOptions {
-        if (!this._initializeOptions) {
+        if (!this.initializeOptions) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        return this._initializeOptions;
+        return this.initializeOptions;
     }
 
     private _loadMollieJs(merchantId: string, locale: string, testmode = false): Promise<MollieClient> {
-        if (this._mollieClient) {
-            return Promise.resolve(this._mollieClient);
+        if (this.mollieClient) {
+            return Promise.resolve(this.mollieClient);
         }
 
-        return this._mollieScriptLoader
+        return this.mollieScriptLoader
             .load(merchantId, locale, testmode);
     }
 
     private _getMollieClient(): MollieClient {
-        if (!this._mollieClient) {
+        if (!this.mollieClient) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        return this._mollieClient;
+        return this.mollieClient;
     }
 
     private _getShopperLocale(): string {
-        if (!this._locale) {
+        if (!this.locale) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        return this._locale;
+        return this.locale;
     }
 
     /**
@@ -398,25 +381,25 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             if (!containerId || container?.style.display !== 'none') {
                 const mollieClient = this._getMollieClient();
 
-                this._cardHolderElement = mollieClient.createComponent('cardHolder', { styles });
-                this._cardHolderElement.mount(`#${cardHolderId}`);
+                this.cardHolderElement = mollieClient.createComponent('cardHolder', { styles });
+                this.cardHolderElement.mount(`#${cardHolderId}`);
 
-                this._cardNumberElement = mollieClient.createComponent('cardNumber', { styles });
-                this._cardNumberElement.mount(`#${cardNumberId}`);
+                this.cardNumberElement = mollieClient.createComponent('cardNumber', { styles });
+                this.cardNumberElement.mount(`#${cardNumberId}`);
 
-                this._verificationCodeElement = mollieClient.createComponent('verificationCode', { styles });
-                this._verificationCodeElement.mount(`#${cardCvcId}`);
+                this.verificationCodeElement = mollieClient.createComponent('verificationCode', { styles });
+                this.verificationCodeElement.mount(`#${cardCvcId}`);
 
-                this._expiryDateElement = mollieClient.createComponent('expiryDate', { styles });
-                this._expiryDateElement.mount(`#${cardExpiryId}`);
+                this.expiryDateElement = mollieClient.createComponent('expiryDate', { styles });
+                this.expiryDateElement.mount(`#${cardExpiryId}`);
             }
         }, 0);
     }
 
-    private _loadPaymentMethodsAllowed(mollie: MolliePaymentInitializeOptions, methodId: string, gatewayId: string, state: InternalCheckoutSelectors){
+    private _loadPaymentMethodsAllowed(mollie: MolliePaymentInitializeOptions, methodId: string, gatewayId: string){
         if (methodsNotAllowedWhenDigitalOrder.includes(methodId)) {
-            const cart = state.cart.getCartOrThrow();
-            const cartDigitalItems = cart.lineItems.digitalItems;
+            const cart = this.paymentIntegrationService.getState().getCartOrThrow();
+            const cartDigitalItems = cart.lineItems?.digitalItems;
 
             if (cartDigitalItems && cartDigitalItems.length > 0) {
                 const { containerId } = this._getInitializeOptions();
