@@ -93,8 +93,8 @@ describe('ApplePayButtonStrategy', () => {
             );
         });
 
-        it('doesnt call verifyCheckoutSpamProtection if checkout undefined', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getCheckout').mockReturnValue(
+        it('doesnt call verifyCheckoutSpamProtection if cart undefined', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCart').mockReturnValue(
                 undefined,
             );
             paymentIntegrationService.verifyCheckoutSpamProtection = jest.fn();
