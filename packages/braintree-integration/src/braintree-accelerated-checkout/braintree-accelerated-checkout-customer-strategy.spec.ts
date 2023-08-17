@@ -102,26 +102,6 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
         // describe #shouldRunAuthenticationFlow() & #runPayPalConnectAuthenticationFlowOrThrow()
     });
 
-    describe('#signIn()', () => {
-        it('calls default sign in method', async () => {
-            const credentials = {
-                email: 'test@test.com',
-                password: '123',
-            };
-
-            await strategy.initialize({ methodId });
-            await strategy.signIn(credentials);
-
-            expect(paymentIntegrationService.signInCustomer).toHaveBeenCalledWith(
-                credentials,
-                undefined,
-            );
-        });
-
-        // INFO: PayPal Connect authentication tests can be found in
-        // describe #shouldRunAuthenticationFlow() & #runPayPalConnectAuthenticationFlowOrThrow()
-    });
-
     describe('#shouldRunAuthenticationFlow() & #runPayPalConnectAuthenticationFlowOrThrow()', () => {
         it('authenticates customer with PayPal Connect', async () => {
             await strategy.initialize({ methodId });
@@ -188,36 +168,13 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             ).not.toHaveBeenCalled();
         });
 
-        it('authenticates customer with PayPal Connect by provided email after sign in', async () => {
-            const credentials = {
-                email: 'test@test.com',
-                password: '123',
-            };
-
-            await strategy.initialize({ methodId });
-            await strategy.signIn(credentials);
-
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
-            expect(
-                braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
-            ).toHaveBeenCalledWith(methodId);
-            expect(
-                braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
-            ).toHaveBeenCalledWith(credentials.email);
-        });
-
         it('loads different payment method due to the A/B testing flow', async () => {
             jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockRejectedValueOnce(
                 new Error(),
             );
 
-            const credentials = {
-                email: 'test@test.com',
-                password: '123',
-            };
-
             await strategy.initialize({ methodId });
-            await strategy.signIn(credentials);
+            await strategy.executePaymentMethodCheckout(executionOptions);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
@@ -228,7 +185,24 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             ).toHaveBeenCalledWith(backupMethodId);
             expect(
                 braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
-            ).toHaveBeenCalledWith(credentials.email);
+            ).toHaveBeenCalled();
+        });
+    });
+
+    describe('#signIn()', () => {
+        it('calls default sign in method', async () => {
+            const credentials = {
+                email: 'test@test.com',
+                password: '123',
+            };
+
+            await strategy.initialize({ methodId });
+            await strategy.signIn(credentials);
+
+            expect(paymentIntegrationService.signInCustomer).toHaveBeenCalledWith(
+                credentials,
+                undefined,
+            );
         });
     });
 
