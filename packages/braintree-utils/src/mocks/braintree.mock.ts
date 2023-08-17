@@ -71,7 +71,7 @@ export function getBraintreeConnectProfileDataMock(): BraintreeConnectProfileDat
 export function getConnectMock(): BraintreeConnect {
     return {
         identity: {
-            lookupCustomerByEmail: () => Promise.resolve({ customerId: 'customerId' }),
+            lookupCustomerByEmail: () => Promise.resolve({ customerContextId: 'customerId' }),
             triggerAuthenticationFlow: () =>
                 Promise.resolve({
                     authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
