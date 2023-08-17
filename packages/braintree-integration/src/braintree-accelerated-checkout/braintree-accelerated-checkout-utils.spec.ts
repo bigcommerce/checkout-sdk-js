@@ -81,7 +81,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
         );
 
         jest.spyOn(braintreeConnectMock.identity, 'lookupCustomerByEmail').mockReturnValue({
-            customerId: 'customerId',
+            customerContextId: 'customerContextId',
         });
         jest.spyOn(braintreeConnectMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
             authenticationState: 'succeeded',

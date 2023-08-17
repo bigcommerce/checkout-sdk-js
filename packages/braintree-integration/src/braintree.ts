@@ -551,7 +551,7 @@ export interface BraintreeConnectIdentity {
 }
 
 export interface BraintreeConnectLookupCustomerByEmailResult {
-    customerId?: string;
+    customerContextId?: string;
 }
 
 export interface BraintreeConnectAuthenticationOptions {
