@@ -11,7 +11,6 @@ import {
     getCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { BraintreeConnect } from '../braintree';
 import BraintreeIntegrationService from '../braintree-integration-service';
@@ -28,7 +27,6 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
     let braintreeConnectMock: BraintreeConnect;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
-    let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let subject: BraintreeAcceleratedCheckoutUtils;
 
@@ -42,7 +40,6 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
     beforeEach(() => {
         braintreeConnectMock = getConnectMock();
 
-        browserStorage = new BrowserStorage('braintree-accelerated-checkout-mock');
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
         braintreeIntegrationService = new BraintreeIntegrationService(
             braintreeScriptLoader,
@@ -53,10 +50,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
         subject = new BraintreeAcceleratedCheckoutUtils(
             paymentIntegrationService,
             braintreeIntegrationService,
-            browserStorage,
         );
-
-        jest.spyOn(browserStorage, 'setItem').mockImplementation(jest.fn);
 
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress');
@@ -176,11 +170,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             await subject.initializeBraintreeConnectOrThrow(methodId);
             await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
-            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
-                authenticationState: 'unrecognized',
-                addresses: undefined,
-                instruments: undefined,
-            });
+            expect(paymentIntegrationService.updatePaymentProviderCustomer).not.toHaveBeenCalled();
         });
 
         it('triggers PP Connect authentication flow if customer is detected as PP Connect user', async () => {
@@ -237,10 +227,6 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
                 updatePaymentProviderCustomerPayload,
             );
-            expect(browserStorage.setItem).toHaveBeenCalledWith('customer', {
-                email: customer.email,
-                ...updatePaymentProviderCustomerPayload,
-            });
         });
 
         it('does not authenticate customer if the authentication was canceled or failed', async () => {
@@ -262,11 +248,6 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
                 updatePaymentProviderCustomerPayload,
             );
-
-            expect(browserStorage.setItem).toHaveBeenCalledWith('customer', {
-                email: customer.email,
-                ...updatePaymentProviderCustomerPayload,
-            });
         });
 
         it('preselects billing address with first paypal connect address', async () => {

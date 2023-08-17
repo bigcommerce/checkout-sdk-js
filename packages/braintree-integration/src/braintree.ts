@@ -591,7 +591,6 @@ export enum BraintreeConnectAuthenticationState {
     SUCCEEDED = 'succeeded',
     FAILED = 'failed',
     CANCELED = 'canceled',
-    UNRECOGNIZED = 'unrecognized', // Info: this is a custom authentication state used on BC side only for users without PayPal account
 }
 
 export interface BraintreeConnectAuthenticationCustomerResult {
