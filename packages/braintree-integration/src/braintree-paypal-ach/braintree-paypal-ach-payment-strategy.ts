@@ -1,4 +1,11 @@
 import {
+    BankAccountSuccessPayload,
+    BraintreeBankAccount,
+    BraintreeInitializationData,
+    BraintreeIntegrationService,
+    isBraintreeError,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
     InvalidArgumentError,
     isHostedInstrumentLike,
     isVaultedInstrument,
@@ -19,13 +26,6 @@ import {
     WithBankAccountInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import {
-    BankAccountSuccessPayload,
-    BraintreeBankAccount,
-    BraintreeInitializationData,
-} from '../braintree';
-import BraintreeIntegrationService from '../braintree-integration-service';
-import isBraintreeError from '../is-braintree-error';
 import isUsBankAccountInstrumentLike from '../is-us-bank-account-instrument-like';
 
 import { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-paypal-ach-initialize-options';

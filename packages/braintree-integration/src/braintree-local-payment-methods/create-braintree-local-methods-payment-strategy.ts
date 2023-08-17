@@ -1,14 +1,15 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
+    BraintreeHostWindow,
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
     PaymentStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
-
-import { BraintreeHostWindow } from '../braintree';
-import BraintreeIntegrationService from '../braintree-integration-service';
-import BraintreeScriptLoader from '../braintree-script-loader';
 
 import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-payment-strategy';
 

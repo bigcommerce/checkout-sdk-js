@@ -1,4 +1,12 @@
 import {
+    BraintreeInitializationData,
+    BraintreeIntegrationService,
+    LocalPaymentInstance,
+    LocalPaymentsPayload,
+    onPaymentStartData,
+    StartPaymentError,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
@@ -13,15 +21,8 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
-import { BraintreeInitializationData } from '../braintree';
-import BraintreeIntegrationService from '../braintree-integration-service';
-
 import {
     BraintreeLocalMethods,
-    LocalPaymentInstance,
-    LocalPaymentsPayload,
-    onPaymentStartData,
-    StartPaymentError,
     WithBraintreeLocalMethodsPaymentInitializeOptions,
 } from './braintree-local-methods-options';
 

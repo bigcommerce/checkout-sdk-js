@@ -1,7 +1,3 @@
-export interface WithBraintreeLocalMethodsPaymentInitializeOptions {
-    braintreelocalmethods?: BraintreeLocalMethods;
-}
-
 export interface BraintreeLocalMethods {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
@@ -27,44 +23,6 @@ export interface BraintreeLocalMethods {
     onError(error: unknown): void;
 }
 
-export interface LocalPaymentInstanceConfig {
-    paymentType: string;
-    amount: number;
-    fallback: {
-        url: string;
-        buttonText: string;
-    };
-    currencyCode: string;
-    shippingAddressRequired: boolean;
-    email: string;
-    givenName: string;
-    surname: string;
-    address: {
-        countryCode: string;
-    };
-    onPaymentStart(data: onPaymentStartData, start: () => Promise<void>): void;
+export interface WithBraintreeLocalMethodsPaymentInitializeOptions {
+    braintreelocalmethods?: BraintreeLocalMethods;
 }
-
-export interface StartPaymentError {
-    code: string;
-}
-
-export interface onPaymentStartData {
-    paymentId: string;
-}
-
-export interface LocalPaymentsPayload {
-    nonce: string;
-}
-
-export interface LocalPaymentInstance {
-    startPayment(
-        config: LocalPaymentInstanceConfig,
-        callback: (
-            startPaymentError: StartPaymentError,
-            payload: LocalPaymentsPayload,
-        ) => Promise<void>,
-    ): void;
-}
-
-export type GetLocalPaymentInstance = (localPaymentInstance: LocalPaymentInstance) => void;

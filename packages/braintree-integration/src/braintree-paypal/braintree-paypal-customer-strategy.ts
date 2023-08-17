@@ -1,6 +1,17 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 
 import {
+    BraintreeError,
+    BraintreeHostWindow,
+    BraintreeInitializationData,
+    BraintreeIntegrationService,
+    BraintreePaypalCheckout,
+    BraintreePaypalSdkCreatorConfig,
+    BraintreeTokenizePayload,
+    isBraintreeError,
+    PaypalAuthorizeData,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
     CustomerCredentials,
     CustomerInitializeOptions,
     CustomerStrategy,
@@ -13,18 +24,6 @@ import {
     RequestOptions,
     StandardError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import {
-    BraintreeError,
-    BraintreeHostWindow,
-    BraintreeInitializationData,
-    BraintreePaypalCheckout,
-    BraintreePaypalSdkCreatorConfig,
-    BraintreeTokenizePayload,
-} from '../braintree';
-import BraintreeIntegrationService from '../braintree-integration-service';
-import isBraintreeError from '../is-braintree-error';
-import { PaypalAuthorizeData } from '../paypal';
 
 import BraintreePaypalCustomerInitializeOptions, {
     WithBraintreePaypalCustomerInitializeOptions,

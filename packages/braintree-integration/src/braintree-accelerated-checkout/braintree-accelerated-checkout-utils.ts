@@ -1,4 +1,12 @@
 import {
+    BraintreeConnect,
+    BraintreeConnectAddress,
+    BraintreeConnectAuthenticationState,
+    BraintreeConnectVaultedInstrument,
+    BraintreeInitializationData,
+    BraintreeIntegrationService,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
     BraintreeAcceleratedCheckoutCustomer,
     CardInstrument,
     CustomerAddress,
@@ -9,15 +17,6 @@ import {
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
-
-import {
-    BraintreeConnect,
-    BraintreeConnectAddress,
-    BraintreeConnectAuthenticationState,
-    BraintreeConnectVaultedInstrument,
-    BraintreeInitializationData,
-} from '../braintree';
-import BraintreeIntegrationService from '../braintree-integration-service';
 
 export default class BraintreeAcceleratedCheckoutUtils {
     private braintreeConnect?: BraintreeConnect;
