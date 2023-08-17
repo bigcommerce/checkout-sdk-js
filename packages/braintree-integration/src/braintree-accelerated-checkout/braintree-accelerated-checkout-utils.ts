@@ -1,5 +1,4 @@
 import {
-    BraintreeAcceleratedCheckoutCustomer,
     CardInstrument,
     CustomerAddress,
     InvalidArgumentError,
@@ -8,12 +7,10 @@ import {
     PaymentIntegrationService,
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import {
     BraintreeConnect,
     BraintreeConnectAddress,
-    BraintreeConnectAuthenticationState,
     BraintreeConnectVaultedInstrument,
     BraintreeInitializationData,
 } from '../braintree';
@@ -26,7 +23,6 @@ export default class BraintreeAcceleratedCheckoutUtils {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeIntegrationService: BraintreeIntegrationService,
-        private browserStorage: BrowserStorage,
     ) {}
 
     async getDeviceSessionId(): Promise<string | undefined> {
@@ -98,12 +94,6 @@ export default class BraintreeAcceleratedCheckoutUtils {
             const { customerContextId } = await lookupCustomerByEmail(customerEmail);
 
             if (!customerContextId) {
-                await this.updateCustomerData(customerEmail, {
-                    authenticationState: BraintreeConnectAuthenticationState.UNRECOGNIZED,
-                    addresses: undefined,
-                    instruments: undefined,
-                });
-
                 return;
             }
 
@@ -114,7 +104,7 @@ export default class BraintreeAcceleratedCheckoutUtils {
             const addresses = this.mapPayPalToBcAddress(profileData.addresses) || [];
             const instruments = this.mapPayPalToBcInstrument(methodId, profileData.cards) || [];
 
-            await this.updateCustomerData(customerEmail, {
+            await this.paymentIntegrationService.updatePaymentProviderCustomer({
                 authenticationState,
                 addresses,
                 instruments,
@@ -131,18 +121,6 @@ export default class BraintreeAcceleratedCheckoutUtils {
             // TODO: we should figure out what to do here
             // TODO: because we should not to stop the flow if the error occurs on paypal side
         }
-    }
-
-    private async updateCustomerData(
-        email: string,
-        customer: BraintreeAcceleratedCheckoutCustomer,
-    ): Promise<void> {
-        await this.paymentIntegrationService.updatePaymentProviderCustomer(customer);
-
-        this.browserStorage.setItem('customer', {
-            email,
-            ...customer,
-        });
     }
 
     /**
