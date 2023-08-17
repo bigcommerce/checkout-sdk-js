@@ -13,6 +13,7 @@ import {
     PayPalUpdateOrderRequestBody,
     PayPalUpdateOrderResponse,
 } from './paypal-commerce-types';
+import RequestOptions from '@bigcommerce/request-sender/lib/request-options';
 
 export default class PayPalCommerceRequestSender {
     constructor(private requestSender: RequestSender) {}
@@ -50,15 +51,15 @@ export default class PayPalCommerceRequestSender {
         return res.body;
     }
 
-    async getOrderStatus(): Promise<PayPalOrderStatusData> {
-        const url = '/api/storefront/initialization/paypalcommerce';
+    async getOrderStatus(methodId = 'paypalcommerce', options?: RequestOptions): Promise<PayPalOrderStatusData> {
+        const url = `/api/storefront/initialization/${methodId}`;
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,
             'Content-Type': ContentType.Json,
             ...SDK_VERSION_HEADERS,
         };
 
-        const res = await this.requestSender.get<PayPalOrderStatusData>(url, { headers });
+        const res = await this.requestSender.get<PayPalOrderStatusData>(url, { headers, ...options });
 
         return res.body;
     }

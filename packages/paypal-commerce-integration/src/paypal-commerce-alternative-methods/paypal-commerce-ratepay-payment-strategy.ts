@@ -7,6 +7,7 @@ import {
     PaymentIntegrationService,
     PaymentRequestOptions,
     PaymentStrategy,
+    TimeoutError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
@@ -14,13 +15,21 @@ import PayPalCommerceIntegrationService from '../paypal-commerce-integration-ser
 import { WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions } from '../index';
 import { BirthDate, PayPalCommerceInitializationData } from '../paypal-commerce-types';
 import { PaypalCommerceRatePay } from './paypal-commerce-alternative-methods-payment-initialize-options';
+import { noop } from 'lodash';
+// import {LoadingIndicator} from "@bigcommerce/checkout-sdk/ui";
 
 export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStrategy {
+    // private loadingIndicatorContainer?: string;
     private guid?: string;
     private paypalcommerceratepay?: PaypalCommerceRatePay;
+    private pollingTimer = 0;
+    private stopPolling = noop;
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        // private loadingIndicator: LoadingIndicator,
+        private pollingInterval = 3000,
+        private maxPollingTime = 600000,
     ) {}
 
     async initialize(
@@ -100,42 +109,47 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
             );
         }
 
-        try {
-            const orderId = await this.paypalCommerceIntegrationService.createOrder(
-                'paypalcommercealternativemethodscheckout',
-                { metadataId: this.guid },
-            );
+        const finalizeOrder = async () => {
+            try {
+                const orderId = await this.paypalCommerceIntegrationService.createOrder(
+                    'paypalcommercealternativemethodscheckout',
+                    {metadataId: this.guid},
+                );
 
-            const { ratepayBirthDate, ratepayPhoneNumber, ratepayPhoneCountryCode } =
-                getFieldsValues();
+                const {ratepayBirthDate, ratepayPhoneNumber, ratepayPhoneCountryCode} =
+                    getFieldsValues();
 
-            const paymentData = {
-                formattedPayload: {
-                    vault_payment_instrument: null,
-                    set_as_default_stored_instrument: null,
-                    device_info: null,
-                    method_id: payment.methodId,
-                    rate_pay: {
-                        birth_date: this.normalizeDate(ratepayBirthDate),
-                        phone: {
-                            national_number: ratepayPhoneNumber,
-                            country_code: ratepayPhoneCountryCode,
+                const paymentData = {
+                    formattedPayload: {
+                        vault_payment_instrument: null,
+                        set_as_default_stored_instrument: null,
+                        device_info: null,
+                        method_id: payment.methodId,
+                        rate_pay: {
+                            birth_date: this.normalizeDate(ratepayBirthDate),
+                            phone: {
+                                national_number: ratepayPhoneNumber,
+                                country_code: ratepayPhoneCountryCode,
+                            },
+                        },
+                        paypal_account: {
+                            order_id: orderId,
                         },
                     },
-                    paypal_account: {
-                        order_id: orderId,
-                    },
-                },
-            };
+                };
 
-            await this.paymentIntegrationService.submitOrder(order, options);
-            await this.paymentIntegrationService.submitPayment({
-                methodId: payment.methodId,
-                paymentData,
-            });
-        } catch (error: unknown) {
-            this.handleError(error);
+                await this.paymentIntegrationService.submitOrder(order, options);
+                await this.paymentIntegrationService.submitPayment({
+                    methodId: payment.methodId,
+                    paymentData,
+                });
+            } catch (error: unknown) {
+                this.handleError(error);
+            }
         }
+
+        // @ts-ignore
+        this.initializePollingMechanism(payment.methodId, payment.gatewayId, this.paypalcommerceratepay, finalizeOrder);
     }
 
     finalize(): Promise<void> {
@@ -146,6 +160,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         const { legalTextContainer } = this.paypalcommerceratepay || {};
         const fraudNetScript = document.querySelectorAll('[data-id="fraudnetScript"]')[0];
         const fraudNetConfig = document.querySelectorAll('[data-id="fraudnetConfig"]')[0];
+        this.deinitializePollingMechanism();
 
         fraudNetScript.remove();
         fraudNetConfig.remove();
@@ -193,6 +208,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
 
     private handleError(error: unknown): void {
         const { onError } = this.paypalcommerceratepay || {};
+        this.resetPollingMechanism();
 
         if (onError && typeof onError === 'function') {
             onError(error);
@@ -236,4 +252,95 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         script.src = 'https://c.paypal.com/da/r/fb.js';
         document.body.appendChild(script);
     }
+
+    private async reinitializeStrategy(
+        options: PaymentInitializeOptions &
+            WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions,
+    ): Promise<void> {
+        await this.deinitialize();
+        await this.initialize(options);
+    }
+
+    /**
+     *
+     * Polling mechanism
+     *
+     *
+     * */
+    private async initializePollingMechanism(
+        methodId: string,
+        gatewayId: string,
+        paypalRatePayOptions: PaypalCommerceRatePay,
+        callback: Function,
+    ): Promise<void> {
+        await new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(resolve, this.pollingInterval);
+
+            this.stopPolling = () => {
+                clearTimeout(timeout);
+                reject();
+            };
+        });
+
+        try {
+            this.pollingTimer += this.pollingInterval;
+
+            const orderStatus = await this.paypalCommerceIntegrationService.getOrderStatus(
+                'paypalcommercealternativemethods',
+                {
+                    params: {
+                        useMetadata: true
+                    },
+                },
+                );
+
+            const isOrderApproved = orderStatus === 'APPROVED'; // TODO: FIX
+            const isOrderPending =
+                orderStatus === 'CREATED' || // TODO: FIX
+                orderStatus === 'PAYER_ACTION_REQUIRED'; // TODO: FIX
+
+            if (isOrderApproved) {
+                this.deinitializePollingMechanism();
+
+                return callback();
+            }
+
+            if (isOrderPending && this.pollingTimer < this.maxPollingTime) {
+                return await this.initializePollingMechanism(methodId, gatewayId, paypalRatePayOptions, callback);
+            }
+
+            await this.reinitializeStrategy({
+                methodId,
+                gatewayId,
+                paypalcommerceratepay: paypalRatePayOptions,
+            });
+
+            throw new TimeoutError();
+        } catch (error) {
+            this.handleError(error);
+        }
+    }
+
+    private deinitializePollingMechanism(): void {
+        this.stopPolling();
+        this.pollingTimer = 0;
+    }
+
+    private resetPollingMechanism(): void {
+        this.deinitializePollingMechanism();
+        // this.toggleLoadingIndicator(false);
+    }
+
+    /**
+     *
+     * Loading Indicator methods
+     *
+     * */
+    // private toggleLoadingIndicator(isLoading: boolean): void {
+    //     if (isLoading && this.loadingIndicatorContainer) {
+    //         this.loadingIndicator.show(this.loadingIndicatorContainer);
+    //     } else {
+    //         this.loadingIndicator.hide();
+    //     }
+    // }
 }

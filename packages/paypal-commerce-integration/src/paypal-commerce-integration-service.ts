@@ -28,6 +28,7 @@ import {
     StyleButtonLabel,
     StyleButtonShape,
 } from './paypal-commerce-types';
+import RequestOptions from '@bigcommerce/request-sender/lib/request-options';
 
 export default class PayPalCommerceIntegrationService {
     private paypalSdk?: PayPalSDK;
@@ -127,9 +128,9 @@ export default class PayPalCommerceIntegrationService {
         }
     }
 
-    async getOrderStatus(): Promise<PayPalOrderStatus> {
+    async getOrderStatus(methodId?: string, options?: RequestOptions): Promise<PayPalOrderStatus> {
         try {
-            const { status } = await this.paypalCommerceRequestSender.getOrderStatus();
+            const { status } = await this.paypalCommerceRequestSender.getOrderStatus(methodId, options);
 
             return status;
         } catch (_error) {
