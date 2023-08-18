@@ -88,6 +88,20 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             }
         });
 
+        it('authenticates user with PayPal Connect with provided email', async () => {
+            const email = 'customer@email.com';
+
+            await strategy.initialize({ methodId });
+            await strategy.executePaymentMethodCheckout({
+                ...executionOptions,
+                email,
+            });
+
+            expect(
+                braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
+            ).toHaveBeenCalledWith(email);
+        });
+
         it('authenticates user with PayPal Connect and calls continueWithCheckoutCallback', async () => {
             await strategy.initialize({ methodId });
             await strategy.executePaymentMethodCheckout(executionOptions);

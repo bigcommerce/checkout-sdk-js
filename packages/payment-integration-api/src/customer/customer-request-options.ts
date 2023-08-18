@@ -11,6 +11,7 @@ export interface CustomerInitializeOptions extends CustomerRequestOptions {
 export interface ExecutePaymentMethodCheckoutOptions extends CustomerRequestOptions {
     checkoutPaymentMethodExecuted?(data?: CheckoutPaymentMethodExecutedOptions): void;
     continueWithCheckoutCallback?(): void;
+    email?: string;
 }
 
 export interface CheckoutPaymentMethodExecutedOptions {
