@@ -63,6 +63,11 @@ export default class BraintreeIntegrationService {
                 authorization: clientToken,
                 client,
                 deviceData,
+                styles: {
+                    root: {
+                        backgroundColorPrimary: 'transparent',
+                    },
+                },
             });
         }
 

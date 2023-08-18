@@ -521,6 +521,7 @@ export interface BraintreeConnectConfig {
     authorization: string;
     client: BraintreeClient;
     deviceData?: string;
+    styles?: BraintreeConnectStylesOption;
 }
 
 export interface BraintreeConnect {
@@ -548,31 +549,31 @@ export interface BraintreeConnectAuthenticationOptions {
 }
 
 interface BraintreeConnectStylesOption {
-    root: {
-        backgroundColorPrimary: string; // default: #ffffff,
-        errorColor: string; // default: #C40B0B
-        fontFamily: string; // default: "Helvetica, Arial, sans-serif"
+    root?: {
+        backgroundColorPrimary?: string; // default: #ffffff,
+        errorColor?: string; // default: #C40B0B
+        fontFamily?: string; // default: "Helvetica, Arial, sans-serif"
     };
-    input: {
-        borderRadius: string; // default: 0.25rem
-        borderColor: string; // default: #9E9E9E
-        focusBorderColor: string; // default: #4496F6
+    input?: {
+        borderRadius?: string; // default: 0.25rem
+        borderColor?: string; // default: #9E9E9E
+        focusBorderColor?: string; // default: #4496F6
     };
-    toggle: {
-        colorPrimary: string; // default: #0F005E
-        colorSecondary: string; // default: #ffffff
+    toggle?: {
+        colorPrimary?: string; // default: #0F005E
+        colorSecondary?: string; // default: #ffffff
     };
-    text: {
-        body: {
-            color: string; // default: #222222
-            fontSize: string; // default: 1rem
+    text?: {
+        body?: {
+            color?: string; // default: #222222
+            fontSize?: string; // default: 1rem
         };
-        caption: {
-            color: string; // default: #515151
-            fontSize: string; // default: 0.875rem
+        caption?: {
+            color?: string; // default: #515151
+            fontSize?: string; // default: 0.875rem
         };
     };
-    branding: 'light' | 'dark'; // default: 'light',
+    branding?: 'light' | 'dark'; // default: 'light',
 }
 
 export enum BraintreeConnectAuthenticationState {
@@ -626,7 +627,6 @@ export interface BraintreeConnectVaultedInstrument {
 }
 
 export interface BraintreeConnectCardComponentOptions {
-    styles?: BraintreeConnectStylesOption;
     fields: BraintreeConnectCardComponentFields;
 }
 

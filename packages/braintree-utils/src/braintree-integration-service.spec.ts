@@ -78,6 +78,11 @@ describe('BraintreeIntegrationService', () => {
         );
     });
 
+    afterEach(() => {
+        jest.resetAllMocks();
+        jest.restoreAllMocks();
+    });
+
     describe('#initialize()', () => {
         it('initializes braintree script loader with provided initialization data', () => {
             braintreeIntegrationService.initialize(clientToken, initializationData);
@@ -135,6 +140,17 @@ describe('BraintreeIntegrationService', () => {
             expect(braintreeScriptLoader.loadClient).toHaveBeenCalled();
             expect(braintreeScriptLoader.loadDataCollector).toHaveBeenCalled();
             expect(braintreeScriptLoader.loadConnect).toHaveBeenCalled();
+
+            expect(braintreeConnectCreatorMock.create).toHaveBeenCalledWith({
+                authorization: clientToken,
+                client: clientMock,
+                deviceData: getDeviceDataMock(),
+                styles: {
+                    root: {
+                        backgroundColorPrimary: 'transparent',
+                    },
+                },
+            });
 
             expect(result).toEqual(braintreeConnectMock);
         });
