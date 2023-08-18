@@ -1,10 +1,18 @@
 # mollie-integration
 
-This library was generated with [Nx](https://nx.dev).
+This package contains the integration layer for the [Mollie](https://www.mollie.com/) provider.
+
+## Mollie documentation
+
+For additional information on Mollie API, please refer to [Mollie API documentation](https://docs.mollie.com/).
 
 ## Running unit tests
 
-Run `nx test mollie-integration` to execute the unit tests via [Jest](https://jestjs.io).
+This package uses [Jest](https://jestjs.io) for testing.
+
+Run `nx test mollie-integration` to execute all the unit tests for this package.
+
+Run `nx test mollie-integration --testFile="<FILE_NAME>"` to execute unit tests for a single file.
 
 ## Running lint
 
