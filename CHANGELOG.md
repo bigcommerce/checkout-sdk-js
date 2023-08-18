@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.428.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.427.0...v1.428.0) (2023-08-18)
+
+
+### Features
+
+* **payment:** PAYPAL-2842 moved braintree-integration-service and braintree-script-loader to braintree utils package ([#2121](https://github.com/bigcommerce/checkout-sdk-js/issues/2121)) ([3e8c6f1](https://github.com/bigcommerce/checkout-sdk-js/commit/3e8c6f1d46736b76a1b8c307ec0ba9a869dd47b6))
+
+
+### Bug Fixes
+
+* **extension:** CHECKOUT-7652 Propagate extension ID as context data and only trigger handler if matching extension ID ([5013d09](https://github.com/bigcommerce/checkout-sdk-js/commit/5013d09d6508910302d2e2e340fabc9093e00e9a))
+
+
+### Code Refactoring
+
+* **extension:** CHECKOUT-7652 Add namespace to extension command messages, remove duplicate commands and improve typing/naming ([c42c012](https://github.com/bigcommerce/checkout-sdk-js/commit/c42c012ecf54902b4d54524ab404372d07d4b745))
+* **extension:** CHECKOUT-7652 Create separate resizable iframe creator for extension ([cc73d80](https://github.com/bigcommerce/checkout-sdk-js/commit/cc73d8003ec2188f9f51b2058d5b2ad9d8c71d70))
+* **payment:** PAYPAL-2730 removed unnecessary method call in sign in BT AXO customer strategy ([#2127](https://github.com/bigcommerce/checkout-sdk-js/issues/2127)) ([c767a38](https://github.com/bigcommerce/checkout-sdk-js/commit/c767a38254e44d0aa0aee82a168bc2026d379af7))
+
 ## [1.427.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.426.1...v1.427.0) (2023-08-17)
 
 

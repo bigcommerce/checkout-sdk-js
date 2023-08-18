@@ -19,7 +19,6 @@
 
 | Name | Type |
 | :------ | :------ |
-| `extensionId` | `string` |
 | `show` | `boolean` |
 
 ___

@@ -6,31 +6,24 @@
 
 ### Properties
 
-- [FRAME_LOADED](ExtensionCommandMap.md#frame_loaded)
-- [RELOAD_CHECKOUT](ExtensionCommandMap.md#reload_checkout)
-- [SET_IFRAME_STYLE](ExtensionCommandMap.md#set_iframe_style)
-- [SHOW_LOADING_INDICATOR](ExtensionCommandMap.md#show_loading_indicator)
+- [EXTENSION%3ARELOAD_CHECKOUT](ExtensionCommandMap.md#extension:reload_checkout)
+- [EXTENSION%3ASET_IFRAME_STYLE](ExtensionCommandMap.md#extension:set_iframe_style)
+- [EXTENSION%3ASHOW_LOADING_INDICATOR](ExtensionCommandMap.md#extension:show_loading_indicator)
 
 ## Properties
 
-### FRAME\_LOADED
+### EXTENSION:RELOAD\_CHECKOUT
 
-• **FRAME\_LOADED**: [`FrameLoadedCommand`](FrameLoadedCommand.md)
-
-___
-
-### RELOAD\_CHECKOUT
-
-• **RELOAD\_CHECKOUT**: [`ReloadCheckoutCommand`](ReloadCheckoutCommand.md)
+• **EXTENSION:RELOAD\_CHECKOUT**: [`ReloadCheckoutCommand`](ReloadCheckoutCommand.md)
 
 ___
 
-### SET\_IFRAME\_STYLE
+### EXTENSION:SET\_IFRAME\_STYLE
 
-• **SET\_IFRAME\_STYLE**: [`SetIframeStyleCommand`](SetIframeStyleCommand.md)
+• **EXTENSION:SET\_IFRAME\_STYLE**: [`SetIframeStyleCommand`](SetIframeStyleCommand.md)
 
 ___
 
-### SHOW\_LOADING\_INDICATOR
+### EXTENSION:SHOW\_LOADING\_INDICATOR
 
-• **SHOW\_LOADING\_INDICATOR**: [`ShowLoadingIndicatorCommand`](ShowLoadingIndicatorCommand.md)
+• **EXTENSION:SHOW\_LOADING\_INDICATOR**: [`ShowLoadingIndicatorCommand`](ShowLoadingIndicatorCommand.md)

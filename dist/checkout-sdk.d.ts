@@ -1,5 +1,6 @@
 /// <reference types="applepayjs" />
 import { BlueSnapDirectEcpInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { BraintreeError as BraintreeError_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -1565,12 +1566,6 @@ declare interface BraintreeAcceleratedCheckoutPaymentInitializeOptions {
 }
 
 declare interface BraintreeError extends Error {
-    type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
-    code: string;
-    details?: unknown;
-}
-
-declare interface BraintreeError_2 extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
     details?: unknown;
@@ -5042,17 +5037,15 @@ declare interface Extension {
 }
 
 declare interface ExtensionCommandMap {
-    [ExtensionCommandType.FrameLoaded]: FrameLoadedCommand;
     [ExtensionCommandType.ReloadCheckout]: ReloadCheckoutCommand;
     [ExtensionCommandType.ShowLoadingIndicator]: ShowLoadingIndicatorCommand;
     [ExtensionCommandType.SetIframeStyle]: SetIframeStyleCommand;
 }
 
-declare const enum ExtensionCommandType {
-    FrameLoaded = "FRAME_LOADED",
-    ReloadCheckout = "RELOAD_CHECKOUT",
-    ShowLoadingIndicator = "SHOW_LOADING_INDICATOR",
-    SetIframeStyle = "SET_IFRAME_STYLE"
+export declare enum ExtensionCommandType {
+    ReloadCheckout = "EXTENSION:RELOAD_CHECKOUT",
+    ShowLoadingIndicator = "EXTENSION:SHOW_LOADING_INDICATOR",
+    SetIframeStyle = "EXTENSION:SET_IFRAME_STYLE"
 }
 
 declare const enum ExtensionRegion {
@@ -5114,13 +5107,6 @@ declare interface FormFields {
     customerAccount: FormField[];
     shippingAddress: FormField[];
     billingAddress: FormField[];
-}
-
-declare interface FrameLoadedCommand {
-    type: ExtensionCommandType.FrameLoaded;
-    payload: {
-        extensionId: string;
-    };
 }
 
 declare interface GatewayOrderPayment extends OrderPayment {
@@ -7086,9 +7072,6 @@ declare interface Region {
 
 declare interface ReloadCheckoutCommand {
     type: ExtensionCommandType.ReloadCheckout;
-    payload: {
-        extensionId: string;
-    };
 }
 
 /**
@@ -7148,7 +7131,6 @@ declare interface SepaPlaceHolder_2 {
 declare interface SetIframeStyleCommand {
     type: ExtensionCommandType.SetIframeStyle;
     payload: {
-        extensionId: string;
         style: {
             [key: string]: string | number | null;
         };
@@ -7216,7 +7198,6 @@ declare interface ShopperCurrency extends StoreCurrency {
 declare interface ShowLoadingIndicatorCommand {
     type: ExtensionCommandType.ShowLoadingIndicator;
     payload: {
-        extensionId: string;
         show: boolean;
     };
 }

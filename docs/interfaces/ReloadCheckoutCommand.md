@@ -6,22 +6,9 @@
 
 ### Properties
 
-- [payload](ReloadCheckoutCommand.md#payload)
 - [type](ReloadCheckoutCommand.md#type)
 
 ## Properties
-
-### payload
-
-• **payload**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `extensionId` | `string` |
-
-___
 
 ### type
 
