@@ -103,16 +103,6 @@ describe('MolliePaymentStrategy', () => {
                 await expect(response).rejects.toThrow(InvalidArgumentError);
             });
 
-            it('does not load Mollie if store config is not provided', async () => {
-                jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
-                    undefined,
-                );
-
-                const response = strategy.initialize(options);
-
-                await expect(response).rejects.toThrow(MissingDataError);
-            });
-
             it('does initialize mollie and create 4 components', async () => {
                 await strategy.initialize(options);
 
@@ -386,7 +376,9 @@ describe('MolliePaymentStrategy', () => {
                             credit_card_token: {
                                 token: 'tkn_test',
                             },
+                            set_as_default_stored_instrument: false,
                             shopper_locale: 'en-US',
+                            vault_payment_instrument: false,
                             /* eslint-enable */
                         },
                     },

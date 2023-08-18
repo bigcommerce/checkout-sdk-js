@@ -72,28 +72,21 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
 
         each(controllers, (controller) => controller.remove());
 
-        const storeConfig = this.paymentIntegrationService.getState().getStoreConfig();
-
-        if (!storeConfig) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-        }
+        const state = this.paymentIntegrationService.getState();
+        const storeConfig = state.getStoreConfigOrThrow();
 
         this.initializeOptions = mollie;
 
-        const paymentMethod = this.paymentIntegrationService
-            .getState()
-            .getPaymentMethodOrThrow(methodId, gatewayId);
+        const paymentMethod = state.getPaymentMethodOrThrow(methodId, gatewayId);
 
         const {
             config: { merchantId, testMode },
         } = paymentMethod;
 
-        this.locale = this.paymentIntegrationService.getState().getLocale();
+        this.locale = state.getLocale();
 
         if (!merchantId) {
-            throw new InvalidArgumentError(
-                'Unable to initialize payment because "merchantId" argument is not provided.',
-            );
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         if (
