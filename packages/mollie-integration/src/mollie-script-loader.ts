@@ -9,10 +9,7 @@ export default class MollieScriptLoader {
     constructor(private scriptLoader: ScriptLoader, private _window: Window = window) {}
 
     isMollieWindow(window: Window): window is MollieHostWindow {
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        const mollieWindow: MollieHostWindow = window as MollieHostWindow;
-
-        return !!mollieWindow.Mollie;
+        return 'Mollie' in window;
     }
 
     async load(merchantId: string, locale: string, testmode: boolean): Promise<MollieClient> {
