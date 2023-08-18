@@ -38,10 +38,6 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
 
     async signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void> {
         await this.paymentIntegrationService.signInCustomer(credentials, options);
-
-        if (await this.shouldRunAuthenticationFlow()) {
-            await this.runPayPalConnectAuthenticationFlowOrThrow(credentials.email);
-        }
     }
 
     async signOut(options?: RequestOptions): Promise<void> {
