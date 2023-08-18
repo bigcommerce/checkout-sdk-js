@@ -1,3 +1,4 @@
+import { BraintreeInitializationData } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CustomerCredentials,
     CustomerInitializeOptions,
@@ -7,8 +8,6 @@ import {
     PaymentIntegrationService,
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { BraintreeInitializationData } from '../braintree';
 
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
 

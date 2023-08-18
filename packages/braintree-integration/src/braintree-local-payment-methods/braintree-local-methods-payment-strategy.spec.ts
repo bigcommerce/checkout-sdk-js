@@ -1,6 +1,12 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
+    getBraintreeLocalPaymentMock,
+    LocalPaymentInstance,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
     InvalidArgumentError,
     MissingDataError,
     OrderFinalizationNotRequiredError,
@@ -15,14 +21,11 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
-import BraintreeIntegrationService from '../braintree-integration-service';
-import BraintreeScriptLoader from '../braintree-script-loader';
 import {
     getBraintreeLocalMethods,
     getBraintreeLocalMethodsInitializationOptions,
 } from '../mocks/braintree.mock';
 
-import { LocalPaymentInstance } from './braintree-local-methods-options';
 import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-payment-strategy';
 
 describe('BraintreeLocalMethodsPaymentStrategy', () => {
@@ -62,13 +65,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
             clientToken: 'token',
         };
 
-        localPaymentInstanceMock = {
-            startPayment: jest.fn(
-                (_options: unknown, onPaymentStart: (payload: { paymentId: string }) => void) => {
-                    onPaymentStart({ paymentId: '123456' });
-                },
-            ),
-        };
+        localPaymentInstanceMock = getBraintreeLocalPaymentMock();
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,

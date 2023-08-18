@@ -1,6 +1,5 @@
+import { BraintreeError } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { BraintreeError } from '../braintree';
 
 export default interface BraintreePaypalCustomerInitializeOptions {
     /**

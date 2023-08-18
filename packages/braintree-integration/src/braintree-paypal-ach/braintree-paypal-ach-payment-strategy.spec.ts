@@ -1,6 +1,11 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
+    BraintreeBankAccount,
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
     InvalidArgumentError,
     MissingDataError,
     OrderFinalizationNotRequiredError,
@@ -16,9 +21,6 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import { BraintreeBankAccount } from '../braintree';
-import BraintreeIntegrationService from '../braintree-integration-service';
-import BraintreeScriptLoader from '../braintree-script-loader';
 import { getBankAccountMock, getBraintreeAch } from '../mocks/braintree.mock';
 
 import { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-paypal-ach-initialize-options';

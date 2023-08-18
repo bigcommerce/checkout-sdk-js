@@ -3,6 +3,20 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
 import {
+    BraintreeDataCollector,
+    BraintreeError,
+    BraintreeHostWindow,
+    BraintreeIntegrationService,
+    BraintreePaypalCheckout,
+    BraintreePaypalCheckoutCreator,
+    BraintreeScriptLoader,
+    getDataCollectorMock,
+    getPayPalCheckoutCreatorMock,
+    getPaypalCheckoutMock,
+    PaypalButtonOptions,
+    PaypalSDK,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
     CustomerInitializeOptions,
     InvalidArgumentError,
     MissingDataError,
@@ -11,23 +25,8 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import {
-    BraintreeDataCollector,
-    BraintreeError,
-    BraintreeHostWindow,
-    BraintreePaypalCheckout,
-    BraintreePaypalCheckoutCreator,
-} from '../braintree';
-import BraintreeIntegrationService from '../braintree-integration-service';
-import BraintreeScriptLoader from '../braintree-script-loader';
-import {
-    getBraintree,
-    getDataCollectorMock,
-    getPayPalCheckoutCreatorMock,
-    getPaypalCheckoutMock,
-} from '../mocks/braintree.mock';
+import { getBraintree } from '../mocks/braintree.mock';
 import { getPaypalSDKMock } from '../mocks/paypal.mock';
-import { PaypalButtonOptions, PaypalSDK } from '../paypal';
 
 import BraintreePaypalCustomerInitializeOptions from './braintree-paypal-customer-options';
 import BraintreePaypalCustomerStrategy from './braintree-paypal-customer-strategy';

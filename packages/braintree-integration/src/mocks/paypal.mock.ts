@@ -1,4 +1,4 @@
-import { PaypalSDK } from '../paypal';
+import { PaypalSDK } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 export function getPaypalSDKMock(): PaypalSDK {
     return {

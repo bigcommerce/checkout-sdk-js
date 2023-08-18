@@ -1,9 +1,5 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import {
-    BRAINTREE_SDK_ALPHA_VERSION,
-    BRAINTREE_SDK_STABLE_VERSION,
-} from '@bigcommerce/checkout-sdk/braintree-utils';
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
@@ -13,8 +9,10 @@ import {
     BraintreeDataCollectorCreator,
     BraintreeHostWindow,
     BraintreeInitializationData,
+    BraintreeLocalPaymentCreator,
     BraintreePaypalCheckoutCreator,
 } from './braintree';
+import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
 
 export default class BraintreeScriptLoader {
     private braintreeSdkVersion = BRAINTREE_SDK_STABLE_VERSION;
@@ -37,7 +35,7 @@ export default class BraintreeScriptLoader {
             `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/client.min.js`,
         );
 
-        if (!this.braintreeHostWindow.braintree?.client) {
+        if (!this.braintreeHostWindow.braintree || !this.braintreeHostWindow.braintree.client) {
             throw new PaymentMethodClientUnavailableError();
         }
 
@@ -49,7 +47,7 @@ export default class BraintreeScriptLoader {
             `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/connect.min.js`,
         );
 
-        if (!this.braintreeHostWindow.braintree?.connect) {
+        if (!this.braintreeHostWindow.braintree || !this.braintreeHostWindow.braintree.connect) {
             throw new PaymentMethodClientUnavailableError();
         }
 
@@ -61,19 +59,25 @@ export default class BraintreeScriptLoader {
             `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/paypal-checkout.min.js`,
         );
 
-        if (!this.braintreeHostWindow.braintree?.paypalCheckout) {
+        if (
+            !this.braintreeHostWindow.braintree ||
+            !this.braintreeHostWindow.braintree.paypalCheckout
+        ) {
             throw new PaymentMethodClientUnavailableError();
         }
 
         return this.braintreeHostWindow.braintree.paypalCheckout;
     }
 
-    async loadBraintreeLocalMethods() {
+    async loadBraintreeLocalMethods(): Promise<BraintreeLocalPaymentCreator> {
         await this.scriptLoader.loadScript(
             `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/local-payment.min.js`,
         );
 
-        if (!this.braintreeHostWindow.braintree?.localPayment) {
+        if (
+            !this.braintreeHostWindow.braintree ||
+            !this.braintreeHostWindow.braintree.localPayment
+        ) {
             throw new PaymentMethodClientUnavailableError();
         }
 
@@ -85,7 +89,10 @@ export default class BraintreeScriptLoader {
             `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/data-collector.min.js`,
         );
 
-        if (!this.braintreeHostWindow.braintree?.dataCollector) {
+        if (
+            !this.braintreeHostWindow.braintree ||
+            !this.braintreeHostWindow.braintree.dataCollector
+        ) {
             throw new PaymentMethodClientUnavailableError();
         }
 

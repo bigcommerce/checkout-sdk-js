@@ -1,6 +1,13 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
+    BraintreeConnect,
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
+    getBraintreeConnectProfileDataMock,
+    getConnectMock,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
     MissingDataError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -12,14 +19,7 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import { BraintreeConnect } from '../braintree';
-import BraintreeIntegrationService from '../braintree-integration-service';
-import BraintreeScriptLoader from '../braintree-script-loader';
-import {
-    getBraintreeAcceleratedCheckoutPaymentMethod,
-    getBraintreeConnectProfileDataMock,
-    getConnectMock,
-} from '../mocks/braintree.mock';
+import { getBraintreeAcceleratedCheckoutPaymentMethod } from '../mocks/braintree.mock';
 
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
 

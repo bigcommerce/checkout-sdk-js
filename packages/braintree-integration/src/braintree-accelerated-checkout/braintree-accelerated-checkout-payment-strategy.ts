@@ -1,4 +1,9 @@
 import {
+    BraintreeConnectAddress,
+    BraintreeConnectCardComponent,
+    BraintreeConnectCardComponentOptions,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
     Address,
     InvalidArgumentError,
     isHostedInstrumentLike,
@@ -15,12 +20,6 @@ import {
     PaymentStrategy,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import {
-    BraintreeConnectAddress,
-    BraintreeConnectCardComponent,
-    BraintreeConnectCardComponentOptions,
-} from '../braintree';
 
 import { WithBraintreeAcceleratedCheckoutPaymentInitializeOptions } from './braintree-accelerated-checkout-payment-initialize-options';
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';

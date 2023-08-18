@@ -1,9 +1,5 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import {
-    BRAINTREE_SDK_ALPHA_VERSION,
-    BRAINTREE_SDK_STABLE_VERSION,
-} from '@bigcommerce/checkout-sdk/braintree-utils';
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
@@ -11,7 +7,7 @@ import {
     BraintreeConnect,
     BraintreeDataCollector,
     BraintreeHostWindow,
-    BraintreeLocalPayment,
+    BraintreeLocalPaymentCreator,
     BraintreeModuleCreator,
     BraintreePaypalCheckoutCreator,
 } from './braintree';
@@ -24,6 +20,7 @@ import {
     getModuleCreatorMock,
     getPaypalCheckoutMock,
 } from './mocks/braintree.mock';
+import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
 
 describe('BraintreeScriptLoader', () => {
     let scriptLoader: ScriptLoader;
@@ -228,10 +225,10 @@ describe('BraintreeScriptLoader', () => {
     });
 
     describe('#loadBraintreeLocalMethods', () => {
-        let localPayment: BraintreeLocalPayment;
+        let localPayment: BraintreeLocalPaymentCreator;
 
         beforeEach(() => {
-            localPayment = getBraintreeLocalPaymentMock();
+            localPayment = getModuleCreatorMock(getBraintreeLocalPaymentMock());
             scriptLoader.loadScript = jest.fn(() => {
                 if (mockWindow.braintree) {
                     mockWindow.braintree.localPayment = localPayment;

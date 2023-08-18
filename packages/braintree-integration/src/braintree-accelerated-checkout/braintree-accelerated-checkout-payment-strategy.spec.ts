@@ -2,6 +2,12 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { noop } from 'lodash';
 
 import {
+    BraintreeConnect,
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
+    getConnectMock,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
     InvalidArgumentError,
     OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
@@ -13,11 +19,6 @@ import {
     getShippingAddress,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-
-import { BraintreeConnect } from '../braintree';
-import BraintreeIntegrationService from '../braintree-integration-service';
-import BraintreeScriptLoader from '../braintree-script-loader';
-import { getConnectMock } from '../mocks/braintree.mock';
 
 import BraintreeAcceleratedCheckoutPaymentStrategy from './braintree-accelerated-checkout-payment-strategy';
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';

@@ -18,26 +18,25 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeShippingAddressOverride,
-} from './braintree';
-import {
-    BraintreeLocalMethods,
     GetLocalPaymentInstance,
     LocalPaymentInstance,
-} from './braintree-local-payment-methods/braintree-local-methods-options';
+} from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import isBraintreeError from './is-braintree-error';
 import { PAYPAL_COMPONENTS } from './paypal';
 
+interface DataCollectors {
+    default?: BraintreeDataCollector;
+    paypal?: BraintreeDataCollector;
+}
+
 export default class BraintreeIntegrationService {
     private client?: Promise<BraintreeClient>;
     private clientToken?: string;
-    private dataCollectors: {
-        default?: BraintreeDataCollector;
-        paypal?: BraintreeDataCollector;
-    } = {};
+    private dataCollectors: DataCollectors = {};
     private paypalCheckout?: BraintreePaypalCheckout;
     private usBankAccount?: Promise<BraintreeBankAccount>;
-    private braintreeLocalMethods?: BraintreeLocalMethods;
+    private braintreeLocalMethods?: LocalPaymentInstance;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
@@ -129,14 +128,17 @@ export default class BraintreeIntegrationService {
         const braintreeLocalMethods = await this.braintreeScriptLoader.loadBraintreeLocalMethods();
 
         if (!this.braintreeLocalMethods) {
-            this.braintreeLocalMethods = braintreeLocalMethods.create(
+            this.braintreeLocalMethods = await braintreeLocalMethods.create(
                 {
                     client,
                     merchantAccountId,
                 },
-                (localPaymentErr: string, localPaymentInstance: LocalPaymentInstance) => {
+                (
+                    localPaymentErr: BraintreeError | undefined,
+                    localPaymentInstance: LocalPaymentInstance,
+                ) => {
                     if (localPaymentErr) {
-                        throw new Error(localPaymentErr);
+                        throw new Error(localPaymentErr.message);
                     }
 
                     getLocalPaymentInstance(localPaymentInstance);
@@ -159,7 +161,7 @@ export default class BraintreeIntegrationService {
     }
 
     async getDataCollector(options?: { paypal: boolean }): Promise<BraintreeDataCollector> {
-        const cacheKey = options?.paypal ? 'paypal' : 'default';
+        const cacheKey: keyof DataCollectors = options?.paypal ? 'paypal' : 'default';
 
         let cached = this.dataCollectors[cacheKey];
 
