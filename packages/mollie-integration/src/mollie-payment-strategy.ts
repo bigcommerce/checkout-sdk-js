@@ -4,8 +4,8 @@ import {
     getBrowserInfo,
     HostedForm,
     HostedFormOptions,
-    HostedInstrument,
     InvalidArgumentError,
+    isHostedInstrumentLike,
     isVaultedInstrument,
     MissingDataError,
     MissingDataErrorType,
@@ -103,12 +103,12 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         ) {
             this.hostedForm = await this.mountCardVerificationfields(mollie.form);
         } else if (this.isCreditCard(methodId)) {
-            this.mollieClient = await this._loadMollieJs(
+            this.mollieClient = await this.loadMollieJs(
                 merchantId,
                 storeConfig.storeProfile.storeLanguage,
                 testMode,
             );
-            this._mountElements();
+            this.mountElements();
         }
 
         this.unsubscribe = () => {
@@ -126,13 +126,13 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
 
                 mollie.disableButton(false);
 
-                this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId);
+                this.loadPaymentMethodsAllowed(mollie, methodId, gatewayId);
             }
         };
 
         this.unsubscribe();
 
-        this._loadPaymentMethodsAllowed(mollie, methodId, gatewayId);
+        this.loadPaymentMethodsAllowed(mollie, methodId, gatewayId);
 
         return Promise.resolve();
     }
@@ -158,7 +158,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
 
             return await this.executeWithAPM(payment);
         } catch (error) {
-            await this._processAdditionalAction(error);
+            await this.processAdditionalAction(error);
         }
     }
 
@@ -209,13 +209,13 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
 
     protected async executeWithCC(payment: OrderPaymentRequestBody): Promise<void> {
         const paymentData = payment.paymentData;
+
+        const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
+            isHostedInstrumentLike(paymentData) ? paymentData : {};
+
+        const { token, error } = await this.getMollieClient().createToken();
+
         /* eslint-disable */
-        const shouldSaveInstrument = (paymentData as HostedInstrument).shouldSaveInstrument;
-        const shouldSetAsDefaultInstrument = (paymentData as HostedInstrument)
-            .shouldSetAsDefaultInstrument;
-
-        const { token, error } = await this._getMollieClient().createToken();
-
         if (error) {
             return Promise.reject(error);
         }
@@ -227,7 +227,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             vault_payment_instrument: shouldSaveInstrument,
             set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
             browser_info: getBrowserInfo(),
-            shopper_locale: this._getShopperLocale(),
+            shopper_locale: this.getShopperLocale(),
         };
         /* eslint-enable */
 
@@ -240,7 +240,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
     }
 
     protected async executeWithVaulted(payment: OrderPaymentRequestBody): Promise<void> {
-        if (this._isHostedPaymentFormEnabled(payment.methodId, payment.gatewayId)) {
+        if (this.isHostedPaymentFormEnabled(payment.methodId, payment.gatewayId)) {
             const form = this.hostedForm;
 
             if (!form) {
@@ -267,7 +267,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
                 formattedPayload: {
                     issuer,
                     // eslint-disable-next-line @typescript-eslint/naming-convention
-                    shopper_locale: this._getShopperLocale(),
+                    shopper_locale: this.getShopperLocale(),
                 },
             },
         });
@@ -279,7 +279,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
 
     private shouldShowTSVHostedForm(methodId: string, gatewayId: string): boolean {
         return (
-            this._isHostedPaymentFormEnabled(methodId, gatewayId) && this._isHostedFieldAvailable()
+            this.isHostedPaymentFormEnabled(methodId, gatewayId) && this.isHostedFieldAvailable()
         );
     }
 
@@ -294,7 +294,10 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                 }
 
-                const form = this.paymentIntegrationService.createHostedForm(bigpayBaseUrl, formOptions);
+                const form = this.paymentIntegrationService.createHostedForm(
+                    bigpayBaseUrl,
+                    formOptions
+                );
 
                 await form.attach();
 
@@ -305,20 +308,20 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         });
     }
 
-    private _isHostedPaymentFormEnabled(methodId: string, gatewayId?: string): boolean {
+    private isHostedPaymentFormEnabled(methodId: string, gatewayId?: string): boolean {
         const { getPaymentMethodOrThrow } = this.paymentIntegrationService.getState();
         const paymentMethod = getPaymentMethodOrThrow(methodId, gatewayId);
 
         return paymentMethod.config.isHostedFormEnabled === true;
     }
 
-    private _isHostedFieldAvailable(): boolean {
-        const options = this._getInitializeOptions();
+    private isHostedFieldAvailable(): boolean {
+        const options = this.getInitializeOptions();
 
         return !!options.form?.fields;
     }
 
-    private _processAdditionalAction(error: any): Promise<any> {
+    private processAdditionalAction(error: any): Promise<unknown> {
         if (!(error instanceof RequestError) && !some(error.body.errors, {code: 'additional_action_required'})) {
             return Promise.reject(error);
         }
@@ -327,7 +330,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         return new Promise(() => window.location.replace(redirect_url));
     }
 
-    private _getInitializeOptions(): MolliePaymentInitializeOptions {
+    private getInitializeOptions(): MolliePaymentInitializeOptions {
         if (!this.initializeOptions) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -335,7 +338,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         return this.initializeOptions;
     }
 
-    private _loadMollieJs(merchantId: string, locale: string, testmode = false): Promise<MollieClient> {
+    private loadMollieJs(merchantId: string, locale: string, testmode = false): Promise<MollieClient> {
         if (this.mollieClient) {
             return Promise.resolve(this.mollieClient);
         }
@@ -344,7 +347,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             .load(merchantId, locale, testmode);
     }
 
-    private _getMollieClient(): MollieClient {
+    private getMollieClient(): MollieClient {
         if (!this.mollieClient) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -352,7 +355,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         return this.mollieClient;
     }
 
-    private _getShopperLocale(): string {
+    private getShopperLocale(): string {
         if (!this.locale) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -369,8 +372,8 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
      * each component, but without a setTimeOut Mollie is not able to find the
      * components as they are hidden so we need to wait until they are shown
      */
-    private _mountElements() {
-        const { containerId, cardNumberId, cardCvcId, cardExpiryId, cardHolderId, styles } = this._getInitializeOptions();
+    private mountElements() {
+        const { containerId, cardNumberId, cardCvcId, cardExpiryId, cardHolderId, styles } = this.getInitializeOptions();
         let container: HTMLElement | null;
 
         if (containerId) {
@@ -379,7 +382,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
 
         setTimeout(() => {
             if (!containerId || container?.style.display !== 'none') {
-                const mollieClient = this._getMollieClient();
+                const mollieClient = this.getMollieClient();
 
                 this.cardHolderElement = mollieClient.createComponent('cardHolder', { styles });
                 this.cardHolderElement.mount(`#${cardHolderId}`);
@@ -396,13 +399,13 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
         }, 0);
     }
 
-    private _loadPaymentMethodsAllowed(mollie: MolliePaymentInitializeOptions, methodId: string, gatewayId: string){
+    private loadPaymentMethodsAllowed(mollie: MolliePaymentInitializeOptions, methodId: string, gatewayId: string){
         if (methodsNotAllowedWhenDigitalOrder.includes(methodId)) {
             const cart = this.paymentIntegrationService.getState().getCartOrThrow();
             const cartDigitalItems = cart.lineItems?.digitalItems;
 
             if (cartDigitalItems && cartDigitalItems.length > 0) {
-                const { containerId } = this._getInitializeOptions();
+                const { containerId } = this.getInitializeOptions();
 
                 if (containerId) {
                     const container = document.getElementById(containerId);

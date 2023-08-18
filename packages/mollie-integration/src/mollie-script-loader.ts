@@ -5,8 +5,7 @@ import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/p
 import { MollieClient, MollieHostWindow } from './mollie';
 
 export default class MollieScriptLoader {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    constructor(private scriptLoader: ScriptLoader, private _window: Window = window) {}
+    constructor(private scriptLoader: ScriptLoader, private mollieHostWindow: Window = window) {}
 
     isMollieWindow(window: Window): window is MollieHostWindow {
         return 'Mollie' in window;
@@ -15,11 +14,11 @@ export default class MollieScriptLoader {
     async load(merchantId: string, locale: string, testmode: boolean): Promise<MollieClient> {
         await this.scriptLoader.loadScript('https://js.mollie.com/v1/mollie.js');
 
-        if (!this.isMollieWindow(this._window)) {
+        if (!this.isMollieWindow(this.mollieHostWindow)) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this._window.Mollie(merchantId, {
+        return this.mollieHostWindow.Mollie(merchantId, {
             locale,
             testmode,
         });
