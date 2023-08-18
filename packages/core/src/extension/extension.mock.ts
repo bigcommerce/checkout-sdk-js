@@ -1,8 +1,8 @@
 import { getConsignments } from '../shipping/consignments.mock';
 
 import { Extension, ExtensionRegion } from './extension';
-import { ExtensionEvent, ExtensionEventType } from './extension-client';
-import { ExtensionCommand, ExtensionCommandType } from './extension-command';
+import { ExtensionCommand, ExtensionCommandType } from './extension-commands';
+import { ExtensionEvent, ExtensionEventType } from './extension-events';
 import { ExtensionState } from './extension-state';
 
 export function getExtensions(): Extension[] {
@@ -38,9 +38,6 @@ export function getExtensionCommand(): {
         origin: 'https://widget.foo.com',
         data: {
             type: ExtensionCommandType.ReloadCheckout,
-            payload: {
-                extensionId: '123',
-            },
         },
     };
 }

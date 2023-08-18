@@ -1,3 +1,5 @@
+import EventEmitter from 'events';
+
 import { createCheckoutStore, ReadableCheckoutStore } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
@@ -5,14 +7,17 @@ import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { ExtensionNotFoundError } from './errors';
 import { UnsupportedExtensionCommandError } from './errors/unsupported-extension-command-error';
 import { Extension } from './extension';
-import { ExtensionEvent } from './extension-client';
-import { ExtensionCommandMap, ExtensionCommandType } from './extension-command';
+import {
+    ExtensionCommandContext,
+    ExtensionCommandMap,
+    ExtensionCommandType,
+} from './extension-commands';
+import { ExtensionEvent } from './extension-events';
 import { ExtensionMessenger } from './extension-messenger';
 import { getExtensionEvent, getExtensions } from './extension.mock';
 
 describe('ExtensionMessenger', () => {
-    const extensionCommandHandler = jest.fn();
-
+    let extensionCommandHandler: jest.Mock;
     let extension: Extension;
     let extensionMessenger: ExtensionMessenger;
     let event: {
@@ -25,6 +30,7 @@ describe('ExtensionMessenger', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         extension = getExtensions()[0];
         event = getExtensionEvent();
+        extensionCommandHandler = jest.fn();
     });
 
     describe('#listen() and #stopListen()', () => {
@@ -61,8 +67,16 @@ describe('ExtensionMessenger', () => {
         });
 
         it('should listen and add an event listener', () => {
-            jest.spyOn(listener, 'listen');
-            jest.spyOn(listener, 'addListener');
+            const eventEmitter = new EventEmitter();
+
+            jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
+                eventEmitter.addListener(
+                    type,
+                    ({ context }: { context: ExtensionCommandContext }) => {
+                        listener({ type }, context);
+                    },
+                );
+            });
 
             extensionMessenger.listen(
                 extension.id,
@@ -70,15 +84,60 @@ describe('ExtensionMessenger', () => {
                 extensionCommandHandler,
             );
 
-            expect(listener.listen).toHaveBeenCalled();
-            expect(listener.addListener).toHaveBeenCalledWith(
-                ExtensionCommandType.ReloadCheckout,
-                extensionCommandHandler,
+            eventEmitter.emit(ExtensionCommandType.ReloadCheckout, {
+                context: { extensionId: extension.id },
+            });
+
+            expect(extensionCommandHandler).toHaveBeenCalledWith(
+                { type: ExtensionCommandType.ReloadCheckout },
+                { extensionId: extension.id },
             );
         });
 
+        it('should listen to commands emitted by same extension', () => {
+            const eventEmitter = new EventEmitter();
+
+            jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
+                eventEmitter.addListener(
+                    type,
+                    ({ context }: { context: ExtensionCommandContext }) => {
+                        listener({ type }, context);
+                    },
+                );
+            });
+
+            extensionMessenger.listen(
+                extension.id,
+                ExtensionCommandType.ReloadCheckout,
+                extensionCommandHandler,
+            );
+
+            eventEmitter.emit(ExtensionCommandType.ReloadCheckout, {
+                context: { extensionId: extension.id },
+            });
+
+            eventEmitter.emit(ExtensionCommandType.ReloadCheckout, {
+                context: { extensionId: getExtensions()[1].id },
+            });
+
+            expect(extensionCommandHandler).toHaveBeenCalledTimes(1);
+        });
+
         it('should remove the event listener', () => {
-            jest.spyOn(listener, 'removeListener');
+            const eventEmitter = new EventEmitter();
+
+            jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
+                eventEmitter.addListener(
+                    type,
+                    ({ context }: { context: ExtensionCommandContext }) => {
+                        listener({ type }, context);
+                    },
+                );
+            });
+
+            jest.spyOn(listener, 'removeListener').mockImplementation((type) => {
+                eventEmitter.removeAllListeners(type);
+            });
 
             const remover = extensionMessenger.listen(
                 extension.id,
@@ -88,10 +147,11 @@ describe('ExtensionMessenger', () => {
 
             remover();
 
-            expect(listener.removeListener).toHaveBeenCalledWith(
-                ExtensionCommandType.ReloadCheckout,
-                extensionCommandHandler,
-            );
+            eventEmitter.emit(ExtensionCommandType.ReloadCheckout, {
+                context: { extensionId: extension.id },
+            });
+
+            expect(extensionCommandHandler).not.toHaveBeenCalled();
         });
 
         it('should stop listening', () => {
@@ -105,6 +165,7 @@ describe('ExtensionMessenger', () => {
 
             extensionMessenger.stopListen(extension.id);
 
+            // FIXME
             expect(listener.stopListen).toHaveBeenCalled();
         });
     });

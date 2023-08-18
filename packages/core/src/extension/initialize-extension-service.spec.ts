@@ -1,6 +1,7 @@
-import { InitializeExtensionServiceOptions } from './extension-client';
 import ExtensionService from './extension-service';
-import initializeExtensionService from './initialize-extension-service';
+import initializeExtensionService, {
+    InitializeExtensionServiceOptions,
+} from './initialize-extension-service';
 
 describe('initializeExtensionService', () => {
     it('initializes extension service correctly', () => {

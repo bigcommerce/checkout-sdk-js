@@ -1,1 +1,1 @@
-export { initializeExtensionService } from '../extension';
+export { initializeExtensionService, ExtensionCommandType, ExtensionEventType } from '../extension';

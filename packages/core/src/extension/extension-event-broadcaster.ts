@@ -2,7 +2,7 @@ import { CheckoutSelectors } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
 import { IframeEventListener } from '../common/iframe';
 
-import { ExtensionEvent, ExtensionEventType } from './extension-client';
+import { ExtensionEvent, ExtensionEventType } from './extension-events';
 import {
     ExtensionInternalCommandMap,
     ExtensionInternalCommandType,

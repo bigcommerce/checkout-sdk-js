@@ -2,11 +2,12 @@ export { ExtensionRegion, Extension } from './extension';
 export { getExtensions } from './extension.mock';
 export { ExtensionActionType } from './extension-actions';
 export { ExtensionActionCreator } from './extension-action-creator';
+export { ExtensionEventType } from './extension-events';
 export { ExtensionEventBroadcaster } from './extension-event-broadcaster';
 export { createExtensionEventBroadcaster } from './create-extension-event-broadcaster';
 export { ExtensionIframe } from './extension-iframe';
 export { ExtensionMessenger } from './extension-messenger';
-export { ExtensionCommand, ExtensionCommandType, ExtensionCommandMap } from './extension-command';
+export { ExtensionCommand, ExtensionCommandType, ExtensionCommandMap } from './extension-commands';
 export { extensionReducer } from './extension-reducer';
 export { ExtensionRequestSender } from './extension-request-sender';
 export {

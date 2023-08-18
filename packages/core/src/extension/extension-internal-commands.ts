@@ -1,8 +1,9 @@
-import { ExtensionEventType } from './extension-client';
+import { ExtensionEventType } from './extension-events';
 
 export enum ExtensionInternalCommandType {
     Subscribe = 'EXTENSION_INTERNAL:SUBSCRIBE',
     Unsubscribe = 'EXTENSION_INTERNAL:UNSUBSCRIBE',
+    ResizeIframe = 'EXTENSION_INTERNAL:RESIZE_IFRAME',
 }
 
 export interface ExtensionSubscribeCommand {
@@ -21,9 +22,20 @@ export interface ExtensionUnsubscribeCommand {
     };
 }
 
+export interface ExtensionResizeIframeCommand {
+    type: ExtensionInternalCommandType.ResizeIframe;
+    payload: {
+        extensionId: string;
+    };
+}
+
 export interface ExtensionInternalCommandMap {
     [ExtensionInternalCommandType.Subscribe]: ExtensionSubscribeCommand;
     [ExtensionInternalCommandType.Unsubscribe]: ExtensionUnsubscribeCommand;
+    [ExtensionInternalCommandType.ResizeIframe]: ExtensionResizeIframeCommand;
 }
 
-export type ExtensionInternalCommand = ExtensionSubscribeCommand | ExtensionUnsubscribeCommand;
+export type ExtensionInternalCommand =
+    | ExtensionSubscribeCommand
+    | ExtensionUnsubscribeCommand
+    | ExtensionResizeIframeCommand;

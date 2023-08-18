@@ -3,18 +3,19 @@ import { EventEmitter } from 'events';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { ErrorResponseBody, StoreConfig } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { getConfig } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { EmbeddedCheckoutEventType } from '../embedded-checkout/embedded-checkout-events';
-import { NotEmbeddableError } from '../embedded-checkout/errors';
+import { StoreConfig } from '../config';
+import { getConfig } from '../config/configs.mock';
 
+import { ExtensionNotLoadedError } from './errors';
 import { Extension, ExtensionRegion } from './extension';
 import { ExtensionActionCreator } from './extension-action-creator';
 import { ExtensionActionType } from './extension-actions';
+import { ExtensionInternalCommandType } from './extension-internal-commands';
 import { ExtensionRequestSender } from './extension-request-sender';
 import { getExtensionCommand, getExtensions } from './extension.mock';
 
@@ -124,7 +125,7 @@ describe('ExtensionActionCreator', () => {
                 eventEmitter.emit('message', {
                     ...event,
                     data: {
-                        type: EmbeddedCheckoutEventType.FrameLoaded,
+                        type: ExtensionInternalCommandType.ResizeIframe,
                     },
                 });
             });
@@ -161,7 +162,7 @@ describe('ExtensionActionCreator', () => {
                 { type: ExtensionActionType.RenderExtensionRequested },
                 {
                     type: ExtensionActionType.RenderExtensionFailed,
-                    payload: expect.any(NotEmbeddableError),
+                    payload: expect.any(ExtensionNotLoadedError),
                     error: true,
                 },
             ]);

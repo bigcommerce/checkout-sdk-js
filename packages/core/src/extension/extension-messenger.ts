@@ -4,8 +4,12 @@ import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { ExtensionNotFoundError } from './errors';
 import { UnsupportedExtensionCommandError } from './errors/unsupported-extension-command-error';
 import { Extension } from './extension';
-import { ExtensionEvent } from './extension-client';
-import { ExtensionCommandMap, ExtensionCommandType } from './extension-command';
+import {
+    ExtensionCommandContext,
+    ExtensionCommandMap,
+    ExtensionCommandType,
+} from './extension-commands';
+import { ExtensionEvent } from './extension-events';
 
 export class ExtensionMessenger {
     private _extensions: Extension[] | undefined;
@@ -21,7 +25,10 @@ export class ExtensionMessenger {
     listen<T extends keyof ExtensionCommandMap>(
         extensionId: string,
         command: T,
-        extensionCommandHandler: (command: ExtensionCommandMap[T]) => void,
+        commandHandler: (
+            command: ExtensionCommandMap[T],
+            context?: ExtensionCommandContext,
+        ) => void,
     ): () => void {
         const extension = this._getExtensionById(extensionId);
 
@@ -35,10 +42,19 @@ export class ExtensionMessenger {
 
         const validCommandType = this._validateCommand<T>(command);
 
-        listener.addListener(validCommandType, extensionCommandHandler);
+        const commandHandlerProxy = (
+            command: ExtensionCommandMap[T],
+            context?: ExtensionCommandContext,
+        ) => {
+            if (context?.extensionId === extensionId) {
+                commandHandler(command, context);
+            }
+        };
+
+        listener.addListener(validCommandType, commandHandlerProxy);
 
         return () => {
-            listener.removeListener(validCommandType, extensionCommandHandler);
+            listener.removeListener(validCommandType, commandHandlerProxy);
         };
     }
 
@@ -94,22 +110,11 @@ export class ExtensionMessenger {
         return extension;
     }
 
-    private _validateCommand<T extends keyof ExtensionCommandMap>(command: string): T {
-        if (this._isExtensionCommandType<T>(command)) {
+    private _validateCommand<T extends keyof ExtensionCommandMap>(command: T): T {
+        if (Object.values(ExtensionCommandType).includes(command)) {
             return command;
         }
 
         throw new UnsupportedExtensionCommandError();
-    }
-
-    private _isExtensionCommandType<T extends keyof ExtensionCommandMap>(
-        command: string,
-    ): command is T {
-        return (
-            command === ExtensionCommandType.FrameLoaded ||
-            command === ExtensionCommandType.ReloadCheckout ||
-            command === ExtensionCommandType.ShowLoadingIndicator ||
-            command === ExtensionCommandType.SetIframeStyle
-        );
     }
 }

@@ -4,10 +4,10 @@ import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
 import {
     ExtensionCommand,
+    ExtensionCommandContext,
     ExtensionCommandType,
-    ExtensionEventMap,
-    ExtensionEventType,
-} from './extension-client';
+} from './extension-commands';
+import { ExtensionEventMap, ExtensionEventType } from './extension-events';
 import {
     ExtensionInternalCommand,
     ExtensionInternalCommandType,
@@ -18,11 +18,11 @@ export default class ExtensionService {
 
     constructor(
         private _eventListener: IframeEventListener<ExtensionEventMap>,
-        private _eventPoster: IframeEventPoster<ExtensionCommand>,
-        private _internalEventPoster: IframeEventPoster<ExtensionInternalCommand>,
+        private _commandPoster: IframeEventPoster<ExtensionCommand, ExtensionCommandContext>,
+        private _internalCommandPoster: IframeEventPoster<ExtensionInternalCommand>,
     ) {
-        this._eventPoster.setTarget(window.parent);
-        this._internalEventPoster.setTarget(window.parent);
+        this._commandPoster.setTarget(window.parent);
+        this._internalCommandPoster.setTarget(window.parent);
     }
 
     initialize(extensionId: string): void {
@@ -33,23 +33,19 @@ export default class ExtensionService {
         this._extensionId = extensionId;
 
         this._eventListener.listen();
+        this._commandPoster.setContext({ extensionId });
+        this._internalCommandPoster.post({
+            type: ExtensionInternalCommandType.ResizeIframe,
+            payload: { extensionId },
+        });
     }
 
-    post(event: ExtensionCommand): void {
-        if (!this._extensionId) {
-            return;
+    post(command: ExtensionCommand): void {
+        if (!Object.values(ExtensionCommandType).includes(command.type)) {
+            throw new Error(`${command.type} is not supported.`);
         }
 
-        if (!Object.values(ExtensionCommandType).includes(event.type)) {
-            throw new Error(`${event.type} is not supported.`);
-        }
-
-        const payload = {
-            ...event.payload,
-            extensionId: this._extensionId,
-        };
-
-        this._eventPoster.post({ ...event, payload });
+        this._commandPoster.post(command);
     }
 
     addListener(eventType: ExtensionEventType, callback: () => void = noop): () => void {
@@ -63,7 +59,7 @@ export default class ExtensionService {
             throw new Error(`${eventType} is not supported.`);
         }
 
-        this._internalEventPoster.post({
+        this._internalCommandPoster.post({
             type: ExtensionInternalCommandType.Subscribe,
             payload: { extensionId, eventType },
         });
@@ -71,7 +67,7 @@ export default class ExtensionService {
         this._eventListener.addListener(eventType, callback);
 
         return () => {
-            this._internalEventPoster.post({
+            this._internalCommandPoster.post({
                 type: ExtensionInternalCommandType.Unsubscribe,
                 payload: { extensionId, eventType },
             });

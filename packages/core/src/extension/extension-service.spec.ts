@@ -2,19 +2,18 @@ import { noop } from 'lodash';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
+import { ExtensionCommand, ExtensionCommandContext } from './extension-commands';
+import { ExtensionEventMap, ExtensionEventType } from './extension-events';
 import {
-    ExtensionCommand,
-    ExtensionCommandType,
-    ExtensionEventMap,
-    ExtensionEventType,
-} from './extension-client';
-import { ExtensionInternalCommand } from './extension-internal-commands';
+    ExtensionInternalCommand,
+    ExtensionInternalCommandType,
+} from './extension-internal-commands';
 import ExtensionService from './extension-service';
 
 describe('ExtensionService', () => {
     let extensionService: ExtensionService;
     let eventListener: IframeEventListener<ExtensionEventMap>;
-    let eventPoster: IframeEventPoster<ExtensionCommand>;
+    let eventPoster: IframeEventPoster<ExtensionCommand, ExtensionCommandContext>;
     let internalEventPoster: IframeEventPoster<ExtensionInternalCommand>;
 
     beforeEach(() => {
@@ -42,31 +41,21 @@ describe('ExtensionService', () => {
         );
     });
 
-    it('#post throws error if extension id is not set', () => {
+    it('posts internal resize iframe command to host', () => {
         extensionService.initialize('test');
 
-        const event: ExtensionCommand = {
-            type: ExtensionCommandType.FRAME_LOADED,
-            payload: {},
-        };
-
-        extensionService.post(event);
-
-        expect(eventPoster.post).toHaveBeenCalledWith({
-            type: ExtensionCommandType.FRAME_LOADED,
-            payload: {
-                extensionId: 'test',
-            },
+        expect(internalEventPoster.post).toHaveBeenCalledWith({
+            type: ExtensionInternalCommandType.ResizeIframe,
+            payload: { extensionId: 'test' },
         });
     });
 
     it('#post throws error if event name is not passed correctly', () => {
         extensionService.initialize('test');
 
-        const event: ExtensionCommand = {
-            type: 'some-event' as ExtensionCommandType,
-            payload: {},
-        };
+        const event = {
+            type: 'some-event',
+        } as unknown as ExtensionCommand;
 
         expect(() => extensionService.post(event)).toThrow('some-event is not supported.');
     });
