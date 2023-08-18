@@ -153,15 +153,27 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
 
         const { instrumentId } = paymentData;
 
+        if (this.isPayPalCommerceInstrument(instrumentId)) {
+            return {
+                methodId,
+                paymentData: {
+                    ...paymentData,
+                    deviceSessionId,
+                    formattedPayload: {
+                        paypal_connect_token: {
+                            token: instrumentId,
+                        },
+                    },
+                },
+            };
+        }
+
         return {
             methodId,
             paymentData: {
                 ...paymentData,
                 instrumentId,
                 deviceSessionId,
-                ...(this.isPayPalCommerceInstrument(instrumentId) && {
-                    tokenType: 'paypal_connect',
-                }),
             },
         };
     }
