@@ -579,6 +579,7 @@ export enum BraintreeConnectAuthenticationState {
     SUCCEEDED = 'succeeded',
     FAILED = 'failed',
     CANCELED = 'canceled',
+    UNRECOGNIZED = 'unrecognized',
 }
 
 export interface BraintreeConnectAuthenticationCustomerResult {
