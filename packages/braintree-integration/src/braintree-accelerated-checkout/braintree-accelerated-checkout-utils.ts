@@ -1,6 +1,7 @@
 import {
     BraintreeConnect,
     BraintreeConnectAddress,
+    BraintreeConnectAuthenticationState,
     BraintreeConnectVaultedInstrument,
     BraintreeInitializationData,
     BraintreeIntegrationService,
@@ -86,13 +87,16 @@ export default class BraintreeAcceleratedCheckoutUtils {
 
             const customerEmail = email || customer?.email || billingAddress?.email || '';
 
-            if (!customerEmail) {
-                return;
-            }
-
             const { customerContextId } = await lookupCustomerByEmail(customerEmail);
 
             if (!customerContextId) {
+                // Info: we should clean up previous experience with default data and related authenticationState
+                await this.paymentIntegrationService.updatePaymentProviderCustomer({
+                    authenticationState: BraintreeConnectAuthenticationState.UNRECOGNIZED,
+                    addresses: [],
+                    instruments: [],
+                });
+
                 return;
             }
 
