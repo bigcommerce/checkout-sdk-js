@@ -15,6 +15,7 @@ import {
     PaymentIntegrationService,
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 export default class BraintreeAcceleratedCheckoutUtils {
     private braintreeConnect?: BraintreeConnect;
@@ -23,6 +24,7 @@ export default class BraintreeAcceleratedCheckoutUtils {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeIntegrationService: BraintreeIntegrationService,
+        private browserStorage: BrowserStorage,
     ) {}
 
     async getDeviceSessionId(): Promise<string | undefined> {
@@ -90,6 +92,8 @@ export default class BraintreeAcceleratedCheckoutUtils {
             const { customerContextId } = await lookupCustomerByEmail(customerEmail);
 
             if (!customerContextId) {
+                this.browserStorage.removeItem('sessionId');
+
                 // Info: we should clean up previous experience with default data and related authenticationState
                 await this.paymentIntegrationService.updatePaymentProviderCustomer({
                     authenticationState: BraintreeConnectAuthenticationState.UNRECOGNIZED,
@@ -106,6 +110,8 @@ export default class BraintreeAcceleratedCheckoutUtils {
 
             const addresses = this.mapPayPalToBcAddress(profileData.addresses) || [];
             const instruments = this.mapPayPalToBcInstrument(methodId, profileData.cards) || [];
+
+            this.browserStorage.setItem('sessionId', cart.id);
 
             await this.paymentIntegrationService.updatePaymentProviderCustomer({
                 authenticationState,
