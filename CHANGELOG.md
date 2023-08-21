@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.430.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.429.0...v1.430.0) (2023-08-21)
+
+
+### Features
+
+* **payment:** PAYPAL-2792 fixed applepay spb on PDP ([#2107](https://github.com/bigcommerce/checkout-sdk-js/issues/2107)) ([4e2470f](https://github.com/bigcommerce/checkout-sdk-js/commit/4e2470f2e039365b35f8c75213a586d8e570b46e))
+
 ## [1.429.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.428.0...v1.429.0) (2023-08-21)
 
 
