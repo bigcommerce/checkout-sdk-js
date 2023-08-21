@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.429.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.428.0...v1.429.0) (2023-08-21)
+
+
+### Features
+
+* **payment:** PAYPAL-2856 added styles for PayPal Connect Credit Card component ([#2120](https://github.com/bigcommerce/checkout-sdk-js/issues/2120)) ([06db7ad](https://github.com/bigcommerce/checkout-sdk-js/commit/06db7adf275063af37be445420bcca73a914b6a1))
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2868 clean up prev provider customer data from checkout state BT AXO ([#2130](https://github.com/bigcommerce/checkout-sdk-js/issues/2130)) ([8415323](https://github.com/bigcommerce/checkout-sdk-js/commit/84153233997bb5ae84acd0fdc49df7a7c0a4c4de))
+
 ## [1.428.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.427.0...v1.428.0) (2023-08-18)
 
 
