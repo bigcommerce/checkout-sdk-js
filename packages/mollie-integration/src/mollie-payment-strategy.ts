@@ -244,9 +244,9 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
             await form.submit(payment);
 
             await this.paymentIntegrationService.loadCurrentOrder();
+        } else {
+            await this.paymentIntegrationService.submitPayment(payment);
         }
-
-        await this.paymentIntegrationService.submitPayment(payment);
     }
 
     protected async executeWithAPM(payment: OrderPaymentRequestBody): Promise<void> {

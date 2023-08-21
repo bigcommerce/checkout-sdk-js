@@ -103,6 +103,21 @@ describe('MolliePaymentStrategy', () => {
                 await expect(response).rejects.toThrow(InvalidArgumentError);
             });
 
+            it('does not load Mollie if merchantId is not provided', async () => {
+                const paymentData = getMollie();
+
+                delete paymentData.config.merchantId;
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(paymentData);
+
+                const response = strategy.initialize(options);
+
+                await expect(response).rejects.toThrow(MissingDataError);
+            });
+
             it('does initialize mollie and create 4 components', async () => {
                 await strategy.initialize(options);
 
