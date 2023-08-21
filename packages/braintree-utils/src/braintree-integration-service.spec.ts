@@ -436,6 +436,21 @@ describe('BraintreeIntegrationService', () => {
         });
     });
 
+    describe('#getSessionId', () => {
+        it('provides riskCorrelationId to data collector', async () => {
+            const cartIdMock = 'cartId-asdasd';
+
+            braintreeIntegrationService.initialize(clientToken, initializationData);
+            await braintreeIntegrationService.getSessionId(cartIdMock);
+
+            expect(dataCollectorCreatorMock.create).toHaveBeenCalledWith({
+                client: clientMock,
+                kount: true,
+                riskCorrelationId: cartIdMock,
+            });
+        });
+    });
+
     describe('#teardown()', () => {
         it('calls teardown in all the dependencies', async () => {
             braintreeIntegrationService.initialize(clientToken, initializationData);

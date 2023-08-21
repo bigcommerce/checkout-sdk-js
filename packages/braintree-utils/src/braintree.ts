@@ -211,6 +211,7 @@ export type BraintreeDataCollectorCreator = BraintreeModuleCreator<
 export interface BraintreeDataCollectorCreatorConfig extends BraintreeModuleCreatorConfig {
     kount?: boolean;
     paypal?: boolean;
+    riskCorrelationId?: string; // Info: the option is needed for PayPal Analytics
 }
 
 export interface BraintreeDataCollector extends BraintreeModule {

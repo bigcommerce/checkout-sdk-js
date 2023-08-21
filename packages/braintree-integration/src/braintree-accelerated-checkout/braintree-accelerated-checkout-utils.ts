@@ -25,7 +25,9 @@ export default class BraintreeAcceleratedCheckoutUtils {
     ) {}
 
     async getDeviceSessionId(): Promise<string | undefined> {
-        return this.braintreeIntegrationService.getSessionId();
+        const cart = this.paymentIntegrationService.getState().getCart();
+
+        return this.braintreeIntegrationService.getSessionId(cart?.id);
     }
 
     /**
@@ -35,6 +37,7 @@ export default class BraintreeAcceleratedCheckoutUtils {
      */
     async initializeBraintreeConnectOrThrow(methodId: string) {
         const state = this.paymentIntegrationService.getState();
+        const cart = state.getCart();
         const { clientToken, initializationData } =
             state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
 
@@ -45,7 +48,9 @@ export default class BraintreeAcceleratedCheckoutUtils {
         this.methodId = methodId;
 
         this.braintreeIntegrationService.initialize(clientToken, initializationData);
-        this.braintreeConnect = await this.braintreeIntegrationService.getBraintreeConnect();
+        this.braintreeConnect = await this.braintreeIntegrationService.getBraintreeConnect(
+            cart?.id,
+        );
     }
 
     /**
