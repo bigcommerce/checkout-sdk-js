@@ -1,6 +1,14 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { getScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 
+import {
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
+    getBraintree,
+    getDataCollectorMock,
+    getDeviceDataMock,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     InvalidArgumentError,
     OrderFinalizationNotRequiredError,
@@ -18,6 +26,7 @@ import ApplePayPaymentStrategy from './apple-pay-payment-strategy';
 import ApplePaySessionFactory from './apple-pay-session-factory';
 import { getApplePay } from './mocks/apple-pay-method.mock';
 import { MockApplePaySession } from './mocks/apple-pay-payment.mock';
+import { ApplePayGatewayType } from './apple-pay';
 
 describe('ApplePayPaymentStrategy', () => {
     let requestSender: RequestSender;
@@ -26,6 +35,7 @@ describe('ApplePayPaymentStrategy', () => {
     let strategy: ApplePayPaymentStrategy;
     let paymentMethod: PaymentMethod;
     let applePaySession: MockApplePaySession;
+    let braintreeIntegrationService: BraintreeIntegrationService;
 
     beforeEach(() => {
         applePaySession = new MockApplePaySession();
@@ -36,6 +46,10 @@ describe('ApplePayPaymentStrategy', () => {
         });
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+        braintreeIntegrationService = new BraintreeIntegrationService(
+            new BraintreeScriptLoader(getScriptLoader(), window),
+            window,
+        );
 
         requestSender = createRequestSender();
         applePayFactory = new ApplePaySessionFactory();
@@ -49,6 +63,7 @@ describe('ApplePayPaymentStrategy', () => {
             requestSender,
             paymentIntegrationService,
             applePayFactory,
+            braintreeIntegrationService,
         );
     });
 
@@ -66,6 +81,10 @@ describe('ApplePayPaymentStrategy', () => {
 
     describe('#execute()', () => {
         beforeEach(() => {
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+                paymentIntegrationService.getState(),
+            );
+
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -152,6 +171,70 @@ describe('ApplePayPaymentStrategy', () => {
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
             expect(applePaySession.completePayment).toHaveBeenCalled();
+        });
+
+        describe('braintree gateway', () => {
+            beforeEach(() => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockImplementation((methodId) => {
+                    if (methodId === 'applepay') {
+                        const applePayPaymentMethod = getApplePay();
+
+                        applePayPaymentMethod.initializationData.gateway = 'braintree';
+
+                        return applePayPaymentMethod;
+                    }
+
+                    if (methodId === 'braintree') {
+                        return getBraintree();
+                    }
+
+                    return {};
+                });
+
+                jest.spyOn(braintreeIntegrationService, 'getClient').mockImplementation(
+                    () => 'token',
+                );
+
+                jest.spyOn(braintreeIntegrationService, 'getDataCollector').mockImplementation(() =>
+                    getDataCollectorMock(),
+                );
+            });
+
+            it('submits payment with deviceSessionId', async () => {
+                await strategy.initialize({ methodId: 'applepay' });
+
+                const payload = merge({}, getOrderRequestBody(), {
+                    payment: { methodId: paymentMethod.id },
+                });
+                const authEvent = {
+                    payment: {
+                        token: {
+                            paymentData: {},
+                            paymentMethod: {},
+                            transactionIdentifier: {},
+                        },
+                    },
+                } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
+
+                strategy.execute(payload);
+                await new Promise((resolve) => process.nextTick(resolve));
+                await applePaySession.onpaymentauthorized(authEvent);
+
+                expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                    ApplePayGatewayType.BRAINTREE,
+                );
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            deviceSessionId: getDeviceDataMock(),
+                        }),
+                    }),
+                );
+            });
         });
     });
 
