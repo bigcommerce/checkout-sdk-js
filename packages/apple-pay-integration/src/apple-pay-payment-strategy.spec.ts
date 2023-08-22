@@ -22,11 +22,11 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import { ApplePayGatewayType } from './apple-pay';
 import ApplePayPaymentStrategy from './apple-pay-payment-strategy';
 import ApplePaySessionFactory from './apple-pay-session-factory';
 import { getApplePay } from './mocks/apple-pay-method.mock';
 import { MockApplePaySession } from './mocks/apple-pay-payment.mock';
-import { ApplePayGatewayType } from './apple-pay';
 
 describe('ApplePayPaymentStrategy', () => {
     let requestSender: RequestSender;
@@ -68,6 +68,17 @@ describe('ApplePayPaymentStrategy', () => {
     });
 
     describe('#initialize()', () => {
+        beforeEach(() => {
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+                paymentIntegrationService.getState(),
+            );
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(getApplePay());
+        });
+
         it('throws invalid argument error if no method id', async () => {
             await expect(strategy.initialize()).rejects.toBeInstanceOf(InvalidArgumentError);
         });

@@ -5,8 +5,6 @@ import {
     Cart,
     Checkout,
     InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
@@ -63,7 +61,14 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 
         this._shippingLabel = options.applepay?.shippingLabel || DefaultLabels.Shipping;
         this._subTotalLabel = options.applepay?.subtotalLabel || DefaultLabels.Subtotal;
-        await this._paymentIntegrationService.loadPaymentMethod(methodId);
+
+        const state = await this._paymentIntegrationService.loadPaymentMethod(methodId);
+
+        const paymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(methodId);
+
+        if (paymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE) {
+            await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
+        }
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -218,7 +223,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         let deviceSessionId: string | undefined;
 
         if (paymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE) {
-            deviceSessionId = await this._getDataCollector();
+            deviceSessionId = await this._getDeviceData();
         }
 
         const payment: Payment = {
@@ -249,7 +254,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private async _getDataCollector() {
+    private async _getDeviceData() {
         const state = await this._paymentIntegrationService.loadPaymentMethod(
             ApplePayGatewayType.BRAINTREE,
         );
@@ -259,7 +264,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         );
 
         if (!braintreePaymentMethod.clientToken || !braintreePaymentMethod.initializationData) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            return;
         }
 
         this._braintreeIntegrationService.initialize(
