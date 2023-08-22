@@ -41,6 +41,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     private _walletButton?: HTMLElement;
     private _paymentMethod?: PaymentMethod;
     private _is3dsEnabled?: boolean;
+    private _sessionId?: string;
     private _buttonClickEventHandler?: (event: Event) => Promise<InternalCheckoutSelectors>;
 
     constructor(
@@ -81,6 +82,8 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 this._paymentMethod.clientToken,
                 this._paymentMethod.initializationData,
             );
+
+            this._sessionId = await this._braintreeSDKCreator.getSessionId();
         }
 
         await this._googlePayPaymentProcessor.initialize(methodId);
@@ -175,6 +178,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 paymentData: {
                     ...payment.paymentData,
                     nonce: verification?.nonce || payment.paymentData.nonce,
+                    deviceSessionId: this._sessionId,
                 },
             };
 

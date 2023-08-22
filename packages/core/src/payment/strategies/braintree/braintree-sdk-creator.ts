@@ -179,6 +179,12 @@ export default class BraintreeSDKCreator {
         return cached;
     }
 
+    async getSessionId(): Promise<string | undefined> {
+        const { deviceData } = await this.getDataCollector();
+
+        return deviceData;
+    }
+
     getVisaCheckout(): Promise<BraintreeVisaCheckout> {
         if (!this._visaCheckout) {
             this._visaCheckout = Promise.all([

@@ -4,6 +4,8 @@ import {
     Cart,
     Checkout,
     InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
@@ -19,7 +21,9 @@ import {
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { ApplePayGatewayType } from './apple-pay';
 import { WithApplePayPaymentInitializeOptions } from './apple-pay-payment-initialize-options';
+import ApplePayScriptLoader from './apple-pay-script-loader';
 import ApplePaySessionFactory from './apple-pay-session-factory';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
@@ -38,11 +42,13 @@ enum DefaultLabels {
 export default class ApplePayPaymentStrategy implements PaymentStrategy {
     private _shippingLabel: string = DefaultLabels.Shipping;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
+    private _sessionId?: string;
 
     constructor(
         private _requestSender: RequestSender,
         private _paymentIntegrationService: PaymentIntegrationService,
         private _sessionFactory: ApplePaySessionFactory,
+        private _applePayScriptLoader: ApplePayScriptLoader,
     ) {}
 
     async initialize(
@@ -58,7 +64,12 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 
         this._shippingLabel = options.applepay?.shippingLabel || DefaultLabels.Shipping;
         this._subTotalLabel = options.applepay?.subtotalLabel || DefaultLabels.Subtotal;
-        await this._paymentIntegrationService.loadPaymentMethod(methodId);
+
+        const state = await this._paymentIntegrationService.loadPaymentMethod(methodId);
+
+        const applePayPaymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(methodId);
+
+        this._sessionId = await this._getBraintreeApplePaySessionId(applePayPaymentMethod);
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -212,6 +223,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         const payment: Payment = {
             methodId: paymentMethod.id,
             paymentData: {
+                deviceSessionId: this._sessionId,
                 formattedPayload: {
                     apple_pay_token: {
                         payment_data: token.paymentData,
@@ -233,6 +245,46 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             return promise.reject(
                 new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
             );
+        }
+    }
+
+    private async _getBraintreeApplePaySessionId(applePayPaymentMethod: PaymentMethod) {
+        if (applePayPaymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE) {
+            const state = await this._paymentIntegrationService.loadPaymentMethod(
+                ApplePayGatewayType.BRAINTREE,
+            );
+
+            const braintreePaymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(
+                ApplePayGatewayType.BRAINTREE,
+            );
+
+            if (!braintreePaymentMethod.clientToken || !braintreePaymentMethod.initializationData) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
+            return this._getDataCollector(braintreePaymentMethod.clientToken);
+        }
+    }
+
+    private async _getDataCollector(clientToken: string) {
+        try {
+            const clientCreator = await this._applePayScriptLoader.loadBraintreeClient();
+            const client = await clientCreator.create({ authorization: clientToken });
+            const dataCollector = await this._applePayScriptLoader.loadBraintreeDataCollector();
+
+            const { deviceData } = await dataCollector.create({
+                client,
+                kount: true,
+                paypal: true,
+            });
+
+            return deviceData;
+        } catch (error) {
+            if (error && error.code === 'DATA_COLLECTOR_KOUNT_NOT_ENABLED') {
+                return undefined;
+            }
+
+            throw error;
         }
     }
 }
