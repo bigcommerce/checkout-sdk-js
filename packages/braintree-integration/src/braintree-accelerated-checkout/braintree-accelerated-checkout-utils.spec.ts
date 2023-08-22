@@ -19,6 +19,7 @@ import {
     getCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { getBraintreeAcceleratedCheckoutPaymentMethod } from '../mocks/braintree.mock';
 
@@ -28,6 +29,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
     let braintreeConnectMock: BraintreeConnect;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
+    let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let subject: BraintreeAcceleratedCheckoutUtils;
 
@@ -46,12 +48,17 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             braintreeScriptLoader,
             window,
         );
+        browserStorage = new BrowserStorage('paypalConnect');
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         subject = new BraintreeAcceleratedCheckoutUtils(
             paymentIntegrationService,
             braintreeIntegrationService,
+            browserStorage,
         );
+
+        jest.spyOn(browserStorage, 'removeItem');
+        jest.spyOn(browserStorage, 'setItem');
 
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress');
@@ -154,6 +161,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             await subject.initializeBraintreeConnectOrThrow(methodId);
             await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
+            expect(browserStorage.removeItem).toHaveBeenCalledWith('sessionId');
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
                 authenticationState: BraintreeConnectAuthenticationState.UNRECOGNIZED,
                 addresses: [],
@@ -211,6 +219,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             await subject.initializeBraintreeConnectOrThrow(methodId);
             await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
+            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
             expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
                 updatePaymentProviderCustomerPayload,
@@ -232,6 +241,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             await subject.initializeBraintreeConnectOrThrow(methodId);
             await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
+            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
             expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
                 updatePaymentProviderCustomerPayload,
