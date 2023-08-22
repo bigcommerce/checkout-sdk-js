@@ -57,7 +57,6 @@ describe('BlueSnapDirectHostedForm', () => {
         hostedInputValidator = new BlueSnapHostedInputValidator();
         jest.spyOn(hostedInputValidator, 'initialize');
         jest.spyOn(hostedInputValidator, 'initializeValidationFields');
-        jest.spyOn(hostedInputValidator, 'initializeValidationCVVFields');
         jest.spyOn(hostedInputValidator, 'validate');
 
         hostedForm = new BlueSnapDirectHostedForm(
@@ -111,19 +110,6 @@ describe('BlueSnapDirectHostedForm', () => {
             await hostedForm.initialize(false, ccOptionsMock.form.fields);
 
             expect(hostedInputValidator.initialize).toHaveBeenCalled();
-            expect(scriptLoader.load).toHaveBeenCalledWith(false);
-        });
-
-        it('should initialize hosted form for stored card successfully with cvv only validation', async () => {
-            await hostedForm.initialize(false, {
-                [HostedFieldType.CardNumberVerification]: undefined,
-                [HostedFieldType.CardCodeVerification]: {
-                    containerId: optionsMocks.ccCvvContainerId,
-                    instrumentId: 'instrumentId',
-                },
-            });
-
-            expect(hostedInputValidator.initializeValidationCVVFields).toHaveBeenCalled();
             expect(scriptLoader.load).toHaveBeenCalledWith(false);
         });
 

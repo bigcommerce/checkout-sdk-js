@@ -67,18 +67,8 @@ export default class BlueSnapDirectHostedForm {
             return;
         }
 
-        if (
-            isHostedStoredCardFieldOptionsMap(fields) &&
-            !!fields.cardNumberVerification &&
-            !!fields.cardCodeVerification
-        ) {
+        if (isHostedStoredCardFieldOptionsMap(fields) && !!fields.cardNumberVerification) {
             this._hostedInputValidator.initializeValidationFields();
-
-            return;
-        }
-
-        if (isHostedStoredCardFieldOptionsMap(fields) && !!fields.cardCodeVerification) {
-            this._hostedInputValidator.initializeValidationCVVFields();
         }
     }
 

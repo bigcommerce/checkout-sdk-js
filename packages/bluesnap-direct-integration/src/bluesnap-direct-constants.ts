@@ -36,11 +36,6 @@ export const CREDIT_CARD_ERRORS = {
             message: 'CVV is required',
             type: 'required',
         },
-        [HostedFieldType.CardCodeVerification]: {
-            fieldType: 'cardCode',
-            message: 'CVV is required',
-            type: 'required',
-        },
         [HostedFieldType.CardName]: {
             fieldType: 'cardName',
             message: 'Full name is required',
@@ -64,11 +59,6 @@ export const CREDIT_CARD_ERRORS = {
             type: 'invalid_card_expiry',
         },
         [HostedFieldType.CardCode]: {
-            fieldType: 'cardCode',
-            message: 'CVV must be valid',
-            type: 'invalid_card_code',
-        },
-        [HostedFieldType.CardCodeVerification]: {
             fieldType: 'cardCode',
             message: 'CVV must be valid',
             type: 'invalid_card_code',
