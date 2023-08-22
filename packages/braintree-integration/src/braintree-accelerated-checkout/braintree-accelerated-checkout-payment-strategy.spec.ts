@@ -307,8 +307,11 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
                 methodId: 'braintreeacceleratedcheckout',
                 paymentData: {
                     deviceSessionId,
-                    instrumentId,
-                    tokenType: 'paypal_connect',
+                    formattedPayload: {
+                        paypal_connect_token: {
+                            token: instrumentId,
+                        },
+                    },
                 },
             });
         });
