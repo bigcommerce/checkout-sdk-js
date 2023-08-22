@@ -3,6 +3,7 @@ import { noop } from 'lodash';
 
 import {
     BraintreeConnect,
+    BraintreeConnectAuthenticationState,
     BraintreeIntegrationService,
     BraintreeScriptLoader,
     getConnectMock,
@@ -16,9 +17,11 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
+    getCart,
     getShippingAddress,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import BraintreeAcceleratedCheckoutPaymentStrategy from './braintree-accelerated-checkout-payment-strategy';
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
@@ -28,6 +31,7 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
     let braintreeConnectMock: BraintreeConnect;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
+    let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeAcceleratedCheckoutPaymentStrategy;
 
@@ -35,6 +39,7 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
     const deviceSessionId = 'device_session_id_mock';
     const instrumentId = 'asd123';
 
+    const cart = getCart();
     const billingAddress = getBillingAddress();
     const shippingAddress = getShippingAddress();
 
@@ -70,19 +75,27 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
             window,
         );
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+        browserStorage = new BrowserStorage('paypalConnect');
         braintreeAcceleratedCheckoutUtils = new BraintreeAcceleratedCheckoutUtils(
             paymentIntegrationService,
             braintreeIntegrationService,
+            browserStorage,
         );
 
         strategy = new BraintreeAcceleratedCheckoutPaymentStrategy(
             paymentIntegrationService,
             braintreeAcceleratedCheckoutUtils,
+            browserStorage,
         );
+
+        jest.spyOn(browserStorage, 'getItem');
+        jest.spyOn(browserStorage, 'setItem');
+        jest.spyOn(browserStorage, 'removeItem');
 
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
         jest.spyOn(paymentIntegrationService, 'submitOrder');
         jest.spyOn(paymentIntegrationService, 'submitPayment');
+        jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(cart);
         jest.spyOn(
             paymentIntegrationService.getState(),
             'getBillingAddressOrThrow',
@@ -98,6 +111,10 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
         jest.spyOn(
             braintreeAcceleratedCheckoutUtils,
             'initializeBraintreeConnectOrThrow',
+        ).mockImplementation(jest.fn);
+        jest.spyOn(
+            braintreeAcceleratedCheckoutUtils,
+            'runPayPalConnectAuthenticationFlowOrThrow',
         ).mockImplementation(jest.fn);
         jest.spyOn(
             braintreeAcceleratedCheckoutUtils,
@@ -150,6 +167,51 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(InvalidArgumentError);
             }
+        });
+
+        it('should not authenticate user if OTP was triggered before', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentProviderCustomerOrThrow',
+            ).mockReturnValue({
+                authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
+            });
+
+            await strategy.initialize(defaultInitializationOptions);
+
+            expect(
+                braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
+            ).not.toHaveBeenCalled();
+        });
+
+        it('should not authenticate user the user logged in before checkout page', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentProviderCustomerOrThrow',
+            ).mockReturnValue({});
+
+            jest.spyOn(browserStorage, 'getItem').mockReturnValue('');
+
+            await strategy.initialize(defaultInitializationOptions);
+
+            expect(
+                braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
+            ).not.toHaveBeenCalled();
+        });
+
+        it('triggers OTP flow', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentProviderCustomerOrThrow',
+            ).mockReturnValue({});
+
+            jest.spyOn(browserStorage, 'getItem').mockReturnValue(cart.id);
+
+            await strategy.initialize(defaultInitializationOptions);
+
+            expect(
+                braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
+            ).toHaveBeenCalled();
         });
     });
 
