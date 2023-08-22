@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.431.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.430.0...v1.431.0) (2023-08-22)
+
+
+### Features
+
+* **payment:** PAYPAL-2853 added riskCorrelationId to data collector for PayPal Analytics ([#2132](https://github.com/bigcommerce/checkout-sdk-js/issues/2132)) ([4d2328f](https://github.com/bigcommerce/checkout-sdk-js/commit/4d2328ffac4b76a7fce71c2d3633739558384587))
+* **payment:** PAYPAL-2873 added paypal connect vaulting formated payload interface ([#2134](https://github.com/bigcommerce/checkout-sdk-js/issues/2134)) ([b2e109c](https://github.com/bigcommerce/checkout-sdk-js/commit/b2e109c1cf5c25b0639dafe2e345bc7b294adafc))
+* **payment:** PAYPAL-2873 updated payment payload for PayPal Connect vaulted instruments BT AXO ([#2135](https://github.com/bigcommerce/checkout-sdk-js/issues/2135)) ([9ee7ba9](https://github.com/bigcommerce/checkout-sdk-js/commit/9ee7ba9bb5bad91e6769426ee6f66a1eb9aa9b5a))
+* **payment:** PAYPAL-2876 added session id to the local storage after customer's OTP BT AXO ([#2133](https://github.com/bigcommerce/checkout-sdk-js/issues/2133)) ([71a8e3f](https://github.com/bigcommerce/checkout-sdk-js/commit/71a8e3f3c46e1896814f722429a8fa9b76903ab5))
+
 ## [1.430.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.429.0...v1.430.0) (2023-08-21)
 
 
