@@ -9,10 +9,10 @@ import {
     PaymentStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import BraintreeAcceleratedCheckoutPaymentStrategy from './braintree-accelerated-checkout-payment-strategy';
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 const createBraintreeAcceleratedCheckoutPaymentStrategy: PaymentStrategyFactory<
     BraintreeAcceleratedCheckoutPaymentStrategy

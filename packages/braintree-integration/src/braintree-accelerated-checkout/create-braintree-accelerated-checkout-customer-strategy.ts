@@ -1,4 +1,3 @@
-import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
@@ -10,6 +9,7 @@ import {
     CustomerStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import BraintreeAcceleratedCheckoutCustomerStrategy from './braintree-accelerated-checkout-customer-strategy';
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
