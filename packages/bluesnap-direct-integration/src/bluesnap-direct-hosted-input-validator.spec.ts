@@ -76,4 +76,23 @@ describe('BlueSnapHostedInputValidator', () => {
 
         expect(validator.validate()).toStrictEqual(expectedResult);
     });
+
+    it('should return an invalid result for stored cards', () => {
+        validator = new BlueSnapHostedInputValidator();
+        validator.initializeValidationFields();
+
+        const expectedResult = {
+            isValid: false,
+            errors: {
+                cardNumberVerification: [CREDIT_CARD_ERRORS.invalid.cardNumber],
+            },
+        };
+
+        validator.validate({
+            tagId: HostedFieldTagId.CardNumber,
+            errorDescription: SubmitErrorDescription.INVALID,
+        });
+
+        expect(validator.validate()).toStrictEqual(expectedResult);
+    });
 });
