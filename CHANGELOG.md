@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.432.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.431.0...v1.432.0) (2023-08-23)
+
+
+### Features
+
+* **payment:** INT-7676 GooglePay: Add payment strategy ([#1967](https://github.com/bigcommerce/checkout-sdk-js/issues/1967)) ([d528699](https://github.com/bigcommerce/checkout-sdk-js/commit/d5286995b1aca3948ff0673ebbedd4c233b35a3f))
+
 ## [1.431.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.430.0...v1.431.0) (2023-08-22)
 
 
