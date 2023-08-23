@@ -54,6 +54,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             paypalCommerceIntegrationService,
         );
 
+        jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockReturnValue('APPROVED');
         jest.spyOn(document, 'getElementById').mockImplementation((id) => {
             if (id === 'legal-text-container') {
                 return {

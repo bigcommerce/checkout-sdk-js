@@ -13,13 +13,11 @@ import {
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 
 import { WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions } from '../index';
-import { BirthDate, PayPalCommerceInitializationData } from '../paypal-commerce-types';
+import { BirthDate, PayPalCommerceInitializationData, PayPalOrderStatus } from '../paypal-commerce-types';
 import { PaypalCommerceRatePay } from './paypal-commerce-alternative-methods-payment-initialize-options';
 import { noop } from 'lodash';
-// import {LoadingIndicator} from "@bigcommerce/checkout-sdk/ui";
 
 export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStrategy {
-    // private loadingIndicatorContainer?: string;
     private guid?: string;
     private paypalcommerceratepay?: PaypalCommerceRatePay;
     private pollingTimer = 0;
@@ -27,7 +25,6 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
-        // private loadingIndicator: LoadingIndicator,
         private pollingInterval = 3000,
         private maxPollingTime = 600000,
     ) {}
@@ -109,47 +106,50 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
             );
         }
 
-        const finalizeOrder = async () => {
-            try {
-                const orderId = await this.paypalCommerceIntegrationService.createOrder(
-                    'paypalcommercealternativemethodscheckout',
-                    {metadataId: this.guid},
-                );
+        return new Promise((resolve, reject) => {
+            const finalizeOrder = async () => {
+                try {
+                    const orderId = await this.paypalCommerceIntegrationService.createOrder(
+                        'paypalcommercealternativemethodscheckout',
+                        {metadataId: this.guid},
+                    );
 
-                const {ratepayBirthDate, ratepayPhoneNumber, ratepayPhoneCountryCode} =
-                    getFieldsValues();
+                    const {ratepayBirthDate, ratepayPhoneNumber, ratepayPhoneCountryCode} =
+                        getFieldsValues();
 
-                const paymentData = {
-                    formattedPayload: {
-                        vault_payment_instrument: null,
-                        set_as_default_stored_instrument: null,
-                        device_info: null,
-                        method_id: payment.methodId,
-                        rate_pay: {
-                            birth_date: this.normalizeDate(ratepayBirthDate),
-                            phone: {
-                                national_number: ratepayPhoneNumber,
-                                country_code: ratepayPhoneCountryCode,
+                    const paymentData = {
+                        formattedPayload: {
+                            vault_payment_instrument: null,
+                            set_as_default_stored_instrument: null,
+                            device_info: null,
+                            method_id: payment.methodId,
+                            rate_pay: {
+                                birth_date: this.normalizeDate(ratepayBirthDate),
+                                phone: {
+                                    national_number: ratepayPhoneNumber,
+                                    country_code: ratepayPhoneCountryCode,
+                                },
+                            },
+                            paypal_account: {
+                                order_id: orderId,
                             },
                         },
-                        paypal_account: {
-                            order_id: orderId,
-                        },
-                    },
-                };
+                    };
 
-                await this.paymentIntegrationService.submitOrder(order, options);
-                await this.paymentIntegrationService.submitPayment({
-                    methodId: payment.methodId,
-                    paymentData,
-                });
-            } catch (error: unknown) {
-                this.handleError(error);
+                    await this.paymentIntegrationService.submitOrder(order, options);
+                    await this.paymentIntegrationService.submitPayment({
+                        methodId: payment.methodId,
+                        paymentData,
+                    });
+                    resolve();
+                } catch (error: unknown) {
+                    this.handleError(error);
+                    reject();
+                }
             }
-        }
 
-        // @ts-ignore
-        this.initializePollingMechanism(payment.methodId, payment.gatewayId, this.paypalcommerceratepay, finalizeOrder);
+            this.initializePollingMechanism(payment.methodId, finalizeOrder, payment.gatewayId, this.paypalcommerceratepay);
+        });
     }
 
     finalize(): Promise<void> {
@@ -269,9 +269,9 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
      * */
     private async initializePollingMechanism(
         methodId: string,
-        gatewayId: string,
-        paypalRatePayOptions: PaypalCommerceRatePay,
         callback: Function,
+        gatewayId?: string,
+        paypalRatePayOptions?: PaypalCommerceRatePay,
     ): Promise<void> {
         await new Promise<void>((resolve, reject) => {
             const timeout = setTimeout(resolve, this.pollingInterval);
@@ -294,10 +294,10 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
                 },
                 );
 
-            const isOrderApproved = orderStatus === 'APPROVED'; // TODO: FIX
+            const isOrderApproved = orderStatus === PayPalOrderStatus.Approved;
             const isOrderPending =
-                orderStatus === 'CREATED' || // TODO: FIX
-                orderStatus === 'PAYER_ACTION_REQUIRED'; // TODO: FIX
+                orderStatus === PayPalOrderStatus.Created ||
+                orderStatus === PayPalOrderStatus.PayerActionRequired;
 
             if (isOrderApproved) {
                 this.deinitializePollingMechanism();
@@ -306,7 +306,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
             }
 
             if (isOrderPending && this.pollingTimer < this.maxPollingTime) {
-                return await this.initializePollingMechanism(methodId, gatewayId, paypalRatePayOptions, callback);
+                return await this.initializePollingMechanism(methodId, paypalRatePayOptions, callback, gatewayId);
             }
 
             await this.reinitializeStrategy({
@@ -328,19 +328,5 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
 
     private resetPollingMechanism(): void {
         this.deinitializePollingMechanism();
-        // this.toggleLoadingIndicator(false);
     }
-
-    /**
-     *
-     * Loading Indicator methods
-     *
-     * */
-    // private toggleLoadingIndicator(isLoading: boolean): void {
-    //     if (isLoading && this.loadingIndicatorContainer) {
-    //         this.loadingIndicator.show(this.loadingIndicatorContainer);
-    //     } else {
-    //         this.loadingIndicator.hide();
-    //     }
-    // }
 }
