@@ -70,6 +70,17 @@ interface WechatDataPaymentMethodState {
     paymentMethod: AdyenPaymentMethodState;
 }
 
+interface BolletoDataPaymentMethodState {
+    paymentMethod: {
+        type: string;
+    };
+    shopperName?: {
+        firstName?: string;
+        lastName?: string;
+    };
+    socialSecurityNumber?: string;
+}
+
 interface CardPaymentMethodState {
     encryptedCardNumber: string;
     encryptedExpiryMonth: string;
@@ -296,6 +307,8 @@ export interface AdyenConfiguration {
 }
 
 export interface AdyenPlaceholderData {
+    firstName?: string;
+    lastName?: string;
     holderName?: string;
     prefillCardHolderName?: boolean;
     billingAddress?: {
@@ -380,6 +393,12 @@ export interface AdyenV3IdealComponentOptions {
      * Optional. Set to **false** to remove the bank logos from the iDEAL form.
      */
     showImage?: boolean;
+}
+
+export interface AdyenV3BoletoComponentOptions {
+    personalDetailsRequired?: boolean;
+    billingAddressRequired?: boolean;
+    showEmailAddress?: boolean;
 }
 
 export interface AdyenStoredPaymentMethod {
@@ -564,6 +583,10 @@ export interface CardStateErrors {
 
 export interface WechatState {
     data: WechatDataPaymentMethodState;
+}
+
+export interface BolletoState {
+    data: BolletoDataPaymentMethodState;
 }
 
 export interface CreditCardPlaceHolder {
@@ -893,11 +916,12 @@ export enum AdyenV3CardFields {
     ExpiryDate = 'encryptedExpiryDate',
 }
 
-export type AdyenV3ComponentState = CardState | WechatState;
+export type AdyenV3ComponentState = CardState | WechatState | BolletoState;
 
 export type AdyenComponentOptions =
     | AdyenV3CreditCardComponentOptions
     | AdyenV3IdealComponentOptions
+    | AdyenV3BoletoComponentOptions
     | AdyenCustomCardComponentOptions;
 
 export function isCardState(param: unknown): param is CardState {
@@ -906,6 +930,16 @@ export function isCardState(param: unknown): param is CardState {
             !!param &&
             typeof (param as CardState).data.paymentMethod.encryptedSecurityCode === 'string') ||
         typeof (param as CardState).data.paymentMethod.encryptedExpiryMonth === 'string'
+    );
+}
+
+export function isBolletoState(param: unknown): param is BolletoState {
+    return (
+        (typeof param === 'object' &&
+            !!param &&
+            typeof (param as BolletoState).data.socialSecurityNumber) === 'string' &&
+        typeof (param as BolletoState).data.shopperName?.firstName === 'string' &&
+        typeof (param as BolletoState).data.shopperName?.lastName === 'string'
     );
 }
 
