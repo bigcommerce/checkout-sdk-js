@@ -1,8 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
 import {
-    Cart,
-    Checkout,
     InvalidArgumentError,
     NotInitializedError,
     NotInitializedErrorType,
@@ -11,12 +9,12 @@ import {
     Payment,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
+    PaymentIntegrationSelectors,
     PaymentIntegrationService,
     PaymentMethod,
     PaymentMethodCancelledError,
     PaymentRequestOptions,
     PaymentStrategy,
-    StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { WithApplePayPaymentInitializeOptions } from './apple-pay-payment-initialize-options';
@@ -33,11 +31,13 @@ interface ApplePayPromise {
 enum DefaultLabels {
     Shipping = 'Shipping',
     Subtotal = 'Subtotal',
+    StoreCredit = 'Store Credit',
 }
 
 export default class ApplePayPaymentStrategy implements PaymentStrategy {
     private _shippingLabel: string = DefaultLabels.Shipping;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
+    private _storeCreditLabel: string = DefaultLabels.StoreCredit;
 
     constructor(
         private _requestSender: RequestSender,
@@ -58,15 +58,14 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 
         this._shippingLabel = options.applepay?.shippingLabel || DefaultLabels.Shipping;
         this._subTotalLabel = options.applepay?.subtotalLabel || DefaultLabels.Subtotal;
+        this._storeCreditLabel = options.applepay?.storeCreditLabel || DefaultLabels.StoreCredit;
+
         await this._paymentIntegrationService.loadPaymentMethod(methodId);
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment } = payload;
         const state = this._paymentIntegrationService.getState();
-        const checkout = state.getCheckoutOrThrow();
-        const cart = state.getCartOrThrow();
-        const config = state.getStoreConfigOrThrow();
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
@@ -76,7 +75,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
-        const request = this._getBaseRequest(cart, checkout, config, paymentMethod);
+        const request = this._getBaseRequest(state, paymentMethod);
         const applePaySession = this._sessionFactory.create(request);
 
         await this._paymentIntegrationService.submitOrder(
@@ -105,20 +104,25 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
     }
 
     private _getBaseRequest(
-        cart: Cart,
-        checkout: Checkout,
-        config: StoreConfig,
+        state: PaymentIntegrationSelectors,
         paymentMethod: PaymentMethod,
     ): ApplePayJS.ApplePayPaymentRequest {
+        const checkout = state.getCheckoutOrThrow();
+        const cart = state.getCartOrThrow();
+        const config = state.getStoreConfigOrThrow();
+
         const {
             storeProfile: { storeCountryCode, storeName },
         } = config;
         const {
-            currency: { decimalPlaces },
+            currency: { code, decimalPlaces },
         } = cart;
         const {
             initializationData: { merchantCapabilities, supportedNetworks },
         } = paymentMethod;
+
+        const { grandTotal, isStoreCreditApplied, outstandingBalance } = checkout;
+
         const lineItems: ApplePayJS.ApplePayLineItem[] = [
             {
                 label: this._subTotalLabel,
@@ -129,7 +133,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         checkout.taxes.forEach((tax) =>
             lineItems.push({
                 label: tax.name,
-                amount: `${tax.amount.toFixed()}`,
+                amount: `${tax.amount.toFixed(decimalPlaces)}`,
             }),
         );
 
@@ -138,15 +142,24 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             amount: `${checkout.shippingCostTotal.toFixed(decimalPlaces)}`,
         });
 
+        if (isStoreCreditApplied) {
+            const { storeCredit } = state.getCustomerOrThrow();
+
+            lineItems.push({
+                label: this._storeCreditLabel,
+                amount: `-${Math.min(grandTotal, storeCredit).toFixed(decimalPlaces)}`,
+            });
+        }
+
         return {
             countryCode: storeCountryCode,
-            currencyCode: cart.currency.code,
+            currencyCode: code,
             merchantCapabilities,
             supportedNetworks,
             lineItems,
             total: {
                 label: storeName,
-                amount: `${checkout.grandTotal.toFixed(cart.currency.decimalPlaces)}`,
+                amount: `${outstandingBalance.toFixed(decimalPlaces)}`,
                 type: 'final',
             },
         };

@@ -20,6 +20,11 @@ export default interface ApplePayPaymentInitializeOptions {
     shippingLabel?: string;
 
     /**
+     * Store credit label to be passed to apple sheet.
+     */
+    storeCreditLabel?: string;
+
+    /**
      * Sub total label to be passed to apple sheet.
      */
     subtotalLabel?: string;
