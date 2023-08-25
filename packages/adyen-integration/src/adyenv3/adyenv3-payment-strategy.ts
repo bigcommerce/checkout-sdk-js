@@ -38,6 +38,7 @@ import {
     AdyenPlaceholderData,
     AdyenV3ComponentState,
     CardStateErrors,
+    isBoletoState,
     isCardState,
 } from './adyenv3';
 import AdyenV3PaymentInitializeOptions, {
@@ -194,17 +195,28 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             }
         }
 
+        let paymentToken = JSON.stringify({
+            ...componentState.data.paymentMethod,
+            type: payment.methodId,
+            origin: window.location.origin,
+        });
+
+        if (payment.methodId === 'boletobancario' && isBoletoState(componentState)) {
+            paymentToken = JSON.stringify({
+                socialSecurityNumber: componentState.data.socialSecurityNumber,
+                ...componentState.data.shopperName,
+                type: payment.methodId,
+                origin: window.location.origin,
+            });
+        }
+
         try {
             await this._paymentIntegrationService.submitPayment({
                 methodId: payment.methodId,
                 paymentData: {
                     formattedPayload: {
                         credit_card_token: {
-                            token: JSON.stringify({
-                                ...componentState.data.paymentMethod,
-                                type: payment.methodId,
-                                origin: window.location.origin,
-                            }),
+                            token: paymentToken,
                         },
                         browser_info: getBrowserInfo(),
                         vault_payment_instrument: shouldSaveInstrument || null,
@@ -329,6 +341,8 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
         return {
             holderName: prefillCardHolderName ? `${firstName} ${lastName}` : '',
+            firstName: prefillCardHolderName ? firstName : '',
+            lastName: prefillCardHolderName ? lastName : '',
             billingAddress: {
                 street,
                 houseNumberOrName,
@@ -386,6 +400,8 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             paymentComponent = adyenClient.create(paymentMethod.method, {
                 ...adyenv3.options,
                 showBrandsUnderCardNumber: false,
+                billingAddressRequired: false,
+                showEmailAddress: false,
                 onChange: (componentState) => this._updateComponentState(componentState),
                 onSubmit: (componentState) => this._updateComponentState(componentState),
                 ...(billingAddress

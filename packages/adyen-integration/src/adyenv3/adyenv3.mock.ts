@@ -20,6 +20,7 @@ import {
     AdyenError,
     AdyenPaymentMethodType,
     AdyenV3ComponentState,
+    BoletoState,
     ResultCode,
 } from './adyenv3';
 
@@ -114,6 +115,22 @@ export function getComponentState(isValid = true): AdyenV3ComponentState {
                 encryptedSecurityCode: 'ENCRYPTED_CVV',
                 holderName: 'John Smith',
             },
+        },
+        isValid,
+    };
+}
+
+export function getBoletoComponentState(isValid = true): BoletoState {
+    return {
+        data: {
+            paymentMethod: {
+                type: 'boleto',
+            },
+            shopperName: {
+                firstName: 'Test',
+                lastName: 'Tester',
+            },
+            socialSecurityNumber: '123123123',
         },
         isValid,
     };
