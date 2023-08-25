@@ -20,6 +20,7 @@ import {
     PaymentStrategy,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { WithBraintreeAcceleratedCheckoutPaymentInitializeOptions } from './braintree-accelerated-checkout-payment-initialize-options';
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
@@ -30,6 +31,7 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeAcceleratedCheckoutUtils: BraintreeAcceleratedCheckoutUtils,
+        private browserStorage: BrowserStorage,
     ) {}
 
     /**
@@ -67,6 +69,10 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
         await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(methodId);
 
+        if (this.shouldRunAuthenticationFlow()) {
+            await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow();
+        }
+
         this.initializeConnectCardComponent();
 
         braintreeacceleratedcheckout.onInit((container) =>
@@ -90,6 +96,8 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
 
         await this.paymentIntegrationService.submitOrder(order, options);
         await this.paymentIntegrationService.submitPayment(paymentPayload);
+
+        this.browserStorage.removeItem('sessionId');
     }
 
     finalize(): Promise<void> {
@@ -224,6 +232,16 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
      * Other methods
      *
      */
+    private shouldRunAuthenticationFlow(): boolean {
+        const state = this.paymentIntegrationService.getState();
+        const cart = state.getCartOrThrow();
+        const paymentProviderCustomer = state.getPaymentProviderCustomer();
+
+        const paypalConnectSessionId = this.browserStorage.getItem('sessionId');
+
+        return !paymentProviderCustomer?.authenticationState && paypalConnectSessionId === cart.id;
+    }
+
     private getBraintreeCardComponentOrThrow() {
         if (!this.braintreeConnectCardComponent) {
             throw new PaymentMethodClientUnavailableError();
