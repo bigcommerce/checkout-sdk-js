@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.433.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.432.0...v1.433.0) (2023-08-25)
+
+
+### Features
+
+* **payment:** PAYPAL-2851 trigger authentication flow on BT AXO payment method initialization ([#2140](https://github.com/bigcommerce/checkout-sdk-js/issues/2140)) ([a3b12a2](https://github.com/bigcommerce/checkout-sdk-js/commit/a3b12a2078df582566cec9406aa38b7735f73219))
+
 ## [1.432.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.431.0...v1.432.0) (2023-08-23)
 
 
