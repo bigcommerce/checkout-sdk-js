@@ -36,6 +36,7 @@ import {
     getAdditionalActionError,
     getAdyenClient,
     getAdyenError,
+    getBoletoComponentState,
     getComponentState,
     getFailingComponent,
     getInitializeOptions,
@@ -310,6 +311,56 @@ describe('AdyenV3PaymentStrategy', () => {
                 );
             });
 
+            it('calls submitPayment, passing Boleto data to paymentData', async () => {
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
+                    submitPaymentAction,
+                );
+                jest.spyOn(adyenCheckout, 'create').mockImplementation(
+                    jest.fn((_method, options) => {
+                        const { onChange } = options;
+
+                        const handleOnChange = onChange;
+
+                        paymentComponent = {
+                            mount: jest.fn(() => {
+                                handleOnChange(getBoletoComponentState());
+                            }),
+                            unmount: jest.fn(),
+                            submit: jest.fn(),
+                        };
+
+                        return paymentComponent;
+                    }),
+                );
+                await strategy.initialize(options);
+                await strategy.execute({
+                    payment: {
+                        methodId: 'boletobancario',
+                        paymentData: {
+                            shouldSaveInstrument: true,
+                        },
+                    },
+                });
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            formattedPayload: expect.objectContaining({
+                                credit_card_token: {
+                                    token: JSON.stringify({
+                                        socialSecurityNumber:
+                                            getBoletoComponentState().data.socialSecurityNumber,
+                                        ...getBoletoComponentState().data.shopperName,
+                                        type: 'boletobancario',
+                                        origin: window.location.origin,
+                                    }),
+                                },
+                            }),
+                        }),
+                    }),
+                );
+            });
+
             it('calls submitPayment, passing both a vault and set as default flag, when paying with an instrument that should be vaulted and defaulted', async () => {
                 jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
                     submitPaymentAction,
@@ -508,6 +559,8 @@ describe('AdyenV3PaymentStrategy', () => {
                                 street: '12345 Testing Way',
                             },
                             holderName: 'Test Tester',
+                            firstName: 'Test',
+                            lastName: 'Tester',
                         },
                     }),
                 );
@@ -541,6 +594,8 @@ describe('AdyenV3PaymentStrategy', () => {
                                 street: '12345 Testing Way',
                             },
                             holderName: '',
+                            firstName: '',
+                            lastName: '',
                         },
                     }),
                 );
