@@ -11,6 +11,8 @@ export { default as createGooglePayWorldpayAccessPaymentStrategy } from './facto
 export { default as createGooglePayAuthorizeDotNetCustomerStrategy } from './factories/customer/create-google-pay-authorizenet-customer-strategy';
 export { default as createGooglePayCheckoutComCustomerStrategy } from './factories/customer/create-google-pay-checkoutcom-customer-strategy';
 export { default as createGooglePayCybersourceCustomerStrategy } from './factories/customer/create-google-pay-cybersource-customer-strategy';
+export { default as createGooglePayBnzCustomerStrategy } from './factories/customer/create-google-pay-bnz-customer-strategy';
 export { default as createGooglePayOrbitalCustomerStrategy } from './factories/customer/create-google-pay-orbital-customer-strategy';
 export { default as createGooglePayStripeCustomerStrategy } from './factories/customer/create-google-pay-stripe-customer-strategy';
+export { default as createGooglePayStripeUpeCustomerStrategy } from './factories/customer/create-google-pay-stripeupe-customer-strategy';
 export { default as createGooglePayWorldpayAccessCustomerStrategy } from './factories/customer/create-google-pay-worldpayaccess-customer-strategy';

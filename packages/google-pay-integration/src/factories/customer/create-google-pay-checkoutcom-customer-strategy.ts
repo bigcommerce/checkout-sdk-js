@@ -14,6 +14,13 @@ import createGooglePayScriptLoader from '../create-google-pay-script-loader';
 const createGooglePayCheckoutComCustomerStrategy: CustomerStrategyFactory<
     GooglePayCustomerStrategy
 > = (paymentIntegrationService) => {
+    const useRegistryV1 = !paymentIntegrationService.getState().getStoreConfig()?.checkoutSettings
+        .features['INT-5659.checkoutcom_use_new_googlepay_customer_strategy'];
+
+    if (useRegistryV1) {
+        throw new Error('googlepaycheckoutcom requires using registryV1');
+    }
+
     const requestSender = createRequestSender();
 
     return new GooglePayCustomerStrategy(

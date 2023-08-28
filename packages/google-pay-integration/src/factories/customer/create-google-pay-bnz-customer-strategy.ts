@@ -6,32 +6,30 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import GooglePayAuthorizeNetGateway from '../../gateways/google-pay-authorizenet-gateway';
+import GooglePayCybersourceGateway from '../../gateways/google-pay-cybersource-gateway';
 import GooglePayCustomerStrategy from '../../google-pay-customer-strategy';
 import GooglePayPaymentProcessor from '../../google-pay-payment-processor';
 import createGooglePayScriptLoader from '../create-google-pay-script-loader';
 
-const createGooglePayAuthorizeDotNetCustomerStrategy: CustomerStrategyFactory<
-    GooglePayCustomerStrategy
-> = (paymentIntegrationService) => {
+const createGooglePayBnzCustomerStrategy: CustomerStrategyFactory<GooglePayCustomerStrategy> = (
+    paymentIntegrationService,
+) => {
     const useRegistryV1 = !paymentIntegrationService.getState().getStoreConfig()?.checkoutSettings
-        .features['INT-5659.authorizenet_use_new_googlepay_customer_strategy'];
+        .features['INT-5659.bnz_use_new_googlepay_customer_strategy'];
 
     if (useRegistryV1) {
-        throw new Error('googlepayauthorizenet requires using registryV1');
+        throw new Error('googlepaybnz requires using registryV1');
     }
 
     return new GooglePayCustomerStrategy(
         paymentIntegrationService,
         new GooglePayPaymentProcessor(
             createGooglePayScriptLoader(),
-            new GooglePayAuthorizeNetGateway(paymentIntegrationService),
+            new GooglePayCybersourceGateway(paymentIntegrationService),
             createRequestSender(),
             createFormPoster(),
         ),
     );
 };
 
-export default toResolvableModule(createGooglePayAuthorizeDotNetCustomerStrategy, [
-    { id: 'googlepayauthorizenet' },
-]);
+export default toResolvableModule(createGooglePayBnzCustomerStrategy, [{ id: 'googlepaybnz' }]);

@@ -6,26 +6,26 @@ import {
 
 import GooglePayCustomerStrategy from '../../google-pay-customer-strategy';
 
-import createGooglePayAuthorizeDotNetCustomerStrategy from './create-google-pay-authorizenet-customer-strategy';
+import createGooglePayStripeUpeCustomerStrategy from './create-google-pay-stripeupe-customer-strategy';
 
-describe('createGooglePayAuthorizeDotNetCustomerStrategy', () => {
+describe('createGooglePayStripeUpeCustomerStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
     });
 
-    it('instantiates google pay authorizenet customer strategy', () => {
+    it('instantiates google pay stripe upe customer strategy', () => {
         const storeConfigMock = getConfig().storeConfig;
 
         storeConfigMock.checkoutSettings.features = {
-            'INT-5659.authorizenet_use_new_googlepay_customer_strategy': true,
+            'INT-5659.stripeupe_use_new_googlepay_customer_strategy': true,
         };
         jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce(
             storeConfigMock,
         );
 
-        const strategy = createGooglePayAuthorizeDotNetCustomerStrategy(paymentIntegrationService);
+        const strategy = createGooglePayStripeUpeCustomerStrategy(paymentIntegrationService);
 
         expect(strategy).toBeInstanceOf(GooglePayCustomerStrategy);
     });

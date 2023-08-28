@@ -1,5 +1,8 @@
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getConfig,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import GooglePayCustomerStrategy from '../../google-pay-customer-strategy';
 
@@ -13,6 +16,15 @@ describe('createGooglePayOrbitalCustomerStrategy', () => {
     });
 
     it('instantiates google pay orbital customer strategy', () => {
+        const storeConfigMock = getConfig().storeConfig;
+
+        storeConfigMock.checkoutSettings.features = {
+            'INT-5659.orbital_use_new_googlepay_customer_strategy': true,
+        };
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce(
+            storeConfigMock,
+        );
+
         const strategy = createGooglePayOrbitalCustomerStrategy(paymentIntegrationService);
 
         expect(strategy).toBeInstanceOf(GooglePayCustomerStrategy);

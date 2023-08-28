@@ -13,8 +13,15 @@ import createGooglePayScriptLoader from '../create-google-pay-script-loader';
 
 const createGooglePayOrbitalCustomerStrategy: CustomerStrategyFactory<GooglePayCustomerStrategy> = (
     paymentIntegrationService,
-) =>
-    new GooglePayCustomerStrategy(
+) => {
+    const useRegistryV1 = !paymentIntegrationService.getState().getStoreConfig()?.checkoutSettings
+        .features['INT-5659.orbital_use_new_googlepay_customer_strategy'];
+
+    if (useRegistryV1) {
+        throw new Error('googlepayorbital requires using registryV1');
+    }
+
+    return new GooglePayCustomerStrategy(
         paymentIntegrationService,
         new GooglePayPaymentProcessor(
             createGooglePayScriptLoader(),
@@ -23,6 +30,7 @@ const createGooglePayOrbitalCustomerStrategy: CustomerStrategyFactory<GooglePayC
             createFormPoster(),
         ),
     );
+};
 
 export default toResolvableModule(createGooglePayOrbitalCustomerStrategy, [
     { id: 'googlepayorbital' },
