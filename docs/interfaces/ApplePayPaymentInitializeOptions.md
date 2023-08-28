@@ -21,6 +21,7 @@ service.initializePayment({
 ### Properties
 
 - [shippingLabel](ApplePayPaymentInitializeOptions.md#shippinglabel)
+- [storeCreditLabel](ApplePayPaymentInitializeOptions.md#storecreditlabel)
 - [subtotalLabel](ApplePayPaymentInitializeOptions.md#subtotallabel)
 
 ## Properties
@@ -30,6 +31,14 @@ service.initializePayment({
 • `Optional` **shippingLabel**: `string`
 
 Shipping label to be passed to apple sheet.
+
+___
+
+### storeCreditLabel
+
+• `Optional` **storeCreditLabel**: `string`
+
+Store credit label to be passed to apple sheet.
 
 ___
 

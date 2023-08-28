@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.433.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.433.1...v1.433.2) (2023-08-28)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-6883 Pass store credit to apple pay sheet ([#2146](https://github.com/bigcommerce/checkout-sdk-js/issues/2146)) ([dea596b](https://github.com/bigcommerce/checkout-sdk-js/commit/dea596b183207dba46c24cd80d52d3bddcdf4bda))
+
 ### [1.433.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.433.0...v1.433.1) (2023-08-25)
 
 
