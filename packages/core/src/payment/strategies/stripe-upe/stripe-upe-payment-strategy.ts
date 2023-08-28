@@ -195,7 +195,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         if (includes(APM_REDIRECT, methodId)) {
             await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-            return this._executeWithAPM(payment.methodId);
+            return this._executeWithAPM(payment.methodId, gatewayId);
         }
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
@@ -204,6 +204,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             payment.methodId,
             shouldSaveInstrument,
             shouldSetAsDefaultInstrument,
+            gatewayId,
         );
     }
 
@@ -238,7 +239,10 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private async _executeWithAPM(methodId: string): Promise<InternalCheckoutSelectors> {
+    private async _executeWithAPM(
+        methodId: string,
+        gatewayId: string | undefined,
+    ): Promise<InternalCheckoutSelectors> {
         const paymentMethod = this._store
             .getState()
             .paymentMethods.getPaymentMethodOrThrow(methodId);
@@ -259,7 +263,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 this._paymentActionCreator.submitPayment(paymentPayload),
             );
         } catch (error) {
-            return await this._processAdditionalAction(error);
+            return await this._processAdditionalAction(error, gatewayId, methodId);
         }
     }
 
@@ -267,10 +271,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         methodId: string,
         shouldSaveInstrument: boolean,
         shouldSetAsDefaultInstrument: boolean,
+        gatewayId?: string,
     ): Promise<InternalCheckoutSelectors> {
         const paymentMethod = this._store
             .getState()
             .paymentMethods.getPaymentMethodOrThrow(methodId);
+
         const paymentPayload = {
             methodId,
             paymentData: {
@@ -290,10 +296,31 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         } catch (error) {
             return await this._processAdditionalAction(
                 error,
+                gatewayId,
+                methodId,
                 shouldSaveInstrument,
                 shouldSetAsDefaultInstrument,
-                methodId,
             );
+        }
+    }
+
+    private async _isPaymentNotComplited(gatewayId: string, methodId: string) {
+        if (gatewayId) {
+            const paymentMethod = this._store
+                .getState()
+                .paymentMethods.getPaymentMethodOrThrow(methodId);
+
+            if (paymentMethod.clientToken && this._stripeUPEClient) {
+                const retrivedPI = await this._stripeUPEClient.retrievePaymentIntent(
+                    paymentMethod.clientToken,
+                );
+
+                if (retrivedPI.paymentIntent?.status !== 'succeeded') {
+                    return true;
+                }
+
+                return false;
+            }
         }
     }
 
@@ -432,9 +459,10 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
     private async _processAdditionalAction(
         error: Error,
+        gatewayId?: string,
+        methodId?: string,
         shouldSaveInstrument = false,
         shouldSetAsDefaultInstrument = false,
-        methodId?: string,
     ): Promise<InternalCheckoutSelectors | never> {
         if (!(error instanceof RequestError)) {
             throw error;
@@ -451,18 +479,24 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             } = error.body.additional_action_required;
 
             if (type === 'redirect_to_url' && redirect_url) {
-                const { paymentIntent, error: stripeError } =
-                    await this._stripeUPEClient.confirmPayment(
-                        this._mapStripePaymentData(redirect_url),
-                    );
+                if (
+                    methodId &&
+                    gatewayId &&
+                    (await this._isPaymentNotComplited(gatewayId, methodId))
+                ) {
+                    const { paymentIntent, error: stripeError } =
+                        await this._stripeUPEClient.confirmPayment(
+                            this._mapStripePaymentData(redirect_url),
+                        );
 
-                if (stripeError) {
-                    this._throwDisplayableStripeError(stripeError);
-                    throw new PaymentMethodFailedError();
-                }
+                    if (stripeError) {
+                        this._throwDisplayableStripeError(stripeError);
+                        throw new PaymentMethodFailedError();
+                    }
 
-                if (!paymentIntent) {
-                    throw new RequestError();
+                    if (!paymentIntent) {
+                        throw new RequestError();
+                    }
                 }
             } else if (methodId && type === 'additional_action_requires_payment_method' && token) {
                 let result;
@@ -470,7 +504,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 const stripePaymentData = this._mapStripePaymentData();
 
                 try {
-                    result = await this._stripeUPEClient.confirmPayment(stripePaymentData);
+                    if (gatewayId && (await this._isPaymentNotComplited(gatewayId, methodId))) {
+                        result = await this._stripeUPEClient.confirmPayment(stripePaymentData);
+                    }
                 } catch (error) {
                     try {
                         result = await this._stripeUPEClient.retrievePaymentIntent(token);
