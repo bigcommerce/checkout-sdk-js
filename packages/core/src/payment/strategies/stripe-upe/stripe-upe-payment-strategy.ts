@@ -469,21 +469,19 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             } = error.body.additional_action_required;
             const isPaymentNotComplited = methodId && (await this._isPaymentNotComplited(methodId));
 
-            if (type === 'redirect_to_url' && redirect_url) {
-                if (isPaymentNotComplited) {
-                    const { paymentIntent, error: stripeError } =
-                        await this._stripeUPEClient.confirmPayment(
-                            this._mapStripePaymentData(redirect_url),
-                        );
+            if (type === 'redirect_to_url' && redirect_url && isPaymentNotComplited) {
+                const { paymentIntent, error: stripeError } =
+                    await this._stripeUPEClient.confirmPayment(
+                        this._mapStripePaymentData(redirect_url),
+                    );
 
-                    if (stripeError) {
-                        this._throwDisplayableStripeError(stripeError);
-                        throw new PaymentMethodFailedError();
-                    }
+                if (stripeError) {
+                    this._throwDisplayableStripeError(stripeError);
+                    throw new PaymentMethodFailedError();
+                }
 
-                    if (!paymentIntent) {
-                        throw new RequestError();
-                    }
+                if (!paymentIntent) {
+                    throw new RequestError();
                 }
             } else if (methodId && type === 'additional_action_requires_payment_method' && token) {
                 let result;
