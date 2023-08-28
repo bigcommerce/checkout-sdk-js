@@ -579,9 +579,15 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
     private _mapStripeAddress(address?: Address): AddressOptions {
         if (address) {
-            const { city, countryCode: country, postalCode } = address;
+            const { city, address1, address2, countryCode: country, postalCode } = address;
 
-            return { city, country, postal_code: postalCode };
+            return {
+                city,
+                country,
+                postal_code: postalCode,
+                line1: address1,
+                line2: address2,
+            };
         }
 
         throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
