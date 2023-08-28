@@ -14,7 +14,6 @@ import { GooglePayPaymentInitializeOptions } from './strategies/googlepay';
 import { KlarnaPaymentInitializeOptions } from './strategies/klarna';
 import { KlarnaV2PaymentInitializeOptions } from './strategies/klarnav2';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
-import { MolliePaymentInitializeOptions } from './strategies/mollie';
 import { MonerisPaymentInitializeOptions } from './strategies/moneris';
 import { OpyPaymentInitializeOptions } from './strategies/opy';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
@@ -206,12 +205,6 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support StripeUPE.
      */
     stripeupe?: StripeUPEPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Mollie payment method.
-     * They can be omitted unless you need to support Mollie.
-     */
-    mollie?: MolliePaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Worldpay payment method.

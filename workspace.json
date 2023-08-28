@@ -13,6 +13,7 @@
         "external-integration": "packages/external-integration",
         "google-pay-integration": "packages/google-pay-integration",
         "legacy-integration": "packages/legacy-integration",
+        "mollie-integration": "packages/mollie-integration",
         "no-payment-integration": "packages/no-payment-integration",
         "offline-integration": "packages/offline-integration",
         "offsite-integration": "packages/offsite-integration",

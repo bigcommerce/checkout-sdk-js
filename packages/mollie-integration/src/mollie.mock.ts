@@ -1,6 +1,9 @@
-import { HostedFieldType } from '../../../hosted-form';
-import { OrderRequestBody } from '../../../order';
-import { PaymentInitializeOptions } from '../../payment-request-options';
+import {
+    HostedFieldType,
+    OrderRequestBody,
+    PaymentInitializeOptions,
+    PaymentMethod,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { MollieClient } from './mollie';
 
@@ -86,6 +89,7 @@ export function getOrderRequestBodyAPMs(): OrderRequestBody {
             gatewayId: 'mollie',
             paymentData: {
                 issuer: 'foo',
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 shopper_locale: 'en-US',
             },
         },
@@ -132,5 +136,33 @@ export function getOrderRequestBodyVaultedCC(): OrderRequestBody {
                 instrumentId: '1234',
             },
         },
+    };
+}
+
+export function getMollie(): PaymentMethod {
+    return {
+        id: 'mollie',
+        gateway: '',
+        logoUrl:
+            'https://charlsieremade-cloud-dev-vm.store.bcdev/rHEAD/modules/checkout/mollie/images/mollie.png',
+        method: 'multi-options',
+        supportedCards: ['VISA', 'AMEX', 'MC', 'MAESTRO'],
+        config: {
+            displayName: 'Mollie',
+            hasDefaultStoredInstrument: false,
+            helpText: '',
+            is3dsEnabled: false,
+            isHostedFormEnabled: true,
+            isVaultingCvvEnabled: false,
+            isVaultingEnabled: false,
+            isVisaCheckoutEnabled: false,
+            merchantId: 'test_T0k3n',
+            requireCustomerCode: false,
+            testMode: true,
+        },
+        initializationData: {
+            locale: 'en-US',
+        },
+        type: 'PAYMENT_TYPE_API',
     };
 }

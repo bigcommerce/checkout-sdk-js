@@ -108,7 +108,6 @@ import {
     KlarnaV2TokenUpdater,
 } from './strategies/klarnav2';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
-import { MolliePaymentStrategy, MollieScriptLoader } from './strategies/mollie';
 import { MonerisPaymentStrategy } from './strategies/moneris';
 import { OpyPaymentStrategy, OpyScriptLoader } from './strategies/opy';
 import {
@@ -671,18 +670,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 new MasterpassScriptLoader(scriptLoader),
                 locale,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.MOLLIE,
-        () =>
-            new MolliePaymentStrategy(
-                hostedFormFactory,
-                store,
-                new MollieScriptLoader(scriptLoader),
-                orderActionCreator,
-                paymentActionCreator,
             ),
     );
 
