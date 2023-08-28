@@ -1269,11 +1269,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      */
     stripeupe?: StripeUPEPaymentInitializeOptions;
     /**
-     * The options that are required to initialize the Mollie payment method.
-     * They can be omitted unless you need to support Mollie.
-     */
-    mollie?: MolliePaymentInitializeOptions;
-    /**
      * The options that are required to initialize the Worldpay payment method.
      * They can be omitted unless you need to support Worldpay.
      */
@@ -6000,7 +5995,7 @@ declare interface MolliePaymentInitializeOptions {
     /**
      * Hosted Form Validation Options
      */
-    form?: HostedFormOptions;
+    form?: HostedFormOptions_2;
     unsupportedMethodMessage?: string;
     disableButton(disabled: boolean): void;
 }
@@ -6919,7 +6914,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -8215,6 +8210,14 @@ declare type WithGooglePayPaymentInitializeOptions = {
 declare interface WithMollieIssuerInstrument {
     issuer: string;
     shopper_locale: string;
+}
+
+declare interface WithMolliePaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Mollie payment
+     * method. They can be omitted unless you need to support Mollie.
+     */
+    mollie?: MolliePaymentInitializeOptions;
 }
 
 declare interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {

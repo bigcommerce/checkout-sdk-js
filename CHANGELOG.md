@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.434.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.433.2...v1.434.0) (2023-08-28)
+
+
+### Features
+
+* **payment:** PI-489 move Mollie to separate package ([#2126](https://github.com/bigcommerce/checkout-sdk-js/issues/2126)) ([a345497](https://github.com/bigcommerce/checkout-sdk-js/commit/a345497a9a14444f2f8c4c2e4e55307f8fde532f))
+
 ### [1.433.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.433.1...v1.433.2) (2023-08-28)
 
 
