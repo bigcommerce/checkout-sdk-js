@@ -128,6 +128,7 @@ export function getRetrievePaymentIntentResponse(): unknown {
     return {
         paymentIntent: {
             id: 'pi_1234',
+            status: 'requires_action',
         },
     };
 }

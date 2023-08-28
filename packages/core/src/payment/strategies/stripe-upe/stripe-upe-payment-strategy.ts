@@ -299,7 +299,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private async _isPaymentNotComplited(methodId: string) {
+    private async _isPaymentNotCompleted(methodId: string) {
         const paymentMethod = this._store
             .getState()
             .paymentMethods.getPaymentMethodOrThrow(methodId);
@@ -467,7 +467,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 type,
                 data: { token, redirect_url },
             } = error.body.additional_action_required;
-            const isPaymentNotComplited = methodId && (await this._isPaymentNotComplited(methodId));
+            const isPaymentNotComplited = methodId && (await this._isPaymentNotCompleted(methodId));
 
             if (type === 'redirect_to_url' && redirect_url && isPaymentNotComplited) {
                 const { paymentIntent, error: stripeError } =
@@ -487,7 +487,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 let result;
                 let catchedConfirmError = false;
                 const stripePaymentData = this._mapStripePaymentData();
-                const isPaymentNotComplited = await this._isPaymentNotComplited(methodId);
+                const isPaymentNotComplited = await this._isPaymentNotCompleted(methodId);
 
                 try {
                     if (isPaymentNotComplited) {

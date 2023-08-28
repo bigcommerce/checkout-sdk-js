@@ -527,6 +527,9 @@ describe('StripeUPEPaymentStrategy', () => {
                                 store.getState().billingAddress,
                                 'getBillingAddress',
                             ).mockReturnValue({});
+                            stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
+                                Promise.resolve(getRetrievePaymentIntentResponse()),
+                            );
                         });
 
                         it('with a signed user', async () => {
@@ -717,6 +720,10 @@ describe('StripeUPEPaymentStrategy', () => {
                             }),
                         );
 
+                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
+                            Promise.resolve(getRetrievePaymentIntentResponse()),
+                        );
+
                         jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(
                             undefined,
                         );
@@ -801,6 +808,10 @@ describe('StripeUPEPaymentStrategy', () => {
                             ),
                         );
 
+                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
+                            Promise.resolve(getRetrievePaymentIntentResponse()),
+                        );
+
                         try {
                             await strategy.execute(getStripeUPEOrderRequestBodyMock());
                         } catch (error) {
@@ -834,6 +845,10 @@ describe('StripeUPEPaymentStrategy', () => {
                                     requiredFieldErrorResponse,
                                 ),
                             ),
+                        );
+
+                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
+                            Promise.resolve(getRetrievePaymentIntentResponse()),
                         );
 
                         stripeUPEJsMock.confirmPayment = jest.fn(() =>
@@ -1236,6 +1251,10 @@ describe('StripeUPEPaymentStrategy', () => {
                                     errorResponse,
                                 ),
                             ),
+                        );
+
+                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
+                            Promise.resolve(getRetrievePaymentIntentResponse()),
                         );
 
                         try {
