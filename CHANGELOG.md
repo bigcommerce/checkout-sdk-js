@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.435.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.434.0...v1.435.0) (2023-08-28)
+
+
+### Features
+
+* **checkout:** PI-520 Stripe UPE - Provide AVS results ([0ba2ecd](https://github.com/bigcommerce/checkout-sdk-js/commit/0ba2ecdf9c0bf865f21709b28e4edae29b61cd3a))
+* **checkout:** PI-520 Stripe UPE - Provide AVS results ([babf9f9](https://github.com/bigcommerce/checkout-sdk-js/commit/babf9f996f06539d18b2f325e327e37a162a683e))
+* **checkout:** PI-520 Stripe UPE - Provide AVS results ([4facd6f](https://github.com/bigcommerce/checkout-sdk-js/commit/4facd6f7a89074ee63dc26d35a3cb535e47621f4))
+
 ## [1.434.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.433.2...v1.434.0) (2023-08-28)
 
 
