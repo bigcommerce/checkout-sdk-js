@@ -23,6 +23,7 @@ import {
     getMollie,
     getMollieClient,
     getOrderRequestBodyAPMs,
+    getOrderRequestBodyOneKlarna,
     getOrderRequestBodyVaultAPMs,
     getOrderRequestBodyVaultCC,
     getOrderRequestBodyVaultedCC,
@@ -441,6 +442,26 @@ describe('MolliePaymentStrategy', () => {
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                     gatewayId: 'mollie',
                     methodId: 'belfius',
+                    paymentData: {
+                        /* eslint-disable */
+                        formattedPayload: {
+                            issuer: 'foo',
+                            shopper_locale: 'en-US',
+                        },
+                        issuer: 'foo',
+                        shopper_locale: 'en-US',
+                        /* eslint-enable */
+                    },
+                });
+            });
+
+            it('should call submitPayment with klarna as methodId while paying with One Klarna', async () => {
+                await strategy.initialize(options);
+                await strategy.execute(getOrderRequestBodyOneKlarna());
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                    gatewayId: 'mollie',
+                    methodId: 'klarna',
                     paymentData: {
                         /* eslint-disable */
                         formattedPayload: {

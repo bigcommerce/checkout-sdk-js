@@ -96,6 +96,21 @@ export function getOrderRequestBodyAPMs(): OrderRequestBody {
     };
 }
 
+export function getOrderRequestBodyOneKlarna(): OrderRequestBody {
+    return {
+        useStoreCredit: false,
+        payment: {
+            methodId: 'oneklarna',
+            gatewayId: 'mollie',
+            paymentData: {
+                issuer: 'foo',
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                shopper_locale: 'en-US',
+            },
+        },
+    };
+}
+
 export function getOrderRequestBodyVaultAPMs(): OrderRequestBody {
     return {
         useStoreCredit: false,

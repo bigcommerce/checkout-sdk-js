@@ -255,6 +255,7 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
 
         await this.paymentIntegrationService.submitPayment({
             ...payment,
+            methodId: payment.methodId === 'oneklarna' ? 'klarna' : payment.methodId,
             paymentData: {
                 ...paymentData,
                 formattedPayload: {
