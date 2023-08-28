@@ -413,3 +413,12 @@ export enum StripeElementType {
     AUTHENTICATION = 'linkAuthentication',
     SHIPPING = 'address',
 }
+
+export enum StripeUPEPaymentIntentStatus {
+    REQUIRES_PAYMENT_METHOD = 'requires_payment_method',
+    REQUIRES_CONFIRMATION = 'requires_confirmation',
+    REQUIRES_ACTION = 'requires_action',
+    PROCESSING = 'processing',
+    SUCCEEDED = 'succeded',
+    CANCELED = 'canceled',
+}
