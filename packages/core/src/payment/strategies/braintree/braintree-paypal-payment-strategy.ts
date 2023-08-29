@@ -307,7 +307,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private _loadPaypal(
+    private async _loadPaypal(
         braintreeOptions?: BraintreePaymentInitializeOptions,
     ): Promise<InternalCheckoutSelectors> {
         const { clientToken, initializationData } = this._paymentMethod || {};
@@ -323,7 +323,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 braintreeOptions,
             );
 
-            this._braintreePaymentProcessor.preloadPaypal();
+            await this._braintreePaymentProcessor.preloadPaypal();
         } catch (error) {
             this._handleError(error);
         }
