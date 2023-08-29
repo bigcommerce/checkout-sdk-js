@@ -51,7 +51,7 @@ export default class BraintreeIntegrationService {
 
     async getBraintreeConnect(cardId?: string) {
         // TODO: should be removed after PayPal prepare stable Braintree SDK version with AXO implementation
-        window.localStorage.setItem('axoEnv', 'test67');
+        window.localStorage.setItem('axoEnv', 'sandbox');
 
         if (!this.braintreeHostWindow.braintreeConnect) {
             const clientToken = this.getClientTokenOrThrow();
