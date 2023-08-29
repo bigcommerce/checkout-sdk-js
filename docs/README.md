@@ -797,9 +797,9 @@ bodlService.checkoutBegin();
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `subscribe` | (`subscriber`: (`state`: [`CheckoutSelectors`](interfaces/CheckoutSelectors.md)) => `void`) => `void` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subscribe` | (`subscriber`: (`state`: [`CheckoutSelectors`](interfaces/CheckoutSelectors.md)) => `void`) => `void` | The callback function, what get a subscriber as a property, that subscribes to state changes. |
 
 #### Returns
 

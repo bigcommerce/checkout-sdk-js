@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.436.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.435.0...v1.436.0) (2023-08-29)
+
+
+### Features
+
+* **payment:** PAYPAL-2888 updated PayPal Connect LS axo value to sandbox ([#2149](https://github.com/bigcommerce/checkout-sdk-js/issues/2149)) ([a499a40](https://github.com/bigcommerce/checkout-sdk-js/commit/a499a40b127093d35d0b360bfff431c4f01b2a94))
+
+
+### Bug Fixes
+
+* **common:** PAYPAL-000 fixed the console error on npm run bundle-dts command run ([#2144](https://github.com/bigcommerce/checkout-sdk-js/issues/2144)) ([ca8cb4d](https://github.com/bigcommerce/checkout-sdk-js/commit/ca8cb4ddf7bc13c739f8cc295d16b2b9db1cdfb6))
+
 ## [1.435.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.434.0...v1.435.0) (2023-08-28)
 
 

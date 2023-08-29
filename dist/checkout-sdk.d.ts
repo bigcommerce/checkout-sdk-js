@@ -8314,7 +8314,7 @@ declare interface ZipCodeElementOptions {
  *
  * ```
  *
- * @param {CheckoutService} checkoutService - An instance of CheckoutService
+ * @param subscribe - The callback function, what get a subscriber as a property, that subscribes to state changes.
  * @returns an instance of `BodlService`.
  */
 export declare function createBodlService(subscribe: (subscriber: (state: CheckoutSelectors) => void) => void): BodlService;
