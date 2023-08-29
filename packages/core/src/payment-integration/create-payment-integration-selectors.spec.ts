@@ -314,6 +314,13 @@ describe('createPaymentIntegrationSelectors', () => {
             expect(() => subject.getShippingAddressOrThrow()).toThrow();
         });
 
+        it('returns copy of shipping countries', () => {
+            const output = subject.getShippingCountries();
+
+            expect(output).toEqual(internalSelectors.shippingCountries.getShippingCountries());
+            expect(output).not.toBe(internalSelectors.shippingCountries.getShippingCountries());
+        });
+
         it('returns is payment data required', () => {
             const output = subject.isPaymentDataRequired();
 

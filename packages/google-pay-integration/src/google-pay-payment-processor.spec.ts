@@ -45,6 +45,7 @@ describe('GooglePayPaymentProcessor', () => {
         jest.spyOn(gateway, 'getPaymentGatewayParameters');
         jest.spyOn(gateway, 'getTransactionInfo');
         jest.spyOn(gateway, 'getMerchantInfo');
+        jest.spyOn(gateway, 'getRequiredData');
         jest.spyOn(gateway, 'mapToExternalCheckoutData');
         jest.spyOn(gateway, 'mapToBillingAddressRequestBody');
         jest.spyOn(gateway, 'mapToShippingAddressRequestBody');
@@ -86,6 +87,7 @@ describe('GooglePayPaymentProcessor', () => {
             expect(gateway.getPaymentGatewayParameters).toHaveBeenCalled();
             expect(gateway.getTransactionInfo).toHaveBeenCalled();
             expect(gateway.getMerchantInfo).toHaveBeenCalled();
+            expect(gateway.getRequiredData).toHaveBeenCalled();
         });
 
         it('should determine readiness to pay', async () => {
@@ -145,6 +147,25 @@ describe('GooglePayPaymentProcessor', () => {
                     totalPriceStatus: 'FINAL',
                 },
             };
+
+            await processor.initialize(getGeneric);
+
+            expect(paymentsClient.prefetchPaymentData).toHaveBeenCalledWith(expectedRequest);
+        });
+
+        it('should prefetch google payment data with shipping address', async () => {
+            const expectedRequest = expect.objectContaining({
+                shippingAddressRequired: true,
+                shippingAddressParameters: {
+                    phoneNumberRequired: true,
+                    allowedCountryCodes: ['AU', 'US', 'JP'],
+                },
+            });
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getShippingAddress',
+            ).mockReturnValueOnce(undefined);
 
             await processor.initialize(getGeneric);
 
@@ -305,6 +326,26 @@ describe('GooglePayPaymentProcessor', () => {
                     totalPriceStatus: 'FINAL',
                 },
             };
+
+            await processor.initialize(getGeneric);
+            await processor.showPaymentSheet();
+
+            expect(paymentsClient.loadPaymentData).toHaveBeenCalledWith(expectedRequest);
+        });
+
+        it('should load payment data with shipping address', async () => {
+            const expectedRequest = expect.objectContaining({
+                shippingAddressRequired: true,
+                shippingAddressParameters: {
+                    phoneNumberRequired: true,
+                    allowedCountryCodes: ['AU', 'US', 'JP'],
+                },
+            });
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getShippingAddress',
+            ).mockReturnValueOnce(undefined);
 
             await processor.initialize(getGeneric);
             await processor.showPaymentSheet();

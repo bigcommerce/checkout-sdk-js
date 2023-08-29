@@ -17,6 +17,10 @@ describe('GooglePayGateway', () => {
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
+        jest.spyOn(paymentIntegrationService, 'loadShippingCountries').mockReturnValue(
+            paymentIntegrationService.getState(),
+        );
+
         gateway = new GooglePayGateway('example', paymentIntegrationService);
     });
 
@@ -138,6 +142,40 @@ describe('GooglePayGateway', () => {
             await gateway.initialize(getGeneric);
 
             expect(gateway.getMerchantInfo()).toStrictEqual(expectedInfo);
+        });
+    });
+
+    describe('#getRequiredData', () => {
+        it('should only require email', async () => {
+            const expectedRequiredData = {
+                emailRequired: true,
+            };
+
+            await gateway.initialize(getGeneric);
+
+            await expect(gateway.getRequiredData()).resolves.toStrictEqual(expectedRequiredData);
+        });
+
+        // TODO: etc...
+
+        it('should require email and shipping address', async () => {
+            const expectedRequiredData = {
+                emailRequired: true,
+                shippingAddressRequired: true,
+                shippingAddressParameters: {
+                    phoneNumberRequired: true,
+                    allowedCountryCodes: ['AU', 'US', 'JP'],
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getShippingAddress',
+            ).mockReturnValueOnce(undefined);
+
+            await gateway.initialize(getGeneric);
+
+            await expect(gateway.getRequiredData()).resolves.toStrictEqual(expectedRequiredData);
         });
     });
 

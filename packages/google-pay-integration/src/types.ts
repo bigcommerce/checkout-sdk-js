@@ -86,10 +86,15 @@ export interface GooglePayPaymentDataRequest extends GooglePayGatewayBaseRequest
     emailRequired?: boolean;
     shippingAddressRequired?: boolean;
     shippingAddressParameters?: {
-        allowedCountryCodes: string[];
+        allowedCountryCodes?: string[];
         phoneNumberRequired?: boolean;
     };
 }
+
+export type GooglePayRequiredPaymentData = Pick<
+    GooglePayPaymentDataRequest,
+    'emailRequired' | 'shippingAddressRequired' | 'shippingAddressParameters'
+>;
 
 interface GooglePayMinBillingAddress {
     name: string;
@@ -144,6 +149,8 @@ interface GooglePayIsReadyToPayResponse {
 export interface GooglePayButtonOptions {
     onClick: (event: MouseEvent) => void;
     allowedPaymentMethods: [GooglePayBaseCardPaymentMethod];
+    buttonColor?: GooglePayButtonColor;
+    buttonType?: GooglePayButtonType;
 }
 
 export interface GooglePaymentsClient {
@@ -236,3 +243,16 @@ export interface GooglePayThreeDSecureResult {
         code: string;
     };
 }
+
+export type GooglePayButtonColor = 'default' | 'black' | 'white';
+export type GooglePayButtonType =
+    | 'book'
+    | 'buy'
+    | 'checkout'
+    | 'donate'
+    | 'order'
+    | 'pay'
+    | 'plain'
+    | 'subscribe'
+    | 'long'
+    | 'short';
