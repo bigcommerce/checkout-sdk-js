@@ -22,6 +22,7 @@
 - [EmbeddedCheckoutEventType](enums/EmbeddedCheckoutEventType.md)
 - [ExtensionCommandType](enums/ExtensionCommandType.md)
 - [ExtensionRegion](enums/ExtensionRegion.md)
+- [GooglePayKey](enums/GooglePayKey.md)
 - [HostedFieldType](enums/HostedFieldType.md)
 - [HostedInputEventType](enums/HostedInputEventType.md)
 - [IconStyle](enums/IconStyle.md)
@@ -240,6 +241,7 @@
 - [GooglePayBuyNowInitializeOptions](interfaces/GooglePayBuyNowInitializeOptions.md)
 - [GooglePayCustomerInitializeOptions](interfaces/GooglePayCustomerInitializeOptions.md)
 - [GooglePayPaymentInitializeOptions](interfaces/GooglePayPaymentInitializeOptions.md)
+- [GooglePayPaymentInitializeOptions_2](interfaces/GooglePayPaymentInitializeOptions_2.md)
 - [HostedCardFieldOptions](interfaces/HostedCardFieldOptions.md)
 - [HostedCardFieldOptionsMap](interfaces/HostedCardFieldOptionsMap.md)
 - [HostedFieldStylesMap](interfaces/HostedFieldStylesMap.md)
@@ -405,6 +407,7 @@
 - [WithCreditCardPaymentInitializeOptions](interfaces/WithCreditCardPaymentInitializeOptions.md)
 - [WithDocumentInstrument](interfaces/WithDocumentInstrument.md)
 - [WithMollieIssuerInstrument](interfaces/WithMollieIssuerInstrument.md)
+- [WithMolliePaymentInitializeOptions](interfaces/WithMolliePaymentInitializeOptions.md)
 - [WithPayPalCommerceAlternativeMethodsButtonInitializeOptions](interfaces/WithPayPalCommerceAlternativeMethodsButtonInitializeOptions.md)
 - [WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions](interfaces/WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions.md)
 - [WithPayPalCommerceButtonInitializeOptions](interfaces/WithPayPalCommerceButtonInitializeOptions.md)
@@ -469,6 +472,7 @@
 - [PaymentProviderCustomer](README.md#paymentprovidercustomer)
 - [StripeElementOptions](README.md#stripeelementoptions)
 - [StripeEventType](README.md#stripeeventtype)
+- [WithGooglePayPaymentInitializeOptions](README.md#withgooglepaypaymentinitializeoptions)
 
 ### Functions
 
@@ -740,7 +744,7 @@ ___
 
 ### PaymentInitializeOptions
 
-Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md) & [`WithBlueSnapDirectAPMPaymentInitializeOptions`](interfaces/WithBlueSnapDirectAPMPaymentInitializeOptions.md) & [`WithBoltPaymentInitializeOptions`](interfaces/WithBoltPaymentInitializeOptions.md) & [`WithBraintreePaypalAchPaymentInitializeOptions`](interfaces/WithBraintreePaypalAchPaymentInitializeOptions.md) & [`WithBraintreeLocalMethodsPaymentInitializeOptions`](interfaces/WithBraintreeLocalMethodsPaymentInitializeOptions.md) & [`WithBraintreeAcceleratedCheckoutPaymentInitializeOptions`](interfaces/WithBraintreeAcceleratedCheckoutPaymentInitializeOptions.md) & [`WithCreditCardPaymentInitializeOptions`](interfaces/WithCreditCardPaymentInitializeOptions.md) & [`WithPayPalCommercePaymentInitializeOptions`](interfaces/WithPayPalCommercePaymentInitializeOptions.md) & [`WithPayPalCommerceCreditPaymentInitializeOptions`](interfaces/WithPayPalCommerceCreditPaymentInitializeOptions.md) & [`WithPayPalCommerceVenmoPaymentInitializeOptions`](interfaces/WithPayPalCommerceVenmoPaymentInitializeOptions.md) & [`WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions`](interfaces/WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions.md) & [`WithPayPalCommerceCreditCardsPaymentInitializeOptions`](interfaces/WithPayPalCommerceCreditCardsPaymentInitializeOptions.md) & [`WithSquareV2PaymentInitializeOptions`](interfaces/WithSquareV2PaymentInitializeOptions.md)
+Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md) & [`WithBlueSnapDirectAPMPaymentInitializeOptions`](interfaces/WithBlueSnapDirectAPMPaymentInitializeOptions.md) & [`WithBoltPaymentInitializeOptions`](interfaces/WithBoltPaymentInitializeOptions.md) & [`WithBraintreePaypalAchPaymentInitializeOptions`](interfaces/WithBraintreePaypalAchPaymentInitializeOptions.md) & [`WithBraintreeLocalMethodsPaymentInitializeOptions`](interfaces/WithBraintreeLocalMethodsPaymentInitializeOptions.md) & [`WithBraintreeAcceleratedCheckoutPaymentInitializeOptions`](interfaces/WithBraintreeAcceleratedCheckoutPaymentInitializeOptions.md) & [`WithCreditCardPaymentInitializeOptions`](interfaces/WithCreditCardPaymentInitializeOptions.md) & [`WithGooglePayPaymentInitializeOptions`](README.md#withgooglepaypaymentinitializeoptions) & [`WithMolliePaymentInitializeOptions`](interfaces/WithMolliePaymentInitializeOptions.md) & [`WithPayPalCommercePaymentInitializeOptions`](interfaces/WithPayPalCommercePaymentInitializeOptions.md) & [`WithPayPalCommerceCreditPaymentInitializeOptions`](interfaces/WithPayPalCommerceCreditPaymentInitializeOptions.md) & [`WithPayPalCommerceVenmoPaymentInitializeOptions`](interfaces/WithPayPalCommerceVenmoPaymentInitializeOptions.md) & [`WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions`](interfaces/WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions.md) & [`WithPayPalCommerceCreditCardsPaymentInitializeOptions`](interfaces/WithPayPalCommerceCreditCardsPaymentInitializeOptions.md) & [`WithSquareV2PaymentInitializeOptions`](interfaces/WithSquareV2PaymentInitializeOptions.md)
 
 ___
 
@@ -766,6 +770,15 @@ ___
 
 Ƭ **StripeEventType**: [`StripeShippingEvent`](interfaces/StripeShippingEvent.md) \| [`StripeCustomerEvent`](interfaces/StripeCustomerEvent.md)
 
+___
+
+### WithGooglePayPaymentInitializeOptions
+
+Ƭ **WithGooglePayPaymentInitializeOptions**: { [k in GooglePayKey]?: GooglePayPaymentInitializeOptions\_2 }
+
+The options that are required to initialize the GooglePay payment method.
+They can be omitted unless you need to support GooglePay.
+
 ## Functions
 
 ### createBodlService
@@ -784,9 +797,9 @@ bodlService.checkoutBegin();
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `subscribe` | (`subscriber`: (`state`: [`CheckoutSelectors`](interfaces/CheckoutSelectors.md)) => `void`) => `void` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subscribe` | (`subscriber`: (`state`: [`CheckoutSelectors`](interfaces/CheckoutSelectors.md)) => `void`) => `void` | The callback function, what get a subscriber as a property, that subscribes to state changes. |
 
 #### Returns
 

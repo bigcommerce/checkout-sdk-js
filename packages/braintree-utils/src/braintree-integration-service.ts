@@ -9,6 +9,7 @@ import {
     BraintreeBankAccount,
     BraintreeClient,
     BraintreeDataCollector,
+    BraintreeDataCollectorCreatorConfig,
     BraintreeDetails,
     BraintreeEnv,
     BraintreeError,
@@ -48,14 +49,14 @@ export default class BraintreeIntegrationService {
         this.braintreeScriptLoader.initialize(initializationData);
     }
 
-    async getBraintreeConnect() {
+    async getBraintreeConnect(cardId?: string) {
         // TODO: should be removed after PayPal prepare stable Braintree SDK version with AXO implementation
-        window.localStorage.setItem('axoEnv', 'test67');
+        window.localStorage.setItem('axoEnv', 'sandbox');
 
         if (!this.braintreeHostWindow.braintreeConnect) {
             const clientToken = this.getClientTokenOrThrow();
             const client = await this.getClient();
-            const deviceData = await this.getSessionId();
+            const deviceData = await this.getSessionId(cardId);
 
             const braintreeConnectCreator = await this.braintreeScriptLoader.loadConnect();
 
@@ -63,6 +64,11 @@ export default class BraintreeIntegrationService {
                 authorization: clientToken,
                 client,
                 deviceData,
+                styles: {
+                    root: {
+                        backgroundColorPrimary: 'transparent',
+                    },
+                },
             });
         }
 
@@ -160,7 +166,9 @@ export default class BraintreeIntegrationService {
         return this.usBankAccount;
     }
 
-    async getDataCollector(options?: { paypal: boolean }): Promise<BraintreeDataCollector> {
+    async getDataCollector(
+        options?: Partial<BraintreeDataCollectorCreatorConfig>,
+    ): Promise<BraintreeDataCollector> {
         const cacheKey: keyof DataCollectors = options?.paypal ? 'paypal' : 'default';
 
         let cached = this.dataCollectors[cacheKey];
@@ -170,7 +178,13 @@ export default class BraintreeIntegrationService {
                 const client = await this.getClient();
                 const dataCollector = await this.braintreeScriptLoader.loadDataCollector();
 
-                cached = await dataCollector.create({ client, kount: true, ...options });
+                const dataCollectorConfig: BraintreeDataCollectorCreatorConfig = {
+                    client,
+                    kount: true,
+                    ...options,
+                };
+
+                cached = await dataCollector.create(dataCollectorConfig);
             } catch (error) {
                 if (isBraintreeError(error) && error.code === 'DATA_COLLECTOR_KOUNT_NOT_ENABLED') {
                     cached = {
@@ -251,8 +265,10 @@ export default class BraintreeIntegrationService {
         }
     }
 
-    async getSessionId(): Promise<string | undefined> {
-        const { deviceData } = await this.getDataCollector();
+    async getSessionId(cartId?: string): Promise<string | undefined> {
+        const { deviceData } = await this.getDataCollector({
+            riskCorrelationId: cartId,
+        });
 
         return deviceData;
     }

@@ -2,6 +2,91 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.436.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.435.0...v1.436.0) (2023-08-29)
+
+
+### Features
+
+* **payment:** PAYPAL-2888 updated PayPal Connect LS axo value to sandbox ([#2149](https://github.com/bigcommerce/checkout-sdk-js/issues/2149)) ([a499a40](https://github.com/bigcommerce/checkout-sdk-js/commit/a499a40b127093d35d0b360bfff431c4f01b2a94))
+
+
+### Bug Fixes
+
+* **common:** PAYPAL-000 fixed the console error on npm run bundle-dts command run ([#2144](https://github.com/bigcommerce/checkout-sdk-js/issues/2144)) ([ca8cb4d](https://github.com/bigcommerce/checkout-sdk-js/commit/ca8cb4ddf7bc13c739f8cc295d16b2b9db1cdfb6))
+
+## [1.435.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.434.0...v1.435.0) (2023-08-28)
+
+
+### Features
+
+* **checkout:** PI-520 Stripe UPE - Provide AVS results ([0ba2ecd](https://github.com/bigcommerce/checkout-sdk-js/commit/0ba2ecdf9c0bf865f21709b28e4edae29b61cd3a))
+* **checkout:** PI-520 Stripe UPE - Provide AVS results ([babf9f9](https://github.com/bigcommerce/checkout-sdk-js/commit/babf9f996f06539d18b2f325e327e37a162a683e))
+* **checkout:** PI-520 Stripe UPE - Provide AVS results ([4facd6f](https://github.com/bigcommerce/checkout-sdk-js/commit/4facd6f7a89074ee63dc26d35a3cb535e47621f4))
+
+## [1.434.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.433.2...v1.434.0) (2023-08-28)
+
+
+### Features
+
+* **payment:** PI-489 move Mollie to separate package ([#2126](https://github.com/bigcommerce/checkout-sdk-js/issues/2126)) ([a345497](https://github.com/bigcommerce/checkout-sdk-js/commit/a345497a9a14444f2f8c4c2e4e55307f8fde532f))
+
+### [1.433.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.433.1...v1.433.2) (2023-08-28)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-6883 Pass store credit to apple pay sheet ([#2146](https://github.com/bigcommerce/checkout-sdk-js/issues/2146)) ([dea596b](https://github.com/bigcommerce/checkout-sdk-js/commit/dea596b183207dba46c24cd80d52d3bddcdf4bda))
+
+### [1.433.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.433.0...v1.433.1) (2023-08-25)
+
+
+### Bug Fixes
+
+* **checkout:** PI-657 fixed validation for stored bluesnap direct card verification fields ([19713a8](https://github.com/bigcommerce/checkout-sdk-js/commit/19713a8492d319078873b501ba7e428e48f0ec18))
+
+## [1.433.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.432.0...v1.433.0) (2023-08-25)
+
+
+### Features
+
+* **payment:** PAYPAL-2851 trigger authentication flow on BT AXO payment method initialization ([#2140](https://github.com/bigcommerce/checkout-sdk-js/issues/2140)) ([a3b12a2](https://github.com/bigcommerce/checkout-sdk-js/commit/a3b12a2078df582566cec9406aa38b7735f73219))
+
+## [1.432.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.431.0...v1.432.0) (2023-08-23)
+
+
+### Features
+
+* **payment:** INT-7676 GooglePay: Add payment strategy ([#1967](https://github.com/bigcommerce/checkout-sdk-js/issues/1967)) ([d528699](https://github.com/bigcommerce/checkout-sdk-js/commit/d5286995b1aca3948ff0673ebbedd4c233b35a3f))
+
+## [1.431.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.430.0...v1.431.0) (2023-08-22)
+
+
+### Features
+
+* **payment:** PAYPAL-2853 added riskCorrelationId to data collector for PayPal Analytics ([#2132](https://github.com/bigcommerce/checkout-sdk-js/issues/2132)) ([4d2328f](https://github.com/bigcommerce/checkout-sdk-js/commit/4d2328ffac4b76a7fce71c2d3633739558384587))
+* **payment:** PAYPAL-2873 added paypal connect vaulting formated payload interface ([#2134](https://github.com/bigcommerce/checkout-sdk-js/issues/2134)) ([b2e109c](https://github.com/bigcommerce/checkout-sdk-js/commit/b2e109c1cf5c25b0639dafe2e345bc7b294adafc))
+* **payment:** PAYPAL-2873 updated payment payload for PayPal Connect vaulted instruments BT AXO ([#2135](https://github.com/bigcommerce/checkout-sdk-js/issues/2135)) ([9ee7ba9](https://github.com/bigcommerce/checkout-sdk-js/commit/9ee7ba9bb5bad91e6769426ee6f66a1eb9aa9b5a))
+* **payment:** PAYPAL-2876 added session id to the local storage after customer's OTP BT AXO ([#2133](https://github.com/bigcommerce/checkout-sdk-js/issues/2133)) ([71a8e3f](https://github.com/bigcommerce/checkout-sdk-js/commit/71a8e3f3c46e1896814f722429a8fa9b76903ab5))
+
+## [1.430.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.429.0...v1.430.0) (2023-08-21)
+
+
+### Features
+
+* **payment:** PAYPAL-2792 fixed applepay spb on PDP ([#2107](https://github.com/bigcommerce/checkout-sdk-js/issues/2107)) ([4e2470f](https://github.com/bigcommerce/checkout-sdk-js/commit/4e2470f2e039365b35f8c75213a586d8e570b46e))
+
+## [1.429.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.428.0...v1.429.0) (2023-08-21)
+
+
+### Features
+
+* **payment:** PAYPAL-2856 added styles for PayPal Connect Credit Card component ([#2120](https://github.com/bigcommerce/checkout-sdk-js/issues/2120)) ([06db7ad](https://github.com/bigcommerce/checkout-sdk-js/commit/06db7adf275063af37be445420bcca73a914b6a1))
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2868 clean up prev provider customer data from checkout state BT AXO ([#2130](https://github.com/bigcommerce/checkout-sdk-js/issues/2130)) ([8415323](https://github.com/bigcommerce/checkout-sdk-js/commit/84153233997bb5ae84acd0fdc49df7a7c0a4c4de))
+
 ## [1.428.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.427.0...v1.428.0) (2023-08-18)
 
 

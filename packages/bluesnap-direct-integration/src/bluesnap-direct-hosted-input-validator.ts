@@ -1,4 +1,5 @@
 import {
+    HostedFieldType,
     HostedInputValidateErrorData,
     HostedInputValidateErrorDataMap,
     HostedInputValidateResults,
@@ -24,14 +25,7 @@ export default class BlueSnapHostedInputValidator {
 
     initializeValidationFields(): void {
         this._errors = {
-            cardNumber: [CREDIT_CARD_ERRORS.empty.cardNumber],
-            cardCode: [CREDIT_CARD_ERRORS.empty.cardCode],
-        };
-    }
-
-    initializeValidationCVVFields(): void {
-        this._errors = {
-            cardCode: [CREDIT_CARD_ERRORS.empty.cardCode],
+            cardNumberVerification: [CREDIT_CARD_ERRORS.empty.cardNumber],
         };
     }
 
@@ -52,7 +46,9 @@ export default class BlueSnapHostedInputValidator {
     }
 
     private _updateErrors(tagId: HostedFieldTagId, errorDescription?: ErrorDescription): void {
-        const fieldType = BlueSnapHostedFieldType[tagId];
+        const fieldType = this._errors.cardNumberVerification
+            ? HostedFieldType.CardNumberVerification
+            : BlueSnapHostedFieldType[tagId];
 
         this._errors[fieldType] = errorDescription
             ? [CREDIT_CARD_ERRORS[errorDescription][fieldType]]

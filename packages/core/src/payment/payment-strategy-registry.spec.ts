@@ -93,23 +93,44 @@ describe('PaymentStrategyRegistry', () => {
             expect(registry.getByMethod(getBankDeposit())).toBeInstanceOf(OfflinePaymentStrategy);
         });
 
-        it('throws error if resolving squarev2 when the experiment is on', () => {
-            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
-                ...getConfig().storeConfig,
-                checkoutSettings: {
-                    ...getConfig().storeConfig.checkoutSettings,
-                    features: {
-                        'PROJECT-4113.squarev2_web_payments_sdk': true,
+        describe('requires using registryV2', () => {
+            test.each([
+                ['squarev2', 'PROJECT-4113.squarev2_web_payments_sdk'],
+                [
+                    'googlepayauthorizenet',
+                    'INT-7676.authorizenet_use_new_googlepay_payment_strategy',
+                ],
+                ['googlepaybnz', 'INT-7676.bnz_use_new_googlepay_payment_strategy'],
+                ['googlepaycheckoutcom', 'INT-7676.checkoutcom_use_new_googlepay_payment_strategy'],
+                [
+                    'googlepaycybersourcev2',
+                    'INT-7676.cybersourcev2_use_new_googlepay_payment_strategy',
+                ],
+                ['googlepayorbital', 'INT-7676.orbital_use_new_googlepay_payment_strategy'],
+                ['googlepaystripe', 'INT-7676.stripe_use_new_googlepay_payment_strategy'],
+                ['googlepaystripeupe', 'INT-7676.stripeupe_use_new_googlepay_payment_strategy'],
+                [
+                    'googlepayworldpayaccess',
+                    'INT-7676.worldpayaccess_use_new_googlepay_payment_strategy',
+                ],
+            ])('throws error if resolving %s when the experiment is on', (id, experiment) => {
+                jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue({
+                    ...getConfig().storeConfig,
+                    checkoutSettings: {
+                        ...getConfig().storeConfig.checkoutSettings,
+                        features: {
+                            [experiment]: true,
+                        },
                     },
-                },
+                });
+
+                registry = new PaymentStrategyRegistry(store);
+
+                expect(() => registry.getByMethod({ ...getSquare(), id })).toThrow(Error);
+                expect(() => registry.getByMethod({ ...getSquare(), id })).not.toThrow(
+                    InvalidArgumentError,
+                );
             });
-
-            registry = new PaymentStrategyRegistry(store);
-
-            expect(() => registry.getByMethod({ ...getSquare(), id: 'squarev2' })).toThrow(Error);
-            expect(() => registry.getByMethod({ ...getSquare(), id: 'squarev2' })).not.toThrow(
-                InvalidArgumentError,
-            );
         });
     });
 });

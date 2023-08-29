@@ -35,6 +35,7 @@ export type PaymentInstrument =
           | StripeV3Intent
           | StripeUPEIntent
           | WithMollieIssuerInstrument
+          | WithPayPalConnectInstrument
       >
     | HostedInstrument
     | NonceInstrument
@@ -90,6 +91,12 @@ export interface WithDocumentInstrument {
 export interface WithMollieIssuerInstrument {
     issuer: string;
     shopper_locale: string;
+}
+
+export interface WithPayPalConnectInstrument {
+    paypal_connect_token: {
+        token: string;
+    };
 }
 
 export interface WithCheckoutcomSEPAInstrument {

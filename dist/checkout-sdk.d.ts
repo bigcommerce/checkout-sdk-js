@@ -873,6 +873,10 @@ declare interface ApplePayPaymentInitializeOptions {
      */
     shippingLabel?: string;
     /**
+     * Store credit label to be passed to apple sheet.
+     */
+    storeCreditLabel?: string;
+    /**
      * Sub total label to be passed to apple sheet.
      */
     subtotalLabel?: string;
@@ -1264,11 +1268,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support StripeUPE.
      */
     stripeupe?: StripeUPEPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Mollie payment method.
-     * They can be omitted unless you need to support Mollie.
-     */
-    mollie?: MolliePaymentInitializeOptions;
     /**
      * The options that are required to initialize the Worldpay payment method.
      * They can be omitted unless you need to support Worldpay.
@@ -5199,6 +5198,23 @@ declare interface GooglePayCustomerInitializeOptions {
 }
 
 /**
+ * The recognized keys to pass the initialization options for Google Pay.
+ */
+declare enum GooglePayKey {
+    ADYEN_V2 = "googlepayadyenv2",
+    ADYEN_V3 = "googlepayadyenv3",
+    AUTHORIZE_NET = "googlepayauthorizenet",
+    BNZ = "googlepaybnz",
+    BRAINTREE = "googlepaybraintree",
+    CHECKOUT_COM = "googlepaycheckoutcom",
+    CYBERSOURCE_V2 = "googlepaycybersourcev2",
+    ORBITAL = "googlepayorbital",
+    STRIPE = "googlepaystripe",
+    STRIPE_UPE = "googlepaystripeupe",
+    WORLDPAY_ACCESS = "googlepayworldpayaccess"
+}
+
+/**
  * A set of options that are required to initialize the GooglePay payment method
  *
  * If the customer chooses to pay with GooglePay, they will be asked to
@@ -5238,6 +5254,65 @@ declare interface GooglePayCustomerInitializeOptions {
  * ```
  */
 declare interface GooglePayPaymentInitializeOptions {
+    /**
+     * This walletButton is used to set an event listener, provide an element ID if you want
+     * users to be able to launch the GooglePay wallet modal by clicking on a button.
+     * It should be an HTML element.
+     */
+    walletButton?: string;
+    /**
+     * A callback that gets called when GooglePay fails to initialize or
+     * selects a payment option.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error: Error): void;
+    /**
+     * A callback that gets called when the customer selects a payment option.
+     */
+    onPaymentSelect?(): void;
+}
+
+/**
+ * A set of options that are required to initialize the GooglePay payment method
+ *
+ * If the customer chooses to pay with GooglePay, they will be asked to
+ * enter their payment details via a modal. You can hook into events emitted by
+ * the modal by providing the callbacks listed below.
+ *
+ * ```html
+ * <!-- This is where the GooglePay button will be inserted -->
+ * <div id="wallet-button"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     // Using GooglePay provided by Braintree as an example
+ *     methodId: 'googlepaybraintree',
+ *     googlepaybraintree: {
+ *         walletButton: 'wallet-button'
+ *     },
+ * });
+ * ```
+ *
+ * Additional event callbacks can be registered.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'googlepaybraintree',
+ *     googlepaybraintree: {
+ *         walletButton: 'wallet-button',
+ *         onError(error) {
+ *             console.log(error);
+ *         },
+ *         onPaymentSelect() {
+ *             console.log('Selected');
+ *         },
+ *     },
+ * });
+ * ```
+ */
+declare interface GooglePayPaymentInitializeOptions_2 {
     /**
      * This walletButton is used to set an event listener, provide an element ID if you want
      * users to be able to launch the GooglePay wallet modal by clicking on a button.
@@ -5920,7 +5995,7 @@ declare interface MolliePaymentInitializeOptions {
     /**
      * Hosted Form Validation Options
      */
-    form?: HostedFormOptions;
+    form?: HostedFormOptions_2;
     unsupportedMethodMessage?: string;
     disableButton(disabled: boolean): void;
 }
@@ -6839,7 +6914,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -8124,9 +8199,25 @@ declare interface WithDocumentInstrument {
     ccDocument: string;
 }
 
+/**
+ * The options that are required to initialize the GooglePay payment method.
+ * They can be omitted unless you need to support GooglePay.
+ */
+declare type WithGooglePayPaymentInitializeOptions = {
+    [k in GooglePayKey]?: GooglePayPaymentInitializeOptions_2;
+};
+
 declare interface WithMollieIssuerInstrument {
     issuer: string;
     shopper_locale: string;
+}
+
+declare interface WithMolliePaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Mollie payment
+     * method. They can be omitted unless you need to support Mollie.
+     */
+    mollie?: MolliePaymentInitializeOptions;
 }
 
 declare interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {
@@ -8223,7 +8314,7 @@ declare interface ZipCodeElementOptions {
  *
  * ```
  *
- * @param {CheckoutService} checkoutService - An instance of CheckoutService
+ * @param subscribe - The callback function, what get a subscriber as a property, that subscribes to state changes.
  * @returns an instance of `BodlService`.
  */
 export declare function createBodlService(subscribe: (subscriber: (state: CheckoutSelectors) => void) => void): BodlService;

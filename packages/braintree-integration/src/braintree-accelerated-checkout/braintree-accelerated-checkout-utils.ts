@@ -1,6 +1,7 @@
 import {
     BraintreeConnect,
     BraintreeConnectAddress,
+    BraintreeConnectAuthenticationState,
     BraintreeConnectVaultedInstrument,
     BraintreeInitializationData,
     BraintreeIntegrationService,
@@ -14,6 +15,7 @@ import {
     PaymentIntegrationService,
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 export default class BraintreeAcceleratedCheckoutUtils {
     private braintreeConnect?: BraintreeConnect;
@@ -22,10 +24,13 @@ export default class BraintreeAcceleratedCheckoutUtils {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeIntegrationService: BraintreeIntegrationService,
+        private browserStorage: BrowserStorage,
     ) {}
 
     async getDeviceSessionId(): Promise<string | undefined> {
-        return this.braintreeIntegrationService.getSessionId();
+        const cart = this.paymentIntegrationService.getState().getCart();
+
+        return this.braintreeIntegrationService.getSessionId(cart?.id);
     }
 
     /**
@@ -35,6 +40,7 @@ export default class BraintreeAcceleratedCheckoutUtils {
      */
     async initializeBraintreeConnectOrThrow(methodId: string) {
         const state = this.paymentIntegrationService.getState();
+        const cart = state.getCart();
         const { clientToken, initializationData } =
             state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
 
@@ -45,7 +51,9 @@ export default class BraintreeAcceleratedCheckoutUtils {
         this.methodId = methodId;
 
         this.braintreeIntegrationService.initialize(clientToken, initializationData);
-        this.braintreeConnect = await this.braintreeIntegrationService.getBraintreeConnect();
+        this.braintreeConnect = await this.braintreeIntegrationService.getBraintreeConnect(
+            cart?.id,
+        );
     }
 
     /**
@@ -86,13 +94,18 @@ export default class BraintreeAcceleratedCheckoutUtils {
 
             const customerEmail = email || customer?.email || billingAddress?.email || '';
 
-            if (!customerEmail) {
-                return;
-            }
-
             const { customerContextId } = await lookupCustomerByEmail(customerEmail);
 
             if (!customerContextId) {
+                this.browserStorage.removeItem('sessionId');
+
+                // Info: we should clean up previous experience with default data and related authenticationState
+                await this.paymentIntegrationService.updatePaymentProviderCustomer({
+                    authenticationState: BraintreeConnectAuthenticationState.UNRECOGNIZED,
+                    addresses: [],
+                    instruments: [],
+                });
+
                 return;
             }
 
@@ -102,6 +115,8 @@ export default class BraintreeAcceleratedCheckoutUtils {
 
             const addresses = this.mapPayPalToBcAddress(profileData.addresses) || [];
             const instruments = this.mapPayPalToBcInstrument(methodId, profileData.cards) || [];
+
+            this.browserStorage.setItem('sessionId', cart.id);
 
             await this.paymentIntegrationService.updatePaymentProviderCustomer({
                 authenticationState,

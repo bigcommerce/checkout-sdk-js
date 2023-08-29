@@ -78,6 +78,11 @@ describe('BraintreeIntegrationService', () => {
         );
     });
 
+    afterEach(() => {
+        jest.resetAllMocks();
+        jest.restoreAllMocks();
+    });
+
     describe('#initialize()', () => {
         it('initializes braintree script loader with provided initialization data', () => {
             braintreeIntegrationService.initialize(clientToken, initializationData);
@@ -135,6 +140,17 @@ describe('BraintreeIntegrationService', () => {
             expect(braintreeScriptLoader.loadClient).toHaveBeenCalled();
             expect(braintreeScriptLoader.loadDataCollector).toHaveBeenCalled();
             expect(braintreeScriptLoader.loadConnect).toHaveBeenCalled();
+
+            expect(braintreeConnectCreatorMock.create).toHaveBeenCalledWith({
+                authorization: clientToken,
+                client: clientMock,
+                deviceData: getDeviceDataMock(),
+                styles: {
+                    root: {
+                        backgroundColorPrimary: 'transparent',
+                    },
+                },
+            });
 
             expect(result).toEqual(braintreeConnectMock);
         });
@@ -433,6 +449,21 @@ describe('BraintreeIntegrationService', () => {
             braintreeIntegrationService.removeElement('any-other-id');
 
             expect(document.getElementById('braintree-id')).not.toBeNull();
+        });
+    });
+
+    describe('#getSessionId', () => {
+        it('provides riskCorrelationId to data collector', async () => {
+            const cartIdMock = 'cartId-asdasd';
+
+            braintreeIntegrationService.initialize(clientToken, initializationData);
+            await braintreeIntegrationService.getSessionId(cartIdMock);
+
+            expect(dataCollectorCreatorMock.create).toHaveBeenCalledWith({
+                client: clientMock,
+                kount: true,
+                riskCorrelationId: cartIdMock,
+            });
         });
     });
 

@@ -2,6 +2,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
     BraintreeConnect,
+    BraintreeConnectAuthenticationState,
     BraintreeIntegrationService,
     BraintreeScriptLoader,
     getBraintreeConnectProfileDataMock,
@@ -18,6 +19,7 @@ import {
     getCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { getBraintreeAcceleratedCheckoutPaymentMethod } from '../mocks/braintree.mock';
 
@@ -27,6 +29,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
     let braintreeConnectMock: BraintreeConnect;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
+    let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let subject: BraintreeAcceleratedCheckoutUtils;
 
@@ -45,12 +48,17 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             braintreeScriptLoader,
             window,
         );
+        browserStorage = new BrowserStorage('paypalConnect');
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         subject = new BraintreeAcceleratedCheckoutUtils(
             paymentIntegrationService,
             braintreeIntegrationService,
+            browserStorage,
         );
+
+        jest.spyOn(browserStorage, 'removeItem');
+        jest.spyOn(browserStorage, 'setItem');
 
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress');
@@ -78,7 +86,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             customerContextId: 'customerContextId',
         });
         jest.spyOn(braintreeConnectMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
-            authenticationState: 'succeeded',
+            authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
             profileData: getBraintreeConnectProfileDataMock(),
         });
     });
@@ -127,29 +135,12 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                 paymentMethod.clientToken,
                 paymentMethod.initializationData,
             );
-            expect(braintreeIntegrationService.getBraintreeConnect).toHaveBeenCalled();
+            expect(braintreeIntegrationService.getBraintreeConnect).toHaveBeenCalledWith(cart.id);
         });
     });
 
     describe('#runPayPalConnectAuthenticationFlowOrThrow()', () => {
         it('does not authenticate user if braintree connect is not loaded', async () => {
-            await subject.runPayPalConnectAuthenticationFlowOrThrow();
-
-            expect(paymentIntegrationService.updatePaymentProviderCustomer).not.toHaveBeenCalled();
-        });
-
-        it('does not authenticate user if email is not defined', async () => {
-            const customerWithoutEmail = { ...customer, email: undefined };
-            const billingWithoutEmail = { ...billingAddress, email: undefined };
-
-            jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(
-                customerWithoutEmail,
-            );
-            jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
-                billingWithoutEmail,
-            );
-
-            await subject.initializeBraintreeConnectOrThrow(methodId);
             await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
             expect(paymentIntegrationService.updatePaymentProviderCustomer).not.toHaveBeenCalled();
@@ -164,13 +155,18 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             expect(braintreeConnectMock.identity.lookupCustomerByEmail).toHaveBeenCalled();
         });
 
-        it('does not authenticate user with if the customer unrecognized in PP Connect', async () => {
+        it('does not authenticate user if the customer unrecognized in PP Connect', async () => {
             jest.spyOn(braintreeConnectMock.identity, 'lookupCustomerByEmail').mockReturnValue({});
 
             await subject.initializeBraintreeConnectOrThrow(methodId);
             await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
-            expect(paymentIntegrationService.updatePaymentProviderCustomer).not.toHaveBeenCalled();
+            expect(browserStorage.removeItem).toHaveBeenCalledWith('sessionId');
+            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
+                authenticationState: BraintreeConnectAuthenticationState.UNRECOGNIZED,
+                addresses: [],
+                instruments: [],
+            });
         });
 
         it('triggers PP Connect authentication flow if customer is detected as PP Connect user', async () => {
@@ -183,7 +179,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
 
         it('successfully authenticate customer with PP Connect', async () => {
             const updatePaymentProviderCustomerPayload = {
-                authenticationState: 'succeeded',
+                authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
                 addresses: [
                     {
                         id: 123123,
@@ -223,6 +219,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             await subject.initializeBraintreeConnectOrThrow(methodId);
             await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
+            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
             expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
                 updatePaymentProviderCustomerPayload,
@@ -231,12 +228,12 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
 
         it('does not authenticate customer if the authentication was canceled or failed', async () => {
             jest.spyOn(braintreeConnectMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
-                authenticationState: 'canceled',
+                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
                 profileData: {},
             });
 
             const updatePaymentProviderCustomerPayload = {
-                authenticationState: 'canceled',
+                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
                 addresses: [],
                 instruments: [],
             };
@@ -244,6 +241,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             await subject.initializeBraintreeConnectOrThrow(methodId);
             await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
+            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
             expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
                 updatePaymentProviderCustomerPayload,
@@ -298,7 +296,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
 
         it('do not update billing and shipping address if paypal does not return any address in profile data', async () => {
             jest.spyOn(braintreeConnectMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
-                authenticationState: 'succeeded',
+                authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
                 profileData: {
                     addresses: [],
                     instruments: [],
