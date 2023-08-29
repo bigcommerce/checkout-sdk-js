@@ -299,7 +299,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private async _isPaymentNotCompleted(methodId: string) {
+    private async _isPaymentCompleted(methodId: string) {
         const paymentMethod = this._store
             .getState()
             .paymentMethods.getPaymentMethodOrThrow(methodId);
@@ -312,7 +312,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             paymentMethod.clientToken,
         );
 
-        return retrivedPI.paymentIntent?.status !== StripeUPEPaymentIntentStatus.SUCCEEDED;
+        return retrivedPI.paymentIntent?.status === StripeUPEPaymentIntentStatus.SUCCEEDED;
     }
 
     private async _executeWithVaulted(
@@ -450,7 +450,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
     private async _processAdditionalAction(
         error: Error,
-        methodId?: string,
+        methodId: string,
         shouldSaveInstrument = false,
         shouldSetAsDefaultInstrument = false,
     ): Promise<InternalCheckoutSelectors | never> {
@@ -467,9 +467,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 type,
                 data: { token, redirect_url },
             } = error.body.additional_action_required;
-            const isPaymentNotComplited = methodId && (await this._isPaymentNotCompleted(methodId));
+            const isPaymentCompleted = await this._isPaymentCompleted(methodId);
 
-            if (type === 'redirect_to_url' && redirect_url && isPaymentNotComplited) {
+            if (type === 'redirect_to_url' && redirect_url && !isPaymentCompleted) {
                 const { paymentIntent, error: stripeError } =
                     await this._stripeUPEClient.confirmPayment(
                         this._mapStripePaymentData(redirect_url),
@@ -483,14 +483,14 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 if (!paymentIntent) {
                     throw new RequestError();
                 }
-            } else if (methodId && type === 'additional_action_requires_payment_method' && token) {
+            } else if (type === 'additional_action_requires_payment_method' && token) {
                 let result;
                 let catchedConfirmError = false;
                 const stripePaymentData = this._mapStripePaymentData();
-                const isPaymentNotComplited = await this._isPaymentNotCompleted(methodId);
+                const isPaymentCompleted = await this._isPaymentCompleted(methodId);
 
                 try {
-                    if (isPaymentNotComplited) {
+                    if (!isPaymentCompleted) {
                         result = await this._stripeUPEClient.confirmPayment(stripePaymentData);
                     }
                 } catch (error) {
