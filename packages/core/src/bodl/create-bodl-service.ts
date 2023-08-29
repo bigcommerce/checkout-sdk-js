@@ -16,7 +16,7 @@ import NoopBodlService from './noop-bodl-service';
  *
  * ```
  *
- * @param {CheckoutService} checkoutService - An instance of CheckoutService
+ * @param subscribe - The callback function, what get a subscriber as a property, that subscribes to state changes.
  * @returns an instance of `BodlService`.
  */
 export default function createBodlService(
