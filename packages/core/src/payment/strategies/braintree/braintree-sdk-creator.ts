@@ -190,6 +190,12 @@ export default class BraintreeSDKCreator {
         return this._visaCheckout;
     }
 
+    async getSessionId(): Promise<string | undefined> {
+        const { deviceData } = await this.getDataCollector();
+
+        return deviceData;
+    }
+
     getGooglePaymentComponent(): Promise<GooglePayBraintreeSDK> {
         if (!this._googlePay) {
             this._googlePay = Promise.all([

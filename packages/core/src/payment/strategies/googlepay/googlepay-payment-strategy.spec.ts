@@ -4,6 +4,8 @@ import { createScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loa
 import { noop } from 'lodash';
 import { of } from 'rxjs';
 
+import { getDeviceDataMock } from '@bigcommerce/checkout-sdk/braintree-utils';
+
 import { getCartState } from '../../../cart/carts.mock';
 import {
     CheckoutActionCreator,
@@ -198,6 +200,7 @@ describe('GooglePayPaymentStrategy', () => {
         jest.spyOn(braintreeSDKCreator, 'initialize').mockImplementationOnce(
             initializeBraintreeSDK,
         );
+        jest.spyOn(braintreeSDKCreator, 'getSessionId').mockResolvedValue(getDeviceDataMock());
         jest.spyOn(braintreeSDKCreator, 'get3DS').mockResolvedValue({ verifyCard });
         jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(
             Promise.resolve(store.getState()),
@@ -506,6 +509,7 @@ describe('GooglePayPaymentStrategy', () => {
                         },
                         method: 'googlepaybraintree',
                         nonce: 'newNonce',
+                        deviceSessionId: getDeviceDataMock(),
                     },
                 });
             });
@@ -743,6 +747,7 @@ describe('GooglePayPaymentStrategy', () => {
                         nonce: 'verificationNonce',
                         method: 'googlepaybraintree',
                         cardInformation: 'card_info',
+                        deviceSessionId: getDeviceDataMock(),
                     },
                 });
             });

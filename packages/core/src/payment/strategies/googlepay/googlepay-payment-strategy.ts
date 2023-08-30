@@ -170,11 +170,17 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 );
             }
 
+            const deviceSessionId =
+                methodId === PaymentStrategyType.BRAINTREE_GOOGLE_PAY
+                    ? await this._braintreeSDKCreator?.getSessionId()
+                    : undefined;
+
             const newPayment = {
                 ...payment,
                 paymentData: {
                     ...payment.paymentData,
                     nonce: verification?.nonce || payment.paymentData.nonce,
+                    deviceSessionId,
                 },
             };
 
