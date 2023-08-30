@@ -172,10 +172,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         const buttonOptions: PayPalCommerceButtonsOptions = {
             fundingSource: methodId,
             style: this.paypalCommerceIntegrationService.getValidButtonStyle(buttonStyle),
-            createOrder: () =>
-                this.paypalCommerceIntegrationService.createOrder(
-                    'paypalcommercealternativemethodscheckout',
-                ),
+            createOrder: () => this.handleCreateOrder(methodId, gatewayId),
             onClick: (_, actions) => this.handleClick(methodId, gatewayId, paypalOptions, actions),
             onApprove: (data) => this.handleApprove(data, submitForm),
             onCancel: () => this.resetPollingMechanism(),
@@ -193,6 +190,27 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         }
 
         this.paypalButton.render(container);
+    }
+
+    private async handleCreateOrder(methodId: string, gatewayId: string): Promise<string> {
+        const orderId = await this.paypalCommerceIntegrationService.createOrder(
+            'paypalcommercealternativemethodscheckout',
+        );
+
+        if (this.isNonInstantPaymentMethod(methodId)) {
+            const order = { useStoreCredit: false };
+            const options = {
+                params: {
+                    methodId,
+                    gatewayId,
+                },
+            };
+
+            await this.paymentIntegrationService.submitOrder(order, options);
+            await this.paypalCommerceIntegrationService.submitPayment(methodId, orderId);
+        }
+
+        return orderId;
     }
 
     private async handleClick(
