@@ -304,7 +304,13 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             .getState()
             .paymentMethods.getPaymentMethodOrThrow(methodId);
 
-        if (!paymentMethod.clientToken || !this._stripeUPEClient) {
+        const { features } = this._store.getState().config.getStoreConfigOrThrow().checkoutSettings;
+
+        if (
+            !paymentMethod.clientToken ||
+            !this._stripeUPEClient ||
+            !features['PI-626.Block_unnecessary_payment_confirmation_for_StripeUPE']
+        ) {
             return false;
         }
 
@@ -490,9 +496,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 const isPaymentCompleted = await this._isPaymentCompleted(methodId);
 
                 try {
-                    if (!isPaymentCompleted) {
-                        result = await this._stripeUPEClient.confirmPayment(stripePaymentData);
-                    }
+                    result = !isPaymentCompleted
+                        ? await this._stripeUPEClient.confirmPayment(stripePaymentData)
+                        : await this._stripeUPEClient.retrievePaymentIntent(token);
                 } catch (error) {
                     try {
                         result = await this._stripeUPEClient.retrievePaymentIntent(token);

@@ -675,6 +675,7 @@ export function getStripeUPE(method = 'card'): PaymentMethod {
             stripeConnectedAccount: 'key',
             browserLanguageEnabled: false,
             shopperLanguage: 'en',
+            blockUnnecessaryPaymentConfirmation: true,
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'clientToken',

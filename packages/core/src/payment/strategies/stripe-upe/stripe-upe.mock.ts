@@ -140,3 +140,12 @@ export function getPaymentMethodResponse(): unknown {
         },
     };
 }
+
+export function getRetrievePaymentIntentResponseSucceeded() {
+    return {
+        paymentIntent: {
+            id: 'pi_1234',
+            status: 'succeeded',
+        },
+    };
+}

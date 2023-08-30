@@ -419,6 +419,6 @@ export enum StripeUPEPaymentIntentStatus {
     REQUIRES_CONFIRMATION = 'requires_confirmation',
     REQUIRES_ACTION = 'requires_action',
     PROCESSING = 'processing',
-    SUCCEEDED = 'succeded',
+    SUCCEEDED = 'succeeded',
     CANCELED = 'canceled',
 }
