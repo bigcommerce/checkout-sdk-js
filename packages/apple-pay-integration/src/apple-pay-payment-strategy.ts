@@ -70,7 +70,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         const paymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(methodId);
 
         if (paymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE) {
-            await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
+            await this._initializeBraintreeIntegrationService();
         }
     }
 
@@ -237,7 +237,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         let deviceSessionId: string | undefined;
 
         if (paymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE) {
-            deviceSessionId = await this._getDeviceData();
+            deviceSessionId = await this._getBraintreeDeviceData();
         }
 
         const payment: Payment = {
@@ -268,7 +268,13 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private async _getDeviceData() {
+    private async _getBraintreeDeviceData() {
+        const data = await this._braintreeIntegrationService.getDataCollector();
+
+        return data.deviceData;
+    }
+
+    private async _initializeBraintreeIntegrationService() {
         const state = await this._paymentIntegrationService.loadPaymentMethod(
             ApplePayGatewayType.BRAINTREE,
         );
@@ -285,9 +291,5 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             braintreePaymentMethod.clientToken,
             braintreePaymentMethod.initializationData,
         );
-
-        const { deviceData } = await this._braintreeIntegrationService.getDataCollector();
-
-        return deviceData;
     }
 }
