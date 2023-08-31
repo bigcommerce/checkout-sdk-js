@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.438.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.437.0...v1.438.0) (2023-08-31)
+
+
+### Features
+
+* **payment:** PI-474 load bluesnap script ONLY if it wasn't loaded before ([39e2ed5](https://github.com/bigcommerce/checkout-sdk-js/commit/39e2ed577d88afc0d9e7057067ab714c746aaabb))
+
 ## [1.437.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.436.1...v1.437.0) (2023-08-29)
 
 
