@@ -9,6 +9,7 @@ import {
     InvalidArgumentError,
     isBillingAddressLike,
     isHostedInstrumentLike,
+    isRequestError,
     isVaultedInstrument,
     MissingDataError,
     MissingDataErrorType,
@@ -25,10 +26,10 @@ import {
     PaymentMethodCancelledError,
     PaymentRequestOptions,
     PaymentStrategy,
-    RequestError,
     StripeV3FormattedPayload,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import isIndividualCardElementOptions from './is-individual-card-element-options';
 import {
     PaymentIntent,
     StripeAdditionalAction,
@@ -48,7 +49,6 @@ import {
     StripeV3Client,
     StripeV3PaymentMethod,
 } from './stripev3';
-import isIndividualCardElementOptions from './is-individual-card-element-options';
 import StripeV3Error, { StripeV3ErrorType } from './stripev3-error';
 import StripeV3PaymentInitializeOptions, {
     WithStripeV3PaymentInitializeOptions,
@@ -399,7 +399,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     }
 
     private handleEmptyPaymentIntentError(error: Error, stripeError: StripeError | undefined) {
-        if (!(error instanceof RequestError)) {
+        if (!isRequestError(error)) {
             return error;
         }
 
@@ -645,7 +645,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         shouldSaveInstrument = false,
         shouldSetAsDefaultInstrument = false,
     ): Promise<any | never> {
-        if (!(error instanceof RequestError)) {
+        if (!isRequestError(error)) {
             throw error;
         }
 
