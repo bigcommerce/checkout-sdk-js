@@ -5,16 +5,13 @@ import {
     PaymentMethodInvalidError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
 import { BlueSnapDirectPreviouslyUsedCard, BlueSnapDirectSdk } from './types';
 
 export default class BlueSnapDirect3ds {
     private _blueSnapSdk?: BlueSnapDirectSdk;
 
-    constructor(private _scriptLoader: BlueSnapDirectScriptLoader) {}
-
-    async initialize(testMode = false): Promise<void> {
-        this._blueSnapSdk = await this._scriptLoader.load(testMode);
+    initialize(blueSnapSdk: BlueSnapDirectSdk) {
+        this._blueSnapSdk = blueSnapSdk;
     }
 
     async initialize3ds(

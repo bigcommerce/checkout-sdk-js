@@ -21,11 +21,16 @@ import BlueSnapHostedInputValidator from './bluesnap-direct-hosted-input-validat
 import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input';
 import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
 import { getBlueSnapDirect } from './mocks/bluesnap-direct-method.mock';
-import { previouslyUsedCardDataMock } from './mocks/bluesnap-direct-sdk.mock';
+import getBlueSnapDirectSdkMock, {
+    previouslyUsedCardDataMock,
+} from './mocks/bluesnap-direct-sdk.mock';
+import { BlueSnapDirectSdk } from './types';
 
 describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let scriptLoader: BlueSnapDirectScriptLoader;
+    let sdkMocks: ReturnType<typeof getBlueSnapDirectSdkMock>;
+    let blueSnapDirectSdkMock: BlueSnapDirectSdk;
     let nameOnCardInput: BluesnapDirectNameOnCardInput;
     let hostedInputValidator: BlueSnapHostedInputValidator;
     let hostedForm: BlueSnapDirectHostedForm;
@@ -49,13 +54,12 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
         scriptLoader = new BlueSnapDirectScriptLoader(createScriptLoader());
         nameOnCardInput = new BluesnapDirectNameOnCardInput();
         hostedInputValidator = new BlueSnapHostedInputValidator();
-        hostedForm = new BlueSnapDirectHostedForm(
-            scriptLoader,
-            nameOnCardInput,
-            hostedInputValidator,
-        );
-        bluesnapdirect3ds = new BlueSnapDirect3ds(scriptLoader);
+        hostedForm = new BlueSnapDirectHostedForm(nameOnCardInput, hostedInputValidator);
+        bluesnapdirect3ds = new BlueSnapDirect3ds();
+        sdkMocks = getBlueSnapDirectSdkMock();
+        blueSnapDirectSdkMock = sdkMocks.sdk;
 
+        jest.spyOn(scriptLoader, 'load').mockResolvedValue(blueSnapDirectSdkMock);
         jest.spyOn(hostedForm, 'initialize').mockResolvedValue(undefined);
         jest.spyOn(hostedForm, 'attach').mockResolvedValue(undefined);
         jest.spyOn(hostedForm, 'validate').mockReturnValue(hostedForm);
@@ -65,6 +69,7 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
         jest.spyOn(bluesnapdirect3ds, 'initialize3ds').mockResolvedValue('3dsId');
 
         strategy = new BlueSnapDirectCreditCardPaymentStrategy(
+            scriptLoader,
             paymentIntegrationService,
             hostedForm,
             bluesnapdirect3ds,
@@ -133,7 +138,7 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
             await strategy.initialize(options);
 
             expect(hostedForm.initialize).toHaveBeenCalledWith(
-                true,
+                blueSnapDirectSdkMock,
                 options.creditCard?.form.fields,
             );
         });
@@ -165,7 +170,7 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
         });
 
         it('should attach BlueSnap hosted form with 3DS enabled', async () => {
-            const initialize = () => {
+            const initialize = async () => {
                 const method = getBlueSnapDirect();
 
                 method.config.is3dsEnabled = true;
@@ -185,7 +190,7 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
 
         describe('should fail if...', () => {
             test('gatewayId is not provided', async () => {
-                const initialize = () => {
+                const initialize = async () => {
                     options.gatewayId = undefined;
 
                     return strategy.initialize(options);

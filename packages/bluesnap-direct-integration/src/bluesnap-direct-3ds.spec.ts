@@ -22,20 +22,12 @@ describe('BlueSnapDirectHostedForm', () => {
         scriptLoader = new BlueSnapDirectScriptLoader(createScriptLoader());
         jest.spyOn(scriptLoader, 'load').mockResolvedValue(blueSnapDirectSdkMock);
 
-        threeDSChallange = new BlueSnapDirect3ds(scriptLoader);
-    });
-
-    describe('#initialize', () => {
-        it('should initialize bluesnap library for 3ds challange successfully', async () => {
-            await threeDSChallange.initialize(false);
-
-            expect(scriptLoader.load).toHaveBeenCalledWith(false);
-        });
+        threeDSChallange = new BlueSnapDirect3ds();
     });
 
     describe('#initialize3ds', () => {
         it('should create hosted payment fields with 3DS enabled', async () => {
-            await threeDSChallange.initialize(false);
+            threeDSChallange.initialize(blueSnapDirectSdkMock);
             await threeDSChallange.initialize3ds('pfToken', previouslyUsedCardDataMock);
 
             expect(blueSnapDirectSdkMock.threeDsPaymentsSetup).toHaveBeenCalledWith(
@@ -48,7 +40,7 @@ describe('BlueSnapDirectHostedForm', () => {
         });
 
         it('should resolves with threeDSecureReferenceId value', async () => {
-            await threeDSChallange.initialize(false);
+            threeDSChallange.initialize(blueSnapDirectSdkMock);
 
             const result = await threeDSChallange.initialize3ds(
                 'pfToken',
@@ -63,8 +55,8 @@ describe('BlueSnapDirectHostedForm', () => {
             blueSnapDirectSdkMock = sdkMocks.sdk;
             jest.spyOn(scriptLoader, 'load').mockResolvedValue(blueSnapDirectSdkMock);
 
-            threeDSChallange = new BlueSnapDirect3ds(scriptLoader);
-            await threeDSChallange.initialize(false);
+            threeDSChallange = new BlueSnapDirect3ds();
+            threeDSChallange.initialize(blueSnapDirectSdkMock);
 
             await expect(
                 threeDSChallange.initialize3ds('pfToken', previouslyUsedCardDataMock),
