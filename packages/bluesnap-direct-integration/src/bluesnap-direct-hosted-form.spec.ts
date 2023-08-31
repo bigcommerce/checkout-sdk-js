@@ -59,11 +59,7 @@ describe('BlueSnapDirectHostedForm', () => {
         jest.spyOn(hostedInputValidator, 'initializeValidationFields');
         jest.spyOn(hostedInputValidator, 'validate');
 
-        hostedForm = new BlueSnapDirectHostedForm(
-            scriptLoader,
-            nameOnCardInput,
-            hostedInputValidator,
-        );
+        hostedForm = new BlueSnapDirectHostedForm(nameOnCardInput, hostedInputValidator);
 
         optionsMocks = getBlueSnapPaymentInitializeOptionsMocks();
         ccOptionsMock = optionsMocks.ccOptions;
@@ -106,24 +102,22 @@ describe('BlueSnapDirectHostedForm', () => {
     });
 
     describe('#initialize', () => {
-        it('should initialize hosted form successfully', async () => {
-            await hostedForm.initialize(false, ccOptionsMock.form.fields);
+        it('should initialize hosted form successfully', () => {
+            hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
 
             expect(hostedInputValidator.initialize).toHaveBeenCalled();
-            expect(scriptLoader.load).toHaveBeenCalledWith(false);
         });
 
-        it('should initialize hosted form for stored card successfully', async () => {
-            await hostedForm.initialize(false, storedCCOptionsMock.form.fields);
+        it('should initialize hosted form for stored card successfully', () => {
+            hostedForm.initialize(blueSnapDirectSdkMock, storedCCOptionsMock.form.fields);
 
             expect(hostedInputValidator.initializeValidationFields).toHaveBeenCalled();
-            expect(scriptLoader.load).toHaveBeenCalledWith(false);
         });
     });
 
     describe('#attach', () => {
         it('should set custom BlueSnap attributes to the hosted fields containers', async () => {
-            await hostedForm.initialize(false, ccOptionsMock.form.fields);
+            hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
             await hostedForm.attach('pfToken', ccOptionsMock);
 
             expect(ccCvvContainer.dataset.bluesnap).toBe(HostedFieldTagId.CardCode);
@@ -133,7 +127,7 @@ describe('BlueSnapDirectHostedForm', () => {
         });
 
         it('should set custom BlueSnap attributes to the stored card hosted fields containers', async () => {
-            await hostedForm.initialize(false, storedCCOptionsMock.form.fields);
+            hostedForm.initialize(blueSnapDirectSdkMock, storedCCOptionsMock.form.fields);
             await hostedForm.attach('pfToken', storedCCOptionsMock);
 
             expect(ccCvvContainer.dataset.bluesnap).toBe(HostedFieldTagId.CardCode);
@@ -169,7 +163,7 @@ describe('BlueSnapDirectHostedForm', () => {
                 '3DS': false,
             };
 
-            await hostedForm.initialize(false, ccOptionsMock.form.fields);
+            hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
             await hostedForm.attach('pfToken', ccOptionsMock);
 
             expect(blueSnapDirectSdkMock.hostedPaymentFieldsCreate).toHaveBeenCalledWith(
@@ -183,7 +177,7 @@ describe('BlueSnapDirectHostedForm', () => {
         });
 
         it('should create hosted payment fields for stored cards without name input', async () => {
-            await hostedForm.initialize(true, storedCCOptionsMock.form.fields);
+            hostedForm.initialize(blueSnapDirectSdkMock, storedCCOptionsMock.form.fields);
             await hostedForm.attach('pfToken', storedCCOptionsMock);
 
             expect(nameOnCardInput.attach).not.toHaveBeenCalled();
@@ -192,7 +186,7 @@ describe('BlueSnapDirectHostedForm', () => {
         it('should create hosted payment fields with 3DS enabled', async () => {
             const expectedOptions = expect.objectContaining({ '3DS': true });
 
-            await hostedForm.initialize(false, ccOptionsMock.form.fields);
+            hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
             await hostedForm.attach('pfToken', ccOptionsMock, true);
 
             expect(blueSnapDirectSdkMock.hostedPaymentFieldsCreate).toHaveBeenCalledWith(
@@ -215,7 +209,7 @@ describe('BlueSnapDirectHostedForm', () => {
                     onFocus?.(HostedFieldTagId.CardNumber);
                 };
 
-                await hostedForm.initialize(false, ccOptionsMock.form.fields);
+                hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
                 await hostedForm.attach('pfToken', ccOptionsMock);
                 triggerFocus();
 
@@ -233,7 +227,7 @@ describe('BlueSnapDirectHostedForm', () => {
                     onBlur?.(HostedFieldTagId.CardNumber);
                 };
 
-                await hostedForm.initialize(false, ccOptionsMock.form.fields);
+                hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
                 await hostedForm.attach('pfToken', ccOptionsMock);
                 triggerBlur();
 
@@ -251,7 +245,7 @@ describe('BlueSnapDirectHostedForm', () => {
                     onEnter?.(HostedFieldTagId.CardNumber);
                 };
 
-                await hostedForm.initialize(false, ccOptionsMock.form.fields);
+                hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
                 await hostedForm.attach('pfToken', ccOptionsMock);
                 triggerEnter();
 
@@ -269,7 +263,7 @@ describe('BlueSnapDirectHostedForm', () => {
                     onType?.(HostedFieldTagId.CardNumber, 'MASTERCARD', undefined);
                 };
 
-                await hostedForm.initialize(false, ccOptionsMock.form.fields);
+                hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
                 await hostedForm.attach('pfToken', ccOptionsMock);
                 triggerCardTypeChange();
 
@@ -293,7 +287,7 @@ describe('BlueSnapDirectHostedForm', () => {
                         );
                     };
 
-                    await hostedForm.initialize(false, ccOptionsMock.form.fields);
+                    hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
                     await hostedForm.attach('pfToken', ccOptionsMock);
                     triggerError();
 
@@ -314,7 +308,7 @@ describe('BlueSnapDirectHostedForm', () => {
                         onValid?.(HostedFieldTagId.CardNumber);
                     };
 
-                    await hostedForm.initialize(false, ccOptionsMock.form.fields);
+                    hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
                     await hostedForm.attach('pfToken', ccOptionsMock);
                     triggerValid();
 
@@ -341,7 +335,7 @@ describe('BlueSnapDirectHostedForm', () => {
                     return hostedForm.attach('pfToken', ccOptionsMock);
                 };
 
-                await hostedForm.initialize(false, ccOptionsMock.form.fields);
+                hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
 
                 await expect(attach()).rejects.toThrow(InvalidArgumentError);
             });
@@ -355,7 +349,7 @@ describe('BlueSnapDirectHostedForm', () => {
                     return hostedForm.attach('pfToken', ccOptionsMock);
                 };
 
-                await hostedForm.initialize(false, ccOptionsMock.form.fields);
+                hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
 
                 await expect(attach()).rejects.toThrow(InvalidArgumentError);
             });
@@ -374,7 +368,7 @@ describe('BlueSnapDirectHostedForm', () => {
                     );
                 };
 
-                await hostedForm.initialize(false, ccOptionsMock.form.fields);
+                hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
                 await hostedForm.attach('pfToken', ccOptionsMock);
 
                 expect(triggerError).toThrow(
@@ -399,7 +393,7 @@ describe('BlueSnapDirectHostedForm', () => {
             };
             const placeOrder = () => hostedForm.validate();
 
-            await hostedForm.initialize(false, ccOptionsMock.form.fields);
+            hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
             await hostedForm.attach('pfToken', ccOptionsMock);
             pretendUserEntersValidData();
 
@@ -421,7 +415,7 @@ describe('BlueSnapDirectHostedForm', () => {
             };
             const placeOrder = () => hostedForm.validate();
 
-            await hostedForm.initialize(false, ccOptionsMock.form.fields);
+            hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
             await hostedForm.attach('pfToken', ccOptionsMock);
             pretendUserForgetsFillCcName();
 
@@ -446,7 +440,7 @@ describe('BlueSnapDirectHostedForm', () => {
                 }
             };
 
-            await hostedForm.initialize(false, ccOptionsMock.form.fields);
+            hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
             await hostedForm.attach('pfToken', ccOptionsMock);
 
             expect(getErrorDetails()).toStrictEqual(expectedErrors);
@@ -457,7 +451,7 @@ describe('BlueSnapDirectHostedForm', () => {
         it('should submit payment data successfully', async () => {
             const placeOrder = () => hostedForm.submit(undefined, true);
 
-            await hostedForm.initialize(false, ccOptionsMock.form.fields);
+            hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
 
             await expect(placeOrder()).resolves.toStrictEqual({
                 ...sdkMocks.callbackResults,
@@ -468,7 +462,7 @@ describe('BlueSnapDirectHostedForm', () => {
         it('should submit payment data successfully without cardholder name', async () => {
             const placeOrder = () => hostedForm.submit(undefined, false);
 
-            await hostedForm.initialize(false, ccOptionsMock.form.fields);
+            hostedForm.initialize(blueSnapDirectSdkMock, ccOptionsMock.form.fields);
 
             await expect(placeOrder()).resolves.toStrictEqual({
                 ...sdkMocks.callbackResults,
@@ -479,13 +473,11 @@ describe('BlueSnapDirectHostedForm', () => {
             const initialize = () => {
                 const sdkWithErrors = getBlueSnapDirectSdkMock('0').sdk;
 
-                jest.spyOn(scriptLoader, 'load').mockResolvedValue(sdkWithErrors);
-
-                return hostedForm.initialize();
+                return hostedForm.initialize(sdkWithErrors);
             };
             const placeOrder = () => hostedForm.submit();
 
-            await initialize();
+            initialize();
 
             await expect(placeOrder()).rejects.toThrow(
                 'Submission failed with status: 0 and errors: [{"errorCode":"0","errorDescription":"unknown","eventType":"Server Error","tagId":"cvv"}]',
@@ -496,13 +488,11 @@ describe('BlueSnapDirectHostedForm', () => {
             const initialize = () => {
                 const sdkWithErrors = getBlueSnapDirectSdkMock('14101').sdk;
 
-                jest.spyOn(scriptLoader, 'load').mockResolvedValue(sdkWithErrors);
-
-                return hostedForm.initialize();
+                return hostedForm.initialize(sdkWithErrors);
             };
             const placeOrder = () => hostedForm.submit();
 
-            await initialize();
+            initialize();
 
             await expect(placeOrder()).rejects.toThrow('3D Secure authentication failed');
         });

@@ -16,13 +16,13 @@ const createBlueSnapDirectCreditCardPaymentStrategy: PaymentStrategyFactory<
     BlueSnapDirectCreditCardPaymentStrategy
 > = (paymentIntegrationService) =>
     new BlueSnapDirectCreditCardPaymentStrategy(
+        new BlueSnapDirectScriptLoader(getScriptLoader()),
         paymentIntegrationService,
         new BlueSnapDirectHostedForm(
-            new BlueSnapDirectScriptLoader(getScriptLoader()),
             new BluesnapDirectNameOnCardInput(),
             new BlueSnapHostedInputValidator(),
         ),
-        new BlueSnapDirect3ds(new BlueSnapDirectScriptLoader(getScriptLoader())),
+        new BlueSnapDirect3ds(),
     );
 
 export default toResolvableModule(createBlueSnapDirectCreditCardPaymentStrategy, [

@@ -16,10 +16,15 @@ export default class BlueSnapDirectScriptLoader {
     ) {}
 
     async load(testMode = false): Promise<BlueSnapDirectSdk> {
+        if (this._window.bluesnap) {
+            return this._window.bluesnap;
+        }
+
         await this._scriptLoader.loadScript(
             testMode ? BlueSnapDirectSdkEnv.SANDBOX : BlueSnapDirectSdkEnv.PRODUCTION,
         );
 
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (!this._window.bluesnap) {
             throw new PaymentMethodClientUnavailableError();
         }

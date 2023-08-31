@@ -16,15 +16,18 @@ import {
 
 import BlueSnapDirect3ds from './bluesnap-direct-3ds';
 import BlueSnapDirectHostedForm from './bluesnap-direct-hosted-form';
+import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
 import isHostedCardFieldOptionsMap from './is-hosted-card-field-options-map';
 import isHostedStoredCardFieldOptionsMap from './is-hosted-stored-card-field-options-map';
-import { BlueSnapDirectThreeDSecureData } from './types';
+import { BlueSnapDirectSdk, BlueSnapDirectThreeDSecureData } from './types';
 
 export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentStrategy {
     private _paymentFieldsToken?: string;
     private _shouldUseHostedFields?: boolean;
+    private _blueSnapSdk?: BlueSnapDirectSdk;
 
     constructor(
+        private _scriptLoader: BlueSnapDirectScriptLoader,
         private _paymentIntegrationService: PaymentIntegrationService,
         private _blueSnapDirectHostedForm: BlueSnapDirectHostedForm,
         private _blueSnapDirect3ds: BlueSnapDirect3ds,
@@ -48,6 +51,8 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
             clientToken,
         } = state.getPaymentMethodOrThrow(methodId, gatewayId);
 
+        this._blueSnapSdk = await this._scriptLoader.load(testMode);
+
         this._paymentFieldsToken = clientToken;
         this._shouldUseHostedFields =
             isHostedCardFieldOptionsMap(creditCard.form.fields) ||
@@ -55,7 +60,7 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
                 !!creditCard.form.fields.cardNumberVerification);
 
         if (this._shouldUseHostedFields) {
-            await this._blueSnapDirectHostedForm.initialize(testMode, creditCard.form.fields);
+            this._blueSnapDirectHostedForm.initialize(this._blueSnapSdk, creditCard.form.fields);
             await this._blueSnapDirectHostedForm.attach(
                 this._getPaymentFieldsToken(),
                 creditCard,
@@ -66,6 +71,10 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
 
     async execute(payload: OrderRequestBody): Promise<void> {
         if (!payload.payment) {
+            throw new PaymentArgumentInvalidError(['payment']);
+        }
+
+        if (!this._blueSnapSdk) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
@@ -102,7 +111,7 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
             paymentData.instrumentId
         ) {
             if (is3dsEnabled && !this._shouldUseHostedFields) {
-                await this._blueSnapDirect3ds.initialize();
+                this._blueSnapDirect3ds.initialize(this._blueSnapSdk);
 
                 const { last4, brand } = this._paymentIntegrationService
                     .getState()
