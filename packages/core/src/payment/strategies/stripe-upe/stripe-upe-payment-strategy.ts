@@ -300,11 +300,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     }
 
     private async _isPaymentCompleted(methodId: string) {
-        const paymentMethod = this._store
-            .getState()
-            .paymentMethods.getPaymentMethodOrThrow(methodId);
-
-        const { features } = this._store.getState().config.getStoreConfigOrThrow().checkoutSettings;
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const { features } = state.config.getStoreConfigOrThrow().checkoutSettings;
 
         if (
             !paymentMethod.clientToken ||

@@ -16,7 +16,9 @@ export default function getConfig(): Config {
         storeConfig: {
             cdnPath: 'https://cdn.bcapp.dev/rHEAD',
             checkoutSettings: {
-                features: {},
+                features: {
+                    'PI-626.Block_unnecessary_payment_confirmation_for_StripeUPE': true,
+                },
                 checkoutBillingSameAsShippingEnabled: true,
                 checkoutUserExperienceSettings: {
                     walletButtonsOnTop: false,

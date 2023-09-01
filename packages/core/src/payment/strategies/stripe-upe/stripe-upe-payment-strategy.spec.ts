@@ -5,6 +5,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable, of } from 'rxjs';
 
 import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { getConfig } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import {
     BillingAddressActionCreator,
@@ -400,6 +401,11 @@ describe('StripeUPEPaymentStrategy', () => {
                         stripeUPEJsMock.confirmPayment = jest.fn(() =>
                             Promise.resolve(getConfirmPaymentResponse()),
                         );
+
+                        jest.spyOn(
+                            store.getState().config,
+                            'getStoreConfigOrThrow',
+                        ).mockReturnValue(getConfig().storeConfig);
                     });
 
                     describe('with both shipping and billing address', () => {
