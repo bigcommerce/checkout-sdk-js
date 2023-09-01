@@ -302,6 +302,7 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId: 'braintreeacceleratedcheckout',
                 paymentData: {
+                    deviceSessionId,
                     shouldSaveInstrument: false,
                     shouldSetAsDefaultInstrument: false,
                     nonce: 'nonce',
@@ -317,6 +318,7 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId: 'braintreeacceleratedcheckout',
                 paymentData: {
+                    deviceSessionId,
                     shouldSaveInstrument: false,
                     shouldSetAsDefaultInstrument: false,
                     nonce: 'nonce',
