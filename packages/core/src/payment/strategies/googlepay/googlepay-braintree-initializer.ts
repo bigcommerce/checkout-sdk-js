@@ -1,6 +1,6 @@
 import { round } from 'lodash';
 
-import { Checkout } from '../../../checkout';
+import { Checkout, CheckoutStore } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import PaymentMethod from '../../payment-method';
 import { BraintreeSDKCreator, GooglePayBraintreeSDK } from '../braintree';
@@ -21,20 +21,21 @@ import {
 export default class GooglePayBraintreeInitializer implements GooglePayInitializer {
     private _googlePaymentInstance!: GooglePayBraintreeSDK;
 
-    constructor(private _braintreeSDKCreator: BraintreeSDKCreator) {}
+    constructor(private _store: CheckoutStore, private _braintreeSDKCreator: BraintreeSDKCreator) {}
 
     initialize(
         checkout: Checkout | undefined,
         paymentMethod: PaymentMethod,
         hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
-        const { clientToken, initializationData } = paymentMethod;
+        const storeConfig = this._store.getState().config.getStoreConfigOrThrow();
+        const { clientToken } = paymentMethod;
 
-        if (!clientToken || !initializationData) {
+        if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this._braintreeSDKCreator.initialize(clientToken, initializationData);
+        this._braintreeSDKCreator.initialize(clientToken, storeConfig);
 
         return this._braintreeSDKCreator
             .getGooglePaymentComponent()

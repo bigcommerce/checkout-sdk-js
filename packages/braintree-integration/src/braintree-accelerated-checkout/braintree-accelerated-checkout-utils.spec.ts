@@ -15,6 +15,7 @@ import {
 import {
     getBillingAddress,
     getCart,
+    getConfig,
     getCountries,
     getCustomer,
     PaymentIntegrationServiceMock,
@@ -37,8 +38,10 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
     const countries = getCountries();
     const customer = getCustomer();
     const billingAddress = getBillingAddress();
-    const methodId = 'braintreeacceleratedcheckout';
     const paymentMethod = getBraintreeAcceleratedCheckoutPaymentMethod();
+    const storeConfig = getConfig().storeConfig;
+
+    const methodId = 'braintreeacceleratedcheckout';
 
     beforeEach(() => {
         braintreeConnectMock = getConnectMock();
@@ -133,7 +136,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
 
             expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethod.clientToken,
-                paymentMethod.initializationData,
+                storeConfig,
             );
             expect(braintreeIntegrationService.getBraintreeConnect).toHaveBeenCalledWith(cart.id);
         });

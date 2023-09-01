@@ -41,6 +41,7 @@ export default class BraintreeAcceleratedCheckoutUtils {
     async initializeBraintreeConnectOrThrow(methodId: string) {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCart();
+        const storeConfig = state.getStoreConfigOrThrow();
         const { clientToken, initializationData } =
             state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
 
@@ -50,7 +51,7 @@ export default class BraintreeAcceleratedCheckoutUtils {
 
         this.methodId = methodId;
 
-        this.braintreeIntegrationService.initialize(clientToken, initializationData);
+        this.braintreeIntegrationService.initialize(clientToken, storeConfig);
         this.braintreeConnect = await this.braintreeIntegrationService.getBraintreeConnect(
             cart?.id,
         );

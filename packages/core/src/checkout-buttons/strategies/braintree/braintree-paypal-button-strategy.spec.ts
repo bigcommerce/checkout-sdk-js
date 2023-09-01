@@ -272,7 +272,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
             expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                paymentMethodMock.initializationData,
+                store.getState().config.getStoreConfigOrThrow(),
             );
         });
 
@@ -284,7 +284,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
             expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                paymentMethodMock.initializationData,
+                store.getState().config.getStoreConfigOrThrow(),
             );
             expect(braintreeSDKCreator.getPaypalCheckout).toHaveBeenCalled();
         });

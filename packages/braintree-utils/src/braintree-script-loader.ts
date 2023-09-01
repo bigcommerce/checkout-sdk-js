@@ -1,6 +1,9 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    PaymentMethodClientUnavailableError,
+    StoreConfig,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
     BraintreeBankAccountCreator,
@@ -8,7 +11,6 @@ import {
     BraintreeConnectCreator,
     BraintreeDataCollectorCreator,
     BraintreeHostWindow,
-    BraintreeInitializationData,
     BraintreeLocalPaymentCreator,
     BraintreePaypalCheckoutCreator,
 } from './braintree';
@@ -24,8 +26,13 @@ export default class BraintreeScriptLoader {
 
     // TODO: this method is needed only for braintree AXO
     // So can be removed after Beta state
-    initialize({ isAcceleratedCheckoutEnabled }: BraintreeInitializationData) {
-        this.braintreeSdkVersion = isAcceleratedCheckoutEnabled
+    initialize(storeConfig: StoreConfig) {
+        const features = storeConfig.checkoutSettings.features;
+        const shouldUseBraintreeAlphaVersion =
+            features['PROJECT-5505.PayPal_Accelerated_Checkout_v2_for_Braintree'] &&
+            features['PAYPAL-2770.PayPal_Accelerated_checkout_ab_testing'];
+
+        this.braintreeSdkVersion = shouldUseBraintreeAlphaVersion
             ? BRAINTREE_SDK_ALPHA_VERSION
             : BRAINTREE_SDK_STABLE_VERSION;
     }

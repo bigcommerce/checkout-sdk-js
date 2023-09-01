@@ -6,6 +6,7 @@ import {
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 import { StandardError } from '../../../common/error/errors';
+import { getConfig } from '../../../config/configs.mock';
 
 import {
     BraintreeClientCreator,
@@ -33,8 +34,17 @@ describe('BraintreeScriptLoader', () => {
     let scriptLoader: ScriptLoader;
     let mockWindow: BraintreeHostWindow;
 
-    const initializationData = {
-        isAcceleratedCheckoutEnabled: true,
+    const storeConfig = getConfig().storeConfig;
+    const storeConfigWithFeaturesOn = {
+        ...storeConfig,
+        checkoutSettings: {
+            ...storeConfig.checkoutSettings,
+            features: {
+                ...storeConfig.checkoutSettings.features,
+                'PROJECT-5505.PayPal_Accelerated_Checkout_v2_for_Braintree': true,
+                'PAYPAL-2770.PayPal_Accelerated_checkout_ab_testing': true,
+            },
+        },
     };
 
     beforeEach(() => {
@@ -66,7 +76,7 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads the client with braintree sdk alpha version', async () => {
-            braintreeScriptLoader.initialize(initializationData);
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
 
             await braintreeScriptLoader.loadClient();
 
@@ -105,7 +115,7 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads the ThreeDSecure library with braintree sdk alpha version', async () => {
-            braintreeScriptLoader.initialize(initializationData);
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
 
             await braintreeScriptLoader.load3DS();
 
@@ -144,7 +154,7 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads the data collector library with braintree sdk alpha version', async () => {
-            braintreeScriptLoader.initialize(initializationData);
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
 
             await braintreeScriptLoader.loadDataCollector();
 
@@ -183,7 +193,7 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads the VisaCheckout library with braintree sdk alpha version', async () => {
-            braintreeScriptLoader.initialize(initializationData);
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
 
             await braintreeScriptLoader.loadVisaCheckout();
 
@@ -222,7 +232,7 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads the GooglePay library with braintree sdk alpha version', async () => {
-            braintreeScriptLoader.initialize(initializationData);
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
 
             await braintreeScriptLoader.loadGooglePayment();
 
@@ -278,7 +288,7 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads hosted fields module with braintree sdk alpha version', async () => {
-            braintreeScriptLoader.initialize(initializationData);
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
 
             await braintreeScriptLoader.loadHostedFields();
 

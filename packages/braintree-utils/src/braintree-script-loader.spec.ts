@@ -1,6 +1,7 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { getConfig } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import {
     BraintreeClientCreator,
@@ -26,8 +27,17 @@ describe('BraintreeScriptLoader', () => {
     let scriptLoader: ScriptLoader;
     let mockWindow: BraintreeHostWindow;
 
-    const braintreeInitializationData = {
-        isAcceleratedCheckoutEnabled: true,
+    const storeConfig = getConfig().storeConfig;
+    const storeConfigWithFeaturesOn = {
+        ...storeConfig,
+        checkoutSettings: {
+            ...storeConfig.checkoutSettings,
+            features: {
+                ...storeConfig.checkoutSettings.features,
+                'PROJECT-5505.PayPal_Accelerated_Checkout_v2_for_Braintree': true,
+                'PAYPAL-2770.PayPal_Accelerated_checkout_ab_testing': true,
+            },
+        },
     };
 
     beforeEach(() => {
@@ -62,7 +72,7 @@ describe('BraintreeScriptLoader', () => {
         it('loads the client with braintree sdk alpha version', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
 
-            braintreeScriptLoader.initialize(braintreeInitializationData);
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
 
             const client = await braintreeScriptLoader.loadClient();
 
@@ -125,7 +135,7 @@ describe('BraintreeScriptLoader', () => {
         it('loads the connect with braintree sdk alpha version', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
 
-            braintreeScriptLoader.initialize(braintreeInitializationData);
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
 
             const connect = await braintreeScriptLoader.loadConnect();
 
@@ -188,7 +198,7 @@ describe('BraintreeScriptLoader', () => {
         it('loads PayPal checkout with braintree sdk alpha version', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
 
-            braintreeScriptLoader.initialize(braintreeInitializationData);
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
 
             const paypalCheckout = await braintreeScriptLoader.loadPaypalCheckout();
 
@@ -251,7 +261,7 @@ describe('BraintreeScriptLoader', () => {
         it('loads local payment methods with braintree sdk alpha version', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
 
-            braintreeScriptLoader.initialize(braintreeInitializationData);
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
 
             await braintreeScriptLoader.loadBraintreeLocalMethods();
 
@@ -288,7 +298,7 @@ describe('BraintreeScriptLoader', () => {
         it('loads the data collector library with braintree sdk alpha version', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
 
-            braintreeScriptLoader.initialize(braintreeInitializationData);
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
 
             const dataCollector = await braintreeScriptLoader.loadDataCollector();
 

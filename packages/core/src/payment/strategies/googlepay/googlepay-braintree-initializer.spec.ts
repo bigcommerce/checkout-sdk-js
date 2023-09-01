@@ -1,5 +1,7 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
+import { CheckoutStore, createCheckoutStore } from '../../../checkout';
+import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import PaymentMethod from '../../payment-method';
 import { BraintreeScriptLoader, BraintreeSDKCreator, GooglePayBraintreeSDK } from '../braintree';
@@ -17,13 +19,15 @@ describe('GooglePayBraintreeInitializer', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;
     let googlePayInitializer: GooglePayBraintreeInitializer;
     let googlePayMock: GooglePayBraintreeSDK;
+    let store: CheckoutStore;
 
     beforeEach(() => {
+        store = createCheckoutStore(getCheckoutStoreState());
         googlePayMock = getGooglePayBraintreeMock();
         braintreeSDKCreator = new BraintreeSDKCreator(
             new BraintreeScriptLoader(createScriptLoader()),
         );
-        googlePayInitializer = new GooglePayBraintreeInitializer(braintreeSDKCreator);
+        googlePayInitializer = new GooglePayBraintreeInitializer(store, braintreeSDKCreator);
         braintreeSDKCreator.initialize = jest.fn();
         braintreeSDKCreator.getGooglePaymentComponent = jest.fn(() =>
             Promise.resolve(googlePayMock),
