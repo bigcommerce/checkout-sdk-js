@@ -5,7 +5,6 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable, of } from 'rxjs';
 
 import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { getConfig } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import {
     BillingAddressActionCreator,
@@ -401,11 +400,6 @@ describe('StripeUPEPaymentStrategy', () => {
                         stripeUPEJsMock.confirmPayment = jest.fn(() =>
                             Promise.resolve(getConfirmPaymentResponse()),
                         );
-
-                        jest.spyOn(
-                            store.getState().config,
-                            'getStoreConfigOrThrow',
-                        ).mockReturnValue(getConfig().storeConfig);
                     });
 
                     describe('with both shipping and billing address', () => {
@@ -1212,7 +1206,21 @@ describe('StripeUPEPaymentStrategy', () => {
                         expect(stripeUPEJsMock.retrievePaymentIntent).toHaveBeenCalled();
                     });
 
-                    it('not calling confirmPayment method when Payment Intent status is already „succeeded", case with additional_action_requires_payment_method', async () => {
+                    it('not calling confirmPayment method when Payment Intent status is already „succeeded", case with additional_action_requires_payment_method and PI-626 Experiment on', async () => {
+                        const storeConfig = {
+                            checkoutSettings: {
+                                features: {
+                                    'PI-626.Block_unnecessary_payment_confirmation_for_StripeUPE':
+                                        true,
+                                },
+                            },
+                        };
+
+                        jest.spyOn(
+                            store.getState().config,
+                            'getStoreConfigOrThrow',
+                        ).mockReturnValue(storeConfig);
+
                         const errorResponse = new RequestError(
                             getResponse({
                                 ...getErrorPaymentResponseBody(),
@@ -1250,7 +1258,21 @@ describe('StripeUPEPaymentStrategy', () => {
                         }
                     });
 
-                    it('not calling confirmPayment method when Payment Intent status is already „succeeded", case with redirect_to_url', async () => {
+                    it('not calling confirmPayment method when Payment Intent status is already „succeeded", case with redirect_to_url and PI-626 Experiment on', async () => {
+                        const storeConfig = {
+                            checkoutSettings: {
+                                features: {
+                                    'PI-626.Block_unnecessary_payment_confirmation_for_StripeUPE':
+                                        true,
+                                },
+                            },
+                        };
+
+                        jest.spyOn(
+                            store.getState().config,
+                            'getStoreConfigOrThrow',
+                        ).mockReturnValue(storeConfig);
+
                         const errorResponse = new RequestError(
                             getResponse({
                                 ...getErrorPaymentResponseBody(),
@@ -1284,6 +1306,109 @@ describe('StripeUPEPaymentStrategy', () => {
                             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                             expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
                             expect(stripeUPEJsMock.confirmPayment).not.toHaveBeenCalled();
+                        }
+                    });
+
+                    it('not calling confirmPayment method when Payment Intent status is already „succeeded", case with additional_action_requires_payment_method and PI-626 Experiment off', async () => {
+                        const storeConfig = {
+                            checkoutSettings: {
+                                features: {
+                                    'PI-626.Block_unnecessary_payment_confirmation_for_StripeUPE':
+                                        false,
+                                },
+                            },
+                        };
+
+                        jest.spyOn(
+                            store.getState().config,
+                            'getStoreConfigOrThrow',
+                        ).mockReturnValue(storeConfig);
+
+                        const errorResponse = new RequestError(
+                            getResponse({
+                                ...getErrorPaymentResponseBody(),
+                                errors: [{ code: 'additional_action_required' }],
+                                additional_action_required: {
+                                    type: 'additional_action_requires_payment_method',
+                                    data: {
+                                        redirect_url: 'https://redirect-url.com',
+                                        token: 'token',
+                                    },
+                                },
+                                status: 'error',
+                            }),
+                        );
+
+                        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                            of(
+                                createErrorAction(
+                                    PaymentActionType.SubmitPaymentFailed,
+                                    errorResponse,
+                                ),
+                            ),
+                        );
+
+                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
+                            Promise.resolve(getRetrievePaymentIntentResponseSucceeded()),
+                        );
+
+                        try {
+                            await strategy.execute(getStripeUPEOrderRequestBodyMock());
+                        } catch {
+                            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                            expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
+                            expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalled();
+                        }
+                    });
+
+                    it('not calling confirmPayment method when Payment Intent status is already „succeeded", case with redirect_to_url and PI-626 Experiment off', async () => {
+                        const storeConfig = {
+                            checkoutSettings: {
+                                features: {
+                                    'PI-626.Block_unnecessary_payment_confirmation_for_StripeUPE':
+                                        false,
+                                },
+                            },
+                        };
+
+                        jest.spyOn(
+                            store.getState().config,
+                            'getStoreConfigOrThrow',
+                        ).mockReturnValue(storeConfig);
+
+                        const errorResponse = new RequestError(
+                            getResponse({
+                                ...getErrorPaymentResponseBody(),
+                                errors: [{ code: 'additional_action_required' }],
+                                additional_action_required: {
+                                    type: 'redirect_to_url',
+                                    data: {
+                                        redirect_url: 'https://redirect-url.com',
+                                    },
+                                },
+                                status: 'error',
+                            }),
+                        );
+
+                        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                            of(
+                                createErrorAction(
+                                    PaymentActionType.SubmitPaymentFailed,
+                                    errorResponse,
+                                ),
+                            ),
+                        );
+
+                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
+                            Promise.resolve(getRetrievePaymentIntentResponseSucceeded()),
+                        );
+
+                        try {
+                            await strategy.execute(getStripeUPEOrderRequestBodyMock());
+                        } catch {
+                            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                            expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
+                            expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalled();
                         }
                     });
                 });
