@@ -3522,6 +3522,7 @@ declare interface CheckoutSettings {
     isAnalyticsEnabled: boolean;
     isCardVaultingEnabled: boolean;
     isCouponCodeCollapsed: boolean;
+    isExpressPrivacyPolicy: boolean;
     isSignInEmailEnabled: boolean;
     isPaymentRequestEnabled: boolean;
     isPaymentRequestCanMakePaymentEnabled: boolean;

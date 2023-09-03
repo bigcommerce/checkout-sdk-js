@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.439.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.438.0...v1.439.0) (2023-09-03)
+
+
+### Features
+
+* **checkout:** CHECKOUT-7648 Add isExpressPrivacyPolicy to checkoutSettings ([#2155](https://github.com/bigcommerce/checkout-sdk-js/issues/2155)) ([c98410a](https://github.com/bigcommerce/checkout-sdk-js/commit/c98410ac719fbe41506b2b36b57dcbb2b0c39456))
+
 ## [1.438.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.437.0...v1.438.0) (2023-08-31)
 
 

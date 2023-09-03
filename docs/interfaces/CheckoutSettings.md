@@ -19,6 +19,7 @@
 - [isAnalyticsEnabled](CheckoutSettings.md#isanalyticsenabled)
 - [isCardVaultingEnabled](CheckoutSettings.md#iscardvaultingenabled)
 - [isCouponCodeCollapsed](CheckoutSettings.md#iscouponcodecollapsed)
+- [isExpressPrivacyPolicy](CheckoutSettings.md#isexpressprivacypolicy)
 - [isPaymentRequestCanMakePaymentEnabled](CheckoutSettings.md#ispaymentrequestcanmakepaymentenabled)
 - [isPaymentRequestEnabled](CheckoutSettings.md#ispaymentrequestenabled)
 - [isSignInEmailEnabled](CheckoutSettings.md#issigninemailenabled)
@@ -116,6 +117,12 @@ ___
 ### isCouponCodeCollapsed
 
 • **isCouponCodeCollapsed**: `boolean`
+
+___
+
+### isExpressPrivacyPolicy
+
+• **isExpressPrivacyPolicy**: `boolean`
 
 ___
 
