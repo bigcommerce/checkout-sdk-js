@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.441.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.440.0...v1.441.0) (2023-09-04)
+
+
+### Features
+
+* **payment:** PAYPAL-2913 provided customer device data on any place order for BT AXO ([#2159](https://github.com/bigcommerce/checkout-sdk-js/issues/2159)) ([d110fa0](https://github.com/bigcommerce/checkout-sdk-js/commit/d110fa06fd10f5f5a06e6a838e9040720fc4e36b))
+* **payment:** PAYPAL-2914 updated BT AXO Credit card component style ([#2160](https://github.com/bigcommerce/checkout-sdk-js/issues/2160)) ([8f82f73](https://github.com/bigcommerce/checkout-sdk-js/commit/8f82f73381bf1f0e7fa3a3cd9ef2ac42aede9414))
+
 ## [1.440.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.439.0...v1.440.0) (2023-09-04)
 
 
