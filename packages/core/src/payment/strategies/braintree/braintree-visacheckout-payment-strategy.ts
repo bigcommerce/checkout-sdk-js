@@ -60,9 +60,9 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
                     throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                 }
 
-                const { clientToken, config, initializationData } = this._paymentMethod || {};
+                const { clientToken, config } = this._paymentMethod || {};
 
-                if (!clientToken || !initializationData) {
+                if (!clientToken) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
@@ -79,7 +79,7 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
                     this._visaCheckoutScriptLoader.load(config?.testMode),
                     this._braintreeVisaCheckoutPaymentProcessor.initialize(
                         clientToken,
-                        initializationData,
+                        storeConfig,
                         initOptions,
                     ),
                 ]).then(([visaCheckout, visaInitOptions]) => {

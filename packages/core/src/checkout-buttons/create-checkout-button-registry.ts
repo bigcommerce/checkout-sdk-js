@@ -169,7 +169,7 @@ export default function createCheckoutButtonRegistry(
                 checkoutActionCreator,
                 createGooglePayPaymentProcessor(
                     store,
-                    new GooglePayBraintreeInitializer(braintreeSdkCreator),
+                    new GooglePayBraintreeInitializer(store, braintreeSdkCreator),
                 ),
                 cartRequestSender,
             ),

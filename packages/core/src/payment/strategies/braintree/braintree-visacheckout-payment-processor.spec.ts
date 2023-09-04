@@ -3,6 +3,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { Address } from '../../../address';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
+import { getConfig } from '../../../config/configs.mock';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 
 import { BraintreeVisaCheckout } from './braintree';
@@ -20,6 +21,8 @@ import {
 describe('BraintreeVisaCheckoutPaymentProcessor', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;
     let requestSender: RequestSender;
+
+    const storeConfig = getConfig().storeConfig;
 
     beforeEach(() => {
         const braintreeScriptLoader = new BraintreeScriptLoader(createScriptLoader());
@@ -56,9 +59,9 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
 
         it('initializes the sdk creator with the client token', () => {
             braintreeSDKCreator.initialize = jest.fn();
-            visaCheckoutPaymentProcessor.initialize('clientToken', {}, {});
+            visaCheckoutPaymentProcessor.initialize('clientToken', storeConfig, {});
 
-            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith('clientToken', {});
+            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith('clientToken', storeConfig);
         });
 
         it('maps the init options to the ones required by the braintree visacheckout module', async () => {
@@ -67,16 +70,12 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
                 requestSender,
             );
 
-            await visaCheckoutPaymentProcessor.initialize(
-                'clientToken',
-                {},
-                {
-                    locale: 'es_ES',
-                    collectShipping: true,
-                    subtotal: 15,
-                    currencyCode: '$',
-                },
-            );
+            await visaCheckoutPaymentProcessor.initialize('clientToken', storeConfig, {
+                locale: 'es_ES',
+                collectShipping: true,
+                subtotal: 15,
+                currencyCode: '$',
+            });
 
             expect(visaCheckoutMock.createInitOptions).toHaveBeenCalledWith({
                 paymentRequest: {

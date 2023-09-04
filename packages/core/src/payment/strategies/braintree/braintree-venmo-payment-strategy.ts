@@ -2,6 +2,7 @@ import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-inte
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
+import { StoreConfig } from '../../../config';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
@@ -35,8 +36,9 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
         );
 
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const storeConfig = state.config.getStoreConfigOrThrow();
 
-        await this._initializeBraintreeVenmo(paymentMethod);
+        await this._initializeBraintreeVenmo(paymentMethod, storeConfig);
 
         return this._store.getState();
     }
@@ -86,15 +88,18 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
         throw new PaymentMethodFailedError(error.message);
     }
 
-    private async _initializeBraintreeVenmo(paymentMethod: PaymentMethod): Promise<void> {
-        const { clientToken, initializationData } = paymentMethod;
+    private async _initializeBraintreeVenmo(
+        paymentMethod: PaymentMethod,
+        storeConfig: StoreConfig,
+    ): Promise<void> {
+        const { clientToken } = paymentMethod;
 
-        if (!clientToken || !initializationData) {
+        if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         try {
-            this._braintreePaymentProcessor.initialize(clientToken, initializationData);
+            this._braintreePaymentProcessor.initialize(clientToken, storeConfig);
             this._braintreeVenmoCheckout = await this._braintreePaymentProcessor.getVenmoCheckout();
         } catch (error) {
             this._handleError(error);

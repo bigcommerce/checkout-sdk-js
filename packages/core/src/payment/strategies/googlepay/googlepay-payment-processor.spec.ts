@@ -74,6 +74,7 @@ describe('GooglePayPaymentProcessor', () => {
         );
         googlePayScriptLoader = new GooglePayScriptLoader(scriptLoader);
         googlePayInitializer = new GooglePayBraintreeInitializer(
+            store,
             new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
         );
         requestSender = createRequestSender();

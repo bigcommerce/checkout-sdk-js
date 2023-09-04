@@ -6,6 +6,7 @@ import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
 import { Address } from '../../../address';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { StoreConfig } from '../../../config';
 import { OrderPaymentRequestBody } from '../../../order';
 import {
     PaymentArgumentInvalidError,
@@ -17,7 +18,6 @@ import { CreditCardInstrument, NonceInstrument } from '../../payment';
 
 import {
     BraintreeError,
-    BraintreeInitializationData,
     BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
@@ -59,10 +59,10 @@ export default class BraintreePaymentProcessor {
 
     initialize(
         clientToken: string,
-        initializationData: BraintreeInitializationData,
+        storeConfig: StoreConfig,
         options?: BraintreePaymentInitializeOptions,
     ): void {
-        this._braintreeSDKCreator.initialize(clientToken, initializationData);
+        this._braintreeSDKCreator.initialize(clientToken, storeConfig);
         this._threeDSecureOptions = options?.threeDSecure;
     }
 

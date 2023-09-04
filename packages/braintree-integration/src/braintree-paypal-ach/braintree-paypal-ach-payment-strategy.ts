@@ -55,7 +55,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         await this.paymentIntegrationService.loadPaymentMethod(options.methodId);
 
         const state = this.paymentIntegrationService.getState();
-
+        const storeConfig = state.getStoreConfigOrThrow();
         const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(
             options.methodId,
         );
@@ -66,7 +66,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         }
 
         try {
-            this.braintreeIntegrationService.initialize(clientToken, initializationData);
+            this.braintreeIntegrationService.initialize(clientToken, storeConfig);
             this.usBankAccount = await this.braintreeIntegrationService.getUsBankAccount();
         } catch (error) {
             this.handleError(error);

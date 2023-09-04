@@ -90,6 +90,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
             currencyCode = state.cart.getCartOrThrow().currency.code;
         }
 
+        const storeConfig = state.config.getStoreConfigOrThrow();
         const { clientToken, initializationData } = paymentMethod;
 
         if (!clientToken || !initializationData) {
@@ -113,7 +114,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
             this._handleError(error, containerId, braintreepaypalcredit.onError);
 
-        this._braintreeSDKCreator.initialize(clientToken, initializationData);
+        this._braintreeSDKCreator.initialize(clientToken, storeConfig);
         await this._braintreeSDKCreator.getPaypalCheckout(
             paypalCheckoutOptions,
             paypalCheckoutCallback,

@@ -21,7 +21,7 @@ import {
 } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
-import { getConfigState } from '../../../config/configs.mock';
+import { getConfig, getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { OrderActionCreator } from '../../../order';
@@ -145,7 +145,7 @@ describe('GooglePayPaymentStrategy', () => {
 
         googlePayPaymentProcessor = createGooglePayPaymentProcessor(
             store,
-            new GooglePayBraintreeInitializer(braintreeSDKCreator),
+            new GooglePayBraintreeInitializer(store, braintreeSDKCreator),
         );
         googlePayAdyenV2PaymentProcessor = new GooglePayAdyenV2PaymentProcessor(
             store,
@@ -165,12 +165,14 @@ describe('GooglePayPaymentStrategy', () => {
             initializationData,
         };
         const order = getOrder();
+        const storeConfig = getConfig().storeConfig;
 
         jest.spyOn(store, 'dispatch');
         jest.spyOn(store.getState().order, 'getOrderOrThrow').mockReturnValue(order);
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
             googlePaymentMethodData,
         );
+        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(storeConfig);
         jest.spyOn(walletButton, 'removeEventListener');
         jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve());
         jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout').mockReturnValue(Promise.resolve());
@@ -347,7 +349,7 @@ describe('GooglePayPaymentStrategy', () => {
 
                 expect(initializeBraintreeSDK).toHaveBeenCalledWith(
                     'clienttoken',
-                    updatedPaymentMethod.initializationData,
+                    getConfig().storeConfig,
                 );
             });
 

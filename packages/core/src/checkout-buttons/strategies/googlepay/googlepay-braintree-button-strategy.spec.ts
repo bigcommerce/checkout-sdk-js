@@ -83,6 +83,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
         paymentProcessor = createGooglePayPaymentProcessor(
             store,
             new GooglePayBraintreeInitializer(
+                store,
                 new BraintreeSDKCreator(new BraintreeScriptLoader(createScriptLoader())),
             ),
         );

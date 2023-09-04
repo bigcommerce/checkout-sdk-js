@@ -179,7 +179,7 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
             expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                paymentMethodMock.initializationData,
+                paymentIntegrationService.getState().getStoreConfig(),
             );
             expect(braintreeIntegrationService.getUsBankAccount).toHaveBeenCalled();
         });
