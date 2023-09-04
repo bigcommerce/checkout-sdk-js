@@ -3,13 +3,14 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import {
     BraintreeIntegrationService,
     BraintreeScriptLoader,
-    getBraintree,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     InvalidArgumentError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+
+import { getBraintree } from '../mocks/braintree.mock';
 
 import BraintreeAcceleratedCheckoutCustomerStrategy from './braintree-accelerated-checkout-customer-strategy';
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';

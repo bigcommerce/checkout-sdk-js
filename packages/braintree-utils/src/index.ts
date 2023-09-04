@@ -37,8 +37,6 @@ export {
     getPaypalCheckoutMock,
     getPayPalCheckoutCreatorMock,
     getBraintreeLocalPaymentMock,
-    getBraintree,
-    getDeviceDataMock,
 } from './mocks/braintree.mock';
 
 export { BRAINTREE_SDK_STABLE_VERSION, BRAINTREE_SDK_ALPHA_VERSION } from './sdk-verison';
