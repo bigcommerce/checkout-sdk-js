@@ -110,7 +110,7 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
             this._paymentFieldsToken &&
             paymentData.instrumentId
         ) {
-            if (is3dsEnabled && !this._shouldUseHostedFields) {
+            if (is3dsEnabled) {
                 this._blueSnapDirect3ds.initialize(this._blueSnapSdk);
 
                 const { last4, brand } = this._paymentIntegrationService
@@ -196,7 +196,6 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
                 billingFirstName: billingAddress.firstName,
                 billingLastName: billingAddress.lastName,
                 billingCountry: billingAddress.countryCode,
-                billingState: billingAddress.stateOrProvinceCode,
                 billingCity: billingAddress.city,
                 billingAddress: `${billingAddress.address1} ${billingAddress.address2}`.trim(),
                 billingZip: billingAddress.postalCode,
@@ -205,7 +204,6 @@ export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentS
                 shippingFirstName: shippingAddress.firstName,
                 shippingLastName: shippingAddress.lastName,
                 shippingCountry: shippingAddress.countryCode,
-                shippingState: shippingAddress.stateOrProvinceCode,
                 shippingCity: shippingAddress.city,
                 shippingAddress: `${shippingAddress.address1} ${shippingAddress.address2}`.trim(),
                 shippingZip: shippingAddress.postalCode,
