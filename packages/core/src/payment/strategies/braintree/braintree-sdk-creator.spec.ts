@@ -1,4 +1,5 @@
 import { NotInitializedError } from '../../../common/error/errors';
+import { getConfig } from '../../../config/configs.mock';
 import { getGooglePayBraintreeMock } from '../googlepay/googlepay.mock';
 
 import {
@@ -29,6 +30,8 @@ describe('Braintree SDK Creator', () => {
     let clientMock: BraintreeClient;
     let clientCreatorMock: BraintreeModuleCreator<BraintreeClient>;
 
+    const storeConfig = getConfig().storeConfig;
+
     beforeEach(() => {
         clientMock = getClientMock();
         clientCreatorMock = getModuleCreatorMock(clientMock);
@@ -55,7 +58,7 @@ describe('Braintree SDK Creator', () => {
         it('uses the right arguments to create the client', async () => {
             const braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
 
-            braintreeSDKCreator.initialize('clientToken', {});
+            braintreeSDKCreator.initialize('clientToken', storeConfig);
             await braintreeSDKCreator.getClient();
 
             expect(clientCreatorMock.create).toHaveBeenCalledWith({ authorization: 'clientToken' });
@@ -64,7 +67,7 @@ describe('Braintree SDK Creator', () => {
         it('returns a copy of the client', async () => {
             const braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
 
-            braintreeSDKCreator.initialize('clientToken', {});
+            braintreeSDKCreator.initialize('clientToken', storeConfig);
 
             const client = await braintreeSDKCreator.getClient();
 
@@ -74,7 +77,7 @@ describe('Braintree SDK Creator', () => {
         it('always returns the same instance of the client', async () => {
             const braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
 
-            braintreeSDKCreator.initialize('clientToken', {});
+            braintreeSDKCreator.initialize('clientToken', storeConfig);
 
             const client1 = await braintreeSDKCreator.getClient();
             const client2 = await braintreeSDKCreator.getClient();
@@ -375,7 +378,7 @@ describe('Braintree SDK Creator', () => {
                 Promise.resolve(hostedFieldsCreatorMock),
             );
 
-            braintreeSDKCreator.initialize('client_token', {});
+            braintreeSDKCreator.initialize('client_token', storeConfig);
 
             expect(await braintreeSDKCreator.createHostedFields({ fields: {} })).toEqual(
                 hostedFieldsMock,
@@ -388,7 +391,7 @@ describe('Braintree SDK Creator', () => {
             braintreeScriptLoader.loadClient = jest.fn(() => Promise.resolve(clientCreatorMock));
             braintreeScriptLoader.loadHostedFields = jest.fn(() => Promise.reject(error));
 
-            braintreeSDKCreator.initialize('client_token', {});
+            braintreeSDKCreator.initialize('client_token', storeConfig);
 
             try {
                 await braintreeSDKCreator.createHostedFields({ fields: {} });
@@ -428,7 +431,7 @@ describe('Braintree SDK Creator', () => {
                 .mockReturnValue(Promise.resolve(getModuleCreatorMock(braintreeVenmoCheckout)));
 
             braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
-            braintreeSDKCreator.initialize('clientToken', {});
+            braintreeSDKCreator.initialize('clientToken', storeConfig);
         });
 
         it('calls teardown in all the dependencies', async () => {

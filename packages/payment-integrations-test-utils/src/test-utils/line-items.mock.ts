@@ -1,8 +1,20 @@
 import {
+    CustomItem,
     DigitalItem,
     GiftCertificateItem,
     PhysicalItem,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export function getCustomItem(): CustomItem {
+    return {
+        id: '55e11c8f-7dce-4da3-9413-b649533f8bad',
+        listPrice: 10,
+        extendedListPrice: 20,
+        name: 'Custom item',
+        quantity: 2,
+        sku: 'custom-sku',
+    };
+}
 
 export function getPhysicalItem(): PhysicalItem {
     return {

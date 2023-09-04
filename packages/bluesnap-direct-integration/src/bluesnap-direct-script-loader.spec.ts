@@ -24,6 +24,10 @@ describe('BlueSnapDirectScriptLoader', () => {
         });
     });
 
+    afterEach(() => {
+        delete bsWindow.bluesnap;
+    });
+
     describe('#load', () => {
         it('should load the Hosted Payment Fields SDK successfully', async () => {
             const sdk = await blueSnapDirectScriptLoader.load();
@@ -41,6 +45,13 @@ describe('BlueSnapDirectScriptLoader', () => {
             await blueSnapDirectScriptLoader.load(true);
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(BlueSnapDirectSdkEnv.SANDBOX);
+        });
+
+        it('should skip to load SDK if SDK was previusly loaded', async () => {
+            bsWindow.bluesnap = blueSnapDirectSdkMock;
+            await blueSnapDirectScriptLoader.load();
+
+            expect(scriptLoader.loadScript).not.toHaveBeenCalled();
         });
 
         it('should fail to load the Hosted Payment Fields SDK', async () => {

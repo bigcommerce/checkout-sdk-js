@@ -240,6 +240,7 @@
 - [GooglePayButtonInitializeOptions](interfaces/GooglePayButtonInitializeOptions.md)
 - [GooglePayBuyNowInitializeOptions](interfaces/GooglePayBuyNowInitializeOptions.md)
 - [GooglePayCustomerInitializeOptions](interfaces/GooglePayCustomerInitializeOptions.md)
+- [GooglePayCustomerInitializeOptions_2](interfaces/GooglePayCustomerInitializeOptions_2.md)
 - [GooglePayPaymentInitializeOptions](interfaces/GooglePayPaymentInitializeOptions.md)
 - [GooglePayPaymentInitializeOptions_2](interfaces/GooglePayPaymentInitializeOptions_2.md)
 - [HostedCardFieldOptions](interfaces/HostedCardFieldOptions.md)
@@ -450,6 +451,8 @@
 - [FlashMessageType](README.md#flashmessagetype)
 - [FormFieldFieldType](README.md#formfieldfieldtype)
 - [FormFieldType](README.md#formfieldtype)
+- [GooglePayButtonColor](README.md#googlepaybuttoncolor)
+- [GooglePayButtonType](README.md#googlepaybuttontype)
 - [GuestCredentials](README.md#guestcredentials)
 - [HostedCreditCardInstrument](README.md#hostedcreditcardinstrument)
 - [HostedFieldBlurEventData](README.md#hostedfieldblureventdata)
@@ -472,6 +475,7 @@
 - [PaymentProviderCustomer](README.md#paymentprovidercustomer)
 - [StripeElementOptions](README.md#stripeelementoptions)
 - [StripeEventType](README.md#stripeeventtype)
+- [WithGooglePayCustomerInitializeOptions](README.md#withgooglepaycustomerinitializeoptions)
 - [WithGooglePayPaymentInitializeOptions](README.md#withgooglepaypaymentinitializeoptions)
 
 ### Functions
@@ -611,7 +615,7 @@ ___
 
 ### CustomerInitializeOptions
 
-Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md) & [`WithBoltCustomerInitializeOptions`](interfaces/WithBoltCustomerInitializeOptions.md) & [`WithBraintreePaypalCustomerInitializeOptions`](interfaces/WithBraintreePaypalCustomerInitializeOptions.md) & [`WithPayPalCommerceCustomerInitializeOptions`](interfaces/WithPayPalCommerceCustomerInitializeOptions.md) & [`WithPayPalCommerceCreditCustomerInitializeOptions`](interfaces/WithPayPalCommerceCreditCustomerInitializeOptions.md) & [`WithPayPalCommerceVenmoCustomerInitializeOptions`](interfaces/WithPayPalCommerceVenmoCustomerInitializeOptions.md)
+Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md) & [`WithBoltCustomerInitializeOptions`](interfaces/WithBoltCustomerInitializeOptions.md) & [`WithBraintreePaypalCustomerInitializeOptions`](interfaces/WithBraintreePaypalCustomerInitializeOptions.md) & [`WithGooglePayCustomerInitializeOptions`](README.md#withgooglepaycustomerinitializeoptions) & [`WithPayPalCommerceCustomerInitializeOptions`](interfaces/WithPayPalCommerceCustomerInitializeOptions.md) & [`WithPayPalCommerceCreditCustomerInitializeOptions`](interfaces/WithPayPalCommerceCreditCustomerInitializeOptions.md) & [`WithPayPalCommerceVenmoCustomerInitializeOptions`](interfaces/WithPayPalCommerceVenmoCustomerInitializeOptions.md)
 
 ___
 
@@ -630,6 +634,18 @@ ___
 ### FormFieldType
 
 Ƭ **FormFieldType**: ``"array"`` \| ``"date"`` \| ``"integer"`` \| ``"string"``
+
+___
+
+### GooglePayButtonColor
+
+Ƭ **GooglePayButtonColor**: ``"default"`` \| ``"black"`` \| ``"white"``
+
+___
+
+### GooglePayButtonType
+
+Ƭ **GooglePayButtonType**: ``"book"`` \| ``"buy"`` \| ``"checkout"`` \| ``"donate"`` \| ``"order"`` \| ``"pay"`` \| ``"plain"`` \| ``"subscribe"`` \| ``"long"`` \| ``"short"``
 
 ___
 
@@ -769,6 +785,15 @@ ___
 ### StripeEventType
 
 Ƭ **StripeEventType**: [`StripeShippingEvent`](interfaces/StripeShippingEvent.md) \| [`StripeCustomerEvent`](interfaces/StripeCustomerEvent.md)
+
+___
+
+### WithGooglePayCustomerInitializeOptions
+
+Ƭ **WithGooglePayCustomerInitializeOptions**: { [k in GooglePayKey]?: GooglePayCustomerInitializeOptions\_2 }
+
+The options that are required to initialize the GooglePay payment method.
+They can be omitted unless you need to support GooglePay.
 
 ___
 

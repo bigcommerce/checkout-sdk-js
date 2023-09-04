@@ -34,6 +34,7 @@ export function getConfig(): Config {
                 isAccountCreationEnabled: true,
                 isAnalyticsEnabled: false,
                 isCardVaultingEnabled: true,
+                isExpressPrivacyPolicy: false,
                 isStorefrontSpamProtectionEnabled: false,
                 isSignInEmailEnabled: false,
                 isPaymentRequestEnabled: false,

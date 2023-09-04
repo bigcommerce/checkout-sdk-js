@@ -193,6 +193,8 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
         // Info: shipping can be unavailable for carts with digital items
         const shippingAddress = state.getShippingAddress();
 
+        const deviceSessionId = await this.braintreeAcceleratedCheckoutUtils.getDeviceSessionId();
+
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
 
@@ -210,6 +212,7 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
             methodId,
             paymentData: {
                 ...paymentData,
+                deviceSessionId,
                 shouldSaveInstrument,
                 shouldSetAsDefaultInstrument,
                 nonce,

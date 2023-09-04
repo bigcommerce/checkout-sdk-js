@@ -111,7 +111,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                paymentMethodMock.initializationData,
+                store.getState().config.getStoreConfigOrThrow(),
                 options.braintree,
             );
         });

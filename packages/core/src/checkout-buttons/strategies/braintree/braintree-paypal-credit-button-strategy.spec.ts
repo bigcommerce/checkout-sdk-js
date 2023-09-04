@@ -286,7 +286,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
 
             expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                paymentMethodMock.initializationData,
+                store.getState().config.getStoreConfigOrThrow(),
             );
         });
 
@@ -298,7 +298,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
 
             expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                paymentMethodMock.initializationData,
+                store.getState().config.getStoreConfigOrThrow(),
             );
             expect(braintreeSDKCreator.getPaypalCheckout).toHaveBeenCalled();
         });

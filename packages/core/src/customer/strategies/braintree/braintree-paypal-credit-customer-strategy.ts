@@ -70,6 +70,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
         const state = await this._store.dispatch(
             this._paymentMethodActionCreator.loadPaymentMethod(methodId),
         );
+        const storeConfig = state.config.getStoreConfigOrThrow();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         const { clientToken, initializationData } = paymentMethod;
 
@@ -95,7 +96,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
             this._handleError(error, braintreepaypalcredit);
 
-        this._braintreeSDKCreator.initialize(clientToken, initializationData);
+        this._braintreeSDKCreator.initialize(clientToken, storeConfig);
         await this._braintreeSDKCreator.getPaypalCheckout(
             paypalCheckoutOptions,
             paypalCheckoutCallback,

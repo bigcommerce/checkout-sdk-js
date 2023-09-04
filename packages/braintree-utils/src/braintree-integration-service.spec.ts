@@ -1,7 +1,10 @@
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 
 import { NotInitializedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { getShippingAddress } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getConfig,
+    getShippingAddress,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import {
     BraintreeClient,
@@ -40,8 +43,18 @@ describe('BraintreeIntegrationService', () => {
     let loader: ScriptLoader;
 
     const clientToken = 'clientToken';
-    const initializationData = {
-        isAcceleratedCheckoutEnabled: false,
+
+    const storeConfig = getConfig().storeConfig;
+    const storeConfigWithFeaturesOn = {
+        ...storeConfig,
+        checkoutSettings: {
+            ...storeConfig.checkoutSettings,
+            features: {
+                ...storeConfig.checkoutSettings.features,
+                'PROJECT-5505.PayPal_Accelerated_Checkout_v2_for_Braintree': true,
+                'PAYPAL-2770.PayPal_Accelerated_checkout_ab_testing': true,
+            },
+        },
     };
 
     beforeEach(() => {
@@ -85,15 +98,17 @@ describe('BraintreeIntegrationService', () => {
 
     describe('#initialize()', () => {
         it('initializes braintree script loader with provided initialization data', () => {
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
-            expect(braintreeScriptLoader.initialize).toHaveBeenCalledWith(initializationData);
+            expect(braintreeScriptLoader.initialize).toHaveBeenCalledWith(
+                storeConfigWithFeaturesOn,
+            );
         });
     });
 
     describe('#getClient()', () => {
         it('uses the right arguments to create the client', async () => {
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             const client = await braintreeIntegrationService.getClient();
 
@@ -102,7 +117,7 @@ describe('BraintreeIntegrationService', () => {
         });
 
         it('always returns the same instance of the client', async () => {
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             const client1 = await braintreeIntegrationService.getClient();
             const client2 = await braintreeIntegrationService.getClient();
@@ -123,7 +138,7 @@ describe('BraintreeIntegrationService', () => {
 
     describe('#getBraintreeConnect()', () => {
         it('throws an error if client token is not provided', async () => {
-            braintreeIntegrationService.initialize('', initializationData);
+            braintreeIntegrationService.initialize('', storeConfigWithFeaturesOn);
 
             try {
                 await braintreeIntegrationService.getBraintreeConnect();
@@ -133,7 +148,7 @@ describe('BraintreeIntegrationService', () => {
         });
 
         it('loads braintree connect and creates an instance of connect object', async () => {
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             const result = await braintreeIntegrationService.getBraintreeConnect();
 
@@ -149,6 +164,11 @@ describe('BraintreeIntegrationService', () => {
                     root: {
                         backgroundColorPrimary: 'transparent',
                     },
+                    text: {
+                        caption: {
+                            fontSize: '1rem',
+                        },
+                    },
                 },
             });
 
@@ -161,7 +181,7 @@ describe('BraintreeIntegrationService', () => {
             const onSuccess = jest.fn();
             const onError = jest.fn();
 
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             await braintreeIntegrationService.getPaypalCheckout({}, onSuccess, onError);
 
@@ -176,7 +196,7 @@ describe('BraintreeIntegrationService', () => {
             const onSuccess = jest.fn();
             const onError = jest.fn();
 
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             await braintreeIntegrationService.getPaypalCheckout({}, onSuccess, onError);
 
@@ -198,7 +218,7 @@ describe('BraintreeIntegrationService', () => {
                 () => newPaypalCheckoutCreatorMock,
             );
 
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             await braintreeIntegrationService.getPaypalCheckout({}, onSuccess, onError);
 
@@ -209,7 +229,7 @@ describe('BraintreeIntegrationService', () => {
 
     describe('#getDataCollector()', () => {
         it('uses the right parameters to instantiate a data collector', async () => {
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             await braintreeIntegrationService.getDataCollector();
 
@@ -228,7 +248,7 @@ describe('BraintreeIntegrationService', () => {
         });
 
         it('always returns the same instance of the data collector', async () => {
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             const dataCollector1 = await braintreeIntegrationService.getDataCollector();
             const dataCollector2 = await braintreeIntegrationService.getDataCollector();
@@ -239,7 +259,7 @@ describe('BraintreeIntegrationService', () => {
         });
 
         it('returns different data collector instance if it is used for PayPal', async () => {
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             const dataCollector = await braintreeIntegrationService.getDataCollector();
             const paypalDataCollector = await braintreeIntegrationService.getDataCollector({
@@ -253,7 +273,7 @@ describe('BraintreeIntegrationService', () => {
         });
 
         it('returns the data collector information', async () => {
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             const dataCollector = await braintreeIntegrationService.getDataCollector();
 
@@ -267,7 +287,7 @@ describe('BraintreeIntegrationService', () => {
                 Promise.reject({ code: 'DATA_COLLECTOR_KOUNT_NOT_ENABLED' }),
             );
 
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             await expect(braintreeIntegrationService.getDataCollector()).resolves.toEqual(
                 expect.objectContaining({ deviceData: undefined }),
@@ -279,7 +299,7 @@ describe('BraintreeIntegrationService', () => {
                 Promise.reject({ code: 'OTHER_RANDOM_ERROR' }),
             );
 
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             await expect(braintreeIntegrationService.getDataCollector()).rejects.toEqual({
                 code: 'OTHER_RANDOM_ERROR',
@@ -348,7 +368,7 @@ describe('BraintreeIntegrationService', () => {
 
     describe('#loadBraintreeLocalMethods()', () => {
         it('loads local payment methods', async () => {
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             await braintreeIntegrationService.loadBraintreeLocalMethods(jest.fn(), '');
 
@@ -456,7 +476,7 @@ describe('BraintreeIntegrationService', () => {
         it('provides riskCorrelationId to data collector', async () => {
             const cartIdMock = 'cartId-asdasd';
 
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
             await braintreeIntegrationService.getSessionId(cartIdMock);
 
             expect(dataCollectorCreatorMock.create).toHaveBeenCalledWith({
@@ -469,7 +489,7 @@ describe('BraintreeIntegrationService', () => {
 
     describe('#teardown()', () => {
         it('calls teardown in all the dependencies', async () => {
-            braintreeIntegrationService.initialize(clientToken, initializationData);
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             await braintreeIntegrationService.getDataCollector();
 

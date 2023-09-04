@@ -241,22 +241,21 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     private async _loadPaypalCheckoutInstance(
         braintreeOptions?: BraintreePaymentInitializeOptions,
     ) {
+        const state = this._store.getState();
+        const storeConfig = state.config.getStoreConfigOrThrow();
+
         const { clientToken, initializationData } = this._paymentMethod || {};
 
-        if (!clientToken || !initializationData) {
+        if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        if (!initializationData.enableCheckoutPaywallBanner) {
+        if (!initializationData?.enableCheckoutPaywallBanner) {
             return Promise.resolve(this._store.getState());
         }
 
         try {
-            this._braintreePaymentProcessor.initialize(
-                clientToken,
-                initializationData,
-                braintreeOptions,
-            );
+            this._braintreePaymentProcessor.initialize(clientToken, storeConfig, braintreeOptions);
 
             const currencyCode = this._store.getState().cart.getCartOrThrow().currency.code;
 
@@ -307,9 +306,12 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private _loadPaypal(
+    private async _loadPaypal(
         braintreeOptions?: BraintreePaymentInitializeOptions,
     ): Promise<InternalCheckoutSelectors> {
+        const state = this._store.getState();
+        const storeConfig = state.config.getStoreConfigOrThrow();
+
         const { clientToken, initializationData } = this._paymentMethod || {};
 
         if (!clientToken || !initializationData) {
@@ -317,13 +319,9 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
 
         try {
-            this._braintreePaymentProcessor.initialize(
-                clientToken,
-                initializationData,
-                braintreeOptions,
-            );
+            this._braintreePaymentProcessor.initialize(clientToken, storeConfig, braintreeOptions);
 
-            this._braintreePaymentProcessor.preloadPaypal();
+            await this._braintreePaymentProcessor.preloadPaypal();
         } catch (error) {
             this._handleError(error);
         }

@@ -219,7 +219,7 @@ export default function createCustomerStrategyRegistry(
                 remoteCheckoutActionCreator,
                 createGooglePayPaymentProcessor(
                     store,
-                    new GooglePayBraintreeInitializer(braintreeSDKCreator),
+                    new GooglePayBraintreeInitializer(store, braintreeSDKCreator),
                 ),
                 formPoster,
             ),

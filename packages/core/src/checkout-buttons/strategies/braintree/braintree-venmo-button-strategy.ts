@@ -70,6 +70,7 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         const state = await this._store.dispatch(
             this._paymentMethodActionCreator.loadPaymentMethod(methodId),
         );
+        const storeConfig = state.config.getStoreConfigOrThrow();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         const { clientToken, initializationData } = paymentMethod;
 
@@ -85,7 +86,7 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
 
         this._onError = braintreevenmo?.onError || this._handleError;
 
-        this._braintreeSDKCreator.initialize(clientToken, initializationData);
+        this._braintreeSDKCreator.initialize(clientToken, storeConfig);
         await this._braintreeSDKCreator.getVenmoCheckout(
             (braintreeVenmoCheckout) =>
                 this._handleInitializationVenmoSuccess(

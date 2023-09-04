@@ -10,6 +10,7 @@ export {
     BuyNowCartRequestBody,
     Cart,
     CartSource,
+    CustomItem,
     DigitalItem,
     GiftCertificateItem,
     LineItemMap,

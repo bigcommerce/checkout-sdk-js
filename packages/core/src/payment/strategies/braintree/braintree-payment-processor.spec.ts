@@ -5,6 +5,7 @@ import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { NotInitializedError } from '../../../common/error/errors';
+import { getConfig } from '../../../config/configs.mock';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import { NonceInstrument } from '../../payment';
 
@@ -33,9 +34,7 @@ describe('BraintreePaymentProcessor', () => {
     let overlay: Overlay;
 
     const clientToken = 'clientToken';
-    const initializationData = {
-        isAcceleratedCheckoutEnabled: false,
-    };
+    const storeConfig = getConfig().storeConfig;
 
     beforeEach(() => {
         braintreeSDKCreator = {} as BraintreeSDKCreator;
@@ -63,12 +62,9 @@ describe('BraintreePaymentProcessor', () => {
                 overlay,
             );
 
-            braintreePaymentProcessor.initialize(clientToken, initializationData);
+            braintreePaymentProcessor.initialize(clientToken, storeConfig);
 
-            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
-                clientToken,
-                initializationData,
-            );
+            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(clientToken, storeConfig);
         });
     });
 
@@ -570,7 +566,7 @@ describe('BraintreePaymentProcessor', () => {
                 overlay,
             );
 
-            braintreePaymentProcessor.initialize(clientToken, initializationData, {
+            braintreePaymentProcessor.initialize(clientToken, storeConfig, {
                 threeDSecure: {
                     ...getThreeDSecureOptionsMock(),
                     addFrame: (_error, _iframe, cancel) => {
@@ -581,7 +577,7 @@ describe('BraintreePaymentProcessor', () => {
         });
 
         it('throws if no 3DS modal handler was supplied on initialization', () => {
-            braintreePaymentProcessor.initialize('clientToken', {});
+            braintreePaymentProcessor.initialize('clientToken', storeConfig);
 
             return expect(
                 braintreePaymentProcessor.challenge3DSVerification(

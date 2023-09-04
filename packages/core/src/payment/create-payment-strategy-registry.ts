@@ -343,6 +343,7 @@ export default function createPaymentStrategyRegistry(
                 createGooglePayPaymentProcessor(
                     store,
                     new GooglePayBraintreeInitializer(
+                        store,
                         new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
                     ),
                 ),

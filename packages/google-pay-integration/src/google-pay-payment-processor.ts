@@ -52,7 +52,7 @@ export default class GooglePayPaymentProcessor {
 
         await this._gateway.initialize(getPaymentMethod);
 
-        this._buildPayloads();
+        await this._buildPayloads();
 
         await this._determineReadinessToPay();
 
@@ -188,7 +188,7 @@ export default class GooglePayPaymentProcessor {
         }
     }
 
-    private _buildPayloads(): void {
+    private async _buildPayloads(): Promise<void> {
         this._baseCardPaymentMethod = {
             type: 'CARD',
             parameters: this._gateway.getCardParameters(),
@@ -205,7 +205,7 @@ export default class GooglePayPaymentProcessor {
             allowedPaymentMethods: [this._cardPaymentMethod],
             transactionInfo: this._gateway.getTransactionInfo(),
             merchantInfo: this._gateway.getMerchantInfo(),
-            emailRequired: true,
+            ...(await this._gateway.getRequiredData()),
         };
         this._isReadyToPayRequest = {
             ...this._baseRequest,

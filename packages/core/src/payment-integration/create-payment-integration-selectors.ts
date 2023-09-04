@@ -33,6 +33,7 @@ export default function createPaymentIntegrationSelectors({
         getShippingAddresses,
         getShippingAddressesOrThrow,
     },
+    shippingCountries: { getShippingCountries },
 }: InternalCheckoutSelectors): PaymentIntegrationSelectors {
     return {
         getHost: clone(getHost),
@@ -70,6 +71,7 @@ export default function createPaymentIntegrationSelectors({
         getShippingAddressOrThrow: clone(getShippingAddressOrThrow),
         getShippingAddresses: clone(getShippingAddresses),
         getShippingAddressesOrThrow: clone(getShippingAddressesOrThrow),
+        getShippingCountries: clone(getShippingCountries),
         isPaymentDataRequired,
         isPaymentMethodInitialized,
     };

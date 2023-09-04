@@ -8,6 +8,7 @@ import getConsignment from './consignment.mock';
 import getCountries from './countries.mock';
 import { getCustomer } from './customer.mock';
 import { getOrder } from './orders.mock';
+import getPaymentId from './payment-id.mock';
 import { getCardInstrument } from './payments.mock';
 
 const subscribe = jest.fn();
@@ -30,8 +31,10 @@ const state = {
     getOrderOrThrow: jest.fn(() => getOrder()),
     getShippingAddress: jest.fn(() => getAddress()),
     getShippingAddressOrThrow: jest.fn(() => getAddress()),
+    getShippingCountries: jest.fn(() => getCountries()),
     getStoreConfig: jest.fn(() => getConfig().storeConfig),
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
+    getPaymentId: jest.fn(() => getPaymentId()),
     getPaymentMethod: jest.fn(),
     getPaymentMethodOrThrow: jest.fn(),
     getPaymentProviderCustomer: jest.fn(),
@@ -47,6 +50,7 @@ const initializeOffsitePayment = jest.fn();
 const loadCheckout = jest.fn();
 const loadDefaultCheckout = jest.fn();
 const loadPaymentMethod = jest.fn();
+const loadShippingCountries = jest.fn(() => state);
 const loadCurrentOrder = jest.fn();
 const submitOrder = jest.fn();
 const submitPayment = jest.fn();
@@ -72,6 +76,7 @@ const PaymentIntegrationServiceMock = jest
             loadCheckout,
             loadDefaultCheckout,
             loadPaymentMethod,
+            loadShippingCountries,
             loadCurrentOrder,
             submitOrder,
             submitPayment,

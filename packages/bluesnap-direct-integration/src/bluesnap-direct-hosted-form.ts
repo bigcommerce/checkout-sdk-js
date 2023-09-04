@@ -23,7 +23,6 @@ import {
 import { BlueSnapHostedFieldType } from './bluesnap-direct-constants';
 import BlueSnapHostedInputValidator from './bluesnap-direct-hosted-input-validator';
 import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input';
-import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
 import isValidationErrorDescription from './is-bluesnap-direct-input-validation-error-description';
 import isHostedCardFieldOptionsMap from './is-hosted-card-field-options-map';
 import isHostedStoredCardFieldOptionsMap from './is-hosted-stored-card-field-options-map';
@@ -49,13 +48,12 @@ export default class BlueSnapDirectHostedForm {
     private _onValidate: HostedFormOptions['onValidate'];
 
     constructor(
-        private _scriptLoader: BlueSnapDirectScriptLoader,
         private _nameOnCardInput: BluesnapDirectNameOnCardInput,
         private _hostedInputValidator: BlueSnapHostedInputValidator,
     ) {}
 
-    async initialize(testMode = false, fields?: HostedFieldOptionsMap): Promise<void> {
-        this._blueSnapSdk = await this._scriptLoader.load(testMode);
+    initialize(blueSnapSdk: BlueSnapDirectSdk, fields?: HostedFieldOptionsMap) {
+        this._blueSnapSdk = blueSnapSdk;
 
         if (!fields) {
             return;

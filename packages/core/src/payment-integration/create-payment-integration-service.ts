@@ -25,7 +25,12 @@ import {
     PaymentRequestTransformer,
 } from '../payment';
 import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
-import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
+import {
+    ConsignmentActionCreator,
+    ConsignmentRequestSender,
+    ShippingCountryActionCreator,
+    ShippingCountryRequestSender,
+} from '../shipping';
 import {
     createSpamProtection,
     PaymentHumanVerificationHandler,
@@ -43,7 +48,7 @@ export default function createPaymentIntegrationService(
     store: CheckoutStore,
 ): PaymentIntegrationService {
     const {
-        config: { getHost },
+        config: { getHost, getLocale },
     } = store.getState();
 
     const requestSender = createRequestSender({ host: getHost() });
@@ -110,6 +115,10 @@ export default function createPaymentIntegrationService(
 
     const paymentProviderCustomerActionCreator = new PaymentProviderCustomerActionCreator();
 
+    const shippingCountryActionCreator = new ShippingCountryActionCreator(
+        new ShippingCountryRequestSender(requestSender, { locale: getLocale() }),
+    );
+
     return new DefaultPaymentIntegrationService(
         store,
         storeProjectionFactory,
@@ -125,5 +134,6 @@ export default function createPaymentIntegrationService(
         storeCreditActionCreator,
         spamProtectionActionCreator,
         paymentProviderCustomerActionCreator,
+        shippingCountryActionCreator,
     );
 }

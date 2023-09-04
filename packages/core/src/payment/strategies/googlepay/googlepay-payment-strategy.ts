@@ -61,6 +61,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         const state = await this._store.dispatch(
             this._paymentMethodActionCreator.loadPaymentMethod(methodId),
         );
+        const storeConfig = state.config.getStoreConfigOrThrow();
 
         this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         this._is3dsEnabled =
@@ -77,10 +78,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             this._paymentMethod.clientToken &&
             this._paymentMethod.initializationData
         ) {
-            this._braintreeSDKCreator.initialize(
-                this._paymentMethod.clientToken,
-                this._paymentMethod.initializationData,
-            );
+            this._braintreeSDKCreator.initialize(this._paymentMethod.clientToken, storeConfig);
         }
 
         await this._googlePayPaymentProcessor.initialize(methodId);

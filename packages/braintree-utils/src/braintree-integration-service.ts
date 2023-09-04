@@ -3,6 +3,7 @@ import {
     LegacyAddress,
     NotInitializedError,
     NotInitializedErrorType,
+    StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
@@ -14,7 +15,6 @@ import {
     BraintreeEnv,
     BraintreeError,
     BraintreeHostWindow,
-    BraintreeInitializationData,
     BraintreeModule,
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
@@ -44,9 +44,9 @@ export default class BraintreeIntegrationService {
         private braintreeHostWindow: BraintreeHostWindow,
     ) {}
 
-    initialize(clientToken: string, initializationData: BraintreeInitializationData) {
+    initialize(clientToken: string, storeConfig: StoreConfig) {
         this.clientToken = clientToken;
-        this.braintreeScriptLoader.initialize(initializationData);
+        this.braintreeScriptLoader.initialize(storeConfig);
     }
 
     async getBraintreeConnect(cardId?: string) {
@@ -67,6 +67,11 @@ export default class BraintreeIntegrationService {
                 styles: {
                     root: {
                         backgroundColorPrimary: 'transparent',
+                    },
+                    text: {
+                        caption: {
+                            fontSize: '1rem',
+                        },
                     },
                 },
             });
