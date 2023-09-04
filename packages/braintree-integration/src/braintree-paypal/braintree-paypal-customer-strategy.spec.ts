@@ -10,7 +10,6 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
     BraintreeScriptLoader,
-    getBraintree,
     getDataCollectorMock,
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
@@ -26,6 +25,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import { getBraintree } from '../mocks/braintree.mock';
 import { getPaypalSDKMock } from '../mocks/paypal.mock';
 
 import BraintreePaypalCustomerInitializeOptions from './braintree-paypal-customer-options';
