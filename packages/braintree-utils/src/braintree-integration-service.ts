@@ -68,6 +68,11 @@ export default class BraintreeIntegrationService {
                     root: {
                         backgroundColorPrimary: 'transparent',
                     },
+                    text: {
+                        caption: {
+                            fontSize: '1rem',
+                        },
+                    },
                 },
             });
         }
