@@ -279,6 +279,8 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
             ApplePayGatewayType.BRAINTREE,
         );
 
+        const storeConfig = state.getStoreConfigOrThrow();
+
         const braintreePaymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(
             ApplePayGatewayType.BRAINTREE,
         );
@@ -289,7 +291,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 
         this._braintreeIntegrationService.initialize(
             braintreePaymentMethod.clientToken,
-            braintreePaymentMethod.initializationData,
+            storeConfig,
         );
     }
 }
