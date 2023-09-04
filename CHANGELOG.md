@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.441.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.441.1...v1.441.2) (2023-09-04)
+
+
+### Bug Fixes
+
+* **checkout:** PI-747 bluesnap 3ds for stored card, billing/shipping state mapping ([f008550](https://github.com/bigcommerce/checkout-sdk-js/commit/f008550aba21a8a822c418bf82e20781d7db31f3))
+
 ### [1.441.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.441.0...v1.441.1) (2023-09-04)
 
 ## [1.441.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.440.0...v1.441.0) (2023-09-04)
