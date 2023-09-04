@@ -1,5 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
+import { BraintreeIntegrationService } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     InvalidArgumentError,
     NotInitializedError,
@@ -17,6 +18,7 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { ApplePayGatewayType } from './apple-pay';
 import { WithApplePayPaymentInitializeOptions } from './apple-pay-payment-initialize-options';
 import ApplePaySessionFactory from './apple-pay-session-factory';
 
@@ -43,6 +45,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         private _requestSender: RequestSender,
         private _paymentIntegrationService: PaymentIntegrationService,
         private _sessionFactory: ApplePaySessionFactory,
+        private _braintreeIntegrationService: BraintreeIntegrationService,
     ) {}
 
     async initialize(
@@ -61,6 +64,14 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         this._storeCreditLabel = options.applepay?.storeCreditLabel || DefaultLabels.StoreCredit;
 
         await this._paymentIntegrationService.loadPaymentMethod(methodId);
+
+        const state = await this._paymentIntegrationService.loadPaymentMethod(methodId);
+
+        const paymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(methodId);
+
+        if (paymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE) {
+            await this._initializeBraintreeIntegrationService();
+        }
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -222,9 +233,17 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         promise: ApplePayPromise,
     ) {
         const { token } = event.payment;
+
+        let deviceSessionId: string | undefined;
+
+        if (paymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE) {
+            deviceSessionId = await this._getBraintreeDeviceData();
+        }
+
         const payment: Payment = {
             methodId: paymentMethod.id,
             paymentData: {
+                deviceSessionId,
                 formattedPayload: {
                     apple_pay_token: {
                         payment_data: token.paymentData,
@@ -247,5 +266,30 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                 new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
             );
         }
+    }
+
+    private async _getBraintreeDeviceData() {
+        const data = await this._braintreeIntegrationService.getDataCollector();
+
+        return data.deviceData;
+    }
+
+    private async _initializeBraintreeIntegrationService() {
+        const state = await this._paymentIntegrationService.loadPaymentMethod(
+            ApplePayGatewayType.BRAINTREE,
+        );
+
+        const braintreePaymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(
+            ApplePayGatewayType.BRAINTREE,
+        );
+
+        if (!braintreePaymentMethod.clientToken || !braintreePaymentMethod.initializationData) {
+            return;
+        }
+
+        this._braintreeIntegrationService.initialize(
+            braintreePaymentMethod.clientToken,
+            braintreePaymentMethod.initializationData,
+        );
     }
 }
