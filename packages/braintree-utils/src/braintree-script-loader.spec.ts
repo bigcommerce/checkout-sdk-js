@@ -35,7 +35,6 @@ describe('BraintreeScriptLoader', () => {
             features: {
                 ...storeConfig.checkoutSettings.features,
                 'PROJECT-5505.PayPal_Accelerated_Checkout_v2_for_Braintree': true,
-                'PAYPAL-2770.PayPal_Accelerated_checkout_ab_testing': true,
             },
         },
     };
