@@ -19,7 +19,9 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeShippingAddressOverride,
+    BraintreeThreeDSecure,
     GetLocalPaymentInstance,
+    GooglePayBraintreeSDK,
     LocalPaymentInstance,
 } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
@@ -38,6 +40,8 @@ export default class BraintreeIntegrationService {
     private paypalCheckout?: BraintreePaypalCheckout;
     private usBankAccount?: Promise<BraintreeBankAccount>;
     private braintreeLocalMethods?: LocalPaymentInstance;
+    private googlePay?: Promise<GooglePayBraintreeSDK>;
+    private threeDS?: Promise<BraintreeThreeDSecure>;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
@@ -171,6 +175,17 @@ export default class BraintreeIntegrationService {
         return this.usBankAccount;
     }
 
+    get3DS(): Promise<BraintreeThreeDSecure> {
+        if (!this.threeDS) {
+            this.threeDS = Promise.all([
+                this.getClient(),
+                this.braintreeScriptLoader.load3DS(),
+            ]).then(([client, threeDSecure]) => threeDSecure.create({ client, version: 2 }));
+        }
+
+        return this.threeDS;
+    }
+
     async getDataCollector(
         options?: Partial<BraintreeDataCollectorCreatorConfig>,
     ): Promise<BraintreeDataCollector> {
@@ -205,6 +220,17 @@ export default class BraintreeIntegrationService {
         }
 
         return cached;
+    }
+
+    getGooglePaymentComponent(): Promise<GooglePayBraintreeSDK> {
+        if (!this.googlePay) {
+            this.googlePay = Promise.all([
+                this.getClient(),
+                this.braintreeScriptLoader.loadGooglePayment(),
+            ]).then(([client, googlePay]) => googlePay.create({ client }));
+        }
+
+        return this.googlePay;
     }
 
     getBraintreeEnv(isTestMode = false): BraintreeEnv {

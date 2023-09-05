@@ -14,6 +14,20 @@ export function getCheckoutCom(): PaymentMethod<GooglePayInitializationData> {
     };
 }
 
+export function getBraintree(): PaymentMethod<GooglePayInitializationData> {
+    const generic = getGeneric();
+
+    return {
+        ...generic,
+        id: 'googlepaybraintree',
+        clientToken: 'token',
+        initializationData: {
+            ...generic.initializationData!,
+            isThreeDSecureEnabled: false,
+        },
+    };
+}
+
 export function getStripe(): PaymentMethod<GooglePayInitializationData> {
     const generic = getGeneric();
 

@@ -13,6 +13,7 @@ import {
     BraintreeHostWindow,
     BraintreeModuleCreator,
     BraintreePaypalCheckout,
+    BraintreeThreeDSecure,
 } from './braintree';
 import BraintreeIntegrationService from './braintree-integration-service';
 import BraintreeScriptLoader from './braintree-script-loader';
@@ -25,6 +26,7 @@ import {
     getModuleCreatorMock,
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
+    getThreeDSecureMock,
 } from './mocks/braintree.mock';
 import { PaypalSDK } from './paypal';
 
@@ -37,6 +39,8 @@ describe('BraintreeIntegrationService', () => {
     let clientMock: BraintreeClient;
     let clientCreatorMock: BraintreeModuleCreator<BraintreeClient>;
     let dataCollectorMock: BraintreeDataCollector;
+    let threeDSecureMock: BraintreeThreeDSecure;
+    let threeDSecureCreatorMock: BraintreeModuleCreator<BraintreeThreeDSecure>;
     let dataCollectorCreatorMock: BraintreeModuleCreator<BraintreeDataCollector>;
     let paypalCheckoutMock: BraintreePaypalCheckout;
     let paypalCheckoutCreatorMock: BraintreeModuleCreator<BraintreePaypalCheckout>;
@@ -66,6 +70,8 @@ describe('BraintreeIntegrationService', () => {
         dataCollectorCreatorMock = getModuleCreatorMock(dataCollectorMock);
         paypalCheckoutMock = getPaypalCheckoutMock();
         paypalCheckoutCreatorMock = getPayPalCheckoutCreatorMock(paypalCheckoutMock, false);
+        threeDSecureMock = getThreeDSecureMock();
+        threeDSecureCreatorMock = getModuleCreatorMock(threeDSecureMock);
         loader = createScriptLoader();
 
         braintreeHostWindowMock = window as BraintreeHostWindow;
@@ -88,6 +94,10 @@ describe('BraintreeIntegrationService', () => {
         );
         jest.spyOn(braintreeScriptLoader, 'loadBraintreeLocalMethods').mockImplementation(() =>
             getModuleCreatorMock(),
+        );
+
+        jest.spyOn(braintreeScriptLoader, 'load3DS').mockImplementation(
+            () => threeDSecureCreatorMock,
         );
     });
 
@@ -373,6 +383,16 @@ describe('BraintreeIntegrationService', () => {
             await braintreeIntegrationService.loadBraintreeLocalMethods(jest.fn(), '');
 
             expect(braintreeScriptLoader.loadBraintreeLocalMethods).toHaveBeenCalled();
+        });
+    });
+
+    describe('#get3DS()', () => {
+        it('loads 3DS payment methods', async () => {
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
+
+            await braintreeIntegrationService.get3DS();
+
+            expect(braintreeScriptLoader.load3DS).toHaveBeenCalled();
         });
     });
 

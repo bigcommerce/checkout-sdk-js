@@ -7,6 +7,7 @@ export { default as createGooglePayCybersourcePaymentStrategy } from './factorie
 export { default as createGooglePayOrbitalPaymentStrategy } from './factories/payment/create-google-pay-orbital-payment-strategy';
 export { default as createGooglePayStripePaymentStrategy } from './factories/payment/create-google-pay-stripe-payment-strategy';
 export { default as createGooglePayWorldpayAccessPaymentStrategy } from './factories/payment/create-google-pay-worldpayaccess-payment-strategy';
+export { default as createGooglePayBraintreePaymentStrategy } from './factories/payment/create-google-pay-braintree-payment-strategy';
 
 export { default as createGooglePayAuthorizeDotNetCustomerStrategy } from './factories/customer/create-google-pay-authorizenet-customer-strategy';
 export { default as createGooglePayCheckoutComCustomerStrategy } from './factories/customer/create-google-pay-checkoutcom-customer-strategy';

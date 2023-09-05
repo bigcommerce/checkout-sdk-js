@@ -20,6 +20,10 @@ export {
     LocalPaymentsPayload,
     LocalPaymentInstance,
     BraintreeHostWindow,
+    GooglePayBraintreeSDK,
+    BraintreeClient,
+    BraintreeThreeDSecure,
+    BraintreeGooglePayThreeDSecure,
 } from './braintree';
 
 export { PaypalSDK, PaypalButtonOptions, PaypalAuthorizeData } from './paypal';
@@ -39,6 +43,10 @@ export {
     getBraintreeLocalPaymentMock,
     getBraintree,
     getDeviceDataMock,
+    getModuleCreatorMock,
+    getGooglePayMock,
+    getClientMock,
+    getThreeDSecureMock,
 } from './mocks/braintree.mock';
 
 export { BRAINTREE_SDK_STABLE_VERSION, BRAINTREE_SDK_ALPHA_VERSION } from './sdk-verison';

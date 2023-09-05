@@ -11,8 +11,12 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
     BraintreeShippingAddressOverride,
+    BraintreeThreeDSecure,
     BraintreeTokenizePayload,
+    GooglePayBraintreePaymentDataRequestV1,
+    GooglePayBraintreeSDK,
     LocalPaymentInstance,
+    TotalPriceStatusType,
 } from '../braintree';
 
 export function getClientMock(): BraintreeClient {
@@ -199,6 +203,61 @@ export function getTokenizePayload(): BraintreeTokenizePayload {
                 countryCode: 'US',
                 postalCode: '95555',
             },
+        },
+    };
+}
+
+export function getGooglePayMock(): GooglePayBraintreeSDK {
+    return {
+        createPaymentDataRequest: jest.fn(() => getBraintreePaymentDataRequest()),
+        teardown: jest.fn(),
+    };
+}
+
+export function getThreeDSecureMock(): BraintreeThreeDSecure {
+    return {
+        verifyCard: jest.fn(),
+        cancelVerifyCard: jest.fn(),
+        teardown: jest.fn(() => Promise.resolve()),
+    };
+}
+
+export function getBraintreePaymentDataRequest(): GooglePayBraintreePaymentDataRequestV1 {
+    return {
+        allowedPaymentMethods: [],
+        apiVersion: 1,
+        cardRequirements: {
+            allowedCardNetworks: [],
+            billingAddressFormat: '',
+            billingAddressRequired: true,
+        },
+        environment: '',
+        i: {
+            googleTransactionId: '',
+            startTimeMs: 1,
+        },
+        merchantInfo: {
+            authJwt: '',
+            merchantId: '',
+            merchantName: '',
+        },
+        paymentMethodTokenizationParameters: {
+            parameters: {
+                'braintree:apiVersion': '',
+                'braintree:authorizationFingerprint': '',
+                'braintree:merchantId': '',
+                'braintree:metadata': '',
+                'braintree:sdkVersion': '',
+                gateway: '',
+            },
+            tokenizationType: '',
+        },
+        shippingAddressRequired: true,
+        phoneNumberRequired: true,
+        transactionInfo: {
+            currencyCode: '',
+            totalPrice: '',
+            totalPriceStatus: TotalPriceStatusType.FINAL,
         },
     };
 }
