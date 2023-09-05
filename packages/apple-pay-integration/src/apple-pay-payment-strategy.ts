@@ -63,8 +63,6 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
         this._subTotalLabel = options.applepay?.subtotalLabel || DefaultLabels.Subtotal;
         this._storeCreditLabel = options.applepay?.storeCreditLabel || DefaultLabels.StoreCredit;
 
-        await this._paymentIntegrationService.loadPaymentMethod(methodId);
-
         const state = await this._paymentIntegrationService.loadPaymentMethod(methodId);
 
         const paymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(methodId);
