@@ -1,17 +1,13 @@
-import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
-import { Observable, of } from 'rxjs';
 
 import {
     Checkout,
-    FinalizeOrderAction,
     HostedForm,
     InvalidArgumentError,
-    LoadOrderSucceededAction,
-    LoadPaymentMethodAction,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
+    Order,
     OrderActionType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
@@ -20,10 +16,7 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentMethod,
-    PaymentMethodActionType,
     RequestError,
-    SubmitOrderAction,
-    SubmitPaymentAction,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
@@ -64,13 +57,13 @@ import {
 
 describe('StripeV3PaymentStrategy', () => {
     let checkoutMock: Checkout;
-    let finalizeOrderAction: Observable<FinalizeOrderAction>;
-    let loadPaymentMethodAction: Observable<LoadPaymentMethodAction>;
+    let finalizeOrderAction: OrderActionType;
+    let loadPaymentMethodAction: Promise<PaymentMethod>;
     let paymentMethodMock: PaymentMethod;
     let strategy: StripeV3PaymentStrategy;
     let stripeScriptLoader: StripeV3ScriptLoader;
-    let submitOrderAction: Observable<SubmitOrderAction>;
-    let submitPaymentAction: Observable<SubmitPaymentAction>;
+    let submitOrderAction: OrderActionType;
+    let submitPaymentAction: PaymentActionType;
 
     let scriptLoader: ScriptLoader;
     let paymentIntegrationService: PaymentIntegrationService;
@@ -82,14 +75,10 @@ describe('StripeV3PaymentStrategy', () => {
         paymentMethodMock = { ...getStripeV3(), clientToken: 'myToken' };
 
         stripeScriptLoader = new StripeV3ScriptLoader(scriptLoader);
-        finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
-        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
-        loadPaymentMethodAction = of(
-            createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {
-                methodId: `stripev3?method=${paymentMethodMock.id}`,
-            }),
-        );
+        finalizeOrderAction = OrderActionType.FinalizeOrderRequested;
+        submitOrderAction = OrderActionType.SubmitOrderRequested;
+        submitPaymentAction = PaymentActionType.SubmitPaymentRequested;
+        loadPaymentMethodAction = Promise.resolve(paymentMethodMock);
         checkoutMock = getCheckout();
 
         jest.useFakeTimers();
@@ -613,7 +602,7 @@ describe('StripeV3PaymentStrategy', () => {
                     window.location.replace = jest.fn();
 
                     jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
-                        of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)),
+                        Promise.resolve(errorResponse),
                     );
 
                     await strategy.initialize(options);
@@ -640,9 +629,7 @@ describe('StripeV3PaymentStrategy', () => {
                     );
 
                     jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
-                        Promise.reject(
-                            createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse),
-                        ),
+                        Promise.reject(Promise.reject(errorResponse)),
                     );
 
                     await strategy.initialize(options);
@@ -1257,13 +1244,6 @@ describe('StripeV3PaymentStrategy', () => {
                     ...getStripeV3(StripeElementType.Alipay),
                     clientToken: 'myToken',
                 };
-                loadPaymentMethodAction = of(
-                    createAction(
-                        PaymentMethodActionType.LoadPaymentMethodSucceeded,
-                        paymentMethodMock,
-                        { methodId: `stripev3?method=${paymentMethodMock.id}` },
-                    ),
-                );
                 jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
                     loadPaymentMethodAction,
                 );
@@ -1293,13 +1273,6 @@ describe('StripeV3PaymentStrategy', () => {
                     ...getStripeV3(StripeElementType.IDEAL),
                     clientToken: 'myToken',
                 };
-                loadPaymentMethodAction = of(
-                    createAction(
-                        PaymentMethodActionType.LoadPaymentMethodSucceeded,
-                        paymentMethodMock,
-                        { methodId: `stripev3?method=${paymentMethodMock.id}` },
-                    ),
-                );
                 jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
                     loadPaymentMethodAction,
                 );
@@ -1328,13 +1301,6 @@ describe('StripeV3PaymentStrategy', () => {
                     ...getStripeV3(StripeElementType.Sepa),
                     clientToken: 'myToken',
                 };
-                loadPaymentMethodAction = of(
-                    createAction(
-                        PaymentMethodActionType.LoadPaymentMethodSucceeded,
-                        paymentMethodMock,
-                        { methodId: `stripev3?method=${paymentMethodMock.id}` },
-                    ),
-                );
                 jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
                     loadPaymentMethodAction,
                 );
@@ -1397,7 +1363,7 @@ describe('StripeV3PaymentStrategy', () => {
     describe('When Hosted Form is enabled', () => {
         let form: Pick<HostedForm, 'attach' | 'submit' | 'validate' | 'detach'>;
         let initializeOptions: PaymentInitializeOptions;
-        let loadOrderAction: Observable<LoadOrderSucceededAction>;
+        let loadOrderAction: Promise<Order>;
         let state;
         const stripeV3JsMock = getStripeV3JsMock();
 
@@ -1410,14 +1376,7 @@ describe('StripeV3PaymentStrategy', () => {
             };
             paymentMethodMock = { ...getStripeV3('card', false, true), clientToken: 'myToken' };
             initializeOptions = getHostedFormInitializeOptions();
-            loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
-            loadPaymentMethodAction = of(
-                createAction(
-                    PaymentMethodActionType.LoadPaymentMethodSucceeded,
-                    paymentMethodMock,
-                    { methodId: `stripev3?method=${paymentMethodMock.id}` },
-                ),
-            );
+            loadOrderAction = Promise.resolve(getOrder());
             state = paymentIntegrationService.getState();
 
             jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(

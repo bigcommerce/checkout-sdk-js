@@ -134,8 +134,6 @@ export {
     PaymentStrategyResolveId,
     VaultedInstrument,
     WithAccountCreation,
-    LoadPaymentMethodAction,
-    PaymentMethodActionType,
     StripeV3FormattedPayload,
 } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';

@@ -1,17 +1,16 @@
 import { IndividualCardElementOptions } from './stripev3';
 
 export default function isIndividualCardElementOptions(
-    individualCardElementOptions: unknown,
+    individualCardElementOptions: any,
 ): individualCardElementOptions is IndividualCardElementOptions {
     return (
-        Boolean(
-            (individualCardElementOptions as IndividualCardElementOptions).cardNumberElementOptions,
-        ) &&
-        Boolean(
-            (individualCardElementOptions as IndividualCardElementOptions).cardCvcElementOptions,
-        ) &&
-        Boolean(
-            (individualCardElementOptions as IndividualCardElementOptions).cardExpiryElementOptions,
-        )
+        individualCardElementOptions !== null &&
+        typeof individualCardElementOptions === 'object' &&
+        'cardNumberElementOptions' in individualCardElementOptions &&
+        'cardCvcElementOptions' in individualCardElementOptions &&
+        'cardExpiryElementOptions' in individualCardElementOptions &&
+        typeof individualCardElementOptions.cardNumberElementOptions !== 'undefined' &&
+        typeof individualCardElementOptions.cardCvcElementOptions !== 'undefined' &&
+        typeof individualCardElementOptions.cardExpiryElementOptions !== 'undefined'
     );
 }

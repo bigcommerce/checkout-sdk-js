@@ -1,9 +1,10 @@
-import { Address } from '../address';
-
 import BillingAddress from './billing-address';
 
-export default function isBillingAddressLike(address: Address): address is BillingAddress {
-    const billingAddress = address as BillingAddress;
-
-    return typeof billingAddress.id !== 'undefined';
+export default function isBillingAddressLike(address: any): address is BillingAddress {
+    return (
+        typeof address === 'object' &&
+        address !== null &&
+        'id' in address &&
+        typeof address.id !== 'undefined'
+    );
 }
