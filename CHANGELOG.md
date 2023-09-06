@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.442.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.441.4...v1.442.0) (2023-09-06)
+
+
+### Features
+
+* **payment:** PAYPAL-2728 create shipping strategy for Braintree AXO ([3dafa27](https://github.com/bigcommerce/checkout-sdk-js/commit/3dafa2738a58740c1a7e1922276a9493923326c3))
+
 ### [1.441.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.441.3...v1.441.4) (2023-09-06)
 
 

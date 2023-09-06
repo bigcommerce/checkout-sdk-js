@@ -119,6 +119,7 @@
 - [BoltCustomerInitializeOptions](interfaces/BoltCustomerInitializeOptions.md)
 - [BoltPaymentInitializeOptions](interfaces/BoltPaymentInitializeOptions.md)
 - [BraintreeAcceleratedCheckoutCustomer](interfaces/BraintreeAcceleratedCheckoutCustomer.md)
+- [BraintreeAcceleratedCheckoutInitializeOptions](interfaces/BraintreeAcceleratedCheckoutInitializeOptions.md)
 - [BraintreeAcceleratedCheckoutPaymentInitializeOptions](interfaces/BraintreeAcceleratedCheckoutPaymentInitializeOptions.md)
 - [BraintreeError](interfaces/BraintreeError.md)
 - [BraintreeFormFieldCardTypeChangeEventData](interfaces/BraintreeFormFieldCardTypeChangeEventData.md)
