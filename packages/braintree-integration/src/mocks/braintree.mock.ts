@@ -5,6 +5,28 @@ import {
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+export function getBraintree(): PaymentMethod {
+    return {
+        id: 'braintree',
+        logoUrl:
+            'https://cdn.bcapp.dev/rHEAD/modules/checkout/braintree/images/paypal_powered_braintree_horizontal.png',
+        method: 'credit-card',
+        supportedCards: ['VISA', 'MC', 'AMEX', 'DISCOVER', 'JCB', 'DINERS'],
+        config: {
+            displayName: 'Credit Card',
+            cardCode: true,
+            enablePaypal: true,
+            merchantId: '',
+            testMode: true,
+            isVisaCheckoutEnabled: false,
+        },
+        initializationData: {
+            isAcceleratedCheckoutEnabled: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+    };
+}
+
 export function getBankAccountMock(): BraintreeBankAccount {
     return {
         teardown: jest.fn(() => Promise.resolve()),

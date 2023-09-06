@@ -31,8 +31,7 @@ export default class BraintreeScriptLoader {
     initialize(storeConfig: StoreConfig) {
         const features = storeConfig.checkoutSettings.features;
         const shouldUseBraintreeAlphaVersion =
-            features['PROJECT-5505.PayPal_Accelerated_Checkout_v2_for_Braintree'] &&
-            features['PAYPAL-2770.PayPal_Accelerated_checkout_ab_testing'];
+            features['PROJECT-5505.PayPal_Accelerated_Checkout_v2_for_Braintree'];
 
         this.braintreeSdkVersion = shouldUseBraintreeAlphaVersion
             ? BRAINTREE_SDK_ALPHA_VERSION

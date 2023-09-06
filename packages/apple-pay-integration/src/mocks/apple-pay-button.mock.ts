@@ -1,4 +1,5 @@
 import { CheckoutButtonInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { getBuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { WithApplePayButtonInitializeOptions } from '../apple-pay-button-initialize-options';

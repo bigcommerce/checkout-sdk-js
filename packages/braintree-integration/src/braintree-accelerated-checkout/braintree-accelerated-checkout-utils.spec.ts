@@ -138,7 +138,10 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                 paymentMethod.clientToken,
                 storeConfig,
             );
-            expect(braintreeIntegrationService.getBraintreeConnect).toHaveBeenCalledWith(cart.id);
+            expect(braintreeIntegrationService.getBraintreeConnect).toHaveBeenCalledWith(
+                cart.id,
+                false,
+            );
         });
     });
 

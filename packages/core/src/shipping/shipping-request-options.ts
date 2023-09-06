@@ -1,6 +1,7 @@
 import { RequestOptions } from '../common/http-request';
 
 import { AmazonPayV2ShippingInitializeOptions } from './strategies/amazon-pay-v2';
+import { BraintreeAcceleratedCheckoutInitializeOptions } from './strategies/braintree';
 import { StripeUPEShippingInitializeOptions } from './strategies/stripe-upe';
 
 /**
@@ -38,4 +39,10 @@ export interface ShippingInitializeOptions<T = {}> extends ShippingRequestOption
      * when using Stripe Upe Link.
      */
     stripeupe?: StripeUPEShippingInitializeOptions;
+
+    /**
+     * The options that are required to initialize the shipping step of checkout
+     * when using Braintree Accelerated Checkout.
+     */
+    braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutInitializeOptions;
 }

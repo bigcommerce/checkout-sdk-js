@@ -1538,6 +1538,17 @@ declare interface BraintreeAcceleratedCheckoutCustomer {
 }
 
 /**
+ * A set of options that are required to initialize the shipping step of
+ * checkout in order to support Braintree Accelerated Checkout.
+ */
+declare interface BraintreeAcceleratedCheckoutInitializeOptions {
+    /**
+     * The identifier of the payment method.
+     */
+    methodId: string;
+}
+
+/**
  * A set of options that are required to initialize the Braintree Accelerated Checkout payment
  * method for presenting on the page.
  *
@@ -7273,6 +7284,11 @@ declare interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptio
      * when using Stripe Upe Link.
      */
     stripeupe?: StripeUPEShippingInitializeOptions;
+    /**
+     * The options that are required to initialize the shipping step of checkout
+     * when using Braintree Accelerated Checkout.
+     */
+    braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutInitializeOptions;
 }
 
 declare interface ShippingOption {

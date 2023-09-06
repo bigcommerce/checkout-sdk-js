@@ -1,6 +1,6 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethodInvalidError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import BlueSnapDirect3ds from './bluesnap-direct-3ds';
 import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
@@ -60,7 +60,7 @@ describe('BlueSnapDirectHostedForm', () => {
 
             await expect(
                 threeDSChallange.initialize3ds('pfToken', previouslyUsedCardDataMock),
-            ).rejects.toThrow(PaymentMethodInvalidError);
+            ).rejects.toThrow(PaymentMethodFailedError);
         });
     });
 });

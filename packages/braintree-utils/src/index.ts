@@ -41,7 +41,6 @@ export {
     getPaypalCheckoutMock,
     getPayPalCheckoutCreatorMock,
     getBraintreeLocalPaymentMock,
-    getBraintree,
     getDeviceDataMock,
     getModuleCreatorMock,
     getGooglePayMock,

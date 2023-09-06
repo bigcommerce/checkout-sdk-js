@@ -104,6 +104,8 @@ describe('BraintreeIntegrationService', () => {
     afterEach(() => {
         jest.resetAllMocks();
         jest.restoreAllMocks();
+
+        localStorage.clear();
     });
 
     describe('#initialize()', () => {
@@ -183,6 +185,26 @@ describe('BraintreeIntegrationService', () => {
             });
 
             expect(result).toEqual(braintreeConnectMock);
+        });
+
+        it('sets axo to sandbox mode if test mode is enabled', async () => {
+            jest.spyOn(Storage.prototype, 'setItem').mockImplementation(jest.fn);
+
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
+
+            await braintreeIntegrationService.getBraintreeConnect('asd123', true);
+
+            expect(window.localStorage.setItem).toHaveBeenCalledWith('axoEnv', 'sandbox');
+        });
+
+        it('does not switch axo to sandbox mode if test mode is disabled', async () => {
+            jest.spyOn(Storage.prototype, 'setItem').mockImplementation(jest.fn);
+
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
+
+            await braintreeIntegrationService.getBraintreeConnect('asd123', false);
+
+            expect(window.localStorage.setItem).not.toHaveBeenCalled();
         });
     });
 

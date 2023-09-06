@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.443.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.442.0...v1.443.0) (2023-09-06)
+
+
+### Features
+
+* **payment:** PI-626 [Stripe] An additional call to confirm payment with Stripe is resulting in error. ([4f9075a](https://github.com/bigcommerce/checkout-sdk-js/commit/4f9075a73aa288500678e56d1859e8c6acc26e19))
+
+## [1.442.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.441.4...v1.442.0) (2023-09-06)
+
+
+### Features
+
+* **payment:** PAYPAL-2728 create shipping strategy for Braintree AXO ([3dafa27](https://github.com/bigcommerce/checkout-sdk-js/commit/3dafa2738a58740c1a7e1922276a9493923326c3))
+
+### [1.441.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.441.3...v1.441.4) (2023-09-06)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-2923 covered Braintree AXO sandbox switcher with test mode condition ([#2168](https://github.com/bigcommerce/checkout-sdk-js/issues/2168)) ([bfafc5c](https://github.com/bigcommerce/checkout-sdk-js/commit/bfafc5cb0130d3451c713080960444839875c110))
+
+### [1.441.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.441.2...v1.441.3) (2023-09-05)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2908 removed unnecessary 2770 experiment because we dont need it here anymore (Braintree SDK) ([#2166](https://github.com/bigcommerce/checkout-sdk-js/issues/2166)) ([f002415](https://github.com/bigcommerce/checkout-sdk-js/commit/f002415e00b60393c8a80acbf1a4e31d02984a84))
+
+### [1.441.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.441.1...v1.441.2) (2023-09-04)
+
+
+### Bug Fixes
+
+* **checkout:** PI-747 bluesnap 3ds for stored card, billing/shipping state mapping ([f008550](https://github.com/bigcommerce/checkout-sdk-js/commit/f008550aba21a8a822c418bf82e20781d7db31f3))
+
+### [1.441.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.441.0...v1.441.1) (2023-09-04)
+
+## [1.441.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.440.0...v1.441.0) (2023-09-04)
+
+
+### Features
+
+* **payment:** PAYPAL-2913 provided customer device data on any place order for BT AXO ([#2159](https://github.com/bigcommerce/checkout-sdk-js/issues/2159)) ([d110fa0](https://github.com/bigcommerce/checkout-sdk-js/commit/d110fa06fd10f5f5a06e6a838e9040720fc4e36b))
+* **payment:** PAYPAL-2914 updated BT AXO Credit card component style ([#2160](https://github.com/bigcommerce/checkout-sdk-js/issues/2160)) ([8f82f73](https://github.com/bigcommerce/checkout-sdk-js/commit/8f82f73381bf1f0e7fa3a3cd9ef2ac42aede9414))
+
 ## [1.440.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.439.0...v1.440.0) (2023-09-04)
 
 
