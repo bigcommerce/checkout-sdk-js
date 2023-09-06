@@ -128,6 +128,7 @@ export function getRetrievePaymentIntentResponse(): unknown {
     return {
         paymentIntent: {
             id: 'pi_1234',
+            status: 'requires_action',
         },
     };
 }
@@ -136,6 +137,15 @@ export function getPaymentMethodResponse(): unknown {
     return {
         paymentMethod: {
             id: 'pm_1234',
+        },
+    };
+}
+
+export function getRetrievePaymentIntentResponseSucceeded() {
+    return {
+        paymentIntent: {
+            id: 'pi_1234',
+            status: 'succeeded',
         },
     };
 }

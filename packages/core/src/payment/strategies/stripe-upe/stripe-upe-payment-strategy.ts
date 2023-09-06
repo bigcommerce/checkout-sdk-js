@@ -36,6 +36,7 @@ import {
     StripeStringConstants,
     StripeUPEAppearanceOptions,
     StripeUPEClient,
+    StripeUPEPaymentIntentStatus,
 } from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
@@ -259,7 +260,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 this._paymentActionCreator.submitPayment(paymentPayload),
             );
         } catch (error) {
-            return await this._processAdditionalAction(error);
+            return await this._processAdditionalAction(error, methodId);
         }
     }
 
@@ -271,6 +272,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         const paymentMethod = this._store
             .getState()
             .paymentMethods.getPaymentMethodOrThrow(methodId);
+
         const paymentPayload = {
             methodId,
             paymentData: {
@@ -290,11 +292,31 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         } catch (error) {
             return await this._processAdditionalAction(
                 error,
+                methodId,
                 shouldSaveInstrument,
                 shouldSetAsDefaultInstrument,
-                methodId,
             );
         }
+    }
+
+    private async _isPaymentCompleted(methodId: string) {
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const { features } = state.config.getStoreConfigOrThrow().checkoutSettings;
+
+        if (
+            !paymentMethod.clientToken ||
+            !this._stripeUPEClient ||
+            !features['PI-626.Block_unnecessary_payment_confirmation_for_StripeUPE']
+        ) {
+            return false;
+        }
+
+        const retrivedPI = await this._stripeUPEClient.retrievePaymentIntent(
+            paymentMethod.clientToken,
+        );
+
+        return retrivedPI.paymentIntent?.status === StripeUPEPaymentIntentStatus.SUCCEEDED;
     }
 
     private async _executeWithVaulted(
@@ -432,9 +454,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
     private async _processAdditionalAction(
         error: Error,
+        methodId: string,
         shouldSaveInstrument = false,
         shouldSetAsDefaultInstrument = false,
-        methodId?: string,
     ): Promise<InternalCheckoutSelectors | never> {
         if (!(error instanceof RequestError)) {
             throw error;
@@ -449,8 +471,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 type,
                 data: { token, redirect_url },
             } = error.body.additional_action_required;
+            const isPaymentCompleted = await this._isPaymentCompleted(methodId);
 
-            if (type === 'redirect_to_url' && redirect_url) {
+            if (type === 'redirect_to_url' && redirect_url && !isPaymentCompleted) {
                 const { paymentIntent, error: stripeError } =
                     await this._stripeUPEClient.confirmPayment(
                         this._mapStripePaymentData(redirect_url),
@@ -464,13 +487,16 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 if (!paymentIntent) {
                     throw new RequestError();
                 }
-            } else if (methodId && type === 'additional_action_requires_payment_method' && token) {
+            } else if (type === 'additional_action_requires_payment_method' && token) {
                 let result;
                 let catchedConfirmError = false;
                 const stripePaymentData = this._mapStripePaymentData();
+                const isPaymentCompleted = await this._isPaymentCompleted(methodId);
 
                 try {
-                    result = await this._stripeUPEClient.confirmPayment(stripePaymentData);
+                    result = !isPaymentCompleted
+                        ? await this._stripeUPEClient.confirmPayment(stripePaymentData)
+                        : await this._stripeUPEClient.retrievePaymentIntent(token);
                 } catch (error) {
                     try {
                         result = await this._stripeUPEClient.retrievePaymentIntent(token);
