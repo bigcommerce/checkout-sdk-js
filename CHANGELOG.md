@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.441.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.441.3...v1.441.4) (2023-09-06)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-2923 covered Braintree AXO sandbox switcher with test mode condition ([#2168](https://github.com/bigcommerce/checkout-sdk-js/issues/2168)) ([bfafc5c](https://github.com/bigcommerce/checkout-sdk-js/commit/bfafc5cb0130d3451c713080960444839875c110))
+
 ### [1.441.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.441.2...v1.441.3) (2023-09-05)
 
 
