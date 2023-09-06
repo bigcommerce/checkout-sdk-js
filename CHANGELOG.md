@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.443.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.442.0...v1.443.0) (2023-09-06)
+
+
+### Features
+
+* **payment:** PI-626 [Stripe] An additional call to confirm payment with Stripe is resulting in error. ([4f9075a](https://github.com/bigcommerce/checkout-sdk-js/commit/4f9075a73aa288500678e56d1859e8c6acc26e19))
+
 ## [1.442.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.441.4...v1.442.0) (2023-09-06)
 
 
