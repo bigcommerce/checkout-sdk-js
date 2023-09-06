@@ -6,6 +6,7 @@ import { Registry } from '../common/registry';
 import createShippingStrategyRegistry from './create-shipping-strategy-registry';
 import { ShippingStrategy } from './strategies';
 import { AmazonPayV2ShippingStrategy } from './strategies/amazon-pay-v2';
+import { BraintreeAcceleratedCheckoutShippingStrategy } from './strategies/braintree';
 
 describe('CreateShippingStrategyRegistry', () => {
     let registry: Registry<ShippingStrategy>;
@@ -21,5 +22,11 @@ describe('CreateShippingStrategyRegistry', () => {
         const shippingStrategy = registry.get('amazonpay');
 
         expect(shippingStrategy).toBeInstanceOf(AmazonPayV2ShippingStrategy);
+    });
+
+    it('can instantiate braintree accelerated checkout', () => {
+        const shippingStrategy = registry.get('braintreeacceleratedcheckout');
+
+        expect(shippingStrategy).toBeInstanceOf(BraintreeAcceleratedCheckoutShippingStrategy);
     });
 });
