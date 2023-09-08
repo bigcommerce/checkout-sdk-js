@@ -1,4 +1,7 @@
-import { StripeEventType } from '../../../payment/strategies/stripe-upe';
+import {
+    StripeEventType,
+    StripeUPEAppearanceOptions,
+} from '../../../payment/strategies/stripe-upe';
 
 /**
  * A set of options that are required to initialize the shipping step of
@@ -41,6 +44,14 @@ export default interface StripeUPEShippingInitializeOptions {
     getStyles?(): {
         [key: string]: string;
     };
+
+    /**
+     * Get the styles applied based on the active step
+     */
+    getAppearance?(
+        styles: { [key: string]: string } | undefined | boolean,
+        step: string | undefined,
+    ): StripeUPEAppearanceOptions;
 
     /**
      * get the state code needed for shipping stripe element

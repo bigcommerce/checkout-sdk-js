@@ -34,7 +34,6 @@ import {
     StripeError,
     StripePaymentMethodType,
     StripeStringConstants,
-    StripeUPEAppearanceOptions,
     StripeUPEClient,
     StripeUPEPaymentIntentStatus,
 } from './stripe-upe';
@@ -358,7 +357,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         gatewayId: string,
         methodId: string,
     ) {
-        const { containerId, style, render } = stripeupe;
+        const { containerId, style, render, getAppearance } = stripeupe;
         const state = await this._store.dispatch(
             this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, {
                 params: { method: methodId },
@@ -378,35 +377,10 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             stripeConnectedAccount,
         );
 
-        let appearance: StripeUPEAppearanceOptions | undefined;
-
-        if (style) {
-            const styles = style;
-
-            appearance = {
-                variables: {
-                    colorPrimary: styles.fieldInnerShadow,
-                    colorBackground: styles.fieldBackground,
-                    colorText: styles.labelText,
-                    colorDanger: styles.fieldErrorText,
-                    colorTextSecondary: styles.labelText,
-                    colorTextPlaceholder: styles.fieldPlaceholderText,
-                    colorIcon: styles.fieldPlaceholderText,
-                },
-                rules: {
-                    '.Input': {
-                        borderColor: styles.fieldBorder,
-                        color: styles.fieldText,
-                        boxShadow: styles.fieldInnerShadow,
-                    },
-                },
-            };
-        }
-
         this._stripeElements = this._stripeScriptLoader.getElements(this._stripeUPEClient, {
             clientSecret: paymentMethod.clientToken,
             locale: formatLocale(shopperLanguage),
-            appearance,
+            appearance: getAppearance && getAppearance(style, ''),
         });
 
         const {

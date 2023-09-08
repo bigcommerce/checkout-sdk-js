@@ -13,7 +13,6 @@ import {
     StripeEventType,
     StripeFormMode,
     StripeScriptLoader,
-    StripeUPEAppearanceOptions,
     StripeUPEClient,
 } from '../../../payment/strategies/stripe-upe';
 import { ConsignmentActionCreator } from '../../../shipping';
@@ -47,8 +46,15 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             );
         }
 
-        const { container, gatewayId, methodId, onEmailChange, getStyles, isLoading } =
-            options.stripeupe;
+        const {
+            container,
+            gatewayId,
+            methodId,
+            onEmailChange,
+            getStyles,
+            isLoading,
+            getAppearance,
+        } = options.stripeupe;
 
         Object.entries(options.stripeupe).forEach(([key, value]) => {
             if (!value) {
@@ -77,30 +83,11 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
             }
 
-            let appearance: StripeUPEAppearanceOptions | undefined;
+            const {
+                billingAddress: { getBillingAddress },
+                consignments: { getConsignments },
+            } = this._store.getState();
             const styles = typeof getStyles === 'function' && getStyles();
-
-            if (styles) {
-                appearance = {
-                    variables: {
-                        colorPrimary: styles.fieldInnerShadow,
-                        colorBackground: styles.fieldBackground,
-                        colorText: styles.labelText,
-                        colorDanger: styles.fieldErrorText,
-                        colorTextSecondary: styles.labelText,
-                        colorTextPlaceholder: styles.fieldPlaceholderText,
-                    },
-                    rules: {
-                        '.Input': {
-                            borderColor: styles.fieldBorder,
-                            color: styles.fieldText,
-                            boxShadow: styles.fieldInnerShadow,
-                        },
-                    },
-                };
-            } else {
-                appearance = {};
-            }
 
             stripeUPEClient = await this._stripeUPEScriptLoader.getStripeClient(
                 stripePublishableKey,
@@ -109,13 +96,10 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
 
             this._stripeElements = this._stripeUPEScriptLoader.getElements(stripeUPEClient, {
                 clientSecret: clientToken,
-                appearance,
+                appearance:
+                    getAppearance && getAppearance(styles, StripeElementType.AUTHENTICATION),
             });
 
-            const {
-                billingAddress: { getBillingAddress },
-                consignments: { getConsignments },
-            } = this._store.getState();
             const consignments = getConsignments();
             const id = consignments?.[0]?.id;
             const { email: billingEmail } = getBillingAddress() || {};

@@ -14,7 +14,6 @@ import {
     StripeEventType,
     StripeFormMode,
     StripeScriptLoader,
-    StripeUPEAppearanceOptions,
     StripeUPEClient,
 } from '../../../payment/strategies/stripe-upe';
 import ConsignmentActionCreator from '../../consignment-action-creator';
@@ -64,6 +63,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             getStyles,
             availableCountries,
             getStripeState,
+            getAppearance,
         } = options.stripeupe;
 
         Object.entries(options.stripeupe).forEach(([key, value]) => {
@@ -97,48 +97,16 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             stripeConnectedAccount,
         );
 
-        let appearance: StripeUPEAppearanceOptions;
-        const styles = getStyles && getStyles();
-
         const {
-            form: { getShippingAddressFields },
             shippingAddress: { getShippingAddress },
+            form: { getShippingAddressFields },
         } = this._store.getState();
-
+        const styles = getStyles && getStyles();
         const shippingFields = getShippingAddressFields([], '');
-
-        if (styles) {
-            appearance = {
-                variables: {
-                    colorPrimary: styles.fieldInnerShadow,
-                    colorBackground: styles.fieldBackground,
-                    colorText: styles.labelText,
-                    colorDanger: styles.fieldErrorText,
-                    colorTextSecondary: styles.labelText,
-                    colorTextPlaceholder: styles.fieldPlaceholderText,
-                    spacingUnit: '4px',
-                    borderRadius: '4px',
-                },
-                rules: {
-                    '.Input': {
-                        borderColor: styles.fieldBorder,
-                        color: styles.fieldText,
-                        boxShadow: styles.fieldInnerShadow,
-                    },
-                },
-            };
-        } else {
-            appearance = {
-                variables: {
-                    spacingUnit: '4px',
-                    borderRadius: '4px',
-                },
-            };
-        }
 
         this._stripeElements = this._stripeUPEScriptLoader.getElements(this._stripeUPEClient, {
             clientSecret: paymentMethod.clientToken,
-            appearance,
+            appearance: getAppearance && getAppearance(styles, StripeFormMode.SHIPPING),
         });
 
         const shipping = getShippingAddress();

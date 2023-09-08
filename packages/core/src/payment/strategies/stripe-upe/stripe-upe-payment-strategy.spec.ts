@@ -27,6 +27,7 @@ import {
     RequestError,
 } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
+import { getConfig } from '../../../config/configs.mock';
 import { getCustomer } from '../../../customer/customers.mock';
 import {
     FinalizeOrderAction,
@@ -191,6 +192,7 @@ describe('StripeUPEPaymentStrategy', () => {
         const elementsOptions: StripeElementsOptions = { clientSecret: 'myToken' };
         let stripeUPEJsMock: StripeUPEClient;
         const testColor = '#123456';
+        const storeConfigMock = getConfig().storeConfig;
         const style = {
             labelText: testColor,
             fieldText: testColor,
@@ -326,6 +328,38 @@ describe('StripeUPEPaymentStrategy', () => {
 
                 await expect(strategy.initialize(options)).resolves.toBe(store.getState());
                 expect(mount).not.toHaveBeenCalled();
+            });
+
+            it('loads stripeUPE with floating labels', async () => {
+                jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValueOnce({
+                    ...storeConfigMock,
+                    checkoutSettings: {
+                        ...storeConfigMock.checkoutSettings,
+                        features: {
+                            'CHECKOUT-6879.enable_floating_labels': true,
+                        },
+                    },
+                });
+
+                await expect(strategy.initialize(options)).resolves.toBe(store.getState());
+
+                expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
+            });
+
+            it('loads stripeUPE without floating labels', async () => {
+                jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValueOnce({
+                    ...storeConfigMock,
+                    checkoutSettings: {
+                        ...storeConfigMock.checkoutSettings,
+                        features: {
+                            'CHECKOUT-6879.enable_floating_labels': false,
+                        },
+                    },
+                });
+
+                await expect(strategy.initialize(options)).resolves.toBe(store.getState());
+
+                expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
             });
         });
     });
