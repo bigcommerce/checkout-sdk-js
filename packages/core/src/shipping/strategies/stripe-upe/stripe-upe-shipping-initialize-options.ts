@@ -1,4 +1,5 @@
-import { StripeEventType } from '../../../payment/strategies/stripe-upe';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { StripeEventType } from '../../../../../stripe-integration/src/stripe-upe/stripe-upe';
 
 /**
  * A set of options that are required to initialize the shipping step of

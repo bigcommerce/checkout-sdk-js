@@ -8,12 +8,12 @@ import {
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
+import StripeUPEScriptLoader  from '../../../stripe-integration/src/stripe-upe/stripe-upe-script-loader';
 import { CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
-import { StripeScriptLoader } from '../payment/strategies/stripe-upe';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import ConsignmentActionCreator from './consignment-action-creator';
@@ -66,7 +66,7 @@ export default function createShippingStrategyRegistry(
         () =>
             new StripeUPEShippingStrategy(
                 store,
-                new StripeScriptLoader(scriptLoader),
+                new StripeUPEScriptLoader(scriptLoader),
                 consignmentActionCreator,
                 paymentMethodActionCreator,
             ),

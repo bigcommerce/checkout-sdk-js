@@ -8,7 +8,6 @@ import {
 import { ChasePayCustomerInitializeOptions } from './strategies/chasepay';
 import { GooglePayCustomerInitializeOptions } from './strategies/googlepay';
 import { MasterpassCustomerInitializeOptions } from './strategies/masterpass';
-import { StripeUPECustomerInitializeOptions } from './strategies/stripe-upe';
 
 export { CustomerInitializeOptions } from '../generated/customer-initialize-options';
 
@@ -125,12 +124,6 @@ export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * They can be omitted unless you need to support GooglePay.
      */
     googlepaystripeupe?: GooglePayCustomerInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Customer Stripe Upe payment method.
-     * They can be omitted unless you need to support Customer Stripe Upe.
-     */
-    stripeupe?: StripeUPECustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the GooglePay payment method.

@@ -1,6 +1,11 @@
-import { CustomFont, PaymentIntent, StripeConfigurationOptions } from '../stripev3';
+import {
+    CustomFont,
+    PaymentIntent,
+    PaymentMethod,
+    StripeConfigurationOptions,
+} from '../stripev3/stripev3';
 
-export { StripeAdditionalAction } from '../stripev3';
+export { StripeAdditionalAction } from '../stripev3/stripev3';
 
 export interface StripeError {
     /**
@@ -143,7 +148,7 @@ export interface PaymentMethodDataOptions {
  * Parameters that will be passed on to the Stripe API to confirm the PaymentIntent.
  */
 export interface StripeUPEConfirmParams {
-    /**
+    /*
      * If you are [handling next actions yourself](https://stripe.com/docs/payments/payment-intents/verifying-status#next-actions), pass in a return_url. If the subsequent action
      * is redirect_to_url, this URL will be used on the return path for the redirect.
      *
@@ -421,4 +426,13 @@ export enum StripeUPEPaymentIntentStatus {
     PROCESSING = 'processing',
     SUCCEEDED = 'succeeded',
     CANCELED = 'canceled',
+}
+export interface StripeUPEPaymentMethod extends PaymentMethod {
+    initializationData: StripeUPEInitializationData;
+}
+
+export interface StripeUPEInitializationData {
+    stripePublishableKey: string;
+    stripeConnectedAccount: string;
+    shopperLanguage: string;
 }

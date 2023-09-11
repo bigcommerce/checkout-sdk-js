@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethodClientUnavailableError } from '../../errors';
+import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
     StripeElements,
@@ -10,14 +10,17 @@ import {
 } from './stripe-upe';
 
 export default class StripeUPEScriptLoader {
-    constructor(private _scriptLoader: ScriptLoader, private _window: StripeHostWindow = window) {}
+    constructor(
+        private scriptLoader: ScriptLoader,
+        private stripeWindow: StripeHostWindow = window,
+    ) {}
 
     async getStripeClient(
         stripePublishableKey: string,
         stripeAccount: string,
         locale?: string,
     ): Promise<StripeUPEClient> {
-        let stripeClient = this._window.bcStripeClient;
+        let stripeClient = this.stripeWindow.bcStripeClient;
 
         if (!stripeClient) {
             const stripe = await this.load();
@@ -35,19 +38,19 @@ export default class StripeUPEScriptLoader {
                 apiVersion: '2020-03-02;alipay_beta=v1;link_beta=v1',
             });
 
-            Object.assign(this._window, { bcStripeClient: stripeClient });
+            Object.assign(this.stripeWindow, { bcStripeClient: stripeClient });
         }
 
         return stripeClient;
     }
 
     getElements(stripeClient: StripeUPEClient, options: StripeElementsOptions): StripeElements {
-        let stripeElements = this._window.bcStripeElements;
+        let stripeElements = this.stripeWindow.bcStripeElements;
 
         if (!stripeElements) {
             stripeElements = stripeClient.elements(options);
 
-            Object.assign(this._window, { bcStripeElements: stripeElements });
+            Object.assign(this.stripeWindow, { bcStripeElements: stripeElements });
         } else {
             stripeElements.fetchUpdates();
             stripeElements.update(options);
@@ -57,12 +60,12 @@ export default class StripeUPEScriptLoader {
     }
 
     private async load() {
-        await this._scriptLoader.loadScript('https://js.stripe.com/v3/');
+        await this.scriptLoader.loadScript('https://js.stripe.com/v3/');
 
-        if (!this._window.Stripe) {
+        if (!this.stripeWindow.Stripe) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this._window.Stripe;
+        return this.stripeWindow.Stripe;
     }
 }

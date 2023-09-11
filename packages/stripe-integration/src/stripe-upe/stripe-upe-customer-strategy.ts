@@ -1,44 +1,63 @@
 import { createAction } from '@bigcommerce/data-store';
 
-import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
+    //     // Address,
+    CustomerCredentials,
+    CustomerInitializeOptions,
+    CustomerStrategy,
+    ExecutePaymentMethodCheckoutOptions,
     InvalidArgumentError,
+    //     // isHostedInstrumentLike,
+    //     // isRequestError,
+    //     // isVaultedInstrument,
     MissingDataError,
     MissingDataErrorType,
-} from '../../../common/error/errors';
-import { PaymentMethodActionCreator } from '../../../payment';
+    //     // NotInitializedError,
+    //     // NotInitializedErrorType,
+    //     // OrderFinalizationNotRequiredError,
+    //     // OrderRequestBody,
+    //     // PaymentArgumentInvalidError,
+    //     // PaymentInitializeOptions,
+    PaymentIntegrationService,
+    RequestOptions,
+    //     // PaymentMethodCancelledError,
+    //     // PaymentMethodFailedError,
+    //     // PaymentRequestOptions,
+    //     // PaymentStrategy,
+    //     // RequestError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     StripeElements,
     StripeElementType,
     StripeEventType,
     StripeFormMode,
-    StripeScriptLoader,
     StripeUPEAppearanceOptions,
     StripeUPEClient,
-} from '../../../payment/strategies/stripe-upe';
-import { ConsignmentActionCreator } from '../../../shipping';
-import CustomerActionCreator from '../../customer-action-creator';
-import { CustomerActionType } from '../../customer-actions';
-import CustomerCredentials from '../../customer-credentials';
-import {
-    CustomerInitializeOptions,
-    CustomerRequestOptions,
-    ExecutePaymentMethodCheckoutOptions,
-} from '../../customer-request-options';
-import CustomerStrategy from '../customer-strategy';
+    StripeUPEPaymentMethod,
+} from './stripe-upe';
+import StripeUPEScriptLoader from './stripe-upe-script-loader';
+import { WithStripeUPECustomerInitializeOptions } from './stripeupe-customer-initialize-options';
 
 export default class StripeUPECustomerStrategy implements CustomerStrategy {
     private _stripeElements?: StripeElements;
 
     constructor(
-        private _store: CheckoutStore,
-        private _stripeUPEScriptLoader: StripeScriptLoader,
-        private _customerActionCreator: CustomerActionCreator,
-        private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _consignmentActionCreator: ConsignmentActionCreator,
+        private paymentIntegrationService: PaymentIntegrationService,
+        private scriptLoader: StripeUPEScriptLoader,
     ) {}
 
-    async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(
+        options: CustomerInitializeOptions & WithStripeUPECustomerInitializeOptions,
+    ): Promise<void> {
+        console.log(
+            'hahaha',
+            options,
+            this.paymentIntegrationService,
+            this.scriptLoader,
+            this._stripeElements,
+        );
+
         let stripeUPEClient: StripeUPEClient;
 
         if (!options.stripeupe) {
@@ -58,18 +77,17 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             }
         });
 
-        const {
-            paymentMethods: { getPaymentMethodOrThrow },
-            customer: { getCustomerOrThrow },
-        } = await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(gatewayId, {
+        const { getPaymentMethodOrThrow, getCustomerOrThrow } =
+            await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
                 params: { method: methodId },
-            }),
-        );
+            });
+
+        const paymentMethod = getPaymentMethodOrThrow(methodId, gatewayId);
+        const { clientToken } = paymentMethod;
         const {
-            clientToken,
-            initializationData: { stripePublishableKey, stripeConnectedAccount } = {},
-        } = getPaymentMethodOrThrow(methodId, gatewayId);
+            initializationData: { stripePublishableKey, stripeConnectedAccount },
+        } = paymentMethod as StripeUPEPaymentMethod;
+
         const { email, isStripeLinkAuthenticated } = getCustomerOrThrow();
 
         if (!email) {
@@ -102,20 +120,18 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 appearance = {};
             }
 
-            stripeUPEClient = await this._stripeUPEScriptLoader.getStripeClient(
+            stripeUPEClient = await this.scriptLoader.getStripeClient(
                 stripePublishableKey,
                 stripeConnectedAccount,
             );
 
-            this._stripeElements = this._stripeUPEScriptLoader.getElements(stripeUPEClient, {
+            this._stripeElements = this.scriptLoader.getElements(stripeUPEClient, {
                 clientSecret: clientToken,
                 appearance,
             });
 
-            const {
-                billingAddress: { getBillingAddress },
-                consignments: { getConsignments },
-            } = this._store.getState();
+            const { getBillingAddress, getConsignments } =
+                this.paymentIntegrationService.getState();
             const consignments = getConsignments();
             const id = consignments?.[0]?.id;
             const { email: billingEmail } = getBillingAddress() || {};
@@ -131,9 +147,9 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                     throw new MissingDataError(MissingDataErrorType.MissingCustomer);
                 }
 
-                this._store.dispatch(
-                    createAction(CustomerActionType.StripeLinkAuthenticated, event.authenticated),
-                );
+                createAction('STRIPE_LINK_AUTHENTICATED', event.authenticated);
+
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                 event.complete
                     ? onEmailChange(event.authenticated, event.value.email)
                     : onEmailChange(false, '');
@@ -143,40 +159,38 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 }
 
                 if (isStripeLinkAuthenticated === undefined && event.authenticated && id) {
-                    this._store.dispatch(this._consignmentActionCreator.deleteConsignment(id));
+                    // this._consignmentActionCreator.deleteConsignment(id);
                 }
             });
 
             linkAuthenticationElement.mount(`#${container}`);
         }
 
-        return this._store.getState();
+        return Promise.resolve();
     }
 
-    deinitialize(): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<void> {
         this._stripeElements?.getElement(StripeElementType.AUTHENTICATION)?.unmount();
 
-        return Promise.resolve(this._store.getState());
+        return Promise.resolve();
     }
 
-    signIn(
-        credentials: CustomerCredentials,
-        options?: CustomerRequestOptions,
-    ): Promise<InternalCheckoutSelectors> {
-        return this._store.dispatch(
-            this._customerActionCreator.signInCustomer(credentials, options),
-        );
+    signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void> {
+        this.paymentIntegrationService.signInCustomer(credentials, options);
+
+        return Promise.resolve();
     }
 
-    signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
-        return this._store.dispatch(this._customerActionCreator.signOutCustomer(options));
+    signOut(options?: RequestOptions): Promise<void> {
+        this.paymentIntegrationService.signOutCustomer(options);
+
+        return Promise.resolve();
     }
 
-    executePaymentMethodCheckout(
-        options?: ExecutePaymentMethodCheckoutOptions,
-    ): Promise<InternalCheckoutSelectors> {
+    executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<void> {
         options?.continueWithCheckoutCallback?.();
+        //Do przetestowania zy potrzebne this.paymentIntegrationService.getState();
 
-        return Promise.resolve(this._store.getState());
+        return Promise.resolve();
     }
 }

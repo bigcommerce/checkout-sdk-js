@@ -13,10 +13,10 @@ import {
     StripeElementType,
     StripeEventType,
     StripeFormMode,
-    StripeScriptLoader,
     StripeUPEAppearanceOptions,
     StripeUPEClient,
-} from '../../../payment/strategies/stripe-upe';
+} from '../../../../../stripe-integration/src/stripe-upe/stripe-upe';
+import StripeUPEScriptLoader from '../../../../../stripe-integration/src/stripe-upe/stripe-upe-script-loader';
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
@@ -28,7 +28,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
 
     constructor(
         private _store: CheckoutStore,
-        private _stripeUPEScriptLoader: StripeScriptLoader,
+        private _stripeUPEScriptLoader: StripeUPEScriptLoader,
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
     ) {}

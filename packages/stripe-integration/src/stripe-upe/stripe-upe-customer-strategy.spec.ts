@@ -27,9 +27,9 @@ import {
     StripeCustomerEvent,
     StripeElement,
     StripeHostWindow,
-    StripeScriptLoader,
     StripeUPEClient,
-} from '../../../payment/strategies/stripe-upe';
+} from '../../../../../stripe-integration/src/stripe-upe/stripe-upe';
+import StripeUPEScriptLoader from '../../../../../stripe-integration/src/stripe-upe/stripe-upe-script-loader';
 import { getQuote } from '../../../quote/internal-quotes.mock';
 import {
     ConsignmentActionCreator,
@@ -76,7 +76,7 @@ describe('StripeUpeCustomerStrategy', () => {
     let paymentMethodMock: PaymentMethod;
     let store: CheckoutStore;
     let strategy: CustomerStrategy;
-    let stripeScriptLoader: StripeScriptLoader;
+    let stripeScriptLoader: StripeUPEScriptLoader;
     let stripeUPEJsMock: StripeUPEClient;
     let loadPaymentMethodAction: Observable<LoadPaymentMethodAction>;
 
@@ -100,7 +100,7 @@ describe('StripeUpeCustomerStrategy', () => {
                 methodId: `stripeupe?method=card`,
             }),
         );
-        stripeScriptLoader = new StripeScriptLoader(createScriptLoader());
+        stripeScriptLoader = new StripeUPEScriptLoader(createScriptLoader());
 
         consignmentActionCreator = new ConsignmentActionCreator(
             new ConsignmentRequestSender(requestSender),

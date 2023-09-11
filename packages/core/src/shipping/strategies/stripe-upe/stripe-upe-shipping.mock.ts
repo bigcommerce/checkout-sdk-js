@@ -1,4 +1,8 @@
-import { StripeElement, StripeUPEClient } from '../../../payment/strategies/stripe-upe';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import {
+    StripeElement,
+    StripeUPEClient,
+} from '../../../../../stripe-integration/src/stripe-upe/stripe-upe';
 import { ShippingInitializeOptions } from '../../shipping-request-options';
 
 export function getShippingStripeUPEJsMock(): StripeUPEClient {
