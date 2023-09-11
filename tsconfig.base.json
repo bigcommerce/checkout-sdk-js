@@ -78,6 +78,9 @@
                 "packages/squarev2-integration/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/storage": ["packages/storage/src/index.ts"],
+            "@bigcommerce/checkout-sdk/stripe-integration": [
+                "packages/stripe-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/ui": ["packages/ui/src/index.ts"],
             "@bigcommerce/checkout-sdk/workspace-tools": ["packages/workspace-tools/src/index.ts"]
         }

@@ -42,7 +42,6 @@ import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy } from './strategies/square';
 import { StripeUPEPaymentStrategy } from './strategies/stripe-upe';
-import { StripeV3PaymentStrategy } from './strategies/stripev3';
 import { WepayPaymentStrategy } from './strategies/wepay';
 import { ZipPaymentStrategy } from './strategies/zip';
 
@@ -288,12 +287,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.STRIPE_UPE_GOOGLE_PAY);
 
         expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
-    });
-
-    it('can instantiate stripev3', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.STRIPEV3);
-
-        expect(paymentStrategy).toBeInstanceOf(StripeV3PaymentStrategy);
     });
 
     it('can instantiate stripe-upe', () => {

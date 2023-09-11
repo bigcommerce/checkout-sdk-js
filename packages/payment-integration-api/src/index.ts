@@ -1,5 +1,5 @@
 export { Address, AddressRequestBody, LegacyAddress } from './address';
-export { BillingAddress, BillingAddressRequestBody } from './billing';
+export { BillingAddress, BillingAddressRequestBody, isBillingAddressLike } from './billing';
 export {
     CheckoutButtonStrategy,
     CheckoutButtonStrategyFactory,
@@ -103,6 +103,10 @@ export {
     OrderShippingConsignment,
     OrderPaymentRequestBody,
     OrderRequestBody,
+    FinalizeOrderAction,
+    LoadOrderSucceededAction,
+    OrderActionType,
+    SubmitOrderAction,
 } from './order';
 export {
     BlueSnapDirectEcpInstrument,
@@ -130,6 +134,7 @@ export {
     PaymentStrategyResolveId,
     VaultedInstrument,
     WithAccountCreation,
+    StripeV3FormattedPayload,
 } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
