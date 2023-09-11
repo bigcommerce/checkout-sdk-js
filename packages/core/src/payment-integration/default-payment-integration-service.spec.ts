@@ -58,7 +58,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let billingAddressActionCreator: Pick<BillingAddressActionCreator, 'updateAddress'>;
     let consignmentActionCreator: Pick<
         ConsignmentActionCreator,
-        'updateAddress' | 'selectShippingOption'
+        'updateAddress' | 'selectShippingOption' | 'deleteConsignment'
     >;
     let paymentMethodActionCreator: Pick<PaymentMethodActionCreator, 'loadPaymentMethod'>;
     let paymentActionCreator: Pick<
@@ -125,6 +125,7 @@ describe('DefaultPaymentIntegrationService', () => {
         consignmentActionCreator = {
             updateAddress: jest.fn(async () => () => createAction('UPDATE_CONSIGNMENT_ADDRESS')),
             selectShippingOption: jest.fn(async () => () => createAction('UPDATE_SHIPPING_OPTION')),
+            deleteConsignment: jest.fn(async () => () => createAction('DELETE_CONSIGNMENT')),
         };
 
         paymentMethodActionCreator = {
@@ -445,6 +446,18 @@ describe('DefaultPaymentIntegrationService', () => {
             expect(shippingCountryActionCreator.loadCountries).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(
                 shippingCountryActionCreator.loadCountries(),
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#deleteConsignment', () => {
+        it('delete consignment', async () => {
+            const output = await subject.deleteConsignment('ID');
+
+            expect(consignmentActionCreator.deleteConsignment).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(
+                consignmentActionCreator.deleteConsignment('ID'),
             );
             expect(output).toEqual(paymentIntegrationSelectors);
         });
