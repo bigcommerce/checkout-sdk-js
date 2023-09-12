@@ -44,7 +44,8 @@ export type PaymentInstrument =
     | VaultedInstrument
     | (VaultedInstrument & WithHostedFormNonce)
     | WithAccountCreation
-    | WithBankAccountInstrument;
+    | WithBankAccountInstrument
+    | WithBraintreeSepaInstrument;
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
@@ -83,6 +84,10 @@ export interface WithBankAccountInstrument {
     shouldSaveInstrument?: boolean;
     shouldSetAsDefaultInstrument?: boolean;
     instrumentId?: string;
+}
+export interface WithBraintreeSepaInstrument {
+    accountHolderName?: string;
+    braintreeIban?: string;
 }
 
 export interface WithDocumentInstrument {

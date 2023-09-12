@@ -7,6 +7,7 @@ export {
     BlueSnapDirectEcpPayload,
     CreditCardInstrument,
     WithBankAccountInstrument,
+    WithBraintreeSepaInstrument,
     WithCheckoutcomiDealInstrument,
     WithCheckoutcomFawryInstrument,
     WithCheckoutcomSEPAInstrument,

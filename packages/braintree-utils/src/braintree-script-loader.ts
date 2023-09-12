@@ -13,6 +13,7 @@ import {
     BraintreeHostWindow,
     BraintreeLocalPaymentCreator,
     BraintreePaypalCheckoutCreator,
+    BraintreeSepaCreator,
 } from './braintree';
 import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
 
@@ -118,5 +119,20 @@ export default class BraintreeScriptLoader {
         }
 
         return this.braintreeHostWindow.braintree.usBankAccount;
+    }
+
+    async loadBraintreeSepa(): Promise<BraintreeSepaCreator> {
+        await this.scriptLoader.loadScript(
+            `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/sepa.min.js`,
+        );
+
+        if (
+            !this.braintreeHostWindow.braintree ||
+            !this.braintreeHostWindow.braintree.sepa
+        ) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this.braintreeHostWindow.braintree.sepa;
     }
 }

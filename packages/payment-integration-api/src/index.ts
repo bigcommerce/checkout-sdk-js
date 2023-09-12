@@ -114,6 +114,7 @@ export {
     CardInstrument,
     CreditCardInstrument,
     WithBankAccountInstrument,
+    WithBraintreeSepaInstrument,
     isVaultedInstrument,
     isHostedInstrumentLike,
     isWithAccountCreation,

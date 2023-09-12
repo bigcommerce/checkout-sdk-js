@@ -5,6 +5,12 @@ export { default as createBraintreePaypalAchPaymentStrategy } from './braintree-
 export { WithBraintreePaypalCustomerInitializeOptions } from './braintree-paypal/braintree-paypal-customer-options';
 
 /**
+ * Braintree Sepa strategies
+ */
+export { default as createBraintreeSepaPaymentStrategy } from './braintree-sepa/create-braintree-sepa-payment-strategy';
+// export { WithBraintreePaypalCustomerInitializeOptions } from './braintree-paypal/braintree-paypal-customer-options';
+
+/**
  * Braintree PayPal strategies
  */
 export { default as createBraintreePaypalCustomerStrategy } from './braintree-paypal/create-braintree-paypal-customer-strategy';
