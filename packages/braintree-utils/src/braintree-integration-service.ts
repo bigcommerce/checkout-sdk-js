@@ -17,7 +17,7 @@ import {
     BraintreeHostWindow,
     BraintreeModule,
     BraintreePaypalCheckout,
-    BraintreePaypalSdkCreatorConfig,
+    BraintreePaypalSdkCreatorConfig, BraintreeSepa,
     BraintreeShippingAddressOverride,
     GetLocalPaymentInstance,
     LocalPaymentInstance,
@@ -38,6 +38,7 @@ export default class BraintreeIntegrationService {
     private paypalCheckout?: BraintreePaypalCheckout;
     private usBankAccount?: Promise<BraintreeBankAccount>;
     private braintreeLocalMethods?: LocalPaymentInstance;
+    private braintreeSepa?: Promise<BraintreeSepa>;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
@@ -169,6 +170,17 @@ export default class BraintreeIntegrationService {
         }
 
         return this.usBankAccount;
+    }
+
+    async getBraintreeSepa() {
+        if (!this.braintreeSepa) {
+            const client = await this.getClient();
+            const sepa = await this.braintreeScriptLoader.loadBraintreeSepa();
+
+            this.braintreeSepa = sepa.create({ client });
+        }
+
+        return this.braintreeSepa;
     }
 
     async getDataCollector(

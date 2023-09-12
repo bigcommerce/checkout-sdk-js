@@ -48,6 +48,7 @@ export interface BraintreeSDK {
     // visaCheckout?: BraintreeVisaCheckoutCreator; // TODO: should be added in future migration
     usBankAccount?: BraintreeBankAccountCreator;
     localPayment?: BraintreeLocalPaymentCreator;
+    sepa?: BraintreeSepaCreator;
 }
 
 export type BraintreeLocalPaymentCreator = BraintreeModuleCreator<
@@ -506,6 +507,21 @@ export interface BraintreeBankAccount extends BraintreeModule {
         bankDetails: BankAccountSuccessPayload;
         mandateText: string;
     }): Promise<{ nonce: string; details: BraintreeDetails }>;
+}
+
+export type BraintreeSepaCreator = BraintreeModuleCreator<BraintreeSepa>;
+
+export interface BraintreeSepa extends BraintreeModule {
+    tokenize(payload: BraintreeSepaPayload): Promise<{ nonce: string; details: BraintreeDetails }>;
+}
+
+export interface BraintreeSepaPayload {
+    accountHolderName?: string,
+    customerId?: number,
+    iban?: string,
+    mandateType?: 'RECURRENT' | 'ONE_OFF',
+    countryCode?: string,
+    merchantAccountId?: string
 }
 
 /**

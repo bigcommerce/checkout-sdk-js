@@ -1,2 +1,2 @@
-export const BRAINTREE_SDK_STABLE_VERSION = '3.95.0';
-export const BRAINTREE_SDK_ALPHA_VERSION = '3.95.0-connect-alpha.12';
+export const BRAINTREE_SDK_STABLE_VERSION = '3.97.1';
+export const BRAINTREE_SDK_ALPHA_VERSION = '3.97.1';

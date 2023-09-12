@@ -13,6 +13,7 @@ import {
     WithCheckoutcomSEPAInstrument,
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
+    WithBraintreeSepaInstrument,
 } from '../payment';
 
 /**
@@ -57,6 +58,7 @@ export interface OrderPaymentRequestBody {
     paymentData?:
         | CreditCardInstrument
         | WithBankAccountInstrument
+        | WithBraintreeSepaInstrument
         | HostedInstrument
         | HostedCreditCardInstrument
         | HostedVaultedInstrument

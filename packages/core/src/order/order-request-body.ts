@@ -2,6 +2,7 @@ import {
     BlueSnapDirectEcpInstrument,
     WithAccountCreation,
     WithBankAccountInstrument,
+    WithBraintreeSepaInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
@@ -39,6 +40,7 @@ export default interface OrderRequestBody {
 }
 
 export type OrderPaymentInstrument =
+    | WithBraintreeSepaInstrument
     | WithBankAccountInstrument
     | CreditCardInstrument
     | HostedInstrument

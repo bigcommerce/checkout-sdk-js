@@ -3,6 +3,7 @@ import {
     BlueSnapDirectEcpPayload,
     WithAccountCreation,
     WithBankAccountInstrument,
+    WithBraintreeSepaInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BrowserInfo } from '../common/browser-info';
@@ -49,7 +50,8 @@ export type PaymentInstrument =
     | VaultedInstrument
     | (VaultedInstrument & WithHostedFormNonce)
     | WithAccountCreation
-    | WithBankAccountInstrument;
+    | WithBankAccountInstrument
+    | WithBraintreeSepaInstrument;
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
