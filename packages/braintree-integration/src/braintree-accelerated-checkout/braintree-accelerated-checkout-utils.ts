@@ -1,7 +1,10 @@
+import { isEqual, omit } from 'lodash';
+
 import {
     BraintreeConnect,
     BraintreeConnectAddress,
     BraintreeConnectAuthenticationState,
+    BraintreeConnectProfileData,
     BraintreeConnectVaultedInstrument,
     BraintreeInitializationData,
     BraintreeIntegrationService,
@@ -115,8 +118,14 @@ export default class BraintreeAcceleratedCheckoutUtils {
                 customerContextId,
             );
 
-            const addresses = this.mapPayPalToBcAddress(profileData.addresses) || [];
+            const shippingAddresses = this.mapPayPalToBcAddress(profileData.addresses) || [];
+            const paypalBillingAddresses = this.getPayPalBillingAddresses(profileData);
+            const billingAddresses = this.mapPayPalToBcAddress(paypalBillingAddresses) || [];
             const instruments = this.mapPayPalToBcInstrument(methodId, profileData.cards) || [];
+            const addresses = this.mergeShippingAndBillingAddresses(
+                shippingAddresses,
+                billingAddresses,
+            );
 
             this.browserStorage.setItem('sessionId', cart.id);
 
@@ -126,12 +135,12 @@ export default class BraintreeAcceleratedCheckoutUtils {
                 instruments,
             });
 
-            if (addresses.length > 0) {
-                await this.paymentIntegrationService.updateBillingAddress(addresses[0]);
+            if (billingAddresses.length > 0) {
+                await this.paymentIntegrationService.updateBillingAddress(billingAddresses[0]);
             }
 
-            if (addresses.length > 0 && cart.lineItems.physicalItems.length > 0) {
-                await this.paymentIntegrationService.updateShippingAddress(addresses[0]);
+            if (shippingAddresses.length > 0 && cart.lineItems.physicalItems.length > 0) {
+                await this.paymentIntegrationService.updateShippingAddress(shippingAddresses[0]);
             }
         } catch (error) {
             // TODO: we should figure out what to do here
@@ -178,6 +187,46 @@ export default class BraintreeAcceleratedCheckoutUtils {
         }));
     }
 
+    /**
+     *
+     * Get PayPal billing addresses from stored braintree instruments info
+     *
+     * */
+    private getPayPalBillingAddresses(
+        profileData?: BraintreeConnectProfileData,
+    ): BraintreeConnectAddress[] | undefined {
+        const { cards, name } = profileData || {};
+
+        if (!cards?.length) {
+            return;
+        }
+
+        return cards.reduce(
+            (
+                billingAddressesList: BraintreeConnectAddress[],
+                instrument: BraintreeConnectVaultedInstrument,
+            ) => {
+                const { firstName, lastName } = instrument.paymentSource.card.billingAddress;
+                const { given_name, surname } = name || {};
+                const address = {
+                    ...instrument.paymentSource.card.billingAddress,
+                    firstName: firstName || given_name,
+                    lastName: lastName || surname,
+                };
+                const isAddressExist = billingAddressesList.some(
+                    (existingAddress: BraintreeConnectAddress) =>
+                        isEqual(
+                            this.normalizeAddress(address),
+                            this.normalizeAddress(existingAddress),
+                        ),
+                );
+
+                return isAddressExist ? billingAddressesList : [...billingAddressesList, address];
+            },
+            [],
+        );
+    }
+
     private mapPayPalToBcInstrument(
         methodId: string,
         instruments?: BraintreeConnectVaultedInstrument[],
@@ -206,6 +255,27 @@ export default class BraintreeAcceleratedCheckoutUtils {
                 type: 'card',
             };
         });
+    }
+
+    private normalizeAddress(address: CustomerAddress | BraintreeConnectAddress) {
+        return omit(address, ['id']);
+    }
+
+    private mergeShippingAndBillingAddresses(
+        shippingAddresses: CustomerAddress[],
+        billingAddresses: CustomerAddress[],
+    ): CustomerAddress[] {
+        const filteredBillingAddresses = billingAddresses.filter(
+            (billingAddress: CustomerAddress) =>
+                !shippingAddresses.some((shippingAddress: CustomerAddress) => {
+                    return isEqual(
+                        this.normalizeAddress(shippingAddress),
+                        this.normalizeAddress(billingAddress),
+                    );
+                }),
+        );
+
+        return [...shippingAddresses, ...filteredBillingAddresses];
     }
 
     /**

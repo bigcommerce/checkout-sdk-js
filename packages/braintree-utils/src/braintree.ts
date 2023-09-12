@@ -594,6 +594,10 @@ export interface BraintreeConnectProfileData {
     connectCustomerId: string;
     addresses: BraintreeConnectAddress[];
     cards: BraintreeConnectVaultedInstrument[];
+    name: {
+        given_name: string;
+        surname: string;
+    };
 }
 
 export interface BraintreeConnectAddress {
