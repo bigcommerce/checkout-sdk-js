@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.446.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.445.0...v1.446.0) (2023-09-12)
+
+
+### Features
+
+* **checkout:** PI-623 BluesnapDirect APMs via redirect ([bb2248f](https://github.com/bigcommerce/checkout-sdk-js/commit/bb2248fc9a98a25024f9aed5da3bef9d265b6074))
+
 ## [1.445.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.444.0...v1.445.0) (2023-09-12)
 
 
