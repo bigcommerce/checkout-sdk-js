@@ -1,3 +1,5 @@
+import { createAction } from '@bigcommerce/data-store';
+
 import {
     BillingAddressRequestBody,
     BuyNowCartRequestBody,
@@ -17,7 +19,7 @@ import { BillingAddressActionCreator } from '../billing';
 import { CartRequestSender } from '../cart';
 import { CheckoutActionCreator, CheckoutStore } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
-import { CustomerActionCreator, CustomerCredentials } from '../customer';
+import { CustomerActionCreator, CustomerActionType, CustomerCredentials } from '../customer';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
 import {
@@ -244,6 +246,16 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
     ): Promise<PaymentIntegrationSelectors> {
         await this._store.dispatch(
             this._consignmentActionCreator.deleteConsignment(consignmentId, options),
+        );
+
+        return this._storeProjection.getState();
+    }
+
+    async stripeLinkAuthenticatedAction(
+        authenticated: boolean | undefined,
+    ): Promise<PaymentIntegrationSelectors> {
+        this._store.dispatch(
+            createAction(CustomerActionType.StripeLinkAuthenticated, authenticated),
         );
 
         return this._storeProjection.getState();

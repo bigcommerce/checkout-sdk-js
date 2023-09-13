@@ -462,4 +462,17 @@ describe('DefaultPaymentIntegrationService', () => {
             expect(output).toEqual(paymentIntegrationSelectors);
         });
     });
+
+    describe('#stripeLinkAuthenticatedAction', () => {
+        it('authenticate stripe link action', async () => {
+            jest.spyOn(store, 'dispatch');
+
+            await subject.stripeLinkAuthenticatedAction(false);
+
+            expect(store.dispatch).toHaveBeenCalledWith({
+                type: 'STRIPE_LINK_AUTHENTICATED',
+                payload: false,
+            });
+        });
+    });
 });

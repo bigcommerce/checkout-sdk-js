@@ -53,6 +53,10 @@ export default interface PaymentIntegrationService {
         options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors>;
 
+    stripeLinkAuthenticatedAction(
+        authenticated: boolean | undefined,
+    ): Promise<PaymentIntegrationSelectors>;
+
     verifyCheckoutSpamProtection(): Promise<PaymentIntegrationSelectors>;
 
     updateBillingAddress(payload: BillingAddressRequestBody): Promise<PaymentIntegrationSelectors>;
