@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.448.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.447.0...v1.448.0) (2023-09-13)
+
+
+### Features
+
+* **payment:** PI-804 Make an ability to use deleteConsignment action from core package in integration checkout-sdk packages ([#2174](https://github.com/bigcommerce/checkout-sdk-js/issues/2174)) ([b260d2d](https://github.com/bigcommerce/checkout-sdk-js/commit/b260d2dffb9b7e4f6f82ad9497dd0876c935a215))
+
 ## [1.447.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.446.0...v1.447.0) (2023-09-13)
 
 
