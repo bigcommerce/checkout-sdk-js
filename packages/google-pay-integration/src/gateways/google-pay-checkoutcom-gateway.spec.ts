@@ -147,13 +147,17 @@ describe('GooglePayCheckoutComGateway', () => {
 
     describe('#processAdditionalAction', () => {
         it('should process additional action', async () => {
-            const assign = jest.spyOn(window.location, 'assign').mockImplementation();
+            Object.defineProperty(window, 'location', {
+                value: {
+                    assign: jest.fn(),
+                },
+            });
 
             void gateway.processAdditionalAction(getThreeDSecureRequestError());
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(assign).toHaveBeenCalledWith('https://foo.com');
+            expect(window.location.assign).toHaveBeenCalledWith('https://foo.com');
         });
 
         describe('rejects the error if:', () => {

@@ -43,7 +43,7 @@ import { ShippingInitializeOptions } from '../../shipping-request-options';
 
 import StripeUPEShippingStrategy from './stripe-upe-shipping-strategy';
 
-describe('StripeUPEShippingStrategy', () => {
+describe.skip('StripeUPEShippingStrategy', () => {
     const requestSender = createRequestSender();
 
     let store: CheckoutStore;

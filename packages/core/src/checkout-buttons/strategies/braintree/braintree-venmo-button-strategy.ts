@@ -160,7 +160,10 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
 
             if (braintreeVenmoCheckout.tokenize) {
                 braintreeVenmoCheckout.tokenize(
-                    async (error: BraintreeError, payload: BraintreeTokenizePayload) => {
+                    async (
+                        error: BraintreeError | undefined,
+                        payload: BraintreeTokenizePayload,
+                    ) => {
                         venmoButton.removeAttribute('disabled');
 
                         if (error) {

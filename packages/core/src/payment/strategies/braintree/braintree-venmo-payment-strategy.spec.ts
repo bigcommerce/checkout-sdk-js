@@ -39,10 +39,12 @@ describe('BraintreeVenmoPaymentStrategy', () => {
     let options: PaymentInitializeOptions;
 
     beforeEach(() => {
-        const braintreeTokenizePayload: Partial<BraintreeTokenizePayload> = {
-            nonce: 'nonce-key',
+        const braintreeTokenizePayload: BraintreeTokenizePayload = {
+            nonce: 'sampleNonce',
+            type: 'PaypalAccount',
             details: {
-                email: 'braintreeTokenize@email.com',
+                username: 'sampleUsername',
+                email: 'sample@example.com',
             },
         };
 
@@ -50,13 +52,16 @@ describe('BraintreeVenmoPaymentStrategy', () => {
         braintreePaymentProcessorMock = {} as BraintreePaymentProcessor;
         braintreePaymentProcessorMock.initialize = jest.fn();
         braintreePaymentProcessorMock.getVenmoCheckout = jest.fn(
-            (): Promise<Partial<BraintreeVenmoCheckout>> =>
+            (): Promise<BraintreeVenmoCheckout> =>
                 Promise.resolve({
                     tokenize: tokenizeMock,
                     isBrowserSupported: () => true,
+                    teardown: jest.fn(),
                 }),
         );
-        braintreePaymentProcessorMock.getSessionId = jest.fn(() => 'my_session_id');
+        braintreePaymentProcessorMock.getSessionId = jest.fn(() =>
+            Promise.resolve('my_session_id'),
+        );
         braintreePaymentProcessorMock.deinitialize = jest.fn();
 
         paymentMethodMock = { ...getBraintreeVenmo(), clientToken: 'myToken' };
@@ -79,13 +84,15 @@ describe('BraintreeVenmoPaymentStrategy', () => {
         );
 
         orderActionCreator = {} as OrderActionCreator;
-        orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
+        orderActionCreator.submitOrder = jest.fn().mockReturnValue(submitOrderAction);
 
         paymentActionCreator = {} as PaymentActionCreator;
-        paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
+        paymentActionCreator.submitPayment = jest.fn().mockReturnValue(submitPaymentAction);
 
         paymentMethodActionCreator = {} as PaymentMethodActionCreator;
-        paymentMethodActionCreator.loadPaymentMethod = jest.fn(() => loadPaymentMethodAction);
+        paymentMethodActionCreator.loadPaymentMethod = jest
+            .fn()
+            .mockReturnValue(loadPaymentMethodAction);
 
         braintreeVenmoPaymentStrategy = new BraintreeVenmoPaymentStrategy(
             store,
@@ -227,10 +234,11 @@ describe('BraintreeVenmoPaymentStrategy', () => {
             );
 
             braintreePaymentProcessorMock.getVenmoCheckout = jest.fn(
-                (): Promise<Partial<BraintreeVenmoCheckout>> =>
+                (): Promise<BraintreeVenmoCheckout> =>
                     Promise.resolve({
                         tokenize: tokenizeMockError,
                         isBrowserSupported: () => true,
+                        teardown: jest.fn(),
                     }),
             );
 
@@ -254,10 +262,11 @@ describe('BraintreeVenmoPaymentStrategy', () => {
             );
 
             braintreePaymentProcessorMock.getVenmoCheckout = jest.fn(
-                (): Promise<Partial<BraintreeVenmoCheckout>> =>
+                (): Promise<BraintreeVenmoCheckout> =>
                     Promise.resolve({
                         tokenize: tokenizeMockError,
                         isBrowserSupported: () => true,
+                        teardown: jest.fn(),
                     }),
             );
 
@@ -273,7 +282,7 @@ describe('BraintreeVenmoPaymentStrategy', () => {
             await braintreeVenmoPaymentStrategy.initialize(options);
 
             try {
-                braintreeVenmoPaymentStrategy.execute({}, options);
+                await braintreeVenmoPaymentStrategy.execute({}, options);
             } catch (error) {
                 expect(error).toEqual(expect.any(PaymentArgumentInvalidError));
             }

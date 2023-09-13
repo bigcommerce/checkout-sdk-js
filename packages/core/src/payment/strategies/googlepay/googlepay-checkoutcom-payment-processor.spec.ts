@@ -6,7 +6,11 @@ describe('GooglePayCheckoutcomPaymentProcessor', () => {
     let processor: GooglePayCheckoutcomPaymentProcessor;
 
     beforeEach(() => {
-        jest.spyOn(window.location, 'assign').mockResolvedValue(undefined);
+        Object.defineProperty(window, 'location', {
+            value: {
+                assign: jest.fn(),
+            },
+        });
 
         processor = new GooglePayCheckoutcomPaymentProcessor();
     });

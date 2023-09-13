@@ -1,5 +1,4 @@
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
-import { noop } from 'lodash';
 
 import {
     PaymentIntegrationService,
@@ -28,9 +27,11 @@ describe('SezzlePaymentStrategy', () => {
 
     describe('#execute()', () => {
         it('redirect to Sezzle if additional action is required with GET mothod', async () => {
-            jest.spyOn(window.location, 'replace').mockImplementation((_url, callback = noop) =>
-                callback(),
-            );
+            Object.defineProperty(window, 'location', {
+                value: {
+                    replace: jest.fn(),
+                },
+            });
 
             const error = new RequestError(
                 getResponse({

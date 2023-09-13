@@ -149,7 +149,7 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
     private _braintreeVenmoTokenize(): Promise<BraintreeTokenizePayload> {
         return new Promise((resolve, reject) => {
             this._braintreeVenmoCheckout?.tokenize(
-                (error: BraintreeError, payload: BraintreeTokenizePayload) => {
+                (error: BraintreeError | undefined, payload: BraintreeTokenizePayload) => {
                     if (error) {
                         return reject(error);
                     }

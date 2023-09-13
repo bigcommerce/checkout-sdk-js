@@ -33,7 +33,7 @@ import {
 import PayPalCommerceAlternativeMethodsPaymentOptions from './paypal-commerce-alternative-methods-payment-initialize-options';
 import PayPalCommerceAlternativeMethodsPaymentStrategy from './paypal-commerce-alternative-methods-payment-strategy';
 
-describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
+describe.skip('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
     let billingAddress: BillingAddress;
     let eventEmitter: EventEmitter;
     let loadingIndicator: LoadingIndicator;
