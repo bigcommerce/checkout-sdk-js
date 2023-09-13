@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.449.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.448.0...v1.449.0) (2023-09-13)
+
+
+### Features
+
+* **payment:** PI-734 fix error message for empty card data in Mollie ([#4](https://github.com/bigcommerce/checkout-sdk-js/issues/4)) ([#2169](https://github.com/bigcommerce/checkout-sdk-js/issues/2169)) ([d179aba](https://github.com/bigcommerce/checkout-sdk-js/commit/d179aba8afa3f49ca584544a95d08335b9e6af0d))
+
 ## [1.448.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.447.0...v1.448.0) (2023-09-13)
 
 
