@@ -420,6 +420,7 @@ export enum PayPalOrderStatus {
     Approved = 'APPROVED',
     Created = 'CREATED',
     PayerActionRequired = 'PAYER_ACTION_REQUIRED',
+    PollingStop = 'POLLING_STOP',
 }
 
 export interface PayPalOrderStatusData {

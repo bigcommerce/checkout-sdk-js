@@ -3,6 +3,7 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import {
     ContentType,
     INTERNAL_USE_ONLY,
+    RequestOptions,
     SDK_VERSION_HEADERS,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -50,15 +51,21 @@ export default class PayPalCommerceRequestSender {
         return res.body;
     }
 
-    async getOrderStatus(): Promise<PayPalOrderStatusData> {
-        const url = '/api/storefront/initialization/paypalcommerce';
+    async getOrderStatus(
+        methodId = 'paypalcommerce',
+        options?: RequestOptions,
+    ): Promise<PayPalOrderStatusData> {
+        const url = `/api/storefront/initialization/${methodId}`;
         const headers = {
             'X-API-INTERNAL': INTERNAL_USE_ONLY,
             'Content-Type': ContentType.Json,
             ...SDK_VERSION_HEADERS,
         };
 
-        const res = await this.requestSender.get<PayPalOrderStatusData>(url, { headers });
+        const res = await this.requestSender.get<PayPalOrderStatusData>(url, {
+            headers,
+            ...options,
+        });
 
         return res.body;
     }

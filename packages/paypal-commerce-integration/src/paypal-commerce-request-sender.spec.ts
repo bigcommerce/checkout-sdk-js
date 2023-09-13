@@ -101,4 +101,23 @@ describe('PayPalCommerceRequestSender', () => {
             }),
         );
     });
+
+    it('requests order status with proper data', async () => {
+        const headers = {
+            'X-API-INTERNAL': INTERNAL_USE_ONLY,
+            'Content-Type': ContentType.Json,
+            ...SDK_VERSION_HEADERS,
+        };
+
+        await paypalCommerceRequestSender.getOrderStatus('paypalcommercealternativemethods', {
+            params: { useMetaData: true },
+        });
+
+        expect(requestSender.get).toHaveBeenCalledWith(
+            '/api/storefront/initialization/paypalcommercealternativemethods',
+            expect.objectContaining({
+                headers,
+            }),
+        );
+    });
 });
