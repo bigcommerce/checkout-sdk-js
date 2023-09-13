@@ -237,4 +237,15 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
 
         return this._storeProjection.getState();
     }
+
+    async deleteConsignment(
+        consignmentId: string,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._consignmentActionCreator.deleteConsignment(consignmentId, options),
+        );
+
+        return this._storeProjection.getState();
+    }
 }
