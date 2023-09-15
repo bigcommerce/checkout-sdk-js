@@ -1,4 +1,4 @@
-import { BraintreeError } from './braintree';
+import { BraintreeError } from '../types';
 
 export default function isBraintreeError(error: unknown): error is BraintreeError {
     return Boolean(
