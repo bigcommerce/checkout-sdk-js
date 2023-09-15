@@ -2,10 +2,10 @@
 
 exports[`LoadingIndicator inserts loading indicator element into container 1`] = `
 <div
-  style="display: block; bottom: 0px; left: 0px; height: 100%; width: 100%; position: absolute; right: 0px; top: 0px; transition: all 250ms ease-out; opacity: 1; visibility: visible;"
+  style="display: block; bottom: 0px; left: 0px; height: 100%; width: 100%; position: absolute; right: 0px; top: 0px; opacity: 1; visibility: visible;"
 >
   <div
-    style="display: block; width: 70px; height: 70px; border-radius: 70px; border: 1px solid; border-color: #ffffff #ffffff #d9d9d9 #d9d9d9; margin: 0px auto; position: absolute; left: 0px; right: 0px; top: 50%; transform: translateY(-50%) rotate(0deg); animation: embedded-checkout-loading-indicator-rotation 500ms infinite cubic-bezier(0.69, 0.31, 0.56, 0.83);"
+    style="display: block; width: 70px; height: 70px; border-radius: 70px; border: 1px solid; border-color: #ffffff #ffffff #d9d9d9 #d9d9d9; margin: 0px auto; position: absolute; left: 0px; right: 0px; top: 50%; transform: translateY(-50%) rotate(0deg);"
   />
 </div>
 `;
