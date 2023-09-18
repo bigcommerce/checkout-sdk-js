@@ -74,6 +74,7 @@ export function getBraintreeConnectProfileDataMock(): BraintreeConnectProfileDat
                         expiry: '02/2037',
                         lastDigits: '1111',
                         billingAddress: {
+                            id: '321',
                             company: undefined,
                             extendedAddress: undefined,
                             firstName: undefined,
@@ -90,6 +91,10 @@ export function getBraintreeConnectProfileDataMock(): BraintreeConnectProfileDat
                 },
             },
         ],
+        name: {
+            given_name: 'John',
+            surname: 'Doe',
+        },
     };
 }
 

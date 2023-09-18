@@ -15,6 +15,7 @@ export {
     BraintreeConnectVaultedInstrument,
     BraintreeConnectCardComponentOptions,
     BraintreeConnectCardComponent,
+    BraintreeConnectProfileData,
     onPaymentStartData,
     StartPaymentError,
     LocalPaymentsPayload,

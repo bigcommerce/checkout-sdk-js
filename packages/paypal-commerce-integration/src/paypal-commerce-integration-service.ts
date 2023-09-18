@@ -11,6 +11,7 @@ import {
     PaymentIntegrationService,
     PaymentMethodClientUnavailableError,
     RequestError,
+    RequestOptions,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -127,9 +128,12 @@ export default class PayPalCommerceIntegrationService {
         }
     }
 
-    async getOrderStatus(): Promise<PayPalOrderStatus> {
+    async getOrderStatus(methodId?: string, options?: RequestOptions): Promise<PayPalOrderStatus> {
         try {
-            const { status } = await this.paypalCommerceRequestSender.getOrderStatus();
+            const { status } = await this.paypalCommerceRequestSender.getOrderStatus(
+                methodId,
+                options,
+            );
 
             return status;
         } catch (_error) {

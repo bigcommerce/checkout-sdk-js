@@ -28,6 +28,7 @@ step of checkout.
 ### Properties
 
 - [amazonpay](ShippingInitializeOptions.md#amazonpay)
+- [braintreeacceleratedcheckout](ShippingInitializeOptions.md#braintreeacceleratedcheckout)
 - [methodId](ShippingInitializeOptions.md#methodid)
 - [params](ShippingInitializeOptions.md#params)
 - [stripeupe](ShippingInitializeOptions.md#stripeupe)
@@ -41,6 +42,15 @@ step of checkout.
 
 The options that are required to initialize the shipping step of checkout
 when using AmazonPayV2.
+
+___
+
+### braintreeacceleratedcheckout
+
+• `Optional` **braintreeacceleratedcheckout**: [`BraintreeAcceleratedCheckoutInitializeOptions`](BraintreeAcceleratedCheckoutInitializeOptions.md)
+
+The options that are required to initialize the shipping step of checkout
+when using Braintree Accelerated Checkout.
 
 ___
 

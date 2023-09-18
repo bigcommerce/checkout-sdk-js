@@ -33,6 +33,7 @@ export type PaymentInstrument =
           | WithCheckoutcomFawryInstrument
           | WithCheckoutcomSEPAInstrument
           | StripeV3Intent
+          | StripeV3FormattedPayload
           | StripeUPEIntent
           | WithMollieIssuerInstrument
           | WithPayPalConnectInstrument
@@ -285,4 +286,17 @@ export interface FormattedVaultedInstrument {
 
 export interface FormattedPayload<T> {
     formattedPayload: T;
+}
+
+export interface StripeV3FormattedPayload {
+    credit_card_token?: {
+        token: string;
+    };
+    vault_payment_instrument?: boolean;
+    confirm: boolean;
+    set_as_default_stored_instrument?: boolean;
+    client_token?: string;
+    bigpay_token?: {
+        token: string;
+    };
 }

@@ -1,4 +1,4 @@
-import { StandardError } from '../../../common/error/errors';
+import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export enum StripeV3ErrorType {
     AuthFailure = 'auth_failure',

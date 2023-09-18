@@ -24,6 +24,7 @@
         "sezzle-integration": "packages/sezzle-integration",
         "squarev2-integration": "packages/squarev2-integration",
         "storage": "packages/storage",
+        "stripe-integration": "packages/stripe-integration",
         "ui": "packages/ui",
         "workspace-tools": "packages/workspace-tools"
     }

@@ -9,6 +9,7 @@
 /packages/payment-integration @bigcommerce/team-checkout
 /packages/payment-integration-test-utils @bigcommerce/team-checkout
 /packages/paypal-commerce-integration @bigcommerce/kyiv-payments-team
+/packages/stripe-integration @bigcommerce/kyiv-payments-team
 /packages/squarev2-integration @bigcommerce/apex-leads
 /packages/paypal-express-integration @bigcommerce/kyiv-payments-team
 /packages/bluesnap-direct-integration @bigcommerce/kyiv-payments-team

@@ -2,7 +2,7 @@ import {
     guard,
     NotInitializedError,
     NotInitializedErrorType,
-    PaymentMethodInvalidError,
+    PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BlueSnapDirectPreviouslyUsedCard, BlueSnapDirectSdk } from './types';
@@ -28,7 +28,7 @@ export default class BlueSnapDirect3ds {
                     return resolve(sdkResponse.threeDSecure.threeDSecureReferenceId);
                 }
 
-                return reject(new PaymentMethodInvalidError());
+                return reject(new PaymentMethodFailedError());
             });
 
             blueSnapSdk.threeDsPaymentsSubmitData(cardData);

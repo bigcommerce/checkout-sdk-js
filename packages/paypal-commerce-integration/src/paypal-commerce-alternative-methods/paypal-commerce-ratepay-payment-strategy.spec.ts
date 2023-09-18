@@ -54,6 +54,9 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             paypalCommerceIntegrationService,
         );
 
+        jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockReturnValue(
+            'POLLING_STOP',
+        );
         jest.spyOn(document, 'getElementById').mockImplementation((id) => {
             if (id === 'legal-text-container') {
                 return {
@@ -249,6 +252,23 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             }
         });
 
+        it('fetch order status', async () => {
+            const payload = {
+                payment: {
+                    methodId: 'ratepay',
+                    gatewayId: 'paypalcommercealternativemethods',
+                },
+            };
+
+            await strategy.initialize(initializationOptions);
+            await strategy.execute(payload);
+
+            expect(paypalCommerceIntegrationService.getOrderStatus).toHaveBeenCalledWith(
+                'paypalcommercealternativemethods',
+                { params: { useMetadata: true } },
+            );
+        });
+
         it('submits order', async () => {
             const payload = {
                 payment: {
@@ -298,6 +318,21 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(expectedPayload);
         });
+
+        it('initialize polling mechanism', async () => {
+            const payload = {
+                payment: {
+                    methodId: 'ratepay',
+                    gatewayId: 'paypalcommercealternativemethods',
+                },
+            };
+
+            await strategy.initialize(initializationOptions);
+            await strategy.execute(payload);
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceIntegrationService.getOrderStatus).toHaveBeenCalled();
+        });
     });
 
     describe('#deinitialize()', () => {
@@ -305,6 +340,35 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             const result = await strategy.deinitialize();
 
             expect(result).toBeUndefined();
+        });
+
+        it('deinitialize polling mechanism', async () => {
+            const payload = {
+                payment: {
+                    methodId: 'ratepay',
+                    gatewayId: 'paypalcommercealternativemethods',
+                },
+            };
+            jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockReturnValue(
+                'POLLING_STOP',
+            );
+            jest.spyOn(document, 'getElementById').mockImplementation((id) => {
+                if (id === 'legal-text-container') {
+                    return {
+                        remove: jest.fn(),
+                    };
+                }
+
+                return null;
+            });
+            jest.spyOn(global, 'clearTimeout');
+
+            await strategy.initialize(initializationOptions);
+            await strategy.execute(payload);
+            await new Promise((resolve) => process.nextTick(resolve));
+            await strategy.deinitialize();
+
+            expect(clearTimeout).toHaveBeenCalled();
         });
     });
 

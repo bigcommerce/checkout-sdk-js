@@ -19,7 +19,6 @@ import { OpyPaymentInitializeOptions } from './strategies/opy';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 import { SquarePaymentInitializeOptions } from './strategies/square';
 import { StripeUPEPaymentInitializeOptions } from './strategies/stripe-upe';
-import { StripeV3PaymentInitializeOptions } from './strategies/stripev3';
 import { WorldpayAccessPaymentInitializeOptions } from './strategies/worldpayaccess';
 
 export { PaymentInitializeOptions } from '../generated/payment-initialize-options';
@@ -193,12 +192,6 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support GooglePay.
      */
     googlepaystripeupe?: GooglePayPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Stripe payment method.
-     * They can be omitted unless you need to support StripeV3.
-     */
-    stripev3?: StripeV3PaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the StripeUPE payment method.
