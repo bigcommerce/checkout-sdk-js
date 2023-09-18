@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.450.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.449.0...v1.450.0) (2023-09-18)
+
+
+### Features
+
+* **payment:** PAYPAL-2932 add PayPal billing addresses ([909270a](https://github.com/bigcommerce/checkout-sdk-js/commit/909270aeda56fc0e062035c1f3c8f4b9fd696af7))
+
 ## [1.449.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.448.0...v1.449.0) (2023-09-13)
 
 
