@@ -5,6 +5,7 @@ import {
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './constants';
 import {
     BraintreeBankAccountCreator,
     BraintreeClientCreator,
@@ -13,9 +14,11 @@ import {
     BraintreeHostWindow,
     BraintreeLocalPaymentCreator,
     BraintreePaypalCheckoutCreator,
-} from './braintree';
-import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
+} from './types';
 
+// TODO: we can avoid loading the same script several times by checking the data
+// availability in the this.braintreeHostWindow (example this.braintreeHostWindow.braintree.client).
+// So we can speed up checkout or other flows by avoiding loading the same script several times
 export default class BraintreeScriptLoader {
     private braintreeSdkVersion = BRAINTREE_SDK_STABLE_VERSION;
 
@@ -24,8 +27,7 @@ export default class BraintreeScriptLoader {
         private braintreeHostWindow: BraintreeHostWindow,
     ) {}
 
-    // TODO: this method is needed only for braintree AXO
-    // So can be removed after Beta state
+    // TODO: this method can be removed when we get stable version for Braintree PayPal Connect
     initialize(storeConfig: StoreConfig) {
         const features = storeConfig.checkoutSettings.features;
         const shouldUseBraintreeAlphaVersion =

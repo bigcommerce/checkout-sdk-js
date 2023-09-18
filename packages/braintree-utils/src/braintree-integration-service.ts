@@ -6,6 +6,13 @@ import {
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import BraintreeScriptLoader from './braintree-script-loader';
+import { isBraintreeError } from './guards';
+import {
+    mapBraintreeTokenizeDetailsToLegacyBillingAddress,
+    mapBraintreeTokenizeDetailsToLegacyShippingAddress,
+    mapToBraintreeShippingAddressOverride,
+} from './mappers';
 import {
     BraintreeBankAccount,
     BraintreeClient,
@@ -21,16 +28,18 @@ import {
     BraintreeShippingAddressOverride,
     GetLocalPaymentInstance,
     LocalPaymentInstance,
-} from './braintree';
-import BraintreeScriptLoader from './braintree-script-loader';
-import isBraintreeError from './is-braintree-error';
-import { PAYPAL_COMPONENTS } from './paypal';
+    PAYPAL_COMPONENTS,
+} from './types';
+import { getBraintreeEnv } from './utils';
 
 interface DataCollectors {
     default?: BraintreeDataCollector;
     paypal?: BraintreeDataCollector;
 }
 
+/**
+ * Info: this class will be deprecated in nearest future
+ */
 export default class BraintreeIntegrationService {
     private client?: Promise<BraintreeClient>;
     private clientToken?: string;
@@ -81,6 +90,7 @@ export default class BraintreeIntegrationService {
         return this.braintreeHostWindow.braintreeConnect;
     }
 
+    // Info: moved to BraintreeSDK
     async getClient(): Promise<BraintreeClient> {
         if (!this.client) {
             const clientToken = this.getClientTokenOrThrow();
@@ -92,6 +102,7 @@ export default class BraintreeIntegrationService {
         return this.client;
     }
 
+    // Info: moved to BraintreeSDK
     async getPaypalCheckout(
         config: Partial<BraintreePaypalSdkCreatorConfig>,
         onSuccess: (instance: BraintreePaypalCheckout) => void,
@@ -118,7 +129,10 @@ export default class BraintreeIntegrationService {
             };
 
             if (!this.braintreeHostWindow.paypal) {
-                braintreePaypalCheckout.loadPayPalSDK(paypalSdkLoadConfig, paypalSdkLoadCallback);
+                void braintreePaypalCheckout.loadPayPalSDK(
+                    paypalSdkLoadConfig,
+                    paypalSdkLoadCallback,
+                );
             } else {
                 onSuccess(braintreePaypalCheckout);
             }
@@ -172,6 +186,7 @@ export default class BraintreeIntegrationService {
         return this.usBankAccount;
     }
 
+    // Info: moved to BraintreeSDK
     async getDataCollector(
         options?: Partial<BraintreeDataCollectorCreatorConfig>,
     ): Promise<BraintreeDataCollector> {
@@ -208,75 +223,43 @@ export default class BraintreeIntegrationService {
         return cached;
     }
 
-    getBraintreeEnv(isTestMode = false): BraintreeEnv {
-        return isTestMode ? BraintreeEnv.Sandbox : BraintreeEnv.Production;
-    }
-
-    mapToBraintreeShippingAddressOverride(address: Address): BraintreeShippingAddressOverride {
-        return {
-            recipientName: `${address.firstName} ${address.lastName}`,
-            line1: address.address1,
-            line2: address.address2,
-            city: address.city,
-            state: address.stateOrProvinceCode,
-            postalCode: address.postalCode,
-            countryCode: address.countryCode,
-            phone: address.phone,
-        };
-    }
-
-    mapToLegacyShippingAddress(details: BraintreeDetails): Partial<LegacyAddress> {
-        const { email, phone, shippingAddress } = details;
-        const recipientName = shippingAddress?.recipientName || '';
-        const [firstName, lastName] = recipientName.split(' ');
-
-        return {
-            email,
-            first_name: firstName || '',
-            last_name: lastName || '',
-            phone_number: phone,
-            address_line_1: shippingAddress?.line1,
-            address_line_2: shippingAddress?.line2,
-            city: shippingAddress?.city,
-            state: shippingAddress?.state,
-            country_code: shippingAddress?.countryCode,
-            postal_code: shippingAddress?.postalCode,
-        };
-    }
-
-    mapToLegacyBillingAddress(details: BraintreeDetails): Partial<LegacyAddress> {
-        const { billingAddress, email, firstName, lastName, phone, shippingAddress } = details;
-
-        const address = billingAddress || shippingAddress;
-
-        return {
-            email,
-            first_name: firstName,
-            last_name: lastName,
-            phone_number: phone,
-            address_line_1: address?.line1,
-            address_line_2: address?.line2,
-            city: address?.city,
-            state: address?.state,
-            country_code: address?.countryCode,
-            postal_code: address?.postalCode,
-        };
-    }
-
-    removeElement(elementId?: string): void {
-        const element = elementId && document.getElementById(elementId);
-
-        if (element) {
-            element.remove();
-        }
-    }
-
+    // Info: this method is a temporary method that is almost the same as getDataCollector
+    // except one thing - passing riskCorrelationId option there
     async getSessionId(cartId?: string): Promise<string | undefined> {
         const { deviceData } = await this.getDataCollector({
             riskCorrelationId: cartId,
         });
 
         return deviceData;
+    }
+
+    // Info: the method should not remove yet to keep code consistency and avoid braking logic in different places
+    getBraintreeEnv(isTestMode = false): BraintreeEnv {
+        return getBraintreeEnv(isTestMode);
+    }
+
+    // Info: the method should not remove yet to keep code consistency and avoid braking logic in different places
+    mapToBraintreeShippingAddressOverride(address: Address): BraintreeShippingAddressOverride {
+        return mapToBraintreeShippingAddressOverride(address);
+    }
+
+    // Info: the method should not remove yet to keep code consistency and avoid braking logic in different places
+    mapToLegacyShippingAddress(details: BraintreeDetails): Partial<LegacyAddress> {
+        return mapBraintreeTokenizeDetailsToLegacyShippingAddress(details);
+    }
+
+    // Info: the method should not remove yet to keep code consistency and avoid braking logic in different places
+    mapToLegacyBillingAddress(details: BraintreeDetails): Partial<LegacyAddress> {
+        return mapBraintreeTokenizeDetailsToLegacyBillingAddress(details);
+    }
+
+    // TODO: should be moved to dom-utils or it might be better to remove element in a callback on UI side
+    removeElement(elementId?: string): void {
+        const element = elementId && document.getElementById(elementId);
+
+        if (element) {
+            element.remove();
+        }
     }
 
     async teardown(): Promise<void> {

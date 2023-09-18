@@ -3,6 +3,16 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { getConfig } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import BraintreeScriptLoader from './braintree-script-loader';
+import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './constants';
+import {
+    getBraintreeLocalPaymentMock,
+    getClientMock,
+    getConnectMock,
+    getDataCollectorMock,
+    getModuleCreatorMock,
+    getPaypalCheckoutMock,
+} from './mocks';
 import {
     BraintreeClientCreator,
     BraintreeConnect,
@@ -11,17 +21,7 @@ import {
     BraintreeLocalPaymentCreator,
     BraintreeModuleCreator,
     BraintreePaypalCheckoutCreator,
-} from './braintree';
-import BraintreeScriptLoader from './braintree-script-loader';
-import {
-    getBraintreeLocalPaymentMock,
-    getClientMock,
-    getConnectMock,
-    getDataCollectorMock,
-    getModuleCreatorMock,
-    getPaypalCheckoutMock,
-} from './mocks/braintree.mock';
-import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
+} from './types';
 
 describe('BraintreeScriptLoader', () => {
     let scriptLoader: ScriptLoader;

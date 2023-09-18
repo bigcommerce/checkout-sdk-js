@@ -11,7 +11,7 @@ import {
     BraintreeShippingAddressOverride,
     BraintreeTokenizePayload,
     LocalPaymentInstance,
-} from '../braintree';
+} from '../types';
 
 export function getClientMock(): BraintreeClient {
     return {
@@ -126,9 +126,10 @@ export function getPaypalCheckoutMock(): BraintreePaypalCheckout {
     };
 }
 
+// TODO: this method can be removed because we can mock 'shouldThrowError: true' flow in other way
 export function getPayPalCheckoutCreatorMock(
     braintreePaypalCheckoutMock: BraintreePaypalCheckout,
-    shouldThrowError: boolean,
+    shouldThrowError?: boolean,
 ): BraintreePaypalCheckoutCreator {
     return {
         create: shouldThrowError

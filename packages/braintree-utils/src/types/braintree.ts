@@ -218,6 +218,11 @@ export interface BraintreeDataCollector extends BraintreeModule {
     deviceData?: string;
 }
 
+export interface BraintreeCachedDataCollectors {
+    default?: BraintreeDataCollector;
+    paypal?: BraintreeDataCollector;
+}
+
 /**
  *
  * Braintree Google Pay
@@ -429,14 +434,22 @@ export type BraintreePaypalCheckoutCreator = BraintreeModuleCreator<BraintreePay
 export interface BraintreePaypalCheckout {
     loadPayPalSDK(
         config: BraintreePaypalSdkCreatorConfig,
-        callback: (instance: BraintreePaypalCheckout) => void,
-    ): void;
+        callback?: (instance: BraintreePaypalCheckout) => void,
+    ): Promise<PaypalSDK>;
     createPayment(options: BraintreePaypalRequest): Promise<string>;
     teardown(): Promise<void>;
     tokenizePayment(options: PaypalAuthorizeData): Promise<BraintreeTokenizePayload>;
 }
 
 export interface BraintreePaypalSdkCreatorConfig {
+    components?: string;
+    currency?: string;
+    intent?: string;
+    'enable-funding'?: string;
+    isCreditEnabled?: boolean; // TODO: should be removed with braintree-integration-service
+}
+
+export interface BraintreePaypalSdkOptions {
     components?: string;
     currency?: string;
     intent?: string;

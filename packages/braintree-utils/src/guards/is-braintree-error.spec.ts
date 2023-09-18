@@ -1,6 +1,6 @@
 import isBraintreeError from './is-braintree-error';
 
-describe('isBraintreeError', () => {
+describe('#isBraintreeError()', () => {
     it('error is BraintreeError', () => {
         expect(
             isBraintreeError({
