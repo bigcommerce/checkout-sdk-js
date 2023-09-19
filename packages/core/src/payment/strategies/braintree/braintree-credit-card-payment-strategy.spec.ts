@@ -64,6 +64,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             Promise.resolve(true),
         );
         braintreePaymentProcessorMock.deinitializeHostedForm = jest.fn(() => Promise.resolve());
+        braintreePaymentProcessorMock.validateHostedForm = jest.fn();
         braintreePaymentProcessorMock.tokenizeCard = jest.fn(() =>
             Promise.resolve({ nonce: 'my_tokenized_card' }),
         );
