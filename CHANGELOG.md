@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.450.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.2...v1.450.3) (2023-09-19)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-1752 added validation for braintree credit card form ([#2182](https://github.com/bigcommerce/checkout-sdk-js/issues/2182)) ([7cf06d8](https://github.com/bigcommerce/checkout-sdk-js/commit/7cf06d84985806b2c51d8018bcfb6a61755df4f1))
+
 ### [1.450.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.1...v1.450.2) (2023-09-19)
 
 ### [1.450.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.0...v1.450.1) (2023-09-19)
