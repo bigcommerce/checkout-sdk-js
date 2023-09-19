@@ -175,6 +175,10 @@ export default class BraintreePaymentProcessor {
         return this._braintreeHostedForm.initialize(options);
     }
 
+    validateHostedForm() {
+        return this._braintreeHostedForm.validate();
+    }
+
     isInitializedHostedForm(): boolean {
         return this._braintreeHostedForm.isInitialized();
     }

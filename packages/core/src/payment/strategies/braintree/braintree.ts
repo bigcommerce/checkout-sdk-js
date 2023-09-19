@@ -243,6 +243,7 @@ export type BraintreeHostedFieldsCreator = BraintreeModuleCreator<
 >;
 
 export interface BraintreeHostedFields {
+    getState(): BraintreeHostedFieldsState;
     teardown(): Promise<void>;
     tokenize(
         options?: BraintreeHostedFieldsTokenizeOptions,

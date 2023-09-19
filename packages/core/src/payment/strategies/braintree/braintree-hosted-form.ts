@@ -92,6 +92,22 @@ export default class BraintreeHostedForm {
         this._cardNameField?.detach();
     }
 
+    validate() {
+        if (!this._cardFields) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        const braintreeHostedFormState = this._cardFields.getState();
+
+        if (!this._isValidForm(braintreeHostedFormState)) {
+            this._handleValidityChange(braintreeHostedFormState);
+
+            const errors = this._mapValidationErrors(braintreeHostedFormState.fields);
+
+            throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
+        }
+    }
+
     async tokenize(billingAddress: Address): Promise<TokenizationPayload> {
         if (!this._cardFields) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -473,12 +489,16 @@ export default class BraintreeHostedForm {
 
     private _handleValidityChange: (event: BraintreeHostedFieldsState) => void = (event) => {
         this._formOptions?.onValidate?.({
-            isValid: (
-                Object.keys(event.fields) as Array<keyof BraintreeHostedFieldsState['fields']>
-            ).every((key) => event.fields[key]?.isValid),
+            isValid: this._isValidForm(event),
             errors: this._mapValidationErrors(event.fields),
         });
     };
+
+    private _isValidForm(event: BraintreeHostedFieldsState): boolean {
+        return (
+            Object.keys(event.fields) as Array<keyof BraintreeHostedFieldsState['fields']>
+        ).every((key) => event.fields[key]?.isValid);
+    }
 
     private _isValidParam(
         formErrorDataKey: string,
