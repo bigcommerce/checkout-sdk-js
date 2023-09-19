@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.450.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.0...v1.450.1) (2023-09-19)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2843 captured device info for Braintree Apple Pay ([#2165](https://github.com/bigcommerce/checkout-sdk-js/issues/2165)) ([da32bcd](https://github.com/bigcommerce/checkout-sdk-js/commit/da32bcdcbfef0b14ae36182e8a73088cb60e0760))
+
 ## [1.450.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.449.0...v1.450.0) (2023-09-18)
 
 
