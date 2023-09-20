@@ -121,10 +121,6 @@ import {
 import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
-import {
-    StripeUPEPaymentStrategy,
-    StripeScriptLoader as StripeUPEScriptLoader,
-} from './strategies/stripe-upe';
 import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
 import { WorldpayaccessPaymetStrategy } from './strategies/worldpayaccess';
 import { ZipPaymentStrategy } from './strategies/zip';
@@ -805,20 +801,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 orderActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayStripeUPEInitializer()),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.STRIPE_UPE,
-        () =>
-            new StripeUPEPaymentStrategy(
-                store,
-                paymentMethodActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                new StripeUPEScriptLoader(scriptLoader),
-                storeCreditActionCreator,
-                billingAddressActionCreator,
             ),
     );
 

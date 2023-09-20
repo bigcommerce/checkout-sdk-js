@@ -1,5 +1,6 @@
-import { StripeElement, StripeUPEClient } from '../../../payment/strategies/stripe-upe';
-import { CustomerInitializeOptions } from '../../customer-request-options';
+import { CustomerInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import { StripeElement, StripeUPEClient } from './stripe-upe';
 
 export function getCustomerStripeUPEJsMock(returnElement?: StripeElement): StripeUPEClient {
     return {

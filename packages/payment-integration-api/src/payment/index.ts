@@ -6,6 +6,7 @@ export {
     BlueSnapDirectEcpInstrument,
     BlueSnapDirectEcpPayload,
     CreditCardInstrument,
+    FormattedHostedInstrument,
     WithBankAccountInstrument,
     WithCheckoutcomiDealInstrument,
     WithCheckoutcomFawryInstrument,
@@ -23,6 +24,7 @@ export {
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
     StripeV3FormattedPayload,
+    StripeUPEIntent,
 } from './payment';
 
 export { default as isHostedInstrumentLike } from './is-hosted-intrument-like';
