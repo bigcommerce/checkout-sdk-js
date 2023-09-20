@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.450.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.4...v1.450.5) (2023-09-20)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2928 fixed the issue with braintree buttons rendering on PDP page ([#2185](https://github.com/bigcommerce/checkout-sdk-js/issues/2185)) ([e2ea829](https://github.com/bigcommerce/checkout-sdk-js/commit/e2ea829e41d057ed6e84389d8b04dbe10c06ba58))
+
 ### [1.450.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.3...v1.450.4) (2023-09-19)
 
 ### [1.450.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.2...v1.450.3) (2023-09-19)
