@@ -90,7 +90,9 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
             currencyCode = state.cart.getCartOrThrow().currency.code;
         }
 
-        const storeConfig = state.config.getStoreConfigOrThrow();
+        // Info: does not use getStoreConfigOrThrow, because storeConfig is not available if
+        // cart is empty, so it causes issues on Product Details Page
+        const storeConfig = state.config.getStoreConfig();
         const { clientToken, initializationData } = paymentMethod;
 
         if (!clientToken || !initializationData) {
