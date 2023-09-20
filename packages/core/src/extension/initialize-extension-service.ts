@@ -9,13 +9,18 @@ import { ExtensionEventMap } from './extension-events';
 import { ExtensionInternalCommand } from './extension-internal-commands';
 import ExtensionService from './extension-service';
 
+import { enableAutoResizing } from './iframe-resizer-methods';
+
 export interface InitializeExtensionServiceOptions {
     extensionId: string;
     parentOrigin: string;
+    taggedElementId?: string;
 }
 
-export default function initializeExtensionService(options: InitializeExtensionServiceOptions) {
-    const { extensionId, parentOrigin } = options;
+export default async function initializeExtensionService(
+    options: InitializeExtensionServiceOptions,
+): Promise<ExtensionService> {
+    const { extensionId, parentOrigin, taggedElementId } = options;
 
     setupContentWindowForIframeResizer();
 
@@ -26,6 +31,8 @@ export default function initializeExtensionService(options: InitializeExtensionS
     );
 
     extension.initialize(extensionId);
+
+    await enableAutoResizing(taggedElementId);
 
     return extension;
 }

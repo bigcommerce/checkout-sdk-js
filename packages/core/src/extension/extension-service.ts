@@ -12,6 +12,7 @@ import {
     ExtensionInternalCommand,
     ExtensionInternalCommandType,
 } from './extension-internal-commands';
+import { isIframeResizerWindow } from './iframe-resizer-methods';
 
 export default class ExtensionService {
     private _extensionId?: string;
@@ -74,5 +75,11 @@ export default class ExtensionService {
 
             this._eventListener.removeListener(eventType, callback);
         };
+    }
+
+    autoResize(isEnabled: boolean): void {
+        if (isIframeResizerWindow(window)) {
+            window.parentIFrame.autoResize(isEnabled);
+        }
     }
 }

@@ -9,6 +9,7 @@ import {
     ExtensionInternalCommandType,
 } from './extension-internal-commands';
 import ExtensionService from './extension-service';
+import { IframeResizerWindow } from './iframe-resizer-methods';
 
 describe('ExtensionService', () => {
     let extensionService: ExtensionService;
@@ -90,5 +91,24 @@ describe('ExtensionService', () => {
             ExtensionEventType.ConsignmentsChanged,
             callbackFn,
         );
+    });
+
+    it('#autoResize is called correctly with params', () => {
+        Object.defineProperty(window, 'parentIFrame', {
+            value: {
+                autoResize: jest.fn(),
+                setHeightCalculationMethod: jest.fn(),
+            },
+        });
+
+        const isEnabled = false;
+
+        extensionService.initialize('test');
+
+        extensionService.autoResize(isEnabled);
+
+        expect(
+            (window as unknown as IframeResizerWindow).parentIFrame.autoResize,
+        ).toHaveBeenCalledWith(isEnabled);
     });
 });

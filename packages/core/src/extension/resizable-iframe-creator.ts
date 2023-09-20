@@ -58,9 +58,10 @@ export default class ResizableIframeCreator {
 
                     const iframes = iframeResizer(
                         {
+                            autoResize: false,
                             scrolling: false,
                             sizeWidth: false,
-                            heightCalculationMethod: 'bodyScroll',
+                            heightCalculationMethod: 'bodyOffset',
                         },
                         iframe,
                     );

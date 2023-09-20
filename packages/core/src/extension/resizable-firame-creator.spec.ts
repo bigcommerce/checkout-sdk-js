@@ -72,9 +72,10 @@ describe('ResizableIframeCreator', () => {
         expect(frame.iFrameResizer).toBeDefined();
         expect(iframeResizer).toHaveBeenCalledWith(
             {
+                autoResize: false,
                 scrolling: false,
                 sizeWidth: false,
-                heightCalculationMethod: 'bodyScroll',
+                heightCalculationMethod: 'bodyOffset',
             },
             frame,
         );
