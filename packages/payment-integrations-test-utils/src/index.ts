@@ -10,6 +10,7 @@ export {
     getConsignment,
     getCountries,
     getCustomer,
+    getGuestCustomer,
     getOrder,
     getOrderRequestBody,
     getShippingOption,

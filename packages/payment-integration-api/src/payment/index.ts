@@ -9,6 +9,7 @@ export {
     WithSepaInstrument,
     WithEcpInstrument,
     CreditCardInstrument,
+    FormattedHostedInstrument,
     WithBankAccountInstrument,
     WithIdealInstrument,
     WithCheckoutcomFawryInstrument,
@@ -25,9 +26,10 @@ export {
     WithAccountCreation,
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
-    StripeV3FormattedPayload,
     PaypalInstrument,
     FormattedPayload,
+    StripeUPEIntent,
+    StripeV3FormattedPayload,
 } from './payment';
 
 export { default as isHostedInstrumentLike } from './is-hosted-intrument-like';

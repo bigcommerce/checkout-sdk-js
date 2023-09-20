@@ -1,4 +1,4 @@
-import { Customer } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Customer, InternalCustomer } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { getAddress } from './address.mock';
 
@@ -23,5 +23,19 @@ export function getCustomer(): Customer {
             id: 1,
             name: 'vip',
         },
+    };
+}
+
+export function getGuestCustomer(): InternalCustomer {
+    return {
+        addresses: [],
+        customerId: 0,
+        customerGroupName: '',
+        email: 'test@bigcommerce.com',
+        firstName: 'Test',
+        lastName: 'Tester',
+        isGuest: true,
+        name: 'Test Tester',
+        storeCredit: 0,
     };
 }

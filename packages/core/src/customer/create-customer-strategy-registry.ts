@@ -28,9 +28,7 @@ import {
     GooglePayWorldpayAccessInitializer,
 } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
-import { StripeScriptLoader } from '../payment/strategies/stripe-upe';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
-import { ConsignmentActionCreator, ConsignmentRequestSender } from '../shipping';
 import {
     createSpamProtection,
     SpamProtectionActionCreator,
@@ -49,7 +47,6 @@ import { DefaultCustomerStrategy } from './strategies/default';
 import { GooglePayCustomerStrategy } from './strategies/googlepay';
 import { MasterpassCustomerStrategy } from './strategies/masterpass';
 import { SquareCustomerStrategy } from './strategies/square';
-import { StripeUPECustomerStrategy } from './strategies/stripe-upe';
 
 export default function createCustomerStrategyRegistry(
     store: CheckoutStore,
@@ -256,21 +253,6 @@ export default function createCustomerStrategyRegistry(
                 remoteCheckoutActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayWorldpayAccessInitializer()),
                 formPoster,
-            ),
-    );
-
-    registry.register(
-        'stripeupe',
-        () =>
-            new StripeUPECustomerStrategy(
-                store,
-                new StripeScriptLoader(scriptLoader),
-                customerActionCreator,
-                paymentMethodActionCreator,
-                new ConsignmentActionCreator(
-                    new ConsignmentRequestSender(requestSender),
-                    new CheckoutRequestSender(requestSender),
-                ),
             ),
     );
 

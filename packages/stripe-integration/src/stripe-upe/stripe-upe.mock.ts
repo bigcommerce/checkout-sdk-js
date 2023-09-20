@@ -1,9 +1,35 @@
-import { OrderRequestBody } from '../../../order';
-import { PaymentInitializeOptions } from '../../payment-request-options';
+import {
+    OrderRequestBody,
+    PaymentInitializeOptions,
+    PaymentMethod,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { StripePaymentMethodType, StripeUPEClient } from './stripe-upe';
 
 const gatewayId = 'stripeupe';
+
+export function getStripeUPE(method = 'card'): PaymentMethod {
+    return {
+        id: method,
+        logoUrl: '',
+        method,
+        supportedCards: [],
+        config: {
+            displayName: 'Stripe',
+            merchantId: '',
+            testMode: true,
+        },
+        initializationData: {
+            stripePublishableKey: 'key',
+            stripeConnectedAccount: 'key',
+            browserLanguageEnabled: false,
+            shopperLanguage: 'en',
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+        returnUrl: 'http://www.example.com',
+    };
+}
 
 export function getStripeUPEJsMock(): StripeUPEClient {
     return {
