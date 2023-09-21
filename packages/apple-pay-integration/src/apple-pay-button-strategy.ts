@@ -629,10 +629,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         const storeConfig = state.getStoreConfig();
 
-        if (!storeConfig) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-        }
-
         const braintreePaymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(
             ApplePayGatewayType.BRAINTREE,
         );
