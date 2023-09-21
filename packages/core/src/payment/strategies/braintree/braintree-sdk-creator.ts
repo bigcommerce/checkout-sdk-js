@@ -43,7 +43,7 @@ export default class BraintreeSDKCreator {
         this._window = window;
     }
 
-    initialize(clientToken: string, storeConfig: StoreConfig) {
+    initialize(clientToken: string, storeConfig?: StoreConfig) {
         this._clientToken = clientToken;
         this._braintreeScriptLoader.initialize(storeConfig);
     }

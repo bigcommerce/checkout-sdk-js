@@ -594,6 +594,7 @@ export interface BraintreeConnectProfileData {
     connectCustomerId: string;
     addresses: BraintreeConnectAddress[];
     cards: BraintreeConnectVaultedInstrument[];
+    phones: BraintreeConnectPhone[];
     name: {
         given_name: string;
         surname: string;
@@ -642,6 +643,11 @@ export interface BraintreeConnectCardComponentFields {
 export interface BraintreeConnectCardComponentField {
     placeholder?: string;
     prefill?: string;
+}
+
+export interface BraintreeConnectPhone {
+    country_code: string;
+    national_number: string;
 }
 
 export interface BraintreeConnectTokenizeResult {
