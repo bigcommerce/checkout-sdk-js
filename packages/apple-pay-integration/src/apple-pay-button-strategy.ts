@@ -637,6 +637,8 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             return;
         }
 
+        console.log('test');
+
         this._braintreeIntegrationService.initialize(
             braintreePaymentMethod.clientToken,
             storeConfig,
