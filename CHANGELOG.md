@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.451.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.5...v1.451.0) (2023-09-21)
+
+
+### Features
+
+* **payment:** PAYPAL-2979 added phone number mapping from BT AXO profileData to autofill BC shipping and billing phone number fields ([#2188](https://github.com/bigcommerce/checkout-sdk-js/issues/2188)) ([62df5e7](https://github.com/bigcommerce/checkout-sdk-js/commit/62df5e7a63c7ee752d08f0149065696c1bf9a68f))
+
 ### [1.450.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.4...v1.450.5) (2023-09-20)
 
 
