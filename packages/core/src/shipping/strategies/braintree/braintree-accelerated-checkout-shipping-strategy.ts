@@ -2,6 +2,7 @@ import { isEqual, omit } from 'lodash';
 
 import {
     BraintreeConnectAddress,
+    BraintreeConnectPhone,
     BraintreeConnectProfileData,
     BraintreeConnectVaultedInstrument,
     BraintreeIntegrationService,
@@ -139,10 +140,10 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
         );
 
         const shippingAddresses =
-            this._mapPayPalToBcAddress(profileData.addresses, countries) || [];
+            this._mapPayPalToBcAddress(profileData.addresses, countries, profileData.phones) || [];
         const paypalBillingAddresses = this._getPayPalBillingAddresses(profileData) || [];
         const billingAddresses =
-            this._mapPayPalToBcAddress(paypalBillingAddresses, countries) || [];
+            this._mapPayPalToBcAddress(paypalBillingAddresses, countries, profileData.phones) || [];
         const instruments = this._mapPayPalToBcInstrument(methodId, profileData.cards) || [];
         const addresses = this._mergeShippingAndBillingAddresses(
             shippingAddresses,
@@ -217,7 +218,11 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
     private _mapPayPalToBcAddress(
         addresses: BraintreeConnectAddress[],
         countries: Country[],
+        phones: BraintreeConnectPhone[],
     ): CustomerAddress[] | undefined {
+        const phoneNumber =
+            phones && phones[0] ? phones[0].country_code + phones[0].national_number : '';
+
         return addresses.map((address) => ({
             id: Number(address.id),
             type: 'paypal-address',
@@ -232,7 +237,7 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
             country: this._getCountryNameByCountryCode(address.countryCodeAlpha2, countries),
             countryCode: address.countryCodeAlpha2,
             postalCode: address.postalCode,
-            phone: '',
+            phone: phoneNumber,
             customFields: [],
         }));
     }

@@ -95,6 +95,12 @@ export function getBraintreeConnectProfileDataMock(): BraintreeConnectProfileDat
             given_name: 'John',
             surname: 'Doe',
         },
+        phones: [
+            {
+                country_code: '1',
+                national_number: '4085551234',
+            },
+        ],
     };
 }
 

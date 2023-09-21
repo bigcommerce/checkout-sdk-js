@@ -201,7 +201,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                         country: 'United States',
                         countryCode: 'US',
                         postalCode: '98225',
-                        phone: '',
+                        phone: '14085551234',
                         customFields: [],
                     },
                 ],
@@ -264,7 +264,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                         country: 'United States',
                         countryCode: 'US',
                         postalCode: '98225',
-                        phone: '',
+                        phone: '14085551234',
                         customFields: [],
                     },
                     {
@@ -281,7 +281,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                         country: 'United States',
                         countryCode: 'US',
                         postalCode: '98225',
-                        phone: '',
+                        phone: '14085551234',
                         customFields: [],
                     },
                 ],
@@ -352,7 +352,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                 country: 'United States',
                 countryCode: 'US',
                 postalCode: '98225',
-                phone: '',
+                phone: '14085551234',
                 customFields: [],
             });
         });
@@ -375,7 +375,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                 country: 'United States',
                 countryCode: 'US',
                 postalCode: '98225',
-                phone: '',
+                phone: '14085551234',
                 customFields: [],
             });
         });
