@@ -201,7 +201,87 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                         country: 'United States',
                         countryCode: 'US',
                         postalCode: '98225',
-                        phone: '',
+                        phone: '14085551234',
+                        customFields: [],
+                    },
+                ],
+                instruments: [
+                    {
+                        bigpayToken: 'pp-vaulted-instrument-id',
+                        brand: 'VISA',
+                        defaultInstrument: false,
+                        expiryMonth: undefined,
+                        expiryYear: '02/2037',
+                        iin: '',
+                        last4: '1111',
+                        method: 'braintreeacceleratedcheckout',
+                        provider: 'braintreeacceleratedcheckout',
+                        trustedShippingAddress: false,
+                        type: 'card',
+                    },
+                ],
+            };
+
+            await subject.initializeBraintreeConnectOrThrow(methodId);
+            await subject.runPayPalConnectAuthenticationFlowOrThrow();
+
+            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
+            expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
+            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
+                updatePaymentProviderCustomerPayload,
+            );
+        });
+
+        it('successfully authenticate customer with PP Connect and different shipping and bulling addresses', async () => {
+            const defaultProfileData = getBraintreeConnectProfileDataMock();
+            const profileData = getBraintreeConnectProfileDataMock();
+
+            profileData.cards[0].paymentSource.card.billingAddress = {
+                ...defaultProfileData.cards[0].paymentSource.card.billingAddress,
+                firstName: 'Mr.',
+                lastName: 'Smith',
+            };
+
+            jest.spyOn(braintreeConnectMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
+                authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
+                profileData,
+            });
+
+            const updatePaymentProviderCustomerPayload = {
+                authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
+                addresses: [
+                    {
+                        id: 123123,
+                        type: 'paypal-address',
+                        firstName: 'John',
+                        lastName: 'Doe',
+                        company: '',
+                        address1: 'Hello World Address',
+                        address2: '',
+                        city: 'Bellingham',
+                        stateOrProvince: 'WA',
+                        stateOrProvinceCode: 'WA',
+                        country: 'United States',
+                        countryCode: 'US',
+                        postalCode: '98225',
+                        phone: '14085551234',
+                        customFields: [],
+                    },
+                    {
+                        id: 321,
+                        type: 'paypal-address',
+                        firstName: 'Mr.',
+                        lastName: 'Smith',
+                        company: '',
+                        address1: 'Hello World Address',
+                        address2: '',
+                        city: 'Bellingham',
+                        stateOrProvince: 'WA',
+                        stateOrProvinceCode: 'WA',
+                        country: 'United States',
+                        countryCode: 'US',
+                        postalCode: '98225',
+                        phone: '14085551234',
                         customFields: [],
                     },
                 ],
@@ -254,12 +334,12 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             );
         });
 
-        it('preselects billing address with first paypal connect address', async () => {
+        it('preselects billing address with first paypal connect billing address', async () => {
             await subject.initializeBraintreeConnectOrThrow(methodId);
             await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
             expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith({
-                id: 123123,
+                id: 321,
                 type: 'paypal-address',
                 firstName: 'John',
                 lastName: 'Doe',
@@ -272,7 +352,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                 country: 'United States',
                 countryCode: 'US',
                 postalCode: '98225',
-                phone: '',
+                phone: '14085551234',
                 customFields: [],
             });
         });
@@ -295,7 +375,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                 country: 'United States',
                 countryCode: 'US',
                 postalCode: '98225',
-                phone: '',
+                phone: '14085551234',
                 customFields: [],
             });
         });

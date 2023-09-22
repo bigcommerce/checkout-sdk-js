@@ -75,6 +75,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `id` | `string` |
+| `mandateText?` | `Object` |
 | `url?` | `string` |
 
 ___

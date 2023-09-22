@@ -1,10 +1,15 @@
-import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { HostedFieldType } from '../../../hosted-form';
-import { OrderRequestBody } from '../../../order';
-import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
-import { PaymentInitializeOptions } from '../../payment-request-options';
+import {
+    HostedFieldType,
+    OrderRequestBody,
+    PaymentInitializeOptions,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    getBillingAddress,
+    getShippingAddress,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import {
+    IndividualCardElementOptions,
     PaymentMethodCreateParams,
     StripeBillingDetails,
     StripeConfirmCardPaymentData,
@@ -12,8 +17,7 @@ import {
     StripeShippingAddress,
     StripeV3Client,
 } from './stripev3';
-
-import { IndividualCardElementOptions, StripeV3PaymentInitializeOptions } from './index';
+import StripeV3PaymentInitializeOptions from './stripev3-initialize-options';
 
 const gatewayId = 'stripev3';
 

@@ -1259,11 +1259,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      */
     googlepaystripeupe?: GooglePayPaymentInitializeOptions;
     /**
-     * The options that are required to initialize the Stripe payment method.
-     * They can be omitted unless you need to support StripeV3.
-     */
-    stripev3?: StripeV3PaymentInitializeOptions;
-    /**
      * The options that are required to initialize the StripeUPE payment method.
      * They can be omitted unless you need to support StripeUPE.
      */
@@ -5128,6 +5123,9 @@ declare interface GatewayOrderPayment extends OrderPayment {
     mandate?: {
         id: string;
         url?: string;
+        mandateText?: {
+            [key: string]: string;
+        };
     };
 }
 
@@ -6965,7 +6963,7 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -7937,7 +7935,7 @@ declare interface StripeV3PaymentInitializeOptions {
     /**
      * Hosted Form Validation Options
      */
-    form?: HostedFormOptions;
+    form?: HostedFormOptions_2;
 }
 
 declare enum StyleButtonColor {
@@ -8347,6 +8345,10 @@ declare interface WithSquareV2PaymentInitializeOptions {
      * They can be omitted unless you need to support Square.
      */
     squarev2?: SquareV2PaymentInitializeOptions;
+}
+
+declare interface WithStripeV3PaymentInitializeOptions {
+    stripev3?: StripeV3PaymentInitializeOptions;
 }
 
 declare interface WorldpayAccessPaymentInitializeOptions {

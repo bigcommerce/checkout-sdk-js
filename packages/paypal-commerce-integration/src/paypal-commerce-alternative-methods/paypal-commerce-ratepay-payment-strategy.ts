@@ -1,3 +1,5 @@
+import { noop } from 'lodash';
+
 import {
     InvalidArgumentError,
     OrderFinalizationNotRequiredError,
@@ -7,17 +9,28 @@ import {
     PaymentIntegrationService,
     PaymentRequestOptions,
     PaymentStrategy,
+    TimeoutError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-
 import { WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions } from '../index';
-import { BirthDate, PayPalCommerceInitializationData } from '../paypal-commerce-types';
+import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
+import {
+    BirthDate,
+    PayPalCommerceInitializationData,
+    PayPalOrderStatus,
+} from '../paypal-commerce-types';
+
 import { PaypalCommerceRatePay } from './paypal-commerce-alternative-methods-payment-initialize-options';
+
+const POLLING_INTERVAL = 3000;
+const MAX_POLLING_TIME = 300000;
 
 export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStrategy {
     private guid?: string;
     private paypalcommerceratepay?: PaypalCommerceRatePay;
+    private pollingTimer = 0;
+    private stopPolling = noop;
+
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
@@ -133,8 +146,19 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
                 methodId: payment.methodId,
                 paymentData,
             });
+
+            return await new Promise((resolve, reject) => {
+                this.initializePollingMechanism(
+                    payment.methodId,
+                    resolve,
+                    reject,
+                    payment.gatewayId,
+                );
+            });
         } catch (error: unknown) {
             this.handleError(error);
+
+            return new Promise((_resolve, reject) => reject());
         }
     }
 
@@ -147,11 +171,14 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         const fraudNetScript = document.querySelectorAll('[data-id="fraudnetScript"]')[0];
         const fraudNetConfig = document.querySelectorAll('[data-id="fraudnetConfig"]')[0];
 
+        this.deinitializePollingMechanism();
+
         fraudNetScript.remove();
         fraudNetConfig.remove();
 
         if (legalTextContainer) {
             const legalTextContainerElement = document.getElementById(legalTextContainer);
+
             legalTextContainerElement?.remove();
         }
 
@@ -173,9 +200,11 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         const buttonContainer = document.getElementById(buttonContainerId);
         const buttonContainerParent = buttonContainer?.parentNode;
         const legalTextContainer = document.createElement('div');
+
         legalTextContainer.style.marginBottom = '20px';
         legalTextContainer.setAttribute('id', legalTextContainerId);
         buttonContainerParent?.prepend(legalTextContainer);
+
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const ratePayButton = paypalSdk.Legal({
             fundingSource: paypalSdk.Legal.FUNDING.PAY_UPON_INVOICE,
@@ -194,6 +223,8 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
     private handleError(error: unknown): void {
         const { onError } = this.paypalcommerceratepay || {};
 
+        this.resetPollingMechanism();
+
         if (onError && typeof onError === 'function') {
             onError(error);
         }
@@ -204,10 +235,12 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         const paymentMethod = state.getPaymentMethodOrThrow(methodId, gatewayId);
         const { testMode } = paymentMethod.config;
         const scriptElement = document.createElement('script');
+
         scriptElement.setAttribute('type', 'application/json');
         scriptElement.setAttribute('fncls', 'fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99');
         scriptElement.setAttribute('data-id', 'fraudnetScript');
         this.guid = this.generateGUID();
+
         const fraudNetConfig = {
             f: this.guid,
             s: `${merchantId}_checkout-page`,
@@ -224,6 +257,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
 
         for (let i = 0; i < 32; i += 1) {
             const randomIndex = Math.floor(Math.random() * characters.length);
+
             guid += characters[randomIndex];
         }
 
@@ -232,8 +266,90 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
 
     private loadFraudnetConfig() {
         const script = document.createElement('script');
+
         script.setAttribute('data-id', 'fraudnetConfig');
         script.src = 'https://c.paypal.com/da/r/fb.js';
         document.body.appendChild(script);
+    }
+
+    private async reinitializeStrategy(
+        options: PaymentInitializeOptions &
+            WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions,
+    ): Promise<void> {
+        await this.deinitialize();
+        await this.initialize(options);
+    }
+
+    /**
+     *
+     * Polling mechanism
+     *
+     *
+     * */
+    private async initializePollingMechanism(
+        methodId: string,
+        resolvePromise: () => void,
+        rejectPromise: () => void,
+        gatewayId?: string,
+    ): Promise<void> {
+        await new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(resolve, POLLING_INTERVAL);
+
+            this.stopPolling = () => {
+                clearTimeout(timeout);
+
+                return reject();
+            };
+        });
+
+        try {
+            this.pollingTimer += POLLING_INTERVAL;
+
+            const orderStatus = await this.paypalCommerceIntegrationService.getOrderStatus(
+                'paypalcommercealternativemethods',
+                {
+                    params: {
+                        useMetadata: true,
+                    },
+                },
+            );
+
+            const isOrderApproved = orderStatus === PayPalOrderStatus.PollingStop;
+
+            if (isOrderApproved) {
+                this.deinitializePollingMechanism();
+
+                return resolvePromise();
+            }
+
+            if (!isOrderApproved && this.pollingTimer < MAX_POLLING_TIME) {
+                return await this.initializePollingMechanism(
+                    methodId,
+                    resolvePromise,
+                    rejectPromise,
+                    gatewayId,
+                );
+            }
+
+            await this.reinitializeStrategy({
+                methodId,
+                gatewayId,
+                paypalcommerceratepay: this.paypalcommerceratepay,
+            });
+
+            this.handleError(new TimeoutError());
+        } catch (error) {
+            this.handleError(error);
+            rejectPromise();
+        }
+    }
+
+    private deinitializePollingMechanism(): void {
+        this.stopPolling();
+        this.pollingTimer = 0;
+    }
+
+    private resetPollingMechanism(): void {
+        this.deinitializePollingMechanism();
     }
 }

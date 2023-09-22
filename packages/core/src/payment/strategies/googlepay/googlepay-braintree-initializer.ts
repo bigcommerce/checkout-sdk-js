@@ -28,7 +28,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         paymentMethod: PaymentMethod,
         hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
-        const storeConfig = this._store.getState().config.getStoreConfigOrThrow();
+        const storeConfig = this._store.getState().config.getStoreConfig();
         const { clientToken } = paymentMethod;
 
         if (!clientToken) {

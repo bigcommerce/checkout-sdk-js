@@ -6,6 +6,7 @@ import {
     HostedFormOptions,
     InvalidArgumentError,
     isHostedInstrumentLike,
+    isRequestError,
     isVaultedInstrument,
     MissingDataError,
     MissingDataErrorType,
@@ -18,7 +19,6 @@ import {
     PaymentIntegrationService,
     PaymentRequestOptions,
     PaymentStrategy,
-    RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { MollieClient, MollieElement } from './mollie';
@@ -315,12 +315,17 @@ export default class MolliePaymentStrategy implements PaymentStrategy {
     }
 
     private processAdditionalAction(error: any): Promise<unknown> {
-        if (!(error instanceof RequestError) && !some(error.body.errors, {code: 'additional_action_required'})) {
+        if (!isRequestError(error)) {
             return Promise.reject(error);
         }
-        const { additional_action_required: { data : { redirect_url } } } = error.body;
 
-        return new Promise(() => window.location.replace(redirect_url));
+        if (some(error.body.errors, {code: 'additional_action_required'})) {
+            const { additional_action_required: { data : { redirect_url } } } = error.body;
+
+            return new Promise(() => window.location.replace(redirect_url));
+        }
+
+        return Promise.reject(error);
     }
 
     private getInitializeOptions(): MolliePaymentInitializeOptions {

@@ -83,19 +83,14 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const state = await this._store.dispatch(
-            this._orderActionCreator.submitOrder(order, options),
-        );
+        if (this._isHostedFormInitialized) {
+            this._braintreePaymentProcessor.validateHostedForm();
+        }
 
         const {
             billingAddress: { getBillingAddressOrThrow },
             order: { getOrderOrThrow },
-            payment: { isPaymentDataRequired },
-        } = state;
-
-        if (!isPaymentDataRequired(order.useStoreCredit)) {
-            return state;
-        }
+        } = await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
         const billingAddress = getBillingAddressOrThrow();
         const orderAmount = getOrderOrThrow().orderAmount;

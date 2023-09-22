@@ -85,6 +85,7 @@ export function getVenmoCheckoutMock(): BraintreeVenmoCheckout {
 
 export function getHostedFieldsMock(): BraintreeHostedFields {
     return {
+        getState: jest.fn(),
         teardown: jest.fn(() => Promise.resolve()),
         tokenize: jest.fn(() => Promise.resolve(getTokenizePayload())),
         on: jest.fn(),

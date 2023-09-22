@@ -14,24 +14,10 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import BlueSnapDirectAPMPaymentStrategy from './bluesnap-direct-apm-payment-strategy';
-import * as iframeCreator from './bluesnap-direct-iframe-creator';
 
 describe('BlueSnapDirectAPMPaymentStrategy', () => {
     let strategy: BlueSnapDirectAPMPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
-    const onLoad = jest.fn();
-
-    const initializeOptions = {
-        methodId: 'foobar',
-        bluesnapdirect: {
-            onLoad,
-            style: {
-                border: '1px solid gray',
-                height: '40vh',
-                width: '100%',
-            },
-        },
-    };
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -53,13 +39,13 @@ describe('BlueSnapDirectAPMPaymentStrategy', () => {
         const options = { methodId: 'bluesnapdirect' };
 
         it('throws error when payment data is empty', async () => {
-            await strategy.initialize(initializeOptions);
+            await strategy.initialize();
 
             await expect(strategy.execute({})).rejects.toThrow(PaymentArgumentInvalidError);
         });
 
         it('submits order without payment data', async () => {
-            await strategy.initialize(initializeOptions);
+            await strategy.initialize();
 
             await strategy.execute(payload, options);
 
@@ -73,7 +59,7 @@ describe('BlueSnapDirectAPMPaymentStrategy', () => {
         });
 
         it('rejects payment when error is different to additional_action_required', async () => {
-            await strategy.initialize(initializeOptions);
+            await strategy.initialize();
 
             const error = new RequestError(getResponse(getErrorPaymentResponseBody()));
 
@@ -82,16 +68,11 @@ describe('BlueSnapDirectAPMPaymentStrategy', () => {
             );
 
             await expect(strategy.execute(getOrderRequestBody())).rejects.toThrow(error);
-
-            expect(onLoad).not.toHaveBeenCalled();
         });
 
         it('redirects to bluesnapdirect if additional action is required', async () => {
-            const createIframeMock = jest.fn();
-
-            jest.spyOn(iframeCreator, 'createIframe').mockImplementation(createIframeMock);
-
-            await strategy.initialize(initializeOptions);
+            window.location.replace = jest.fn();
+            await strategy.initialize();
 
             const redirect_url = 'https://sandbox.bluesnap.com/buynow/checkout?enc=test';
             const error = new RequestError(
@@ -114,21 +95,15 @@ describe('BlueSnapDirectAPMPaymentStrategy', () => {
             );
 
             void strategy.execute(payload, options);
-
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(createIframeMock).toHaveBeenCalledWith(
-                'bluesnap_direct_hosted_payment_page',
-                `${redirect_url}&merchantid=123`,
-                initializeOptions.bluesnapdirect.style,
-            );
-            expect(onLoad).toHaveBeenCalled();
+            expect(window.location.replace).toHaveBeenCalledWith(`${redirect_url}&merchantid=123`);
         });
     });
 
     describe('#initialize()', () => {
         it('initializes the strategy successfully', async () => {
-            const result = await strategy.initialize(initializeOptions);
+            const result = await strategy.initialize();
 
             expect(result).toBeUndefined();
         });

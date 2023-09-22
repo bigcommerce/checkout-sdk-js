@@ -1,8 +1,13 @@
-import { BraintreeIntegrationService } from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
+    BraintreeIntegrationService,
+    getBraintreeConnectProfileDataMock,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
     getCart,
+    getConfig,
+    getCountries,
     getPaymentMethod,
     getShippingAddress,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -58,34 +63,40 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
     const defaultOptions = {
         methodId: BRAINTREE_AXO_METHOD_ID,
     };
-    const ppAddress = {
-        id: '123',
-        firstName: 'firstName',
-        lastName: 'lastName',
-        company: 'company',
-        streetAddress: 'streetAddress',
-        extendedAddress: 'extendedAddress',
-        locality: 'locality',
-        region: 'region',
-        countryCodeAlpha2: 'countryCodeAlpha2',
-        postalCode: 'postalCode',
-    };
     const mappedAddress = {
-        id: 123,
+        id: 123123,
         type: 'paypal-address',
-        firstName: 'firstName',
-        lastName: 'lastName',
-        company: 'company',
-        address1: 'streetAddress',
-        address2: 'extendedAddress',
-        city: 'locality',
-        stateOrProvince: 'region',
-        stateOrProvinceCode: 'region',
-        country: '',
-        countryCode: 'countryCodeAlpha2',
-        postalCode: 'postalCode',
-        phone: '',
+        firstName: 'John',
+        lastName: 'Doe',
+        company: '',
+        address1: 'Hello World Address',
+        address2: '',
+        city: 'Bellingham',
+        stateOrProvince: 'WA',
+        stateOrProvinceCode: 'WA',
+        country: 'United States',
+        countryCode: 'US',
+        postalCode: '98225',
+        phone: '14085551234',
         customFields: [],
+    };
+    const mappedBillingAddress = {
+        ...mappedAddress,
+        id: '321',
+    };
+    const mappedInstruments = {
+        bigpayToken: 'pp-vaulted-instrument-id',
+        brand: 'VISA',
+        defaultInstrument: false,
+        expiryMonth: undefined,
+        expiryYear: '02/2037',
+        iin: '',
+        last4: '1111',
+        method: 'braintreeacceleratedcheckout',
+        provider: 'braintreeacceleratedcheckout',
+        trustedShippingAddress: false,
+        type: 'card',
+        untrustedShippingCardVerificationMode: 'cvv',
     };
     const createStrategy = () => {
         return new BraintreeAcceleratedCheckoutShippingStrategy(
@@ -113,6 +124,8 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
         jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue({
             ...getCart(),
         });
+        jest.spyOn(store.getState().countries, 'getCountries').mockReturnValue(getCountries());
+        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(getConfig());
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
             clientToken: 'clientToken',
             initializationData: {},
@@ -127,7 +140,7 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
                 triggerAuthenticationFlow: () =>
                     Promise.resolve({
                         authenticationState: 'authenticationState',
-                        profileData: { addresses: [ppAddress] },
+                        profileData: getBraintreeConnectProfileDataMock(),
                     }),
             },
         });
@@ -265,23 +278,6 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
             expect(getBraintreeConnectMock).not.toHaveBeenCalled();
         });
 
-        it('skip authentication if initializationData does not exist', async () => {
-            const getBraintreeConnectMock = jest.fn();
-
-            jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeConnect').mockImplementation(
-                getBraintreeConnectMock,
-            );
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
-                clientToken: 'clientToken',
-            });
-
-            const strategy = createStrategy();
-
-            await strategy.initialize(defaultOptions);
-
-            expect(getBraintreeConnectMock).not.toHaveBeenCalled();
-        });
-
         it('skip authentication if customerContextId does not exist', async () => {
             const lookupCustomerByEmailMock = () => ({ customerContextId: undefined });
             const triggerAuthenticationFlowMock = jest.fn();
@@ -351,11 +347,10 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
             expect(updatePaymentProviderCustomerMock).toHaveBeenCalledWith({
                 authenticationState: 'authenticationState',
                 addresses: [mappedAddress],
-                instruments: [],
+                instruments: [mappedInstruments],
             });
             expect(updateBillingAddressMock).toHaveBeenCalledWith({
-                ...mappedAddress,
-                id: '123',
+                ...mappedBillingAddress,
             });
             expect(updateShippingAddressMock).not.toHaveBeenCalled();
         });
@@ -384,12 +379,53 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
         expect(updatePaymentProviderCustomerMock).toHaveBeenCalledWith({
             authenticationState: 'authenticationState',
             addresses: [mappedAddress],
-            instruments: [],
+            instruments: [mappedInstruments],
         });
         expect(updateBillingAddressMock).toHaveBeenCalledWith({
-            ...mappedAddress,
-            id: '123',
+            ...mappedBillingAddress,
         });
         expect(updateShippingAddressMock).toHaveBeenCalledWith(mappedAddress);
+    });
+
+    it('update payment provider customer data with different billing and shipping addresses', async () => {
+        const updatePaymentProviderCustomerMock = jest.fn();
+        const profileData = getBraintreeConnectProfileDataMock();
+        const billingAddress = {
+            ...mappedBillingAddress,
+            id: 321,
+            firstName: 'Mr.',
+            lastName: 'Smith',
+        };
+
+        profileData.cards[0].paymentSource.card.billingAddress = {
+            ...profileData.cards[0].paymentSource.card.billingAddress,
+            firstName: 'Mr.',
+            lastName: 'Smith',
+        };
+
+        jest.spyOn(
+            paymentProviderCustomerActionCreator,
+            'updatePaymentProviderCustomer',
+        ).mockImplementation(updatePaymentProviderCustomerMock);
+        jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeConnect').mockReturnValue({
+            identity: {
+                lookupCustomerByEmail: () => ({ customerContextId: 'customerContextId' }),
+                triggerAuthenticationFlow: () =>
+                    Promise.resolve({
+                        authenticationState: 'authenticationState',
+                        profileData,
+                    }),
+            },
+        });
+
+        const strategy = createStrategy();
+
+        await strategy.initialize(defaultOptions);
+
+        expect(updatePaymentProviderCustomerMock).toHaveBeenCalledWith({
+            authenticationState: 'authenticationState',
+            addresses: [mappedAddress, billingAddress],
+            instruments: [mappedInstruments],
+        });
     });
 });

@@ -1,3 +1,5 @@
+import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     BraintreeClient,
     BraintreeConnect,
@@ -21,6 +23,29 @@ export function getClientMock(): BraintreeClient {
     return {
         request: jest.fn(),
         getVersion: jest.fn(),
+    };
+}
+
+export function getBraintree(): PaymentMethod {
+    return {
+        id: 'braintree',
+        clientToken: 'clientToken',
+        logoUrl:
+            'https://cdn.bcapp.dev/rHEAD/modules/checkout/braintree/images/paypal_powered_braintree_horizontal.png',
+        method: 'credit-card',
+        supportedCards: ['VISA', 'MC', 'AMEX', 'DISCOVER', 'JCB', 'DINERS'],
+        config: {
+            displayName: 'Credit Card',
+            cardCode: true,
+            enablePaypal: true,
+            merchantId: '',
+            testMode: true,
+            isVisaCheckoutEnabled: false,
+        },
+        initializationData: {
+            isAcceleratedCheckoutEnabled: false,
+        },
+        type: 'PAYMENT_TYPE_API',
     };
 }
 
@@ -53,6 +78,7 @@ export function getBraintreeConnectProfileDataMock(): BraintreeConnectProfileDat
                         expiry: '02/2037',
                         lastDigits: '1111',
                         billingAddress: {
+                            id: '321',
                             company: undefined,
                             extendedAddress: undefined,
                             firstName: undefined,
@@ -67,6 +93,16 @@ export function getBraintreeConnectProfileDataMock(): BraintreeConnectProfileDat
                         },
                     },
                 },
+            },
+        ],
+        name: {
+            given_name: 'John',
+            surname: 'Doe',
+        },
+        phones: [
+            {
+                country_code: '1',
+                national_number: '4085551234',
             },
         ],
     };

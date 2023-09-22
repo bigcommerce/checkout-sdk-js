@@ -12,6 +12,11 @@ import { RequestOptions } from './util-types';
 export default interface PaymentIntegrationService {
     createHostedForm(host: string, options: HostedFormOptions): HostedForm;
 
+    deleteConsignment(
+        consignmentId: string,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors>;
+
     subscribe(
         subscriber: (state: PaymentIntegrationSelectors) => void,
         ...filters: Array<(state: PaymentIntegrationSelectors) => unknown>

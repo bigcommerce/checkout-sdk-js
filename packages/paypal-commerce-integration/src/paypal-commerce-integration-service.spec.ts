@@ -242,6 +242,25 @@ describe('PayPalCommerceIntegrationService', () => {
             expect(paypalCommerceRequestSender.getOrderStatus).toHaveBeenCalled();
         });
 
+        it('calls getOrderStatus with proper data', async () => {
+            jest.spyOn(paypalCommerceRequestSender, 'getOrderStatus').mockReturnValue({
+                status: PayPalOrderStatus.Approved,
+            });
+
+            await subject.getOrderStatus('paypalcommercealternativemethods', {
+                params: { useMetaData: true },
+            });
+
+            expect(paypalCommerceRequestSender.getOrderStatus).toHaveBeenCalledWith(
+                'paypalcommercealternativemethods',
+                {
+                    params: {
+                        useMetaData: true,
+                    },
+                },
+            );
+        });
+
         it('throws an error if something went wrong during requesting order status', async () => {
             jest.spyOn(paypalCommerceRequestSender, 'getOrderStatus').mockImplementation(() =>
                 Promise.reject(new Error()),

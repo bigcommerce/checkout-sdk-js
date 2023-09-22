@@ -2,6 +2,94 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.452.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.451.0...v1.452.0) (2023-09-22)
+
+
+### Features
+
+* **payment:** PAYPAL-2947 added fields to mandate interface ([#2192](https://github.com/bigcommerce/checkout-sdk-js/issues/2192)) ([c1b24c9](https://github.com/bigcommerce/checkout-sdk-js/commit/c1b24c9f1dff3e113518e6b609be8892e50ef895))
+
+## [1.451.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.5...v1.451.0) (2023-09-21)
+
+
+### Features
+
+* **payment:** PAYPAL-2979 added phone number mapping from BT AXO profileData to autofill BC shipping and billing phone number fields ([#2188](https://github.com/bigcommerce/checkout-sdk-js/issues/2188)) ([62df5e7](https://github.com/bigcommerce/checkout-sdk-js/commit/62df5e7a63c7ee752d08f0149065696c1bf9a68f))
+
+### [1.450.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.4...v1.450.5) (2023-09-20)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2928 fixed the issue with braintree buttons rendering on PDP page ([#2185](https://github.com/bigcommerce/checkout-sdk-js/issues/2185)) ([e2ea829](https://github.com/bigcommerce/checkout-sdk-js/commit/e2ea829e41d057ed6e84389d8b04dbe10c06ba58))
+
+### [1.450.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.3...v1.450.4) (2023-09-19)
+
+### [1.450.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.2...v1.450.3) (2023-09-19)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-1752 added validation for braintree credit card form ([#2182](https://github.com/bigcommerce/checkout-sdk-js/issues/2182)) ([7cf06d8](https://github.com/bigcommerce/checkout-sdk-js/commit/7cf06d84985806b2c51d8018bcfb6a61755df4f1))
+
+### [1.450.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.1...v1.450.2) (2023-09-19)
+
+### [1.450.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.0...v1.450.1) (2023-09-19)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2843 captured device info for Braintree Apple Pay ([#2165](https://github.com/bigcommerce/checkout-sdk-js/issues/2165)) ([da32bcd](https://github.com/bigcommerce/checkout-sdk-js/commit/da32bcdcbfef0b14ae36182e8a73088cb60e0760))
+
+## [1.450.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.449.0...v1.450.0) (2023-09-18)
+
+
+### Features
+
+* **payment:** PAYPAL-2932 add PayPal billing addresses ([909270a](https://github.com/bigcommerce/checkout-sdk-js/commit/909270aeda56fc0e062035c1f3c8f4b9fd696af7))
+
+## [1.449.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.448.0...v1.449.0) (2023-09-13)
+
+
+### Features
+
+* **payment:** PI-734 fix error message for empty card data in Mollie ([#4](https://github.com/bigcommerce/checkout-sdk-js/issues/4)) ([#2169](https://github.com/bigcommerce/checkout-sdk-js/issues/2169)) ([d179aba](https://github.com/bigcommerce/checkout-sdk-js/commit/d179aba8afa3f49ca584544a95d08335b9e6af0d))
+
+## [1.448.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.447.0...v1.448.0) (2023-09-13)
+
+
+### Features
+
+* **payment:** PI-804 Make an ability to use deleteConsignment action from core package in integration checkout-sdk packages ([#2174](https://github.com/bigcommerce/checkout-sdk-js/issues/2174)) ([b260d2d](https://github.com/bigcommerce/checkout-sdk-js/commit/b260d2dffb9b7e4f6f82ad9497dd0876c935a215))
+
+## [1.447.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.446.0...v1.447.0) (2023-09-13)
+
+
+### Features
+
+* **payment:** PAYPAL-2632 added polling mechanism for ratepay ([#2142](https://github.com/bigcommerce/checkout-sdk-js/issues/2142)) ([4f17790](https://github.com/bigcommerce/checkout-sdk-js/commit/4f17790ca155ceacd222b1bd3dc432fcf6796db6))
+
+## [1.446.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.445.0...v1.446.0) (2023-09-12)
+
+
+### Features
+
+* **checkout:** PI-623 BluesnapDirect APMs via redirect ([bb2248f](https://github.com/bigcommerce/checkout-sdk-js/commit/bb2248fc9a98a25024f9aed5da3bef9d265b6074))
+
+## [1.445.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.444.0...v1.445.0) (2023-09-12)
+
+
+### Features
+
+* **payment:** PAYPAL-2932 add PayPal billing addresses ([0c4a7c8](https://github.com/bigcommerce/checkout-sdk-js/commit/0c4a7c88a69a4ae8b34abacb1a9840d7d7f6340d))
+
+## [1.444.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.443.0...v1.444.0) (2023-09-11)
+
+
+### Features
+
+* **payment:** PI-516 Move Stripe V3 to package ([#2089](https://github.com/bigcommerce/checkout-sdk-js/issues/2089)) ([f28e3dc](https://github.com/bigcommerce/checkout-sdk-js/commit/f28e3dca39d61db21adb7ca92ecfcca9379661a7))
+
 ## [1.443.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.442.0...v1.443.0) (2023-09-06)
 
 
