@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.452.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.451.0...v1.452.0) (2023-09-22)
+
+
+### Features
+
+* **payment:** PAYPAL-2947 added fields to mandate interface ([#2192](https://github.com/bigcommerce/checkout-sdk-js/issues/2192)) ([c1b24c9](https://github.com/bigcommerce/checkout-sdk-js/commit/c1b24c9f1dff3e113518e6b609be8892e50ef895))
+
 ## [1.451.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.450.5...v1.451.0) (2023-09-21)
 
 
