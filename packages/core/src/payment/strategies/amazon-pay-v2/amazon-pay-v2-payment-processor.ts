@@ -16,7 +16,6 @@ import {
     AmazonPayV2Button,
     AmazonPayV2ButtonColor,
     AmazonPayV2ButtonConfig,
-    AmazonPayV2ButtonDesign,
     AmazonPayV2ButtonParameters,
     AmazonPayV2ButtonRenderingOptions,
     AmazonPayV2ChangeActionType,
@@ -131,10 +130,6 @@ export default class AmazonPayV2PaymentProcessor {
 
         const { id: parentContainerId } = container.appendChild(this._getButtonParentContainer());
 
-        if (options) {
-            options.design = AmazonPayV2ButtonDesign.C0001;
-        }
-
         const amazonPayV2ButtonOptions =
             options ??
             this._getAmazonPayV2ButtonOptions(
@@ -230,7 +225,6 @@ export default class AmazonPayV2PaymentProcessor {
             checkoutLanguage,
             placement,
             buttonColor,
-            design: AmazonPayV2ButtonDesign.C0001,
         };
 
         if (this._isBuyNowFlow) {
