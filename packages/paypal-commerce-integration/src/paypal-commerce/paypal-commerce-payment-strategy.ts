@@ -116,13 +116,15 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-        const { buttonStyle } = paymentMethod.initializationData || {};
-
+        const { paymentButtonStyles } = paymentMethod.initializationData || {};
+        const { checkoutPaymentButtonStyles } = paymentButtonStyles || {};
         const { container, onError, onRenderButton, onValidate, submitForm } = paypalcommerce;
 
         const buttonOptions: PayPalCommerceButtonsOptions = {
             fundingSource: paypalSdk.FUNDING.PAYPAL,
-            style: this.paypalCommerceIntegrationService.getValidButtonStyle(buttonStyle),
+            style: this.paypalCommerceIntegrationService.getValidButtonStyle(
+                checkoutPaymentButtonStyles,
+            ),
             createOrder: () =>
                 this.paypalCommerceIntegrationService.createOrder('paypalcommercecheckout'),
             onClick: (_, actions) => this.handleClick(actions, onValidate),

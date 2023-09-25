@@ -105,6 +105,7 @@ export interface PayPalCommerceInitializationData {
     merchantId?: string;
     orderId?: string;
     shouldRenderFields?: boolean;
+    paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
 }
 
 /**
