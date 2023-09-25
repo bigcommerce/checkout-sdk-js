@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.453.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.452.0...v1.453.0) (2023-09-25)
+
+
+### Features
+
+* **payment:** PAYPAL-2576 added specific button styles for each PayPal buttons ([299ce3a](https://github.com/bigcommerce/checkout-sdk-js/commit/299ce3acc9513508f976184a93ccbdf72695e1e5))
+
 ## [1.452.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.451.0...v1.452.0) (2023-09-22)
 
 
