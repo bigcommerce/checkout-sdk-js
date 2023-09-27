@@ -123,10 +123,7 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
             fields: {
                 ...(phone && {
                     phoneNumber: {
-                        // Info: we should remove first character of the phone number
-                        // for PayPal Connect Phase 1, because this feature will
-                        // be available for US stores only
-                        prefill: phone.slice(1),
+                        prefill: phone,
                     },
                 }),
             },
