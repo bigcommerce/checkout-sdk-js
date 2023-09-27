@@ -4,7 +4,6 @@ import { Cart } from '../cart';
 import { getCart } from '../cart/carts.mock';
 import { createCheckoutStore } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
-import { IframeEventListener } from '../common/iframe';
 import { parseUrl } from '../common/url';
 
 import { Extension } from './extension';
@@ -23,23 +22,19 @@ describe('ExtensionIframe', () => {
     let eventEmitter: EventEmitter;
 
     beforeEach(() => {
-        extension = getExtensions()[0];
-
         const store = createCheckoutStore(getCheckoutStoreState());
-        const listeners = {
-            [extension.id]: new IframeEventListener(extension.url),
-        };
 
-        extensionMessenger = new ExtensionMessenger(store, listeners, {});
+        extensionMessenger = new ExtensionMessenger(store);
         container = document.createElement('div');
         container.id = 'containerId';
         cart = getCart();
-        eventEmitter = new EventEmitter();
-        extensionOrigin = parseUrl(extension.url).origin;
+        extension = getExtensions()[0];
         extensionIframe = new ExtensionIframe(extensionMessenger, 'containerId', extension, {
             cartId: cart.id,
             parentOrigin: parseUrl('https://www.test.com').origin,
         });
+        extensionOrigin = parseUrl(extension.url).origin;
+        eventEmitter = new EventEmitter();
 
         document.getElementById = jest.fn().mockReturnValue(container);
 

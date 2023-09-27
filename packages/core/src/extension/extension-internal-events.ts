@@ -12,9 +12,3 @@ export interface ExtensionFailedEvent {
 }
 
 export type ExtensionInternalEvent = ExtensionReadyEvent | ExtensionFailedEvent;
-
-// Don't listen for these events now
-// export interface ExtensionInternalEventMap {
-//     [ExtensionInternalEventType.ExtensionReady]: ExtensionReadyEvent;
-//     [ExtensionInternalEventType.ExtensionFailed]: ExtensionFailedEvent;
-// }
