@@ -19,6 +19,7 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import {
     ButtonColor,
     ButtonType,
+    CardInformation,
     EnvironmentType,
     GooglePayAddress,
     GooglePayClient,
@@ -202,11 +203,7 @@ export default class GooglePayPaymentProcessor {
             });
     }
 
-    private _getCardInformation(cardInformation: {
-        cardType: string;
-        lastFour: string;
-        bin?: string;
-    }) {
+    private _getCardInformation(cardInformation: CardInformation) {
         return {
             type: cardInformation.cardType,
             number: cardInformation.lastFour,

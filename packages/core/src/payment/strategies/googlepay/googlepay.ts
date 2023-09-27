@@ -82,15 +82,17 @@ export interface GooglePayHostWindow extends Window {
     google?: GooglePaySDK;
 }
 
+export interface CardInformation {
+    cardType: string;
+    lastFour: string;
+    lastTwo?: string;
+    bin?: string;
+}
+
 export interface TokenizePayload {
     nonce: string;
     tokenFormat?: string;
-    details: {
-        cardType: string;
-        lastFour: string;
-        lastTwo?: string;
-        bin?: string;
-    };
+    details: CardInformation;
     description?: string;
     type: TokenizeType;
     binData?: {
