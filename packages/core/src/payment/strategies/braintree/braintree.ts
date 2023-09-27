@@ -221,6 +221,7 @@ export interface BraintreeGooglePayThreeDSecure {
 export interface BraintreeGooglePayThreeDSecureOptions {
     nonce: string;
     amount: number;
+    bin: string;
     showLoader?: boolean;
     onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
 }
@@ -408,7 +409,7 @@ export interface BraintreeThreeDSecureCreatorConfig extends BraintreeModuleCreat
 export interface BraintreeThreeDSecureOptions {
     nonce: string;
     amount: number;
-    bin?: string;
+    bin: string;
     challengeRequested: boolean;
     showLoader?: boolean;
     addFrame(error: Error | undefined, iframe: HTMLIFrameElement): void;

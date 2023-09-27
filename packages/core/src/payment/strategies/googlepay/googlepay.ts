@@ -89,6 +89,7 @@ export interface TokenizePayload {
         cardType: string;
         lastFour: string;
         lastTwo?: string;
+        bin?: string;
     };
     description?: string;
     type: TokenizeType;
@@ -152,6 +153,7 @@ export interface PaymentMethodData {
         cardInformation: {
             type: string;
             number: string;
+            bin: string;
         };
     };
 }
