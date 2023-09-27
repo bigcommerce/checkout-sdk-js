@@ -8,6 +8,7 @@ import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration
 import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { IframeEventListener } from '../common/iframe';
 import { StoreConfig } from '../config';
 import { getConfig } from '../config/configs.mock';
 
@@ -16,6 +17,7 @@ import { Extension, ExtensionRegion } from './extension';
 import { ExtensionActionCreator } from './extension-action-creator';
 import { ExtensionActionType } from './extension-actions';
 import { ExtensionInternalCommandType } from './extension-internal-commands';
+import { ExtensionMessenger } from './extension-messenger';
 import { ExtensionRequestSender } from './extension-request-sender';
 import { getExtensionCommand, getExtensions } from './extension.mock';
 
@@ -23,6 +25,7 @@ describe('ExtensionActionCreator', () => {
     let errorResponse: Response<ErrorResponseBody>;
     let extensionActionCreator: ExtensionActionCreator;
     let extensionRequestSender: ExtensionRequestSender;
+    let extensionMessenger: ExtensionMessenger;
     let extensionsResponse: Response<Extension[]>;
     let store: CheckoutStore;
     let storeConfig: StoreConfig;
@@ -39,6 +42,13 @@ describe('ExtensionActionCreator', () => {
 
         extensionRequestSender = new ExtensionRequestSender(createRequestSender());
         extensionActionCreator = new ExtensionActionCreator(extensionRequestSender);
+
+        const extension = getExtensions()[0];
+        const listeners = {
+            [extension.id]: new IframeEventListener(extension.url),
+        };
+
+        extensionMessenger = new ExtensionMessenger(store, listeners, {});
 
         jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(storeConfig);
         jest.spyOn(extensionRequestSender, 'loadExtensions').mockReturnValue(
@@ -103,6 +113,7 @@ describe('ExtensionActionCreator', () => {
                 extensionActionCreator.renderExtension(
                     'foo',
                     ExtensionRegion.ShippingShippingAddressFormAfter,
+                    extensionMessenger,
                 )(store),
             )
                 .pipe(catchError(errorHandler))
@@ -134,6 +145,7 @@ describe('ExtensionActionCreator', () => {
                 extensionActionCreator.renderExtension(
                     'foo',
                     ExtensionRegion.ShippingShippingAddressFormBefore,
+                    extensionMessenger,
                 )(store),
             )
                 .pipe(toArray())
@@ -153,6 +165,7 @@ describe('ExtensionActionCreator', () => {
                 extensionActionCreator.renderExtension(
                     'foo',
                     ExtensionRegion.ShippingShippingAddressFormAfter,
+                    extensionMessenger,
                 )(store),
             )
                 .pipe(catchError(errorHandler), toArray())
@@ -178,6 +191,7 @@ describe('ExtensionActionCreator', () => {
                 extensionActionCreator.renderExtension(
                     'foo',
                     ExtensionRegion.ShippingShippingAddressFormBefore,
+                    extensionMessenger,
                 )(store),
             )
                 .pipe(toArray())

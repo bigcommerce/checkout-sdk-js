@@ -12,7 +12,7 @@ import {
     ExtensionInternalCommand,
     ExtensionInternalCommandType,
 } from './extension-internal-commands';
-import { isIframeResizerWindow } from './iframe-resizer-methods';
+import { ExtensionInternalEventType } from './extension-internal-events';
 
 export default class ExtensionService {
     private _extensionId?: string;
@@ -26,7 +26,7 @@ export default class ExtensionService {
         this._internalCommandPoster.setTarget(window.parent);
     }
 
-    initialize(extensionId: string): void {
+    async initialize(extensionId: string): Promise<void> {
         if (!extensionId) {
             throw new Error('Extension Id not found.');
         }
@@ -35,10 +35,23 @@ export default class ExtensionService {
 
         this._eventListener.listen();
         this._commandPoster.setContext({ extensionId });
-        this._internalCommandPoster.post({
-            type: ExtensionInternalCommandType.ResizeIframe,
-            payload: { extensionId },
-        });
+
+        try {
+            await this._internalCommandPoster.post(
+                {
+                    type: ExtensionInternalCommandType.ResizeIframe,
+                    payload: { extensionId },
+                },
+                {
+                    successType: ExtensionInternalEventType.ExtensionReady,
+                    errorType: ExtensionInternalEventType.ExtensionFailed,
+                },
+            );
+        } catch (event) {
+            if (this._isExtensionFailedEvent(event)) {
+                throw new Error('Extension failed to initialize within 60 seconds');
+            }
+        }
     }
 
     post(command: ExtensionCommand): void {
@@ -77,9 +90,9 @@ export default class ExtensionService {
         };
     }
 
-    autoResize(isEnabled: boolean): void {
-        if (isIframeResizerWindow(window)) {
-            window.parentIFrame.autoResize(isEnabled);
-        }
+    private _isExtensionFailedEvent(
+        event: any,
+    ): event is ExtensionInternalEventType.ExtensionFailed {
+        return event.type === ExtensionInternalEventType.ExtensionFailed;
     }
 }

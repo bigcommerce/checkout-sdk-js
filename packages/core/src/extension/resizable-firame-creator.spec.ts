@@ -1,27 +1,28 @@
 import { EventEmitter } from 'events';
 
-import { IFrameComponent, IFrameObject, IFrameOptions, iframeResizer } from '../common/iframe';
+import { createCheckoutStore } from '../checkout';
+import { getCheckoutStoreState } from '../checkout/checkouts.mock';
+import * as iframeModule from '../common/iframe';
 
 import { ExtensionNotLoadedError } from './errors';
 import { ExtensionInternalCommandType } from './extension-internal-commands';
+import { ExtensionInternalEventType } from './extension-internal-events';
+import { ExtensionMessenger } from './extension-messenger';
 import ResizableIframeCreator from './resizable-iframe-creator';
-
-jest.mock('../common/iframe', () => ({
-    iframeResizer: jest.fn((_: IFrameOptions, element: HTMLIFrameElement) => {
-        (element as IFrameComponent).iFrameResizer = {} as IFrameObject;
-
-        return [element];
-    }),
-    isIframeEvent: jest.fn((object, type) => object.type === type),
-}));
 
 describe('ResizableIframeCreator', () => {
     let url: string;
     let container: HTMLElement;
     let eventEmitter: EventEmitter;
     let iframeCreator: ResizableIframeCreator;
+    let extensionId: string;
+    let extensionMessenger: ExtensionMessenger;
 
     beforeEach(() => {
+        const store = createCheckoutStore(getCheckoutStoreState());
+
+        extensionId = '123';
+        extensionMessenger = new ExtensionMessenger(store);
         url = 'http://mybigcommerce.com/checkout';
         container = document.createElement('div');
         eventEmitter = new EventEmitter();
@@ -34,10 +35,12 @@ describe('ResizableIframeCreator', () => {
             return eventEmitter.removeListener(type, listener);
         });
 
+        jest.spyOn(extensionMessenger, 'post').mockReturnValue(null);
+
         container.setAttribute('id', 'checkout');
         window.document.body.appendChild(container);
 
-        iframeCreator = new ResizableIframeCreator({
+        iframeCreator = new ResizableIframeCreator(extensionId, extensionMessenger, {
             timeout: 0,
         });
     });
@@ -58,6 +61,8 @@ describe('ResizableIframeCreator', () => {
     });
 
     it('configures iframe to be borderless and auto-resizable', async () => {
+        jest.spyOn(iframeModule, 'iframeResizer');
+
         setTimeout(() => {
             eventEmitter.emit('message', {
                 origin: 'http://mybigcommerce.com',
@@ -70,7 +75,7 @@ describe('ResizableIframeCreator', () => {
         expect(frame.style.border).toBe('');
         expect(frame.style.width).toBe('100%');
         expect(frame.iFrameResizer).toBeDefined();
-        expect(iframeResizer).toHaveBeenCalledWith(
+        expect(iframeModule.iframeResizer).toHaveBeenCalledWith(
             {
                 autoResize: false,
                 scrolling: false,
@@ -89,11 +94,18 @@ describe('ResizableIframeCreator', () => {
                 origin: 'http://mybigcommerce.com',
                 data: { type: ExtensionInternalCommandType.ResizeIframe },
             });
+            eventEmitter.emit('message', {
+                origin: 'http://mybigcommerce.com',
+                data: '[iFrameSizer]iFrameResizer0:0:0:init',
+            });
         });
 
         await iframeCreator.createFrame(url, 'checkout');
 
         expect(window.removeEventListener).toHaveBeenCalledWith('message', expect.any(Function));
+        expect(extensionMessenger.post).toHaveBeenCalledWith(extensionId, {
+            type: ExtensionInternalEventType.ExtensionReady,
+        });
     });
 
     it('throws error if unable to find container element', () => {
@@ -107,6 +119,9 @@ describe('ResizableIframeCreator', () => {
             await iframeCreator.createFrame(url, 'checkout');
         } catch (error) {
             expect(error).toBeInstanceOf(ExtensionNotLoadedError);
+            expect(extensionMessenger.post).toHaveBeenCalledWith(extensionId, {
+                type: ExtensionInternalEventType.ExtensionFailed,
+            });
         }
     });
 

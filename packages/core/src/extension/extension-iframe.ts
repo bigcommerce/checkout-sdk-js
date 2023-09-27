@@ -1,4 +1,5 @@
 import { Extension, ExtensionIframeConfig } from './extension';
+import { ExtensionMessenger } from './extension-messenger';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 export class ExtensionIframe {
@@ -6,6 +7,7 @@ export class ExtensionIframe {
     private _url: URL;
 
     constructor(
+        private _extensionMessenger: ExtensionMessenger,
         private _containerId: string,
         private _extension: Extension,
         private _config: ExtensionIframeConfig,
@@ -28,7 +30,10 @@ export class ExtensionIframe {
             return;
         }
 
-        const iframeCreator = new ResizableIframeCreator();
+        const iframeCreator = new ResizableIframeCreator(
+            this._extension.id,
+            this._extensionMessenger,
+        );
 
         this._iframe = await iframeCreator.createFrame(this._url.toString(), this._containerId);
 

@@ -10,6 +10,7 @@ import {
     ExtensionCommandType,
 } from './extension-commands';
 import { ExtensionEvent } from './extension-events';
+import { ExtensionInternalEvent } from './extension-internal-events';
 
 export class ExtensionMessenger {
     private _extensions: Extension[] | undefined;
@@ -19,7 +20,9 @@ export class ExtensionMessenger {
         private _listeners: {
             [extensionId: string]: IframeEventListener<ExtensionCommandMap>;
         } = {},
-        private _posters: { [extensionId: string]: IframeEventPoster<ExtensionEvent> } = {},
+        private _posters: {
+            [extensionId: string]: IframeEventPoster<ExtensionEvent | ExtensionInternalEvent>;
+        } = {},
     ) {}
 
     listen<T extends keyof ExtensionCommandMap>(
@@ -68,7 +71,7 @@ export class ExtensionMessenger {
         listener.stopListen();
     }
 
-    post(extensionId: string, event: ExtensionEvent): void {
+    post(extensionId: string, event: ExtensionEvent | ExtensionInternalEvent): void {
         if (!this._posters[extensionId]) {
             const extension = this._getExtensionById(extensionId);
 

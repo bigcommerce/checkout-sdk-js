@@ -8,8 +8,8 @@ import {
     ExtensionInternalCommand,
     ExtensionInternalCommandType,
 } from './extension-internal-commands';
+import { ExtensionInternalEventType } from './extension-internal-events';
 import ExtensionService from './extension-service';
-import { IframeResizerWindow } from './iframe-resizer-methods';
 
 describe('ExtensionService', () => {
     let extensionService: ExtensionService;
@@ -30,29 +30,45 @@ describe('ExtensionService', () => {
         extensionService = new ExtensionService(eventListener, eventPoster, internalEventPoster);
     });
 
-    it('#initializes success fully', () => {
-        extensionService.initialize('test');
+    it('#initializes successfully', () => {
+        void extensionService.initialize('test');
 
         expect(eventListener.listen).toHaveBeenCalled();
     });
 
-    it('#initialize throws error if no extension Id is passed', () => {
-        expect(() => extensionService.initialize(undefined as unknown as string)).toThrow(
-            new Error('Extension Id not found.'),
+    it('#initialize throws error if no extension Id is passed', async () => {
+        await expect(extensionService.initialize(undefined as unknown as string)).rejects.toThrow(
+            'Extension Id not found.',
         );
     });
 
     it('posts internal resize iframe command to host', () => {
-        extensionService.initialize('test');
+        void extensionService.initialize('test');
 
-        expect(internalEventPoster.post).toHaveBeenCalledWith({
-            type: ExtensionInternalCommandType.ResizeIframe,
-            payload: { extensionId: 'test' },
+        expect(internalEventPoster.post).toHaveBeenCalledWith(
+            {
+                type: ExtensionInternalCommandType.ResizeIframe,
+                payload: { extensionId: 'test' },
+            },
+            {
+                successType: ExtensionInternalEventType.ExtensionReady,
+                errorType: ExtensionInternalEventType.ExtensionFailed,
+            },
+        );
+    });
+
+    it('throws error if host side asserts that the extension failed', async () => {
+        jest.spyOn(internalEventPoster, 'post').mockRejectedValue({
+            type: ExtensionInternalEventType.ExtensionFailed,
         });
+
+        await expect(extensionService.initialize('test')).rejects.toThrow(
+            'Extension failed to initialize within 60 seconds',
+        );
     });
 
     it('#post throws error if event name is not passed correctly', () => {
-        extensionService.initialize('test');
+        void extensionService.initialize('test');
 
         const event = {
             type: 'some-event',
@@ -62,7 +78,7 @@ describe('ExtensionService', () => {
     });
 
     it('#addListener adds callback as noop if no callback method is passed', () => {
-        extensionService.initialize('test');
+        void extensionService.initialize('test');
 
         extensionService.addListener(ExtensionEventType.ConsignmentsChanged);
 
@@ -73,7 +89,7 @@ describe('ExtensionService', () => {
     });
 
     it('#addListener is not called if event name is not correct', () => {
-        extensionService.initialize('test');
+        void extensionService.initialize('test');
 
         expect(() => extensionService.addListener('someevent' as ExtensionEventType)).toThrow(
             'someevent is not supported.',
@@ -81,7 +97,7 @@ describe('ExtensionService', () => {
     });
 
     it('#addListener is called correctly with params', () => {
-        extensionService.initialize('test');
+        void extensionService.initialize('test');
 
         const callbackFn = jest.fn();
 
@@ -91,24 +107,5 @@ describe('ExtensionService', () => {
             ExtensionEventType.ConsignmentsChanged,
             callbackFn,
         );
-    });
-
-    it('#autoResize is called correctly with params', () => {
-        Object.defineProperty(window, 'parentIFrame', {
-            value: {
-                autoResize: jest.fn(),
-                setHeightCalculationMethod: jest.fn(),
-            },
-        });
-
-        const isEnabled = false;
-
-        extensionService.initialize('test');
-
-        extensionService.autoResize(isEnabled);
-
-        expect(
-            (window as unknown as IframeResizerWindow).parentIFrame.autoResize,
-        ).toHaveBeenCalledWith(isEnabled);
     });
 });

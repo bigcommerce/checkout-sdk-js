@@ -3,9 +3,15 @@ import { parseUrl } from '../common/url';
 
 import { ExtensionNotLoadedError } from './errors';
 import { ExtensionInternalCommandType } from './extension-internal-commands';
+import { ExtensionInternalEventType } from './extension-internal-events';
+import { ExtensionMessenger } from './extension-messenger';
 
 export default class ResizableIframeCreator {
-    constructor(private _options?: { timeout: number }) {}
+    constructor(
+        private _extensionId: string,
+        private _extensionMessenger: ExtensionMessenger,
+        private _options?: { timeout: number },
+    ) {}
 
     createFrame(src: string, containerId: string): Promise<IFrameComponent> {
         const container = document.getElementById(containerId);
@@ -41,9 +47,13 @@ export default class ResizableIframeCreator {
         // Instead, listen to the `load` inside the iframe and let the parent frame know when it happens.
         return new Promise((resolve, reject) => {
             const timeout = window.setTimeout(() => {
+                this._extensionMessenger.post(this._extensionId, {
+                    type: ExtensionInternalEventType.ExtensionFailed,
+                });
+
                 reject(
                     new ExtensionNotLoadedError(
-                        'Unable to embed the iframe because the content could not be loaded.',
+                        'Unable to load the extension because the content could not be loaded.',
                     ),
                 );
             }, timeoutInterval);
@@ -66,8 +76,18 @@ export default class ResizableIframeCreator {
                         iframe,
                     );
 
-                    teardown();
                     resolve(iframes[iframes.length - 1]);
+                }
+
+                if (
+                    typeof event.data === 'string' &&
+                    /\[iFrameSizer]iFrameResizer.*init/.test(event.data)
+                ) {
+                    this._extensionMessenger.post(this._extensionId, {
+                        type: ExtensionInternalEventType.ExtensionReady,
+                    });
+
+                    teardown();
                 }
             };
 
