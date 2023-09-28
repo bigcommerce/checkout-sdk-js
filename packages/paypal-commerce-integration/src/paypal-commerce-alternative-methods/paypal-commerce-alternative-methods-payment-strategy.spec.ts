@@ -33,6 +33,7 @@ import {
 import PayPalCommerceAlternativeMethodsPaymentOptions from './paypal-commerce-alternative-methods-payment-initialize-options';
 import PayPalCommerceAlternativeMethodsPaymentStrategy from './paypal-commerce-alternative-methods-payment-strategy';
 
+// TODO: CHECKOUT-7766
 describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
     let billingAddress: BillingAddress;
     let eventEmitter: EventEmitter;

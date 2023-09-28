@@ -110,27 +110,27 @@ describe('QuadpayPaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockResolvedValue(
-            store.getState(),
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(
+            Promise.resolve(store.getState()),
         );
 
         jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow').mockReturnValue(checkoutMock);
 
-        jest.spyOn(storeCreditActionCreator, 'applyStoreCredit').mockReturnValue(
-            applyStoreCreditAction,
-        );
+        storeCreditActionCreator.applyStoreCredit = jest
+            .fn()
+            .mockReturnValue(applyStoreCreditAction);
 
-        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment').mockResolvedValue(
-            store.getState(),
-        );
+        remoteCheckoutActionCreator.initializePayment = jest
+            .fn()
+            .mockResolvedValue(store.getState());
 
         jest.spyOn(storefrontPaymentRequestSender, 'saveExternalId').mockResolvedValue(undefined);
 
-        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
+        orderActionCreator.submitOrder = jest.fn().mockReturnValue(submitOrderAction);
 
-        jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve());
+        requestSender.post = jest.fn().mockReturnValue(Promise.resolve());
 
-        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
+        paymentActionCreator.submitPayment = jest.fn().mockReturnValue(submitPaymentAction);
 
         strategy = new QuadpayPaymentStrategy(
             store,
@@ -227,11 +227,15 @@ describe('QuadpayPaymentStrategy', () => {
                 ),
             );
 
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
-                paymentFailedErrorAction,
-            );
+            paymentActionCreator.submitPayment = jest
+                .fn()
+                .mockReturnValue(paymentFailedErrorAction);
 
-            window.location.replace = jest.fn();
+            Object.defineProperty(window, 'location', {
+                value: {
+                    replace: jest.fn(),
+                },
+            });
 
             strategy.execute(orderRequestBody, quadpayOptions);
 

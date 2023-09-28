@@ -48,6 +48,15 @@ describe('EmbeddedCheckout', () => {
             },
         };
 
+        Object.defineProperty(window, 'location', {
+            value: {
+                replace: jest.fn(),
+            },
+        });
+
+        window.addEventListener = jest.fn();
+        window.removeEventListener = jest.fn();
+
         iframe = iframeResizer({}, document.body.appendChild(document.createElement('iframe')))[0];
         iframeCreator = new ResizableIframeCreator();
         messageListener = new IframeEventListener('https://mybigcommerce.com');
@@ -62,8 +71,6 @@ describe('EmbeddedCheckout', () => {
         jest.spyOn(loadingIndicator, 'show').mockImplementation(() => {});
 
         jest.spyOn(loadingIndicator, 'hide').mockImplementation(() => {});
-
-        jest.spyOn(location, 'replace').mockImplementation(() => {});
 
         jest.spyOn(storage, 'getItem').mockImplementation((key) =>
             key === IS_COOKIE_ALLOWED_KEY ? true : null,

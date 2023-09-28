@@ -34,7 +34,7 @@ export function getCBAMPGSScriptMock(
         );
 
     return {
-        configure: jest.fn((config) => config.callback()),
+        configure: jest.fn((config) => Promise.resolve(config.callback())),
         isConfigured: jest.fn(() => configureSuccess),
         initiateAuthentication: jest.fn((_orderId, _transactionId, callback) =>
             callback(
@@ -84,7 +84,7 @@ export function getCBAMPGSScriptMockRetryOnly(
         );
 
     return {
-        configure: jest.fn((config) => config.callback()),
+        configure: jest.fn((config) => Promise.resolve(config.callback())),
         isConfigured: jest.fn(() => configureSuccess),
         initiateAuthentication: jest.fn((_orderId, _transactionId, callback) =>
             callback(

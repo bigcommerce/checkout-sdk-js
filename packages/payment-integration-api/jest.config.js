@@ -1,12 +1,12 @@
 module.exports = {
-    displayName: "payment-integration",
-    preset: "../../jest.preset.js",
+    displayName: 'payment-integration',
+    preset: '../../jest.preset.js',
     globals: {
-        "ts-jest": {
-            tsconfig: "./tsconfig.spec.json",
+        'ts-jest': {
+            tsconfig: '<rootDir>/tsconfig.spec.json',
         },
     },
-    setupFilesAfterEnv: ["../../jest-setup.js"],
-    coverageDirectory: "../../coverage/packages/payment-integration-api",
+    setupFilesAfterEnv: ['../../jest-setup.js'],
+    coverageDirectory: '../../coverage/packages/payment-integration-api',
     collectCoverageFrom: [],
 };

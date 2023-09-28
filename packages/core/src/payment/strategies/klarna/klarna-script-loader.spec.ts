@@ -6,15 +6,11 @@ describe('KlarnaScriptLoader', () => {
     const scriptLoader = createScriptLoader();
     const klarnaScriptLoader = new KlarnaScriptLoader(scriptLoader);
 
-    beforeEach(() => {
-        jest.spyOn(scriptLoader, 'loadScript').mockReturnValue(Promise.resolve(true));
-    });
-
     it('loads widget script', () => {
-        klarnaScriptLoader.load();
+        const loadScript = jest.spyOn(scriptLoader, 'loadScript');
 
-        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//credit.klarnacdn.net/lib/v1/api.js',
-        );
+        void klarnaScriptLoader.load();
+
+        expect(loadScript).toHaveBeenCalledWith('//credit.klarnacdn.net/lib/v1/api.js');
     });
 });

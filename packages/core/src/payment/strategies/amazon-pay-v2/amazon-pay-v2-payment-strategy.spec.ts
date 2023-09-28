@@ -442,13 +442,19 @@ describe('AmazonPayV2PaymentStrategy', () => {
                 paymentFailedErrorAction,
             );
 
-            window.location.assign = jest.fn();
+            Object.defineProperty(window, 'location', {
+                value: {
+                    assign: jest.fn(),
+                },
+            });
 
             strategy.execute(orderRequestBody, initializeOptions);
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(window.location.assign).toHaveBeenCalledWith('http://some-url');
             expect(amazonPayButton.click).not.toHaveBeenCalled();
+
+            jest.clearAllMocks();
         });
 
         it('should invoke Amazon Pay Pre-Order page', async () => {
@@ -542,7 +548,11 @@ describe('AmazonPayV2PaymentStrategy', () => {
                     paymentFailedErrorAction,
                 );
 
-                window.location.assign = jest.fn();
+                Object.defineProperty(window, 'location', {
+                    value: {
+                        assign: jest.fn(),
+                    },
+                });
 
                 await expect(strategy.execute(orderRequestBody, initializeOptions)).rejects.toThrow(
                     RequestError,

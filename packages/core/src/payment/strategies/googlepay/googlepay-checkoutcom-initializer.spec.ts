@@ -20,9 +20,14 @@ describe('GooglePayCheckoutcomInitializer', () => {
     let googlePayCheckoutcomInitializer: GooglePayCheckoutcomInitializer;
 
     beforeAll(() => {
-        jest.spyOn(requestSender, 'post').mockReturnValue(
-            Promise.resolve({ body: { token: 'parsedToken' } }),
-        );
+        jest.spyOn(requestSender, 'post').mockResolvedValue({
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+            body: {
+                token: 'parsedToken',
+            },
+        });
     });
 
     beforeEach(() => {
@@ -85,7 +90,12 @@ describe('GooglePayCheckoutcomInitializer', () => {
 
         it('parses a response from google pay payload received with token format', async () => {
             jest.spyOn(requestSender, 'post').mockReturnValue(
-                Promise.resolve({ body: { token: 'parsedToken', token_format: 'pan_only' } }),
+                Promise.resolve({
+                    headers: {},
+                    status: 200,
+                    statusText: 'ok',
+                    body: { token: 'parsedToken', token_format: 'pan_only' },
+                }),
             );
 
             const tokenizePayload = await googlePayCheckoutcomInitializer.parseResponse(
@@ -104,7 +114,7 @@ describe('GooglePayCheckoutcomInitializer', () => {
             );
 
             expect(response).rejects.toThrow(
-                new InvalidArgumentError('Unable to parse response from Google Pay.'),
+                new InvalidArgumentError('Unable to parse response from GooglePay.'),
             );
         });
 
@@ -116,13 +126,18 @@ describe('GooglePayCheckoutcomInitializer', () => {
             const response = googlePayCheckoutcomInitializer.parseResponse(withoutToken);
 
             expect(response).rejects.toThrow(
-                new InvalidArgumentError('Unable to parse response from Google Pay.'),
+                new InvalidArgumentError('Unable to parse response from GooglePay.'),
             );
         });
 
         it('throws error when checkoutcom token is not received', async () => {
             jest.spyOn(requestSender, 'post').mockReturnValueOnce(
-                Promise.resolve({ body: { token: '' } }),
+                Promise.resolve({
+                    headers: {},
+                    status: 200,
+                    statusText: 'ok',
+                    body: { token: '' },
+                }),
             );
 
             try {

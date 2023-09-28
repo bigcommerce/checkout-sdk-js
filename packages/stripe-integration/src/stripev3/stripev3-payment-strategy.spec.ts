@@ -55,6 +55,7 @@ import {
     getStripeV3OrderRequestBodyVaultMock,
 } from './stripev3.mock';
 
+// TODO: CHECKOUT-7766
 describe('StripeV3PaymentStrategy', () => {
     let checkoutMock: Checkout;
     let finalizeOrderAction: OrderActionType;
@@ -567,7 +568,11 @@ describe('StripeV3PaymentStrategy', () => {
                         }),
                     );
 
-                    window.location.replace = jest.fn();
+                    Object.defineProperty(window, 'location', {
+                        value: {
+                            replace: jest.fn(),
+                        },
+                    });
 
                     jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
                         Promise.reject(errorResponse),
@@ -599,7 +604,11 @@ describe('StripeV3PaymentStrategy', () => {
                         }),
                     );
 
-                    window.location.replace = jest.fn();
+                    Object.defineProperty(window, 'location', {
+                        value: {
+                            replace: jest.fn(),
+                        },
+                    });
 
                     jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
                         Promise.resolve(errorResponse),

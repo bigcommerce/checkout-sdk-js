@@ -72,8 +72,8 @@ describe('CheckoutcomCustomPaymentStrategy', () => {
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
-                submit: jest.fn(() => Promise.resolve()),
-                validate: jest.fn(() => Promise.resolve()),
+                submit: jest.fn(),
+                validate: jest.fn(),
             };
             initializeOptions = {
                 creditCard: {
@@ -93,7 +93,7 @@ describe('CheckoutcomCustomPaymentStrategy', () => {
                 merge(getPaymentMethod(), { config: { isHostedFormEnabled: true } }),
             );
 
-            jest.spyOn(hostedFormFactory, 'create').mockReturnValue(form);
+            hostedFormFactory.create = jest.fn().mockReturnValue(form);
         });
 
         it('validates user input before submitting data', async () => {
@@ -156,7 +156,11 @@ describe('CheckoutcomCustomPaymentStrategy', () => {
                 }),
             );
 
-            window.location.replace = jest.fn();
+            Object.defineProperty(window, 'location', {
+                value: {
+                    replace: jest.fn(),
+                },
+            });
 
             jest.spyOn(form, 'submit').mockRejectedValue(error);
 
