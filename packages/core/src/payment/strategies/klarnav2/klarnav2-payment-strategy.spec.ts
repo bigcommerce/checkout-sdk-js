@@ -418,7 +418,8 @@ describe('KlarnaV2PaymentStrategy', () => {
             );
         });
 
-        it.skip('throws error if required data is not loaded', async () => {
+        // TODO: CHECKOUT-7766
+        it('throws error if required data is not loaded', async () => {
             store = store = createCheckoutStore({
                 ...getCheckoutStoreState(),
                 billingAddress: undefined,

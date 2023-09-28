@@ -628,7 +628,8 @@ describe('BraintreePaymentProcessor', () => {
             });
         });
 
-        describe.skip('when cancel function gets called', () => {
+        // TODO: CHECKOUT-7766
+        describe('when cancel function gets called', () => {
             beforeEach(() => {
                 jest.spyOn(threeDSecureMock, 'verifyCard').mockImplementation(({ addFrame }) => {
                     addFrame(new Error(), document.createElement('iframe'));

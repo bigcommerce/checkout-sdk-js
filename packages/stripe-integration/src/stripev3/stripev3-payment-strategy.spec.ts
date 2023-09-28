@@ -55,7 +55,8 @@ import {
     getStripeV3OrderRequestBodyVaultMock,
 } from './stripev3.mock';
 
-describe.skip('StripeV3PaymentStrategy', () => {
+// TODO: CHECKOUT-7766
+describe('StripeV3PaymentStrategy', () => {
     let checkoutMock: Checkout;
     let finalizeOrderAction: OrderActionType;
     let loadPaymentMethodAction: Promise<PaymentMethod>;
@@ -552,7 +553,7 @@ describe.skip('StripeV3PaymentStrategy', () => {
                     expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
                 });
 
-                it.skip('fires additional action outside of bigcommerce', async () => {
+                it('fires additional action outside of bigcommerce', async () => {
                     const errorResponse = new RequestError(
                         getResponse({
                             ...getErrorPaymentResponseBody(),
@@ -590,7 +591,7 @@ describe.skip('StripeV3PaymentStrategy', () => {
                     );
                 });
 
-                it.skip('do not fire additional action because of missing url', async () => {
+                it('do not fire additional action because of missing url', async () => {
                     const errorResponse = new RequestError(
                         getResponse({
                             ...getErrorPaymentResponseBody(),

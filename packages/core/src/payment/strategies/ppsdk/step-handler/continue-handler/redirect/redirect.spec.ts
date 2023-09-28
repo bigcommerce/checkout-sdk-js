@@ -18,16 +18,11 @@ describe('handleRedirect', () => {
 
     describe('when there is not an already pending redirect', () => {
         describe('when not passed form_fields', () => {
+            // TODO: CHECKOUT-7766
             it('calls location assign with the url, never resolves or rejects', () => {
                 const resolveMock = jest.fn();
                 const rejectMock = jest.fn();
-
-                Object.defineProperty(window, 'location', {
-                    value: {
-                        assign: jest.fn(),
-                        href: 'foobar',
-                    },
-                });
+                const assignSpy = jest.spyOn(window.location, 'assign').mockImplementation(jest.fn);
 
                 const redirectContinueResponse = {
                     url: 'http://some-url.com',
@@ -37,7 +32,7 @@ describe('handleRedirect', () => {
                     .then(resolveMock)
                     .catch(rejectMock);
 
-                expect(window.location.assign).toHaveBeenCalledWith('http://some-url.com');
+                expect(assignSpy).toHaveBeenCalledWith('http://some-url.com');
                 expect(resolveMock).not.toHaveBeenCalled();
                 expect(rejectMock).not.toHaveBeenCalled();
             });
@@ -70,7 +65,7 @@ describe('handleRedirect', () => {
         });
     });
 
-    describe.skip('when there is an already pending redirect', () => {
+    describe('when there is an already pending redirect', () => {
         it('rejects with a PaymentMethodCancelledError', async () => {
             const redirectContinueResponse = {
                 url: 'http://some-url.com',
