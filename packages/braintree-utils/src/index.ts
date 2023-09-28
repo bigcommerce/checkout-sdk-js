@@ -45,10 +45,10 @@ export {
     getBraintreeLocalPaymentMock,
     getBraintree,
     getDeviceDataMock,
-				getModuleCreatorMock,
-				getGooglePayMock,
-				getClientMock,
-				getThreeDSecureMock,
+    getModuleCreatorMock,
+    getGooglePayMock,
+    getClientMock,
+    getThreeDSecureMock,
 } from './mocks/braintree.mock';
 
 export { BRAINTREE_SDK_STABLE_VERSION, BRAINTREE_SDK_ALPHA_VERSION } from './sdk-verison';
