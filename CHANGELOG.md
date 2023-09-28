@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.457.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.456.0...v1.457.0) (2023-09-28)
+
+
+### Features
+
+* **payment:** PAYPAL-2926 Unable to place order via GooglePay with 3D secure  ([#2203](https://github.com/bigcommerce/checkout-sdk-js/issues/2203)) ([7e2983f](https://github.com/bigcommerce/checkout-sdk-js/commit/7e2983fd52302ccf29996133c5bfd49630cf863e))
+
 ## [1.456.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.455.1...v1.456.0) (2023-09-28)
 
 
