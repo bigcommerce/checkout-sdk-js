@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.455.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.455.0...v1.455.1) (2023-09-28)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3061 prefill full phone number in BT AXO instead of slicing country code num ([#2204](https://github.com/bigcommerce/checkout-sdk-js/issues/2204)) ([a0fea14](https://github.com/bigcommerce/checkout-sdk-js/commit/a0fea14cbed0ac6d64991862af80879831f8b013))
+
 ## [1.455.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.454.0...v1.455.0) (2023-09-28)
 
 
