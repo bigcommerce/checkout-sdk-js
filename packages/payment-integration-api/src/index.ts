@@ -138,6 +138,7 @@ export {
 } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
+export { PaymentProviderAuthentication } from './payment-provider-authentication';
 export {
     BraintreeAcceleratedCheckoutCustomer,
     PaymentProviderCustomer,

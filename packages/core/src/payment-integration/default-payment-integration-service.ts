@@ -21,6 +21,10 @@ import { CustomerActionCreator, CustomerCredentials } from '../customer';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
 import {
+    PaymentProviderAuthentication,
+    PaymentProviderAuthenticationActionCreator,
+} from '../payment-provider-authentication';
+import {
     PaymentProviderCustomer,
     PaymentProviderCustomerActionCreator,
 } from '../payment-provider-customer';
@@ -49,6 +53,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _cartRequestSender: CartRequestSender,
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
+        private _paymentProviderAuthenticationActionCreator: PaymentProviderAuthenticationActionCreator,
         private _paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
     ) {
@@ -216,6 +221,18 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
 
     async loadCurrentOrder(options?: RequestOptions): Promise<PaymentIntegrationSelectors> {
         await this._store.dispatch(this._orderActionCreator.loadCurrentOrder(options));
+
+        return this._storeProjection.getState();
+    }
+
+    async updatePaymentProviderAuthentication(
+        paymentProviderAuthentication: PaymentProviderAuthentication,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._paymentProviderAuthenticationActionCreator.updatePaymentProviderAuthentication(
+                paymentProviderAuthentication,
+            ),
+        );
 
         return this._storeProjection.getState();
     }

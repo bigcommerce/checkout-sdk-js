@@ -10,6 +10,7 @@ import { CountrySelector } from '../geography';
 import { OrderSelector } from '../order';
 import OrderBillingAddressSelector from '../order-billing-address/order-billing-address-selector';
 import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from '../payment';
+import { PaymentProviderAuthenticationSelector } from '../payment-provider-authentication';
 import { PaymentProviderCustomerSelector } from '../payment-provider-customer';
 import { InstrumentSelector } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
@@ -46,6 +47,7 @@ export default interface InternalCheckoutSelectors {
     payment: PaymentSelector;
     paymentMethods: PaymentMethodSelector;
     paymentStrategies: PaymentStrategySelector;
+    paymentProviderAuthentication: PaymentProviderAuthenticationSelector;
     paymentProviderCustomer: PaymentProviderCustomerSelector;
     pickupOptions: PickupOptionSelector;
     remoteCheckout: RemoteCheckoutSelector;

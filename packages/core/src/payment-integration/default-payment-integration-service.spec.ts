@@ -23,6 +23,7 @@ import { CustomerActionCreator } from '../customer';
 import { HostedForm, HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
 import { getOrder } from '../order/orders.mock';
+import { PaymentProviderAuthenticationActionCreator } from '../payment-provider-authentication';
 import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
@@ -72,6 +73,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let customerActionCreator: Pick<CustomerActionCreator, 'signInCustomer' | 'signOutCustomer'>;
     let cartRequestSender: CartRequestSender;
     let storeCreditActionCreator: Pick<StoreCreditActionCreator, 'applyStoreCredit'>;
+    let paymentProviderAuthenticationActionCreator: PaymentProviderAuthenticationActionCreator;
     let paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator;
     let shippingCountryActionCreator: Pick<ShippingCountryActionCreator, 'loadCountries'>;
 
@@ -156,6 +158,12 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
+        paymentProviderAuthenticationActionCreator = {
+            updatePaymentProviderAuthentication: jest.fn(
+                async () => () => createAction('UPDATE_PAYMENT_PROVIDER_AUTHENTICATION'),
+            ),
+        };
+
         paymentProviderCustomerActionCreator = {
             updatePaymentProviderCustomer: jest.fn(
                 async () => () => createAction('UPDATE_PAYMENT_PROVIDER_CUSTOMER'),
@@ -182,6 +190,7 @@ describe('DefaultPaymentIntegrationService', () => {
             cartRequestSender,
             storeCreditActionCreator as StoreCreditActionCreator,
             spamProtectionActionCreator as SpamProtectionActionCreator,
+            paymentProviderAuthenticationActionCreator,
             paymentProviderCustomerActionCreator,
             shippingCountryActionCreator as ShippingCountryActionCreator,
         );

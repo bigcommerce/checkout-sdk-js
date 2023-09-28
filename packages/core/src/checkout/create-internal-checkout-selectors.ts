@@ -15,6 +15,7 @@ import {
     createPaymentSelectorFactory,
     createPaymentStrategySelectorFactory,
 } from '../payment';
+import { createPaymentProviderAuthenticationSelectorFactory } from '../payment-provider-authentication';
 import { createPaymentProviderCustomerSelectorFactory } from '../payment-provider-customer';
 import { createInstrumentSelectorFactory } from '../payment/instrument';
 import { createRemoteCheckoutSelectorFactory } from '../remote-checkout';
@@ -54,6 +55,8 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createPaymentMethodSelector = createPaymentMethodSelectorFactory();
     const createPaymentStrategySelector = createPaymentStrategySelectorFactory();
     const createPickupOptionSelector = createPickupOptionSelectorFactory();
+    const createPaymentProviderAuthenticationSelector =
+        createPaymentProviderAuthenticationSelectorFactory();
     const createPaymentProviderCustomerSelector = createPaymentProviderCustomerSelectorFactory();
     const createRemoteCheckoutSelector = createRemoteCheckoutSelectorFactory();
     const createShippingAddressSelector = createShippingAddressSelectorFactory();
@@ -83,6 +86,9 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const instruments = createInstrumentSelector(state.instruments);
         const orderBillingAddress = createOrderBillingAddressSelector(state.orderBillingAddress);
         const paymentMethods = createPaymentMethodSelector(state.paymentMethods);
+        const paymentProviderAuthentication = createPaymentProviderAuthenticationSelector(
+            state.paymentProviderAuthentication,
+        );
         const paymentProviderCustomer = createPaymentProviderCustomerSelector(
             state.paymentProviderCustomer,
         );
@@ -130,6 +136,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
             orderBillingAddress,
             payment,
             paymentMethods,
+            paymentProviderAuthentication,
             paymentProviderCustomer,
             paymentStrategies,
             pickupOptions,

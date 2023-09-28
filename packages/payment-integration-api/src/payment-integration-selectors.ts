@@ -5,6 +5,7 @@ import { StoreConfig } from './config';
 import { Customer } from './customer';
 import { Country } from './geography';
 import { Order } from './order';
+import { PaymentProviderAuthentication } from './payment-provider-authentication';
 import { PaymentProviderCustomer } from './payment-provider-customer';
 import { CardInstrument } from './payment/instrument';
 import PaymentMethod from './payment/payment-method';
@@ -57,6 +58,9 @@ export default interface PaymentIntegrationSelectors {
         gatewayId?: string,
     ): PaymentMethod<T> | undefined;
     getPaymentMethodOrThrow<T = unknown>(methodId: string, gatewayId?: string): PaymentMethod<T>;
+
+    getPaymentProviderAuthentication(): PaymentProviderAuthentication | undefined;
+    getPaymentProviderAuthenticationOrThrow(): PaymentProviderAuthentication;
 
     getPaymentProviderCustomer(): PaymentProviderCustomer | undefined;
     getPaymentProviderCustomerOrThrow(): PaymentProviderCustomer;

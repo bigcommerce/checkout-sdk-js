@@ -23,6 +23,7 @@ export {
     PaymentMethodActionCreator,
     PaymentMethod,
 } from './payment';
+export { PaymentProviderAuthentication } from './payment-provider-authentication';
 export {
     BraintreeAcceleratedCheckoutCustomer,
     PaymentProviderCustomer,
