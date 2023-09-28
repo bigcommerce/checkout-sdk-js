@@ -66,6 +66,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
                 cardType: payload.details.cardType,
                 lastFour: payload.details.lastFour,
                 lastTwo: payload.details.lastTwo,
+                bin: payload.details.bin,
             },
             binData: payload.binData,
         });
