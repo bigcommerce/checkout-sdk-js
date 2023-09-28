@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.455.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.454.0...v1.455.0) (2023-09-28)
+
+
+### Features
+
+* **checkout:** CHECKOUT-7141 Preparation for Jest v27 Upgrade ([#2180](https://github.com/bigcommerce/checkout-sdk-js/issues/2180)) ([3c40df3](https://github.com/bigcommerce/checkout-sdk-js/commit/3c40df398be05ea7b7b8a03ec174c984b385ef70))
+
 ## [1.454.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.453.0...v1.454.0) (2023-09-25)
 
 
