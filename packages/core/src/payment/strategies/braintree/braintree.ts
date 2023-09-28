@@ -363,7 +363,7 @@ export interface BraintreeHostedFieldsTokenizePayload {
 
 export interface TokenizationPayload {
     nonce: string;
-    bin?: string;
+    bin: string;
 }
 
 export interface BraintreeBillingAddressRequestData {
