@@ -219,8 +219,9 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.PAYLATER,
                 style: {
-                    height: 40,
-                    color: StyleButtonColor.gold,
+                    height: 36,
+                    color: StyleButtonColor.silver,
+                    label: 'checkout',
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
@@ -244,8 +245,9 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.PAYLATER,
                 style: {
-                    height: 40,
-                    color: StyleButtonColor.gold,
+                    height: 36,
+                    color: StyleButtonColor.silver,
+                    label: 'checkout',
                 },
                 createOrder: expect.any(Function),
                 onShippingAddressChange: expect.any(Function),
@@ -284,8 +286,9 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.CREDIT,
                 style: {
-                    height: 40,
-                    color: StyleButtonColor.gold,
+                    height: 36,
+                    color: StyleButtonColor.silver,
+                    label: 'checkout',
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),

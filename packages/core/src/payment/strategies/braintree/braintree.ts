@@ -135,14 +135,14 @@ export interface BraintreeShippingAddress extends BraintreeAddress {
 
 export interface BraintreeVerifyPayload {
     nonce: string;
-    details: {
+    details?: {
         cardType: string;
         lastFour: string;
         lastTwo: string;
     };
-    description: string;
-    liabilityShiftPossible: boolean;
-    liabilityShifted: boolean;
+    description?: string;
+    liabilityShiftPossible?: boolean;
+    liabilityShifted?: boolean;
 }
 
 export interface BraintreeError extends Error {
@@ -221,6 +221,7 @@ export interface BraintreeGooglePayThreeDSecure {
 export interface BraintreeGooglePayThreeDSecureOptions {
     nonce: string;
     amount: number;
+    bin: string;
     showLoader?: boolean;
     onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
 }
@@ -408,7 +409,7 @@ export interface BraintreeThreeDSecureCreatorConfig extends BraintreeModuleCreat
 export interface BraintreeThreeDSecureOptions {
     nonce: string;
     amount: number;
-    bin?: string;
+    bin: string;
     challengeRequested: boolean;
     showLoader?: boolean;
     addFrame(error: Error | undefined, iframe: HTMLIFrameElement): void;
@@ -477,7 +478,9 @@ export type BraintreeVenmoCheckoutCreator = BraintreeModuleCreator<
 >;
 
 export interface BraintreeVenmoCheckout extends BraintreeModule {
-    tokenize(callback: (error: BraintreeError, payload: BraintreeTokenizePayload) => void): void;
+    tokenize(
+        callback: (error: BraintreeError | undefined, payload: BraintreeTokenizePayload) => void,
+    ): void;
     isBrowserSupported(): boolean;
 }
 

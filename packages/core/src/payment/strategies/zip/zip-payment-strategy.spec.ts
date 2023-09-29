@@ -208,7 +208,11 @@ describe('ZipPaymentStrategy', () => {
                 paymentFailedErrorAction,
             );
 
-            window.location.replace = jest.fn();
+            Object.defineProperty(window, 'location', {
+                value: {
+                    replace: jest.fn(),
+                },
+            });
 
             strategy.execute(payload, options);
 

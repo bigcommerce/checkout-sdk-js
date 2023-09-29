@@ -18,6 +18,7 @@ describe('handleRedirect', () => {
 
     describe('when there is not an already pending redirect', () => {
         describe('when not passed form_fields', () => {
+            // TODO: CHECKOUT-7766
             it('calls location assign with the url, never resolves or rejects', () => {
                 const resolveMock = jest.fn();
                 const rejectMock = jest.fn();

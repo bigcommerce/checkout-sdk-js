@@ -1538,7 +1538,11 @@ describe('StripeUPEPaymentStrategy', () => {
                             }),
                         );
 
-                        window.location.replace = jest.fn();
+                        Object.defineProperty(window, 'location', {
+                            value: {
+                                replace: jest.fn(),
+                            },
+                        });
 
                         jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
                             of(

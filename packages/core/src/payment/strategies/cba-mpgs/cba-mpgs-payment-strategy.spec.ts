@@ -45,6 +45,7 @@ import { getCBAMPGSScriptMock, getCBAMPGSScriptMockRetryOnly } from './cba-mpgs.
 
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './';
 
+// TODO: CHECKOUT-7766
 describe('CBAMPGSPaymentStrategy', () => {
     let scriptLoader: ScriptLoader;
     let cbaMPGSScriptLoader: CBAMPGSScriptLoader;

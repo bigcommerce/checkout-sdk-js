@@ -10,11 +10,11 @@ describe('CardinalScriptLoader', () => {
     const cardinalWindow: CardinalWindow = window;
     const scriptLoader = createScriptLoader();
     const scriptMock = getCardinalScriptMock();
+    const loadScript = jest.spyOn(scriptLoader, 'loadScript');
     let cardinalScriptLoader: CardinalScriptLoader;
 
     beforeEach(() => {
         cardinalScriptLoader = new CardinalScriptLoader(scriptLoader, cardinalWindow);
-        jest.spyOn(scriptLoader, 'loadScript').mockReturnValue(Promise.resolve(true));
     });
 
     it('loads widget test script', () => {
@@ -22,7 +22,7 @@ describe('CardinalScriptLoader', () => {
 
         cardinalScriptLoader.load('provider', testMode);
 
-        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+        expect(loadScript).toHaveBeenCalledWith(
             'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js?v=provider',
         );
     });
@@ -32,7 +32,7 @@ describe('CardinalScriptLoader', () => {
 
         cardinalScriptLoader.load('provider', testMode);
 
-        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+        expect(loadScript).toHaveBeenCalledWith(
             'https://songbird.cardinalcommerce.com/edge/v1/songbird.js?v=provider',
         );
     });

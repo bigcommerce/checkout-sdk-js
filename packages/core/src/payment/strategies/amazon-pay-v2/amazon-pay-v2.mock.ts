@@ -4,7 +4,6 @@ import { getAmazonPayV2 } from '../../payment-methods.mock';
 import {
     AmazonPayV2ButtonColor,
     AmazonPayV2ButtonConfig,
-    AmazonPayV2ButtonDesign,
     AmazonPayV2ButtonParameters,
     AmazonPayV2CheckoutLanguage,
     AmazonPayV2LedgerCurrency,
@@ -59,7 +58,6 @@ export function getAmazonPayV2Ph4ButtonParamsMock(): AmazonPayV2ButtonParameters
             payloadJSON: 'payload',
             signature: 'xxxx',
         },
-        design: AmazonPayV2ButtonDesign.C0001,
     };
 }
 
@@ -71,7 +69,6 @@ export function getAmazonPayBaseButtonParamsMock(): AmazonPayV2ButtonConfig {
         placement: AmazonPayV2Placement.Checkout,
         buttonColor: AmazonPayV2ButtonColor.Gold,
         sandbox: true,
-        design: AmazonPayV2ButtonDesign.C0001,
     };
 }
 
@@ -89,6 +86,5 @@ export function getAmazonPayV2ButtonParamsMock(): AmazonPayV2ButtonParameters {
         placement: AmazonPayV2Placement.Checkout,
         productType: AmazonPayV2PayOptions.PayAndShip,
         sandbox: true,
-        design: AmazonPayV2ButtonDesign.C0001,
     };
 }

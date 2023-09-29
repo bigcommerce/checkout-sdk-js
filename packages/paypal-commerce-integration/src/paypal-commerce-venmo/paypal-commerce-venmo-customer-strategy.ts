@@ -9,7 +9,11 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import { ApproveCallbackPayload, PayPalCommerceButtonsOptions } from '../paypal-commerce-types';
+import {
+    ApproveCallbackPayload,
+    PayPalCommerceButtonsOptions,
+    PayPalCommerceInitializationData,
+} from '../paypal-commerce-types';
 
 import { WithPayPalCommerceVenmoCustomerInitializeOptions } from './paypal-commerce-venmo-customer-initialize-options';
 
@@ -68,10 +72,18 @@ export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStra
 
     private renderButton(methodId: string, containerId: string): void {
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const state = this.paymentIntegrationService.getState();
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const { paymentButtonStyles } = paymentMethod.initializationData || {};
+        const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {
             fundingSource: paypalSdk.FUNDING.VENMO,
-            style: this.paypalCommerceIntegrationService.getValidButtonStyle(),
+            style: this.paypalCommerceIntegrationService.getValidButtonStyle({
+                ...checkoutTopButtonStyles,
+                height: 36,
+            }),
             createOrder: () =>
                 this.paypalCommerceIntegrationService.createOrder('paypalcommercevenmo'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
