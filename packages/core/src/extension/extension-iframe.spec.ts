@@ -2,14 +2,11 @@ import { EventEmitter } from 'events';
 
 import { Cart } from '../cart';
 import { getCart } from '../cart/carts.mock';
-import { createCheckoutStore } from '../checkout';
-import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { parseUrl } from '../common/url';
 
 import { Extension } from './extension';
 import { ExtensionIframe } from './extension-iframe';
 import { ExtensionInternalCommandType } from './extension-internal-commands';
-import { ExtensionMessenger } from './extension-messenger';
 import { getExtensions } from './extension.mock';
 
 describe('ExtensionIframe', () => {
@@ -18,18 +15,14 @@ describe('ExtensionIframe', () => {
     let extension: Extension;
     let extensionIframe: ExtensionIframe;
     let extensionOrigin: string;
-    let extensionMessenger: ExtensionMessenger;
     let eventEmitter: EventEmitter;
 
     beforeEach(() => {
-        const store = createCheckoutStore(getCheckoutStoreState());
-
-        extensionMessenger = new ExtensionMessenger(store);
         container = document.createElement('div');
         container.id = 'containerId';
         cart = getCart();
         extension = getExtensions()[0];
-        extensionIframe = new ExtensionIframe(extensionMessenger, 'containerId', extension, {
+        extensionIframe = new ExtensionIframe('containerId', extension, {
             cartId: cart.id,
             parentOrigin: parseUrl('https://www.test.com').origin,
         });

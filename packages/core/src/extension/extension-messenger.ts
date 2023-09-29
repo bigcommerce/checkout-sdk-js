@@ -1,6 +1,7 @@
 import { ReadableCheckoutStore } from '../checkout';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
+import { createExtensionEventPoster } from './create-extension-event-poster';
 import { ExtensionNotFoundError } from './errors';
 import { UnsupportedExtensionCommandError } from './errors/unsupported-extension-command-error';
 import { Extension } from './extension';
@@ -10,7 +11,6 @@ import {
     ExtensionCommandType,
 } from './extension-commands';
 import { ExtensionEvent } from './extension-events';
-import { ExtensionInternalEvent } from './extension-internal-events';
 
 export class ExtensionMessenger {
     private _extensions: Extension[] | undefined;
@@ -20,9 +20,7 @@ export class ExtensionMessenger {
         private _listeners: {
             [extensionId: string]: IframeEventListener<ExtensionCommandMap>;
         } = {},
-        private _posters: {
-            [extensionId: string]: IframeEventPoster<ExtensionEvent | ExtensionInternalEvent>;
-        } = {},
+        private _posters: { [extensionId: string]: IframeEventPoster<ExtensionEvent> } = {},
     ) {}
 
     listen<T extends keyof ExtensionCommandMap>(
@@ -71,21 +69,11 @@ export class ExtensionMessenger {
         listener.stopListen();
     }
 
-    post(extensionId: string, event: ExtensionEvent | ExtensionInternalEvent): void {
+    post(extensionId: string, event: ExtensionEvent): void {
         if (!this._posters[extensionId]) {
             const extension = this._getExtensionById(extensionId);
 
-            const iframe = document
-                .querySelector(`[data-extension-id="${extensionId}"]`)
-                ?.querySelector('iframe');
-
-            if (!iframe?.contentWindow) {
-                throw new ExtensionNotFoundError(
-                    `Unable to post due to no extension rendered for ID: ${extensionId}.`,
-                );
-            }
-
-            this._posters[extensionId] = new IframeEventPoster(extension.url, iframe.contentWindow);
+            this._posters[extensionId] = createExtensionEventPoster<ExtensionEvent>(extension);
         }
 
         this._posters[extensionId].post(event);

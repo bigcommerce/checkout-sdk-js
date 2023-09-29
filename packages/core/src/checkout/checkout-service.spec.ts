@@ -1515,11 +1515,7 @@ describe('CheckoutService', () => {
 
             await checkoutService.renderExtension(container, region);
 
-            expect(extensionActionCreator.renderExtension).toHaveBeenCalledWith(
-                container,
-                region,
-                extensionMessenger,
-            );
+            expect(extensionActionCreator.renderExtension).toHaveBeenCalledWith(container, region);
             expect(extensionEventBroadcaster.listen).toHaveBeenCalled();
         });
     });

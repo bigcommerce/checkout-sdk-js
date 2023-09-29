@@ -1,28 +1,22 @@
 import { EventEmitter } from 'events';
 
-import { createCheckoutStore } from '../checkout';
-import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import * as iframeModule from '../common/iframe';
 
 import { ExtensionNotLoadedError } from './errors';
+import { Extension } from './extension';
 import { ExtensionInternalCommandType } from './extension-internal-commands';
-import { ExtensionInternalEventType } from './extension-internal-events';
-import { ExtensionMessenger } from './extension-messenger';
+import { getExtensions } from './extension.mock';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 describe('ResizableIframeCreator', () => {
     let url: string;
     let container: HTMLElement;
     let eventEmitter: EventEmitter;
+    let extension: Extension;
     let iframeCreator: ResizableIframeCreator;
-    let extensionId: string;
-    let extensionMessenger: ExtensionMessenger;
 
     beforeEach(() => {
-        const store = createCheckoutStore(getCheckoutStoreState());
-
-        extensionId = '123';
-        extensionMessenger = new ExtensionMessenger(store);
+        extension = getExtensions()[0];
         url = 'http://mybigcommerce.com/checkout';
         container = document.createElement('div');
         eventEmitter = new EventEmitter();
@@ -35,12 +29,11 @@ describe('ResizableIframeCreator', () => {
             return eventEmitter.removeListener(type, listener);
         });
 
-        jest.spyOn(extensionMessenger, 'post').mockReturnValue(null);
-
         container.setAttribute('id', 'checkout');
+        container.setAttribute('data-extension-id', extension.id);
         window.document.body.appendChild(container);
 
-        iframeCreator = new ResizableIframeCreator(extensionId, extensionMessenger, {
+        iframeCreator = new ResizableIframeCreator({
             timeout: 0,
         });
     });
@@ -53,7 +46,7 @@ describe('ResizableIframeCreator', () => {
             });
         });
 
-        const frame = await iframeCreator.createFrame(url, 'checkout');
+        const frame = await iframeCreator.createFrame(extension, url, 'checkout');
 
         expect(frame.tagName).toBe('IFRAME');
         expect(frame.src).toEqual(url);
@@ -70,7 +63,7 @@ describe('ResizableIframeCreator', () => {
             });
         });
 
-        const frame = await iframeCreator.createFrame(url, 'checkout');
+        const frame = await iframeCreator.createFrame(extension, url, 'checkout');
 
         expect(frame.style.border).toBe('');
         expect(frame.style.width).toBe('100%');
@@ -81,6 +74,7 @@ describe('ResizableIframeCreator', () => {
                 scrolling: false,
                 sizeWidth: false,
                 heightCalculationMethod: 'bodyOffset',
+                initCallback: expect.any(Function),
             },
             frame,
         );
@@ -100,34 +94,28 @@ describe('ResizableIframeCreator', () => {
             });
         });
 
-        await iframeCreator.createFrame(url, 'checkout');
+        await iframeCreator.createFrame(extension, url, 'checkout');
 
         expect(window.removeEventListener).toHaveBeenCalledWith('message', expect.any(Function));
-        expect(extensionMessenger.post).toHaveBeenCalledWith(extensionId, {
-            type: ExtensionInternalEventType.ExtensionReady,
-        });
     });
 
     it('throws error if unable to find container element', () => {
-        expect(() => iframeCreator.createFrame(url, 'invalid_container')).toThrow(
+        expect(() => iframeCreator.createFrame(extension, url, 'invalid_container')).toThrow(
             ExtensionNotLoadedError,
         );
     });
 
     it('throws error if not receiving "loaded" event within certain timeframe', async () => {
         try {
-            await iframeCreator.createFrame(url, 'checkout');
+            await iframeCreator.createFrame(extension, url, 'checkout');
         } catch (error) {
             expect(error).toBeInstanceOf(ExtensionNotLoadedError);
-            expect(extensionMessenger.post).toHaveBeenCalledWith(extensionId, {
-                type: ExtensionInternalEventType.ExtensionFailed,
-            });
         }
     });
 
     it('removes iframe from container element if unable to load', async () => {
         try {
-            await iframeCreator.createFrame(url, 'checkout');
+            await iframeCreator.createFrame(extension, url, 'checkout');
         } catch (error) {
             expect(container.childNodes).toHaveLength(0);
         }
@@ -137,7 +125,7 @@ describe('ResizableIframeCreator', () => {
         jest.spyOn(window, 'removeEventListener');
 
         try {
-            await iframeCreator.createFrame(url, 'checkout');
+            await iframeCreator.createFrame(extension, url, 'checkout');
         } catch (error) {
             expect(window.removeEventListener).toHaveBeenCalledWith(
                 'message',

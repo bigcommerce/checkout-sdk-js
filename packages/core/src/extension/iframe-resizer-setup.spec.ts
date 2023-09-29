@@ -4,7 +4,7 @@ import {
     isIframeResizerWindow,
 } from './iframe-resizer-setup';
 
-describe('iframeResizer methods', () => {
+describe('isIframeResizerWindow and iframeResizerSetup', () => {
     beforeAll(() => {
         Object.defineProperty(window, 'parentIFrame', {
             value: {

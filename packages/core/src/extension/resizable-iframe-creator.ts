@@ -1,19 +1,16 @@
 import { IFrameComponent, iframeResizer, isIframeEvent } from '../common/iframe';
 import { parseUrl } from '../common/url';
 
+import { createExtensionEventPoster } from './create-extension-event-poster';
 import { ExtensionNotLoadedError } from './errors';
+import { Extension } from './extension';
 import { ExtensionInternalCommandType } from './extension-internal-commands';
-import { ExtensionInternalEventType } from './extension-internal-events';
-import { ExtensionMessenger } from './extension-messenger';
+import { ExtensionInternalEvent, ExtensionInternalEventType } from './extension-internal-events';
 
 export default class ResizableIframeCreator {
-    constructor(
-        private _extensionId: string,
-        private _extensionMessenger: ExtensionMessenger,
-        private _options?: { timeout: number },
-    ) {}
+    constructor(private _options?: { timeout: number }) {}
 
-    createFrame(src: string, containerId: string): Promise<IFrameComponent> {
+    createFrame(extension: Extension, src: string, containerId: string): Promise<IFrameComponent> {
         const container = document.getElementById(containerId);
         const { timeout = 60000 } = this._options || {};
 
@@ -32,7 +29,7 @@ export default class ResizableIframeCreator {
 
         container.appendChild(iframe);
 
-        return this._toResizableFrame(iframe, timeout).catch((error) => {
+        return this._toResizableFrame(extension, iframe, timeout).catch((error) => {
             container.removeChild(iframe);
 
             throw error;
@@ -40,6 +37,7 @@ export default class ResizableIframeCreator {
     }
 
     private _toResizableFrame(
+        extension: Extension,
         iframe: HTMLIFrameElement,
         timeoutInterval: number,
     ): Promise<IFrameComponent> {
@@ -47,7 +45,9 @@ export default class ResizableIframeCreator {
         // Instead, listen to the `load` inside the iframe and let the parent frame know when it happens.
         return new Promise((resolve, reject) => {
             const timeout = window.setTimeout(() => {
-                this._extensionMessenger.post(this._extensionId, {
+                const poster = createExtensionEventPoster<ExtensionInternalEvent>(extension);
+
+                poster.post({
                     type: ExtensionInternalEventType.ExtensionFailed,
                 });
 
@@ -72,20 +72,19 @@ export default class ResizableIframeCreator {
                             scrolling: false,
                             sizeWidth: false,
                             heightCalculationMethod: 'bodyOffset',
+                            initCallback: () => {
+                                const poster =
+                                    createExtensionEventPoster<ExtensionInternalEvent>(extension);
+
+                                poster.post({
+                                    type: ExtensionInternalEventType.ExtensionReady,
+                                });
+                            },
                         },
                         iframe,
                     );
 
                     resolve(iframes[iframes.length - 1]);
-                }
-
-                if (
-                    typeof event.data === 'string' &&
-                    /\[iFrameSizer]iFrameResizer.*init/.test(event.data)
-                ) {
-                    this._extensionMessenger.post(this._extensionId, {
-                        type: ExtensionInternalEventType.ExtensionReady,
-                    });
 
                     teardown();
                 }

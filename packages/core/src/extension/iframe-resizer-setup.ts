@@ -14,24 +14,26 @@ export function iframeResizerSetup(
     taggedElementId: string | undefined,
     fixedHeight: number | undefined,
 ): void {
-    if (isIframeResizerWindow(window)) {
-        if (fixedHeight) {
-            window.parentIFrame.size(fixedHeight);
-        } else {
-            window.parentIFrame.autoResize(true);
+    if (!isIframeResizerWindow(window)) {
+        throw new Error('iFramerResizer window not found.');
+    }
 
-            if (taggedElementId) {
-                const element = document.getElementById(taggedElementId);
+    if (fixedHeight) {
+        window.parentIFrame.size(fixedHeight);
+    } else {
+        window.parentIFrame.autoResize(true);
 
-                if (!element) {
-                    throw new Error(`Element not found.`);
-                }
+        if (taggedElementId) {
+            const element = document.getElementById(taggedElementId);
 
-                element.setAttribute('data-iframe-height', '');
-                window.parentIFrame.setHeightCalculationMethod('taggedElement');
-            } else {
-                window.parentIFrame.setHeightCalculationMethod('bodyOffset');
+            if (!element) {
+                throw new Error(`Element not found.`);
             }
+
+            element.setAttribute('data-iframe-height', '');
+            window.parentIFrame.setHeightCalculationMethod('taggedElement');
+        } else {
+            window.parentIFrame.setHeightCalculationMethod('bodyOffset');
         }
     }
 }

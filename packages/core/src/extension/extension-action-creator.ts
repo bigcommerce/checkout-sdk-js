@@ -10,7 +10,6 @@ import { ExtensionRegion } from './extension';
 import { ExtensionAction, ExtensionActionType } from './extension-actions';
 import { ExtensionIframe } from './extension-iframe';
 import { ExtensionRequestSender } from './extension-request-sender';
-import { ExtensionMessenger } from './extension-messenger';
 
 export class ExtensionActionCreator {
     constructor(private _requestSender: ExtensionRequestSender) {}
@@ -43,7 +42,6 @@ export class ExtensionActionCreator {
     renderExtension(
         container: string,
         region: ExtensionRegion,
-        extensionMessenger: ExtensionMessenger,
     ): ThunkAction<ExtensionAction, InternalCheckoutSelectors> {
         return (store) =>
             Observable.create(async (observer: Observer<ExtensionAction>) => {
@@ -69,7 +67,7 @@ export class ExtensionActionCreator {
 
                     observer.next(createAction(ExtensionActionType.RenderExtensionRequested));
 
-                    const iframe = new ExtensionIframe(extensionMessenger, container, extension, {
+                    const iframe = new ExtensionIframe(container, extension, {
                         cartId,
                         parentOrigin: parseUrl(checkoutLink).origin,
                     });

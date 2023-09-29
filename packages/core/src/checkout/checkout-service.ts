@@ -1395,11 +1395,7 @@ export default class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     async renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors> {
-        const action = this._extensionActionCreator.renderExtension(
-            container,
-            region,
-            this._extensionMessenger,
-        );
+        const action = this._extensionActionCreator.renderExtension(container, region);
         const state = await this._dispatch(action, { queueId: 'extensions' });
 
         this._extensionEventBroadcaster.listen();
