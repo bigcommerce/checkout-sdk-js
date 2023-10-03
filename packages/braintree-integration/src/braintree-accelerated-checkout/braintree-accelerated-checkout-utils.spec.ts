@@ -141,6 +141,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             expect(braintreeIntegrationService.getBraintreeConnect).toHaveBeenCalledWith(
                 cart.id,
                 false,
+                undefined,
             );
         });
     });

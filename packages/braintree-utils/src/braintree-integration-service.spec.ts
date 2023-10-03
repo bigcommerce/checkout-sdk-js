@@ -165,12 +165,29 @@ describe('BraintreeIntegrationService', () => {
                 styles: {
                     root: {
                         backgroundColorPrimary: 'transparent',
+                        errorColor: '#C40B0B',
+                        fontFamily: 'Montserrat, Helvetica, Arial, sans-serif',
+                    },
+                    input: {
+                        borderRadius: '0.25rem',
+                        borderColor: '#9E9E9E',
+                        focusBorderColor: '#4496F6',
+                    },
+                    toggle: {
+                        colorPrimary: '#0F005E',
+                        colorSecondary: '#ffffff',
                     },
                     text: {
+                        body: {
+                            color: '#222222',
+                            fontSize: '1rem',
+                        },
                         caption: {
+                            color: '#515151',
                             fontSize: '1rem',
                         },
                     },
+                    branding: 'light',
                 },
             });
 

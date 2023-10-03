@@ -21,7 +21,7 @@ import { PaymentProviderCustomerActionCreator } from '../../../payment-provider-
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { getFlatRateOption } from '../../internal-shipping-options.mock';
 
-import BraintreeAcceleratedCheckoutInitializeOptions from './braintree-accelerated-checkout-initialize-options';
+import BraintreeAcceleratedCheckoutInitializeOptions from './braintree-accelerated-checkout-shipping-initialize-options';
 import BraintreeAcceleratedCheckoutShippingStrategy from './braintree-accelerated-checkout-shipping-strategy';
 
 const BRAINTREE_AXO_METHOD_ID = 'braintreeacceleratedcheckout';

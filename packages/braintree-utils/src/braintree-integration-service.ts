@@ -9,6 +9,7 @@ import {
 import {
     BraintreeBankAccount,
     BraintreeClient,
+    BraintreeConnectStylesOption,
     BraintreeDataCollector,
     BraintreeDataCollectorCreatorConfig,
     BraintreeDetails,
@@ -25,6 +26,7 @@ import {
 import BraintreeScriptLoader from './braintree-script-loader';
 import isBraintreeError from './is-braintree-error';
 import { PAYPAL_COMPONENTS } from './paypal';
+import getValidBraintreeConnectStyles from './utils/get-valid-braintree-connect-styles';
 
 interface DataCollectors {
     default?: BraintreeDataCollector;
@@ -49,7 +51,11 @@ export default class BraintreeIntegrationService {
         this.braintreeScriptLoader.initialize(storeConfig);
     }
 
-    async getBraintreeConnect(cardId?: string, isTestModeEnabled?: boolean) {
+    async getBraintreeConnect(
+        cardId?: string,
+        isTestModeEnabled?: boolean,
+        styles?: BraintreeConnectStylesOption,
+    ) {
         if (isTestModeEnabled) {
             window.localStorage.setItem('axoEnv', 'sandbox');
         }
@@ -65,16 +71,7 @@ export default class BraintreeIntegrationService {
                 authorization: clientToken,
                 client,
                 deviceData,
-                styles: {
-                    root: {
-                        backgroundColorPrimary: 'transparent',
-                    },
-                    text: {
-                        caption: {
-                            fontSize: '1rem',
-                        },
-                    },
-                },
+                styles: getValidBraintreeConnectStyles(styles),
             });
         }
 
