@@ -310,7 +310,8 @@ export default class PayPalCommerceIntegrationService {
         const element = elementId && document.getElementById(elementId);
 
         if (element) {
-            element.remove();
+            // For now this is a temporary solution, further removeElement method will be removed
+            element.style.display = 'none';
         }
     }
 }
