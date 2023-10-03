@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.458.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.457.0...v1.458.0) (2023-10-03)
+
+
+### Features
+
+* **payment:** PAYPAL-2844 captured device info ([#2186](https://github.com/bigcommerce/checkout-sdk-js/issues/2186)) ([3607300](https://github.com/bigcommerce/checkout-sdk-js/commit/360730012c65df79d93224da763ceb00860f5430))
+
 ## [1.457.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.456.0...v1.457.0) (2023-09-28)
 
 
