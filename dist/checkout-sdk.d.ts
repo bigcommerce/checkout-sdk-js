@@ -268,6 +268,8 @@ declare interface AdyenPlaceholderData {
 }
 
 declare interface AdyenPlaceholderData_2 {
+    firstName?: string;
+    lastName?: string;
     holderName?: string;
     prefillCardHolderName?: boolean;
     billingAddress?: {
@@ -413,7 +415,7 @@ declare enum AdyenV3CardFields {
     ExpiryDate = "encryptedExpiryDate"
 }
 
-declare type AdyenV3ComponentState = CardState_2 | WechatState_2;
+declare type AdyenV3ComponentState = CardState_2 | WechatState_2 | BoletoState;
 
 declare interface AdyenV3CreditCardComponentOptions extends AdyenBaseCardComponentOptions_2, AdyenComponentEvents_2 {
     /**
@@ -1431,6 +1433,21 @@ declare interface BodlService {
 
 declare interface BodyStyles {
     backgroundColor?: string;
+}
+
+declare interface BoletoDataPaymentMethodState {
+    paymentMethod: {
+        type: string;
+    };
+    shopperName?: {
+        firstName?: string;
+        lastName?: string;
+    };
+    socialSecurityNumber?: string;
+}
+
+declare interface BoletoState {
+    data: BoletoDataPaymentMethodState;
 }
 
 declare interface BoltButtonInitializeOptions {

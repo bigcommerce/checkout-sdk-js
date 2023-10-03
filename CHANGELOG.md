@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.459.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.458.0...v1.459.0) (2023-10-03)
+
+
+### Features
+
+* **checkout:** PI-741 updated adyen component state for the Boleto implementation ([f1642d4](https://github.com/bigcommerce/checkout-sdk-js/commit/f1642d4fe8ff551ac9b9cd3e34fde7eb41f75f69))
+* **payment:** PAYPAL-2987 checkout page crashing fixed ([d4aa116](https://github.com/bigcommerce/checkout-sdk-js/commit/d4aa1168bdda03b2727f7cd3677bdd9e7b9f71d4))
+
 ## [1.458.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.457.0...v1.458.0) (2023-10-03)
 
 
