@@ -6,6 +6,7 @@ import {
     BraintreeConnectAuthenticationState,
     BraintreeConnectPhone,
     BraintreeConnectProfileData,
+    BraintreeConnectStylesOption,
     BraintreeConnectVaultedInstrument,
     BraintreeInitializationData,
     BraintreeIntegrationService,
@@ -42,7 +43,10 @@ export default class BraintreeAcceleratedCheckoutUtils {
      * Initialization method
      *
      */
-    async initializeBraintreeConnectOrThrow(methodId: string) {
+    async initializeBraintreeConnectOrThrow(
+        methodId: string,
+        styles?: BraintreeConnectStylesOption,
+    ) {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCart();
         const storeConfig = state.getStoreConfigOrThrow();
@@ -59,6 +63,7 @@ export default class BraintreeAcceleratedCheckoutUtils {
         this.braintreeConnect = await this.braintreeIntegrationService.getBraintreeConnect(
             cart?.id,
             config.testMode,
+            styles,
         );
     }
 

@@ -4,6 +4,7 @@ import {
     BraintreeConnectAddress,
     BraintreeConnectPhone,
     BraintreeConnectProfileData,
+    BraintreeConnectStylesOption,
     BraintreeConnectVaultedInstrument,
     BraintreeIntegrationService,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -27,7 +28,7 @@ import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
 
-import BraintreeAcceleratedCheckoutInitializeOptions from './braintree-accelerated-checkout-initialize-options';
+import BraintreeAcceleratedCheckoutShippingInitializeOptions from './braintree-accelerated-checkout-shipping-initialize-options';
 
 export default class BraintreeAcceleratedCheckoutShippingStrategy implements ShippingStrategy {
     private _browserStorage: BrowserStorage;
@@ -64,9 +65,9 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
     }
 
     async initialize(
-        options: BraintreeAcceleratedCheckoutInitializeOptions,
+        options: BraintreeAcceleratedCheckoutShippingInitializeOptions,
     ): Promise<InternalCheckoutSelectors> {
-        const { methodId } = options || {};
+        const { methodId, styles } = options || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -82,7 +83,7 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
             await this._store.dispatch(
                 this._paymentMethodActionCreator.loadPaymentMethod(methodId),
             );
-            await this._runAuthenticationFlowOrThrow(methodId);
+            await this._runAuthenticationFlowOrThrow(methodId, styles);
         } catch (error) {
             // Info: we should not throw any error here to avoid
             // customer stuck on shipping step due to the payment provider
@@ -101,7 +102,10 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
         return !paymentProviderCustomer?.authenticationState && payPalConnectSessionId === cartId;
     }
 
-    private async _runAuthenticationFlowOrThrow(methodId: string): Promise<void> {
+    private async _runAuthenticationFlowOrThrow(
+        methodId: string,
+        styles?: BraintreeConnectStylesOption,
+    ): Promise<void> {
         const state = this._store.getState();
         const storeConfig = state.config.getStoreConfigOrThrow();
         const cart = state.cart.getCartOrThrow();
@@ -109,7 +113,7 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
         const customer = state.customer.getCustomer();
         const billingAddress = state.billingAddress.getBillingAddress();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        const { clientToken } = paymentMethod;
+        const { clientToken, config } = paymentMethod;
 
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -119,6 +123,8 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
 
         const braintreeConnect = await this._braintreeIntegrationService.getBraintreeConnect(
             cart?.id,
+            config?.testMode,
+            styles,
         );
 
         const customerEmail = customer?.email || billingAddress?.email;

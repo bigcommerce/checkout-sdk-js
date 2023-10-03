@@ -10,6 +10,7 @@ import {
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import BraintreeAcceleratedCheckoutCustomerStrategy from './braintree-accelerated-checkout-customer-strategy';
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
@@ -18,6 +19,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
     let braintreeAcceleratedCheckoutUtils: BraintreeAcceleratedCheckoutUtils;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
+    let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeAcceleratedCheckoutCustomerStrategy;
 
@@ -44,10 +46,12 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             braintreeScriptLoader,
             window,
         );
+        browserStorage = new BrowserStorage('paypalConnect');
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeAcceleratedCheckoutUtils = new BraintreeAcceleratedCheckoutUtils(
             paymentIntegrationService,
             braintreeIntegrationService,
+            browserStorage,
         );
 
         strategy = new BraintreeAcceleratedCheckoutCustomerStrategy(
@@ -111,7 +115,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
             expect(
                 braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
-            ).toHaveBeenCalledWith(methodId);
+            ).toHaveBeenCalledWith(methodId, undefined);
             expect(
                 braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
             ).toHaveBeenCalled();
@@ -183,7 +187,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             );
             expect(
                 braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
-            ).toHaveBeenCalledWith(backupMethodId);
+            ).toHaveBeenCalledWith(backupMethodId, undefined);
             expect(
                 braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
             ).toHaveBeenCalled();

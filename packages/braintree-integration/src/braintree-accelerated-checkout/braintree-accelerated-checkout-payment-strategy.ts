@@ -67,7 +67,10 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
         }
 
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
-        await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(methodId);
+        await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(
+            methodId,
+            braintreeacceleratedcheckout.styles,
+        );
 
         if (this.shouldRunAuthenticationFlow()) {
             await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow();
