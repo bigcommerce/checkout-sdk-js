@@ -162,7 +162,11 @@ describe('CheckoutcomSEPAPaymentStrategy', () => {
             }),
         );
 
-        window.location.replace = jest.fn();
+        Object.defineProperty(window, 'location', {
+            value: {
+                replace: jest.fn(),
+            },
+        });
 
         jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
             of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)),
@@ -333,7 +337,11 @@ describe('CheckoutcomSEPAPaymentStrategy', () => {
                 }),
             );
 
-            window.location.replace = jest.fn();
+            Object.defineProperty(window, 'location', {
+                value: {
+                    replace: jest.fn(),
+                },
+            });
 
             jest.spyOn(form, 'submit').mockRejectedValue(error);
 

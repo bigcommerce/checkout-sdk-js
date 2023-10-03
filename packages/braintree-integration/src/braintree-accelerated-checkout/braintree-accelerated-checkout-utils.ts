@@ -4,6 +4,7 @@ import {
     BraintreeConnect,
     BraintreeConnectAddress,
     BraintreeConnectAuthenticationState,
+    BraintreeConnectPhone,
     BraintreeConnectProfileData,
     BraintreeConnectVaultedInstrument,
     BraintreeInitializationData,
@@ -118,9 +119,11 @@ export default class BraintreeAcceleratedCheckoutUtils {
                 customerContextId,
             );
 
-            const shippingAddresses = this.mapPayPalToBcAddress(profileData.addresses) || [];
+            const shippingAddresses =
+                this.mapPayPalToBcAddress(profileData.addresses, profileData.phones) || [];
             const paypalBillingAddresses = this.getPayPalBillingAddresses(profileData);
-            const billingAddresses = this.mapPayPalToBcAddress(paypalBillingAddresses) || [];
+            const billingAddresses =
+                this.mapPayPalToBcAddress(paypalBillingAddresses, profileData.phones) || [];
             const instruments = this.mapPayPalToBcInstrument(methodId, profileData.cards) || [];
             const addresses = this.mergeShippingAndBillingAddresses(
                 shippingAddresses,
@@ -155,12 +158,15 @@ export default class BraintreeAcceleratedCheckoutUtils {
      * */
     private mapPayPalToBcAddress(
         addresses?: BraintreeConnectAddress[],
+        phones?: BraintreeConnectPhone[],
     ): CustomerAddress[] | undefined {
         if (!addresses) {
             return;
         }
 
         const countries = this.paymentIntegrationService.getState().getCountries() || [];
+        const phoneNumber =
+            phones && phones[0] ? phones[0].country_code + phones[0].national_number : '';
 
         const getCountryNameByCountryCode = (countryCode: string) => {
             const matchedCountry = countries.find((country) => country.code === countryCode);
@@ -182,7 +188,7 @@ export default class BraintreeAcceleratedCheckoutUtils {
             country: getCountryNameByCountryCode(address.countryCodeAlpha2),
             countryCode: address.countryCodeAlpha2,
             postalCode: address.postalCode,
-            phone: '',
+            phone: phoneNumber,
             customFields: [],
         }));
     }

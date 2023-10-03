@@ -97,7 +97,9 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-        const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
+        const { isHostedCheckoutEnabled, paymentButtonStyles } =
+            paymentMethod.initializationData || {};
+        const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         const defaultCallbacks = {
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
@@ -116,7 +118,10 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
 
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {
             fundingSource: paypalSdk.FUNDING.PAYPAL,
-            style: this.paypalCommerceIntegrationService.getValidButtonStyle(),
+            style: this.paypalCommerceIntegrationService.getValidButtonStyle({
+                ...checkoutTopButtonStyles,
+                height: 36,
+            }),
             ...defaultCallbacks,
             ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),
         };

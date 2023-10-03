@@ -200,14 +200,19 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         payment: PaymentMethodData,
     ): Promise<GooglePayVerifyPayload> {
         if (methodId === PaymentStrategyType.BRAINTREE_GOOGLE_PAY) {
-            const { nonce } = payment.paymentData;
+            const { nonce, cardInformation } = payment.paymentData;
             const threeDSecure = await this._braintreeSDKCreator?.get3DS();
 
             if (!nonce || !threeDSecure) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
-            return this._braintreePresent3DSChallenge(threeDSecure, amount, nonce);
+            return this._braintreePresent3DSChallenge(
+                threeDSecure,
+                amount,
+                nonce,
+                cardInformation?.bin,
+            );
         }
     }
 
@@ -215,11 +220,13 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         threeDSecure: BraintreeGooglePayThreeDSecure,
         amount: number,
         nonce: string,
+        bin: string,
     ): Promise<BraintreeVerifyPayload> {
         const verification = new CancellablePromise(
             threeDSecure.verifyCard({
                 amount,
                 nonce,
+                bin,
                 onLookupComplete: (_data, next) => {
                     next();
                 },

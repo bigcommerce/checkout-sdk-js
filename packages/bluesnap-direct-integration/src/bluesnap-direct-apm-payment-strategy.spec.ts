@@ -71,7 +71,11 @@ describe('BlueSnapDirectAPMPaymentStrategy', () => {
         });
 
         it('redirects to bluesnapdirect if additional action is required', async () => {
-            window.location.replace = jest.fn();
+            Object.defineProperty(window, 'location', {
+                value: {
+                    replace: jest.fn(),
+                },
+            });
             await strategy.initialize();
 
             const redirect_url = 'https://sandbox.bluesnap.com/buynow/checkout?enc=test';

@@ -1954,14 +1954,14 @@ declare interface BraintreeVenmoButtonInitializeOptions {
 
 declare interface BraintreeVerifyPayload {
     nonce: string;
-    details: {
+    details?: {
         cardType: string;
         lastFour: string;
         lastTwo: string;
     };
-    description: string;
-    liabilityShiftPossible: boolean;
-    liabilityShifted: boolean;
+    description?: string;
+    liabilityShiftPossible?: boolean;
+    liabilityShifted?: boolean;
 }
 
 declare interface BraintreeVisaCheckoutCustomerInitializeOptions {
@@ -5123,6 +5123,9 @@ declare interface GatewayOrderPayment extends OrderPayment {
     mandate?: {
         id: string;
         url?: string;
+        mandateText?: {
+            [key: string]: string;
+        };
     };
 }
 

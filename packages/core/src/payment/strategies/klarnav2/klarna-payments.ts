@@ -33,9 +33,9 @@ export interface KlarnaLoadResponse {
 }
 
 export interface KlarnaAuthorizationResponse {
-    authorization_token: string;
+    authorization_token?: string;
     approved: boolean;
-    show_form: boolean;
+    show_form?: boolean;
     error?: {
         invalid_fields: string[];
     };

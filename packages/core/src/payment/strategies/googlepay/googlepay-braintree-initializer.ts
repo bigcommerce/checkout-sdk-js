@@ -28,7 +28,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         paymentMethod: PaymentMethod,
         hasShippingAddress: boolean,
     ): Promise<GooglePayPaymentDataRequestV2> {
-        const storeConfig = this._store.getState().config.getStoreConfigOrThrow();
+        const storeConfig = this._store.getState().config.getStoreConfig();
         const { clientToken } = paymentMethod;
 
         if (!clientToken) {
@@ -66,6 +66,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
                 cardType: payload.details.cardType,
                 lastFour: payload.details.lastFour,
                 lastTwo: payload.details.lastTwo,
+                bin: payload.details.bin,
             },
             binData: payload.binData,
         });

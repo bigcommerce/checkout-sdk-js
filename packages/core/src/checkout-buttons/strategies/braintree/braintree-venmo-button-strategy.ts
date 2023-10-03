@@ -70,7 +70,9 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         const state = await this._store.dispatch(
             this._paymentMethodActionCreator.loadPaymentMethod(methodId),
         );
-        const storeConfig = state.config.getStoreConfigOrThrow();
+        // Info: does not use getStoreConfigOrThrow, because storeConfig is not available if
+        // cart is empty, so it causes issues on Product Details Page
+        const storeConfig = state.config.getStoreConfig();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         const { clientToken, initializationData } = paymentMethod;
 
@@ -160,7 +162,10 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
 
             if (braintreeVenmoCheckout.tokenize) {
                 braintreeVenmoCheckout.tokenize(
-                    async (error: BraintreeError, payload: BraintreeTokenizePayload) => {
+                    async (
+                        error: BraintreeError | undefined,
+                        payload: BraintreeTokenizePayload,
+                    ) => {
                         venmoButton.removeAttribute('disabled');
 
                         if (error) {
