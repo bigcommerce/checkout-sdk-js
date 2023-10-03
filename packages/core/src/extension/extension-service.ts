@@ -49,7 +49,9 @@ export default class ExtensionService {
             );
         } catch (event) {
             if (this._isExtensionFailedEvent(event)) {
-                throw new Error('Extension failed to initialize within 60 seconds');
+                throw new Error(
+                    'Extension failed to load within 60 seconds; please reload and try again.',
+                );
             }
         }
     }

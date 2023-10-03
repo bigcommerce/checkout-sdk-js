@@ -63,7 +63,7 @@ describe('ExtensionService', () => {
         });
 
         await expect(extensionService.initialize('test')).rejects.toThrow(
-            'Extension failed to initialize within 60 seconds',
+            'Extension failed to load within 60 seconds; please reload and try again.',
         );
     });
 

@@ -1,4 +1,6 @@
+import { createExtensionEventPoster } from './create-extension-event-poster';
 import { Extension, ExtensionIframeConfig } from './extension';
+import { ExtensionInternalEvent, ExtensionInternalEventType } from './extension-internal-events';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 export class ExtensionIframe {
@@ -29,11 +31,25 @@ export class ExtensionIframe {
         }
 
         const iframeCreator = new ResizableIframeCreator();
+        const iframeResizerCallback = (type: ExtensionInternalEventType) => {
+            const poster = createExtensionEventPoster<ExtensionInternalEvent>(this._extension);
+
+            poster.post({
+                type,
+            });
+        };
+        const initCallback = () => {
+            iframeResizerCallback(ExtensionInternalEventType.ExtensionReady);
+        };
+        const failedCallback = () => {
+            iframeResizerCallback(ExtensionInternalEventType.ExtensionFailed);
+        };
 
         this._iframe = await iframeCreator.createFrame(
-            this._extension,
             this._url.toString(),
             this._containerId,
+            initCallback,
+            failedCallback,
         );
 
         const container = document.getElementById(this._containerId);
