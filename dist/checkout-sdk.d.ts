@@ -1,5 +1,6 @@
 /// <reference types="applepayjs" />
 import { BlueSnapDirectEcpInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { BraintreeConnectStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeError as BraintreeError_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
@@ -1550,17 +1551,6 @@ declare interface BraintreeAcceleratedCheckoutCustomer {
 }
 
 /**
- * A set of options that are required to initialize the shipping step of
- * checkout in order to support Braintree Accelerated Checkout.
- */
-declare interface BraintreeAcceleratedCheckoutInitializeOptions {
-    /**
-     * The identifier of the payment method.
-     */
-    methodId: string;
-}
-
-/**
  * A set of options that are required to initialize the Braintree Accelerated Checkout payment
  * method for presenting on the page.
  *
@@ -1575,16 +1565,71 @@ declare interface BraintreeAcceleratedCheckoutInitializeOptions {
  * service.initializePayment({
  *     methodId: 'braintreeacceleratedcheckout',
  *     braintreeacceleratedcheckout: {
- *         onInit: (renderPayPalComponentMethod) => renderPayPalComponentMethod('#container-id');
+ *         onInit: (renderPayPalComponentMethod) => renderPayPalComponentMethod('#container-id'),
+ *         styles: {
+ *              root: {
+ *                  backgroundColorPrimary: 'transparent',
+ *                  errorColor: '#C40B0B',
+ *                  fontFamily: 'Montserrat, Helvetica, Arial, sans-serif',
+ *              },
+ *              input: {
+ *                  borderRadius: '0.25rem',
+ *                  borderColor: '#9E9E9E',
+ *                  focusBorderColor: '#4496F6',
+ *              },
+ *              toggle: {
+ *                  colorPrimary: '#0F005E',
+ *                  colorSecondary: '#ffffff',
+ *              },
+ *              text: {
+ *                  body: {
+ *                      color: '#222222',
+ *                      fontSize: '1rem',
+ *                  },
+ *                  caption: {
+ *                      color: '#515151',
+ *                      fontSize: '0.875rem',
+ *                  },
+ *              },
+ *              branding: 'light',
+ *         },
  *     },
  * });
  * ```
  */
 declare interface BraintreeAcceleratedCheckoutPaymentInitializeOptions {
     /**
-     * The CSS selector of a container where the payment widget should be inserted into.
+     * Is a callback that takes the CSS selector of a container
+     * where the PayPal Connect form should be inserted into.
      */
     onInit?: (renderPayPalComponentMethod: (container: string) => void) => void;
+    /**
+     * Is a stylisation options for customizing PayPal Connect components
+     *
+     * Note: the styles for all Braintree Accelerated Checkout strategies should be the same,
+     * because they will be provided to PayPal library only for the first strategy initialization
+     * no matter what strategy was initialised first
+     */
+    styles?: BraintreeConnectStylesOption;
+}
+
+/**
+ * A set of options that are required to initialize the shipping step of
+ * checkout in order to support Braintree Accelerated Checkout.
+ */
+declare interface BraintreeAcceleratedCheckoutShippingInitializeOptions {
+    /**
+     * The identifier of the payment method.
+     */
+    methodId: string;
+    /**
+     * Is a stylisation options for customizing PayPal Connect components
+     *
+     * Note: the styles for all Braintree Accelerated Checkout strategies should be the same,
+     * because they will be provided to PayPal library only for the first strategy initialization
+     * no matter what strategy was initialised first
+     */
+    styles?: BraintreeConnectStylesOption;
 }
 
 declare interface BraintreeError extends Error {
@@ -7303,7 +7348,7 @@ declare interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptio
      * The options that are required to initialize the shipping step of checkout
      * when using Braintree Accelerated Checkout.
      */
-    braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutInitializeOptions;
+    braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutShippingInitializeOptions;
 }
 
 declare interface ShippingOption {

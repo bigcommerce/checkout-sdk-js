@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.460.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.459.0...v1.460.0) (2023-10-03)
+
+
+### Features
+
+* **payment:** PAYPAL-2984 added an ability to change BT AXO component styling through strategy initialisation options ([#2206](https://github.com/bigcommerce/checkout-sdk-js/issues/2206)) ([07ee89b](https://github.com/bigcommerce/checkout-sdk-js/commit/07ee89bdc89ce2c4bb540d0e305db9c5c8bf933d))
+
 ## [1.459.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.458.0...v1.459.0) (2023-10-03)
 
 
