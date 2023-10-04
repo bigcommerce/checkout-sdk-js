@@ -113,14 +113,16 @@
 - [BodlEventsPayload](interfaces/BodlEventsPayload.md)
 - [BodlService](interfaces/BodlService.md)
 - [BodyStyles](interfaces/BodyStyles.md)
+- [BoletoDataPaymentMethodState](interfaces/BoletoDataPaymentMethodState.md)
+- [BoletoState](interfaces/BoletoState.md)
 - [BoltButtonInitializeOptions](interfaces/BoltButtonInitializeOptions.md)
 - [BoltButtonStyleOptions](interfaces/BoltButtonStyleOptions.md)
 - [BoltBuyNowInitializeOptions](interfaces/BoltBuyNowInitializeOptions.md)
 - [BoltCustomerInitializeOptions](interfaces/BoltCustomerInitializeOptions.md)
 - [BoltPaymentInitializeOptions](interfaces/BoltPaymentInitializeOptions.md)
 - [BraintreeAcceleratedCheckoutCustomer](interfaces/BraintreeAcceleratedCheckoutCustomer.md)
-- [BraintreeAcceleratedCheckoutInitializeOptions](interfaces/BraintreeAcceleratedCheckoutInitializeOptions.md)
 - [BraintreeAcceleratedCheckoutPaymentInitializeOptions](interfaces/BraintreeAcceleratedCheckoutPaymentInitializeOptions.md)
+- [BraintreeAcceleratedCheckoutShippingInitializeOptions](interfaces/BraintreeAcceleratedCheckoutShippingInitializeOptions.md)
 - [BraintreeError](interfaces/BraintreeError.md)
 - [BraintreeFormFieldCardTypeChangeEventData](interfaces/BraintreeFormFieldCardTypeChangeEventData.md)
 - [BraintreeFormFieldKeyboardEventData](interfaces/BraintreeFormFieldKeyboardEventData.md)
@@ -513,7 +515,7 @@ ___
 
 ### AdyenV3ComponentState
 
-Ƭ **AdyenV3ComponentState**: [`CardState_2`](interfaces/CardState_2.md) \| [`WechatState_2`](interfaces/WechatState_2.md)
+Ƭ **AdyenV3ComponentState**: [`CardState_2`](interfaces/CardState_2.md) \| [`WechatState_2`](interfaces/WechatState_2.md) \| [`BoletoState`](interfaces/BoletoState.md)
 
 ___
 

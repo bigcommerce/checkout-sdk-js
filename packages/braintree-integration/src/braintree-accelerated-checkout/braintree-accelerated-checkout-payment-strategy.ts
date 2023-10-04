@@ -67,7 +67,10 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
         }
 
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
-        await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(methodId);
+        await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(
+            methodId,
+            braintreeacceleratedcheckout.styles,
+        );
 
         if (this.shouldRunAuthenticationFlow()) {
             await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow();
@@ -123,10 +126,7 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
             fields: {
                 ...(phone && {
                     phoneNumber: {
-                        // Info: we should remove first character of the phone number
-                        // for PayPal Connect Phase 1, because this feature will
-                        // be available for US stores only
-                        prefill: phone.slice(1),
+                        prefill: phone,
                     },
                 }),
             },

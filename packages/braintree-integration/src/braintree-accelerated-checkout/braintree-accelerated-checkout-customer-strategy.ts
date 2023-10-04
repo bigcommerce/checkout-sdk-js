@@ -9,9 +9,13 @@ import {
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import BraintreeAcceleratedCheckoutCustomerInitializeOptions, {
+    WithBraintreeAcceleratedCheckoutCustomerInitializeOptions,
+} from './braintree-accelerated-checkout-customer-initialize-options';
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
 
 export default class BraintreeAcceleratedCheckoutCustomerStrategy implements CustomerStrategy {
+    private braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutCustomerInitializeOptions;
     private methodId?: string;
 
     constructor(
@@ -19,13 +23,18 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
         private braintreeAcceleratedCheckoutUtils: BraintreeAcceleratedCheckoutUtils,
     ) {}
 
-    async initialize({ methodId }: CustomerInitializeOptions): Promise<void> {
+    async initialize({
+        methodId,
+        braintreeacceleratedcheckout,
+    }: CustomerInitializeOptions &
+        WithBraintreeAcceleratedCheckoutCustomerInitializeOptions): Promise<void> {
         if (!methodId) {
             throw new InvalidArgumentError(
                 'Unable to proceed because "methodId" argument is not provided.',
             );
         }
 
+        this.braintreeacceleratedcheckout = braintreeacceleratedcheckout;
         this.setMethodId(methodId);
 
         return Promise.resolve();
@@ -80,7 +89,10 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
     private async runPayPalConnectAuthenticationFlowOrThrow(email?: string): Promise<void> {
         const methodId = this.getMethodIdOrThrow();
 
-        await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(methodId);
+        await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(
+            methodId,
+            this.braintreeacceleratedcheckout?.styles,
+        );
         await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow(
             email,
         );

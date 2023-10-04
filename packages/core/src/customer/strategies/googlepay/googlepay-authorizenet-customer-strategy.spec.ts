@@ -11,7 +11,7 @@ import {
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
-import { getConfigState } from '../../../config/configs.mock';
+import { getConfig, getConfigState } from '../../../config/configs.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import {
@@ -20,13 +20,19 @@ import {
     GooglePayPaymentProcessor,
 } from '../../../payment/strategies/googlepay';
 import { getGooglePaymentDataMock } from '../../../payment/strategies/googlepay/googlepay.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import {
+    RemoteCheckoutActionCreator,
+    RemoteCheckoutActionType,
+    RemoteCheckoutRequestSender,
+} from '../../../remote-checkout';
 import { CustomerInitializeOptions } from '../../customer-request-options';
 import { getCustomerState } from '../../customers.mock';
 import CustomerStrategy from '../customer-strategy';
 
 import { getAuthNetCustomerInitializeOptions, Mode } from './googlepay-customer-mock';
 import GooglePayCustomerStrategy from './googlepay-customer-strategy';
+import { of } from 'rxjs';
+import { createAction } from '@bigcommerce/data-store';
 
 describe('GooglePayCustomerStrategy', () => {
     let checkoutActionCreator: CheckoutActionCreator;
@@ -76,9 +82,9 @@ describe('GooglePayCustomerStrategy', () => {
             formPoster,
         );
 
-        jest.spyOn(formPoster, 'postForm').mockReturnValue(Promise.resolve());
-        jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
-        jest.spyOn(paymentProcessor, 'initialize').mockReturnValue(Promise.resolve(true));
+        formPoster.postForm = jest.fn().mockResolvedValue(null);
+        store.dispatch = jest.fn().mockResolvedValue(store.getState());
+        paymentProcessor.initialize = jest.fn().mockResolvedValue(true);
 
         walletButton = document.createElement('a');
         walletButton.setAttribute('id', 'mockButton');
@@ -93,6 +99,10 @@ describe('GooglePayCustomerStrategy', () => {
         container = document.createElement('div');
         container.setAttribute('id', 'googlePayCheckoutButton');
         document.body.appendChild(container);
+
+        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+            getConfig().storeConfig,
+        );
     });
 
     afterEach(() => {
@@ -194,7 +204,15 @@ describe('GooglePayCustomerStrategy', () => {
 
             jest.spyOn(store.getState().payment, 'getPaymentId').mockReturnValue(paymentId);
 
-            jest.spyOn(remoteCheckoutActionCreator, 'forgetCheckout').mockReturnValue('data');
+            jest.spyOn(remoteCheckoutActionCreator, 'forgetCheckout').mockReturnValue(
+                of(
+                    createAction(
+                        RemoteCheckoutActionType.ForgetCheckoutRemoteCustomerSucceeded,
+                        undefined,
+                        { methodId: 'googlepayauthorizenet' },
+                    ),
+                ),
+            );
 
             const options = {
                 methodId: 'googlepayauthorizenet',
@@ -243,14 +261,10 @@ describe('GooglePayCustomerStrategy', () => {
         beforeEach(() => {
             customerInitializeOptions = getAuthNetCustomerInitializeOptions();
 
-            jest.spyOn(paymentProcessor, 'updatePaymentDataRequest').mockReturnValue(
-                Promise.resolve(),
-            );
-            jest.spyOn(paymentProcessor, 'displayWallet').mockResolvedValue(googlePaymentDataMock);
-            jest.spyOn(paymentProcessor, 'handleSuccess').mockReturnValue(Promise.resolve());
-            jest.spyOn(paymentProcessor, 'updateShippingAddress').mockReturnValue(
-                Promise.resolve(),
-            );
+            paymentProcessor.updatePaymentDataRequest = jest.fn().mockResolvedValue(null);
+            paymentProcessor.displayWallet = jest.fn().mockResolvedValue(googlePaymentDataMock);
+            paymentProcessor.handleSuccess = jest.fn().mockResolvedValue(null);
+            paymentProcessor.updateShippingAddress = jest.fn().mockResolvedValue(null);
         });
 
         it('displays the wallet and updates the shipping address', async () => {

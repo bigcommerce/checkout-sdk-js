@@ -17,7 +17,12 @@ describe('ContinueHandler', () => {
 
     describe('#handle', () => {
         it('passes redirect parameters to the redirect handler', () => {
-            const assignSpy = jest.spyOn(window.location, 'assign').mockImplementation(jest.fn);
+            Object.defineProperty(window, 'location', {
+                value: {
+                    assign: jest.fn(),
+                    href: 'foobar',
+                },
+            });
 
             const redirectContinueResponse: Continue = {
                 type: 'continue',
@@ -29,7 +34,7 @@ describe('ContinueHandler', () => {
 
             continueHandler.handle(redirectContinueResponse);
 
-            expect(assignSpy).toHaveBeenCalledWith('http://some-url.com');
+            expect(window.location.assign).toHaveBeenCalledWith('http://some-url.com');
         });
     });
 });

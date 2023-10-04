@@ -551,32 +551,32 @@ export interface BraintreeConnectAuthenticationOptions {
     fetchFullProfileData?: boolean; // default: true
 }
 
-interface BraintreeConnectStylesOption {
+export interface BraintreeConnectStylesOption {
     root?: {
-        backgroundColorPrimary?: string; // default: #ffffff,
-        errorColor?: string; // default: #C40B0B
-        fontFamily?: string; // default: "Helvetica, Arial, sans-serif"
+        backgroundColorPrimary?: string;
+        errorColor?: string;
+        fontFamily?: string;
     };
     input?: {
-        borderRadius?: string; // default: 0.25rem
-        borderColor?: string; // default: #9E9E9E
-        focusBorderColor?: string; // default: #4496F6
+        borderRadius?: string;
+        borderColor?: string;
+        focusBorderColor?: string;
     };
     toggle?: {
-        colorPrimary?: string; // default: #0F005E
-        colorSecondary?: string; // default: #ffffff
+        colorPrimary?: string;
+        colorSecondary?: string;
     };
     text?: {
         body?: {
-            color?: string; // default: #222222
-            fontSize?: string; // default: 1rem
+            color?: string;
+            fontSize?: string;
         };
         caption?: {
-            color?: string; // default: #515151
-            fontSize?: string; // default: 0.875rem
+            color?: string;
+            fontSize?: string;
         };
     };
-    branding?: 'light' | 'dark'; // default: 'light',
+    branding?: string; // 'light' | 'dark'
 }
 
 export enum BraintreeConnectAuthenticationState {

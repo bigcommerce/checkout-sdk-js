@@ -48,13 +48,13 @@ describe('GooglePayBraintreeInitializer', () => {
         });
 
         it('initializes the google pay configuration for braintree and fail to create google pay payload', async () => {
-            jest.spyOn(googlePayMock, 'createPaymentDataRequest').mockReturnValue(Promise.reject());
+            googlePayMock.createPaymentDataRequest = jest.fn().mockImplementation(() => {});
 
             await googlePayInitializer
                 .initialize(getCheckoutMock(), getPaymentMethodMock(), false)
                 .catch((error) => {
                     expect(error.message).toBe(
-                        `Cannot read properties of undefined (reading 'authJwt')`,
+                        `Cannot read properties of undefined (reading 'merchantInfo')`,
                     );
                 });
         });
@@ -110,7 +110,7 @@ describe('GooglePayBraintreeInitializer', () => {
 
     describe('#teardown', () => {
         it('teardowns the initializer', async () => {
-            spyOn(braintreeSDKCreator, 'teardown');
+            jest.spyOn(braintreeSDKCreator, 'teardown');
 
             await googlePayInitializer.teardown();
 
@@ -129,7 +129,7 @@ describe('GooglePayBraintreeInitializer', () => {
         });
 
         it('parses a response from google pay payload received', async () => {
-            spyOn(googlePayInitializer, 'parseResponse');
+            jest.spyOn(googlePayInitializer, 'parseResponse');
 
             await googlePayInitializer.initialize(getCheckoutMock(), getPaymentMethodMock(), false);
             googlePayInitializer.parseResponse(getGooglePaymentDataMock());

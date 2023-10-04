@@ -47,7 +47,7 @@ ___
 
 ### braintreeacceleratedcheckout
 
-• `Optional` **braintreeacceleratedcheckout**: [`BraintreeAcceleratedCheckoutInitializeOptions`](BraintreeAcceleratedCheckoutInitializeOptions.md)
+• `Optional` **braintreeacceleratedcheckout**: [`BraintreeAcceleratedCheckoutShippingInitializeOptions`](BraintreeAcceleratedCheckoutShippingInitializeOptions.md)
 
 The options that are required to initialize the shipping step of checkout
 when using Braintree Accelerated Checkout.

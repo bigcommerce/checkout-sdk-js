@@ -263,7 +263,7 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
 
             expect(
                 braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
-            ).toHaveBeenCalledWith(methodId);
+            ).toHaveBeenCalledWith(methodId, undefined);
         });
 
         it('renders braintree connect card component', async () => {

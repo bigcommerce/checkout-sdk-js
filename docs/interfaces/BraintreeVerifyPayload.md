@@ -16,13 +16,13 @@
 
 ### description
 
-• **description**: `string`
+• `Optional` **description**: `string`
 
 ___
 
 ### details
 
-• **details**: `Object`
+• `Optional` **details**: `Object`
 
 #### Type declaration
 
@@ -36,13 +36,13 @@ ___
 
 ### liabilityShiftPossible
 
-• **liabilityShiftPossible**: `boolean`
+• `Optional` **liabilityShiftPossible**: `boolean`
 
 ___
 
 ### liabilityShifted
 
-• **liabilityShifted**: `boolean`
+• `Optional` **liabilityShifted**: `boolean`
 
 ___
 

@@ -2,6 +2,70 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.460.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.459.0...v1.460.0) (2023-10-03)
+
+
+### Features
+
+* **payment:** PAYPAL-2984 added an ability to change BT AXO component styling through strategy initialisation options ([#2206](https://github.com/bigcommerce/checkout-sdk-js/issues/2206)) ([07ee89b](https://github.com/bigcommerce/checkout-sdk-js/commit/07ee89bdc89ce2c4bb540d0e305db9c5c8bf933d))
+
+## [1.459.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.458.0...v1.459.0) (2023-10-03)
+
+
+### Features
+
+* **checkout:** PI-741 updated adyen component state for the Boleto implementation ([f1642d4](https://github.com/bigcommerce/checkout-sdk-js/commit/f1642d4fe8ff551ac9b9cd3e34fde7eb41f75f69))
+* **payment:** PAYPAL-2987 checkout page crashing fixed ([d4aa116](https://github.com/bigcommerce/checkout-sdk-js/commit/d4aa1168bdda03b2727f7cd3677bdd9e7b9f71d4))
+
+## [1.458.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.457.0...v1.458.0) (2023-10-03)
+
+
+### Features
+
+* **payment:** PAYPAL-2844 captured device info ([#2186](https://github.com/bigcommerce/checkout-sdk-js/issues/2186)) ([3607300](https://github.com/bigcommerce/checkout-sdk-js/commit/360730012c65df79d93224da763ceb00860f5430))
+
+## [1.457.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.456.0...v1.457.0) (2023-09-28)
+
+
+### Features
+
+* **payment:** PAYPAL-2926 Unable to place order via GooglePay with 3D secure  ([#2203](https://github.com/bigcommerce/checkout-sdk-js/issues/2203)) ([7e2983f](https://github.com/bigcommerce/checkout-sdk-js/commit/7e2983fd52302ccf29996133c5bfd49630cf863e))
+
+## [1.456.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.455.1...v1.456.0) (2023-09-28)
+
+
+### Features
+
+* **payment:** PI-569 [Adyen] Klarna widget update - Klarna works through redirect again ([#2199](https://github.com/bigcommerce/checkout-sdk-js/issues/2199)) ([cd514f3](https://github.com/bigcommerce/checkout-sdk-js/commit/cd514f37539dbfd0dd8e80556f8bab152783a849))
+
+### [1.455.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.455.0...v1.455.1) (2023-09-28)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3061 prefill full phone number in BT AXO instead of slicing country code num ([#2204](https://github.com/bigcommerce/checkout-sdk-js/issues/2204)) ([a0fea14](https://github.com/bigcommerce/checkout-sdk-js/commit/a0fea14cbed0ac6d64991862af80879831f8b013))
+
+## [1.455.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.454.0...v1.455.0) (2023-09-28)
+
+
+### Features
+
+* **checkout:** CHECKOUT-7141 Preparation for Jest v27 Upgrade ([#2180](https://github.com/bigcommerce/checkout-sdk-js/issues/2180)) ([3c40df3](https://github.com/bigcommerce/checkout-sdk-js/commit/3c40df398be05ea7b7b8a03ec174c984b385ef70))
+
+## [1.454.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.453.0...v1.454.0) (2023-09-25)
+
+
+### Features
+
+* **payment:** PI-567 Amazon Pay Button needs to be changed to one with microtext ([8be47c9](https://github.com/bigcommerce/checkout-sdk-js/commit/8be47c915a3899aa2eacf961be696e750032cbcb))
+
+## [1.453.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.452.0...v1.453.0) (2023-09-25)
+
+
+### Features
+
+* **payment:** PAYPAL-2576 added specific button styles for each PayPal buttons ([299ce3a](https://github.com/bigcommerce/checkout-sdk-js/commit/299ce3acc9513508f976184a93ccbdf72695e1e5))
+
 ## [1.452.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.451.0...v1.452.0) (2023-09-22)
 
 
