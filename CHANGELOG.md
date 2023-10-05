@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.461.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.461.0...v1.461.1) (2023-10-05)
+
+
+### Bug Fixes
+
+* **payment:** PI-758 check if Stripe container exists before mount ([607261e](https://github.com/bigcommerce/checkout-sdk-js/commit/607261e65b0c9bcade88cb2f38771ad75162c6f6))
+
 ## [1.461.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.460.0...v1.461.0) (2023-10-04)
 
 
