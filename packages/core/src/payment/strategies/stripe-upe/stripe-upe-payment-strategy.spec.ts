@@ -184,6 +184,10 @@ describe('StripeUPEPaymentStrategy', () => {
             storeCreditActionCreator,
             billingAddressActionCreator,
         );
+
+        const mockElement = document.createElement('div');
+
+        jest.spyOn(document, 'getElementById').mockReturnValue(mockElement);
     });
 
     describe('#initialize()', () => {
@@ -326,6 +330,25 @@ describe('StripeUPEPaymentStrategy', () => {
 
                 await expect(strategy.initialize(options)).resolves.toBe(store.getState());
                 expect(mount).not.toHaveBeenCalled();
+            });
+
+            it('fails mounting a stripe payment element if container not exist', async () => {
+                const mountMock = jest.fn();
+                const { getElement } = stripeUPEJsMock.elements(elementsOptions);
+                const createMock = jest.fn().mockReturnValue({ mount: mountMock });
+
+                jest.spyOn(document, 'getElementById').mockReturnValue(null);
+
+                stripeUPEJsMock.elements = jest
+                    .fn()
+                    .mockReturnValue({ create: createMock, getElement });
+
+                jest.spyOn(stripeScriptLoader, 'getStripeClient').mockReturnValue(
+                    Promise.resolve(stripeUPEJsMock),
+                );
+
+                await expect(strategy.initialize(options)).resolves.toBe(store.getState());
+                expect(mountMock).not.toHaveBeenCalled();
             });
         });
     });
