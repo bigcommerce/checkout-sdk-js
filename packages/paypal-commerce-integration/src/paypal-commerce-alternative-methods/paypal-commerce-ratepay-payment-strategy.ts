@@ -113,6 +113,8 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
             );
         }
 
+        this.onPaymentSubmission(true);
+
         try {
             const orderId = await this.paypalCommerceIntegrationService.createOrder(
                 'paypalcommercealternativemethodscheckout',
@@ -194,6 +196,16 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         return `${date.getFullYear()}-${formattedMonth}-${formattedDate}`;
     }
 
+    private onPaymentSubmission(isPaymentSubmitting: boolean) {
+        const { onPaymentSubmission } = this.paypalcommerceratepay || {};
+
+        if (!onPaymentSubmission || typeof onPaymentSubmission !== 'function') {
+            return;
+        }
+
+        onPaymentSubmission(isPaymentSubmitting);
+    }
+
     private renderLegalText(legalTextContainerElementId: string, container: string) {
         const legalTextContainerId = legalTextContainerElementId;
         const buttonContainerId = container.split('#')[1];
@@ -224,6 +236,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         const { onError } = this.paypalcommerceratepay || {};
 
         this.resetPollingMechanism();
+        this.onPaymentSubmission(false);
 
         if (onError && typeof onError === 'function') {
             onError(error);
@@ -297,6 +310,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
 
             this.stopPolling = () => {
                 clearTimeout(timeout);
+                this.onPaymentSubmission(false);
 
                 return reject();
             };
