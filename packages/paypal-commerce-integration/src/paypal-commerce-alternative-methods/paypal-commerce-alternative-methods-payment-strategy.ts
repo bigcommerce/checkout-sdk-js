@@ -10,19 +10,16 @@ import {
     PaymentMethodInvalidError,
     PaymentRequestOptions,
     PaymentStrategy,
-    TimeoutError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
     ApproveCallbackPayload,
-    ClickCallbackActions,
     NonInstantAlternativePaymentMethods,
     PayPalCommerceButtons,
     PayPalCommerceButtonsOptions,
     PayPalCommerceInitializationData,
-    PayPalOrderStatus,
 } from '../paypal-commerce-types';
 
 import PayPalCommerceAlternativeMethodsPaymentOptions, {
@@ -33,15 +30,11 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
     private loadingIndicatorContainer?: string;
     private orderId?: string;
     private paypalButton?: PayPalCommerceButtons;
-    private pollingTimer = 0;
-    private stopPolling = noop;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
         private loadingIndicator: LoadingIndicator,
-        private pollingInterval = 3000,
-        private maxPollingTime = 600000,
     ) {}
 
     async initialize(
@@ -131,21 +124,11 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
     }
 
     deinitialize(): Promise<void> {
-        this.deinitializePollingMechanism();
-
         this.orderId = undefined;
 
         this.paypalButton?.close();
 
         return Promise.resolve();
-    }
-
-    private async reinitializeStrategy(
-        options: PaymentInitializeOptions &
-            WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions,
-    ): Promise<void> {
-        await this.deinitialize();
-        await this.initialize(options);
     }
 
     /**
@@ -172,14 +155,10 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         const buttonOptions: PayPalCommerceButtonsOptions = {
             fundingSource: methodId,
             style: this.paypalCommerceIntegrationService.getValidButtonStyle(buttonStyle),
-            createOrder: () =>
-                this.paypalCommerceIntegrationService.createOrder(
-                    'paypalcommercealternativemethodscheckout',
-                ),
-            onClick: (_, actions) => this.handleClick(methodId, gatewayId, paypalOptions, actions),
+            createOrder: () => this.onCreateOrder(paypalOptions),
             onApprove: (data) => this.handleApprove(data, submitForm),
-            onCancel: () => this.resetPollingMechanism(),
-            onError: (error) => this.handleError(error, onError),
+            onCancel: () => this.handleFailure(new Error('Payment was canceled.'), onError),
+            onError: (error) => this.handleFailure(error, onError),
         };
 
         this.paypalButton = paypalSdk.Buttons(buttonOptions);
@@ -195,26 +174,22 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         this.paypalButton.render(container);
     }
 
-    private async handleClick(
-        methodId: string,
-        gatewayId: string,
+    private async onCreateOrder(
         paypalOptions: PayPalCommerceAlternativeMethodsPaymentOptions,
-        actions: ClickCallbackActions,
-    ): Promise<void> {
+    ): Promise<string> {
         const { onValidate } = paypalOptions;
-        const { resolve, reject } = actions;
-
-        if (!this.isNonInstantPaymentMethod(methodId)) {
-            await this.initializePollingMechanism(methodId, gatewayId, paypalOptions);
-        }
 
         const onValidationPassed = () => {
             this.toggleLoadingIndicator(true);
 
-            return resolve();
+            return () => Promise.resolve();
         };
 
-        await onValidate(onValidationPassed, reject);
+        await onValidate(onValidationPassed, noop);
+
+        return this.paypalCommerceIntegrationService.createOrder(
+            'paypalcommercealternativemethodscheckout',
+        );
     }
 
     private handleApprove(
@@ -223,16 +198,15 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
     ): void {
         this.orderId = orderID;
 
-        this.deinitializePollingMechanism();
         submitForm();
         this.toggleLoadingIndicator(false);
     }
 
-    private handleError(
+    private handleFailure(
         error: Error,
         onError: PayPalCommerceAlternativeMethodsPaymentOptions['onError'],
     ): void {
-        this.resetPollingMechanism();
+        this.toggleLoadingIndicator(false);
 
         if (onError && typeof onError === 'function') {
             onError(error);
@@ -282,70 +256,6 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         const paypalPaymentFields = paypalSdk.PaymentFields(fieldsOptions);
 
         paypalPaymentFields.render(apmFieldsContainer);
-    }
-
-    /**
-     *
-     * Polling mechanism
-     *
-     *
-     * */
-    private async initializePollingMechanism(
-        methodId: string,
-        gatewayId: string,
-        paypalOptions: PayPalCommerceAlternativeMethodsPaymentOptions,
-    ): Promise<void> {
-        const { onError, submitForm } = paypalOptions;
-
-        await new Promise<void>((resolve, reject) => {
-            const timeout = setTimeout(resolve, this.pollingInterval);
-
-            this.stopPolling = () => {
-                clearTimeout(timeout);
-                reject();
-            };
-        });
-
-        try {
-            this.pollingTimer += this.pollingInterval;
-
-            const orderStatus = await this.paypalCommerceIntegrationService.getOrderStatus();
-
-            const isOrderApproved = orderStatus === PayPalOrderStatus.Approved;
-            const isOrderPending =
-                orderStatus === PayPalOrderStatus.Created ||
-                orderStatus === PayPalOrderStatus.PayerActionRequired;
-
-            if (isOrderApproved) {
-                this.deinitializePollingMechanism();
-
-                return submitForm();
-            }
-
-            if (isOrderPending && this.pollingTimer < this.maxPollingTime) {
-                return await this.initializePollingMechanism(methodId, gatewayId, paypalOptions);
-            }
-
-            await this.reinitializeStrategy({
-                methodId,
-                gatewayId,
-                paypalcommercealternativemethods: paypalOptions,
-            });
-
-            throw new TimeoutError();
-        } catch (error) {
-            this.handleError(error, onError);
-        }
-    }
-
-    private deinitializePollingMechanism(): void {
-        this.stopPolling();
-        this.pollingTimer = 0;
-    }
-
-    private resetPollingMechanism(): void {
-        this.deinitializePollingMechanism();
-        this.toggleLoadingIndicator(false);
     }
 
     /**
