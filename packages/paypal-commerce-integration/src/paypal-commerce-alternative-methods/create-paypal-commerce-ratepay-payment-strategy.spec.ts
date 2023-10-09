@@ -1,7 +1,7 @@
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import createPayPalCommerceAlternativeMethodRatePayPaymentStrategy from './create-paypal-commerce-ratepay-payment-strategy';
+import createPaypalCommerceRatepayPaymentStrategy from './create-paypal-commerce-ratepay-payment-strategy';
 import PaypalCommerceRatepayPaymentStrategy from './paypal-commerce-ratepay-payment-strategy';
 
 describe('createPayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
@@ -12,8 +12,7 @@ describe('createPayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
     });
 
     it('instantiates paypal commerce ratepay payment strategy', () => {
-        const strategy =
-            createPayPalCommerceAlternativeMethodRatePayPaymentStrategy(paymentIntegrationService);
+        const strategy = createPaypalCommerceRatepayPaymentStrategy(paymentIntegrationService);
 
         expect(strategy).toBeInstanceOf(PaypalCommerceRatepayPaymentStrategy);
     });
