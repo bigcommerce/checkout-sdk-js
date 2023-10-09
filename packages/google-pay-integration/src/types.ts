@@ -3,6 +3,12 @@ export interface GooglePayGatewayBaseRequest {
     apiVersionMinor: 0;
 }
 
+export enum TotalPriceStatusType {
+    ESTIMATED = 'ESTIMATED',
+    FINAL = 'FINAL',
+    NOT_CURRENTLY_KNOWN = 'NOT_CURRENTLY_KNOWN',
+}
+
 type GooglePayGatewayBaseResponse = GooglePayGatewayBaseRequest;
 
 interface GooglePayPaymentMethod<T> {
@@ -54,9 +60,17 @@ export interface GooglePayStripeGatewayParameters extends GooglePayGatewayBasePa
     'stripe:publishableKey'?: string;
 }
 
+export interface GooglePayBraintreeGatewayParameters extends GooglePayGatewayBaseParameters {
+    'braintree:apiVersion'?: string;
+    'braintree:authorizationFingerprint'?: string;
+    'braintree:merchantId'?: string;
+    'braintree:sdkVersion'?: string;
+}
+
 export type GooglePayGatewayParameters =
     | GooglePayRegularGatewayParameters
-    | GooglePayStripeGatewayParameters;
+    | GooglePayStripeGatewayParameters
+    | GooglePayBraintreeGatewayParameters;
 
 export interface GooglePayCardPaymentMethod extends GooglePayBaseCardPaymentMethod {
     tokenizationSpecification: {
@@ -69,7 +83,7 @@ export interface GooglePayTransactionInfo {
     /** [!] Required for EEA countries */
     countryCode?: string;
     currencyCode: string;
-    totalPriceStatus: 'FINAL';
+    totalPriceStatus: TotalPriceStatusType.FINAL;
     totalPrice: string;
 }
 
@@ -177,7 +191,7 @@ export interface GooglePayHostWindow extends Window {
 }
 
 interface GooglePayBaseInitializationData {
-    card_information?: { type: string; number: string };
+    card_information?: { type: string; number: string; bin?: string };
     gateway: string;
     gatewayMerchantId?: string;
     googleMerchantId: string;
@@ -210,7 +224,7 @@ export type GooglePayInitializationData =
 
 export interface GooglePaySetExternalCheckoutData {
     nonce: string;
-    card_information: { type: string; number: string };
+    card_information: { type: string; number: string; bin?: string };
 }
 
 export interface GooglePayAdditionalActionProcessable {
@@ -231,6 +245,17 @@ export interface GooglePayTokenObject {
 
 export interface GooglePayStripeTokenObject {
     id: string;
+}
+
+export interface GooglePayBraintreeTokenObject {
+    androidPayCards: [
+        {
+            nonce: string;
+            details: {
+                bin: string;
+            };
+        },
+    ];
 }
 
 export interface GooglePayCheckoutComTokenObject {

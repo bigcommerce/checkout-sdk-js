@@ -1,8 +1,6 @@
 import {
     guard,
     InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
@@ -52,6 +50,8 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
         const { walletButton, ...callbacks } = googlePayOptions;
 
+        await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
+
         await this._googlePayPaymentProcessor.initialize(() =>
             this._paymentIntegrationService
                 .getState()
@@ -66,16 +66,9 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const nonce = this._paymentIntegrationService
-            .getState()
-            .getPaymentMethodOrThrow<GooglePayInitializationData>(payment.methodId)
-            .initializationData?.nonce;
-
-        if (!nonce) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
-        }
-
         await this._paymentIntegrationService.submitOrder();
+
+        const nonce = await this._googlePayPaymentProcessor.getNonce(payment.methodId);
 
         try {
             await this._paymentIntegrationService.submitPayment({

@@ -5,6 +5,8 @@ import {
     BillingAddressRequestBody,
     guard,
     InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
     PaymentIntegrationService,
@@ -23,6 +25,7 @@ import {
     GooglePayRequiredPaymentData,
     GooglePaySetExternalCheckoutData,
     GooglePayTransactionInfo,
+    TotalPriceStatusType,
 } from '../types';
 import itemsRequireShipping from '../utils/items-require-shipping';
 
@@ -103,6 +106,19 @@ export default class GooglePayGateway {
         return data;
     }
 
+    getNonce(methodId: string) {
+        const nonce = this._paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow<GooglePayInitializationData>(methodId)
+            .initializationData?.nonce;
+
+        if (!nonce) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
+        }
+
+        return Promise.resolve(nonce);
+    }
+
     getMerchantInfo(): GooglePayMerchantInfo {
         const {
             googleMerchantName: merchantName,
@@ -124,7 +140,7 @@ export default class GooglePayGateway {
         return {
             ...(countryCode && { countryCode }),
             currencyCode,
-            totalPriceStatus: 'FINAL',
+            totalPriceStatus: TotalPriceStatusType.FINAL,
             totalPrice,
         };
     }

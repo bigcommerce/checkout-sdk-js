@@ -59,6 +59,10 @@ export default class GooglePayPaymentProcessor {
         this._prefetchGooglePaymentData();
     }
 
+    getNonce(methodId: string) {
+        return this._gateway.getNonce(methodId);
+    }
+
     addPaymentButton(
         containerId: string,
         options: Omit<GooglePayButtonOptions, 'allowedPaymentMethods'>,

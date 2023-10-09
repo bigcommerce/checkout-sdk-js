@@ -54,8 +54,6 @@ import { BNZPaymentStrategy } from './strategies/bnz';
 import {
     BraintreeCreditCardPaymentStrategy,
     BraintreePaypalPaymentStrategy,
-    BraintreeScriptLoader,
-    BraintreeSDKCreator,
     BraintreeVenmoPaymentStrategy,
     BraintreeVisaCheckoutPaymentStrategy,
     createBraintreePaymentProcessor,
@@ -90,7 +88,6 @@ import {
     GooglePayAdyenV3PaymentProcessor,
     GooglePayAuthorizeNetInitializer,
     GooglePayBNZInitializer,
-    GooglePayBraintreeInitializer,
     GooglePayCheckoutcomInitializer,
     GooglePayCheckoutcomPaymentProcessor,
     GooglePayCybersourceV2Initializer,
@@ -323,28 +320,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 paymentMethodActionCreator,
                 braintreePaymentProcessor,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.BRAINTREE_GOOGLE_PAY,
-        () =>
-            new GooglePayPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                createGooglePayPaymentProcessor(
-                    store,
-                    new GooglePayBraintreeInitializer(
-                        store,
-                        new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
-                    ),
-                ),
-                undefined,
-                new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
             ),
     );
 

@@ -13,6 +13,8 @@ import {
     BraintreeHostWindow,
     BraintreeLocalPaymentCreator,
     BraintreePaypalCheckoutCreator,
+    BraintreeThreeDSecureCreator,
+    GooglePayCreator,
 } from './braintree';
 import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
 
@@ -118,5 +120,39 @@ export default class BraintreeScriptLoader {
         }
 
         return this.braintreeHostWindow.braintree.usBankAccount;
+    }
+
+    loadGooglePayment(): Promise<GooglePayCreator> {
+        return this.scriptLoader
+            .loadScript(
+                `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/google-payment.min.js`,
+            )
+            .then(() => {
+                if (
+                    !this.braintreeHostWindow.braintree ||
+                    !this.braintreeHostWindow.braintree.googlePayment
+                ) {
+                    throw new PaymentMethodClientUnavailableError();
+                }
+
+                return this.braintreeHostWindow.braintree.googlePayment;
+            });
+    }
+
+    load3DS(): Promise<BraintreeThreeDSecureCreator> {
+        return this.scriptLoader
+            .loadScript(
+                `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/three-d-secure.min.js`,
+            )
+            .then(() => {
+                if (
+                    !this.braintreeHostWindow.braintree ||
+                    !this.braintreeHostWindow.braintree.threeDSecure
+                ) {
+                    throw new PaymentMethodClientUnavailableError();
+                }
+
+                return this.braintreeHostWindow.braintree.threeDSecure;
+            });
     }
 }

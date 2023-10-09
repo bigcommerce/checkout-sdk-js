@@ -39,7 +39,7 @@ export interface BraintreeSDK {
     client?: BraintreeClientCreator;
     connect?: BraintreeConnectCreator;
     dataCollector?: BraintreeDataCollectorCreator;
-    // googlePayment?: GooglePayCreator; // TODO: should be added in future migration
+    googlePayment?: GooglePayCreator;
     hostedFields?: BraintreeHostedFieldsCreator;
     paypal?: BraintreePaypalCreator;
     paypalCheckout?: BraintreePaypalCheckoutCreator;
@@ -230,6 +230,7 @@ export interface BraintreeGooglePayThreeDSecure {
 export interface BraintreeGooglePayThreeDSecureOptions {
     nonce: string;
     amount: number;
+    bin: string;
     showLoader?: boolean;
     onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
 }
@@ -386,10 +387,11 @@ export interface BraintreeThreeDSecureCreatorConfig extends BraintreeModuleCreat
 export interface BraintreeThreeDSecureOptions {
     nonce: string;
     amount: number;
-    challengeRequested: boolean;
+    challengeRequested?: boolean;
     showLoader?: boolean;
-    addFrame(error: Error | undefined, iframe: HTMLIFrameElement): void;
-    removeFrame(): void;
+    bin?: string;
+    addFrame?(error: Error | undefined, iframe: HTMLIFrameElement): void;
+    removeFrame?(): void;
     onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
 }
 
@@ -733,6 +735,86 @@ export interface LocalPaymentInstance extends BraintreeModule {
 }
 
 export type GetLocalPaymentInstance = (localPaymentInstance: LocalPaymentInstance) => void;
+
+/**
+ *
+ * Braintree GooglePay
+ *
+ */
+
+type AddressFormat = 'FULL' | 'MIN';
+
+export enum TotalPriceStatusType {
+    ESTIMATED = 'ESTIMATED',
+    FINAL = 'FINAL',
+    NOT_CURRENTLY_KNOWN = 'NOT_CURRENTLY_KNOWN',
+}
+
+export interface GooglePayBraintreeDataRequest {
+    merchantInfo: {
+        authJwt?: string;
+        merchantId?: string;
+        merchantName?: string;
+    };
+    transactionInfo: {
+        currencyCode: string;
+        totalPriceStatus: TotalPriceStatusType.FINAL;
+        totalPrice: string;
+    };
+    cardRequirements: {
+        billingAddressRequired: boolean;
+        billingAddressFormat: AddressFormat;
+    };
+    emailRequired?: boolean;
+    phoneNumberRequired?: boolean;
+    shippingAddressRequired?: boolean;
+}
+
+export interface GooglePayBraintreePaymentDataRequestV1 {
+    allowedPaymentMethods: string[];
+    apiVersion: number;
+    cardRequirements: {
+        allowedCardNetworks: string[];
+        billingAddressFormat: string;
+        billingAddressRequired: boolean;
+    };
+    environment: string;
+    i: {
+        googleTransactionId: string;
+        startTimeMs: number;
+    };
+    merchantInfo: {
+        merchantId: string;
+        merchantName: string;
+        authJwt?: string;
+    };
+    paymentMethodTokenizationParameters: {
+        parameters: {
+            'braintree:apiVersion': string;
+            'braintree:authorizationFingerprint': string;
+            'braintree:merchantId': string;
+            'braintree:metadata': string;
+            'braintree:sdkVersion': string;
+            gateway: string;
+        };
+        tokenizationType: string;
+    };
+    shippingAddressRequired: boolean;
+    phoneNumberRequired: boolean;
+    transactionInfo: {
+        currencyCode: string;
+        totalPrice: string;
+        totalPriceStatus: TotalPriceStatusType;
+    };
+}
+
+export type GooglePayCreator = BraintreeModuleCreator<GooglePayBraintreeSDK>;
+
+export interface GooglePayBraintreeSDK extends BraintreeModule {
+    createPaymentDataRequest(
+        request?: GooglePayBraintreeDataRequest,
+    ): GooglePayBraintreePaymentDataRequestV1;
+}
 
 /**
  *

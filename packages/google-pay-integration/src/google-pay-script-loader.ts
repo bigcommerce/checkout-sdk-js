@@ -8,11 +8,9 @@ export const GOOGLE_PAY_LIBRARY = 'https://pay.google.com/gp/p/js/pay.js';
 
 export default class GooglePayScriptLoader {
     private _paymentsClient?: GooglePaymentsClient;
+    private _window: GooglePayHostWindow = window;
 
-    constructor(
-        private _scriptLoader: ScriptLoader,
-        private _window: GooglePayHostWindow = window,
-    ) {}
+    constructor(private _scriptLoader: ScriptLoader) {}
 
     async getGooglePaymentsClient(testMode = false): Promise<GooglePaymentsClient> {
         await this._scriptLoader.loadScript(GOOGLE_PAY_LIBRARY);

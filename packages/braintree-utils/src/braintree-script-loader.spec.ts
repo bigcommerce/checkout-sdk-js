@@ -11,6 +11,8 @@ import {
     BraintreeLocalPaymentCreator,
     BraintreeModuleCreator,
     BraintreePaypalCheckoutCreator,
+    BraintreeThreeDSecureCreator,
+    GooglePayCreator,
 } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import {
@@ -18,6 +20,7 @@ import {
     getClientMock,
     getConnectMock,
     getDataCollectorMock,
+    getGooglePayMock,
     getModuleCreatorMock,
     getPaypalCheckoutMock,
 } from './mocks/braintree.mock';
@@ -266,6 +269,80 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/local-payment.min.js`,
+            );
+        });
+    });
+
+    describe('#loadGooglePayment', () => {
+        let googlePayment: GooglePayCreator;
+
+        beforeEach(() => {
+            googlePayment = getModuleCreatorMock(getGooglePayMock());
+            scriptLoader.loadScript = jest.fn(() => {
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.googlePayment = googlePayment;
+                }
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads google payment methods', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            await braintreeScriptLoader.loadGooglePayment();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/google-payment.min.js`,
+            );
+        });
+
+        it('loads google payment methods with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadGooglePayment();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/google-payment.min.js`,
+            );
+        });
+    });
+
+    describe('#load3DS', () => {
+        let threeDSecure: BraintreeThreeDSecureCreator;
+
+        beforeEach(() => {
+            threeDSecure = getModuleCreatorMock(getGooglePayMock());
+            scriptLoader.loadScript = jest.fn(() => {
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.threeDSecure = threeDSecure;
+                }
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads threeDSecure methods', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            await braintreeScriptLoader.load3DS();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/three-d-secure.min.js`,
+            );
+        });
+
+        it('loads threeDSecure methods with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.load3DS();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/three-d-secure.min.js`,
             );
         });
     });
