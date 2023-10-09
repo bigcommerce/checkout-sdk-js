@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.462.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.461.1...v1.462.0) (2023-10-09)
+
+
+### Features
+
+* **payment:** PAYPAL-2946 added loading spinner to ratepay strategy ([#2200](https://github.com/bigcommerce/checkout-sdk-js/issues/2200)) ([5425418](https://github.com/bigcommerce/checkout-sdk-js/commit/5425418e25bbe4eaa9d6deaa6ef9044f8671e8df))
+
 ### [1.461.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.461.0...v1.461.1) (2023-10-05)
 
 
