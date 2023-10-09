@@ -7,7 +7,9 @@ import {
     PaymentIntegrationService,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
+
 import { PayPalCommerceHostWindow, PayPalSDK } from '../paypal-commerce-types';
 import PaypalCommerceRatepayPaymentStrategy from './paypal-commerce-ratepay-payment-strategy';
 import { getPayPalCommerceIntegrationServiceMock, getPayPalSDKMock } from '../mocks';
@@ -26,6 +28,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
     const paypalCommerceRatePayMethodsOptions: PaypalCommerceRatePay = {
         container: '#checkout-payment-continue',
         legalTextContainer: 'legal-text-container',
+        onPaymentSubmission: jest.fn(),
         getFieldsValues: () => {
             return {
                 ratepayBirthDate: {

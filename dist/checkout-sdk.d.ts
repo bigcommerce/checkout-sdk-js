@@ -7156,6 +7156,10 @@ declare interface PaypalCommerceRatePay {
      */
     legalTextContainer: string;
     /**
+     * Callback that triggers pending logic (for example: show loading overlay)
+     */
+    onPaymentSubmission?(isPaymentSubmitting: boolean): void;
+    /**
      * A callback that gets form values
      */
     getFieldsValues?(): {

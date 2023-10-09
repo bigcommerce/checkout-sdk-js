@@ -13,6 +13,7 @@
 
 - [getFieldsValues](PaypalCommerceRatePay.md#getfieldsvalues)
 - [onError](PaypalCommerceRatePay.md#onerror)
+- [onPaymentSubmission](PaypalCommerceRatePay.md#onpaymentsubmission)
 - [onRenderButton](PaypalCommerceRatePay.md#onrenderbutton)
 
 ## Properties
@@ -62,6 +63,24 @@ A callback for displaying error popup. This callback requires error object as pa
 | Name | Type |
 | :------ | :------ |
 | `error` | `unknown` |
+
+#### Returns
+
+`void`
+
+___
+
+### onPaymentSubmission
+
+▸ `Optional` **onPaymentSubmission**(`isPaymentSubmitting`): `void`
+
+Callback that triggers pending logic (for example: show loading overlay)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `isPaymentSubmitting` | `boolean` |
 
 #### Returns
 

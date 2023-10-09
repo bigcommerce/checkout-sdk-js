@@ -28,10 +28,10 @@ export default class BraintreeScriptLoader {
 
     // TODO: this method is needed only for braintree AXO
     // So can be removed after Beta state
-    initialize(storeConfig: StoreConfig) {
-        const features = storeConfig.checkoutSettings.features;
+    initialize(storeConfig?: StoreConfig) {
+        const features = storeConfig?.checkoutSettings.features;
         const shouldUseBraintreeAlphaVersion =
-            features['PROJECT-5505.PayPal_Accelerated_Checkout_v2_for_Braintree'];
+            features && features['PROJECT-5505.PayPal_Accelerated_Checkout_v2_for_Braintree'];
 
         this.braintreeSdkVersion = shouldUseBraintreeAlphaVersion
             ? BRAINTREE_SDK_ALPHA_VERSION
