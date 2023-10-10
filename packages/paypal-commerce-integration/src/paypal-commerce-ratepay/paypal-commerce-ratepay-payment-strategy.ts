@@ -12,7 +12,6 @@ import {
     TimeoutError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions } from '../index';
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
     BirthDate,
@@ -20,7 +19,10 @@ import {
     PayPalOrderStatus,
 } from '../paypal-commerce-types';
 
-import { PaypalCommerceRatePay } from './paypal-commerce-alternative-methods-payment-initialize-options';
+import {
+    PaypalCommerceRatePay,
+    WithPayPalCommerceRatePayPaymentInitializeOptions,
+} from './paypal-commerce-ratepay-initialize-options';
 
 const POLLING_INTERVAL = 3000;
 const MAX_POLLING_TIME = 300000;
@@ -37,8 +39,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
     ) {}
 
     async initialize(
-        options: PaymentInitializeOptions &
-            WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions,
+        options: PaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions,
     ): Promise<void> {
         const { gatewayId, methodId, paypalcommerceratepay } = options;
 
@@ -286,8 +287,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
     }
 
     private async reinitializeStrategy(
-        options: PaymentInitializeOptions &
-            WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions,
+        options: PaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions,
     ): Promise<void> {
         await this.deinitialize();
         await this.initialize(options);
