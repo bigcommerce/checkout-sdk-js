@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.464.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.463.0...v1.464.0) (2023-10-10)
+
+
+### Features
+
+* **payment:** PI-889 Add cart ID to stripe upe payment submit ([8fda6a5](https://github.com/bigcommerce/checkout-sdk-js/commit/8fda6a52ee48502912b573cb3b188d3fe684f827))
+
 ## [1.463.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.462.0...v1.463.0) (2023-10-09)
 
 
