@@ -235,13 +235,15 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     }
 
     private async _executeWithAPM(methodId: string): Promise<InternalCheckoutSelectors> {
-        const paymentMethod = this._store
-            .getState()
-            .paymentMethods.getPaymentMethodOrThrow(methodId);
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const cartId = state.cart.getCart()?.id;
+
         const paymentPayload = {
             methodId,
             paymentData: {
                 formattedPayload: {
+                    cart_id: cartId,
                     credit_card_token: { token: paymentMethod.clientToken },
                     vault_payment_instrument: false,
                     confirm: false,
@@ -264,14 +266,15 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         shouldSaveInstrument: boolean,
         shouldSetAsDefaultInstrument: boolean,
     ): Promise<InternalCheckoutSelectors> {
-        const paymentMethod = this._store
-            .getState()
-            .paymentMethods.getPaymentMethodOrThrow(methodId);
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const cartId = state.cart.getCart()?.id;
 
         const paymentPayload = {
             methodId,
             paymentData: {
                 formattedPayload: {
+                    cart_id: cartId,
                     credit_card_token: { token: paymentMethod.clientToken },
                     vault_payment_instrument: shouldSaveInstrument,
                     confirm: false,
@@ -319,15 +322,16 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         token: string,
         shouldSetAsDefaultInstrument: boolean,
     ): Promise<InternalCheckoutSelectors> {
-        const paymentMethod = this._store
-            .getState()
-            .paymentMethods.getPaymentMethodOrThrow(methodId);
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const cartId = state.cart.getCart()?.id;
 
         try {
             const paymentPayload = {
                 methodId,
                 paymentData: {
                     formattedPayload: {
+                        cart_id: cartId,
                         bigpay_token: { token },
                         confirm: false,
                         client_token: paymentMethod.clientToken,
@@ -505,10 +509,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     throw new RequestError();
                 }
 
+                const cartId = this._store.getState().cart.getCart()?.id;
                 const paymentPayload = {
                     methodId,
                     paymentData: {
                         formattedPayload: {
+                            cart_id: cartId,
                             credit_card_token: {
                                 token: catchedConfirmError ? token : result?.paymentIntent?.id,
                             },
@@ -570,10 +576,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 throw new RequestError();
             }
 
+            const cartId = this._store.getState().cart.getCart()?.id;
             const paymentPayload = {
                 methodId,
                 paymentData: {
                     formattedPayload: {
+                        cart_id: cartId,
                         credit_card_token: {
                             token: catchedConfirmError ? clientSecret : result?.paymentIntent?.id,
                         },
