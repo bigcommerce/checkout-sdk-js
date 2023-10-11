@@ -168,7 +168,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             await subject.initializeBraintreeConnectOrThrow(methodId);
             await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
-            expect(browserStorage.removeItem).toHaveBeenCalledWith('sessionId');
+            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
                 authenticationState: BraintreeConnectAuthenticationState.UNRECOGNIZED,
                 addresses: [],
