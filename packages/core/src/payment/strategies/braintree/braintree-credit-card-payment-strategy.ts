@@ -10,12 +10,7 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
 import { isHostedInstrumentLike, PaymentMethod } from '../../index';
 import isVaultedInstrument from '../../is-vaulted-instrument';
-import {
-    CreditCardInstrument,
-    NonceInstrument,
-    PaymentInstrument,
-    PaymentInstrumentMeta,
-} from '../../payment';
+import { PaymentInstrument, PaymentInstrumentMeta } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
@@ -140,7 +135,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         const { paymentData } = payment;
         const commonPaymentData = { deviceSessionId: this._deviceSessionId };
 
-        if (this._isSubmittingWithStoredCard(payment) || this._isStoringNewCard(payment)) {
+        if (this._isSubmittingWithStoredCard(payment)) {
             return {
                 ...commonPaymentData,
                 ...paymentData,
@@ -260,13 +255,6 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
 
     private _isSubmittingWithStoredCard(payment: OrderPaymentRequestBody): boolean {
         return !!(payment.paymentData && isVaultedInstrument(payment.paymentData));
-    }
-
-    private _isStoringNewCard(payment: OrderPaymentRequestBody): boolean {
-        return !!(
-            payment.paymentData &&
-            (payment.paymentData as CreditCardInstrument | NonceInstrument).shouldSaveInstrument
-        );
     }
 
     private _shouldPerform3DSVerification(payment: OrderPaymentRequestBody): boolean {
