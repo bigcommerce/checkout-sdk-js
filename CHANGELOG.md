@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.465.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.464.1...v1.465.0) (2023-10-12)
+
+
+### Features
+
+* **payment:** PAYPAL-3098 added sessionId to local storage even for unrecognised guest users for Gary flow Braintree AXO ([#2216](https://github.com/bigcommerce/checkout-sdk-js/issues/2216)) ([958156f](https://github.com/bigcommerce/checkout-sdk-js/commit/958156f9a3a2d2221c773f99371e788e4e957c91))
+
 ### [1.464.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.464.0...v1.464.1) (2023-10-11)
 
 ## [1.464.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.463.0...v1.464.0) (2023-10-10)
