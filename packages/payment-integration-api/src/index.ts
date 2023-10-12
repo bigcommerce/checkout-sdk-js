@@ -15,6 +15,7 @@ export {
     GiftCertificateItem,
     LineItemMap,
     PhysicalItem,
+    CartRequestSender,
 } from './cart';
 export { Checkout } from './checkout';
 export { BrowserInfo, getBrowserInfo } from './common/browser-info';
