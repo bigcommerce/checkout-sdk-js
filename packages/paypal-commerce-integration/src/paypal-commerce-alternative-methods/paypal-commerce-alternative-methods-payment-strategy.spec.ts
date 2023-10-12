@@ -251,7 +251,6 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
                     label: 'pay',
                 },
                 createOrder: expect.any(Function),
-                onClick: expect.any(Function),
                 onApprove: expect.any(Function),
                 onCancel: expect.any(Function),
                 onError: expect.any(Function),
@@ -319,28 +318,6 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             expect(submitFormMock).not.toHaveBeenCalled();
         });
 
-        it('initializes polling mechanism for non instant payment methods before validation', async () => {
-            const submitFormMock = jest.fn();
-
-            jest.useFakeTimers();
-
-            await strategy.initialize({
-                ...initializationOptions,
-                paypalcommercealternativemethods: {
-                    ...paypalCommerceAlternativeMethodsOptions,
-                    submitForm: submitFormMock,
-                },
-            });
-
-            eventEmitter.emit('onClick');
-
-            jest.runAllTimers();
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(submitFormMock).toHaveBeenCalled();
-        });
-
         it('calls validation callback with provided params', async () => {
             const onValidateMock = jest.fn();
 
@@ -353,7 +330,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
                 },
             });
 
-            eventEmitter.emit('onClick');
+            eventEmitter.emit('createOrder');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
@@ -362,23 +339,6 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
     });
 
     describe('#onApprove button callback', () => {
-        it('deinitializes polling mechanism', async () => {
-            jest.spyOn(global, 'clearTimeout');
-            jest.useFakeTimers();
-
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('onClick');
-
-            jest.runAllTimers();
-
-            eventEmitter.emit('onApprove');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(clearTimeout).toHaveBeenCalled();
-        });
-
         it('submits form', async () => {
             const submitFormMock = jest.fn();
 
@@ -418,23 +378,6 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
     });
 
     describe('#onCancel button callback', () => {
-        it('deinitializes polling mechanism', async () => {
-            jest.spyOn(global, 'clearTimeout');
-            jest.useFakeTimers();
-
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('onClick');
-
-            jest.runAllTimers();
-
-            eventEmitter.emit('onCancel');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(clearTimeout).toHaveBeenCalled();
-        });
-
         it('hides loading indicator', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -447,23 +390,6 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
     });
 
     describe('#onError button callback', () => {
-        it('deinitializes polling mechanism', async () => {
-            jest.spyOn(global, 'clearTimeout');
-            jest.useFakeTimers();
-
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('onClick');
-
-            jest.runAllTimers();
-
-            eventEmitter.emit('onError');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(clearTimeout).toHaveBeenCalled();
-        });
-
         it('hides loading indicator', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -631,23 +557,6 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
     });
 
     describe('#deinitialize()', () => {
-        it('deinitializes polling mechanism', async () => {
-            jest.spyOn(global, 'clearTimeout');
-            jest.useFakeTimers();
-
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('onClick');
-
-            jest.runAllTimers();
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            await strategy.deinitialize();
-
-            expect(clearTimeout).toHaveBeenCalled();
-        });
-
         it('closes paypal button component on deinitialize strategy', async () => {
             const paypalCommerceSdkCloseMock = jest.fn();
 
