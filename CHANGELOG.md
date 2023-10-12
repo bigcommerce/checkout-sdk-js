@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.465.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.465.0...v1.465.1) (2023-10-12)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2986 trigger 3DS for Braintree when the HostedForm feature turned off ([#2217](https://github.com/bigcommerce/checkout-sdk-js/issues/2217)) ([80f10af](https://github.com/bigcommerce/checkout-sdk-js/commit/80f10af996a9982d9231ca549b2b159f98bae406))
+
 ## [1.465.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.464.1...v1.465.0) (2023-10-12)
 
 
