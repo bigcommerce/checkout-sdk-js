@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.466.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.465.1...v1.466.0) (2023-10-12)
+
+
+### Features
+
+* **payment:** PAYPAL-2507 polling mechanism removed from PPCP APM ([951f4bf](https://github.com/bigcommerce/checkout-sdk-js/commit/951f4bfaa17ab18487954c8527cddd4f36f16d65))
+
 ### [1.465.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.465.0...v1.465.1) (2023-10-12)
 
 
