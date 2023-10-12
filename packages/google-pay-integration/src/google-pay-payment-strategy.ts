@@ -123,7 +123,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         return async (event: MouseEvent) => {
             event.preventDefault();
 
-            // TODO: Dispatch Widget Actions
+            // TODO: Dispatch Widget Actions.
             try {
                 await this._interactWithPaymentSheet();
             } catch (error) {
