@@ -50,7 +50,7 @@ export default class BraintreeIntegrationService {
         private braintreeHostWindow: BraintreeHostWindow,
     ) {}
 
-    initialize(clientToken: string, storeConfig: StoreConfig) {
+    initialize(clientToken: string, storeConfig?: StoreConfig) {
         this.clientToken = clientToken;
         this.braintreeScriptLoader.initialize(storeConfig);
     }

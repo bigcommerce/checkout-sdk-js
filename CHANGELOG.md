@@ -2,6 +2,64 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.466.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.465.1...v1.466.0) (2023-10-12)
+
+
+### Features
+
+* **payment:** PAYPAL-2507 polling mechanism removed from PPCP APM ([951f4bf](https://github.com/bigcommerce/checkout-sdk-js/commit/951f4bfaa17ab18487954c8527cddd4f36f16d65))
+
+### [1.465.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.465.0...v1.465.1) (2023-10-12)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2986 trigger 3DS for Braintree when the HostedForm feature turned off ([#2217](https://github.com/bigcommerce/checkout-sdk-js/issues/2217)) ([80f10af](https://github.com/bigcommerce/checkout-sdk-js/commit/80f10af996a9982d9231ca549b2b159f98bae406))
+
+## [1.465.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.464.1...v1.465.0) (2023-10-12)
+
+
+### Features
+
+* **payment:** PAYPAL-3098 added sessionId to local storage even for unrecognised guest users for Gary flow Braintree AXO ([#2216](https://github.com/bigcommerce/checkout-sdk-js/issues/2216)) ([958156f](https://github.com/bigcommerce/checkout-sdk-js/commit/958156f9a3a2d2221c773f99371e788e4e957c91))
+
+### [1.464.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.464.0...v1.464.1) (2023-10-11)
+
+## [1.464.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.463.0...v1.464.0) (2023-10-10)
+
+
+### Features
+
+* **payment:** PI-889 Add cart ID to stripe upe payment submit ([8fda6a5](https://github.com/bigcommerce/checkout-sdk-js/commit/8fda6a52ee48502912b573cb3b188d3fe684f827))
+
+## [1.463.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.462.0...v1.463.0) (2023-10-09)
+
+
+### Features
+
+* **payment:** PAYPAL-2910 Move googlepay-braintree from core to google-pay-integration package ([#2167](https://github.com/bigcommerce/checkout-sdk-js/issues/2167)) ([9b2e779](https://github.com/bigcommerce/checkout-sdk-js/commit/9b2e77937418912e545909e76ca3543e02da1017))
+
+## [1.462.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.461.1...v1.462.0) (2023-10-09)
+
+
+### Features
+
+* **payment:** PAYPAL-2946 added loading spinner to ratepay strategy ([#2200](https://github.com/bigcommerce/checkout-sdk-js/issues/2200)) ([5425418](https://github.com/bigcommerce/checkout-sdk-js/commit/5425418e25bbe4eaa9d6deaa6ef9044f8671e8df))
+
+### [1.461.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.461.0...v1.461.1) (2023-10-05)
+
+
+### Bug Fixes
+
+* **payment:** PI-758 check if Stripe container exists before mount ([607261e](https://github.com/bigcommerce/checkout-sdk-js/commit/607261e65b0c9bcade88cb2f38771ad75162c6f6))
+
+## [1.461.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.460.0...v1.461.0) (2023-10-04)
+
+
+### Features
+
+* **payment:** PAYPAL-2845 captured device info ([#2196](https://github.com/bigcommerce/checkout-sdk-js/issues/2196)) ([f33e0a0](https://github.com/bigcommerce/checkout-sdk-js/commit/f33e0a055332e1a4b9e6f22a310d3bbc1948e26d))
+
 ## [1.460.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.459.0...v1.460.0) (2023-10-03)
 
 

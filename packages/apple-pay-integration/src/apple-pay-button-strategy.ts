@@ -1,6 +1,7 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 import { noop } from 'lodash';
 
+import { BraintreeIntegrationService } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     AddressRequestBody,
     BuyNowCartCreationError,
@@ -19,6 +20,7 @@ import {
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { ApplePayGatewayType } from './apple-pay';
 import ApplePayButtonInitializeOptions, {
     WithApplePayButtonInitializeOptions,
 } from './apple-pay-button-initialize-options';
@@ -49,6 +51,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         private _requestSender: RequestSender,
         private _paymentIntegrationService: PaymentIntegrationService,
         private _sessionFactory: ApplePaySessionFactory,
+        private _braintreeIntegrationService: BraintreeIntegrationService,
     ) {}
 
     async initialize(
@@ -85,6 +88,10 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         if (cart) {
             await this._paymentIntegrationService.verifyCheckoutSpamProtection();
+        }
+
+        if (this._paymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE) {
+            await this._initializeBraintreeIntegrationService();
         }
 
         this._applePayButton = this._createButton(containerId, buttonClassName);
@@ -538,9 +545,16 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         const cart = state.getCartOrThrow();
         const requiresShipping = cart.lineItems.physicalItems.length > 0;
 
+        let deviceSessionId: string | undefined;
+
+        if (paymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE) {
+            deviceSessionId = await this._getBraintreeDeviceData();
+        }
+
         const payment: Payment = {
             methodId: paymentMethod.id,
             paymentData: {
+                deviceSessionId,
                 formattedPayload: {
                     apple_pay_token: {
                         payment_data: token.paymentData,
@@ -579,7 +593,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             return this._onAuthorizeCallback();
         } catch (error) {
             applePaySession.completePayment(ApplePaySession.STATUS_FAILURE);
-
             throw new Error('Payment cannot complete');
         }
     }
@@ -601,5 +614,32 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             stateOrProvinceCode: contact?.administrativeArea || '',
             customFields: [],
         };
+    }
+
+    private async _getBraintreeDeviceData() {
+        const data = await this._braintreeIntegrationService.getDataCollector();
+
+        return data.deviceData;
+    }
+
+    private async _initializeBraintreeIntegrationService() {
+        const state = await this._paymentIntegrationService.loadPaymentMethod(
+            ApplePayGatewayType.BRAINTREE,
+        );
+
+        const storeConfig = state.getStoreConfig();
+
+        const braintreePaymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(
+            ApplePayGatewayType.BRAINTREE,
+        );
+
+        if (!braintreePaymentMethod.clientToken || !braintreePaymentMethod.initializationData) {
+            return;
+        }
+
+        this._braintreeIntegrationService.initialize(
+            braintreePaymentMethod.clientToken,
+            storeConfig,
+        );
     }
 }

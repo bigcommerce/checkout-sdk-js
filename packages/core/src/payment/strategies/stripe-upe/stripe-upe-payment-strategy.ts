@@ -58,7 +58,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     private _stripeElements?: StripeElements;
     private _isMounted = false;
     private _unsubscribe?: () => void;
-    private _isDeinitialize?: boolean;
 
     constructor(
         private _store: CheckoutStore,
@@ -82,8 +81,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 'Unable to initialize payment because "gatewayId" argument is not provided.',
             );
         }
-
-        this._isDeinitialize = false;
 
         this._loadStripeElement(stripeupe, gatewayId, methodId).catch((error) =>
             stripeupe.onError?.(error),
@@ -113,8 +110,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         stripeupe.onError?.(error);
                     } else if (!this._isMounted) {
                         await this._stripeElements?.fetchUpdates();
-                        payment.mount(`#${stripeupe.containerId}`);
-                        this._isMounted = true;
+                        this._mountElement(payment, stripeupe.containerId);
                     }
                 }
             },
@@ -219,7 +215,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         this._stripeElements?.getElement(StripeElementType.PAYMENT)?.unmount();
         this._isMounted = false;
-        this._isDeinitialize = true;
 
         return Promise.resolve(this._store.getState());
     }
@@ -240,13 +235,15 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     }
 
     private async _executeWithAPM(methodId: string): Promise<InternalCheckoutSelectors> {
-        const paymentMethod = this._store
-            .getState()
-            .paymentMethods.getPaymentMethodOrThrow(methodId);
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const cartId = state.cart.getCart()?.id;
+
         const paymentPayload = {
             methodId,
             paymentData: {
                 formattedPayload: {
+                    cart_id: cartId,
                     credit_card_token: { token: paymentMethod.clientToken },
                     vault_payment_instrument: false,
                     confirm: false,
@@ -269,14 +266,15 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         shouldSaveInstrument: boolean,
         shouldSetAsDefaultInstrument: boolean,
     ): Promise<InternalCheckoutSelectors> {
-        const paymentMethod = this._store
-            .getState()
-            .paymentMethods.getPaymentMethodOrThrow(methodId);
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const cartId = state.cart.getCart()?.id;
 
         const paymentPayload = {
             methodId,
             paymentData: {
                 formattedPayload: {
+                    cart_id: cartId,
                     credit_card_token: { token: paymentMethod.clientToken },
                     vault_payment_instrument: shouldSaveInstrument,
                     confirm: false,
@@ -324,15 +322,16 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         token: string,
         shouldSetAsDefaultInstrument: boolean,
     ): Promise<InternalCheckoutSelectors> {
-        const paymentMethod = this._store
-            .getState()
-            .paymentMethods.getPaymentMethodOrThrow(methodId);
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const cartId = state.cart.getCart()?.id;
 
         try {
             const paymentPayload = {
                 methodId,
                 paymentData: {
                     formattedPayload: {
+                        cart_id: cartId,
                         bigpay_token: { token },
                         confirm: false,
                         client_token: paymentMethod.clientToken,
@@ -436,16 +435,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 },
             });
 
-        try {
-            stripeElement.mount(`#${containerId}`);
-            this._isMounted = true;
-        } catch (error) {
-            if (!this._isDeinitialize) {
-                throw new InvalidArgumentError(
-                    'Unable to mount Stripe component without valid container ID.',
-                );
-            }
-        }
+        this._mountElement(stripeElement, containerId);
 
         stripeElement.on('ready', () => {
             render();
@@ -519,10 +509,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     throw new RequestError();
                 }
 
+                const cartId = this._store.getState().cart.getCart()?.id;
                 const paymentPayload = {
                     methodId,
                     paymentData: {
                         formattedPayload: {
+                            cart_id: cartId,
                             credit_card_token: {
                                 token: catchedConfirmError ? token : result?.paymentIntent?.id,
                             },
@@ -584,10 +576,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 throw new RequestError();
             }
 
+            const cartId = this._store.getState().cart.getCart()?.id;
             const paymentPayload = {
                 methodId,
                 paymentData: {
                     formattedPayload: {
+                        cart_id: cartId,
                         credit_card_token: {
                             token: catchedConfirmError ? clientSecret : result?.paymentIntent?.id,
                         },
@@ -660,5 +654,14 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             stripePublishableKey,
             stripeConnectedAccount,
         );
+    }
+
+    private _mountElement(stripeElement: StripeElement, containerId: string): void {
+        if (!document.getElementById(containerId)) {
+            return;
+        }
+
+        stripeElement.mount(`#${containerId}`);
+        this._isMounted = true;
     }
 }

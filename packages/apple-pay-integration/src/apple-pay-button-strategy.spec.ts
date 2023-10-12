@@ -1,6 +1,14 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { getScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 
+import {
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
+    getBraintree,
+    getDataCollectorMock,
+    getDeviceDataMock,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CartSource,
     InvalidArgumentError,
@@ -34,6 +42,7 @@ describe('ApplePayButtonStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: ApplePayButtonStrategy;
     let applePaySession: MockApplePaySession;
+    let braintreeIntegrationService: BraintreeIntegrationService;
 
     beforeEach(() => {
         applePaySession = new MockApplePaySession();
@@ -45,6 +54,10 @@ describe('ApplePayButtonStrategy', () => {
         applePayFactory = new ApplePaySessionFactory();
         requestSender = createRequestSender();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+        braintreeIntegrationService = new BraintreeIntegrationService(
+            new BraintreeScriptLoader(getScriptLoader(), window),
+            window,
+        );
 
         jest.spyOn(requestSender, 'post').mockReturnValue(true);
 
@@ -56,6 +69,7 @@ describe('ApplePayButtonStrategy', () => {
             requestSender,
             paymentIntegrationService,
             applePayFactory,
+            braintreeIntegrationService,
         );
 
         container = document.createElement('div');
@@ -73,6 +87,10 @@ describe('ApplePayButtonStrategy', () => {
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(getApplePay());
+
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+                paymentIntegrationService.getState(),
+            );
         });
 
         it('creates the button', async () => {
@@ -96,6 +114,7 @@ describe('ApplePayButtonStrategy', () => {
         it('doesnt call verifyCheckoutSpamProtection if cart undefined', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getCart').mockReturnValue(undefined);
             paymentIntegrationService.verifyCheckoutSpamProtection = jest.fn();
+
             const checkoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
 
             await strategy.initialize(checkoutButtonInitializeOptions);
@@ -575,6 +594,73 @@ describe('ApplePayButtonStrategy', () => {
                     ).toHaveBeenCalled();
                 }
             }
+        });
+
+        describe('braintree gateway', () => {
+            const applePayPaymentMethod = getApplePay();
+
+            applePayPaymentMethod.initializationData.gateway = 'braintree';
+
+            beforeEach(() => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockImplementation((methodId) => {
+                    if (methodId === 'applepay') {
+                        return applePayPaymentMethod;
+                    }
+
+                    if (methodId === 'braintree') {
+                        return getBraintree();
+                    }
+
+                    return {};
+                });
+
+                jest.spyOn(braintreeIntegrationService, 'getClient').mockImplementation(
+                    () => 'token',
+                );
+
+                jest.spyOn(braintreeIntegrationService, 'getDataCollector').mockImplementation(() =>
+                    getDataCollectorMock(),
+                );
+            });
+
+            it('submits payment with deviceSessionId', async () => {
+                const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
+                const authEvent = {
+                    payment: {
+                        billingContact: getContactAddress(),
+                        shippingContact: getContactAddress(),
+                        token: {
+                            paymentData: {},
+                            paymentMethod: {},
+                            transactionIdentifier: {},
+                        },
+                    },
+                } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
+
+                await strategy.initialize(CheckoutButtonInitializeOptions);
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                if (CheckoutButtonInitializeOptions.applepay) {
+                    const button = container.firstChild as HTMLElement;
+
+                    if (button) {
+                        button.click();
+                        await applePaySession.onpaymentauthorized(authEvent);
+
+                        expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                            expect.objectContaining({
+                                paymentData: expect.objectContaining({
+                                    deviceSessionId: getDeviceDataMock(),
+                                }),
+                            }),
+                        );
+                    }
+                }
+            });
         });
 
         it('returns an error if autorize payment fails', async () => {

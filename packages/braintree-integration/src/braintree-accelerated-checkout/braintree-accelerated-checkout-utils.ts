@@ -107,9 +107,9 @@ export default class BraintreeAcceleratedCheckoutUtils {
 
             const { customerContextId } = await lookupCustomerByEmail(customerEmail);
 
-            if (!customerContextId) {
-                this.browserStorage.removeItem('sessionId');
+            this.browserStorage.setItem('sessionId', cart.id);
 
+            if (!customerContextId) {
                 // Info: we should clean up previous experience with default data and related authenticationState
                 await this.paymentIntegrationService.updatePaymentProviderCustomer({
                     authenticationState: BraintreeConnectAuthenticationState.UNRECOGNIZED,
@@ -134,8 +134,6 @@ export default class BraintreeAcceleratedCheckoutUtils {
                 shippingAddresses,
                 billingAddresses,
             );
-
-            this.browserStorage.setItem('sessionId', cart.id);
 
             await this.paymentIntegrationService.updatePaymentProviderCustomer({
                 authenticationState,

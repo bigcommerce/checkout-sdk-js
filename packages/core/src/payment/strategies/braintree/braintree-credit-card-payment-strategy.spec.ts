@@ -301,16 +301,6 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         });
 
         describe('non hosted form behaviour', () => {
-            it('does not touch the card if it is going to be saved in the vault (shouldSaveInstrument: true)', async () => {
-                const payload = merge({}, orderRequestBody, {
-                    payment: { paymentData: { shouldSaveInstrument: true } },
-                });
-
-                await braintreeCreditCardPaymentStrategy.execute(payload, options);
-
-                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(payload.payment);
-            });
-
             it('passes on optional flags to save and to make default', async () => {
                 const payload = merge({}, orderRequestBody, {
                     payment: {
