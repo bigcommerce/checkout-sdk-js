@@ -758,7 +758,7 @@ export interface GooglePayBraintreeDataRequest {
     };
     transactionInfo: {
         currencyCode: string;
-        totalPriceStatus: TotalPriceStatusType.FINAL;
+        totalPriceStatus: TotalPriceStatusType;
         totalPrice: string;
     };
     cardRequirements: {
