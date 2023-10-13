@@ -49,12 +49,12 @@ export default class GooglePayPaymentProcessor {
 
     async initialize(
         getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>,
-        getGooglePayPaymentOptions?: () => GooglePayPaymentOptions | undefined,
+        googlePayPaymentOptions?: GooglePayPaymentOptions,
         isBuyNowFlow?: boolean,
     ): Promise<void> {
         this._paymentsClient = await this._scriptLoader.getGooglePaymentsClient(
             getPaymentMethod().config.testMode,
-            getGooglePayPaymentOptions?.(),
+            googlePayPaymentOptions,
         );
 
         this._isBuyNowFlow = Boolean(isBuyNowFlow);

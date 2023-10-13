@@ -14,7 +14,7 @@ export default class GooglePayScriptLoader {
 
     async getGooglePaymentsClient(
         testMode = false,
-        googlePayClientOptions?: GooglePayPaymentOptions,
+        options?: GooglePayPaymentOptions,
     ): Promise<GooglePaymentsClient> {
         await this._scriptLoader.loadScript(GOOGLE_PAY_LIBRARY);
 
@@ -25,7 +25,7 @@ export default class GooglePayScriptLoader {
         if (this._paymentsClient === undefined) {
             this._paymentsClient = new this._window.google.payments.api.PaymentsClient({
                 environment: testMode ? 'TEST' : 'PRODUCTION',
-                ...(googlePayClientOptions ?? {}),
+                ...(options ?? {}),
             });
         }
 
