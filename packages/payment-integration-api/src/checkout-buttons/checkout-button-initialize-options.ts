@@ -16,4 +16,9 @@ export default interface CheckoutButtonInitializeOptions extends CheckoutButtonO
      * The ID of a container which the checkout button should be inserted.
      */
     containerId: string;
+
+    /**
+     * The option that is required to load payment method configuration for provided currency code in Buy Now flow.
+     */
+    currencyCode?: string;
 }
