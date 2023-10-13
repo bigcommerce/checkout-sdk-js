@@ -19,7 +19,7 @@ describe('GooglePayScriptLoader', () => {
     beforeEach(() => {
         scriptLoader = createScriptLoader();
         googlePayWindow = window;
-        googlePayScriptLoader = new GooglePayScriptLoader(scriptLoader, googlePayWindow);
+        googlePayScriptLoader = new GooglePayScriptLoader(scriptLoader);
         googlePaymentsClientMock = {} as GooglePaymentsClient;
         googlePaymentsClientConstructorMock = jest.fn(() => googlePaymentsClientMock);
 

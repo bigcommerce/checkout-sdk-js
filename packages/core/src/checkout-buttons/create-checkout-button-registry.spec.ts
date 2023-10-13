@@ -58,10 +58,6 @@ describe('createCheckoutButtonRegistry', () => {
         expect(registry.get('googlepayauthorizenet')).toEqual(expect.any(GooglePayButtonStrategy));
     });
 
-    it('returns registry with GooglePay on Braintree Credit registered', () => {
-        expect(registry.get('googlepaybraintree')).toEqual(expect.any(GooglePayButtonStrategy));
-    });
-
     it('returns registry with GooglePay on Bank of New Zealand Credit registered', () => {
         expect(registry.get('googlepaybnz')).toEqual(expect.any(GooglePayButtonStrategy));
     });

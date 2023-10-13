@@ -17,3 +17,5 @@ export { default as createGooglePayOrbitalCustomerStrategy } from './factories/c
 export { default as createGooglePayStripeCustomerStrategy } from './factories/customer/create-google-pay-stripe-customer-strategy';
 export { default as createGooglePayStripeUpeCustomerStrategy } from './factories/customer/create-google-pay-stripeupe-customer-strategy';
 export { default as createGooglePayWorldpayAccessCustomerStrategy } from './factories/customer/create-google-pay-worldpayaccess-customer-strategy';
+
+export { default as createGooglePayBraintreeButtonStrategy } from './factories/button/create-google-pay-braintree-button-strategy';

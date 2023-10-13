@@ -31,6 +31,7 @@ import itemsRequireShipping from '../utils/items-require-shipping';
 
 export default class GooglePayGateway {
     private _getPaymentMethodFn?: () => PaymentMethod<GooglePayInitializationData>;
+    private _isBuyNowFlow = false;
 
     constructor(
         private _gatewayIdentifier: string,
@@ -90,6 +91,16 @@ export default class GooglePayGateway {
     async getRequiredData(): Promise<GooglePayRequiredPaymentData> {
         const data: GooglePayRequiredPaymentData = { emailRequired: true };
 
+        if (this._isBuyNowFlow) {
+            return {
+                ...data,
+                shippingAddressRequired: true,
+                shippingAddressParameters: {
+                    phoneNumberRequired: true,
+                },
+            };
+        }
+
         if (this._isShippingAddressRequired()) {
             const state = await this._paymentIntegrationService.loadShippingCountries();
             const allowedCountryCodes = state
@@ -130,6 +141,14 @@ export default class GooglePayGateway {
     }
 
     getTransactionInfo(): GooglePayTransactionInfo {
+        if (this._isBuyNowFlow) {
+            return {
+                currencyCode: '',
+                totalPriceStatus: TotalPriceStatusType.FINAL,
+                totalPrice: '',
+            };
+        }
+
         const { getCheckoutOrThrow, getCartOrThrow } = this._paymentIntegrationService.getState();
         const countryCode = this.getGooglePayInitializationData().storeCountry;
         const { code: currencyCode, decimalPlaces } = getCartOrThrow().currency;
@@ -174,8 +193,12 @@ export default class GooglePayGateway {
         };
     }
 
-    initialize(getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>): Promise<void> {
+    initialize(
+        getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>,
+        isBuyNowFlow?: boolean,
+    ): Promise<void> {
         this._getPaymentMethodFn = getPaymentMethod;
+        this._isBuyNowFlow = Boolean(isBuyNowFlow);
 
         return Promise.resolve();
     }

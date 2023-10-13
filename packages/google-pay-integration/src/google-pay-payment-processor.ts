@@ -17,6 +17,7 @@ import GooglePayGateway from './gateways/google-pay-gateway';
 import GooglePayScriptLoader from './google-pay-script-loader';
 import isGooglePayAdditionalActionProcessable from './guards/is-google-pay-additional-action-processable';
 import {
+    CallbackIntentsType,
     GooglePayBaseCardPaymentMethod,
     GooglePayButtonOptions,
     GooglePayCardDataResponse,
@@ -26,6 +27,8 @@ import {
     GooglePayIsReadyToPayRequest,
     GooglePaymentsClient,
     GooglePayPaymentDataRequest,
+    GooglePayPaymentOptions,
+    GooglePayTransactionInfo,
 } from './types';
 
 export default class GooglePayPaymentProcessor {
@@ -35,6 +38,7 @@ export default class GooglePayPaymentProcessor {
     private _cardPaymentMethod?: GooglePayCardPaymentMethod;
     private _paymentDataRequest?: GooglePayPaymentDataRequest;
     private _isReadyToPayRequest?: GooglePayIsReadyToPayRequest;
+    private _isBuyNowFlow = false;
 
     constructor(
         private _scriptLoader: GooglePayScriptLoader,
@@ -45,12 +49,17 @@ export default class GooglePayPaymentProcessor {
 
     async initialize(
         getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>,
+        getGooglePayPaymentOptions?: () => GooglePayPaymentOptions | undefined,
+        isBuyNowFlow?: boolean,
     ): Promise<void> {
         this._paymentsClient = await this._scriptLoader.getGooglePaymentsClient(
             getPaymentMethod().config.testMode,
+            getGooglePayPaymentOptions?.(),
         );
 
-        await this._gateway.initialize(getPaymentMethod);
+        this._isBuyNowFlow = Boolean(isBuyNowFlow);
+
+        await this._gateway.initialize(getPaymentMethod, this._isBuyNowFlow);
 
         await this._buildPayloads();
 
@@ -83,10 +92,25 @@ export default class GooglePayPaymentProcessor {
         return container.appendChild(paymentButton);
     }
 
+    updatePaymentDataRequest({
+        transactionInfo,
+        callbackIntents,
+    }: {
+        transactionInfo: GooglePayTransactionInfo;
+        callbackIntents?: CallbackIntentsType[];
+    }) {
+        if (this._paymentDataRequest) {
+            this._paymentDataRequest.transactionInfo = transactionInfo;
+            this._paymentDataRequest.callbackIntents = callbackIntents;
+        }
+    }
+
     async showPaymentSheet(): Promise<GooglePayCardDataResponse> {
         const paymentDataRequest = this._getPaymentDataRequest();
 
-        paymentDataRequest.transactionInfo = this._gateway.getTransactionInfo();
+        if (!this._isBuyNowFlow) {
+            paymentDataRequest.transactionInfo = this._gateway.getTransactionInfo();
+        }
 
         return this._getPaymentsClient().loadPaymentData(paymentDataRequest);
     }

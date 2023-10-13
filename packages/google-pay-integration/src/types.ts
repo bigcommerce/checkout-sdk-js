@@ -1,3 +1,5 @@
+import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 export interface GooglePayGatewayBaseRequest {
     apiVersion: 2;
     apiVersionMinor: 0;
@@ -83,7 +85,7 @@ export interface GooglePayTransactionInfo {
     /** [!] Required for EEA countries */
     countryCode?: string;
     currencyCode: string;
-    totalPriceStatus: TotalPriceStatusType.FINAL;
+    totalPriceStatus: TotalPriceStatusType;
     totalPrice: string;
 }
 
@@ -91,6 +93,13 @@ export interface GooglePayMerchantInfo {
     merchantName: string;
     merchantId: string;
     authJwt: string;
+}
+
+export enum CallbackIntentsType {
+    OFFER = 'OFFER',
+    PAYMENT_AUTHORIZATION = 'PAYMENT_AUTHORIZATION',
+    SHIPPING_ADDRESS = 'SHIPPING_ADDRESS',
+    SHIPPING_OPTION = 'SHIPPING_OPTION',
 }
 
 export interface GooglePayPaymentDataRequest extends GooglePayGatewayBaseRequest {
@@ -102,6 +111,34 @@ export interface GooglePayPaymentDataRequest extends GooglePayGatewayBaseRequest
     shippingAddressParameters?: {
         allowedCountryCodes?: string[];
         phoneNumberRequired?: boolean;
+    };
+    callbackIntents?: CallbackIntentsType[];
+}
+
+export interface NewTransactionInfo {
+    newTransactionInfo: {
+        currencyCode: string;
+        totalPrice: string;
+        totalPriceStatus: TotalPriceStatusType;
+    };
+}
+
+export enum CallbackTriggerType {
+    INITIALIZE = 'INITIALIZE',
+    SHIPPING_OPTION = 'SHIPPING_OPTION',
+    SHIPPING_ADDRESS = 'SHIPPING_ADDRESS',
+    OFFER = 'OFFER',
+}
+
+export interface IntermediatePaymentData {
+    callbackTrigger: CallbackTriggerType;
+}
+
+export interface GooglePayPaymentOptions {
+    paymentDataCallbacks?: {
+        onPaymentDataChanged(
+            intermediatePaymentData: IntermediatePaymentData,
+        ): Promise<NewTransactionInfo | void>;
     };
 }
 
@@ -176,7 +213,7 @@ export interface GooglePaymentsClient {
 
 type GooglePayEnvironment = 'TEST' | 'PRODUCTION';
 
-type GooglePaymentsClientConstructor = new (paymentOptions: {
+export type GooglePaymentsClientConstructor = new (paymentOptions: {
     environment: GooglePayEnvironment;
 }) => GooglePaymentsClient;
 
@@ -267,6 +304,10 @@ export interface GooglePayThreeDSecureResult {
         acs_url: string;
         code: string;
     };
+}
+
+export interface GooglePayBuyNowInitializeOptions {
+    getBuyNowCartRequestBody?(): BuyNowCartRequestBody;
 }
 
 export type GooglePayButtonColor = 'default' | 'black' | 'white';

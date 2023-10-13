@@ -37,8 +37,9 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
 
     async initialize(
         getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>,
+        isBuyNowFlow?: boolean,
     ): Promise<void> {
-        await super.initialize(getPaymentMethod);
+        await super.initialize(getPaymentMethod, isBuyNowFlow);
 
         const paymentMethod = super.getPaymentMethod();
 
@@ -48,7 +49,7 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
 
         this._braintreeService.initialize(
             paymentMethod.clientToken,
-            this._service.getState().getStoreConfigOrThrow(),
+            this._service.getState().getStoreConfig(),
         );
 
         const googleBraintreePaymentInstance =
