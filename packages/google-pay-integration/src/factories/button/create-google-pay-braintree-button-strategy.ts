@@ -17,9 +17,9 @@ import GooglePayButtonStrategy from '../../google-pay-button-strategy';
 import GooglePayPaymentProcessor from '../../google-pay-payment-processor';
 import createGooglePayScriptLoader from '../create-google-pay-script-loader';
 
-const createBoltButtonStrategy: CheckoutButtonStrategyFactory<GooglePayButtonStrategy> = (
-    paymentIntegrationService,
-) => {
+const createGooglePayBraintreeButtonStrategy: CheckoutButtonStrategyFactory<
+    GooglePayButtonStrategy
+> = (paymentIntegrationService) => {
     const requestSender = createRequestSender();
 
     const braintreeHostWindow: BraintreeHostWindow = window;
@@ -39,4 +39,6 @@ const createBoltButtonStrategy: CheckoutButtonStrategyFactory<GooglePayButtonStr
     );
 };
 
-export default toResolvableModule(createBoltButtonStrategy, [{ id: 'googlepaybraintree' }]);
+export default toResolvableModule(createGooglePayBraintreeButtonStrategy, [
+    { id: 'googlepaybraintree' },
+]);
