@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.467.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.466.0...v1.467.0) (2023-10-15)
+
+
+### Features
+
+* **extension:** CHECKOUT-7733 Enhance Extension Auto-Resizing ([#2187](https://github.com/bigcommerce/checkout-sdk-js/issues/2187)) ([7637cac](https://github.com/bigcommerce/checkout-sdk-js/commit/7637cac56945f6cf2bf7fad7639e786e46a9c430))
+
 ## [1.466.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.465.1...v1.466.0) (2023-10-12)
 
 
