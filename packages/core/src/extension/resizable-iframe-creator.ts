@@ -7,7 +7,12 @@ import { ExtensionInternalCommandType } from './extension-internal-commands';
 export default class ResizableIframeCreator {
     constructor(private _options?: { timeout: number }) {}
 
-    createFrame(src: string, containerId: string): Promise<IFrameComponent> {
+    createFrame(
+        src: string,
+        containerId: string,
+        initCallback: () => void,
+        failedCallback: () => void,
+    ): Promise<IFrameComponent> {
         const container = document.getElementById(containerId);
         const { timeout = 60000 } = this._options || {};
 
@@ -26,24 +31,30 @@ export default class ResizableIframeCreator {
 
         container.appendChild(iframe);
 
-        return this._toResizableFrame(iframe, timeout).catch((error) => {
-            container.removeChild(iframe);
+        return this._toResizableFrame(iframe, timeout, initCallback, failedCallback).catch(
+            (error) => {
+                container.removeChild(iframe);
 
-            throw error;
-        });
+                throw error;
+            },
+        );
     }
 
     private _toResizableFrame(
         iframe: HTMLIFrameElement,
         timeoutInterval: number,
+        initCallback: () => void,
+        failedCallback: () => void,
     ): Promise<IFrameComponent> {
         // Can't simply listen to `load` event because it always gets triggered even if there's an error.
         // Instead, listen to the `load` inside the iframe and let the parent frame know when it happens.
         return new Promise((resolve, reject) => {
             const timeout = window.setTimeout(() => {
+                failedCallback();
+
                 reject(
                     new ExtensionNotLoadedError(
-                        'Unable to embed the iframe because the content could not be loaded.',
+                        'Unable to load the extension because the content could not be loaded.',
                     ),
                 );
             }, timeoutInterval);
@@ -58,9 +69,11 @@ export default class ResizableIframeCreator {
 
                     const iframes = iframeResizer(
                         {
+                            autoResize: false,
                             scrolling: false,
                             sizeWidth: false,
-                            heightCalculationMethod: 'bodyScroll',
+                            heightCalculationMethod: 'bodyOffset',
+                            initCallback,
                         },
                         iframe,
                     );
