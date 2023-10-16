@@ -2,6 +2,7 @@ import {
     CustomerCredentials,
     CustomerInitializeOptions,
     CustomerStrategy,
+    DefaultCheckoutButtonHeight,
     ExecutePaymentMethodCheckoutOptions,
     InvalidArgumentError,
     PaymentIntegrationService,
@@ -82,7 +83,7 @@ export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStra
             fundingSource: paypalSdk.FUNDING.VENMO,
             style: this.paypalCommerceIntegrationService.getValidButtonStyle({
                 ...checkoutTopButtonStyles,
-                height: 36,
+                height: DefaultCheckoutButtonHeight,
             }),
             createOrder: () =>
                 this.paypalCommerceIntegrationService.createOrder('paypalcommercevenmo'),
