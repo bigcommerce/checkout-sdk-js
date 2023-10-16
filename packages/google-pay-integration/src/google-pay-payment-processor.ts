@@ -28,7 +28,6 @@ import {
     GooglePaymentsClient,
     GooglePayPaymentDataRequest,
     GooglePayPaymentOptions,
-    GooglePayTransactionInfo,
 } from './types';
 
 export default class GooglePayPaymentProcessor {
@@ -51,6 +50,7 @@ export default class GooglePayPaymentProcessor {
         getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>,
         googlePayPaymentOptions?: GooglePayPaymentOptions,
         isBuyNowFlow?: boolean,
+        currencyCode?: string,
     ): Promise<void> {
         this._paymentsClient = await this._scriptLoader.getGooglePaymentsClient(
             getPaymentMethod().config.testMode,
@@ -59,7 +59,7 @@ export default class GooglePayPaymentProcessor {
 
         this._isBuyNowFlow = Boolean(isBuyNowFlow);
 
-        await this._gateway.initialize(getPaymentMethod, this._isBuyNowFlow);
+        await this._gateway.initialize(getPaymentMethod, isBuyNowFlow, currencyCode);
 
         await this._buildPayloads();
 
@@ -92,25 +92,10 @@ export default class GooglePayPaymentProcessor {
         return container.appendChild(paymentButton);
     }
 
-    updatePaymentDataRequest({
-        transactionInfo,
-        callbackIntents,
-    }: {
-        transactionInfo: GooglePayTransactionInfo;
-        callbackIntents?: CallbackIntentsType[];
-    }) {
-        if (this._paymentDataRequest) {
-            this._paymentDataRequest.transactionInfo = transactionInfo;
-            this._paymentDataRequest.callbackIntents = callbackIntents;
-        }
-    }
-
     async showPaymentSheet(): Promise<GooglePayCardDataResponse> {
         const paymentDataRequest = this._getPaymentDataRequest();
 
-        if (!this._isBuyNowFlow) {
-            paymentDataRequest.transactionInfo = this._gateway.getTransactionInfo();
-        }
+        paymentDataRequest.transactionInfo = this._gateway.getTransactionInfo();
 
         return this._getPaymentsClient().loadPaymentData(paymentDataRequest);
     }
@@ -234,6 +219,7 @@ export default class GooglePayPaymentProcessor {
             transactionInfo: this._gateway.getTransactionInfo(),
             merchantInfo: this._gateway.getMerchantInfo(),
             ...(await this._gateway.getRequiredData()),
+            ...(this._isBuyNowFlow && { callbackIntents: [CallbackIntentsType.OFFER] }),
         };
         this._isReadyToPayRequest = {
             ...this._baseRequest,
