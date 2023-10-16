@@ -9,14 +9,11 @@ import {
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import BraintreeAcceleratedCheckoutCustomerInitializeOptions, {
-    WithBraintreeAcceleratedCheckoutCustomerInitializeOptions,
-} from './braintree-accelerated-checkout-customer-initialize-options';
+import { WithBraintreeAcceleratedCheckoutCustomerInitializeOptions } from './braintree-accelerated-checkout-customer-initialize-options';
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
 
 export default class BraintreeAcceleratedCheckoutCustomerStrategy implements CustomerStrategy {
-    private braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutCustomerInitializeOptions;
-    private methodId?: string;
+    private isAcceleratedCheckoutEnabled = false;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -34,8 +31,20 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
             );
         }
 
-        this.braintreeacceleratedcheckout = braintreeacceleratedcheckout;
-        this.setMethodId(methodId);
+        await this.paymentIntegrationService.loadPaymentMethod(methodId);
+
+        const state = this.paymentIntegrationService.getState();
+        const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
+
+        this.isAcceleratedCheckoutEnabled =
+            !!paymentMethod.initializationData?.isAcceleratedCheckoutEnabled;
+
+        if (this.isAcceleratedCheckoutEnabled) {
+            await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(
+                methodId,
+                braintreeacceleratedcheckout?.styles,
+            );
+        }
 
         return Promise.resolve();
     }
@@ -55,7 +64,7 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
     async executePaymentMethodCheckout(
         options?: ExecutePaymentMethodCheckoutOptions,
     ): Promise<void> {
-        const { continueWithCheckoutCallback } = options || {};
+        const { continueWithCheckoutCallback, methodId } = options || {};
 
         if (typeof continueWithCheckoutCallback !== 'function') {
             throw new InvalidArgumentError(
@@ -63,75 +72,35 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
             );
         }
 
-        if (await this.shouldRunAuthenticationFlow()) {
-            await this.runPayPalConnectAuthenticationFlowOrThrow();
+        if (await this.shouldRunAuthenticationFlow(methodId)) {
+            await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow();
         }
 
         continueWithCheckoutCallback();
     }
 
-    // Info: we should load payment method and check the shouldRunAcceleratedCheckout flag only for A/B testing purposes
-    // when the A/B testing finished, we can move paymentIntegrationService.loadPaymentMethod and
-    // braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow to the initialize method
-    private async shouldRunAuthenticationFlow(): Promise<boolean> {
-        await this.loadMainOrBackupPaymentMethod();
+    private async shouldRunAuthenticationFlow(methodId?: string): Promise<boolean> {
+        const primaryMethodId = 'braintreeacceleratedcheckout';
 
-        const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(
-            this.getMethodIdOrThrow(),
-        );
-        const { shouldRunAcceleratedCheckout, isAcceleratedCheckoutEnabled } =
-            paymentMethod.initializationData || {};
+        if (!this.isAcceleratedCheckoutEnabled) {
+            return false;
+        }
 
-        return !!(isAcceleratedCheckoutEnabled && shouldRunAcceleratedCheckout);
-    }
-
-    private async runPayPalConnectAuthenticationFlowOrThrow(email?: string): Promise<void> {
-        const methodId = this.getMethodIdOrThrow();
-
-        await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(
-            methodId,
-            this.braintreeacceleratedcheckout?.styles,
-        );
-        await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow(
-            email,
-        );
-    }
-
-    private async loadMainOrBackupPaymentMethod(): Promise<void> {
         try {
-            const methodId = this.getMethodIdOrThrow();
+            if (methodId !== primaryMethodId) {
+                await this.paymentIntegrationService.loadPaymentMethod(primaryMethodId);
+            }
 
-            await this.paymentIntegrationService.loadPaymentMethod(methodId);
-        } catch (error) {
-            // Info: we should load backup payment method for cases when major one was disabled
-            // due to the A/B testing flow (customer enters another email that
-            // triggers another A/B testing flow).
-            const backupMethodId = this.getBackupMethodId();
+            const state = this.paymentIntegrationService.getState();
+            const paymentMethod =
+                state.getPaymentMethodOrThrow<BraintreeInitializationData>(primaryMethodId);
 
-            await this.paymentIntegrationService.loadPaymentMethod(backupMethodId);
-
-            this.setMethodId(backupMethodId);
+            // Info: shouldRunAcceleratedCheckout is responsible for the flow of A/B testing purposes
+            // when shouldRunAcceleratedCheckout is true, the lookup PayPal Connect method should be called,
+            // otherwise AcceleratedCheckout should not be available for the customer
+            return paymentMethod.initializationData?.shouldRunAcceleratedCheckout || false;
+        } catch (_) {
+            return false;
         }
-    }
-
-    private setMethodId(methodId: string): void {
-        this.methodId = methodId;
-    }
-
-    private getMethodIdOrThrow(): string {
-        if (!this.methodId) {
-            throw new InvalidArgumentError(
-                'Unable to proceed because "methodId" argument is not provided.',
-            );
-        }
-
-        return this.methodId;
-    }
-
-    private getBackupMethodId(): string {
-        const methodId = this.getMethodIdOrThrow();
-
-        return methodId === 'braintree' ? 'braintreeacceleratedcheckout' : 'braintree';
     }
 }
