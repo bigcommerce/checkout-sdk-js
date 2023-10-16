@@ -32,6 +32,7 @@ import itemsRequireShipping from '../utils/items-require-shipping';
 export default class GooglePayGateway {
     private _getPaymentMethodFn?: () => PaymentMethod<GooglePayInitializationData>;
     private _isBuyNowFlow = false;
+    private _currencyCode?: string;
 
     constructor(
         private _gatewayIdentifier: string,
@@ -146,9 +147,9 @@ export default class GooglePayGateway {
     getTransactionInfo(): GooglePayTransactionInfo {
         if (this._isBuyNowFlow) {
             return {
-                currencyCode: '',
-                totalPriceStatus: TotalPriceStatusType.FINAL,
-                totalPrice: '',
+                currencyCode: this._getCurrencyCodeOrThrow(),
+                totalPriceStatus: TotalPriceStatusType.ESTIMATED,
+                totalPrice: '0',
             };
         }
 
@@ -199,9 +200,15 @@ export default class GooglePayGateway {
     initialize(
         getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>,
         isBuyNowFlow?: boolean,
+        currencyCode?: string,
     ): Promise<void> {
         this._getPaymentMethodFn = getPaymentMethod;
         this._isBuyNowFlow = Boolean(isBuyNowFlow);
+        this._currencyCode = currencyCode;
+
+        if (this._isBuyNowFlow) {
+            this._getCurrencyCodeOrThrow();
+        }
 
         return Promise.resolve();
     }
@@ -279,5 +286,15 @@ export default class GooglePayGateway {
         const lastName = nameParts[nameParts.length - 1];
 
         return [firstName, lastName];
+    }
+
+    private _getCurrencyCodeOrThrow(): string {
+        return guard(
+            this._currencyCode,
+            () =>
+                new InvalidArgumentError(
+                    'Unable to initialize payment because "options.currencyCode" argument is not provided.',
+                ),
+        );
     }
 }

@@ -22,7 +22,6 @@ import GooglePayPaymentProcessor from './google-pay-payment-processor';
 import isGooglePayErrorObject from './guards/is-google-pay-error-object';
 import isGooglePayKey from './guards/is-google-pay-key';
 import {
-    CallbackIntentsType,
     CallbackTriggerType,
     GooglePayBuyNowInitializeOptions,
     GooglePayInitializationData,
@@ -88,6 +87,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                             ),
                     this._getGooglePayClientOptions(googlePayOptions),
                     !!buyNowInitializeOptions,
+                    currencyCode,
                 );
             } else {
                 await this._paymentIntegrationService.loadDefaultCheckout();
@@ -126,17 +126,6 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         });
     }
 
-    private _updatePaymentDataRequest() {
-        this._googlePayPaymentProcessor.updatePaymentDataRequest({
-            transactionInfo: {
-                currencyCode: this._getCurrencyCodeOrThrow(),
-                totalPrice: '0',
-                totalPriceStatus: TotalPriceStatusType.ESTIMATED,
-            },
-            callbackIntents: [CallbackIntentsType.OFFER],
-        });
-    }
-
     private _handleClick(
         onError: GooglePayCustomerInitializeOptions['onError'],
     ): (event: MouseEvent) => unknown {
@@ -168,9 +157,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     }
 
     private async _interactWithPaymentSheet(): Promise<void> {
-        if (this._buyNowInitializeOptions) {
-            this._updatePaymentDataRequest();
-        } else {
+        if (!this._buyNowInitializeOptions) {
             await this._paymentIntegrationService.loadCheckout();
         }
 
