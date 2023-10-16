@@ -68,4 +68,5 @@ export { WithPayPalCommerceCreditCardsPaymentInitializeOptions } from './paypal-
  * PayPalCommerce Ratepay strategy
  *
  */
-export { default as createPayPalCommerceAlternativeMethodRatePayPaymentStrategy } from './paypal-commerce-alternative-methods/create-paypal-commerce-ratepay-payment-strategy';
+export { default as createPayPalCommerceRatePayPaymentStrategy } from './paypal-commerce-ratepay/create-paypal-commerce-ratepay-payment-strategy';
+export { WithPayPalCommerceRatePayPaymentInitializeOptions } from './paypal-commerce-ratepay/paypal-commerce-ratepay-initialize-options';

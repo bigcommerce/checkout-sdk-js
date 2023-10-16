@@ -4,7 +4,7 @@ import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment
 import createPaypalCommerceRatepayPaymentStrategy from './create-paypal-commerce-ratepay-payment-strategy';
 import PaypalCommerceRatepayPaymentStrategy from './paypal-commerce-ratepay-payment-strategy';
 
-describe('createPayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
+describe('createPayPalCommerceRatePayPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
