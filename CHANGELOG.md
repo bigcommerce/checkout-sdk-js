@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.469.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.468.0...v1.469.0) (2023-10-16)
+
+
+### Features
+
+* **payment:** PAYPAL-00 moved ratepay strategy to separate directory ([#2215](https://github.com/bigcommerce/checkout-sdk-js/issues/2215)) ([01bf98e](https://github.com/bigcommerce/checkout-sdk-js/commit/01bf98e7aaf28d60928d5c7f3fc4b2716b8173a0))
+
 ## [1.468.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.467.0...v1.468.0) (2023-10-16)
 
 
