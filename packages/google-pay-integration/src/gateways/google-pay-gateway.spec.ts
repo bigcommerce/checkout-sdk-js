@@ -112,6 +112,18 @@ describe('GooglePayGateway', () => {
             expect(gateway.getTransactionInfo()).toStrictEqual(expectedInfo);
         });
 
+        it('should return transaction info (Buy Now Flow)', async () => {
+            const expectedInfo = {
+                currencyCode: 'USD',
+                totalPriceStatus: 'ESTIMATED',
+                totalPrice: '0',
+            };
+
+            await gateway.initialize(getGeneric, true, 'USD');
+
+            expect(gateway.getTransactionInfo()).toStrictEqual(expectedInfo);
+        });
+
         it('should call getCartOrThrow', async () => {
             await gateway.initialize(getGeneric);
 
@@ -127,6 +139,14 @@ describe('GooglePayGateway', () => {
         describe('should fail if:', () => {
             test('not initialized', () => {
                 expect(() => gateway.getTransactionInfo()).toThrow(NotInitializedError);
+            });
+
+            it('currencyCode is not passed (Buy Now flow)', async () => {
+                try {
+                    await gateway.initialize(getGeneric, true);
+                } catch (error) {
+                    expect(error).toBeInstanceOf(InvalidArgumentError);
+                }
             });
         });
     });
@@ -152,6 +172,20 @@ describe('GooglePayGateway', () => {
             };
 
             await gateway.initialize(getGeneric);
+
+            await expect(gateway.getRequiredData()).resolves.toStrictEqual(expectedRequiredData);
+        });
+
+        it('should only require data (Buy Now Flow)', async () => {
+            const expectedRequiredData = {
+                emailRequired: true,
+                shippingAddressRequired: true,
+                shippingAddressParameters: {
+                    phoneNumberRequired: true,
+                },
+            };
+
+            await gateway.initialize(getGeneric, true, 'USD');
 
             await expect(gateway.getRequiredData()).resolves.toStrictEqual(expectedRequiredData);
         });
