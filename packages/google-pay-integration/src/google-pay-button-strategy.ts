@@ -65,7 +65,8 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             throw new InvalidArgumentError('Unable to proceed without valid options.');
         }
 
-        const { buyNowInitializeOptions, currencyCode } = googlePayOptions;
+        const { buyNowInitializeOptions, currencyCode, buttonColor, buttonType, onError } =
+            googlePayOptions;
 
         if (buyNowInitializeOptions) {
             if (!currencyCode) {
@@ -97,27 +98,15 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             );
         }
 
-        this._addPaymentButton({
-            ...googlePayOptions,
-            container: options.containerId,
+        this._googlePayPaymentProcessor.addPaymentButton(options.containerId, {
+            buttonColor: buttonColor ?? 'default',
+            buttonType: buttonType ?? 'plain',
+            onClick: this._handleClick(onError),
         });
     }
 
     deinitialize(): Promise<void> {
         return Promise.resolve();
-    }
-
-    private _addPaymentButton({
-        container,
-        buttonColor,
-        buttonType,
-        onError,
-    }: GooglePayButtonInitializeOptions): void {
-        this._googlePayPaymentProcessor.addPaymentButton(container, {
-            buttonColor: buttonColor ?? 'default',
-            buttonType: buttonType ?? 'plain',
-            onClick: this._handleClick(onError),
-        });
     }
 
     private _handleClick(

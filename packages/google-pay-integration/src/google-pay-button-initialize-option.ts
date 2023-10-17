@@ -27,11 +27,6 @@ export interface GooglePayButtonInitializeOptions {
     buyNowInitializeOptions?: GooglePayBuyNowInitializeOptions;
 
     /**
-     * The ID of a container which the checkout button should be inserted.
-     */
-    container: string;
-
-    /**
      * The option that is required to load payment method configuration for provided currency code in Buy Now flow.
      */
     currencyCode?: string;
