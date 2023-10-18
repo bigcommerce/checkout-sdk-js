@@ -22,7 +22,6 @@ import {
     GooglePayAdyenV3Initializer,
     GooglePayAuthorizeNetInitializer,
     GooglePayBNZInitializer,
-    GooglePayBraintreeInitializer,
     GooglePayCheckoutcomInitializer,
     GooglePayCybersourceV2Initializer,
     GooglePayOrbitalInitializer,
@@ -207,20 +206,6 @@ export default function createCustomerStrategyRegistry(
                 store,
                 remoteCheckoutActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayBNZInitializer()),
-                formPoster,
-            ),
-    );
-
-    registry.register(
-        'googlepaybraintree',
-        () =>
-            new GooglePayCustomerStrategy(
-                store,
-                remoteCheckoutActionCreator,
-                createGooglePayPaymentProcessor(
-                    store,
-                    new GooglePayBraintreeInitializer(store, braintreeSDKCreator),
-                ),
                 formPoster,
             ),
     );
