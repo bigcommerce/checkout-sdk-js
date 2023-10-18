@@ -23,6 +23,7 @@ const createGooglePayBraintreePaymentStrategy: CustomerStrategyFactory<
     const requestSender = createRequestSender();
 
     const braintreeHostWindow: BraintreeHostWindow = window;
+
     const braintreeIntegrationService = new BraintreeIntegrationService(
         new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
         braintreeHostWindow,
