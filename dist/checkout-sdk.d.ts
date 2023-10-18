@@ -5317,6 +5317,7 @@ declare enum GooglePayKey {
     AUTHORIZE_NET = "googlepayauthorizenet",
     BNZ = "googlepaybnz",
     BRAINTREE = "googlepaybraintree",
+    PAYPAL_COMMERCE = "googlepaypaypalcommerce",
     CHECKOUT_COM = "googlepaycheckoutcom",
     CYBERSOURCE_V2 = "googlepaycybersourcev2",
     ORBITAL = "googlepayorbital",
