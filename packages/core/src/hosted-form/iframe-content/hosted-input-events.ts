@@ -6,6 +6,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import HostedFieldType from '../hosted-field-type';
+import HostedInputValues from './hosted-input-values';
 import { HostedFormErrorsData } from '../hosted-form-options';
 
 import HostedInputInitializeErrorData from './hosted-input-initialize-error-data';
@@ -24,6 +25,7 @@ export enum HostedInputEventType {
     SubmitSucceeded = 'HOSTED_INPUT:SUBMIT_SUCCEEDED',
     SubmitFailed = 'HOSTED_INPUT:SUBMIT_FAILED',
     Validated = 'HOSTED_INPUT:VALIDATED',
+    ValueRecived = 'HOSTED_INPUT:VALUE_RECIEVED',
 }
 
 // Event mapping
@@ -53,10 +55,16 @@ export type HostedInputEvent =
     | HostedInputFocusEvent
     | HostedInputSubmitSuccessEvent
     | HostedInputSubmitErrorEvent
-    | HostedInputValidateEvent;
+    | HostedInputValidateEvent
+    | HostedInputValueRecivedEvent;
 
 export interface HostedInputAttachSuccessEvent {
     type: HostedInputEventType.AttachSucceeded;
+}
+
+export interface HostedInputValueRecivedEvent {
+    type: HostedInputEventType.ValueRecived;
+    payload: HostedInputValues;
 }
 
 export interface HostedInputAttachErrorEvent {

@@ -8,18 +8,21 @@ export enum HostedFieldEventType {
     AttachRequested = 'HOSTED_FIELD:ATTACH_REQUESTED',
     SubmitRequested = 'HOSTED_FIELD:SUBMITTED_REQUESTED',
     ValidateRequested = 'HOSTED_FIELD:VALIDATE_REQUESTED',
+    FieldValueRequested = 'HOSTED_FIELD:FIELD_VALUE_REQUESTED',
 }
 
 export interface HostedFieldEventMap {
     [HostedFieldEventType.AttachRequested]: HostedFieldAttachEvent;
     [HostedFieldEventType.SubmitRequested]: HostedFieldSubmitRequestEvent;
     [HostedFieldEventType.ValidateRequested]: HostedFieldValidateRequestEvent;
+    [HostedFieldEventType.FieldValueRequested]: HostedFieldValueRequestEvent;
 }
 
 export type HostedFieldEvent =
     | HostedFieldAttachEvent
     | HostedFieldSubmitRequestEvent
-    | HostedFieldValidateRequestEvent;
+    | HostedFieldValidateRequestEvent
+    | HostedFieldValueRequestEvent;
 
 export interface HostedFieldAttachEvent {
     type: HostedFieldEventType.AttachRequested;
@@ -44,4 +47,8 @@ export interface HostedFieldSubmitRequestEvent {
 
 export interface HostedFieldValidateRequestEvent {
     type: HostedFieldEventType.ValidateRequested;
+}
+
+export interface HostedFieldValueRequestEvent {
+    type: HostedFieldEventType.FieldValueRequested;
 }

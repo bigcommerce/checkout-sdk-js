@@ -6,6 +6,7 @@ import {
     HostedFieldEventMap,
     HostedFieldEventType,
     HostedFieldValidateRequestEvent,
+    HostedFieldValueRequestEvent,
 } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
 
@@ -51,6 +52,10 @@ export default class HostedInput {
         this._eventListener.addListener(
             HostedFieldEventType.SubmitRequested,
             this._paymentHandler.handle,
+        );
+        this._eventListener.addListener(
+            HostedFieldEventType.FieldValueRequested,
+            this._handleGetValue,
         );
 
         this._configureInput();
@@ -266,6 +271,17 @@ export default class HostedInput {
 
     private _handleValidate: (event: HostedFieldValidateRequestEvent) => void = () => {
         this._validateForm();
+    };
+
+    private _handleGetValue: (event: HostedFieldValueRequestEvent) => void = async () => {
+        const values = this._inputAggregator.getInputValues();
+
+        console.log({ values });
+
+        this._eventPoster.post({
+            type: HostedInputEventType.ValueRecived,
+            payload: values,
+        });
     };
 
     private _handleSubmit: (event: Event) => void = (event) => {
