@@ -4,6 +4,7 @@ import {
     CustomerCredentials,
     CustomerInitializeOptions,
     CustomerStrategy,
+    DefaultCheckoutButtonHeight,
     ExecutePaymentMethodCheckoutOptions,
     InvalidArgumentError,
     MissingDataError,
@@ -122,7 +123,7 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
                     fundingSource,
                     style: this.paypalCommerceIntegrationService.getValidButtonStyle({
                         ...checkoutTopButtonStyles,
-                        height: 36,
+                        height: DefaultCheckoutButtonHeight,
                     }),
                     ...defaultCallbacks,
                     ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),

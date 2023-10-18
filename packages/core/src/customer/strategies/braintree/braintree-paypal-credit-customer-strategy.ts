@@ -1,5 +1,7 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 
+import { DefaultCheckoutButtonHeight } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import mapToLegacyBillingAddress from '../../../checkout-buttons/strategies/braintree/map-to-legacy-billing-address';
 import mapToLegacyShippingAddress from '../../../checkout-buttons/strategies/braintree/map-to-legacy-shipping-address';
@@ -47,7 +49,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintreepaypalcredit, methodId } = options;
-        const { container, buttonHeight = 40 } = braintreepaypalcredit || {};
+        const { container, buttonHeight } = braintreepaypalcredit || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -138,7 +140,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
         braintreepaypalcredit: BraintreePaypalCreditCustomerInitializeOptions,
         methodId: string,
         testMode: boolean,
-        buttonHeight: number,
+        buttonHeight = DefaultCheckoutButtonHeight,
     ): void {
         const { container } = braintreepaypalcredit;
         const { paypal } = this._window;
