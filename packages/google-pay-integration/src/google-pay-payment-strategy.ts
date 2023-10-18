@@ -27,8 +27,8 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     private _methodId?: keyof WithGooglePayPaymentInitializeOptions;
 
     constructor(
-        private _paymentIntegrationService: PaymentIntegrationService,
-        private _googlePayPaymentProcessor: GooglePayPaymentProcessor,
+        protected _paymentIntegrationService: PaymentIntegrationService,
+        protected _googlePayPaymentProcessor: GooglePayPaymentProcessor,
     ) {}
 
     async initialize(
@@ -96,7 +96,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
-    private _addPaymentButton(
+    protected _addPaymentButton(
         walletButton: string,
         callbacks: Omit<GooglePayPaymentInitializeOptions, 'walletButton'>,
     ): void {
@@ -116,7 +116,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         this._paymentButton.addEventListener('click', this._clickListener);
     }
 
-    private _handleClick({
+    protected _handleClick({
         onPaymentSelect,
         onError,
     }: Omit<GooglePayPaymentInitializeOptions, 'walletButton'>): (event: MouseEvent) => unknown {
@@ -150,7 +150,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         };
     }
 
-    private async _interactWithPaymentSheet(): Promise<void> {
+    protected async _interactWithPaymentSheet(): Promise<void> {
         await this._paymentIntegrationService.loadCheckout();
 
         const response = await this._googlePayPaymentProcessor.showPaymentSheet();
@@ -167,7 +167,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
     }
 
-    private _getMethodId(): keyof WithGooglePayPaymentInitializeOptions {
+    protected _getMethodId(): keyof WithGooglePayPaymentInitializeOptions {
         return guard(
             this._methodId,
             () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
