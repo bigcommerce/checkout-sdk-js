@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.470.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.470.0...v1.470.1) (2023-10-18)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3090 updated all paypal buttons on checkout page to have the same default button height ([#2226](https://github.com/bigcommerce/checkout-sdk-js/issues/2226)) ([e9c87bf](https://github.com/bigcommerce/checkout-sdk-js/commit/e9c87bf363a042b4d57ec47d788a20c17265ee29))
+
 ## [1.470.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.469.0...v1.470.0) (2023-10-18)
 
 
