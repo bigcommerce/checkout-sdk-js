@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.471.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.470.1...v1.471.0) (2023-10-18)
+
+
+### Features
+
+* **payment:** PAYPAL-2930 PPCP GooglePay payment strategy ([8341aa1](https://github.com/bigcommerce/checkout-sdk-js/commit/8341aa1fda4c3be5a407be4827e0df9158d4760f))
+
+### [1.470.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.470.0...v1.470.1) (2023-10-18)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3090 updated all paypal buttons on checkout page to have the same default button height ([#2226](https://github.com/bigcommerce/checkout-sdk-js/issues/2226)) ([e9c87bf](https://github.com/bigcommerce/checkout-sdk-js/commit/e9c87bf363a042b4d57ec47d788a20c17265ee29))
+
+## [1.470.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.469.0...v1.470.0) (2023-10-18)
+
+
+### Features
+
+* **payment:** PAYPAL-3056 GP Braintree customer strategy ([5b56000](https://github.com/bigcommerce/checkout-sdk-js/commit/5b56000352d52c8a463ece8edb8c86fc2d836e79))
+
+## [1.469.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.468.0...v1.469.0) (2023-10-16)
+
+
+### Features
+
+* **payment:** PAYPAL-00 moved ratepay strategy to separate directory ([#2215](https://github.com/bigcommerce/checkout-sdk-js/issues/2215)) ([01bf98e](https://github.com/bigcommerce/checkout-sdk-js/commit/01bf98e7aaf28d60928d5c7f3fc4b2716b8173a0))
+
+## [1.468.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.467.0...v1.468.0) (2023-10-16)
+
+
+### Features
+
+* **payment:** PAYPAL-3099 updated BraintreeAcceleratedCheckout customer strategy to reduce customers waiting time ([#2219](https://github.com/bigcommerce/checkout-sdk-js/issues/2219)) ([7e1db5c](https://github.com/bigcommerce/checkout-sdk-js/commit/7e1db5c40db74485a005bb80d62b75521d62c0a8))
+
+## [1.467.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.466.0...v1.467.0) (2023-10-15)
+
+
+### Features
+
+* **extension:** CHECKOUT-7733 Enhance Extension Auto-Resizing ([#2187](https://github.com/bigcommerce/checkout-sdk-js/issues/2187)) ([7637cac](https://github.com/bigcommerce/checkout-sdk-js/commit/7637cac56945f6cf2bf7fad7639e786e46a9c430))
+
 ## [1.466.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.465.1...v1.466.0) (2023-10-12)
 
 

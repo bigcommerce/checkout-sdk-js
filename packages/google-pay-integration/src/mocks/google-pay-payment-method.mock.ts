@@ -28,6 +28,20 @@ export function getBraintree(): PaymentMethod<GooglePayInitializationData> {
     };
 }
 
+export function getPayPalCommerce(): PaymentMethod<GooglePayInitializationData> {
+    const generic = getGeneric();
+
+    return {
+        ...generic,
+        initializationData: {
+            ...generic.initializationData!,
+            merchantId: 'merchantId',
+            clientId: 'clientId',
+        },
+        clientToken: 'clientToken',
+    };
+}
+
 export function getStripe(): PaymentMethod<GooglePayInitializationData> {
     const generic = getGeneric();
 

@@ -8,7 +8,6 @@
 
 - [paypalcommerce](WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions.md#paypalcommerce)
 - [paypalcommercealternativemethods](WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions.md#paypalcommercealternativemethods)
-- [paypalcommerceratepay](WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions.md#paypalcommerceratepay)
 
 ## Properties
 
@@ -21,9 +20,3 @@ ___
 ### paypalcommercealternativemethods
 
 • `Optional` **paypalcommercealternativemethods**: [`PayPalCommerceAlternativeMethodsPaymentOptions`](PayPalCommerceAlternativeMethodsPaymentOptions.md)
-
-___
-
-### paypalcommerceratepay
-
-• `Optional` **paypalcommerceratepay**: [`PaypalCommerceRatePay`](PaypalCommerceRatePay.md)

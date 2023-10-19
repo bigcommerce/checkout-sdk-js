@@ -69,6 +69,10 @@ export interface GooglePayBraintreeGatewayParameters extends GooglePayGatewayBas
     'braintree:sdkVersion'?: string;
 }
 
+export interface GooglePayPayPalCommerceGatewayParameters extends GooglePayGatewayBaseParameters {
+    gatewayMerchantId?: string;
+}
+
 export type GooglePayGatewayParameters =
     | GooglePayRegularGatewayParameters
     | GooglePayStripeGatewayParameters
@@ -239,6 +243,11 @@ interface GooglePayBaseInitializationData {
     storeCountry?: string;
 }
 
+export interface GooglePayPayPalCommerceInitializationData extends GooglePayBaseInitializationData {
+    merchantId?: string;
+    clientId?: string;
+}
+
 export interface GooglePayAuthorizeNetInitializationData extends GooglePayBaseInitializationData {
     paymentGatewayId: string;
 }
@@ -257,7 +266,8 @@ export type GooglePayInitializationData =
     | GooglePayBaseInitializationData
     | GooglePayAuthorizeNetInitializationData
     | GooglePayStripeInitializationData
-    | GooglePayCheckoutComInitializationData;
+    | GooglePayCheckoutComInitializationData
+    | GooglePayPayPalCommerceInitializationData;
 
 export interface GooglePaySetExternalCheckoutData {
     nonce: string;

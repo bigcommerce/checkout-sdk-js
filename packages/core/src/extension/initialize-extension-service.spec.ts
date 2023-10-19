@@ -4,13 +4,20 @@ import initializeExtensionService, {
 } from './initialize-extension-service';
 
 describe('initializeExtensionService', () => {
-    it('initializes extension service correctly', () => {
+    it('initializes extension service correctly', async () => {
+        Object.defineProperty(window, 'parentIFrame', {
+            value: {
+                autoResize: jest.fn(),
+                setHeightCalculationMethod: jest.fn(),
+            },
+        });
+
         const options: InitializeExtensionServiceOptions = {
             extensionId: 'test',
             parentOrigin: 'https://test.com',
         };
 
-        const extensionService = initializeExtensionService(options);
+        const extensionService = await initializeExtensionService(options);
 
         expect(extensionService).toBeInstanceOf(ExtensionService);
     });

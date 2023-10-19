@@ -5,6 +5,7 @@ export {
     CheckoutButtonStrategyFactory,
     CheckoutButtonStrategyResolveId,
     CheckoutButtonInitializeOptions,
+    DefaultCheckoutButtonHeight,
 } from './checkout-buttons';
 export {
     BuyNowCartRequestBody,
