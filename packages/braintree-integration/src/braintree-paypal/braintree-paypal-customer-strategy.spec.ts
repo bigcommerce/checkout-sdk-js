@@ -19,6 +19,7 @@ import {
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CustomerInitializeOptions,
+    DefaultCheckoutButtonHeight,
     InvalidArgumentError,
     MissingDataError,
     PaymentIntegrationService,
@@ -279,7 +280,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
                 commit: false,
                 fundingSource: paypalSdkMock.FUNDING.PAYPAL,
                 style: {
-                    height: 40,
+                    height: DefaultCheckoutButtonHeight,
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
@@ -303,7 +304,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
                 commit: false,
                 fundingSource: paypalSdkMock.FUNDING.PAYPAL,
                 style: {
-                    height: 40,
+                    height: DefaultCheckoutButtonHeight,
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),

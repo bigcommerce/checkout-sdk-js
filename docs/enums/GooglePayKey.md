@@ -16,6 +16,7 @@ The recognized keys to pass the initialization options for Google Pay.
 - [CHECKOUT_COM](GooglePayKey.md#checkout_com)
 - [CYBERSOURCE_V2](GooglePayKey.md#cybersource_v2)
 - [ORBITAL](GooglePayKey.md#orbital)
+- [PAYPAL_COMMERCE](GooglePayKey.md#paypal_commerce)
 - [STRIPE](GooglePayKey.md#stripe)
 - [STRIPE_UPE](GooglePayKey.md#stripe_upe)
 - [WORLDPAY_ACCESS](GooglePayKey.md#worldpay_access)
@@ -67,6 +68,12 @@ ___
 ### ORBITAL
 
 • **ORBITAL**
+
+___
+
+### PAYPAL\_COMMERCE
+
+• **PAYPAL\_COMMERCE**
 
 ___
 

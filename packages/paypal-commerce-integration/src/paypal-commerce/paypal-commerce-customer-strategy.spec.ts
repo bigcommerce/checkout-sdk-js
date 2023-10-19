@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 
 import {
     CustomerInitializeOptions,
+    DefaultCheckoutButtonHeight,
     InvalidArgumentError,
     PaymentIntegrationService,
     PaymentMethod,
@@ -217,7 +218,11 @@ describe('PayPalCommerceCustomerStrategy', () => {
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
-                style: { height: 36, color: StyleButtonColor.silver, label: 'checkout' },
+                style: {
+                    height: DefaultCheckoutButtonHeight,
+                    color: StyleButtonColor.silver,
+                    label: 'checkout',
+                },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
             });
@@ -239,7 +244,11 @@ describe('PayPalCommerceCustomerStrategy', () => {
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.PAYPAL,
-                style: { height: 36, color: StyleButtonColor.silver, label: 'checkout' },
+                style: {
+                    height: DefaultCheckoutButtonHeight,
+                    color: StyleButtonColor.silver,
+                    label: 'checkout',
+                },
                 createOrder: expect.any(Function),
                 onShippingAddressChange: expect.any(Function),
                 onShippingOptionsChange: expect.any(Function),

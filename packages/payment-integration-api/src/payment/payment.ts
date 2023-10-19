@@ -37,6 +37,7 @@ export type PaymentInstrument =
           | StripeUPEIntent
           | WithMollieIssuerInstrument
           | WithPayPalConnectInstrument
+          | PaypalGooglePayInstrument
       >
     | HostedInstrument
     | NonceInstrument
@@ -184,6 +185,13 @@ export interface PaypalInstrument {
     paypal_account: {
         token: string;
         email: string | null;
+    };
+}
+
+export interface PaypalGooglePayInstrument {
+    method_id: string | null;
+    paypal_account: {
+        order_id: string;
     };
 }
 

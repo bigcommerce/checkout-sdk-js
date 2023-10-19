@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 
 import {
     CustomerInitializeOptions,
+    DefaultCheckoutButtonHeight,
     InvalidArgumentError,
     PaymentIntegrationService,
     PaymentMethod,
@@ -182,7 +183,7 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
                 fundingSource: paypalSdk.FUNDING.VENMO,
                 style: {
                     color: 'silver',
-                    height: 36,
+                    height: DefaultCheckoutButtonHeight,
                     label: 'checkout',
                 },
                 createOrder: expect.any(Function),

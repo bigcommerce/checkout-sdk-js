@@ -24,8 +24,6 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
     let strategy: BraintreeAcceleratedCheckoutCustomerStrategy;
 
     const methodId = 'braintreeacceleratedcheckout';
-    const backupMethodId = 'braintree';
-
     const initializationOptions = { methodId };
     const executionOptions = {
         methodId,
@@ -78,8 +76,54 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
     });
 
     describe('#initialize()', () => {
-        it('initializes strategy', async () => {
-            await expect(strategy.initialize(initializationOptions)).resolves.not.toThrow();
+        it('throw an error if the method id is not provided', async () => {
+            try {
+                await strategy.initialize({});
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
+        it('initializes Braintree Connect if isAcceleratedCheckoutEnabled is enabled', async () => {
+            const mockPaymentMethod = {
+                ...paymentMethod,
+                initializationData: {
+                    isAcceleratedCheckoutEnabled: true,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(mockPaymentMethod);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+            expect(
+                braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
+            ).toHaveBeenCalledWith(methodId, undefined);
+        });
+
+        it('does not initialize Braintree Connect if isAcceleratedCheckoutEnabled is disabled', async () => {
+            const mockPaymentMethod = {
+                ...paymentMethod,
+                initializationData: {
+                    isAcceleratedCheckoutEnabled: false,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(mockPaymentMethod);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+            expect(
+                braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
+            ).not.toHaveBeenCalled();
         });
     });
 
@@ -102,9 +146,6 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             ).toHaveBeenCalled();
             expect(executionOptions.continueWithCheckoutCallback).toHaveBeenCalled();
         });
-
-        // INFO: PayPal Connect authentication tests can be found in
-        // describe #shouldRunAuthenticationFlow() & #runPayPalConnectAuthenticationFlowOrThrow()
     });
 
     describe('#shouldRunAuthenticationFlow() & #runPayPalConnectAuthenticationFlowOrThrow()', () => {
@@ -121,7 +162,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             ).toHaveBeenCalled();
         });
 
-        it('does not authenticate customer with PayPal Connect if it should not run', async () => {
+        it('does not authenticate customer with PayPal Connect if it should not run due to A/B testing', async () => {
             const mockPaymentMethod = {
                 ...paymentMethod,
                 initializationData: {
@@ -141,7 +182,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
             expect(
                 braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
-            ).not.toHaveBeenCalled();
+            ).toHaveBeenCalled();
             expect(
                 braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
             ).not.toHaveBeenCalled();
@@ -173,21 +214,32 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             ).not.toHaveBeenCalled();
         });
 
-        it('loads different payment method due to the A/B testing flow', async () => {
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockRejectedValueOnce(
-                new Error(),
-            );
+        // Info: valid only for A/B testing
+        it('loads extra payment method if braintreeacceleratedcheckout didnt load before', async () => {
+            const mockPaymentMethod = {
+                ...paymentMethod,
+                initializationData: {
+                    isAcceleratedCheckoutEnabled: true,
+                    shouldRunAcceleratedCheckout: true,
+                },
+            };
 
-            await strategy.initialize({ methodId });
-            await strategy.executePaymentMethodCheckout(executionOptions);
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(mockPaymentMethod);
 
+            await strategy.initialize({ methodId: 'braintree' });
+            await strategy.executePaymentMethodCheckout({
+                ...executionOptions,
+                methodId: 'braintree',
+            });
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith('braintree');
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
-                backupMethodId,
-            );
             expect(
                 braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
-            ).toHaveBeenCalledWith(backupMethodId, undefined);
+            ).toHaveBeenCalled();
             expect(
                 braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
             ).toHaveBeenCalled();

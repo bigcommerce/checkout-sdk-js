@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 
 import {
     CustomerInitializeOptions,
+    DefaultCheckoutButtonHeight,
     InvalidArgumentError,
     PaymentIntegrationService,
     PaymentMethod,
@@ -219,7 +220,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.PAYLATER,
                 style: {
-                    height: 36,
+                    height: DefaultCheckoutButtonHeight,
                     color: StyleButtonColor.silver,
                     label: 'checkout',
                 },
@@ -245,7 +246,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.PAYLATER,
                 style: {
-                    height: 36,
+                    height: DefaultCheckoutButtonHeight,
                     color: StyleButtonColor.silver,
                     label: 'checkout',
                 },
@@ -286,7 +287,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
                 fundingSource: paypalSdk.FUNDING.CREDIT,
                 style: {
-                    height: 36,
+                    height: DefaultCheckoutButtonHeight,
                     color: StyleButtonColor.silver,
                     label: 'checkout',
                 },

@@ -5,6 +5,8 @@ import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader'
 import { EventEmitter } from 'events';
 import { Observable, of } from 'rxjs';
 
+import { DefaultCheckoutButtonHeight } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import {
     CheckoutActionCreator,
     CheckoutRequestSender,
@@ -330,7 +332,7 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
                 onApprove: expect.any(Function),
                 style: {
-                    height: 40,
+                    height: DefaultCheckoutButtonHeight,
                     color: PaypalButtonStyleColorOption.GOLD,
                 },
             });
@@ -387,7 +389,7 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
                 onApprove: expect.any(Function),
                 style: {
-                    height: 40,
+                    height: DefaultCheckoutButtonHeight,
                     color: PaypalButtonStyleColorOption.GOLD,
                 },
             });
@@ -401,7 +403,7 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                 fundingSource: paypalSdkMock.FUNDING.CREDIT,
                 onApprove: expect.any(Function),
                 style: {
-                    height: 40,
+                    height: DefaultCheckoutButtonHeight,
                     label: 'credit',
                     color: PaypalButtonStyleColorOption.GOLD,
                 },

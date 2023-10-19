@@ -12,6 +12,7 @@ import {
     ExtensionInternalCommand,
     ExtensionInternalCommandType,
 } from './extension-internal-commands';
+import { ExtensionInternalEventType } from './extension-internal-events';
 
 export default class ExtensionService {
     private _extensionId?: string;
@@ -25,7 +26,7 @@ export default class ExtensionService {
         this._internalCommandPoster.setTarget(window.parent);
     }
 
-    initialize(extensionId: string): void {
+    async initialize(extensionId: string): Promise<void> {
         if (!extensionId) {
             throw new Error('Extension Id not found.');
         }
@@ -34,10 +35,25 @@ export default class ExtensionService {
 
         this._eventListener.listen();
         this._commandPoster.setContext({ extensionId });
-        this._internalCommandPoster.post({
-            type: ExtensionInternalCommandType.ResizeIframe,
-            payload: { extensionId },
-        });
+
+        try {
+            await this._internalCommandPoster.post(
+                {
+                    type: ExtensionInternalCommandType.ResizeIframe,
+                    payload: { extensionId },
+                },
+                {
+                    successType: ExtensionInternalEventType.ExtensionReady,
+                    errorType: ExtensionInternalEventType.ExtensionFailed,
+                },
+            );
+        } catch (event) {
+            if (this._isExtensionFailedEvent(event)) {
+                throw new Error(
+                    'Extension failed to load within 60 seconds; please reload and try again.',
+                );
+            }
+        }
     }
 
     post(command: ExtensionCommand): void {
@@ -74,5 +90,11 @@ export default class ExtensionService {
 
             this._eventListener.removeListener(eventType, callback);
         };
+    }
+
+    private _isExtensionFailedEvent(
+        event: any,
+    ): event is ExtensionInternalEventType.ExtensionFailed {
+        return event.type === ExtensionInternalEventType.ExtensionFailed;
     }
 }

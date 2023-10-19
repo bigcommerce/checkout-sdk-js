@@ -15,6 +15,7 @@ import {
     CustomerCredentials,
     CustomerInitializeOptions,
     CustomerStrategy,
+    DefaultCheckoutButtonHeight,
     ExecutePaymentMethodCheckoutOptions,
     InvalidArgumentError,
     MissingDataError,
@@ -128,7 +129,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         containerId: string,
         methodId: string,
         testMode: boolean,
-        buttonHeight = 40,
+        buttonHeight = DefaultCheckoutButtonHeight,
     ): void {
         const { paypal } = this.braintreeHostWindow;
         const fundingSource = paypal?.FUNDING.PAYPAL;

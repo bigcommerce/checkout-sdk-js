@@ -14,7 +14,7 @@ import { PayPalCommerceHostWindow, PayPalSDK } from '../paypal-commerce-types';
 import PaypalCommerceRatepayPaymentStrategy from './paypal-commerce-ratepay-payment-strategy';
 import { getPayPalCommerceIntegrationServiceMock, getPayPalSDKMock } from '../mocks';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import { PaypalCommerceRatePay } from './paypal-commerce-alternative-methods-payment-initialize-options';
+import { PaypalCommerceRatePay } from './paypal-commerce-ratepay-initialize-options';
 import getPayPalCommerceRatePayPaymentMethod from '../mocks/get-paypal-commerce-ratepay-payment-method.mock';
 
 describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
