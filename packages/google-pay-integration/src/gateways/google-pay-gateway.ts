@@ -119,6 +119,10 @@ export default class GooglePayGateway {
         return Promise.resolve(nonce);
     }
 
+    getDeviceSessionId(): Promise<undefined | string> {
+        return Promise.resolve(undefined);
+    }
+
     getMerchantInfo(): GooglePayMerchantInfo {
         const {
             googleMerchantName: merchantName,
