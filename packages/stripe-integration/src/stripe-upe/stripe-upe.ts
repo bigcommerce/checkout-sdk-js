@@ -278,7 +278,7 @@ export interface StripeElements {
      * and reflects these updates in the Payment Element.
      * https://stripe.com/docs/js/elements_object/fetch_updates
      */
-    fetchUpdates(): void;
+    fetchUpdates(): Promise<void>;
 }
 
 /**
