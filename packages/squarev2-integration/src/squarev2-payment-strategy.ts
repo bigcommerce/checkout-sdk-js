@@ -76,8 +76,10 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
         await this._paymentIntegrationService.submitPayment({
             ...payment,
             paymentData: {
-                nonce,
                 formattedPayload: {
+                    credit_card_token: {
+                        token: nonce,
+                    },
                     vault_payment_instrument: shouldSaveInstrument || false,
                     set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
                 },

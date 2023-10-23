@@ -163,8 +163,10 @@ describe('SquareV2PaymentStrategy', () => {
             const expectedPayment = {
                 methodId: 'squarev2',
                 paymentData: {
-                    nonce: 'cnon:xxx',
                     formattedPayload: {
+                        credit_card_token: {
+                            token: 'cnon:xxx',
+                        },
                         vault_payment_instrument: false,
                         set_as_default_stored_instrument: false,
                     },
@@ -180,8 +182,10 @@ describe('SquareV2PaymentStrategy', () => {
             const expectedPayment = {
                 methodId: 'squarev2',
                 paymentData: {
-                    nonce: '{"nonce":"cnon:xxx","token":"verf:yyy"}',
                     formattedPayload: {
+                        credit_card_token: {
+                            token: '{"nonce":"cnon:xxx","token":"verf:yyy"}',
+                        },
                         vault_payment_instrument: false,
                         set_as_default_stored_instrument: false,
                     },
