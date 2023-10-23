@@ -67,6 +67,12 @@ export default class GooglePayPaymentProcessor {
         return this._gateway.getDeviceSessionId();
     }
 
+    async getExtraData() {
+        return {
+            deviceSessionId: await this._gateway.getDeviceSessionId(),
+        };
+    }
+
     addPaymentButton(
         containerId: string,
         options: Omit<GooglePayButtonOptions, 'allowedPaymentMethods'>,

@@ -69,12 +69,12 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         await this._paymentIntegrationService.submitOrder();
 
         const nonce = await this._googlePayPaymentProcessor.getNonce(payment.methodId);
-        const deviceSessionId = await this._googlePayPaymentProcessor.getDeviceSessionId();
+        const extraData = await this._googlePayPaymentProcessor.getExtraData();
 
         try {
             await this._paymentIntegrationService.submitPayment({
                 ...payment,
-                paymentData: { nonce, deviceSessionId },
+                paymentData: { nonce, ...extraData },
             });
         } catch (error) {
             await this._googlePayPaymentProcessor.processAdditionalAction(error);
