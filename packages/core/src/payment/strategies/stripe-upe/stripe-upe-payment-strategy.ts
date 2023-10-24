@@ -1,6 +1,7 @@
 import { includes, some } from 'lodash';
 
 import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import { isHostedInstrumentLike } from '../..';
 import { Address } from '../../../address';
@@ -52,12 +53,18 @@ const APM_REDIRECT = [
     StripePaymentMethodType.ALIPAY,
     StripePaymentMethodType.KLARNA,
 ];
+const ORDER_SUCCESS_STATUS = 'AWAITING_FULFILLMENT';
+const POLLING_MAX_QUANTITY = 5;
+const POLLING_TIME_INTERVAL = 2000;
+const POLLING_TIME_DELAY = 5000;
 
 export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     private _stripeUPEClient?: StripeUPEClient;
     private _stripeElements?: StripeElements;
     private _isMounted = false;
     private _unsubscribe?: () => void;
+    private _pollingCounter = 0;
+    private _loaderContainerId?: string;
 
     constructor(
         private _store: CheckoutStore,
@@ -67,6 +74,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         private _stripeScriptLoader: StripeUPEScriptLoader,
         private _storeCreditActionCreator: StoreCreditActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
+        private loadingIndicator: LoadingIndicator,
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -81,6 +89,8 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 'Unable to initialize payment because "gatewayId" argument is not provided.',
             );
         }
+
+        this._loaderContainerId = stripeupe.loaderContainerId;
 
         this._loadStripeElement(stripeupe, gatewayId, methodId).catch((error) =>
             stripeupe.onError?.(error),
@@ -525,9 +535,13 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     },
                 };
 
-                return this._store.dispatch(
-                    this._paymentActionCreator.submitPayment(paymentPayload),
-                );
+                try {
+                    return await this._store.dispatch(
+                        this._paymentActionCreator.submitPayment(paymentPayload),
+                    );
+                } catch (error) {
+                    return await this._initializePollingMechanism();
+                }
             }
         }
 
@@ -663,5 +677,70 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         stripeElement.mount(`#${containerId}`);
         this._isMounted = true;
+    }
+
+    private async _checkOrderStatus(): Promise<string | undefined> {
+        const state = await this._store.dispatch(this._orderActionCreator.loadCurrentOrder());
+
+        return state.order.getOrder()?.status;
+    }
+
+    private _toggleLoadingIndicator(isLoading: boolean): void {
+        isLoading && this._loaderContainerId
+            ? this.loadingIndicator.show(this._loaderContainerId)
+            : this.loadingIndicator.hide();
+    }
+
+    private _isPaymentSubmitted(orderStatus?: string): boolean {
+        return orderStatus === ORDER_SUCCESS_STATUS;
+    }
+
+    private _pollingWithDelay(
+        callback: () => Promise<string | undefined>,
+        timeDelay: number,
+    ): Promise<string | undefined> {
+        return new Promise((resolve) => {
+            setTimeout(async () => {
+                resolve(await callback());
+            }, timeDelay);
+        });
+    }
+
+    private async _pollingOrderStatus(): Promise<string | undefined> {
+        const orderStatus = await this._checkOrderStatus();
+
+        this._pollingCounter++;
+
+        if (this._isPaymentSubmitted(orderStatus) || this._pollingCounter >= POLLING_MAX_QUANTITY) {
+            return orderStatus;
+        }
+
+        return this._pollingWithDelay(() => this._pollingOrderStatus(), POLLING_TIME_INTERVAL);
+    }
+
+    /**
+     * Polling mechanism is needed in case when payment was successfully confirmed by Stripe.confirmPayment request on FE side, but has some delay to confirm payment on BE side.
+     * In this case the second payment request returns an error and we need to add some delay to wait webhook confirmation on BE side and wait while order status will be changed.
+     *
+     * This is a temporary solution.
+     * This logic should be removed after Stripe payment finalization will be processed on BE side and we won't need Stripe.confirmPayment here.
+     */
+    private async _initializePollingMechanism(): Promise<InternalCheckoutSelectors | never> {
+        this._toggleLoadingIndicator(true);
+
+        const orderStatus = await this._pollingWithDelay(
+            () => this._pollingOrderStatus(),
+            POLLING_TIME_DELAY,
+        );
+
+        this._toggleLoadingIndicator(false);
+
+        if (!this._isPaymentSubmitted(orderStatus)) {
+            throw new InvalidArgumentError(
+                "We've received your order and are processing your payment. Once the payment is verified, your order will be completed. We will send you an email when it's completed. Please note, this process may take a few minutes depending on the processing times of your chosen method.",
+            );
+        }
+
+        return this._store.getState();
     }
 }

@@ -5,6 +5,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable, of } from 'rxjs';
 
 import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import {
     BillingAddressActionCreator,
@@ -19,7 +20,7 @@ import {
     CheckoutValidator,
     createCheckoutStore,
 } from '../../../checkout';
-import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { getCheckout, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
 import {
     InvalidArgumentError,
     MissingDataError,
@@ -30,12 +31,14 @@ import { getResponse } from '../../../common/http-request/responses.mock';
 import { getCustomer } from '../../../customer/customers.mock';
 import {
     FinalizeOrderAction,
+    LoadOrderAction,
     OrderActionCreator,
     OrderActionType,
     OrderRequestSender,
     SubmitOrderAction,
 } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getOrder } from '../../../order/orders.mock';
 import {
     LoadPaymentMethodAction,
     PaymentInitializeOptions,
@@ -96,11 +99,13 @@ describe('StripeUPEPaymentStrategy', () => {
     let strategy: StripeUPEPaymentStrategy;
     let stripeScriptLoader: StripeUPEScriptLoader;
     let submitOrderAction: Observable<SubmitOrderAction>;
+    let loadOrderAction: Observable<LoadOrderAction>;
     let submitPaymentAction: Observable<SubmitPaymentAction>;
     let updateAddressAction: Observable<Action>;
+    let loadingIndicatorMock: LoadingIndicator;
 
     beforeEach(() => {
-        store = createCheckoutStore(getCheckoutStoreState());
+        store = createCheckoutStore(getCheckoutStoreStateWithOrder());
 
         const requestSender = createRequestSender();
 
@@ -138,6 +143,7 @@ describe('StripeUPEPaymentStrategy', () => {
         stripeScriptLoader = new StripeUPEScriptLoader(scriptLoader);
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+        loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         loadPaymentMethodAction = of(
             createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {
@@ -154,6 +160,7 @@ describe('StripeUPEPaymentStrategy', () => {
         jest.spyOn(store, 'dispatch');
 
         jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
 
         jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
@@ -175,6 +182,15 @@ describe('StripeUPEPaymentStrategy', () => {
 
         jest.spyOn(store, 'subscribe');
 
+        jest.spyOn(window, 'setTimeout').mockImplementation(
+            jest.fn((callback: () => unknown, _delay: number) => callback()),
+        );
+
+        loadingIndicatorMock = {
+            show: jest.fn(),
+            hide: jest.fn(),
+        } as unknown as LoadingIndicator;
+
         strategy = new StripeUPEPaymentStrategy(
             store,
             paymentMethodActionCreator,
@@ -183,6 +199,7 @@ describe('StripeUPEPaymentStrategy', () => {
             stripeScriptLoader,
             storeCreditActionCreator,
             billingAddressActionCreator,
+            loadingIndicatorMock,
         );
 
         const mockElement = document.createElement('div');
@@ -1607,6 +1624,98 @@ describe('StripeUPEPaymentStrategy', () => {
             };
 
             expect(strategy.execute(payload)).rejects.toThrow(PaymentArgumentInvalidError);
+        });
+
+        describe('Polling mechanism for order status changes', () => {
+            it('polling order status after failed additional payment submit', async () => {
+                const errorResponse = new RequestError(
+                    getResponse({
+                        ...getErrorPaymentResponseBody(),
+                        errors: [{ code: 'additional_action_required' }],
+                        additional_action_required: {
+                            type: 'additional_action_requires_payment_method',
+                            data: {
+                                redirect_url: 'https://redirect-url.com',
+                                token: 'token',
+                            },
+                        },
+                        status: 'error',
+                    }),
+                );
+
+                jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                    of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)),
+                );
+
+                jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(
+                    of(
+                        createAction(OrderActionType.LoadOrderSucceeded, {
+                            ...getOrder(),
+                            status: 'AWAITING_FULFILLMENT',
+                        }),
+                    ),
+                );
+
+                stripeUPEJsMock.confirmPayment = jest.fn(() =>
+                    Promise.resolve(getConfirmPaymentResponse()),
+                );
+
+                await strategy.initialize(getStripeUPEInitializeOptionsMock());
+                await strategy.execute(getStripeUPEOrderRequestBodyMock());
+
+                expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalledTimes(1);
+                expect(stripeUPEJsMock.retrievePaymentIntent).not.toHaveBeenCalled();
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
+                expect(loadingIndicatorMock.show).toHaveBeenCalledTimes(1);
+                expect(orderActionCreator.loadCurrentOrder).toHaveBeenCalledTimes(1);
+                expect(loadingIndicatorMock.hide).toHaveBeenCalledTimes(1);
+            });
+
+            it('order status polling returns error message if order does not change', async () => {
+                const errorResponse = new RequestError(
+                    getResponse({
+                        ...getErrorPaymentResponseBody(),
+                        errors: [{ code: 'additional_action_required' }],
+                        additional_action_required: {
+                            type: 'additional_action_requires_payment_method',
+                            data: {
+                                redirect_url: 'https://redirect-url.com',
+                                token: 'token',
+                            },
+                        },
+                        status: 'error',
+                    }),
+                );
+
+                jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                    of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)),
+                );
+
+                jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(
+                    of(
+                        createAction(OrderActionType.LoadOrderSucceeded, {
+                            ...getOrder(),
+                            status: 'ORDER_NOT_FINISHED',
+                        }),
+                    ),
+                );
+
+                stripeUPEJsMock.confirmPayment = jest.fn(() =>
+                    Promise.resolve(getConfirmPaymentResponse()),
+                );
+
+                await strategy.initialize(getStripeUPEInitializeOptionsMock());
+
+                try {
+                    await strategy.execute(getStripeUPEOrderRequestBodyMock());
+                } catch (error) {
+                    expect(loadingIndicatorMock.show).toHaveBeenCalledTimes(1);
+                    expect(orderActionCreator.loadCurrentOrder).toHaveBeenCalledTimes(5);
+                    expect(loadingIndicatorMock.hide).toHaveBeenCalledTimes(1);
+                    expect(error).toBeInstanceOf(InvalidArgumentError);
+                }
+            });
         });
     });
 

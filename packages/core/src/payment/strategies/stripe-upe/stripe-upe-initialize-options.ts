@@ -27,6 +27,11 @@ export default interface StripeUPEPaymentInitializeOptions {
     containerId: string;
 
     /**
+     * The location to insert the preloader while waiting for Stripe confirmation.
+     */
+    loaderContainerId?: string;
+
+    /**
      * Checkout styles from store theme
      */
     style?: {

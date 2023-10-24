@@ -51,6 +51,7 @@ export function getStripeUPEInitializeOptionsMock(
         gatewayId,
         stripeupe: {
             containerId: `stripe-${stripePaymentMethodType}-component-field`,
+            loaderContainerId: 'loaderContainerId',
             style,
             render: jest.fn(),
         },

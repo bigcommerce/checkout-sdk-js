@@ -6,6 +6,8 @@ import {
     getStylesheetLoader,
 } from '@bigcommerce/script-loader';
 
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import {
     CheckoutActionCreator,
@@ -819,6 +821,7 @@ export default function createPaymentStrategyRegistry(
                 new StripeUPEScriptLoader(scriptLoader),
                 storeCreditActionCreator,
                 billingAddressActionCreator,
+                new LoadingIndicator({ styles: { backgroundColor: 'black' } }),
             ),
     );
 
