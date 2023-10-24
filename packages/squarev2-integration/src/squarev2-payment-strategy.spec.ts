@@ -162,7 +162,15 @@ describe('SquareV2PaymentStrategy', () => {
         it('should submit the payment', async () => {
             const expectedPayment = {
                 methodId: 'squarev2',
-                paymentData: { nonce: 'cnon:xxx' },
+                paymentData: {
+                    formattedPayload: {
+                        credit_card_token: {
+                            token: 'cnon:xxx',
+                        },
+                        vault_payment_instrument: false,
+                        set_as_default_stored_instrument: false,
+                    },
+                },
             };
 
             await strategy.execute(payload);
@@ -174,7 +182,13 @@ describe('SquareV2PaymentStrategy', () => {
             const expectedPayment = {
                 methodId: 'squarev2',
                 paymentData: {
-                    nonce: '{"nonce":"cnon:xxx","token":"verf:yyy"}',
+                    formattedPayload: {
+                        credit_card_token: {
+                            token: '{"nonce":"cnon:xxx","token":"verf:yyy"}',
+                        },
+                        vault_payment_instrument: false,
+                        set_as_default_stored_instrument: false,
+                    },
                 },
             };
             const storeConfigMock = getConfig().storeConfig;

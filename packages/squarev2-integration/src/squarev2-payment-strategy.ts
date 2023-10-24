@@ -1,5 +1,6 @@
 import {
     InvalidArgumentError,
+    isHostedInstrumentLike,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentArgumentInvalidError,
@@ -63,10 +64,26 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
             });
         }
 
+        const paymentData = payment.paymentData;
+
+        const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = isHostedInstrumentLike(
+            paymentData,
+        )
+            ? paymentData
+            : { shouldSaveInstrument: false, shouldSetAsDefaultInstrument: false };
+
         await this._paymentIntegrationService.submitOrder();
         await this._paymentIntegrationService.submitPayment({
             ...payment,
-            paymentData: { nonce },
+            paymentData: {
+                formattedPayload: {
+                    credit_card_token: {
+                        token: nonce,
+                    },
+                    vault_payment_instrument: shouldSaveInstrument || false,
+                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
+                },
+            },
         });
     }
 
