@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.474.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.473.0...v1.474.0) (2023-10-24)
+
+
+### Features
+
+* **payment:** PAYPAL-0 hotfix ratepay date of birth field data ([#2235](https://github.com/bigcommerce/checkout-sdk-js/issues/2235)) ([6fec055](https://github.com/bigcommerce/checkout-sdk-js/commit/6fec05551c8a7b7520a3c8dfaa5321cd90b7fcbf))
+
+## [1.473.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.472.0...v1.473.0) (2023-10-24)
+
+
+### Features
+
+* **payment:** PI-633 add vaulted instrument data to square v2 payment strategy ([20f44d5](https://github.com/bigcommerce/checkout-sdk-js/commit/20f44d5befdfa62c82fd26668486cc44bbbb3ca1))
+
+## [1.472.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.471.1...v1.472.0) (2023-10-23)
+
+
+### Features
+
+* **payment:** PAYPAL-3080 Google Pay Braintree Button Strategy ([#2223](https://github.com/bigcommerce/checkout-sdk-js/issues/2223)) ([0a2a7f1](https://github.com/bigcommerce/checkout-sdk-js/commit/0a2a7f119da2a244d0d8f24d66f6675c0cf1ab5c))
+
+### [1.471.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.471.0...v1.471.1) (2023-10-20)
+
 ## [1.471.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.470.1...v1.471.0) (2023-10-18)
 
 

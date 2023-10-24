@@ -17,6 +17,7 @@ import GooglePayGateway from './gateways/google-pay-gateway';
 import GooglePayScriptLoader from './google-pay-script-loader';
 import isGooglePayAdditionalActionProcessable from './guards/is-google-pay-additional-action-processable';
 import {
+    CallbackIntentsType,
     GooglePayBaseCardPaymentMethod,
     GooglePayButtonOptions,
     GooglePayCardDataResponse,
@@ -26,6 +27,7 @@ import {
     GooglePayIsReadyToPayRequest,
     GooglePaymentsClient,
     GooglePayPaymentDataRequest,
+    GooglePayPaymentOptions,
 } from './types';
 
 export default class GooglePayPaymentProcessor {
@@ -35,6 +37,7 @@ export default class GooglePayPaymentProcessor {
     private _cardPaymentMethod?: GooglePayCardPaymentMethod;
     private _paymentDataRequest?: GooglePayPaymentDataRequest;
     private _isReadyToPayRequest?: GooglePayIsReadyToPayRequest;
+    private _isBuyNowFlow = false;
 
     constructor(
         private _scriptLoader: GooglePayScriptLoader,
@@ -45,12 +48,18 @@ export default class GooglePayPaymentProcessor {
 
     async initialize(
         getPaymentMethod: () => PaymentMethod<GooglePayInitializationData>,
+        googlePayPaymentOptions?: GooglePayPaymentOptions,
+        isBuyNowFlow?: boolean,
+        currencyCode?: string,
     ): Promise<void> {
         this._paymentsClient = await this._scriptLoader.getGooglePaymentsClient(
             getPaymentMethod().config.testMode,
+            googlePayPaymentOptions,
         );
 
-        await this._gateway.initialize(getPaymentMethod);
+        this._isBuyNowFlow = Boolean(isBuyNowFlow);
+
+        await this._gateway.initialize(getPaymentMethod, isBuyNowFlow, currencyCode);
 
         await this._buildPayloads();
 
@@ -214,6 +223,7 @@ export default class GooglePayPaymentProcessor {
             transactionInfo: this._gateway.getTransactionInfo(),
             merchantInfo: this._gateway.getMerchantInfo(),
             ...(await this._gateway.getRequiredData()),
+            ...(this._isBuyNowFlow && { callbackIntents: [CallbackIntentsType.OFFER] }),
         };
         this._isReadyToPayRequest = {
             ...this._baseRequest,

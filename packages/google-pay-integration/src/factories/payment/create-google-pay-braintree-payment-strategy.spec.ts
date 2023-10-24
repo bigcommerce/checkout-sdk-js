@@ -5,7 +5,7 @@ import GooglePayPaymentStrategy from '../../google-pay-payment-strategy';
 
 import createGooglePayBraintreePaymentStrategy from './create-google-pay-braintree-payment-strategy';
 
-describe('createGooglePayBraintreeComPaymentStrategy', () => {
+describe('createGooglePayBraintreePaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {

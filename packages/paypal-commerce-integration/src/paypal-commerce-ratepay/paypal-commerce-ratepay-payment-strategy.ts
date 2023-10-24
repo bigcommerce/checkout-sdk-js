@@ -189,12 +189,14 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
     }
 
     private normalizeDate(date: BirthDate) {
-        const formattedDate =
-            date.getDate() < 10 ? `0${date.getDate()}` : date.getDate().toString();
-        const formattedMonth =
-            date.getMonth() < 10 ? `0${date.getMonth() + 1}` : date.getMonth().toString();
+        const formattedDate = this.formatDate(date.getDate());
+        const formattedMonth = this.formatDate(date.getMonth() + 1);
 
         return `${date.getFullYear()}-${formattedMonth}-${formattedDate}`;
+    }
+
+    private formatDate(date: number): string {
+        return `${date < 10 ? 0 : ''}${date}`;
     }
 
     private onPaymentSubmission(isPaymentSubmitting: boolean) {

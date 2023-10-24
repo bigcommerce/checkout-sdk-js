@@ -16,7 +16,6 @@ import {
     GooglePayAdyenV3Initializer,
     GooglePayAuthorizeNetInitializer,
     GooglePayBNZInitializer,
-    GooglePayBraintreeInitializer,
     GooglePayCheckoutcomInitializer,
     GooglePayCybersourceV2Initializer,
     GooglePayOrbitalInitializer,
@@ -156,21 +155,6 @@ export default function createCheckoutButtonRegistry(
                 formPoster,
                 checkoutActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayBNZInitializer()),
-                cartRequestSender,
-            ),
-    );
-
-    registry.register(
-        CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE,
-        () =>
-            new GooglePayButtonStrategy(
-                store,
-                formPoster,
-                checkoutActionCreator,
-                createGooglePayPaymentProcessor(
-                    store,
-                    new GooglePayBraintreeInitializer(store, braintreeSdkCreator),
-                ),
                 cartRequestSender,
             ),
     );
