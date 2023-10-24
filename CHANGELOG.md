@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.473.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.472.0...v1.473.0) (2023-10-24)
+
+
+### Features
+
+* **payment:** PI-633 add vaulted instrument data to square v2 payment strategy ([20f44d5](https://github.com/bigcommerce/checkout-sdk-js/commit/20f44d5befdfa62c82fd26668486cc44bbbb3ca1))
+
 ## [1.472.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.471.1...v1.472.0) (2023-10-23)
 
 
