@@ -279,6 +279,10 @@ export interface GooglePayThreeDSecureResult {
     };
 }
 
+export interface ExtraPaymentData {
+    deviceSessionId?: string;
+}
+
 export type GooglePayButtonColor = 'default' | 'black' | 'white';
 export type GooglePayButtonType =
     | 'book'

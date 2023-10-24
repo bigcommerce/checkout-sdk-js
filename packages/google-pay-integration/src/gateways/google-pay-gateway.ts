@@ -15,6 +15,7 @@ import {
 
 import isGooglePayCardNetworkKey from '../guards/is-google-pay-card-network-key';
 import {
+    ExtraPaymentData,
     GooglePayCardDataResponse,
     GooglePayCardNetwork,
     GooglePayCardParameters,
@@ -119,7 +120,7 @@ export default class GooglePayGateway {
         return Promise.resolve(nonce);
     }
 
-    getDeviceSessionId(): Promise<undefined | string> {
+    extraPaymentData(): Promise<undefined | ExtraPaymentData> {
         return Promise.resolve(undefined);
     }
 

@@ -101,8 +101,10 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
         return nonce;
     }
 
-    async getDeviceSessionId() {
-        return this._getBraintreeDeviceData();
+    async extraPaymentData() {
+        return {
+            deviceSessionId: await this._getBraintreeDeviceData(),
+        };
     }
 
     async mapToExternalCheckoutData(

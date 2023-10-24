@@ -63,14 +63,8 @@ export default class GooglePayPaymentProcessor {
         return this._gateway.getNonce(methodId);
     }
 
-    async getDeviceSessionId(): Promise<string | undefined> {
-        return this._gateway.getDeviceSessionId();
-    }
-
-    async getExtraData() {
-        return {
-            deviceSessionId: await this._gateway.getDeviceSessionId(),
-        };
+    async extraPaymentData() {
+        return this._gateway.extraPaymentData();
     }
 
     addPaymentButton(

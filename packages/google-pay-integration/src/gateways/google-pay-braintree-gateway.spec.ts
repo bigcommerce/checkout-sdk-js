@@ -190,10 +190,10 @@ describe('GooglePayBraintreeGateway', () => {
         it('get deviceSessionId', async () => {
             await googlePayBraintreeGateway.initialize(getBraintree);
 
-            const deviceId = await googlePayBraintreeGateway.getDeviceSessionId();
+            const extraData = await googlePayBraintreeGateway.extraPaymentData();
 
             expect(braintreeIntegrationService.getDataCollector).toHaveBeenCalled();
-            expect(deviceId).toBe(getDeviceDataMock());
+            expect(extraData.deviceSessionId).toBe(getDeviceDataMock());
         });
     });
 });
