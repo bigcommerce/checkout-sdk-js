@@ -186,8 +186,8 @@ describe('GooglePayBraintreeGateway', () => {
         });
     });
 
-    describe('#getDeviceSessionId', () => {
-        it('get deviceSessionId', async () => {
+    describe('#extraPaymentData', () => {
+        it('get extraPaymentData', async () => {
             await googlePayBraintreeGateway.initialize(getBraintree);
 
             const extraData = await googlePayBraintreeGateway.extraPaymentData();
