@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.475.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.474.0...v1.475.0) (2023-10-25)
+
+
+### Features
+
+* **payment:** PI-976 Stripe UPE payment payload refactoring ([41e7ed2](https://github.com/bigcommerce/checkout-sdk-js/commit/41e7ed25cf90e05b4c700363d4eb4bb4a75a88f5))
+
 ## [1.474.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.473.0...v1.474.0) (2023-10-24)
 
 
