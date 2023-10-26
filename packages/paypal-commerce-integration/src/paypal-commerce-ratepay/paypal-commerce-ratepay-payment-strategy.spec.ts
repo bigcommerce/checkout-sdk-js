@@ -336,6 +336,25 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
 
             expect(paypalCommerceIntegrationService.getOrderStatus).toHaveBeenCalled();
         });
+
+        it('stop polling mechanism if corresponding status received', async () => {
+            jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockReturnValue(
+                'POLLING_ERROR',
+            );
+            const payload = {
+                payment: {
+                    methodId: 'ratepay',
+                    gatewayId: 'paypalcommercealternativemethods',
+                },
+            };
+            jest.spyOn(global, 'clearTimeout');
+            try {
+                await strategy.initialize(initializationOptions);
+                await strategy.execute(payload);
+            } catch (e) {
+                expect(clearTimeout).toHaveBeenCalled();
+            }
+        });
     });
 
     describe('#deinitialize()', () => {

@@ -422,6 +422,7 @@ export enum PayPalOrderStatus {
     Created = 'CREATED',
     PayerActionRequired = 'PAYER_ACTION_REQUIRED',
     PollingStop = 'POLLING_STOP',
+    PollingError = 'POLLING_ERROR',
 }
 
 export interface PayPalOrderStatusData {
