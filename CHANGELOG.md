@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.476.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.475.0...v1.476.0) (2023-10-30)
+
+
+### Features
+
+* **payment:** PAYPAL-3146 stop polling mechanism when corresponding status recieved ([#2239](https://github.com/bigcommerce/checkout-sdk-js/issues/2239)) ([0b7ca82](https://github.com/bigcommerce/checkout-sdk-js/commit/0b7ca82293d5afa9ab10248ad907e799d34369b0))
+
 ## [1.475.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.474.0...v1.475.0) (2023-10-25)
 
 
