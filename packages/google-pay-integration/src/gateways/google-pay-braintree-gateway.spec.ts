@@ -6,6 +6,8 @@ import {
     BraintreeScriptLoader,
     BraintreeThreeDSecure,
     getClientMock,
+    getDataCollectorMock,
+    getDeviceDataMock,
     getGooglePayMock,
     getModuleCreatorMock,
     getThreeDSecureMock,
@@ -70,6 +72,9 @@ describe('GooglePayBraintreeGateway', () => {
 
         jest.spyOn(braintreeIntegrationService, 'initialize');
         jest.spyOn(braintreeIntegrationService, 'get3DS');
+        jest.spyOn(braintreeIntegrationService, 'getDataCollector').mockImplementation(() =>
+            getDataCollectorMock(),
+        );
 
         googlePayBraintreeGateway = new GooglePayBraintreeGateway(
             paymentIntegrationService,
@@ -165,6 +170,7 @@ describe('GooglePayBraintreeGateway', () => {
 
         it('get nonce when 3DSecure is not enabled', async () => {
             const braintree = getBraintree();
+
             braintree.initializationData!.card_information = {
                 type: 'type',
                 number: '1234',
@@ -177,6 +183,17 @@ describe('GooglePayBraintreeGateway', () => {
 
             expect(braintreeIntegrationService.get3DS).not.toHaveBeenCalled();
             expect(nonce).toBe('token');
+        });
+    });
+
+    describe('#extraPaymentData', () => {
+        it('get extraPaymentData', async () => {
+            await googlePayBraintreeGateway.initialize(getBraintree);
+
+            const extraData = await googlePayBraintreeGateway.extraPaymentData();
+
+            expect(braintreeIntegrationService.getDataCollector).toHaveBeenCalled();
+            expect(extraData.deviceSessionId).toBe(getDeviceDataMock());
         });
     });
 });
