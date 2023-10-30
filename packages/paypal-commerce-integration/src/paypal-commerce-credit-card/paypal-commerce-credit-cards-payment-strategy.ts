@@ -26,6 +26,7 @@ import {
     OrderFinalizationNotRequiredError,
     OrderPaymentRequestBody,
     OrderRequestBody,
+    Payment,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
@@ -65,12 +66,6 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         const { methodId, paypalcommercecreditcards, paypalcommerce } = options;
         const form = paypalcommercecreditcards?.form || paypalcommerce?.form;
 
-        if (paypalcommerce) {
-            console.warn(
-                'The "options.paypalcommerce" option is deprecated for PayPal Commerce Credit Card form, please use "options.paypalcommercecreditcards" instead',
-            );
-        }
-
         if (!methodId) {
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.methodId" argument is not provided.',
@@ -102,12 +97,20 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
 
         this.executionPaymentData = paymentData;
 
-        this.validateHostedFormOrThrow();
+        let submitPaymentPayload;
 
-        const orderId = await this.submitHostedForm(methodId);
+        if (paymentData && isVaultedInstrument(paymentData)) {
+            submitPaymentPayload = this.preparePaymentPayload(methodId, paymentData);
+        } else {
+            this.validateHostedFormOrThrow();
+
+            const orderId = await this.submitHostedForm(methodId);
+
+            submitPaymentPayload = this.preparePaymentPayload(methodId, paymentData, orderId);
+        }
 
         await this.paymentIntegrationService.submitOrder(order, options);
-        await this.paypalCommerceIntegrationService.submitPayment(methodId, orderId);
+        await this.paymentIntegrationService.submitPayment(submitPaymentPayload);
     }
 
     finalize(): Promise<void> {
@@ -118,6 +121,51 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         return Promise.resolve();
     }
 
+    /**
+     *
+     * Submit Payment Payload preparing methods
+     *
+     */
+    private preparePaymentPayload(
+        methodId: string,
+        paymentData: OrderPaymentRequestBody['paymentData'],
+        orderId?: string,
+    ): Payment {
+        if (paymentData && isVaultedInstrument(paymentData)) {
+            return {
+                methodId,
+                paymentData,
+            };
+        }
+
+        const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
+            isHostedInstrumentLike(paymentData) ? paymentData : {};
+
+        return {
+            methodId,
+            paymentData: {
+                formattedPayload: {
+                    vault_payment_instrument: shouldSaveInstrument || false,
+                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
+                    device_info: null,
+                    method_id: methodId,
+                    ...(orderId
+                        ? {
+                              paypal_account: {
+                                  order_id: orderId,
+                              },
+                          }
+                        : {}),
+                },
+            },
+        };
+    }
+
+    /**
+     *
+     * Hosted fields
+     *
+     */
     private async renderFields(formOptions: HostedFormOptions): Promise<void> {
         const { fields, styles } = formOptions;
 

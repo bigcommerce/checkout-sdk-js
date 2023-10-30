@@ -159,21 +159,6 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             }
         });
 
-        it('throws an error and logs a warning if paypalcommerce.form option is not provided', async () => {
-            const warnLogSpy = jest.spyOn(console, 'warn');
-            const options = {
-                methodId,
-                paypalcommerce: {},
-            };
-
-            try {
-                await strategy.initialize(options);
-            } catch (error) {
-                expect(warnLogSpy).toHaveBeenCalled();
-                expect(error).toBeInstanceOf(InvalidArgumentError);
-            }
-        });
-
         it('loads paypalcommercecreditcards payment method', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -453,7 +438,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
         });
 
-        it('submits payment', async () => {
+        it('submits payment without saving vaulting instrument', async () => {
             const hostedFormOrderId = 'hostedFormOrderId';
 
             const hostedFormSubmitFnMock = jest.fn(() => ({
@@ -472,10 +457,83 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
 
             await strategy.execute(defaultExecutePayload);
 
-            expect(paypalCommerceIntegrationService.submitPayment).toHaveBeenCalledWith(
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId,
-                hostedFormOrderId,
+                paymentData: {
+                    formattedPayload: {
+                        vault_payment_instrument: false,
+                        set_as_default_stored_instrument: false,
+                        device_info: null,
+                        method_id: methodId,
+                        paypal_account: {
+                            order_id: hostedFormOrderId,
+                        },
+                    },
+                },
+            });
+        });
+
+        it('submits payment with flag to save vaulted instrument', async () => {
+            const hostedFormOrderId = 'hostedFormOrderId';
+
+            const hostedFormSubmitFnMock = jest.fn(() => ({
+                liabilityShift: undefined,
+                orderId: hostedFormOrderId,
+            }));
+
+            jest.spyOn(paypalSdk.HostedFields, 'render').mockImplementation(() =>
+                Promise.resolve({
+                    getState: () => getHostedFieldSateMock(),
+                    submit: hostedFormSubmitFnMock,
+                }),
             );
+
+            await strategy.initialize(initializationOptions);
+            await strategy.execute({
+                payment: {
+                    methodId: 'paypalcommercecreditcards',
+                    paymentData: {
+                        shouldSaveInstrument: true,
+                        shouldSetAsDefaultInstrument: true,
+                    },
+                },
+            });
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        vault_payment_instrument: true,
+                        set_as_default_stored_instrument: true,
+                        device_info: null,
+                        method_id: methodId,
+                        paypal_account: {
+                            order_id: hostedFormOrderId,
+                        },
+                    },
+                },
+            });
+        });
+
+        it('submits payment with vaulted(stored) instrument', async () => {
+            const instrumentId = 'bc_instrument_id';
+
+            await strategy.initialize(initializationOptions);
+            await strategy.execute({
+                payment: {
+                    methodId: 'paypalcommercecreditcards',
+                    paymentData: {
+                        instrumentId,
+                    },
+                },
+            });
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    instrumentId,
+                },
+            });
         });
     });
 
