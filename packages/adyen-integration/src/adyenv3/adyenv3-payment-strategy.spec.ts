@@ -64,6 +64,10 @@ describe('AdyenV3PaymentStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         strategy = new AdyenV3PaymentStrategy(paymentIntegrationService, adyenV3ScriptLoader);
+
+        const mockElement = document.createElement('div');
+
+        jest.spyOn(document, 'getElementById').mockReturnValue(mockElement);
     });
 
     describe('#Initializes & Executes', () => {
@@ -149,6 +153,16 @@ describe('AdyenV3PaymentStrategy', () => {
                 cardVerificationComponent = getFailingComponent();
 
                 await expect(strategy.initialize(options)).rejects.toThrow(NotInitializedError);
+            });
+
+            it('fails mounting payment element if container not exist', () => {
+                const adyenClient = getAdyenClient();
+                const adyenComponent = adyenClient.create('scheme', {});
+
+                jest.spyOn(document, 'getElementById').mockReturnValue(null);
+
+                expect(strategy.initialize(options));
+                expect(adyenComponent.mount).not.toHaveBeenCalled();
             });
         });
 
