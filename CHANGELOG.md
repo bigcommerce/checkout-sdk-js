@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.477.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.476.0...v1.477.0) (2023-10-30)
+
+
+### Features
+
+* **payment:** PAYPAL-2877 Add deviceSessionId to submitPayment ([#2234](https://github.com/bigcommerce/checkout-sdk-js/issues/2234)) ([b34c920](https://github.com/bigcommerce/checkout-sdk-js/commit/b34c9200d85772acfa0ff6f5099db709f491ad5f))
+* **payment:** PAYPAL-3133 inline ([5e4776e](https://github.com/bigcommerce/checkout-sdk-js/commit/5e4776ece9eb55f5ba0100ce798a26584cd09478))
+
 ## [1.476.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.475.0...v1.476.0) (2023-10-30)
 
 
