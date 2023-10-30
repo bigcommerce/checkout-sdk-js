@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.478.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.477.0...v1.478.0) (2023-10-30)
+
+
+### Features
+
+* **payment:** PAYPAL-3156 updated payment payload to be able to vault instrument for PayPalCommerce Credit Card ([#2240](https://github.com/bigcommerce/checkout-sdk-js/issues/2240)) ([f36720a](https://github.com/bigcommerce/checkout-sdk-js/commit/f36720ac525844c20667e51632700d319c016233))
+
 ## [1.477.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.476.0...v1.477.0) (2023-10-30)
 
 
