@@ -5,5 +5,7 @@ export default interface PaymentProviderAuthenticationState {
 }
 
 export const DEFAULT_STATE = {
-    data: {},
+    data: {
+        isAuthenticated: false,
+    },
 };
