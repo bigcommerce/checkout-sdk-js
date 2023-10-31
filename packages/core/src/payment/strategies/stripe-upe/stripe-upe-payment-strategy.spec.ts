@@ -1476,6 +1476,46 @@ describe('StripeUPEPaymentStrategy', () => {
                             expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalled();
                         }
                     });
+
+                    it('shows error message if stripe successfully submitted order but additional BC payment request failed', async () => {
+                        const errorResponse = new RequestError(
+                            getResponse({
+                                ...getErrorPaymentResponseBody(),
+                                errors: [{ code: 'additional_action_required' }],
+                                additional_action_required: {
+                                    type: 'additional_action_requires_payment_method',
+                                    data: {
+                                        redirect_url: 'https://redirect-url.com',
+                                        token: 'token',
+                                    },
+                                },
+                                status: 'error',
+                            }),
+                        );
+
+                        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                            of(
+                                createErrorAction(
+                                    PaymentActionType.SubmitPaymentFailed,
+                                    errorResponse,
+                                ),
+                            ),
+                        );
+
+                        stripeUPEJsMock.confirmPayment = jest.fn(() =>
+                            Promise.resolve(getConfirmPaymentResponse()),
+                        );
+
+                        await strategy.initialize(getStripeUPEInitializeOptionsMock());
+
+                        try {
+                            await strategy.execute(getStripeUPEOrderRequestBodyMock());
+                        } catch (error) {
+                            expect(stripeUPEJsMock.confirmPayment).toHaveBeenCalledTimes(1);
+                            expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
+                            expect(error).toBeInstanceOf(PaymentMethodFailedError);
+                        }
+                    });
                 });
 
                 describe('with SOFORT', () => {
