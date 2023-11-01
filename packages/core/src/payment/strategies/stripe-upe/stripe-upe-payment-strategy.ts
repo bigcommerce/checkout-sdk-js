@@ -496,9 +496,17 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     shouldSetAsDefaultInstrument,
                 );
 
-                return this._store.dispatch(
-                    this._paymentActionCreator.submitPayment(paymentPayload),
-                );
+                try {
+                    return await this._store.dispatch(
+                        this._paymentActionCreator.submitPayment(paymentPayload),
+                    );
+                } catch (error) {
+                    // INFO: for case if payment was successfully confirmed on Stripe side but on BC side something go wrong, request failed and order status hasn't changed yet
+                    // For shopper we need to show additional message that BC is waiting for stripe confirmation, to prevent additional payment creation
+                    throw new PaymentMethodFailedError(
+                        "We've received your order and are processing your payment. Once the payment is verified, your order will be completed. We will send you an email when it's completed. Please note, this process may take a few minutes depending on the processing times of your chosen method.",
+                    );
+                }
             }
         }
 
