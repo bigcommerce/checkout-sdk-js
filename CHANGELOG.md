@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.479.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.478.1...v1.479.0) (2023-11-02)
+
+
+### Features
+
+* **payment:** PI-846 Quickly selecting different payment methods on Payment step of Checkout sometimes results in error ([#2241](https://github.com/bigcommerce/checkout-sdk-js/issues/2241)) ([797a91b](https://github.com/bigcommerce/checkout-sdk-js/commit/797a91b1a4aaa2160565691fa31d8d9df19c12ec))
+
 ### [1.478.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.478.0...v1.478.1) (2023-11-01)
 
 
