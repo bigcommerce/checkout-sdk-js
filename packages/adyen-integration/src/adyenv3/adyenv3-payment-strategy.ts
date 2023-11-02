@@ -309,7 +309,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 );
             }
 
-            additionalActionComponent.mount(`#${containerId}`);
+            this._mountElement(additionalActionComponent, containerId);
 
             if (onLoad) {
                 onLoad(() => {
@@ -377,7 +377,10 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 });
 
                 try {
-                    cardVerificationComponent.mount(`#${adyenv3.cardVerificationContainerId}`);
+                    this._mountElement(
+                        cardVerificationComponent,
+                        adyenv3.cardVerificationContainerId,
+                    );
                 } catch (error) {
                     reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
                 }
@@ -410,7 +413,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             });
 
             try {
-                paymentComponent.mount(`#${adyenv3.containerId}`);
+                this._mountElement(paymentComponent, adyenv3.containerId);
             } catch (error) {
                 reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
             }
@@ -481,5 +484,13 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         });
 
         return errors;
+    }
+
+    private _mountElement(adyenComponent: AdyenComponent, containerId: string): void {
+        if (!document.getElementById(containerId)) {
+            return;
+        }
+
+        adyenComponent.mount(`#${containerId}`);
     }
 }
