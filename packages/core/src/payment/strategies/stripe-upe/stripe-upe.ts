@@ -274,6 +274,8 @@ export interface StripeElements {
      * https://stripe.com/docs/js/elements_object/fetch_updates
      */
     fetchUpdates(): void;
+
+    submit(): Promise<{ error: StripeError }>;
 }
 
 /**
@@ -333,6 +335,8 @@ export interface StripeElementsOptions {
      * The layout of each Element stays consistent, but you can modify colors, fonts, borders, padding, and more.
      */
     appearance?: StripeUPEAppearanceOptions;
+
+    paymentMethodCreation?: string;
 }
 
 export interface StripeUpdateElementsOptions {
@@ -349,6 +353,15 @@ export interface StripeUpdateElementsOptions {
      * The layout of each Element stays consistent, but you can modify colors, fonts, borders, padding, and more.
      */
     appearance?: StripeUPEAppearanceOptions;
+}
+
+interface StripeCreatePaymentMethodOptions {
+    elements: StripeElements;
+    params?: PaymentMethodDataOptions;
+}
+
+interface StripePaymentMethod extends PaymentMethodDataOptions {
+    id: string;
 }
 
 export interface StripeUPEClient {
@@ -370,12 +383,25 @@ export interface StripeUPEClient {
     retrievePaymentIntent(clientSecret: string): Promise<StripeUpeResult>;
 
     /**
+     * For finalizing payments on the server flow to finish confirmation of a PaymentIntent with the requires_action status. It will throw an error if the PaymentIntent has a different status.
+     */
+    handleNextAction(options: { clientSecret: string }): Promise<StripeUpeResult>;
+
+    /**
+     * Convert payment information collected by elements into a PaymentMethod object that you safely pass to your server to use in an API call.
+     */
+    createPaymentMethod(options: StripeCreatePaymentMethodOptions): Promise<{
+        error: StripeError;
+        paymentMethod: StripePaymentMethod;
+    }>;
+
+    /**
      * Create an `Elements` instance, which manages a group of elements.
      */
     elements(options: StripeElementsOptions): StripeElements;
 }
 
-interface StripeUpeResult {
+export interface StripeUpeResult {
     paymentIntent?: PaymentIntent;
     error?: StripeError;
 }
