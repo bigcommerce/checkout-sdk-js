@@ -6,8 +6,10 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import GooglePayGateway from '../gateways/google-pay-gateway';
+import assertsIsGooglePayPayPalCommercePaymentMethod from '../guards/is-google-pay-paypal-commerce-payment-method';
 import {
     GooglePayCardDataResponse,
+    GooglePayInitializationData,
     GooglePayPayPalCommerceGatewayParameters,
     GooglePayPayPalCommerceInitializationData,
     GooglePaySetExternalCheckoutData,
@@ -18,34 +20,42 @@ import { GooglePayConfig } from './types';
 
 export default class GooglePayPaypalCommerceGateway extends GooglePayGateway {
     private googlepayConfig?: GooglePayConfig;
-    private paymentMethod?: PaymentMethod<GooglePayPayPalCommerceInitializationData>;
+    private paymentMethod?: PaymentMethod<GooglePayInitializationData>;
+    private service: PaymentIntegrationService;
 
     constructor(
         service: PaymentIntegrationService,
         private paypalCommerceScriptLoader: PayPalCommerceScriptLoader,
     ) {
         super('paypalsb', service);
+
+        this.service = service;
     }
 
     async initialize(
         getPaymentMethod: () => PaymentMethod<GooglePayPayPalCommerceInitializationData>,
+        isBuyNowFlow?: boolean,
+        currencyCode?: string,
     ): Promise<void> {
-        await super.initialize(getPaymentMethod);
+        const currency = this.service.getState().getStoreConfig()?.currency.code ?? currencyCode;
 
-        this.paymentMethod = super.getPaymentMethod();
-
-        const { clientToken, initializationData } = this.paymentMethod;
-        const { merchantId, clientId } = initializationData || {};
-
-        if (!merchantId || !clientToken || !clientId) {
+        if (!currency) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this.googlepayConfig = await this.paypalCommerceScriptLoader.getGooglePayConfigOrThrow(
-            clientId,
-            merchantId,
-            clientToken,
-        );
+        await super.initialize(getPaymentMethod, isBuyNowFlow, currency);
+
+        this.paymentMethod = super.getPaymentMethod();
+
+        if (!this.paymentMethod.initializationData) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        assertsIsGooglePayPayPalCommercePaymentMethod(this.paymentMethod);
+
+        await this.paypalCommerceScriptLoader.getPayPalSDK(this.paymentMethod, currency);
+
+        this.googlepayConfig = await this.paypalCommerceScriptLoader.getGooglePayConfigOrThrow();
     }
 
     getPaymentGatewayParameters(): GooglePayPayPalCommerceGatewayParameters {

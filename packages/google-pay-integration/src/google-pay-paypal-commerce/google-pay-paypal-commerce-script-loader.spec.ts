@@ -1,25 +1,53 @@
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-    MissingDataError,
-    MissingDataErrorType,
+    PaymentMethod,
+    PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import isGooglePayPaypalCommercePaymentMethod from '../guards/is-google-pay-paypal-commerce-payment-method';
+import { getPayPalCommerce } from '../mocks/google-pay-payment-method.mock';
+import { GooglePayInitializationData } from '../types';
+
 import PayPalCommerceScriptLoader from './google-pay-paypal-commerce-script-loader';
-import { PayPalCommerceHostWindow } from './types';
+import { AllowedPaymentMethods, PayPalCommerceHostWindow } from './types';
 
 describe('PayPalCommerceScriptLoader', () => {
     let loader: ScriptLoader;
     let paypalLoader: PayPalCommerceScriptLoader;
+    let googlePayPaymentMethod: PaymentMethod<GooglePayInitializationData>;
+    let allowedPaymentMethodsMock: {
+        allowedPaymentMethods: Array<Omit<AllowedPaymentMethods, 'type' | 'parameters'>>;
+    };
 
     beforeEach(() => {
         loader = createScriptLoader();
         paypalLoader = new PayPalCommerceScriptLoader(loader);
+        googlePayPaymentMethod = getPayPalCommerce();
+        allowedPaymentMethodsMock = {
+            allowedPaymentMethods: [
+                {
+                    tokenizationSpecification: {
+                        type: 'type',
+                        parameters: {
+                            gatewayMerchantId: 'ID',
+                            gateway: 'paypalcommerce',
+                        },
+                    },
+                },
+            ],
+        };
 
-        jest.spyOn(paypalLoader, 'loadPayPalGooglePaySDK').mockResolvedValue({
+        const paypalSDK = {
             Googlepay: jest.fn().mockReturnValue({
-                config: jest.fn(),
+                config: jest.fn().mockResolvedValue(allowedPaymentMethodsMock),
             }),
+        };
+
+        jest.spyOn(paypalLoader, 'getPayPalSDK').mockImplementation(() => {
+            (window as PayPalCommerceHostWindow).paypal = paypalSDK;
+
+            return Promise.resolve(paypalSDK);
         });
     });
 
@@ -27,41 +55,15 @@ describe('PayPalCommerceScriptLoader', () => {
         (window as PayPalCommerceHostWindow).paypal = undefined;
     });
 
-    it('getPayPalGooglePaySdkOrThrow loads payPalSdk script', async () => {
-        await paypalLoader.getPayPalGooglePaySdkOrThrow('clientId', 'merchantId', 'clientToken');
+    it('getPayPalSDK loads payPalSdk script', async () => {
+        isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
 
-        expect(paypalLoader.loadPayPalGooglePaySDK).toHaveBeenCalledWith(
-            'clientId',
-            'merchantId',
-            'clientToken',
-        );
+        await paypalLoader.getPayPalSDK(googlePayPaymentMethod, 'USD');
+
+        expect(paypalLoader.getPayPalSDK).toHaveBeenCalled();
     });
 
-    it('getPayPalGooglePaySdkOrThrow throws an error if no arguments', async () => {
-        let err;
-
-        try {
-            await paypalLoader.getPayPalGooglePaySdkOrThrow();
-        } catch (e) {
-            err = e;
-        } finally {
-            expect(err).toStrictEqual(
-                new MissingDataError(MissingDataErrorType.MissingPaymentMethod),
-            );
-        }
-    });
-
-    it('getGooglePayConfigOrThrow loads payPalSdk script', async () => {
-        await paypalLoader.getGooglePayConfigOrThrow('clientId', 'merchantId', 'clientToken');
-
-        expect(paypalLoader.loadPayPalGooglePaySDK).toHaveBeenCalledWith(
-            'clientId',
-            'merchantId',
-            'clientToken',
-        );
-    });
-
-    it('getGooglePayConfigOrThrow throws an error if no arguments', async () => {
+    it('getPayPalSDK throws an error if client is not initialized', async () => {
         let err;
 
         try {
@@ -69,9 +71,17 @@ describe('PayPalCommerceScriptLoader', () => {
         } catch (e) {
             err = e;
         } finally {
-            expect(err).toStrictEqual(
-                new MissingDataError(MissingDataErrorType.MissingPaymentMethod),
-            );
+            expect(err).toBeInstanceOf(PaymentMethodClientUnavailableError);
         }
+    });
+
+    it('getGooglePayConfigOrThrow loads GooglePay config', async () => {
+        isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
+
+        await paypalLoader.getPayPalSDK(googlePayPaymentMethod, 'USD');
+
+        const config = await paypalLoader.getGooglePayConfigOrThrow();
+
+        expect(config).toEqual(expect.objectContaining(allowedPaymentMethodsMock));
     });
 });

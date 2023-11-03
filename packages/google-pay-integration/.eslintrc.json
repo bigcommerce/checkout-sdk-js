@@ -6,7 +6,9 @@
             "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
             "rules": {
                 "@typescript-eslint/naming-convention": "off",
-                "@typescript-eslint/no-unsafe-argument": "off"
+                "@typescript-eslint/no-unsafe-argument": "off",
+                "@typescript-eslint/no-unsafe-assignment": "off",
+                "@typescript-eslint/consistent-type-assertions": "off"
             }
         },
         {

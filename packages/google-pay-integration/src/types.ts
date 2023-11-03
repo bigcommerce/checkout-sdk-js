@@ -1,5 +1,40 @@
 import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { FundingType } from './google-pay-paypal-commerce/types';
+
+export enum PayPalCommerceIntent {
+    AUTHORIZE = 'authorize',
+    CAPTURE = 'capture',
+}
+
+export enum StyleButtonLabel {
+    paypal = 'paypal',
+    checkout = 'checkout',
+    buynow = 'buynow',
+    pay = 'pay',
+    installment = 'installment',
+}
+
+export enum StyleButtonColor {
+    gold = 'gold',
+    blue = 'blue',
+    silver = 'silver',
+    black = 'black',
+    white = 'white',
+}
+
+export enum StyleButtonShape {
+    pill = 'pill',
+    rect = 'rect',
+}
+
+export interface PayPalButtonStyleOptions {
+    color?: StyleButtonColor;
+    shape?: StyleButtonShape;
+    height?: number;
+    label?: StyleButtonLabel;
+}
+
 export interface GooglePayGatewayBaseRequest {
     apiVersion: 2;
     apiVersionMinor: 0;
@@ -246,6 +281,21 @@ interface GooglePayBaseInitializationData {
 export interface GooglePayPayPalCommerceInitializationData extends GooglePayBaseInitializationData {
     merchantId?: string;
     clientId?: string;
+    attributionId?: string;
+    availableAlternativePaymentMethods: FundingType;
+    buttonStyle?: PayPalButtonStyleOptions;
+    buyerCountry?: string;
+    clientToken?: string;
+    enabledAlternativePaymentMethods: FundingType;
+    isDeveloperModeApplicable?: boolean;
+    intent?: PayPalCommerceIntent;
+    isHostedCheckoutEnabled?: boolean;
+    isPayPalCreditAvailable?: boolean;
+    isVenmoEnabled?: boolean;
+    isGooglePayEnabled?: boolean;
+    orderId?: string;
+    shouldRenderFields?: boolean;
+    paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
 }
 
 export interface GooglePayAuthorizeNetInitializationData extends GooglePayBaseInitializationData {

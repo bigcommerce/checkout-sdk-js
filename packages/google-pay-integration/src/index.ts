@@ -22,3 +22,4 @@ export { default as createGooglePayBraintreeCustomerStrategy } from './factories
 export { default as createGooglePayPayPalCommerceCustomerStrategy } from './google-pay-paypal-commerce/create-google-pay-paypal-commerce-customer-strategy';
 
 export { default as createGooglePayBraintreeButtonStrategy } from './factories/button/create-google-pay-braintree-button-strategy';
+export { default as createGooglePayPayPalCommerceButtonStrategy } from './google-pay-paypal-commerce/create-google-pay-paypal-commerce-button-strategy';

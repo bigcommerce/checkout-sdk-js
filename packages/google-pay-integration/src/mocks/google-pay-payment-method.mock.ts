@@ -37,6 +37,10 @@ export function getPayPalCommerce(): PaymentMethod<GooglePayInitializationData> 
             ...generic.initializationData!,
             merchantId: 'merchantId',
             clientId: 'clientId',
+            attributionId: 'bc',
+            isVenmoEnabled: true,
+            isGooglePayEnabled: true,
+            isPayPalCreditAvailable: true,
         },
         clientToken: 'clientToken',
     };

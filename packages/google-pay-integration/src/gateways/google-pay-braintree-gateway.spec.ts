@@ -165,6 +165,7 @@ describe('GooglePayBraintreeGateway', () => {
 
         it('get nonce when 3DSecure is not enabled', async () => {
             const braintree = getBraintree();
+
             braintree.initializationData!.card_information = {
                 type: 'type',
                 number: '1234',
