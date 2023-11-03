@@ -57,17 +57,21 @@ export interface BirthDate {
 }
 
 export interface PayPalCommerceScriptParams {
-    'client-id'?: string;
-    'merchant-id'?: string;
-    'buyer-country'?: string;
-    'disable-funding'?: FundingType;
-    'enable-funding'?: EnableFundingType;
-    'data-client-token'?: string;
-    'data-partner-attribution-id'?: string;
-    currency?: string;
-    commit?: boolean;
-    intent?: PayPalCommerceIntent;
-    components?: ComponentsScriptType;
+    options: {
+        'client-id'?: string;
+        'merchant-id'?: string;
+        'buyer-country'?: string;
+        'disable-funding'?: FundingType;
+        'enable-funding'?: EnableFundingType;
+        currency?: string;
+        commit?: boolean;
+        intent?: PayPalCommerceIntent;
+        components?: ComponentsScriptType;
+    };
+    attributes: {
+        'data-client-token'?: string;
+        'data-partner-attribution-id'?: string;
+    };
 }
 
 export enum PayPalCommerceIntent {

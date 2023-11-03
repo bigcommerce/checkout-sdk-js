@@ -49,6 +49,7 @@ export default class PayPalCommerceIntegrationService {
         methodId: string,
         providedCurrencyCode?: string,
         initializesOnCheckoutPage?: boolean,
+        forceLoad?: boolean,
     ): Promise<PayPalSDK> {
         const state = this.paymentIntegrationService.getState();
         const currencyCode = providedCurrencyCode || state.getCartOrThrow().currency.code;
@@ -59,6 +60,7 @@ export default class PayPalCommerceIntegrationService {
             paymentMethod,
             currencyCode,
             initializesOnCheckoutPage,
+            forceLoad,
         );
 
         return this.paypalSdk;
