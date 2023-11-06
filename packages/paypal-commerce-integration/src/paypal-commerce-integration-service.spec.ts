@@ -91,11 +91,12 @@ describe('PayPalCommerceIntegrationService', () => {
 
     describe('#loadPayPalSdk', () => {
         it('loads paypal sdk', async () => {
-            const output = await subject.loadPayPalSdk(defaultMethodId, undefined, false);
+            const output = await subject.loadPayPalSdk(defaultMethodId, undefined, false, false);
 
             expect(paypalCommerceScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
                 paymentMethod,
                 cart.currency.code,
+                false,
                 false,
             );
             expect(output).toBe(paypalSdk);
@@ -107,11 +108,13 @@ describe('PayPalCommerceIntegrationService', () => {
                 defaultMethodId,
                 providedCurrencyCode,
                 false,
+                false,
             );
 
             expect(paypalCommerceScriptLoader.getPayPalSDK).toHaveBeenCalledWith(
                 paymentMethod,
                 providedCurrencyCode,
+                false,
                 false,
             );
             expect(output).toBe(paypalSdk);

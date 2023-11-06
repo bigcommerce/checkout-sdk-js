@@ -82,7 +82,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         this.isCreditCardForm = isCreditCardFormFields(form.fields);
 
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
-        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
+        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, undefined, true, true);
 
         await this.renderFields(form);
     }

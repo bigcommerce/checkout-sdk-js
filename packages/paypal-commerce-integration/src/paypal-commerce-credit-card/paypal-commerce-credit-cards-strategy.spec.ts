@@ -168,7 +168,12 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         it('loads paypal sdk', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(methodId);
+            expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
+                methodId,
+                undefined,
+                true,
+                true,
+            );
         });
     });
 

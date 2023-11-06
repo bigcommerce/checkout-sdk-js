@@ -21,24 +21,13 @@ describe('PayPalCommerceScriptLoader', () => {
     let paymentMethod: PaymentMethod;
     let paypalLoadScript: (options: PayPalCommerceScriptParams) => Promise<{ paypal: PayPalSDK }>;
 
-    const paypalCdn = 'https://unpkg.com/@paypal/paypal-js@5.0.5/dist/iife/paypal-js.min.js';
-    const paypalScriptOptions = { async: true, attributes: {} };
-
     beforeEach(() => {
         loader = createScriptLoader();
         paymentMethod = getPayPalCommercePaymentMethod();
         paypalSdk = getPayPalSDKMock();
-        paypalLoadScript = jest.fn(
-            () =>
-                new Promise((resolve) => {
-                    (window as PayPalCommerceHostWindow).paypal = paypalSdk;
-
-                    return resolve({ paypalSdk });
-                }),
-        );
 
         jest.spyOn(loader, 'loadScript').mockImplementation(() => {
-            (window as PayPalCommerceHostWindow).paypalLoadScript = paypalLoadScript;
+            (window as PayPalCommerceHostWindow).paypal = paypalSdk;
 
             return Promise.resolve();
         });
@@ -64,76 +53,65 @@ describe('PayPalCommerceScriptLoader', () => {
         }
     });
 
-    it('loads PayPalSDK script with default configuration', async () => {
+    it('loads PayPalSDK with default configuration', async () => {
         const output = await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
 
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
-            commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'USD',
-            intent: 'capture',
         };
 
-        expect(loader.loadScript).toHaveBeenCalledWith(paypalCdn, paypalScriptOptions);
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
         expect(output).toEqual(paypalSdk);
     });
 
-    it('loads PayPalSDK script every time even if it calls couple times', async () => {
+    it('loads PayPalSDK script every time if force load flag is provided', async () => {
         const paypalCommerceCreditPaymentMethod = {
             ...paymentMethod,
-            id: 'paypalcommercecredit',
+            id: 'paypalcommercecreditcard',
         };
 
         await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
-        await paypalLoader.getPayPalSDK(paypalCommerceCreditPaymentMethod, 'USD');
+        await paypalLoader.getPayPalSDK(paypalCommerceCreditPaymentMethod, 'USD', false, true);
 
-        expect(loader.loadScript).toHaveBeenCalledTimes(1);
-        expect(paypalLoadScript).toHaveBeenCalledTimes(2);
+        expect(loader.loadScript).toHaveBeenCalledTimes(2);
     });
 
     it('loads PayPalSDK script with EUR currency', async () => {
         await paypalLoader.getPayPalSDK(paymentMethod, 'EUR');
 
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=EUR&intent=capture';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
-            commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'EUR',
-            intent: 'capture',
         };
 
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
     });
 
     it('loads PayPalCommerce script with disabled card funding', async () => {
         await paypalLoader.getPayPalSDK(paymentMethod, 'USD');
 
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
-            commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'USD',
-            intent: 'capture',
         };
 
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
     });
 
     it('loads PayPalCommerce script with enabled credit funding', async () => {
@@ -147,20 +125,17 @@ describe('PayPalCommerceScriptLoader', () => {
 
         await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=credit%2Cpaylater&disable-funding=card%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'venmo'],
-            'enable-funding': ['credit', 'paylater'],
-            commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'USD',
-            intent: 'capture',
         };
 
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
     });
 
     it('loads PayPalCommerce script with disabled credit funding', async () => {
@@ -174,20 +149,17 @@ describe('PayPalCommerceScriptLoader', () => {
 
         await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
-            commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'USD',
-            intent: 'capture',
         };
 
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
     });
 
     it('loads PayPalCommerce script with enabled Venmo funding', async () => {
@@ -201,20 +173,17 @@ describe('PayPalCommerceScriptLoader', () => {
 
         await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=venmo&disable-funding=card%2Ccredit%2Cpaylater&commit=true&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater'],
-            'enable-funding': ['venmo'],
-            commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'USD',
-            intent: 'capture',
         };
 
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
     });
 
     it('loads PayPalCommerce script with disabled Venmo funding', async () => {
@@ -228,20 +197,17 @@ describe('PayPalCommerceScriptLoader', () => {
 
         await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
-            commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'USD',
-            intent: 'capture',
         };
 
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
     });
 
     it('loads PayPalCommerce script with enabled several APMs', async () => {
@@ -263,20 +229,17 @@ describe('PayPalCommerceScriptLoader', () => {
 
         await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD');
 
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=bancontact%2Cgiropay%2Cideal&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo%2Cmybank%2Csofort%2Csepa&commit=true&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo', 'mybank', 'sofort', 'sepa'],
-            'enable-funding': ['bancontact', 'giropay', 'ideal'],
-            commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'USD',
-            intent: 'capture',
         };
 
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
     });
 
     it('loads PayPalSDK script with disabled all APMs', async () => {
@@ -299,69 +262,49 @@ describe('PayPalCommerceScriptLoader', () => {
 
         await paypalLoader.getPayPalSDK(paymentMethodProp, 'USD', false);
 
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo%2Cbancontact%2Cgiropay%2Cideal%2Cmybank%2Csofort%2Csepa&commit=true&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': [
-                'card',
-                'credit',
-                'paylater',
-                'venmo',
-                'bancontact',
-                'giropay',
-                'ideal',
-                'mybank',
-                'sofort',
-                'sepa',
-            ],
-            'enable-funding': undefined,
-            commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'USD',
-            intent: 'capture',
         };
 
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
     });
 
     it('loads PayPalSDK script with commit flag as true', async () => {
         await paypalLoader.getPayPalSDK(paymentMethod, 'USD', true);
 
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
-            commit: true,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'USD',
-            intent: 'capture',
         };
 
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
     });
 
     it('loads PayPalSDK script with commit flag as false', async () => {
         await paypalLoader.getPayPalSDK(paymentMethod, 'USD', false);
 
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
-            commit: false,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'USD',
-            intent: 'capture',
         };
 
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
     });
 
     it('successfully loads PayPalSDK script with commit flag as false if Skip Checkout feature off', async () => {
@@ -375,20 +318,17 @@ describe('PayPalCommerceScriptLoader', () => {
 
         await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', false);
 
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
-            commit: false,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'USD',
-            intent: 'capture',
         };
 
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
     });
 
     it('successfully enables all provided funding sources', async () => {
@@ -407,20 +347,17 @@ describe('PayPalCommerceScriptLoader', () => {
 
         await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', false);
 
-        const paypalSdkLoaderOptions = {
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': undefined,
-            'enable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            commit: false,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'USD',
-            intent: 'capture',
         };
 
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
     });
 
     it('successfully loads paypal sdk with dev configuration', async () => {
@@ -436,21 +373,41 @@ describe('PayPalCommerceScriptLoader', () => {
 
         await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', false);
 
-        const paypalSdkLoaderOptions = {
-            'buyer-country': 'UA',
-            'client-id': paymentMethod.initializationData.clientId,
-            'merchant-id': paymentMethod.initializationData.merchantId,
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture&buyer-country=UA';
+        const paypalSdkAttributes = {
             'data-client-token': paymentMethod.clientToken,
             'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
-            'disable-funding': ['card', 'credit', 'paylater', 'venmo'],
-            'enable-funding': undefined,
-            commit: false,
-            components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
-            currency: 'USD',
-            intent: 'capture',
         };
 
-        expect(paypalLoadScript).toHaveBeenCalledWith(paypalSdkLoaderOptions);
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
+    });
+
+    it('successfully loads paypal sdk without nil values in configuration', async () => {
+        const paymentMethodMock = {
+            ...paymentMethod,
+            clientToken: '',
+            id: 'paypalcommerce',
+            initializationData: {
+                ...paymentMethod.initializationData,
+                attributionId: '',
+                merchantId: null,
+            },
+        };
+
+        await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', false);
+
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=false&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal&currency=USD&intent=capture';
+        const paypalSdkAttributes = {};
+
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
     });
 
     it('throw error if unable to load Paypal script', async () => {
