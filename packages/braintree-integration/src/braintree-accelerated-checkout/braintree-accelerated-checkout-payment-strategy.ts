@@ -23,6 +23,8 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
+import isBraintreeAcceleratedCheckoutCustomer from '../is-braintree-accelerated-checkout-customer';
+
 import { WithBraintreeAcceleratedCheckoutPaymentInitializeOptions } from './braintree-accelerated-checkout-payment-initialize-options';
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
 
@@ -266,12 +268,16 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
 
     private isPayPalCommerceInstrument(instrumentId: string): boolean {
         const state = this.paymentIntegrationService.getState();
-        const { instruments } = state.getPaymentProviderCustomerOrThrow();
+        const customer = state.getPaymentProviderCustomerOrThrow();
 
-        const paypalConnectInstruments = instruments || [];
+        if (isBraintreeAcceleratedCheckoutCustomer(customer)) {
+            const paypalConnectInstruments = customer.instruments || [];
 
-        return !!paypalConnectInstruments.find(
-            (instrument) => instrument.bigpayToken === instrumentId,
-        );
+            return !!paypalConnectInstruments.find(
+                (instrument) => instrument.bigpayToken === instrumentId,
+            );
+        }
+
+        return false;
     }
 }
