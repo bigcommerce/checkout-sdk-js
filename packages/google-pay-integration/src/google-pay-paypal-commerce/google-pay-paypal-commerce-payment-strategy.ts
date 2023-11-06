@@ -68,8 +68,8 @@ export default class GooglePayPaypalCommercePaymentStrategy extends GooglePayPay
             };
 
             await this._paymentIntegrationService.submitPayment({
-                methodId: payment.methodId,
                 paymentData,
+                methodId: payment.methodId,
             });
         } catch (error) {
             await this._googlePayPaymentProcessor.processAdditionalAction(error);
