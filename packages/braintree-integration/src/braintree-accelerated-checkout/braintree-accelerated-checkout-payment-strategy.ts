@@ -1,5 +1,6 @@
 import {
     BraintreeConnectAddress,
+    BraintreeConnectAuthenticationState,
     BraintreeConnectCardComponent,
     BraintreeConnectCardComponentOptions,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -244,6 +245,13 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
         const paymentProviderCustomer = state.getPaymentProviderCustomer();
 
         const paypalConnectSessionId = this.browserStorage.getItem('sessionId');
+
+        if (
+            paymentProviderCustomer?.authenticationState ===
+            BraintreeConnectAuthenticationState.CANCELED
+        ) {
+            return false;
+        }
 
         return !paymentProviderCustomer?.authenticationState && paypalConnectSessionId === cart.id;
     }

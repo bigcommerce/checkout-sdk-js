@@ -107,8 +107,6 @@ export default class BraintreeAcceleratedCheckoutUtils {
 
             const { customerContextId } = await lookupCustomerByEmail(customerEmail);
 
-            this.browserStorage.setItem('sessionId', cart.id);
-
             if (!customerContextId) {
                 // Info: we should clean up previous experience with default data and related authenticationState
                 await this.paymentIntegrationService.updatePaymentProviderCustomer({
@@ -117,12 +115,26 @@ export default class BraintreeAcceleratedCheckoutUtils {
                     instruments: [],
                 });
 
+                this.browserStorage.setItem('sessionId', cart.id);
+
                 return;
             }
 
             const { authenticationState, profileData } = await triggerAuthenticationFlow(
                 customerContextId,
             );
+
+            if (authenticationState === BraintreeConnectAuthenticationState.CANCELED) {
+                await this.paymentIntegrationService.updatePaymentProviderCustomer({
+                    authenticationState,
+                    addresses: [],
+                    instruments: [],
+                });
+
+                this.browserStorage.removeItem('sessionId');
+
+                return;
+            }
 
             const shippingAddresses =
                 this.mapPayPalToBcAddress(profileData.addresses, profileData.phones) || [];
@@ -134,6 +146,8 @@ export default class BraintreeAcceleratedCheckoutUtils {
                 shippingAddresses,
                 billingAddresses,
             );
+
+            this.browserStorage.setItem('sessionId', cart.id);
 
             await this.paymentIntegrationService.updatePaymentProviderCustomer({
                 authenticationState,

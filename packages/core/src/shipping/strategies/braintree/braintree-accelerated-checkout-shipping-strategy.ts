@@ -2,6 +2,7 @@ import { isEqual, omit } from 'lodash';
 
 import {
     BraintreeConnectAddress,
+    BraintreeConnectAuthenticationState,
     BraintreeConnectPhone,
     BraintreeConnectProfileData,
     BraintreeConnectStylesOption,
@@ -96,10 +97,17 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
     private _shouldRunAuthenticationFlow(): boolean {
         const state = this._store.getState();
         const cartId = state.cart.getCart()?.id;
-        const payPalConnectSessionId = this._browserStorage.getItem('sessionId');
+        const paypalConnectSessionId = this._browserStorage.getItem('sessionId');
         const paymentProviderCustomer = state.paymentProviderCustomer.getPaymentProviderCustomer();
 
-        return !paymentProviderCustomer?.authenticationState && payPalConnectSessionId === cartId;
+        if (
+            paymentProviderCustomer?.authenticationState ===
+            BraintreeConnectAuthenticationState.CANCELED
+        ) {
+            return false;
+        }
+
+        return !paymentProviderCustomer?.authenticationState && paypalConnectSessionId === cartId;
     }
 
     private async _runAuthenticationFlowOrThrow(
@@ -144,6 +152,20 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
         const { authenticationState, profileData } = await triggerAuthenticationFlow(
             customerContextId,
         );
+
+        if (authenticationState === BraintreeConnectAuthenticationState.CANCELED) {
+            await this._store.dispatch(
+                this._paymentProviderCustomerActionCreator.updatePaymentProviderCustomer({
+                    authenticationState,
+                    addresses: [],
+                    instruments: [],
+                }),
+            );
+
+            this._browserStorage.removeItem('sessionId');
+
+            return;
+        }
 
         const shippingAddresses =
             this._mapPayPalToBcAddress(profileData.addresses, countries, profileData.phones) || [];
