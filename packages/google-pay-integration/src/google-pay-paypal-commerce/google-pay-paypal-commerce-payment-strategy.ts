@@ -85,13 +85,13 @@ export default class GooglePayPaypalCommercePaymentStrategy extends GooglePayPay
 
         const currencyCode = state.getCartOrThrow().currency.code;
 
-        const googlePayPayPalSdk = await this._paypalCommerceScriptLoader.getPayPalSDK(
+        const payPalSDK = await this._paypalCommerceScriptLoader.getPayPalSDK(
             paymentMethod,
             currencyCode,
             true,
         );
 
-        const { status } = await googlePayPayPalSdk
+        const { status } = await payPalSDK
             .Googlepay()
             .confirmOrder({ orderId, paymentMethodData: confirmOrderData });
 

@@ -9,7 +9,6 @@ import GooglePayGateway from '../gateways/google-pay-gateway';
 import assertsIsGooglePayPayPalCommercePaymentMethod from '../guards/is-google-pay-paypal-commerce-payment-method';
 import {
     GooglePayCardDataResponse,
-    GooglePayInitializationData,
     GooglePayPayPalCommerceGatewayParameters,
     GooglePayPayPalCommerceInitializationData,
     GooglePaySetExternalCheckoutData,
@@ -20,7 +19,6 @@ import { GooglePayConfig } from './types';
 
 export default class GooglePayPaypalCommerceGateway extends GooglePayGateway {
     private googlepayConfig?: GooglePayConfig;
-    private paymentMethod?: PaymentMethod<GooglePayInitializationData>;
     private service: PaymentIntegrationService;
 
     constructor(
@@ -45,15 +43,15 @@ export default class GooglePayPaypalCommerceGateway extends GooglePayGateway {
 
         await super.initialize(getPaymentMethod, isBuyNowFlow, currency);
 
-        this.paymentMethod = super.getPaymentMethod();
+        const paymentMethod = super.getPaymentMethod();
 
-        if (!this.paymentMethod.initializationData) {
+        if (!paymentMethod.initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        assertsIsGooglePayPayPalCommercePaymentMethod(this.paymentMethod);
+        assertsIsGooglePayPayPalCommercePaymentMethod(paymentMethod);
 
-        await this.paypalCommerceScriptLoader.getPayPalSDK(this.paymentMethod, currency);
+        await this.paypalCommerceScriptLoader.getPayPalSDK(paymentMethod, currency);
 
         this.googlepayConfig = await this.paypalCommerceScriptLoader.getGooglePayConfigOrThrow();
     }

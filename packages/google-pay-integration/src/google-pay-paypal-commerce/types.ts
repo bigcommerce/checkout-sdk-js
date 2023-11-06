@@ -19,7 +19,6 @@ export interface PayPalSDK {
 
 export interface PayPalCommerceHostWindow extends Window {
     paypal?: PayPalSDK;
-    paypalLoadScript?(options: PayPalCommerceScriptParams): Promise<{ paypal: PayPalSDK }>;
 }
 
 export interface PayPalCommerceScriptParams {
