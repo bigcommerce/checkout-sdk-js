@@ -64,7 +64,9 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             initializationData: { stripePublishableKey, stripeConnectedAccount },
         } = paymentMethod as StripeUPEPaymentMethod;
 
-        const { email, isStripeLinkAuthenticated } = state.getCustomerOrThrow();
+        const { email } = state.getCustomerOrThrow();
+
+        const { authenticationState } = state.getPaymentProviderCustomerOrThrow();
 
         if (!email) {
             if (!stripePublishableKey || !clientToken) {
@@ -123,10 +125,9 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                     throw new MissingDataError(MissingDataErrorType.MissingCustomer);
                 }
 
-                // createAction('STRIPE_LINK_AUTHENTICATED', event.authenticated);
-
-                // metoda stripeLinkAuthenticatedAction będzie dostępna po mergu PI-811
-                // this.paymentIntegrationService.stripeLinkAuthenticatedAction(event.authenticated);
+                this.paymentIntegrationService.updatePaymentProviderCustomer({
+                    authenticationState: event.authenticated,
+                });
 
                 if (event.complete) {
                     onEmailChange(event.authenticated, event.value.email);
@@ -138,7 +139,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                     isLoading(false);
                 }
 
-                if (isStripeLinkAuthenticated === undefined && event.authenticated && id) {
+                if (authenticationState === undefined && event.authenticated && id) {
                     this.paymentIntegrationService.deleteConsignment(id);
                 }
             });

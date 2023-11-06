@@ -24,6 +24,8 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
+// import isBraintreeAcceleratedCheckoutCustomer from '../is-braintree-accelerated-checkout-customer';
+
 import { WithBraintreeAcceleratedCheckoutPaymentInitializeOptions } from './braintree-accelerated-checkout-payment-initialize-options';
 import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
 
