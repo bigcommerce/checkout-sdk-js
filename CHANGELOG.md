@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.479.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.479.0...v1.479.1) (2023-11-06)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-3164 updated paypal sdk script loading in a new way ([#2243](https://github.com/bigcommerce/checkout-sdk-js/issues/2243)) ([273b209](https://github.com/bigcommerce/checkout-sdk-js/commit/273b2093643ceab3b48ca15a5078ce0e46830cd3))
+
 ## [1.479.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.478.1...v1.479.0) (2023-11-02)
 
 
