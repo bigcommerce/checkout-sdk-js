@@ -211,7 +211,8 @@ interface StripeV3Intent {
     confirm: boolean;
 }
 
-interface StripeUPEIntent {
+export interface StripeUPEIntent {
+    cart_id: string;
     credit_card_token: {
         token: string;
     };

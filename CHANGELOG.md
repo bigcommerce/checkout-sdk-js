@@ -2,6 +2,56 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.479.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.479.0...v1.479.1) (2023-11-06)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-3164 updated paypal sdk script loading in a new way ([#2243](https://github.com/bigcommerce/checkout-sdk-js/issues/2243)) ([273b209](https://github.com/bigcommerce/checkout-sdk-js/commit/273b2093643ceab3b48ca15a5078ce0e46830cd3))
+
+## [1.479.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.478.1...v1.479.0) (2023-11-02)
+
+
+### Features
+
+* **payment:** PI-846 Quickly selecting different payment methods on Payment step of Checkout sometimes results in error ([#2241](https://github.com/bigcommerce/checkout-sdk-js/issues/2241)) ([797a91b](https://github.com/bigcommerce/checkout-sdk-js/commit/797a91b1a4aaa2160565691fa31d8d9df19c12ec))
+
+### [1.478.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.478.0...v1.478.1) (2023-11-01)
+
+
+### Bug Fixes
+
+* **payment:** PI-924 Add additional  message while waiting confirmation from Stripe ([fd9be99](https://github.com/bigcommerce/checkout-sdk-js/commit/fd9be99af19079a0ff72ec2f270367e36e9a700b))
+
+## [1.478.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.477.0...v1.478.0) (2023-10-30)
+
+
+### Features
+
+* **payment:** PAYPAL-3156 updated payment payload to be able to vault instrument for PayPalCommerce Credit Card ([#2240](https://github.com/bigcommerce/checkout-sdk-js/issues/2240)) ([f36720a](https://github.com/bigcommerce/checkout-sdk-js/commit/f36720ac525844c20667e51632700d319c016233))
+
+## [1.477.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.476.0...v1.477.0) (2023-10-30)
+
+
+### Features
+
+* **payment:** PAYPAL-2877 Add deviceSessionId to submitPayment ([#2234](https://github.com/bigcommerce/checkout-sdk-js/issues/2234)) ([b34c920](https://github.com/bigcommerce/checkout-sdk-js/commit/b34c9200d85772acfa0ff6f5099db709f491ad5f))
+* **payment:** PAYPAL-3133 inline ([5e4776e](https://github.com/bigcommerce/checkout-sdk-js/commit/5e4776ece9eb55f5ba0100ce798a26584cd09478))
+
+## [1.476.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.475.0...v1.476.0) (2023-10-30)
+
+
+### Features
+
+* **payment:** PAYPAL-3146 stop polling mechanism when corresponding status recieved ([#2239](https://github.com/bigcommerce/checkout-sdk-js/issues/2239)) ([0b7ca82](https://github.com/bigcommerce/checkout-sdk-js/commit/0b7ca82293d5afa9ab10248ad907e799d34369b0))
+
+## [1.475.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.474.0...v1.475.0) (2023-10-25)
+
+
+### Features
+
+* **payment:** PI-976 Stripe UPE payment payload refactoring ([41e7ed2](https://github.com/bigcommerce/checkout-sdk-js/commit/41e7ed25cf90e05b4c700363d4eb4bb4a75a88f5))
+
 ## [1.474.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.473.0...v1.474.0) (2023-10-24)
 
 

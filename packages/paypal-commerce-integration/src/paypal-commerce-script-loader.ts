@@ -16,8 +16,6 @@ import {
     PayPalSDK,
 } from './paypal-commerce-types';
 
-const PAYPAL_SDK_VERSION = '5.0.5';
-
 export default class PayPalCommerceScriptLoader {
     private window: PayPalCommerceHostWindow;
 
@@ -29,30 +27,35 @@ export default class PayPalCommerceScriptLoader {
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
         initializesOnCheckoutPage?: boolean,
+        forceLoad?: boolean,
     ): Promise<PayPalSDK> {
-        return this.loadPayPalSDK(
-            this.getPayPalSdkScriptConfigOrThrow(
-                paymentMethod,
-                currencyCode,
-                initializesOnCheckoutPage,
-            ),
+        const paypalSdkScriptConfig = this.getPayPalSdkScriptConfigOrThrow(
+            paymentMethod,
+            currencyCode,
+            initializesOnCheckoutPage,
         );
+
+        return this.loadPayPalSDK(paypalSdkScriptConfig, forceLoad);
     }
 
     private async loadPayPalSDK(
         paypalSdkScriptConfig: PayPalCommerceScriptParams,
+        forceLoad = false,
     ): Promise<PayPalSDK> {
-        if (!this.window.paypalLoadScript) {
-            const scriptSrc = `https://unpkg.com/@paypal/paypal-js@${PAYPAL_SDK_VERSION}/dist/iife/paypal-js.min.js`;
+        if (!this.window.paypal || forceLoad) {
+            const options = this.transformConfig<PayPalCommerceScriptParams['options']>(
+                paypalSdkScriptConfig.options,
+            );
+            const attributes = this.transformConfig<PayPalCommerceScriptParams['attributes']>(
+                paypalSdkScriptConfig.attributes,
+            );
 
-            await this.scriptLoader.loadScript(scriptSrc, { async: true, attributes: {} });
+            const paypalSdkUrl = 'https://www.paypal.com/sdk/js';
+            const scriptQuery = new URLSearchParams(options).toString();
+            const scriptSrc = `${paypalSdkUrl}?${scriptQuery}`;
 
-            if (!this.window.paypalLoadScript) {
-                throw new PaymentMethodClientUnavailableError();
-            }
+            await this.scriptLoader.loadScript(scriptSrc, { async: true, attributes });
         }
-
-        await this.window.paypalLoadScript(paypalSdkScriptConfig);
 
         if (!this.window.paypal) {
             throw new PaymentMethodClientUnavailableError();
@@ -121,24 +124,47 @@ export default class PayPalCommerceScriptLoader {
         ];
 
         return {
-            'client-id': clientId,
-            'data-partner-attribution-id': attributionId,
-            'data-client-token': clientToken,
-            'merchant-id': merchantId,
-            'enable-funding': enableFunding.length > 0 ? enableFunding : undefined,
-            'disable-funding': disableFunding.length > 0 ? disableFunding : undefined,
-            commit,
-            components: [
-                'buttons',
-                'hosted-fields',
-                'messages',
-                'payment-fields',
-                'legal',
-                ...googlePayComponent,
-            ],
-            currency: currencyCode,
-            intent,
-            ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
+            options: {
+                'client-id': clientId,
+                'merchant-id': merchantId,
+                'enable-funding': enableFunding.length > 0 ? enableFunding : undefined,
+                'disable-funding': disableFunding.length > 0 ? disableFunding : undefined,
+                commit,
+                components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal', ...googlePayComponent],
+                currency: currencyCode,
+                intent,
+                ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
+            },
+            attributes: {
+                'data-partner-attribution-id': attributionId,
+                'data-client-token': clientToken,
+            },
         };
+    }
+
+    private transformConfig<T extends Record<string, unknown>>(config: T): Record<string, string> {
+        let transformedConfig = {};
+
+        const keys = Object.keys(config) as Array<keyof T>;
+
+        keys.forEach((key) => {
+            const value = config[key];
+
+            if (
+                value === undefined ||
+                value === null ||
+                value === '' ||
+                (Array.isArray(value) && value.length === 0)
+            ) {
+                return;
+            }
+
+            transformedConfig = {
+                ...transformedConfig,
+                [key]: Array.isArray(value) ? value.join(',') : value,
+            };
+        });
+
+        return transformedConfig;
     }
 }

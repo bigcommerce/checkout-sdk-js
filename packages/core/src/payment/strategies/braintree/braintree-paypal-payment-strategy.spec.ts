@@ -182,7 +182,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 style: {
                     layout: 'text',
                     logo: {
-                        type: 'none',
+                        type: 'inline',
                     },
                 },
             });

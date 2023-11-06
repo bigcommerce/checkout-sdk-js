@@ -331,11 +331,16 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
             );
 
             const isOrderApproved = orderStatus === PayPalOrderStatus.PollingStop;
+            const isPollingError = orderStatus === PayPalOrderStatus.PollingError;
 
             if (isOrderApproved) {
                 this.deinitializePollingMechanism();
 
                 return resolvePromise();
+            }
+
+            if (isPollingError) {
+                return rejectPromise();
             }
 
             if (!isOrderApproved && this.pollingTimer < MAX_POLLING_TIME) {

@@ -298,7 +298,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                     style: {
                         layout: 'text',
                         logo: {
-                            type: 'none',
+                            type: 'inline',
                         },
                     },
                 })

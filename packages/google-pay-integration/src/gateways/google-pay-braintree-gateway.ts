@@ -103,6 +103,12 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
         return nonce;
     }
 
+    async extraPaymentData() {
+        return {
+            deviceSessionId: await this._getBraintreeDeviceData(),
+        };
+    }
+
     async mapToExternalCheckoutData(
         response: GooglePayCardDataResponse,
     ): Promise<GooglePaySetExternalCheckoutData> {
@@ -134,6 +140,12 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
         }
 
         return this._paymentGatewayParameters;
+    }
+
+    private async _getBraintreeDeviceData() {
+        const data = await this._braintreeService.getDataCollector();
+
+        return data.deviceData;
     }
 
     private _braintreePresent3DSChallenge(
