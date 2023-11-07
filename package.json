@@ -71,7 +71,7 @@
     "lodash": "^4.17.15",
     "messageformat": "^2.3.0",
     "query-string": "^7.1.1",
-    "reselect": "^4.1.7",
+    "reselect": "^4.1.8",
     "rxjs": "^6.6.7",
     "shallowequal": "^1.1.0",
     "tslib": "^1.10.0",
