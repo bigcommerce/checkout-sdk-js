@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.479.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.479.2...v1.479.3) (2023-11-07)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-000 upgrade @braintree/browser-detection from 1.14.0 to 1.16.0 ([#2047](https://github.com/bigcommerce/checkout-sdk-js/issues/2047)) ([e60625c](https://github.com/bigcommerce/checkout-sdk-js/commit/e60625cdc644ef9dac677950ff868181ef13c3e6))
+* **common:** CHECKOUT-000 upgrade core-js from 3.25.2 to 3.31.0 ([#2046](https://github.com/bigcommerce/checkout-sdk-js/issues/2046)) ([36d6b3d](https://github.com/bigcommerce/checkout-sdk-js/commit/36d6b3d6021620ecf462779dfeb5c6a78403500d))
+* **common:** CHECKOUT-000 upgrade reselect from 4.1.7 to 4.1.8 ([#2048](https://github.com/bigcommerce/checkout-sdk-js/issues/2048)) ([ae07833](https://github.com/bigcommerce/checkout-sdk-js/commit/ae078335f9e8f90856f1069bea3aa76100f6e9b6))
+
 ### [1.479.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.479.1...v1.479.2) (2023-11-07)
 
 
