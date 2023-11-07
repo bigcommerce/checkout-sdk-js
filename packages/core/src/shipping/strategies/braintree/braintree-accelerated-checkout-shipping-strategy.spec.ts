@@ -1,4 +1,5 @@
 import {
+    BraintreeConnectAuthenticationState,
     BraintreeIntegrationService,
     getBraintreeConnectProfileDataMock,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -134,6 +135,7 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
             ...getBillingAddress(),
         });
         jest.spyOn(BrowserStorage.prototype, 'getItem').mockReturnValue(getCart().id);
+        jest.spyOn(BrowserStorage.prototype, 'removeItem').mockImplementation(jest.fn());
         jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeConnect').mockReturnValue({
             identity: {
                 lookupCustomerByEmail: () => ({ customerContextId: 'customerContextId' }),
@@ -228,6 +230,25 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
             expect(loadPaymentMethodMock).not.toHaveBeenCalled();
         });
 
+        it('should not run authentication flow if the OPT window was canceled/closed before', async () => {
+            const loadPaymentMethodMock = jest.fn();
+
+            jest.spyOn(
+                store.getState().paymentProviderCustomer,
+                'getPaymentProviderCustomer',
+            ).mockReturnValue({
+                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
+                addresses: [],
+                instruments: [],
+            });
+
+            const strategy = createStrategy();
+
+            await strategy.initialize(defaultOptions);
+
+            expect(loadPaymentMethodMock).not.toHaveBeenCalled();
+        });
+
         it('should not run authentication flow if PayPal session id is different', async () => {
             const loadPaymentMethodMock = jest.fn();
 
@@ -283,11 +304,9 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
             const triggerAuthenticationFlowMock = jest.fn();
 
             jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeConnect').mockReturnValue({
-                braintreeConnect: {
-                    identity: {
-                        lookupCustomerByEmail: lookupCustomerByEmailMock,
-                        triggerAuthenticationFlow: triggerAuthenticationFlowMock,
-                    },
+                identity: {
+                    lookupCustomerByEmail: lookupCustomerByEmailMock,
+                    triggerAuthenticationFlow: triggerAuthenticationFlowMock,
                 },
             });
 
@@ -298,23 +317,39 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
             expect(triggerAuthenticationFlowMock).not.toHaveBeenCalled();
         });
 
-        it('skip authentication if customerContextId does not exist', async () => {
-            const triggerAuthenticationFlowMock = jest.fn();
+        it('update payment provider customer with canceled authentication state if the OTP was canceled', async () => {
+            const updatePaymentProviderCustomerMock = jest.fn();
+            const lookupCustomerByEmailMock = () => ({ customerContextId: 'asd' });
+            const triggerAuthenticationFlowMock = jest.fn().mockImplementation(() => ({
+                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
+                profileData: {},
+            }));
 
-            jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeConnect').mockReturnValue({
-                braintreeConnect: {
+            jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeConnect').mockImplementation(
+                () => ({
                     identity: {
-                        lookupCustomerByEmail: () => ({ customerContextId: undefined }),
+                        lookupCustomerByEmail: lookupCustomerByEmailMock,
                         triggerAuthenticationFlow: triggerAuthenticationFlowMock,
                     },
-                },
-            });
+                }),
+            );
+
+            jest.spyOn(
+                paymentProviderCustomerActionCreator,
+                'updatePaymentProviderCustomer',
+            ).mockImplementation(updatePaymentProviderCustomerMock);
 
             const strategy = createStrategy();
 
             await strategy.initialize(defaultOptions);
 
-            expect(triggerAuthenticationFlowMock).not.toHaveBeenCalled();
+            expect(triggerAuthenticationFlowMock).toHaveBeenCalled();
+            expect(BrowserStorage.prototype.removeItem).toHaveBeenCalledWith('sessionId');
+            expect(updatePaymentProviderCustomerMock).toHaveBeenCalledWith({
+                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
+                addresses: [],
+                instruments: [],
+            });
         });
 
         it('update billing address for digital product', async () => {

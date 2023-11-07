@@ -328,7 +328,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             await subject.initializeBraintreeConnectOrThrow(methodId);
             await subject.runPayPalConnectAuthenticationFlowOrThrow();
 
-            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
+            expect(browserStorage.removeItem).toHaveBeenCalledWith('sessionId');
             expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
                 updatePaymentProviderCustomerPayload,

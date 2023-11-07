@@ -184,6 +184,21 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
             ).not.toHaveBeenCalled();
         });
 
+        it('should not authenticate user if OTP was canceled before', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentProviderCustomerOrThrow',
+            ).mockReturnValue({
+                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
+            });
+
+            await strategy.initialize(defaultInitializationOptions);
+
+            expect(
+                braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
+            ).not.toHaveBeenCalled();
+        });
+
         it('should not authenticate user the user logged in before checkout page', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
