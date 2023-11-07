@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.479.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.479.1...v1.479.2) (2023-11-07)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3190 updated implementation to avoid trigger OTP if the shopper canceled PayPal Connect OTP window ([#2245](https://github.com/bigcommerce/checkout-sdk-js/issues/2245)) ([4eb5eb3](https://github.com/bigcommerce/checkout-sdk-js/commit/4eb5eb3f80f6454489898bb5067e5d964a5ec57a))
+
 ### [1.479.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.479.0...v1.479.1) (2023-11-06)
 
 
