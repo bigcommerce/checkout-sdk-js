@@ -25,6 +25,7 @@
         "squarev2-integration": "packages/squarev2-integration",
         "storage": "packages/storage",
         "stripe-integration": "packages/stripe-integration",
+        "td-bank-integration": "packages/td-bank-integration",
         "ui": "packages/ui",
         "workspace-tools": "packages/workspace-tools"
     }
