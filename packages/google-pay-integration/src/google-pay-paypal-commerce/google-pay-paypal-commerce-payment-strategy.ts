@@ -95,6 +95,12 @@ export default class GooglePayPaypalCommercePaymentStrategy extends GooglePayPay
             .Googlepay()
             .confirmOrder({ orderId, paymentMethodData: confirmOrderData });
 
+        if (status === 'PAYER_ACTION_REQUIRED') {
+            await payPalSDK.Googlepay().initiatePayerAction({ orderId });
+
+            return Promise.resolve();
+        }
+
         if (status !== 'APPROVED') {
             throw new InvalidArgumentError('Payment is not approved.');
         }

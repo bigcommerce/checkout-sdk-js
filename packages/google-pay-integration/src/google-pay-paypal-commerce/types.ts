@@ -13,7 +13,7 @@ export interface PayPalSDK {
             orderId: string;
             paymentMethodData: ConfirmOrderData;
         }) => Promise<{ status: string }>;
-        initiatePayerAction: () => void;
+        initiatePayerAction: (arg0: { orderId: string }) => Promise<void>;
     };
 }
 
