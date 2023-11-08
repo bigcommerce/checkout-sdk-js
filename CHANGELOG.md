@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.480.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.479.3...v1.480.0) (2023-11-08)
+
+
+### Features
+
+* **payment:** PAYPAL-2953 google-pay-paypal-commerce button implementation ([#2244](https://github.com/bigcommerce/checkout-sdk-js/issues/2244)) ([6316a83](https://github.com/bigcommerce/checkout-sdk-js/commit/6316a83b430afb8a949c18b853ee99bb506dca6b))
+
 ### [1.479.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.479.2...v1.479.3) (2023-11-07)
 
 
