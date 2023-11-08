@@ -29,6 +29,14 @@ export interface PayPalCommerceSDKFunding {
  *
  */
 export interface PayPalSDK {
+    Googlepay: () => {
+        config: () => Promise<GooglePayConfig>;
+        confirmOrder: (arg0: {
+            orderId: string;
+            paymentMethodData: ConfirmOrderData;
+        }) => Promise<{ status: string }>;
+        initiatePayerAction: () => void;
+    };
     FUNDING: PayPalCommerceSDKFunding;
     HostedFields: {
         isEligible(): boolean;
@@ -38,6 +46,50 @@ export interface PayPalSDK {
     Buttons(options: PayPalCommerceButtonsOptions): PayPalCommerceButtons;
     PaymentFields(options: PayPalCommercePaymentFieldsOptions): PayPalCommercePaymentFields;
     Messages(options: PayPalCommerceMessagesOptions): PayPalCommerceMessages;
+}
+
+export interface ConfirmOrderData {
+    tokenizationData: {
+        type: string;
+        token: string;
+    };
+    info: {
+        cardNetwork: string;
+        cardDetails: string;
+    };
+    type: string;
+}
+
+export interface GooglePayConfig {
+    allowedPaymentMethods: AllowedPaymentMethods[];
+    apiVersion: number;
+    apiVersionMinor: number;
+    countryCode: string;
+    isEligible: boolean;
+    merchantInfo: {
+        merchantId: string;
+        merchantOrigin: string;
+    };
+}
+
+export interface AllowedPaymentMethods {
+    type: string;
+    parameters: {
+        allowedAuthMethods: string[];
+        allowedCardNetworks: string[];
+        billingAddressRequired: boolean;
+        assuranceDetailsRequired: boolean;
+        billingAddressParameters: {
+            format: string;
+        };
+    };
+    tokenizationSpecification: {
+        type: string;
+        parameters: {
+            gateway: string;
+            gatewayMerchantId: string;
+        };
+    };
 }
 
 export type PayPalLegal = (params: { fundingSource: string }) => {
@@ -80,12 +132,17 @@ export enum PayPalCommerceIntent {
 }
 
 export type ComponentsScriptType = Array<
-    'buttons' | 'funding-eligibility' | 'hosted-fields' | 'messages' | 'payment-fields' | 'legal'
+    | 'buttons'
+    | 'funding-eligibility'
+    | 'hosted-fields'
+    | 'messages'
+    | 'payment-fields'
+    | 'legal'
+    | 'googlepay'
 >;
 
 export interface PayPalCommerceHostWindow extends Window {
     paypal?: PayPalSDK;
-    paypalLoadScript?(options: PayPalCommerceScriptParams): Promise<{ paypal: PayPalSDK }>;
 }
 
 /**
@@ -106,6 +163,7 @@ export interface PayPalCommerceInitializationData {
     isHostedCheckoutEnabled?: boolean;
     isPayPalCreditAvailable?: boolean;
     isVenmoEnabled?: boolean;
+    isGooglePayEnabled?: boolean;
     merchantId?: string;
     orderId?: string;
     shouldRenderFields?: boolean;

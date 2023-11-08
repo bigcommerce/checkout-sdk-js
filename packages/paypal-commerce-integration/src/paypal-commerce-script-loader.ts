@@ -8,6 +8,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    ComponentsScriptType,
     FundingType,
     PayPalCommerceHostWindow,
     PayPalCommerceInitializationData,
@@ -86,6 +87,7 @@ export default class PayPalCommerceScriptLoader {
             isDeveloperModeApplicable,
             availableAlternativePaymentMethods = [],
             enabledAlternativePaymentMethods = [],
+            isGooglePayEnabled,
         } = initializationData;
 
         const commit = isHostedCheckoutEnabled || initializesOnCheckoutPage;
@@ -106,6 +108,7 @@ export default class PayPalCommerceScriptLoader {
                   (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
               )
             : availableAlternativePaymentMethods;
+        const googlePayComponent: ComponentsScriptType = isGooglePayEnabled ? ['googlepay'] : [];
 
         const disableFunding: FundingType = [
             ...disableCardFunding,
@@ -127,7 +130,14 @@ export default class PayPalCommerceScriptLoader {
                 'enable-funding': enableFunding.length > 0 ? enableFunding : undefined,
                 'disable-funding': disableFunding.length > 0 ? disableFunding : undefined,
                 commit,
-                components: ['buttons', 'hosted-fields', 'messages', 'payment-fields', 'legal'],
+                components: [
+                    'buttons',
+                    'hosted-fields',
+                    'messages',
+                    'payment-fields',
+                    'legal',
+                    ...googlePayComponent,
+                ],
                 currency: currencyCode,
                 intent,
                 ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),

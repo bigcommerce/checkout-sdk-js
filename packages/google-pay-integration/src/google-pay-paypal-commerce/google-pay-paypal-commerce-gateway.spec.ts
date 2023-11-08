@@ -4,6 +4,7 @@ import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-int
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import GooglePayGateway from '../gateways/google-pay-gateway';
+import isGooglePayPaypalCommercePaymentMethod from '../guards/is-google-pay-paypal-commerce-payment-method';
 import getCardDataResponse from '../mocks/google-pay-card-data-response.mock';
 import { getPayPalCommerce } from '../mocks/google-pay-payment-method.mock';
 
@@ -32,7 +33,7 @@ describe('GooglePayPayPalCommerceGateway', () => {
             ],
         });
 
-        jest.spyOn(scriptLoader, 'getPayPalGooglePaySdkOrThrow').mockResolvedValue({
+        jest.spyOn(scriptLoader, 'getPayPalSDK').mockResolvedValue({
             Googlepay: jest.fn().mockReturnValue({
                 config: jest.fn().mockReturnValue({}),
                 confirmOrder: jest.fn().mockResolvedValue({ status: 'APPROVED' }),
@@ -71,7 +72,11 @@ describe('GooglePayPayPalCommerceGateway', () => {
                 gatewayMerchantId: 'ID',
             };
 
-            await gateway.initialize(getPayPalCommerce);
+            const googlePayPaymentMethod = getPayPalCommerce();
+
+            isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
+
+            await gateway.initialize(() => googlePayPaymentMethod);
 
             expect(gateway.getPaymentGatewayParameters()).toStrictEqual(expectedParams);
         });

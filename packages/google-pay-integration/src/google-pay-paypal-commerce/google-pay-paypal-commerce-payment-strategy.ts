@@ -12,7 +12,7 @@ import {
 
 import GooglePayPaymentProcessor from '../google-pay-payment-processor';
 import GooglePayPaymentStrategy from '../google-pay-payment-strategy';
-import { GooglePayInitializationData } from '../types';
+import { GooglePayInitializationData, GooglePayPayPalCommerceInitializationData } from '../types';
 
 import PayPalCommerceScriptLoader from './google-pay-paypal-commerce-script-loader';
 import { ConfirmOrderData } from './types';
@@ -77,10 +77,21 @@ export default class GooglePayPaypalCommercePaymentStrategy extends GooglePayPay
     }
 
     private async confirmOrder(orderId: string, confirmOrderData: ConfirmOrderData) {
-        const googlePayPayPalSdk =
-            await this._paypalCommerceScriptLoader.getPayPalGooglePaySdkOrThrow();
+        const state = this._paymentIntegrationService.getState();
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<GooglePayPayPalCommerceInitializationData>(
+                this._getMethodId(),
+            );
 
-        const { status } = await googlePayPayPalSdk
+        const currencyCode = state.getCartOrThrow().currency.code;
+
+        const payPalSDK = await this._paypalCommerceScriptLoader.getPayPalSDK(
+            paymentMethod,
+            currencyCode,
+            true,
+        );
+
+        const { status } = await payPalSDK
             .Googlepay()
             .confirmOrder({ orderId, paymentMethodData: confirmOrderData });
 
