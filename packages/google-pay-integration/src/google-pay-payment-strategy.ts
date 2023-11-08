@@ -146,6 +146,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
                 throw err;
             }
+            //
 
             onPaymentSelect?.();
         };
