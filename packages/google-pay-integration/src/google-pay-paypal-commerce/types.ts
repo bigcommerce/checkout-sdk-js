@@ -9,12 +9,23 @@ export type EnableFundingType = FundingType | string;
 export interface PayPalSDK {
     Googlepay: () => {
         config: () => Promise<GooglePayConfig>;
-        confirmOrder: (arg0: {
-            orderId: string;
-            paymentMethodData: ConfirmOrderData;
-        }) => Promise<{ status: string }>;
-        initiatePayerAction: () => void;
+        confirmOrder: (confirmOrderConfig: ConfirmOrderConfig) => Promise<{ status: string }>;
+        initiatePayerAction: (payerActionConfig: PayerActionConfig) => Promise<void>;
     };
+}
+
+interface ConfirmOrderConfig {
+    orderId: string;
+    paymentMethodData: ConfirmOrderData;
+}
+
+interface PayerActionConfig {
+    orderId: string;
+}
+
+export enum ConfirmOrderStatus {
+    Approved = 'APPROVED',
+    PayerActionRequired = 'PAYER_ACTION_REQUIRED',
 }
 
 export interface PayPalCommerceHostWindow extends Window {
