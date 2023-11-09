@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.483.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.482.0...v1.483.0) (2023-11-09)
+
+
+### Features
+
+* **payment:** PI-921 Amazon Pay Button needs to be changed to one with WITHOUT microtext ([#2225](https://github.com/bigcommerce/checkout-sdk-js/issues/2225)) ([3520e88](https://github.com/bigcommerce/checkout-sdk-js/commit/3520e887f84addeb5f048f5a467f77562b543297))
+
 ## [1.482.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.481.0...v1.482.0) (2023-11-09)
 
 
