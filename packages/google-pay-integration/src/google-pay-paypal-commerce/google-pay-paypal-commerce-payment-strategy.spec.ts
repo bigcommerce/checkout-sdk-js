@@ -21,6 +21,7 @@ import { getGeneric, getPayPalCommerce } from '../mocks/google-pay-payment-metho
 import GooglePayGateway from './google-pay-paypal-commerce-gateway';
 import GooglePayPaymentStrategy from './google-pay-paypal-commerce-payment-strategy';
 import PayPalCommerceScriptLoader from './google-pay-paypal-commerce-script-loader';
+import { ConfirmOrderStatus } from './types';
 
 describe('PayPalCommerceGooglePayPaymentStrategy', () => {
     const BUTTON_ID = 'my_awesome_google_pay_button';
@@ -57,6 +58,7 @@ describe('PayPalCommerceGooglePayPaymentStrategy', () => {
             Googlepay: jest.fn().mockReturnValue({
                 config: jest.fn(),
                 confirmOrder: jest.fn().mockResolvedValue({ status: 'APPROVED' }),
+                initiatePayerAction: jest.fn(),
             }),
         });
 
@@ -175,6 +177,28 @@ describe('PayPalCommerceGooglePayPaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(processor.processAdditionalAction).toHaveBeenCalledWith('error');
+        });
+
+        it('should initiate payer action', async () => {
+            jest.spyOn(scriptLoader, 'getPayPalSDK').mockResolvedValue({
+                Googlepay: jest.fn().mockReturnValue({
+                    config: jest.fn(),
+                    confirmOrder: jest
+                        .fn()
+                        .mockResolvedValue({ status: ConfirmOrderStatus.PayerActionRequired }),
+                    initiatePayerAction: jest.fn(),
+                }),
+            });
+
+            const googlePayPaymentMethod = getPayPalCommerce();
+
+            isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
+
+            const sdk = await scriptLoader.getPayPalSDK(googlePayPaymentMethod, 'USD');
+
+            await strategy.execute(payload);
+
+            expect(sdk.Googlepay().initiatePayerAction).toHaveBeenCalled();
         });
 
         describe('should fail if:', () => {

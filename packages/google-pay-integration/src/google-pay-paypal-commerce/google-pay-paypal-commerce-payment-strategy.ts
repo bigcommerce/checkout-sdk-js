@@ -15,7 +15,7 @@ import GooglePayPaymentStrategy from '../google-pay-payment-strategy';
 import { GooglePayInitializationData, GooglePayPayPalCommerceInitializationData } from '../types';
 
 import PayPalCommerceScriptLoader from './google-pay-paypal-commerce-script-loader';
-import { ConfirmOrderData } from './types';
+import { ConfirmOrderData, ConfirmOrderStatus } from './types';
 
 export default class GooglePayPaypalCommercePaymentStrategy extends GooglePayPaymentStrategy {
     constructor(
@@ -95,7 +95,13 @@ export default class GooglePayPaypalCommercePaymentStrategy extends GooglePayPay
             .Googlepay()
             .confirmOrder({ orderId, paymentMethodData: confirmOrderData });
 
-        if (status !== 'APPROVED') {
+        if (status === ConfirmOrderStatus.PayerActionRequired) {
+            await payPalSDK.Googlepay().initiatePayerAction({ orderId });
+
+            return Promise.resolve();
+        }
+
+        if (status !== ConfirmOrderStatus.Approved) {
             throw new InvalidArgumentError('Payment is not approved.');
         }
 
