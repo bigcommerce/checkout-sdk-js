@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.482.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.481.0...v1.482.0) (2023-11-09)
+
+
+### Features
+
+* **payment:** PAYPAL-3175 PPCP GooglePay 3DSecure ([cb1eb6a](https://github.com/bigcommerce/checkout-sdk-js/commit/cb1eb6a1ae3c261e8a54a1c9a298b104e6797d70))
+
 ## [1.481.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.480.0...v1.481.0) (2023-11-09)
 
 
