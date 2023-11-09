@@ -81,6 +81,9 @@
             "@bigcommerce/checkout-sdk/stripe-integration": [
                 "packages/stripe-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/td-bank-integration": [
+                "packages/td-bank-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/ui": ["packages/ui/src/index.ts"],
             "@bigcommerce/checkout-sdk/workspace-tools": ["packages/workspace-tools/src/index.ts"]
         }
