@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.481.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.480.0...v1.481.0) (2023-11-09)
+
+
+### Features
+
+* **payment:** PI-1004 Create a new package for TD Bank integration ([0e140df](https://github.com/bigcommerce/checkout-sdk-js/commit/0e140df704c22086162977bf016ab6ead78a6e71))
+
 ## [1.480.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.479.3...v1.480.0) (2023-11-08)
 
 
