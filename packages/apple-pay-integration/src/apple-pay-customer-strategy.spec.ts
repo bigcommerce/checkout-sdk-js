@@ -221,6 +221,31 @@ describe('ApplePayCustomerStrategy', () => {
             }
         });
 
+        it('triggers onClick callback provided through initialization options', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                getCart(),
+            );
+
+            const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+
+            await strategy.initialize(customerInitializeOptions);
+
+            if (customerInitializeOptions.applepay) {
+                jest.spyOn(customerInitializeOptions.applepay, 'onClick')
+
+                const buttonContainer = document.getElementById(
+                    customerInitializeOptions.applepay.container,
+                );
+                const button = buttonContainer?.firstChild as HTMLElement;
+
+                if (button) {
+                    button.click();
+
+                    expect(customerInitializeOptions.applepay.onClick).toHaveBeenCalled();
+                }
+            }
+        });
+
         it('throws error if merchant validation fails', async () => {
             jest.spyOn(requestSender, 'post').mockRejectedValue(false);
 
