@@ -1,4 +1,5 @@
 export { createTimeout } from '@bigcommerce/request-sender';
+export { BraintreeConnectTrackerService, createBraintreeConnectTracker } from '@bigcommerce/checkout-sdk/analytics';
 
 export { createCheckoutService } from '../checkout';
 export { createCheckoutButtonInitializer } from '../checkout-buttons';

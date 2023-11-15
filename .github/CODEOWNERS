@@ -69,6 +69,7 @@
 /packages/core/src/payment/strategies/braintree @bigcommerce/team-paypal
 /packages/core/src/payment/strategies/paypal @bigcommerce/team-paypal
 
+/packages/analytics/src/braintree-connect-tracker @bigcommerce/team-paypal
 /packages/braintree-integration @bigcommerce/team-paypal
 /packages/braintree-utils @bigcommerce/team-paypal
 /packages/paypal-express-integration @bigcommerce/team-paypal
