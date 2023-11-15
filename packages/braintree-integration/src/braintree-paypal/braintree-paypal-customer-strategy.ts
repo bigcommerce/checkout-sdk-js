@@ -1,4 +1,5 @@
 import { FormPoster } from '@bigcommerce/form-poster';
+import { noop } from 'lodash';
 
 import {
     BraintreeError,
@@ -42,7 +43,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         options: CustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions,
     ): Promise<void> {
         const { braintreepaypal, methodId } = options;
-        const { container, buttonHeight, onError } = braintreepaypal || {};
+        const { container, onError } = braintreepaypal || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -88,10 +89,8 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
             this.renderPayPalButton(
                 braintreePaypalCheckout,
                 braintreepaypal,
-                container,
                 methodId,
                 Boolean(config.testMode),
-                buttonHeight,
             );
         };
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
@@ -126,11 +125,15 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
     private renderPayPalButton(
         braintreePaypalCheckout: BraintreePaypalCheckout,
         braintreepaypal: BraintreePaypalCustomerInitializeOptions,
-        containerId: string,
         methodId: string,
         testMode: boolean,
-        buttonHeight = DefaultCheckoutButtonHeight,
     ): void {
+        const {
+            container,
+            buttonHeight = DefaultCheckoutButtonHeight,
+            onClick = noop,
+        } = braintreepaypal;
+
         const { paypal } = this.braintreeHostWindow;
         const fundingSource = paypal?.FUNDING.PAYPAL;
 
@@ -151,13 +154,14 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
                         methodId,
                         braintreepaypal,
                     ),
+                onClick,
             });
 
             if (paypalButtonRender.isEligible()) {
-                paypalButtonRender.render(`#${containerId}`);
+                paypalButtonRender.render(`#${container}`);
             }
         } else {
-            this.braintreeIntegrationService.removeElement(containerId);
+            this.braintreeIntegrationService.removeElement(container);
         }
     }
 

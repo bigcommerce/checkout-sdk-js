@@ -88,6 +88,7 @@ export interface PaypalButtonOptions {
     onAuthorize?(data: PaypalAuthorizeData, actions?: PaypalActions): Promise<unknown>;
     createOrder?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<unknown>;
     onApprove?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<unknown>;
+    onClick?(): void;
 }
 
 export interface PaypalStyleOptions {

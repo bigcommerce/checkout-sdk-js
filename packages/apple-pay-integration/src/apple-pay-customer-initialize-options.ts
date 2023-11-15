@@ -36,8 +36,6 @@ export default interface ApplePayCustomerInitializeOptions {
 
     /**
      * A callback that gets called when wallet button clicked
-     *
-     * @param error - The error object describing the failure.
      */
     onClick?(): void;
 }

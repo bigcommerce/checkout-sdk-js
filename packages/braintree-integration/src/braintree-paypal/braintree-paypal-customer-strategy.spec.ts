@@ -51,6 +51,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
     const braintreePaypalOptions: BraintreePaypalCustomerInitializeOptions = {
         container: defaultButtonContainerId,
         onError: jest.fn(),
+        onClick: jest.fn(),
     };
 
     const initializationOptions: CustomerInitializeOptions = {
@@ -133,6 +134,12 @@ describe('BraintreePaypalCustomerStrategy', () => {
             eventEmitter.on('approve', () => {
                 if (typeof options.onApprove === 'function') {
                     options.onApprove({ payerId: 'PAYER_ID' }).catch(() => {});
+                }
+            });
+
+            eventEmitter.on('click', () => {
+                if (typeof options.onClick === 'function') {
+                    options.onClick();
                 }
             });
 
@@ -284,6 +291,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
             expect(renderMock).not.toHaveBeenCalled();
         });
@@ -308,6 +316,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -329,6 +338,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -486,6 +496,16 @@ describe('BraintreePaypalCustomerStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(braintreePaypalOptions.onError).toHaveBeenCalledWith(expectedError);
+        });
+
+        it('triggers click callback when paypal buttons onClick option was called', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('click');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(braintreePaypalOptions.onClick).toHaveBeenCalled();
         });
     });
 
