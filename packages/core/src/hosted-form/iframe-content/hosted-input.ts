@@ -14,6 +14,7 @@ import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
 import HostedInputPaymentHandler from './hosted-input-payment-handler';
 import HostedInputStyles, { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
+import HostedInputVaultingHandler from './hosted-input-vaulting-handler';
 import HostedInputWindow from './hosted-input-window';
 
 export default class HostedInput {
@@ -38,6 +39,7 @@ export default class HostedInput {
         protected _inputAggregator: HostedInputAggregator,
         protected _inputValidator: HostedInputValidator,
         protected _paymentHandler: HostedInputPaymentHandler,
+        protected _vaultingHandler: HostedInputVaultingHandler,
     ) {
         this._input = document.createElement('input');
 
@@ -51,6 +53,10 @@ export default class HostedInput {
         this._eventListener.addListener(
             HostedFieldEventType.SubmitRequested,
             this._paymentHandler.handle,
+        );
+        this._eventListener.addListener(
+            HostedFieldEventType.VaultingRequested,
+            this._vaultingHandler.handle,
         );
 
         this._configureInput();

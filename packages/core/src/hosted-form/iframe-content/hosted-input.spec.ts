@@ -15,6 +15,7 @@ import HostedInputPaymentHandler from './hosted-input-payment-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 import HostedInputValues from './hosted-input-values';
+import HostedInputVaultingHandler from './hosted-input-vaulting-handler';
 
 describe('HostedInput', () => {
     let container: HTMLFormElement;
@@ -29,6 +30,7 @@ describe('HostedInput', () => {
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
     let paymentHandler: Pick<HostedInputPaymentHandler, 'handle'>;
+    let vaultingHandler: Pick<HostedInputVaultingHandler, 'handle'>;
     let styles: HostedInputStylesMap;
     let values: HostedInputValues;
 
@@ -65,6 +67,7 @@ describe('HostedInput', () => {
         fontUrls = ['https://fonts.googleapis.com/css?family=Open+Sans&display=swap'];
 
         paymentHandler = { handle: jest.fn() };
+        vaultingHandler = { handle: jest.fn() };
 
         inputAggregator = {
             getInputValues: jest.fn(() => values),
@@ -99,6 +102,7 @@ describe('HostedInput', () => {
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
             paymentHandler as HostedInputPaymentHandler,
+            vaultingHandler as HostedInputVaultingHandler,
         );
     });
 
@@ -150,6 +154,7 @@ describe('HostedInput', () => {
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
             paymentHandler as HostedInputPaymentHandler,
+            vaultingHandler as HostedInputVaultingHandler,
         );
 
         cardNumberInput.attach();

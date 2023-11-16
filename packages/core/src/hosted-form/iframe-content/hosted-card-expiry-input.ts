@@ -9,6 +9,7 @@ import { HostedInputEvent } from './hosted-input-events';
 import HostedInputPaymentHandler from './hosted-input-payment-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
+import HostedInputVaultingHandler from './hosted-input-vaulting-handler';
 
 export default class HostedCardExpiryInput extends HostedInput {
     /**
@@ -26,6 +27,7 @@ export default class HostedCardExpiryInput extends HostedInput {
         inputAggregator: HostedInputAggregator,
         inputValidator: HostedInputValidator,
         paymentHandler: HostedInputPaymentHandler,
+        vaultingHandler: HostedInputVaultingHandler,
         private _formatter: CardExpiryFormatter,
     ) {
         super(
@@ -41,6 +43,7 @@ export default class HostedCardExpiryInput extends HostedInput {
             inputAggregator,
             inputValidator,
             paymentHandler,
+            vaultingHandler,
         );
     }
 

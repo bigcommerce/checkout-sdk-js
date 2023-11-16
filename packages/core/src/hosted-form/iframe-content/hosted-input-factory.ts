@@ -1,8 +1,13 @@
 import { createClient as createBigpayClient } from '@bigcommerce/bigpay-client';
+import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import { appendWww, parseUrl } from '../../common/url';
-import { PaymentRequestSender, PaymentRequestTransformer } from '../../payment';
+import {
+    PaymentRequestSender,
+    PaymentRequestTransformer,
+    StorefrontVaultingRequestSender,
+} from '../../payment';
 import { CardInstrument } from '../../payment/instrument';
 import HostedFieldType from '../hosted-field-type';
 
@@ -17,6 +22,7 @@ import HostedInputAggregator from './hosted-input-aggregator';
 import HostedInputPaymentHandler from './hosted-input-payment-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
+import HostedInputVaultingHandler from './hosted-input-vaulting-handler';
 import mapToAccessibilityLabel from './map-to-accessibility-label';
 import mapToAutocompleteType from './map-to-autocomplete-type';
 
@@ -133,6 +139,7 @@ export default class HostedInputFactory {
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(),
             this._createPaymentHandler(),
+            this._createVaultingHandler(),
             new CardExpiryFormatter(),
         );
     }
@@ -160,6 +167,7 @@ export default class HostedInputFactory {
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(cardInstrument),
             this._createPaymentHandler(cardInstrument),
+            this._createVaultingHandler(cardInstrument),
             new HostedAutocompleteFieldset(
                 form,
                 [HostedFieldType.CardCode, HostedFieldType.CardExpiry, HostedFieldType.CardName],
@@ -192,6 +200,7 @@ export default class HostedInputFactory {
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(cardInstrument),
             this._createPaymentHandler(cardInstrument),
+            this._createVaultingHandler(cardInstrument),
         );
     }
 
@@ -203,6 +212,15 @@ export default class HostedInputFactory {
             new IframeEventPoster(this._parentOrigin, window.parent),
             new PaymentRequestSender(createBigpayClient()),
             new PaymentRequestTransformer(),
+        );
+    }
+
+    private _createVaultingHandler(cardInstrument?: CardInstrument): HostedInputVaultingHandler {
+        return new HostedInputVaultingHandler(
+            new HostedInputAggregator(window.parent),
+            new HostedInputValidator(cardInstrument),
+            new IframeEventPoster(this._parentOrigin, window.parent),
+            new StorefrontVaultingRequestSender(createRequestSender()),
         );
     }
 }

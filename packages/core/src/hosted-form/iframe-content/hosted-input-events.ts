@@ -24,6 +24,8 @@ export enum HostedInputEventType {
     SubmitSucceeded = 'HOSTED_INPUT:SUBMIT_SUCCEEDED',
     SubmitFailed = 'HOSTED_INPUT:SUBMIT_FAILED',
     Validated = 'HOSTED_INPUT:VALIDATED',
+    VaultingSucceeded = 'HOSTED_INPUT:VAULTING_SUCCEEDED',
+    VaultingFailed = 'HOSTED_INPUT:VAULTING_FAILED',
 }
 
 // Event mapping
@@ -39,6 +41,8 @@ export interface HostedInputEventMap {
     [HostedInputEventType.SubmitSucceeded]: HostedInputSubmitSuccessEvent;
     [HostedInputEventType.SubmitFailed]: HostedInputSubmitErrorEvent;
     [HostedInputEventType.Validated]: HostedInputValidateEvent;
+    [HostedInputEventType.VaultingFailed]: HostedInputVaultingErrorEvent;
+    [HostedInputEventType.VaultingSucceeded]: HostedInputVaultingSucceededEvent;
 }
 
 // Events
@@ -53,10 +57,23 @@ export type HostedInputEvent =
     | HostedInputFocusEvent
     | HostedInputSubmitSuccessEvent
     | HostedInputSubmitErrorEvent
-    | HostedInputValidateEvent;
+    | HostedInputValidateEvent
+    | HostedInputVaultingSucceededEvent
+    | HostedInputVaultingErrorEvent;
 
 export interface HostedInputAttachSuccessEvent {
     type: HostedInputEventType.AttachSucceeded;
+}
+
+export interface HostedInputVaultingSucceededEvent {
+    type: HostedInputEventType.VaultingSucceeded;
+}
+
+export interface HostedInputVaultingErrorEvent {
+    type: HostedInputEventType.VaultingFailed;
+    payload?: {
+        errors?: string[];
+    };
 }
 
 export interface HostedInputAttachErrorEvent {
