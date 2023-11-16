@@ -9,6 +9,7 @@ import { HostedInputEvent } from './hosted-input-events';
 import HostedInputPaymentHandler from './hosted-input-payment-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
+import HostedInputVaultingHandler from './hosted-input-vaulting-handler';
 
 describe('HostedCardExpiryInput', () => {
     let container: HTMLFormElement;
@@ -22,6 +23,7 @@ describe('HostedCardExpiryInput', () => {
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
     let paymentHandler: Pick<HostedInputPaymentHandler, 'handle'>;
+    let vaultingHandler: Pick<HostedInputVaultingHandler, 'handle'>;
     let styles: HostedInputStylesMap;
 
     beforeEach(() => {
@@ -45,6 +47,7 @@ describe('HostedCardExpiryInput', () => {
             ),
         };
         paymentHandler = { handle: jest.fn() };
+        vaultingHandler = { handle: jest.fn() };
         styles = { default: { color: 'rgb(255, 255, 255)' } };
 
         container = document.createElement('form');
@@ -62,6 +65,7 @@ describe('HostedCardExpiryInput', () => {
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
             paymentHandler as HostedInputPaymentHandler,
+            vaultingHandler as HostedInputVaultingHandler,
             expiryFormatter as CardExpiryFormatter,
         );
     });

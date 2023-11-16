@@ -12,6 +12,8 @@ export enum HostedInputEventType {
     SubmitSucceeded = 'HOSTED_INPUT:SUBMIT_SUCCEEDED',
     SubmitFailed = 'HOSTED_INPUT:SUBMIT_FAILED',
     Validated = 'HOSTED_INPUT:VALIDATED',
+    VaultingSucceeded = 'HOSTED_INPUT:VAULTING_SUCCEEDED',
+    VaultingFailed = 'HOSTED_INPUT:VAULTING_FAILED',
 }
 
 export interface HostedInputSubmitSuccessEvent {
