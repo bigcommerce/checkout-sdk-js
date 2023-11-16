@@ -88,7 +88,11 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
         methodId: string,
         paypalCommerceCredit: PayPalCommerceCreditCustomerInitializeOptions,
     ): void {
-        const { container, onComplete } = paypalCommerceCredit;
+        const {
+            container,
+            onComplete,
+            onClick = noop,
+        } = paypalCommerceCredit;
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -103,6 +107,7 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
                 this.paypalCommerceIntegrationService.createOrder('paypalcommercecredit'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
+            onClick: () => onClick(),
         };
 
         const hostedCheckoutCallbacks = {

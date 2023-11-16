@@ -46,6 +46,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
     const paypalCommerceCreditOptions: PayPalCommerceCreditCustomerInitializeOptions = {
         container: defaultContainerId,
         onComplete: jest.fn(),
+        onClick: jest.fn(),
     };
 
     const initializationOptions: CustomerInitializeOptions = {
@@ -114,6 +115,18 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                                 order: {
                                     get: jest.fn(),
                                 },
+                            },
+                        );
+                    }
+                });
+
+                eventEmitter.on('onClick', () => {
+                    if (options.onClick) {
+                        options.onClick(
+                            { fundingSource: 'paypal' },
+                            {
+                                resolve: jest.fn(),
+                                reject: jest.fn(),
                             },
                         );
                     }
@@ -226,6 +239,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -254,6 +268,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 onShippingAddressChange: expect.any(Function),
                 onShippingOptionsChange: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -293,6 +308,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -596,6 +612,18 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceIntegrationService.updateOrder).toHaveBeenCalled();
+        });
+    });
+
+    describe('#onClick button callback', () => {
+        it('triggers onClick option by clicking on the button', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onClick');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceCreditOptions.onClick).toHaveBeenCalled();
         });
     });
 
