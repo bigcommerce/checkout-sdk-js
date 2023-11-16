@@ -123,7 +123,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 eventEmitter.on('onClick', () => {
                     if (options.onClick) {
                         options.onClick(
-                            { fundingSource: 'paypal' },
+                            { fundingSource: 'credit' },
                             {
                                 resolve: jest.fn(),
                                 reject: jest.fn(),

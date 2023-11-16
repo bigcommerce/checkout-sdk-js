@@ -1,3 +1,5 @@
+import { noop } from 'lodash';
+
 import {
     CustomerCredentials,
     CustomerInitializeOptions,
@@ -16,7 +18,7 @@ import {
     PayPalCommerceInitializationData,
 } from '../paypal-commerce-types';
 
-import { WithPayPalCommerceVenmoCustomerInitializeOptions } from './paypal-commerce-venmo-customer-initialize-options';
+import PayPalCommerceVenmoCustomerInitializeOptions, { WithPayPalCommerceVenmoCustomerInitializeOptions } from './paypal-commerce-venmo-customer-initialize-options';
 
 export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStrategy {
     constructor(
@@ -50,7 +52,7 @@ export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStra
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
 
-        this.renderButton(methodId, paypalcommercevenmo.container);
+        this.renderButton(methodId, paypalcommercevenmo);
     }
 
     deinitialize(): Promise<void> {
@@ -71,7 +73,15 @@ export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStra
         return Promise.resolve();
     }
 
-    private renderButton(methodId: string, containerId: string): void {
+    private renderButton(
+        methodId: string,
+        paypalcommercevenmo: PayPalCommerceVenmoCustomerInitializeOptions,
+    ): void {
+        const {
+            container,
+            onClick = noop,
+        } = paypalcommercevenmo;
+
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
@@ -89,14 +99,15 @@ export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStra
                 this.paypalCommerceIntegrationService.createOrder('paypalcommercevenmo'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
+            onClick: () => onClick(),
         };
 
         const paypalButtonRender = paypalSdk.Buttons(buttonRenderOptions);
 
         if (paypalButtonRender.isEligible()) {
-            paypalButtonRender.render(`#${containerId}`);
+            paypalButtonRender.render(`#${container}`);
         } else {
-            this.paypalCommerceIntegrationService.removeElement(containerId);
+            this.paypalCommerceIntegrationService.removeElement(container);
         }
     }
 }
