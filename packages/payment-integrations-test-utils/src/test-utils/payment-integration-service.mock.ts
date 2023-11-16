@@ -41,6 +41,7 @@ const state = {
     getPaymentProviderCustomerOrThrow: jest.fn(),
     getPaymentStatus: jest.fn(),
     isPaymentMethodInitialized: jest.fn(),
+    getOutstandingBalance: jest.fn(),
 };
 
 const createBuyNowCart = jest.fn();

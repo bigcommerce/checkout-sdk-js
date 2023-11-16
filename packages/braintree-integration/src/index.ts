@@ -8,6 +8,7 @@ export { WithBraintreePaypalCustomerInitializeOptions } from './braintree-paypal
  * Braintree PayPal strategies
  */
 export { default as createBraintreePaypalCustomerStrategy } from './braintree-paypal/create-braintree-paypal-customer-strategy';
+export { default as createBraintreePaypalPaymentStrategy } from './braintree-paypal/create-braintree-paypal-payment-strategy';
 export { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-paypal-ach/braintree-paypal-ach-initialize-options';
 
 /**

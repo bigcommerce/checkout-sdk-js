@@ -1,3 +1,5 @@
+import { supportsPopups } from '@braintree/browser-detection';
+
 import {
     Address,
     LegacyAddress,
@@ -5,6 +7,7 @@ import {
     NotInitializedErrorType,
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
 import {
     BraintreeBankAccount,
@@ -17,10 +20,13 @@ import {
     BraintreeError,
     BraintreeHostWindow,
     BraintreeModule,
+    BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeShippingAddressOverride,
     BraintreeThreeDSecure,
+    // BraintreeThreeDSecureOptions,
+    BraintreeTokenizePayload,
     GetLocalPaymentInstance,
     GooglePayBraintreeSDK,
     LocalPaymentInstance,
@@ -29,6 +35,16 @@ import BraintreeScriptLoader from './braintree-script-loader';
 import isBraintreeError from './is-braintree-error';
 import { PAYPAL_COMPONENTS } from './paypal';
 import getValidBraintreeConnectStyles from './utils/get-valid-braintree-connect-styles';
+
+export interface PaypalConfig {
+    amount: number;
+    currency: string;
+    locale: string;
+    offerCredit?: boolean;
+    shippingAddressEditable?: boolean;
+    shippingAddressOverride?: BraintreeShippingAddressOverride;
+    shouldSaveInstrument?: boolean;
+}
 
 interface DataCollectors {
     default?: BraintreeDataCollector;
@@ -44,10 +60,12 @@ export default class BraintreeIntegrationService {
     private braintreeLocalMethods?: LocalPaymentInstance;
     private googlePay?: Promise<GooglePayBraintreeSDK>;
     private threeDS?: Promise<BraintreeThreeDSecure>;
+    private braintreePaypal?: Promise<BraintreePaypal>;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
         private braintreeHostWindow: BraintreeHostWindow,
+        private overlay?: Overlay,
     ) {}
 
     initialize(clientToken: string, storeConfig?: StoreConfig) {
@@ -91,6 +109,47 @@ export default class BraintreeIntegrationService {
         }
 
         return this.client;
+    }
+
+    getPaypal(): Promise<BraintreePaypal> {
+        if (!this.braintreePaypal) {
+            this.braintreePaypal = Promise.all([
+                this.getClient(),
+                this.braintreeScriptLoader.loadPaypal(),
+            ]).then(([client, paypal]) => paypal.create({ client }));
+        }
+
+        return this.braintreePaypal;
+    }
+
+    paypal({ shouldSaveInstrument, ...config }: PaypalConfig): Promise<BraintreeTokenizePayload> {
+        const newWindowFlow = supportsPopups();
+
+        return this.getPaypal()
+            .then((paypal) => {
+                if (newWindowFlow) {
+                    this.overlay?.show({
+                        onClick: () => paypal.focusWindow(),
+                    });
+                }
+
+                return paypal.tokenize({
+                    enableShippingAddress: true,
+                    flow: shouldSaveInstrument ? 'vault' : 'checkout',
+                    useraction: 'commit',
+                    ...config,
+                });
+            })
+            .then((response) => {
+                this.overlay?.remove();
+
+                return response;
+            })
+            .catch((error) => {
+                this.overlay?.remove();
+
+                throw error;
+            });
     }
 
     async getPaypalCheckout(

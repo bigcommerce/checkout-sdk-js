@@ -11,12 +11,14 @@ import {
     BraintreeLocalPaymentCreator,
     BraintreeModuleCreator,
     BraintreePaypalCheckoutCreator,
+    BraintreePaypalCreator,
     BraintreeThreeDSecureCreator,
     GooglePayCreator,
 } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import {
     getBraintreeLocalPaymentMock,
+    getBraintreePaypalMock,
     getClientMock,
     getConnectMock,
     getDataCollectorMock,
@@ -306,6 +308,43 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/google-payment.min.js`,
+            );
+        });
+    });
+
+    describe('#loadPaypal', () => {
+        let braintreePaypal: BraintreePaypalCreator;
+
+        beforeEach(() => {
+            braintreePaypal = getModuleCreatorMock(getBraintreePaypalMock());
+            scriptLoader.loadScript = jest.fn(() => {
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.paypal = braintreePaypal;
+                }
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads braintree paypal payment methods', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            await braintreeScriptLoader.loadPaypal();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/paypal.min.js`,
+            );
+        });
+
+        it('loads braintree paypal with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadPaypal();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/paypal.min.js`,
             );
         });
     });
