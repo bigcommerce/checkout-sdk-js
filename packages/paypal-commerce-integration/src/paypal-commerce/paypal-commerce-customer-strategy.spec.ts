@@ -46,6 +46,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
     const paypalCommerceOptions: PayPalCommerceCustomerInitializeOptions = {
         container: defaultContainerId,
         onComplete: jest.fn(),
+        onClick: jest.fn(),
     };
 
     const initializationOptions: CustomerInitializeOptions = {
@@ -113,6 +114,18 @@ describe('PayPalCommerceCustomerStrategy', () => {
                                 order: {
                                     get: jest.fn(),
                                 },
+                            },
+                        );
+                    }
+                });
+
+                eventEmitter.on('onClick', () => {
+                    if (options.onClick) {
+                        options.onClick(
+                            { fundingSource: 'paypal' },
+                            {
+                                resolve: jest.fn(),
+                                reject: jest.fn(),
                             },
                         );
                     }
@@ -225,6 +238,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -253,6 +267,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 onShippingAddressChange: expect.any(Function),
                 onShippingOptionsChange: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -452,6 +467,18 @@ describe('PayPalCommerceCustomerStrategy', () => {
                     approveDataOrderId,
                 );
             });
+        });
+    });
+
+    describe('#onClick button callback', () => {
+        it('triggers onClick option by clicking on the button', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onClick');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceOptions.onClick).toHaveBeenCalled();
         });
     });
 

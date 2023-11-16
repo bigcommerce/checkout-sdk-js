@@ -92,7 +92,11 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         methodId: string,
         paypalcommerce: PayPalCommerceCustomerInitializeOptions,
     ): void {
-        const { container, onComplete } = paypalcommerce;
+        const {
+            container,
+            onComplete,
+            onClick = noop,
+        } = paypalcommerce;
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -106,6 +110,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
+            onClick: () => onClick(),
         };
 
         const hostedCheckoutCallbacks = {
