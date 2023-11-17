@@ -102,6 +102,7 @@ describe('AmazonPayV2CustomerStrategy', () => {
                 containerId: 'amazonpayCheckoutButton',
                 methodId: 'amazonpay',
                 placement: AmazonPayV2Placement.Checkout,
+                onClick: customerInitializeOptions.amazonpay?.onClick
             });
         });
 

@@ -14,7 +14,12 @@ export function getAmazonPayV2CustomerInitializeOptions(
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'amazonpayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
-    const amazonPayV2 = { amazonpay: { ...container } };
+    const amazonPayV2 = {
+        amazonpay: {
+            ...container,
+            onClick: jest.fn(),
+        },
+    };
     const amazonPayV2WithInvalidContainer = { amazonpay: { ...invalidContainer } };
 
     switch (mode) {

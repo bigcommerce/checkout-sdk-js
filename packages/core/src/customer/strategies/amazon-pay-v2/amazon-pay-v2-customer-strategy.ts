@@ -43,6 +43,7 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
             containerId: amazonpay.container,
             methodId,
             placement: AmazonPayV2Placement.Checkout,
+            onClick: amazonpay.onClick,
         });
 
         return this._store.getState();
