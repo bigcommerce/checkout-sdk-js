@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import { FormPoster } from '@bigcommerce/form-poster';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
@@ -24,6 +25,7 @@ import { default as MethodType } from './googlepay-customer-method-type';
 
 export default class GooglePayCustomerStrategy implements CustomerStrategy {
     private _walletButton?: HTMLElement;
+    private _onClick?: () => void;
 
     constructor(
         private _store: CheckoutStore,
@@ -40,6 +42,8 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         if (!methodId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
+
+        this._onClick = googlePayOptions.onClick || noop;
 
         this._googlePayPaymentProcessor.updateShouldThrowInvalidError(false);
 
@@ -178,6 +182,10 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     @bind
     private async _handleWalletButtonClick(event: Event): Promise<void> {
         event.preventDefault();
+
+        if (this._onClick && typeof this._onClick === 'function') {
+            this._onClick();
+        }
 
         const cart = this._store.getState().cart.getCartOrThrow();
         const hasPhysicalItems = getShippableItemsCount(cart) > 0;
