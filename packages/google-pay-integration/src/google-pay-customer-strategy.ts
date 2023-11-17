@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import {
     CustomerInitializeOptions,
     CustomerStrategy,
@@ -23,6 +24,7 @@ import { GooglePayInitializationData } from './types';
 export default class GooglePayCustomerStrategy implements CustomerStrategy {
     private _paymentButton?: HTMLElement;
     private _methodId?: keyof WithGooglePayCustomerInitializeOptions;
+    private _onClick?: () => void;
 
     constructor(
         private _paymentIntegrationService: PaymentIntegrationService,
@@ -45,6 +47,8 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         if (!googlePayOptions) {
             throw new InvalidArgumentError('Unable to proceed without valid options.');
         }
+
+        this._onClick = googlePayOptions.onClick || noop;
 
         await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
 
@@ -111,6 +115,10 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     ): (event: MouseEvent) => unknown {
         return async (event: MouseEvent) => {
             event.preventDefault();
+
+            if (this._onClick && typeof this._onClick === 'function') {
+                this._onClick();
+            }
 
             // TODO: Dispatch Widget Actions
             try {

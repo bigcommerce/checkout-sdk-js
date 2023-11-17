@@ -21,4 +21,9 @@ export interface GooglePayButtonInitializeOptions {
      * The options that are required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: GooglePayBuyNowInitializeOptions;
+
+    /**
+     * Callback that get called on wallet button click
+     */
+    onClick?(): void;
 }
