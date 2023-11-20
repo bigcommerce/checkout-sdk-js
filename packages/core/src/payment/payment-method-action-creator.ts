@@ -9,6 +9,7 @@ import { RequestOptions } from '../common/http-request';
 import {
     LoadPaymentMethodAction,
     LoadPaymentMethodsAction,
+    LoadPaymentMethodsByIdsAction,
     PaymentMethodActionType,
 } from './payment-method-actions';
 import PaymentMethodRequestSender from './payment-method-request-sender';
@@ -20,6 +21,50 @@ const APPLEPAYID = 'applepay';
 
 export default class PaymentMethodActionCreator {
     constructor(private _requestSender: PaymentMethodRequestSender) {}
+
+    loadPaymentMethodsById(
+        methodIds: string[],
+        options?: RequestOptions,
+    ): ThunkAction<LoadPaymentMethodsByIdsAction, InternalCheckoutSelectors> {
+        return (store) =>
+            new Observable((observer: Observer<LoadPaymentMethodsByIdsAction>) => {
+                const state = store.getState();
+                const cartId = state.cart.getCart()?.id;
+                const params = cartId ? { ...options?.params, cartId } : { ...options?.params };
+
+                observer.next(
+                    createAction(PaymentMethodActionType.LoadPaymentMethodsByIdsRequested),
+                );
+
+                Promise.all(
+                    methodIds.map(async (id) => {
+                        const response = await this._requestSender.loadPaymentMethod(id, {
+                            ...options,
+                            params,
+                        });
+
+                        return response.body;
+                    }),
+                )
+                    .then((response) => {
+                        observer.next(
+                            createAction(
+                                PaymentMethodActionType.LoadPaymentMethodsByIdsSucceeded,
+                                response,
+                            ),
+                        );
+                        observer.complete();
+                    })
+                    .catch((response) => {
+                        observer.error(
+                            createErrorAction(
+                                PaymentMethodActionType.LoadPaymentMethodsByIdsFailed,
+                                response,
+                            ),
+                        );
+                    });
+            });
+    }
 
     loadPaymentMethods(
         options?: RequestOptions,

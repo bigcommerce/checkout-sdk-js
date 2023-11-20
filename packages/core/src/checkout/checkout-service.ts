@@ -366,6 +366,15 @@ export default class CheckoutService {
         return this._dispatch(action, { queueId: 'paymentMethods' });
     }
 
+    loadPaymentMethodByIds(
+        methodIds: string[],
+        options?: RequestOptions,
+    ): Promise<CheckoutSelectors> {
+        const action = this._paymentMethodActionCreator.loadPaymentMethodsById(methodIds, options);
+
+        return this._dispatch(action, { queueId: 'paymentMethods' });
+    }
+
     /**
      * Loads a payment method by an id.
      *

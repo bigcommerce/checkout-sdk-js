@@ -69,9 +69,14 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
             );
         }
 
+        console.log('going to init: SDK load method', methodId);
+
         const state = await this._store.dispatch(
             this._paymentMethodActionCreator.loadPaymentMethod(methodId),
         );
+
+        console.log('going to init: SDK load method finished', methodId);
+
         const storeConfig = state.config.getStoreConfigOrThrow();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         const { clientToken, initializationData } = paymentMethod;
