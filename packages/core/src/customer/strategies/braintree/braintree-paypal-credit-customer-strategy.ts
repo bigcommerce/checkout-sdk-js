@@ -1,6 +1,9 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 
-import { DefaultCheckoutButtonHeight } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    DefaultCheckoutButtonHeight,
+    PaymentMethod,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import mapToLegacyBillingAddress from '../../../checkout-buttons/strategies/braintree/map-to-legacy-billing-address';
@@ -69,18 +72,19 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
             );
         }
 
-        console.log('going to init: SDK load method', methodId, this._paymentMethodActionCreator);
+        let state = this._store.getState();
+        let paymentMethod: PaymentMethod<any>;
 
-        const state = await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(methodId, { useCache: true }),
-        );
-
-        console.log('going to init: SDK load method finished', methodId);
-
-        // const state = this._store.getState();
+        try {
+            paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        } catch (_e) {
+            state = await this._store.dispatch(
+                this._paymentMethodActionCreator.loadPaymentMethod(methodId),
+            );
+            paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        }
 
         const storeConfig = state.config.getStoreConfigOrThrow();
-        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         const { clientToken, initializationData } = paymentMethod;
 
         if (!clientToken || !initializationData) {
