@@ -34,7 +34,7 @@ export default interface PaymentIntegrationService {
 
     loadPaymentMethod(
         methodId: string,
-        options?: RequestOptions,
+        options?: RequestOptions & { useCache?: boolean },
     ): Promise<PaymentIntegrationSelectors>;
 
     loadCurrentOrder(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;

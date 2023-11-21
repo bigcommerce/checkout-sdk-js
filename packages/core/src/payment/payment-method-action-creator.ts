@@ -9,7 +9,6 @@ import { RequestOptions } from '../common/http-request';
 import {
     LoadPaymentMethodAction,
     LoadPaymentMethodsAction,
-    LoadPaymentMethodsByIdsAction,
     PaymentMethodActionType,
 } from './payment-method-actions';
 import PaymentMethodRequestSender from './payment-method-request-sender';
@@ -25,17 +24,14 @@ export default class PaymentMethodActionCreator {
     loadPaymentMethodsById(
         methodIds: string[],
         options?: RequestOptions,
-    ): ThunkAction<LoadPaymentMethodsByIdsAction, InternalCheckoutSelectors> {
+    ): ThunkAction<LoadPaymentMethodsAction, InternalCheckoutSelectors> {
         return (store) =>
-            new Observable((observer: Observer<LoadPaymentMethodsByIdsAction>) => {
+            new Observable((observer: Observer<LoadPaymentMethodsAction>) => {
                 const state = store.getState();
                 const cartId = state.cart.getCart()?.id;
                 const params = cartId ? { ...options?.params, cartId } : { ...options?.params };
 
-                observer.next(
-                    createAction(PaymentMethodActionType.LoadPaymentMethodsByIdsRequested),
-                );
-
+                observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsRequested));
                 Promise.all(
                     methodIds.map(async (id) => {
                         const response = await this._requestSender.loadPaymentMethod(id, {
@@ -49,7 +45,7 @@ export default class PaymentMethodActionCreator {
                     .then((response) => {
                         observer.next(
                             createAction(
-                                PaymentMethodActionType.LoadPaymentMethodsByIdsSucceeded,
+                                PaymentMethodActionType.LoadPaymentMethodsSucceeded,
                                 response,
                             ),
                         );
@@ -58,7 +54,7 @@ export default class PaymentMethodActionCreator {
                     .catch((response) => {
                         observer.error(
                             createErrorAction(
-                                PaymentMethodActionType.LoadPaymentMethodsByIdsFailed,
+                                PaymentMethodActionType.LoadPaymentMethodsFailed,
                                 response,
                             ),
                         );

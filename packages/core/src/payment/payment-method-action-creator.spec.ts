@@ -194,4 +194,78 @@ describe('PaymentMethodActionCreator', () => {
             ]);
         });
     });
+
+    describe('#loadPaymentMethodsByIds()', () => {
+        it('loads payment methods data', async () => {
+            const methodId = 'braintree';
+            const options = { params: { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7' } };
+
+            await from(
+                paymentMethodActionCreator.loadPaymentMethodsById([methodId])(store),
+            ).toPromise();
+
+            expect(paymentMethodRequestSender.loadPaymentMethod).toHaveBeenCalledWith(
+                methodId,
+                options,
+            );
+        });
+
+        it('loads payment method data with timeout', async () => {
+            const methodId = 'braintree';
+            const options = {
+                timeout: createTimeout(),
+                params: { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7' },
+            };
+
+            await from(
+                paymentMethodActionCreator.loadPaymentMethodsById([methodId], options)(store),
+            ).toPromise();
+
+            expect(paymentMethodRequestSender.loadPaymentMethod).toHaveBeenCalledWith(
+                methodId,
+                options,
+            );
+        });
+
+        it('emits actions if able to load payment method', async () => {
+            const methodId = 'braintree';
+            const actions = await from(
+                paymentMethodActionCreator.loadPaymentMethodsById([methodId])(store),
+            )
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
+                {
+                    type: PaymentMethodActionType.LoadPaymentMethodsSucceeded,
+                    payload: [getPaymentMethod()],
+                },
+            ]);
+        });
+
+        it('emits error actions if unable to load payment method', async () => {
+            jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethod').mockReturnValue(
+                Promise.reject(errorResponse),
+            );
+
+            const methodId = 'braintree';
+            const errorHandler = jest.fn((action) => of(action));
+            const actions = await from(
+                paymentMethodActionCreator.loadPaymentMethodsById([methodId])(store),
+            )
+                .pipe(catchError(errorHandler), toArray())
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
+                {
+                    type: PaymentMethodActionType.LoadPaymentMethodsFailed,
+                    payload: errorResponse,
+                    error: true,
+                },
+            ]);
+        });
+    });
 });
