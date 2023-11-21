@@ -62,10 +62,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
             );
         }
 
-        console.log('going to init: SDK load method', methodId);
-
         let state = this.paymentIntegrationService.getState();
-        // await this.paymentIntegrationService.loadPaymentMethod(methodId);
         let paymentMethod: PaymentMethod<BraintreeInitializationData>;
 
         try {
@@ -74,8 +71,6 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
             state = await this.paymentIntegrationService.loadPaymentMethod(methodId);
             paymentMethod = state.getPaymentMethodOrThrow(methodId);
         }
-
-        console.log('going to init: SDK load method finishe', methodId);
 
         const storeConfig = state.getStoreConfigOrThrow();
 

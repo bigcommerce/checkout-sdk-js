@@ -8,6 +8,7 @@ import {
     NotInitializedError,
     NotInitializedErrorType,
     PaymentIntegrationService,
+    PaymentMethod,
     PaymentMethodCancelledError,
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -46,14 +47,18 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             throw new InvalidArgumentError('Unable to proceed without valid options.');
         }
 
-        await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
+        let state = this._paymentIntegrationService.getState();
+        let paymentMethod: PaymentMethod<GooglePayInitializationData>;
 
         try {
-            await this._googlePayPaymentProcessor.initialize(() =>
-                this._paymentIntegrationService
-                    .getState()
-                    .getPaymentMethodOrThrow<GooglePayInitializationData>(this._getMethodId()),
-            );
+            paymentMethod = state.getPaymentMethodOrThrow(this._getMethodId());
+        } catch (_e) {
+            state = await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
+            paymentMethod = state.getPaymentMethodOrThrow(this._getMethodId());
+        }
+
+        try {
+            await this._googlePayPaymentProcessor.initialize(() => paymentMethod);
         } catch {
             return;
         }
