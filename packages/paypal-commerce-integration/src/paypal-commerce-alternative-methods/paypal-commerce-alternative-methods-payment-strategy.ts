@@ -150,12 +150,12 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         );
         const { buttonStyle } = paymentMethod.initializationData || {};
 
-        const { container, onError, onRenderButton, submitForm } = paypalOptions;
+        const { container, onError, onRenderButton, submitForm, onValidate } = paypalOptions;
 
         const buttonOptions: PayPalCommerceButtonsOptions = {
             fundingSource: methodId,
             style: this.paypalCommerceIntegrationService.getValidButtonStyle(buttonStyle),
-            createOrder: () => this.onCreateOrder(paypalOptions),
+            createOrder: () => this.handleCreateOrder(methodId, gatewayId, onValidate),
             onApprove: (data) => this.handleApprove(data, submitForm),
             onCancel: () => this.handleFailure(new Error('Payment was canceled.'), onError),
             onError: (error) => this.handleFailure(error, onError),
@@ -174,22 +174,35 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         this.paypalButton.render(container);
     }
 
-    private async onCreateOrder(
-        paypalOptions: PayPalCommerceAlternativeMethodsPaymentOptions,
+    private async handleCreateOrder(
+        methodId: string,
+        gatewayId: string,
+        onValidate: PayPalCommerceAlternativeMethodsPaymentOptions['onValidate'],
     ): Promise<string> {
-        const { onValidate } = paypalOptions;
-
-        const onValidationPassed = () => {
+        await onValidate(() => {
             this.toggleLoadingIndicator(true);
 
             return () => Promise.resolve();
-        };
+        }, noop);
 
-        await onValidate(onValidationPassed, noop);
-
-        return this.paypalCommerceIntegrationService.createOrder(
+        const orderId = await this.paypalCommerceIntegrationService.createOrder(
             'paypalcommercealternativemethodscheckout',
         );
+
+        if (this.isNonInstantPaymentMethod(methodId)) {
+            const order = { useStoreCredit: false };
+            const options = {
+                params: {
+                    methodId,
+                    gatewayId,
+                },
+            };
+
+            await this.paymentIntegrationService.submitOrder(order, options);
+            await this.paypalCommerceIntegrationService.submitPayment(methodId, orderId);
+        }
+
+        return orderId;
     }
 
     private handleApprove(

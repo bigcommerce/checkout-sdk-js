@@ -285,7 +285,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
     });
 
     describe('#createOrder button callback', () => {
-        it('creates paypal order', async () => {
+        it('creates paypal order without instant payment method', async () => {
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('createOrder');
@@ -295,6 +295,25 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
                 'paypalcommercealternativemethodscheckout',
             );
+            expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalled();
+            expect(paypalCommerceIntegrationService.submitPayment).not.toHaveBeenCalled();
+        });
+
+        it('creates paypal order with instant payment method', async () => {
+            await strategy.initialize({
+                ...initializationOptions,
+                methodId: 'oxxo',
+            });
+
+            eventEmitter.emit('createOrder');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
+                'paypalcommercealternativemethodscheckout',
+            );
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            expect(paypalCommerceIntegrationService.submitPayment).toHaveBeenCalled();
         });
     });
 
