@@ -325,6 +325,37 @@ describe('AdyenV2PaymentStrategy', () => {
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(0);
             });
 
+            it('throws an error when a card field is empty', async () => {
+                const adyenInvalidPaymentComponent = {
+                    mount: jest.fn(),
+                    unmount: jest.fn(),
+                    componentRef: {
+                        showValidation: jest.fn(),
+                    },
+                    state: {
+                        data: { 'sepa.ownerName': '' },
+                    },
+                    props: {
+                        type: 'card',
+                    },
+                };
+
+                jest.spyOn(adyenCheckout, 'create').mockReturnValueOnce(
+                    adyenInvalidPaymentComponent,
+                );
+
+                await strategy.initialize(options);
+
+                await expect(strategy.execute(getOrderRequestBody())).rejects.toThrow(
+                    PaymentInvalidFormError,
+                );
+                expect(
+                    adyenInvalidPaymentComponent.componentRef.showValidation,
+                ).toHaveBeenCalledTimes(1);
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(0);
+            });
+
             it('calls submitPayment when paying with vaulted instrument', async () => {
                 jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
                     submitPaymentAction,
