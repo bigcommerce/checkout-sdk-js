@@ -1,6 +1,7 @@
 import {
     InvalidArgumentError,
     isHostedInstrumentLike,
+    isVaultedInstrument,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentArgumentInvalidError,
@@ -55,15 +56,6 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        let nonce = await this._squareV2PaymentProcessor.tokenize();
-
-        if (this._shouldVerify()) {
-            nonce = JSON.stringify({
-                nonce,
-                token: await this._squareV2PaymentProcessor.verifyBuyer(nonce),
-            });
-        }
-
         const paymentData = payment.paymentData;
 
         const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = isHostedInstrumentLike(
@@ -73,6 +65,33 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
             : { shouldSaveInstrument: false, shouldSetAsDefaultInstrument: false };
 
         await this._paymentIntegrationService.submitOrder();
+
+        if (paymentData && isVaultedInstrument(paymentData)) {
+            await this._paymentIntegrationService.submitPayment({
+                ...payment,
+                paymentData: {
+                    formattedPayload: {
+                        bigpay_token: {
+                            token: paymentData.instrumentId,
+                        },
+                        vault_payment_instrument: shouldSaveInstrument || false,
+                        set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
+                    },
+                },
+            });
+
+            return;
+        }
+
+        let nonce = await this._squareV2PaymentProcessor.tokenize();
+
+        if (this._shouldVerify()) {
+            nonce = JSON.stringify({
+                nonce,
+                token: await this._squareV2PaymentProcessor.verifyBuyer(nonce),
+            });
+        }
+
         await this._paymentIntegrationService.submitPayment({
             ...payment,
             paymentData: {
