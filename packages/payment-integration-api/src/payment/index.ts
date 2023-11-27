@@ -23,8 +23,8 @@ export {
     WithAccountCreation,
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
-    StripeV3FormattedPayload,
     StripeUPEIntent,
+    StripeV3FormattedPayload,
 } from './payment';
 
 export { default as isHostedInstrumentLike } from './is-hosted-intrument-like';
