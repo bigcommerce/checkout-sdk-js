@@ -85,6 +85,13 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             );
         }
 
+        const {
+            customer: { getCustomerOrThrow },
+        } = await this._store.getState();
+        const { isStripeLinkAuthenticated } = getCustomerOrThrow();
+
+        console.log({ isStripeLinkAuthenticated });
+
         this._loadStripeElement(stripeupe, gatewayId, methodId).catch((error) =>
             stripeupe.onError?.(error),
         );
@@ -260,7 +267,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         let stripePaymentMethod;
 
-        if (this._isBackendConfirmationEnabled(methodId)) {
+        if (this._isBackendConfirmationEnabled()) {
             stripePaymentMethod = await this._createStripePaymentMethod();
         }
 
@@ -333,7 +340,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 this._paymentActionCreator.submitPayment(paymentPayload),
             );
         } catch (error) {
-            if (this._isBackendConfirmationEnabled(methodId)) {
+            if (this._isBackendCardConfirmation(methodId)) {
                 return await this._backendConfirmationFlow(
                     error,
                     methodId,
@@ -404,7 +411,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             clientSecret: paymentMethod.clientToken,
             locale: formatLocale(shopperLanguage),
             appearance,
-            ...(this._isBackendConfirmationEnabled(methodId) && {
+            ...(this._isBackendConfirmationEnabled() && {
                 paymentMethodCreation: 'manual',
             }),
         });
@@ -458,8 +465,8 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
 
         if (
-            this._isBackendConfirmationEnabled(methodId) &&
             this._isThreeDSecureRequired(error) &&
+            this._isBackendCardConfirmation(methodId) &&
             methodId
         ) {
             return this._backendConfirmationFlow(
@@ -478,7 +485,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             if (type === 'redirect_to_url' && redirect_url && !isPaymentCompleted) {
                 const { paymentIntent, error: stripeError } =
                     await this._stripeUPEClient.confirmPayment(
-                        this._mapStripePaymentData(redirect_url),
+                        await this._mapStripePaymentData(redirect_url),
                     );
 
                 if (stripeError) {
@@ -492,7 +499,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             } else if (type === 'additional_action_requires_payment_method' && token) {
                 let result;
                 let catchedConfirmError = false;
-                const stripePaymentData = this._mapStripePaymentData();
+                const stripePaymentData = await this._mapStripePaymentData();
                 const isPaymentCompleted = await this._isPaymentCompleted(methodId);
 
                 try {
@@ -629,12 +636,15 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private _isBackendConfirmationEnabled(methodId: string): boolean {
-        const { features } = this._store.getState().config.getStoreConfig()?.checkoutSettings || {};
+    private _isBackendConfirmationEnabled(): boolean {
+        return !!this._store.getState().config.getStoreConfig()?.checkoutSettings?.features?.[
+            'PI-984.move_Stripe_confirm_request_to_backend'
+        ];
+    }
 
+    private _isBackendCardConfirmation(methodId: string): boolean {
         return (
-            methodId === StripePaymentMethodType.CreditCard &&
-            !!features?.['PI-984.move_Stripe_confirm_request_to_backend']
+            methodId === StripePaymentMethodType.CreditCard && this._isBackendConfirmationEnabled()
         );
     }
 
@@ -666,6 +676,8 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             this._throwDisplayableStripeError(stripePaymentMethodError);
             throw new PaymentMethodFailedError();
         }
+
+        console.log({ stripePaymentMethod });
 
         return stripePaymentMethod;
     }
@@ -720,9 +732,15 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         };
     }
 
-    private _mapStripePaymentData(returnUrl?: string): StripeConfirmPaymentData {
+    private async _mapStripePaymentData(returnUrl?: string): Promise<StripeConfirmPaymentData> {
         if (!this._stripeElements) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        let stripePaymentMethod;
+
+        if (this._isBackendConfirmationEnabled()) {
+            stripePaymentMethod = await this._createStripePaymentMethod();
         }
 
         return {
@@ -733,6 +751,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     billing_details: this._getBillingDetails(),
                 },
                 ...(returnUrl && { return_url: returnUrl }),
+                ...(stripePaymentMethod && { payment_method: stripePaymentMethod.id }),
             },
         };
     }
