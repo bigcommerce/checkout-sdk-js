@@ -150,7 +150,9 @@ export interface StripeUPEConfirmParams {
      * @recommended
      */
     return_url?: string;
+    payment_method?: string;
     payment_method_data?: PaymentMethodDataOptions;
+    is_backend_confirmation_supported?: boolean;
 }
 
 /**
@@ -276,6 +278,12 @@ export interface StripeElements {
     fetchUpdates(): void;
 
     submit(): Promise<{ error: StripeError }>;
+
+    /**
+     * Custom parameter to save initialization option for stripe payment method creation between different steps
+     * For Stripe Link flow Stripe payment method can't be created manually.
+     */
+    paymentMethodCreation?: string;
 }
 
 /**
@@ -448,3 +456,5 @@ export enum StripeUPEPaymentIntentStatus {
     SUCCEEDED = 'succeeded',
     CANCELED = 'canceled',
 }
+
+export const MANUAL_STRIPE_PAYMENT_METHOD_CREATION = 'manual';

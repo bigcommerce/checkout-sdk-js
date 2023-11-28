@@ -29,6 +29,7 @@ import formatLocale from './format-locale';
 import {
     AddressOptions,
     BillingDetailsOptions,
+    MANUAL_STRIPE_PAYMENT_METHOD_CREATION,
     StripeConfirmPaymentData,
     StripeElement,
     StripeElements,
@@ -84,13 +85,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 'Unable to initialize payment because "gatewayId" argument is not provided.',
             );
         }
-
-        const {
-            customer: { getCustomerOrThrow },
-        } = await this._store.getState();
-        const { isStripeLinkAuthenticated } = getCustomerOrThrow();
-
-        console.log({ isStripeLinkAuthenticated });
 
         this._loadStripeElement(stripeupe, gatewayId, methodId).catch((error) =>
             stripeupe.onError?.(error),
@@ -265,11 +259,8 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     ): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        let stripePaymentMethod;
-
-        if (this._isBackendConfirmationEnabled()) {
-            stripePaymentMethod = await this._createStripePaymentMethod();
-        }
+        const stripePaymentMethod = await this._createStripePaymentMethod();
+        const isBackendConfirmationSupported = this._shouldCreateStripePaymentMethodManually();
 
         const paymentPayload = this._getPaymentPayload(
             methodId,
@@ -277,6 +268,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             shouldSaveInstrument,
             shouldSetAsDefaultInstrument,
             stripePaymentMethod?.id,
+            isBackendConfirmationSupported,
         );
 
         try {
@@ -412,7 +404,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             locale: formatLocale(shopperLanguage),
             appearance,
             ...(this._isBackendConfirmationEnabled() && {
-                paymentMethodCreation: 'manual',
+                paymentMethodCreation: MANUAL_STRIPE_PAYMENT_METHOD_CREATION,
             }),
         });
 
@@ -642,9 +634,17 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         ];
     }
 
+    private _shouldCreateStripePaymentMethodManually(): boolean {
+        return (
+            this._isBackendConfirmationEnabled() &&
+            this._stripeElements?.paymentMethodCreation === MANUAL_STRIPE_PAYMENT_METHOD_CREATION
+        );
+    }
+
     private _isBackendCardConfirmation(methodId: string): boolean {
         return (
-            methodId === StripePaymentMethodType.CreditCard && this._isBackendConfirmationEnabled()
+            methodId === StripePaymentMethodType.CreditCard &&
+            this._shouldCreateStripePaymentMethodManually()
         );
     }
 
@@ -655,6 +655,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     private async _createStripePaymentMethod() {
         if (!this._stripeUPEClient || !this._stripeElements) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        if (!this._shouldCreateStripePaymentMethodManually()) {
+            // INFO: should not create stripe payment method manually if this option wasn't enabled on Stripe elements initialization
+            // Stripe Link flow.
+            return;
         }
 
         const { error: submitError } = await this._stripeElements.submit();
@@ -676,8 +682,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             this._throwDisplayableStripeError(stripePaymentMethodError);
             throw new PaymentMethodFailedError();
         }
-
-        console.log({ stripePaymentMethod });
 
         return stripePaymentMethod;
     }
@@ -737,11 +741,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        let stripePaymentMethod;
-
-        if (this._isBackendConfirmationEnabled()) {
-            stripePaymentMethod = await this._createStripePaymentMethod();
-        }
+        const stripePaymentMethod = await this._createStripePaymentMethod();
 
         return {
             elements: this._stripeElements,
@@ -752,6 +752,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 },
                 ...(returnUrl && { return_url: returnUrl }),
                 ...(stripePaymentMethod && { payment_method: stripePaymentMethod.id }),
+                is_backend_confirmation_supported: this._shouldCreateStripePaymentMethodManually(),
             },
         };
     }
@@ -785,6 +786,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         shouldSaveInstrument = false,
         shouldSetAsDefaultInstrument = false,
         stripePaymentMethodId?: string,
+        isBackendConfirmationSupported = false,
     ): Payment {
         const cartId = this._store.getState().cart.getCart()?.id || '';
         const formattedPayload: StripeUPEIntent & FormattedHostedInstrument = {
@@ -794,6 +796,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             vault_payment_instrument: shouldSaveInstrument,
             set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
             ...(stripePaymentMethodId && { payment_method_id: stripePaymentMethodId }),
+            ...(isBackendConfirmationSupported && {
+                is_backend_confirmation_supported: isBackendConfirmationSupported,
+            }),
         };
 
         return {
