@@ -18,6 +18,10 @@ import { PaymentMethod } from '.';
 
 const APPLEPAYID = 'applepay';
 
+const isPaymentMethod = (value: PaymentMethod | undefined): value is PaymentMethod => {
+    return !!value;
+};
+
 export default class PaymentMethodActionCreator {
     constructor(private _requestSender: PaymentMethodRequestSender) {}
 
@@ -34,30 +38,38 @@ export default class PaymentMethodActionCreator {
                 observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsRequested));
                 Promise.all(
                     methodIds.map(async (id) => {
-                        const response = await this._requestSender.loadPaymentMethod(id, {
-                            ...options,
-                            params,
-                        });
+                        try {
+                            const response = await this._requestSender.loadPaymentMethod(id, {
+                                ...options,
+                                params,
+                            });
 
-                        return response.body;
+                            return response.body;
+                        } catch (_e) {
+                            return undefined;
+                        }
                     }),
                 )
                     .then((response) => {
+                        const paymentMethods = response.filter(isPaymentMethod);
+
                         observer.next(
                             createAction(
                                 PaymentMethodActionType.LoadPaymentMethodsSucceeded,
-                                response,
+                                paymentMethods,
                             ),
                         );
+
                         observer.complete();
                     })
                     .catch((response) => {
-                        observer.error(
-                            createErrorAction(
+                        observer.next(
+                            createAction(
                                 PaymentMethodActionType.LoadPaymentMethodsFailed,
                                 response,
                             ),
                         );
+                        observer.complete();
                     });
             });
     }
