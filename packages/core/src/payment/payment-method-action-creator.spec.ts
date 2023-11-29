@@ -244,7 +244,7 @@ describe('PaymentMethodActionCreator', () => {
             ]);
         });
 
-        it('emits error actions if unable to load payment method', async () => {
+        it('if call fails no methods are returned', async () => {
             jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethod').mockReturnValue(
                 Promise.reject(errorResponse),
             );
@@ -257,13 +257,11 @@ describe('PaymentMethodActionCreator', () => {
                 .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
-            expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
                 {
-                    type: PaymentMethodActionType.LoadPaymentMethodsFailed,
-                    payload: errorResponse,
-                    error: true,
+                    type: PaymentMethodActionType.LoadPaymentMethodsSucceeded,
+                    payload: [],
                 },
             ]);
         });
