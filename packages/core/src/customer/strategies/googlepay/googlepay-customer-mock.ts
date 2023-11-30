@@ -26,7 +26,12 @@ export function getAdyenV2CustomerInitializeOptions(
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
-    const googlepayAdyenV2 = { googlepayadyenv2: { ...container } };
+    const googlepayAdyenV2 = {
+        googlepayadyenv2: {
+            ...container,
+            onClick: jest.fn(),
+        },
+    };
     const googlepayAdyenV2WithInvalidContainer = { googlepayadyenv2: { ...invalidContainer } };
 
     switch (mode) {
@@ -55,7 +60,12 @@ export function getAdyenV3CustomerInitializeOptions(
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
-    const googlepayAdyenV3 = { googlepayadyenv3: { ...container } };
+    const googlepayAdyenV3 = {
+        googlepayadyenv3: {
+            ...container,
+            onClick: jest.fn(),
+        },
+    };
     const googlepayAdyenV3WithInvalidContainer = { googlepayadyenv3: { ...invalidContainer } };
 
     switch (mode) {
@@ -84,7 +94,12 @@ export function getAuthNetCustomerInitializeOptions(
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
-    const googlepayAuthNet = { googlepayauthorizenet: { ...container } };
+    const googlepayAuthNet = {
+        googlepayauthorizenet: {
+            ...container,
+            onClick: jest.fn(),
+        },
+    };
     const googlepayAuthNetWithInvalidContainer = { googlepayauthorizenet: { ...invalidContainer } };
 
     switch (mode) {
@@ -107,7 +122,12 @@ export function getBNZCustomerInitializeOptions(mode: Mode = Mode.Full): Custome
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
-    const googlepayBNZ = { googlepaybnz: { ...container } };
+    const googlepayBNZ = {
+        googlepaybnz: {
+            ...container,
+            onClick: jest.fn(),
+        },
+    };
     const googlepayBNZWithInvalidContainer = { googlepaybnz: { ...invalidContainer } };
 
     switch (mode) {
@@ -132,7 +152,12 @@ export function getBraintreeCustomerInitializeOptions(
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
-    const googlepayBraintree = { googlepaybraintree: { ...container } };
+    const googlepayBraintree = {
+        googlepaybraintree: {
+            ...container,
+            onClick: jest.fn(),
+        },
+    };
     const googlepayBraintreeWithInvalidContainer = { googlepaybraintree: { ...invalidContainer } };
 
     switch (mode) {
@@ -161,7 +186,12 @@ export function getCheckoutcomCustomerInitializeOptions(
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
-    const googlepayCheckoutcom = { googlepaycheckoutcom: { ...container } };
+    const googlepayCheckoutcom = {
+        googlepaycheckoutcom: {
+            ...container,
+            onClick: jest.fn(),
+        },
+    };
     const googlepayCheckoutcomWithInvalidContainer = {
         googlepaycheckoutcom: { ...invalidContainer },
     };
@@ -188,7 +218,12 @@ export function getCybersourceV2CustomerInitializeOptions(
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
-    const googlepayCybersourceV2 = { googlepaycybersourcev2: { ...container } };
+    const googlepayCybersourceV2 = {
+        googlepaycybersourcev2: {
+            ...container,
+            onClick: jest.fn(),
+        },
+    };
     const googlepayCyberSourceV2WithInvalidContainer = {
         googlepaycybersourcev2: { ...invalidContainer },
     };
@@ -215,7 +250,12 @@ export function getOrbitalCustomerInitializeOptions(
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
-    const googlepayOrbital = { googlepayorbital: { ...container } };
+    const googlepayOrbital = {
+        googlepayorbital: {
+            ...container,
+            onClick: jest.fn(),
+        },
+    };
     const googlepayOrbitalWithInvalidContainer = { googlepayorbital: { ...invalidContainer } };
 
     switch (mode) {
@@ -240,7 +280,12 @@ export function getStripeCustomerInitializeOptions(
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
-    const googlepayStripe = { googlepaystripe: { ...container } };
+    const googlepayStripe = {
+        googlepaystripe: {
+            ...container,
+            onClick: jest.fn(),
+        },
+    };
     const googlepayStripeWithInvalidContainer = { googlepaystripe: { ...invalidContainer } };
 
     switch (mode) {
@@ -269,7 +314,12 @@ export function getStripeUPECustomerInitializeOptions(
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
-    const googlepayStripeUPE = { googlepaystripeupe: { ...container } };
+    const googlepayStripeUPE = {
+        googlepaystripeupe: {
+            ...container,
+            onClick: jest.fn(),
+        },
+    };
     const googlepayStripeUPEWithInvalidContainer = { googlepaystripeupe: { ...invalidContainer } };
 
     switch (mode) {
@@ -298,7 +348,12 @@ export function getWorldpayAccessCustomerInitializeOptions(
     const undefinedMethodId = { methodId: undefined };
     const container = { container: 'googlePayCheckoutButton' };
     const invalidContainer = { container: 'invalid_container' };
-    const googlepayWorldpayAccess = { googlepayworldpayaccess: { ...container } };
+    const googlepayWorldpayAccess = {
+        googlepayworldpayaccess: {
+            ...container,
+            onClick: jest.fn(),
+        },
+    };
     const googlepayWorldpayAccessWithInvalidContainer = {
         googlepayworldpayaccess: { ...invalidContainer },
     };
