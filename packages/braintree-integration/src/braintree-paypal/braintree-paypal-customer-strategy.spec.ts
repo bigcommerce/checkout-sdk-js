@@ -32,7 +32,9 @@ import {
 
 import { getPaypalSDKMock } from '../mocks/paypal.mock';
 
-import BraintreePaypalCustomerInitializeOptions from './braintree-paypal-customer-options';
+import BraintreePaypalCustomerInitializeOptions, {
+    WithBraintreePaypalCustomerInitializeOptions,
+} from './braintree-paypal-customer-options';
 import BraintreePaypalCustomerStrategy from './braintree-paypal-customer-strategy';
 
 describe('BraintreePaypalCustomerStrategy', () => {
@@ -53,10 +55,12 @@ describe('BraintreePaypalCustomerStrategy', () => {
 
     const braintreePaypalOptions: BraintreePaypalCustomerInitializeOptions = {
         container: defaultButtonContainerId,
+        onClick: jest.fn(),
         onError: jest.fn(),
     };
 
-    const initializationOptions: CustomerInitializeOptions = {
+    const initializationOptions: CustomerInitializeOptions &
+        WithBraintreePaypalCustomerInitializeOptions = {
         methodId: 'braintreepaypal',
         braintreepaypal: braintreePaypalOptions,
     };
@@ -136,6 +140,12 @@ describe('BraintreePaypalCustomerStrategy', () => {
             eventEmitter.on('approve', () => {
                 if (typeof options.onApprove === 'function') {
                     options.onApprove({ payerId: 'PAYER_ID' }).catch(() => {});
+                }
+            });
+
+            eventEmitter.on('click', () => {
+                if (typeof options.onClick === 'function') {
+                    options.onClick();
                 }
             });
 
@@ -287,6 +297,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
             expect(renderMock).not.toHaveBeenCalled();
         });
@@ -311,6 +322,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -332,6 +344,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 

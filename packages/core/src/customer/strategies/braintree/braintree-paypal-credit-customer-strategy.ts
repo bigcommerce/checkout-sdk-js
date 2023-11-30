@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import { FormPoster } from '@bigcommerce/form-poster';
 
 import {
@@ -52,7 +53,6 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
 
     async initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintreepaypalcredit, methodId } = options;
-        const { container, buttonHeight } = braintreepaypalcredit || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -66,9 +66,9 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
             );
         }
 
-        if (!container) {
+        if (!braintreepaypalcredit.container) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "braintreepaypalcredit.container" argument is not provided.`,
+                `Unable to initialize payment because "options.braintreepaypalcredit.container" argument is not provided.`,
             );
         }
 
@@ -104,7 +104,6 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
                 braintreepaypalcredit,
                 methodId,
                 Boolean(paymentMethod.config.testMode),
-                buttonHeight,
             );
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
             this._handleError(error, braintreepaypalcredit);
@@ -151,9 +150,12 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
         braintreepaypalcredit: BraintreePaypalCreditCustomerInitializeOptions,
         methodId: string,
         testMode: boolean,
-        buttonHeight = DefaultCheckoutButtonHeight,
     ): void {
-        const { container } = braintreepaypalcredit;
+        const {
+            container,
+            buttonHeight = DefaultCheckoutButtonHeight,
+            onClick = noop,
+        } = braintreepaypalcredit;
         const { paypal } = this._window;
 
         let hasRenderedSmartButton = false;
@@ -190,6 +192,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
                                 braintreepaypalcredit,
                                 methodId,
                             ),
+                        onClick,
                     });
 
                     if (paypalButtonRender.isEligible()) {
