@@ -118,7 +118,13 @@ export function getConnectMock(): BraintreeConnect {
                     profileData: getBraintreeConnectProfileDataMock(),
                 }),
         },
+        events: {
+            apmSelected: jest.fn(),
+            emailSubmitted: jest.fn(),
+            orderPlaced: jest.fn(),
+        },
         ConnectCardComponent: jest.fn(),
+
     };
 }
 
