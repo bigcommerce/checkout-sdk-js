@@ -1,3 +1,5 @@
+import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, NotImplementedError } from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
@@ -30,13 +32,19 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
             );
         }
 
-        const {
-            paymentMethods: { getPaymentMethodOrThrow },
-        } = await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(methodId),
-        );
+        let state = this._store.getState();
+        let paymentMethod: PaymentMethod<any>;
 
-        await this._amazonPayV2PaymentProcessor.initialize(getPaymentMethodOrThrow(methodId));
+        try {
+            paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        } catch (_e) {
+            state = await this._store.dispatch(
+                this._paymentMethodActionCreator.loadPaymentMethod(methodId),
+            );
+            paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        }
+
+        await this._amazonPayV2PaymentProcessor.initialize(paymentMethod);
 
         this._amazonPayV2PaymentProcessor.renderAmazonPayButton({
             checkoutState: this._store.getState(),

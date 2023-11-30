@@ -66,6 +66,17 @@ describe('GooglePayCustomerStrategy', () => {
         });
 
         it('should call loadPaymentMethod', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockImplementation(() => {
+                throw new Error();
+            });
+
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValueOnce({
+                getPaymentMethodOrThrow: jest.fn().mockReturnValue(getGeneric()),
+            });
+
             await strategy.initialize(options);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(

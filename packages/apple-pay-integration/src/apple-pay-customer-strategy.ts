@@ -76,11 +76,14 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         this._onAuthorizeCallback = onPaymentAuthorize;
         this._onError = onError;
 
-        await this._paymentIntegrationService.loadPaymentMethod(methodId);
+        let state = this._paymentIntegrationService.getState();
 
-        const state = this._paymentIntegrationService.getState();
-
-        this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        try {
+            this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        } catch (_e) {
+            state = await this._paymentIntegrationService.loadPaymentMethod(methodId);
+            this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        }
 
         await this._paymentIntegrationService.verifyCheckoutSpamProtection();
 

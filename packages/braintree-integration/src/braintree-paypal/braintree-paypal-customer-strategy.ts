@@ -62,12 +62,17 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
             );
         }
 
-        await this.paymentIntegrationService.loadPaymentMethod(methodId);
+        let state = this.paymentIntegrationService.getState();
+        let paymentMethod: PaymentMethod<BraintreeInitializationData>;
 
-        const state = this.paymentIntegrationService.getState();
+        try {
+            paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        } catch (_e) {
+            state = await this.paymentIntegrationService.loadPaymentMethod(methodId);
+            paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        }
+
         const storeConfig = state.getStoreConfigOrThrow();
-        const paymentMethod: PaymentMethod<BraintreeInitializationData> =
-            state.getPaymentMethodOrThrow(methodId);
 
         const { clientToken, config, initializationData } = paymentMethod;
 
