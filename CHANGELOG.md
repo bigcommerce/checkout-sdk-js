@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.484.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.483.0...v1.484.0) (2023-11-30)
+
+
+### Features
+
+* **payment:** CHECKOUT-7901 Add method to load button payment method config in parallel ([#2258](https://github.com/bigcommerce/checkout-sdk-js/issues/2258)) ([cbb328a](https://github.com/bigcommerce/checkout-sdk-js/commit/cbb328a2fa3a3f259b3ed42441aa5df1e0d1bc0b))
+
 ## [1.483.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.482.0...v1.483.0) (2023-11-09)
 
 
