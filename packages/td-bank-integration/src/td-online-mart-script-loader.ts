@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { CustomCheckoutSDK, TdOnlineMartHostWindow } from './td-online-mart';
+import { TDCustomCheckoutSDK, TdOnlineMartHostWindow } from './td-online-mart';
 
 export default class TDOnlineMartScriptLoader {
     constructor(
@@ -10,10 +10,12 @@ export default class TDOnlineMartScriptLoader {
         private tdOnlineMartWindow: TdOnlineMartHostWindow = window,
     ) {}
 
-    async load(): Promise<CustomCheckoutSDK> {
-        await this.scriptLoader.loadScript(
-            'https://libs.na.bambora.com/customcheckout/1/customcheckout.js',
-        );
+    async load(): Promise<TDCustomCheckoutSDK> {
+        if (!this.tdOnlineMartWindow.customcheckout) {
+            await this.scriptLoader.loadScript(
+                'https://libs.na.bambora.com/customcheckout/1/customcheckout.js',
+            );
+        }
 
         if (!this.tdOnlineMartWindow.customcheckout) {
             throw new PaymentMethodClientUnavailableError();

@@ -7,11 +7,11 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { CustomCheckoutSDK } from './td-online-mart';
+import { FieldType, TDCustomCheckoutSDK } from './td-online-mart';
 import TDOnlineMartScriptLoader from './td-online-mart-script-loader';
 
 export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
-    private tdOnlineMartClient?: CustomCheckoutSDK;
+    private tdOnlineMartClient?: TDCustomCheckoutSDK;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -24,8 +24,6 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         this.tdOnlineMartClient = await this.loadTDOnlineMartJs();
 
         this.mountHostedFields();
-
-        await Promise.resolve();
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -48,22 +46,18 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             return;
         }
 
-        const cardNumber = this.tdOnlineMartClient.create('card-number');
-
-        const cvv = this.tdOnlineMartClient.create('cvv');
-
-        const expiry = this.tdOnlineMartClient.create('expiry');
+        const cardNumber = this.tdOnlineMartClient.create(FieldType.CARD_NUMBER);
+        const cvv = this.tdOnlineMartClient.create(FieldType.CVV);
+        const expiry = this.tdOnlineMartClient.create(FieldType.EXPIRY);
 
         cardNumber.mount('#tdonlinemart-ccNumber');
-
         cvv.mount('#tdonlinemart-ccCvv');
-
         expiry.mount('#tdonlinemart-ccExpiry');
     }
 
-    private async loadTDOnlineMartJs(): Promise<CustomCheckoutSDK> {
+    private async loadTDOnlineMartJs(): Promise<TDCustomCheckoutSDK> {
         if (this.tdOnlineMartClient) {
-            return Promise.resolve(this.tdOnlineMartClient);
+            return this.tdOnlineMartClient;
         }
 
         return this.tdOnlineMartScriptLoader.load();

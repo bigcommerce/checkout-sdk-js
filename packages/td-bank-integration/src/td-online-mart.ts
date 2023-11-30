@@ -1,8 +1,8 @@
 export interface TdOnlineMartHostWindow extends Window {
-    customcheckout?(): CustomCheckoutSDK;
+    customcheckout?(): TDCustomCheckoutSDK;
 }
 
-export interface CustomCheckoutSDK {
+export interface TDCustomCheckoutSDK {
     create(fieldType: FieldType): TdOnlineMartElement;
 }
 
@@ -10,4 +10,8 @@ interface TdOnlineMartElement {
     mount(cssSelector: string): void;
 }
 
-type FieldType = 'card-number' | 'cvv' | 'expiry';
+export enum FieldType {
+    CARD_NUMBER = 'card-number',
+    CVV = 'cvv',
+    EXPIRY = 'expiry',
+}
