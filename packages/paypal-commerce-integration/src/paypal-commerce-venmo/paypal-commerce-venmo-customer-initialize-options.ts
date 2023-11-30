@@ -11,6 +11,11 @@ export default interface PayPalCommerceVenmoCustomerInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error?: Error): void;
+
+    /**
+     * A callback that gets called when paypal button clicked.
+     */
+    onClick?(): void;
 }
 
 export interface WithPayPalCommerceVenmoCustomerInitializeOptions {
