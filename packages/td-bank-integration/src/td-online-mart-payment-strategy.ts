@@ -1,4 +1,6 @@
 import {
+    NotInitializedError,
+    NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentInitializeOptions,
@@ -18,12 +20,14 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         private tdOnlineMartScriptLoader: TDOnlineMartScriptLoader,
     ) {}
 
-    async initialize(options?: PaymentInitializeOptions): Promise<void> {
+    async initialize(options: PaymentInitializeOptions): Promise<void> {
         console.log(options, this.paymentIntegrationService);
+
+        const { methodId } = options;
 
         this.tdOnlineMartClient = await this.loadTDOnlineMartJs();
 
-        this.mountHostedFields();
+        this.mountHostedFields(methodId);
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -41,18 +45,14 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         await Promise.resolve();
     }
 
-    private mountHostedFields(): void {
-        if (!this.tdOnlineMartClient) {
-            return;
-        }
+    private mountHostedFields(methodId: string): void {
+        const cardNumber = this.getTDOnlineMartClient().create(FieldType.CARD_NUMBER);
+        const cvv = this.getTDOnlineMartClient().create(FieldType.CVV);
+        const expiry = this.getTDOnlineMartClient().create(FieldType.EXPIRY);
 
-        const cardNumber = this.tdOnlineMartClient.create(FieldType.CARD_NUMBER);
-        const cvv = this.tdOnlineMartClient.create(FieldType.CVV);
-        const expiry = this.tdOnlineMartClient.create(FieldType.EXPIRY);
-
-        cardNumber.mount('#tdonlinemart-ccNumber');
-        cvv.mount('#tdonlinemart-ccCvv');
-        expiry.mount('#tdonlinemart-ccExpiry');
+        cardNumber.mount(`#${methodId}-ccNumber`);
+        cvv.mount(`#${methodId}-ccCvv`);
+        expiry.mount(`#${methodId}-ccExpiry`);
     }
 
     private async loadTDOnlineMartJs(): Promise<TDCustomCheckoutSDK> {
@@ -61,5 +61,12 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         }
 
         return this.tdOnlineMartScriptLoader.load();
+    }
+    private getTDOnlineMartClient(): TDCustomCheckoutSDK {
+        if (!this.tdOnlineMartClient) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return this.tdOnlineMartClient;
     }
 }
