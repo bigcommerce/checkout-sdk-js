@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
+    MissingDataError,
+    MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
+    PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentRequestOptions,
@@ -31,8 +35,37 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
-        console.log('payment', payload);
-        console.log('options', options);
+        const { payment, ...order } = payload;
+
+        if (!payment) {
+            throw new PaymentArgumentInvalidError(['payment']);
+        }
+
+        const cartId = this.paymentIntegrationService.getState().getCartOrThrow().id;
+
+        const paymentToken = await this.getToken();
+
+        if (!paymentToken) {
+            throw new MissingDataError(MissingDataErrorType.MissingCart);
+        }
+
+        await this.paymentIntegrationService.submitOrder(order, options);
+
+        await this.paymentIntegrationService.submitPayment({
+            methodId: payment.methodId,
+            paymentData: {
+                formattedPayload: {
+                    cart_id: cartId,
+                    credit_card_token: {
+                        token: paymentToken,
+                    },
+                    vault_payment_instrument: null,
+                    set_as_default_stored_instrument: null,
+                    // vault_payment_instrument: shouldSaveInstrument || null,
+                    // set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
+                },
+            },
+        });
 
         await Promise.resolve();
     }
@@ -62,6 +95,19 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
 
         return this.tdOnlineMartScriptLoader.load();
     }
+
+    private getToken(): Promise<string | undefined> {
+        return new Promise((resolve) => {
+            this.getTDOnlineMartClient().createToken((result) => {
+                if (result.error) {
+                    resolve(undefined);
+                } else {
+                    resolve(result.token);
+                }
+            });
+        });
+    }
+
     private getTDOnlineMartClient(): TDCustomCheckoutSDK {
         if (!this.tdOnlineMartClient) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);

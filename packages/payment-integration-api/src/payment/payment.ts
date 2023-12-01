@@ -38,6 +38,7 @@ export type PaymentInstrument =
           | WithMollieIssuerInstrument
           | WithPayPalConnectInstrument
           | PaypalGooglePayInstrument
+          | TDOnlineMartFormattedPayload
       >
     | HostedInstrument
     | NonceInstrument
@@ -304,6 +305,18 @@ export interface StripeV3FormattedPayload {
     confirm: boolean;
     set_as_default_stored_instrument?: boolean;
     client_token?: string;
+    bigpay_token?: {
+        token: string;
+    };
+}
+
+export interface TDOnlineMartFormattedPayload {
+    cart_id: string;
+    credit_card_token?: {
+        token: string;
+    };
+    vault_payment_instrument?: boolean | null;
+    set_as_default_stored_instrument?: boolean | null;
     bigpay_token?: {
         token: string;
     };

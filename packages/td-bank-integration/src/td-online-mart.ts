@@ -4,6 +4,7 @@ export interface TdOnlineMartHostWindow extends Window {
 
 export interface TDCustomCheckoutSDK {
     create(fieldType: FieldType): TdOnlineMartElement;
+    createToken(callback: (result: CreateTokenResponse) => void): void;
 }
 
 interface TdOnlineMartElement {
@@ -14,4 +15,19 @@ export enum FieldType {
     CARD_NUMBER = 'card-number',
     CVV = 'cvv',
     EXPIRY = 'expiry',
+}
+
+interface CreateTokenResponse {
+    code: string;
+    error?: CreateTokenError;
+    token?: string;
+    last4?: string;
+    expiryMonth?: string;
+    expiryYear?: string;
+}
+
+interface CreateTokenError {
+    field: string;
+    type: string;
+    message: string;
 }
