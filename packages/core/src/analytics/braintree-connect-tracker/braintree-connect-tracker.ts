@@ -19,7 +19,7 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
     constructor(private checkoutService: CheckoutService) {}
 
     customerPaymentMethodExecuted() {
-        if (this.shouldTrackTheEvent()) {
+        if (this.shouldTrackEvent()) {
             this.shouldTriggerEventSubmittedEvent = false;
 
             this.trackEmailSubmitted(false);
@@ -28,7 +28,7 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
 
     trackStepViewed(step: string) {
         if (
-            this.shouldTrackTheEvent() &&
+            this.shouldTrackEvent() &&
             this.shouldTriggerEventSubmittedEvent &&
             step !== 'customer'
         ) {
@@ -39,7 +39,7 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
     }
 
     paymentComplete() {
-        if (this.shouldTrackTheEvent()) {
+        if (this.shouldTrackEvent()) {
             if (this.shouldTriggerEventSubmittedEvent) {
                 this.trackEmailSubmitted(true);
             }
@@ -48,14 +48,18 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
         }
     }
 
-    selectedPaymentMethod(methodId?: string): void {
-        if (this.shouldTrackTheEvent() && methodId) {
+    selectedPaymentMethod(methodId: string): void {
+        if (this.shouldTrackEvent() && methodId) {
+            this.selectedPaymentMethodId = methodId;
+
             this.trackApmSelected(methodId, false);
         }
     }
 
-    walletButtonClick(methodId?: string) {
-        if (this.shouldTrackTheEvent() && methodId) {
+    walletButtonClick(methodId: string) {
+        if (this.shouldTrackEvent() && methodId) {
+            this.selectedPaymentMethodId = methodId;
+
             this.trackApmSelected(methodId, true);
         }
     }
@@ -65,25 +69,13 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
      * Common
      *
      */
-    private shouldTrackTheEvent() {
-        return isBraintreeConnectWindow(window);
+    private shouldTrackEvent() {
+        return isBraintreeConnectWindow(window) && window.braintreeConnect.events;
     }
 
     private getBraintreeConnectEventsOrThrow(): BraintreeConnect['events'] {
         if (isBraintreeConnectWindow(window)) {
-            // return window.braintreeConnect.events;
-
-            return {
-                orderPlaced: (options: BraintreeConnectOrderPlacedEventOptions) => {
-                    console.log('Braintree Connect order placed: ', options);
-                },
-                emailSubmitted: (options: BraintreeConnectEmailEnteredEventOptions) => {
-                    console.log('Braintree Connect email submitted: ', options);
-                },
-                apmSelected: (options: BraintreeConnectApmSelectedEventOptions) => {
-                    console.log('Braintree Connect apm selected: ', options);
-                },
-            };
+            return window.braintreeConnect.events;
         }
 
         throw new PaymentMethodClientUnavailableError();
@@ -155,13 +147,13 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
     ): BraintreeConnectEmailEnteredEventOptions {
         const state = this.checkoutService.getState().data;
         const paymentMethods = state.getPaymentMethods() || [];
-        const apmList = paymentMethods.map(({ id }) => id).join(',');
+        const apmList = paymentMethods.map(({ id }) => id);
 
         return {
             ...this.getEventCommonOptions(),
             user_email_saved: isEmailPrefilled,
             apm_shown: apmList.length > 1 ? '1' : '0',
-            apm_list: apmList,
+            apm_list: apmList.join(','),
         };
     }
 
@@ -171,12 +163,12 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
     ): BraintreeConnectApmSelectedEventOptions {
         const state = this.checkoutService.getState().data;
         const paymentMethods = state.getPaymentMethods() || [];
-        const apmList = paymentMethods.map(({ id }) => id).join(',');
+        const apmList = paymentMethods.map(({ id }) => id);
 
         return {
             ...this.getEventCommonOptions(),
             apm_shown: apmList.length > 1 ? '1' : '0',
-            apm_list: apmList,
+            apm_list: apmList.join(','),
             apm_selected: methodId,
             apm_location: isWalletButton ? 'pre-email section' : 'payment section',
         };
