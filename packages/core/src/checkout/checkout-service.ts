@@ -60,6 +60,8 @@ import { Subscriptions, SubscriptionsActionCreator } from '../subscription';
 
 import { CheckoutRequestBody } from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';
+import { CheckoutHydrateActionType } from './checkout-hydrate-actions';
+import CheckoutInitialState from './checkout-initial-state';
 import CheckoutParams from './checkout-params';
 import CheckoutSelectors from './checkout-selectors';
 import CheckoutStore from './checkout-store';
@@ -178,6 +180,13 @@ export default class CheckoutService {
         ...filters: Array<(state: CheckoutSelectors) => any>
     ): () => void {
         return this._storeProjection.subscribe(subscriber, ...filters);
+    }
+
+    hydrate(initialState: CheckoutInitialState): Promise<CheckoutSelectors> {
+        return this._dispatch({
+            type: CheckoutHydrateActionType.HydrateInitialState,
+            payload: initialState,
+        });
     }
 
     /**
