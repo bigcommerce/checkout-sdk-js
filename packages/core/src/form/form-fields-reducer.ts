@@ -1,5 +1,9 @@
 import { Action, combineReducers, composeReducers } from '@bigcommerce/data-store';
 
+import {
+    CheckoutHydrateAction,
+    CheckoutHydrateActionType,
+} from '../checkout/checkout-hydrate-actions';
 import { clearErrorReducer } from '../common/error';
 import { objectMerge, objectSet } from '../common/utility';
 
@@ -26,11 +30,14 @@ export default function formFieldsReducer(
 
 function dataReducer(
     data: FormFields | undefined,
-    action: LoadFormFieldsAction,
+    action: LoadFormFieldsAction | CheckoutHydrateAction,
 ): FormFields | undefined {
     switch (action.type) {
         case FormFieldsActionType.LoadFormFieldsSucceeded:
             return objectMerge(data, action.payload);
+
+        case CheckoutHydrateActionType.HydrateInitialState:
+            return objectMerge(data, action.payload?.formFields);
 
         default:
             return data;

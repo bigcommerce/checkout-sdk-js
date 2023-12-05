@@ -59,13 +59,14 @@ export function createConfigSelectorFactory(): ConfigSelectorFactory {
     const getStoreConfig = createSelector(
         (state: ConfigState) => state.data,
         (_: ConfigState, { formState }: ConfigSelectorDependencies) => formState && formState.data,
-        (data, formFields) => () =>
-            data && formFields
-                ? {
-                      ...data.storeConfig,
-                      formFields,
-                  }
-                : undefined,
+        (data, formFields = { customerAccount: [], shippingAddress: [], billingAddress: [] }) =>
+            () =>
+                data
+                    ? {
+                          ...data.storeConfig,
+                          formFields,
+                      }
+                    : undefined,
     );
 
     const getStoreConfigOrThrow = createSelector(getStoreConfig, (getStoreConfig) => () => {
