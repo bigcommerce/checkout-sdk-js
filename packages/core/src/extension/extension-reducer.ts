@@ -1,5 +1,9 @@
 import { Action, combineReducers, composeReducers } from '@bigcommerce/data-store';
 
+import {
+    CheckoutHydrateAction,
+    CheckoutHydrateActionType,
+} from '../checkout/checkout-hydrate-actions';
 import { clearErrorReducer } from '../common/error';
 import { arrayReplace, objectSet } from '../common/utility';
 
@@ -27,10 +31,14 @@ export function extensionReducer(
 
 function dataReducer(
     data: Extension[] | undefined,
-    action: ExtensionAction,
+    action: ExtensionAction | CheckoutHydrateAction,
 ): Extension[] | undefined {
     if (action.type === ExtensionActionType.LoadExtensionsSucceeded) {
         return arrayReplace(data, action.payload);
+    }
+
+    if (action.type === CheckoutHydrateActionType.HydrateInitialState) {
+        return arrayReplace(data, action.payload?.extensions);
     }
 
     return data;
