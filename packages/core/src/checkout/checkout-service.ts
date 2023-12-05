@@ -543,6 +543,30 @@ export default class CheckoutService {
 
     /**
      * Loads a set of form fields that should be presented to customers in order
+     * to capture their personal information.
+     *
+     * Once the method has been executed successfully, you can call
+     * `CheckoutStoreSelector#getFormFields` to retrieve the set of
+     * form fields.
+     *
+     * ```js
+     * const state = await service.loadFormFields();
+     *
+     * console.log(state.data.getFormFields());
+     * ```
+     *
+     * @alpha
+     * @param options - Options for loading the form fields.
+     * @returns A promise that resolves to the current state.
+     */
+    loadFormFields(options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._formFieldsActionCreator.loadFormFields(options);
+
+        return this._dispatch(action, { queueId: 'formFields' });
+    }
+
+    /**
+     * Loads a set of form fields that should be presented to customers in order
      * to capture their billing address.
      *
      * Once the method has been executed successfully, you can call

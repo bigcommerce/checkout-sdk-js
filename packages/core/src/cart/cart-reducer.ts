@@ -1,7 +1,12 @@
 import { Action, combineReducers, composeReducers } from '@bigcommerce/data-store';
 
 import { BillingAddressAction, BillingAddressActionType } from '../billing';
-import { CheckoutAction, CheckoutActionType } from '../checkout';
+import {
+    CheckoutAction,
+    CheckoutActionType,
+    CheckoutHydrateAction,
+    CheckoutHydrateActionType,
+} from '../checkout';
 import { clearErrorReducer } from '../common/error';
 import { objectMerge, objectSet } from '../common/utility';
 import {
@@ -32,7 +37,8 @@ function dataReducer(
         | CheckoutAction
         | ConsignmentAction
         | CouponAction
-        | GiftCertificateAction,
+        | GiftCertificateAction
+        | CheckoutHydrateAction,
 ): Cart | undefined {
     switch (action.type) {
         case BillingAddressActionType.UpdateBillingAddressSucceeded:
@@ -47,6 +53,9 @@ function dataReducer(
         case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
         case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
             return objectMerge(data, action.payload && action.payload.cart);
+
+        case CheckoutHydrateActionType.HydrateInitialState:
+            return objectMerge(data, action.payload?.checkout.cart);
 
         default:
             return data;
