@@ -25,7 +25,6 @@ import {
     BraintreePaypalSdkCreatorConfig,
     BraintreeShippingAddressOverride,
     BraintreeThreeDSecure,
-    // BraintreeThreeDSecureOptions,
     BraintreeTokenizePayload,
     GetLocalPaymentInstance,
     GooglePayBraintreeSDK,

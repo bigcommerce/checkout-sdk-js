@@ -29,7 +29,7 @@ import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment
 
 import { getPaypalSDKMock } from '../mocks/paypal.mock';
 
-import BraintreePaypalCustomerInitializeOptions from './braintree-paypal-customer-options';
+import BraintreePaypalCustomerInitializeOptions from './braintree-paypal-customer-initialize-options';
 import BraintreePaypalCustomerStrategy from './braintree-paypal-customer-strategy';
 
 describe('BraintreePaypalCustomerStrategy', () => {

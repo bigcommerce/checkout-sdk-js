@@ -34,49 +34,49 @@ import mapToBraintreeShippingAddressOverride from '../map-to-braintree-shipping-
 
 import {
     BraintreePaypalPaymentInitializeOptions,
-    WithBraintreePaypalCustomerInitializeOptions,
-} from './braintree-paypal-payment-options';
+    WithBraintreePaypalPaymentInitializeOptions,
+} from './braintree-paypal-payment-initialize-options';
 
 export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
-    private _paymentMethod?: PaymentMethod;
-    private _braintreeHostWindow: BraintreeHostWindow = window;
+    private paymentMethod?: PaymentMethod;
+    private braintreeHostWindow: BraintreeHostWindow = window;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeIntegrationService: BraintreeIntegrationService,
-        private _credit: boolean = false,
+        private credit: boolean = false,
     ) {}
 
     async initialize(
-        options: PaymentInitializeOptions & WithBraintreePaypalCustomerInitializeOptions,
+        options: PaymentInitializeOptions & WithBraintreePaypalPaymentInitializeOptions,
     ) {
         const { braintree: braintreeOptions, methodId } = options;
 
-        if (!this._paymentMethod || !this._paymentMethod.nonce) {
-            this._paymentMethod = this.paymentIntegrationService
+        if (!this.paymentMethod || !this.paymentMethod.nonce) {
+            this.paymentMethod = this.paymentIntegrationService
                 .getState()
                 .getPaymentMethodOrThrow(methodId);
         }
 
-        if (this._paymentMethod.clientToken && braintreeOptions?.bannerContainerId) {
+        if (this.paymentMethod.clientToken && braintreeOptions?.bannerContainerId) {
             await this.loadPaypal();
 
             return this.loadPaypalCheckoutInstance(braintreeOptions);
         }
 
-        if (this._paymentMethod.clientToken) {
+        if (this.paymentMethod.clientToken) {
             return this.loadPaypal();
         }
 
         const state = await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
-        this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        this.paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
         if (braintreeOptions?.bannerContainerId) {
             return this.loadPaypalCheckoutInstance(braintreeOptions);
         }
 
-        if (!this._paymentMethod.clientToken) {
+        if (!this.paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
@@ -125,7 +125,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
-        if (!this._paymentMethod) {
+        if (!this.paymentMethod) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
@@ -136,13 +136,13 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         const {
             nonce,
             config: { isVaultingEnabled },
-        } = this._paymentMethod;
+        } = this.paymentMethod;
         const { methodId, paymentData = {} } = payment;
 
         if (nonce) {
             const state = await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
-            this._paymentMethod = state.getPaymentMethod(methodId);
+            this.paymentMethod = state.getPaymentMethod(methodId);
 
             return Promise.resolve({ ...payment, paymentData: this.formattedPayload(nonce) });
         }
@@ -180,7 +180,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 amount: grandTotal,
                 locale: storeLanguage,
                 currency: currency.code,
-                offerCredit: this._credit,
+                offerCredit: this.credit,
                 shippingAddressOverride,
                 shouldSaveInstrument: shouldSaveInstrument || false,
                 shippingAddressEditable: false,
@@ -224,7 +224,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         const state = this.paymentIntegrationService.getState();
         const storeConfig = state.getStoreConfigOrThrow();
 
-        const { clientToken, initializationData } = this._paymentMethod || {};
+        const { clientToken, initializationData } = this.paymentMethod || {};
 
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -262,7 +262,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         const isMessageContainerAvailable =
             containerId && Boolean(document.getElementById(containerId));
 
-        if (this._braintreeHostWindow.paypal && isMessageContainerAvailable) {
+        if (this.braintreeHostWindow.paypal && isMessageContainerAvailable) {
             const state = this.paymentIntegrationService.getState();
             const checkout = state.getCheckout();
 
@@ -270,7 +270,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
-            this._braintreeHostWindow.paypal
+            this.braintreeHostWindow.paypal
                 .Messages({
                     amount: checkout.subtotal,
                     placement: 'payment',
@@ -289,7 +289,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         const state = this.paymentIntegrationService.getState();
         const storeConfig = state.getStoreConfigOrThrow();
 
-        const { clientToken, initializationData } = this._paymentMethod || {};
+        const { clientToken, initializationData } = this.paymentMethod || {};
 
         if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);

@@ -2,7 +2,7 @@
  * Braintree ACH strategies
  */
 export { default as createBraintreePaypalAchPaymentStrategy } from './braintree-paypal-ach/create-braintree-paypal-ach-payment-strategy';
-export { WithBraintreePaypalCustomerInitializeOptions } from './braintree-paypal/braintree-paypal-customer-options';
+export { WithBraintreePaypalCustomerInitializeOptions } from './braintree-paypal/braintree-paypal-customer-initialize-options';
 
 /**
  * Braintree PayPal strategies

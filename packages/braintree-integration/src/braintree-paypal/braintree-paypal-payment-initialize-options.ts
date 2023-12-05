@@ -20,7 +20,7 @@ export interface BraintreePaypalPaymentInitializeOptions {
     bannerContainerId?: string;
 }
 
-export interface WithBraintreePaypalCustomerInitializeOptions {
+export interface WithBraintreePaypalPaymentInitializeOptions {
     /**
      * The options that are required to initialize the customer step of checkout
      * when using Braintree PayPal.
