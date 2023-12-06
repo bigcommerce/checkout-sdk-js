@@ -313,7 +313,7 @@ export interface StripeV3FormattedPayload {
 export interface TDOnlineMartFormattedPayload {
     cart_id: string;
     credit_card_token?: {
-        token: string;
+        token: string | undefined;
     };
     vault_payment_instrument?: boolean | null;
     set_as_default_stored_instrument?: boolean | null;

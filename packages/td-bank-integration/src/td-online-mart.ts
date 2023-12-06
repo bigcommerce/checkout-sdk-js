@@ -7,8 +7,9 @@ export interface TDCustomCheckoutSDK {
     createToken(callback: (result: CreateTokenResponse) => void): void;
 }
 
-interface TdOnlineMartElement {
+export interface TdOnlineMartElement {
     mount(cssSelector: string): void;
+    unmount(): void;
 }
 
 export enum FieldType {

@@ -4,7 +4,11 @@
     "overrides": [
         {
             "files": ["*.ts", "*.tsx"],
-            "rules": {}
+            "rules": {
+                "@typescript-eslint/naming-convention": "off",
+                "@typescript-eslint/no-unsafe-call": "off"
+            }
         }
     ]
 }
+
