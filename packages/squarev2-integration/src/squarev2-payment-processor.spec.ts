@@ -240,7 +240,7 @@ describe('SquareV2PaymentProcessor', () => {
                 intent: 'CHARGE',
             };
 
-            const nonce = await processor.verifyBuyer('cnon:zzz');
+            const nonce = await processor.verifyBuyer('cnon:zzz', 'CHARGE');
 
             expect(nonce).toBe('verf:yyy');
             expect(squareV2MockFunctions.verifyBuyer).toHaveBeenCalledWith(
@@ -252,7 +252,7 @@ describe('SquareV2PaymentProcessor', () => {
         it('should fail if _payments has not yet been initialized', async () => {
             await processor.deinitialize();
 
-            const nonce = processor.verifyBuyer('cnon:zzz');
+            const nonce = processor.verifyBuyer('cnon:zzz', 'CHARGE');
 
             await expect(nonce).rejects.toThrow(NotInitializedError);
         });

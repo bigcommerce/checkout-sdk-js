@@ -150,7 +150,7 @@ describe('SquareV2PaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(processor.verifyBuyer).toHaveBeenCalledWith('cnon:xxx');
+            expect(processor.verifyBuyer).toHaveBeenCalledWith('cnon:xxx', 'CHARGE');
         });
 
         it('should submit the order', async () => {
