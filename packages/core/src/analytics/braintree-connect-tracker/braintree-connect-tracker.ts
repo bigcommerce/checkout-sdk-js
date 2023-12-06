@@ -48,12 +48,16 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
 
     selectedPaymentMethod(methodId?: string): void {
         if (this.shouldTrackTheEvent() && methodId) {
+            this.selectedPaymentMethodId = methodId;
+
             this.trackApmSelected(methodId, false);
         }
     }
 
     walletButtonClick(methodId?: string) {
         if (this.shouldTrackTheEvent() && methodId) {
+            this.selectedPaymentMethodId = methodId;
+
             this.trackApmSelected(methodId, true);
         }
     }
@@ -65,7 +69,7 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
      *
      */
     private shouldTrackTheEvent() {
-        return isBraintreeConnectWindow(window);
+        return isBraintreeConnectWindow(window) && window.braintreeConnect.events;
     }
 
     // @ts-ignore
