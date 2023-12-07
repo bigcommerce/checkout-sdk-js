@@ -13,67 +13,62 @@ import { CheckoutService } from '../../checkout';
 import BraintreeConnectTrackerService from './braintree-connect-tracker-service';
 
 export default class BraintreeConnectTracker implements BraintreeConnectTrackerService {
-    private shouldTriggerEventSubmittedEvent = true;
-    private selectedPaymentMethodId = 'braintreeacceleratedcheckout';
+    private _shouldTriggerEventSubmittedEvent = true;
+    private _selectedPaymentMethodId = 'braintreeacceleratedcheckout';
 
     constructor(private checkoutService: CheckoutService) {}
 
     customerPaymentMethodExecuted() {
-        if (this.shouldTrackEvent()) {
-            this.shouldTriggerEventSubmittedEvent = false;
+        if (this._shouldTrackEvent()) {
+            this._shouldTriggerEventSubmittedEvent = false;
 
-            this.trackEmailSubmitted(false);
+            this._trackEmailSubmitted(false);
         }
     }
 
     trackStepViewed(step: string) {
         if (
-            this.shouldTrackEvent() &&
-            this.shouldTriggerEventSubmittedEvent &&
+            this._shouldTrackEvent() &&
+            this._shouldTriggerEventSubmittedEvent &&
             step !== 'customer'
         ) {
-            this.shouldTriggerEventSubmittedEvent = false;
+            this._shouldTriggerEventSubmittedEvent = false;
 
-            this.trackEmailSubmitted(true);
+            this._trackEmailSubmitted(true);
         }
     }
 
     paymentComplete() {
-        if (this.shouldTrackEvent()) {
-            if (this.shouldTriggerEventSubmittedEvent) {
-                this.trackEmailSubmitted(true);
+        if (this._shouldTrackEvent()) {
+            if (this._shouldTriggerEventSubmittedEvent) {
+                this._trackEmailSubmitted(true);
             }
 
-            this.trackOrderPlaced(this.selectedPaymentMethodId);
+            this._trackOrderPlaced(this._selectedPaymentMethodId);
         }
     }
 
     selectedPaymentMethod(methodId: string): void {
-        if (this.shouldTrackEvent() && methodId) {
-            this.selectedPaymentMethodId = methodId;
+        if (this._shouldTrackEvent() && methodId) {
+            this._selectedPaymentMethodId = methodId;
 
-            this.trackApmSelected(methodId, false);
+            this._trackApmSelected(methodId, false);
         }
     }
 
     walletButtonClick(methodId: string) {
-        if (this.shouldTrackEvent() && methodId) {
-            this.selectedPaymentMethodId = methodId;
+        if (this._shouldTrackEvent() && methodId) {
+            this._selectedPaymentMethodId = methodId;
 
-            this.trackApmSelected(methodId, true);
+            this._trackApmSelected(methodId, true);
         }
     }
 
-    /**
-     *
-     * Common
-     *
-     */
-    private shouldTrackEvent() {
+    private _shouldTrackEvent() {
         return isBraintreeConnectWindow(window) && window.braintreeConnect.events;
     }
 
-    private getBraintreeConnectEventsOrThrow(): BraintreeConnect['events'] {
+    private _getBraintreeConnectEventsOrThrow(): BraintreeConnect['events'] {
         if (isBraintreeConnectWindow(window)) {
             return window.braintreeConnect.events;
         }
@@ -86,23 +81,23 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
      * Braintree Connect Event track methods
      *
      */
-    private trackEmailSubmitted(isEmailPrefilled: boolean): void {
-        const { emailSubmitted } = this.getBraintreeConnectEventsOrThrow();
-        const eventOptions = this.getEmailSubmittedEventOptions(isEmailPrefilled);
+    private _trackEmailSubmitted(isEmailPrefilled: boolean): void {
+        const { emailSubmitted } = this._getBraintreeConnectEventsOrThrow();
+        const eventOptions = this._getEmailSubmittedEventOptions(isEmailPrefilled);
 
         emailSubmitted(eventOptions);
     }
 
-    private trackApmSelected(methodId: string, isWalletButton: boolean): void {
-        const { apmSelected } = this.getBraintreeConnectEventsOrThrow();
-        const eventOptions = this.getApmSelectedEventOptions(methodId, isWalletButton);
+    private _trackApmSelected(methodId: string, isWalletButton: boolean): void {
+        const { apmSelected } = this._getBraintreeConnectEventsOrThrow();
+        const eventOptions = this._getApmSelectedEventOptions(methodId, isWalletButton);
 
         apmSelected(eventOptions);
     }
 
-    private trackOrderPlaced(methodId: string): void {
-        const { orderPlaced } = this.getBraintreeConnectEventsOrThrow();
-        const eventOptions = this.getOrderPlacedEventOptions(methodId);
+    private _trackOrderPlaced(methodId: string): void {
+        const { orderPlaced } = this._getBraintreeConnectEventsOrThrow();
+        const eventOptions = this._getOrderPlacedEventOptions(methodId);
 
         orderPlaced(eventOptions);
     }
@@ -112,7 +107,7 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
      * Event options methods
      *
      */
-    private getEventCommonOptions(): BraintreeConnectEventCommonOptions {
+    private _getEventCommonOptions(): BraintreeConnectEventCommonOptions {
         const state = this.checkoutService.getState().data;
         const cart = state.getCart();
         const storeProfile = state.getConfig()?.storeProfile;
@@ -142,7 +137,7 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
         };
     }
 
-    private getEmailSubmittedEventOptions(
+    private _getEmailSubmittedEventOptions(
         isEmailPrefilled = false,
     ): BraintreeConnectEmailEnteredEventOptions {
         const state = this.checkoutService.getState().data;
@@ -150,14 +145,14 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
         const apmList = paymentMethods.map(({ id }) => id);
 
         return {
-            ...this.getEventCommonOptions(),
+            ...this._getEventCommonOptions(),
             user_email_saved: isEmailPrefilled,
             apm_shown: apmList.length > 1 ? '1' : '0',
             apm_list: apmList.join(','),
         };
     }
 
-    private getApmSelectedEventOptions(
+    private _getApmSelectedEventOptions(
         methodId: string,
         isWalletButton: boolean,
     ): BraintreeConnectApmSelectedEventOptions {
@@ -166,7 +161,7 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
         const apmList = paymentMethods.map(({ id }) => id);
 
         return {
-            ...this.getEventCommonOptions(),
+            ...this._getEventCommonOptions(),
             apm_shown: apmList.length > 1 ? '1' : '0',
             apm_list: apmList.join(','),
             apm_selected: methodId,
@@ -174,12 +169,12 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
         };
     }
 
-    private getOrderPlacedEventOptions(methodId: string): BraintreeConnectOrderPlacedEventOptions {
+    private _getOrderPlacedEventOptions(methodId: string): BraintreeConnectOrderPlacedEventOptions {
         const state = this.checkoutService.getState().data;
         const cart = state.getCart();
 
         return {
-            ...this.getEventCommonOptions(),
+            ...this._getEventCommonOptions(),
             selected_payment_method: methodId,
             currency_code: cart?.currency.code || '',
         };
