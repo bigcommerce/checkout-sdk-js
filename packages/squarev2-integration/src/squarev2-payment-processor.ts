@@ -20,6 +20,7 @@ import {
     ChargeVerifyBuyerDetails,
     Payments,
     SqEvent,
+    SquareIntent,
     StoreVerifyBuyerDetails,
 } from './types';
 
@@ -107,8 +108,10 @@ export default class SquareV2PaymentProcessor {
         return result.token;
     }
 
-    async verifyBuyer(token: string, intent: 'CHARGE' | 'STORE'): Promise<string> {
-        return intent === 'CHARGE' ? this._chargeVerifyBuyer(token) : this._storeVerifyBuyer(token);
+    async verifyBuyer(token: string, intent: SquareIntent): Promise<string> {
+        return intent === SquareIntent.CHARGE
+            ? this._chargeVerifyBuyer(token)
+            : this._storeVerifyBuyer(token);
     }
 
     private _getPayments(): Payments {
@@ -195,7 +198,7 @@ export default class SquareV2PaymentProcessor {
             amount: outstandingBalance.toString(),
             billingContact: this._mapToSquareBillingContact(getBillingAddressOrThrow()),
             currencyCode: cart.currency.code,
-            intent: 'CHARGE',
+            intent: SquareIntent.CHARGE,
         };
 
         const response = await this._getPayments().verifyBuyer(token, details);
@@ -208,7 +211,7 @@ export default class SquareV2PaymentProcessor {
 
         const details: StoreVerifyBuyerDetails = {
             billingContact: this._mapToSquareBillingContact(getBillingAddressOrThrow()),
-            intent: 'STORE',
+            intent: SquareIntent.STORE,
         };
 
         const response = await this._getPayments().verifyBuyer(token, details);

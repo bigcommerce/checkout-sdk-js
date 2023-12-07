@@ -19,6 +19,7 @@ import { getSquareV2 } from './mocks/squarev2-method.mock';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
 import SquareV2PaymentStrategy from './squarev2-payment-strategy';
 import SquareV2ScriptLoader from './squarev2-script-loader';
+import { SquareIntent } from './types';
 
 describe('SquareV2PaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
@@ -150,7 +151,7 @@ describe('SquareV2PaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(processor.verifyBuyer).toHaveBeenCalledWith('cnon:xxx', 'CHARGE');
+            expect(processor.verifyBuyer).toHaveBeenCalledWith('cnon:xxx', SquareIntent.CHARGE);
         });
 
         it('should submit the order', async () => {
@@ -240,8 +241,8 @@ describe('SquareV2PaymentStrategy', () => {
 
                 await strategy.execute(payload);
 
-                expect(processor.verifyBuyer).toHaveBeenCalledWith('cnon:xxx', 'CHARGE');
-                expect(processor.verifyBuyer).toHaveBeenCalledWith('cnon:xxx', 'STORE');
+                expect(processor.verifyBuyer).toHaveBeenCalledWith('cnon:xxx', SquareIntent.CHARGE);
+                expect(processor.verifyBuyer).toHaveBeenCalledWith('cnon:xxx', SquareIntent.STORE);
             });
 
             it('should submit the payment with verification tokens', async () => {

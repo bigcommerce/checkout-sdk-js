@@ -13,7 +13,7 @@ import {
 
 import { WithSquareV2PaymentInitializeOptions } from './squarev2-payment-initialize-options';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
-import { SquarePaymentMethodInitializationData } from './types';
+import { SquareIntent, SquarePaymentMethodInitializationData } from './types';
 
 export default class SquareV2PaymentStrategy implements PaymentStrategy {
     constructor(
@@ -92,16 +92,22 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
                 nonce = JSON.stringify({
                     nonce,
                     store_card_nonce: storeCardNonce,
-                    token: await this._squareV2PaymentProcessor.verifyBuyer(nonce, 'CHARGE'),
+                    token: await this._squareV2PaymentProcessor.verifyBuyer(
+                        nonce,
+                        SquareIntent.CHARGE,
+                    ),
                     store_card_token: await this._squareV2PaymentProcessor.verifyBuyer(
                         storeCardNonce,
-                        'STORE',
+                        SquareIntent.STORE,
                     ),
                 });
             } else {
                 nonce = JSON.stringify({
                     nonce,
-                    token: await this._squareV2PaymentProcessor.verifyBuyer(nonce, 'CHARGE'),
+                    token: await this._squareV2PaymentProcessor.verifyBuyer(
+                        nonce,
+                        SquareIntent.CHARGE,
+                    ),
                 });
             }
         }
