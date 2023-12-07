@@ -145,6 +145,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'worldpayaccess',
         method: 'credit_card',
     },
+    squarev2: {
+        provider: 'squarev2',
+        method: 'credit_card',
+    },
 };
 
 export default supportedInstruments;
