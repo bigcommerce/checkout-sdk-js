@@ -12,6 +12,7 @@ export function getApplePayCustomerInitializationOptions(): CustomerInitializeOp
             subtotalLabel: 'Subtotal',
             onPaymentAuthorize: jest.fn(),
             onError: jest.fn(),
+            onClick: jest.fn(),
         },
     };
 }
