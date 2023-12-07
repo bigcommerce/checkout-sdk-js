@@ -436,3 +436,16 @@ export interface StripeUPEInitializationData {
     stripeConnectedAccount: string;
     shopperLanguage: string;
 }
+
+export function isStripeUPEPaymentMethodLike(
+    paymentMethod: any,
+): paymentMethod is StripeUPEPaymentMethod {
+    return (
+        typeof paymentMethod === 'object' &&
+        paymentMethod !== null &&
+        'initializationData' in paymentMethod &&
+        typeof paymentMethod.initializationData.stripePublishableKey !== 'undefined' &&
+        typeof paymentMethod.initializationData.stripeConnectedAccount !== 'undefined' &&
+        typeof paymentMethod.initializationData.shopperLanguage !== 'undefined'
+    );
+}

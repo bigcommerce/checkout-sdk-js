@@ -16,6 +16,7 @@ import {
     Payment,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
+    PaymentIntegrationSelectors,
     PaymentIntegrationService,
     PaymentMethodCancelledError,
     PaymentMethodFailedError,
@@ -28,6 +29,7 @@ import {
 import formatLocale from './format-locale';
 import {
     AddressOptions,
+    isStripeUPEPaymentMethodLike,
     StripeConfirmPaymentData,
     StripeElement,
     StripeElements,
@@ -38,7 +40,6 @@ import {
     StripeUPEAppearanceOptions,
     StripeUPEClient,
     StripeUPEPaymentIntentStatus,
-    StripeUPEPaymentMethod,
 } from './stripe-upe';
 import StripeUPEPaymentInitializeOptions, {
     WithStripeUPEPaymentInitializeOptions,
@@ -85,7 +86,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         );
 
         this._unsubscribe = this.paymentIntegrationService.subscribe(
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             async () => {
                 const payment = this._stripeElements?.getElement(StripeElementType.PAYMENT);
 
@@ -175,22 +175,18 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
             const { instrumentId } = paymentData;
 
-            return this._executeWithVaulted(
-                payment.methodId,
-                instrumentId,
-                shouldSetAsDefaultInstrument,
-            );
+            this._executeWithVaulted(payment.methodId, instrumentId, shouldSetAsDefaultInstrument);
         }
 
         if (includes(APM_REDIRECT, methodId)) {
             await this.paymentIntegrationService.submitOrder(order, options);
 
-            return this._executeWithAPM(payment.methodId);
+            this._executeWithAPM(payment.methodId);
         }
 
         await this.paymentIntegrationService.submitOrder(order, options);
 
-        return this._executeWithoutRedirect(
+        this._executeWithoutRedirect(
             payment.methodId,
             shouldSaveInstrument,
             shouldSetAsDefaultInstrument,
@@ -227,7 +223,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private async _executeWithAPM(methodId: string): Promise<any> {
+    private async _executeWithAPM(methodId: string): Promise<PaymentIntegrationSelectors> {
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
         const paymentPayload = this._getPaymentPayload(methodId, paymentMethod.clientToken || '');
@@ -243,7 +239,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         methodId: string,
         shouldSaveInstrument: boolean,
         shouldSetAsDefaultInstrument: boolean,
-    ): Promise<any> {
+    ): Promise<PaymentIntegrationSelectors> {
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
         const paymentPayload = this._getPaymentPayload(
@@ -289,7 +285,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         methodId: string,
         token: string,
         shouldSetAsDefaultInstrument: boolean,
-    ): Promise<any> {
+    ): Promise<PaymentIntegrationSelectors | void> {
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
         const cartId = state.getCart()?.id;
@@ -310,11 +306,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            return this._processVaultedAdditionalAction(
-                error,
-                methodId,
-                shouldSetAsDefaultInstrument,
-            );
+            this._processVaultedAdditionalAction(error, methodId, shouldSetAsDefaultInstrument);
         }
     }
 
@@ -328,13 +320,15 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             params: { method: methodId },
         });
 
-        const paymentMethod = this.paymentIntegrationService
-            .getState()
-            .getPaymentMethodOrThrow(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
+
+        if (!paymentMethod || !isStripeUPEPaymentMethodLike(paymentMethod)) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
 
         const {
             initializationData: { stripePublishableKey, stripeConnectedAccount, shopperLanguage },
-        } = paymentMethod as StripeUPEPaymentMethod;
+        } = paymentMethod;
 
         if (!paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -414,7 +408,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         methodId: string,
         shouldSaveInstrument = false,
         shouldSetAsDefaultInstrument = false,
-    ): Promise<any> {
+    ): Promise<PaymentIntegrationSelectors | never> {
         if (!isRequestError(error)) {
             throw error;
         }
@@ -502,7 +496,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         error: Error,
         methodId?: string,
         shouldSetAsDefaultInstrument = false,
-    ): Promise<any> {
+    ): Promise<PaymentIntegrationSelectors | never> {
         if (!isRequestError(error)) {
             throw error;
         }
