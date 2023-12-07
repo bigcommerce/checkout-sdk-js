@@ -853,6 +853,10 @@ declare interface ApplePayCustomerInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error?: Error): void;
+    /**
+     * A callback that gets called when wallet button clicked
+     */
+    onClick?(): void;
 }
 
 /**

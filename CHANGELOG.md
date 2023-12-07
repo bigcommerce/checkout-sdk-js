@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.488.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.487.0...v1.488.0) (2023-12-07)
+
+
+### Features
+
+* **payment:** PAYPAL-3229 added onClick callback to ApplePayCustomerStrategy ([#2268](https://github.com/bigcommerce/checkout-sdk-js/issues/2268)) ([e913796](https://github.com/bigcommerce/checkout-sdk-js/commit/e9137962ecc29abd492153f0a5ce9e17724529d3))
+
 ## [1.487.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.486.0...v1.487.0) (2023-12-07)
 
 
