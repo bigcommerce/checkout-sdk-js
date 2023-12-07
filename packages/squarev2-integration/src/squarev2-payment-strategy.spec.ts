@@ -275,6 +275,49 @@ describe('SquareV2PaymentStrategy', () => {
                 );
             });
         });
+
+        describe('when using a stored card', () => {
+            beforeEach(async () => {
+                payload = {
+                    ...getOrderRequestBody(),
+                    payment: {
+                        methodId: 'squarev2',
+                        paymentData: {
+                            instrumentId: 'bigpaytoken',
+                        },
+                    },
+                };
+
+                await strategy.initialize(options);
+            });
+
+            it('should not tokenize the card', async () => {
+                await strategy.execute(payload);
+
+                expect(processor.tokenize).not.toHaveBeenCalled();
+            });
+
+            it('should submit the payment', async () => {
+                const expectedPayment = {
+                    methodId: 'squarev2',
+                    paymentData: {
+                        formattedPayload: {
+                            bigpay_token: {
+                                token: 'bigpaytoken',
+                            },
+                            vault_payment_instrument: false,
+                            set_as_default_stored_instrument: false,
+                        },
+                    },
+                };
+
+                await strategy.execute(payload);
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                    expectedPayment,
+                );
+            });
+        });
     });
 
     describe('#finalize', () => {
