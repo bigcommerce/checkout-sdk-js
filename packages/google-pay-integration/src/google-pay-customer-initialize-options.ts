@@ -37,6 +37,11 @@ export default interface GooglePayCustomerInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error: Error): void;
+
+    /**
+     * Callback that get called on wallet button click
+     */
+    onClick?(): void;
 }
 
 /**

@@ -100,6 +100,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         container,
         buttonColor,
         buttonType,
+        onClick,
         onError,
     }: GooglePayCustomerInitializeOptions): void {
         this._paymentButton =
@@ -107,15 +108,20 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             this._googlePayPaymentProcessor.addPaymentButton(container, {
                 buttonColor: buttonColor ?? 'default',
                 buttonType: buttonType ?? 'plain',
-                onClick: this._handleClick(onError),
+                onClick: this._handleClick(onError, onClick),
             });
     }
 
     private _handleClick(
         onError: GooglePayCustomerInitializeOptions['onError'],
+        onClick: GooglePayCustomerInitializeOptions['onClick'],
     ): (event: MouseEvent) => unknown {
         return async (event: MouseEvent) => {
             event.preventDefault();
+
+            if (onClick && typeof onClick === 'function') {
+                onClick();
+            }
 
             // TODO: Dispatch Widget Actions
             try {

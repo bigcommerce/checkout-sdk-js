@@ -263,6 +263,7 @@ describe('GooglePayCustomerStrategy', () => {
                 methodId: 'googlepaystripeupe',
                 googlepaystripeupe: {
                     container: 'googlePayCheckoutButton',
+                    onClick: jest.fn(),
                 },
             };
 
@@ -301,6 +302,16 @@ describe('GooglePayCustomerStrategy', () => {
             expect(paymentProcessor.displayWallet).toHaveBeenCalled();
             expect(paymentProcessor.handleSuccess).toHaveBeenCalledWith(googlePaymentDataMock);
             expect(paymentProcessor.updateShippingAddress).not.toHaveBeenCalled();
+        });
+
+        it('triggers onClick callback on wallet button click', async () => {
+            await strategy.initialize(customerInitializeOptions);
+
+            walletButton.click();
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(customerInitializeOptions.googlepaystripeupe?.onClick).toHaveBeenCalled();
         });
     });
 });
