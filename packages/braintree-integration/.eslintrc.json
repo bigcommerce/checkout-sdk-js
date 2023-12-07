@@ -5,7 +5,8 @@
         {
             "files": ["*.ts", "*.tsx"],
             "rules": {
-                "@typescript-eslint/naming-convention": "off"
+                "@typescript-eslint/naming-convention": "off",
+                "@typescript-eslint/no-unnecessary-condition": "off"
             }
         },
         {
