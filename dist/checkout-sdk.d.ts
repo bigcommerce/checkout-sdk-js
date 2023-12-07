@@ -5299,6 +5299,10 @@ declare interface GooglePayCustomerInitializeOptions {
      *  short: Google Pay payment button without the "Buy with" text.
      */
     buttonType?: ButtonType;
+    /**
+     * Callback that gets called on google pay button click
+     */
+    onClick?(): void;
 }
 
 declare interface GooglePayCustomerInitializeOptions_2 {
@@ -5334,6 +5338,10 @@ declare interface GooglePayCustomerInitializeOptions_2 {
      * @param error - The error object describing the failure.
      */
     onError?(error: Error): void;
+    /**
+     * Callback that get called on wallet button click
+     */
+    onClick?(): void;
 }
 
 /**
