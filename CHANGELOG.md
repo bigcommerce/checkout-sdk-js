@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.486.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.485.0...v1.486.0) (2023-12-07)
+
+
+### Features
+
+* **payment:** PAYPAL-3229 added onClick callback for all Braintree customer strategies ([#2270](https://github.com/bigcommerce/checkout-sdk-js/issues/2270)) ([f4f41f6](https://github.com/bigcommerce/checkout-sdk-js/commit/f4f41f6bb3076f2b7844fbccb84d662ec4a15b49))
+
 ## [1.485.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.484.0...v1.485.0) (2023-12-07)
 
 

@@ -1942,6 +1942,10 @@ declare interface BraintreePaypalCreditCustomerInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error: BraintreeError | StandardError): void;
+    /**
+     * A callback that gets called when wallet button clicked
+     */
+    onClick?(): void;
 }
 
 declare interface BraintreePaypalCustomerInitializeOptions {
@@ -1956,6 +1960,10 @@ declare interface BraintreePaypalCustomerInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error: BraintreeError_2 | StandardError_2): void;
+    /**
+     * A callback that gets called when wallet button clicked
+     */
+    onClick?(): void;
 }
 
 declare interface BraintreeStoredCardFieldOptions extends BraintreeFormFieldOptions {
