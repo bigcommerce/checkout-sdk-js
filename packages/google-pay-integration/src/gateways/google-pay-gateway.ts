@@ -236,6 +236,10 @@ export default class GooglePayGateway {
         return this._gatewayIdentifier;
     }
 
+    protected setGatewayIdentifier(gateway?: string) {
+        this._gatewayIdentifier = gateway || this.getGatewayIdentifier();
+    }
+
     private _isShippingAddressRequired(): boolean {
         const { getCartOrThrow, getStoreConfig, getShippingAddress } =
             this._paymentIntegrationService.getState();

@@ -54,6 +54,12 @@ export default class GooglePayPaypalCommerceGateway extends GooglePayGateway {
         await this.paypalCommerceScriptLoader.getPayPalSDK(paymentMethod, currency);
 
         this.googlepayConfig = await this.paypalCommerceScriptLoader.getGooglePayConfigOrThrow();
+
+        const { allowedPaymentMethods } = this.googlepayConfig;
+
+        this.setGatewayIdentifier(
+            allowedPaymentMethods[0]?.tokenizationSpecification?.parameters?.gateway,
+        );
     }
 
     getPaymentGatewayParameters(): GooglePayPayPalCommerceGatewayParameters {
