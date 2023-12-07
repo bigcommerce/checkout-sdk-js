@@ -6740,6 +6740,10 @@ declare interface PayPalCommerceCreditCustomerInitializeOptions {
      * A callback that gets called when payment complete on paypal side.
      */
     onComplete?(): void;
+    /**
+     * A callback that gets called when paypal button clicked.
+     */
+    onClick?(): void;
 }
 
 /**
@@ -6837,6 +6841,10 @@ declare interface PayPalCommerceCustomerInitializeOptions {
      * A callback that gets called when payment complete on paypal side.
      */
     onComplete?(): void;
+    /**
+     * A callback that gets called when paypal button clicked.
+     */
+    onClick?(): void;
 }
 
 declare interface PayPalCommerceFieldsStyleOptions {
@@ -6964,6 +6972,10 @@ declare interface PayPalCommerceVenmoCustomerInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error?: Error): void;
+    /**
+     * A callback that gets called when paypal button clicked.
+     */
+    onClick?(): void;
 }
 
 /**

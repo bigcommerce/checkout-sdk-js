@@ -10,6 +10,7 @@
 
 ### Methods
 
+- [onClick](PayPalCommerceVenmoCustomerInitializeOptions.md#onclick)
 - [onError](PayPalCommerceVenmoCustomerInitializeOptions.md#onerror)
 
 ## Properties
@@ -21,6 +22,18 @@
 The ID of a container which the checkout button should be inserted into.
 
 ## Methods
+
+### onClick
+
+▸ `Optional` **onClick**(): `void`
+
+A callback that gets called when paypal button clicked.
+
+#### Returns
+
+`void`
+
+___
 
 ### onError
 
