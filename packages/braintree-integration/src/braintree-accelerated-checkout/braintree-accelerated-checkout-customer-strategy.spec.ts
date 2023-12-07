@@ -27,6 +27,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
     const initializationOptions = { methodId };
     const executionOptions = {
         methodId,
+        checkoutPaymentMethodExecuted: jest.fn(),
         continueWithCheckoutCallback: jest.fn(),
     };
     const paymentMethod = {
@@ -137,13 +138,20 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             }
         });
 
-        it('authenticates user with PayPal Connect and calls continueWithCheckoutCallback', async () => {
+        it('authenticates user with PayPal Connect', async () => {
             await strategy.initialize({ methodId });
             await strategy.executePaymentMethodCheckout(executionOptions);
 
             expect(
                 braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
             ).toHaveBeenCalled();
+        });
+
+        it('calls checkoutPaymentMethodExecuted and continueWithCheckoutCallback after payment method execution', async () => {
+            await strategy.initialize({ methodId });
+            await strategy.executePaymentMethodCheckout(executionOptions);
+
+            expect(executionOptions.checkoutPaymentMethodExecuted).toHaveBeenCalled();
             expect(executionOptions.continueWithCheckoutCallback).toHaveBeenCalled();
         });
     });
