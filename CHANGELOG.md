@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.489.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.488.0...v1.489.0) (2023-12-07)
+
+
+### Features
+
+* **payment:** PAYPAL-3229 added onClick callback to AmazonPay customer strategy ([#2271](https://github.com/bigcommerce/checkout-sdk-js/issues/2271)) ([2a4e0ec](https://github.com/bigcommerce/checkout-sdk-js/commit/2a4e0ec52b76cba5b5b4c0680778cfd8fff82164))
+
 ## [1.488.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.487.0...v1.488.0) (2023-12-07)
 
 

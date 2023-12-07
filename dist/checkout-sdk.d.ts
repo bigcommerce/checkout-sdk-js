@@ -663,6 +663,7 @@ declare interface AmazonPayV2CheckoutSessionConfig {
  *     methodId: 'amazonpay',
  *     amazonpay: {
  *         container: 'signInButton',
+ *         onClick: () => console.log('AmazonPay button clicked'),
  *     },
  * });
  * ```
@@ -672,6 +673,10 @@ declare interface AmazonPayV2CustomerInitializeOptions {
      * The ID of a container which the sign-in button should insert into.
      */
     container: string;
+    /**
+     * Callback that get called on wallet button click
+     */
+    onClick?(): void;
 }
 
 declare enum AmazonPayV2LedgerCurrency {
