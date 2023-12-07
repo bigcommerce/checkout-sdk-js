@@ -39,6 +39,7 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
 
     const paypalCommerceVenmoOptions: PayPalCommerceVenmoCustomerInitializeOptions = {
         container: defaultButtonContainerId,
+        onClick: jest.fn(),
         onError: jest.fn(),
     };
 
@@ -93,6 +94,18 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
                                 order: {
                                     get: jest.fn(),
                                 },
+                            },
+                        );
+                    }
+                });
+
+                eventEmitter.on('onClick', () => {
+                    if (options.onClick) {
+                        options.onClick(
+                            { fundingSource: 'venmo' },
+                            {
+                                resolve: jest.fn(),
+                                reject: jest.fn(),
                             },
                         );
                     }
@@ -158,6 +171,22 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
             }
         });
 
+        it('throws an error if paypalcommercevenmo.onClick is provided but it is not a function', async () => {
+            const options = {
+                methodId: defaultMethodId,
+                paypalcommercevenmo: {
+                    container: 'container',
+                    onClick: 'test',
+                },
+            } as CustomerInitializeOptions;
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
         it('loads paypalcommerce venmo payment method', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -188,6 +217,7 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -259,6 +289,18 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
                 defaultMethodId,
                 paypalOrderId,
             );
+        });
+    });
+
+    describe('#onClick button callback', () => {
+        it('triggers onClick option by clicking on the button', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onClick');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceVenmoOptions.onClick).toHaveBeenCalled();
         });
     });
 

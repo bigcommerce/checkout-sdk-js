@@ -48,13 +48,19 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
 
         if (!paypalcommerce) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.paypalcommerce" argument is not provided.`,
+                'Unable to initialize payment because "options.paypalcommerce" argument is not provided.',
             );
         }
 
         if (!paypalcommerce.container) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.paypalcommerce.container" argument is not provided.`,
+                'Unable to initialize payment because "options.paypalcommerce.container" argument is not provided.',
+            );
+        }
+
+        if (paypalcommerce.onClick && typeof paypalcommerce.onClick !== 'function') {
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "options.paypalcommerce.onClick" argument is not a function.',
             );
         }
 
@@ -92,7 +98,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         methodId: string,
         paypalcommerce: PayPalCommerceCustomerInitializeOptions,
     ): void {
-        const { container, onComplete } = paypalcommerce;
+        const { container, onClick, onComplete } = paypalcommerce;
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -106,6 +112,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
             createOrder: () => this.paypalCommerceIntegrationService.createOrder('paypalcommerce'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
+            ...(onClick && { onClick: () => onClick() }),
         };
 
         const hostedCheckoutCallbacks = {
