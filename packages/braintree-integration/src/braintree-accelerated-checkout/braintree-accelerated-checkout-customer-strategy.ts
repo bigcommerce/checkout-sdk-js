@@ -64,7 +64,8 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
     async executePaymentMethodCheckout(
         options?: ExecutePaymentMethodCheckoutOptions,
     ): Promise<void> {
-        const { continueWithCheckoutCallback, methodId } = options || {};
+        const { checkoutPaymentMethodExecuted, continueWithCheckoutCallback, methodId } =
+            options || {};
 
         if (typeof continueWithCheckoutCallback !== 'function') {
             throw new InvalidArgumentError(
@@ -74,6 +75,10 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
 
         if (await this.shouldRunAuthenticationFlow(methodId)) {
             await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow();
+        }
+
+        if (checkoutPaymentMethodExecuted && typeof checkoutPaymentMethodExecuted === 'function') {
+            checkoutPaymentMethodExecuted();
         }
 
         continueWithCheckoutCallback();

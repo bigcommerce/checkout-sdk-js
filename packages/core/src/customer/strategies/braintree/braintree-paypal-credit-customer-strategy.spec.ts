@@ -84,6 +84,7 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
 
     const braintreePaypalCreditOptions: BraintreePaypalCreditCustomerInitializeOptions = {
         container: defaultButtonContainerId,
+        onClick: jest.fn(),
         onError: jest.fn(),
     };
 
@@ -184,6 +185,12 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
             eventEmitter.on('approve', () => {
                 if (options.onApprove) {
                     options.onApprove({ payerId: 'PAYER_ID' }).catch(() => {});
+                }
+            });
+
+            eventEmitter.on('click', () => {
+                if (options.onClick) {
+                    options.onClick();
                 }
             });
 
@@ -331,6 +338,7 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                 env: 'sandbox',
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
                 style: {
                     height: DefaultCheckoutButtonHeight,
                     color: PaypalButtonStyleColorOption.GOLD,
@@ -366,6 +374,7 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                 env: 'sandbox',
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
                 style: {
                     height: 100,
                     color: PaypalButtonStyleColorOption.GOLD,
@@ -388,6 +397,7 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                 env: 'sandbox',
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
                 style: {
                     height: DefaultCheckoutButtonHeight,
                     color: PaypalButtonStyleColorOption.GOLD,
@@ -402,6 +412,7 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                 env: 'sandbox',
                 fundingSource: paypalSdkMock.FUNDING.CREDIT,
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
                 style: {
                     height: DefaultCheckoutButtonHeight,
                     label: 'credit',
@@ -540,6 +551,16 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(braintreePaypalCreditOptions.onError).toHaveBeenCalledWith(expectedError);
+        });
+
+        it('triggers click callback when onClick paypal callback get called', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('click');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(braintreePaypalCreditOptions.onClick).toHaveBeenCalled();
         });
     });
 

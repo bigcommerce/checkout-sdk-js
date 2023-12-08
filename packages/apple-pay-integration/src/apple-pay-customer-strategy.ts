@@ -42,6 +42,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     private _applePayButton?: HTMLElement;
     private _onAuthorizeCallback = noop;
     private _onError = noop;
+    private _onClick = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _shippingLabel: string = DefaultLabels.Shipping;
 
@@ -68,6 +69,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             shippingLabel,
             subtotalLabel,
             onError = noop,
+            onClick = noop,
             onPaymentAuthorize,
         } = applepay;
 
@@ -75,12 +77,16 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         this._subTotalLabel = subtotalLabel || DefaultLabels.Subtotal;
         this._onAuthorizeCallback = onPaymentAuthorize;
         this._onError = onError;
+        this._onClick = onClick;
 
-        await this._paymentIntegrationService.loadPaymentMethod(methodId);
+        let state = this._paymentIntegrationService.getState();
 
-        const state = this._paymentIntegrationService.getState();
-
-        this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        try {
+            this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        } catch (_e) {
+            state = await this._paymentIntegrationService.loadPaymentMethod(methodId);
+            this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        }
 
         await this._paymentIntegrationService.verifyCheckoutSpamProtection();
 
@@ -132,6 +138,8 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
 
     private _handleWalletButtonClick(event: Event) {
         event.preventDefault();
+
+        this._onClick();
 
         const state = this._paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();

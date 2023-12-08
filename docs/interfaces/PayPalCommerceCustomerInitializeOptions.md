@@ -13,6 +13,7 @@ checkout to support PayPalCommerce.
 
 ### Methods
 
+- [onClick](PayPalCommerceCustomerInitializeOptions.md#onclick)
 - [onComplete](PayPalCommerceCustomerInitializeOptions.md#oncomplete)
 - [onError](PayPalCommerceCustomerInitializeOptions.md#onerror)
 
@@ -25,6 +26,18 @@ checkout to support PayPalCommerce.
 The ID of a container which the checkout button should be inserted into.
 
 ## Methods
+
+### onClick
+
+▸ `Optional` **onClick**(): `void`
+
+A callback that gets called when paypal button clicked.
+
+#### Returns
+
+`void`
+
+___
 
 ### onComplete
 

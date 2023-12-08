@@ -18,8 +18,61 @@ import { PaymentMethod } from '.';
 
 const APPLEPAYID = 'applepay';
 
+const isPaymentMethod = (value: PaymentMethod | undefined): value is PaymentMethod => {
+    return !!value;
+};
+
 export default class PaymentMethodActionCreator {
     constructor(private _requestSender: PaymentMethodRequestSender) {}
+
+    loadPaymentMethodsById(
+        methodIds: string[],
+        options?: RequestOptions,
+    ): ThunkAction<LoadPaymentMethodsAction, InternalCheckoutSelectors> {
+        return (store) =>
+            new Observable((observer: Observer<LoadPaymentMethodsAction>) => {
+                const state = store.getState();
+                const cartId = state.cart.getCart()?.id;
+                const params = cartId ? { ...options?.params, cartId } : { ...options?.params };
+
+                observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsRequested));
+                Promise.all(
+                    methodIds.map(async (id) => {
+                        try {
+                            const response = await this._requestSender.loadPaymentMethod(id, {
+                                ...options,
+                                params,
+                            });
+
+                            return response.body;
+                        } catch (_e) {
+                            return undefined;
+                        }
+                    }),
+                )
+                    .then((response) => {
+                        const paymentMethods = response.filter(isPaymentMethod);
+
+                        observer.next(
+                            createAction(
+                                PaymentMethodActionType.LoadPaymentMethodsSucceeded,
+                                paymentMethods,
+                            ),
+                        );
+
+                        observer.complete();
+                    })
+                    .catch((response) => {
+                        observer.next(
+                            createAction(
+                                PaymentMethodActionType.LoadPaymentMethodsFailed,
+                                response,
+                            ),
+                        );
+                        observer.complete();
+                    });
+            });
+    }
 
     loadPaymentMethods(
         options?: RequestOptions,

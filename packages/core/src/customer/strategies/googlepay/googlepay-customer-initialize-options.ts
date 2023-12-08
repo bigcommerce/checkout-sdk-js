@@ -22,4 +22,9 @@ export default interface GooglePayCustomerInitializeOptions {
      *  short: Google Pay payment button without the "Buy with" text.
      */
     buttonType?: ButtonType;
+
+    /**
+     * Callback that gets called on google pay button click
+     */
+    onClick?(): void;
 }

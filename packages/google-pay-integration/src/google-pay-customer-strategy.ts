@@ -8,6 +8,7 @@ import {
     NotInitializedError,
     NotInitializedErrorType,
     PaymentIntegrationService,
+    PaymentMethod,
     PaymentMethodCancelledError,
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -46,14 +47,18 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             throw new InvalidArgumentError('Unable to proceed without valid options.');
         }
 
-        await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
+        let state = this._paymentIntegrationService.getState();
+        let paymentMethod: PaymentMethod<GooglePayInitializationData>;
 
         try {
-            await this._googlePayPaymentProcessor.initialize(() =>
-                this._paymentIntegrationService
-                    .getState()
-                    .getPaymentMethodOrThrow<GooglePayInitializationData>(this._getMethodId()),
-            );
+            paymentMethod = state.getPaymentMethodOrThrow(this._getMethodId());
+        } catch (_e) {
+            state = await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
+            paymentMethod = state.getPaymentMethodOrThrow(this._getMethodId());
+        }
+
+        try {
+            await this._googlePayPaymentProcessor.initialize(() => paymentMethod);
         } catch {
             return;
         }
@@ -95,6 +100,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         container,
         buttonColor,
         buttonType,
+        onClick,
         onError,
     }: GooglePayCustomerInitializeOptions): void {
         this._paymentButton =
@@ -102,15 +108,20 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             this._googlePayPaymentProcessor.addPaymentButton(container, {
                 buttonColor: buttonColor ?? 'default',
                 buttonType: buttonType ?? 'plain',
-                onClick: this._handleClick(onError),
+                onClick: this._handleClick(onError, onClick),
             });
     }
 
     private _handleClick(
         onError: GooglePayCustomerInitializeOptions['onError'],
+        onClick: GooglePayCustomerInitializeOptions['onClick'],
     ): (event: MouseEvent) => unknown {
         return async (event: MouseEvent) => {
             event.preventDefault();
+
+            if (onClick && typeof onClick === 'function') {
+                onClick();
+            }
 
             // TODO: Dispatch Widget Actions
             try {

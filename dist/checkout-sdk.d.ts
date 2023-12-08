@@ -663,6 +663,7 @@ declare interface AmazonPayV2CheckoutSessionConfig {
  *     methodId: 'amazonpay',
  *     amazonpay: {
  *         container: 'signInButton',
+ *         onClick: () => console.log('AmazonPay button clicked'),
  *     },
  * });
  * ```
@@ -672,6 +673,10 @@ declare interface AmazonPayV2CustomerInitializeOptions {
      * The ID of a container which the sign-in button should insert into.
      */
     container: string;
+    /**
+     * Callback that get called on wallet button click
+     */
+    onClick?(): void;
 }
 
 declare enum AmazonPayV2LedgerCurrency {
@@ -853,6 +858,10 @@ declare interface ApplePayCustomerInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error?: Error): void;
+    /**
+     * A callback that gets called when wallet button clicked
+     */
+    onClick?(): void;
 }
 
 /**
@@ -1632,6 +1641,14 @@ declare interface BraintreeAcceleratedCheckoutShippingInitializeOptions {
     styles?: BraintreeConnectStylesOption;
 }
 
+declare interface BraintreeConnectTrackerService {
+    trackStepViewed(step: string): void;
+    customerPaymentMethodExecuted(): void;
+    paymentComplete(): void;
+    selectedPaymentMethod(methodId: string): void;
+    walletButtonClick(methodId: string): void;
+}
+
 declare interface BraintreeError extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
@@ -1942,6 +1959,10 @@ declare interface BraintreePaypalCreditCustomerInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error: BraintreeError | StandardError): void;
+    /**
+     * A callback that gets called when wallet button clicked
+     */
+    onClick?(): void;
 }
 
 declare interface BraintreePaypalCustomerInitializeOptions {
@@ -1956,6 +1977,10 @@ declare interface BraintreePaypalCustomerInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error: BraintreeError_2 | StandardError_2): void;
+    /**
+     * A callback that gets called when wallet button clicked
+     */
+    onClick?(): void;
 }
 
 declare interface BraintreeStoredCardFieldOptions extends BraintreeFormFieldOptions {
@@ -2785,6 +2810,26 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     loadPaymentMethods(options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
+     * Loads a list of payment methods for given ids.
+     *
+     *
+     * Once the method is executed successfully, you can call
+     * `CheckoutStoreSelector#getPaymentMethods` to retrieve the list of payment
+     * methods.
+     *
+     * ```js
+     * const state = service.loadPaymentMethodsById(['applepay']);
+     *
+     * console.log(state.data.getPaymentMethodOrThrow('applepay'));
+     * ```
+     *
+     * @param methodIds - The identifier for the payment methods to load.
+     * @param options - Options for loading the payment methods that are
+     * available to the current customer.
+     * @returns A promise that resolves to the current state.
+     */
+    loadPaymentMethodByIds(methodIds: string[], options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Initializes the payment step of a checkout process.
      *
@@ -5271,6 +5316,10 @@ declare interface GooglePayCustomerInitializeOptions {
      *  short: Google Pay payment button without the "Buy with" text.
      */
     buttonType?: ButtonType;
+    /**
+     * Callback that gets called on google pay button click
+     */
+    onClick?(): void;
 }
 
 declare interface GooglePayCustomerInitializeOptions_2 {
@@ -5306,6 +5355,10 @@ declare interface GooglePayCustomerInitializeOptions_2 {
      * @param error - The error object describing the failure.
      */
     onError?(error: Error): void;
+    /**
+     * Callback that get called on wallet button click
+     */
+    onClick?(): void;
 }
 
 /**
@@ -6720,6 +6773,10 @@ declare interface PayPalCommerceCreditCustomerInitializeOptions {
      * A callback that gets called when payment complete on paypal side.
      */
     onComplete?(): void;
+    /**
+     * A callback that gets called when paypal button clicked.
+     */
+    onClick?(): void;
 }
 
 /**
@@ -6817,6 +6874,10 @@ declare interface PayPalCommerceCustomerInitializeOptions {
      * A callback that gets called when payment complete on paypal side.
      */
     onComplete?(): void;
+    /**
+     * A callback that gets called when paypal button clicked.
+     */
+    onClick?(): void;
 }
 
 declare interface PayPalCommerceFieldsStyleOptions {
@@ -6944,6 +7005,10 @@ declare interface PayPalCommerceVenmoCustomerInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error?: Error): void;
+    /**
+     * A callback that gets called when paypal button clicked.
+     */
+    onClick?(): void;
 }
 
 /**
@@ -8454,6 +8519,26 @@ declare interface ZipCodeElementOptions {
  * @returns an instance of `BodlService`.
  */
 export declare function createBodlService(subscribe: (subscriber: (state: CheckoutSelectors) => void) => void): BodlService;
+
+/**
+ * Creates an instance of `BraintreeConnectTrackerService`.
+ *
+ * @remarks
+ * ```js
+ * const checkoutService = createCheckoutService();
+ * await checkoutService.loadCheckout();
+ * const braintreeConnectTracker = createBraintreeConnectTracker(checkoutService);
+ *
+ * braintreeConnectTracker.customerPaymentMethodExecuted();
+ * braintreeConnectTracker.trackStepViewed('customer');
+ * braintreeConnectTracker.paymentComplete();
+ * braintreeConnectTracker.selectedPaymentMethod('applepay');
+ * braintreeConnectTracker.walletButtonClick('paypal');
+ * ```
+ *
+ * @returns an instance of `BraintreeConnectTrackerService`.
+ */
+export declare function createBraintreeConnectTracker(checkoutService: CheckoutService): BraintreeConnectTrackerService;
 
 /**
  * Creates an instance of `CheckoutButtonInitializer`.

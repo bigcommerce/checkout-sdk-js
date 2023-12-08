@@ -45,6 +45,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
 
     const paypalCommerceOptions: PayPalCommerceCustomerInitializeOptions = {
         container: defaultContainerId,
+        onClick: jest.fn(),
         onComplete: jest.fn(),
     };
 
@@ -113,6 +114,18 @@ describe('PayPalCommerceCustomerStrategy', () => {
                                 order: {
                                     get: jest.fn(),
                                 },
+                            },
+                        );
+                    }
+                });
+
+                eventEmitter.on('onClick', () => {
+                    if (options.onClick) {
+                        options.onClick(
+                            { fundingSource: 'paypal' },
+                            {
+                                resolve: jest.fn(),
+                                reject: jest.fn(),
                             },
                         );
                     }
@@ -199,6 +212,23 @@ describe('PayPalCommerceCustomerStrategy', () => {
             }
         });
 
+        it('throws an error if paypalcommerce.onClick is provided but it is not a function', async () => {
+            const options = {
+                methodId,
+                paypalcommerce: {
+                    container: 'container',
+                    onClick: 'test',
+                    onComplete: jest.fn(),
+                },
+            } as CustomerInitializeOptions;
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
         it('loads paypalcommerce payment method', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -225,6 +255,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -253,6 +284,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 onShippingAddressChange: expect.any(Function),
                 onShippingOptionsChange: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -452,6 +484,18 @@ describe('PayPalCommerceCustomerStrategy', () => {
                     approveDataOrderId,
                 );
             });
+        });
+    });
+
+    describe('#onClick button callback', () => {
+        it('triggers onClick option by clicking on the button', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onClick');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceOptions.onClick).toHaveBeenCalled();
         });
     });
 

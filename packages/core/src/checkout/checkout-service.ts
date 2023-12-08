@@ -367,6 +367,34 @@ export default class CheckoutService {
     }
 
     /**
+     * Loads a list of payment methods for given ids.
+     *
+     *
+     * Once the method is executed successfully, you can call
+     * `CheckoutStoreSelector#getPaymentMethods` to retrieve the list of payment
+     * methods.
+     *
+     * ```js
+     * const state = service.loadPaymentMethodsById(['applepay']);
+     *
+     * console.log(state.data.getPaymentMethodOrThrow('applepay'));
+     * ```
+     *
+     * @param methodIds - The identifier for the payment methods to load.
+     * @param options - Options for loading the payment methods that are
+     * available to the current customer.
+     * @returns A promise that resolves to the current state.
+     */
+    loadPaymentMethodByIds(
+        methodIds: string[],
+        options?: RequestOptions,
+    ): Promise<CheckoutSelectors> {
+        const action = this._paymentMethodActionCreator.loadPaymentMethodsById(methodIds, options);
+
+        return this._dispatch(action, { queueId: 'paymentMethods' });
+    }
+
+    /**
      * Loads a payment method by an id.
      *
      * This method does not work with multi-option payment providers. Due to its

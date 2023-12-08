@@ -48,13 +48,19 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
 
         if (!paypalcommercecredit) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "paypalcommercecredit" argument is not provided.`,
+                'Unable to initialize payment because "options.paypalcommercecredit" argument is not provided.',
             );
         }
 
         if (!paypalcommercecredit.container) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "paypalcommercecredit.container" argument is not provided.`,
+                'Unable to initialize payment because "options.paypalcommercecredit.container" argument is not provided.',
+            );
+        }
+
+        if (paypalcommercecredit.onClick && typeof paypalcommercecredit.onClick !== 'function') {
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "options.paypalcommercecredit.onClick" argument is not a function.',
             );
         }
 
@@ -88,7 +94,7 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
         methodId: string,
         paypalCommerceCredit: PayPalCommerceCreditCustomerInitializeOptions,
     ): void {
-        const { container, onComplete } = paypalCommerceCredit;
+        const { container, onComplete, onClick } = paypalCommerceCredit;
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -103,6 +109,7 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
                 this.paypalCommerceIntegrationService.createOrder('paypalcommercecredit'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
+            ...(onClick && { onClick: () => onClick() }),
         };
 
         const hostedCheckoutCallbacks = {

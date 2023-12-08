@@ -155,6 +155,20 @@ describe('AmazonPayV2PaymentProcessor', () => {
             );
         });
 
+        it('onClick is called to define custom actions', async () => {
+            await processor.initialize(amazonPayV2Mock);
+
+            const onClickCallback = jest.fn();
+
+            processor.createButton(containerId, amazonPayV2ButtonParams, onClickCallback);
+
+            const amazonPayV2Button: AmazonPayV2Button = (
+                amazonPayV2SDKMock.Pay.renderButton as jest.Mock
+            ).mock.results[0].value;
+
+            expect(amazonPayV2Button.onClick).toHaveBeenCalledTimes(1);
+        });
+
         it('throws an error when amazonPayV2SDK is not initialized', () => {
             const createButton = () => processor.createButton(containerId, amazonPayV2ButtonParams);
 

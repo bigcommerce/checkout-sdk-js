@@ -15,4 +15,9 @@ export default interface BraintreePaypalCreditCustomerInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error: BraintreeError | StandardError): void;
+
+    /**
+     * A callback that gets called when wallet button clicked
+     */
+    onClick?(): void;
 }

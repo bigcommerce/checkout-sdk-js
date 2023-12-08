@@ -120,6 +120,11 @@ export function getConnectMock(): BraintreeConnect {
                 }),
         },
         ConnectCardComponent: jest.fn(),
+        events: {
+            apmSelected: jest.fn(),
+            emailSubmitted: jest.fn(),
+            orderPlaced: jest.fn(),
+        },
     };
 }
 

@@ -17,7 +17,7 @@ import GooglePayCustomerStrategy from './google-pay-customer-strategy';
 import GooglePayPaymentProcessor from './google-pay-payment-processor';
 import GooglePayScriptLoader from './google-pay-script-loader';
 import { getGeneric } from './mocks/google-pay-payment-method.mock';
-import { GooglePayInitializationData } from './types';
+import { GooglePayButtonOptions, GooglePayInitializationData } from './types';
 
 describe('GooglePayCustomerStrategy', () => {
     const CONTAINER_ID = 'my_awesome_google_pay_button_container';
@@ -54,6 +54,7 @@ describe('GooglePayCustomerStrategy', () => {
             methodId: 'googlepayworldpayaccess',
             googlepayworldpayaccess: {
                 container: CONTAINER_ID,
+                onClick: jest.fn(),
             },
         };
     });
@@ -66,6 +67,17 @@ describe('GooglePayCustomerStrategy', () => {
         });
 
         it('should call loadPaymentMethod', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockImplementation(() => {
+                throw new Error();
+            });
+
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValueOnce({
+                getPaymentMethodOrThrow: jest.fn().mockReturnValue(getGeneric()),
+            });
+
             await strategy.initialize(options);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
@@ -191,6 +203,29 @@ describe('GooglePayCustomerStrategy', () => {
             await strategy.deinitialize();
 
             expect(button.remove).toHaveBeenCalled();
+        });
+    });
+
+    describe('#handleClick', () => {
+        it('triggers onClick callback on wallet button click', async () => {
+            jest.spyOn(processor, 'addPaymentButton').mockImplementation(
+                (
+                    _: string,
+                    buttonOptions: Omit<GooglePayButtonOptions, 'allowedPaymentMethods'>,
+                ) => {
+                    button.onclick = buttonOptions.onClick;
+
+                    return button;
+                },
+            );
+
+            await strategy.initialize(options);
+
+            button.click();
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(options.googlepayworldpayaccess?.onClick).toHaveBeenCalled();
         });
     });
 });

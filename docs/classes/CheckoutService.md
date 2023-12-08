@@ -45,6 +45,7 @@ retrieve the current checkout state and subscribe to its changes.
 - [loadExtensions](CheckoutService.md#loadextensions)
 - [loadInstruments](CheckoutService.md#loadinstruments)
 - [loadOrder](CheckoutService.md#loadorder)
+- [loadPaymentMethodByIds](CheckoutService.md#loadpaymentmethodbyids)
 - [loadPaymentMethods](CheckoutService.md#loadpaymentmethods)
 - [loadPickupOptions](CheckoutService.md#loadpickupoptions)
 - [loadShippingAddressFields](CheckoutService.md#loadshippingaddressfields)
@@ -985,6 +986,37 @@ console.log(state.data.getOrder());
 | :------ | :------ | :------ |
 | `orderId` | `number` | The identifier of the order to load. |
 | `options?` | [`RequestOptions`](../interfaces/RequestOptions.md)<`Object`\> | Options for loading the order. |
+
+#### Returns
+
+`Promise`<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+A promise that resolves to the current state.
+
+___
+
+### loadPaymentMethodByIds
+
+▸ **loadPaymentMethodByIds**(`methodIds`, `options?`): `Promise`<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
+
+Loads a list of payment methods for given ids.
+
+Once the method is executed successfully, you can call
+`CheckoutStoreSelector#getPaymentMethods` to retrieve the list of payment
+methods.
+
+```js
+const state = service.loadPaymentMethodsById(['applepay']);
+
+console.log(state.data.getPaymentMethodOrThrow('applepay'));
+```
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `methodIds` | `string`[] | The identifier for the payment methods to load. |
+| `options?` | [`RequestOptions`](../interfaces/RequestOptions.md)<`Object`\> | Options for loading the payment methods that are available to the current customer. |
 
 #### Returns
 

@@ -28,7 +28,9 @@ import {
     StyleButtonColor,
 } from '../paypal-commerce-types';
 
-import PayPalCommerceCreditCustomerInitializeOptions from './paypal-commerce-credit-customer-initialize-options';
+import PayPalCommerceCreditCustomerInitializeOptions, {
+    WithPayPalCommerceCreditCustomerInitializeOptions,
+} from './paypal-commerce-credit-customer-initialize-options';
 import PayPalCommerceCreditCustomerStrategy from './paypal-commerce-credit-customer-strategy';
 
 describe('PayPalCommerceCreditCustomerStrategy', () => {
@@ -45,10 +47,12 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
 
     const paypalCommerceCreditOptions: PayPalCommerceCreditCustomerInitializeOptions = {
         container: defaultContainerId,
+        onClick: jest.fn(),
         onComplete: jest.fn(),
     };
 
-    const initializationOptions: CustomerInitializeOptions = {
+    const initializationOptions: CustomerInitializeOptions &
+        WithPayPalCommerceCreditCustomerInitializeOptions = {
         methodId,
         paypalcommercecredit: paypalCommerceCreditOptions,
     };
@@ -114,6 +118,18 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                                 order: {
                                     get: jest.fn(),
                                 },
+                            },
+                        );
+                    }
+                });
+
+                eventEmitter.on('onClick', () => {
+                    if (options.onClick) {
+                        options.onClick(
+                            { fundingSource: 'credit' },
+                            {
+                                resolve: jest.fn(),
+                                reject: jest.fn(),
                             },
                         );
                     }
@@ -200,6 +216,22 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
             }
         });
 
+        it('throws an error if paypalcommercecredit.onClick is provided but it is not a function', async () => {
+            const options = {
+                methodId,
+                paypalcommercecredit: {
+                    ...initializationOptions.paypalcommercecredit,
+                    onClick: 'test',
+                },
+            } as CustomerInitializeOptions;
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
         it('loads paypalcommercecredit payment method', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -226,6 +258,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -254,6 +287,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 onShippingAddressChange: expect.any(Function),
                 onShippingOptionsChange: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -293,6 +327,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -596,6 +631,18 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalCommerceIntegrationService.updateOrder).toHaveBeenCalled();
+        });
+    });
+
+    describe('#onClick button callback', () => {
+        it('triggers onClick option by clicking on the button', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onClick');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceCreditOptions.onClick).toHaveBeenCalled();
         });
     });
 
