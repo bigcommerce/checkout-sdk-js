@@ -123,6 +123,7 @@
 - [BraintreeAcceleratedCheckoutCustomer](interfaces/BraintreeAcceleratedCheckoutCustomer.md)
 - [BraintreeAcceleratedCheckoutPaymentInitializeOptions](interfaces/BraintreeAcceleratedCheckoutPaymentInitializeOptions.md)
 - [BraintreeAcceleratedCheckoutShippingInitializeOptions](interfaces/BraintreeAcceleratedCheckoutShippingInitializeOptions.md)
+- [BraintreeConnectTrackerService](interfaces/BraintreeConnectTrackerService.md)
 - [BraintreeError](interfaces/BraintreeError.md)
 - [BraintreeFormFieldCardTypeChangeEventData](interfaces/BraintreeFormFieldCardTypeChangeEventData.md)
 - [BraintreeFormFieldKeyboardEventData](interfaces/BraintreeFormFieldKeyboardEventData.md)
@@ -486,6 +487,7 @@
 ### Functions
 
 - [createBodlService](README.md#createbodlservice)
+- [createBraintreeConnectTracker](README.md#createbraintreeconnecttracker)
 - [createCheckoutButtonInitializer](README.md#createcheckoutbuttoninitializer)
 - [createCheckoutService](README.md#createcheckoutservice)
 - [createCurrencyService](README.md#createcurrencyservice)
@@ -836,6 +838,39 @@ bodlService.checkoutBegin();
 [`BodlService`](interfaces/BodlService.md)
 
 an instance of `BodlService`.
+
+___
+
+### createBraintreeConnectTracker
+
+▸ **createBraintreeConnectTracker**(`checkoutService`): [`BraintreeConnectTrackerService`](interfaces/BraintreeConnectTrackerService.md)
+
+Creates an instance of `BraintreeConnectTrackerService`.
+
+**`remarks`**
+```js
+const checkoutService = createCheckoutService();
+await checkoutService.loadCheckout();
+const braintreeConnectTracker = createBraintreeConnectTracker(checkoutService);
+
+braintreeConnectTracker.customerPaymentMethodExecuted();
+braintreeConnectTracker.trackStepViewed('customer');
+braintreeConnectTracker.paymentComplete();
+braintreeConnectTracker.selectedPaymentMethod('applepay');
+braintreeConnectTracker.walletButtonClick('paypal');
+```
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `checkoutService` | [`CheckoutService`](classes/CheckoutService.md) |
+
+#### Returns
+
+[`BraintreeConnectTrackerService`](interfaces/BraintreeConnectTrackerService.md)
+
+an instance of `BraintreeConnectTrackerService`.
 
 ___
 

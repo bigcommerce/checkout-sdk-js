@@ -1641,6 +1641,14 @@ declare interface BraintreeAcceleratedCheckoutShippingInitializeOptions {
     styles?: BraintreeConnectStylesOption;
 }
 
+declare interface BraintreeConnectTrackerService {
+    trackStepViewed(step: string): void;
+    customerPaymentMethodExecuted(): void;
+    paymentComplete(): void;
+    selectedPaymentMethod(methodId: string): void;
+    walletButtonClick(methodId: string): void;
+}
+
 declare interface BraintreeError extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
@@ -8511,6 +8519,26 @@ declare interface ZipCodeElementOptions {
  * @returns an instance of `BodlService`.
  */
 export declare function createBodlService(subscribe: (subscriber: (state: CheckoutSelectors) => void) => void): BodlService;
+
+/**
+ * Creates an instance of `BraintreeConnectTrackerService`.
+ *
+ * @remarks
+ * ```js
+ * const checkoutService = createCheckoutService();
+ * await checkoutService.loadCheckout();
+ * const braintreeConnectTracker = createBraintreeConnectTracker(checkoutService);
+ *
+ * braintreeConnectTracker.customerPaymentMethodExecuted();
+ * braintreeConnectTracker.trackStepViewed('customer');
+ * braintreeConnectTracker.paymentComplete();
+ * braintreeConnectTracker.selectedPaymentMethod('applepay');
+ * braintreeConnectTracker.walletButtonClick('paypal');
+ * ```
+ *
+ * @returns an instance of `BraintreeConnectTrackerService`.
+ */
+export declare function createBraintreeConnectTracker(checkoutService: CheckoutService): BraintreeConnectTrackerService;
 
 /**
  * Creates an instance of `CheckoutButtonInitializer`.
