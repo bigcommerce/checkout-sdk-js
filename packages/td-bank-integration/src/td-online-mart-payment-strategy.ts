@@ -52,8 +52,6 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const cartId = this.paymentIntegrationService.getState().getCartOrThrow().id;
-
         const paymentToken = await this.getTokenOrThrow();
 
         await this.paymentIntegrationService.submitOrder(order, options);
@@ -61,14 +59,7 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         await this.paymentIntegrationService.submitPayment({
             methodId: payment.methodId,
             paymentData: {
-                formattedPayload: {
-                    cart_id: cartId, // TODO: recheck if cart_id is needed
-                    credit_card_token: {
-                        token: paymentToken,
-                    },
-                    vault_payment_instrument: null,
-                    set_as_default_stored_instrument: null,
-                },
+                nonce: paymentToken,
             },
         });
     }
@@ -77,12 +68,12 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    async deinitialize(): Promise<void> {
+    deinitialize(): Promise<void> {
         this.cardNumberInput?.unmount();
         this.cvvInput?.unmount();
         this.expiryInput?.unmount();
 
-        await Promise.resolve();
+        return Promise.resolve();
     }
 
     private mountHostedFields(methodId: string): void {
@@ -105,14 +96,16 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         return this.tdOnlineMartScriptLoader.load();
     }
 
-    private getTokenOrThrow(): Promise<string | undefined> {
+    private getTokenOrThrow(): Promise<string> {
         return new Promise((resolve) => {
             this.getTDOnlineMartClientOrThrow().createToken((result) => {
-                if (result.error || !result.token) {
+                const { error, token } = result;
+
+                if (error || !token) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
                 }
 
-                resolve(result.token);
+                resolve(token);
             });
         });
     }

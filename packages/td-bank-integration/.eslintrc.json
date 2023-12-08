@@ -3,9 +3,8 @@
     "ignorePatterns": ["!**/*"],
     "overrides": [
         {
-            "files": ["*.ts", "*.tsx"],
+            "files": ["*.spec.ts", "*.spec.tsx"],
             "rules": {
-                "@typescript-eslint/naming-convention": "off",
                 "@typescript-eslint/no-unsafe-call": "off"
             }
         }

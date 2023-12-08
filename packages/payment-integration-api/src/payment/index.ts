@@ -23,7 +23,6 @@ export {
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
     StripeV3FormattedPayload,
-    TDOnlineMartFormattedPayload,
 } from './payment';
 
 export { default as isHostedInstrumentLike } from './is-hosted-intrument-like';

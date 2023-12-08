@@ -12,6 +12,7 @@ describe('TDOnlineMartScriptLoader', () => {
 
     beforeEach(() => {
         scriptLoader = new ScriptLoader();
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         mockWindow = {} as TdOnlineMartHostWindow;
         tdOnlineMartScriptLoader = new TDOnlineMartScriptLoader(scriptLoader, mockWindow);
     });
@@ -47,6 +48,7 @@ describe('TDOnlineMartScriptLoader', () => {
             try {
                 await tdOnlineMartScriptLoader.load();
             } catch (error) {
+                // eslint-disable-next-line jest/no-conditional-expect
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
         });
