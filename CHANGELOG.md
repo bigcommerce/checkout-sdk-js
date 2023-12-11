@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.492.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.491.0...v1.492.0) (2023-12-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3281 fixed phone country code field ([#2274](https://github.com/bigcommerce/checkout-sdk-js/issues/2274)) ([f1ce652](https://github.com/bigcommerce/checkout-sdk-js/commit/f1ce65217aa38ac715963108f07fbf3eddca021b))
+
 ## [1.491.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.490.0...v1.491.0) (2023-12-08)
 
 
