@@ -110,8 +110,10 @@ export {
     SubmitOrderAction,
 } from './order';
 export {
-    BlueSnapDirectEcpInstrument,
+    EcpInstrument,
     BlueSnapDirectEcpPayload,
+    SepaInstrument,
+    BlueSnapDirectSepaPayload,
     CardInstrument,
     CreditCardInstrument,
     WithBankAccountInstrument,

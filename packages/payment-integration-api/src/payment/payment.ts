@@ -11,7 +11,8 @@ export default interface Payment {
 }
 
 export type PaymentInstrument =
-    | BlueSnapDirectEcpInstrument
+    | EcpInstrument
+    | SepaInstrument
     | CreditCardInstrument
     | (CreditCardInstrument & WithHostedFormNonce)
     | (CreditCardInstrument & WithDocumentInstrument)
@@ -24,6 +25,7 @@ export type PaymentInstrument =
           | AppleInstrument
           | BlueSnapDirectCreditCardInstrument
           | BlueSnapDirectEcpPayload
+          | BlueSnapDirectSepaPayload
           | BoltInstrument
           | PaypalInstrument
           | FormattedHostedInstrument
@@ -77,7 +79,7 @@ export interface WithBankAccountInstrument {
     accountNumber: string;
     routingNumber: string;
     ownershipType: 'Personal' | 'Business';
-    accountType: BankAccountType | BlueSnapDirectEcpAccountType;
+    accountType: BankAccountType | EcpAccountType;
     firstName?: string;
     lastName?: string;
     businessName?: string;
@@ -238,15 +240,15 @@ interface BlueSnapDirectCreditCardInstrument {
     };
 }
 
-type BlueSnapDirectEcpAccountType =
+type EcpAccountType =
     | 'CONSUMER_CHECKING'
     | 'CONSUMER_SAVINGS'
     | 'CORPORATE_CHECKING'
     | 'CORPORATE_SAVINGS';
 
-export interface BlueSnapDirectEcpInstrument {
+export interface EcpInstrument {
     accountNumber: string;
-    accountType: BankAccountType | BlueSnapDirectEcpAccountType;
+    accountType: BankAccountType | EcpAccountType;
     shopperPermission: boolean;
     routingNumber: string;
 }
@@ -254,9 +256,25 @@ export interface BlueSnapDirectEcpInstrument {
 export interface BlueSnapDirectEcpPayload {
     ecp: {
         account_number: string;
-        account_type: BlueSnapDirectEcpAccountType | BankAccountType;
+        account_type: EcpAccountType | BankAccountType;
         shopper_permission: boolean;
         routing_number: string;
+    };
+}
+
+export interface SepaInstrument {
+    firstName: string;
+    lastName: string;
+    iban: string;
+    shopperPermission: boolean;
+}
+
+export interface BlueSnapDirectSepaPayload {
+    sepa_direct_debit: {
+        first_name: string;
+        last_name: string;
+        shopper_permission: boolean;
+        iban: string;
     };
 }
 
