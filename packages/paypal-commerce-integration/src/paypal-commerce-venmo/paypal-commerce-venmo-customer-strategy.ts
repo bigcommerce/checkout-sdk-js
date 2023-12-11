@@ -55,7 +55,13 @@ export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStra
             );
         }
 
-        await this.paymentIntegrationService.loadPaymentMethod(methodId);
+        const state = this.paymentIntegrationService.getState();
+        const paymentMethod = state.getPaymentMethod(methodId);
+
+        if (!paymentMethod) {
+            await this.paymentIntegrationService.loadPaymentMethod(methodId);
+        }
+
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
 
         this.renderButton(methodId, paypalcommercevenmo);

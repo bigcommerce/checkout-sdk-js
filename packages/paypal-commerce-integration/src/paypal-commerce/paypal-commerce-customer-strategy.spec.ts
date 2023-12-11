@@ -24,6 +24,7 @@ import {
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
     PayPalCommerceButtonsOptions,
+    PayPalCommerceHostWindow,
     PayPalSDK,
     StyleButtonColor,
 } from '../paypal-commerce-types';
@@ -171,6 +172,12 @@ describe('PayPalCommerceCustomerStrategy', () => {
         );
     });
 
+    afterEach(() => {
+        jest.clearAllMocks();
+
+        delete (window as PayPalCommerceHostWindow).paypal;
+    });
+
     it('creates an interface of the PayPalCommerce customer strategy', () => {
         expect(strategy).toBeInstanceOf(PayPalCommerceCustomerStrategy);
     });
@@ -233,6 +240,16 @@ describe('PayPalCommerceCustomerStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+        });
+
+        it('does not load paypalcommerce payment method if payment method is already exists', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockReturnValue(
+                paymentMethod,
+            );
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
         });
 
         it('loads paypal sdk with provided method id', async () => {
