@@ -135,7 +135,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
                         birth_date: this.normalizeDate(ratepayBirthDate),
                         phone: {
                             national_number: ratepayPhoneNumber,
-                            country_code: ratepayPhoneCountryCode,
+                            country_code: ratepayPhoneCountryCode.split('+')[1],
                         },
                     },
                     paypal_account: {

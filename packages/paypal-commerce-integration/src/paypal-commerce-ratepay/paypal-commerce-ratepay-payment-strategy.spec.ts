@@ -306,7 +306,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
                         rate_pay: {
                             birth_date: '2000-02-01',
                             phone: {
-                                country_code: '49',
+                                country_code: undefined,
                                 national_number: '234343434',
                             },
                         },
