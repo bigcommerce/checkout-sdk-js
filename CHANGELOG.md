@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.494.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.493.0...v1.494.0) (2023-12-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3280 added inputDateFormat for date input ([6cc6ebb](https://github.com/bigcommerce/checkout-sdk-js/commit/6cc6ebb4ce161d235997f19f2a67ff4221ffc32f))
+
 ## [1.493.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.492.0...v1.493.0) (2023-12-11)
 
 

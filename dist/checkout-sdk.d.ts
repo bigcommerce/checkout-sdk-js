@@ -5197,6 +5197,7 @@ declare interface FormField {
     secret?: boolean;
     min?: string | number;
     max?: string | number;
+    inputDateFormat?: string;
     options?: FormFieldOptions;
     requirements?: CustomerPasswordRequirements;
 }
