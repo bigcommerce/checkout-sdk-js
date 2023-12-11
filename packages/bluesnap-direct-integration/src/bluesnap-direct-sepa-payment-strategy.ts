@@ -5,9 +5,9 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import assertEcpInstrument from './is-bluesnap-direct-ecp-instrument';
+import assertSepaInstrument from './is-bluesnap-direct-sepa-instrument';
 
-export default class BlueSnapDirectEcpPaymentStrategy implements PaymentStrategy {
+export default class BlueSnapDirectSepaPaymentStrategy implements PaymentStrategy {
     constructor(private _paymentIntegrationService: PaymentIntegrationService) {}
 
     initialize(): Promise<void> {
@@ -15,18 +15,18 @@ export default class BlueSnapDirectEcpPaymentStrategy implements PaymentStrategy
     }
 
     async execute({ payment }: OrderRequestBody): Promise<void> {
-        assertEcpInstrument(payment?.paymentData);
+        assertSepaInstrument(payment?.paymentData);
 
         await this._paymentIntegrationService.submitOrder();
         await this._paymentIntegrationService.submitPayment({
             ...payment,
             paymentData: {
                 formattedPayload: {
-                    ecp: {
-                        account_number: payment.paymentData.accountNumber,
-                        account_type: payment.paymentData.accountType,
+                    sepa_direct_debit: {
+                        iban: payment.paymentData.iban,
+                        first_name: payment.paymentData.firstName,
+                        last_name: payment.paymentData.lastName,
                         shopper_permission: payment.paymentData.shopperPermission,
-                        routing_number: payment.paymentData.routingNumber,
                     },
                 },
             },
