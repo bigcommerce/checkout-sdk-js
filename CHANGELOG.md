@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.493.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.492.0...v1.493.0) (2023-12-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3337 PPCP GooglePay setGatewayIdentifier added ([a18f34e](https://github.com/bigcommerce/checkout-sdk-js/commit/a18f34e37e429740ee61bdf1a32e3c8172326660))
+
 ## [1.492.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.491.0...v1.492.0) (2023-12-11)
 
 
