@@ -1,16 +1,17 @@
 /// <reference types="applepayjs" />
-import { BlueSnapDirectEcpInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BraintreeConnectStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeError as BraintreeError_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
+import { EcpInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedFormOptions as HostedFormOptions_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
+import { SepaInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Timeout } from '@bigcommerce/request-sender';
 import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -6396,7 +6397,7 @@ declare interface OrderPayment {
     amount: number;
 }
 
-declare type OrderPaymentInstrument = WithBankAccountInstrument | CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | BlueSnapDirectEcpInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithCheckoutcomiDealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
+declare type OrderPaymentInstrument = WithBankAccountInstrument | EcpInstrument | SepaInstrument | CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithCheckoutcomiDealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
 
 /**
  * An object that contains the payment information required for submitting an
