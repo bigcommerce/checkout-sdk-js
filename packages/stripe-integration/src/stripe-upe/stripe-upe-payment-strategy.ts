@@ -175,18 +175,26 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
             const { instrumentId } = paymentData;
 
-            this._executeWithVaulted(payment.methodId, instrumentId, shouldSetAsDefaultInstrument);
+            await this._executeWithVaulted(
+                payment.methodId,
+                instrumentId,
+                shouldSetAsDefaultInstrument,
+            );
+
+            return;
         }
 
         if (includes(APM_REDIRECT, methodId)) {
             await this.paymentIntegrationService.submitOrder(order, options);
 
-            this._executeWithAPM(payment.methodId);
+            await this._executeWithAPM(payment.methodId);
+
+            return;
         }
 
         await this.paymentIntegrationService.submitOrder(order, options);
 
-        this._executeWithoutRedirect(
+        await this._executeWithoutRedirect(
             payment.methodId,
             shouldSaveInstrument,
             shouldSetAsDefaultInstrument,
@@ -306,7 +314,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            this._processVaultedAdditionalAction(error, methodId, shouldSetAsDefaultInstrument);
+            return this._processVaultedAdditionalAction(
+                error,
+                methodId,
+                shouldSetAsDefaultInstrument,
+            );
         }
     }
 
@@ -319,7 +331,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
             params: { method: methodId },
         });
-
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
         if (!paymentMethod || !isStripeUPEPaymentMethodLike(paymentMethod)) {
