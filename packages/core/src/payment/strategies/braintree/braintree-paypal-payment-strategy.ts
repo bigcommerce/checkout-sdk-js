@@ -320,7 +320,6 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
         try {
             this._braintreePaymentProcessor.initialize(clientToken, storeConfig, braintreeOptions);
-
             await this._braintreePaymentProcessor.preloadPaypal();
         } catch (error) {
             this._handleError(error);
