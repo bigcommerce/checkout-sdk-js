@@ -7,7 +7,7 @@ import {
     BlueSnapDirectEventOrigin as EventOrigin,
     BlueSnapDirectHostedFieldTagId as HostedFieldTagId,
     BlueSnapDirectHostedPaymentFieldsOptions as HostedPaymentFieldsOptions,
-} from './types';
+} from '../types';
 
 describe('BluesnapDirectNameOnCardInput', () => {
     let nameOnCardInput: BluesnapDirectNameOnCardInput;

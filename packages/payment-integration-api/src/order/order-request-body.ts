@@ -4,13 +4,13 @@ import {
     HostedCreditCardInstrument,
     HostedInstrument,
     HostedVaultedInstrument,
+    IdealInstrument,
     NonceInstrument,
     SepaInstrument,
     VaultedInstrument,
     WithAccountCreation,
     WithBankAccountInstrument,
     WithCheckoutcomFawryInstrument,
-    WithCheckoutcomiDealInstrument,
     WithCheckoutcomSEPAInstrument,
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
@@ -68,7 +68,7 @@ export interface OrderPaymentRequestBody {
         | (CreditCardInstrument & WithDocumentInstrument)
         | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
         | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
-        | (CreditCardInstrument & WithCheckoutcomiDealInstrument)
+        | (CreditCardInstrument & IdealInstrument)
         | (HostedInstrument & WithMollieIssuerInstrument)
         | WithAccountCreation;
 }

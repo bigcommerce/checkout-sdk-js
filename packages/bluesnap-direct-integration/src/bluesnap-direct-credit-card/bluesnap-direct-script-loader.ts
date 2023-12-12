@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { BlueSnapDirectHostWindow, BlueSnapDirectSdk } from './types';
+import { BlueSnapDirectHostWindow, BlueSnapDirectSdk } from '../types';
 
 export enum BlueSnapDirectSdkEnv {
     PRODUCTION = 'https://pay.bluesnap.com/web-sdk/5/bluesnap.js',

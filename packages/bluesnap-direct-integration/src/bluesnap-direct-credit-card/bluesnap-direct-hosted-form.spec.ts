@@ -8,13 +8,9 @@ import {
     PaymentInvalidFormError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { BlueSnapHostedFieldType } from './bluesnap-direct-constants';
-import BlueSnapDirectHostedForm from './bluesnap-direct-hosted-form';
-import BlueSnapHostedInputValidator from './bluesnap-direct-hosted-input-validator';
-import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input';
-import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
-import getBlueSnapDirectSdkMock from './mocks/bluesnap-direct-sdk.mock';
-import getBlueSnapPaymentInitializeOptionsMocks from './mocks/credit-card-payment-initialize-options.mock';
+import { BlueSnapHostedFieldType } from '../bluesnap-direct-constants';
+import getBlueSnapDirectSdkMock from '../mocks/bluesnap-direct-sdk.mock';
+import getBlueSnapPaymentInitializeOptionsMocks from '../mocks/credit-card-payment-initialize-options.mock';
 import {
     BlueSnapDirectSdk,
     BlueSnapDirectCardType as CardType,
@@ -23,7 +19,12 @@ import {
     BlueSnapDirectEventOrigin as EventOrigin,
     BlueSnapDirectHostedFieldTagId as HostedFieldTagId,
     BlueSnapDirectHostedPaymentFieldsOptions as HostedPaymentFieldsOptions,
-} from './types';
+} from '../types';
+
+import BlueSnapDirectHostedForm from './bluesnap-direct-hosted-form';
+import BlueSnapHostedInputValidator from './bluesnap-direct-hosted-input-validator';
+import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input';
+import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
 
 describe('BlueSnapDirectHostedForm', () => {
     let sdkMocks: ReturnType<typeof getBlueSnapDirectSdkMock>;

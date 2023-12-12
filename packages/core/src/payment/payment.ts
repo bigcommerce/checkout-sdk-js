@@ -2,6 +2,7 @@ import {
     BlueSnapDirectEcpPayload,
     BlueSnapDirectSepaPayload,
     EcpInstrument,
+    IdealPayload,
     SepaInstrument,
     WithAccountCreation,
     WithBankAccountInstrument,
@@ -25,7 +26,7 @@ export type PaymentInstrument =
     | CreditCardInstrument
     | (CreditCardInstrument & WithHostedFormNonce)
     | (CreditCardInstrument & WithDocumentInstrument)
-    | (CreditCardInstrument & WithCheckoutcomiDealInstrument)
+    | (CreditCardInstrument & IdealInstrument)
     | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
     | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
     | CryptogramInstrument
@@ -34,12 +35,13 @@ export type PaymentInstrument =
           | AppleInstrument
           | BlueSnapDirectEcpPayload
           | BlueSnapDirectSepaPayload
+          | IdealPayload
           | BoltInstrument
           | PaypalInstrument
           | FormattedHostedInstrument
           | FormattedVaultedInstrument
           | WithDocumentInstrument
-          | WithCheckoutcomiDealInstrument
+          | IdealInstrument
           | WithCheckoutcomFawryInstrument
           | WithCheckoutcomSEPAInstrument
           | StripeV3Intent
@@ -89,7 +91,7 @@ export interface WithCheckoutcomSEPAInstrument {
     bic: string;
 }
 
-export interface WithCheckoutcomiDealInstrument {
+export interface IdealInstrument {
     bic: string;
 }
 

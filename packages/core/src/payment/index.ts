@@ -21,7 +21,7 @@ export { default as PaymentActionCreator } from './payment-action-creator';
 export {
     default as Payment,
     CreditCardInstrument,
-    WithCheckoutcomiDealInstrument,
+    IdealInstrument,
     WithCheckoutcomFawryInstrument,
     WithCheckoutcomSEPAInstrument,
     HostedCreditCardInstrument,

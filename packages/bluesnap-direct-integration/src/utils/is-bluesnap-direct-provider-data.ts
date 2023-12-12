@@ -1,4 +1,4 @@
-import { BlueSnapDirectRedirectResponseProviderData } from './types';
+import { BlueSnapDirectRedirectResponseProviderData } from '../types';
 
 export default function isBlueSnapDirectRedirectResponseProviderData(
     value: unknown,

@@ -5,7 +5,7 @@ import {
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { BlueSnapDirectPreviouslyUsedCard, BlueSnapDirectSdk } from './types';
+import { BlueSnapDirectPreviouslyUsedCard, BlueSnapDirectSdk } from '../types';
 
 export default class BlueSnapDirect3ds {
     private _blueSnapSdk?: BlueSnapDirectSdk;

@@ -1,4 +1,4 @@
-import { BluesnapDirectNocInputAllowedStyle } from './types';
+import { BluesnapDirectNocInputAllowedStyle } from '../types';
 
 export default function isArrayOfAllowedProps(
     fields: string[],

@@ -7,8 +7,8 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import isBlueSnapDirectRedirectResponseProviderData from './is-bluesnap-direct-provider-data';
-import { BlueSnapDirectRedirectResponse } from './types';
+import { BlueSnapDirectRedirectResponse } from '../types';
+import isBlueSnapDirectRedirectResponseProviderData from '../utils/is-bluesnap-direct-provider-data';
 
 export default class BlueSnapDirectAPMPaymentStrategy implements PaymentStrategy {
     constructor(private _paymentIntegrationService: PaymentIntegrationService) {}

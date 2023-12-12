@@ -2,8 +2,9 @@ import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { BlueSnapDirectHostWindow, BlueSnapDirectSdk } from '../types';
+
 import BlueSnapDirectScriptLoader, { BlueSnapDirectSdkEnv } from './bluesnap-direct-script-loader';
-import { BlueSnapDirectHostWindow, BlueSnapDirectSdk } from './types';
 
 describe('BlueSnapDirectScriptLoader', () => {
     let scriptLoader: ScriptLoader;
