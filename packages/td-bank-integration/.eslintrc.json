@@ -3,8 +3,11 @@
     "ignorePatterns": ["!**/*"],
     "overrides": [
         {
-            "files": ["*.ts", "*.tsx"],
-            "rules": {}
+            "files": ["*.spec.ts", "*.spec.tsx"],
+            "rules": {
+                "@typescript-eslint/no-unsafe-call": "off"
+            }
         }
     ]
 }
+
