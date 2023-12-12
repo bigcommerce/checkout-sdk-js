@@ -21,6 +21,7 @@
 - [redirectUrl](PaymentMethodConfig.md#redirecturl)
 - [requireCustomerCode](PaymentMethodConfig.md#requirecustomercode)
 - [returnUrl](PaymentMethodConfig.md#returnurl)
+- [showCardHolderName](PaymentMethodConfig.md#showcardholdername)
 - [testMode](PaymentMethodConfig.md#testmode)
 
 ## Properties
@@ -112,6 +113,12 @@ ___
 ### returnUrl
 
 • `Optional` **returnUrl**: `string`
+
+___
+
+### showCardHolderName
+
+• `Optional` **showCardHolderName**: `boolean`
 
 ___
 
