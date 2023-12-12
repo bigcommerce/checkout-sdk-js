@@ -19,8 +19,7 @@ import {
     ApproveCallbackPayload,
     PayPalCommerceButtonsOptions,
     PayPalCommerceInitializationData,
-    ShippingAddressChangeCallbackPayload,
-    ShippingOptionChangeCallbackPayload,
+    ShippingChangeCallbackPayload,
 } from '../paypal-commerce-types';
 
 import PayPalCommerceCreditCustomerInitializeOptions, {
@@ -113,10 +112,7 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
         };
 
         const hostedCheckoutCallbacks = {
-            onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                this.onShippingAddressChange(data),
-            onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
-                this.onShippingOptionsChange(data),
+            onShippingChange: (data: ShippingChangeCallbackPayload) => this.onShippingChange(data),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
                 this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
         };
@@ -192,43 +188,26 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
         }
     }
 
-    private async onShippingAddressChange(
-        data: ShippingAddressChangeCallbackPayload,
-    ): Promise<void> {
+    private async onShippingChange(data: ShippingChangeCallbackPayload): Promise<void> {
         const address = this.paypalCommerceIntegrationService.getAddress({
-            city: data.shippingAddress.city,
-            countryCode: data.shippingAddress.country_code,
-            postalCode: data.shippingAddress.postal_code,
-            stateOrProvinceCode: data.shippingAddress.state,
+            city: data.shipping_address.city,
+            countryCode: data.shipping_address.country_code,
+            postalCode: data.shipping_address.postal_code,
+            stateOrProvinceCode: data.shipping_address.state,
         });
 
         try {
-            // Info: we use the same address to fill billing and shipping addresses to have valid quota on BE for order updating process
-            // on this stage we don't have access to valid customer's address except shipping data
             await this.paymentIntegrationService.updateBillingAddress(address);
             await this.paymentIntegrationService.updateShippingAddress(address);
 
-            const shippingOption = this.paypalCommerceIntegrationService.getShippingOptionOrThrow();
+            const shippingOption = this.paypalCommerceIntegrationService.getShippingOptionOrThrow(
+                data.selected_shipping_option?.id,
+            );
 
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.paypalCommerceIntegrationService.updateOrder();
         } catch (error) {
-            this.handleError(error);
-        }
-    }
-
-    private async onShippingOptionsChange(
-        data: ShippingOptionChangeCallbackPayload,
-    ): Promise<void> {
-        const shippingOption = this.paypalCommerceIntegrationService.getShippingOptionOrThrow(
-            data.selectedShippingOption.id,
-        );
-
-        try {
-            await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.paypalCommerceIntegrationService.updateOrder();
-        } catch (error) {
-            this.handleError(error);
+            throw new Error(error);
         }
     }
 
