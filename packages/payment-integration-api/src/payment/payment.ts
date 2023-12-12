@@ -16,7 +16,7 @@ export type PaymentInstrument =
     | CreditCardInstrument
     | (CreditCardInstrument & WithHostedFormNonce)
     | (CreditCardInstrument & WithDocumentInstrument)
-    | (CreditCardInstrument & WithCheckoutcomiDealInstrument)
+    | (CreditCardInstrument & IdealInstrument)
     | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
     | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
     | CryptogramInstrument
@@ -25,13 +25,14 @@ export type PaymentInstrument =
           | AppleInstrument
           | BlueSnapDirectCreditCardInstrument
           | BlueSnapDirectEcpPayload
+          | IdealPayload
           | BlueSnapDirectSepaPayload
           | BoltInstrument
           | PaypalInstrument
           | FormattedHostedInstrument
           | FormattedVaultedInstrument
           | WithDocumentInstrument
-          | WithCheckoutcomiDealInstrument
+          | IdealInstrument
           | WithCheckoutcomFawryInstrument
           | WithCheckoutcomSEPAInstrument
           | StripeV3Intent
@@ -103,12 +104,16 @@ export interface WithPayPalConnectInstrument {
     };
 }
 
-export interface WithCheckoutcomSEPAInstrument {
-    iban: string;
+export interface IdealInstrument {
     bic: string;
 }
 
-export interface WithCheckoutcomiDealInstrument {
+export interface IdealPayload {
+    ideal: IdealInstrument;
+}
+
+export interface WithCheckoutcomSEPAInstrument {
+    iban: string;
     bic: string;
 }
 

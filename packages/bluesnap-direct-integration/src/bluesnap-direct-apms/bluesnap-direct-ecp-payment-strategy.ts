@@ -5,7 +5,7 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import assertEcpInstrument from './is-bluesnap-direct-ecp-instrument';
+import assertEcpInstrument from '../utils/is-bluesnap-direct-ecp-instrument';
 
 export default class BlueSnapDirectEcpPaymentStrategy implements PaymentStrategy {
     constructor(private _paymentIntegrationService: PaymentIntegrationService) {}

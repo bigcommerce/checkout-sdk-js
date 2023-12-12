@@ -1,7 +1,7 @@
 import {
     BlueSnapDirectErrorDescription,
     BlueSnapDirectInputValidationErrorDescription,
-} from './types';
+} from '../types';
 
 export default function isBlueSnapDirectInputValidationErrorDescription(
     errorDescription?: BlueSnapDirectErrorDescription,

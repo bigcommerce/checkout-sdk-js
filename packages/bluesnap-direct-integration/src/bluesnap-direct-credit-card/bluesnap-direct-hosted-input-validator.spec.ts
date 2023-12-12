@@ -1,9 +1,9 @@
-import { CREDIT_CARD_ERRORS } from './bluesnap-direct-constants';
+import { CREDIT_CARD_ERRORS } from '../bluesnap-direct-constants';
 import BlueSnapHostedInputValidator from './bluesnap-direct-hosted-input-validator';
 import {
     BlueSnapDirectHostedFieldTagId as HostedFieldTagId,
     BlueSnapDirectErrorDescription as SubmitErrorDescription,
-} from './types';
+} from '../types';
 
 describe('BlueSnapHostedInputValidator', () => {
     let validator: BlueSnapHostedInputValidator;

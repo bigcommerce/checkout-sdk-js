@@ -5,7 +5,7 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import assertSepaInstrument from './is-bluesnap-direct-sepa-instrument';
+import assertSepaInstrument from '../utils/is-bluesnap-direct-sepa-instrument';
 
 export default class BlueSnapDirectSepaPaymentStrategy implements PaymentStrategy {
     constructor(private _paymentIntegrationService: PaymentIntegrationService) {}

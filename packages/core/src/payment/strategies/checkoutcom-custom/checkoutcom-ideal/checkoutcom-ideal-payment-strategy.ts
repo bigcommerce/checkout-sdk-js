@@ -1,7 +1,7 @@
 import { InternalCheckoutSelectors } from '../../../../checkout';
 import { OrderRequestBody } from '../../../../order';
 import { PaymentArgumentInvalidError } from '../../../errors';
-import { PaymentInstrument, WithCheckoutcomiDealInstrument } from '../../../payment';
+import { IdealInstrument, PaymentInstrument } from '../../../payment';
 import { PaymentRequestOptions } from '../../../payment-request-options';
 import CheckoutcomCustomPaymentStrategy from '../checkoutcom-custom-payment-strategy';
 
@@ -42,7 +42,7 @@ export default class CheckoutcomiDealPaymentStrategy extends CheckoutcomCustomPa
     private _createFormattedPayload(
         methodId: string,
         paymentData: PaymentInstrument,
-    ): WithCheckoutcomiDealInstrument | undefined {
+    ): IdealInstrument | undefined {
         if (CHECKOUTCOM_IDEAL_PAYMENT_METHOD === methodId && 'bic' in paymentData) {
             return { bic: paymentData.bic };
         }

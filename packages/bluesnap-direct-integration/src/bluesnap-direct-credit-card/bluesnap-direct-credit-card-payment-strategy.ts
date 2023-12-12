@@ -17,9 +17,9 @@ import {
 import BlueSnapDirect3ds from './bluesnap-direct-3ds';
 import BlueSnapDirectHostedForm from './bluesnap-direct-hosted-form';
 import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
-import isHostedCardFieldOptionsMap from './is-hosted-card-field-options-map';
-import isHostedStoredCardFieldOptionsMap from './is-hosted-stored-card-field-options-map';
-import { BlueSnapDirectSdk, BlueSnapDirectThreeDSecureData } from './types';
+import isHostedCardFieldOptionsMap from '../utils/is-hosted-card-field-options-map';
+import isHostedStoredCardFieldOptionsMap from '../utils/is-hosted-stored-card-field-options-map';
+import { BlueSnapDirectSdk, BlueSnapDirectThreeDSecureData } from '../types';
 
 export default class BlueSnapDirectCreditCardPaymentStrategy implements PaymentStrategy {
     private _paymentFieldsToken?: string;

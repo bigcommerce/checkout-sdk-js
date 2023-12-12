@@ -10,10 +10,10 @@ import {
     HostedCreditCardInstrument,
     HostedInstrument,
     HostedVaultedInstrument,
+    IdealInstrument,
     NonceInstrument,
     VaultedInstrument,
     WithCheckoutcomFawryInstrument,
-    WithCheckoutcomiDealInstrument,
     WithCheckoutcomSEPAInstrument,
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
@@ -52,7 +52,7 @@ export type OrderPaymentInstrument =
     | (CreditCardInstrument & WithDocumentInstrument)
     | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
     | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
-    | (CreditCardInstrument & WithCheckoutcomiDealInstrument)
+    | (CreditCardInstrument & IdealInstrument)
     | (HostedInstrument & WithMollieIssuerInstrument)
     | WithAccountCreation;
 

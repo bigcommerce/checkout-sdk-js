@@ -20,12 +20,12 @@ import {
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { BlueSnapHostedFieldType } from './bluesnap-direct-constants';
+import { BlueSnapHostedFieldType } from '../bluesnap-direct-constants';
 import BlueSnapHostedInputValidator from './bluesnap-direct-hosted-input-validator';
 import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input';
-import isValidationErrorDescription from './is-bluesnap-direct-input-validation-error-description';
-import isHostedCardFieldOptionsMap from './is-hosted-card-field-options-map';
-import isHostedStoredCardFieldOptionsMap from './is-hosted-stored-card-field-options-map';
+import isValidationErrorDescription from '../utils/is-bluesnap-direct-input-validation-error-description';
+import isHostedCardFieldOptionsMap from '../utils/is-hosted-card-field-options-map';
+import isHostedStoredCardFieldOptionsMap from '../utils/is-hosted-stored-card-field-options-map';
 import {
     BlueSnapDirectSdk,
     BlueSnapDirectStyle,
@@ -41,7 +41,7 @@ import {
     BlueSnapDirectHostedFieldTagId as HostedFieldTagId,
     BlueSnapDirectHostedPaymentFieldsOptions as HostedPaymentFieldsOptions,
     BlueSnapDirectThreeDSecureData as ThreeDSecureData,
-} from './types';
+} from '../types';
 
 export default class BlueSnapDirectHostedForm {
     private _blueSnapSdk?: BlueSnapDirectSdk;

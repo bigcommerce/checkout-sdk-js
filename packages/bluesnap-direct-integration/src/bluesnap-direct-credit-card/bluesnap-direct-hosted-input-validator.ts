@@ -5,11 +5,11 @@ import {
     HostedInputValidateResults,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { BlueSnapHostedFieldType, CREDIT_CARD_ERRORS } from './bluesnap-direct-constants';
+import { BlueSnapHostedFieldType, CREDIT_CARD_ERRORS } from '../bluesnap-direct-constants';
 import {
     BlueSnapDirectInputValidationErrorDescription as ErrorDescription,
     BlueSnapDirectHostedFieldTagId as HostedFieldTagId,
-} from './types';
+} from '../types';
 
 export default class BlueSnapHostedInputValidator {
     private _errors: HostedInputValidateErrorDataMap = {};

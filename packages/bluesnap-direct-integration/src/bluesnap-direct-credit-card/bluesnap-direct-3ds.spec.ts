@@ -7,8 +7,8 @@ import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
 import getBlueSnapDirectSdkMock, {
     previouslyUsedCardDataMock,
     threeDSdata,
-} from './mocks/bluesnap-direct-sdk.mock';
-import { BlueSnapDirectSdk } from './types';
+} from '../mocks/bluesnap-direct-sdk.mock';
+import { BlueSnapDirectSdk } from '../types';
 
 describe('BlueSnapDirectHostedForm', () => {
     let sdkMocks: ReturnType<typeof getBlueSnapDirectSdkMock>;
