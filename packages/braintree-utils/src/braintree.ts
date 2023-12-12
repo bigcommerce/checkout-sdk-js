@@ -1,3 +1,5 @@
+import { Omit } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { PaypalAuthorizeData, PaypalButtonOptions, PaypalButtonRender, PaypalSDK } from './paypal';
 
 /**
@@ -158,6 +160,20 @@ export interface BraintreeError extends Error {
     code: string;
     details?: unknown;
 }
+
+export type BraintreeFormErrorData = Omit<BraintreeFormFieldState, 'isFocused'>;
+
+export type BraintreeFormErrorDataKeys =
+    | 'number'
+    | 'expirationDate'
+    | 'expirationMonth'
+    | 'expirationYear'
+    | 'cvv'
+    | 'postalCode';
+
+export type BraintreeFormErrorsData = Partial<
+    Record<BraintreeFormErrorDataKeys, BraintreeFormErrorData>
+>;
 
 /**
  *
@@ -365,6 +381,13 @@ export interface BraintreeHostedFormError extends BraintreeError {
     };
 }
 
+export interface BraintreeFormFieldState {
+    isFocused: boolean;
+    isEmpty: boolean;
+    isPotentiallyValid: boolean;
+    isValid: boolean;
+}
+
 /**
  *
  * Braintree 3D Secure
@@ -390,7 +413,11 @@ export interface BraintreeThreeDSecureOptions {
     challengeRequested?: boolean;
     showLoader?: boolean;
     bin?: string;
-    addFrame?(error: Error | undefined, iframe: HTMLIFrameElement): void;
+    addFrame?(
+        error: Error | undefined,
+        iframe: HTMLIFrameElement,
+        cancel: () => Promise<BraintreeVerifyPayload> | undefined,
+    ): void;
     removeFrame?(): void;
     onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
 }
@@ -419,6 +446,121 @@ export interface BraintreePaypal {
     focusWindow(): void;
     tokenize(options: BraintreePaypalRequest): Promise<BraintreeTokenizePayload>;
     Buttons?(options: PaypalButtonOptions): PaypalButtonRender;
+}
+
+/**
+ * A set of options that are required to support 3D Secure authentication flow.
+ *
+ * If the customer uses a credit card that has 3D Secure enabled, they will be
+ * asked to verify their identity when they pay. The verification is done
+ * through a web page via an iframe provided by the card issuer.
+ */
+// export interface BraintreeThreeDSecureOptions {
+//     /**
+//      * A callback that gets called when the iframe is ready to be added to the
+//      * current page. It is responsible for determining where the iframe should
+//      * be inserted in the DOM.
+//      *
+//      * @param error - Any error raised during the verification process;
+//      * undefined if there is none.
+//      * @param iframe - The iframe element containing the verification web page
+//      * provided by the card issuer.
+//      * @param cancel - A function, when called, will cancel the verification
+//      * process and remove the iframe.
+//      */
+//     addFrame(
+//         error: Error | undefined,
+//         iframe: HTMLIFrameElement,
+//         cancel: () => Promise<BraintreeVerifyPayload> | undefined,
+//     ): void;
+//
+//     /**
+//      * A callback that gets called when the iframe is about to be removed from
+//      * the current page.
+//      */
+//     removeFrame(): void;
+// }
+
+export interface BraintreeFormOptions {
+    fields: BraintreeFormFieldsMap | BraintreeStoredCardFieldsMap;
+    styles?: BraintreeFormFieldStylesMap;
+    onBlur?(data: BraintreeFormFieldBlurEventData): void;
+    onCardTypeChange?(data: BraintreeFormFieldCardTypeChangeEventData): void;
+    onFocus?(data: BraintreeFormFieldFocusEventData): void;
+    onValidate?(data: BraintreeFormFieldValidateEventData): void;
+    onEnter?(data: BraintreeFormFieldEnterEventData): void;
+}
+
+export enum BraintreeFormFieldType {
+    CardCode = 'cardCode',
+    CardCodeVerification = 'cardCodeVerification',
+    CardExpiry = 'cardExpiry',
+    CardName = 'cardName',
+    CardNumber = 'cardNumber',
+    CardNumberVerification = 'cardNumberVerification',
+}
+
+export interface BraintreeFormFieldsMap {
+    [BraintreeFormFieldType.CardCode]?: BraintreeFormFieldOptions;
+    [BraintreeFormFieldType.CardExpiry]: BraintreeFormFieldOptions;
+    [BraintreeFormFieldType.CardName]: BraintreeFormFieldOptions;
+    [BraintreeFormFieldType.CardNumber]: BraintreeFormFieldOptions;
+}
+
+export interface BraintreeStoredCardFieldsMap {
+    [BraintreeFormFieldType.CardCodeVerification]?: BraintreeStoredCardFieldOptions;
+    [BraintreeFormFieldType.CardNumberVerification]?: BraintreeStoredCardFieldOptions;
+}
+
+export interface BraintreeFormFieldOptions {
+    accessibilityLabel?: string;
+    containerId: string;
+    placeholder?: string;
+}
+
+export interface BraintreeStoredCardFieldOptions extends BraintreeFormFieldOptions {
+    instrumentId: string;
+}
+
+export interface BraintreeFormFieldStylesMap {
+    default?: BraintreeFormFieldStyles;
+    error?: BraintreeFormFieldStyles;
+    focus?: BraintreeFormFieldStyles;
+}
+
+export type BraintreeFormFieldStyles = Partial<
+    Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>
+>;
+
+export interface BraintreeFormFieldKeyboardEventData {
+    fieldType: string;
+    errors?: BraintreeFormErrorsData;
+}
+
+export type BraintreeFormFieldBlurEventData = BraintreeFormFieldKeyboardEventData;
+export type BraintreeFormFieldEnterEventData = BraintreeFormFieldKeyboardEventData;
+export type BraintreeFormFieldFocusEventData = BraintreeFormFieldKeyboardEventData;
+
+export interface BraintreeFormFieldCardTypeChangeEventData {
+    cardType?: string;
+}
+
+export interface BraintreeFormFieldValidateEventData {
+    errors: {
+        [BraintreeFormFieldType.CardCode]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardExpiry]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardName]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardNumber]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardCodeVerification]?: BraintreeFormFieldValidateErrorData[];
+        [BraintreeFormFieldType.CardNumberVerification]?: BraintreeFormFieldValidateErrorData[];
+    };
+    isValid: boolean;
+}
+
+export interface BraintreeFormFieldValidateErrorData {
+    fieldType: string;
+    message: string;
+    type: string;
 }
 
 /**
@@ -532,6 +674,11 @@ export interface BraintreeConnect {
     ConnectCardComponent: (
         options: BraintreeConnectCardComponentOptions,
     ) => BraintreeConnectCardComponent;
+    events: BraintreeConnectEvents;
+}
+
+export interface BraintreeConnectWindow extends Window {
+    braintreeConnect: BraintreeConnect;
 }
 
 export interface BraintreeConnectIdentity {
@@ -672,6 +819,45 @@ export interface BraintreeConnectTokenizeDetails {
 export interface BraintreeConnectTokenizeOptions {
     billingAddress?: BraintreeConnectAddress;
     shippingAddress?: BraintreeConnectAddress;
+}
+
+export interface BraintreeConnectEvents {
+    apmSelected: (options: BraintreeConnectApmSelectedEventOptions) => void;
+    emailSubmitted: (options: BraintreeConnectEmailEnteredEventOptions) => void;
+    orderPlaced: (options: BraintreeConnectOrderPlacedEventOptions) => void;
+}
+
+export interface BraintreeConnectEventCommonOptions {
+    context_type: 'cs_id';
+    context_id: string; // checkout session id
+    page_type: 'checkout_page';
+    page_name: string; // title of the checkout initiation page
+    partner_name: 'bigc';
+    user_type: 'store_member' | 'store_guest'; // type of the user on the merchant site
+    store_id: string;
+    merchant_name: string;
+    experiment: string; // stringify JSON object "[{ treatment_group: 'test' | 'control' }]"
+}
+
+export interface BraintreeConnectApmSelectedEventOptions
+    extends BraintreeConnectEventCommonOptions {
+    apm_shown: '0' | '1'; // alternate payment shown on the checkout page
+    apm_list: string; // list of alternate payment shown on checkout page
+    apm_selected: string; // alternate payment method selected / methodId
+    apm_location: 'pre-email section' | 'payment section'; // placement of APM, whether it be above the email entry or in the radio buttons
+}
+
+export interface BraintreeConnectEmailEnteredEventOptions
+    extends BraintreeConnectEventCommonOptions {
+    user_email_saved: boolean; // shows whether checkout was loaded with or without a saved email
+    apm_shown: '0' | '1'; // alternate payment shown on the checkout page
+    apm_list: string; // list of alternate payment shown on checkout page 'applepay,googlepay,paypal'
+}
+
+export interface BraintreeConnectOrderPlacedEventOptions
+    extends BraintreeConnectEventCommonOptions {
+    selected_payment_method: string;
+    currency_code: string;
 }
 
 export interface Card {

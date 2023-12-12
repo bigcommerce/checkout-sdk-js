@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.497.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.496.1...v1.497.0) (2023-12-12)
+
+
+### Features
+
+* **payment:** PI-1148 Hide card holder name from hosted fields form ([4bc6cbd](https://github.com/bigcommerce/checkout-sdk-js/commit/4bc6cbd5fa5b4e26c7b963e3e5a204cb2304c7b9))
+
+### [1.496.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.496.0...v1.496.1) (2023-12-12)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2936 updated PayPal Commerce shipping callbacks with onShippingChanged ([#2255](https://github.com/bigcommerce/checkout-sdk-js/issues/2255)) ([e6c4640](https://github.com/bigcommerce/checkout-sdk-js/commit/e6c46409f402dfd20dbca62605b2d43a8aa6d47f))
+
+## [1.496.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.495.0...v1.496.0) (2023-12-12)
+
+
+### Features
+
+* **payment:** PAYPAL-2616 moved braintree-paypal-payment-strategy to braintree-integration package ([#2257](https://github.com/bigcommerce/checkout-sdk-js/issues/2257)) ([079a971](https://github.com/bigcommerce/checkout-sdk-js/commit/079a971bdf46af406988413721271b45e4f6fdfa))
+
+## [1.495.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.494.0...v1.495.0) (2023-12-11)
+
+
+### Features
+
+* **payment:** PI-853 BluesnapDirect added Sepa fieldset ([99feb87](https://github.com/bigcommerce/checkout-sdk-js/commit/99feb87a358c425cb604a8f684a20ef7c946af13))
+
+## [1.494.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.493.0...v1.494.0) (2023-12-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3280 added inputDateFormat for date input ([6cc6ebb](https://github.com/bigcommerce/checkout-sdk-js/commit/6cc6ebb4ce161d235997f19f2a67ff4221ffc32f))
+
+## [1.493.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.492.0...v1.493.0) (2023-12-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3337 PPCP GooglePay setGatewayIdentifier added ([a18f34e](https://github.com/bigcommerce/checkout-sdk-js/commit/a18f34e37e429740ee61bdf1a32e3c8172326660))
+
+## [1.492.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.491.0...v1.492.0) (2023-12-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3281 fixed phone country code field ([#2274](https://github.com/bigcommerce/checkout-sdk-js/issues/2274)) ([f1ce652](https://github.com/bigcommerce/checkout-sdk-js/commit/f1ce65217aa38ac715963108f07fbf3eddca021b))
+
+## [1.491.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.490.0...v1.491.0) (2023-12-08)
+
+
+### Features
+
+* **payment:** PAYPAL-3229 added BraintreeConnectTracker (analytic) ([#2276](https://github.com/bigcommerce/checkout-sdk-js/issues/2276)) ([13a87dd](https://github.com/bigcommerce/checkout-sdk-js/commit/13a87dd981f88bc71e80d894ececf3b48473b3cc))
+
 ## [1.490.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.489.0...v1.490.0) (2023-12-07)
 
 

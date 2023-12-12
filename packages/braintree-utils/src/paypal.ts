@@ -71,6 +71,14 @@ export interface PaypalExpressCheckoutOptions {
 export interface MessagingOptions {
     amount: number;
     placement: string;
+    style?: MessagesStyleOptions;
+}
+
+export interface MessagesStyleOptions {
+    layout?: 'text' | 'flex';
+    logo?: {
+        type: 'none' | 'inline' | 'primary';
+    };
 }
 
 export interface MessagingRender {

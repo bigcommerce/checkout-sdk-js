@@ -22,6 +22,10 @@ export {
     getGooglePayMock,
     getClientMock,
     getThreeDSecureMock,
+    getBraintreePaypalMock,
+    getBraintreeAddress,
+    getBraintreePaypal,
 } from './mocks/braintree.mock';
-export { getValidBraintreeConnectStyles } from './utils';
+export { getValidBraintreeConnectStyles, isBraintreeConnectWindow } from './utils';
+export { getPaypalMock } from './mocks/paypal.mock';
 export { BRAINTREE_SDK_STABLE_VERSION, BRAINTREE_SDK_ALPHA_VERSION } from './sdk-verison';

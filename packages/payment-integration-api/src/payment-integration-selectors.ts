@@ -68,6 +68,8 @@ export default interface PaymentIntegrationSelectors {
 
     getShippingCountries(): Country[] | undefined;
 
+    getOutstandingBalance(useStoreCredit?: boolean): number | undefined;
+
     isPaymentDataRequired(useStoreCredit?: boolean): boolean;
     isPaymentMethodInitialized(query: { methodId: string; gatewayId?: string }): boolean;
 }

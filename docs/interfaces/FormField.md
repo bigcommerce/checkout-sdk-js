@@ -10,6 +10,7 @@
 - [default](FormField.md#default)
 - [fieldType](FormField.md#fieldtype)
 - [id](FormField.md#id)
+- [inputDateFormat](FormField.md#inputdateformat)
 - [itemtype](FormField.md#itemtype)
 - [label](FormField.md#label)
 - [max](FormField.md#max)
@@ -45,6 +46,12 @@ ___
 ### id
 
 • **id**: `string`
+
+___
+
+### inputDateFormat
+
+• `Optional` **inputDateFormat**: `string`
 
 ___
 

@@ -1,16 +1,17 @@
 /// <reference types="applepayjs" />
-import { BlueSnapDirectEcpInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BraintreeConnectStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeError as BraintreeError_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
+import { EcpInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedFormOptions as HostedFormOptions_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
+import { SepaInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Timeout } from '@bigcommerce/request-sender';
 import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -1639,6 +1640,14 @@ declare interface BraintreeAcceleratedCheckoutShippingInitializeOptions {
      * no matter what strategy was initialised first
      */
     styles?: BraintreeConnectStylesOption;
+}
+
+declare interface BraintreeConnectTrackerService {
+    trackStepViewed(step: string): void;
+    customerPaymentMethodExecuted(): void;
+    paymentComplete(): void;
+    selectedPaymentMethod(methodId: string): void;
+    walletButtonClick(methodId: string): void;
 }
 
 declare interface BraintreeError extends Error {
@@ -5189,6 +5198,7 @@ declare interface FormField {
     secret?: boolean;
     min?: string | number;
     max?: string | number;
+    inputDateFormat?: string;
     options?: FormFieldOptions;
     requirements?: CustomerPasswordRequirements;
 }
@@ -6387,7 +6397,7 @@ declare interface OrderPayment {
     amount: number;
 }
 
-declare type OrderPaymentInstrument = WithBankAccountInstrument | CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | BlueSnapDirectEcpInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithCheckoutcomiDealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
+declare type OrderPaymentInstrument = WithBankAccountInstrument | EcpInstrument | SepaInstrument | CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithCheckoutcomiDealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
 
 /**
  * An object that contains the payment information required for submitting an
@@ -7118,6 +7128,7 @@ declare interface PaymentMethodConfig {
     redirectUrl?: string;
     requireCustomerCode?: boolean;
     returnUrl?: string;
+    showCardHolderName?: boolean;
     testMode?: boolean;
 }
 
@@ -8511,6 +8522,26 @@ declare interface ZipCodeElementOptions {
  * @returns an instance of `BodlService`.
  */
 export declare function createBodlService(subscribe: (subscriber: (state: CheckoutSelectors) => void) => void): BodlService;
+
+/**
+ * Creates an instance of `BraintreeConnectTrackerService`.
+ *
+ * @remarks
+ * ```js
+ * const checkoutService = createCheckoutService();
+ * await checkoutService.loadCheckout();
+ * const braintreeConnectTracker = createBraintreeConnectTracker(checkoutService);
+ *
+ * braintreeConnectTracker.customerPaymentMethodExecuted();
+ * braintreeConnectTracker.trackStepViewed('customer');
+ * braintreeConnectTracker.paymentComplete();
+ * braintreeConnectTracker.selectedPaymentMethod('applepay');
+ * braintreeConnectTracker.walletButtonClick('paypal');
+ * ```
+ *
+ * @returns an instance of `BraintreeConnectTrackerService`.
+ */
+export declare function createBraintreeConnectTracker(checkoutService: CheckoutService): BraintreeConnectTrackerService;
 
 /**
  * Creates an instance of `CheckoutButtonInitializer`.
