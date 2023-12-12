@@ -198,6 +198,12 @@ describe('createPaymentIntegrationSelectors', () => {
             expect(output).toEqual(internalSelectors.payment.getPaymentToken());
         });
 
+        it('returns outstanding balance', () => {
+            const output = subject.getOutstandingBalance();
+
+            expect(output).toEqual(internalSelectors.checkout.getCheckout()?.outstandingBalance);
+        });
+
         it('throws if payment token is missing', () => {
             subject = createPaymentIntegrationSelectors(
                 merge(internalSelectors, {

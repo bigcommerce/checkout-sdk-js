@@ -34,7 +34,7 @@ import { getPaypalSDKMock } from '../mocks/paypal.mock';
 
 import BraintreePaypalCustomerInitializeOptions, {
     WithBraintreePaypalCustomerInitializeOptions,
-} from './braintree-paypal-customer-options';
+} from './braintree-paypal-customer-initialize-options';
 import BraintreePaypalCustomerStrategy from './braintree-paypal-customer-strategy';
 
 describe('BraintreePaypalCustomerStrategy', () => {

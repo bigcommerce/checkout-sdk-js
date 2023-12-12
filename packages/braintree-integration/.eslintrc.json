@@ -5,7 +5,14 @@
         {
             "files": ["*.ts", "*.tsx"],
             "rules": {
-                "@typescript-eslint/naming-convention": "off"
+                "@typescript-eslint/naming-convention": "off",
+                "@typescript-eslint/no-unsafe-assignment": "off",
+                "@typescript-eslint/no-shadow": "off",
+                "@typescript-eslint/consistent-type-assertions": "off",
+                "@typescript-eslint/no-explicit-any": "off",
+                "@typescript-eslint/no-unsafe-argument": "off",
+                "@typescript-eslint/no-unsafe-member-access": "off",
+                "jsdoc/check-tag-names": "off"
             }
         },
         {

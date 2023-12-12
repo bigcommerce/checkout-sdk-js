@@ -8,6 +8,7 @@ import {
     BraintreeDataCollector,
     BraintreeModule,
     BraintreeModuleCreator,
+    BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
     BraintreeShippingAddressOverride,
@@ -150,7 +151,7 @@ export function getDeviceDataMock(): string {
 }
 
 export function getModuleCreatorMock<T>(
-    module?: BraintreeModule | BraintreeClient | BraintreeConnect,
+    module?: BraintreeModule | BraintreeClient | BraintreeConnect | BraintreePaypal,
 ): BraintreeModuleCreator<T> {
     return {
         create: jest.fn(() => Promise.resolve(module || {})),
@@ -227,6 +228,46 @@ export function getGooglePayMock(): GooglePayBraintreeSDK {
     return {
         createPaymentDataRequest: jest.fn(() => getBraintreePaymentDataRequest()),
         teardown: jest.fn(),
+    };
+}
+
+export function getBraintreePaypalMock(): BraintreePaypal {
+    return {
+        closeWindow: jest.fn(),
+        focusWindow: jest.fn(),
+        tokenize: jest.fn(() => Promise.resolve(getBraintreePaypalTokenizePayloadMock())),
+        Buttons: jest.fn(() => ({
+            render: jest.fn(),
+            isEligible: jest.fn(() => true),
+        })),
+    };
+}
+
+export function getBraintreePaypalTokenizePayloadMock(): BraintreeTokenizePayload {
+    return {
+        nonce: 'nonce',
+        type: 'PaypalAccount',
+        details: {
+            email: 'test@test.com',
+        },
+    };
+}
+
+export function getBraintreePaypal(): PaymentMethod {
+    return {
+        id: 'braintreepaypal',
+        logoUrl: '',
+        method: 'paypal',
+        supportedCards: [],
+        config: {
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'foo',
+        initializationData: {
+            isBrainteeVenmoEnabled: false,
+            enableCheckoutPaywallBanner: false,
+        },
     };
 }
 

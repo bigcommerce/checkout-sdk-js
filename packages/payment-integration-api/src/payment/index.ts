@@ -25,6 +25,8 @@ export {
     WithDocumentInstrument,
     WithMollieIssuerInstrument,
     StripeV3FormattedPayload,
+    PaypalInstrument,
+    FormattedPayload,
 } from './payment';
 
 export { default as isHostedInstrumentLike } from './is-hosted-intrument-like';

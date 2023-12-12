@@ -115,12 +115,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(paymentStrategy).toBeInstanceOf(BlueSnapV2PaymentStrategy);
     });
 
-    it('can instantiate braintreepaypal', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE_PAYPAL);
-
-        expect(paymentStrategy).toBeInstanceOf(BraintreePaypalPaymentStrategy);
-    });
-
     it('can instantiate braintreepaypaylcredit', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE_PAYPAL_CREDIT);
 

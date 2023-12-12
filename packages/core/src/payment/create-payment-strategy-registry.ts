@@ -324,18 +324,6 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register(
-        PaymentStrategyType.BRAINTREE_PAYPAL,
-        () =>
-            new BraintreePaypalPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                braintreePaymentProcessor,
-            ),
-    );
-
-    registry.register(
         PaymentStrategyType.BRAINTREE_VENMO,
         () =>
             new BraintreeVenmoPaymentStrategy(
