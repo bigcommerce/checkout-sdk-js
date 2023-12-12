@@ -232,6 +232,18 @@ export interface BlueSnapDirectRedirectResponse {
     };
 }
 
+export interface BlueSnapDirectIdealRedirectResponse {
+    body: {
+        additional_action_required: {
+            type: 'offsite_redirect';
+            data: {
+                redirect_url: string;
+            };
+        };
+        status: string;
+    };
+}
+
 /**
  * A set of options that are required to initialize the BlueSnap V2 payment
  * method.
