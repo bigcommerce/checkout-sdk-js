@@ -114,8 +114,9 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
         const isGuestCustomer = state.data.getCustomer()?.isGuest;
 
         const paymentMethod = state.data.getPaymentMethod('braintreeacceleratedcheckout');
-        const isTestTreatmentGroup = !state.errors.getLoadPaymentMethodError('braintreeacceleratedcheckout')
-            && paymentMethod?.initializationData.shouldRunAcceleratedCheckout;
+        const isTestTreatmentGroup =
+            !state.errors.getLoadPaymentMethodError('braintreeacceleratedcheckout') &&
+            paymentMethod?.initializationData.shouldRunAcceleratedCheckout;
 
         const experiments = [
             {

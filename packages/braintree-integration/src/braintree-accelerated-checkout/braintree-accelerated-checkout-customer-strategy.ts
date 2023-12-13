@@ -62,8 +62,7 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
     async executePaymentMethodCheckout(
         options?: ExecutePaymentMethodCheckoutOptions,
     ): Promise<void> {
-        const { checkoutPaymentMethodExecuted, continueWithCheckoutCallback } =
-            options || {};
+        const { checkoutPaymentMethodExecuted, continueWithCheckoutCallback } = options || {};
 
         if (typeof continueWithCheckoutCallback !== 'function') {
             throw new InvalidArgumentError(
@@ -108,16 +107,21 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
         }
     }
 
-    private async getValidPaymentMethodOrThrow(methodId: string): Promise<PaymentMethod<BraintreeInitializationData>> {
+    private async getValidPaymentMethodOrThrow(
+        methodId: string,
+    ): Promise<PaymentMethod<BraintreeInitializationData>> {
         let validPaymentMethodId = methodId;
 
         try {
             await this.paymentIntegrationService.loadPaymentMethod(validPaymentMethodId);
         } catch {
-            validPaymentMethodId = methodId === 'braintree' ? 'braintreeacceleratedcheckout' : 'braintree';
+            validPaymentMethodId =
+                methodId === 'braintree' ? 'braintreeacceleratedcheckout' : 'braintree';
             await this.paymentIntegrationService.loadPaymentMethod(validPaymentMethodId);
         }
 
-        return this.paymentIntegrationService.getState().getPaymentMethodOrThrow<BraintreeInitializationData>(validPaymentMethodId);
+        return this.paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow<BraintreeInitializationData>(validPaymentMethodId);
     }
 }

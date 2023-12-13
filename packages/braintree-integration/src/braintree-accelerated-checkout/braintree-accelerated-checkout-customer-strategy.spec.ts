@@ -107,10 +107,11 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
         });
 
         it('loads another payment method if the primary load throws an error', async () => {
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod')
-                .mockImplementationOnce(() => {
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockImplementationOnce(
+                () => {
                     throw new Error();
-                });
+                },
+            );
 
             await strategy.initialize(initializationOptions);
 

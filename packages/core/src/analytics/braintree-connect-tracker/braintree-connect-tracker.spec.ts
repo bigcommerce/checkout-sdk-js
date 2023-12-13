@@ -243,9 +243,10 @@ describe('BraintreeConnectTracker', () => {
         });
 
         it('calls emailSubmitted callback and place user in a control group if there was an error loading braintreeacceleratedcheckout payment method', () => {
-            jest.spyOn(checkoutService.getState().errors, 'getLoadPaymentMethodError').mockReturnValue(
-                Error('asd'),
-            );
+            jest.spyOn(
+                checkoutService.getState().errors,
+                'getLoadPaymentMethodError',
+            ).mockReturnValue(Error('asd'));
 
             braintreeConnectTracker.customerPaymentMethodExecuted();
 
