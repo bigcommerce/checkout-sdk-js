@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.498.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.497.0...v1.498.0) (2023-12-13)
+
+
+### Features
+
+* **payment:** PI-1142 [TD Bank- Ph. 1a][FE] Add payment strategy for… ([#2267](https://github.com/bigcommerce/checkout-sdk-js/issues/2267)) ([99e7d6d](https://github.com/bigcommerce/checkout-sdk-js/commit/99e7d6d902c538f139cd46dd55254beecfb8683e))
+
 ## [1.497.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.496.1...v1.497.0) (2023-12-12)
 
 
