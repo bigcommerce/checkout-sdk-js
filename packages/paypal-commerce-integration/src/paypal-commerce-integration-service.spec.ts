@@ -587,6 +587,7 @@ describe('PayPalCommerceIntegrationService', () => {
             paypalButtonElement.id = paypalCommerceButtonContainerId;
 
             document.body.appendChild(paypalButtonElement);
+
             const element = document.getElementById(paypalCommerceButtonContainerId);
 
             expect(element).toBeDefined();
@@ -594,6 +595,7 @@ describe('PayPalCommerceIntegrationService', () => {
             subject.removeElement(paypalCommerceButtonContainerId);
 
             const computedStyle = getComputedStyle(element as Element);
+
             expect(computedStyle.getPropertyValue('display')).toBe('none');
         });
     });

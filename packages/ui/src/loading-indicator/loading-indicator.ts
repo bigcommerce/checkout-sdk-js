@@ -1,4 +1,7 @@
-import { LoadingIndicatorStyles } from './loading-indicator-styles';
+import {
+    LoadingIndicatorContainerStyles,
+    LoadingIndicatorStyles,
+} from './loading-indicator-styles';
 
 const DEFAULT_STYLES: LoadingIndicatorStyles = {
     size: 70,
@@ -8,13 +11,20 @@ const DEFAULT_STYLES: LoadingIndicatorStyles = {
 
 const ROTATION_ANIMATION = 'embedded-checkout-loading-indicator-rotation';
 
+interface LoadingIndicatorOptions {
+    styles?: LoadingIndicatorStyles;
+    containerStyles?: LoadingIndicatorContainerStyles;
+}
+
 export default class LoadingIndicator {
     private container: HTMLElement;
     private indicator: HTMLElement;
     private styles: LoadingIndicatorStyles;
+    private containerStyles: LoadingIndicatorContainerStyles;
 
-    constructor(options?: { styles?: LoadingIndicatorStyles }) {
+    constructor(options?: LoadingIndicatorOptions) {
         this.styles = { ...DEFAULT_STYLES, ...(options && options.styles) };
+        this.containerStyles = { ...(options && options.containerStyles) };
 
         this.defineAnimation();
 
@@ -67,6 +77,8 @@ export default class LoadingIndicator {
         container.style.transition = 'all 250ms ease-out';
         container.style.opacity = '0';
 
+        this.setStyleAttribute(container, this.containerStyles);
+
         return container;
     }
 
@@ -89,6 +101,12 @@ export default class LoadingIndicator {
         indicator.style.animation = `${ROTATION_ANIMATION} 500ms infinite cubic-bezier(0.69, 0.31, 0.56, 0.83)`;
 
         return indicator;
+    }
+
+    private setStyleAttribute(element: HTMLElement, attrs: { [key: string]: string }): void {
+        Object.keys(attrs).forEach((k) => {
+            element.style.setProperty(k, attrs[k]);
+        });
     }
 
     private defineAnimation(): void {

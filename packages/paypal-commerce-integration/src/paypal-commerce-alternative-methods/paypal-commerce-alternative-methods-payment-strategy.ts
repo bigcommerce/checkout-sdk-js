@@ -199,7 +199,6 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         this.orderId = orderID;
 
         submitForm();
-        this.toggleLoadingIndicator(false);
     }
 
     private handleFailure(
