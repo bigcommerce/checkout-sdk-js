@@ -108,15 +108,14 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
      *
      */
     private _getEventCommonOptions(): BraintreeConnectEventCommonOptions {
-        const state = this.checkoutService.getState().data;
-        const cart = state.getCart();
-        const storeProfile = state.getConfig()?.storeProfile;
-        const isGuestCustomer = state.getCustomer()?.isGuest;
+        const state = this.checkoutService.getState();
+        const cart = state.data.getCart();
+        const storeProfile = state.data.getConfig()?.storeProfile;
+        const isGuestCustomer = state.data.getCustomer()?.isGuest;
 
-        const paymentMethod =
-            state.getPaymentMethod('braintreeacceleratedcheckout') ||
-            state.getPaymentMethod('braintree');
-        const isTestTreatmentGroup = paymentMethod?.initializationData.shouldRunAcceleratedCheckout;
+        const paymentMethod = state.data.getPaymentMethod('braintreeacceleratedcheckout');
+        const isTestTreatmentGroup = !state.errors.getLoadPaymentMethodError('braintreeacceleratedcheckout')
+            && paymentMethod?.initializationData.shouldRunAcceleratedCheckout;
 
         const experiments = [
             {

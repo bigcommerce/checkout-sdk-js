@@ -32,7 +32,7 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
     };
     const paymentMethod = {
         ...getBraintree(),
-        methodId,
+        id: methodId,
         initializationData: {
             isAcceleratedCheckoutEnabled: true,
             shouldRunAcceleratedCheckout: true,
@@ -104,6 +104,18 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             expect(
                 braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow,
             ).toHaveBeenCalledWith(methodId, undefined);
+        });
+
+        it('loads another payment method if the primary load throws an error', async () => {
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod')
+                .mockImplementationOnce(() => {
+                    throw new Error();
+                });
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith('braintree');
         });
 
         it('does not initialize Braintree Connect if isAcceleratedCheckoutEnabled is disabled', async () => {
