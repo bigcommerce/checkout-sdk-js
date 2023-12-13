@@ -13,6 +13,7 @@
 - [fullName](Customer.md#fullname)
 - [id](Customer.md#id)
 - [isGuest](Customer.md#isguest)
+- [isStripeLinkAuthenticated](Customer.md#isstripelinkauthenticated)
 - [lastName](Customer.md#lastname)
 - [shouldEncourageSignIn](Customer.md#shouldencouragesignin)
 - [storeCredit](Customer.md#storecredit)
