@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.499.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.499.1...v1.499.2) (2023-12-14)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3360 fixed a mistake in codeowners file due BT analytics ([#2288](https://github.com/bigcommerce/checkout-sdk-js/issues/2288)) ([ee887e8](https://github.com/bigcommerce/checkout-sdk-js/commit/ee887e8df0a94c866b5edbb77a71f298d1518263))
+* **payment:** PAYPAL-3360 fixed the issue with braintree axo customer step initialisation and fixed data for BT AXO Analytics ([#2285](https://github.com/bigcommerce/checkout-sdk-js/issues/2285)) ([286bac5](https://github.com/bigcommerce/checkout-sdk-js/commit/286bac55b5975b13b14098ee18723a5fd630f7da))
+* **payment:** PAYPAL-3367 removed onCancel error throw for PP AMP payment strategy ([#2286](https://github.com/bigcommerce/checkout-sdk-js/issues/2286)) ([8772484](https://github.com/bigcommerce/checkout-sdk-js/commit/8772484f44198115af1860a7cda5d30561e18bc3))
+
 ### [1.499.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.499.0...v1.499.1) (2023-12-14)
 
 
