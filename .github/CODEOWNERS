@@ -62,7 +62,7 @@
 
 ## PayPal team
 
-/packages/core/src/analytics/src/braintree-connect-tracker
+/packages/core/src/analytics/braintree-connect-tracker
 /packages/core/src/checkout-buttons/strategies/braintree @bigcommerce/team-paypal
 /packages/core/src/checkout-buttons/strategies/paypal @bigcommerce/team-paypal
 /packages/core/src/customer/strategies/braintree @bigcommerce/team-paypal
