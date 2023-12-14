@@ -1,5 +1,9 @@
+import { FormPoster } from '@bigcommerce/form-poster';
+import { some } from 'lodash';
+
 import {
     InvalidArgumentError,
+    isRequestError,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
@@ -25,6 +29,7 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private tdOnlineMartScriptLoader: TDOnlineMartScriptLoader,
+        private formPoster: FormPoster,
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<void> {
@@ -48,7 +53,9 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        if (!payment.methodId) {
+        const { methodId } = payment;
+
+        if (!methodId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
@@ -56,12 +63,16 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
 
         await this.paymentIntegrationService.submitOrder(order, options);
 
-        await this.paymentIntegrationService.submitPayment({
-            methodId: payment.methodId,
-            paymentData: {
-                nonce: paymentToken,
-            },
-        });
+        try {
+            await this.paymentIntegrationService.submitPayment({
+                methodId,
+                paymentData: {
+                    nonce: paymentToken,
+                },
+            });
+        } catch (error: unknown) {
+            await this.processWithAdditionalAction(error);
+        }
     }
 
     finalize(): Promise<void> {
@@ -116,5 +127,46 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         }
 
         return this.tdOnlineMartClient;
+    }
+
+    private async processWithAdditionalAction(error: unknown): Promise<void> {
+        /* eslint-disable
+            @typescript-eslint/no-unsafe-assignment,
+            @typescript-eslint/no-unsafe-member-access,
+            @typescript-eslint/no-unsafe-argument
+        */
+        // TODO: eslint disable should be fixed by adding correct type for error.body and type guard
+        if (
+            !isRequestError(error) ||
+            // TODO: add type guard for error.body
+            // TODO: check which error code will be returned from BE
+            // 'three_d_secure_required' or 'additional_action_required'
+            !some(error.body.errors, { code: 'additional_action_required' })
+        ) {
+            throw error;
+        }
+
+        // Form data example is from https://dev.na.bambora.com/docs/guides/3D_secure_2_0/#3d-secure-2-0-api
+        // TODO: select correct data which will be returned from BE
+        const {
+            data: { formUrl, threeDSSessionData, creq },
+        } = error.body.additional_action_required;
+
+        return new Promise<void>((resolve) => {
+            this.formPoster.postForm(
+                formUrl,
+                {
+                    threeDSSessionData,
+                    creq,
+                },
+                resolve,
+                '_top',
+            );
+        });
+        /* eslint-enable
+            @typescript-eslint/no-unsafe-assignment,
+            @typescript-eslint/no-unsafe-member-access,
+            @typescript-eslint/no-unsafe-argument
+        */
     }
 }
