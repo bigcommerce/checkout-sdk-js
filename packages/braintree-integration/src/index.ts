@@ -12,6 +12,11 @@ export { default as createBraintreePaypalPaymentStrategy } from './braintree-pay
 export { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-paypal-ach/braintree-paypal-ach-initialize-options';
 
 /**
+ * Braintree PayPal Credit strategies
+ */
+export { default as createBraintreePaypalCreditCustomerStrategy } from './braintree-paypal/create-braintree-paypal-credit-customer-strategy';
+
+/**
  * Braintree LPMs strategies
  */
 export { default as createBraintreeLocalMethodsPaymentStrategy } from './braintree-local-payment-methods/create-braintree-local-methods-payment-strategy';

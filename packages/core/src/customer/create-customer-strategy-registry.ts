@@ -10,8 +10,6 @@ import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payme
 import { createPaymentIntegrationService } from '../payment-integration';
 import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
 import {
-    BraintreeScriptLoader,
-    BraintreeSDKCreator,
     createBraintreeVisaCheckoutPaymentProcessor,
     VisaCheckoutScriptLoader,
 } from '../payment/strategies/braintree';
@@ -45,10 +43,7 @@ import CustomerRequestSender from './customer-request-sender';
 import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategy } from './strategies';
 import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
-import {
-    BraintreePaypalCreditCustomerStrategy,
-    BraintreeVisaCheckoutCustomerStrategy,
-} from './strategies/braintree';
+import { BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
 import { ChasePayCustomerStrategy } from './strategies/chasepay';
 import { DefaultCustomerStrategy } from './strategies/default';
 import { GooglePayCustomerStrategy } from './strategies/googlepay';
@@ -88,7 +83,6 @@ export default function createCustomerStrategyRegistry(
         spamProtectionActionCreator,
     );
 
-    const braintreeSDKCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader));
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
 
@@ -137,20 +131,6 @@ export default function createCustomerStrategyRegistry(
                 createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
                 new VisaCheckoutScriptLoader(scriptLoader),
                 formPoster,
-            ),
-    );
-
-    registry.register(
-        'braintreepaypalcredit',
-        () =>
-            new BraintreePaypalCreditCustomerStrategy(
-                store,
-                checkoutActionCreator,
-                customerActionCreator,
-                paymentMethodActionCreator,
-                braintreeSDKCreator,
-                formPoster,
-                window,
             ),
     );
 
