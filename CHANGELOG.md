@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.499.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.499.0...v1.499.1) (2023-12-14)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3124 PPCP loading indicator keeps after submit ([653e2db](https://github.com/bigcommerce/checkout-sdk-js/commit/653e2dbdc5e066e8da1bf9aecafd53da114ace15))
+
 ## [1.499.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.498.0...v1.499.0) (2023-12-14)
 
 
