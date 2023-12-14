@@ -1,19 +1,19 @@
 import {
     CreditCardInstrument,
-    EcpInstrument,
     HostedCreditCardInstrument,
     HostedInstrument,
     HostedVaultedInstrument,
-    IdealInstrument,
     NonceInstrument,
-    SepaInstrument,
     VaultedInstrument,
     WithAccountCreation,
     WithBankAccountInstrument,
     WithCheckoutcomFawryInstrument,
     WithCheckoutcomSEPAInstrument,
     WithDocumentInstrument,
+    WithEcpInstrument,
+    WithIdealInstrument,
     WithMollieIssuerInstrument,
+    WithSepaInstrument,
 } from '../payment';
 
 /**
@@ -63,12 +63,13 @@ export interface OrderPaymentRequestBody {
         | HostedVaultedInstrument
         | NonceInstrument
         | VaultedInstrument
-        | EcpInstrument
-        | SepaInstrument
+        | WithEcpInstrument
+        | WithIdealInstrument
+        | WithSepaInstrument
         | (CreditCardInstrument & WithDocumentInstrument)
         | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
         | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
-        | (CreditCardInstrument & IdealInstrument)
+        | (CreditCardInstrument & WithIdealInstrument)
         | (HostedInstrument & WithMollieIssuerInstrument)
         | WithAccountCreation;
 }

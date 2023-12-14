@@ -1,11 +1,11 @@
 import {
     BlueSnapDirectEcpPayload,
     BlueSnapDirectSepaPayload,
-    EcpInstrument,
     IdealPayload,
-    SepaInstrument,
     WithAccountCreation,
     WithBankAccountInstrument,
+    WithEcpInstrument,
+    WithSepaInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BrowserInfo } from '../common/browser-info';
@@ -21,12 +21,13 @@ export default interface Payment {
 }
 
 export type PaymentInstrument =
-    | EcpInstrument
-    | SepaInstrument
+    | WithEcpInstrument
+    | WithSepaInstrument
+    | WithIdealInstrument
     | CreditCardInstrument
     | (CreditCardInstrument & WithHostedFormNonce)
     | (CreditCardInstrument & WithDocumentInstrument)
-    | (CreditCardInstrument & IdealInstrument)
+    | (CreditCardInstrument & WithIdealInstrument)
     | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
     | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
     | CryptogramInstrument
@@ -41,7 +42,7 @@ export type PaymentInstrument =
           | FormattedHostedInstrument
           | FormattedVaultedInstrument
           | WithDocumentInstrument
-          | IdealInstrument
+          | WithIdealInstrument
           | WithCheckoutcomFawryInstrument
           | WithCheckoutcomSEPAInstrument
           | StripeV3Intent
@@ -91,7 +92,7 @@ export interface WithCheckoutcomSEPAInstrument {
     bic: string;
 }
 
-export interface IdealInstrument {
+export interface WithIdealInstrument {
     bic: string;
 }
 

@@ -11,12 +11,13 @@ export default interface Payment {
 }
 
 export type PaymentInstrument =
-    | EcpInstrument
-    | SepaInstrument
+    | WithEcpInstrument
+    | WithSepaInstrument
+    | WithIdealInstrument
     | CreditCardInstrument
     | (CreditCardInstrument & WithHostedFormNonce)
     | (CreditCardInstrument & WithDocumentInstrument)
-    | (CreditCardInstrument & IdealInstrument)
+    | (CreditCardInstrument & WithIdealInstrument)
     | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
     | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
     | CryptogramInstrument
@@ -32,7 +33,7 @@ export type PaymentInstrument =
           | FormattedHostedInstrument
           | FormattedVaultedInstrument
           | WithDocumentInstrument
-          | IdealInstrument
+          | WithIdealInstrument
           | WithCheckoutcomFawryInstrument
           | WithCheckoutcomSEPAInstrument
           | StripeV3Intent
@@ -104,12 +105,12 @@ export interface WithPayPalConnectInstrument {
     };
 }
 
-export interface IdealInstrument {
+export interface WithIdealInstrument {
     bic: string;
 }
 
 export interface IdealPayload {
-    ideal: IdealInstrument;
+    ideal: WithIdealInstrument;
 }
 
 export interface WithCheckoutcomSEPAInstrument {
@@ -251,7 +252,7 @@ type EcpAccountType =
     | 'CORPORATE_CHECKING'
     | 'CORPORATE_SAVINGS';
 
-export interface EcpInstrument {
+export interface WithEcpInstrument {
     accountNumber: string;
     accountType: BankAccountType | EcpAccountType;
     shopperPermission: boolean;
@@ -267,7 +268,7 @@ export interface BlueSnapDirectEcpPayload {
     };
 }
 
-export interface SepaInstrument {
+export interface WithSepaInstrument {
     firstName: string;
     lastName: string;
     iban: string;
