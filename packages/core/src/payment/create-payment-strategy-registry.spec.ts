@@ -16,7 +16,6 @@ import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BNZPaymentStrategy } from './strategies/bnz';
 import {
     BraintreeCreditCardPaymentStrategy,
-    BraintreePaypalPaymentStrategy,
     BraintreeVisaCheckoutPaymentStrategy,
 } from './strategies/braintree';
 import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
@@ -113,12 +112,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.BLUESNAPV2);
 
         expect(paymentStrategy).toBeInstanceOf(BlueSnapV2PaymentStrategy);
-    });
-
-    it('can instantiate braintreepaypaylcredit', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE_PAYPAL_CREDIT);
-
-        expect(paymentStrategy).toBeInstanceOf(BraintreePaypalPaymentStrategy);
     });
 
     it('can instantiate braintreevisacheckout', () => {

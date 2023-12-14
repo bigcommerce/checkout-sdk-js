@@ -53,7 +53,6 @@ import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BNZPaymentStrategy } from './strategies/bnz';
 import {
     BraintreeCreditCardPaymentStrategy,
-    BraintreePaypalPaymentStrategy,
     BraintreeVenmoPaymentStrategy,
     BraintreeVisaCheckoutPaymentStrategy,
     createBraintreePaymentProcessor,
@@ -332,19 +331,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 paymentMethodActionCreator,
                 braintreePaymentProcessor,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.BRAINTREE_PAYPAL_CREDIT,
-        () =>
-            new BraintreePaypalPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                braintreePaymentProcessor,
-                true,
             ),
     );
 
