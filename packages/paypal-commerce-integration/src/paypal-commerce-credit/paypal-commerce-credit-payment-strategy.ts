@@ -196,7 +196,6 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
         this.orderId = orderID;
 
         submitForm();
-        this.toggleLoadingIndicator(false);
     }
 
     private handleError(

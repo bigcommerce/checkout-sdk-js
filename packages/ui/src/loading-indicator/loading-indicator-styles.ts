@@ -3,3 +3,7 @@ export interface LoadingIndicatorStyles {
     color?: string;
     backgroundColor?: string;
 }
+
+export interface LoadingIndicatorContainerStyles {
+    [key: string]: string;
+}

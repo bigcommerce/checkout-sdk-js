@@ -168,7 +168,6 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         this.orderId = orderID;
 
         submitForm();
-        this.toggleLoadingIndicator(false);
     }
 
     private handleError(
