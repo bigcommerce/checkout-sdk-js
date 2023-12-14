@@ -6,6 +6,7 @@ import {
     ExecutePaymentMethodCheckoutOptions,
     InvalidArgumentError,
     PaymentIntegrationService,
+    PaymentMethod,
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -31,17 +32,14 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
             );
         }
 
-        await this.paymentIntegrationService.loadPaymentMethod(methodId);
-
-        const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
+        const paymentMethod = await this.getValidPaymentMethodOrThrow(methodId);
 
         this.isAcceleratedCheckoutEnabled =
             !!paymentMethod.initializationData?.isAcceleratedCheckoutEnabled;
 
         if (this.isAcceleratedCheckoutEnabled) {
             await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(
-                methodId,
+                paymentMethod.id,
                 braintreeacceleratedcheckout?.styles,
             );
         }
@@ -64,8 +62,7 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
     async executePaymentMethodCheckout(
         options?: ExecutePaymentMethodCheckoutOptions,
     ): Promise<void> {
-        const { checkoutPaymentMethodExecuted, continueWithCheckoutCallback, methodId } =
-            options || {};
+        const { checkoutPaymentMethodExecuted, continueWithCheckoutCallback } = options || {};
 
         if (typeof continueWithCheckoutCallback !== 'function') {
             throw new InvalidArgumentError(
@@ -73,7 +70,7 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
             );
         }
 
-        if (await this.shouldRunAuthenticationFlow(methodId)) {
+        if (await this.shouldRunAuthenticationFlow()) {
             await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow();
         }
 
@@ -84,7 +81,8 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
         continueWithCheckoutCallback();
     }
 
-    private async shouldRunAuthenticationFlow(methodId?: string): Promise<boolean> {
+    // TODO: remove this method after A/B testing finished
+    private async shouldRunAuthenticationFlow(): Promise<boolean> {
         const primaryMethodId = 'braintreeacceleratedcheckout';
 
         if (!this.isAcceleratedCheckoutEnabled) {
@@ -92,9 +90,9 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
         }
 
         try {
-            if (methodId !== primaryMethodId) {
-                await this.paymentIntegrationService.loadPaymentMethod(primaryMethodId);
-            }
+            // Info: we should load payment method each time to detect if the user
+            // should be in a test or in a control group
+            await this.paymentIntegrationService.loadPaymentMethod(primaryMethodId);
 
             const state = this.paymentIntegrationService.getState();
             const paymentMethod =
@@ -107,5 +105,23 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
         } catch (_) {
             return false;
         }
+    }
+
+    private async getValidPaymentMethodOrThrow(
+        methodId: string,
+    ): Promise<PaymentMethod<BraintreeInitializationData>> {
+        let validPaymentMethodId = methodId;
+
+        try {
+            await this.paymentIntegrationService.loadPaymentMethod(validPaymentMethodId);
+        } catch {
+            validPaymentMethodId =
+                methodId === 'braintree' ? 'braintreeacceleratedcheckout' : 'braintree';
+            await this.paymentIntegrationService.loadPaymentMethod(validPaymentMethodId);
+        }
+
+        return this.paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow<BraintreeInitializationData>(validPaymentMethodId);
     }
 }

@@ -242,6 +242,20 @@ describe('BraintreeConnectTracker', () => {
             });
         });
 
+        it('calls emailSubmitted callback and place user in a control group if there was an error loading braintreeacceleratedcheckout payment method', () => {
+            jest.spyOn(
+                checkoutService.getState().errors,
+                'getLoadPaymentMethodError',
+            ).mockReturnValue(Error('asd'));
+
+            braintreeConnectTracker.customerPaymentMethodExecuted();
+
+            expect(braintreeConnectMock.events.emailSubmitted).toHaveBeenCalledWith({
+                ...emailSubmitEventOptions,
+                experiment: '[{"treatment_group":"control"}]',
+            });
+        });
+
         it('calls emailSubmitted callback with apm options', () => {
             jest.spyOn(checkoutService.getState().data, 'getPaymentMethods').mockReturnValue([
                 getBraintree(),
