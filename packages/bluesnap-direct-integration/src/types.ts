@@ -228,19 +228,7 @@ export interface BlueSnapDirectRedirectResponse {
             };
         };
         status: string;
-        provider_data: string;
-    };
-}
-
-export interface BlueSnapDirectIdealRedirectResponse {
-    body: {
-        additional_action_required: {
-            type: 'offsite_redirect';
-            data: {
-                redirect_url: string;
-            };
-        };
-        status: string;
+        provider_data?: string;
     };
 }
 

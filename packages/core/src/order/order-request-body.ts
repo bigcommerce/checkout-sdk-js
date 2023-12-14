@@ -1,8 +1,8 @@
 import {
-    EcpInstrument,
-    SepaInstrument,
     WithAccountCreation,
     WithBankAccountInstrument,
+    WithEcpInstrument,
+    WithSepaInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
@@ -10,12 +10,12 @@ import {
     HostedCreditCardInstrument,
     HostedInstrument,
     HostedVaultedInstrument,
-    IdealInstrument,
     NonceInstrument,
     VaultedInstrument,
     WithCheckoutcomFawryInstrument,
     WithCheckoutcomSEPAInstrument,
     WithDocumentInstrument,
+    WithIdealInstrument,
     WithMollieIssuerInstrument,
 } from '../payment';
 
@@ -41,8 +41,9 @@ export default interface OrderRequestBody {
 
 export type OrderPaymentInstrument =
     | WithBankAccountInstrument
-    | EcpInstrument
-    | SepaInstrument
+    | WithEcpInstrument
+    | WithSepaInstrument
+    | WithIdealInstrument
     | CreditCardInstrument
     | HostedInstrument
     | HostedCreditCardInstrument
@@ -52,7 +53,7 @@ export type OrderPaymentInstrument =
     | (CreditCardInstrument & WithDocumentInstrument)
     | (CreditCardInstrument & WithCheckoutcomFawryInstrument)
     | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
-    | (CreditCardInstrument & IdealInstrument)
+    | (CreditCardInstrument & WithIdealInstrument)
     | (HostedInstrument & WithMollieIssuerInstrument)
     | WithAccountCreation;
 
