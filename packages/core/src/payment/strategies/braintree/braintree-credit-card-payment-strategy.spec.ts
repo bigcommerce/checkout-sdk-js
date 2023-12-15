@@ -1,11 +1,17 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { Action, createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { from, Observable, of } from 'rxjs';
 
+import {
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
+import { getCart } from '../../../cart/carts.mock';
 import {
     CheckoutRequestSender,
     CheckoutStore,
@@ -15,6 +21,7 @@ import {
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
+import { getConfig } from '../../../config/configs.mock';
 import {
     Order,
     OrderActionCreator,
@@ -48,6 +55,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let braintreePaymentProcessorMock: BraintreePaymentProcessor;
     let braintreeCreditCardPaymentStrategy: BraintreeCreditCardPaymentStrategy;
+    let braintreeIntegrationServiceMock: BraintreeIntegrationService;
     let loadPaymentMethodAction: Observable<Action>;
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethodMock: PaymentMethod;
@@ -104,6 +112,15 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         paymentMethodActionCreator = new PaymentMethodActionCreator(
             new PaymentMethodRequestSender(createRequestSender()),
         );
+        braintreeIntegrationServiceMock = new BraintreeIntegrationService(
+            new BraintreeScriptLoader(getScriptLoader(), window),
+            window,
+        );
+
+        jest.spyOn(braintreeIntegrationServiceMock, 'initialize').mockImplementation(jest.fn());
+        jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeConnect').mockImplementation(
+            jest.fn(),
+        );
 
         order = getOrder();
         submitOrderAction = from([
@@ -137,6 +154,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             paymentActionCreator,
             paymentMethodActionCreator,
             braintreePaymentProcessorMock,
+            braintreeIntegrationServiceMock,
         );
     });
 
@@ -204,6 +222,38 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             );
             expect(braintreePaymentProcessorMock.isInitializedHostedForm).toHaveBeenCalled();
             expect(braintreePaymentProcessorMock.getSessionId).toHaveBeenCalled();
+        });
+
+        it('initializes braintree connect sdk', async () => {
+            const state = store.getState();
+            const cart = getCart();
+            const storeConfig = getConfig().storeConfig;
+
+            jest.spyOn(state.cart, 'getCartOrThrow').mockReturnValue(cart);
+            jest.spyOn(state.config, 'getStoreConfigOrThrow').mockReturnValue(storeConfig);
+            jest.spyOn(state.paymentProviderCustomer, 'getPaymentProviderCustomer').mockReturnValue(
+                undefined,
+            );
+
+            paymentMethodMock.initializationData.isAcceleratedCheckoutEnabled = true;
+
+            const options = {
+                methodId: paymentMethodMock.id,
+                braintree: {
+                    form: {
+                        fields: {
+                            cardName: { containerId: 'cardName' },
+                            cardNumber: { containerId: 'cardNumber' },
+                            cardExpiry: { containerId: 'cardExpiry' },
+                        },
+                    },
+                },
+            };
+
+            await braintreeCreditCardPaymentStrategy.initialize(options);
+
+            expect(braintreeIntegrationServiceMock.initialize).toHaveBeenCalled();
+            expect(braintreeIntegrationServiceMock.getBraintreeConnect).toHaveBeenCalled();
         });
     });
 
@@ -290,6 +340,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                     paymentActionCreator,
                     paymentMethodActionCreator,
                     braintreePaymentProcessorMock,
+                    braintreeIntegrationServiceMock,
                 );
 
                 try {

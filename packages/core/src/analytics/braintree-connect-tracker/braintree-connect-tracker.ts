@@ -13,37 +13,21 @@ import { CheckoutService } from '../../checkout';
 import BraintreeConnectTrackerService from './braintree-connect-tracker-service';
 
 export default class BraintreeConnectTracker implements BraintreeConnectTrackerService {
-    private _shouldTriggerEventSubmittedEvent = true;
     private _selectedPaymentMethodId = 'braintreeacceleratedcheckout';
 
     constructor(private checkoutService: CheckoutService) {}
 
     customerPaymentMethodExecuted() {
         if (this._shouldTrackEvent()) {
-            this._shouldTriggerEventSubmittedEvent = false;
-
-            this._trackEmailSubmitted(false);
+            this._trackEmailSubmitted();
         }
     }
 
-    trackStepViewed(step: string) {
-        if (
-            this._shouldTrackEvent() &&
-            this._shouldTriggerEventSubmittedEvent &&
-            step !== 'customer'
-        ) {
-            this._shouldTriggerEventSubmittedEvent = false;
-
-            this._trackEmailSubmitted(true);
-        }
-    }
+    // TODO: remove this method when this method will be removed from checkout-js part
+    trackStepViewed() {}
 
     paymentComplete() {
         if (this._shouldTrackEvent()) {
-            if (this._shouldTriggerEventSubmittedEvent) {
-                this._trackEmailSubmitted(true);
-            }
-
             this._trackOrderPlaced(this._selectedPaymentMethodId);
         }
     }
@@ -81,9 +65,9 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
      * Braintree Connect Event track methods
      *
      */
-    private _trackEmailSubmitted(isEmailPrefilled: boolean): void {
+    private _trackEmailSubmitted(): void {
         const { emailSubmitted } = this._getBraintreeConnectEventsOrThrow();
-        const eventOptions = this._getEmailSubmittedEventOptions(isEmailPrefilled);
+        const eventOptions = this._getEmailSubmittedEventOptions();
 
         emailSubmitted(eventOptions);
     }
@@ -137,16 +121,14 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
         };
     }
 
-    private _getEmailSubmittedEventOptions(
-        isEmailPrefilled = false,
-    ): BraintreeConnectEmailEnteredEventOptions {
+    private _getEmailSubmittedEventOptions(): BraintreeConnectEmailEnteredEventOptions {
         const state = this.checkoutService.getState().data;
         const paymentMethods = state.getPaymentMethods() || [];
         const apmList = paymentMethods.map(({ id }) => id);
 
         return {
             ...this._getEventCommonOptions(),
-            user_email_saved: isEmailPrefilled,
+            user_email_saved: false,
             apm_shown: apmList.length > 1 ? '1' : '0',
             apm_list: apmList.join(','),
         };

@@ -6,6 +6,11 @@ import {
     getStylesheetLoader,
 } from '@bigcommerce/script-loader';
 
+import {
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import {
     CheckoutActionCreator,
@@ -320,6 +325,10 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 paymentMethodActionCreator,
                 braintreePaymentProcessor,
+                new BraintreeIntegrationService(
+                    new BraintreeScriptLoader(getScriptLoader(), window),
+                    window,
+                ),
             ),
     );
 
