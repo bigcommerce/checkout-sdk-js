@@ -1,5 +1,7 @@
 import {
     InvalidArgumentError,
+    isHostedInstrumentLike,
+    isVaultedInstrument,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
@@ -48,18 +50,39 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
+        const { paymentData } = payment;
+
         if (!payment.methodId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const paymentToken = await this.getTokenOrThrow();
+        const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
+            isHostedInstrumentLike(paymentData) ? paymentData : {};
 
         await this.paymentIntegrationService.submitOrder(order, options);
+
+        if (
+            isHostedInstrumentLike(paymentData) &&
+            isVaultedInstrument(paymentData) &&
+            paymentData.instrumentId
+        ) {
+            await this.executeWithVaulted(
+                payment.methodId,
+                paymentData.instrumentId,
+                shouldSetAsDefaultInstrument,
+            );
+
+            return;
+        }
+
+        const paymentToken = await this.getTokenOrThrow();
 
         await this.paymentIntegrationService.submitPayment({
             methodId: payment.methodId,
             paymentData: {
                 nonce: paymentToken,
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
             },
         });
     }
@@ -74,6 +97,20 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         this.expiryInput?.unmount();
 
         return Promise.resolve();
+    }
+
+    private async executeWithVaulted(
+        methodId: string,
+        instrumentId: string,
+        shouldSetAsDefaultInstrument: boolean,
+    ) {
+        await this.paymentIntegrationService.submitPayment({
+            methodId,
+            paymentData: {
+                instrumentId,
+                shouldSetAsDefaultInstrument,
+            },
+        });
     }
 
     private mountHostedFields(methodId: string): void {

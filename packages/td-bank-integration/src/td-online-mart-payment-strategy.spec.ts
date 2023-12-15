@@ -157,6 +157,68 @@ describe('TDOnlineMartPaymentStrategy', () => {
 
             expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalled();
         });
+
+        describe('with Vaulted Instruments', () => {
+            it('call submitPayment with instrument id', async () => {
+                payload = {
+                    payment: {
+                        methodId: 'tdonlinemart',
+                        paymentData: {
+                            instrumentId:
+                                'f73bdf6d8f466f6332f3daca2c5815f20c859cb7f19b9d1f340e4f2a7e18ddce',
+                        },
+                    },
+                };
+
+                await tdOnlineMartPaymentStrategy.initialize(
+                    tdOnlineMartClientScriptInitializationOptions,
+                );
+
+                await tdOnlineMartPaymentStrategy.execute(payload);
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
+                    1,
+                    expect.objectContaining({
+                        methodId: 'tdonlinemart',
+                        paymentData: expect.objectContaining({
+                            instrumentId:
+                                'f73bdf6d8f466f6332f3daca2c5815f20c859cb7f19b9d1f340e4f2a7e18ddce',
+                        }),
+                    }),
+                );
+            });
+
+            it('call submitPayment with instrumentId and shouldSetAsDefaultInstrument id if customer want to save instrument', async () => {
+                payload = {
+                    payment: {
+                        methodId: 'tdonlinemart',
+                        paymentData: {
+                            instrumentId:
+                                'f73bdf6d8f466f6332f3daca2c5815f20c859cb7f19b9d1f340e4f2a7e18ddce',
+                            shouldSetAsDefaultInstrument: true,
+                        },
+                    },
+                };
+
+                await tdOnlineMartPaymentStrategy.initialize(
+                    tdOnlineMartClientScriptInitializationOptions,
+                );
+
+                await tdOnlineMartPaymentStrategy.execute(payload);
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
+                    1,
+                    expect.objectContaining({
+                        methodId: 'tdonlinemart',
+                        paymentData: expect.objectContaining({
+                            instrumentId:
+                                'f73bdf6d8f466f6332f3daca2c5815f20c859cb7f19b9d1f340e4f2a7e18ddce',
+                            shouldSetAsDefaultInstrument: true,
+                        }),
+                    }),
+                );
+            });
+        });
     });
 
     describe('deinitialize', () => {
