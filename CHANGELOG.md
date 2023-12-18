@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.499.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.499.2...v1.499.3) (2023-12-18)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3660 updated Braintree AXO events trigger order ([#2291](https://github.com/bigcommerce/checkout-sdk-js/issues/2291)) ([adce33c](https://github.com/bigcommerce/checkout-sdk-js/commit/adce33c119b7b8e736020239916b4b0058dccfd5))
+
 ### [1.499.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.499.1...v1.499.2) (2023-12-14)
 
 
