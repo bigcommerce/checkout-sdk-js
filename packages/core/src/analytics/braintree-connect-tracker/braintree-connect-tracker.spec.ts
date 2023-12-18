@@ -73,35 +73,6 @@ describe('BraintreeConnectTracker', () => {
         });
     });
 
-    describe('trackStepViewed', () => {
-        it('does not trigger anything if braintreeConnect is not provided', () => {
-            delete braintreeConnectWindow.braintreeConnect;
-
-            braintreeConnectTracker.trackStepViewed('shipping');
-
-            expect(braintreeConnectMock.events.emailSubmitted).not.toHaveBeenCalled();
-        });
-
-        it('does not trigger any event on customer step', () => {
-            braintreeConnectTracker.trackStepViewed('customer');
-
-            expect(braintreeConnectMock.events.emailSubmitted).not.toHaveBeenCalled();
-        });
-
-        it('does not trigger any emailSubmitted event if it was called before', () => {
-            braintreeConnectTracker.customerPaymentMethodExecuted();
-            braintreeConnectTracker.trackStepViewed('shipping');
-
-            expect(braintreeConnectMock.events.emailSubmitted).toHaveBeenCalledTimes(1);
-        });
-
-        it('trigger emailSubmitted event', () => {
-            braintreeConnectTracker.trackStepViewed('payment');
-
-            expect(braintreeConnectMock.events.emailSubmitted).toHaveBeenCalled();
-        });
-    });
-
     describe('paymentComplete', () => {
         it('does not trigger anything if braintreeConnect is not provided', () => {
             delete braintreeConnectWindow.braintreeConnect;
@@ -111,18 +82,9 @@ describe('BraintreeConnectTracker', () => {
             expect(braintreeConnectMock.events.emailSubmitted).not.toHaveBeenCalled();
         });
 
-        it('triggers emailSubmitted and orderPlaced if emailSubmitted was not triggered before', () => {
+        it('triggers orderPlaced', () => {
             braintreeConnectTracker.paymentComplete();
 
-            expect(braintreeConnectMock.events.emailSubmitted).toHaveBeenCalled();
-            expect(braintreeConnectMock.events.orderPlaced).toHaveBeenCalled();
-        });
-
-        it('triggers only orderPlaced', () => {
-            braintreeConnectTracker.customerPaymentMethodExecuted();
-            braintreeConnectTracker.paymentComplete();
-
-            expect(braintreeConnectMock.events.emailSubmitted).toHaveBeenCalledTimes(1); // due to customerPaymentMethodExecuted method call
             expect(braintreeConnectMock.events.orderPlaced).toHaveBeenCalled();
         });
     });
@@ -272,16 +234,6 @@ describe('BraintreeConnectTracker', () => {
                 ...emailSubmitEventOptions,
                 apm_list: 'braintree,braintreeacceleratedcheckout',
                 apm_shown: '1',
-            });
-        });
-
-        it('calls emailSubmitted callback with preselected email', () => {
-            // Info: lets imagine that customer comes back from cart edit page and lands strait to shipping step
-            braintreeConnectTracker.trackStepViewed('shipping');
-
-            expect(braintreeConnectMock.events.emailSubmitted).toHaveBeenCalledWith({
-                ...emailSubmitEventOptions,
-                user_email_saved: true,
             });
         });
     });

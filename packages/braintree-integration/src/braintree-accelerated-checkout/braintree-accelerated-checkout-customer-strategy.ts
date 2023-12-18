@@ -70,12 +70,19 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
             );
         }
 
-        if (await this.shouldRunAuthenticationFlow()) {
-            await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow();
-        }
+        if (this.isAcceleratedCheckoutEnabled) {
+            const shouldRunAuthenticationFlow = await this.shouldRunAuthenticationFlow();
 
-        if (checkoutPaymentMethodExecuted && typeof checkoutPaymentMethodExecuted === 'function') {
-            checkoutPaymentMethodExecuted();
+            if (
+                checkoutPaymentMethodExecuted &&
+                typeof checkoutPaymentMethodExecuted === 'function'
+            ) {
+                checkoutPaymentMethodExecuted();
+            }
+
+            if (shouldRunAuthenticationFlow) {
+                await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow();
+            }
         }
 
         continueWithCheckoutCallback();
@@ -84,10 +91,6 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
     // TODO: remove this method after A/B testing finished
     private async shouldRunAuthenticationFlow(): Promise<boolean> {
         const primaryMethodId = 'braintreeacceleratedcheckout';
-
-        if (!this.isAcceleratedCheckoutEnabled) {
-            return false;
-        }
 
         try {
             // Info: we should load payment method each time to detect if the user
