@@ -33,4 +33,5 @@ const createBraintreePaypalPaymentStrategy: PaymentStrategyFactory<
 
 export default toResolvableModule(createBraintreePaypalPaymentStrategy, [
     { id: 'braintreepaypal' },
+    { id: 'braintreepaypalcredit' },
 ]);
