@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.500.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.499.3...v1.500.0) (2023-12-18)
+
+
+### Features
+
+* **payment:** PI-1076 add 3ds support for storing cards in square v2 ([0585261](https://github.com/bigcommerce/checkout-sdk-js/commit/058526126729854ca3fc9f3d0bb8f5046aee6cb3))
+
 ### [1.499.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.499.2...v1.499.3) (2023-12-18)
 
 
