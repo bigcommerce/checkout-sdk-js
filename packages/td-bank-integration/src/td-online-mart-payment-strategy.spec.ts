@@ -164,8 +164,7 @@ describe('TDOnlineMartPaymentStrategy', () => {
                     payment: {
                         methodId: 'tdonlinemart',
                         paymentData: {
-                            instrumentId:
-                                'f73bdf6d8f466f6332f3daca2c5815f20c859cb7f19b9d1f340e4f2a7e18ddce',
+                            instrumentId: 'testInstrumentId',
                         },
                     },
                 };
@@ -181,8 +180,7 @@ describe('TDOnlineMartPaymentStrategy', () => {
                     expect.objectContaining({
                         methodId: 'tdonlinemart',
                         paymentData: expect.objectContaining({
-                            instrumentId:
-                                'f73bdf6d8f466f6332f3daca2c5815f20c859cb7f19b9d1f340e4f2a7e18ddce',
+                            instrumentId: 'testInstrumentId',
                         }),
                     }),
                 );
@@ -193,8 +191,7 @@ describe('TDOnlineMartPaymentStrategy', () => {
                     payment: {
                         methodId: 'tdonlinemart',
                         paymentData: {
-                            instrumentId:
-                                'f73bdf6d8f466f6332f3daca2c5815f20c859cb7f19b9d1f340e4f2a7e18ddce',
+                            instrumentId: 'testInstrumentId',
                             shouldSetAsDefaultInstrument: true,
                         },
                     },
@@ -211,8 +208,7 @@ describe('TDOnlineMartPaymentStrategy', () => {
                     expect.objectContaining({
                         methodId: 'tdonlinemart',
                         paymentData: expect.objectContaining({
-                            instrumentId:
-                                'f73bdf6d8f466f6332f3daca2c5815f20c859cb7f19b9d1f340e4f2a7e18ddce',
+                            instrumentId: 'testInstrumentId',
                             shouldSetAsDefaultInstrument: true,
                         }),
                     }),

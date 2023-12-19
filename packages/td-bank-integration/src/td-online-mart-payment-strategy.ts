@@ -7,6 +7,7 @@ import {
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
+    OrderPaymentRequestBody,
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
@@ -50,41 +51,15 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const { paymentData } = payment;
-
         if (!payment.methodId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
-            isHostedInstrumentLike(paymentData) ? paymentData : {};
-
         await this.paymentIntegrationService.submitOrder(order, options);
 
-        if (
-            isHostedInstrumentLike(paymentData) &&
-            isVaultedInstrument(paymentData) &&
-            paymentData.instrumentId
-        ) {
-            await this.executeWithVaulted(
-                payment.methodId,
-                paymentData.instrumentId,
-                shouldSetAsDefaultInstrument,
-            );
+        const paymentPayload = await this.getPaymentPayload(payment);
 
-            return;
-        }
-
-        const paymentToken = await this.getTokenOrThrow();
-
-        await this.paymentIntegrationService.submitPayment({
-            methodId: payment.methodId,
-            paymentData: {
-                nonce: paymentToken,
-                shouldSaveInstrument,
-                shouldSetAsDefaultInstrument,
-            },
-        });
+        await this.paymentIntegrationService.submitPayment(paymentPayload);
     }
 
     finalize(): Promise<void> {
@@ -99,18 +74,36 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
-    private async executeWithVaulted(
-        methodId: string,
-        instrumentId: string,
-        shouldSetAsDefaultInstrument: boolean,
-    ) {
-        await this.paymentIntegrationService.submitPayment({
+    private async getPaymentPayload(payment: OrderPaymentRequestBody) {
+        const { methodId, paymentData } = payment;
+
+        const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
+            isHostedInstrumentLike(paymentData) ? paymentData : {};
+
+        if (
+            isHostedInstrumentLike(paymentData) &&
+            isVaultedInstrument(paymentData) &&
+            paymentData.instrumentId
+        ) {
+            return {
+                methodId,
+                paymentData: {
+                    instrumentId: paymentData.instrumentId,
+                    shouldSetAsDefaultInstrument,
+                },
+            };
+        }
+
+        const paymentToken = await this.getTokenOrThrow();
+
+        return {
             methodId,
             paymentData: {
-                instrumentId,
+                nonce: paymentToken,
+                shouldSaveInstrument,
                 shouldSetAsDefaultInstrument,
             },
-        });
+        };
     }
 
     private mountHostedFields(methodId: string): void {
