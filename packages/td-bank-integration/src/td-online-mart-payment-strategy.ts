@@ -1,10 +1,13 @@
 import {
     InvalidArgumentError,
+    isHostedInstrumentLike,
+    isVaultedInstrument,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
+    OrderPaymentRequestBody,
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
@@ -52,16 +55,11 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const paymentToken = await this.getTokenOrThrow();
-
         await this.paymentIntegrationService.submitOrder(order, options);
 
-        await this.paymentIntegrationService.submitPayment({
-            methodId: payment.methodId,
-            paymentData: {
-                nonce: paymentToken,
-            },
-        });
+        const paymentPayload = await this.getPaymentPayload(payment);
+
+        await this.paymentIntegrationService.submitPayment(paymentPayload);
     }
 
     finalize(): Promise<void> {
@@ -74,6 +72,38 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         this.expiryInput?.unmount();
 
         return Promise.resolve();
+    }
+
+    private async getPaymentPayload(payment: OrderPaymentRequestBody) {
+        const { methodId, paymentData } = payment;
+
+        const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
+            isHostedInstrumentLike(paymentData) ? paymentData : {};
+
+        if (
+            isHostedInstrumentLike(paymentData) &&
+            isVaultedInstrument(paymentData) &&
+            paymentData.instrumentId
+        ) {
+            return {
+                methodId,
+                paymentData: {
+                    instrumentId: paymentData.instrumentId,
+                    shouldSetAsDefaultInstrument,
+                },
+            };
+        }
+
+        const paymentToken = await this.getTokenOrThrow();
+
+        return {
+            methodId,
+            paymentData: {
+                nonce: paymentToken,
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
+            },
+        };
     }
 
     private mountHostedFields(methodId: string): void {

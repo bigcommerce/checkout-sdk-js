@@ -157,6 +157,64 @@ describe('TDOnlineMartPaymentStrategy', () => {
 
             expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalled();
         });
+
+        describe('with Vaulted Instruments', () => {
+            it('call submitPayment with instrument id', async () => {
+                payload = {
+                    payment: {
+                        methodId: 'tdonlinemart',
+                        paymentData: {
+                            instrumentId: 'testInstrumentId',
+                        },
+                    },
+                };
+
+                await tdOnlineMartPaymentStrategy.initialize(
+                    tdOnlineMartClientScriptInitializationOptions,
+                );
+
+                await tdOnlineMartPaymentStrategy.execute(payload);
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
+                    1,
+                    expect.objectContaining({
+                        methodId: 'tdonlinemart',
+                        paymentData: expect.objectContaining({
+                            instrumentId: 'testInstrumentId',
+                        }),
+                    }),
+                );
+            });
+
+            it('call submitPayment with instrumentId and shouldSetAsDefaultInstrument id if customer want to save instrument', async () => {
+                payload = {
+                    payment: {
+                        methodId: 'tdonlinemart',
+                        paymentData: {
+                            instrumentId: 'testInstrumentId',
+                            shouldSetAsDefaultInstrument: true,
+                        },
+                    },
+                };
+
+                await tdOnlineMartPaymentStrategy.initialize(
+                    tdOnlineMartClientScriptInitializationOptions,
+                );
+
+                await tdOnlineMartPaymentStrategy.execute(payload);
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
+                    1,
+                    expect.objectContaining({
+                        methodId: 'tdonlinemart',
+                        paymentData: expect.objectContaining({
+                            instrumentId: 'testInstrumentId',
+                            shouldSetAsDefaultInstrument: true,
+                        }),
+                    }),
+                );
+            });
+        });
     });
 
     describe('deinitialize', () => {
