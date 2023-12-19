@@ -49,7 +49,21 @@ export default class BraintreeConnectTracker implements BraintreeConnectTrackerS
     }
 
     private _shouldTrackEvent() {
-        return isBraintreeConnectWindow(window) && window.braintreeConnect.events;
+        const state = this.checkoutService.getState();
+        const braintreePaymentMethod = state.data.getPaymentMethod('braintree');
+        const braintreeAXOPaymentMethod = state.data.getPaymentMethod(
+            'braintreeacceleratedcheckout',
+        );
+
+        const isBraintreeAnalyticEnabled =
+            braintreePaymentMethod?.initializationData.isBraintreeAnalyticsV2Enabled ||
+            braintreeAXOPaymentMethod?.initializationData.isBraintreeAnalyticsV2Enabled;
+
+        return (
+            isBraintreeConnectWindow(window) &&
+            window.braintreeConnect.events &&
+            isBraintreeAnalyticEnabled
+        );
     }
 
     private _getBraintreeConnectEventsOrThrow(): BraintreeConnect['events'] {
