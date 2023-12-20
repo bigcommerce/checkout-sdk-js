@@ -19,7 +19,6 @@ import { getSquareV2 } from './mocks/squarev2-method.mock';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
 import SquareV2PaymentStrategy from './squarev2-payment-strategy';
 import SquareV2ScriptLoader from './squarev2-script-loader';
-import { SquareIntent } from './types';
 
 describe('SquareV2PaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
@@ -151,7 +150,7 @@ describe('SquareV2PaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(processor.verifyBuyer).toHaveBeenCalledWith('cnon:xxx', SquareIntent.CHARGE);
+            expect(processor.verifyBuyer).toHaveBeenCalledWith('cnon:xxx');
         });
 
         it('should submit the order', async () => {
@@ -205,118 +204,6 @@ describe('SquareV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(expectedPayment);
-        });
-
-        describe('when storing new card', () => {
-            beforeEach(async () => {
-                payload = {
-                    ...getOrderRequestBody(),
-                    payment: {
-                        methodId: 'squarev2',
-                        paymentData: {
-                            shouldSaveInstrument: true,
-                        },
-                    },
-                };
-
-                await strategy.initialize(options);
-            });
-
-            it('should tokenize the card twice', async () => {
-                await strategy.execute(payload);
-
-                expect(processor.tokenize).toHaveBeenCalledTimes(2);
-            });
-
-            it('should verify the buyer twice to get two verification tokens with different intents', async () => {
-                const storeConfigMock = getConfig().storeConfig;
-
-                storeConfigMock.checkoutSettings.features = {
-                    'PROJECT-3828.add_3ds_support_on_squarev2': true,
-                };
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getStoreConfigOrThrow',
-                ).mockReturnValue(storeConfigMock);
-
-                await strategy.execute(payload);
-
-                expect(processor.verifyBuyer).toHaveBeenCalledWith('cnon:xxx', SquareIntent.CHARGE);
-                expect(processor.verifyBuyer).toHaveBeenCalledWith('cnon:xxx', SquareIntent.STORE);
-            });
-
-            it('should submit the payment with verification tokens', async () => {
-                const expectedPayment = {
-                    methodId: 'squarev2',
-                    paymentData: {
-                        formattedPayload: {
-                            credit_card_token: {
-                                token: '{"nonce":"cnon:xxx","store_card_nonce":"cnon:xxx","token":"verf:yyy","store_card_token":"verf:yyy"}',
-                            },
-                            vault_payment_instrument: true,
-                            set_as_default_stored_instrument: false,
-                        },
-                    },
-                };
-                const storeConfigMock = getConfig().storeConfig;
-
-                storeConfigMock.checkoutSettings.features = {
-                    'PROJECT-3828.add_3ds_support_on_squarev2': true,
-                };
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getStoreConfigOrThrow',
-                ).mockReturnValue(storeConfigMock);
-
-                await strategy.execute(payload);
-
-                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
-                    expectedPayment,
-                );
-            });
-        });
-
-        describe('when using a stored card', () => {
-            beforeEach(async () => {
-                payload = {
-                    ...getOrderRequestBody(),
-                    payment: {
-                        methodId: 'squarev2',
-                        paymentData: {
-                            instrumentId: 'bigpaytoken',
-                        },
-                    },
-                };
-
-                await strategy.initialize(options);
-            });
-
-            it('should not tokenize the card', async () => {
-                await strategy.execute(payload);
-
-                expect(processor.tokenize).not.toHaveBeenCalled();
-            });
-
-            it('should submit the payment', async () => {
-                const expectedPayment = {
-                    methodId: 'squarev2',
-                    paymentData: {
-                        formattedPayload: {
-                            bigpay_token: {
-                                token: 'bigpaytoken',
-                            },
-                            vault_payment_instrument: false,
-                            set_as_default_stored_instrument: false,
-                        },
-                    },
-                };
-
-                await strategy.execute(payload);
-
-                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
-                    expectedPayment,
-                );
-            });
         });
     });
 

@@ -1,7 +1,6 @@
 import {
     InvalidArgumentError,
     isHostedInstrumentLike,
-    isVaultedInstrument,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentArgumentInvalidError,
@@ -13,7 +12,7 @@ import {
 
 import { WithSquareV2PaymentInitializeOptions } from './squarev2-payment-initialize-options';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
-import { SquareIntent, SquarePaymentMethodInitializationData } from './types';
+import { SquarePaymentMethodInitializationData } from './types';
 
 export default class SquareV2PaymentStrategy implements PaymentStrategy {
     constructor(
@@ -56,6 +55,15 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
+        let nonce = await this._squareV2PaymentProcessor.tokenize();
+
+        if (this._shouldVerify()) {
+            nonce = JSON.stringify({
+                nonce,
+                token: await this._squareV2PaymentProcessor.verifyBuyer(nonce),
+            });
+        }
+
         const paymentData = payment.paymentData;
 
         const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = isHostedInstrumentLike(
@@ -65,53 +73,6 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
             : { shouldSaveInstrument: false, shouldSetAsDefaultInstrument: false };
 
         await this._paymentIntegrationService.submitOrder();
-
-        if (paymentData && isVaultedInstrument(paymentData)) {
-            await this._paymentIntegrationService.submitPayment({
-                ...payment,
-                paymentData: {
-                    formattedPayload: {
-                        bigpay_token: {
-                            token: paymentData.instrumentId,
-                        },
-                        vault_payment_instrument: shouldSaveInstrument || false,
-                        set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
-                    },
-                },
-            });
-
-            return;
-        }
-
-        let nonce = await this._squareV2PaymentProcessor.tokenize();
-
-        if (this._shouldVerify()) {
-            if (shouldSaveInstrument) {
-                const storeCardNonce = await this._squareV2PaymentProcessor.tokenize();
-
-                nonce = JSON.stringify({
-                    nonce,
-                    store_card_nonce: storeCardNonce,
-                    token: await this._squareV2PaymentProcessor.verifyBuyer(
-                        nonce,
-                        SquareIntent.CHARGE,
-                    ),
-                    store_card_token: await this._squareV2PaymentProcessor.verifyBuyer(
-                        storeCardNonce,
-                        SquareIntent.STORE,
-                    ),
-                });
-            } else {
-                nonce = JSON.stringify({
-                    nonce,
-                    token: await this._squareV2PaymentProcessor.verifyBuyer(
-                        nonce,
-                        SquareIntent.CHARGE,
-                    ),
-                });
-            }
-        }
-
         await this._paymentIntegrationService.submitPayment({
             ...payment,
             paymentData: {
