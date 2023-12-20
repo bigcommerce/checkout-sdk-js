@@ -287,7 +287,7 @@ describe('PayPalCommercePaymentStrategy', () => {
             expect(submitFormMock).toHaveBeenCalled();
         });
 
-        it('hides loading indicator after form submit', async () => {
+        it("doesn't hide loading indicator after form submit", async () => {
             const submitFormMock = jest.fn();
 
             await strategy.initialize({
@@ -303,7 +303,7 @@ describe('PayPalCommercePaymentStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(submitFormMock).toHaveBeenCalled();
-            expect(loadingIndicator.hide).toHaveBeenCalled();
+            expect(loadingIndicator.hide).not.toHaveBeenCalled();
         });
     });
 

@@ -1,5 +1,6 @@
 import { some } from 'lodash';
 
+import { BraintreeIntegrationService } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { Address } from '../../../address';
@@ -30,16 +31,19 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor,
+        private _braintreeIntegrationService: BraintreeIntegrationService,
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        const { methodId, gatewayId, braintree } = options;
+
         const state = await this._store.dispatch(
-            this._paymentMethodActionCreator.loadPaymentMethod(options.methodId),
+            this._paymentMethodActionCreator.loadPaymentMethod(methodId),
         );
 
         const storeConfig = state.config.getStoreConfigOrThrow();
 
-        this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(options.methodId);
+        this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
         const { clientToken } = this._paymentMethod;
 
@@ -48,19 +52,21 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         }
 
         try {
-            this._braintreePaymentProcessor.initialize(clientToken, storeConfig, options.braintree);
+            this._braintreePaymentProcessor.initialize(clientToken, storeConfig, braintree);
 
-            if (
-                this._isHostedPaymentFormEnabled(options.methodId, options.gatewayId) &&
-                options.braintree?.form
-            ) {
-                await this._braintreePaymentProcessor.initializeHostedForm(options.braintree.form);
+            if (this._isHostedPaymentFormEnabled(methodId, gatewayId) && braintree?.form) {
+                await this._braintreePaymentProcessor.initializeHostedForm(braintree.form);
                 this._isHostedFormInitialized =
                     this._braintreePaymentProcessor.isInitializedHostedForm();
             }
 
             this._is3dsEnabled = this._paymentMethod.config.is3dsEnabled;
             this._deviceSessionId = await this._braintreePaymentProcessor.getSessionId();
+
+            // TODO: remove this part when BT AXO A/B testing will be finished
+            if (this._shouldInitializeBraintreeConnect()) {
+                await this._initializeBraintreeConnectOrThrow(methodId);
+            }
         } catch (error) {
             this._handleError(error);
         }
@@ -259,5 +265,32 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
 
     private _shouldPerform3DSVerification(payment: OrderPaymentRequestBody): boolean {
         return !!(this._is3dsEnabled && !this._isSubmittingWithStoredCard(payment));
+    }
+
+    // TODO: remove this part when BT AXO A/B testing will be finished
+    private _shouldInitializeBraintreeConnect() {
+        const state = this._store.getState();
+        const paymentProviderCustomer = state.paymentProviderCustomer.getPaymentProviderCustomer();
+        const isAcceleratedCheckoutEnabled =
+            this._paymentMethod?.initializationData.isAcceleratedCheckoutEnabled;
+
+        return isAcceleratedCheckoutEnabled && !paymentProviderCustomer?.authenticationState;
+    }
+
+    // TODO: remove this part when BT AXO A/B testing will be finished
+    private async _initializeBraintreeConnectOrThrow(methodId: string): Promise<void> {
+        const state = this._store.getState();
+        const cart = state.cart.getCartOrThrow();
+        const storeConfig = state.config.getStoreConfigOrThrow();
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const { clientToken, config } = paymentMethod;
+
+        if (!clientToken) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        this._braintreeIntegrationService.initialize(clientToken, storeConfig);
+
+        await this._braintreeIntegrationService.getBraintreeConnect(cart.id, config.testMode);
     }
 }

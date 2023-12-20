@@ -18,6 +18,7 @@ DOM. When the customer clicks on it, it will trigger apple sheet
 
 ### Methods
 
+- [onClick](ApplePayCustomerInitializeOptions.md#onclick)
 - [onError](ApplePayCustomerInitializeOptions.md#onerror)
 - [onPaymentAuthorize](ApplePayCustomerInitializeOptions.md#onpaymentauthorize)
 
@@ -46,6 +47,18 @@ ___
 Sub total label to be passed to apple sheet.
 
 ## Methods
+
+### onClick
+
+▸ `Optional` **onClick**(): `void`
+
+A callback that gets called when wallet button clicked
+
+#### Returns
+
+`void`
+
+___
 
 ### onError
 

@@ -5,7 +5,7 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import assertBlueSnapDirectEcpInstrument from './is-bluesnap-direct-ecp-instrument';
+import assertEcpInstrument from './is-bluesnap-direct-ecp-instrument';
 
 export default class BlueSnapDirectEcpPaymentStrategy implements PaymentStrategy {
     constructor(private _paymentIntegrationService: PaymentIntegrationService) {}
@@ -15,7 +15,7 @@ export default class BlueSnapDirectEcpPaymentStrategy implements PaymentStrategy
     }
 
     async execute({ payment }: OrderRequestBody): Promise<void> {
-        assertBlueSnapDirectEcpInstrument(payment?.paymentData);
+        assertEcpInstrument(payment?.paymentData);
 
         await this._paymentIntegrationService.submitOrder();
         await this._paymentIntegrationService.submitPayment({

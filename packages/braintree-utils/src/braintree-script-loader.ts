@@ -13,6 +13,7 @@ import {
     BraintreeHostWindow,
     BraintreeLocalPaymentCreator,
     BraintreePaypalCheckoutCreator,
+    BraintreePaypalCreator,
     BraintreeThreeDSecureCreator,
     GooglePayCreator,
 } from './braintree';
@@ -75,6 +76,23 @@ export default class BraintreeScriptLoader {
         }
 
         return this.braintreeHostWindow.braintree.paypalCheckout;
+    }
+
+    async loadPaypal(): Promise<BraintreePaypalCreator> {
+        return this.scriptLoader
+            .loadScript(
+                `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/paypal.min.js`,
+            )
+            .then(() => {
+                if (
+                    !this.braintreeHostWindow.braintree ||
+                    !this.braintreeHostWindow.braintree.paypal
+                ) {
+                    throw new PaymentMethodClientUnavailableError();
+                }
+
+                return this.braintreeHostWindow.braintree.paypal;
+            });
     }
 
     async loadBraintreeLocalMethods(): Promise<BraintreeLocalPaymentCreator> {

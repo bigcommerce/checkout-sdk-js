@@ -11,6 +11,7 @@
 
 ### Methods
 
+- [onClick](BraintreePaypalCustomerInitializeOptions.md#onclick)
 - [onError](BraintreePaypalCustomerInitializeOptions.md#onerror)
 
 ## Properties
@@ -28,6 +29,18 @@ ___
 The ID of a container which the checkout button should be inserted into.
 
 ## Methods
+
+### onClick
+
+▸ `Optional` **onClick**(): `void`
+
+A callback that gets called when wallet button clicked
+
+#### Returns
+
+`void`
+
+___
 
 ### onError
 

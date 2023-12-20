@@ -44,7 +44,8 @@ export default class CheckoutcomSEPAPaymentStrategy extends CheckoutcomCustomPay
         paymentData: PaymentInstrument,
     ): WithCheckoutcomSEPAInstrument {
         const formattedPayload: WithCheckoutcomSEPAInstrument = { iban: '', bic: '' };
-        const { iban, bic } = 'iban' in paymentData ? paymentData : formattedPayload;
+        const { iban, bic } =
+            'iban' in paymentData && 'bic' in paymentData ? paymentData : formattedPayload;
 
         if (methodId === CHECKOUTCOM_SEPA_PAYMENT_METHOD && document) {
             formattedPayload.iban = iban;

@@ -12,6 +12,7 @@
 
 ### Methods
 
+- [onClick](GooglePayCustomerInitializeOptions_2.md#onclick)
 - [onError](GooglePayCustomerInitializeOptions_2.md#onerror)
 
 ## Properties
@@ -52,6 +53,18 @@ This container is used to set an event listener, provide an element ID if you wa
 the GooglePay wallet modal by clicking on a button. It should be an HTML element.
 
 ## Methods
+
+### onClick
+
+▸ `Optional` **onClick**(): `void`
+
+Callback that get called on wallet button click
+
+#### Returns
+
+`void`
+
+___
 
 ### onError
 

@@ -1,6 +1,8 @@
 import {
-    BlueSnapDirectEcpInstrument,
     BlueSnapDirectEcpPayload,
+    BlueSnapDirectSepaPayload,
+    EcpInstrument,
+    SepaInstrument,
     WithAccountCreation,
     WithBankAccountInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -18,7 +20,8 @@ export default interface Payment {
 }
 
 export type PaymentInstrument =
-    | BlueSnapDirectEcpInstrument
+    | EcpInstrument
+    | SepaInstrument
     | CreditCardInstrument
     | (CreditCardInstrument & WithHostedFormNonce)
     | (CreditCardInstrument & WithDocumentInstrument)
@@ -30,6 +33,7 @@ export type PaymentInstrument =
           | AdyenV2Instrument
           | AppleInstrument
           | BlueSnapDirectEcpPayload
+          | BlueSnapDirectSepaPayload
           | BoltInstrument
           | PaypalInstrument
           | FormattedHostedInstrument

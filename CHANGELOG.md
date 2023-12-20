@@ -2,6 +2,158 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.501.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.501.0...v1.501.1) (2023-12-20)
+
+## [1.501.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.500.0...v1.501.0) (2023-12-20)
+
+
+### Features
+
+* **payment:** PAYPAL-3382 covered braintree connect analytic with experiment ([#2292](https://github.com/bigcommerce/checkout-sdk-js/issues/2292)) ([0d7f447](https://github.com/bigcommerce/checkout-sdk-js/commit/0d7f4473137b79e3ce7a7d99044bd7ffe71903ee))
+* **payment:** PI-1021 [TD Bank][FE] Vaulted instruments implementation on Checkout  ([#2290](https://github.com/bigcommerce/checkout-sdk-js/issues/2290)) ([9c5430d](https://github.com/bigcommerce/checkout-sdk-js/commit/9c5430d63c632fd672510b6b140f53bd02d9c663))
+
+## [1.500.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.499.3...v1.500.0) (2023-12-18)
+
+
+### Features
+
+* **payment:** PI-1076 add 3ds support for storing cards in square v2 ([0585261](https://github.com/bigcommerce/checkout-sdk-js/commit/058526126729854ca3fc9f3d0bb8f5046aee6cb3))
+
+### [1.499.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.499.2...v1.499.3) (2023-12-18)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3660 updated Braintree AXO events trigger order ([#2291](https://github.com/bigcommerce/checkout-sdk-js/issues/2291)) ([adce33c](https://github.com/bigcommerce/checkout-sdk-js/commit/adce33c119b7b8e736020239916b4b0058dccfd5))
+
+### [1.499.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.499.1...v1.499.2) (2023-12-14)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3360 fixed a mistake in codeowners file due BT analytics ([#2288](https://github.com/bigcommerce/checkout-sdk-js/issues/2288)) ([ee887e8](https://github.com/bigcommerce/checkout-sdk-js/commit/ee887e8df0a94c866b5edbb77a71f298d1518263))
+* **payment:** PAYPAL-3360 fixed the issue with braintree axo customer step initialisation and fixed data for BT AXO Analytics ([#2285](https://github.com/bigcommerce/checkout-sdk-js/issues/2285)) ([286bac5](https://github.com/bigcommerce/checkout-sdk-js/commit/286bac55b5975b13b14098ee18723a5fd630f7da))
+* **payment:** PAYPAL-3367 removed onCancel error throw for PP AMP payment strategy ([#2286](https://github.com/bigcommerce/checkout-sdk-js/issues/2286)) ([8772484](https://github.com/bigcommerce/checkout-sdk-js/commit/8772484f44198115af1860a7cda5d30561e18bc3))
+
+### [1.499.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.499.0...v1.499.1) (2023-12-14)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3124 PPCP loading indicator keeps after submit ([653e2db](https://github.com/bigcommerce/checkout-sdk-js/commit/653e2dbdc5e066e8da1bf9aecafd53da114ace15))
+
+## [1.499.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.498.0...v1.499.0) (2023-12-14)
+
+
+### Features
+
+* **payment:** PAYPAL-2612 Move BraintreePayPalCredit customer strategy to braintree-integration package ([#2279](https://github.com/bigcommerce/checkout-sdk-js/issues/2279)) ([c46c1e9](https://github.com/bigcommerce/checkout-sdk-js/commit/c46c1e920751c9b9f3089081bf5f408919297b35))
+
+## [1.498.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.497.0...v1.498.0) (2023-12-13)
+
+
+### Features
+
+* **payment:** PI-1142 [TD Bank- Ph. 1a][FE] Add payment strategy for… ([#2267](https://github.com/bigcommerce/checkout-sdk-js/issues/2267)) ([99e7d6d](https://github.com/bigcommerce/checkout-sdk-js/commit/99e7d6d902c538f139cd46dd55254beecfb8683e))
+
+## [1.497.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.496.1...v1.497.0) (2023-12-12)
+
+
+### Features
+
+* **payment:** PI-1148 Hide card holder name from hosted fields form ([4bc6cbd](https://github.com/bigcommerce/checkout-sdk-js/commit/4bc6cbd5fa5b4e26c7b963e3e5a204cb2304c7b9))
+
+### [1.496.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.496.0...v1.496.1) (2023-12-12)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-2936 updated PayPal Commerce shipping callbacks with onShippingChanged ([#2255](https://github.com/bigcommerce/checkout-sdk-js/issues/2255)) ([e6c4640](https://github.com/bigcommerce/checkout-sdk-js/commit/e6c46409f402dfd20dbca62605b2d43a8aa6d47f))
+
+## [1.496.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.495.0...v1.496.0) (2023-12-12)
+
+
+### Features
+
+* **payment:** PAYPAL-2616 moved braintree-paypal-payment-strategy to braintree-integration package ([#2257](https://github.com/bigcommerce/checkout-sdk-js/issues/2257)) ([079a971](https://github.com/bigcommerce/checkout-sdk-js/commit/079a971bdf46af406988413721271b45e4f6fdfa))
+
+## [1.495.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.494.0...v1.495.0) (2023-12-11)
+
+
+### Features
+
+* **payment:** PI-853 BluesnapDirect added Sepa fieldset ([99feb87](https://github.com/bigcommerce/checkout-sdk-js/commit/99feb87a358c425cb604a8f684a20ef7c946af13))
+
+## [1.494.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.493.0...v1.494.0) (2023-12-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3280 added inputDateFormat for date input ([6cc6ebb](https://github.com/bigcommerce/checkout-sdk-js/commit/6cc6ebb4ce161d235997f19f2a67ff4221ffc32f))
+
+## [1.493.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.492.0...v1.493.0) (2023-12-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3337 PPCP GooglePay setGatewayIdentifier added ([a18f34e](https://github.com/bigcommerce/checkout-sdk-js/commit/a18f34e37e429740ee61bdf1a32e3c8172326660))
+
+## [1.492.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.491.0...v1.492.0) (2023-12-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3281 fixed phone country code field ([#2274](https://github.com/bigcommerce/checkout-sdk-js/issues/2274)) ([f1ce652](https://github.com/bigcommerce/checkout-sdk-js/commit/f1ce65217aa38ac715963108f07fbf3eddca021b))
+
+## [1.491.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.490.0...v1.491.0) (2023-12-08)
+
+
+### Features
+
+* **payment:** PAYPAL-3229 added BraintreeConnectTracker (analytic) ([#2276](https://github.com/bigcommerce/checkout-sdk-js/issues/2276)) ([13a87dd](https://github.com/bigcommerce/checkout-sdk-js/commit/13a87dd981f88bc71e80d894ececf3b48473b3cc))
+
+## [1.490.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.489.0...v1.490.0) (2023-12-07)
+
+
+### Features
+
+* **payment:** PAYPAL-3229 added checkoutPaymentMethodExecuted callback call to BraintreeAcceleratedCheckoutCustomerStrategy ([#2273](https://github.com/bigcommerce/checkout-sdk-js/issues/2273)) ([1e9684a](https://github.com/bigcommerce/checkout-sdk-js/commit/1e9684a9db8ae7c7ee097423e1fefa7449b9ab6f))
+
+## [1.489.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.488.0...v1.489.0) (2023-12-07)
+
+
+### Features
+
+* **payment:** PAYPAL-3229 added onClick callback to AmazonPay customer strategy ([#2271](https://github.com/bigcommerce/checkout-sdk-js/issues/2271)) ([2a4e0ec](https://github.com/bigcommerce/checkout-sdk-js/commit/2a4e0ec52b76cba5b5b4c0680778cfd8fff82164))
+
+## [1.488.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.487.0...v1.488.0) (2023-12-07)
+
+
+### Features
+
+* **payment:** PAYPAL-3229 added onClick callback to ApplePayCustomerStrategy ([#2268](https://github.com/bigcommerce/checkout-sdk-js/issues/2268)) ([e913796](https://github.com/bigcommerce/checkout-sdk-js/commit/e9137962ecc29abd492153f0a5ce9e17724529d3))
+
+## [1.487.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.486.0...v1.487.0) (2023-12-07)
+
+
+### Features
+
+* **payment:** PAYPAL-3229 added onClick callback for GooglePay customer strategies ([#2269](https://github.com/bigcommerce/checkout-sdk-js/issues/2269)) ([a1781de](https://github.com/bigcommerce/checkout-sdk-js/commit/a1781de0e70c0a65b85a9f5794df6fd1d88c8a78))
+
+## [1.486.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.485.0...v1.486.0) (2023-12-07)
+
+
+### Features
+
+* **payment:** PAYPAL-3229 added onClick callback for all Braintree customer strategies ([#2270](https://github.com/bigcommerce/checkout-sdk-js/issues/2270)) ([f4f41f6](https://github.com/bigcommerce/checkout-sdk-js/commit/f4f41f6bb3076f2b7844fbccb84d662ec4a15b49))
+
+## [1.485.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.484.0...v1.485.0) (2023-12-07)
+
+
+### Features
+
+* **payment:** PAYPAL-3229 added onClick callback for each PayPalCommerce customer strategy ([#2272](https://github.com/bigcommerce/checkout-sdk-js/issues/2272)) ([72db9a4](https://github.com/bigcommerce/checkout-sdk-js/commit/72db9a4c92f99a2e367aba0434160220286ace0c))
+
 ## [1.484.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.483.0...v1.484.0) (2023-11-30)
 
 

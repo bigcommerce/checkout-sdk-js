@@ -28,7 +28,9 @@ import {
     StyleButtonColor,
 } from '../paypal-commerce-types';
 
-import PayPalCommerceCreditCustomerInitializeOptions from './paypal-commerce-credit-customer-initialize-options';
+import PayPalCommerceCreditCustomerInitializeOptions, {
+    WithPayPalCommerceCreditCustomerInitializeOptions,
+} from './paypal-commerce-credit-customer-initialize-options';
 import PayPalCommerceCreditCustomerStrategy from './paypal-commerce-credit-customer-strategy';
 
 describe('PayPalCommerceCreditCustomerStrategy', () => {
@@ -41,16 +43,37 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
 
     const methodId = 'paypalcommercecredit';
     const defaultContainerId = 'paypal-commerce-credit-container-mock-id';
-    const approveDataOrderId = 'ORDER_ID';
+    const paypalOrderId = 'ORDER_ID';
+    const approveDataOrderId = paypalOrderId;
 
     const paypalCommerceCreditOptions: PayPalCommerceCreditCustomerInitializeOptions = {
         container: defaultContainerId,
+        onClick: jest.fn(),
         onComplete: jest.fn(),
     };
 
-    const initializationOptions: CustomerInitializeOptions = {
+    const initializationOptions: CustomerInitializeOptions &
+        WithPayPalCommerceCreditCustomerInitializeOptions = {
         methodId,
         paypalcommercecredit: paypalCommerceCreditOptions,
+    };
+
+    const paypalShippingAddressPayloadMock = {
+        city: 'New York',
+        country_code: 'US',
+        postal_code: '07564',
+        state: 'New York',
+    };
+
+    const paypalSelectedShippingOptionPayloadMock = {
+        amount: {
+            currency_code: 'USD',
+            value: '100',
+        },
+        id: '1',
+        label: 'Free shipping',
+        selected: true,
+        type: 'type_shipping',
     };
 
     beforeEach(() => {
@@ -119,34 +142,24 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                     }
                 });
 
-                eventEmitter.on('onShippingAddressChange', () => {
-                    if (options.onShippingAddressChange) {
-                        options.onShippingAddressChange({
-                            orderId: approveDataOrderId,
-                            shippingAddress: {
-                                city: 'New York',
-                                country_code: 'US',
-                                postal_code: '07564',
-                                state: 'New York',
+                eventEmitter.on('onClick', () => {
+                    if (options.onClick) {
+                        options.onClick(
+                            { fundingSource: 'credit' },
+                            {
+                                resolve: jest.fn(),
+                                reject: jest.fn(),
                             },
-                        });
+                        );
                     }
                 });
 
-                eventEmitter.on('onShippingOptionsChange', () => {
-                    if (options.onShippingOptionsChange) {
-                        options.onShippingOptionsChange({
-                            orderId: approveDataOrderId,
-                            selectedShippingOption: {
-                                amount: {
-                                    currency_code: 'USD',
-                                    value: '100',
-                                },
-                                id: '1',
-                                label: 'Free shipping',
-                                selected: true,
-                                type: 'type_shipping',
-                            },
+                eventEmitter.on('onShippingChange', () => {
+                    if (options.onShippingChange) {
+                        options.onShippingChange({
+                            orderID: paypalOrderId,
+                            shipping_address: paypalShippingAddressPayloadMock,
+                            selected_shipping_option: paypalSelectedShippingOptionPayloadMock,
                         });
                     }
                 });
@@ -200,6 +213,22 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
             }
         });
 
+        it('throws an error if paypalcommercecredit.onClick is provided but it is not a function', async () => {
+            const options = {
+                methodId,
+                paypalcommercecredit: {
+                    ...initializationOptions.paypalcommercecredit,
+                    onClick: 'test',
+                },
+            } as CustomerInitializeOptions;
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
         it('loads paypalcommercecredit payment method', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -226,6 +255,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -251,9 +281,9 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                     label: 'checkout',
                 },
                 createOrder: expect.any(Function),
-                onShippingAddressChange: expect.any(Function),
-                onShippingOptionsChange: expect.any(Function),
+                onShippingChange: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -293,6 +323,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
+                onClick: expect.any(Function),
             });
         });
 
@@ -482,7 +513,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
         });
     });
 
-    describe('#onShippingAddressChange button callback', () => {
+    describe('#onShippingChange button callback', () => {
         beforeEach(() => {
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
@@ -519,7 +550,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            eventEmitter.emit('onShippingAddressChange');
+            eventEmitter.emit('onShippingChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
@@ -530,7 +561,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
         it('selects shipping option after address update', async () => {
             await strategy.initialize(initializationOptions);
 
-            eventEmitter.emit('onShippingAddressChange');
+            eventEmitter.emit('onShippingChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
@@ -551,7 +582,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            eventEmitter.emit('onShippingAddressChange');
+            eventEmitter.emit('onShippingChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
@@ -559,43 +590,15 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
         });
     });
 
-    describe('#onShippingOptionsChange button callback', () => {
-        beforeEach(() => {
-            const paymentMethodWithShippingOptionsFeature = {
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    isHostedCheckoutEnabled: true,
-                },
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
-        });
-
-        it('selects shipping option', async () => {
+    describe('#onClick button callback', () => {
+        it('triggers onClick option by clicking on the button', async () => {
             await strategy.initialize(initializationOptions);
 
-            eventEmitter.emit('onShippingOptionsChange');
+            eventEmitter.emit('onClick');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(paypalCommerceIntegrationService.getShippingOptionOrThrow).toHaveBeenCalled();
-            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
-                getShippingOption().id,
-            );
-        });
-
-        it('updates PayPal order', async () => {
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('onShippingOptionsChange');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(paypalCommerceIntegrationService.updateOrder).toHaveBeenCalled();
+            expect(paypalCommerceCreditOptions.onClick).toHaveBeenCalled();
         });
     });
 

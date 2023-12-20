@@ -27,11 +27,12 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
     const initializationOptions = { methodId };
     const executionOptions = {
         methodId,
+        checkoutPaymentMethodExecuted: jest.fn(),
         continueWithCheckoutCallback: jest.fn(),
     };
     const paymentMethod = {
         ...getBraintree(),
-        methodId,
+        id: methodId,
         initializationData: {
             isAcceleratedCheckoutEnabled: true,
             shouldRunAcceleratedCheckout: true,
@@ -105,6 +106,19 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             ).toHaveBeenCalledWith(methodId, undefined);
         });
 
+        it('loads another payment method if the primary load throws an error', async () => {
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockImplementationOnce(
+                () => {
+                    throw new Error();
+                },
+            );
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith('braintree');
+        });
+
         it('does not initialize Braintree Connect if isAcceleratedCheckoutEnabled is disabled', async () => {
             const mockPaymentMethod = {
                 ...paymentMethod,
@@ -137,13 +151,20 @@ describe('BraintreeAcceleratedCheckoutCustomerStrategy', () => {
             }
         });
 
-        it('authenticates user with PayPal Connect and calls continueWithCheckoutCallback', async () => {
+        it('authenticates user with PayPal Connect', async () => {
             await strategy.initialize({ methodId });
             await strategy.executePaymentMethodCheckout(executionOptions);
 
             expect(
                 braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow,
             ).toHaveBeenCalled();
+        });
+
+        it('calls checkoutPaymentMethodExecuted and continueWithCheckoutCallback after payment method execution', async () => {
+            await strategy.initialize({ methodId });
+            await strategy.executePaymentMethodCheckout(executionOptions);
+
+            expect(executionOptions.checkoutPaymentMethodExecuted).toHaveBeenCalled();
             expect(executionOptions.continueWithCheckoutCallback).toHaveBeenCalled();
         });
     });

@@ -157,7 +157,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             style: this.paypalCommerceIntegrationService.getValidButtonStyle(buttonStyle),
             createOrder: () => this.onCreateOrder(paypalOptions),
             onApprove: (data) => this.handleApprove(data, submitForm),
-            onCancel: () => this.handleFailure(new Error('Payment was canceled.'), onError),
+            onCancel: () => this.toggleLoadingIndicator(false),
             onError: (error) => this.handleFailure(error, onError),
         };
 
@@ -199,7 +199,6 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         this.orderId = orderID;
 
         submitForm();
-        this.toggleLoadingIndicator(false);
     }
 
     private handleFailure(
