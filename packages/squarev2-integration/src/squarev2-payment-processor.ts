@@ -20,8 +20,6 @@ import {
     ChargeVerifyBuyerDetails,
     Payments,
     SqEvent,
-    SquareIntent,
-    StoreVerifyBuyerDetails,
 } from './types';
 
 export interface SquareV2PaymentProcessorOptions {
@@ -108,10 +106,21 @@ export default class SquareV2PaymentProcessor {
         return result.token;
     }
 
-    async verifyBuyer(token: string, intent: SquareIntent): Promise<string> {
-        return intent === SquareIntent.CHARGE
-            ? this._chargeVerifyBuyer(token)
-            : this._storeVerifyBuyer(token);
+    async verifyBuyer(token: string): Promise<string> {
+        const { getCheckoutOrThrow, getBillingAddressOrThrow } =
+            this._paymentIntegrationService.getState();
+        const { outstandingBalance, cart } = getCheckoutOrThrow();
+
+        const details: ChargeVerifyBuyerDetails = {
+            amount: outstandingBalance.toString(),
+            billingContact: this._mapToSquareBillingContact(getBillingAddressOrThrow()),
+            currencyCode: cart.currency.code,
+            intent: 'CHARGE',
+        };
+
+        const response = await this._getPayments().verifyBuyer(token, details);
+
+        return response ? response.token : '';
     }
 
     private _getPayments(): Payments {
@@ -187,35 +196,5 @@ export default class SquareV2PaymentProcessor {
             email,
             phone,
         };
-    }
-
-    private async _chargeVerifyBuyer(token: string): Promise<string> {
-        const { getCheckoutOrThrow, getBillingAddressOrThrow } =
-            this._paymentIntegrationService.getState();
-        const { outstandingBalance, cart } = getCheckoutOrThrow();
-
-        const details: ChargeVerifyBuyerDetails = {
-            amount: outstandingBalance.toString(),
-            billingContact: this._mapToSquareBillingContact(getBillingAddressOrThrow()),
-            currencyCode: cart.currency.code,
-            intent: SquareIntent.CHARGE,
-        };
-
-        const response = await this._getPayments().verifyBuyer(token, details);
-
-        return response ? response.token : '';
-    }
-
-    private async _storeVerifyBuyer(token: string): Promise<string> {
-        const { getBillingAddressOrThrow } = this._paymentIntegrationService.getState();
-
-        const details: StoreVerifyBuyerDetails = {
-            billingContact: this._mapToSquareBillingContact(getBillingAddressOrThrow()),
-            intent: SquareIntent.STORE,
-        };
-
-        const response = await this._getPayments().verifyBuyer(token, details);
-
-        return response ? response.token : '';
     }
 }
