@@ -26,6 +26,7 @@ describe('BraintreeConnectTracker', () => {
         initializationData: {
             isAcceleratedCheckoutEnabled: true,
             shouldRunAcceleratedCheckout: isControlGroup,
+            isBraintreeAnalyticsV2Enabled: true,
         },
     });
 
@@ -55,11 +56,30 @@ describe('BraintreeConnectTracker', () => {
         jest.spyOn(checkoutService.getState().data, 'getPaymentMethods').mockReturnValue([
             getBraintreeAcceleratedCheckout(true),
         ]);
+        jest.spyOn(checkoutService.getState().data, 'getPaymentMethod').mockReturnValue(
+            getBraintreeAcceleratedCheckout(false),
+        );
     });
 
     describe('customerPaymentMethodExecuted', () => {
         it('does not trigger anything if braintreeConnect is not provided', () => {
             delete braintreeConnectWindow.braintreeConnect;
+
+            braintreeConnectTracker.customerPaymentMethodExecuted();
+
+            expect(braintreeConnectMock.events.emailSubmitted).not.toHaveBeenCalled();
+        });
+
+        it('does not trigger anything if braintree analytic feature is disabled', () => {
+            const braintreeAcceleratedCheckoutMock = getBraintreeAcceleratedCheckout(false);
+
+            jest.spyOn(checkoutService.getState().data, 'getPaymentMethod').mockReturnValue({
+                ...braintreeAcceleratedCheckoutMock,
+                initializationData: {
+                    ...braintreeAcceleratedCheckoutMock.initializationData,
+                    isBraintreeAnalyticsV2Enabled: false,
+                },
+            });
 
             braintreeConnectTracker.customerPaymentMethodExecuted();
 
@@ -79,7 +99,23 @@ describe('BraintreeConnectTracker', () => {
 
             braintreeConnectTracker.paymentComplete();
 
-            expect(braintreeConnectMock.events.emailSubmitted).not.toHaveBeenCalled();
+            expect(braintreeConnectMock.events.orderPlaced).not.toHaveBeenCalled();
+        });
+
+        it('does not trigger anything if braintree analytic feature is disabled', () => {
+            const braintreeAcceleratedCheckoutMock = getBraintreeAcceleratedCheckout(false);
+
+            jest.spyOn(checkoutService.getState().data, 'getPaymentMethod').mockReturnValue({
+                ...braintreeAcceleratedCheckoutMock,
+                initializationData: {
+                    ...braintreeAcceleratedCheckoutMock.initializationData,
+                    isBraintreeAnalyticsV2Enabled: false,
+                },
+            });
+
+            braintreeConnectTracker.paymentComplete();
+
+            expect(braintreeConnectMock.events.orderPlaced).not.toHaveBeenCalled();
         });
 
         it('triggers orderPlaced', () => {
@@ -104,6 +140,22 @@ describe('BraintreeConnectTracker', () => {
             expect(braintreeConnectMock.events.apmSelected).not.toHaveBeenCalled();
         });
 
+        it('does not trigger anything if braintree analytic feature is disabled', () => {
+            const braintreeAcceleratedCheckoutMock = getBraintreeAcceleratedCheckout(false);
+
+            jest.spyOn(checkoutService.getState().data, 'getPaymentMethod').mockReturnValue({
+                ...braintreeAcceleratedCheckoutMock,
+                initializationData: {
+                    ...braintreeAcceleratedCheckoutMock.initializationData,
+                    isBraintreeAnalyticsV2Enabled: false,
+                },
+            });
+
+            braintreeConnectTracker.selectedPaymentMethod('applepay');
+
+            expect(braintreeConnectMock.events.apmSelected).not.toHaveBeenCalled();
+        });
+
         it('triggers apm selected event', () => {
             braintreeConnectTracker.selectedPaymentMethod('applepay');
 
@@ -122,6 +174,22 @@ describe('BraintreeConnectTracker', () => {
 
         it('does not trigger anything if method id is not properly provided', () => {
             braintreeConnectTracker.walletButtonClick('');
+
+            expect(braintreeConnectMock.events.apmSelected).not.toHaveBeenCalled();
+        });
+
+        it('does not trigger anything if braintree analytic feature is disabled', () => {
+            const braintreeAcceleratedCheckoutMock = getBraintreeAcceleratedCheckout(false);
+
+            jest.spyOn(checkoutService.getState().data, 'getPaymentMethod').mockReturnValue({
+                ...braintreeAcceleratedCheckoutMock,
+                initializationData: {
+                    ...braintreeAcceleratedCheckoutMock.initializationData,
+                    isBraintreeAnalyticsV2Enabled: false,
+                },
+            });
+
+            braintreeConnectTracker.walletButtonClick('applepay');
 
             expect(braintreeConnectMock.events.apmSelected).not.toHaveBeenCalled();
         });
