@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.501.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.500.0...v1.501.0) (2023-12-20)
+
+
+### Features
+
+* **payment:** PAYPAL-3382 covered braintree connect analytic with experiment ([#2292](https://github.com/bigcommerce/checkout-sdk-js/issues/2292)) ([0d7f447](https://github.com/bigcommerce/checkout-sdk-js/commit/0d7f4473137b79e3ce7a7d99044bd7ffe71903ee))
+* **payment:** PI-1021 [TD Bank][FE] Vaulted instruments implementation on Checkout  ([#2290](https://github.com/bigcommerce/checkout-sdk-js/issues/2290)) ([9c5430d](https://github.com/bigcommerce/checkout-sdk-js/commit/9c5430d63c632fd672510b6b140f53bd02d9c663))
+
 ## [1.500.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.499.3...v1.500.0) (2023-12-18)
 
 
