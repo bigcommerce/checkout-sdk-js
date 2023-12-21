@@ -7,6 +7,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import { SquareIntent } from './enums';
 import { getSquareV2MockFunctions } from './mocks/squarev2-web-payments-sdk.mock';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
 import SquareV2ScriptLoader from './squarev2-script-loader';
@@ -240,7 +241,7 @@ describe('SquareV2PaymentProcessor', () => {
                 intent: 'CHARGE',
             };
 
-            const nonce = await processor.verifyBuyer('cnon:zzz');
+            const nonce = await processor.verifyBuyer('cnon:zzz', SquareIntent.CHARGE);
 
             expect(nonce).toBe('verf:yyy');
             expect(squareV2MockFunctions.verifyBuyer).toHaveBeenCalledWith(
@@ -252,7 +253,7 @@ describe('SquareV2PaymentProcessor', () => {
         it('should fail if _payments has not yet been initialized', async () => {
             await processor.deinitialize();
 
-            const nonce = processor.verifyBuyer('cnon:zzz');
+            const nonce = processor.verifyBuyer('cnon:zzz', SquareIntent.CHARGE);
 
             await expect(nonce).rejects.toThrow(NotInitializedError);
         });
