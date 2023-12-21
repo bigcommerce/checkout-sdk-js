@@ -10,6 +10,7 @@ import {
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { SquareIntent } from './enums';
 import SquareV2PaymentInitializeOptions from './squarev2-payment-initialize-options';
 import SquareV2ScriptLoader from './squarev2-script-loader';
 import {
@@ -20,7 +21,6 @@ import {
     ChargeVerifyBuyerDetails,
     Payments,
     SqEvent,
-    SquareIntent,
     StoreVerifyBuyerDetails,
 } from './types';
 

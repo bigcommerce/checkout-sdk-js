@@ -11,9 +11,10 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { SquareIntent } from './enums';
 import { WithSquareV2PaymentInitializeOptions } from './squarev2-payment-initialize-options';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
-import { SquareIntent, SquarePaymentMethodInitializationData } from './types';
+import { SquarePaymentMethodInitializationData } from './types';
 
 export default class SquareV2PaymentStrategy implements PaymentStrategy {
     constructor(

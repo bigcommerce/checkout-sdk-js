@@ -15,11 +15,11 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import { SquareIntent } from './enums';
 import { getSquareV2 } from './mocks/squarev2-method.mock';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
 import SquareV2PaymentStrategy from './squarev2-payment-strategy';
 import SquareV2ScriptLoader from './squarev2-script-loader';
-import { SquareIntent } from './types';
 
 describe('SquareV2PaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;

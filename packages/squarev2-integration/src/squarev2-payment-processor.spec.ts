@@ -7,10 +7,11 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import { SquareIntent } from './enums';
 import { getSquareV2MockFunctions } from './mocks/squarev2-web-payments-sdk.mock';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
 import SquareV2ScriptLoader from './squarev2-script-loader';
-import { Square, SquareIntent } from './types';
+import { Square } from './types';
 
 describe('SquareV2PaymentProcessor', () => {
     let squareV2ScriptLoader: SquareV2ScriptLoader;
