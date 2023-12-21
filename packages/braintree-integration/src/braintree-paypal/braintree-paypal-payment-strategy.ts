@@ -44,7 +44,6 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeIntegrationService: BraintreeIntegrationService,
-        private credit: boolean = false,
     ) {}
 
     async initialize(
@@ -180,7 +179,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 amount: grandTotal,
                 locale: storeLanguage,
                 currency: currency.code,
-                offerCredit: this.credit,
+                offerCredit: this.paymentMethod.id === 'braintreepaypalcredit',
                 shippingAddressOverride,
                 shouldSaveInstrument: shouldSaveInstrument || false,
                 shippingAddressEditable: false,

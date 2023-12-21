@@ -468,11 +468,17 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
         describe('if paypal credit', () => {
             beforeEach(() => {
+                const state = paymentIntegrationService.getState();
+
                 strategy = new BraintreePaypalPaymentStrategy(
                     paymentIntegrationService,
                     braintreeIntegrationService,
-                    true,
                 );
+
+                jest.spyOn(state, 'getPaymentMethodOrThrow').mockImplementation(() => ({
+                    ...paymentMethodMock,
+                    id: 'braintreepaypalcredit',
+                }));
             });
 
             it('submitPayment with the right information and sets credit to true', async () => {
