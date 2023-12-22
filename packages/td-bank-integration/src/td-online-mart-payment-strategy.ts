@@ -65,9 +65,9 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        await this.paymentIntegrationService.submitOrder(order, options);
-
         const paymentPayload = await this.getPaymentPayload(payment);
+
+        await this.paymentIntegrationService.submitOrder(order, options);
 
         try {
             await this.paymentIntegrationService.submitPayment(paymentPayload);
