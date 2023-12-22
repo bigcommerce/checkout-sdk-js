@@ -5,7 +5,7 @@ export interface TdOnlineMartHostWindow extends Window {
 }
 
 export interface TDCustomCheckoutSDK {
-    create(fieldType: FieldType): TdOnlineMartElement;
+    create(fieldType: FieldType, options?: object): TdOnlineMartElement;
     createToken(callback: (result: CreateTokenResponse) => void): void;
 }
 
@@ -29,7 +29,7 @@ interface CreateTokenResponse {
     expiryYear?: string;
 }
 
-interface CreateTokenError {
+export interface CreateTokenError {
     field: string;
     type: string;
     message: string;

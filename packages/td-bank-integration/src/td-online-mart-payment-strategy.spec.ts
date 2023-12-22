@@ -150,6 +150,24 @@ describe('TDOnlineMartPaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalled();
         });
 
+        it('fails to execute the td online mart strategy strategy when token is not created and we getting error message', async () => {
+            tdOnlineMartClient.createToken = jest.fn((callback) => {
+                callback({
+                    error: {
+                        message: 'error occurs',
+                    },
+                });
+            });
+
+            await tdOnlineMartPaymentStrategy.initialize(
+                tdOnlineMartClientScriptInitializationOptions,
+            );
+
+            await expect(tdOnlineMartPaymentStrategy.execute(payload)).rejects.toThrow(Error);
+
+            expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalled();
+        });
+
         it('fails to execute the strategy if no method id is provided with checkout takeover', async () => {
             payload.payment = {
                 methodId: '',
