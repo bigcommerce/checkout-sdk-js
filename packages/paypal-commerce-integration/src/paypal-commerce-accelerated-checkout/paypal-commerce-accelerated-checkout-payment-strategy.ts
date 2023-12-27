@@ -96,7 +96,7 @@ export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements
         this.paypalConnectStyles = paypalcommerceacceleratedcheckout.styles;
         this.paypalConnect = await this.initializePayPalConnect(methodId);
 
-        if (await this.shouldRunAuthenticationFlow()) {
+        if (this.shouldRunAuthenticationFlow()) {
             await this.runPayPalConnectAuthenticationFlowOrThrow(methodId);
         }
 

@@ -52,7 +52,7 @@ export default interface PayPalCommerceAcceleratedCheckoutPaymentInitializeOptio
      * Is a callback that takes the CSS selector of a container
      * where the PayPal Connect form should be inserted into.
      */
-    onInit?: (renderPayPalComponentMethod: (container: string) => void) => void;
+    onInit?: (renderPayPalConnectCardComponent: (container: string) => void) => void;
 
     // onChange?: // TODO:
 
