@@ -77,3 +77,4 @@ export { WithPayPalCommerceRatePayPaymentInitializeOptions } from './paypal-comm
  *
  */
 export { default as createPayPalCommerceAcceleratedCheckoutCustomerStrategy } from './paypal-commerce-accelerated-checkout/create-paypal-commerce-accelerated-checkout-customer-strategy';
+export { WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions } from './paypal-commerce-accelerated-checkout/paypal-commerce-accelerated-checkout-customer-initialize-options';

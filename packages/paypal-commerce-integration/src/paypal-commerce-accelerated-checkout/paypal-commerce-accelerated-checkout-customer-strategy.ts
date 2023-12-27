@@ -22,15 +22,20 @@ import {
     PayPalCommerceConnectLookupCustomerByEmailResult,
     PayPalCommerceConnectProfileAddress,
     PayPalCommerceConnectProfileCard,
-    PayPalCommerceConnectProfileName,
+    PayPalCommerceConnectProfileName, PayPalCommerceConnectStylesOption,
     PayPalCommerceInitializationData,
 } from '../paypal-commerce-types';
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
+
+import {
+    WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions
+} from './paypal-commerce-accelerated-checkout-customer-initialize-options';
 
 export default class PaypalCommerceAcceleratedCheckoutCustomerStrategy implements CustomerStrategy {
     private primaryMethodId: string = 'paypalcommerceacceleratedcheckout';
     private isAcceleratedCheckoutEnabled = false;
     private paypalConnect?: PayPalCommerceConnect;
+    private paypalConnectStyles?: PayPalCommerceConnectStylesOption;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -38,7 +43,9 @@ export default class PaypalCommerceAcceleratedCheckoutCustomerStrategy implement
         private browserStorage: BrowserStorage, // TODO: should be changed to cookies implementation
     ) {}
 
-    async initialize({ methodId }: CustomerInitializeOptions): Promise<void> {
+    async initialize(options: CustomerInitializeOptions & WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions): Promise<void> {
+        const { methodId, paypalcommerceacceleratedcheckout } = options;
+
         if (!methodId) {
             throw new InvalidArgumentError(
                 'Unable to proceed because "methodId" argument is not provided.',
@@ -53,6 +60,7 @@ export default class PaypalCommerceAcceleratedCheckoutCustomerStrategy implement
         this.isAcceleratedCheckoutEnabled = !!paymentMethod.initializationData?.isAcceleratedCheckoutEnabled;
 
         if (this.isAcceleratedCheckoutEnabled) {
+            this.paypalConnectStyles = paypalcommerceacceleratedcheckout?.styles;
             this.paypalConnect = await this.initializePayPalConnect(methodId);
         }
 
@@ -191,7 +199,10 @@ export default class PaypalCommerceAcceleratedCheckoutCustomerStrategy implement
 
         const paypalConnect = this.getPayPalConnectOrThrow();
 
-        return paypalConnect.identity.triggerAuthenticationFlow(customerContextId);
+        return paypalConnect.identity.triggerAuthenticationFlow(
+            customerContextId,
+            { styles: this.paypalConnectStyles },
+        );
     }
 
     private async updateCustomerDataStateOrThrow(

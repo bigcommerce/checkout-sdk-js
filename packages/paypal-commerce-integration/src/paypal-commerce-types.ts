@@ -56,7 +56,10 @@ export interface PayPalCommerceConnect {
 
 export interface PayPalCommerceConnectIdentity {
     lookupCustomerByEmail(email: string): Promise<PayPalCommerceConnectLookupCustomerByEmailResult>;
-    triggerAuthenticationFlow(customerContextId: string): Promise<PayPalCommerceConnectAuthenticationResult>;
+    triggerAuthenticationFlow(
+        customerContextId: string,
+        options?: PayPalCommerceConnectAuthenticationOptions,
+    ): Promise<PayPalCommerceConnectAuthenticationResult>;
 }
 
 export interface PayPalCommerceConnectLookupCustomerByEmailResult {
@@ -133,6 +136,38 @@ export interface PayPalCommerceConnectLegacyProfileAddress {
     countryCodeNumeric?: number;
     countryCodeAlpha2?: string;
     countryCodeAlpha3?: string;
+}
+
+export interface PayPalCommerceConnectAuthenticationOptions {
+    styles?: PayPalCommerceConnectStylesOption;
+}
+
+export interface PayPalCommerceConnectStylesOption {
+    root?: {
+        backgroundColorPrimary?: string;
+        errorColor?: string;
+        fontFamily?: string;
+    };
+    input?: {
+        borderRadius?: string;
+        borderColor?: string;
+        focusBorderColor?: string;
+    };
+    toggle?: {
+        colorPrimary?: string;
+        colorSecondary?: string;
+    };
+    text?: {
+        body?: {
+            color?: string;
+            fontSize?: string;
+        };
+        caption?: {
+            color?: string;
+            fontSize?: string;
+        };
+    };
+    branding?: string; // 'light' | 'dark'
 }
 // --------------------
 
