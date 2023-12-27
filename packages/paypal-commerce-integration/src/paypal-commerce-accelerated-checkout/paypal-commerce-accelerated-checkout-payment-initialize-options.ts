@@ -1,13 +1,21 @@
 import { PayPalCommerceConnectStylesOption } from '../paypal-commerce-types';
 
 /**
- * A set of options that are optional to initialize the PayPalCommerce Accelerated Checkout customer strategy
- * that are responsible for PayPalCommerce Accelerated Checkout components styling and initialization
+ * A set of options that are required to initialize the PayPalCommerce Accelerated Checkout payment
+ * method for presenting on the page.
  *
+ *
+ * Also, PayPalCommerce requires specific options to initialize PayPalCommerce Accelerated Checkout Credit Card Component
+ * ```html
+ * <!-- This is where the PayPalCommerce Credit Card Component will be inserted -->
+ * <div id="container"></div>
+ * ```
  * ```js
- * service.initializeCustomer({
- *     methodId: 'paypalcommerceacceleratedcheckout', // 'paypalcommerce' only for A/B testing
+ * service.initializePayment({
+ *     methodId: 'paypalcommerceacceleratedcheckout',
  *     paypalcommerceacceleratedcheckout: {
+ *         onInit: (renderPayPalComponentMethod) => renderPayPalComponentMethod('#container-id'),
+ *         onChange: // TODO: update
  *         styles: {
  *              root: {
  *                  backgroundColorPrimary: 'transparent',
@@ -39,7 +47,15 @@ import { PayPalCommerceConnectStylesOption } from '../paypal-commerce-types';
  * });
  * ```
  */
-export default interface PayPalCommerceAcceleratedCheckoutCustomerInitializeOptions {
+export default interface PayPalCommerceAcceleratedCheckoutPaymentInitializeOptions {
+    /**
+     * Is a callback that takes the CSS selector of a container
+     * where the PayPal Connect form should be inserted into.
+     */
+    onInit?: (renderPayPalComponentMethod: (container: string) => void) => void;
+
+    // onChange?: // TODO:
+
     /**
      * Is a stylisation options for customizing PayPal Connect components
      *
@@ -50,6 +66,6 @@ export default interface PayPalCommerceAcceleratedCheckoutCustomerInitializeOpti
     styles?: PayPalCommerceConnectStylesOption;
 }
 
-export interface WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions {
-    paypalcommerceacceleratedcheckout?: PayPalCommerceAcceleratedCheckoutCustomerInitializeOptions;
+export interface WithPayPalCommerceAcceleratedCheckoutPaymentInitializeOptions {
+    paypalcommerceacceleratedcheckout?: PayPalCommerceAcceleratedCheckoutPaymentInitializeOptions;
 }

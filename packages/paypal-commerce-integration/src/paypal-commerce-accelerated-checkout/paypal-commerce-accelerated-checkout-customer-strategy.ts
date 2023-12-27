@@ -16,13 +16,14 @@ import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import {
     PayPalCommerceConnect,
+    PayPalCommerceConnectAddress,
     PayPalCommerceConnectAuthenticationResult,
     PayPalCommerceConnectAuthenticationState,
     PayPalCommerceConnectLegacyProfileAddress,
     PayPalCommerceConnectLookupCustomerByEmailResult,
-    PayPalCommerceConnectProfileAddress,
     PayPalCommerceConnectProfileCard,
-    PayPalCommerceConnectProfileName, PayPalCommerceConnectStylesOption,
+    PayPalCommerceConnectProfileName,
+    PayPalCommerceConnectStylesOption,
     PayPalCommerceInitializationData,
 } from '../paypal-commerce-types';
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
@@ -30,6 +31,7 @@ import PayPalCommerceIntegrationService from '../paypal-commerce-integration-ser
 import {
     WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions
 } from './paypal-commerce-accelerated-checkout-customer-initialize-options';
+import { BraintreeConnectCardComponent } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implements CustomerStrategy {
     private primaryMethodId: string = 'paypalcommerceacceleratedcheckout';
@@ -270,7 +272,7 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
      *
      * */
     private mapPayPalShippingToBcAddress(
-        address: PayPalCommerceConnectProfileAddress,
+        address: PayPalCommerceConnectAddress,
         profileName: PayPalCommerceConnectProfileName,
     ): AddressRequestBody {
         const [firstName, lastName] = profileName.fullName.split(' ');
@@ -284,7 +286,7 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
             city: address.adminArea2,
             stateOrProvince: address.adminArea1,
             stateOrProvinceCode: address.adminArea1,
-            countryCode: address.countryCode || '', // TODO: update countryCode with an address.countryCode as string
+            countryCode: address.countryCode || '',
             postalCode: address.postalCode,
             // phone: address.phone, // TODO: update phone number
             phone: '333333333333',

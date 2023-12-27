@@ -4,6 +4,10 @@ import {
     ShippingOption,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    BraintreeConnectAddress,
+    BraintreeConnectCardComponentOptions, BraintreeConnectTokenizeOptions, BraintreeConnectTokenizeResult,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
 
 /**
  *
@@ -52,6 +56,9 @@ export interface PayPalSDK {
 // --------------------
 export interface PayPalCommerceConnect {
     identity: PayPalCommerceConnectIdentity;
+    ConnectCardComponent: (
+        options: PayPalCommerceConnectCardComponentOptions,
+    ) => PayPalCommerceConnectCardComponent;
 }
 
 export interface PayPalCommerceConnectIdentity {
@@ -92,7 +99,7 @@ export interface PayPalCommerceConnectProfileName {
 
 export interface PayPalCommerceConnectShippingAddress {
     name: PayPalCommerceConnectProfileName;
-    address: PayPalCommerceConnectProfileAddress;
+    address: PayPalCommerceConnectAddress;
 }
 
 export interface PayPalCommerceConnectProfileCard {
@@ -109,10 +116,10 @@ export interface PayPalCommerceConnectCardSource {
     expiry: string; // "YYYY-MM"
     lastDigits: string; // "1111"
     name: string;
-    billingAddress: PayPalCommerceConnectLegacyProfileAddress; // TODO: update to PayPalCommerceConnectProfileAddress in next release
+    billingAddress: PayPalCommerceConnectLegacyProfileAddress; // TODO: update to PayPalCommerceConnectAddress in next release
 }
 
-export interface PayPalCommerceConnectProfileAddress {
+export interface PayPalCommerceConnectAddress {
     company?: string;
     addressLine1: string;
     addressLine2?: string;
@@ -168,6 +175,46 @@ export interface PayPalCommerceConnectStylesOption {
         };
     };
     branding?: string; // 'light' | 'dark'
+}
+
+export interface PayPalCommerceConnectCardComponent {
+    (options: BraintreeConnectCardComponentOptions): PayPalCommerceConnectCardComponent;
+    tokenize(options: PayPalCommerceConnectTokenizeOptions): Promise<PayPalCommerceConnectTokenizeResult>;
+    render(element: string): void;
+}
+
+export interface PayPalCommerceConnectCardComponentOptions {
+    fields: PayPalCommerceConnectCardComponentFields;
+}
+
+export interface PayPalCommerceConnectCardComponentFields {
+    [key: string]: PayPalCommerceConnectCardComponentField;
+}
+export interface PayPalCommerceConnectCardComponentField {
+    placeholder?: string;
+    prefill?: string;
+}
+
+export interface PayPalCommerceConnectTokenizeResult {
+    nonce: string;
+    details: PayPalCommerceConnectTokenizeDetails;
+    description: string;
+    type: string;
+}
+
+export interface PayPalCommerceConnectTokenizeDetails {
+    bin: string;
+    cardType: string;
+    expirationMoth: string;
+    expirationYear: string;
+    cardholderName: string;
+    lastFour: string;
+    lastTwo: string;
+}
+
+export interface PayPalCommerceConnectTokenizeOptions {
+    billingAddress?: PayPalCommerceConnectAddress;
+    shippingAddress?: PayPalCommerceConnectAddress;
 }
 // --------------------
 
