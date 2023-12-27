@@ -63,12 +63,16 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
             );
         }
 
-        this.onError = paypalcommerce.onError || noop;
+        const mock = false;
 
-        await this.paymentIntegrationService.loadPaymentMethod(methodId);
-        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
+        if (mock) {
+            this.onError = paypalcommerce.onError || noop;
 
-        this.renderButton(methodId, paypalcommerce);
+            await this.paymentIntegrationService.loadPaymentMethod(methodId);
+            await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
+
+            this.renderButton(methodId, paypalcommerce);
+        }
     }
 
     deinitialize(): Promise<void> {

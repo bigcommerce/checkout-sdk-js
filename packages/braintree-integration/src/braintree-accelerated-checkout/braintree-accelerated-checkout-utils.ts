@@ -176,7 +176,7 @@ export default class BraintreeAcceleratedCheckoutUtils {
     private mapPayPalToBcAddress(
         addresses?: BraintreeConnectAddress[],
         phones?: BraintreeConnectPhone[],
-    ): CustomerAddress[] | undefined {
+    ): CustomerAddress[] | undefined { // TODO: update to AddressRequestBody?
         if (!addresses) {
             return;
         }

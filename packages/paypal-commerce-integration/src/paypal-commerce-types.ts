@@ -46,7 +46,95 @@ export interface PayPalSDK {
     Buttons(options: PayPalCommerceButtonsOptions): PayPalCommerceButtons;
     PaymentFields(options: PayPalCommercePaymentFieldsOptions): PayPalCommercePaymentFields;
     Messages(options: PayPalCommerceMessagesOptions): PayPalCommerceMessages;
+    Connect(): Promise<PayPalCommerceConnect>;
 }
+
+// --------------------
+export interface PayPalCommerceConnect {
+    identity: PayPalCommerceConnectIdentity;
+}
+
+export interface PayPalCommerceConnectIdentity {
+    lookupCustomerByEmail(email: string): Promise<PayPalCommerceConnectLookupCustomerByEmailResult>;
+    triggerAuthenticationFlow(customerContextId: string): Promise<PayPalCommerceConnectAuthenticationResult>;
+}
+
+export interface PayPalCommerceConnectLookupCustomerByEmailResult {
+    customerContextId?: string;
+}
+
+export interface PayPalCommerceConnectAuthenticationResult {
+    authenticationState?: PayPalCommerceConnectAuthenticationState;
+    profileData?: PayPalCommerceConnectProfileData;
+}
+
+export enum PayPalCommerceConnectAuthenticationState {
+    SUCCEEDED = 'succeeded',
+    FAILED = 'failed',
+    CANCELED = 'canceled',
+    UNRECOGNIZED = 'unrecognized',
+}
+
+export interface PayPalCommerceConnectProfileData {
+    name: PayPalCommerceConnectProfileName;
+    shippingAddress: PayPalCommerceConnectShippingAddress;
+    card: PayPalCommerceConnectProfileCard;
+}
+
+export interface PayPalCommerceConnectProfileName {
+    fullName: string;
+    firstName: string;
+    lastName: string;
+}
+
+export interface PayPalCommerceConnectShippingAddress {
+    name: PayPalCommerceConnectProfileName;
+    address: PayPalCommerceConnectProfileAddress;
+}
+
+export interface PayPalCommerceConnectProfileCard {
+    id: string; // nonce / token
+    paymentSource: PayPalCommerceConnectPaymentSource;
+}
+
+export interface PayPalCommerceConnectPaymentSource {
+    card: PayPalCommerceConnectCardSource;
+}
+
+export interface PayPalCommerceConnectCardSource {
+    brand: string;
+    expiry: string; // "YYYY-MM"
+    lastDigits: string; // "1111"
+    name: string;
+    billingAddress: PayPalCommerceConnectLegacyProfileAddress; // TODO: update to PayPalCommerceConnectProfileAddress in next release
+}
+
+export interface PayPalCommerceConnectProfileAddress {
+    company?: string;
+    addressLine1: string;
+    addressLine2?: string;
+    adminArea1: string; // State
+    adminArea2: string; // City
+    postalCode: string;
+    countryCode?: string;
+    phone: string;
+}
+
+// TODO: should be removed after PP next release
+export interface PayPalCommerceConnectLegacyProfileAddress {
+    firstName?: string;
+    lastName?: string;
+    company?: string;
+    streetAddress: string;
+    extendedAddress?: string;
+    locality: string; // City
+    region: string; // State
+    postalCode: string;
+    countryCodeNumeric?: number;
+    countryCodeAlpha2?: string;
+    countryCodeAlpha3?: string;
+}
+// --------------------
 
 export interface ConfirmOrderData {
     tokenizationData: {
@@ -122,7 +210,9 @@ export interface PayPalCommerceScriptParams {
     };
     attributes: {
         'data-client-token'?: string;
+        'data-client-metadata-id'?: string;
         'data-partner-attribution-id'?: string;
+        'data-user-id-token'?: string;
     };
 }
 
@@ -139,10 +229,12 @@ export type ComponentsScriptType = Array<
     | 'payment-fields'
     | 'legal'
     | 'googlepay'
+    | 'connect'
 >;
 
 export interface PayPalCommerceHostWindow extends Window {
     paypal?: PayPalSDK;
+    paypalLoadScript?: (options: PayPalCommerceScriptParams) => Promise<{ paypal: PayPalSDK }>;
 }
 
 /**
@@ -160,6 +252,7 @@ export interface PayPalCommerceInitializationData {
     enabledAlternativePaymentMethods: FundingType;
     isDeveloperModeApplicable?: boolean;
     intent?: PayPalCommerceIntent;
+    isAcceleratedCheckoutEnabled?: boolean;
     isHostedCheckoutEnabled?: boolean;
     isPayPalCreditAvailable?: boolean;
     isVenmoEnabled?: boolean;
@@ -167,6 +260,7 @@ export interface PayPalCommerceInitializationData {
     merchantId?: string;
     orderId?: string;
     shouldRenderFields?: boolean;
+    shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
 }
 

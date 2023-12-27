@@ -82,6 +82,7 @@ export default class PayPalCommerceScriptLoader {
             buyerCountry,
             attributionId,
             isVenmoEnabled,
+            isAcceleratedCheckoutEnabled,
             isHostedCheckoutEnabled,
             isPayPalCreditAvailable,
             isDeveloperModeApplicable,
@@ -103,12 +104,12 @@ export default class PayPalCommerceScriptLoader {
         const enableVenmoFunding = shouldEnableAPMs && isVenmoEnabled ? ['venmo'] : [];
         const disableVenmoFunding = !shouldEnableAPMs || !isVenmoEnabled ? ['venmo'] : [];
         const enableAPMsFunding = shouldEnableAPMs ? enabledAlternativePaymentMethods : [];
+
         const disableAPMsFunding = shouldEnableAPMs
             ? availableAlternativePaymentMethods.filter(
                   (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
               )
             : availableAlternativePaymentMethods;
-        const googlePayComponent: ComponentsScriptType = isGooglePayEnabled ? ['googlepay'] : [];
 
         const disableFunding: FundingType = [
             ...disableCardFunding,
@@ -122,6 +123,10 @@ export default class PayPalCommerceScriptLoader {
             ...enableVenmoFunding,
             ...enableAPMsFunding,
         ];
+
+        const shouldEnableConnectComponent = isAcceleratedCheckoutEnabled && initializesOnCheckoutPage;
+        const enableConnectComponent: ComponentsScriptType = shouldEnableConnectComponent ? ['connect'] : [];
+        const googlePayComponent: ComponentsScriptType = isGooglePayEnabled ? ['googlepay'] : [];
 
         return {
             options: {
@@ -137,6 +142,7 @@ export default class PayPalCommerceScriptLoader {
                     'payment-fields',
                     'legal',
                     ...googlePayComponent,
+                    ...enableConnectComponent,
                 ],
                 currency: currencyCode,
                 intent,
@@ -144,7 +150,12 @@ export default class PayPalCommerceScriptLoader {
             },
             attributes: {
                 'data-partner-attribution-id': attributionId,
-                'data-client-token': clientToken,
+                ...(!!enableConnectComponent && initializesOnCheckoutPage ? {
+                    'data-user-id-token': clientToken,
+                    'data-client-metadata-id': 'test',
+                } : {
+                    'data-client-token': clientToken,
+                }),
             },
         };
     }
