@@ -1,3 +1,5 @@
+import { FormPoster } from '@bigcommerce/form-poster';
+
 import {
     InvalidArgumentError,
     isHostedInstrumentLike,
@@ -16,7 +18,13 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { FieldType, TDCustomCheckoutSDK, TdOnlineMartElement } from './td-online-mart';
+import { isTdOnlineMartAdditionalAction } from './isTdOnlineMartAdditionalAction';
+import {
+    FieldType,
+    TDCustomCheckoutSDK,
+    TdOnlineMartElement,
+    TdOnlineMartThreeDSErrorBody,
+} from './td-online-mart';
 import TDOnlineMartScriptLoader from './td-online-mart-script-loader';
 
 export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
@@ -28,6 +36,7 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private tdOnlineMartScriptLoader: TDOnlineMartScriptLoader,
+        private formPoster: FormPoster,
     ) {}
 
     async initialize(options: PaymentInitializeOptions): Promise<void> {
@@ -59,7 +68,11 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
 
         const paymentPayload = await this.getPaymentPayload(payment);
 
-        await this.paymentIntegrationService.submitPayment(paymentPayload);
+        try {
+            await this.paymentIntegrationService.submitPayment(paymentPayload);
+        } catch (error: unknown) {
+            await this.processWithAdditionalAction(error);
+        }
     }
 
     finalize(): Promise<void> {
@@ -146,5 +159,30 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         }
 
         return this.tdOnlineMartClient;
+    }
+
+    private async processWithAdditionalAction(error: unknown): Promise<void> {
+        if (!isTdOnlineMartAdditionalAction(error)) {
+            throw error;
+        }
+
+        const { three_ds_result: threeDSResult }: TdOnlineMartThreeDSErrorBody = error.body;
+        const { formUrl, threeDSSessionData, creq } = threeDSResult || {};
+
+        if (!formUrl || !threeDSSessionData || !creq) {
+            throw new PaymentArgumentInvalidError(['formUrl', 'threeDSSessionData', 'sreq']);
+        }
+
+        return new Promise((resolve) => {
+            this.formPoster.postForm(
+                formUrl,
+                {
+                    threeDSSessionData,
+                    creq,
+                },
+                resolve,
+                '_top',
+            );
+        });
     }
 }

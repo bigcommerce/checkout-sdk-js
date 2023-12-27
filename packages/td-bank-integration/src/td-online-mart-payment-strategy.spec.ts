@@ -1,3 +1,4 @@
+import { FormPoster } from '@bigcommerce/form-poster';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 
 import {
@@ -10,6 +11,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import * as TdOnlineMartAdditionalAction from './isTdOnlineMartAdditionalAction';
 import { FieldType, TDCustomCheckoutSDK } from './td-online-mart';
 import TDOnlineMartPaymentStrategy from './td-online-mart-payment-strategy';
 import TDOnlineMartScriptLoader from './td-online-mart-script-loader';
@@ -22,6 +24,7 @@ let tdOnlineMartPaymentStrategy: TDOnlineMartPaymentStrategy;
 let paymentIntegrationService: PaymentIntegrationService;
 let tdOnlineMartClient: TDCustomCheckoutSDK;
 let tdOnlineMartClientScriptInitializationOptions: PaymentInitializeOptions;
+let formPoster: FormPoster;
 
 describe('TDOnlineMartPaymentStrategy', () => {
     beforeEach(() => {
@@ -32,10 +35,15 @@ describe('TDOnlineMartPaymentStrategy', () => {
         tdOnlineMartClientScriptInitializationOptions = {
             methodId: 'tdonlinemart',
         };
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        formPoster = {
+            postForm: jest.fn(),
+        } as unknown as FormPoster;
 
         tdOnlineMartPaymentStrategy = new TDOnlineMartPaymentStrategy(
             paymentIntegrationService,
             tdOnlineScriptLoader,
+            formPoster,
         );
 
         jest.spyOn(tdOnlineScriptLoader, 'load').mockImplementation(() =>
@@ -212,6 +220,106 @@ describe('TDOnlineMartPaymentStrategy', () => {
                             shouldSetAsDefaultInstrument: true,
                         }),
                     }),
+                );
+            });
+        });
+
+        describe('execute with additional actions', () => {
+            it('throw not additional action error', async () => {
+                let submitPaymentError;
+
+                jest.spyOn(
+                    TdOnlineMartAdditionalAction,
+                    'isTdOnlineMartAdditionalAction',
+                ).mockReturnValue(false);
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue({
+                    message: 'any_error',
+                });
+
+                await tdOnlineMartPaymentStrategy.initialize(
+                    tdOnlineMartClientScriptInitializationOptions,
+                );
+
+                try {
+                    await tdOnlineMartPaymentStrategy.execute(payload);
+                } catch (error) {
+                    submitPaymentError = error;
+                } finally {
+                    expect(submitPaymentError).toEqual({ message: 'any_error' });
+                }
+            });
+
+            it('throw error when not enough 3DS data', async () => {
+                let submitPaymentError;
+
+                jest.spyOn(
+                    TdOnlineMartAdditionalAction,
+                    'isTdOnlineMartAdditionalAction',
+                ).mockReturnValue(true);
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue({
+                    body: {
+                        errors: [
+                            {
+                                code: 'three_ds_result',
+                            },
+                        ],
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
+                        three_ds_result: {},
+                    },
+                });
+
+                await tdOnlineMartPaymentStrategy.initialize(
+                    tdOnlineMartClientScriptInitializationOptions,
+                );
+
+                try {
+                    await tdOnlineMartPaymentStrategy.execute(payload);
+                } catch (error) {
+                    submitPaymentError = error;
+                } finally {
+                    expect(submitPaymentError).toBeInstanceOf(PaymentArgumentInvalidError);
+                }
+            });
+
+            it('execute 3DS challenge', async () => {
+                const postFormMock = jest.fn((_url, _options, resolveFn) =>
+                    Promise.resolve(resolveFn()),
+                );
+
+                jest.spyOn(formPoster, 'postForm').mockImplementation(postFormMock);
+                jest.spyOn(
+                    TdOnlineMartAdditionalAction,
+                    'isTdOnlineMartAdditionalAction',
+                ).mockReturnValue(true);
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue({
+                    body: {
+                        errors: [
+                            {
+                                code: 'three_ds_result',
+                            },
+                        ],
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
+                        three_ds_result: {
+                            formUrl: 'https://example.com',
+                            threeDSSessionData: '3ds_session_data',
+                            creq: 'creq_data',
+                        },
+                    },
+                });
+
+                await tdOnlineMartPaymentStrategy.initialize(
+                    tdOnlineMartClientScriptInitializationOptions,
+                );
+                await tdOnlineMartPaymentStrategy.execute(payload);
+
+                expect(postFormMock).toHaveBeenCalledWith(
+                    'https://example.com',
+                    {
+                        threeDSSessionData: '3ds_session_data',
+                        creq: 'creq_data',
+                    },
+                    expect.any(Function),
+                    '_top',
                 );
             });
         });

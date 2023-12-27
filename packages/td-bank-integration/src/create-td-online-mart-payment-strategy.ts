@@ -1,3 +1,4 @@
+import { createFormPoster } from '@bigcommerce/form-poster';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
@@ -14,6 +15,7 @@ const createTDOnlineMartPaymentStrategy: PaymentStrategyFactory<TDOnlineMartPaym
     return new TDOnlineMartPaymentStrategy(
         paymentIntegrationService,
         new TDOnlineMartScriptLoader(getScriptLoader()),
+        createFormPoster(),
     );
 };
 

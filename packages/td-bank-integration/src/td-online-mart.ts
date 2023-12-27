@@ -1,3 +1,5 @@
+import { RequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 export interface TdOnlineMartHostWindow extends Window {
     customcheckout?(): TDCustomCheckoutSDK;
 }
@@ -32,3 +34,16 @@ interface CreateTokenError {
     type: string;
     message: string;
 }
+
+/* eslint-disable @typescript-eslint/naming-convention */
+export interface TdOnlineMartThreeDSErrorBody {
+    errors?: Array<{ code: string }>;
+    three_ds_result?: {
+        formUrl: string;
+        threeDSSessionData: string;
+        creq: string;
+    };
+}
+/* eslint-enable @typescript-eslint/naming-convention */
+
+export type TdOnlineMartAdditionalAction = RequestError<TdOnlineMartThreeDSErrorBody>;
