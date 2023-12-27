@@ -3,19 +3,22 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import createPayPalCommerceIntegrationService from '../create-paypal-commerce-integration-service';
-
-import PaypalCommerceAcceleratedCheckoutCustomerStrategy
-    from './paypal-commerce-accelerated-checkout-customer-strategy';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
+import createPayPalCommerceIntegrationService from '../create-paypal-commerce-integration-service';
+
+import PayPalCommerceAcceleratedCheckoutCustomerStrategy from './paypal-commerce-accelerated-checkout-customer-strategy';
+
 const createPayPalCommerceAcceleratedCheckoutCustomerStrategy: CustomerStrategyFactory<
-    PaypalCommerceAcceleratedCheckoutCustomerStrategy
+    PayPalCommerceAcceleratedCheckoutCustomerStrategy
 > = (paymentIntegrationService) =>
-    new PaypalCommerceAcceleratedCheckoutCustomerStrategy(
+    new PayPalCommerceAcceleratedCheckoutCustomerStrategy(
         paymentIntegrationService,
         createPayPalCommerceIntegrationService(paymentIntegrationService),
         new BrowserStorage('paypalConnect'),
     );
 
-export default toResolvableModule(createPayPalCommerceAcceleratedCheckoutCustomerStrategy, [{ id: 'paypalcommerceacceleratedcheckout' }]);
+export default toResolvableModule(createPayPalCommerceAcceleratedCheckoutCustomerStrategy, [
+    { id: 'paypalcommerceacceleratedcheckout' },
+    { id: 'paypalcommerce' },
+]);

@@ -31,7 +31,7 @@ import {
     WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions
 } from './paypal-commerce-accelerated-checkout-customer-initialize-options';
 
-export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implements CustomerStrategy {
+export default class PaypalCommerceAcceleratedCheckoutCustomerStrategy implements CustomerStrategy {
     private primaryMethodId: string = 'paypalcommerceacceleratedcheckout';
     private isAcceleratedCheckoutEnabled = false;
     private paypalConnect?: PayPalCommerceConnect;
@@ -118,6 +118,7 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
 
         continueWithCheckoutCallback();
     }
+
 
     /**
      *
