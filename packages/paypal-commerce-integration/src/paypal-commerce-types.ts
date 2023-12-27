@@ -4,10 +4,6 @@ import {
     ShippingOption,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import {
-    BraintreeConnectAddress,
-    BraintreeConnectCardComponentOptions, BraintreeConnectTokenizeOptions, BraintreeConnectTokenizeResult,
-} from '@bigcommerce/checkout-sdk/braintree-utils';
 
 /**
  *
@@ -178,7 +174,7 @@ export interface PayPalCommerceConnectStylesOption {
 }
 
 export interface PayPalCommerceConnectCardComponent {
-    (options: BraintreeConnectCardComponentOptions): PayPalCommerceConnectCardComponent;
+    (options: PayPalCommerceConnectCardComponentOptions): PayPalCommerceConnectCardComponent;
     tokenize(options: PayPalCommerceConnectTokenizeOptions): Promise<PayPalCommerceConnectTokenizeResult>;
     render(element: string): void;
 }

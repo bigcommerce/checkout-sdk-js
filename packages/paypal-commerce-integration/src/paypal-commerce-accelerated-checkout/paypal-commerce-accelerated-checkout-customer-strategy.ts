@@ -31,7 +31,6 @@ import PayPalCommerceIntegrationService from '../paypal-commerce-integration-ser
 import {
     WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions
 } from './paypal-commerce-accelerated-checkout-customer-initialize-options';
-import { BraintreeConnectCardComponent } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implements CustomerStrategy {
     private primaryMethodId: string = 'paypalcommerceacceleratedcheckout';
