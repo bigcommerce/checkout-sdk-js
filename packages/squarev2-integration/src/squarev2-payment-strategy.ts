@@ -68,6 +68,27 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
         await this._paymentIntegrationService.submitOrder();
 
         if (paymentData && isVaultedInstrument(paymentData)) {
+            if (this._shouldVerify()) {
+                await this._paymentIntegrationService.submitPayment({
+                    ...payment,
+                    paymentData: {
+                        formattedPayload: {
+                            bigpay_token: {
+                                token: paymentData.instrumentId,
+                            },
+                            credit_card_token: {
+                                token: await this._squareV2PaymentProcessor.verifyBuyer(
+                                    'ccof:customer-card-id-requires-verification',
+                                    SquareIntent.CHARGE,
+                                ),
+                            },
+                            vault_payment_instrument: shouldSaveInstrument || false,
+                            set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
+                        },
+                    },
+                });
+            }
+
             await this._paymentIntegrationService.submitPayment({
                 ...payment,
                 paymentData: {
