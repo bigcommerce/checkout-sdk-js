@@ -40,6 +40,7 @@ import {
 } from './paypal-commerce-accelerated-checkout-payment-initialize-options';
 
 export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements PaymentStrategy {
+    private methodId = 'paypalcommerceacceleratedcheckout';
     private paypalConnectStyles?: PayPalCommerceConnectStylesOption;
     private paypalConnect?: PayPalCommerceConnect;
     private paypalConnectCardComponent?: PayPalCommerceConnectCardComponent;
@@ -82,22 +83,23 @@ export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements
             );
         }
 
-        // if (
-        //     !paypalcommerceacceleratedcheckout.onChange ||
-        //     typeof paypalcommerceacceleratedcheckout.onChange !== 'function'
-        // ) {
-        //     throw new InvalidArgumentError(
-        //         'Unable to initialize payment because "options.paypalcommerceacceleratedcheckout.onChange" argument is not provided or it is not a function.',
-        //     );
-        // }
+        if (
+            !paypalcommerceacceleratedcheckout.onChange ||
+            typeof paypalcommerceacceleratedcheckout.onChange !== 'function'
+        ) {
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "options.paypalcommerceacceleratedcheckout.onChange" argument is not provided or it is not a function.',
+            );
+        }
 
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
+        this.methodId = methodId;
         this.paypalConnectStyles = paypalcommerceacceleratedcheckout.styles;
-        this.paypalConnect = await this.initializePayPalConnect(methodId);
+        this.paypalConnect = await this.initializePayPalConnect();
 
         if (this.shouldRunAuthenticationFlow()) {
-            await this.runPayPalConnectAuthenticationFlowOrThrow(methodId);
+            await this.runPayPalConnectAuthenticationFlowOrThrow();
         }
 
         this.initializeConnectCardComponent();
@@ -105,9 +107,9 @@ export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements
         paypalcommerceacceleratedcheckout.onInit((container: string) =>
             this.renderPayPalConnectCardComponent(container),
         );
-        // paypalcommerceacceleratedcheckout.onChange((container: string) =>
-        //     this.renderBraintreeAXOComponent(container),
-        // );
+        paypalcommerceacceleratedcheckout.onChange(() =>
+            this.handlePayPalConnectInstrumentChange(),
+        );
     }
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions,): Promise<void> {
@@ -143,10 +145,10 @@ export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements
      * Initialises PayPal Connect Sdk
      *
      */
-    private async initializePayPalConnect(methodId: string): Promise<PayPalCommerceConnect> {
+    private async initializePayPalConnect(): Promise<PayPalCommerceConnect> {
         // TODO: fix the issue with paypal sdk load conflict
         const paypalSdk = await this.paypalCommerceIntegrationService.loadPayPalSdk(
-            methodId,
+            this.methodId,
             undefined,
             true,
             true,
@@ -187,14 +189,14 @@ export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements
         return !paymentProviderCustomer?.authenticationState && paypalConnectSessionId === cart.id;
     }
 
-    private async runPayPalConnectAuthenticationFlowOrThrow(methodId: string): Promise<void> {
+    private async runPayPalConnectAuthenticationFlowOrThrow(): Promise<void> {
         try {
             const { customerContextId } = await this.lookupCustomerOrThrow();
             const authenticationResult = await this.triggerAuthenticationFlowOrThrow(
                 customerContextId,
             );
 
-            await this.updateCustomerDataStateOrThrow(methodId, authenticationResult);
+            await this.updateCustomerDataStateOrThrow(authenticationResult);
             this.updateStorageSessionId(authenticationResult.authenticationState === PayPalCommerceConnectAuthenticationState.CANCELED);
         } catch (error) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
@@ -226,7 +228,6 @@ export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements
     }
 
     private async updateCustomerDataStateOrThrow(
-        methodId: string,
         authenticationResult?: PayPalCommerceConnectAuthenticationResult
     ): Promise<void> {
         const { authenticationState, profileData } = authenticationResult || {};
@@ -245,7 +246,7 @@ export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements
             ? this.mapPayPalBillingToBcAddress(paypalBillingAddress, paypalProfileName)
             : undefined;
         const instruments = paypalInstrument
-            ? this.mapPayPalToBcInstrument(paypalInstrument, methodId)
+            ? [this.mapPayPalToBcInstrument(paypalInstrument)]
             : [];
 
         const addresses = this.mergeShippingAndBillingAddresses(shippingAddress, billingAddress);
@@ -327,28 +328,25 @@ export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements
 
     private mapPayPalToBcInstrument(
         instrument: PayPalCommerceConnectProfileCard,
-        methodId: string,
-    ): CardInstrument[] {
+    ): CardInstrument {
         const { id, paymentSource } = instrument;
         const { brand, expiry, lastDigits } = paymentSource.card;
 
         const [expiryYear, expiryMonth] = expiry.split('-');
 
-        return [
-            {
-                bigpayToken: id,
-                brand,
-                defaultInstrument: false,
-                expiryMonth,
-                expiryYear,
-                iin: '',
-                last4: lastDigits,
-                method: methodId,
-                provider: methodId,
-                trustedShippingAddress: false,
-                type: 'card',
-            },
-        ];
+        return {
+            bigpayToken: id,
+            brand,
+            defaultInstrument: false,
+            expiryMonth,
+            expiryYear,
+            iin: '',
+            last4: lastDigits,
+            method: this.methodId,
+            provider: this.methodId,
+            trustedShippingAddress: false,
+            type: 'card',
+        };
     }
 
     private mergeShippingAndBillingAddresses(
@@ -474,5 +472,17 @@ export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements
             countryCode: address?.countryCode || '',
             phone: address?.phone || '',
         };
+    }
+
+    /**
+     *
+     * PayPal Commerce Connect instrument change
+     *
+     * */
+    private async handlePayPalConnectInstrumentChange() {
+        const paypalConnect = this.getPayPalConnectOrThrow();
+        const { selectionChanged, selectedCard } = await paypalConnect.profile.showCardSelector();
+
+        return selectionChanged ? this.mapPayPalToBcInstrument(selectedCard) : undefined;
     }
 }

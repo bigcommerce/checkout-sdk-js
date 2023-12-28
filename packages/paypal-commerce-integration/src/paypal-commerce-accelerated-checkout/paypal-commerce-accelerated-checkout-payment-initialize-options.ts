@@ -1,4 +1,5 @@
 import { PayPalCommerceConnectStylesOption } from '../paypal-commerce-types';
+import { CardInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
  * A set of options that are required to initialize the PayPalCommerce Accelerated Checkout payment
@@ -54,7 +55,11 @@ export default interface PayPalCommerceAcceleratedCheckoutPaymentInitializeOptio
      */
     onInit?: (renderPayPalConnectCardComponent: (container: string) => void) => void;
 
-    // onChange?: // TODO:
+    /**
+     * Is a callback that shows PayPal stored instruments
+     * when get triggered
+     */
+    onChange?: (showPayPalConnectCardSelector: () => Promise<CardInstrument | undefined>) => void;
 
     /**
      * Is a stylisation options for customizing PayPal Connect components

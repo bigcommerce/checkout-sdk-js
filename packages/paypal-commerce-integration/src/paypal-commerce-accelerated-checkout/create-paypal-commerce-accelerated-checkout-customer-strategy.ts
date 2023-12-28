@@ -20,5 +20,4 @@ const createPayPalCommerceAcceleratedCheckoutCustomerStrategy: CustomerStrategyF
 
 export default toResolvableModule(createPayPalCommerceAcceleratedCheckoutCustomerStrategy, [
     { id: 'paypalcommerceacceleratedcheckout' },
-    { id: 'paypalcommerce' },
 ]);

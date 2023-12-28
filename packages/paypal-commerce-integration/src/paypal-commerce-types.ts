@@ -52,6 +52,7 @@ export interface PayPalSDK {
 // --------------------
 export interface PayPalCommerceConnect {
     identity: PayPalCommerceConnectIdentity;
+    profile: PayPalCommerceConnectProfile;
     ConnectCardComponent: (
         options: PayPalCommerceConnectCardComponentOptions,
     ) => PayPalCommerceConnectCardComponent;
@@ -171,6 +172,15 @@ export interface PayPalCommerceConnectStylesOption {
         };
     };
     branding?: string; // 'light' | 'dark'
+}
+
+export interface PayPalCommerceConnectProfile {
+    showCardSelector(): Promise<PayPalCommerceCardSelectorResponse>,
+}
+
+export interface PayPalCommerceCardSelectorResponse {
+    selectionChanged: boolean;
+    selectedCard: PayPalCommerceConnectProfileCard;
 }
 
 export interface PayPalCommerceConnectCardComponent {
