@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.504.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.503.0...v1.504.0) (2023-12-28)
+
+
+### Features
+
+* **payment:** PI-1126 TD bank 3DS flow ([c9b6319](https://github.com/bigcommerce/checkout-sdk-js/commit/c9b631952f536dbefc43a6dd26369b3c14f48172))
+
 ## [1.503.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.502.0...v1.503.0) (2023-12-21)
 
 
