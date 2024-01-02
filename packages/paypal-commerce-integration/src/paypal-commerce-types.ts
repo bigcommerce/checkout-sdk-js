@@ -122,7 +122,9 @@ export interface PayPalCommerceScriptParams {
     };
     attributes: {
         'data-client-token'?: string;
+        'data-client-metadata-id'?: string;
         'data-partner-attribution-id'?: string;
+        'data-user-id-token'?: string;
     };
 }
 
@@ -139,10 +141,12 @@ export type ComponentsScriptType = Array<
     | 'payment-fields'
     | 'legal'
     | 'googlepay'
+    | 'connect'
 >;
 
 export interface PayPalCommerceHostWindow extends Window {
     paypal?: PayPalSDK;
+    paypalLoadScript?: (options: PayPalCommerceScriptParams) => Promise<{ paypal: PayPalSDK }>;
 }
 
 /**
@@ -160,6 +164,7 @@ export interface PayPalCommerceInitializationData {
     enabledAlternativePaymentMethods: FundingType;
     isDeveloperModeApplicable?: boolean;
     intent?: PayPalCommerceIntent;
+    isAcceleratedCheckoutEnabled?: boolean;
     isHostedCheckoutEnabled?: boolean;
     isPayPalCreditAvailable?: boolean;
     isVenmoEnabled?: boolean;
@@ -167,6 +172,7 @@ export interface PayPalCommerceInitializationData {
     merchantId?: string;
     orderId?: string;
     shouldRenderFields?: boolean;
+    shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
 }
 
