@@ -161,21 +161,6 @@ describe('PayPalCommerceVenmoPaymentStrategy', () => {
             }
         });
 
-        it('logs a warning message if options.paypalcommerce was not provided instead of options.paypalcommercealternativemethods', async () => {
-            const warnLogSpy = jest.spyOn(console, 'warn');
-
-            const options = {
-                methodId: defaultMethodId,
-                paypalcommerce: {
-                    container: defaultContainerId,
-                },
-            } as PaymentInitializeOptions;
-
-            await strategy.initialize(options);
-
-            expect(warnLogSpy).toHaveBeenCalled();
-        });
-
         it('throws error if options.paypalcommercevenmo is not provided', async () => {
             const options = {
                 methodId: defaultMethodId,

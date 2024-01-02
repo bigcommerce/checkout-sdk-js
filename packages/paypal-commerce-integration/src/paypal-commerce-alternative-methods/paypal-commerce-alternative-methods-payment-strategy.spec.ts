@@ -205,23 +205,6 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             }
         });
 
-        it('logs a warning message if options.paypalcommerce was not provided instead of options.paypalcommercealternativemethods', async () => {
-            const warnLogSpy = jest.spyOn(console, 'warn');
-
-            const options = {
-                methodId: defaultMethodId,
-                gatewayId: defaultGatewayId,
-                paypalcommerce: {
-                    container: defaultContainerId,
-                    apmFieldsContainer: defaultApmFieldsContainerId,
-                },
-            } as PaymentInitializeOptions;
-
-            await strategy.initialize(options);
-
-            expect(warnLogSpy).toHaveBeenCalled();
-        });
-
         it('does not continues strategy initialization if order id is available in initializationData', async () => {
             paymentMethod.initializationData.orderId = '1';
 

@@ -49,12 +49,6 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
             );
         }
 
-        if (paypalcommerce) {
-            console.warn(
-                'The "options.paypalcommerce" option is deprecated for this strategy, please use "options.paypalcommercevenmo" instead',
-            );
-        }
-
         if (!paypalOptions) {
             throw new InvalidArgumentError(
                 `Unable to initialize payment because "options.paypalcommerce" argument is not provided.`,

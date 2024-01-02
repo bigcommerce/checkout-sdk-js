@@ -7,15 +7,18 @@ import {
     PaymentIntegrationService,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-
-import { PayPalCommerceHostWindow, PayPalSDK } from '../paypal-commerce-types';
-import PaypalCommerceRatepayPaymentStrategy from './paypal-commerce-ratepay-payment-strategy';
-import { getPayPalCommerceIntegrationServiceMock, getPayPalSDKMock } from '../mocks';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+
+import {
+    getPayPalCommerceIntegrationServiceMock,
+    getPayPalCommerceRatePayPaymentMethod,
+    getPayPalSDKMock,
+} from '../mocks';
+import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
+import { PayPalCommerceHostWindow, PayPalSDK } from '../paypal-commerce-types';
+
 import { PaypalCommerceRatePay } from './paypal-commerce-ratepay-initialize-options';
-import getPayPalCommerceRatePayPaymentMethod from '../mocks/get-paypal-commerce-ratepay-payment-method.mock';
+import PaypalCommerceRatepayPaymentStrategy from './paypal-commerce-ratepay-payment-strategy';
 
 describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
     let billingAddress: BillingAddress;
@@ -173,6 +176,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
 
         it('throws error if merchantId is not provided', async () => {
             paymentMethod.initializationData.merchantId = '';
+
             const options = {
                 methodId: 'ratepay',
                 gatewayId: 'paypalcommercealternativemethods',
@@ -203,6 +207,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
 
         it('add another needed fraudNet script', async () => {
             await strategy.initialize(initializationOptions);
+
             const script = document.querySelector('script[src="https://c.paypal.com/da/r/fb.js"]');
 
             expect(script).toBeDefined();
@@ -212,6 +217,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
     describe('#renderLegalText', () => {
         it('throws error if legalTextContainerElement is not found', async () => {
             jest.spyOn(document, 'getElementById').mockImplementation(() => null);
+
             try {
                 await strategy.initialize(initializationOptions);
             } catch (error) {
@@ -221,6 +227,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
 
         it('renders legal text', async () => {
             await strategy.initialize(initializationOptions);
+
             const source = document.getElementsByTagName('html')[0].innerHTML;
             const legalText = source.search(
                 'By clicking on the button, you agree to the terms of payment and performance of a risk check from the payment partner, Ratepay. You also agree to PayPal’s privacy statement. If your request to purchase upon invoice is accepted, the purchase price claim will be assigned to Ratepay, and you may only pay Ratepay, not the merchant.',
@@ -241,6 +248,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
 
         it('throws an error if orderId is not defined', async () => {
             jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockReturnValue(undefined);
+
             const payload = {
                 payment: {
                     methodId: 'ratepay',
@@ -341,13 +349,16 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockReturnValue(
                 'POLLING_ERROR',
             );
+
             const payload = {
                 payment: {
                     methodId: 'ratepay',
                     gatewayId: 'paypalcommercealternativemethods',
                 },
             };
+
             jest.spyOn(global, 'clearTimeout');
+
             try {
                 await strategy.initialize(initializationOptions);
                 await strategy.execute(payload);
@@ -371,6 +382,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
                     gatewayId: 'paypalcommercealternativemethods',
                 },
             };
+
             jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockReturnValue(
                 'POLLING_STOP',
             );
