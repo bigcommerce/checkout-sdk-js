@@ -386,6 +386,33 @@ describe('PayPalCommerceScriptLoader', () => {
         });
     });
 
+    it('successfully loads paypal sdk with connect configuration', async () => {
+        const paymentMethodMock = {
+            ...paymentMethod,
+            id: 'paypalcommerce',
+            initializationData: {
+                ...paymentMethod.initializationData,
+                isAcceleratedCheckoutEnabled: true,
+                shouldRunAcceleratedCheckout: true,
+            },
+        };
+
+        await paypalLoader.getPayPalSDK(paymentMethodMock, 'USD', true);
+
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cmessages%2Cpayment-fields%2Clegal%2Cconnect&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
+            'data-user-id-token': paymentMethod.clientToken,
+            'data-client-metadata-id': 'sandbox',
+            'data-partner-attribution-id': paymentMethod.initializationData.attributionId,
+        };
+
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
+    });
+
     it('successfully loads paypal sdk without nil values in configuration', async () => {
         const paymentMethodMock = {
             ...paymentMethod,
