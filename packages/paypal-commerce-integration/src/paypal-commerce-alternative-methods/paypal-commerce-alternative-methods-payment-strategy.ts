@@ -49,12 +49,6 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         } = options;
         const paypalOptions = paypalcommercealternativemethods || paypalcommerce;
 
-        if (paypalcommerce) {
-            console.warn(
-                'The "options.paypalcommerce" option is deprecated for this strategy, please use "options.paypalcommercealternativemethods" instead',
-            );
-        }
-
         if (!methodId) {
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.methodId" argument is not provided.',
