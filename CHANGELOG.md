@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.505.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.505.0...v1.505.1) (2024-01-03)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-7901 added a condition to load PPCP payment methods only if they are not exist in the state ([#2282](https://github.com/bigcommerce/checkout-sdk-js/issues/2282)) ([aeb3722](https://github.com/bigcommerce/checkout-sdk-js/commit/aeb3722191f824a487f3ef582cca9d475a43b5ca))
+
 ## [1.505.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.504.1...v1.505.0) (2024-01-03)
 
 
