@@ -187,12 +187,22 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
             }
         });
 
-        it('loads paypalcommerce venmo payment method', async () => {
+        it('loads paypalcommercevenmo payment method', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
                 defaultMethodId,
             );
+        });
+
+        it('does not load paypalcommercevenmo payment method if payment method is already exists', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockReturnValue(
+                paymentMethod,
+            );
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
         });
 
         it('loads paypal sdk with provided method id', async () => {

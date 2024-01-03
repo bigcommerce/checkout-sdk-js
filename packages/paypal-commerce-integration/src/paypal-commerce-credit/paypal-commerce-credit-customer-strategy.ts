@@ -65,7 +65,13 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
 
         this.onError = paypalcommercecredit.onError || noop;
 
-        await this.paymentIntegrationService.loadPaymentMethod(methodId);
+        const state = this.paymentIntegrationService.getState();
+        const paymentMethod = state.getPaymentMethod(methodId);
+
+        if (!paymentMethod) {
+            await this.paymentIntegrationService.loadPaymentMethod(methodId);
+        }
+
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
 
         this.renderButton(methodId, paypalcommercecredit);
