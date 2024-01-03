@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.505.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.505.1...v1.505.2) (2024-01-03)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-000 fixed eslint warnings in paypal-commerce-integration package ([#2300](https://github.com/bigcommerce/checkout-sdk-js/issues/2300)) ([cc366ad](https://github.com/bigcommerce/checkout-sdk-js/commit/cc366ad29fc25512ee931cecfbff6621e2b60834))
+
 ### [1.505.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.505.0...v1.505.1) (2024-01-03)
 
 
