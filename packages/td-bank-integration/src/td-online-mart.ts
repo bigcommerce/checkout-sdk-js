@@ -5,7 +5,7 @@ export interface TdOnlineMartHostWindow extends Window {
 }
 
 export interface TDCustomCheckoutSDK {
-    create(fieldType: FieldType, options?: object): TdOnlineMartElement;
+    create(fieldType: FieldType, options?: FieldOptions): TdOnlineMartElement;
     createToken(callback: (result: CreateTokenResponse) => void): void;
 }
 
@@ -47,3 +47,40 @@ export interface TdOnlineMartThreeDSErrorBody {
 /* eslint-enable @typescript-eslint/naming-convention */
 
 export type TdOnlineMartAdditionalAction = RequestError<TdOnlineMartThreeDSErrorBody>;
+
+//Note: The style property affects the remote styling of text inside the iframe input. The classes property updates the class list of the element the field is mounted to on your page.
+interface FieldOptions {
+    placeholder?: string;
+    style?: Styles;
+    classes?: Classes;
+    brands?: string[];
+}
+
+interface Classes {
+    base?: string;
+    complete?: string;
+    empty?: string;
+    focus?: string;
+    error?: string;
+}
+
+interface Styles {
+    base?: CssStyles;
+    complete?: CssStyles;
+    empty?: CssStyles;
+    error?: CssStyles;
+}
+
+interface CssStyles {
+    color?: string;
+    fontFamily?: string;
+    fontSize?: string;
+    fontStyle?: string;
+    fontWeight?: string;
+    textDecoration?: string;
+    padding?: string;
+    paddingLeft?: string;
+    paddingTop?: string;
+    paddingRight?: string;
+    paddingBottom?: string;
+}

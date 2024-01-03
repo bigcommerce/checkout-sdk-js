@@ -65,7 +65,7 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const paymentPayload = await this.getPaymentPayload(payment);
+        const paymentPayload = await this.getPaymentPayloadOrThrow(payment);
 
         await this.paymentIntegrationService.submitOrder(order, options);
 
@@ -88,7 +88,7 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
-    private async getPaymentPayload(payment: OrderPaymentRequestBody) {
+    private async getPaymentPayloadOrThrow(payment: OrderPaymentRequestBody) {
         const { methodId, paymentData } = payment;
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =

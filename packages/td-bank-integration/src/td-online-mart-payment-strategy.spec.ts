@@ -132,7 +132,7 @@ describe('TDOnlineMartPaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalled();
         });
 
-        it('fails to execute the td online mart strategy strategy when token is not created', async () => {
+        it('fails to execute the td online mart strategy when token is not created', async () => {
             tdOnlineMartClient.createToken = jest.fn((callback) => {
                 callback({
                     token: '',
@@ -150,7 +150,7 @@ describe('TDOnlineMartPaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalled();
         });
 
-        it('fails to execute the td online mart strategy strategy when token is not created and we getting error message', async () => {
+        it('fails to execute the td online mart strategy when token is not created and we getting error message', async () => {
             tdOnlineMartClient.createToken = jest.fn((callback) => {
                 callback({
                     error: {
