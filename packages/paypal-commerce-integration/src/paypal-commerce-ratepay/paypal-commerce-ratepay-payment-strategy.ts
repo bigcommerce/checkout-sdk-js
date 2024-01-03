@@ -11,6 +11,7 @@ import {
     PaymentStrategy,
     TimeoutError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
@@ -30,12 +31,14 @@ const MAX_POLLING_TIME = 300000;
 export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStrategy {
     private guid?: string;
     private paypalcommerceratepay?: PaypalCommerceRatePay;
+    private loadingIndicatorContainer?: string;
     private pollingTimer = 0;
     private stopPolling = noop;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private loadingIndicator: LoadingIndicator,
     ) {}
 
     async initialize(
@@ -61,7 +64,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
             );
         }
 
-        const { legalTextContainer, container } = paypalcommerceratepay;
+        const { legalTextContainer, container, loadingContainerId } = paypalcommerceratepay;
 
         if (!container) {
             throw new InvalidArgumentError(
@@ -74,6 +77,14 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
                 `Unable to initialize payment because "options.legalTextContainer" argument is not provided.`,
             );
         }
+
+        if (!loadingContainerId) {
+            throw new InvalidArgumentError(
+                `Unable to initialize payment because "options.loadingContainerId" argument is not provided.`,
+            );
+        }
+
+        this.loadingIndicatorContainer = loadingContainerId;
 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
@@ -114,7 +125,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
             );
         }
 
-        this.onPaymentSubmission(true);
+        this.toggleLoadingIndicator(true);
 
         try {
             const orderId = await this.paypalCommerceIntegrationService.createOrder(
@@ -199,16 +210,6 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         return `${date < 10 ? 0 : ''}${date}`;
     }
 
-    private onPaymentSubmission(isPaymentSubmitting: boolean) {
-        const { onPaymentSubmission } = this.paypalcommerceratepay || {};
-
-        if (!onPaymentSubmission || typeof onPaymentSubmission !== 'function') {
-            return;
-        }
-
-        onPaymentSubmission(isPaymentSubmitting);
-    }
-
     private renderLegalText(legalTextContainerElementId: string, container: string) {
         const legalTextContainerId = legalTextContainerElementId;
         const buttonContainerId = container.split('#')[1];
@@ -239,7 +240,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         const { onError } = this.paypalcommerceratepay || {};
 
         this.resetPollingMechanism();
-        this.onPaymentSubmission(false);
+        this.toggleLoadingIndicator(false);
 
         if (onError && typeof onError === 'function') {
             onError(error);
@@ -312,7 +313,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
 
             this.stopPolling = () => {
                 clearTimeout(timeout);
-                this.onPaymentSubmission(false);
+                this.toggleLoadingIndicator(false);
 
                 return reject();
             };
@@ -372,5 +373,18 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
 
     private resetPollingMechanism(): void {
         this.deinitializePollingMechanism();
+    }
+
+    /**
+     *
+     * Loading Indicator methods
+     *
+     * */
+    private toggleLoadingIndicator(isLoading: boolean): void {
+        if (isLoading && this.loadingIndicatorContainer) {
+            this.loadingIndicator.show(this.loadingIndicatorContainer);
+        } else {
+            this.loadingIndicator.hide();
+        }
     }
 }
