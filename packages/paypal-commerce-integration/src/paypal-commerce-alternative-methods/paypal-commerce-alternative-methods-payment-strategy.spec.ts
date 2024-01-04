@@ -233,6 +233,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
                     height: 55,
                     label: 'pay',
                 },
+                onClick: expect.any(Function),
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
                 onCancel: expect.any(Function),
@@ -279,27 +280,6 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
                 'paypalcommercealternativemethodscheckout',
             );
         });
-    });
-
-    describe('#onClick button callback', () => {
-        it('does not initialize polling mechanism for non instant payment methods before validation', async () => {
-            const submitFormMock = jest.fn();
-
-            await strategy.initialize({
-                ...initializationOptions,
-                methodId: NonInstantAlternativePaymentMethods.OXXO,
-                paypalcommercealternativemethods: {
-                    ...paypalCommerceAlternativeMethodsOptions,
-                    submitForm: submitFormMock,
-                },
-            });
-
-            eventEmitter.emit('onClick');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(submitFormMock).not.toHaveBeenCalled();
-        });
 
         it('calls validation callback with provided params', async () => {
             const onValidateMock = jest.fn();
@@ -314,6 +294,27 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             });
 
             eventEmitter.emit('createOrder');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(onValidateMock).toHaveBeenCalled();
+        });
+    });
+
+    describe('#onClick button callback', () => {
+        it('calls validation callback with provided params', async () => {
+            const onValidateMock = jest.fn();
+
+            await strategy.initialize({
+                ...initializationOptions,
+                methodId: NonInstantAlternativePaymentMethods.OXXO,
+                paypalcommercealternativemethods: {
+                    ...paypalCommerceAlternativeMethodsOptions,
+                    onValidate: onValidateMock,
+                },
+            });
+
+            eventEmitter.emit('onClick');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
