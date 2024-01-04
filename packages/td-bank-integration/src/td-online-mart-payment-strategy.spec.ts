@@ -207,6 +207,16 @@ describe('TDOnlineMartPaymentStrategy', () => {
                         methodId: 'tdonlinemart',
                         paymentData: expect.objectContaining({
                             instrumentId: 'testInstrumentId',
+                            /* eslint-disable @typescript-eslint/naming-convention */
+                            browser_info: expect.objectContaining({
+                                color_depth: expect.any(Number),
+                                java_enabled: expect.any(Boolean),
+                                language: expect.any(String),
+                                screen_height: expect.any(Number),
+                                screen_width: expect.any(Number),
+                                time_zone: expect.any(String),
+                            }),
+                            /* eslint-enable @typescript-eslint/naming-convention */
                         }),
                     }),
                 );
@@ -236,6 +246,16 @@ describe('TDOnlineMartPaymentStrategy', () => {
                         paymentData: expect.objectContaining({
                             instrumentId: 'testInstrumentId',
                             shouldSetAsDefaultInstrument: true,
+                            /* eslint-disable @typescript-eslint/naming-convention */
+                            browser_info: expect.objectContaining({
+                                color_depth: expect.any(Number),
+                                java_enabled: expect.any(Boolean),
+                                language: expect.any(String),
+                                screen_height: expect.any(Number),
+                                screen_width: expect.any(Number),
+                                time_zone: expect.any(String),
+                            }),
+                            /* eslint-enable @typescript-eslint/naming-convention */
                         }),
                     }),
                 );
