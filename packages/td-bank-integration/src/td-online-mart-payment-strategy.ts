@@ -1,6 +1,7 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 
 import {
+    getBrowserInfo,
     InvalidArgumentError,
     isHostedInstrumentLike,
     isVaultedInstrument,
@@ -23,6 +24,7 @@ import { isTdOnlineMartAdditionalAction } from './isTdOnlineMartAdditionalAction
 import {
     FieldType,
     TDCustomCheckoutSDK,
+    TdOnlineMartBrowserInfo,
     TdOnlineMartElement,
     TdOnlineMartThreeDSErrorBody,
 } from './td-online-mart';
@@ -93,6 +95,11 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
+        const commonPaymentData = {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            browser_info: this.getTDBrowserInfo(),
+            shouldSetAsDefaultInstrument,
+        };
 
         let paymentToken;
 
@@ -104,8 +111,8 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             return {
                 methodId,
                 paymentData: {
+                    ...commonPaymentData,
                     instrumentId: paymentData.instrumentId,
-                    shouldSetAsDefaultInstrument,
                 },
             };
         }
@@ -119,12 +126,23 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         return {
             methodId,
             paymentData: {
+                ...commonPaymentData,
                 nonce: paymentToken,
                 shouldSaveInstrument,
-                shouldSetAsDefaultInstrument,
             },
         };
     }
+
+    /* eslint-disable @typescript-eslint/naming-convention */
+    private getTDBrowserInfo(): TdOnlineMartBrowserInfo {
+        const { time_zone_offset, ...defaultBrowserInfo } = getBrowserInfo();
+
+        return {
+            ...defaultBrowserInfo,
+            time_zone: time_zone_offset,
+        };
+    }
+    /* eslint-enable @typescript-eslint/naming-convention */
 
     private mountHostedFields(methodId: string): void {
         const options = this.getHostedFieldsOptions();
