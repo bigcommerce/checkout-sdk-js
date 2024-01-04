@@ -18,6 +18,7 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import isCreateTokenError from './is-create-token-error';
 import { isTdOnlineMartAdditionalAction } from './isTdOnlineMartAdditionalAction';
 import {
     FieldType,
@@ -64,9 +65,9 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        await this.paymentIntegrationService.submitOrder(order, options);
+        const paymentPayload = await this.getPaymentPayloadOrThrow(payment);
 
-        const paymentPayload = await this.getPaymentPayload(payment);
+        await this.paymentIntegrationService.submitOrder(order, options);
 
         try {
             await this.paymentIntegrationService.submitPayment(paymentPayload);
@@ -87,11 +88,13 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
-    private async getPaymentPayload(payment: OrderPaymentRequestBody) {
+    private async getPaymentPayloadOrThrow(payment: OrderPaymentRequestBody) {
         const { methodId, paymentData } = payment;
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
+
+        let paymentToken;
 
         if (
             isHostedInstrumentLike(paymentData) &&
@@ -107,7 +110,11 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             };
         }
 
-        const paymentToken = await this.getTokenOrThrow();
+        try {
+            paymentToken = await this.getTokenOrThrow();
+        } catch (error) {
+            this.throwTokenizationError(error);
+        }
 
         return {
             methodId,
@@ -120,11 +127,12 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
     }
 
     private mountHostedFields(methodId: string): void {
+        const options = this.getHostedFieldsOptions();
         const tdOnlineMartClient = this.getTDOnlineMartClientOrThrow();
 
-        this.cardNumberInput = tdOnlineMartClient.create(FieldType.CARD_NUMBER);
-        this.cvvInput = tdOnlineMartClient.create(FieldType.CVV);
-        this.expiryInput = tdOnlineMartClient.create(FieldType.EXPIRY);
+        this.cardNumberInput = tdOnlineMartClient.create(FieldType.CARD_NUMBER, options);
+        this.cvvInput = tdOnlineMartClient.create(FieldType.CVV, options);
+        this.expiryInput = tdOnlineMartClient.create(FieldType.EXPIRY, options);
 
         this.cardNumberInput.mount(`#${methodId}-ccNumber`);
         this.cvvInput.mount(`#${methodId}-ccCvv`);
@@ -140,12 +148,12 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
     }
 
     private getTokenOrThrow(): Promise<string> {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.getTDOnlineMartClientOrThrow().createToken((result) => {
                 const { error, token } = result;
 
                 if (error || !token) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
+                    return reject(error);
                 }
 
                 resolve(token);
@@ -184,5 +192,30 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
                 '_top',
             );
         });
+    }
+
+    private throwTokenizationError(error: unknown) {
+        if (!isCreateTokenError(error)) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
+        }
+
+        throw new Error(error.message);
+    }
+
+    private getHostedFieldsOptions() {
+        const style = {
+            error: {
+                color: '#d14343',
+            },
+        };
+
+        const classes = {
+            error: 'form-input--error',
+        };
+
+        return {
+            style,
+            classes,
+        };
     }
 }

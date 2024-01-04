@@ -40,7 +40,7 @@ describe('TDOnlineMartScriptLoader', () => {
             );
         });
 
-        it('throw error when chustomcheckout does not exist on window', async () => {
+        it('throw error when custom checkout does not exist on window', async () => {
             scriptLoader.loadScript = jest.fn(() => {
                 mockWindow.customcheckout = undefined;
             });
