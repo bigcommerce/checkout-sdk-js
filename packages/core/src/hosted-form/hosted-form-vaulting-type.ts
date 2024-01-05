@@ -9,35 +9,35 @@ export interface HostedFormVaultingData {
 
 export interface HostedFormVaultingPaymentInstrument {
     type: string;
-    cardholder_name: string;
+    cardholderName: string;
     number: string;
-    expiry_month: number;
-    expiry_year: number;
-    verification_value: string;
+    expiryMonth: number;
+    expiryYear: number;
+    verificationValue: string;
 }
 
 export interface HostedFormVaultingBillingAddress {
     address1: string;
     address2?: string;
     city: string;
-    postal_code: string;
-    country_code: string;
+    postalCode: string;
+    countryCode: string;
     company?: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     phone?: string;
-    state_or_province_code?: string;
+    stateOrProvinceCode?: string;
 }
 
 export interface HostedFormVaultingInstrumentForm {
     billingAddress: HostedFormVaultingBillingAddress;
     instrument: HostedFormVaultingPaymentInstrument;
-    default_instrument: boolean;
+    defaultInstrument: boolean;
 }
 
 export interface HostedFormVaultingInstrumentFields extends HostedFormVaultingBillingAddress {
-    default_instrument: boolean;
+    defaultInstrument: boolean;
 }
 
 export interface HostedFormVaultingPayload {

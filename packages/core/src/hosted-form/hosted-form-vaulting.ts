@@ -1,7 +1,6 @@
 import { noop, without } from 'lodash';
 
 import { IframeEventListener } from '../common/iframe';
-// import { PaymentHumanVerificationHandler } from '../spam-protection';
 
 import { InvalidHostedFormConfigError } from './errors';
 import HostedField from './hosted-field';
@@ -29,7 +28,7 @@ export default class HostedFormVaulting {
     constructor(
         private _fields: HostedField[],
         private _eventListener: IframeEventListener<HostedInputEventMap>,
-        private _eventCallbacks: HostedFormEventCallbacks, // private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler,
+        private _eventCallbacks: HostedFormEventCallbacks,
     ) {
         const {
             onBlur = noop,
@@ -88,22 +87,11 @@ export default class HostedFormVaulting {
         });
     }
 
-    async submit(
-        payload: {
-            fields: HostedFormVaultingInstrumentFields;
-            data: HostedFormVaultingData;
-        },
-        // additionalActionData?: PaymentAdditionalAction,
-    ): Promise<HostedInputVaultingSucceededEvent | void> {
-        try {
-            return await this._getFirstField().submitVaultingForm(payload.fields, payload.data);
-        } catch (error) {
-            // const additionalAction = await this._paymentHumanVerificationHandler.handle(error);
-
-            console.log(error);
-
-            // return await this._getFirstField().submitVaultingForm(payload.fields, payload.data);
-        }
+    async submit(payload: {
+        fields: HostedFormVaultingInstrumentFields;
+        data: HostedFormVaultingData;
+    }): Promise<HostedInputVaultingSucceededEvent | void> {
+        return this._getFirstField().submitVaultingForm(payload.fields, payload.data);
     }
 
     async validate(): Promise<void> {

@@ -73,9 +73,8 @@ export interface HostedInputVaultingErrorEvent {
     type: HostedInputEventType.VaultingFailed;
     payload?: {
         errors?: string[];
-        // TODO:
-        // error?: PaymentErrorData;
-        // response?: Response<PaymentErrorResponseBody>;
+        error?: PaymentErrorData;
+        response?: Response<PaymentErrorResponseBody>;
     };
 }
 

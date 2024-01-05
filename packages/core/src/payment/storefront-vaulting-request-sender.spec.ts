@@ -2,6 +2,7 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 
 import {
     hostedFormVaultingDataMock,
+    hostedFormVaultingInstrumentFormAPIMock,
     hostedFormVaultingInstrumentFormMock,
 } from '../hosted-form/hosted-form-vaulting.mock';
 
@@ -26,19 +27,22 @@ describe('StorefrontVaultingRequestSender', () => {
         };
 
         it('saves payment method', async () => {
-            await storefrontVaultingRequestSender.submitPaymentMethod(
+            await storefrontVaultingRequestSender.submitPaymentInstrument(
                 hostedFormVaultingDataMock,
                 hostedFormVaultingInstrumentFormMock,
             );
+
+            const { instrument, billingAddress } = hostedFormVaultingInstrumentFormAPIMock;
 
             expect(requestSender.post).toHaveBeenCalledWith(
                 `${hostedFormVaultingDataMock.paymentsUrl}/stores/${hostedFormVaultingDataMock.storeHash}/customers/${hostedFormVaultingDataMock.shopperId}/stored_instruments`,
                 {
                     body: JSON.stringify({
-                        instrument: hostedFormVaultingInstrumentFormMock.instrument,
-                        billing_address: hostedFormVaultingInstrumentFormMock.billingAddress,
+                        instrument,
+                        billing_address: billingAddress,
                         provider_id: hostedFormVaultingDataMock.providerId,
-                        default_instrument: hostedFormVaultingInstrumentFormMock.default_instrument,
+                        default_instrument:
+                            hostedFormVaultingInstrumentFormAPIMock.default_Instrument,
                         currency_code: hostedFormVaultingDataMock.currencyCode,
                     }),
                     headers,

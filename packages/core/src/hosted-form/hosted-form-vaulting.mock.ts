@@ -7,21 +7,34 @@ const hostedFormVaultingDataMock = {
     vaultToken: 'token124',
 };
 
-const hostedFormVaultingBillingAddressMock = {
+const hostedFormVaultingBillingAddressAPIMock = {
+    email: 'string@mail.com',
     address1: '57 Balsham Road',
-    address2: '',
     city: 'Harthill',
     postal_code: 'S31 6EN',
     country_code: 'NL',
     company: 'String',
     first_name: 'John',
     last_name: 'Smith',
-    email: 'string@mail.com',
     phone: '123456789',
     state_or_province_code: 'BEL',
 };
 
-const hostedFormVaultingPaymentInstrumentMock = {
+const hostedFormVaultingBillingAddressMock = {
+    address1: '57 Balsham Road',
+    address2: '',
+    city: 'Harthill',
+    postalCode: 'S31 6EN',
+    countryCode: 'NL',
+    company: 'String',
+    firstName: 'John',
+    lastName: 'Smith',
+    email: 'string@mail.com',
+    phone: '123456789',
+    stateOrProvinceCode: 'BEL',
+};
+
+const hostedFormVaultingPaymentInstrumentAPIMock = {
     type: 'card',
     cardholder_name: 'John Smith',
     number: '4111111111111111',
@@ -30,15 +43,29 @@ const hostedFormVaultingPaymentInstrumentMock = {
     verification_value: '777',
 };
 
+const hostedFormVaultingPaymentInstrumentMock = {
+    type: 'card',
+    cardholderName: 'John Smith',
+    number: '4111111111111111',
+    expiryMonth: 3,
+    expiryYear: 2030,
+    verificationValue: '777',
+};
+
 const hostedFormVaultingInstrumentFormMock = {
     billingAddress: hostedFormVaultingBillingAddressMock,
     instrument: hostedFormVaultingPaymentInstrumentMock,
-    default_instrument: true,
+    defaultInstrument: true,
+};
+
+const hostedFormVaultingInstrumentFormAPIMock = {
+    billingAddress: hostedFormVaultingBillingAddressAPIMock,
+    instrument: hostedFormVaultingPaymentInstrumentAPIMock,
+    default_Instrument: true,
 };
 const hostedFormVaultingInstrumentFieldsMock = {
     ...hostedFormVaultingBillingAddressMock,
-    default_instrument: true,
-    cardholder_name: hostedFormVaultingPaymentInstrumentMock.cardholder_name,
+    defaultInstrument: true,
 };
 
 export {
@@ -47,4 +74,5 @@ export {
     hostedFormVaultingPaymentInstrumentMock,
     hostedFormVaultingInstrumentFormMock,
     hostedFormVaultingInstrumentFieldsMock,
+    hostedFormVaultingInstrumentFormAPIMock,
 };

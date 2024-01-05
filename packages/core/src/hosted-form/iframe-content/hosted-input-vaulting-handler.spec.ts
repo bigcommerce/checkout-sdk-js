@@ -28,7 +28,7 @@ describe('HostedInputVaultingHandler', () => {
     let handler: HostedInputVaultingHandler;
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
-    let requestSender: Pick<StorefrontVaultingRequestSender, 'submitPaymentMethod'>;
+    let requestSender: Pick<StorefrontVaultingRequestSender, 'submitPaymentInstrument'>;
     let values: HostedInputValues;
     let validationResults: HostedInputValidateResults;
 
@@ -36,7 +36,7 @@ describe('HostedInputVaultingHandler', () => {
         inputAggregator = { getInputValues: jest.fn() };
         inputValidator = { validate: jest.fn(() => []) };
         eventPoster = { post: jest.fn() };
-        requestSender = { submitPaymentMethod: jest.fn() };
+        requestSender = { submitPaymentInstrument: jest.fn() };
 
         handler = new HostedInputVaultingHandler(
             inputAggregator as HostedInputAggregator,
@@ -69,7 +69,7 @@ describe('HostedInputVaultingHandler', () => {
 
         jest.spyOn(inputValidator, 'validate').mockReturnValue(validationResults);
 
-        jest.spyOn(requestSender, 'submitPaymentMethod').mockResolvedValue(
+        jest.spyOn(requestSender, 'submitPaymentInstrument').mockResolvedValue(
             getResponse(getPaymentResponseBody()),
         );
     });
@@ -117,7 +117,7 @@ describe('HostedInputVaultingHandler', () => {
             payload: { data, fields },
         });
 
-        expect(requestSender.submitPaymentMethod).toHaveBeenCalledWith(
+        expect(requestSender.submitPaymentInstrument).toHaveBeenCalledWith(
             hostedFormVaultingDataMock,
             hostedFormVaultingInstrumentFormMock,
         );
@@ -141,7 +141,7 @@ describe('HostedInputVaultingHandler', () => {
 
         jest.spyOn(eventPoster, 'post');
 
-        jest.spyOn(requestSender, 'submitPaymentMethod').mockRejectedValue(response);
+        jest.spyOn(requestSender, 'submitPaymentInstrument').mockRejectedValue(response);
 
         await handler.handle({
             type: HostedFieldEventType.VaultingRequested,
