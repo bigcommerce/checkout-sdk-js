@@ -32,7 +32,7 @@ export default class HostedInputVaultingHandler {
             });
         }
 
-        const { default_instrument, cardholder_name, ...billingAddress } = fields;
+        const { default_instrument, ...billingAddress } = fields;
 
         const [expiry_month, expiry_year] = values.cardExpiry ? values.cardExpiry.split('/') : [];
 
@@ -41,7 +41,7 @@ export default class HostedInputVaultingHandler {
                 billingAddress,
                 instrument: {
                     type: 'card',
-                    cardholder_name,
+                    cardholder_name: values.cardName || '',
                     number: values.cardNumber ? values.cardNumber.replace(/ /g, '') : '',
                     expiry_month: Number(expiry_month.trim()),
                     expiry_year: Number(`20${expiry_year.trim()}`),

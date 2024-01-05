@@ -18,11 +18,16 @@ import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
 import {
+    HostedFormVaultingData,
+    HostedFormVaultingInstrumentFields,
+} from './hosted-form-vaulting-type';
+import {
     HostedInputEventMap,
     HostedInputEventType,
     HostedInputSubmitErrorEvent,
     HostedInputSubmitSuccessEvent,
     HostedInputValidateEvent,
+    HostedInputVaultingSucceededEvent,
 } from './iframe-content';
 
 export const RETRY_INTERVAL = 60 * 1000;
@@ -142,6 +147,41 @@ export default class HostedField {
 
                 throw new Error(event.payload.error.message);
             }
+
+            throw event;
+        }
+    }
+
+    async submitVaultingForm(
+        fields: HostedFormVaultingInstrumentFields,
+        data: HostedFormVaultingData,
+    ): Promise<HostedInputVaultingSucceededEvent> {
+        try {
+            const promise = this._eventPoster.post<HostedInputVaultingSucceededEvent>(
+                {
+                    type: HostedFieldEventType.VaultingRequested,
+                    payload: { fields, data },
+                },
+                {
+                    successType: HostedInputEventType.VaultingSucceeded,
+                    errorType: HostedInputEventType.VaultingFailed,
+                },
+            );
+
+            return await this._detachmentObserver.ensurePresence([this._iframe], promise);
+        } catch (event) {
+            console.log(event);
+            // if (this._isSubmitErrorEvent(event)) {
+            //     if (event.payload.error.code === 'hosted_form_error') {
+            //         throw new InvalidHostedFormError(event.payload.error.message);
+            //     }
+
+            //     if (event.payload.response) {
+            //         throw mapFromPaymentErrorResponse(event.payload.response);
+            //     }
+
+            //     throw new Error(event.payload.error.message);
+            // }
 
             throw event;
         }

@@ -3,7 +3,7 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import {
     HostedFormVaultingData,
     HostedFormVaultingInstrumentForm,
-} from '../hosted-form/hosted-form-vaulting';
+} from '../hosted-form/hosted-form-vaulting-type';
 
 export default class StorefrontVaultingRequestSender {
     constructor(private _requestSender: RequestSender) {}

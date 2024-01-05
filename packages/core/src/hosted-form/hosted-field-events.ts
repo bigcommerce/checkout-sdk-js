@@ -3,7 +3,10 @@ import { CardInstrument } from '../payment/instrument';
 import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
-import { HostedFormVaultingData, HostedFormVaultingInstrumentFields } from './hosted-form-vaulting';
+import {
+    HostedFormVaultingData,
+    HostedFormVaultingInstrumentFields,
+} from './hosted-form-vaulting-type';
 
 export enum HostedFieldEventType {
     AttachRequested = 'HOSTED_FIELD:ATTACH_REQUESTED',

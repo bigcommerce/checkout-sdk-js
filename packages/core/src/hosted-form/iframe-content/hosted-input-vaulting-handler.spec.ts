@@ -7,7 +7,7 @@ import HostedFieldType from '../hosted-field-type';
 import {
     HostedFormVaultingData,
     HostedFormVaultingInstrumentFields,
-} from '../hosted-form-vaulting';
+} from '../hosted-form-vaulting-type';
 import {
     hostedFormVaultingDataMock,
     hostedFormVaultingInstrumentFieldsMock,
