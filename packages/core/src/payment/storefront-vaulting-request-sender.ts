@@ -8,14 +8,14 @@ import {
 export default class StorefrontVaultingRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
-    async submitPaymentMethod(
+    async submitPaymentInstrument(
         requestInitializationData: HostedFormVaultingData,
         storeInstrumentFormData: HostedFormVaultingInstrumentForm,
     ): Promise<void> {
         const { providerId, currencyCode, paymentsUrl, shopperId, storeHash, vaultToken } =
             requestInitializationData;
 
-        const { billingAddress, instrument, default_instrument } = storeInstrumentFormData;
+        const { billingAddress, instrument, defaultInstrument } = storeInstrumentFormData;
         const url = `${paymentsUrl}/stores/${storeHash}/customers/${shopperId}/stored_instruments`;
         const options = {
             headers: {
@@ -24,10 +24,31 @@ export default class StorefrontVaultingRequestSender {
                 'Content-Type': 'application/vnd.bc.v1+json',
             },
             body: JSON.stringify({
-                instrument,
-                billing_address: billingAddress,
+                instrument: {
+                    type: instrument.type,
+                    cardholder_name: instrument.cardholderName,
+                    number: instrument.number,
+                    expiry_month: instrument.expiryMonth,
+                    expiry_year: instrument.expiryYear,
+                    verification_value: instrument.verificationValue,
+                },
+                billing_address: {
+                    email: billingAddress.email,
+                    address1: billingAddress.address1,
+                    ...(billingAddress.address2 && { address2: billingAddress.address2 }),
+                    city: billingAddress.city,
+                    postal_code: billingAddress.postalCode,
+                    country_code: billingAddress.countryCode,
+                    ...(billingAddress.company && { company: billingAddress.company }),
+                    first_name: billingAddress.firstName,
+                    last_name: billingAddress.lastName,
+                    ...(billingAddress.phone && { phone: billingAddress.phone }),
+                    ...(billingAddress.stateOrProvinceCode && {
+                        state_or_province_code: billingAddress.stateOrProvinceCode,
+                    }),
+                },
                 provider_id: providerId,
-                default_instrument,
+                default_instrument: defaultInstrument,
                 currency_code: currencyCode,
             }),
         };

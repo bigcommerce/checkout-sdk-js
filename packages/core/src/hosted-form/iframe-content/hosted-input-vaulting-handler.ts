@@ -32,22 +32,22 @@ export default class HostedInputVaultingHandler {
             });
         }
 
-        const { default_instrument, ...billingAddress } = fields;
+        const { defaultInstrument, ...billingAddress } = fields;
 
-        const [expiry_month, expiry_year] = values.cardExpiry ? values.cardExpiry.split('/') : [];
+        const [expiryMonth, expiryYear] = values.cardExpiry ? values.cardExpiry.split('/') : [];
 
         try {
-            await this._vaultingRequestSender.submitPaymentMethod(data, {
+            await this._vaultingRequestSender.submitPaymentInstrument(data, {
                 billingAddress,
                 instrument: {
                     type: 'card',
-                    cardholder_name: values.cardName || '',
+                    cardholderName: values.cardName || '',
                     number: values.cardNumber ? values.cardNumber.replace(/ /g, '') : '',
-                    expiry_month: Number(expiry_month.trim()),
-                    expiry_year: Number(`20${expiry_year.trim()}`),
-                    verification_value: values.cardCode ?? '',
+                    expiryMonth: Number(expiryMonth.trim()),
+                    expiryYear: Number(`20${expiryYear.trim()}`),
+                    verificationValue: values.cardCode ?? '',
                 },
-                default_instrument,
+                defaultInstrument,
             });
 
             this._eventPoster.post({

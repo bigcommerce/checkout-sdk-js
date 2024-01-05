@@ -156,35 +156,18 @@ export default class HostedField {
         fields: HostedFormVaultingInstrumentFields,
         data: HostedFormVaultingData,
     ): Promise<HostedInputVaultingSucceededEvent> {
-        try {
-            const promise = this._eventPoster.post<HostedInputVaultingSucceededEvent>(
-                {
-                    type: HostedFieldEventType.VaultingRequested,
-                    payload: { fields, data },
-                },
-                {
-                    successType: HostedInputEventType.VaultingSucceeded,
-                    errorType: HostedInputEventType.VaultingFailed,
-                },
-            );
+        const promise = this._eventPoster.post<HostedInputVaultingSucceededEvent>(
+            {
+                type: HostedFieldEventType.VaultingRequested,
+                payload: { fields, data },
+            },
+            {
+                successType: HostedInputEventType.VaultingSucceeded,
+                errorType: HostedInputEventType.VaultingFailed,
+            },
+        );
 
-            return await this._detachmentObserver.ensurePresence([this._iframe], promise);
-        } catch (event) {
-            console.log(event);
-            // if (this._isSubmitErrorEvent(event)) {
-            //     if (event.payload.error.code === 'hosted_form_error') {
-            //         throw new InvalidHostedFormError(event.payload.error.message);
-            //     }
-
-            //     if (event.payload.response) {
-            //         throw mapFromPaymentErrorResponse(event.payload.response);
-            //     }
-
-            //     throw new Error(event.payload.error.message);
-            // }
-
-            throw event;
-        }
+        return this._detachmentObserver.ensurePresence([this._iframe], promise);
     }
 
     async validateForm(): Promise<void> {

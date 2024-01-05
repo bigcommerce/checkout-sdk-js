@@ -2,7 +2,6 @@ import { pick } from 'lodash';
 
 import { DetachmentObserver, MutationObserverFactory } from '../common/dom';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
-// import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-protection';
 
 import HostedField from './hosted-field';
 import HostedFieldType from './hosted-field-type';
@@ -43,7 +42,6 @@ export default class HostedFormVaultingFactory {
             fields,
             new IframeEventListener(host),
             pick(options, 'onBlur', 'onEnter', 'onFocus', 'onCardTypeChange', 'onValidate'),
-            // new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
         );
     }
 }
