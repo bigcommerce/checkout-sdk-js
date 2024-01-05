@@ -214,7 +214,7 @@ describe('TDOnlineMartPaymentStrategy', () => {
                                 language: expect.any(String),
                                 screen_height: expect.any(Number),
                                 screen_width: expect.any(Number),
-                                time_zone: expect.any(String),
+                                time_zone_offset: expect.any(String),
                             }),
                             /* eslint-enable @typescript-eslint/naming-convention */
                         }),
@@ -253,7 +253,7 @@ describe('TDOnlineMartPaymentStrategy', () => {
                                 language: expect.any(String),
                                 screen_height: expect.any(Number),
                                 screen_width: expect.any(Number),
-                                time_zone: expect.any(String),
+                                time_zone_offset: expect.any(String),
                             }),
                             /* eslint-enable @typescript-eslint/naming-convention */
                         }),
