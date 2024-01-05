@@ -125,6 +125,7 @@ export interface PayPalCommerceScriptParams {
         'data-client-metadata-id'?: string;
         'data-partner-attribution-id'?: string;
         'data-user-id-token'?: string;
+        'data-namespace'?: string;
     };
 }
 
@@ -146,6 +147,7 @@ export type ComponentsScriptType = Array<
 
 export interface PayPalCommerceHostWindow extends Window {
     paypal?: PayPalSDK;
+    paypalAxo?: PayPalSDK;
     paypalLoadScript?: (options: PayPalCommerceScriptParams) => Promise<{ paypal: PayPalSDK }>;
 }
 

@@ -38,23 +38,27 @@ export default class PayPalCommerceScriptLoader {
         return this.loadPayPalSDK(paypalSdkScriptConfig, forceLoad);
     }
 
+    async getPayPalConnectSDK(
+        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
+        currencyCode: string,
+        initializesOnCheckoutPage?: boolean,
+        forceLoad?: boolean,
+    ): Promise<PayPalSDK> {
+        const paypalSdkScriptConfig = this.getPayPalConnectSdkScriptConfigOrThrow(
+            paymentMethod,
+            currencyCode,
+            initializesOnCheckoutPage,
+        );
+
+        return this.loadPayPalConnectSDK(paypalSdkScriptConfig, forceLoad);
+    }
+
     private async loadPayPalSDK(
         paypalSdkScriptConfig: PayPalCommerceScriptParams,
         forceLoad = false,
     ): Promise<PayPalSDK> {
         if (!this.window.paypal || forceLoad) {
-            const options = this.transformConfig<PayPalCommerceScriptParams['options']>(
-                paypalSdkScriptConfig.options,
-            );
-            const attributes = this.transformConfig<PayPalCommerceScriptParams['attributes']>(
-                paypalSdkScriptConfig.attributes,
-            );
-
-            const paypalSdkUrl = 'https://www.paypal.com/sdk/js';
-            const scriptQuery = new URLSearchParams(options).toString();
-            const scriptSrc = `${paypalSdkUrl}?${scriptQuery}`;
-
-            await this.scriptLoader.loadScript(scriptSrc, { async: true, attributes });
+            await this.loadPayPalScript(paypalSdkScriptConfig);
         }
 
         if (!this.window.paypal) {
@@ -62,6 +66,36 @@ export default class PayPalCommerceScriptLoader {
         }
 
         return this.window.paypal;
+    }
+
+    private async loadPayPalConnectSDK(
+        paypalSdkScriptConfig: PayPalCommerceScriptParams,
+        forceLoad = false,
+    ): Promise<PayPalSDK> {
+        if (!this.window.paypalAxo || forceLoad) {
+            await this.loadPayPalScript(paypalSdkScriptConfig);
+        }
+
+        if (!this.window.paypalAxo) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this.window.paypalAxo;
+    }
+
+    private async loadPayPalScript(paypalSdkScriptConfig: PayPalCommerceScriptParams): Promise<void> {
+        const options = this.transformConfig<PayPalCommerceScriptParams['options']>(
+            paypalSdkScriptConfig.options,
+        );
+        const attributes = this.transformConfig<PayPalCommerceScriptParams['attributes']>(
+            paypalSdkScriptConfig.attributes,
+        );
+
+        const paypalSdkUrl = 'https://www.paypal.com/sdk/js';
+        const scriptQuery = new URLSearchParams(options).toString();
+        const scriptSrc = `${paypalSdkUrl}?${scriptQuery}`;
+
+        await this.scriptLoader.loadScript(scriptSrc, { async: true, attributes });
     }
 
     // TODO: find a way how to fix complexity of the method
@@ -84,7 +118,6 @@ export default class PayPalCommerceScriptLoader {
             buyerCountry,
             attributionId,
             isVenmoEnabled,
-            isAcceleratedCheckoutEnabled,
             isHostedCheckoutEnabled,
             isPayPalCreditAvailable,
             isDeveloperModeApplicable,
@@ -112,11 +145,6 @@ export default class PayPalCommerceScriptLoader {
               )
             : availableAlternativePaymentMethods;
 
-        const shouldEnableConnectComponent =
-            isAcceleratedCheckoutEnabled && initializesOnCheckoutPage;
-        const enableConnectComponent: ComponentsScriptType = shouldEnableConnectComponent
-            ? ['connect']
-            : [];
         const googlePayComponent: ComponentsScriptType = isGooglePayEnabled ? ['googlepay'] : [];
 
         const disableFunding: FundingType = [
@@ -146,7 +174,6 @@ export default class PayPalCommerceScriptLoader {
                     'payment-fields',
                     'legal',
                     ...googlePayComponent,
-                    ...enableConnectComponent,
                 ],
                 currency: currencyCode,
                 intent,
@@ -154,14 +181,53 @@ export default class PayPalCommerceScriptLoader {
             },
             attributes: {
                 'data-partner-attribution-id': attributionId,
-                ...(shouldEnableConnectComponent
-                    ? {
-                          'data-user-id-token': clientToken,
-                          'data-client-metadata-id': 'sandbox', // TODO: should be updated when paypal will be ready for production
-                      }
-                    : {
-                          'data-client-token': clientToken,
-                      }),
+                'data-client-token': clientToken,
+            },
+        };
+    }
+
+    // TODO: find a way how to fix complexity of the method
+    // eslint-disable-next-line complexity
+    private getPayPalConnectSdkScriptConfigOrThrow(
+        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
+        currencyCode: string,
+        initializesOnCheckoutPage = true,
+    ): PayPalCommerceScriptParams {
+        const { clientToken, initializationData } = paymentMethod;
+
+        if (!initializationData?.clientId) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const {
+            intent,
+            clientId,
+            merchantId,
+            attributionId,
+            isAcceleratedCheckoutEnabled,
+        } = initializationData;
+
+        const shouldEnableConnectComponent = isAcceleratedCheckoutEnabled && initializesOnCheckoutPage;
+        const enableConnectComponent: ComponentsScriptType = shouldEnableConnectComponent
+            ? ['connect']
+            : [];
+
+        return {
+            options: {
+                'client-id': clientId,
+                'merchant-id': merchantId,
+                commit: true,
+                components: [
+                    ...enableConnectComponent,
+                ],
+                currency: currencyCode,
+                intent,
+            },
+            attributes: {
+                'data-partner-attribution-id': attributionId,
+                'data-user-id-token': clientToken,
+                'data-client-metadata-id': 'sandbox', // TODO: should be updated when paypal will be ready for production
+                'data-namespace': 'paypalAxo',
             },
         };
     }

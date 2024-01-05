@@ -66,6 +66,25 @@ export default class PayPalCommerceIntegrationService {
         return this.paypalSdk;
     }
 
+    async loadPayPalConnectSdk(
+        methodId: string,
+        providedCurrencyCode?: string,
+        initializesOnCheckoutPage?: boolean,
+        forceLoad?: boolean,
+    ): Promise<PayPalSDK> {
+        const state = this.paymentIntegrationService.getState();
+        const currencyCode = providedCurrencyCode || state.getCartOrThrow().currency.code;
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+
+        return await this.paypalCommerceScriptLoader.getPayPalConnectSDK(
+            paymentMethod,
+            currencyCode,
+            initializesOnCheckoutPage,
+            forceLoad,
+        );
+    }
+
     getPayPalSdkOrThrow(): PayPalSDK {
         if (!this.paypalSdk) {
             throw new PaymentMethodClientUnavailableError();
