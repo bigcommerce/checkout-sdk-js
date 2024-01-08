@@ -20,6 +20,7 @@
         "payment-integration-api": "packages/payment-integration-api",
         "payment-integrations-test-utils": "packages/payment-integrations-test-utils",
         "paypal-commerce-integration": "packages/paypal-commerce-integration",
+        "paypal-commerce-utils": "packages/paypal-commerce-utils",
         "paypal-express-integration": "packages/paypal-express-integration",
         "sezzle-integration": "packages/sezzle-integration",
         "squarev2-integration": "packages/squarev2-integration",

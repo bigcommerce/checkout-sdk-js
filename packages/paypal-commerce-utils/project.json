@@ -1,0 +1,23 @@
+{
+    "root": "packages/paypal-commerce-utils",
+    "sourceRoot": "packages/paypal-commerce-utils/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/paypal-commerce-utils/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/paypal-commerce-utils"],
+            "options": {
+                "jestConfig": "packages/paypal-commerce-utils/jest.config.js",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": ["scope:shared"]
+}
