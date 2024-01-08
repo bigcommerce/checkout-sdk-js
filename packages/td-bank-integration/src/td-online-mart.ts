@@ -1,4 +1,4 @@
-import { BrowserInfo, RequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { RequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export interface TdOnlineMartHostWindow extends Window {
     customcheckout?(): TDCustomCheckoutSDK;
@@ -84,9 +84,3 @@ interface CssStyles {
     paddingRight?: string;
     paddingBottom?: string;
 }
-
-/* eslint-disable @typescript-eslint/naming-convention */
-export interface TdOnlineMartBrowserInfo extends Omit<BrowserInfo, 'time_zone_offset'> {
-    time_zone: string;
-}
-/* eslint-enable @typescript-eslint/naming-convention */

@@ -24,7 +24,6 @@ import { isTdOnlineMartAdditionalAction } from './isTdOnlineMartAdditionalAction
 import {
     FieldType,
     TDCustomCheckoutSDK,
-    TdOnlineMartBrowserInfo,
     TdOnlineMartElement,
     TdOnlineMartThreeDSErrorBody,
 } from './td-online-mart';
@@ -97,7 +96,7 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             isHostedInstrumentLike(paymentData) ? paymentData : {};
         const commonPaymentData = {
             // eslint-disable-next-line @typescript-eslint/naming-convention
-            browser_info: this.getTDBrowserInfo(),
+            browser_info: getBrowserInfo(),
             shouldSetAsDefaultInstrument,
         };
 
@@ -132,17 +131,6 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             },
         };
     }
-
-    /* eslint-disable @typescript-eslint/naming-convention */
-    private getTDBrowserInfo(): TdOnlineMartBrowserInfo {
-        const { time_zone_offset, ...defaultBrowserInfo } = getBrowserInfo();
-
-        return {
-            ...defaultBrowserInfo,
-            time_zone: time_zone_offset,
-        };
-    }
-    /* eslint-enable @typescript-eslint/naming-convention */
 
     private mountHostedFields(methodId: string): void {
         const options = this.getHostedFieldsOptions();
