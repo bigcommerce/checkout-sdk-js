@@ -68,7 +68,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         private scriptLoader: StripeUPEScriptLoader,
     ) {}
 
-    async initialize(options: PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions) {
+    async initialize(
+        options: PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions,
+    ): Promise<void> {
         const { stripeupe, methodId, gatewayId } = options;
 
         if (!stripeupe?.containerId) {
@@ -142,9 +144,8 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         const { paymentData, methodId, gatewayId } = payment;
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
-        const { isStoreCreditApplied: useStoreCredit } = this.paymentIntegrationService
-            .getState()
-            .getCheckoutOrThrow();
+        const state = this.paymentIntegrationService.getState();
+        const { isStoreCreditApplied: useStoreCredit } = state.getCheckoutOrThrow();
 
         if (useStoreCredit) {
             await this.paymentIntegrationService.applyStoreCredit(useStoreCredit);
@@ -155,16 +156,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 params: { method: methodId },
             });
 
-            const { email } = this.paymentIntegrationService.getState().getCustomerOrThrow();
+            const { email } = state.getCustomerOrThrow();
 
-            const { authenticationState } = this.paymentIntegrationService
-                .getState()
-                .getPaymentProviderCustomerOrThrow();
+            const { authenticationState } = state.getPaymentProviderCustomerOrThrow();
 
             if (authenticationState !== undefined && !email) {
-                const billingAddress = this.paymentIntegrationService
-                    .getState()
-                    .getBillingAddressOrThrow();
+                const billingAddress = state.getBillingAddressOrThrow();
 
                 await this.paymentIntegrationService.updateBillingAddress(billingAddress);
             }
@@ -333,7 +330,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         });
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
-        if (!paymentMethod || !isStripeUPEPaymentMethodLike(paymentMethod)) {
+        if (!isStripeUPEPaymentMethodLike(paymentMethod)) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 

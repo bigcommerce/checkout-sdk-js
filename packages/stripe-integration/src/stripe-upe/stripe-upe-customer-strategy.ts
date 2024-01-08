@@ -11,13 +11,13 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    isStripeUPEPaymentMethodLike,
     StripeElements,
     StripeElementType,
     StripeEventType,
     StripeFormMode,
     StripeUPEAppearanceOptions,
     StripeUPEClient,
-    StripeUPEPaymentMethod,
 } from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import { WithStripeUPECustomerInitializeOptions } from './stripeupe-customer-initialize-options';
@@ -57,22 +57,22 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
         });
 
         const state = this.paymentIntegrationService.getState();
-
         const paymentMethod = state.getPaymentMethodOrThrow(methodId, gatewayId);
         const { clientToken } = paymentMethod;
+
+        if (!isStripeUPEPaymentMethodLike(paymentMethod) || !clientToken) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
+        }
+
         const {
             initializationData: { stripePublishableKey, stripeConnectedAccount },
-        } = paymentMethod as StripeUPEPaymentMethod;
+        } = paymentMethod;
 
         const { email } = state.getCustomerOrThrow();
 
         const { authenticationState } = state.getPaymentProviderCustomerOrThrow();
 
         if (!email) {
-            if (!stripePublishableKey || !clientToken) {
-                throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
-            }
-
             let appearance: StripeUPEAppearanceOptions | undefined;
             const styles = typeof getStyles === 'function' && getStyles();
 
@@ -145,8 +145,6 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             });
             linkAuthenticationElement.mount(`#${container}`);
         }
-
-        return Promise.resolve();
     }
 
     deinitialize(): Promise<void> {
