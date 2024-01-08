@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.507.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.506.0...v1.507.0) (2024-01-08)
+
+
+### Features
+
+* **payment:** PI-1318 TDBank add  browser info ([4b8f3f0](https://github.com/bigcommerce/checkout-sdk-js/commit/4b8f3f0fe309db5ecf719c955d5036a13f168449))
+
 ## [1.506.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.505.2...v1.506.0) (2024-01-04)
 
 
