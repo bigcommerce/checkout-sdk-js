@@ -149,12 +149,13 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         const buttonOptions: PayPalCommerceButtonsOptions = {
             fundingSource: methodId,
             style: this.paypalCommerceIntegrationService.getValidButtonStyle(buttonStyle),
-            onClick: async (_, actions) =>
-                paypalOptions.onValidate(actions.resolve, actions.reject),
+            onInit: (_, actions) => paypalOptions.onInitButton(actions),
             createOrder: () => this.onCreateOrder(paypalOptions),
             onApprove: (data) => this.handleApprove(data, submitForm),
             onCancel: () => this.toggleLoadingIndicator(false),
             onError: (error) => this.handleFailure(error, onError),
+            onClick: async (_, actions) =>
+                paypalOptions.onValidate(actions.resolve, actions.reject),
         };
 
         this.paypalButton = paypalSdk.Buttons(buttonOptions);

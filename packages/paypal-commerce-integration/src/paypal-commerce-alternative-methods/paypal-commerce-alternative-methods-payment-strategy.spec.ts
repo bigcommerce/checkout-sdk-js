@@ -113,6 +113,18 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
                     }
                 });
 
+                eventEmitter.on('onInit', () => {
+                    if (options.onInit) {
+                        options.onInit(
+                            { correlationID: defaultMethodId },
+                            {
+                                disable: jest.fn(),
+                                enable: jest.fn(),
+                            },
+                        );
+                    }
+                });
+
                 eventEmitter.on('onClick', () => {
                     if (options.onClick) {
                         options.onClick(
@@ -233,6 +245,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
                     height: 55,
                     label: 'pay',
                 },
+                onInit: expect.any(Function),
                 onClick: expect.any(Function),
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
@@ -319,6 +332,27 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(onValidateMock).toHaveBeenCalled();
+        });
+    });
+
+    describe('#onInit button callback', () => {
+        it('calls validation callback with provided params', async () => {
+            const onInitButtonMock = jest.fn();
+
+            await strategy.initialize({
+                ...initializationOptions,
+                methodId: NonInstantAlternativePaymentMethods.OXXO,
+                paypalcommercealternativemethods: {
+                    ...paypalCommerceAlternativeMethodsOptions,
+                    onInitButton: onInitButtonMock,
+                },
+            });
+
+            eventEmitter.emit('onInit');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(onInitButtonMock).toHaveBeenCalled();
         });
     });
 
