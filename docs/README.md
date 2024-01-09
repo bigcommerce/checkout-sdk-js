@@ -408,9 +408,9 @@
 - [WithBuyNowFeature](interfaces/WithBuyNowFeature.md)
 - [WithCheckoutcomFawryInstrument](interfaces/WithCheckoutcomFawryInstrument.md)
 - [WithCheckoutcomSEPAInstrument](interfaces/WithCheckoutcomSEPAInstrument.md)
-- [WithCheckoutcomiDealInstrument](interfaces/WithCheckoutcomiDealInstrument.md)
 - [WithCreditCardPaymentInitializeOptions](interfaces/WithCreditCardPaymentInitializeOptions.md)
 - [WithDocumentInstrument](interfaces/WithDocumentInstrument.md)
+- [WithIdealInstrument](interfaces/WithIdealInstrument.md)
 - [WithMollieIssuerInstrument](interfaces/WithMollieIssuerInstrument.md)
 - [WithMolliePaymentInitializeOptions](interfaces/WithMolliePaymentInitializeOptions.md)
 - [WithPayPalCommerceAlternativeMethodsButtonInitializeOptions](interfaces/WithPayPalCommerceAlternativeMethodsButtonInitializeOptions.md)
@@ -755,7 +755,7 @@ ___
 
 ### OrderPaymentInstrument
 
-Ƭ **OrderPaymentInstrument**: `WithBankAccountInstrument` \| `EcpInstrument` \| `SepaInstrument` \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) \| [`HostedInstrument`](interfaces/HostedInstrument.md) \| [`HostedCreditCardInstrument`](README.md#hostedcreditcardinstrument) \| [`HostedVaultedInstrument`](README.md#hostedvaultedinstrument) \| [`NonceInstrument`](interfaces/NonceInstrument.md) \| [`VaultedInstrument`](interfaces/VaultedInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithDocumentInstrument`](interfaces/WithDocumentInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomFawryInstrument`](interfaces/WithCheckoutcomFawryInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomSEPAInstrument`](interfaces/WithCheckoutcomSEPAInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomiDealInstrument`](interfaces/WithCheckoutcomiDealInstrument.md) \| [`HostedInstrument`](interfaces/HostedInstrument.md) & [`WithMollieIssuerInstrument`](interfaces/WithMollieIssuerInstrument.md) \| `WithAccountCreation`
+Ƭ **OrderPaymentInstrument**: `WithBankAccountInstrument` \| `WithEcpInstrument` \| `WithSepaInstrument` \| [`WithIdealInstrument`](interfaces/WithIdealInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) \| [`HostedInstrument`](interfaces/HostedInstrument.md) \| [`HostedCreditCardInstrument`](README.md#hostedcreditcardinstrument) \| [`HostedVaultedInstrument`](README.md#hostedvaultedinstrument) \| [`NonceInstrument`](interfaces/NonceInstrument.md) \| [`VaultedInstrument`](interfaces/VaultedInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithDocumentInstrument`](interfaces/WithDocumentInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomFawryInstrument`](interfaces/WithCheckoutcomFawryInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithCheckoutcomSEPAInstrument`](interfaces/WithCheckoutcomSEPAInstrument.md) \| [`CreditCardInstrument`](interfaces/CreditCardInstrument.md) & [`WithIdealInstrument`](interfaces/WithIdealInstrument.md) \| [`HostedInstrument`](interfaces/HostedInstrument.md) & [`WithMollieIssuerInstrument`](interfaces/WithMollieIssuerInstrument.md) \| `WithAccountCreation`
 
 ___
 

@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.510.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.509.0...v1.510.0) (2024-01-09)
+
+
+### Features
+
+* **payment:** PI-851 bluesnap direct APMs refactoring ([cfdaf66](https://github.com/bigcommerce/checkout-sdk-js/commit/cfdaf663a3c70d4a2f2129c44e14d8d4f3ee74c5))
+* **payment:** PI-851 blusnap direct ideal strategy creation ([f0feb99](https://github.com/bigcommerce/checkout-sdk-js/commit/f0feb99f7e5ebb2b260bbf2c726597612652353d))
+* **payment:** PI-851 blusnap direct package directories reorganisation and creation of the Ideal generic instrument type ([6292ca2](https://github.com/bigcommerce/checkout-sdk-js/commit/6292ca2b20a964a6812efa56f8dee7eb777e7ce5))
+
 ## [1.509.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.508.0...v1.509.0) (2024-01-09)
 
 

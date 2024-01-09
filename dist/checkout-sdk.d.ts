@@ -5,17 +5,17 @@ import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/c
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
-import { EcpInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedFormOptions as HostedFormOptions_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
-import { SepaInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Timeout } from '@bigcommerce/request-sender';
 import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WithBankAccountInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { WithEcpInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { WithSepaInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { createTimeout } from '@bigcommerce/request-sender';
 
 declare type AccountInstrument = PayPalInstrument | BankInstrument | AchInstrument;
@@ -6397,7 +6397,7 @@ declare interface OrderPayment {
     amount: number;
 }
 
-declare type OrderPaymentInstrument = WithBankAccountInstrument | EcpInstrument | SepaInstrument | CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithCheckoutcomiDealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
+declare type OrderPaymentInstrument = WithBankAccountInstrument | WithEcpInstrument | WithSepaInstrument | WithIdealInstrument | CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithIdealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
 
 /**
  * An object that contains the payment information required for submitting an
@@ -8376,10 +8376,6 @@ declare interface WithCheckoutcomSEPAInstrument {
     bic: string;
 }
 
-declare interface WithCheckoutcomiDealInstrument {
-    bic: string;
-}
-
 declare interface WithCreditCardPaymentInitializeOptions {
     creditCard?: CreditCardPaymentInitializeOptions_2;
 }
@@ -8403,6 +8399,10 @@ declare type WithGooglePayCustomerInitializeOptions = {
 declare type WithGooglePayPaymentInitializeOptions = {
     [k in GooglePayKey]?: GooglePayPaymentInitializeOptions_2;
 };
+
+declare interface WithIdealInstrument {
+    bic: string;
+}
 
 declare interface WithMollieIssuerInstrument {
     issuer: string;
