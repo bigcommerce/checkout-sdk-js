@@ -73,7 +73,7 @@ export default class PayPalCommerceSdk {
     ): PayPalSdkConfig {
         const { clientToken, initializationData } = paymentMethod;
 
-        if (!initializationData?.clientId) {
+        if (!initializationData || !initializationData.clientId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 

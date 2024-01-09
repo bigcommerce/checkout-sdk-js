@@ -19,6 +19,7 @@ import {
     PayPalCommerceConnectProfileCard,
     PayPalCommerceConnectProfileName,
     PayPalCommerceConnectStylesOption,
+    PayPalConnectProfileToBcCustomerDataMappingResult,
 } from './paypal-commerce-types';
 
 export default class PayPalCommerceAcceleratedCheckoutUtils {
@@ -117,12 +118,11 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
      * update shipping and billing addresses
      *
      */
-    // TODO: add return interface later
     mapPayPalConnectProfileToBcCustomerData(
         methodId: string,
-        authenticationResult?: PayPalCommerceConnectAuthenticationResult,
-    ) {
-        const { authenticationState, profileData } = authenticationResult || {};
+        authenticationResult: PayPalCommerceConnectAuthenticationResult,
+    ): PayPalConnectProfileToBcCustomerDataMappingResult {
+        const { authenticationState, profileData } = authenticationResult;
 
         const paypalBillingAddress = profileData?.card?.paymentSource?.card?.billingAddress;
         const paypalShippingAddress = profileData?.shippingAddress;
