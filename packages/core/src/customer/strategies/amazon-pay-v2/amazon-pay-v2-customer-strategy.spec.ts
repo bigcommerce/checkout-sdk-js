@@ -102,7 +102,6 @@ describe('AmazonPayV2CustomerStrategy', () => {
                 containerId: 'amazonpayCheckoutButton',
                 methodId: 'amazonpay',
                 placement: AmazonPayV2Placement.Checkout,
-                onClick: customerInitializeOptions.amazonpay?.onClick,
             });
         });
 
@@ -121,17 +120,6 @@ describe('AmazonPayV2CustomerStrategy', () => {
                 customerInitializeOptions = getAmazonPayV2CustomerInitializeOptions(
                     Mode.Incomplete,
                 );
-
-                const initialize = strategy.initialize(customerInitializeOptions);
-
-                await expect(initialize).rejects.toThrow(InvalidArgumentError);
-            });
-
-            test('if onClick is not a function', async () => {
-                customerInitializeOptions = {
-                    ...getAmazonPayV2CustomerInitializeOptions(Mode.UndefinedMethodId),
-                    onClick: 'test',
-                };
 
                 const initialize = strategy.initialize(customerInitializeOptions);
 
