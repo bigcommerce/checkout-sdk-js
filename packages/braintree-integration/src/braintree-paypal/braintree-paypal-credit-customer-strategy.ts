@@ -11,8 +11,7 @@ import {
     BraintreeTokenizePayload,
     isBraintreeError,
     PaypalAuthorizeData,
-    PaypalButtonStyleColorOption,
-    PaypalButtonStyleLabelOption,
+    PaypalStyleOptions,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CustomerCredentials,
@@ -78,6 +77,8 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
         const storeConfig = state.getStoreConfigOrThrow();
 
         const { clientToken, config, initializationData } = paymentMethod;
+        const { paymentButtonStyles } = initializationData || {};
+        const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -98,6 +99,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
                 braintreepaypalcredit,
                 methodId,
                 Boolean(config.testMode),
+                { ...checkoutTopButtonStyles, height: DefaultCheckoutButtonHeight },
             );
         };
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
@@ -134,35 +136,23 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
         braintreepaypalcredit: BraintreePaypalCreditCustomerInitializeOptions,
         methodId: string,
         testMode: boolean,
+        buttonStyles: PaypalStyleOptions,
     ): void {
-        const {
-            container,
-            buttonHeight = DefaultCheckoutButtonHeight,
-            onClick = noop,
-        } = braintreepaypalcredit;
+        const { container, onClick = noop } = braintreepaypalcredit;
         const { paypal } = this.braintreeHostWindow;
 
         let hasRenderedSmartButton = false;
 
         if (paypal) {
             const fundingSources = [paypal.FUNDING.PAYLATER, paypal.FUNDING.CREDIT];
-            const commonButtonStyle = {
-                height: buttonHeight,
-                color: PaypalButtonStyleColorOption.GOLD,
-            };
 
             fundingSources.forEach((fundingSource) => {
-                const buttonStyle =
-                    fundingSource === paypal.FUNDING.CREDIT
-                        ? { label: PaypalButtonStyleLabelOption.CREDIT, ...commonButtonStyle }
-                        : commonButtonStyle;
-
                 if (!hasRenderedSmartButton) {
                     const paypalButtonRender = paypal.Buttons({
                         env: testMode ? 'sandbox' : 'production',
                         commit: false,
                         fundingSource,
-                        style: buttonStyle,
+                        style: buttonStyles,
                         createOrder: () =>
                             this.setupPayment(
                                 braintreePaypalCheckout,

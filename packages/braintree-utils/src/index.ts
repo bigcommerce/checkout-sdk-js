@@ -5,6 +5,7 @@ export {
     PaypalAuthorizeData,
     PaypalButtonStyleColorOption,
     PaypalButtonStyleLabelOption,
+    PaypalStyleOptions,
 } from './paypal';
 export { default as BraintreeIntegrationService } from './braintree-integration-service';
 export { default as BraintreeScriptLoader } from './braintree-script-loader';

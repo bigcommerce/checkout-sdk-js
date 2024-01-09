@@ -15,6 +15,7 @@ import {
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
     PaypalButtonOptions,
+    PaypalButtonStyleColorOption,
     PaypalSDK,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -293,6 +294,8 @@ describe('BraintreePaypalCustomerStrategy', () => {
                 commit: false,
                 fundingSource: paypalSdkMock.FUNDING.PAYPAL,
                 style: {
+                    color: PaypalButtonStyleColorOption.BLUE,
+                    label: 'checkout',
                     height: DefaultCheckoutButtonHeight,
                 },
                 createOrder: expect.any(Function),
@@ -318,6 +321,8 @@ describe('BraintreePaypalCustomerStrategy', () => {
                 commit: false,
                 fundingSource: paypalSdkMock.FUNDING.PAYPAL,
                 style: {
+                    color: PaypalButtonStyleColorOption.BLUE,
+                    label: 'checkout',
                     height: DefaultCheckoutButtonHeight,
                 },
                 createOrder: expect.any(Function),
@@ -331,7 +336,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
                 ...initializationOptions,
                 braintreepaypal: {
                     ...braintreePaypalOptions,
-                    buttonHeight: 100,
+                    buttonHeight: DefaultCheckoutButtonHeight,
                 },
             });
 
@@ -340,7 +345,9 @@ describe('BraintreePaypalCustomerStrategy', () => {
                 commit: false,
                 fundingSource: paypalSdkMock.FUNDING.PAYPAL,
                 style: {
-                    height: 100,
+                    color: PaypalButtonStyleColorOption.BLUE,
+                    label: 'checkout',
+                    height: DefaultCheckoutButtonHeight,
                 },
                 createOrder: expect.any(Function),
                 onApprove: expect.any(Function),
