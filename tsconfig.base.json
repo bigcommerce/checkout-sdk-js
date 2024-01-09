@@ -68,6 +68,9 @@
             "@bigcommerce/checkout-sdk/paypal-commerce-integration": [
                 "packages/paypal-commerce-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/paypal-commerce-utils": [
+                "packages/paypal-commerce-utils/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/paypal-express-integration": [
                 "packages/paypal-express-integration/src/index.ts"
             ],
