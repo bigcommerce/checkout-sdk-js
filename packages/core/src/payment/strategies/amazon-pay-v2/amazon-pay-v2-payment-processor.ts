@@ -64,23 +64,11 @@ export default class AmazonPayV2PaymentProcessor {
         });
     }
 
-    createButton(
-        containerId: string,
-        options: AmazonPayV2ButtonParameters,
-        onClick?: () => void,
-    ): void {
+    createButton(containerId: string, options: AmazonPayV2ButtonParameters): void {
         this._amazonPayV2Button = this._getAmazonPayV2SDK().Pay.renderButton(
             `#${containerId}`,
             options,
         );
-
-        // onClick callback is a function provided through initializationOptions to the strategy
-        // P.S.: related to customer strategy
-        if (onClick && typeof onClick === 'function') {
-            this._amazonPayV2Button.onClick(() => {
-                onClick();
-            });
-        }
     }
 
     prepareCheckout(createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>) {
@@ -132,7 +120,6 @@ export default class AmazonPayV2PaymentProcessor {
         methodId,
         options,
         placement,
-        onClick,
     }: AmazonPayV2ButtonRenderingOptions): HTMLDivElement {
         const container = document.querySelector<HTMLElement>(`#${containerId}`);
 
@@ -158,7 +145,7 @@ export default class AmazonPayV2PaymentProcessor {
                 buttonColor,
             );
 
-        this.createButton(parentContainerId, amazonPayV2ButtonOptions, onClick);
+        this.createButton(parentContainerId, amazonPayV2ButtonOptions);
 
         return this._getButtonParentContainer();
     }

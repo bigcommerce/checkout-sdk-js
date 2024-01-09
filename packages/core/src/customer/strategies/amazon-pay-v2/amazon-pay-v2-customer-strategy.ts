@@ -32,12 +32,6 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
             );
         }
 
-        if (amazonpay.onClick && typeof amazonpay.onClick !== 'function') {
-            throw new InvalidArgumentError(
-                'Unable to proceed because "options.amazonpay.onClick" argument is not a function.',
-            );
-        }
-
         let state = this._store.getState();
         let paymentMethod: PaymentMethod<any>;
 
@@ -57,7 +51,6 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
             containerId: amazonpay.container,
             methodId,
             placement: AmazonPayV2Placement.Checkout,
-            ...(amazonpay.onClick && { onClick: amazonpay.onClick }),
         });
 
         return this._store.getState();
