@@ -1,8 +1,8 @@
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { PayPalCommerceInitializationData, PayPalCommerceIntent } from '../paypal-commerce-types';
+import { PayPalCommerceIntent } from '../paypal-commerce-types';
 
-export default function getPayPalCommercePaymentMethod(): PaymentMethod<PayPalCommerceInitializationData> {
+export default function getPayPalCommercePaymentMethod(): PaymentMethod {
     return {
         id: 'paypalcommerce',
         logoUrl: '',
@@ -38,6 +38,7 @@ export default function getPayPalCommercePaymentMethod(): PaymentMethod<PayPalCo
                     height: 55,
                 },
             },
+            availableAlternativePaymentMethods: [],
             clientId: 'abc',
             merchantId: 'JTS4DY7XFSQZE',
             orderId: '3U4171152W1482642',
@@ -54,7 +55,7 @@ export default function getPayPalCommercePaymentMethod(): PaymentMethod<PayPalCo
     };
 }
 
-export function getPayPalCommerceAcceleratedCheckoutPaymentMethod(): PaymentMethod<PayPalCommerceInitializationData> {
+export function getPayPalCommerceAcceleratedCheckoutPaymentMethod(): PaymentMethod {
     const paypalCommerceDefaultPaymentMethod = getPayPalCommercePaymentMethod();
 
     return {

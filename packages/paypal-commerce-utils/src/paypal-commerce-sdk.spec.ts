@@ -8,15 +8,11 @@ import {
 
 import { getPayPalAxoSdk, getPayPalCommerceAcceleratedCheckoutPaymentMethod } from './mocks';
 import PayPalCommerceSdk from './paypal-commerce-sdk';
-import {
-    PayPalAxoSdk,
-    PayPalCommerceHostWindow,
-    PayPalCommerceInitializationData,
-} from './paypal-commerce-types';
+import { PayPalAxoSdk, PayPalCommerceHostWindow } from './paypal-commerce-types';
 
 describe('PayPalCommerceSdk', () => {
     let loader: ScriptLoader;
-    let paymentMethod: PaymentMethod<PayPalCommerceInitializationData>;
+    let paymentMethod: PaymentMethod;
     let paypalAxoSdk: PayPalAxoSdk;
     let subject: PayPalCommerceSdk;
 

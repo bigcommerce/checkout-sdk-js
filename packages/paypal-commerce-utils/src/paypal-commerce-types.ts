@@ -88,6 +88,10 @@ export interface PayPalAxoSdk {
  */
 export interface PayPalCommerceConnect {
     identity: PayPalCommerceConnectIdentity;
+    profile: PayPalCommerceConnectProfile;
+    ConnectCardComponent: (
+        options: PayPalCommerceConnectCardComponentOptions,
+    ) => PayPalCommerceConnectCardComponent;
 }
 
 export interface PayPalCommerceConnectIdentity {
@@ -204,4 +208,55 @@ export interface PayPalCommerceConnectStylesOption {
         };
     };
     branding?: string; // 'light' | 'dark'
+}
+
+export interface PayPalCommerceConnectProfile {
+    showCardSelector(): Promise<PayPalCommerceCardSelectorResponse>;
+}
+
+export interface PayPalCommerceCardSelectorResponse {
+    selectionChanged: boolean;
+    selectedCard: PayPalCommerceConnectProfileCard;
+}
+
+export interface PayPalCommerceConnectCardComponent {
+    (options: PayPalCommerceConnectCardComponentOptions): PayPalCommerceConnectCardComponent;
+    tokenize(
+        options: PayPalCommerceConnectTokenizeOptions,
+    ): Promise<PayPalCommerceConnectTokenizeResult>;
+    render(element: string): void;
+}
+
+export interface PayPalCommerceConnectCardComponentOptions {
+    fields: PayPalCommerceConnectCardComponentFields;
+}
+
+export interface PayPalCommerceConnectCardComponentFields {
+    [key: string]: PayPalCommerceConnectCardComponentField;
+}
+export interface PayPalCommerceConnectCardComponentField {
+    placeholder?: string;
+    prefill?: string;
+}
+
+export interface PayPalCommerceConnectTokenizeResult {
+    nonce: string;
+    details: PayPalCommerceConnectTokenizeDetails;
+    description: string;
+    type: string;
+}
+
+export interface PayPalCommerceConnectTokenizeDetails {
+    bin: string;
+    cardType: string;
+    expirationMoth: string;
+    expirationYear: string;
+    cardholderName: string;
+    lastFour: string;
+    lastTwo: string;
+}
+
+export interface PayPalCommerceConnectTokenizeOptions {
+    billingAddress?: PayPalCommerceConnectAddress;
+    shippingAddress?: PayPalCommerceConnectAddress;
 }
