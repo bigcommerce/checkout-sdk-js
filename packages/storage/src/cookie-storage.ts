@@ -7,12 +7,12 @@ interface CookieOptions {
 
 export default class CookieStorage {
     static get(name: string): string | null {
-        const cookieValue = `${encodeURIComponent(`${name}`)}=`;
+        const cookieKey = `${encodeURIComponent(`${name}`)}=`;
         const cookie = document.cookie;
 
         let value = null;
 
-        const firstIndex = cookie.indexOf(cookieValue);
+        const firstIndex = cookie.indexOf(cookieKey);
 
         if (firstIndex > -1) {
             let lastIndex = cookie.indexOf(';', firstIndex);
@@ -21,9 +21,7 @@ export default class CookieStorage {
                 lastIndex = cookie.length;
             }
 
-            value = decodeURIComponent(
-                cookie.substring(firstIndex + cookieValue.length, lastIndex),
-            );
+            value = decodeURIComponent(cookie.substring(firstIndex + cookieKey.length, lastIndex));
         }
 
         return value;

@@ -10,7 +10,15 @@ describe('CookieStorage', () => {
         });
     });
 
+    afterEach(() => {
+        Object.defineProperty(window.document, 'cookie', {
+            writable: true,
+            value: '',
+        });
+    });
+
     it('retrieve an existing value by name', () => {
+        expect(CookieStorage.get('first_user')).toContain('John');
         expect(CookieStorage.get('description')).toBe('any small description =');
     });
 
@@ -19,9 +27,24 @@ describe('CookieStorage', () => {
     });
 
     it('retrieve the existing value by name after setting', () => {
+        const date = new Date('09 Jan 2024 14:04:48 GMT');
+
+        CookieStorage.set('agent', 'Smith', {
+            expires: date,
+            secure: false,
+            domain: 'domain',
+            path: 'path',
+        });
+
+        expect(window.document.cookie).toContain(
+            'agent=Smith; expires=Tue, 09 Jan 2024 14:04:48 GMT; path=path; domain=domain',
+        );
+    });
+
+    it('retrieve the existing value by name after setting without additional options', () => {
         CookieStorage.set('agent', 'Smith');
 
-        expect(CookieStorage.get('agent')).toBe('Smith');
+        expect(window.document.cookie).toContain('agent=Smith');
     });
 
     it('remove value by name', () => {
