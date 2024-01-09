@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.509.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.508.0...v1.509.0) (2024-01-09)
+
+
+### Features
+
+* **payment:** PAYPAL-3443 added PayPal Commerce Accelerated Checkout utils class to PPCP shared package ([#2313](https://github.com/bigcommerce/checkout-sdk-js/issues/2313)) ([766ab3e](https://github.com/bigcommerce/checkout-sdk-js/commit/766ab3e27fc9138e1e16270a40f2d78d0dfac188))
+
 ## [1.508.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.507.0...v1.508.0) (2024-01-09)
 
 
