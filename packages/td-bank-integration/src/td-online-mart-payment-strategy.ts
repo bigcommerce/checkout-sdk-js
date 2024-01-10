@@ -82,6 +82,7 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<void> {
+        this.tdOnlineMartClient = undefined;
         this.cardNumberInput?.unmount();
         this.cvvInput?.unmount();
         this.expiryInput?.unmount();
