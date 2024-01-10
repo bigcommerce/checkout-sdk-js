@@ -101,6 +101,7 @@ export interface WithMollieIssuerInstrument {
 
 export interface WithPayPalConnectInstrument {
     paypal_connect_token: {
+        order_id?: string;
         token: string;
     };
 }
