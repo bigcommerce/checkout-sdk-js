@@ -266,6 +266,7 @@
 - [IbanElementOptions](interfaces/IbanElementOptions.md)
 - [IdealElementOptions](interfaces/IdealElementOptions.md)
 - [IndividualCardElementOptions](interfaces/IndividualCardElementOptions.md)
+- [InitCallbackActions](interfaces/InitCallbackActions.md)
 - [InitializationStrategy](interfaces/InitializationStrategy.md)
 - [InlineElementStyles](interfaces/InlineElementStyles.md)
 - [InputDetail](interfaces/InputDetail.md)

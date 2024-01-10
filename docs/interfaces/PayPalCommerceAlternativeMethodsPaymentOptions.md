@@ -81,6 +81,7 @@ service.initializePayment({
 ### Methods
 
 - [onError](PayPalCommerceAlternativeMethodsPaymentOptions.md#onerror)
+- [onInitButton](PayPalCommerceAlternativeMethodsPaymentOptions.md#oninitbutton)
 - [onRenderButton](PayPalCommerceAlternativeMethodsPaymentOptions.md#onrenderbutton)
 - [onValidate](PayPalCommerceAlternativeMethodsPaymentOptions.md#onvalidate)
 - [submitForm](PayPalCommerceAlternativeMethodsPaymentOptions.md#submitform)
@@ -128,6 +129,25 @@ A callback for displaying error popup. This callback requires error object as pa
 #### Returns
 
 `void`
+
+___
+
+### onInitButton
+
+▸ **onInitButton**(`actions`): `Promise`<`void`\>
+
+A callback that gets called
+when Smart Payment Button is initialized.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `actions` | [`InitCallbackActions`](InitCallbackActions.md) |
+
+#### Returns
+
+`Promise`<`void`\>
 
 ___
 

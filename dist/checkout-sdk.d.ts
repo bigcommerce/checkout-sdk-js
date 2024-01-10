@@ -5695,6 +5695,11 @@ declare interface IndividualCardElementOptions {
     zipCodeElementOptions?: ZipCodeElementOptions;
 }
 
+declare interface InitCallbackActions {
+    disable(): void;
+    enable(): void;
+}
+
 declare interface InitializationStrategy extends Partial<UnknownObject> {
     type: string;
 }
@@ -6683,6 +6688,11 @@ declare interface PayPalCommerceAlternativeMethodsPaymentOptions {
      * when buyer approved PayPal account.
      */
     submitForm(): void;
+    /**
+     * A callback that gets called
+     * when Smart Payment Button is initialized.
+     */
+    onInitButton(actions: InitCallbackActions): Promise<void>;
 }
 
 /**

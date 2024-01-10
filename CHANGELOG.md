@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.514.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.513.0...v1.514.0) (2024-01-10)
+
+
+### Features
+
+* **payment:** PAYPAL-3300 Added onClick and onInit options to handle validation process with mandatory terms and conditions ([#2304](https://github.com/bigcommerce/checkout-sdk-js/issues/2304)) ([c47674c](https://github.com/bigcommerce/checkout-sdk-js/commit/c47674c32ebc152e2b312a582284a0b787973172))
+
 ## [1.513.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.512.0...v1.513.0) (2024-01-10)
 
 
