@@ -428,6 +428,10 @@ declare interface BraintreeVenmoButtonInitializeOptions {
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
 }
 
 declare enum ButtonColor {
@@ -758,7 +762,8 @@ declare enum PaypalButtonStyleColorOption {
     GOLD = "gold",
     BLUE = "blue",
     SIlVER = "silver",
-    BLACK = "black"
+    BLACK = "black",
+    WHITE = "white"
 }
 
 declare enum PaypalButtonStyleLabelOption {

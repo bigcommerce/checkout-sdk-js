@@ -8,6 +8,7 @@
 
 - [buyNowInitializeOptions](BraintreeVenmoButtonInitializeOptions.md#buynowinitializeoptions)
 - [currencyCode](BraintreeVenmoButtonInitializeOptions.md#currencycode)
+- [style](BraintreeVenmoButtonInitializeOptions.md#style)
 
 ### Methods
 
@@ -34,6 +35,14 @@ ___
 • `Optional` **currencyCode**: `string`
 
 The option that used to initialize a PayPal script with provided currency code.
+
+___
+
+### style
+
+• `Optional` **style**: `Pick`<[`PaypalStyleOptions`](PaypalStyleOptions.md), ``"color"`` \| ``"layout"`` \| ``"size"`` \| ``"label"`` \| ``"shape"`` \| ``"tagline"`` \| ``"fundingicons"`` \| ``"height"``\>
+
+A set of styling options for the checkout button.
 
 ## Methods
 

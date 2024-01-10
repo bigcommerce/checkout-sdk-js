@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.513.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.512.0...v1.513.0) (2024-01-10)
+
+
+### Features
+
+* **payment:** PAYPAL-2800 added style configs to Braintree payment buttons ([9b955c5](https://github.com/bigcommerce/checkout-sdk-js/commit/9b955c5dbe1852596b2b9e64d6c18ee427a30839))
+
 ## [1.512.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.511.0...v1.512.0) (2024-01-10)
 
 

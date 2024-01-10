@@ -10,6 +10,7 @@
 - [BLUE](PaypalButtonStyleColorOption.md#blue)
 - [GOLD](PaypalButtonStyleColorOption.md#gold)
 - [SIlVER](PaypalButtonStyleColorOption.md#silver)
+- [WHITE](PaypalButtonStyleColorOption.md#white)
 
 ## Enumeration Members
 
@@ -34,3 +35,9 @@ ___
 ### SIlVER
 
 • **SIlVER**
+
+___
+
+### WHITE
+
+• **WHITE**

@@ -19,7 +19,7 @@
 
 ### color
 
-• `Optional` **color**: [`GOLD`](../enums/PaypalButtonStyleColorOption.md#gold) \| [`BLUE`](../enums/PaypalButtonStyleColorOption.md#blue) \| [`SIlVER`](../enums/PaypalButtonStyleColorOption.md#silver) \| [`BLACK`](../enums/PaypalButtonStyleColorOption.md#black)
+• `Optional` **color**: [`GOLD`](../enums/PaypalButtonStyleColorOption.md#gold) \| [`BLUE`](../enums/PaypalButtonStyleColorOption.md#blue) \| [`SIlVER`](../enums/PaypalButtonStyleColorOption.md#silver) \| [`BLACK`](../enums/PaypalButtonStyleColorOption.md#black) \| [`WHITE`](../enums/PaypalButtonStyleColorOption.md#white)
 
 ___
 
