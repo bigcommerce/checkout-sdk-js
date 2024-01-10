@@ -8,6 +8,7 @@ import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/cr
 import { HostedFormOptions as HostedFormOptions_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PayPalCommerceConnectStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
 import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -4834,7 +4835,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithGooglePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithGooglePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions & WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -6499,6 +6500,56 @@ declare interface PayPalButtonStyleOptions {
  */
 declare interface PayPalBuyNowInitializeOptions {
     getBuyNowCartRequestBody(): BuyNowCartRequestBody_2;
+}
+
+/**
+ * A set of options that are optional to initialize the PayPalCommerce Accelerated Checkout customer strategy
+ * that are responsible for PayPalCommerce Accelerated Checkout components styling and initialization
+ *
+ * ```js
+ * service.initializeCustomer({
+ *     methodId: 'paypalcommerceacceleratedcheckout',
+ *     paypalcommerceacceleratedcheckout: {
+ *         styles: {
+ *              root: {
+ *                  backgroundColorPrimary: 'transparent',
+ *                  errorColor: '#C40B0B',
+ *                  fontFamily: 'Montserrat, Helvetica, Arial, sans-serif',
+ *              },
+ *              input: {
+ *                  borderRadius: '0.25rem',
+ *                  borderColor: '#9E9E9E',
+ *                  focusBorderColor: '#4496F6',
+ *              },
+ *              toggle: {
+ *                  colorPrimary: '#0F005E',
+ *                  colorSecondary: '#ffffff',
+ *              },
+ *              text: {
+ *                  body: {
+ *                      color: '#222222',
+ *                      fontSize: '1rem',
+ *                  },
+ *                  caption: {
+ *                      color: '#515151',
+ *                      fontSize: '0.875rem',
+ *                  },
+ *              },
+ *              branding: 'light',
+ *         },
+ *     },
+ * });
+ * ```
+ */
+declare interface PayPalCommerceAcceleratedCheckoutCustomerInitializeOptions {
+    /**
+     * Is a stylisation options for customizing PayPal Connect components
+     *
+     * Note: the styles for all PayPalCommerce Accelerated Checkout strategies should be the same,
+     * because they will be provided to PayPal library only for the first strategy initialization
+     * no matter what strategy was initialised first
+     */
+    styles?: PayPalCommerceConnectStylesOption;
 }
 
 declare interface PayPalCommerceAlternativeMethodsButtonOptions {
@@ -8415,6 +8466,10 @@ declare interface WithMolliePaymentInitializeOptions {
      * method. They can be omitted unless you need to support Mollie.
      */
     mollie?: MolliePaymentInitializeOptions;
+}
+
+declare interface WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions {
+    paypalcommerceacceleratedcheckout?: PayPalCommerceAcceleratedCheckoutCustomerInitializeOptions;
 }
 
 declare interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {
