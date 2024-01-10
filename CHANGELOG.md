@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.514.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.514.1...v1.514.2) (2024-01-10)
+
+
+### Bug Fixes
+
+* **payment:** PI-1328 [TD Bank][FE] TD Online Mart fields don't initialize on second and next attempts ([#2315](https://github.com/bigcommerce/checkout-sdk-js/issues/2315)) ([4fa546e](https://github.com/bigcommerce/checkout-sdk-js/commit/4fa546e01c35cd588359c7de9aaaccfe833192bc))
+
 ### [1.514.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.514.0...v1.514.1) (2024-01-10)
 
 ## [1.514.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.513.0...v1.514.0) (2024-01-10)
