@@ -279,6 +279,7 @@ export interface PayPalCommerceButtonsOptions {
         data: ApproveCallbackPayload,
         actions: ApproveCallbackActions,
     ): Promise<boolean | void> | void;
+    onInit?(data: InitCallbackPayload, actions: InitCallbackActions): Promise<void>;
     onComplete?(data: CompleteCallbackDataPayload): Promise<void>;
     onClick?(data: ClickCallbackPayload, actions: ClickCallbackActions): Promise<void> | void;
     onError?(error: Error): void;
@@ -293,6 +294,15 @@ export interface ClickCallbackPayload {
 export interface ClickCallbackActions {
     reject(): void;
     resolve(): void;
+}
+
+export interface InitCallbackPayload {
+    correlationID: string;
+}
+
+export interface InitCallbackActions {
+    disable(): void;
+    enable(): void;
 }
 
 export interface ShippingChangeCallbackPayload {

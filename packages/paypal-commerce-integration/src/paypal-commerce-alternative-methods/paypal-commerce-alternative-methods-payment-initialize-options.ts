@@ -1,4 +1,4 @@
-import { PayPalCommerceFieldsStyleOptions } from '../paypal-commerce-types';
+import { InitCallbackActions, PayPalCommerceFieldsStyleOptions } from '../paypal-commerce-types';
 
 /**
  * A set of options that are required to initialize the PayPal Commerce payment
@@ -114,6 +114,12 @@ export default interface PayPalCommerceAlternativeMethodsPaymentOptions {
      * when buyer approved PayPal account.
      */
     submitForm(): void;
+
+    /**
+     * A callback that gets called
+     * when Smart Payment Button is initialized.
+     */
+    onInitButton(actions: InitCallbackActions): Promise<void>;
 }
 
 export interface WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions {
