@@ -11,6 +11,7 @@ import {
     BraintreeTokenizePayload,
     isBraintreeError,
     PaypalAuthorizeData,
+    PaypalStyleOptions,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CustomerCredentials,
@@ -76,6 +77,8 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         const storeConfig = state.getStoreConfigOrThrow();
 
         const { clientToken, config, initializationData } = paymentMethod;
+        const { paymentButtonStyles } = initializationData || {};
+        const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -96,6 +99,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
                 braintreepaypal,
                 methodId,
                 Boolean(config.testMode),
+                checkoutTopButtonStyles,
             );
         };
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
@@ -132,12 +136,9 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         braintreepaypal: BraintreePaypalCustomerInitializeOptions,
         methodId: string,
         testMode: boolean,
+        buttonStyles: PaypalStyleOptions,
     ): void {
-        const {
-            container,
-            buttonHeight = DefaultCheckoutButtonHeight,
-            onClick = noop,
-        } = braintreepaypal;
+        const { container, onClick = noop } = braintreepaypal;
 
         const { paypal } = this.braintreeHostWindow;
         const fundingSource = paypal?.FUNDING.PAYPAL;
@@ -147,9 +148,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
                 env: this.braintreeIntegrationService.getBraintreeEnv(testMode),
                 commit: false,
                 fundingSource,
-                style: {
-                    height: buttonHeight,
-                },
+                style: { ...buttonStyles, height: DefaultCheckoutButtonHeight },
                 createOrder: () =>
                     this.setupPayment(braintreePaypalCheckout, braintreepaypal, methodId),
                 onApprove: (authorizeData: PaypalAuthorizeData) =>

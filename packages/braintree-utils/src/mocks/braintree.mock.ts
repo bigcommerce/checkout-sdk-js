@@ -45,6 +45,12 @@ export function getBraintree(): PaymentMethod {
         },
         initializationData: {
             isAcceleratedCheckoutEnabled: false,
+            paymentButtonStyles: {
+                checkoutTopButtonStyles: {
+                    color: 'blue',
+                    label: 'checkout',
+                },
+            },
         },
         type: 'PAYMENT_TYPE_API',
     };

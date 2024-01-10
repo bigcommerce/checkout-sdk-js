@@ -2,8 +2,12 @@ import {
     BraintreeBankAccount,
     BraintreeDataCollector,
     BraintreeModuleCreator,
+    PaypalButtonStyleColorOption,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
-import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    DefaultCheckoutButtonHeight,
+    PaymentMethod,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export function getBankAccountMock(): BraintreeBankAccount {
     return {
@@ -76,6 +80,13 @@ export function getBraintreeLocalMethods() {
         },
         initializationData: {
             isAcceleratedCheckoutEnabled: false,
+            paymentButtonStyles: {
+                checkoutTopButtonStyles: {
+                    color: PaypalButtonStyleColorOption.BLUE,
+                    label: 'checkout',
+                    height: DefaultCheckoutButtonHeight,
+                },
+            },
         },
         type: 'PAYMENT_TYPE_API',
     };

@@ -1,6 +1,12 @@
 import { Omit } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { PaypalAuthorizeData, PaypalButtonOptions, PaypalButtonRender, PaypalSDK } from './paypal';
+import {
+    PaypalAuthorizeData,
+    PaypalButtonOptions,
+    PaypalButtonRender,
+    PaypalSDK,
+    PaypalStyleOptions,
+} from './paypal';
 
 /**
  *
@@ -67,6 +73,7 @@ export interface BraintreeInitializationData {
     isAcceleratedCheckoutEnabled?: boolean;
     isBraintreeAnalyticsV2Enabled?: boolean;
     shouldRunAcceleratedCheckout?: boolean; // TODO: only for BT AXO A/B testing purposes, hence should be removed after testing
+    paymentButtonStyles?: Record<string, PaypalStyleOptions>;
 }
 
 export interface BraintreePaypalRequest {

@@ -1,5 +1,8 @@
+import { DefaultCheckoutButtonHeight } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import PaymentMethod from './payment-method';
 import PaymentMethodState from './payment-method-state';
+import { PaypalButtonStyleColorOption } from './strategies/paypal';
 
 export function getBraintree(): PaymentMethod {
     return {
@@ -21,6 +24,13 @@ export function getBraintree(): PaymentMethod {
         initializationData: {
             isAcceleratedCheckoutEnabled: false,
             merchantAccountId: '100000',
+            paymentButtonStyles: {
+                checkoutTopButtonStyles: {
+                    color: PaypalButtonStyleColorOption.BLUE,
+                    label: 'checkout',
+                    height: DefaultCheckoutButtonHeight,
+                },
+            },
         },
     };
 }
@@ -56,6 +66,13 @@ export function getBraintreePaypal(): PaymentMethod {
         initializationData: {
             isBrainteeVenmoEnabled: false,
             enableCheckoutPaywallBanner: false,
+            paymentButtonStyles: {
+                checkoutTopButtonStyles: {
+                    color: PaypalButtonStyleColorOption.BLUE,
+                    label: 'checkout',
+                    height: DefaultCheckoutButtonHeight,
+                },
+            },
         },
     };
 }
@@ -73,6 +90,13 @@ export function getBraintreePaypalCredit(): PaymentMethod {
         clientToken: 'foo',
         initializationData: {
             isBraintreeVenmoEnabled: false,
+            paymentButtonStyles: {
+                checkoutTopButtonStyles: {
+                    color: PaypalButtonStyleColorOption.BLUE,
+                    label: 'checkout',
+                    height: DefaultCheckoutButtonHeight,
+                },
+            },
         },
     };
 }
