@@ -1,10 +1,12 @@
 export * from './paypal-commerce-types';
+export * from './mocks';
 
 /**
  *
  * PayPal Commerce Sdk exports
  *
  * */
+export { default as createPayPalCommerceSdk } from './create-paypal-commerce-sdk';
 export { default as PayPalCommerceSdk } from './paypal-commerce-sdk';
 
 /**

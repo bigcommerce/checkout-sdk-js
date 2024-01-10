@@ -70,3 +70,11 @@ export { WithPayPalCommerceCreditCardsPaymentInitializeOptions } from './paypal-
  */
 export { default as createPayPalCommerceRatePayPaymentStrategy } from './paypal-commerce-ratepay/create-paypal-commerce-ratepay-payment-strategy';
 export { WithPayPalCommerceRatePayPaymentInitializeOptions } from './paypal-commerce-ratepay/paypal-commerce-ratepay-initialize-options';
+
+/**
+ *
+ * PayPalCommerce Accelerated Checkout strategy
+ *
+ */
+export { default as createPayPalCommerceAcceleratedCheckoutCustomerStrategy } from './paypal-commerce-accelerated-checkout/create-paypal-commerce-accelerated-checkout-customer-strategy';
+export { WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions } from './paypal-commerce-accelerated-checkout/paypal-commerce-accelerated-checkout-customer-initialize-options';

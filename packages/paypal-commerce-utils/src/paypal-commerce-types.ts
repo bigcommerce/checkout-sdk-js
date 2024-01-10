@@ -1,3 +1,8 @@
+import {
+    AddressRequestBody,
+    CardInstrument,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 /**
  *
  * PayPal Commerce Funding sources
@@ -176,6 +181,14 @@ export interface PayPalCommerceConnectLegacyProfileAddress {
     countryCodeNumeric?: number;
     countryCodeAlpha2?: string;
     countryCodeAlpha3?: string;
+}
+
+export interface PayPalConnectProfileToBcCustomerDataMappingResult {
+    authenticationState: PayPalCommerceConnectAuthenticationState;
+    addresses: AddressRequestBody[];
+    billingAddress?: AddressRequestBody;
+    shippingAddress?: AddressRequestBody;
+    instruments: CardInstrument[];
 }
 
 export interface PayPalCommerceConnectAuthenticationOptions {

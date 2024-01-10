@@ -8,6 +8,10 @@ export default function getPayPalAxoSdk(): PayPalAxoSdk {
                     lookupCustomerByEmail: jest.fn(),
                     triggerAuthenticationFlow: jest.fn(),
                 },
+                profile: {
+                    showCardSelector: jest.fn(),
+                },
+                ConnectCardComponent: jest.fn(),
             }),
     };
 }

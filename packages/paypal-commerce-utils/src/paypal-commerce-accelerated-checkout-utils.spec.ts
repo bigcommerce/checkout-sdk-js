@@ -194,7 +194,7 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
         };
 
         it('returns default "empty" data if authenticationResult is undefined', () => {
-            expect(subject.mapPayPalConnectProfileToBcCustomerData(methodIdMock)).toEqual({
+            expect(subject.mapPayPalConnectProfileToBcCustomerData(methodIdMock, {})).toEqual({
                 authenticationState: PayPalCommerceConnectAuthenticationState.UNRECOGNIZED,
                 addresses: [],
                 billingAddress: undefined,
