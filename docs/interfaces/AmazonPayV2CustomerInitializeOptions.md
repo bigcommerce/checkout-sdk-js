@@ -19,7 +19,6 @@ service.initializeCustomer({
     methodId: 'amazonpay',
     amazonpay: {
         container: 'signInButton',
-        onClick: () => console.log('AmazonPay button clicked'),
     },
 });
 ```
@@ -30,10 +29,6 @@ service.initializeCustomer({
 
 - [container](AmazonPayV2CustomerInitializeOptions.md#container)
 
-### Methods
-
-- [onClick](AmazonPayV2CustomerInitializeOptions.md#onclick)
-
 ## Properties
 
 ### container
@@ -41,15 +36,3 @@ service.initializeCustomer({
 • **container**: `string`
 
 The ID of a container which the sign-in button should insert into.
-
-## Methods
-
-### onClick
-
-▸ `Optional` **onClick**(): `void`
-
-Callback that get called on wallet button click
-
-#### Returns
-
-`void`
