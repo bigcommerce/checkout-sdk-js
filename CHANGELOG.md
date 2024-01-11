@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.515.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.514.3...v1.515.0) (2024-01-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3416 updated WithPayPalConnectInstrument interface with an optional order_id ([#2317](https://github.com/bigcommerce/checkout-sdk-js/issues/2317)) ([76bb4ef](https://github.com/bigcommerce/checkout-sdk-js/commit/76bb4ef6cd56253bfd77d80db6b94e8d0c81b2e9))
+
 ### [1.514.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.514.2...v1.514.3) (2024-01-11)
 
 ### [1.514.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.514.1...v1.514.2) (2024-01-10)
