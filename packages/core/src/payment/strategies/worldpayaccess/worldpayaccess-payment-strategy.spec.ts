@@ -255,8 +255,6 @@ describe('WorldpayaccessPaymetStrategy', () => {
         });
 
         it('submit with collection data required hosted', async () => {
-            window.fetch = jest.fn(() => Promise.resolve({ ok: true }));
-
             jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValueOnce(
                 of(
                     createErrorAction(
@@ -271,23 +269,6 @@ describe('WorldpayaccessPaymetStrategy', () => {
 
             expect(orderActionCreator.loadCurrentOrder).toHaveBeenCalled();
             expect(form.submit).toHaveBeenCalledTimes(2);
-        });
-
-        it('throws error when url in hidden iframe is invalid', async () => {
-            window.fetch = jest.fn(() => Promise.resolve({ ok: false }));
-
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
-            );
-
-            await strategy.initialize(initializeOptions);
-
-            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
         });
 
         describe('when hosted fields are not present for rendering', () => {
@@ -330,167 +311,9 @@ describe('WorldpayaccessPaymetStrategy', () => {
         });
     });
 
-    describe('when hosted form is disable', () => {
-        beforeEach(() => {
-            initializeOptions = {
-                methodId: 'worldpayaccess',
-                worldpay: {
-                    onLoad: jest.fn(),
-                },
-            };
-
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
-                merge(getPaymentMethod(), { config: { isHostedFormEnabled: false } }),
-            );
-        });
-
-        it('submit with collection data required', async () => {
-            window.fetch = jest.fn(() => Promise.resolve({ ok: true }));
-
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
-            );
-
-            await strategy.initialize(initializeOptions);
-            await strategy.execute(payload);
-
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    paymentData: expect.objectContaining({
-                        threeDSecure: expect.objectContaining({ token: 'token' }),
-                    }),
-                }),
-            );
-        });
-
-        it("stop event execution when the event message string isn't a json", async () => {
-            HTMLFormElement.prototype.submit = () =>
-                window.parent.postMessage('invalid string', '*');
-            window.fetch = jest.fn(() => Promise.resolve({ ok: true }));
-
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
-            );
-
-            await strategy.initialize(initializeOptions);
-
-            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
-        });
-
-        it("stop event execution when the event message string isn't a valid json with SessionId", async () => {
-            HTMLFormElement.prototype.submit = () =>
-                window.parent.postMessage('{"MessageType":"profile.completed","Status":true}', '*');
-            window.fetch = jest.fn(() => Promise.resolve({ ok: true }));
-
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
-            );
-
-            await strategy.initialize(initializeOptions);
-
-            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
-        });
-
-        it("stop event execution when the event message isn't string", async () => {
-            HTMLFormElement.prototype.submit = () => window.parent.postMessage({}, '*');
-            window.fetch = jest.fn(() => Promise.resolve({ ok: true }));
-
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
-            );
-
-            await strategy.initialize(initializeOptions);
-
-            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
-        });
-
-        it('throws error with collection data required with the url', async () => {
-            window.fetch = jest.fn(() => Promise.resolve({ ok: false }));
-
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
-            );
-
-            await strategy.initialize(initializeOptions);
-
-            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
-        });
-
-        it("throws error when hidden iframe isn't created", async () => {
-            const createElement = window.document.createElement;
-
-            window.document.createElement = jest.fn().mockImplementationOnce(() => {
-                return undefined;
-            });
-
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
-            );
-
-            await strategy.initialize(initializeOptions);
-
-            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
-
-            window.document.createElement = createElement;
-        });
-
-        it("throws error when hidden iframe hasn't contentWindow", async () => {
-            const append = window.document.body.appendChild;
-
-            window.document.body.appendChild = jest.fn().mockImplementationOnce(() => {
-                return undefined;
-            });
-
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
-            );
-
-            await strategy.initialize(initializeOptions);
-
-            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
-
-            window.document.body.appendChild = append;
-        });
-    });
-
     describe('when 3DS is required', () => {
         let threeDSecureRequiredErrorResponse: RequestError;
-        let onLoad = jest.fn().mockImplementation(() => {
+        const onLoad = jest.fn().mockImplementation(() => {
             throw new Error();
         });
 
@@ -506,8 +329,6 @@ describe('WorldpayaccessPaymetStrategy', () => {
                     },
                 }),
             );
-
-            window.fetch = jest.fn(() => Promise.resolve({ ok: true }));
 
             initializeOptions = {
                 methodId: 'worldpayaccess',
@@ -656,7 +477,7 @@ describe('WorldpayaccessPaymetStrategy', () => {
         });
 
         it('throws error when is 3ds authentication is cancelled', async () => {
-            onLoad = jest.fn((_, b) => b());
+            const onLoad = jest.fn((_, b) => b());
 
             initializeOptions = {
                 ...initializeOptions,
@@ -721,6 +542,142 @@ describe('WorldpayaccessPaymetStrategy', () => {
             await strategy.initialize(initializeOptions);
 
             await expect(strategy.execute(payload)).rejects.toThrow(Error);
+        });
+    });
+
+    describe('when hosted form is disable', () => {
+        beforeEach(() => {
+            initializeOptions = {
+                methodId: 'worldpayaccess',
+                worldpay: {
+                    onLoad: jest.fn(),
+                },
+            };
+
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                merge(getPaymentMethod(), { config: { isHostedFormEnabled: false } }),
+            );
+        });
+
+        it('submit with collection data required', async () => {
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                of(
+                    createErrorAction(
+                        PaymentActionType.SubmitPaymentFailed,
+                        errorResponseAdditionalAction,
+                    ),
+                ),
+            );
+
+            await strategy.initialize(initializeOptions);
+            await strategy.execute(payload);
+
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    paymentData: expect.objectContaining({
+                        threeDSecure: expect.objectContaining({ token: 'token' }),
+                    }),
+                }),
+            );
+        });
+
+        it("stop event execution when the event message string isn't a json", async () => {
+            HTMLFormElement.prototype.submit = () =>
+                window.parent.postMessage('invalid string', '*');
+
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                of(
+                    createErrorAction(
+                        PaymentActionType.SubmitPaymentFailed,
+                        errorResponseAdditionalAction,
+                    ),
+                ),
+            );
+
+            await strategy.initialize(initializeOptions);
+
+            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
+        });
+
+        it("stop event execution when the event message string isn't a valid json with SessionId", async () => {
+            HTMLFormElement.prototype.submit = () =>
+                window.parent.postMessage('{"MessageType":"profile.completed","Status":true}', '*');
+
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                of(
+                    createErrorAction(
+                        PaymentActionType.SubmitPaymentFailed,
+                        errorResponseAdditionalAction,
+                    ),
+                ),
+            );
+
+            await strategy.initialize(initializeOptions);
+
+            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
+        });
+
+        it("stop event execution when the event message isn't string", async () => {
+            HTMLFormElement.prototype.submit = () => window.parent.postMessage({}, '*');
+
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                of(
+                    createErrorAction(
+                        PaymentActionType.SubmitPaymentFailed,
+                        errorResponseAdditionalAction,
+                    ),
+                ),
+            );
+
+            await strategy.initialize(initializeOptions);
+
+            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
+        });
+
+        it("throws error when hidden iframe isn't created", async () => {
+            const createElement = window.document.createElement;
+
+            window.document.createElement = jest.fn().mockImplementationOnce(() => {
+                return undefined;
+            });
+
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                of(
+                    createErrorAction(
+                        PaymentActionType.SubmitPaymentFailed,
+                        errorResponseAdditionalAction,
+                    ),
+                ),
+            );
+
+            await strategy.initialize(initializeOptions);
+
+            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
+
+            window.document.createElement = createElement;
+        });
+
+        it("throws error when hidden iframe hasn't contentWindow", async () => {
+            const append = window.document.body.appendChild;
+
+            window.document.body.appendChild = jest.fn().mockImplementationOnce(() => {
+                return undefined;
+            });
+
+            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                of(
+                    createErrorAction(
+                        PaymentActionType.SubmitPaymentFailed,
+                        errorResponseAdditionalAction,
+                    ),
+                ),
+            );
+
+            await strategy.initialize(initializeOptions);
+
+            await expect(strategy.execute(payload)).rejects.toThrow(PAYMENT_CANNOT_CONTINUE);
+
+            window.document.body.appendChild = append;
         });
     });
 });
