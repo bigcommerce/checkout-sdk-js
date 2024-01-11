@@ -305,6 +305,9 @@ describe('SquareV2PaymentStrategy', () => {
                             bigpay_token: {
                                 token: 'bigpaytoken',
                             },
+                            credit_card_token: {
+                                token: 'verf:yyy',
+                            },
                             vault_payment_instrument: false,
                             set_as_default_stored_instrument: false,
                         },
