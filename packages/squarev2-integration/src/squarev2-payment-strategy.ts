@@ -17,6 +17,8 @@ import SquareV2PaymentProcessor from './squarev2-payment-processor';
 import { SquarePaymentMethodInitializationData } from './types';
 
 export default class SquareV2PaymentStrategy implements PaymentStrategy {
+    private _methodId?: string;
+
     constructor(
         private _paymentIntegrationService: PaymentIntegrationService,
         private _squareV2PaymentProcessor: SquareV2PaymentProcessor,
@@ -32,6 +34,9 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
         }
 
         const { methodId, squarev2 } = options;
+
+        this._methodId = methodId;
+
         const {
             config: { testMode },
             initializationData,
@@ -68,6 +73,29 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
         await this._paymentIntegrationService.submitOrder();
 
         if (paymentData && isVaultedInstrument(paymentData)) {
+            if (this._shouldVerify()) {
+                await this._paymentIntegrationService.submitPayment({
+                    ...payment,
+                    paymentData: {
+                        formattedPayload: {
+                            bigpay_token: {
+                                token: paymentData.instrumentId,
+                            },
+                            credit_card_token: {
+                                token: await this._squareV2PaymentProcessor.verifyBuyer(
+                                    this._getSquareCardId(paymentData.instrumentId),
+                                    SquareIntent.CHARGE,
+                                ),
+                            },
+                            vault_payment_instrument: shouldSaveInstrument || false,
+                            set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
+                        },
+                    },
+                });
+
+                return;
+            }
+
             await this._paymentIntegrationService.submitPayment({
                 ...payment,
                 paymentData: {
@@ -133,6 +161,24 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
 
     deinitialize(): Promise<void> {
         return this._squareV2PaymentProcessor.deinitialize();
+    }
+
+    private _getSquareCardId(bigpayToken: string): string {
+        if (this._methodId) {
+            const { initializationData } = this._paymentIntegrationService
+                .getState()
+                .getPaymentMethodOrThrow<SquarePaymentMethodInitializationData>(this._methodId);
+
+            const { squareCardsData } = initializationData || {};
+
+            if (squareCardsData) {
+                const cardData = squareCardsData.find((data) => data.bigpay_token === bigpayToken);
+
+                return cardData?.provider_card_token || '';
+            }
+        }
+
+        return '';
     }
 
     private _shouldVerify(): boolean {
