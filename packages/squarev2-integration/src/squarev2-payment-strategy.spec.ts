@@ -298,6 +298,17 @@ describe('SquareV2PaymentStrategy', () => {
             });
 
             it('should submit the payment', async () => {
+                const storeConfigMock = getConfig().storeConfig;
+
+                storeConfigMock.checkoutSettings.features = {
+                    'PROJECT-3828.add_3ds_support_on_squarev2': false,
+                };
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue(storeConfigMock);
+
                 const expectedPayment = {
                     methodId: 'squarev2',
                     paymentData: {
@@ -305,8 +316,50 @@ describe('SquareV2PaymentStrategy', () => {
                             bigpay_token: {
                                 token: 'bigpaytoken',
                             },
+                            vault_payment_instrument: false,
+                            set_as_default_stored_instrument: false,
+                        },
+                    },
+                };
+
+                await strategy.execute(payload);
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                    expectedPayment,
+                );
+            });
+
+            it('should submit the payment with verification token', async () => {
+                const storeConfigMock = getConfig().storeConfig;
+                const squareCardsDataMock = [
+                    { bigpay_token: 'bigpaytoken', provider_card_token: 'ccof:yyy' },
+                ];
+
+                storeConfigMock.checkoutSettings.features = {
+                    'PROJECT-3828.add_3ds_support_on_squarev2': true,
+                };
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue(storeConfigMock);
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...getSquareV2(),
+                    initializationData: {
+                        squareCardsData: squareCardsDataMock,
+                    },
+                });
+
+                const expectedPayment = {
+                    methodId: 'squarev2',
+                    paymentData: {
+                        formattedPayload: {
                             credit_card_token: {
-                                token: 'verf:yyy',
+                                token: '{"card_id":"ccof:yyy","token":"verf:yyy"}',
                             },
                             vault_payment_instrument: false,
                             set_as_default_stored_instrument: false,
