@@ -73,7 +73,6 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
                 }
 
                 window.removeEventListener('message', messageEvent);
-                window.removeEventListener('remove_event_message', removeEvent);
                 iframeHidden.remove();
 
                 const data = JSON.parse(event.data);
@@ -108,23 +107,13 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
                 }
             };
 
-            const removeEvent = () => {
-                window.removeEventListener('remove_event_message', removeEvent);
-                window.removeEventListener('message', messageEvent);
-                iframeHidden.remove();
-
-                return reject(new Error(PAYMENT_CANNOT_CONTINUE));
-            };
-
             window.addEventListener('message', messageEvent);
-            window.addEventListener('remove_event_message', removeEvent);
 
             let iframeHidden: HTMLIFrameElement;
 
             try {
                 iframeHidden = this._createHiddenIframe(error.body);
             } catch (e) {
-                window.removeEventListener('remove_event_message', removeEvent);
                 window.removeEventListener('message', messageEvent);
                 throw new Error(PAYMENT_CANNOT_CONTINUE);
             }
@@ -188,25 +177,7 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
         const script = document.createElement('script');
 
         script.innerHTML = `
-            const data = new URLSearchParams()
-            data.append('Bin', '${body.provider_data.source_id}');
-            data.append('JWT', '${body.provider_data.data}');
-
-            window.parent.fetch('${url}', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: data
-            })
-            .then((response) => {
-                if (!response.ok) {
-                    window.parent.dispatchEvent(new Event('remove_event_message'));
-                } else {
-                    document.getElementById('${formId}').submit();
-                }
-            })
-            .catch((error) =>  {
-                window.parent.dispatchEvent(new Event('remove_event_message'));
-            })
+            document.getElementById('${formId}').submit();
         `;
         iframe.contentWindow.document.body.appendChild(script);
 
