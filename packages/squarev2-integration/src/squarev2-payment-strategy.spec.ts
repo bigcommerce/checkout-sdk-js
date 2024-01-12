@@ -331,9 +331,7 @@ describe('SquareV2PaymentStrategy', () => {
 
             it('should submit the payment with verification token', async () => {
                 const storeConfigMock = getConfig().storeConfig;
-                const squareCardsDataMock = [
-                    { bigpay_token: 'bigpaytoken', provider_card_token: 'ccof:yyy' },
-                ];
+                const squareCardsDataMock = [{ token: 'bigpaytoken', id: 'ccof:yyy' }];
 
                 storeConfigMock.checkoutSettings.features = {
                     'PROJECT-3828.add_3ds_support_on_squarev2': true,

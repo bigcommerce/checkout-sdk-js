@@ -1,8 +1,8 @@
 export * from '@square/web-payments-sdk-types';
 
 interface SquareCardsData {
-    bigpay_token: string;
-    provider_card_token: string;
+    token: string;
+    id: string;
 }
 
 export interface SquarePaymentMethodInitializationData {
