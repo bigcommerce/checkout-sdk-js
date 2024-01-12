@@ -9,6 +9,6 @@ export interface SquarePaymentMethodInitializationData {
     applicationId: string;
     locationId?: string;
     providerData?: {
-        squareCardsData: SquareCardsData[];
+        squareCardsData: SquareCardsData[][];
     };
 }

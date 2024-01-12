@@ -174,7 +174,9 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
             const { squareCardsData } = initializationData?.providerData || {};
 
             if (squareCardsData) {
-                const cardData = squareCardsData.find((data) => data.bigpay_token === bigpayToken);
+                const cardData = squareCardsData
+                    .reduce((acc, cur) => acc.concat(cur), [])
+                    .find((data) => data.bigpay_token === bigpayToken);
 
                 return cardData?.provider_card_token || '';
             }
