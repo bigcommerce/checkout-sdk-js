@@ -350,7 +350,9 @@ describe('SquareV2PaymentStrategy', () => {
                 ).mockReturnValue({
                     ...getSquareV2(),
                     initializationData: {
-                        squareCardsData: squareCardsDataMock,
+                        providerData: {
+                            squareCardsData: squareCardsDataMock,
+                        },
                     },
                 });
 
