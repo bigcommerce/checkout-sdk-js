@@ -1,7 +1,7 @@
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
-import { getPayPalAxoSdk } from './mocks';
+import { getPayPalAxoSdk, getPayPalConnectAuthenticationResultMock } from './mocks';
 import PayPalCommerceAcceleratedCheckoutUtils from './paypal-commerce-accelerated-checkout-utils';
 import { PayPalAxoSdk, PayPalCommerceConnectAuthenticationState } from './paypal-commerce-types';
 
@@ -143,55 +143,7 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
 
     describe('#mapPayPalConnectProfileToBcCustomerData', () => {
         const methodIdMock = 'paypalcommerceacceleratedcheckout';
-        const authenticationResultMock = {
-            authenticationState: PayPalCommerceConnectAuthenticationState.SUCCEEDED,
-            profileData: {
-                name: {
-                    fullName: 'John Doe',
-                    firstName: 'John',
-                    lastName: 'Doe',
-                },
-                shippingAddress: {
-                    name: {
-                        fullName: 'John Doe',
-                        firstName: 'John',
-                        lastName: 'Doe',
-                    },
-                    address: {
-                        company: 'BigCommerce',
-                        addressLine1: 'addressLine1',
-                        addressLine2: 'addressLine2',
-                        adminArea1: 'addressState',
-                        adminArea2: 'addressCity',
-                        postalCode: '03004',
-                        countryCode: 'US',
-                        phone: '555555555',
-                    },
-                },
-                card: {
-                    id: 'nonce/token',
-                    paymentSource: {
-                        card: {
-                            brand: 'Visa',
-                            expiry: '2030-12',
-                            lastDigits: '1111',
-                            name: 'John Doe',
-                            billingAddress: {
-                                firstName: 'John',
-                                lastName: 'Doe',
-                                company: 'BigCommerce',
-                                streetAddress: 'addressLine1',
-                                extendedAddress: 'addressLine2',
-                                locality: 'addressCity',
-                                region: 'addressState',
-                                postalCode: '03004',
-                                countryCodeAlpha2: 'US',
-                            },
-                        },
-                    },
-                },
-            },
-        };
+        const authenticationResultMock = getPayPalConnectAuthenticationResultMock();
 
         it('returns default "empty" data if authenticationResult is undefined', () => {
             expect(subject.mapPayPalConnectProfileToBcCustomerData(methodIdMock, {})).toEqual({

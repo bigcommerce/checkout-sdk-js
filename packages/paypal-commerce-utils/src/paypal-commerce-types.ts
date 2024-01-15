@@ -94,9 +94,9 @@ export interface PayPalAxoSdk {
 export interface PayPalCommerceConnect {
     identity: PayPalCommerceConnectIdentity;
     profile: PayPalCommerceConnectProfile;
-    ConnectCardComponent: (
+    ConnectCardComponent(
         options: PayPalCommerceConnectCardComponentOptions,
-    ) => PayPalCommerceConnectCardComponent;
+    ): PayPalCommerceConnectCardComponentMethods;
 }
 
 export interface PayPalCommerceConnectIdentity {
@@ -232,8 +232,7 @@ export interface PayPalCommerceCardSelectorResponse {
     selectedCard: PayPalCommerceConnectProfileCard;
 }
 
-export interface PayPalCommerceConnectCardComponent {
-    (options: PayPalCommerceConnectCardComponentOptions): PayPalCommerceConnectCardComponent;
+export interface PayPalCommerceConnectCardComponentMethods {
     tokenize(
         options: PayPalCommerceConnectTokenizeOptions,
     ): Promise<PayPalCommerceConnectTokenizeResult>;
@@ -241,7 +240,7 @@ export interface PayPalCommerceConnectCardComponent {
 }
 
 export interface PayPalCommerceConnectCardComponentOptions {
-    fields: PayPalCommerceConnectCardComponentFields;
+    fields?: PayPalCommerceConnectCardComponentFields;
 }
 
 export interface PayPalCommerceConnectCardComponentFields {
