@@ -34,6 +34,14 @@ export default class CookieStorage {
 
         if (expires) {
             cookieText += `; expires=${expires.toUTCString()}`;
+        } else {
+            const now = new Date();
+            // info: default cookie expiration time after setup
+            const minutes = 60;
+
+            now.setTime(now.getTime() + minutes * 60 * 1000);
+
+            cookieText += `; expires=${now.toUTCString()}`;
         }
 
         if (path) {
