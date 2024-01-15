@@ -11,7 +11,7 @@ describe('createPayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
     });
 
-    it('instantiates paypal commerce button strategy', () => {
+    it('instantiates paypal commerce accelerated checkout customer strategy', () => {
         const strategy =
             createPayPalCommerceAcceleratedCheckoutCustomerStrategy(paymentIntegrationService);
 
