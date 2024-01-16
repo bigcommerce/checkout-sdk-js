@@ -8,6 +8,7 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import {
     getPayPalCommerceIntegrationServiceMock,
@@ -27,11 +28,12 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
     let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
     let paypalSdk: PayPalSDK;
     let strategy: PaypalCommerceRatepayPaymentStrategy;
+    let loadingIndicator: LoadingIndicator;
 
     const paypalCommerceRatePayMethodsOptions: PaypalCommerceRatePay = {
         container: '#checkout-payment-continue',
         legalTextContainer: 'legal-text-container',
-        onPaymentSubmission: jest.fn(),
+        loadingContainerId: 'checkout-page-container-id',
         getFieldsValues: () => {
             return {
                 ratepayBirthDate: {
@@ -54,11 +56,16 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
     beforeEach(() => {
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+        loadingIndicator = new LoadingIndicator();
 
         strategy = new PaypalCommerceRatepayPaymentStrategy(
             paymentIntegrationService,
             paypalCommerceIntegrationService,
+            loadingIndicator,
         );
+
+        jest.spyOn(loadingIndicator, 'show').mockReturnValue(undefined);
+        jest.spyOn(loadingIndicator, 'hide').mockReturnValue(undefined);
 
         jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockReturnValue(
             'POLLING_STOP',
@@ -109,6 +116,23 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
     describe('#initialize()', () => {
         it('throws error if methodId is not provided', async () => {
             const options = {} as PaymentInitializeOptions;
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
+        it('throws error if loadingContainerId is not provided', async () => {
+            const options = {
+                methodId: 'ratepay',
+                gatewayId: 'paypalcommercealternativemethods',
+                paypalcommerceratepay: {
+                    legalTextContainer: 'legal-text-container',
+                    container: '#checkout-payment-continue',
+                },
+            } as PaymentInitializeOptions;
 
             try {
                 await strategy.initialize(options);
@@ -190,6 +214,40 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
                 await strategy.initialize(options);
             } catch (error) {
                 expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+    });
+
+    describe('#toggleLoadingIndicator', () => {
+        it('shows loading indicator on execute', async () => {
+            const payload = {
+                payment: {
+                    methodId: 'ratepay',
+                    gatewayId: 'paypalcommercealternativemethods',
+                },
+            };
+
+            await strategy.initialize(initializationOptions);
+            await strategy.execute(payload);
+
+            expect(loadingIndicator.show).toHaveBeenCalled();
+        });
+
+        it('hides loading indicator when error occurs', async () => {
+            const payload = {
+                payment: {
+                    methodId: 'ratepay',
+                    gatewayId: 'paypalcommercealternativemethods',
+                },
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            try {
+                await strategy.execute(payload);
+                await new Promise((_resolve, reject) => process.nextTick(reject));
+            } catch (error: unknown) {
+                expect(loadingIndicator.hide).toHaveBeenCalled();
             }
         });
     });

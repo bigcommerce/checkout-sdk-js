@@ -12,10 +12,9 @@ export interface PaypalCommerceRatePay {
     legalTextContainer: string;
 
     /**
-     * Callback that triggers pending logic (for example: show loading overlay)
+     * The CSS selector of a container where loading indicator should be rendered
      */
-    onPaymentSubmission?(isPaymentSubmitting: boolean): void;
-
+    loadingContainerId: string;
     /**
      * A callback that gets form values
      */
