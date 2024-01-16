@@ -3,6 +3,7 @@ import {
     BraintreeConnectAuthenticationState,
     BraintreeConnectCardComponent,
     BraintreeConnectCardComponentOptions,
+    isBraintreeAcceleratedCheckoutCustomer,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     Address,
@@ -164,7 +165,7 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
 
         const { instrumentId } = paymentData;
 
-        if (this.isPayPalCommerceInstrument(instrumentId)) {
+        if (this.isPayPalConnectInstrument(instrumentId)) {
             return {
                 methodId,
                 paymentData: {
@@ -243,17 +244,25 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         const paymentProviderCustomer = state.getPaymentProviderCustomer();
+        const braintreePaymentProviderCustomer = isBraintreeAcceleratedCheckoutCustomer(
+            paymentProviderCustomer,
+        )
+            ? paymentProviderCustomer
+            : {};
 
         const paypalConnectSessionId = this.browserStorage.getItem('sessionId');
 
         if (
-            paymentProviderCustomer?.authenticationState ===
+            braintreePaymentProviderCustomer?.authenticationState ===
             BraintreeConnectAuthenticationState.CANCELED
         ) {
             return false;
         }
 
-        return !paymentProviderCustomer?.authenticationState && paypalConnectSessionId === cart.id;
+        return (
+            !braintreePaymentProviderCustomer?.authenticationState &&
+            paypalConnectSessionId === cart.id
+        );
     }
 
     private getBraintreeCardComponentOrThrow() {
@@ -264,11 +273,16 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
         return this.braintreeConnectCardComponent;
     }
 
-    private isPayPalCommerceInstrument(instrumentId: string): boolean {
+    private isPayPalConnectInstrument(instrumentId: string): boolean {
         const state = this.paymentIntegrationService.getState();
-        const { instruments } = state.getPaymentProviderCustomerOrThrow();
+        const paymentProviderCustomer = state.getPaymentProviderCustomerOrThrow();
+        const braintreePaymentProviderCustomer = isBraintreeAcceleratedCheckoutCustomer(
+            paymentProviderCustomer,
+        )
+            ? paymentProviderCustomer
+            : {};
 
-        const paypalConnectInstruments = instruments || [];
+        const paypalConnectInstruments = braintreePaymentProviderCustomer.instruments || [];
 
         return !!paypalConnectInstruments.find(
             (instrument) => instrument.bigpayToken === instrumentId,

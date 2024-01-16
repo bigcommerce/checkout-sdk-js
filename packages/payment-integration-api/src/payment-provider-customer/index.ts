@@ -1,5 +1,6 @@
 export {
     BraintreeAcceleratedCheckoutCustomer,
-    PayPalCommerceAcceleratedCheckoutCustomer,
     PaymentProviderCustomer,
+    PayPalCommerceAcceleratedCheckoutCustomer,
+    StripeAcceleratedCheckoutCustomer,
 } from './payment-provider-customer';

@@ -4,7 +4,8 @@ import { CardInstrument } from '../payment';
 
 export type PaymentProviderCustomer =
     | BraintreeAcceleratedCheckoutCustomer
-    | PayPalCommerceAcceleratedCheckoutCustomer;
+    | PayPalCommerceAcceleratedCheckoutCustomer
+    | StripeAcceleratedCheckoutCustomer;
 
 export interface BraintreeAcceleratedCheckoutCustomer {
     authenticationState?: string;
@@ -16,4 +17,8 @@ export interface PayPalCommerceAcceleratedCheckoutCustomer {
     authenticationState?: string;
     addresses?: AddressRequestBody[];
     instruments?: CardInstrument[];
+}
+
+export interface StripeAcceleratedCheckoutCustomer {
+    stripeLinkAuthenticationState?: boolean;
 }
