@@ -147,7 +147,6 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
 
         const state = paymentIntegrationService.getState();
 
-        // jest.spyOn(paymentIntegrationService, 'getState');
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
         jest.spyOn(paymentIntegrationService, 'updatePaymentProviderCustomer');
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress');
@@ -196,10 +195,12 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
             }
         });
 
-        it('loads paypal accelerated checkout payment method', async () => {
+        it('loads paypal commerce payment method', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                'paypalcommerce',
+            );
         });
 
         it('do nothing if accelerated checkout feature is disabled', async () => {
