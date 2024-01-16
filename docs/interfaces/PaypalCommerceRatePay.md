@@ -8,12 +8,12 @@
 
 - [container](PaypalCommerceRatePay.md#container)
 - [legalTextContainer](PaypalCommerceRatePay.md#legaltextcontainer)
+- [loadingContainerId](PaypalCommerceRatePay.md#loadingcontainerid)
 
 ### Methods
 
 - [getFieldsValues](PaypalCommerceRatePay.md#getfieldsvalues)
 - [onError](PaypalCommerceRatePay.md#onerror)
-- [onPaymentSubmission](PaypalCommerceRatePay.md#onpaymentsubmission)
 - [onRenderButton](PaypalCommerceRatePay.md#onrenderbutton)
 
 ## Properties
@@ -31,6 +31,14 @@ ___
 • **legalTextContainer**: `string`
 
 The CSS selector of a container where the legal text should be inserted into.
+
+___
+
+### loadingContainerId
+
+• **loadingContainerId**: `string`
+
+The CSS selector of a container where loading indicator should be rendered
 
 ## Methods
 
@@ -63,24 +71,6 @@ A callback for displaying error popup. This callback requires error object as pa
 | Name | Type |
 | :------ | :------ |
 | `error` | `unknown` |
-
-#### Returns
-
-`void`
-
-___
-
-### onPaymentSubmission
-
-▸ `Optional` **onPaymentSubmission**(`isPaymentSubmitting`): `void`
-
-Callback that triggers pending logic (for example: show loading overlay)
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `isPaymentSubmitting` | `boolean` |
 
 #### Returns
 
