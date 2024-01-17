@@ -16,7 +16,6 @@ import {
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    isPayPalCommerceAcceleratedCheckoutCustomer,
     PayPalCommerceAcceleratedCheckoutUtils,
     PayPalCommerceConnectAuthenticationState,
     PayPalCommerceConnectCardComponentMethods,
@@ -156,26 +155,18 @@ export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
         const paymentProviderCustomer = state.getPaymentProviderCustomer();
-        const paypalCommercePaymentProviderCustomer = isPayPalCommerceAcceleratedCheckoutCustomer(
-            paymentProviderCustomer,
-        )
-            ? paymentProviderCustomer
-            : {};
 
         const paypalConnectSessionId =
             this.paypalCommerceAcceleratedCheckoutUtils.getStorageSessionId();
 
         if (
-            paypalCommercePaymentProviderCustomer?.authenticationState ===
+            paymentProviderCustomer?.authenticationState ===
             PayPalCommerceConnectAuthenticationState.CANCELED
         ) {
             return false;
         }
 
-        return (
-            !paypalCommercePaymentProviderCustomer?.authenticationState &&
-            paypalConnectSessionId === cart.id
-        );
+        return !paymentProviderCustomer?.authenticationState && paypalConnectSessionId === cart.id;
     }
 
     private async runPayPalConnectAuthenticationFlowOrThrow(methodId: string): Promise<void> {

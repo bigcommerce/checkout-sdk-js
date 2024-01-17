@@ -1,6 +1,4 @@
 export * from './braintree';
-export * from './utils';
-
 export {
     PaypalSDK,
     PaypalButtonOptions,
@@ -29,5 +27,6 @@ export {
     getBraintreeAddress,
     getBraintreePaypal,
 } from './mocks/braintree.mock';
+export { getValidBraintreeConnectStyles, isBraintreeConnectWindow } from './utils';
 export { getPaypalMock } from './mocks/paypal.mock';
 export { BRAINTREE_SDK_STABLE_VERSION, BRAINTREE_SDK_ALPHA_VERSION } from './sdk-verison';

@@ -149,8 +149,6 @@ export { default as PaymentIntegrationService } from './payment-integration-serv
 export {
     BraintreeAcceleratedCheckoutCustomer,
     PaymentProviderCustomer,
-    PayPalCommerceAcceleratedCheckoutCustomer,
-    StripeAcceleratedCheckoutCustomer,
 } from './payment-provider-customer';
 export {
     Consignment,
