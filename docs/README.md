@@ -120,7 +120,6 @@
 - [BoltBuyNowInitializeOptions](interfaces/BoltBuyNowInitializeOptions.md)
 - [BoltCustomerInitializeOptions](interfaces/BoltCustomerInitializeOptions.md)
 - [BoltPaymentInitializeOptions](interfaces/BoltPaymentInitializeOptions.md)
-- [BraintreeAcceleratedCheckoutCustomer](interfaces/BraintreeAcceleratedCheckoutCustomer.md)
 - [BraintreeAcceleratedCheckoutPaymentInitializeOptions](interfaces/BraintreeAcceleratedCheckoutPaymentInitializeOptions.md)
 - [BraintreeAcceleratedCheckoutShippingInitializeOptions](interfaces/BraintreeAcceleratedCheckoutShippingInitializeOptions.md)
 - [BraintreeConnectTrackerService](interfaces/BraintreeConnectTrackerService.md)
@@ -483,7 +482,6 @@
 - [OrderPayments](README.md#orderpayments)
 - [PaymentInitializeOptions](README.md#paymentinitializeoptions)
 - [PaymentInstrument](README.md#paymentinstrument)
-- [PaymentProviderCustomer](README.md#paymentprovidercustomer)
 - [StripeElementOptions](README.md#stripeelementoptions)
 - [StripeEventType](README.md#stripeeventtype)
 - [WithGooglePayCustomerInitializeOptions](README.md#withgooglepaycustomerinitializeoptions)
@@ -779,12 +777,6 @@ ___
 ### PaymentInstrument
 
 Ƭ **PaymentInstrument**: [`CardInstrument`](interfaces/CardInstrument.md) \| [`AccountInstrument`](README.md#accountinstrument)
-
-___
-
-### PaymentProviderCustomer
-
-Ƭ **PaymentProviderCustomer**: [`BraintreeAcceleratedCheckoutCustomer`](interfaces/BraintreeAcceleratedCheckoutCustomer.md)
 
 ___
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.517.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.517.3...v1.517.4) (2024-01-17)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-3466 covered paypal connect paymentProviderCustomer checkout state object with type guards ([#2323](https://github.com/bigcommerce/checkout-sdk-js/issues/2323)) ([f0b3f87](https://github.com/bigcommerce/checkout-sdk-js/commit/f0b3f87814c0b491c9459cd90bc30a1dc99599e7))
+
 ### [1.517.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.517.2...v1.517.3) (2024-01-17)
 
 
