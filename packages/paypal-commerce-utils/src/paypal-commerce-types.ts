@@ -45,6 +45,7 @@ export interface PayPalCommerceInitializationData {
  */
 export interface PayPalCommerceHostWindow extends Window {
     paypalAxo?: PayPalAxoSdk;
+    paypalConnect?: PayPalCommerceConnect;
 }
 
 /**

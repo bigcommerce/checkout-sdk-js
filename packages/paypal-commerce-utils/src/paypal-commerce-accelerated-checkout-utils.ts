@@ -18,15 +18,16 @@ import {
     PayPalCommerceConnectProfileCard,
     PayPalCommerceConnectProfileName,
     PayPalCommerceConnectStylesOption,
+    PayPalCommerceHostWindow,
     PayPalConnectProfileToBcCustomerDataMappingResult,
 } from './paypal-commerce-types';
 
 export default class PayPalCommerceAcceleratedCheckoutUtils {
-    private paypalConnect?: PayPalCommerceConnect;
+    private window: PayPalCommerceHostWindow;
 
-    constructor(
-        private browserStorage: BrowserStorage, // TODO: should be changed to cookies implementation
-    ) {}
+    constructor(private browserStorage: BrowserStorage) {
+        this.window = window;
+    }
 
     async initializePayPalConnect(
         paypalAxoSdk: PayPalAxoSdk,
@@ -36,17 +37,19 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
             window.localStorage.setItem('axoEnv', 'sandbox');
         }
 
-        this.paypalConnect = await paypalAxoSdk.Connect();
+        if (!this.window.paypalConnect) {
+            this.window.paypalConnect = await paypalAxoSdk.Connect();
+        }
 
-        return this.paypalConnect;
+        return this.window.paypalConnect;
     }
 
     getPayPalConnectOrThrow(): PayPalCommerceConnect {
-        if (!this.paypalConnect) {
+        if (!this.window.paypalConnect) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this.paypalConnect;
+        return this.window.paypalConnect;
     }
 
     /**

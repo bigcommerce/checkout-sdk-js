@@ -3,7 +3,11 @@ import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { getPayPalAxoSdk, getPayPalConnectAuthenticationResultMock } from './mocks';
 import PayPalCommerceAcceleratedCheckoutUtils from './paypal-commerce-accelerated-checkout-utils';
-import { PayPalAxoSdk, PayPalCommerceConnectAuthenticationState } from './paypal-commerce-types';
+import {
+    PayPalAxoSdk,
+    PayPalCommerceConnectAuthenticationState,
+    PayPalCommerceHostWindow,
+} from './paypal-commerce-types';
 
 describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
     let browserStorage: BrowserStorage;
@@ -18,6 +22,8 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
     });
 
     afterEach(() => {
+        (window as PayPalCommerceHostWindow).paypalConnect = undefined;
+
         jest.resetAllMocks();
         jest.restoreAllMocks();
 
