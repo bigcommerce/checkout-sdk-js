@@ -154,7 +154,7 @@ export interface PayPalCommerceConnectCardSource {
     expiry: string; // "YYYY-MM"
     lastDigits: string; // "1111"
     name: string;
-    billingAddress: PayPalCommerceConnectLegacyProfileAddress; // TODO: update to PayPalCommerceConnectAddress in next release
+    billingAddress: PayPalCommerceConnectAddress;
 }
 
 export interface PayPalCommerceConnectAddress {
@@ -166,21 +166,6 @@ export interface PayPalCommerceConnectAddress {
     postalCode: string;
     countryCode?: string;
     phone: string;
-}
-
-// TODO: should be removed after PP next release
-export interface PayPalCommerceConnectLegacyProfileAddress {
-    firstName?: string;
-    lastName?: string;
-    company?: string;
-    streetAddress: string;
-    extendedAddress?: string;
-    locality: string;
-    region: string;
-    postalCode: string;
-    countryCodeNumeric?: number;
-    countryCodeAlpha2?: string;
-    countryCodeAlpha3?: string;
 }
 
 export interface PayPalConnectProfileToBcCustomerDataMappingResult {
