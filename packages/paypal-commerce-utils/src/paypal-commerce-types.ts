@@ -39,13 +39,25 @@ export interface PayPalCommerceInitializationData {
 
 /**
  *
+ * PayPal Commerce Sdk Namespaces
+ *
+ */
+export enum PayPalCommerceSdkNamespaces {
+    PaypalAxo = 'paypalAxo',
+    PaypalMessages = 'paypalMessages',
+    PaypalConnect = 'paypalConnect',
+}
+
+/**
+ *
  * PayPalCommerceHostWindow contains different
  * PayPal Sdk instances for different purposes
  *
  */
 export interface PayPalCommerceHostWindow extends Window {
-    paypalAxo?: PayPalAxoSdk;
-    paypalConnect?: PayPalCommerceConnect;
+    [PayPalCommerceSdkNamespaces.PaypalAxo]?: PayPalAxoSdk;
+    [PayPalCommerceSdkNamespaces.PaypalConnect]?: PayPalCommerceConnect;
+    [PayPalCommerceSdkNamespaces.PaypalMessages]?: PayPalMessagesSdk;
 }
 
 /**
@@ -76,7 +88,7 @@ export enum PayPalCommerceIntent {
     CAPTURE = 'capture',
 }
 
-export type PayPalSdkComponents = Array<'connect'>;
+export type PayPalSdkComponents = Array<'connect' | 'messages'>;
 
 /**
  *
@@ -85,6 +97,32 @@ export type PayPalSdkComponents = Array<'connect'>;
  */
 export interface PayPalAxoSdk {
     Connect(): Promise<PayPalCommerceConnect>;
+}
+
+export interface PayPalMessagesSdk {
+    Messages(options: MessagingOptions): MessagingRender;
+}
+
+/**
+ *
+ * PayLater Messages related types
+ *
+ */
+export interface MessagingRender {
+    render(container: string): void;
+}
+
+export interface MessagesStyleOptions {
+    layout?: 'text' | 'flex';
+    logo?: {
+        type: 'none' | 'inline' | 'primary';
+    };
+}
+
+export interface MessagingOptions {
+    amount: number;
+    placement: string;
+    style?: MessagesStyleOptions;
 }
 
 /**
