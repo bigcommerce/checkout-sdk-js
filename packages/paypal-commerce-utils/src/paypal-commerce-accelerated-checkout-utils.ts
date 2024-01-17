@@ -14,7 +14,6 @@ import {
     PayPalCommerceConnectAddress,
     PayPalCommerceConnectAuthenticationResult,
     PayPalCommerceConnectAuthenticationState,
-    PayPalCommerceConnectLegacyProfileAddress,
     PayPalCommerceConnectLookupCustomerByEmailResult,
     PayPalCommerceConnectProfileCard,
     PayPalCommerceConnectProfileName,
@@ -134,7 +133,7 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
             : undefined;
         const billingAddress =
             paypalBillingAddress && paypalProfileName
-                ? this.mapPayPalBillingToBcAddress(paypalBillingAddress, paypalProfileName)
+                ? this.mapPayPalToBcAddress(paypalBillingAddress, paypalProfileName)
                 : undefined;
         const instruments = paypalInstrument
             ? this.mapPayPalToBcInstrument(methodId, paypalInstrument)
@@ -207,31 +206,6 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
             stateOrProvince: address.adminArea1,
             stateOrProvinceCode: address.adminArea1,
             countryCode: address.countryCode || '',
-            postalCode: address.postalCode,
-            // phone: address.phone,
-            phone: '333333333333', // TODO: remove phone number mock when its done on PP side
-            customFields: [],
-        };
-    }
-
-    // Info: this method will be deprecated in one of PayPal future release
-    // TODO: remove with PayPal new release
-    private mapPayPalBillingToBcAddress(
-        address: PayPalCommerceConnectLegacyProfileAddress,
-        profileName: PayPalCommerceConnectProfileName,
-    ): AddressRequestBody {
-        const [firstName, lastName] = profileName.fullName.split(' ');
-
-        return {
-            firstName: profileName.firstName || firstName || '',
-            lastName: profileName.lastName || lastName || '',
-            company: address.company || '',
-            address1: address.streetAddress,
-            address2: address.extendedAddress || '',
-            city: address.locality,
-            stateOrProvince: address.region,
-            stateOrProvinceCode: address.region,
-            countryCode: address.countryCodeAlpha2 || '',
             postalCode: address.postalCode,
             // phone: address.phone,
             phone: '333333333333', // TODO: remove phone number mock when its done on PP side
