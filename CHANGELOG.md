@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.517.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.517.0...v1.517.1) (2024-01-17)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3466 load paypalcommerce payment method in initialization method of PPCP AXO customer strategy ([#2324](https://github.com/bigcommerce/checkout-sdk-js/issues/2324)) ([2416e93](https://github.com/bigcommerce/checkout-sdk-js/commit/2416e93a5273bca5a4855c5cce16b3c73ab21755))
+
 ## [1.517.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.516.0...v1.517.0) (2024-01-16)
 
 
