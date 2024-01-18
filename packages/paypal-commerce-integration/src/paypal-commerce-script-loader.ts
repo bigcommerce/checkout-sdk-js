@@ -64,8 +64,6 @@ export default class PayPalCommerceScriptLoader {
         return this.window.paypal;
     }
 
-    // TODO: find a way how to fix complexity of the method
-    // eslint-disable-next-line complexity
     private getPayPalSdkScriptConfigOrThrow(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
@@ -84,7 +82,6 @@ export default class PayPalCommerceScriptLoader {
             buyerCountry,
             attributionId,
             isVenmoEnabled,
-            isAcceleratedCheckoutEnabled,
             isHostedCheckoutEnabled,
             isPayPalCreditAvailable,
             isDeveloperModeApplicable,
@@ -111,12 +108,6 @@ export default class PayPalCommerceScriptLoader {
                   (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
               )
             : availableAlternativePaymentMethods;
-
-        const shouldEnableConnectComponent =
-            isAcceleratedCheckoutEnabled && initializesOnCheckoutPage;
-        const enableConnectComponent: ComponentsScriptType = shouldEnableConnectComponent
-            ? ['connect']
-            : [];
         const googlePayComponent: ComponentsScriptType = isGooglePayEnabled ? ['googlepay'] : [];
 
         const disableFunding: FundingType = [
@@ -146,7 +137,6 @@ export default class PayPalCommerceScriptLoader {
                     'payment-fields',
                     'legal',
                     ...googlePayComponent,
-                    ...enableConnectComponent,
                 ],
                 currency: currencyCode,
                 intent,
@@ -154,14 +144,7 @@ export default class PayPalCommerceScriptLoader {
             },
             attributes: {
                 'data-partner-attribution-id': attributionId,
-                ...(shouldEnableConnectComponent
-                    ? {
-                          'data-user-id-token': clientToken,
-                          'data-client-metadata-id': 'sandbox', // TODO: should be updated when paypal will be ready for production
-                      }
-                    : {
-                          'data-client-token': clientToken,
-                      }),
+                'data-client-token': clientToken,
             },
         };
     }
