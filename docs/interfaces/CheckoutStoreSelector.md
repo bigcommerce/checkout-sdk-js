@@ -354,7 +354,7 @@ ___
 
 ### getPaymentProviderCustomer
 
-▸ **getPaymentProviderCustomer**(): `undefined` \| `BraintreeAcceleratedCheckoutCustomer` \| `PayPalCommerceAcceleratedCheckoutCustomer` \| `StripeAcceleratedCheckoutCustomer`
+▸ **getPaymentProviderCustomer**(): `undefined` \| [`BraintreeAcceleratedCheckoutCustomer`](BraintreeAcceleratedCheckoutCustomer.md)
 
 Gets payment provider customers data.
 
@@ -362,7 +362,7 @@ Gets payment provider customers data.
 
 #### Returns
 
-`undefined` \| `BraintreeAcceleratedCheckoutCustomer` \| `PayPalCommerceAcceleratedCheckoutCustomer` \| `StripeAcceleratedCheckoutCustomer`
+`undefined` \| [`BraintreeAcceleratedCheckoutCustomer`](BraintreeAcceleratedCheckoutCustomer.md)
 
 The object with payment provider customer data
 
