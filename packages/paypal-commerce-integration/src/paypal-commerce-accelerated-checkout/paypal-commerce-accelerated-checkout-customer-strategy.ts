@@ -39,19 +39,13 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
             );
         }
 
-        // TODO: remove when A/B testing finished
-        // Info: parent method id should be used in current initialization method
-        // to avoid getting error after loading payment method which is not available
-        // for a control group customers
-        const parentMethodId = 'paypalcommerce';
+        await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
-        await this.paymentIntegrationService.loadPaymentMethod(parentMethodId);
-
-        if (this.isAcceleratedCheckoutFeatureEnabled(parentMethodId)) {
+        if (this.isAcceleratedCheckoutFeatureEnabled(methodId)) {
             const state = this.paymentIntegrationService.getState();
             const currency = state.getCartOrThrow().currency.code;
             const paymentMethod =
-                state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(parentMethodId);
+                state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
             this.paypalConnectStyles = paypalcommerceacceleratedcheckout?.styles;
 
