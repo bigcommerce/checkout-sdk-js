@@ -11,6 +11,7 @@ import {
     PayPalAxoSdk,
     PayPalCommerceHostWindow,
     PayPalCommerceInitializationData,
+    PayPalMessagesSdk,
     PayPalSdkConfig,
 } from './paypal-commerce-types';
 
@@ -33,13 +34,33 @@ export default class PayPalCommerceSdk {
             );
 
             await this.loadPayPalSdk(paypalSdkConnectConfig);
-        }
 
-        if (!this.window.paypalAxo) {
-            throw new PaymentMethodClientUnavailableError();
+            if (!this.window.paypalAxo) {
+                throw new PaymentMethodClientUnavailableError();
+            }
         }
 
         return this.window.paypalAxo;
+    }
+
+    async getPayPalMessages(
+        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
+        currencyCode: string,
+    ): Promise<PayPalMessagesSdk> {
+        if (!this.window.paypalMessages) {
+            const paypalSdkMessagesConfig = this.getPayPalSdkMessagesConfiguration(
+                paymentMethod,
+                currencyCode,
+            );
+
+            await this.loadPayPalSdk(paypalSdkMessagesConfig);
+
+            if (!this.window.paypalMessages) {
+                throw new PaymentMethodClientUnavailableError();
+            }
+        }
+
+        return this.window.paypalMessages;
     }
 
     /**
@@ -91,6 +112,33 @@ export default class PayPalCommerceSdk {
             attributes: {
                 'data-client-metadata-id': 'sandbox', // TODO: should be updated when paypal will be ready for production
                 'data-namespace': 'paypalAxo',
+                'data-partner-attribution-id': attributionId,
+                'data-user-id-token': clientToken,
+            },
+        };
+    }
+
+    private getPayPalSdkMessagesConfiguration(
+        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
+        currencyCode: string,
+    ): PayPalSdkConfig {
+        const { clientToken, initializationData } = paymentMethod;
+
+        if (!initializationData || !initializationData.clientId) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const { clientId, merchantId, attributionId } = initializationData;
+
+        return {
+            options: {
+                'client-id': clientId,
+                'merchant-id': merchantId,
+                components: ['messages'],
+                currency: currencyCode,
+            },
+            attributes: {
+                'data-namespace': 'paypalMessages',
                 'data-partner-attribution-id': attributionId,
                 'data-user-id-token': clientToken,
             },
