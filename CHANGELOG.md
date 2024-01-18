@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.518.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.517.6...v1.518.0) (2024-01-18)
+
+
+### Features
+
+* **payment:** PI-429 [Adyen] Improve FE validation for APMs on checkout ([3209cfb](https://github.com/bigcommerce/checkout-sdk-js/commit/3209cfb4d4592454a0aa536ee0da18804d09405c))
+
 ### [1.517.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.517.5...v1.517.6) (2024-01-18)
 
 ### [1.517.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.517.4...v1.517.5) (2024-01-18)
