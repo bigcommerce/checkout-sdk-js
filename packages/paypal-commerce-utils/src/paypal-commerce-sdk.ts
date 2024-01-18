@@ -11,7 +11,6 @@ import {
     PayPalAxoSdk,
     PayPalCommerceHostWindow,
     PayPalCommerceInitializationData,
-    PayPalCommerceSdkNamespaces,
     PayPalMessagesSdk,
     PayPalSdkConfig,
 } from './paypal-commerce-types';
@@ -35,10 +34,10 @@ export default class PayPalCommerceSdk {
             );
 
             await this.loadPayPalSdk(paypalSdkConnectConfig);
-        }
 
-        if (!this.window.paypalAxo) {
-            throw new PaymentMethodClientUnavailableError();
+            if (!this.window.paypalAxo) {
+                throw new PaymentMethodClientUnavailableError();
+            }
         }
 
         return this.window.paypalAxo;
@@ -55,10 +54,10 @@ export default class PayPalCommerceSdk {
             );
 
             await this.loadPayPalSdk(paypalSdkMessagesConfig);
-        }
 
-        if (!this.window.paypalMessages) {
-            throw new PaymentMethodClientUnavailableError();
+            if (!this.window.paypalMessages) {
+                throw new PaymentMethodClientUnavailableError();
+            }
         }
 
         return this.window.paypalMessages;
@@ -112,7 +111,7 @@ export default class PayPalCommerceSdk {
             },
             attributes: {
                 'data-client-metadata-id': 'sandbox', // TODO: should be updated when paypal will be ready for production
-                'data-namespace': PayPalCommerceSdkNamespaces.PaypalAxo,
+                'data-namespace': 'paypalAxo',
                 'data-partner-attribution-id': attributionId,
                 'data-user-id-token': clientToken,
             },
@@ -129,19 +128,17 @@ export default class PayPalCommerceSdk {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { intent, clientId, merchantId, attributionId } = initializationData;
+        const { clientId, merchantId, attributionId } = initializationData;
 
         return {
             options: {
                 'client-id': clientId,
                 'merchant-id': merchantId,
-                commit: true,
                 components: ['messages'],
                 currency: currencyCode,
-                intent,
             },
             attributes: {
-                'data-namespace': PayPalCommerceSdkNamespaces.PaypalMessages,
+                'data-namespace': 'paypalMessages',
                 'data-partner-attribution-id': attributionId,
                 'data-user-id-token': clientToken,
             },

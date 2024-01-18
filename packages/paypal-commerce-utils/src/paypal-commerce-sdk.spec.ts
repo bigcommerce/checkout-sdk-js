@@ -8,12 +8,7 @@ import {
 
 import { getPayPalAxoSdk, getPayPalCommerceAcceleratedCheckoutPaymentMethod } from './mocks';
 import PayPalCommerceSdk from './paypal-commerce-sdk';
-import {
-    PayPalAxoSdk,
-    PayPalCommerceHostWindow,
-    PayPalCommerceSdkNamespaces,
-    PayPalMessagesSdk,
-} from './paypal-commerce-types';
+import { PayPalAxoSdk, PayPalCommerceHostWindow, PayPalMessagesSdk } from './paypal-commerce-types';
 
 describe('PayPalCommerceSdk', () => {
     let loader: ScriptLoader;
@@ -71,7 +66,7 @@ describe('PayPalCommerceSdk', () => {
                     async: true,
                     attributes: {
                         'data-client-metadata-id': 'sandbox',
-                        'data-namespace': PayPalCommerceSdkNamespaces.PaypalAxo,
+                        'data-namespace': 'paypalAxo',
                         'data-partner-attribution-id': '1123JLKJASD12',
                         'data-user-id-token': 'asdcvY7XFSQasd',
                     },
@@ -117,11 +112,11 @@ describe('PayPalCommerceSdk', () => {
             await subject.getPayPalMessages(paymentMethod, 'USD');
 
             expect(loader.loadScript).toHaveBeenCalledWith(
-                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=messages&currency=USD&intent=capture',
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&components=messages&currency=USD',
                 {
                     async: true,
                     attributes: {
-                        'data-namespace': PayPalCommerceSdkNamespaces.PaypalMessages,
+                        'data-namespace': 'paypalMessages',
                         'data-partner-attribution-id': '1123JLKJASD12',
                         'data-user-id-token': 'asdcvY7XFSQasd',
                     },

@@ -39,25 +39,14 @@ export interface PayPalCommerceInitializationData {
 
 /**
  *
- * PayPal Commerce Sdk Namespaces
- *
- */
-export enum PayPalCommerceSdkNamespaces {
-    PaypalAxo = 'paypalAxo',
-    PaypalMessages = 'paypalMessages',
-    PaypalConnect = 'paypalConnect',
-}
-
-/**
- *
  * PayPalCommerceHostWindow contains different
  * PayPal Sdk instances for different purposes
  *
  */
 export interface PayPalCommerceHostWindow extends Window {
-    [PayPalCommerceSdkNamespaces.PaypalAxo]?: PayPalAxoSdk;
-    [PayPalCommerceSdkNamespaces.PaypalConnect]?: PayPalCommerceConnect;
-    [PayPalCommerceSdkNamespaces.PaypalMessages]?: PayPalMessagesSdk;
+    paypalAxo?: PayPalAxoSdk;
+    paypalConnect?: PayPalCommerceConnect;
+    paypalMessages?: PayPalMessagesSdk;
 }
 
 /**
