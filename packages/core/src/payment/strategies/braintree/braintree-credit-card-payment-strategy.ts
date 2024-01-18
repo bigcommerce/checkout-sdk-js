@@ -1,9 +1,6 @@
 import { some } from 'lodash';
 
-import {
-    BraintreeIntegrationService,
-    isBraintreeAcceleratedCheckoutCustomer,
-} from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreeIntegrationService } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { Address } from '../../../address';
@@ -274,17 +271,10 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     private _shouldInitializeBraintreeConnect() {
         const state = this._store.getState();
         const paymentProviderCustomer = state.paymentProviderCustomer.getPaymentProviderCustomer();
-        const braintreePaymentProviderCustomer = isBraintreeAcceleratedCheckoutCustomer(
-            paymentProviderCustomer,
-        )
-            ? paymentProviderCustomer
-            : {};
         const isAcceleratedCheckoutEnabled =
             this._paymentMethod?.initializationData.isAcceleratedCheckoutEnabled;
 
-        return (
-            isAcceleratedCheckoutEnabled && !braintreePaymentProviderCustomer?.authenticationState
-        );
+        return isAcceleratedCheckoutEnabled && !paymentProviderCustomer?.authenticationState;
     }
 
     // TODO: remove this part when BT AXO A/B testing will be finished

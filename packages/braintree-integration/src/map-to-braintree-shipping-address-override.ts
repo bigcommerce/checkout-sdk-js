@@ -1,5 +1,6 @@
-import { BraintreeShippingAddressOverride } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { Address } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import { BraintreeShippingAddressOverride } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 export default function mapToBraintreeShippingAddressOverride(
     address: Address,

@@ -4,8 +4,8 @@ import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { createSelector } from '../common/selector';
 import { guard } from '../common/utility';
 
-import { PaymentProviderCustomer } from './payment-provider-customer';
 import PaymentProviderCustomerState, { DEFAULT_STATE } from './payment-provider-customer-state';
+import { PaymentProviderCustomer } from './payment-provider-customer';
 
 export default interface PaymentProviderCustomerSelector {
     getPaymentProviderCustomer(): PaymentProviderCustomer | undefined;

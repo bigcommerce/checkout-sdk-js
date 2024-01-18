@@ -8,7 +8,6 @@ import {
     BraintreeConnectStylesOption,
     BraintreeConnectVaultedInstrument,
     BraintreeIntegrationService,
-    isBraintreeAcceleratedCheckoutCustomer,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
@@ -100,23 +99,15 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
         const cartId = state.cart.getCart()?.id;
         const paypalConnectSessionId = this._browserStorage.getItem('sessionId');
         const paymentProviderCustomer = state.paymentProviderCustomer.getPaymentProviderCustomer();
-        const braintreePaymentProviderCustomer = isBraintreeAcceleratedCheckoutCustomer(
-            paymentProviderCustomer,
-        )
-            ? paymentProviderCustomer
-            : {};
 
         if (
-            braintreePaymentProviderCustomer?.authenticationState ===
+            paymentProviderCustomer?.authenticationState ===
             BraintreeConnectAuthenticationState.CANCELED
         ) {
             return false;
         }
 
-        return (
-            !braintreePaymentProviderCustomer?.authenticationState &&
-            paypalConnectSessionId === cartId
-        );
+        return !paymentProviderCustomer?.authenticationState && paypalConnectSessionId === cartId;
     }
 
     private async _runAuthenticationFlowOrThrow(

@@ -1,6 +1,5 @@
 export * from './paypal-commerce-types';
 export * from './mocks';
-export * from './utils';
 
 /**
  *
