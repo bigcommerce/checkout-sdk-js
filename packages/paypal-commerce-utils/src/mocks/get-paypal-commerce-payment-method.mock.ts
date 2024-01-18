@@ -45,6 +45,7 @@ export default function getPayPalCommercePaymentMethod(): PaymentMethod {
             attributionId: '1123JLKJASD12',
             intent: PayPalCommerceIntent.CAPTURE,
             isAcceleratedCheckoutEnabled: false,
+            isPayPalCommerceAnalyticsV2Enabled: false,
             isPayPalCreditAvailable: false,
             isVenmoEnabled: false,
             shouldRenderFields: true,
@@ -65,6 +66,7 @@ export function getPayPalCommerceAcceleratedCheckoutPaymentMethod(): PaymentMeth
             ...paypalCommerceDefaultPaymentMethod.initializationData,
             isAcceleratedCheckoutEnabled: true,
             shouldRunAcceleratedCheckout: true,
+            isPayPalCommerceAnalyticsV2Enabled: true,
         },
     };
 }

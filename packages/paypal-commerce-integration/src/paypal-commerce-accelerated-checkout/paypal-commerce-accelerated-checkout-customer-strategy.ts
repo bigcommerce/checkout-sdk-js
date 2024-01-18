@@ -97,7 +97,6 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
             if (
                 checkoutPaymentMethodExecuted &&
                 typeof checkoutPaymentMethodExecuted === 'function'
-                // && window.paypal.connect.events // TODO: uncomment when paypal events will be available in pp sdk
             ) {
                 checkoutPaymentMethodExecuted();
             }
