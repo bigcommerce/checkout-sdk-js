@@ -1,9 +1,9 @@
-import { isEqual } from 'lodash';
+import { isEqual, omit } from 'lodash';
 
 import {
     Address,
-    AddressRequestBody,
     CardInstrument,
+    CustomerAddress,
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
@@ -189,17 +189,22 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
             adminArea2: address?.city || '',
             postalCode: address?.postalCode || '',
             countryCode: address?.countryCode || '',
-            phone: address?.phone || '',
         };
     }
 
     private mapPayPalToBcAddress(
         address: PayPalCommerceConnectAddress,
         profileName: PayPalCommerceConnectProfileName,
-    ): AddressRequestBody {
+    ): CustomerAddress {
         const [firstName, lastName] = profileName.fullName.split(' ');
+        const phone = {
+            nationalNumber: address.phone?.nationalNumber || '',
+            countryCode: address.phone?.countryCode || '',
+        };
 
         return {
+            id: Date.now(),
+            type: 'paypal-address',
             firstName: profileName.firstName || firstName || '',
             lastName: profileName.lastName || lastName || '',
             company: address.company || '',
@@ -208,10 +213,10 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
             city: address.adminArea2,
             stateOrProvince: address.adminArea1,
             stateOrProvinceCode: address.adminArea1,
+            country: address.countryCode || '', // TODO: update country with valid naming
             countryCode: address.countryCode || '',
             postalCode: address.postalCode,
-            // phone: address.phone,
-            phone: '333333333333', // TODO: remove phone number mock when its done on PP side
+            phone: phone.countryCode + phone.nationalNumber,
             customFields: [],
         };
     }
@@ -224,14 +229,24 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
      *
      */
     private mergeShippingAndBillingAddresses(
-        shippingAddress?: AddressRequestBody,
-        billingAddress?: AddressRequestBody,
-    ): AddressRequestBody[] {
-        const isBillingEqualsShipping = isEqual(shippingAddress, billingAddress);
+        shippingAddress?: CustomerAddress,
+        billingAddress?: CustomerAddress,
+    ): CustomerAddress[] {
+        const isBillingEqualsShipping =
+            shippingAddress && billingAddress
+                ? isEqual(
+                      this.normalizeAddress(shippingAddress),
+                      this.normalizeAddress(billingAddress),
+                  )
+                : false;
 
         return [
             ...(shippingAddress ? [shippingAddress] : []),
             ...(billingAddress && !isBillingEqualsShipping ? [billingAddress] : []),
         ];
+    }
+
+    private normalizeAddress(address: CustomerAddress) {
+        return omit(address, ['id', 'phone']);
     }
 }

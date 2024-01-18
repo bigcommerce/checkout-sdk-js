@@ -19,6 +19,8 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
         paypalAxoSdk = getPayPalAxoSdk();
 
         subject = new PayPalCommerceAcceleratedCheckoutUtils(browserStorage);
+
+        jest.spyOn(Date, 'now').mockImplementation(() => 1);
     });
 
     afterEach(() => {
@@ -163,18 +165,21 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
 
         it('returns mapped PayPal Connect Profile to BC like data', () => {
             const addressMock = {
+                id: 1,
                 address1: 'addressLine1',
                 address2: 'addressLine2',
                 city: 'addressCity',
                 company: 'BigCommerce',
                 countryCode: 'US',
+                country: 'US',
                 customFields: [],
                 firstName: 'John',
                 lastName: 'Doe',
-                phone: '333333333333',
+                phone: '15551113344',
                 postalCode: '03004',
                 stateOrProvince: 'addressState',
                 stateOrProvinceCode: 'addressState',
+                type: 'paypal-address',
             };
 
             const instrumentMock = {
@@ -217,10 +222,10 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
             customFields: [],
             firstName: 'John',
             lastName: 'Doe',
-            phone: '333333333333',
             postalCode: '03004',
             stateOrProvince: 'addressState',
             stateOrProvinceCode: 'addressState',
+            phone: '',
         };
 
         it('maps and returns PayPal Address based on provided BC address', () => {
@@ -233,7 +238,6 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
                 adminArea2: 'addressCity',
                 company: 'BigCommerce',
                 countryCode: 'US',
-                phone: '333333333333',
                 postalCode: '03004',
             });
         });

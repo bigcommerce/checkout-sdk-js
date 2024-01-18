@@ -1,7 +1,4 @@
-import {
-    AddressRequestBody,
-    CardInstrument,
-} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { CardInstrument, CustomerAddress } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
  *
@@ -166,14 +163,17 @@ export interface PayPalCommerceConnectAddress {
     adminArea2: string; // City
     postalCode: string;
     countryCode?: string;
-    phone: string;
+    phone?: {
+        countryCode?: string;
+        nationalNumber?: string;
+    };
 }
 
 export interface PayPalConnectProfileToBcCustomerDataMappingResult {
     authenticationState: PayPalCommerceConnectAuthenticationState;
-    addresses: AddressRequestBody[];
-    billingAddress?: AddressRequestBody;
-    shippingAddress?: AddressRequestBody;
+    addresses: CustomerAddress[];
+    billingAddress?: CustomerAddress;
+    shippingAddress?: CustomerAddress;
     instruments: CardInstrument[];
 }
 
