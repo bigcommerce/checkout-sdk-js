@@ -57,7 +57,7 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const paymentData = payment.paymentData;
+        const { paymentData } = payment;
 
         const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = isHostedInstrumentLike(
             paymentData,
@@ -84,34 +84,7 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
             return;
         }
 
-        let nonce = await this._squareV2PaymentProcessor.tokenize();
-
-        if (this._shouldVerify()) {
-            if (shouldSaveInstrument) {
-                const storeCardNonce = await this._squareV2PaymentProcessor.tokenize();
-
-                nonce = JSON.stringify({
-                    nonce,
-                    store_card_nonce: storeCardNonce,
-                    token: await this._squareV2PaymentProcessor.verifyBuyer(
-                        nonce,
-                        SquareIntent.CHARGE,
-                    ),
-                    store_card_token: await this._squareV2PaymentProcessor.verifyBuyer(
-                        storeCardNonce,
-                        SquareIntent.STORE,
-                    ),
-                });
-            } else {
-                nonce = JSON.stringify({
-                    nonce,
-                    token: await this._squareV2PaymentProcessor.verifyBuyer(
-                        nonce,
-                        SquareIntent.CHARGE,
-                    ),
-                });
-            }
-        }
+        const nonce = await this.getNonce(shouldSaveInstrument);
 
         await this._paymentIntegrationService.submitPayment({
             ...payment,
@@ -133,6 +106,37 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
 
     deinitialize(): Promise<void> {
         return this._squareV2PaymentProcessor.deinitialize();
+    }
+
+    private async getNonce(shouldSaveInstrument: boolean | undefined) {
+        let nonce = await this._squareV2PaymentProcessor.tokenize();
+
+        if (this._shouldVerify()) {
+            const verifyBuyer = await this._squareV2PaymentProcessor.verifyBuyer(
+                nonce,
+                SquareIntent.CHARGE,
+            );
+
+            if (shouldSaveInstrument) {
+                nonce = JSON.stringify({
+                    nonce,
+                    store_card_nonce: nonce,
+                    //shouldn't be "stored" intead of "store"?
+                    token: verifyBuyer,
+                    store_card_token: await this._squareV2PaymentProcessor.verifyBuyer(
+                        nonce,
+                        SquareIntent.STORE,
+                    ),
+                });
+            } else {
+                nonce = JSON.stringify({
+                    nonce,
+                    token: verifyBuyer,
+                });
+            }
+        }
+
+        return nonce;
     }
 
     private _shouldVerify(): boolean {
