@@ -137,8 +137,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         if (
             payment.methodId === 'klarna' ||
             payment.methodId === 'klarna_account' ||
-            payment.methodId === 'klarna_paynow' ||
-            payment.methodId === 'blik'
+            payment.methodId === 'klarna_paynow'
         ) {
             this._paymentComponent?.submit();
         }
@@ -461,25 +460,13 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
             ? this._cardVerificationComponent
             : this._paymentComponent;
 
-        const isEmptyString = (value: string) => value.toString().trim().length === 0;
-        const isShorterThan2 = (value: string) => value.toString().replace(/ /g, '').length < 2;
-        const onlyContainsNumbers = (value: string) => /^\d+$/.test(value);
-        const isInvalidBlik = (value: string) =>
-            isShorterThan2(value) || !onlyContainsNumbers(value);
-
         if (!cardComponent?.componentRef?.showValidation || !cardComponent.state) {
             return;
         }
 
         cardComponent.componentRef.showValidation();
 
-        if (
-            Object.keys(cardComponent.state).length === 0 ||
-            !cardComponent.state.isValid ||
-            Object.values(cardComponent.state.data).some(isEmptyString) ||
-            (cardComponent.props?.type === 'blik' &&
-                Object.values(cardComponent.state.data).some(isInvalidBlik))
-        ) {
+        if (Object.keys(cardComponent.state).length === 0 || !cardComponent.state.isValid) {
             throw new PaymentInvalidFormError(this._mapCardErrors(cardComponent.state.errors));
         }
     }
