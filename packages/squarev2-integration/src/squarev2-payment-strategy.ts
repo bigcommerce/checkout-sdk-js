@@ -1,8 +1,10 @@
 import {
+    FormattedPayload,
     InvalidArgumentError,
     isHostedInstrumentLike,
     isVaultedInstrument,
     OrderFinalizationNotRequiredError,
+    OrderPaymentRequestBody,
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
@@ -14,7 +16,11 @@ import {
 import { SquareIntent } from './enums';
 import { WithSquareV2PaymentInitializeOptions } from './squarev2-payment-initialize-options';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
-import { SquarePaymentMethodInitializationData } from './types';
+import {
+    SquareFormattedVaultedInstrument,
+    SquareInitializationData,
+    SquarePaymentMethodInitializationData,
+} from './types';
 
 export default class SquareV2PaymentStrategy implements PaymentStrategy {
     constructor(
@@ -57,7 +63,7 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const paymentData = payment.paymentData;
+        const { paymentData } = payment;
 
         const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = isHostedInstrumentLike(
             paymentData,
@@ -68,18 +74,11 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
         await this._paymentIntegrationService.submitOrder();
 
         if (paymentData && isVaultedInstrument(paymentData)) {
-            await this._paymentIntegrationService.submitPayment({
-                ...payment,
-                paymentData: {
-                    formattedPayload: {
-                        bigpay_token: {
-                            token: paymentData.instrumentId,
-                        },
-                        vault_payment_instrument: shouldSaveInstrument || false,
-                        set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
-                    },
-                },
-            });
+            await this._processWithVaultedInstrument(
+                payment,
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
+            );
 
             return;
         }
@@ -141,5 +140,59 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
             .getStoreConfigOrThrow().checkoutSettings;
 
         return features['PROJECT-3828.add_3ds_support_on_squarev2'];
+    }
+
+    private async _processWithVaultedInstrument(
+        payment: OrderPaymentRequestBody,
+        shouldSaveInstrument = false,
+        shouldSetAsDefaultInstrument = false,
+    ): Promise<void> {
+        const { methodId, paymentData } = payment;
+
+        // TODO: optimize type guard (the same in execute method)
+        // need some refactoring in execute method
+        if (!paymentData || !isVaultedInstrument(paymentData)) {
+            return;
+        }
+
+        const { instrumentId } = paymentData;
+        const verificationToken = this._shouldVerify()
+            ? await this._squareV2PaymentProcessor.verifyBuyer(
+                  await this._getSquareCardIdOrThrow(methodId, instrumentId),
+                  SquareIntent.CHARGE,
+              )
+            : undefined;
+
+        const submitPaymentPayload: FormattedPayload<SquareFormattedVaultedInstrument> = {
+            formattedPayload: {
+                bigpay_token: {
+                    token: instrumentId,
+                    ...(verificationToken && { three_d_secure: { token: verificationToken } }),
+                },
+                vault_payment_instrument: shouldSaveInstrument,
+                set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
+            },
+        };
+
+        await this._paymentIntegrationService.submitPayment({
+            ...payment,
+            paymentData: submitPaymentPayload,
+        });
+    }
+
+    private async _getSquareCardIdOrThrow(methodId: string, instrumentId: string): Promise<string> {
+        const state = await this._paymentIntegrationService.loadPaymentMethod(methodId, {
+            params: { method: methodId, bigpayToken: instrumentId },
+        });
+
+        const { initializationData } =
+            state.getPaymentMethodOrThrow<SquareInitializationData>(methodId);
+        const { cardId } = initializationData || {};
+
+        if (!cardId) {
+            throw new PaymentArgumentInvalidError(['cardId']);
+        }
+
+        return cardId;
     }
 }
