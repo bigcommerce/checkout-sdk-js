@@ -10,6 +10,7 @@ import { HostedFormOptions as HostedFormOptions_2 } from '@bigcommerce/checkout-
 import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PayPalCommerceConnectStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import { PaymentProviderCustomer as PaymentProviderCustomerType } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
 import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -1549,12 +1550,6 @@ declare interface BoltPaymentInitializeOptions {
      * A callback that gets called when the customer selects Bolt as payment option.
      */
     onPaymentSelect?(hasBoltAccount: boolean): void;
-}
-
-declare interface BraintreeAcceleratedCheckoutCustomer {
-    authenticationState?: string;
-    addresses?: CustomerAddress[];
-    instruments?: CardInstrument[];
 }
 
 /**
@@ -7261,7 +7256,7 @@ declare interface PaymentMethodConfig {
     testMode?: boolean;
 }
 
-declare type PaymentProviderCustomer = BraintreeAcceleratedCheckoutCustomer;
+declare type PaymentProviderCustomer = PaymentProviderCustomerType;
 
 /**
  * The set of options for configuring any requests related to the payment step of
