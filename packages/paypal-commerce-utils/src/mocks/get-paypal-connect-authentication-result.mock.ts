@@ -10,11 +10,6 @@ export default function getPayPalConnectAuthenticationResultMock() {
                 lastName: 'Doe',
             },
             shippingAddress: {
-                name: {
-                    fullName: 'John Doe',
-                    firstName: 'John',
-                    lastName: 'Doe',
-                },
                 address: {
                     company: 'BigCommerce',
                     addressLine1: 'addressLine1',
@@ -23,10 +18,15 @@ export default function getPayPalConnectAuthenticationResultMock() {
                     adminArea2: 'addressCity',
                     postalCode: '03004',
                     countryCode: 'US',
-                    phone: {
-                        nationalNumber: '5551113344',
-                        countryCode: '1',
-                    },
+                },
+                name: {
+                    fullName: 'John Doe',
+                    firstName: 'John',
+                    lastName: 'Doe',
+                },
+                phoneNumber: {
+                    nationalNumber: '5551113344',
+                    countryCode: '1',
                 },
             },
             card: {
