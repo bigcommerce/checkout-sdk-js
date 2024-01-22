@@ -17,6 +17,7 @@ import {
     PayPalCommerceConnectLookupCustomerByEmailResult,
     PayPalCommerceConnectProfileCard,
     PayPalCommerceConnectProfileName,
+    PayPalCommerceConnectProfilePhone,
     PayPalCommerceConnectStylesOption,
     PayPalCommerceHostWindow,
     PayPalConnectProfileToBcCustomerDataMappingResult,
@@ -132,11 +133,19 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
         const paypalInstrument = profileData?.card;
 
         const shippingAddress = paypalShippingAddress
-            ? this.mapPayPalToBcAddress(paypalShippingAddress.address, paypalShippingAddress.name)
+            ? this.mapPayPalToBcAddress(
+                  paypalShippingAddress.address,
+                  paypalShippingAddress.name,
+                  paypalShippingAddress.phoneNumber,
+              )
             : undefined;
         const billingAddress =
             paypalBillingAddress && paypalProfileName
-                ? this.mapPayPalToBcAddress(paypalBillingAddress, paypalProfileName)
+                ? this.mapPayPalToBcAddress(
+                      paypalBillingAddress,
+                      paypalProfileName,
+                      paypalShippingAddress?.phoneNumber,
+                  )
                 : undefined;
         const instruments = paypalInstrument
             ? this.mapPayPalToBcInstrument(methodId, paypalInstrument)
@@ -195,11 +204,13 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
     private mapPayPalToBcAddress(
         address: PayPalCommerceConnectAddress,
         profileName: PayPalCommerceConnectProfileName,
+        phone?: PayPalCommerceConnectProfilePhone,
     ): CustomerAddress {
         const [firstName, lastName] = profileName.fullName.split(' ');
-        const phone = {
-            nationalNumber: address.phone?.nationalNumber || '',
-            countryCode: address.phone?.countryCode || '',
+
+        const phoneData = {
+            nationalNumber: phone?.nationalNumber || '',
+            countryCode: phone?.countryCode || '',
         };
 
         return {
@@ -216,7 +227,7 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
             country: address.countryCode || '', // TODO: update country with valid naming
             countryCode: address.countryCode || '',
             postalCode: address.postalCode,
-            phone: phone.countryCode + phone.nationalNumber,
+            phone: phoneData.countryCode + phoneData.nationalNumber,
             customFields: [],
         };
     }

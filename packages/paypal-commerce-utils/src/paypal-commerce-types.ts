@@ -160,8 +160,14 @@ export interface PayPalCommerceConnectProfileName {
     lastName: string;
 }
 
+export interface PayPalCommerceConnectProfilePhone {
+    countryCode: string;
+    nationalNumber: string;
+}
+
 export interface PayPalCommerceConnectShippingAddress {
     name: PayPalCommerceConnectProfileName;
+    phoneNumber: PayPalCommerceConnectProfilePhone;
     address: PayPalCommerceConnectAddress;
 }
 
@@ -190,10 +196,6 @@ export interface PayPalCommerceConnectAddress {
     adminArea2: string; // City
     postalCode: string;
     countryCode?: string;
-    phone?: {
-        countryCode?: string;
-        nationalNumber?: string;
-    };
 }
 
 export interface PayPalConnectProfileToBcCustomerDataMappingResult {
