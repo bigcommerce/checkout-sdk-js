@@ -63,6 +63,7 @@ export type ComponentsScriptType = Array<
     | 'payment-fields'
     | 'legal'
     | 'googlepay'
+    | 'card-fields'
 >;
 
 export interface GooglePayConfig {

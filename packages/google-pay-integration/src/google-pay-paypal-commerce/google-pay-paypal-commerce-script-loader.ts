@@ -110,6 +110,9 @@ export default class GooglePayPayPalCommerceScriptLoader {
         const shouldEnableCard = id === 'paypalcommercecreditcards';
         const enableCardFunding = shouldEnableCard ? ['card'] : [];
         const disableCardFunding = !shouldEnableCard ? ['card'] : [];
+        const cardFieldsComponent: ComponentsScriptType = initializesOnCheckoutPage
+            ? ['card-fields']
+            : [];
 
         const enableCreditFunding = isPayPalCreditAvailable ? ['credit', 'paylater'] : [];
         const disableCreditFunding = !isPayPalCreditAvailable ? ['credit', 'paylater'] : [];
@@ -152,6 +155,7 @@ export default class GooglePayPayPalCommerceScriptLoader {
                     'payment-fields',
                     'legal',
                     ...googlePayComponent,
+                    ...cardFieldsComponent,
                 ],
                 currency: currencyCode,
                 intent,

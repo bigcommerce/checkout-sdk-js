@@ -149,6 +149,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'squarev2',
         method: 'credit_card',
     },
+    paypalcommercecreditcards: {
+        provider: 'paypalcommerce',
+        method: 'credit_card',
+    },
 };
 
 export default supportedInstruments;

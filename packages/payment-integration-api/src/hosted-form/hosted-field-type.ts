@@ -7,6 +7,7 @@ enum HostedFieldType {
     CardName = 'cardName',
     CardNumber = 'cardNumber',
     CardNumberVerification = 'cardNumberVerification',
+    CardExpiryVerification = 'cardExpiryVerification',
 }
 
 export default HostedFieldType;

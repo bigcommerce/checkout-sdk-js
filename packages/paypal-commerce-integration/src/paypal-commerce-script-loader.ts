@@ -109,7 +109,9 @@ export default class PayPalCommerceScriptLoader {
               )
             : availableAlternativePaymentMethods;
         const googlePayComponent: ComponentsScriptType = isGooglePayEnabled ? ['googlepay'] : [];
-
+        const cardFieldsComponent: ComponentsScriptType = initializesOnCheckoutPage
+            ? ['card-fields']
+            : [];
         const disableFunding: FundingType = [
             ...disableCardFunding,
             ...disableCreditFunding,
@@ -137,6 +139,7 @@ export default class PayPalCommerceScriptLoader {
                     'payment-fields',
                     'legal',
                     ...googlePayComponent,
+                    ...cardFieldsComponent,
                 ],
                 currency: currencyCode,
                 intent,

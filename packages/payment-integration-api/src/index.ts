@@ -95,6 +95,7 @@ export {
     HostedStoredCardFieldOptions,
     HostedStoredCardFieldOptionsMap,
     isCreditCardFormFields,
+    isCreditCardVaultedFormFields,
 } from './hosted-form';
 export {
     GatewayOrderPayment,
