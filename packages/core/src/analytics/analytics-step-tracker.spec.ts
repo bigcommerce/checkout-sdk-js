@@ -155,7 +155,7 @@ describe('AnalyticsStepTracker', () => {
                 expect.objectContaining({
                     products: [
                         {
-                            product_id: 103,
+                            product_id: '103',
                             sku: 'CLC',
                             name: 'Canvas Laundry Cart',
                             price: 190,
@@ -166,7 +166,7 @@ describe('AnalyticsStepTracker', () => {
                             variant: 'n:v',
                         },
                         {
-                            product_id: 104,
+                            product_id: '104',
                             sku: 'CLX',
                             name: 'Digital Book',
                             price: 200,
@@ -230,7 +230,7 @@ describe('AnalyticsStepTracker', () => {
                 expect(analytics.track).toHaveBeenCalledWith(
                     'Order Completed',
                     expect.objectContaining({
-                        orderId: 295,
+                        order_id: '295',
                     }),
                 );
             });
@@ -304,7 +304,7 @@ describe('AnalyticsStepTracker', () => {
                     expect.objectContaining({
                         products: [
                             {
-                                product_id: 103,
+                                product_id: '103',
                                 sku: 'CLC',
                                 name: 'Canvas Laundry Cart',
                                 price: 190,
@@ -585,7 +585,7 @@ describe('AnalyticsStepTracker', () => {
                 analyticsStepTracker.trackStepCompleted('payment');
             });
 
-            it('sends an empty shippingMethod property when neither paymentMethod nor shippingMethod are specified', () => {
+            it('sends an empty shipping_method property when neither payment_method nor shipping_method are specified', () => {
                 expect(analytics.track).toHaveBeenCalledWith(
                     COMPLETED_EVENT_NAME,
                     buildCompletedPayload(AnalyticStepId.PAYMENT),
@@ -608,11 +608,11 @@ describe('AnalyticsStepTracker', () => {
                 analyticsStepTracker.trackStepCompleted('payment');
             });
 
-            it('sends the shippingMethod and payment data', () => {
+            it('sends the shipping_method and payment data', () => {
                 expect(analytics.track).toHaveBeenCalledWith(COMPLETED_EVENT_NAME, {
                     step: AnalyticStepId.PAYMENT,
-                    shippingMethod: 'Flat Rate',
-                    paymentMethod: 'Authorizenet',
+                    shipping_method: 'Flat Rate',
+                    payment_method: 'Authorizenet',
                     currency: 'JPY',
                 });
             });
@@ -624,7 +624,7 @@ describe('AnalyticsStepTracker', () => {
                 expect(analytics.track).toHaveBeenCalledTimes(0);
             });
 
-            it('sends step complete event again if different shippingMethod method is selected', () => {
+            it('sends step complete event again if different shipping_method is selected', () => {
                 jest.spyOn(
                     checkoutService.getState().data,
                     'getSelectedShippingOption',
@@ -643,7 +643,7 @@ describe('AnalyticsStepTracker', () => {
 
                 expect(analytics.track).toHaveBeenLastCalledWith(COMPLETED_EVENT_NAME, {
                     step: AnalyticStepId.SHIPPING,
-                    shippingMethod: 'foo',
+                    shipping_method: 'foo',
                     currency: 'JPY',
                 });
             });
@@ -651,6 +651,6 @@ describe('AnalyticsStepTracker', () => {
     });
 
     function buildCompletedPayload(step: AnalyticStepId) {
-        return { step, shippingMethod: ' ', currency: 'JPY' };
+        return { step, shipping_method: ' ', currency: 'JPY' };
     }
 });
