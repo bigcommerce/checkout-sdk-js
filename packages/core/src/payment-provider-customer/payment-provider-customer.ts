@@ -1,10 +1,3 @@
-import { CustomerAddress } from '../customer';
-import { CardInstrument } from '../payment/instrument/instrument';
+import { PaymentProviderCustomer as PaymentProviderCustomerType } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-export type PaymentProviderCustomer = BraintreeAcceleratedCheckoutCustomer;
-
-export interface BraintreeAcceleratedCheckoutCustomer {
-    authenticationState?: string;
-    addresses?: CustomerAddress[];
-    instruments?: CardInstrument[];
-}
+export type PaymentProviderCustomer = PaymentProviderCustomerType;

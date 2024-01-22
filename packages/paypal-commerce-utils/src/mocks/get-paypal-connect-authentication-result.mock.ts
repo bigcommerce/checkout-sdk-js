@@ -23,7 +23,10 @@ export default function getPayPalConnectAuthenticationResultMock() {
                     adminArea2: 'addressCity',
                     postalCode: '03004',
                     countryCode: 'US',
-                    phone: '555555555',
+                    phone: {
+                        nationalNumber: '5551113344',
+                        countryCode: '1',
+                    },
                 },
             },
             card: {
@@ -44,7 +47,10 @@ export default function getPayPalConnectAuthenticationResultMock() {
                             adminArea2: 'addressCity',
                             postalCode: '03004',
                             countryCode: 'US',
-                            phone: '555555555',
+                            phone: {
+                                nationalNumber: '5551113344',
+                                countryCode: '1',
+                            },
                         },
                     },
                 },

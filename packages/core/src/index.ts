@@ -23,10 +23,7 @@ export {
     PaymentMethodActionCreator,
     PaymentMethod,
 } from './payment';
-export {
-    BraintreeAcceleratedCheckoutCustomer,
-    PaymentProviderCustomer,
-} from './payment-provider-customer';
+export { PaymentProviderCustomer } from './payment-provider-customer';
 export { getPayment } from './payment/payments.mock';
 export { CardInstrument } from './payment/instrument';
 export {

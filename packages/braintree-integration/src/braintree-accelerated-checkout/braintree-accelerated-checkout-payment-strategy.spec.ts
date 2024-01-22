@@ -362,6 +362,7 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
                 'getPaymentProviderCustomerOrThrow',
             ).mockImplementation(() => ({
                 authenticationState: 'succeeded',
+                addresses: [],
                 instruments: [
                     {
                         brand: 'visa',
