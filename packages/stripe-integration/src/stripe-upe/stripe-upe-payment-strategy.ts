@@ -27,6 +27,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import formatLocale from './format-locale';
+import isStripeAcceleratedCheckoutCustomer from './is-stripe-accelerated-checkout-customer';
 import {
     AddressOptions,
     isStripeUPEPaymentMethodLike,
@@ -158,9 +159,16 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
             const { email } = state.getCustomerOrThrow();
 
-            const { authenticationState } = state.getPaymentProviderCustomerOrThrow();
+            const paymentProviderCustomer = state.getPaymentProviderCustomerOrThrow();
+            const stripePaymentProviderCustomer = isStripeAcceleratedCheckoutCustomer(
+                paymentProviderCustomer,
+            )
+                ? paymentProviderCustomer
+                : {};
+            const stripeLinkAuthenticationState =
+                stripePaymentProviderCustomer.stripeLinkAuthenticationState;
 
-            if (authenticationState !== undefined && !email) {
+            if (stripeLinkAuthenticationState !== undefined && !email) {
                 const billingAddress = state.getBillingAddressOrThrow();
 
                 await this.paymentIntegrationService.updateBillingAddress(billingAddress);

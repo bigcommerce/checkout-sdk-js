@@ -69,7 +69,7 @@ describe('StripeUpeCustomerStrategy', () => {
         jest.spyOn(
             paymentIntegrationService.getState(),
             'getPaymentProviderCustomerOrThrow',
-        ).mockReturnValue({ authenticationState: true });
+        ).mockReturnValue({ stripeLinkAuthenticationState: true });
 
         strategy = new StripeUPECustomerStrategy(paymentIntegrationService, stripeScriptLoader);
     });
@@ -131,7 +131,7 @@ describe('StripeUpeCustomerStrategy', () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentProviderCustomerOrThrow',
-            ).mockReturnValue({ authenticationState: undefined });
+            ).mockReturnValue({ stripeLinkAuthenticationState: undefined });
 
             const stripeUPEJsMockWithElement = getCustomerStripeUPEJsMock(stripeMockElement);
             const action = Promise.resolve(true);
@@ -183,7 +183,7 @@ describe('StripeUpeCustomerStrategy', () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentProviderCustomerOrThrow',
-            ).mockReturnValue({ authenticationState: true });
+            ).mockReturnValue({ stripeLinkAuthenticationState: true });
 
             await strategy.initialize(customerInitialization);
 

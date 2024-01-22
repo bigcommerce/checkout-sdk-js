@@ -405,7 +405,7 @@ describe('StripeUPEPaymentStrategy', () => {
                             jest.spyOn(
                                 paymentIntegrationService.getState(),
                                 'getPaymentProviderCustomerOrThrow',
-                            ).mockReturnValue({ authenticationState: true });
+                            ).mockReturnValue({ stripeLinkAuthenticationState: true });
 
                             await strategy.execute(getStripeUPEWithLinkOrderRequestBodyMock());
 
@@ -445,7 +445,7 @@ describe('StripeUPEPaymentStrategy', () => {
                             jest.spyOn(
                                 paymentIntegrationService.getState(),
                                 'getPaymentProviderCustomerOrThrow',
-                            ).mockReturnValue({ authenticationState: false });
+                            ).mockReturnValue({ stripeLinkAuthenticationState: false });
                             jest.spyOn(
                                 paymentIntegrationService.getState(),
                                 'getBillingAddressOrThrow',

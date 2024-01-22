@@ -10,6 +10,7 @@ import {
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import isStripeAcceleratedCheckoutCustomer from './is-stripe-accelerated-checkout-customer';
 import {
     isStripeUPEPaymentMethodLike,
     StripeElements,
@@ -69,8 +70,14 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
         } = paymentMethod;
 
         const { email } = state.getCustomerOrThrow();
-
-        const { authenticationState } = state.getPaymentProviderCustomerOrThrow();
+        const paymentProviderCustomer = state.getPaymentProviderCustomerOrThrow();
+        const stripePaymentProviderCustomer = isStripeAcceleratedCheckoutCustomer(
+            paymentProviderCustomer,
+        )
+            ? paymentProviderCustomer
+            : {};
+        const stripeLinkAuthenticationState =
+            stripePaymentProviderCustomer.stripeLinkAuthenticationState;
 
         if (!email) {
             let appearance: StripeUPEAppearanceOptions | undefined;
@@ -126,7 +133,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 }
 
                 this.paymentIntegrationService.updatePaymentProviderCustomer({
-                    authenticationState: event.authenticated,
+                    stripeLinkAuthenticationState: event.authenticated,
                 });
 
                 if (event.complete) {
@@ -139,7 +146,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                     isLoading(false);
                 }
 
-                if (authenticationState === undefined && event.authenticated && id) {
+                if (stripeLinkAuthenticationState === undefined && event.authenticated && id) {
                     this.paymentIntegrationService.deleteConsignment(id);
                 }
             });
