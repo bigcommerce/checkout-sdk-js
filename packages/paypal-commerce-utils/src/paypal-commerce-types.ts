@@ -22,15 +22,16 @@ export interface PayPalCommerceInitializationData {
     enabledAlternativePaymentMethods: FundingType;
     isDeveloperModeApplicable?: boolean;
     intent?: PayPalCommerceIntent;
-    isAcceleratedCheckoutEnabled?: boolean;
+    isAcceleratedCheckoutEnabled?: boolean; // PayPal Connect related
     isHostedCheckoutEnabled?: boolean;
+    isPayPalCommerceAnalyticsV2Enabled?: boolean; // PayPal Connect related
     isPayPalCreditAvailable?: boolean;
     isVenmoEnabled?: boolean;
     isGooglePayEnabled?: boolean;
     merchantId?: string;
     orderId?: string;
     shouldRenderFields?: boolean;
-    shouldRunAcceleratedCheckout?: boolean;
+    shouldRunAcceleratedCheckout?: boolean; // PayPal Connect related
     // paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>; // TODO: PayPalButtonStyleOptions interface will be moved in the future
 }
 
@@ -118,6 +119,7 @@ export interface MessagingOptions {
  */
 export interface PayPalCommerceConnect {
     identity: PayPalCommerceConnectIdentity;
+    events: PayPalCommerceConnectEvents;
     profile: PayPalCommerceConnectProfile;
     ConnectCardComponent(
         options: PayPalCommerceConnectCardComponentOptions,
@@ -286,4 +288,43 @@ export interface PayPalCommerceConnectTokenizeDetails {
 export interface PayPalCommerceConnectTokenizeOptions {
     billingAddress?: PayPalCommerceConnectAddress;
     shippingAddress?: PayPalCommerceConnectAddress;
+}
+
+export interface PayPalCommerceConnectEvents {
+    apmSelected: (options: PayPalCommerceConnectApmSelectedEventOptions) => void;
+    emailSubmitted: (options: PayPalCommerceConnectEmailEnteredEventOptions) => void;
+    orderPlaced: (options: PayPalCommerceConnectOrderPlacedEventOptions) => void;
+}
+
+export interface PayPalCommerceConnectEventCommonOptions {
+    context_type: 'cs_id';
+    context_id: string; // checkout session id
+    page_type: 'checkout_page';
+    page_name: string; // title of the checkout initiation page
+    partner_name: 'bigc';
+    user_type: 'store_member' | 'store_guest'; // type of the user on the merchant site
+    store_id: string;
+    merchant_name: string;
+    experiment: string; // stringify JSON object "[{ treatment_group: 'test' | 'control' }]"
+}
+
+export interface PayPalCommerceConnectApmSelectedEventOptions
+    extends PayPalCommerceConnectEventCommonOptions {
+    apm_shown: '0' | '1'; // alternate payment shown on the checkout page
+    apm_list: string; // list of alternate payment shown on checkout page
+    apm_selected: string; // alternate payment method selected / methodId
+    apm_location: 'pre-email section' | 'payment section'; // placement of APM, whether it be above the email entry or in the radio buttons
+}
+
+export interface PayPalCommerceConnectEmailEnteredEventOptions
+    extends PayPalCommerceConnectEventCommonOptions {
+    user_email_saved: boolean; // shows whether checkout was loaded with or without a saved email
+    apm_shown: '0' | '1'; // alternate payment shown on the checkout page
+    apm_list: string; // list of alternate payment shown on checkout page 'applepay,googlepay,paypal'
+}
+
+export interface PayPalCommerceConnectOrderPlacedEventOptions
+    extends PayPalCommerceConnectEventCommonOptions {
+    selected_payment_method: string;
+    currency_code: string;
 }
