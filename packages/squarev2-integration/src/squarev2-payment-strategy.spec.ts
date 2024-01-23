@@ -6,6 +6,7 @@ import {
     MissingDataErrorType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
+    PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -26,9 +27,27 @@ describe('SquareV2PaymentStrategy', () => {
     let strategy: SquareV2PaymentStrategy;
     let processor: SquareV2PaymentProcessor;
     let options: PaymentInitializeOptions;
+    let verifyBuyerMock: jest.SpyInstance;
+    let loadPaymentMethodMock: jest.SpyInstance;
+
+    const methodId = 'squarev2';
+
+    const toggle3dsExperiment = (value: boolean) => {
+        const storeConfigMock = getConfig().storeConfig;
+
+        storeConfigMock.checkoutSettings.features = {
+            'PROJECT-3828.add_3ds_support_on_squarev2': value,
+        };
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            storeConfigMock,
+        );
+    };
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+
+        loadPaymentMethodMock = jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
+        loadPaymentMethodMock.mockReturnValue(paymentIntegrationService.getState());
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             getSquareV2(),
@@ -39,6 +58,8 @@ describe('SquareV2PaymentStrategy', () => {
             paymentIntegrationService,
         );
 
+        toggle3dsExperiment(false);
+
         jest.spyOn(processor, 'initialize').mockResolvedValue(undefined);
 
         jest.spyOn(processor, 'deinitialize').mockResolvedValue(undefined);
@@ -47,18 +68,23 @@ describe('SquareV2PaymentStrategy', () => {
 
         jest.spyOn(processor, 'tokenize').mockResolvedValue('cnon:xxx');
 
-        jest.spyOn(processor, 'verifyBuyer').mockResolvedValue('verf:yyy');
+        verifyBuyerMock = jest.spyOn(processor, 'verifyBuyer');
+        verifyBuyerMock.mockResolvedValue('verf:yyy');
 
         strategy = new SquareV2PaymentStrategy(paymentIntegrationService, processor);
 
         options = {
-            methodId: 'squarev2',
+            methodId,
             squarev2: {
                 containerId: 'card-container',
                 style: { input: { color: 'foo' } },
                 onValidationChange: jest.fn(),
             },
         };
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     describe('#initialize', () => {
@@ -119,7 +145,7 @@ describe('SquareV2PaymentStrategy', () => {
             payload = {
                 ...getOrderRequestBody(),
                 payment: {
-                    methodId: 'squarev2',
+                    methodId,
                 },
             };
 
@@ -139,15 +165,7 @@ describe('SquareV2PaymentStrategy', () => {
         });
 
         it('should verify the buyer to get the verification token', async () => {
-            const storeConfigMock = getConfig().storeConfig;
-
-            storeConfigMock.checkoutSettings.features = {
-                'PROJECT-3828.add_3ds_support_on_squarev2': true,
-            };
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigMock);
+            toggle3dsExperiment(true);
 
             await strategy.execute(payload);
 
@@ -162,7 +180,7 @@ describe('SquareV2PaymentStrategy', () => {
 
         it('should submit the payment', async () => {
             const expectedPayment = {
-                methodId: 'squarev2',
+                methodId,
                 paymentData: {
                     formattedPayload: {
                         credit_card_token: {
@@ -181,7 +199,7 @@ describe('SquareV2PaymentStrategy', () => {
 
         it('should submit the payment with verification token', async () => {
             const expectedPayment = {
-                methodId: 'squarev2',
+                methodId,
                 paymentData: {
                     formattedPayload: {
                         credit_card_token: {
@@ -192,15 +210,8 @@ describe('SquareV2PaymentStrategy', () => {
                     },
                 },
             };
-            const storeConfigMock = getConfig().storeConfig;
 
-            storeConfigMock.checkoutSettings.features = {
-                'PROJECT-3828.add_3ds_support_on_squarev2': true,
-            };
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigMock);
+            toggle3dsExperiment(true);
 
             await strategy.execute(payload);
 
@@ -212,12 +223,14 @@ describe('SquareV2PaymentStrategy', () => {
                 payload = {
                     ...getOrderRequestBody(),
                     payment: {
-                        methodId: 'squarev2',
+                        methodId,
                         paymentData: {
                             shouldSaveInstrument: true,
                         },
                     },
                 };
+
+                toggle3dsExperiment(true);
 
                 await strategy.initialize(options);
             });
@@ -229,16 +242,6 @@ describe('SquareV2PaymentStrategy', () => {
             });
 
             it('should verify the buyer twice to get two verification tokens with different intents', async () => {
-                const storeConfigMock = getConfig().storeConfig;
-
-                storeConfigMock.checkoutSettings.features = {
-                    'PROJECT-3828.add_3ds_support_on_squarev2': true,
-                };
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getStoreConfigOrThrow',
-                ).mockReturnValue(storeConfigMock);
-
                 await strategy.execute(payload);
 
                 expect(processor.verifyBuyer).toHaveBeenCalledWith('cnon:xxx', SquareIntent.CHARGE);
@@ -247,7 +250,7 @@ describe('SquareV2PaymentStrategy', () => {
 
             it('should submit the payment with verification tokens', async () => {
                 const expectedPayment = {
-                    methodId: 'squarev2',
+                    methodId,
                     paymentData: {
                         formattedPayload: {
                             credit_card_token: {
@@ -258,15 +261,6 @@ describe('SquareV2PaymentStrategy', () => {
                         },
                     },
                 };
-                const storeConfigMock = getConfig().storeConfig;
-
-                storeConfigMock.checkoutSettings.features = {
-                    'PROJECT-3828.add_3ds_support_on_squarev2': true,
-                };
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getStoreConfigOrThrow',
-                ).mockReturnValue(storeConfigMock);
 
                 await strategy.execute(payload);
 
@@ -281,7 +275,7 @@ describe('SquareV2PaymentStrategy', () => {
                 payload = {
                     ...getOrderRequestBody(),
                     payment: {
-                        methodId: 'squarev2',
+                        methodId,
                         paymentData: {
                             instrumentId: 'bigpaytoken',
                         },
@@ -299,7 +293,7 @@ describe('SquareV2PaymentStrategy', () => {
 
             it('should submit the payment', async () => {
                 const expectedPayment = {
-                    methodId: 'squarev2',
+                    methodId,
                     paymentData: {
                         formattedPayload: {
                             bigpay_token: {
@@ -313,6 +307,94 @@ describe('SquareV2PaymentStrategy', () => {
 
                 await strategy.execute(payload);
 
+                expect(loadPaymentMethodMock).not.toHaveBeenCalled();
+                expect(verifyBuyerMock).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                    expectedPayment,
+                );
+            });
+        });
+
+        describe('when using a stored card with 3Ds verification', () => {
+            beforeEach(async () => {
+                payload = {
+                    ...getOrderRequestBody(),
+                    payment: {
+                        methodId,
+                        paymentData: {
+                            instrumentId: 'bigpaytoken',
+                        },
+                    },
+                };
+
+                toggle3dsExperiment(true);
+
+                const defaultPaymentMethod = getSquareV2();
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...defaultPaymentMethod,
+                    initializationData: {
+                        ...defaultPaymentMethod.initializationData,
+                        cardId: 'squareCardId',
+                    },
+                });
+
+                await strategy.initialize(options);
+            });
+
+            it('throws error if cardId is not provided', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue(getSquareV2());
+
+                let executeError;
+
+                try {
+                    await strategy.execute(payload);
+                } catch (error) {
+                    executeError = error;
+                }
+
+                expect(executeError).toBeInstanceOf(PaymentArgumentInvalidError);
+                expect(loadPaymentMethodMock).toHaveBeenCalledWith(methodId, {
+                    params: {
+                        method: methodId,
+                        bigpayToken: 'bigpaytoken',
+                    },
+                });
+                expect(verifyBuyerMock).not.toHaveBeenCalled();
+            });
+
+            it('should submit payment with 3ds verification', async () => {
+                const expectedPayment = {
+                    methodId,
+                    paymentData: {
+                        formattedPayload: {
+                            bigpay_token: {
+                                token: 'bigpaytoken',
+                                three_d_secure: {
+                                    token: 'verf:yyy',
+                                },
+                            },
+                            vault_payment_instrument: false,
+                            set_as_default_stored_instrument: false,
+                        },
+                    },
+                };
+
+                await strategy.execute(payload);
+
+                expect(loadPaymentMethodMock).toHaveBeenCalledWith(methodId, {
+                    params: {
+                        method: methodId,
+                        bigpayToken: 'bigpaytoken',
+                    },
+                });
+                expect(verifyBuyerMock).toHaveBeenCalledWith('squareCardId', SquareIntent.CHARGE);
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
                     expectedPayment,
                 );
