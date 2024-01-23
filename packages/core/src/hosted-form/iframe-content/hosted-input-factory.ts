@@ -6,7 +6,7 @@ import { appendWww, parseUrl } from '../../common/url';
 import {
     PaymentRequestSender,
     PaymentRequestTransformer,
-    StorefrontVaultingRequestSender,
+    StorefrontStoredCardRequestSender,
 } from '../../payment';
 import { CardInstrument } from '../../payment/instrument';
 import HostedFieldType from '../hosted-field-type';
@@ -20,9 +20,9 @@ import HostedCardNumberInput from './hosted-card-number-input';
 import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';
 import HostedInputPaymentHandler from './hosted-input-payment-handler';
+import HostedInputStoredCardHandler from './hosted-input-stored-card-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
-import HostedInputVaultingHandler from './hosted-input-vaulting-handler';
 import mapToAccessibilityLabel from './map-to-accessibility-label';
 import mapToAutocompleteType from './map-to-autocomplete-type';
 
@@ -139,7 +139,7 @@ export default class HostedInputFactory {
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(),
             this._createPaymentHandler(),
-            this._createVaultingHandler(),
+            this._createStoredCardHandler(),
             new CardExpiryFormatter(),
         );
     }
@@ -167,7 +167,7 @@ export default class HostedInputFactory {
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(cardInstrument),
             this._createPaymentHandler(cardInstrument),
-            this._createVaultingHandler(cardInstrument),
+            this._createStoredCardHandler(cardInstrument),
             new HostedAutocompleteFieldset(
                 form,
                 [HostedFieldType.CardCode, HostedFieldType.CardExpiry, HostedFieldType.CardName],
@@ -200,7 +200,7 @@ export default class HostedInputFactory {
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(cardInstrument),
             this._createPaymentHandler(cardInstrument),
-            this._createVaultingHandler(cardInstrument),
+            this._createStoredCardHandler(cardInstrument),
         );
     }
 
@@ -215,12 +215,14 @@ export default class HostedInputFactory {
         );
     }
 
-    private _createVaultingHandler(cardInstrument?: CardInstrument): HostedInputVaultingHandler {
-        return new HostedInputVaultingHandler(
+    private _createStoredCardHandler(
+        cardInstrument?: CardInstrument,
+    ): HostedInputStoredCardHandler {
+        return new HostedInputStoredCardHandler(
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(cardInstrument),
             new IframeEventPoster(this._parentOrigin, window.parent),
-            new StorefrontVaultingRequestSender(createRequestSender()),
+            new StorefrontStoredCardRequestSender(createRequestSender()),
         );
     }
 }

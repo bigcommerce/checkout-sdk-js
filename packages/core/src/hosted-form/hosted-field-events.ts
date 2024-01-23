@@ -4,29 +4,29 @@ import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
 import {
-    HostedFormVaultingData,
-    HostedFormVaultingInstrumentFields,
-} from './hosted-form-vaulting-type';
+    HostedFormStoredCardData,
+    HostedFormStoredCardInstrumentFields,
+} from './hosted-form-stored-card-type';
 
 export enum HostedFieldEventType {
     AttachRequested = 'HOSTED_FIELD:ATTACH_REQUESTED',
     SubmitRequested = 'HOSTED_FIELD:SUBMITTED_REQUESTED',
     ValidateRequested = 'HOSTED_FIELD:VALIDATE_REQUESTED',
-    VaultingRequested = 'HOSTED_FIELD:VAULTING_REQUESTED',
+    StoredCardRequested = 'HOSTED_FIELD:STORED_CARD_REQUESTED',
 }
 
 export interface HostedFieldEventMap {
     [HostedFieldEventType.AttachRequested]: HostedFieldAttachEvent;
     [HostedFieldEventType.SubmitRequested]: HostedFieldSubmitRequestEvent;
     [HostedFieldEventType.ValidateRequested]: HostedFieldValidateRequestEvent;
-    [HostedFieldEventType.VaultingRequested]: HostedFieldVaultingRequestEvent;
+    [HostedFieldEventType.StoredCardRequested]: HostedFieldStoredCardRequestEvent;
 }
 
 export type HostedFieldEvent =
     | HostedFieldAttachEvent
     | HostedFieldSubmitRequestEvent
     | HostedFieldValidateRequestEvent
-    | HostedFieldVaultingRequestEvent;
+    | HostedFieldStoredCardRequestEvent;
 
 export interface HostedFieldAttachEvent {
     type: HostedFieldEventType.AttachRequested;
@@ -53,10 +53,10 @@ export interface HostedFieldValidateRequestEvent {
     type: HostedFieldEventType.ValidateRequested;
 }
 
-export interface HostedFieldVaultingRequestEvent {
-    type: HostedFieldEventType.VaultingRequested;
+export interface HostedFieldStoredCardRequestEvent {
+    type: HostedFieldEventType.StoredCardRequested;
     payload: {
-        data: HostedFormVaultingData;
-        fields: HostedFormVaultingInstrumentFields;
+        data: HostedFormStoredCardData;
+        fields: HostedFormStoredCardInstrumentFields;
     };
 }

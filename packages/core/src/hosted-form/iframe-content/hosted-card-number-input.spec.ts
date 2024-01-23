@@ -9,9 +9,9 @@ import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
 import HostedInputPaymentHandler from './hosted-input-payment-handler';
+import HostedInputStoredCardHandler from './hosted-input-stored-card-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
-import HostedInputVaultingHandler from './hosted-input-vaulting-handler';
 
 describe('HostedCardNumberInput', () => {
     let autocompleteFieldset: HostedAutocompleteFieldset;
@@ -26,7 +26,7 @@ describe('HostedCardNumberInput', () => {
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
     let numberFormatter: Pick<CardNumberFormatter, 'format' | 'unformat'>;
     let paymentHandler: Pick<HostedInputPaymentHandler, 'handle'>;
-    let vaultingHandler: Pick<HostedInputVaultingHandler, 'handle'>;
+    let storedCardHandler: Pick<HostedInputStoredCardHandler, 'handle'>;
     let styles: HostedInputStylesMap;
 
     beforeEach(() => {
@@ -58,7 +58,7 @@ describe('HostedCardNumberInput', () => {
         };
         numberFormatter = { format: jest.fn(), unformat: (value) => value.replace(/ /g, '') };
         paymentHandler = { handle: jest.fn() };
-        vaultingHandler = { handle: jest.fn() };
+        storedCardHandler = { handle: jest.fn() };
         styles = { default: { color: 'rgb(255, 255, 255)' } };
 
         input = new HostedCardNumberInput(
@@ -74,7 +74,7 @@ describe('HostedCardNumberInput', () => {
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
             paymentHandler as HostedInputPaymentHandler,
-            vaultingHandler as HostedInputVaultingHandler,
+            storedCardHandler as HostedInputStoredCardHandler,
             autocompleteFieldset,
             numberFormatter as CardNumberFormatter,
         );
