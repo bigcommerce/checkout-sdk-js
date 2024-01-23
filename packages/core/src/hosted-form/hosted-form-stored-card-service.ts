@@ -1,20 +1,20 @@
 import { NotInitializedError, NotInitializedErrorType } from '../common/error/errors';
 
+import HostedForm from './hosted-form';
+import HostedFormFactory from './hosted-form-factory';
 import HostedFormOptions from './hosted-form-options';
-import HostedFormVaulting from './hosted-form-vaulting';
-import HostedFormVaultingFactory from './hosted-form-vaulting-factory';
 import {
-    HostedFormVaultingData,
-    HostedFormVaultingInstrumentFields,
-} from './hosted-form-vaulting-type';
+    HostedFormStoredCardData,
+    HostedFormStoredCardInstrumentFields,
+} from './hosted-form-stored-card-type';
 
-export default class HostedFormVaultingService {
-    protected _hostedForm?: HostedFormVaulting;
-    constructor(protected _host: string, protected _hostedFormFactory: HostedFormVaultingFactory) {}
+export default class HostedFormStoredCardService {
+    protected _hostedForm?: HostedForm;
+    constructor(protected _host: string, protected _hostedFormFactory: HostedFormFactory) {}
 
-    async submit(
-        fields: HostedFormVaultingInstrumentFields,
-        data: HostedFormVaultingData,
+    async submitStoredCard(
+        fields: HostedFormStoredCardInstrumentFields,
+        data: HostedFormStoredCardData,
     ): Promise<void> {
         const form = this._hostedForm;
 
@@ -22,7 +22,7 @@ export default class HostedFormVaultingService {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        await form.validate().then(() => form.submit({ fields, data }));
+        await form.validate().then(() => form.submitStoredCard({ fields, data }));
     }
 
     initialize(options: HostedFormOptions): Promise<void> {

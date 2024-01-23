@@ -9,6 +9,10 @@ import HostedField from './hosted-field';
 import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
 import HostedFieldType from './hosted-field-type';
 import { getHostedFormOrderData } from './hosted-form-order-data.mock';
+import {
+    hostedFormStoredCardDataMock,
+    hostedFormStoredCardInstrumentFieldsMock,
+} from './hosted-form-stored-card.mock';
 import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
 
 describe('HostedField', () => {
@@ -175,6 +179,31 @@ describe('HostedField', () => {
             {
                 successType: HostedInputEventType.SubmitSucceeded,
                 errorType: HostedInputEventType.SubmitFailed,
+            },
+        );
+    });
+
+    it('sends request to submit stored card form data', async () => {
+        jest.spyOn(eventPoster, 'post').mockResolvedValue({
+            type: HostedInputEventType.StoredCardSucceeded,
+        });
+
+        await field.submitStoredCardForm(
+            hostedFormStoredCardInstrumentFieldsMock,
+            hostedFormStoredCardDataMock,
+        );
+
+        expect(eventPoster.post).toHaveBeenCalledWith(
+            {
+                type: HostedFieldEventType.StoredCardRequested,
+                payload: {
+                    fields: hostedFormStoredCardInstrumentFieldsMock,
+                    data: hostedFormStoredCardDataMock,
+                },
+            },
+            {
+                successType: HostedInputEventType.StoredCardSucceeded,
+                errorType: HostedInputEventType.StoredCardFailed,
             },
         );
     });

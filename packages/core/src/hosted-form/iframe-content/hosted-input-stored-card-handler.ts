@@ -1,20 +1,20 @@
 import { IframeEventPoster } from '../../common/iframe';
-import { StorefrontVaultingRequestSender } from '../../payment';
-import { HostedFieldVaultingRequestEvent } from '../hosted-field-events';
+import { StorefrontStoredCardRequestSender } from '../../payment';
+import { HostedFieldStoredCardRequestEvent } from '../hosted-field-events';
 
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
 import HostedInputValidator from './hosted-input-validator';
 
-export default class HostedInputVaultingHandler {
+export default class HostedInputStoredCardHandler {
     constructor(
         private _inputAggregator: HostedInputAggregator,
         private _inputValidator: HostedInputValidator,
         private _eventPoster: IframeEventPoster<HostedInputEvent>,
-        private _vaultingRequestSender: StorefrontVaultingRequestSender,
+        private _storedCardRequestSender: StorefrontStoredCardRequestSender,
     ) {}
 
-    handle: (event: HostedFieldVaultingRequestEvent) => Promise<void> = async (event) => {
+    handle: (event: HostedFieldStoredCardRequestEvent) => Promise<void> = async (event) => {
         const {
             payload: { data, fields },
         } = event;
@@ -28,7 +28,7 @@ export default class HostedInputVaultingHandler {
 
         if (!results.isValid) {
             return this._eventPoster.post({
-                type: HostedInputEventType.VaultingFailed,
+                type: HostedInputEventType.StoredCardFailed,
             });
         }
 
@@ -37,7 +37,7 @@ export default class HostedInputVaultingHandler {
         const [expiryMonth, expiryYear] = values.cardExpiry ? values.cardExpiry.split('/') : [];
 
         try {
-            await this._vaultingRequestSender.submitPaymentInstrument(data, {
+            await this._storedCardRequestSender.submitPaymentInstrument(data, {
                 billingAddress,
                 instrument: {
                     type: 'card',
@@ -51,11 +51,11 @@ export default class HostedInputVaultingHandler {
             });
 
             this._eventPoster.post({
-                type: HostedInputEventType.VaultingSucceeded,
+                type: HostedInputEventType.StoredCardSucceeded,
             });
         } catch (error) {
             this._eventPoster.post({
-                type: HostedInputEventType.VaultingFailed,
+                type: HostedInputEventType.StoredCardFailed,
             });
         }
     };

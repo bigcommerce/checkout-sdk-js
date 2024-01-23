@@ -1,4 +1,4 @@
-const hostedFormVaultingDataMock = {
+const hostedFormStoredCardDataMock = {
     currencyCode: 'USD',
     paymentsUrl: 'https//test.com',
     providerId: 'bluesnapdirect',
@@ -7,7 +7,7 @@ const hostedFormVaultingDataMock = {
     vaultToken: 'token124',
 };
 
-const hostedFormVaultingBillingAddressAPIMock = {
+const hostedFormStoredCardBillingAddressAPIMock = {
     email: 'string@mail.com',
     address1: '57 Balsham Road',
     city: 'Harthill',
@@ -20,7 +20,7 @@ const hostedFormVaultingBillingAddressAPIMock = {
     state_or_province_code: 'BEL',
 };
 
-const hostedFormVaultingBillingAddressMock = {
+const hostedFormStoredCardBillingAddressMock = {
     address1: '57 Balsham Road',
     address2: '',
     city: 'Harthill',
@@ -34,7 +34,7 @@ const hostedFormVaultingBillingAddressMock = {
     stateOrProvinceCode: 'BEL',
 };
 
-const hostedFormVaultingPaymentInstrumentAPIMock = {
+const hostedFormStoredCardPaymentInstrumentAPIMock = {
     type: 'card',
     cardholder_name: 'John Smith',
     number: '4111111111111111',
@@ -43,7 +43,7 @@ const hostedFormVaultingPaymentInstrumentAPIMock = {
     verification_value: '777',
 };
 
-const hostedFormVaultingPaymentInstrumentMock = {
+const hostedFormStoredCardPaymentInstrumentMock = {
     type: 'card',
     cardholderName: 'John Smith',
     number: '4111111111111111',
@@ -52,27 +52,27 @@ const hostedFormVaultingPaymentInstrumentMock = {
     verificationValue: '777',
 };
 
-const hostedFormVaultingInstrumentFormMock = {
-    billingAddress: hostedFormVaultingBillingAddressMock,
-    instrument: hostedFormVaultingPaymentInstrumentMock,
+const hostedFormStoredCardInstrumentFormMock = {
+    billingAddress: hostedFormStoredCardBillingAddressMock,
+    instrument: hostedFormStoredCardPaymentInstrumentMock,
     defaultInstrument: true,
 };
 
-const hostedFormVaultingInstrumentFormAPIMock = {
-    billingAddress: hostedFormVaultingBillingAddressAPIMock,
-    instrument: hostedFormVaultingPaymentInstrumentAPIMock,
+const hostedFormStoredCardInstrumentFormAPIMock = {
+    billingAddress: hostedFormStoredCardBillingAddressAPIMock,
+    instrument: hostedFormStoredCardPaymentInstrumentAPIMock,
     default_Instrument: true,
 };
-const hostedFormVaultingInstrumentFieldsMock = {
-    ...hostedFormVaultingBillingAddressMock,
+const hostedFormStoredCardInstrumentFieldsMock = {
+    ...hostedFormStoredCardBillingAddressMock,
     defaultInstrument: true,
 };
 
 export {
-    hostedFormVaultingDataMock,
-    hostedFormVaultingBillingAddressMock,
-    hostedFormVaultingPaymentInstrumentMock,
-    hostedFormVaultingInstrumentFormMock,
-    hostedFormVaultingInstrumentFieldsMock,
-    hostedFormVaultingInstrumentFormAPIMock,
+    hostedFormStoredCardDataMock,
+    hostedFormStoredCardBillingAddressMock,
+    hostedFormStoredCardPaymentInstrumentMock,
+    hostedFormStoredCardInstrumentFormMock,
+    hostedFormStoredCardInstrumentFieldsMock,
+    hostedFormStoredCardInstrumentFormAPIMock,
 };

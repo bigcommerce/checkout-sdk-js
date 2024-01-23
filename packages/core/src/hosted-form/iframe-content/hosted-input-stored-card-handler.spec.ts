@@ -1,34 +1,34 @@
 import { getResponse } from '../../common/http-request/responses.mock';
 import { IframeEventPoster } from '../../common/iframe';
-import { StorefrontVaultingRequestSender } from '../../payment';
+import { StorefrontStoredCardRequestSender } from '../../payment';
 import { getErrorPaymentResponseBody, getPaymentResponseBody } from '../../payment/payments.mock';
 import { HostedFieldEventType } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
 import {
-    HostedFormVaultingData,
-    HostedFormVaultingInstrumentFields,
-} from '../hosted-form-vaulting-type';
+    HostedFormStoredCardData,
+    HostedFormStoredCardInstrumentFields,
+} from '../hosted-form-stored-card-type';
 import {
-    hostedFormVaultingDataMock,
-    hostedFormVaultingInstrumentFieldsMock,
-    hostedFormVaultingInstrumentFormMock,
-} from '../hosted-form-vaulting.mock';
+    hostedFormStoredCardDataMock,
+    hostedFormStoredCardInstrumentFieldsMock,
+    hostedFormStoredCardInstrumentFormMock,
+} from '../hosted-form-stored-card.mock';
 
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
 import HostedInputValidateResults from './hosted-input-validate-results';
 import HostedInputValidator from './hosted-input-validator';
 import HostedInputValues from './hosted-input-values';
-import HostedInputVaultingHandler from './hosted-input-vaulting-handler';
+import HostedInputStoredCardHandler from './hosted-input-stored-card-handler';
 
-describe('HostedInputVaultingHandler', () => {
-    let data: HostedFormVaultingData;
+describe('HostedInputStoredCardHandler', () => {
+    let data: HostedFormStoredCardData;
     let eventPoster: Pick<IframeEventPoster<HostedInputEvent>, 'post'>;
-    let fields: HostedFormVaultingInstrumentFields;
-    let handler: HostedInputVaultingHandler;
+    let fields: HostedFormStoredCardInstrumentFields;
+    let handler: HostedInputStoredCardHandler;
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
-    let requestSender: Pick<StorefrontVaultingRequestSender, 'submitPaymentInstrument'>;
+    let requestSender: Pick<StorefrontStoredCardRequestSender, 'submitPaymentInstrument'>;
     let values: HostedInputValues;
     let validationResults: HostedInputValidateResults;
 
@@ -38,15 +38,15 @@ describe('HostedInputVaultingHandler', () => {
         eventPoster = { post: jest.fn() };
         requestSender = { submitPaymentInstrument: jest.fn() };
 
-        handler = new HostedInputVaultingHandler(
+        handler = new HostedInputStoredCardHandler(
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
             eventPoster as IframeEventPoster<HostedInputEvent>,
-            requestSender as StorefrontVaultingRequestSender,
+            requestSender as StorefrontStoredCardRequestSender,
         );
 
-        data = hostedFormVaultingDataMock;
-        fields = hostedFormVaultingInstrumentFieldsMock;
+        data = hostedFormStoredCardDataMock;
+        fields = hostedFormStoredCardInstrumentFieldsMock;
 
         values = {
             [HostedFieldType.CardCode]: '777',
@@ -78,7 +78,7 @@ describe('HostedInputVaultingHandler', () => {
         jest.spyOn(inputValidator, 'validate');
 
         await handler.handle({
-            type: HostedFieldEventType.VaultingRequested,
+            type: HostedFieldEventType.StoredCardRequested,
             payload: { data, fields },
         });
 
@@ -101,7 +101,7 @@ describe('HostedInputVaultingHandler', () => {
         jest.spyOn(eventPoster, 'post');
 
         await handler.handle({
-            type: HostedFieldEventType.VaultingRequested,
+            type: HostedFieldEventType.StoredCardRequested,
             payload: { data, fields },
         });
 
@@ -113,13 +113,13 @@ describe('HostedInputVaultingHandler', () => {
 
     it('makes vaulting request with expected payload', async () => {
         await handler.handle({
-            type: HostedFieldEventType.VaultingRequested,
+            type: HostedFieldEventType.StoredCardRequested,
             payload: { data, fields },
         });
 
         expect(requestSender.submitPaymentInstrument).toHaveBeenCalledWith(
-            hostedFormVaultingDataMock,
-            hostedFormVaultingInstrumentFormMock,
+            hostedFormStoredCardDataMock,
+            hostedFormStoredCardInstrumentFormMock,
         );
     });
 
@@ -127,12 +127,12 @@ describe('HostedInputVaultingHandler', () => {
         jest.spyOn(eventPoster, 'post');
 
         await handler.handle({
-            type: HostedFieldEventType.VaultingRequested,
+            type: HostedFieldEventType.StoredCardRequested,
             payload: { data, fields },
         });
 
         expect(eventPoster.post).toHaveBeenCalledWith({
-            type: HostedInputEventType.VaultingSucceeded,
+            type: HostedInputEventType.StoredCardSucceeded,
         });
     });
 
@@ -144,12 +144,12 @@ describe('HostedInputVaultingHandler', () => {
         jest.spyOn(requestSender, 'submitPaymentInstrument').mockRejectedValue(response);
 
         await handler.handle({
-            type: HostedFieldEventType.VaultingRequested,
+            type: HostedFieldEventType.StoredCardRequested,
             payload: { data, fields },
         });
 
         expect(eventPoster.post).toHaveBeenCalledWith({
-            type: HostedInputEventType.VaultingFailed,
+            type: HostedInputEventType.StoredCardFailed,
         });
     });
 });

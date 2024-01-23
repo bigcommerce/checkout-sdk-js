@@ -1,16 +1,16 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
 import {
-    HostedFormVaultingData,
-    HostedFormVaultingInstrumentForm,
-} from '../hosted-form/hosted-form-vaulting-type';
+    HostedFormStoredCardData,
+    HostedFormStoredCardInstrumentForm,
+} from '../hosted-form/hosted-form-stored-card-type';
 
-export default class StorefrontVaultingRequestSender {
+export default class StorefrontStoredCardRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
     async submitPaymentInstrument(
-        requestInitializationData: HostedFormVaultingData,
-        storeInstrumentFormData: HostedFormVaultingInstrumentForm,
+        requestInitializationData: HostedFormStoredCardData,
+        storeInstrumentFormData: HostedFormStoredCardInstrumentForm,
     ): Promise<void> {
         const { providerId, currencyCode, paymentsUrl, shopperId, storeHash, vaultToken } =
             requestInitializationData;

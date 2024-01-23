@@ -12,6 +12,10 @@ import HostedForm from './hosted-form';
 import HostedFormOptions from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 import { getHostedFormOrderData } from './hosted-form-order-data.mock';
+import {
+    hostedFormStoredCardDataMock,
+    hostedFormStoredCardInstrumentFieldsMock,
+} from './hosted-form-stored-card.mock';
 import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
 
 describe('HostedForm', () => {
@@ -32,6 +36,7 @@ describe('HostedForm', () => {
         detach: jest.fn(),
         getType: jest.fn(),
         submitForm: jest.fn(),
+        submitStoredCardForm: jest.fn(),
         validateForm: jest.fn(),
     };
 
@@ -140,6 +145,23 @@ describe('HostedForm', () => {
         expect(field.submitForm).toHaveBeenCalledWith(
             fields.map((field) => field.getType()),
             data,
+        );
+    });
+
+    it('submits stored card form data', async () => {
+        // tslint:disable-next-line:no-non-null-assertion
+        const field = fields.find((field) => field.getType() === HostedFieldType.CardNumber)!;
+
+        jest.spyOn(field, 'submitStoredCardForm').mockResolvedValue({});
+
+        await form.submitStoredCard({
+            fields: hostedFormStoredCardInstrumentFieldsMock,
+            data: hostedFormStoredCardDataMock,
+        });
+
+        expect(field.submitStoredCardForm).toHaveBeenCalledWith(
+            hostedFormStoredCardInstrumentFieldsMock,
+            hostedFormStoredCardDataMock,
         );
     });
 

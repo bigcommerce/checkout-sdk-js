@@ -18,16 +18,16 @@ import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
 import {
-    HostedFormVaultingData,
-    HostedFormVaultingInstrumentFields,
-} from './hosted-form-vaulting-type';
+    HostedFormStoredCardData,
+    HostedFormStoredCardInstrumentFields,
+} from './hosted-form-stored-card-type';
 import {
     HostedInputEventMap,
     HostedInputEventType,
+    HostedInputStoredCardSucceededEvent,
     HostedInputSubmitErrorEvent,
     HostedInputSubmitSuccessEvent,
     HostedInputValidateEvent,
-    HostedInputVaultingSucceededEvent,
 } from './iframe-content';
 
 export const RETRY_INTERVAL = 60 * 1000;
@@ -152,18 +152,18 @@ export default class HostedField {
         }
     }
 
-    async submitVaultingForm(
-        fields: HostedFormVaultingInstrumentFields,
-        data: HostedFormVaultingData,
-    ): Promise<HostedInputVaultingSucceededEvent> {
-        const promise = this._eventPoster.post<HostedInputVaultingSucceededEvent>(
+    async submitStoredCardForm(
+        fields: HostedFormStoredCardInstrumentFields,
+        data: HostedFormStoredCardData,
+    ): Promise<HostedInputStoredCardSucceededEvent> {
+        const promise = this._eventPoster.post<HostedInputStoredCardSucceededEvent>(
             {
-                type: HostedFieldEventType.VaultingRequested,
+                type: HostedFieldEventType.StoredCardRequested,
                 payload: { fields, data },
             },
             {
-                successType: HostedInputEventType.VaultingSucceeded,
-                errorType: HostedInputEventType.VaultingFailed,
+                successType: HostedInputEventType.StoredCardSucceeded,
+                errorType: HostedInputEventType.StoredCardFailed,
             },
         );
 
