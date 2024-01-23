@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.519.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.519.3...v1.519.4) (2024-01-23)
+
+
+### Bug Fixes
+
+* **checkout:** DATA-11638 Fix payloads for Segment events ([9684db6](https://github.com/bigcommerce/checkout-sdk-js/commit/9684db6c5bbe34382ee23fe69a5c965d86437c14))
+
 ### [1.519.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.519.2...v1.519.3) (2024-01-22)
 
 
