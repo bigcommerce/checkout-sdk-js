@@ -314,6 +314,7 @@
 - [PayPalCommerceAlternativeMethodsButtonOptions](interfaces/PayPalCommerceAlternativeMethodsButtonOptions.md)
 - [PayPalCommerceAlternativeMethodsPaymentOptions](interfaces/PayPalCommerceAlternativeMethodsPaymentOptions.md)
 - [PayPalCommerceButtonInitializeOptions](interfaces/PayPalCommerceButtonInitializeOptions.md)
+- [PayPalCommerceConnectTrackerService](interfaces/PayPalCommerceConnectTrackerService.md)
 - [PayPalCommerceCreditButtonInitializeOptions](interfaces/PayPalCommerceCreditButtonInitializeOptions.md)
 - [PayPalCommerceCreditCardsPaymentInitializeOptions](interfaces/PayPalCommerceCreditCardsPaymentInitializeOptions.md)
 - [PayPalCommerceCreditCustomerInitializeOptions](interfaces/PayPalCommerceCreditCustomerInitializeOptions.md)
@@ -497,6 +498,7 @@
 - [createCurrencyService](README.md#createcurrencyservice)
 - [createEmbeddedCheckoutMessenger](README.md#createembeddedcheckoutmessenger)
 - [createLanguageService](README.md#createlanguageservice)
+- [createPayPalCommerceConnectTracker](README.md#createpaypalcommerceconnecttracker)
 - [createStepTracker](README.md#createsteptracker)
 - [embedCheckout](README.md#embedcheckout)
 
@@ -1041,6 +1043,38 @@ console.log(service.translate('address.city_label'));
 [`LanguageService`](classes/LanguageService.md)
 
 An instance of `LanguageService`.
+
+___
+
+### createPayPalCommerceConnectTracker
+
+▸ **createPayPalCommerceConnectTracker**(`checkoutService`): [`PayPalCommerceConnectTrackerService`](interfaces/PayPalCommerceConnectTrackerService.md)
+
+Creates an instance of `PayPalCommerceConnectTrackerService`.
+
+**`remarks`**
+```js
+const checkoutService = createCheckoutService();
+await checkoutService.loadCheckout();
+const paypalCommerceConnectTracker = createPayPalCommerceConnectTracker(checkoutService);
+
+paypalCommerceConnectTracker.customerPaymentMethodExecuted();
+paypalCommerceConnectTracker.paymentComplete();
+paypalCommerceConnectTracker.selectedPaymentMethod('applepay');
+paypalCommerceConnectTracker.walletButtonClick('paypal');
+```
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `checkoutService` | [`CheckoutService`](classes/CheckoutService.md) |
+
+#### Returns
+
+[`PayPalCommerceConnectTrackerService`](interfaces/PayPalCommerceConnectTrackerService.md)
+
+an instance of `PayPalCommerceConnectTrackerService`.
 
 ___
 

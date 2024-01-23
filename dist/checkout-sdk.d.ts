@@ -6779,6 +6779,13 @@ declare interface PayPalCommerceButtonInitializeOptions {
     onComplete?(): void;
 }
 
+declare interface PayPalCommerceConnectTrackerService {
+    customerPaymentMethodExecuted(): void;
+    paymentComplete(): void;
+    selectedPaymentMethod(methodId: string): void;
+    walletButtonClick(methodId: string): void;
+}
+
 declare interface PayPalCommerceCreditButtonInitializeOptions {
     /**
      * The ID of a container which the messaging should be inserted.
@@ -8781,6 +8788,25 @@ export declare function createEmbeddedCheckoutMessenger(options: EmbeddedCheckou
  * @returns An instance of `LanguageService`.
  */
 export declare function createLanguageService(config?: Partial<LanguageConfig>): LanguageService;
+
+/**
+ * Creates an instance of `PayPalCommerceConnectTrackerService`.
+ *
+ * @remarks
+ * ```js
+ * const checkoutService = createCheckoutService();
+ * await checkoutService.loadCheckout();
+ * const paypalCommerceConnectTracker = createPayPalCommerceConnectTracker(checkoutService);
+ *
+ * paypalCommerceConnectTracker.customerPaymentMethodExecuted();
+ * paypalCommerceConnectTracker.paymentComplete();
+ * paypalCommerceConnectTracker.selectedPaymentMethod('applepay');
+ * paypalCommerceConnectTracker.walletButtonClick('paypal');
+ * ```
+ *
+ * @returns an instance of `PayPalCommerceConnectTrackerService`.
+ */
+export declare function createPayPalCommerceConnectTracker(checkoutService: CheckoutService): PayPalCommerceConnectTrackerService;
 
 /**
  * Creates an instance of `StepTracker`.
