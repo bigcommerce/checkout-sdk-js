@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.520.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.519.4...v1.520.0) (2024-01-23)
+
+
+### Features
+
+* **payment:** PI-1309 SquareV2 - 3ds flow for vaulted instruments ([c4dfc66](https://github.com/bigcommerce/checkout-sdk-js/commit/c4dfc66e50387c860195f07495349448107ddefd))
+
 ### [1.519.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.519.3...v1.519.4) (2024-01-23)
 
 
