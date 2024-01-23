@@ -15,7 +15,7 @@ import PayPalCommerceConnectTrackerService from './paypal-commerce-connect-track
 export default class PayPalCommerceConnectTracker implements PayPalCommerceConnectTrackerService {
     private _selectedPaymentMethodId = 'paypalcommerceacceleratedcheckout';
 
-    constructor(private checkoutService: CheckoutService) {}
+    constructor(private _checkoutService: CheckoutService) {}
 
     customerPaymentMethodExecuted() {
         if (this._shouldTrackEvent()) {
@@ -46,7 +46,7 @@ export default class PayPalCommerceConnectTracker implements PayPalCommerceConne
     }
 
     private _shouldTrackEvent() {
-        const state = this.checkoutService.getState();
+        const state = this._checkoutService.getState();
         const paymentMethod = state.data.getPaymentMethod('paypalcommerce');
         const isAnalyticEnabled =
             paymentMethod?.initializationData.isPayPalCommerceAnalyticsV2Enabled;
@@ -98,7 +98,7 @@ export default class PayPalCommerceConnectTracker implements PayPalCommerceConne
      *
      */
     private _getEventCommonOptions(): PayPalCommerceConnectEventCommonOptions {
-        const state = this.checkoutService.getState();
+        const state = this._checkoutService.getState();
         const cart = state.data.getCart();
         const storeProfile = state.data.getConfig()?.storeProfile;
         const isGuestCustomer = state.data.getCustomer()?.isGuest;
@@ -129,7 +129,7 @@ export default class PayPalCommerceConnectTracker implements PayPalCommerceConne
     }
 
     private _getEmailSubmittedEventOptions(): PayPalCommerceConnectEmailEnteredEventOptions {
-        const state = this.checkoutService.getState().data;
+        const state = this._checkoutService.getState().data;
         const paymentMethods = state.getPaymentMethods() || [];
         const apmList = paymentMethods.map(({ id }) => id);
 
@@ -145,7 +145,7 @@ export default class PayPalCommerceConnectTracker implements PayPalCommerceConne
         methodId: string,
         isWalletButton: boolean,
     ): PayPalCommerceConnectApmSelectedEventOptions {
-        const state = this.checkoutService.getState().data;
+        const state = this._checkoutService.getState().data;
         const paymentMethods = state.getPaymentMethods() || [];
         const apmList = paymentMethods.map(({ id }) => id);
 
@@ -161,7 +161,7 @@ export default class PayPalCommerceConnectTracker implements PayPalCommerceConne
     private _getOrderPlacedEventOptions(
         methodId: string,
     ): PayPalCommerceConnectOrderPlacedEventOptions {
-        const state = this.checkoutService.getState().data;
+        const state = this._checkoutService.getState().data;
         const cart = state.getCart();
 
         return {
