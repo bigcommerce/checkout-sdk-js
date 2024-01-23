@@ -16,10 +16,13 @@ export function getStripeUPEJsMock(): StripeUPEClient {
             getElement: jest.fn().mockReturnValue(null),
             update: jest.fn(),
             fetchUpdates: jest.fn(),
+            submit: jest.fn(() => Promise.resolve({})),
         })),
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
         retrievePaymentIntent: jest.fn(),
+        handleNextAction: jest.fn(),
+        createPaymentMethod: jest.fn(),
     };
 }
 
@@ -35,10 +38,13 @@ export function getFailingStripeUPEJsMock(): StripeUPEClient {
             getElement: jest.fn().mockReturnValue(null),
             update: jest.fn(),
             fetchUpdates: jest.fn(),
+            submit: jest.fn(() => Promise.resolve({})),
         })),
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
         retrievePaymentIntent: jest.fn(),
+        handleNextAction: jest.fn(),
+        createPaymentMethod: jest.fn(),
     };
 }
 

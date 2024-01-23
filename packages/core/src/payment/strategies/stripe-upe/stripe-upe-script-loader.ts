@@ -46,6 +46,7 @@ export default class StripeUPEScriptLoader {
 
         if (!stripeElements) {
             stripeElements = stripeClient.elements(options);
+            stripeElements.paymentMethodCreation = options.paymentMethodCreation;
 
             Object.assign(this._window, { bcStripeElements: stripeElements });
         } else {

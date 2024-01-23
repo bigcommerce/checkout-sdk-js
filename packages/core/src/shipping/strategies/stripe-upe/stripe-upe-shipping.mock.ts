@@ -17,6 +17,8 @@ export function getShippingStripeUPEJsMock(): StripeUPEClient {
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
         retrievePaymentIntent: jest.fn(),
+        handleNextAction: jest.fn(),
+        createPaymentMethod: jest.fn(),
     };
 }
 
@@ -31,6 +33,8 @@ export function getShippingStripeUPEJsOnMock(returnElement?: StripeElement): Str
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
         retrievePaymentIntent: jest.fn(),
+        handleNextAction: jest.fn(),
+        createPaymentMethod: jest.fn(),
     };
 }
 
@@ -55,6 +59,8 @@ export function getShippingStripeUPEJsMockWithAnElementCreated(): StripeUPEClien
         confirmPayment: jest.fn(),
         confirmCardPayment: jest.fn(),
         retrievePaymentIntent: jest.fn(),
+        handleNextAction: jest.fn(),
+        createPaymentMethod: jest.fn(),
     };
 }
 
