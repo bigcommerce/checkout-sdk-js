@@ -5,26 +5,26 @@ import { getErrorPaymentResponseBody, getPaymentResponseBody } from '../../payme
 import { HostedFieldEventType } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
 import {
-    HostedFormStoredCardData,
-    HostedFormStoredCardInstrumentFields,
-} from '../hosted-form-stored-card-type';
+    StoredCardHostedFormData,
+    StoredCardHostedFormInstrumentFields,
+} from '../stored-card-hosted-form-type';
 import {
-    hostedFormStoredCardDataMock,
-    hostedFormStoredCardInstrumentFieldsMock,
-    hostedFormStoredCardInstrumentFormMock,
-} from '../hosted-form-stored-card.mock';
+    StoredCardHostedFormDataMock,
+    StoredCardHostedFormInstrumentFieldsMock,
+    StoredCardHostedFormInstrumentFormMock,
+} from '../stored-card-hosted-form.mock';
 
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
+import HostedInputStoredCardHandler from './hosted-input-stored-card-handler';
 import HostedInputValidateResults from './hosted-input-validate-results';
 import HostedInputValidator from './hosted-input-validator';
 import HostedInputValues from './hosted-input-values';
-import HostedInputStoredCardHandler from './hosted-input-stored-card-handler';
 
 describe('HostedInputStoredCardHandler', () => {
-    let data: HostedFormStoredCardData;
+    let data: StoredCardHostedFormData;
     let eventPoster: Pick<IframeEventPoster<HostedInputEvent>, 'post'>;
-    let fields: HostedFormStoredCardInstrumentFields;
+    let fields: StoredCardHostedFormInstrumentFields;
     let handler: HostedInputStoredCardHandler;
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
@@ -45,8 +45,8 @@ describe('HostedInputStoredCardHandler', () => {
             requestSender as StorefrontStoredCardRequestSender,
         );
 
-        data = hostedFormStoredCardDataMock;
-        fields = hostedFormStoredCardInstrumentFieldsMock;
+        data = StoredCardHostedFormDataMock;
+        fields = StoredCardHostedFormInstrumentFieldsMock;
 
         values = {
             [HostedFieldType.CardCode]: '777',
@@ -118,8 +118,8 @@ describe('HostedInputStoredCardHandler', () => {
         });
 
         expect(requestSender.submitPaymentInstrument).toHaveBeenCalledWith(
-            hostedFormStoredCardDataMock,
-            hostedFormStoredCardInstrumentFormMock,
+            StoredCardHostedFormDataMock,
+            StoredCardHostedFormInstrumentFormMock,
         );
     });
 

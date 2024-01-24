@@ -9,11 +9,11 @@ import HostedField from './hosted-field';
 import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
 import HostedFieldType from './hosted-field-type';
 import { getHostedFormOrderData } from './hosted-form-order-data.mock';
-import {
-    hostedFormStoredCardDataMock,
-    hostedFormStoredCardInstrumentFieldsMock,
-} from './hosted-form-stored-card.mock';
 import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
+import {
+    StoredCardHostedFormDataMock,
+    StoredCardHostedFormInstrumentFieldsMock,
+} from './stored-card-hosted-form.mock';
 
 describe('HostedField', () => {
     let container: HTMLDivElement;
@@ -189,16 +189,16 @@ describe('HostedField', () => {
         });
 
         await field.submitStoredCardForm(
-            hostedFormStoredCardInstrumentFieldsMock,
-            hostedFormStoredCardDataMock,
+            StoredCardHostedFormInstrumentFieldsMock,
+            StoredCardHostedFormDataMock,
         );
 
         expect(eventPoster.post).toHaveBeenCalledWith(
             {
                 type: HostedFieldEventType.StoredCardRequested,
                 payload: {
-                    fields: hostedFormStoredCardInstrumentFieldsMock,
-                    data: hostedFormStoredCardDataMock,
+                    fields: StoredCardHostedFormInstrumentFieldsMock,
+                    data: StoredCardHostedFormDataMock,
                 },
             },
             {

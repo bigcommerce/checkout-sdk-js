@@ -11,6 +11,6 @@ export {
     createBraintreeConnectTracker,
     createPayPalCommerceConnectTracker,
 } from '../analytics';
-export { createHostedFormStoredCardService } from '../hosted-form';
+export { createStoredCardHostedFormService } from '../hosted-form';
 export { createBodlService } from '../bodl';
 export { ExtensionCommandType } from '../extension';

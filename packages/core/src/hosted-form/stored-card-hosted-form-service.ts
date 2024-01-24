@@ -4,17 +4,17 @@ import HostedForm from './hosted-form';
 import HostedFormFactory from './hosted-form-factory';
 import HostedFormOptions from './hosted-form-options';
 import {
-    HostedFormStoredCardData,
-    HostedFormStoredCardInstrumentFields,
-} from './hosted-form-stored-card-type';
+    StoredCardHostedFormData,
+    StoredCardHostedFormInstrumentFields,
+} from './stored-card-hosted-form-type';
 
-export default class HostedFormStoredCardService {
+export default class StoredCardHostedFormService {
     protected _hostedForm?: HostedForm;
     constructor(protected _host: string, protected _hostedFormFactory: HostedFormFactory) {}
 
     async submitStoredCard(
-        fields: HostedFormStoredCardInstrumentFields,
-        data: HostedFormStoredCardData,
+        fields: StoredCardHostedFormInstrumentFields,
+        data: StoredCardHostedFormData,
     ): Promise<void> {
         const form = this._hostedForm;
 

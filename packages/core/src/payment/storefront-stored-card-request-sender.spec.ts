@@ -1,10 +1,10 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
 import {
-    hostedFormStoredCardDataMock,
-    hostedFormStoredCardInstrumentFormAPIMock,
-    hostedFormStoredCardInstrumentFormMock,
-} from '../hosted-form/hosted-form-stored-card.mock';
+    StoredCardHostedFormDataMock,
+    StoredCardHostedFormInstrumentFormAPIMock,
+    StoredCardHostedFormInstrumentFormMock,
+} from '../hosted-form/stored-card-hosted-form.mock';
 
 import StorefrontStoredCardRequestSender from './storefront-stored-card-request-sender';
 
@@ -21,29 +21,29 @@ describe('StorefrontStoredCardRequestSender', () => {
 
     describe('#submitPaymentMethod', () => {
         const headers = {
-            Authorization: hostedFormStoredCardDataMock.vaultToken,
+            Authorization: StoredCardHostedFormDataMock.vaultToken,
             Accept: 'application/vnd.bc.v1+json',
             'Content-Type': 'application/vnd.bc.v1+json',
         };
 
         it('saves payment method', async () => {
             await storefrontStoredCardRequestSender.submitPaymentInstrument(
-                hostedFormStoredCardDataMock,
-                hostedFormStoredCardInstrumentFormMock,
+                StoredCardHostedFormDataMock,
+                StoredCardHostedFormInstrumentFormMock,
             );
 
-            const { instrument, billingAddress } = hostedFormStoredCardInstrumentFormAPIMock;
+            const { instrument, billingAddress } = StoredCardHostedFormInstrumentFormAPIMock;
 
             expect(requestSender.post).toHaveBeenCalledWith(
-                `${hostedFormStoredCardDataMock.paymentsUrl}/stores/${hostedFormStoredCardDataMock.storeHash}/customers/${hostedFormStoredCardDataMock.shopperId}/stored_instruments`,
+                `${StoredCardHostedFormDataMock.paymentsUrl}/stores/${StoredCardHostedFormDataMock.storeHash}/customers/${StoredCardHostedFormDataMock.shopperId}/stored_instruments`,
                 {
                     body: JSON.stringify({
                         instrument,
                         billing_address: billingAddress,
-                        provider_id: hostedFormStoredCardDataMock.providerId,
+                        provider_id: StoredCardHostedFormDataMock.providerId,
                         default_instrument:
-                            hostedFormStoredCardInstrumentFormAPIMock.default_Instrument,
-                        currency_code: hostedFormStoredCardDataMock.currencyCode,
+                            StoredCardHostedFormInstrumentFormAPIMock.default_Instrument,
+                        currency_code: StoredCardHostedFormDataMock.currencyCode,
                     }),
                     headers,
                 },

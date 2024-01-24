@@ -12,16 +12,16 @@ import HostedField from './hosted-field';
 import HostedFormOptions from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 import {
-    HostedFormStoredCardData,
-    HostedFormStoredCardInstrumentFields,
-} from './hosted-form-stored-card-type';
-import {
     HostedInputEnterEvent,
     HostedInputEventMap,
     HostedInputEventType,
     HostedInputStoredCardSucceededEvent,
     HostedInputSubmitSuccessEvent,
 } from './iframe-content';
+import {
+    StoredCardHostedFormData,
+    StoredCardHostedFormInstrumentFields,
+} from './stored-card-hosted-form-type';
 
 type HostedFormEventCallbacks = Pick<
     HostedFormOptions,
@@ -116,8 +116,8 @@ export default class HostedForm implements HostedFormInterface {
     }
 
     async submitStoredCard(payload: {
-        fields: HostedFormStoredCardInstrumentFields;
-        data: HostedFormStoredCardData;
+        fields: StoredCardHostedFormInstrumentFields;
+        data: StoredCardHostedFormData;
     }): Promise<HostedInputStoredCardSucceededEvent | void> {
         return this._getFirstField().submitStoredCardForm(payload.fields, payload.data);
     }

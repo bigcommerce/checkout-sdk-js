@@ -1,19 +1,19 @@
 import { CheckoutStore, createCheckoutStore } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
-import HostedFormStoredCardService from './hosted-form-stored-card-service';
+import StoredCardHostedFormService from './stored-card-hosted-form-service';
 import {
-    hostedFormStoredCardDataMock,
-    hostedFormStoredCardInstrumentFieldsMock,
-} from './hosted-form-stored-card.mock';
+    StoredCardHostedFormDataMock,
+    StoredCardHostedFormInstrumentFieldsMock,
+} from './stored-card-hosted-form.mock';
 
-import { HostedForm, HostedFormFactory, HostedFormOptions } from './';
+import { HostedForm, HostedFormFactory, HostedFormOptions } from '.';
 
-describe('HostedFormStoredCardService', () => {
+describe('StoredCardHostedFormService', () => {
     let formFactory: HostedFormFactory;
 
     let store: CheckoutStore;
-    let service: HostedFormStoredCardService;
+    let service: StoredCardHostedFormService;
     let initializeOptions: HostedFormOptions;
 
     beforeEach(() => {
@@ -21,7 +21,7 @@ describe('HostedFormStoredCardService', () => {
 
         formFactory = new HostedFormFactory(store);
 
-        service = new HostedFormStoredCardService('https://bigpay.integration.zone', formFactory);
+        service = new StoredCardHostedFormService('https://bigpay.integration.zone', formFactory);
     });
 
     describe('when hosted form is enabled', () => {
@@ -72,21 +72,21 @@ describe('HostedFormStoredCardService', () => {
         it('submits payment data with hosted form', async () => {
             await service.initialize(initializeOptions);
             await service.submitStoredCard(
-                hostedFormStoredCardInstrumentFieldsMock,
-                hostedFormStoredCardDataMock,
+                StoredCardHostedFormInstrumentFieldsMock,
+                StoredCardHostedFormDataMock,
             );
 
             expect(form.submitStoredCard).toHaveBeenCalledWith({
-                fields: hostedFormStoredCardInstrumentFieldsMock,
-                data: hostedFormStoredCardDataMock,
+                fields: StoredCardHostedFormInstrumentFieldsMock,
+                data: StoredCardHostedFormDataMock,
             });
         });
 
         it('validates user input before submitting data', async () => {
             await service.initialize(initializeOptions);
             await service.submitStoredCard(
-                hostedFormStoredCardInstrumentFieldsMock,
-                hostedFormStoredCardDataMock,
+                StoredCardHostedFormInstrumentFieldsMock,
+                StoredCardHostedFormDataMock,
             );
 
             expect(form.validate).toHaveBeenCalled();
@@ -98,8 +98,8 @@ describe('HostedFormStoredCardService', () => {
             try {
                 await service.initialize(initializeOptions);
                 await service.submitStoredCard(
-                    hostedFormStoredCardInstrumentFieldsMock,
-                    hostedFormStoredCardDataMock,
+                    StoredCardHostedFormInstrumentFieldsMock,
+                    StoredCardHostedFormDataMock,
                 );
             } catch (error) {
                 expect(form.submit).not.toHaveBeenCalled();
@@ -127,8 +127,8 @@ describe('HostedFormStoredCardService', () => {
         it('does not submit with hosted form', async () => {
             await service.initialize(initializeOptions);
             await service.submitStoredCard(
-                hostedFormStoredCardInstrumentFieldsMock,
-                hostedFormStoredCardDataMock,
+                StoredCardHostedFormInstrumentFieldsMock,
+                StoredCardHostedFormDataMock,
             );
 
             expect(form.submit).not.toHaveBeenCalled();

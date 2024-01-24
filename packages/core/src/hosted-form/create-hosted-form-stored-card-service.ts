@@ -1,17 +1,17 @@
 import { createCheckoutStore } from '../checkout';
 
 import HostedFormFactory from './hosted-form-factory';
-import HostedFormStoredCardService from './hosted-form-stored-card-service';
+import StoredCardHostedFormService from './stored-card-hosted-form-service';
 
 /**
- * Creates an instance of `HostedFormStoredCardService`.
+ * Creates an instance of `StoredCardHostedFormService`.
  *
  *
  * @param host - Host url string parameter.
- * @returns An instance of `HostedFormStoredCardService`.
+ * @returns An instance of `StoredCardHostedFormService`.
  */
-export default function createHostedFormStoredCardService(host: string) {
+export default function createStoredCardHostedFormService(host: string) {
     const store = createCheckoutStore();
 
-    return new HostedFormStoredCardService(host, new HostedFormFactory(store));
+    return new StoredCardHostedFormService(host, new HostedFormFactory(store));
 }

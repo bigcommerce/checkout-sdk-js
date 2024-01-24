@@ -18,10 +18,6 @@ import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
 import {
-    HostedFormStoredCardData,
-    HostedFormStoredCardInstrumentFields,
-} from './hosted-form-stored-card-type';
-import {
     HostedInputEventMap,
     HostedInputEventType,
     HostedInputStoredCardSucceededEvent,
@@ -29,6 +25,10 @@ import {
     HostedInputSubmitSuccessEvent,
     HostedInputValidateEvent,
 } from './iframe-content';
+import {
+    StoredCardHostedFormData,
+    StoredCardHostedFormInstrumentFields,
+} from './stored-card-hosted-form-type';
 
 export const RETRY_INTERVAL = 60 * 1000;
 export const LAST_RETRY_KEY = 'lastRetry';
@@ -153,8 +153,8 @@ export default class HostedField {
     }
 
     async submitStoredCardForm(
-        fields: HostedFormStoredCardInstrumentFields,
-        data: HostedFormStoredCardData,
+        fields: StoredCardHostedFormInstrumentFields,
+        data: StoredCardHostedFormData,
     ): Promise<HostedInputStoredCardSucceededEvent> {
         const promise = this._eventPoster.post<HostedInputStoredCardSucceededEvent>(
             {
