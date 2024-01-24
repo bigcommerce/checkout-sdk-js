@@ -16,6 +16,7 @@ import { SquareIntent } from './enums';
 import { WithSquareV2PaymentInitializeOptions } from './squarev2-payment-initialize-options';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
 import {
+    SquareCreditCardTokens,
     SquareFormattedVaultedInstrument,
     SquareInitializationData,
     SquarePaymentMethodInitializationData,
@@ -115,21 +116,21 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
             };
         }
 
-        const creditCardTokens = {
+        let tokenData: SquareCreditCardTokens = {
             nonce: cardTokenizationResult,
             token: await this._squareV2PaymentProcessor.verifyBuyer(
                 cardTokenizationResult,
                 SquareIntent.CHARGE,
             ),
         };
-        let savingCreditCardTokens;
 
         if (shouldSaveInstrument) {
             // INFO: additional 'tokenize' is required to verify and save the card
             // for each 'verifyBuyer' we need to generate new token
             const tokenForSavingCard = await this._squareV2PaymentProcessor.tokenize();
 
-            savingCreditCardTokens = {
+            tokenData = {
+                ...tokenData,
                 store_card_nonce: tokenForSavingCard,
                 store_card_token: await this._squareV2PaymentProcessor.verifyBuyer(
                     tokenForSavingCard,
@@ -140,10 +141,7 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
 
         return {
             credit_card_token: {
-                token: JSON.stringify({
-                    ...creditCardTokens,
-                    ...savingCreditCardTokens,
-                }),
+                token: JSON.stringify(tokenData),
             },
         };
     }

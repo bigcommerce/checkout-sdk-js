@@ -9,6 +9,13 @@ export interface SquareInitializationData {
     cardId?: string;
 }
 
+export interface SquareCreditCardTokens {
+    nonce: string;
+    token: string;
+    store_card_nonce?: string;
+    store_card_token?: string;
+}
+
 export interface SquareFormattedVaultedInstrument {
     bigpay_token: {
         token: string;
