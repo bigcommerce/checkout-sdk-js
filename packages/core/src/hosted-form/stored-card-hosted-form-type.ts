@@ -1,4 +1,4 @@
-export interface HostedFormStoredCardData {
+export interface StoredCardHostedFormData {
     currencyCode: string;
     paymentsUrl: string;
     providerId: string;
@@ -7,7 +7,7 @@ export interface HostedFormStoredCardData {
     vaultToken: string;
 }
 
-export interface HostedFormStoredCardPaymentInstrument {
+export interface StoredCardHostedFormPaymentInstrument {
     type: string;
     cardholderName: string;
     number: string;
@@ -16,7 +16,7 @@ export interface HostedFormStoredCardPaymentInstrument {
     verificationValue: string;
 }
 
-export interface HostedFormStoredCardBillingAddress {
+export interface StoredCardHostedFormBillingAddress {
     address1: string;
     address2?: string;
     city: string;
@@ -30,17 +30,17 @@ export interface HostedFormStoredCardBillingAddress {
     stateOrProvinceCode?: string;
 }
 
-export interface HostedFormStoredCardInstrumentForm {
-    billingAddress: HostedFormStoredCardBillingAddress;
-    instrument: HostedFormStoredCardPaymentInstrument;
+export interface StoredCardHostedFormInstrumentForm {
+    billingAddress: StoredCardHostedFormBillingAddress;
+    instrument: StoredCardHostedFormPaymentInstrument;
     defaultInstrument: boolean;
 }
 
-export interface HostedFormStoredCardInstrumentFields extends HostedFormStoredCardBillingAddress {
+export interface StoredCardHostedFormInstrumentFields extends StoredCardHostedFormBillingAddress {
     defaultInstrument: boolean;
 }
 
-export interface HostedFormStoredCardPayload {
-    fields: HostedFormStoredCardInstrumentFields;
-    data: HostedFormStoredCardData;
+export interface StoredCardHostedFormPayload {
+    fields: StoredCardHostedFormInstrumentFields;
+    data: StoredCardHostedFormData;
 }

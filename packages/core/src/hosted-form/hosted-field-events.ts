@@ -4,9 +4,9 @@ import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
 import {
-    HostedFormStoredCardData,
-    HostedFormStoredCardInstrumentFields,
-} from './hosted-form-stored-card-type';
+    StoredCardHostedFormData,
+    StoredCardHostedFormInstrumentFields,
+} from './stored-card-hosted-form-type';
 
 export enum HostedFieldEventType {
     AttachRequested = 'HOSTED_FIELD:ATTACH_REQUESTED',
@@ -56,7 +56,7 @@ export interface HostedFieldValidateRequestEvent {
 export interface HostedFieldStoredCardRequestEvent {
     type: HostedFieldEventType.StoredCardRequested;
     payload: {
-        data: HostedFormStoredCardData;
-        fields: HostedFormStoredCardInstrumentFields;
+        data: StoredCardHostedFormData;
+        fields: StoredCardHostedFormInstrumentFields;
     };
 }

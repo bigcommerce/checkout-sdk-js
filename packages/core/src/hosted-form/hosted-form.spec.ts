@@ -12,11 +12,11 @@ import HostedForm from './hosted-form';
 import HostedFormOptions from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 import { getHostedFormOrderData } from './hosted-form-order-data.mock';
-import {
-    hostedFormStoredCardDataMock,
-    hostedFormStoredCardInstrumentFieldsMock,
-} from './hosted-form-stored-card.mock';
 import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
+import {
+    StoredCardHostedFormDataMock,
+    StoredCardHostedFormInstrumentFieldsMock,
+} from './stored-card-hosted-form.mock';
 
 describe('HostedForm', () => {
     let callbacks: Pick<
@@ -155,13 +155,13 @@ describe('HostedForm', () => {
         jest.spyOn(field, 'submitStoredCardForm').mockResolvedValue({});
 
         await form.submitStoredCard({
-            fields: hostedFormStoredCardInstrumentFieldsMock,
-            data: hostedFormStoredCardDataMock,
+            fields: StoredCardHostedFormInstrumentFieldsMock,
+            data: StoredCardHostedFormDataMock,
         });
 
         expect(field.submitStoredCardForm).toHaveBeenCalledWith(
-            hostedFormStoredCardInstrumentFieldsMock,
-            hostedFormStoredCardDataMock,
+            StoredCardHostedFormInstrumentFieldsMock,
+            StoredCardHostedFormDataMock,
         );
     });
 
