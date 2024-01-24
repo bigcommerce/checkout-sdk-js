@@ -92,7 +92,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
 
     if (getEnvironment() !== 'production') {
         getDefaultLogger().warn(
-            'Note that the development build is not optimized. To create a production build, set process.env.NODE_ENV to `production`.',
+            'Note that the development build is not optimized. To create a production build, set process\u200b.env.NODE_ENV to `production`.',
         );
     }
 
