@@ -14,6 +14,8 @@
 - [Changed](HostedInputEventType.md#changed)
 - [Entered](HostedInputEventType.md#entered)
 - [Focused](HostedInputEventType.md#focused)
+- [StoredCardFailed](HostedInputEventType.md#storedcardfailed)
+- [StoredCardSucceeded](HostedInputEventType.md#storedcardsucceeded)
 - [SubmitFailed](HostedInputEventType.md#submitfailed)
 - [SubmitSucceeded](HostedInputEventType.md#submitsucceeded)
 - [Validated](HostedInputEventType.md#validated)
@@ -65,6 +67,18 @@ ___
 ### Focused
 
 • **Focused**
+
+___
+
+### StoredCardFailed
+
+• **StoredCardFailed**
+
+___
+
+### StoredCardSucceeded
+
+• **StoredCardSucceeded**
 
 ___
 

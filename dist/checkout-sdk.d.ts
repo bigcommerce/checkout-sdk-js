@@ -1,4 +1,6 @@
 /// <reference types="applepayjs" />
+/// <reference types="grecaptcha" />
+/// <reference types="lodash" />
 import { BraintreeConnectStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeError as BraintreeError_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -6,14 +8,21 @@ import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CardInstrument as CardInstrument_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
+import { HostedForm as HostedFormInterface } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedFormOptions as HostedFormOptions_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
+import { Observable } from 'rxjs';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PayPalCommerceConnectStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import { PaymentErrorData } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentProviderCustomer as PaymentProviderCustomerType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ReadableDataStore } from '@bigcommerce/data-store';
 import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
+import { ScriptLoader } from '@bigcommerce/script-loader';
 import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { StorefrontErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Timeout } from '@bigcommerce/request-sender';
 import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WithBankAccountInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -546,6 +555,24 @@ declare interface AdyenV3ValidationState {
     i18n?: string;
     error?: string;
     errorKey?: string;
+}
+
+declare interface AmazonPayRemoteCheckout {
+    referenceId?: string;
+    billing?: {
+        address?: InternalAddress | false;
+    };
+    shipping?: {
+        address?: InternalAddress | false;
+    };
+    settings?: {
+        billing: string;
+        billingMessage: string;
+        customer: string;
+        payment: string;
+        provider: string;
+        shipping: string;
+    };
 }
 
 declare enum AmazonPayV2ButtonColor {
@@ -1293,6 +1320,17 @@ declare interface BillingAddress extends Address {
 
 declare interface BillingAddressRequestBody extends AddressRequestBody {
     email?: string;
+}
+
+declare interface BillingAddressSelector {
+    getBillingAddress(): BillingAddress | undefined;
+    getBillingAddressOrThrow(): BillingAddress;
+    getUpdateError(): Error | undefined;
+    getContinueAsGuestError(): Error | undefined;
+    getLoadError(): Error | undefined;
+    isUpdating(): boolean;
+    isContinuingAsGuest(): boolean;
+    isLoading(): boolean;
 }
 
 declare interface BirthDate {
@@ -2238,6 +2276,10 @@ declare interface CardState_2 {
     errors?: CardStateErrors_2;
 }
 
+declare interface CardingProtectionActionData {
+    human_verification_token?: string;
+}
+
 declare interface Cart {
     id: string;
     customerId: number;
@@ -2275,6 +2317,13 @@ declare class CartChangedError extends StandardError {
  */
 declare class CartConsistencyError extends StandardError {
     constructor(message?: string);
+}
+
+declare interface CartSelector {
+    getCart(): Cart | undefined;
+    getCartOrThrow(): Cart;
+    getLoadError(): Error | undefined;
+    isLoading(): boolean;
 }
 
 declare interface ChasePayCustomerInitializeOptions {
@@ -2391,10 +2440,21 @@ declare interface Checkout {
     fees: Fee[];
 }
 
+declare interface CheckoutButtonDataState {
+    initializedContainers: {
+        [key: string]: boolean;
+    };
+}
+
 declare class CheckoutButtonErrorSelector {
     private _checkoutButton;
     getInitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
+}
+
+declare interface CheckoutButtonErrorsState {
+    initializeError?: Error;
+    deinitializeError?: Error;
 }
 
 declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
@@ -2520,15 +2580,41 @@ declare interface CheckoutButtonOptions extends RequestOptions {
     methodId: CheckoutButtonMethodType;
 }
 
+declare interface CheckoutButtonSelector {
+    getState(): CheckoutButtonState;
+    isInitializing(methodId?: CheckoutButtonMethodType): boolean;
+    isInitialized(methodId: CheckoutButtonMethodType, containerId?: string): boolean;
+    isDeinitializing(methodId?: CheckoutButtonMethodType): boolean;
+    getInitializeError(methodId?: CheckoutButtonMethodType): Error | undefined;
+    getDeinitializeError(methodId?: CheckoutButtonMethodType): Error | undefined;
+}
+
 declare interface CheckoutButtonSelectors {
     errors: CheckoutButtonErrorSelector;
     statuses: CheckoutButtonStatusSelector;
+}
+
+declare interface CheckoutButtonState {
+    data: {
+        [key in CheckoutButtonMethodType]?: CheckoutButtonDataState | undefined;
+    };
+    errors: {
+        [key in CheckoutButtonMethodType]?: CheckoutButtonErrorsState | undefined;
+    };
+    statuses: {
+        [key in CheckoutButtonMethodType]?: CheckoutButtonStatusesState | undefined;
+    };
 }
 
 declare class CheckoutButtonStatusSelector {
     private _checkoutButton;
     isInitializingButton(methodId?: CheckoutButtonMethodType): boolean;
     isDeinitializingButton(methodId?: CheckoutButtonMethodType): boolean;
+}
+
+declare interface CheckoutButtonStatusesState {
+    isInitializing?: boolean;
+    isDeinitializing?: boolean;
 }
 
 declare type CheckoutIncludeParam = {
@@ -2560,6 +2646,17 @@ declare interface CheckoutPaymentMethodExecutedOptions {
 
 declare interface CheckoutRequestBody {
     customerMessage: string;
+}
+
+declare interface CheckoutSelector {
+    getCheckout(): Checkout | undefined;
+    getCheckoutOrThrow(): Checkout;
+    getOutstandingBalance(useStoreCredit?: boolean): number | undefined;
+    getLoadError(): Error | undefined;
+    getUpdateError(): Error | undefined;
+    isExecutingSpamCheck(): boolean;
+    isLoading(): boolean;
+    isUpdating(): boolean;
 }
 
 declare interface CheckoutSelectors {
@@ -4497,6 +4594,26 @@ declare type ComparableCheckout = Pick<Checkout, 'outstandingBalance' | 'coupons
     cart: Partial<Cart>;
 };
 
+declare interface Config {
+    context: ContextConfig;
+    customization: CustomizationConfig;
+    storeConfig: StoreConfig;
+}
+
+declare interface ConfigSelector {
+    getConfig(): Config | undefined;
+    getFlashMessages(type?: FlashMessageType): FlashMessage[] | undefined;
+    getStoreConfig(): StoreConfig | undefined;
+    getStoreConfigOrThrow(): StoreConfig;
+    getContextConfig(): ContextConfig | undefined;
+    getExternalSource(): string | undefined;
+    getHost(): string | undefined;
+    getLocale(): string | undefined;
+    getVariantIdentificationToken(): string | undefined;
+    getLoadError(): Error | undefined;
+    isLoading(): boolean;
+}
+
 declare interface Consignment {
     id: string;
     address: Address;
@@ -4539,6 +4656,29 @@ declare interface ConsignmentPickupOption {
     pickupMethodId: number;
 }
 
+declare interface ConsignmentSelector {
+    getConsignments(): Consignment[] | undefined;
+    getConsignmentsOrThrow(): Consignment[];
+    getConsignmentById(id: string): Consignment | undefined;
+    getConsignmentByAddress(address: AddressRequestBody): Consignment | undefined;
+    getShippingOption(): ShippingOption | undefined;
+    getLoadError(): Error | undefined;
+    getCreateError(): Error | undefined;
+    getLoadShippingOptionsError(): Error | undefined;
+    getUnassignedItems(): PhysicalItem[];
+    getUpdateError(consignmentId?: string): Error | undefined;
+    getDeleteError(consignmentId?: string): Error | undefined;
+    getItemAssignmentError(address: AddressRequestBody): Error | undefined;
+    getUpdateShippingOptionError(consignmentId?: string): Error | undefined;
+    isLoading(): boolean;
+    isLoadingShippingOptions(): boolean;
+    isCreating(): boolean;
+    isUpdating(consignmentId?: string): boolean;
+    isDeleting(consignmentId?: string): boolean;
+    isAssigningItems(address: AddressRequestBody): boolean;
+    isUpdatingShippingOption(consignmentId?: string): boolean;
+}
+
 declare interface ConsignmentUpdateRequestBody {
     id: string;
     address?: AddressRequestBody;
@@ -4548,6 +4688,16 @@ declare interface ConsignmentUpdateRequestBody {
 }
 
 declare type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
+
+declare interface ContextConfig {
+    checkoutId?: string;
+    geoCountryCode: string;
+    flashMessages: FlashMessage[];
+    payment: {
+        formId?: string;
+        token?: string;
+    };
+}
 
 declare interface Coordinates {
     latitude: number;
@@ -4562,12 +4712,26 @@ declare interface Country {
     requiresState: boolean;
 }
 
+declare interface CountrySelector {
+    getCountries(): Country[] | undefined;
+    getLoadError(): Error | undefined;
+    isLoading(): boolean;
+}
+
 declare interface Coupon {
     id: string;
     displayName: string;
     code: string;
     couponType: string;
     discountedAmount: number;
+}
+
+declare interface CouponSelector {
+    getCoupons(): Coupon[] | undefined;
+    getRemoveError(): RequestError | undefined;
+    getApplyError(): RequestError | undefined;
+    isApplying(): boolean;
+    isRemoving(): boolean;
 }
 
 declare interface CreditCardInstrument {
@@ -4851,11 +5015,44 @@ declare interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
 }
 
+declare interface CustomerSelector {
+    getCustomer(): Customer | undefined;
+    getCustomerOrThrow(): Customer;
+    getCreateAccountError(): Error | undefined;
+    isCreatingCustomerAccount(): boolean;
+    getCreateAddressError(): Error | undefined;
+    isCreatingCustomerAddress(): boolean;
+}
+
+declare interface CustomerStrategySelector {
+    getSignInError(methodId?: string): Error | undefined;
+    getSignOutError(methodId?: string): Error | undefined;
+    getExecutePaymentMethodCheckoutError(methodId?: string): Error | undefined;
+    getInitializeError(methodId?: string): Error | undefined;
+    getWidgetInteractionError(methodId?: string): Error | undefined;
+    isSigningIn(methodId?: string): boolean;
+    isSigningOut(methodId?: string): boolean;
+    isExecutingPaymentMethodCheckout(methodId?: string): boolean;
+    isInitializing(methodId?: string): boolean;
+    isInitialized(methodId: string): boolean;
+    isWidgetInteracting(methodId?: string): boolean;
+}
+
+declare interface CustomizationConfig {
+    languageData: any[];
+}
+
 declare interface DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions {
     /**
      * The form is data for Credit Card Form
      */
     form?: HostedFormOptions_2;
+}
+
+declare class DetachmentObserver {
+    private _mutationObserver;
+    constructor(_mutationObserver: MutationObserverFactory);
+    ensurePresence<T>(targets: Node[], promise: Promise<T>): Promise<T>;
 }
 
 declare interface DigitalItem extends LineItem {
@@ -5163,6 +5360,13 @@ declare const enum ExtensionRegion {
     ShippingShippingAddressFormAfter = "shipping.shippingAddressForm.after"
 }
 
+declare interface ExtensionSelector {
+    getExtensions(): Extension[] | undefined;
+    getExtensionByRegion(region: ExtensionRegion): Extension | undefined;
+    getLoadError(): Error | undefined;
+    isLoading(): boolean;
+}
+
 declare interface Fee {
     id: string;
     type: string;
@@ -5220,6 +5424,14 @@ declare interface FormFields {
     billingAddress: FormField[];
 }
 
+declare interface FormSelector {
+    getShippingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
+    getBillingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
+    getCustomerAccountFields(): FormField[];
+    getLoadError(): Error | undefined;
+    isLoading(): boolean;
+}
+
 declare interface GatewayOrderPayment extends OrderPayment {
     detail: {
         step: string;
@@ -5264,6 +5476,14 @@ declare interface GiftCertificateOrderPayment extends OrderPayment {
         code: string;
         remaining: number;
     };
+}
+
+declare interface GiftCertificateSelector {
+    getGiftCertificates(): GiftCertificate[] | undefined;
+    getRemoveError(): RequestError<StorefrontErrorResponseBody> | undefined;
+    getApplyError(): RequestError<StorefrontErrorResponseBody> | undefined;
+    isApplying(): boolean;
+    isRemoving(): boolean;
 }
 
 declare type GooglePayButtonColor = 'default' | 'black' | 'white';
@@ -5495,6 +5715,33 @@ declare interface GooglePayPaymentInitializeOptions_2 {
     onPaymentSelect?(): void;
 }
 
+declare class GoogleRecaptcha {
+    private googleRecaptchaScriptLoader;
+    private mutationObserverFactory;
+    private _event$?;
+    private _recaptcha?;
+    private _memoized;
+    private _widgetId?;
+    constructor(googleRecaptchaScriptLoader: GoogleRecaptchaScriptLoader, mutationObserverFactory: MutationObserverFactory);
+    load(containerId: string, sitekey: string): Promise<void>;
+    execute(): Observable<RecaptchaResult>;
+    private _watchRecaptchaChallengeWindow;
+}
+
+declare class GoogleRecaptchaScriptLoader {
+    private _scriptLoader;
+    private _window;
+    private _loadPromise?;
+    constructor(_scriptLoader: ScriptLoader, _window?: GoogleRecaptchaWindow);
+    load(): Promise<ReCaptchaV2.ReCaptcha | undefined>;
+    private _loadScript;
+}
+
+declare interface GoogleRecaptchaWindow extends Window {
+    grecaptcha?: ReCaptchaV2.ReCaptcha;
+    initRecaptcha?(): void;
+}
+
 declare type GuestCredentials = Partial<Subscriptions> & {
     id?: string;
     email: string;
@@ -5515,15 +5762,67 @@ declare interface HostedCardFieldOptionsMap {
 
 declare type HostedCreditCardInstrument = Omit<CreditCardInstrument, 'ccExpiry' | 'ccName' | 'ccNumber' | 'ccCvv'>;
 
+declare class HostedField {
+    private _type;
+    private _containerId;
+    private _placeholder;
+    private _accessibilityLabel;
+    private _styles;
+    private _eventPoster;
+    private _eventListener;
+    private _detachmentObserver;
+    private _cardInstrument?;
+    private _iframe;
+    constructor(_type: HostedFieldType, _containerId: string, _placeholder: string, _accessibilityLabel: string, _styles: HostedFieldStylesMap, _eventPoster: IframeEventPoster<HostedFieldEvent>, _eventListener: IframeEventListener<HostedInputEventMap>, _detachmentObserver: DetachmentObserver, _cardInstrument?: CardInstrument | undefined);
+    getType(): HostedFieldType;
+    attach(): Promise<void>;
+    detach(): void;
+    submitForm(fields: HostedFieldType[], data: HostedFormOrderData): Promise<HostedInputSubmitSuccessEvent>;
+    submitStoredCardForm(fields: StoredCardHostedFormInstrumentFields, data: StoredCardHostedFormData): Promise<HostedInputStoredCardSucceededEvent>;
+    validateForm(): Promise<void>;
+    private _getFontUrls;
+    private _isSubmitErrorEvent;
+}
+
+declare interface HostedFieldAttachEvent {
+    type: HostedFieldEventType.AttachRequested;
+    payload: {
+        accessibilityLabel?: string;
+        cardInstrument?: CardInstrument;
+        fontUrls?: string[];
+        placeholder?: string;
+        styles?: HostedFieldStylesMap;
+        origin?: string;
+        type: HostedFieldType;
+    };
+}
+
 declare type HostedFieldBlurEventData = HostedInputBlurEvent['payload'];
 
 declare type HostedFieldCardTypeChangeEventData = HostedInputCardTypeChangeEvent['payload'];
 
 declare type HostedFieldEnterEventData = HostedInputEnterEvent['payload'];
 
+declare type HostedFieldEvent = HostedFieldAttachEvent | HostedFieldSubmitRequestEvent | HostedFieldValidateRequestEvent | HostedFieldStoredCardRequestEvent;
+
+declare enum HostedFieldEventType {
+    AttachRequested = "HOSTED_FIELD:ATTACH_REQUESTED",
+    SubmitRequested = "HOSTED_FIELD:SUBMITTED_REQUESTED",
+    ValidateRequested = "HOSTED_FIELD:VALIDATE_REQUESTED",
+    StoredCardRequested = "HOSTED_FIELD:STORED_CARD_REQUESTED"
+}
+
 declare type HostedFieldFocusEventData = HostedInputFocusEvent['payload'];
 
 declare type HostedFieldOptionsMap = HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap;
+
+declare interface HostedFieldStoredCardRequestEvent {
+    type: HostedFieldEventType.StoredCardRequested;
+    payload: {
+        data: StoredCardHostedFormData;
+        fields: StoredCardHostedFormInstrumentFields;
+    };
+}
 
 declare type HostedFieldStyles = HostedInputStyles;
 
@@ -5531,6 +5830,14 @@ declare interface HostedFieldStylesMap {
     default?: HostedFieldStyles;
     error?: HostedFieldStyles;
     focus?: HostedFieldStyles;
+}
+
+declare interface HostedFieldSubmitRequestEvent {
+    type: HostedFieldEventType.SubmitRequested;
+    payload: {
+        data: HostedFormOrderData;
+        fields: HostedFieldType[];
+    };
 }
 
 declare enum HostedFieldType {
@@ -5544,6 +5851,33 @@ declare enum HostedFieldType {
 
 declare type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
 
+declare interface HostedFieldValidateRequestEvent {
+    type: HostedFieldEventType.ValidateRequested;
+}
+
+declare class HostedForm implements HostedFormInterface {
+    private _fields;
+    private _eventListener;
+    private _payloadTransformer;
+    private _eventCallbacks;
+    private _paymentHumanVerificationHandler;
+    private _bin?;
+    private _cardType?;
+    constructor(_fields: HostedField[], _eventListener: IframeEventListener<HostedInputEventMap>, _payloadTransformer: HostedFormOrderDataTransformer, _eventCallbacks: HostedFormEventCallbacks, _paymentHumanVerificationHandler: PaymentHumanVerificationHandler);
+    getBin(): string | undefined;
+    getCardType(): string | undefined;
+    attach(): Promise<void>;
+    detach(): void;
+    submit(payload: OrderPaymentRequestBody, additionalActionData?: PaymentAdditionalAction): Promise<HostedInputSubmitSuccessEvent>;
+    submitStoredCard(payload: {
+        fields: StoredCardHostedFormInstrumentFields;
+        data: StoredCardHostedFormData;
+    }): Promise<HostedInputStoredCardSucceededEvent | void>;
+    validate(): Promise<void>;
+    private _getFirstField;
+    private _handleEnter;
+}
+
 declare interface HostedFormErrorData {
     isEmpty: boolean;
     isPotentiallyValid: boolean;
@@ -5554,6 +5888,15 @@ declare type HostedFormErrorDataKeys = 'number' | 'expirationDate' | 'expiration
 
 declare type HostedFormErrorsData = Partial<Record<HostedFormErrorDataKeys, HostedFormErrorData>>;
 
+declare type HostedFormEventCallbacks = Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onEnter' | 'onValidate'>;
+
+declare class HostedFormFactory {
+    private _store;
+    constructor(_store: ReadableCheckoutStore);
+    create(host: string, options: HostedFormOptions): HostedForm;
+    private _getCardInstrument;
+}
+
 declare interface HostedFormOptions {
     fields: HostedFieldOptionsMap;
     styles?: HostedFieldStylesMap;
@@ -5562,6 +5905,42 @@ declare interface HostedFormOptions {
     onEnter?(data: HostedFieldEnterEventData): void;
     onFocus?(data: HostedFieldFocusEventData): void;
     onValidate?(data: HostedFieldValidateEventData): void;
+}
+
+declare interface HostedFormOrderData {
+    additionalAction?: PaymentAdditionalAction;
+    authToken: string;
+    checkout?: Checkout;
+    config?: Config;
+    order?: Order;
+    orderMeta?: OrderMeta;
+    payment?: (HostedCreditCardInstrument | HostedVaultedInstrument) & PaymentInstrumentMeta;
+    paymentMethod?: PaymentMethod;
+    paymentMethodMeta?: PaymentMethodMeta;
+}
+
+declare class HostedFormOrderDataTransformer {
+    private _store;
+    constructor(_store: ReadableCheckoutStore);
+    transform(payload: OrderPaymentRequestBody, additionalAction?: PaymentAdditionalAction): HostedFormOrderData;
+}
+
+declare interface HostedInputAttachErrorEvent {
+    type: HostedInputEventType.AttachFailed;
+    payload: {
+        error: HostedInputInitializeErrorData;
+    };
+}
+
+declare interface HostedInputAttachSuccessEvent {
+    type: HostedInputEventType.AttachSucceeded;
+}
+
+declare interface HostedInputBinChangeEvent {
+    type: HostedInputEventType.BinChanged;
+    payload: {
+        bin?: string;
+    };
 }
 
 declare interface HostedInputBlurEvent {
@@ -5579,11 +5958,34 @@ declare interface HostedInputCardTypeChangeEvent {
     };
 }
 
+declare interface HostedInputChangeEvent {
+    type: HostedInputEventType.Changed;
+    payload: {
+        fieldType: HostedFieldType;
+    };
+}
+
 declare interface HostedInputEnterEvent {
     type: HostedInputEventType.Entered;
     payload: {
         fieldType: HostedFieldType;
     };
+}
+
+declare interface HostedInputEventMap {
+    [HostedInputEventType.AttachSucceeded]: HostedInputAttachSuccessEvent;
+    [HostedInputEventType.AttachFailed]: HostedInputAttachErrorEvent;
+    [HostedInputEventType.BinChanged]: HostedInputBinChangeEvent;
+    [HostedInputEventType.Blurred]: HostedInputBlurEvent;
+    [HostedInputEventType.Changed]: HostedInputChangeEvent;
+    [HostedInputEventType.CardTypeChanged]: HostedInputCardTypeChangeEvent;
+    [HostedInputEventType.Entered]: HostedInputEnterEvent;
+    [HostedInputEventType.Focused]: HostedInputFocusEvent;
+    [HostedInputEventType.SubmitSucceeded]: HostedInputSubmitSuccessEvent;
+    [HostedInputEventType.SubmitFailed]: HostedInputSubmitErrorEvent;
+    [HostedInputEventType.Validated]: HostedInputValidateEvent;
+    [HostedInputEventType.StoredCardFailed]: HostedInputStoredCardErrorEvent;
+    [HostedInputEventType.StoredCardSucceeded]: HostedInputStoredCardSucceededEvent;
 }
 
 declare enum HostedInputEventType {
@@ -5597,7 +5999,9 @@ declare enum HostedInputEventType {
     Focused = "HOSTED_INPUT:FOCUSED",
     SubmitSucceeded = "HOSTED_INPUT:SUBMIT_SUCCEEDED",
     SubmitFailed = "HOSTED_INPUT:SUBMIT_FAILED",
-    Validated = "HOSTED_INPUT:VALIDATED"
+    Validated = "HOSTED_INPUT:VALIDATED",
+    StoredCardSucceeded = "HOSTED_INPUT:STORED_CARD_SUCCEEDED",
+    StoredCardFailed = "HOSTED_INPUT:STORED_CARD_FAILED"
 }
 
 declare interface HostedInputFocusEvent {
@@ -5607,7 +6011,40 @@ declare interface HostedInputFocusEvent {
     };
 }
 
+declare interface HostedInputInitializeErrorData {
+    message: string;
+    redirectUrl: string;
+}
+
+declare interface HostedInputStoredCardErrorEvent {
+    type: HostedInputEventType.StoredCardFailed;
+    payload?: {
+        errors?: string[];
+        error?: PaymentErrorData;
+        response?: Response<PaymentErrorResponseBody>;
+    };
+}
+
+declare interface HostedInputStoredCardSucceededEvent {
+    type: HostedInputEventType.StoredCardSucceeded;
+}
+
 declare type HostedInputStyles = Partial<Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>>;
+
+declare interface HostedInputSubmitErrorEvent {
+    type: HostedInputEventType.SubmitFailed;
+    payload: {
+        error: PaymentErrorData;
+        response?: Response<PaymentErrorResponseBody>;
+    };
+}
+
+declare interface HostedInputSubmitSuccessEvent {
+    type: HostedInputEventType.SubmitSucceeded;
+    payload: {
+        response: Response<unknown>;
+    };
+}
 
 declare interface HostedInputValidateErrorData {
     fieldType: string;
@@ -5679,6 +6116,44 @@ declare interface IdealElementOptions extends BaseElementOptions_2 {
     hideIcon?: boolean;
 }
 
+declare interface IframeEvent<TType = string, TPayload = any> {
+    type: TType;
+    payload?: TPayload;
+}
+
+declare class IframeEventListener<TEventMap extends IframeEventMap<keyof TEventMap>, TContext = undefined> {
+    private _isListening;
+    private _listeners;
+    private _sourceOrigins;
+    constructor(sourceOrigin: string);
+    listen(): void;
+    stopListen(): void;
+    addListener<TType extends keyof TEventMap>(type: TType, listener: (event: TEventMap[TType], context?: TContext) => void): void;
+    removeListener<TType extends keyof TEventMap>(type: TType, listener: (event: TEventMap[TType], context?: TContext) => void): void;
+    trigger<TType extends keyof TEventMap>(event: TEventMap[TType], context?: TContext): void;
+    private _handleMessage;
+}
+
+declare type IframeEventMap<TType extends string | number | symbol = string> = {
+    [key in TType]: IframeEvent<TType>;
+};
+
+declare interface IframeEventPostOptions<TSuccessEvent extends IframeEvent, TErrorEvent extends IframeEvent> {
+    errorType?: TErrorEvent['type'];
+    successType?: TSuccessEvent['type'];
+}
+
+declare class IframeEventPoster<TEvent, TContext = undefined> {
+    private _targetWindow?;
+    private _context?;
+    private _targetOrigin;
+    constructor(targetOrigin: string, _targetWindow?: Window | undefined, _context?: TContext | undefined);
+    post(event: TEvent): void;
+    post<TSuccessEvent extends IframeEvent = IframeEvent, TErrorEvent extends IframeEvent = IframeEvent>(event: TEvent, options: IframeEventPostOptions<TSuccessEvent, TErrorEvent>): Promise<TSuccessEvent>;
+    setTarget(window: Window): void;
+    setContext(context: TContext): void;
+}
+
 declare interface IndividualCardElementOptions {
     cardCvcElementOptions: CardCvcElementOptions;
     cardExpiryElementOptions: CardExpiryElementOptions;
@@ -5689,6 +6164,11 @@ declare interface IndividualCardElementOptions {
 declare interface InitCallbackActions {
     disable(): void;
     enable(): void;
+}
+
+declare interface InitiaizedQuery {
+    methodId: string;
+    gatewayId?: string;
 }
 
 declare interface InitializationStrategy extends Partial<UnknownObject> {
@@ -5782,6 +6262,85 @@ declare interface InputStyles extends BlockElementStyles {
 }
 
 declare type Instrument = CardInstrument;
+
+declare type InstrumentMeta = VaultAccessToken;
+
+declare interface InstrumentSelector {
+    getCardInstrument(instrumentId: string): CardInstrument | undefined;
+    getCardInstrumentOrThrow(instrumentId: string): CardInstrument;
+    getInstruments(): PaymentInstrument[] | undefined;
+    getInstrumentsByPaymentMethod(paymentMethod: PaymentMethod): PaymentInstrument[] | undefined;
+    getInstrumentsMeta(): InstrumentMeta | undefined;
+    getLoadError(): Error | undefined;
+    getDeleteError(instrumentId?: string): Error | undefined;
+    isLoading(): boolean;
+    isDeleting(instrumentId?: string): boolean;
+}
+
+declare interface InternalAddress<T = string> {
+    id?: T;
+    firstName: string;
+    lastName: string;
+    company: string;
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    province: string;
+    provinceCode: string;
+    postCode: string;
+    country: string;
+    countryCode: string;
+    phone: string;
+    customFields: Array<{
+        fieldId: string;
+        fieldValue: string | number | string[];
+    }>;
+    type?: string;
+}
+
+declare interface InternalCheckoutSelectors {
+    billingAddress: BillingAddressSelector;
+    cart: CartSelector;
+    checkout: CheckoutSelector;
+    checkoutButton: CheckoutButtonSelector;
+    config: ConfigSelector;
+    consignments: ConsignmentSelector;
+    countries: CountrySelector;
+    coupons: CouponSelector;
+    customer: CustomerSelector;
+    customerStrategies: CustomerStrategySelector;
+    extensions: ExtensionSelector;
+    form: FormSelector;
+    giftCertificates: GiftCertificateSelector;
+    instruments: InstrumentSelector;
+    order: OrderSelector;
+    orderBillingAddress: OrderBillingAddressSelector;
+    payment: PaymentSelector;
+    paymentMethods: PaymentMethodSelector;
+    paymentStrategies: PaymentStrategySelector;
+    paymentProviderCustomer: PaymentProviderCustomerSelector;
+    pickupOptions: PickupOptionSelector;
+    remoteCheckout: RemoteCheckoutSelector;
+    shippingAddress: ShippingAddressSelector;
+    shippingCountries: ShippingCountrySelector;
+    shippingStrategies: ShippingStrategySelector;
+    signInEmail: SignInEmailSelector;
+    subscriptions: SubscriptionsSelector;
+    storeCredit: StoreCreditSelector;
+}
+
+declare interface InternalOrderMeta {
+    deviceFingerprint?: string;
+}
+
+declare interface InternalOrderPayment {
+    id?: string;
+    gateway?: string;
+    redirectUrl?: string;
+    returnUrl?: string;
+    status?: string;
+    helpText?: string;
+}
 
 declare interface Item {
     variantId: number;
@@ -6252,6 +6811,21 @@ declare interface MonerisStylingProps {
     cssInputLabel?: string;
 }
 
+declare interface MutationObeserverCreator {
+    prototype: MutationObserver;
+    new (callback: MutationCallback): MutationObserver;
+}
+
+declare class MutationObserverFactory {
+    private _window;
+    constructor(_window?: MutationObserverWindow);
+    create(callback: MutationCallback): MutationObserver;
+}
+
+declare interface MutationObserverWindow extends Window {
+    MutationObserver: MutationObeserverCreator;
+}
+
 declare interface NonceGenerationError {
     type: string;
     message: string;
@@ -6377,6 +6951,10 @@ declare interface OrderBillingAddress extends Address {
     email?: string;
 }
 
+declare interface OrderBillingAddressSelector {
+    getOrderBillingAddress(): OrderBillingAddress | undefined;
+}
+
 declare interface OrderConsignment {
     shipping: OrderShippingConsignment[];
 }
@@ -6387,6 +6965,15 @@ declare interface OrderFee {
     customerDisplayName: string;
     cost: number;
     source: string;
+}
+
+declare type OrderMeta = OrderMetaState;
+
+declare interface OrderMetaState extends InternalOrderMeta {
+    token?: string;
+    orderToken?: string;
+    callbackUrl?: string;
+    payment?: InternalOrderPayment;
 }
 
 declare interface OrderPayment {
@@ -6439,6 +7026,15 @@ declare interface OrderRequestBody {
      * works if the customer has previously signed in.
      */
     useStoreCredit?: boolean;
+}
+
+declare interface OrderSelector {
+    getOrder(): Order | undefined;
+    getOrderOrThrow(): Order;
+    getOrderMeta(): OrderMetaState | undefined;
+    getLoadError(): Error | undefined;
+    getPaymentId(methodId: string): string | undefined;
+    isLoading(): boolean;
 }
 
 declare interface OrderShippingConsignment {
@@ -7224,9 +7820,30 @@ declare interface PayPalInstrument extends BaseAccountInstrument {
     method: 'paypal';
 }
 
+declare interface PaymentAdditionalAction {
+    type: string;
+    data: CardingProtectionActionData;
+}
+
+declare class PaymentHumanVerificationHandler {
+    private _googleRecaptcha;
+    constructor(_googleRecaptcha: GoogleRecaptcha);
+    handle(error: Error): Promise<PaymentAdditionalAction>;
+    handle(id: string, key: string): Promise<PaymentAdditionalAction>;
+    private handleWithPaymentHumanVerificationRequestError;
+    private handleWithRecaptchaSitekey;
+    private _performRecaptcha;
+    private _initialize;
+    private _isPaymentHumanVerificationRequest;
+}
+
 declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceAcceleratedCheckoutPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
+
+declare interface PaymentInstrumentMeta {
+    deviceSessionId?: string;
+}
 
 declare interface PaymentMethod<T = any> {
     id: string;
@@ -7263,7 +7880,28 @@ declare interface PaymentMethodConfig {
     testMode?: boolean;
 }
 
+declare interface PaymentMethodMeta {
+    deviceSessionId: string;
+    sessionHash: string;
+}
+
+declare interface PaymentMethodSelector {
+    getPaymentMethods(): PaymentMethod[] | undefined;
+    getPaymentMethodsMeta(): PaymentMethodMeta | undefined;
+    getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined;
+    getPaymentMethodOrThrow(methodId: string, gatewayId?: string): PaymentMethod;
+    getLoadError(): Error | undefined;
+    getLoadMethodError(methodId?: string): Error | undefined;
+    isLoading(): boolean;
+    isLoadingMethod(methodId?: string): boolean;
+}
+
 declare type PaymentProviderCustomer = PaymentProviderCustomerType;
+
+declare interface PaymentProviderCustomerSelector {
+    getPaymentProviderCustomer(): PaymentProviderCustomer | undefined;
+    getPaymentProviderCustomerOrThrow(): PaymentProviderCustomer;
+}
 
 /**
  * The set of options for configuring any requests related to the payment step of
@@ -7282,9 +7920,40 @@ declare interface PaymentRequestOptions extends RequestOptions {
     gatewayId?: string;
 }
 
+declare interface PaymentSelector {
+    getPaymentId(): {
+        providerId: string;
+        gatewayId?: string;
+    } | undefined;
+    getPaymentIdOrThrow(): {
+        providerId: string;
+        gatewayId?: string;
+    };
+    getPaymentStatus(): string | undefined;
+    getPaymentStatusOrThrow(): string;
+    getPaymentToken(): string | undefined;
+    getPaymentTokenOrThrow(): string;
+    getPaymentRedirectUrl(): string | undefined;
+    getPaymentRedirectUrlOrThrow(): string;
+    isPaymentDataRequired(useStoreCredit?: boolean): boolean;
+    isPaymentDataSubmitted(paymentMethod?: PaymentMethod): boolean;
+}
+
 declare interface PaymentSettings {
     bigpayBaseUrl: string;
     clientSidePaymentProviders: string[];
+}
+
+declare interface PaymentStrategySelector {
+    getInitializeError(methodId?: string): Error | undefined;
+    getExecuteError(methodId?: string): Error | undefined;
+    getFinalizeError(methodId?: string): Error | undefined;
+    getWidgetInteractingError(methodId?: string): Error | undefined;
+    isInitializing(methodId?: string): boolean;
+    isInitialized(query: InitiaizedQuery): boolean;
+    isExecuting(methodId?: string): boolean;
+    isFinalizing(methodId?: string): boolean;
+    isWidgetInteracting(methodId?: string): boolean;
 }
 
 declare interface PaypalButtonInitializeOptions {
@@ -7442,6 +8111,12 @@ declare interface PickupOptionResult {
     options: Option[];
 }
 
+declare interface PickupOptionSelector {
+    getPickupOptions(consignmentId: string, searchArea: SearchArea): PickupOptionResult[] | undefined;
+    getLoadError(): Error | undefined;
+    isLoading(): boolean;
+}
+
 declare interface Promotion {
     banners: Banner[];
 }
@@ -7456,6 +8131,13 @@ declare enum RadiusUnit {
     MI = "MI"
 }
 
+declare type ReadableCheckoutStore = ReadableDataStore<InternalCheckoutSelectors>;
+
+declare interface RecaptchaResult {
+    error?: Error;
+    token?: string;
+}
+
 declare interface Region {
     code: string;
     name: string;
@@ -7463,6 +8145,14 @@ declare interface Region {
 
 declare interface ReloadCheckoutCommand {
     type: ExtensionCommandType.ReloadCheckout;
+}
+
+declare interface RemoteCheckoutSelector {
+    getCheckout<TMethodId extends keyof RemoteCheckoutStateData>(methodId: TMethodId): RemoteCheckoutStateData[TMethodId] | undefined;
+}
+
+declare interface RemoteCheckoutStateData {
+    amazon?: AmazonPayRemoteCheckout;
 }
 
 /**
@@ -7528,6 +8218,19 @@ declare interface SetIframeStyleCommand {
     };
 }
 
+declare interface ShippingAddressSelector {
+    getShippingAddress(): Address | undefined;
+    getShippingAddressOrThrow(): Address;
+    getShippingAddresses(): Address[];
+    getShippingAddressesOrThrow(): Address[];
+}
+
+declare interface ShippingCountrySelector {
+    getShippingCountries(): Country[] | undefined;
+    getLoadError(): Error | undefined;
+    isLoading(): boolean;
+}
+
 /**
  * A set of options that are required to initialize the shipping step of the
  * current checkout flow.
@@ -7580,6 +8283,18 @@ declare interface ShippingRequestOptions<T = {}> extends RequestOptions<T> {
     methodId?: string;
 }
 
+declare interface ShippingStrategySelector {
+    getUpdateAddressError(methodId?: string): Error | undefined;
+    getSelectOptionError(methodId?: string): Error | undefined;
+    getInitializeError(methodId?: string): Error | undefined;
+    getWidgetInteractionError(methodId?: string): Error | undefined;
+    isUpdatingAddress(methodId?: string): boolean;
+    isSelectingOption(methodId?: string): boolean;
+    isInitializing(methodId?: string): boolean;
+    isInitialized(methodId: string): boolean;
+    isWidgetInteracting(methodId?: string): boolean;
+}
+
 declare interface ShopperConfig {
     defaultNewsletterSignup: boolean;
     passwordRequirements: PasswordRequirements;
@@ -7606,6 +8321,12 @@ declare interface SignInEmail {
 declare interface SignInEmailRequestBody {
     email: string;
     redirectUrl?: string;
+}
+
+declare interface SignInEmailSelector {
+    getEmail(): SignInEmail | undefined;
+    getSendError(): Error | undefined;
+    isSending(): boolean;
 }
 
 /**
@@ -7814,6 +8535,11 @@ declare interface StoreConfig {
     shopperCurrency: ShopperCurrency;
 }
 
+declare interface StoreCreditSelector {
+    getApplyError(): RequestError | undefined;
+    isApplying(): boolean;
+}
+
 declare interface StoreCurrency {
     code: string;
     decimalPlaces: string;
@@ -7843,6 +8569,43 @@ declare interface StoreProfile {
     storeName: string;
     storePhoneNumber: string;
     storeLanguage: string;
+}
+
+declare interface StoredCardHostedFormBillingAddress {
+    address1: string;
+    address2?: string;
+    city: string;
+    postalCode: string;
+    countryCode: string;
+    company?: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+    stateOrProvinceCode?: string;
+}
+
+declare interface StoredCardHostedFormData {
+    currencyCode: string;
+    paymentsUrl: string;
+    providerId: string;
+    shopperId: string;
+    storeHash: string;
+    vaultToken: string;
+}
+
+declare interface StoredCardHostedFormInstrumentFields extends StoredCardHostedFormBillingAddress {
+    defaultInstrument: boolean;
+}
+
+declare class StoredCardHostedFormService {
+    protected _host: string;
+    protected _hostedFormFactory: HostedFormFactory;
+    protected _hostedForm?: HostedForm;
+    constructor(_host: string, _hostedFormFactory: HostedFormFactory);
+    submitStoredCard(fields: StoredCardHostedFormInstrumentFields, data: StoredCardHostedFormData): Promise<void>;
+    initialize(options: HostedFormOptions): Promise<void>;
+    deinitialize(): void;
 }
 
 declare interface StripeCustomerEvent extends StripeEvent {
@@ -8335,6 +9098,11 @@ declare interface Subscriptions {
     acceptsAbandonedCartEmails: boolean;
 }
 
+declare interface SubscriptionsSelector {
+    getUpdateError(): Error | undefined;
+    isUpdating(): boolean;
+}
+
 declare interface Tax {
     name: string;
     amount: number;
@@ -8377,6 +9145,11 @@ declare enum UntrustedShippingCardVerificationType {
 declare interface UserExperienceSettings {
     walletButtonsOnTop: boolean;
     floatingLabelEnabled: boolean;
+}
+
+declare interface VaultAccessToken {
+    vaultAccessToken: string;
+    vaultAccessExpiry: number;
 }
 
 declare interface VaultedInstrument {
@@ -8825,6 +9598,15 @@ export declare function createPayPalCommerceConnectTracker(checkoutService: Chec
  * @returns an instance of `StepTracker`.
  */
 export declare function createStepTracker(checkoutService: CheckoutService, stepTrackerConfig?: StepTrackerConfig): StepTracker;
+
+/**
+ * Creates an instance of `StoredCardHostedFormService`.
+ *
+ *
+ * @param host - Host url string parameter.
+ * @returns An instance of `StoredCardHostedFormService`.
+ */
+export declare function createStoredCardHostedFormService(host: string): StoredCardHostedFormService;
 
 /**
  * Embed the checkout form in an iframe.

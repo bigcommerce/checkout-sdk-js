@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.522.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.521.2...v1.522.0) (2024-01-24)
+
+
+### Features
+
+* **payment:** PI-659 added hosted form for storefront account vaulting ([e01c887](https://github.com/bigcommerce/checkout-sdk-js/commit/e01c88734d6de25997ef34402fcceb46988568c0))
+* **payment:** PI-659 fixed case consistancy ([20e2496](https://github.com/bigcommerce/checkout-sdk-js/commit/20e249665388a2eb35bd2c5ecac90da31e234ff8))
+* **payment:** PI-659 fixed namings and removed duplication of hosted form for stored cards, added submitStoredCard method to hosted-form ([cbaa3dd](https://github.com/bigcommerce/checkout-sdk-js/commit/cbaa3dd601ea57c0b47133747afd63001a0e5155))
+* **payment:** PI-659 moved vaulting hosted fields events logic to checkout-sdk ([ce0d4d8](https://github.com/bigcommerce/checkout-sdk-js/commit/ce0d4d887c7c98d99059b6dcdb1a1106a233604d))
+* **payment:** PI-659 naming fixes ([04fe8f0](https://github.com/bigcommerce/checkout-sdk-js/commit/04fe8f092d8c6b385fc39dbe52e2f17a00935301))
+
 ### [1.521.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.521.1...v1.521.2) (2024-01-24)
 
 

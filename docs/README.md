@@ -23,6 +23,7 @@
 - [ExtensionCommandType](enums/ExtensionCommandType.md)
 - [ExtensionRegion](enums/ExtensionRegion.md)
 - [GooglePayKey](enums/GooglePayKey.md)
+- [HostedFieldEventType](enums/HostedFieldEventType.md)
 - [HostedFieldType](enums/HostedFieldType.md)
 - [HostedInputEventType](enums/HostedInputEventType.md)
 - [IconStyle](enums/IconStyle.md)
@@ -48,10 +49,22 @@
 - [CheckoutButtonStatusSelector](classes/CheckoutButtonStatusSelector.md)
 - [CheckoutService](classes/CheckoutService.md)
 - [CurrencyService](classes/CurrencyService.md)
+- [DetachmentObserver](classes/DetachmentObserver.md)
 - [EmbeddedCheckout](classes/EmbeddedCheckout.md)
+- [GoogleRecaptcha](classes/GoogleRecaptcha.md)
+- [GoogleRecaptchaScriptLoader](classes/GoogleRecaptchaScriptLoader.md)
+- [HostedField](classes/HostedField.md)
+- [HostedForm](classes/HostedForm.md)
+- [HostedFormFactory](classes/HostedFormFactory.md)
+- [HostedFormOrderDataTransformer](classes/HostedFormOrderDataTransformer.md)
+- [IframeEventListener](classes/IframeEventListener.md)
+- [IframeEventPoster](classes/IframeEventPoster.md)
 - [LanguageService](classes/LanguageService.md)
+- [MutationObserverFactory](classes/MutationObserverFactory.md)
+- [PaymentHumanVerificationHandler](classes/PaymentHumanVerificationHandler.md)
 - [RequestError](classes/RequestError.md)
 - [StandardError](classes/StandardError.md)
+- [StoredCardHostedFormService](classes/StoredCardHostedFormService.md)
 
 ### Interfaces
 
@@ -80,6 +93,7 @@
 - [AdyenV3CreditCardComponentOptions](interfaces/AdyenV3CreditCardComponentOptions.md)
 - [AdyenV3PaymentInitializeOptions](interfaces/AdyenV3PaymentInitializeOptions.md)
 - [AdyenV3ValidationState](interfaces/AdyenV3ValidationState.md)
+- [AmazonPayRemoteCheckout](interfaces/AmazonPayRemoteCheckout.md)
 - [AmazonPayV2ButtonConfig](interfaces/AmazonPayV2ButtonConfig.md)
 - [AmazonPayV2ButtonParams](interfaces/AmazonPayV2ButtonParams.md)
 - [AmazonPayV2CheckoutSession](interfaces/AmazonPayV2CheckoutSession.md)
@@ -104,6 +118,7 @@
 - [BasePaymentInitializeOptions](interfaces/BasePaymentInitializeOptions.md)
 - [BillingAddress](interfaces/BillingAddress.md)
 - [BillingAddressRequestBody](interfaces/BillingAddressRequestBody.md)
+- [BillingAddressSelector](interfaces/BillingAddressSelector.md)
 - [BirthDate](interfaces/BirthDate.md)
 - [BlockElementStyles](interfaces/BlockElementStyles.md)
 - [BlueSnapDirectAPMInitializeOptions](interfaces/BlueSnapDirectAPMInitializeOptions.md)
@@ -164,35 +179,49 @@
 - [CardStateErrors](interfaces/CardStateErrors.md)
 - [CardStateErrors_2](interfaces/CardStateErrors_2.md)
 - [CardState_2](interfaces/CardState_2.md)
+- [CardingProtectionActionData](interfaces/CardingProtectionActionData.md)
 - [Cart](interfaces/Cart.md)
+- [CartSelector](interfaces/CartSelector.md)
 - [ChasePayCustomerInitializeOptions](interfaces/ChasePayCustomerInitializeOptions.md)
 - [ChasePayInitializeOptions](interfaces/ChasePayInitializeOptions.md)
 - [CheckableInputStyles](interfaces/CheckableInputStyles.md)
 - [ChecklistStyles](interfaces/ChecklistStyles.md)
 - [Checkout](interfaces/Checkout.md)
+- [CheckoutButtonDataState](interfaces/CheckoutButtonDataState.md)
+- [CheckoutButtonErrorsState](interfaces/CheckoutButtonErrorsState.md)
 - [CheckoutButtonInitializerOptions](interfaces/CheckoutButtonInitializerOptions.md)
 - [CheckoutButtonOptions](interfaces/CheckoutButtonOptions.md)
+- [CheckoutButtonSelector](interfaces/CheckoutButtonSelector.md)
 - [CheckoutButtonSelectors](interfaces/CheckoutButtonSelectors.md)
+- [CheckoutButtonState](interfaces/CheckoutButtonState.md)
+- [CheckoutButtonStatusesState](interfaces/CheckoutButtonStatusesState.md)
 - [CheckoutParams](interfaces/CheckoutParams.md)
 - [CheckoutPayment](interfaces/CheckoutPayment.md)
 - [CheckoutPaymentMethodExecutedOptions](interfaces/CheckoutPaymentMethodExecutedOptions.md)
 - [CheckoutRequestBody](interfaces/CheckoutRequestBody.md)
+- [CheckoutSelector](interfaces/CheckoutSelector.md)
 - [CheckoutSelectors](interfaces/CheckoutSelectors.md)
 - [CheckoutServiceOptions](interfaces/CheckoutServiceOptions.md)
 - [CheckoutSettings](interfaces/CheckoutSettings.md)
 - [CheckoutStoreErrorSelector](interfaces/CheckoutStoreErrorSelector.md)
 - [CheckoutStoreSelector](interfaces/CheckoutStoreSelector.md)
 - [CheckoutStoreStatusSelector](interfaces/CheckoutStoreStatusSelector.md)
+- [Config](interfaces/Config.md)
+- [ConfigSelector](interfaces/ConfigSelector.md)
 - [Consignment](interfaces/Consignment.md)
 - [ConsignmentAssignmentBaseRequestBodyWithAddress](interfaces/ConsignmentAssignmentBaseRequestBodyWithAddress.md)
 - [ConsignmentAssignmentBaseRequestBodyWithShippingAddress](interfaces/ConsignmentAssignmentBaseRequestBodyWithShippingAddress.md)
 - [ConsignmentCreateRequestBody](interfaces/ConsignmentCreateRequestBody.md)
 - [ConsignmentLineItem](interfaces/ConsignmentLineItem.md)
 - [ConsignmentPickupOption](interfaces/ConsignmentPickupOption.md)
+- [ConsignmentSelector](interfaces/ConsignmentSelector.md)
 - [ConsignmentUpdateRequestBody](interfaces/ConsignmentUpdateRequestBody.md)
+- [ContextConfig](interfaces/ContextConfig.md)
 - [Coordinates](interfaces/Coordinates.md)
 - [Country](interfaces/Country.md)
+- [CountrySelector](interfaces/CountrySelector.md)
 - [Coupon](interfaces/Coupon.md)
+- [CouponSelector](interfaces/CouponSelector.md)
 - [CreditCardInstrument](interfaces/CreditCardInstrument.md)
 - [CreditCardPaymentInitializeOptions_2](interfaces/CreditCardPaymentInitializeOptions_2.md)
 - [CreditCardPlaceHolder](interfaces/CreditCardPlaceHolder.md)
@@ -209,6 +238,9 @@
 - [CustomerGroup](interfaces/CustomerGroup.md)
 - [CustomerPasswordRequirements](interfaces/CustomerPasswordRequirements.md)
 - [CustomerRequestOptions](interfaces/CustomerRequestOptions.md)
+- [CustomerSelector](interfaces/CustomerSelector.md)
+- [CustomerStrategySelector](interfaces/CustomerStrategySelector.md)
+- [CustomizationConfig](interfaces/CustomizationConfig.md)
 - [DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions](interfaces/DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions.md)
 - [DigitalItem](interfaces/DigitalItem.md)
 - [DigitalRiverElementClasses](interfaces/DigitalRiverElementClasses.md)
@@ -230,31 +262,50 @@
 - [ExecutePaymentMethodCheckoutOptions](interfaces/ExecutePaymentMethodCheckoutOptions.md)
 - [Extension](interfaces/Extension.md)
 - [ExtensionCommandMap](interfaces/ExtensionCommandMap.md)
+- [ExtensionSelector](interfaces/ExtensionSelector.md)
 - [Fee](interfaces/Fee.md)
 - [FlashMessage](interfaces/FlashMessage.md)
 - [FormField](interfaces/FormField.md)
 - [FormFieldItem](interfaces/FormFieldItem.md)
 - [FormFieldOptions](interfaces/FormFieldOptions.md)
 - [FormFields](interfaces/FormFields.md)
+- [FormSelector](interfaces/FormSelector.md)
 - [GatewayOrderPayment](interfaces/GatewayOrderPayment.md)
 - [GiftCertificate](interfaces/GiftCertificate.md)
 - [GiftCertificateItem](interfaces/GiftCertificateItem.md)
 - [GiftCertificateOrderPayment](interfaces/GiftCertificateOrderPayment.md)
+- [GiftCertificateSelector](interfaces/GiftCertificateSelector.md)
 - [GooglePayButtonInitializeOptions](interfaces/GooglePayButtonInitializeOptions.md)
 - [GooglePayBuyNowInitializeOptions](interfaces/GooglePayBuyNowInitializeOptions.md)
 - [GooglePayCustomerInitializeOptions](interfaces/GooglePayCustomerInitializeOptions.md)
 - [GooglePayCustomerInitializeOptions_2](interfaces/GooglePayCustomerInitializeOptions_2.md)
 - [GooglePayPaymentInitializeOptions](interfaces/GooglePayPaymentInitializeOptions.md)
 - [GooglePayPaymentInitializeOptions_2](interfaces/GooglePayPaymentInitializeOptions_2.md)
+- [GoogleRecaptchaWindow](interfaces/GoogleRecaptchaWindow.md)
 - [HostedCardFieldOptions](interfaces/HostedCardFieldOptions.md)
 - [HostedCardFieldOptionsMap](interfaces/HostedCardFieldOptionsMap.md)
+- [HostedFieldAttachEvent](interfaces/HostedFieldAttachEvent.md)
+- [HostedFieldStoredCardRequestEvent](interfaces/HostedFieldStoredCardRequestEvent.md)
 - [HostedFieldStylesMap](interfaces/HostedFieldStylesMap.md)
+- [HostedFieldSubmitRequestEvent](interfaces/HostedFieldSubmitRequestEvent.md)
+- [HostedFieldValidateRequestEvent](interfaces/HostedFieldValidateRequestEvent.md)
 - [HostedFormErrorData](interfaces/HostedFormErrorData.md)
 - [HostedFormOptions](interfaces/HostedFormOptions.md)
+- [HostedFormOrderData](interfaces/HostedFormOrderData.md)
+- [HostedInputAttachErrorEvent](interfaces/HostedInputAttachErrorEvent.md)
+- [HostedInputAttachSuccessEvent](interfaces/HostedInputAttachSuccessEvent.md)
+- [HostedInputBinChangeEvent](interfaces/HostedInputBinChangeEvent.md)
 - [HostedInputBlurEvent](interfaces/HostedInputBlurEvent.md)
 - [HostedInputCardTypeChangeEvent](interfaces/HostedInputCardTypeChangeEvent.md)
+- [HostedInputChangeEvent](interfaces/HostedInputChangeEvent.md)
 - [HostedInputEnterEvent](interfaces/HostedInputEnterEvent.md)
+- [HostedInputEventMap](interfaces/HostedInputEventMap.md)
 - [HostedInputFocusEvent](interfaces/HostedInputFocusEvent.md)
+- [HostedInputInitializeErrorData](interfaces/HostedInputInitializeErrorData.md)
+- [HostedInputStoredCardErrorEvent](interfaces/HostedInputStoredCardErrorEvent.md)
+- [HostedInputStoredCardSucceededEvent](interfaces/HostedInputStoredCardSucceededEvent.md)
+- [HostedInputSubmitErrorEvent](interfaces/HostedInputSubmitErrorEvent.md)
+- [HostedInputSubmitSuccessEvent](interfaces/HostedInputSubmitSuccessEvent.md)
 - [HostedInputValidateErrorData](interfaces/HostedInputValidateErrorData.md)
 - [HostedInputValidateErrorDataMap](interfaces/HostedInputValidateErrorDataMap.md)
 - [HostedInputValidateEvent](interfaces/HostedInputValidateEvent.md)
@@ -264,13 +315,21 @@
 - [HostedStoredCardFieldOptionsMap](interfaces/HostedStoredCardFieldOptionsMap.md)
 - [IbanElementOptions](interfaces/IbanElementOptions.md)
 - [IdealElementOptions](interfaces/IdealElementOptions.md)
+- [IframeEvent](interfaces/IframeEvent.md)
+- [IframeEventPostOptions](interfaces/IframeEventPostOptions.md)
 - [IndividualCardElementOptions](interfaces/IndividualCardElementOptions.md)
 - [InitCallbackActions](interfaces/InitCallbackActions.md)
+- [InitiaizedQuery](interfaces/InitiaizedQuery.md)
 - [InitializationStrategy](interfaces/InitializationStrategy.md)
 - [InlineElementStyles](interfaces/InlineElementStyles.md)
 - [InputDetail](interfaces/InputDetail.md)
 - [InputDetail_2](interfaces/InputDetail_2.md)
 - [InputStyles](interfaces/InputStyles.md)
+- [InstrumentSelector](interfaces/InstrumentSelector.md)
+- [InternalAddress](interfaces/InternalAddress.md)
+- [InternalCheckoutSelectors](interfaces/InternalCheckoutSelectors.md)
+- [InternalOrderMeta](interfaces/InternalOrderMeta.md)
+- [InternalOrderPayment](interfaces/InternalOrderPayment.md)
 - [Item](interfaces/Item.md)
 - [Item_2](interfaces/Item_2.md)
 - [Item_3](interfaces/Item_3.md)
@@ -293,6 +352,8 @@
 - [MolliePaymentInitializeOptions](interfaces/MolliePaymentInitializeOptions.md)
 - [MonerisPaymentInitializeOptions](interfaces/MonerisPaymentInitializeOptions.md)
 - [MonerisStylingProps](interfaces/MonerisStylingProps.md)
+- [MutationObeserverCreator](interfaces/MutationObeserverCreator.md)
+- [MutationObserverWindow](interfaces/MutationObserverWindow.md)
 - [NonceGenerationError](interfaces/NonceGenerationError.md)
 - [NonceInstrument](interfaces/NonceInstrument.md)
 - [Option](interfaces/Option.md)
@@ -300,11 +361,14 @@
 - [OpyPaymentInitializeOptions](interfaces/OpyPaymentInitializeOptions.md)
 - [Order](interfaces/Order.md)
 - [OrderBillingAddress](interfaces/OrderBillingAddress.md)
+- [OrderBillingAddressSelector](interfaces/OrderBillingAddressSelector.md)
 - [OrderConsignment](interfaces/OrderConsignment.md)
 - [OrderFee](interfaces/OrderFee.md)
+- [OrderMetaState](interfaces/OrderMetaState.md)
 - [OrderPayment](interfaces/OrderPayment.md)
 - [OrderPaymentRequestBody](interfaces/OrderPaymentRequestBody.md)
 - [OrderRequestBody](interfaces/OrderRequestBody.md)
+- [OrderSelector](interfaces/OrderSelector.md)
 - [OrderShippingConsignment](interfaces/OrderShippingConsignment.md)
 - [PasswordRequirements](interfaces/PasswordRequirements.md)
 - [PayPalButtonStyleOptions](interfaces/PayPalButtonStyleOptions.md)
@@ -326,10 +390,17 @@
 - [PayPalCommerceVenmoCustomerInitializeOptions](interfaces/PayPalCommerceVenmoCustomerInitializeOptions.md)
 - [PayPalCommerceVenmoPaymentInitializeOptions](interfaces/PayPalCommerceVenmoPaymentInitializeOptions.md)
 - [PayPalInstrument](interfaces/PayPalInstrument.md)
+- [PaymentAdditionalAction](interfaces/PaymentAdditionalAction.md)
+- [PaymentInstrumentMeta](interfaces/PaymentInstrumentMeta.md)
 - [PaymentMethod](interfaces/PaymentMethod.md)
 - [PaymentMethodConfig](interfaces/PaymentMethodConfig.md)
+- [PaymentMethodMeta](interfaces/PaymentMethodMeta.md)
+- [PaymentMethodSelector](interfaces/PaymentMethodSelector.md)
+- [PaymentProviderCustomerSelector](interfaces/PaymentProviderCustomerSelector.md)
 - [PaymentRequestOptions](interfaces/PaymentRequestOptions.md)
+- [PaymentSelector](interfaces/PaymentSelector.md)
 - [PaymentSettings](interfaces/PaymentSettings.md)
+- [PaymentStrategySelector](interfaces/PaymentStrategySelector.md)
 - [PaypalButtonInitializeOptions](interfaces/PaypalButtonInitializeOptions.md)
 - [PaypalCommerceRatePay](interfaces/PaypalCommerceRatePay.md)
 - [PaypalExpressPaymentInitializeOptions](interfaces/PaypalExpressPaymentInitializeOptions.md)
@@ -338,23 +409,31 @@
 - [PickupMethod](interfaces/PickupMethod.md)
 - [PickupOptionRequestBody](interfaces/PickupOptionRequestBody.md)
 - [PickupOptionResult](interfaces/PickupOptionResult.md)
+- [PickupOptionSelector](interfaces/PickupOptionSelector.md)
 - [Promotion](interfaces/Promotion.md)
 - [Radius](interfaces/Radius.md)
+- [RecaptchaResult](interfaces/RecaptchaResult.md)
 - [Region](interfaces/Region.md)
 - [ReloadCheckoutCommand](interfaces/ReloadCheckoutCommand.md)
+- [RemoteCheckoutSelector](interfaces/RemoteCheckoutSelector.md)
+- [RemoteCheckoutStateData](interfaces/RemoteCheckoutStateData.md)
 - [RequestOptions](interfaces/RequestOptions.md)
 - [SearchArea](interfaces/SearchArea.md)
 - [SepaPlaceHolder](interfaces/SepaPlaceHolder.md)
 - [SepaPlaceHolder_2](interfaces/SepaPlaceHolder_2.md)
 - [SetIframeStyleCommand](interfaces/SetIframeStyleCommand.md)
+- [ShippingAddressSelector](interfaces/ShippingAddressSelector.md)
+- [ShippingCountrySelector](interfaces/ShippingCountrySelector.md)
 - [ShippingInitializeOptions](interfaces/ShippingInitializeOptions.md)
 - [ShippingOption](interfaces/ShippingOption.md)
 - [ShippingRequestOptions](interfaces/ShippingRequestOptions.md)
+- [ShippingStrategySelector](interfaces/ShippingStrategySelector.md)
 - [ShopperConfig](interfaces/ShopperConfig.md)
 - [ShopperCurrency](interfaces/ShopperCurrency.md)
 - [ShowLoadingIndicatorCommand](interfaces/ShowLoadingIndicatorCommand.md)
 - [SignInEmail](interfaces/SignInEmail.md)
 - [SignInEmailRequestBody](interfaces/SignInEmailRequestBody.md)
+- [SignInEmailSelector](interfaces/SignInEmailSelector.md)
 - [SpamProtectionOptions](interfaces/SpamProtectionOptions.md)
 - [SquareFormElement](interfaces/SquareFormElement.md)
 - [SquarePaymentInitializeOptions](interfaces/SquarePaymentInitializeOptions.md)
@@ -363,9 +442,13 @@
 - [StepTracker](interfaces/StepTracker.md)
 - [StepTrackerConfig](interfaces/StepTrackerConfig.md)
 - [StoreConfig](interfaces/StoreConfig.md)
+- [StoreCreditSelector](interfaces/StoreCreditSelector.md)
 - [StoreCurrency](interfaces/StoreCurrency.md)
 - [StoreLinks](interfaces/StoreLinks.md)
 - [StoreProfile](interfaces/StoreProfile.md)
+- [StoredCardHostedFormBillingAddress](interfaces/StoredCardHostedFormBillingAddress.md)
+- [StoredCardHostedFormData](interfaces/StoredCardHostedFormData.md)
+- [StoredCardHostedFormInstrumentFields](interfaces/StoredCardHostedFormInstrumentFields.md)
 - [StripeCustomerEvent](interfaces/StripeCustomerEvent.md)
 - [StripeElementCSSProperties](interfaces/StripeElementCSSProperties.md)
 - [StripeElementClasses](interfaces/StripeElementClasses.md)
@@ -382,6 +465,7 @@
 - [SubInputDetail](interfaces/SubInputDetail.md)
 - [SubInputDetail_2](interfaces/SubInputDetail_2.md)
 - [Subscriptions](interfaces/Subscriptions.md)
+- [SubscriptionsSelector](interfaces/SubscriptionsSelector.md)
 - [Tax](interfaces/Tax.md)
 - [TextInputStyles](interfaces/TextInputStyles.md)
 - [ThreeDSecure](interfaces/ThreeDSecure.md)
@@ -390,6 +474,7 @@
 - [Translations](interfaces/Translations.md)
 - [UnknownObject](interfaces/UnknownObject.md)
 - [UserExperienceSettings](interfaces/UserExperienceSettings.md)
+- [VaultAccessToken](interfaces/VaultAccessToken.md)
 - [VaultedInstrument](interfaces/VaultedInstrument.md)
 - [WechatDataPaymentMethodState](interfaces/WechatDataPaymentMethodState.md)
 - [WechatDataPaymentMethodState_2](interfaces/WechatDataPaymentMethodState_2.md)
@@ -469,21 +554,27 @@
 - [HostedFieldBlurEventData](README.md#hostedfieldblureventdata)
 - [HostedFieldCardTypeChangeEventData](README.md#hostedfieldcardtypechangeeventdata)
 - [HostedFieldEnterEventData](README.md#hostedfieldentereventdata)
+- [HostedFieldEvent](README.md#hostedfieldevent)
 - [HostedFieldFocusEventData](README.md#hostedfieldfocuseventdata)
 - [HostedFieldOptionsMap](README.md#hostedfieldoptionsmap)
 - [HostedFieldStyles](README.md#hostedfieldstyles)
 - [HostedFieldValidateEventData](README.md#hostedfieldvalidateeventdata)
 - [HostedFormErrorDataKeys](README.md#hostedformerrordatakeys)
 - [HostedFormErrorsData](README.md#hostedformerrorsdata)
+- [HostedFormEventCallbacks](README.md#hostedformeventcallbacks)
 - [HostedInputStyles](README.md#hostedinputstyles)
 - [HostedVaultedInstrument](README.md#hostedvaultedinstrument)
+- [IframeEventMap](README.md#iframeeventmap)
 - [Instrument](README.md#instrument)
+- [InstrumentMeta](README.md#instrumentmeta)
 - [Omit](README.md#omit)
+- [OrderMeta](README.md#ordermeta)
 - [OrderPaymentInstrument](README.md#orderpaymentinstrument)
 - [OrderPayments](README.md#orderpayments)
 - [PaymentInitializeOptions](README.md#paymentinitializeoptions)
 - [PaymentInstrument](README.md#paymentinstrument)
 - [PaymentProviderCustomer](README.md#paymentprovidercustomer)
+- [ReadableCheckoutStore](README.md#readablecheckoutstore)
 - [StripeElementOptions](README.md#stripeelementoptions)
 - [StripeEventType](README.md#stripeeventtype)
 - [WithGooglePayCustomerInitializeOptions](README.md#withgooglepaycustomerinitializeoptions)
@@ -500,6 +591,7 @@
 - [createLanguageService](README.md#createlanguageservice)
 - [createPayPalCommerceConnectTracker](README.md#createpaypalcommerceconnecttracker)
 - [createStepTracker](README.md#createsteptracker)
+- [createStoredCardHostedFormService](README.md#createstoredcardhostedformservice)
 - [embedCheckout](README.md#embedcheckout)
 
 ## Type Aliases
@@ -692,6 +784,12 @@ ___
 
 ___
 
+### HostedFieldEvent
+
+Ƭ **HostedFieldEvent**: [`HostedFieldAttachEvent`](interfaces/HostedFieldAttachEvent.md) \| [`HostedFieldSubmitRequestEvent`](interfaces/HostedFieldSubmitRequestEvent.md) \| [`HostedFieldValidateRequestEvent`](interfaces/HostedFieldValidateRequestEvent.md) \| [`HostedFieldStoredCardRequestEvent`](interfaces/HostedFieldStoredCardRequestEvent.md)
+
+___
+
 ### HostedFieldFocusEventData
 
 Ƭ **HostedFieldFocusEventData**: [`HostedInputFocusEvent`](interfaces/HostedInputFocusEvent.md)[``"payload"``]
@@ -728,6 +826,12 @@ ___
 
 ___
 
+### HostedFormEventCallbacks
+
+Ƭ **HostedFormEventCallbacks**: `Pick`<[`HostedFormOptions`](interfaces/HostedFormOptions.md), ``"onBlur"`` \| ``"onCardTypeChange"`` \| ``"onFocus"`` \| ``"onEnter"`` \| ``"onValidate"``\>
+
+___
+
 ### HostedInputStyles
 
 Ƭ **HostedInputStyles**: `Partial`<`Pick`<`CSSStyleDeclaration`, ``"color"`` \| ``"fontFamily"`` \| ``"fontSize"`` \| ``"fontWeight"``\>\>
@@ -740,9 +844,27 @@ ___
 
 ___
 
+### IframeEventMap
+
+Ƭ **IframeEventMap**<`TType`\>: { [key in TType]: IframeEvent<TType\> }
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `TType` | extends `string` \| `number` \| `symbol``string` |
+
+___
+
 ### Instrument
 
 Ƭ **Instrument**: [`CardInstrument`](interfaces/CardInstrument.md)
+
+___
+
+### InstrumentMeta
+
+Ƭ **InstrumentMeta**: [`VaultAccessToken`](interfaces/VaultAccessToken.md)
 
 ___
 
@@ -756,6 +878,12 @@ ___
 | :------ | :------ |
 | `T` | `T` |
 | `K` | extends keyof `T` |
+
+___
+
+### OrderMeta
+
+Ƭ **OrderMeta**: [`OrderMetaState`](interfaces/OrderMetaState.md)
 
 ___
 
@@ -786,6 +914,12 @@ ___
 ### PaymentProviderCustomer
 
 Ƭ **PaymentProviderCustomer**: `PaymentProviderCustomerType`
+
+___
+
+### ReadableCheckoutStore
+
+Ƭ **ReadableCheckoutStore**: `ReadableDataStore`<[`InternalCheckoutSelectors`](interfaces/InternalCheckoutSelectors.md)\>
 
 ___
 
@@ -1105,6 +1239,26 @@ stepTracker.trackCheckoutStarted();
 [`StepTracker`](interfaces/StepTracker.md)
 
 an instance of `StepTracker`.
+
+___
+
+### createStoredCardHostedFormService
+
+▸ **createStoredCardHostedFormService**(`host`): [`StoredCardHostedFormService`](classes/StoredCardHostedFormService.md)
+
+Creates an instance of `StoredCardHostedFormService`.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `host` | `string` | Host url string parameter. |
+
+#### Returns
+
+[`StoredCardHostedFormService`](classes/StoredCardHostedFormService.md)
+
+An instance of `StoredCardHostedFormService`.
 
 ___
 
