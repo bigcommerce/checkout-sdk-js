@@ -21,6 +21,7 @@ import {
     PayPalButtonStyleOptions,
     PayPalBuyNowInitializeOptions,
     PayPalCommerceInitializationData,
+    PayPalCreateOrderCardFieldsResponse,
     PayPalCreateOrderRequestBody,
     PayPalOrderDetails,
     PayPalOrderStatus,
@@ -112,6 +113,23 @@ export default class PayPalCommerceIntegrationService {
         });
 
         return orderId;
+    }
+
+    async createOrderCardFields(
+        providerId: string,
+        requestBody?: Partial<PayPalCreateOrderRequestBody>,
+    ): Promise<PayPalCreateOrderCardFieldsResponse> {
+        const cartId = this.paymentIntegrationService.getState().getCartOrThrow().id;
+
+        const { orderId, setupToken } = await this.paypalCommerceRequestSender.createOrder(
+            providerId,
+            {
+                cartId,
+                ...requestBody,
+            },
+        );
+
+        return { orderId, ...(setupToken ? { setupToken } : {}) };
     }
 
     async updateOrder(): Promise<void> {

@@ -27,3 +27,4 @@ export {
     HostedInputValidateResults,
 } from './iframe-content';
 export { default as isCreditCardFormFields } from './is-credit-card-form-fields';
+export { default as isCreditCardVaultedFormFields } from './is-credit-card-vaulted-form-fields';

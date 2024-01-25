@@ -28,7 +28,71 @@ export interface PayPalCommerceSDKFunding {
  * PayPal Commerce SDK
  *
  */
+
+export interface PayPalCommerceCardFieldsConfig {
+    inputEvents: {
+        onChange(data: PayPalCommerceCardFieldsState): void;
+        onFocus(data: PayPalCommerceCardFieldsState): void;
+        onBlur(data: PayPalCommerceCardFieldsState): void;
+        onInputSubmitRequest(data: PayPalCommerceCardFieldsState): void;
+    };
+    createVaultSetupToken?: (data: PayPalCommerceCardFieldsState) => void;
+    createOrder?: () => Promise<string>;
+    style: PayPalCommerceHostedFieldsRenderOptions['styles'];
+    onApprove(data: PayPalCommerceCardFieldsOnApproveData): void;
+    onError(): void;
+}
+
+export interface PayPalCommerceCardFieldsOnApproveData {
+    vaultSetupToken?: string;
+    orderID: string;
+}
+
+interface PayPalCommerceCardFieldsFieldData {
+    isFocused: boolean;
+    isEmpty: boolean;
+    isValid: boolean;
+    isPotentiallyValid: boolean;
+}
+
+type PayPalCommerceCardFieldsCard = PayPalCommerceHostedFieldsCard;
+
+export interface PayPalCommerceCardFieldsState {
+    cards: PayPalCommerceCardFieldsCard[];
+    emittedBy: string;
+    isFormValid: boolean;
+    errors: string[];
+    fields: {
+        cardCvvField: PayPalCommerceCardFieldsFieldData;
+        cardNumberField: PayPalCommerceCardFieldsFieldData;
+        cardNameField?: PayPalCommerceCardFieldsFieldData;
+        cardExpiryField: PayPalCommerceCardFieldsFieldData;
+    };
+}
+
+export interface PayPalCommerceFields {
+    render(container: HTMLElement | string): void;
+    clear(): void;
+    removeClass(className: string): Promise<void>;
+    close(): Promise<void>;
+}
+
+interface PayPalCommerceFieldsInitializationData {
+    placeholder?: string;
+}
+
+export interface PayPalCommerceCardFields {
+    isEligible(): boolean;
+    CVVField(config?: PayPalCommerceFieldsInitializationData): PayPalCommerceFields;
+    ExpiryField(config?: PayPalCommerceFieldsInitializationData): PayPalCommerceFields;
+    NameField(config?: PayPalCommerceFieldsInitializationData): PayPalCommerceFields;
+    NumberField(config?: PayPalCommerceFieldsInitializationData): PayPalCommerceFields;
+    submit(): Promise<void>;
+    getState(): Promise<PayPalCommerceCardFieldsState>;
+}
+
 export interface PayPalSDK {
+    CardFields: (data: PayPalCommerceCardFieldsConfig) => Promise<PayPalCommerceCardFields>;
     Googlepay: () => {
         config: () => Promise<GooglePayConfig>;
         confirmOrder: (arg0: {
@@ -142,6 +206,7 @@ export type ComponentsScriptType = Array<
     | 'legal'
     | 'googlepay'
     | 'connect'
+    | 'card-fields'
 >;
 
 export interface PayPalCommerceHostWindow extends Window {
@@ -472,6 +537,7 @@ export enum NonInstantAlternativePaymentMethods {
 
 export interface PayPalOrderData {
     orderId: string;
+    setupToken?: string;
     approveUrl: string;
 }
 
@@ -488,6 +554,7 @@ export interface PayPalUpdateOrderResponse {
 export interface PayPalCreateOrderRequestBody extends HostedInstrument, VaultedInstrument {
     cartId: string;
     metadataId?: string;
+    setupToken?: boolean;
 }
 
 export enum PayPalOrderStatus {
@@ -500,4 +567,9 @@ export enum PayPalOrderStatus {
 
 export interface PayPalOrderStatusData {
     status: PayPalOrderStatus;
+}
+
+export interface PayPalCreateOrderCardFieldsResponse {
+    orderId: string;
+    setupToken?: string;
 }

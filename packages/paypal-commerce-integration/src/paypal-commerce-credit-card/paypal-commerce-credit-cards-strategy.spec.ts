@@ -1,7 +1,7 @@
+import { EventEmitter } from 'events';
+
 import {
-    HostedCardFieldOptionsMap,
     HostedFieldType,
-    HostedStoredCardFieldOptionsMap,
     InvalidArgumentError,
     NotInitializedError,
     OrderFinalizationNotRequiredError,
@@ -11,7 +11,6 @@ import {
     PaymentIntegrationService,
     PaymentInvalidFormError,
     PaymentMethod,
-    PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
@@ -21,7 +20,11 @@ import {
     getPayPalSDKMock,
 } from '../mocks';
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import { PayPalCommerceHostWindow, PayPalSDK } from '../paypal-commerce-types';
+import {
+    PayPalCommerceCardFieldsConfig,
+    PayPalCommerceHostWindow,
+    PayPalSDK,
+} from '../paypal-commerce-types';
 
 import PayPalCommerceCreditCardsPaymentInitializeOptions from './paypal-commerce-credit-cards-payment-initialize-options';
 import PayPalCommerceCreditCardsPaymentStrategy from './paypal-commerce-credit-cards-payment-strategy';
@@ -32,12 +35,65 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
     let paymentMethod: PaymentMethod;
     let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
     let paypalSdk: PayPalSDK;
-
+    let eventEmitter: EventEmitter;
+    const mockRender = jest.fn();
+    const mockClose = jest.fn().mockReturnValue(Promise.resolve());
+    const mockField = {
+        render: mockRender,
+        close: mockClose,
+    };
+    const hostedFormOrderId = 'hostedFormOrderId';
     let paypalCardNameFieldElement: HTMLDivElement;
 
     const methodId = 'paypalcommercecreditcards';
 
     const paypalCardNameFieldContainerId = 'card-name';
+
+    const cardFieldsOptionsMock = {
+        inputEvents: {
+            onChange: expect.any(Function),
+            onFocus: expect.any(Function),
+            onBlur: expect.any(Function),
+            onInputSubmitRequest: expect.any(Function),
+        },
+        style: {
+            input: {
+                color: 'gray',
+                'font-family': 'bigFont',
+                'font-size': '14px',
+                'font-weight': '400',
+                outline: 'none',
+                padding: '9px 13px',
+            },
+            '.invalid': {
+                color: 'red',
+                'font-family': 'bigFont',
+                'font-size': '14px',
+                'font-weight': '400',
+            },
+            ':focus': {
+                color: 'black',
+                'font-family': 'bigFont',
+                'font-size': '14px',
+                'font-weight': '400',
+            },
+        },
+        createOrder: expect.any(Function),
+        onError: expect.any(Function),
+        onApprove: expect.any(Function),
+    };
+
+    const cardFieldsInstanceMock = {
+        isEligible: jest.fn(() => true),
+        CVVField: () => mockField,
+        ExpiryField: () => mockField,
+        NameField: () => mockField,
+        NumberField: () => mockField,
+        getState: jest
+            .fn()
+            .mockReturnValue(Promise.resolve({ fields: { number: { isValid: true } } })),
+        submit: jest.fn().mockReturnValue(Promise.resolve()),
+    };
 
     const creditCardFormFields = {
         [HostedFieldType.CardNumber]: { containerId: 'card-number' },
@@ -46,32 +102,15 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         [HostedFieldType.CardName]: { containerId: paypalCardNameFieldContainerId },
     };
 
-    const storedCreditCardFormFields = {
-        [HostedFieldType.CardCodeVerification]: { containerId: 'card-code-verification' },
-        [HostedFieldType.CardNumberVerification]: { containerId: 'card-number-verification' },
-    } as HostedStoredCardFieldOptionsMap;
-
     const paypalCommerceCreditCardsOptions: PayPalCommerceCreditCardsPaymentInitializeOptions = {
         form: {
             fields: creditCardFormFields,
         },
     };
 
-    const paypalCommerceStoredCreditCardsOptions: PayPalCommerceCreditCardsPaymentInitializeOptions =
-        {
-            form: {
-                fields: storedCreditCardFormFields,
-            },
-        };
-
     const initializationOptions: PaymentInitializeOptions = {
         methodId,
         paypalcommercecreditcards: paypalCommerceCreditCardsOptions,
-    };
-
-    const initializationOptionsForStoredCreditCardsForm: PaymentInitializeOptions = {
-        methodId,
-        paypalcommercecreditcards: paypalCommerceStoredCreditCardsOptions,
     };
 
     const defaultExecutePayload = {
@@ -81,21 +120,8 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         },
     };
 
-    const getHostedFieldSateMock = (isValid = true) => ({
-        cards: [],
-        emittedBy: 'number',
-        fields: {
-            number: {
-                container: 'containerId',
-                isFocused: false,
-                isEmpty: true,
-                isPotentiallyValid: false,
-                isValid,
-            },
-        },
-    });
-
     beforeEach(() => {
+        eventEmitter = new EventEmitter();
         paymentMethod = { ...getPayPalCommercePaymentMethod(), id: methodId };
         paypalSdk = getPayPalSDKMock();
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
@@ -119,9 +145,22 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             paypalSdk,
         );
         jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockImplementation(jest.fn());
+        jest.spyOn(paypalCommerceIntegrationService, 'createOrderCardFields').mockReturnValue({
+            orderId: 'orderId',
+            setupToken: 'setupToken',
+        });
 
-        jest.spyOn(paypalSdk.HostedFields, 'isEligible').mockReturnValue(true);
-        jest.spyOn(paypalSdk.HostedFields, 'render').mockImplementation(jest.fn());
+        jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
+            (options: PayPalCommerceCardFieldsConfig) => {
+                eventEmitter.on('onApprove', () => {
+                    if (options.onApprove) {
+                        options.onApprove({ orderID: hostedFormOrderId });
+                    }
+                });
+
+                return cardFieldsInstanceMock;
+            },
+        );
     });
 
     afterEach(() => {
@@ -178,8 +217,10 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
     });
 
     describe('#renderFields', () => {
-        it('throws an error if hosted field is not eligible', async () => {
-            jest.spyOn(paypalSdk.HostedFields, 'isEligible').mockReturnValue(false);
+        it('throws an error if card field is not eligible', async () => {
+            jest.spyOn(paypalSdk, 'CardFields').mockReturnValue({
+                isEligible: jest.fn().mockReturnValue(false),
+            });
 
             try {
                 await strategy.initialize(initializationOptions);
@@ -188,71 +229,13 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             }
         });
 
-        it('renders hosted fields if they are eligible', async () => {
+        it('renders card fields if they are eligible', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalSdk.HostedFields.render).toHaveBeenCalled();
+            expect(mockRender).toHaveBeenCalled();
         });
 
-        it('renders hosted fields with credit card fields', async () => {
-            const { fields } = paypalCommerceCreditCardsOptions.form;
-            const formFields = fields as HostedCardFieldOptionsMap;
-
-            const expectedCreditCardFormFields = {
-                number: {
-                    selector: `#${formFields[HostedFieldType.CardNumber].containerId}`,
-                    placeholder: undefined,
-                },
-                expirationDate: {
-                    selector: `#${formFields[HostedFieldType.CardExpiry].containerId}`,
-                    placeholder: undefined,
-                },
-                cvv: {
-                    selector: `#${formFields[HostedFieldType.CardCode]?.containerId || ''}`,
-                    placeholder: undefined,
-                },
-            };
-
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalSdk.HostedFields.render).toHaveBeenCalledWith({
-                fields: expectedCreditCardFormFields,
-                styles: {},
-                paymentsSDK: true,
-                createOrder: expect.any(Function),
-            });
-        });
-
-        it('renders hosted fields with stored credit fields', async () => {
-            const { fields } = paypalCommerceStoredCreditCardsOptions.form;
-            const formFields = fields as HostedStoredCardFieldOptionsMap;
-
-            const numberSelector =
-                formFields[HostedFieldType.CardNumberVerification]?.containerId || '';
-            const cvvSelector = formFields[HostedFieldType.CardCodeVerification]?.containerId || '';
-
-            const expectedCreditCardFormFields = {
-                number: {
-                    selector: `#${numberSelector}`,
-                    placeholder: undefined,
-                },
-                cvv: {
-                    selector: `#${cvvSelector}`,
-                    placeholder: undefined,
-                },
-            };
-
-            await strategy.initialize(initializationOptionsForStoredCreditCardsForm);
-
-            expect(paypalSdk.HostedFields.render).toHaveBeenCalledWith({
-                fields: expectedCreditCardFormFields,
-                styles: {},
-                paymentsSDK: true,
-                createOrder: expect.any(Function),
-            });
-        });
-
-        it('renders hosted fields with valid styles', async () => {
+        it('renders card fields with valid options', async () => {
             const initializationOptionsWithStyles = {
                 methodId,
                 paypalcommercecreditcards: {
@@ -282,115 +265,9 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                 },
             };
 
-            const { fields } = paypalCommerceCreditCardsOptions.form;
-            const formFields = fields as HostedCardFieldOptionsMap;
-
-            const numberSelector = formFields[HostedFieldType.CardNumber].containerId;
-            const expirationDateSelector = formFields[HostedFieldType.CardExpiry].containerId;
-            const cvvSelector = formFields[HostedFieldType.CardCode]?.containerId || '';
-
-            const expectedCreditCardFormFields = {
-                number: {
-                    selector: `#${numberSelector}`,
-                    placeholder: undefined,
-                },
-                expirationDate: {
-                    selector: `#${expirationDateSelector}`,
-                    placeholder: undefined,
-                },
-                cvv: {
-                    selector: `#${cvvSelector}`,
-                    placeholder: undefined,
-                },
-            };
-
             await strategy.initialize(initializationOptionsWithStyles);
 
-            expect(paypalSdk.HostedFields.render).toHaveBeenCalledWith({
-                fields: expectedCreditCardFormFields,
-                styles: {
-                    input: {
-                        color: 'gray',
-                        'font-family': 'bigFont',
-                        'font-size': '14px',
-                        'font-weight': '400',
-                    },
-                    '.invalid': {
-                        color: 'red',
-                        'font-family': 'bigFont',
-                        'font-size': '14px',
-                        'font-weight': '400',
-                    },
-                    ':focus': {
-                        color: 'black',
-                        'font-family': 'bigFont',
-                        'font-size': '14px',
-                        'font-weight': '400',
-                    },
-                },
-                paymentsSDK: true,
-                createOrder: expect.any(Function),
-            });
-        });
-
-        it('sets hosted form events if related callbacks were provided', async () => {
-            const hostedFieldOn = jest.fn();
-
-            jest.spyOn(paypalSdk.HostedFields, 'render').mockImplementation(() =>
-                Promise.resolve({
-                    on: hostedFieldOn,
-                }),
-            );
-
-            const initializationOptionsWithStyles = {
-                methodId,
-                paypalcommercecreditcards: {
-                    form: {
-                        fields: paypalCommerceCreditCardsOptions.form.fields,
-                        onBlur: jest.fn(),
-                        onFocus: jest.fn(),
-                        onEnter: jest.fn(),
-                        onCardTypeChange: jest.fn(),
-                        onValidate: jest.fn(),
-                    },
-                },
-            };
-
-            await strategy.initialize(initializationOptionsWithStyles);
-
-            expect(hostedFieldOn).toHaveBeenCalledWith('blur', expect.any(Function));
-            expect(hostedFieldOn).toHaveBeenCalledWith('focus', expect.any(Function));
-            expect(hostedFieldOn).toHaveBeenCalledWith('inputSubmitRequest', expect.any(Function));
-            expect(hostedFieldOn).toHaveBeenCalledWith('cardTypeChange', expect.any(Function));
-            expect(hostedFieldOn).toHaveBeenCalledWith('validityChange', expect.any(Function));
-        });
-
-        it('throws an error if an element with provided card name container id is not defined', async () => {
-            document.body.removeChild(paypalCardNameFieldElement);
-
-            try {
-                await strategy.initialize(initializationOptions);
-            } catch (error) {
-                expect(error).toBeInstanceOf(InvalidArgumentError);
-            }
-        });
-
-        it('renders card name field for credit card form', async () => {
-            await strategy.initialize(initializationOptions);
-
-            const cardNameContainer = document.getElementById(paypalCardNameFieldContainerId);
-            const cardNameField = cardNameContainer?.getElementsByTagName('input')[0];
-
-            expect(cardNameField).toBeDefined();
-        });
-
-        it('does not render card name field for stored credit card form', async () => {
-            await strategy.initialize(initializationOptionsForStoredCreditCardsForm);
-
-            const cardNameContainer = document.getElementById(paypalCardNameFieldContainerId);
-            const cardNameField = cardNameContainer?.getElementsByTagName('input')[0];
-
-            expect(cardNameField).toBeUndefined();
+            expect(paypalSdk.CardFields).toHaveBeenCalledWith(cardFieldsOptionsMock);
         });
     });
 
@@ -424,41 +301,17 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         });
 
         it('submits an order', async () => {
-            const hostedFormSubmitFnMock = jest.fn(() => ({
-                liabilityShift: undefined,
-                orderId: 'orderId',
-            }));
-
-            jest.spyOn(paypalSdk.HostedFields, 'render').mockImplementation(() =>
-                Promise.resolve({
-                    getState: () => getHostedFieldSateMock(),
-                    submit: hostedFormSubmitFnMock,
-                }),
-            );
-
             await strategy.initialize(initializationOptions);
-
             await strategy.execute(defaultExecutePayload);
 
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
         });
 
         it('submits payment without saving vaulting instrument', async () => {
-            const hostedFormOrderId = 'hostedFormOrderId';
-
-            const hostedFormSubmitFnMock = jest.fn(() => ({
-                liabilityShift: undefined,
-                orderId: hostedFormOrderId,
-            }));
-
-            jest.spyOn(paypalSdk.HostedFields, 'render').mockImplementation(() =>
-                Promise.resolve({
-                    getState: () => getHostedFieldSateMock(),
-                    submit: hostedFormSubmitFnMock,
-                }),
-            );
-
             await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onApprove');
+            await new Promise((resolve) => process.nextTick(resolve));
 
             await strategy.execute(defaultExecutePayload);
 
@@ -470,7 +323,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                         set_as_default_stored_instrument: false,
                         device_info: null,
                         method_id: methodId,
-                        paypal_account: {
+                        card_with_order: {
                             order_id: hostedFormOrderId,
                         },
                     },
@@ -479,21 +332,9 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         });
 
         it('submits payment with flag to save vaulted instrument', async () => {
-            const hostedFormOrderId = 'hostedFormOrderId';
-
-            const hostedFormSubmitFnMock = jest.fn(() => ({
-                liabilityShift: undefined,
-                orderId: hostedFormOrderId,
-            }));
-
-            jest.spyOn(paypalSdk.HostedFields, 'render').mockImplementation(() =>
-                Promise.resolve({
-                    getState: () => getHostedFieldSateMock(),
-                    submit: hostedFormSubmitFnMock,
-                }),
-            );
-
             await strategy.initialize(initializationOptions);
+            eventEmitter.emit('onApprove');
+            await new Promise((resolve) => process.nextTick(resolve));
             await strategy.execute({
                 payment: {
                     methodId: 'paypalcommercecreditcards',
@@ -512,7 +353,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                         set_as_default_stored_instrument: true,
                         device_info: null,
                         method_id: methodId,
-                        paypal_account: {
+                        card_with_order: {
                             order_id: hostedFormOrderId,
                         },
                     },
@@ -521,9 +362,28 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         });
 
         it('submits payment with vaulted(stored) instrument', async () => {
+            jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
+                (options: PayPalCommerceCardFieldsConfig) => {
+                    eventEmitter.on('onApprove', () => {
+                        if (options.onApprove) {
+                            options.onApprove({
+                                orderID: 'orderId',
+                                vaultSetupToken: 'vaultSetupToken',
+                            });
+                        }
+                    });
+
+                    return cardFieldsInstanceMock;
+                },
+            );
+
             const instrumentId = 'bc_instrument_id';
 
             await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onApprove');
+            await new Promise((resolve) => process.nextTick(resolve));
+
             await strategy.execute({
                 payment: {
                     methodId: 'paypalcommercecreditcards',
@@ -536,7 +396,19 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId,
                 paymentData: {
-                    instrumentId,
+                    formattedPayload: {
+                        bigpay_token: {
+                            token: 'bc_instrument_id',
+                        },
+                        card_with_order: {
+                            order_id: 'orderId',
+                        },
+                        setup_token: 'vaultSetupToken',
+                        device_info: null,
+                        method_id: 'paypalcommercecreditcards',
+                        set_as_default_stored_instrument: false,
+                        vault_payment_instrument: false,
+                    },
                 },
             });
         });
@@ -544,13 +416,16 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
 
     describe('#submitHostedForm()', () => {
         it('throws an error if the hosted form is not valid on form submit', async () => {
-            jest.spyOn(paypalSdk.HostedFields, 'render').mockImplementation(() =>
-                Promise.resolve({
-                    getState: () => getHostedFieldSateMock(false),
-                    submit: jest.fn(),
-                }),
+            const cardFields = paypalSdk.CardFields(
+                cardFieldsOptionsMock as PayPalCommerceCardFieldsConfig,
             );
 
+            jest.spyOn(paypalSdk, 'CardFields').mockImplementation(() => ({
+                ...cardFields,
+                getState: jest
+                    .fn()
+                    .mockReturnValue(Promise.resolve({ fields: { number: { isValid: false } } })),
+            }));
             await strategy.initialize(initializationOptions);
 
             try {
@@ -561,89 +436,21 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         });
 
         it('submits hosted form', async () => {
-            const hostedFormSubmitFnMock = jest.fn(() => ({
-                liabilityShift: undefined,
-                orderId: 'orderId',
-            }));
-
-            jest.spyOn(paypalSdk.HostedFields, 'render').mockImplementation(() =>
-                Promise.resolve({
-                    getState: () => getHostedFieldSateMock(),
-                    submit: hostedFormSubmitFnMock,
-                }),
+            const cardFields = paypalSdk.CardFields(
+                cardFieldsOptionsMock as PayPalCommerceCardFieldsConfig,
             );
+            const submitMock = jest.fn().mockReturnValue(Promise.resolve());
+
+            jest.spyOn(paypalSdk, 'CardFields').mockImplementation(() => ({
+                ...cardFields,
+                submit: submitMock,
+            }));
 
             await strategy.initialize(initializationOptions);
 
             await strategy.execute(defaultExecutePayload);
 
-            expect(hostedFormSubmitFnMock).toHaveBeenCalled();
-        });
-
-        it('submits hosted form with 3DS contingencies', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...paymentMethod,
-                config: {
-                    ...paymentMethod.config,
-                    is3dsEnabled: true,
-                },
-            });
-
-            const hostedFormSubmitFnMock = jest.fn(() => ({
-                liabilityShift: undefined,
-                orderId: 'orderId',
-            }));
-
-            jest.spyOn(paypalSdk.HostedFields, 'render').mockImplementation(() =>
-                Promise.resolve({
-                    getState: () => getHostedFieldSateMock(),
-                    submit: hostedFormSubmitFnMock,
-                }),
-            );
-
-            await strategy.initialize(initializationOptions);
-
-            await strategy.execute(defaultExecutePayload);
-
-            expect(hostedFormSubmitFnMock).toHaveBeenCalledWith({
-                contingencies: ['3D_SECURE'],
-            });
-        });
-
-        it('throws an error if liabilityShift is "NO" or "UNKNOWN" on submit hosted form while 3DS enabled', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...paymentMethod,
-                config: {
-                    ...paymentMethod.config,
-                    is3dsEnabled: true,
-                },
-            });
-
-            const hostedFormSubmitFnMock = jest.fn(() => ({
-                liabilityShift: 'NO',
-                orderId: 'orderId',
-            }));
-
-            jest.spyOn(paypalSdk.HostedFields, 'render').mockImplementation(() =>
-                Promise.resolve({
-                    getState: () => getHostedFieldSateMock(),
-                    submit: hostedFormSubmitFnMock,
-                }),
-            );
-
-            await strategy.initialize(initializationOptions);
-
-            try {
-                await strategy.execute(defaultExecutePayload);
-            } catch (error) {
-                expect(error).toBeInstanceOf(PaymentMethodFailedError);
-            }
+            expect(submitMock).toHaveBeenCalled();
         });
     });
 
@@ -655,9 +462,12 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
 
     describe('#deinitialize()', () => {
         it('deinitializes strategy', async () => {
+            await strategy.initialize(initializationOptions);
+
             const result = await strategy.deinitialize();
 
             expect(result).toBeUndefined();
+            expect(mockClose).toHaveBeenCalled();
         });
     });
 });

@@ -38,6 +38,7 @@ export interface HostedCardFieldOptionsMap {
 export interface HostedStoredCardFieldOptionsMap {
     [HostedFieldType.CardCodeVerification]?: HostedStoredCardFieldOptions;
     [HostedFieldType.CardNumberVerification]?: HostedStoredCardFieldOptions;
+    [HostedFieldType.CardExpiryVerification]?: HostedStoredCardFieldOptions;
 }
 
 export interface HostedCardFieldOptions {

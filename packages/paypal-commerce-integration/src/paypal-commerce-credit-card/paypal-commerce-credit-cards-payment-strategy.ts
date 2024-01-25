@@ -4,7 +4,6 @@ import {
     HostedCardFieldOptions,
     HostedCardFieldOptionsMap,
     HostedFieldBlurEventData,
-    HostedFieldCardTypeChangeEventData,
     HostedFieldEnterEventData,
     HostedFieldFocusEventData,
     HostedFieldStylesMap,
@@ -18,6 +17,7 @@ import {
     HostedStoredCardFieldOptionsMap,
     InvalidArgumentError,
     isCreditCardFormFields,
+    isCreditCardVaultedFormFields,
     isHostedInstrumentLike,
     isVaultedInstrument,
     NotInitializedError,
@@ -40,10 +40,12 @@ import {
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
-    PayPalCommerceHostedFields,
+    PayPalCommerceCardFields,
+    PayPalCommerceCardFieldsConfig,
+    PayPalCommerceCardFieldsOnApproveData,
+    PayPalCommerceCardFieldsState,
+    PayPalCommerceFields,
     PayPalCommerceHostedFieldsRenderOptions,
-    PayPalCommerceHostedFieldsState,
-    PayPalCommerceHostedFieldsSubmitOptions,
 } from '../paypal-commerce-types';
 
 import { WithPayPalCommerceCreditCardsPaymentInitializeOptions } from './paypal-commerce-credit-cards-payment-initialize-options';
@@ -51,9 +53,17 @@ import { WithPayPalCommerceCreditCardsPaymentInitializeOptions } from './paypal-
 export default class PayPalCommerceCreditCardsPaymentStrategy implements PaymentStrategy {
     private executionPaymentData?: OrderPaymentRequestBody['paymentData'];
     private isCreditCardForm?: boolean;
-    private hostedFields?: PayPalCommerceHostedFields;
+    private isCreditCardVaultedForm?: boolean;
+
+    private cardFields?: PayPalCommerceCardFields;
+    private cvvField?: PayPalCommerceFields;
+    private expiryField?: PayPalCommerceFields;
+    private numberField?: PayPalCommerceFields;
+    private nameField?: PayPalCommerceFields;
+
     private hostedFormOptions?: HostedFormOptions;
-    private cardNameField?: HTMLInputElement;
+    private returnedOrderId?: string;
+    private returnedVaultedToken?: string;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -79,12 +89,17 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         }
 
         this.hostedFormOptions = form;
+
         this.isCreditCardForm = isCreditCardFormFields(form.fields);
+        this.isCreditCardVaultedForm =
+            isCreditCardVaultedFormFields(form.fields) && !this.hasUndefinedValues();
 
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, undefined, true, true);
 
-        await this.renderFields(form);
+        if (this.isCreditCardForm || this.isCreditCardVaultedForm) {
+            await this.initializeFields(form);
+        }
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -97,17 +112,27 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
 
         this.executionPaymentData = paymentData;
 
-        let submitPaymentPayload;
-
-        if (paymentData && isVaultedInstrument(paymentData)) {
-            submitPaymentPayload = this.preparePaymentPayload(methodId, paymentData);
-        } else {
-            this.validateHostedFormOrThrow();
-
-            const orderId = await this.submitHostedForm(methodId);
-
-            submitPaymentPayload = this.preparePaymentPayload(methodId, paymentData, orderId);
+        if (this.isCreditCardForm || this.isCreditCardVaultedForm) {
+            await this.validateHostedFormOrThrow();
+            await this.submitHostedForm();
         }
+
+        // This condition is triggered when we pay with vaulted instrument and shipping address is trusted
+        if (!this.returnedOrderId) {
+            const { orderId } = await this.paypalCommerceIntegrationService.createOrderCardFields(
+                'paypalcommercecreditcardscheckout',
+                this.getInstrumentParams(),
+            );
+
+            this.returnedOrderId = orderId;
+        }
+
+        const submitPaymentPayload = this.preparePaymentPayload(
+            methodId,
+            paymentData,
+            this.returnedOrderId,
+            this.returnedVaultedToken,
+        );
 
         await this.paymentIntegrationService.submitOrder(order, options);
         await this.paymentIntegrationService.submitPayment(submitPaymentPayload);
@@ -117,25 +142,35 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    deinitialize(): Promise<void> {
+    async deinitialize(): Promise<void> {
+        await this.cvvField?.close();
+        await this.expiryField?.close();
+        await this.numberField?.close();
+        await this.nameField?.close();
+
         return Promise.resolve();
     }
 
     /**
      *
-     * Submit Payment Payload preparing methods
+     * Submit Payment Payload preparing method
      *
+     * `vaultedToken` is used when we pay with vaulted instrument (with trusted shipping address and untrusted)
+     * `setupToken` is used when we pay with vaulted instrument (untrusted shipping address)
+     * `orderId` is used in every case (basic card payment, trusted shipping address and untrusted)
      */
     private preparePaymentPayload(
         methodId: string,
         paymentData: OrderPaymentRequestBody['paymentData'],
         orderId?: string,
+        setupToken?: string,
     ): Payment {
+        let vaultedToken: string | undefined;
+
         if (paymentData && isVaultedInstrument(paymentData)) {
-            return {
-                methodId,
-                paymentData,
-            };
+            const { instrumentId } = paymentData;
+
+            vaultedToken = instrumentId;
         }
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
@@ -149,9 +184,19 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
                     set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
                     device_info: null,
                     method_id: methodId,
+                    ...(vaultedToken
+                        ? {
+                              bigpay_token: { token: vaultedToken },
+                          }
+                        : {}),
+                    ...(setupToken
+                        ? {
+                              setup_token: setupToken,
+                          }
+                        : {}),
                     ...(orderId
                         ? {
-                              paypal_account: {
+                              card_with_order: {
                                   order_id: orderId,
                               },
                           }
@@ -163,32 +208,42 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
 
     /**
      *
-     * Hosted fields
+     * Card fields initialize
      *
      */
-    private async renderFields(formOptions: HostedFormOptions): Promise<void> {
+    private async initializeFields(formOptions: HostedFormOptions): Promise<void> {
         const { fields, styles } = formOptions;
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const executeCallback = this.getExecuteCallback(fields);
 
-        const hostedFieldsOptions = {
-            fields: this.mapFieldOptions(fields),
-            styles: styles ? this.mapStyleOptions(styles) : {},
-            paymentsSDK: true,
-            createOrder: () =>
-                this.paypalCommerceIntegrationService.createOrder(
-                    'paypalcommercecreditcardscheckout',
-                    this.getInstrumentParams(),
-                ),
+        const cardFieldsConfig: PayPalCommerceCardFieldsConfig = {
+            style: this.getInputStyles(styles),
+            onApprove: ({ orderID, vaultSetupToken }: PayPalCommerceCardFieldsOnApproveData) =>
+                this.handleApprove({ orderID, vaultSetupToken }),
+            onError: () => {
+                throw new PaymentMethodFailedError();
+            },
+            inputEvents: {
+                onChange: (event) => this.onChangeHandler(formOptions, event),
+                onFocus: (event) => this.onFocusHandler(formOptions, event),
+                onBlur: (event) => this.onBlurHandler(formOptions, event),
+                onInputSubmitRequest: (event) => this.onInputSubmitRequest(formOptions, event),
+            },
+            ...executeCallback,
         };
 
-        if (paypalSdk.HostedFields.isEligible()) {
-            this.hostedFields = await paypalSdk.HostedFields.render(hostedFieldsOptions);
+        this.cardFields = await paypalSdk.CardFields(cardFieldsConfig);
 
-            this.setFormFieldEvents(this.hostedFields, formOptions);
+        if (this.cardFields.isEligible()) {
+            this.stylizeInputContainers(fields);
 
             if (isCreditCardFormFields(fields)) {
-                this.renderCardNameField(fields.cardName, styles);
+                this.renderFields(fields);
+            }
+
+            if (isCreditCardVaultedFormFields(fields)) {
+                this.renderVaultedFields(fields);
             }
         } else {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -197,61 +252,126 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
 
     /**
      *
-     * Card Name field methods
+     * Get execute callback method
+     * Depends on shipping address is trusted or not we should pass to PP
+     * `createVaultSetupToken` callback if address is untrusted or
+     * `createOrder` if address is trusted
      *
      */
-    private renderCardNameField(
-        field: HostedCardFieldOptions,
-        styles?: HostedFieldStylesMap,
-    ): void {
-        const container = document.getElementById(field.containerId);
+    private getExecuteCallback(
+        fields: HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap,
+    ) {
+        const isVaultedForm = isCreditCardVaultedFormFields(fields);
 
-        if (!container) {
-            throw new InvalidArgumentError(
-                'Unable to proceed because "options.paypalcommercecreditcards.form.fields.cardName.containerId" argument is not provided or the item is not defined in the dom.',
-            );
-        }
-
-        const cardNameFiledStylesPreset = {
-            backgroundColor: 'transparent',
-            border: 0,
-            display: 'block',
-            height: '100%',
-            margin: 0,
-            outline: 'none',
-            padding: 0,
-            width: '100%',
-        };
-
-        const defaultCardNameFiledStyles = {
-            ...cardNameFiledStylesPreset,
-            ...styles?.default,
-        };
-
-        const focusCardNameFiledStyles = {
-            ...cardNameFiledStylesPreset,
-            ...styles?.focus,
-        };
-
-        const defaultStyleProperties = this.getValidStyleString(defaultCardNameFiledStyles);
-        const focusStyleProperties = this.getValidStyleString(focusCardNameFiledStyles);
-
-        this.cardNameField = document.createElement('input');
-
-        this.setFieldStyleAttribute(defaultStyleProperties, this.cardNameField);
-
-        this.cardNameField.addEventListener('blur', () =>
-            this.setFieldStyleAttribute(defaultStyleProperties, this.cardNameField),
-        );
-        this.cardNameField.addEventListener('focus', () =>
-            this.setFieldStyleAttribute(focusStyleProperties, this.cardNameField),
-        );
-
-        container.appendChild(this.cardNameField);
+        return isVaultedForm ? this.createVaultSetupTokenCallback() : this.createOrderCallback();
     }
 
-    private setFieldStyleAttribute(style: string, item?: HTMLInputElement): void {
-        item?.setAttribute('style', style);
+    private createVaultSetupTokenCallback() {
+        return {
+            createVaultSetupToken: async () => {
+                const { setupToken } =
+                    (await this.paypalCommerceIntegrationService.createOrderCardFields(
+                        'paypalcommercecreditcardscheckout',
+                        {
+                            ...this.getInstrumentParams(),
+                            setupToken: true,
+                        },
+                    )) || {};
+
+                return setupToken;
+            },
+        };
+    }
+
+    private createOrderCallback() {
+        return {
+            createOrder: async () => {
+                const { orderId } =
+                    (await this.paypalCommerceIntegrationService.createOrderCardFields(
+                        'paypalcommercecreditcardscheckout',
+                        this.getInstrumentParams(),
+                    )) || {};
+
+                return orderId;
+            },
+        };
+    }
+
+    /**
+     *
+     * onApprove method
+     * When submitting a form with a `submitHostedForm` method if there is no error
+     * then onApprove callback is triggered and depends on the flow
+     * we will receive an `orderID` if it's basic paying and `vaultSetupToken` if we are paying
+     * with vaulted instrument and shipping address is untrusted
+     *
+     */
+    private handleApprove({ orderID, vaultSetupToken }: PayPalCommerceCardFieldsOnApproveData) {
+        if (orderID) {
+            this.returnedOrderId = orderID;
+        }
+
+        if (vaultSetupToken) {
+            this.returnedVaultedToken = vaultSetupToken;
+        }
+    }
+
+    /**
+     *
+     * Rendering Card Fields methods
+     *
+     */
+    private renderFields(fieldsOptions: HostedCardFieldOptionsMap) {
+        const cardFields = this.getCardFieldsOrThrow();
+
+        if (fieldsOptions.cardCode?.containerId) {
+            this.cvvField = cardFields.CVVField({
+                placeholder: '',
+            });
+            this.cvvField.render(`#${fieldsOptions.cardCode.containerId}`);
+        }
+
+        if (fieldsOptions.cardExpiry?.containerId) {
+            this.expiryField = cardFields.ExpiryField();
+            this.expiryField.render(`#${fieldsOptions.cardExpiry.containerId}`);
+        }
+
+        if (fieldsOptions.cardName?.containerId) {
+            this.nameField = cardFields.NameField({
+                placeholder: '',
+            });
+            this.nameField.render(`#${fieldsOptions.cardName.containerId}`);
+        }
+
+        if (fieldsOptions.cardNumber?.containerId) {
+            this.numberField = cardFields.NumberField({
+                placeholder: '',
+            });
+            this.numberField.render(`#${fieldsOptions.cardNumber.containerId}`);
+        }
+    }
+
+    private renderVaultedFields(fieldsOptions: HostedStoredCardFieldOptionsMap) {
+        const cardFields = this.getCardFieldsOrThrow();
+
+        if (fieldsOptions.cardCodeVerification?.containerId) {
+            this.cvvField = cardFields.CVVField({
+                placeholder: '',
+            });
+            this.cvvField.render(`#${fieldsOptions.cardCodeVerification.containerId}`);
+        }
+
+        if (fieldsOptions.cardExpiryVerification?.containerId) {
+            this.expiryField = cardFields.ExpiryField();
+            this.expiryField.render(`#${fieldsOptions.cardExpiryVerification.containerId}`);
+        }
+
+        if (fieldsOptions.cardNumberVerification?.containerId) {
+            this.numberField = cardFields.NumberField({
+                placeholder: '',
+            });
+            this.numberField.render(`#${fieldsOptions.cardNumberVerification.containerId}`);
+        }
     }
 
     /**
@@ -285,58 +405,9 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         return {};
     }
 
-    /**
-     *
-     * Hosted form events
-     *
-     */
-    private setFormFieldEvents(
-        hostedFields: PayPalCommerceHostedFields,
-        formOptions: HostedFormOptions,
-    ): void {
-        const eventsData = [
-            {
-                eventName: 'blur',
-                formCallback: formOptions?.onBlur,
-                eventHandler: (event: PayPalCommerceHostedFieldsState) =>
-                    formOptions?.onBlur?.(this.getFieldTypeByEmittedField(event)),
-            },
-            {
-                eventName: 'focus',
-                formCallback: formOptions?.onFocus,
-                eventHandler: (event: PayPalCommerceHostedFieldsState) =>
-                    formOptions?.onFocus?.(this.getFieldTypeByEmittedField(event)),
-            },
-            {
-                eventName: 'inputSubmitRequest',
-                formCallback: formOptions?.onEnter,
-                eventHandler: (event: PayPalCommerceHostedFieldsState) =>
-                    formOptions?.onEnter?.(this.getFieldTypeByEmittedField(event)),
-            },
-            {
-                eventName: 'cardTypeChange',
-                formCallback: formOptions?.onCardTypeChange,
-                eventHandler: (event: PayPalCommerceHostedFieldsState) =>
-                    formOptions?.onCardTypeChange?.(this.getCardTypeByEvent(event)),
-            },
-            {
-                eventName: 'validityChange',
-                formCallback: formOptions?.onValidate,
-                eventHandler: (event: PayPalCommerceHostedFieldsState) =>
-                    formOptions?.onValidate?.(this.getValidityData(event)),
-            },
-        ];
-
-        eventsData.forEach(({ eventName, eventHandler, formCallback }) => {
-            if (formCallback && typeof formCallback === 'function') {
-                hostedFields.on(eventName, eventHandler);
-            }
-        });
-    }
-
     private getFieldTypeByEmittedField({
         emittedBy,
-    }: PayPalCommerceHostedFieldsState):
+    }: PayPalCommerceCardFieldsState):
         | HostedFieldBlurEventData
         | HostedFieldEnterEventData
         | HostedFieldFocusEventData {
@@ -345,45 +416,19 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         };
     }
 
-    private getCardTypeByEvent({
-        cards,
-    }: PayPalCommerceHostedFieldsState): HostedFieldCardTypeChangeEventData {
-        return {
-            cardType: cards?.[0]?.type,
-        };
-    }
-
     /**
      *
-     * Hosted form submit method
-     *
+     * Form submit method
+     * Triggers a form submit
      * */
-    private async submitHostedForm(methodId: string): Promise<string> {
-        const hostedFields = this.getHostedFieldsOrThrow();
+    private async submitHostedForm() {
+        const cardFields = this.getCardFieldsOrThrow();
 
-        const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
-        const { is3dsEnabled } = paymentMethod.config;
-
-        const options: PayPalCommerceHostedFieldsSubmitOptions = {
-            ...(this.cardNameField?.value && {
-                cardholderName: this.cardNameField.value,
-            }),
-            ...(is3dsEnabled && {
-                contingencies: ['3D_SECURE'],
-            }),
-        };
-
-        const { liabilityShift, orderId } = await hostedFields.submit(options);
-
-        if (is3dsEnabled && (liabilityShift === 'NO' || liabilityShift === 'UNKNOWN')) {
-            // FIXME: we should throw another error to have an ability to translate it
+        await cardFields.submit().catch(() => {
             throw new PaymentMethodFailedError(
                 'Failed authentication. Please try to authorize again.',
             );
-        }
-
-        return orderId;
+        });
     }
 
     /**
@@ -391,10 +436,10 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
      * Validation and errors
      *
      */
-    private validateHostedFormOrThrow(): void {
-        const hostedFields = this.getHostedFieldsOrThrow();
-        const hostedFieldState = hostedFields.getState();
-        const validationData = this.getValidityData(hostedFieldState);
+    private async validateHostedFormOrThrow() {
+        const cardFields = this.getCardFieldsOrThrow();
+        const cardFieldsState = await cardFields.getState().then((data) => data);
+        const validationData = this.getValidityData(cardFieldsState);
 
         if (validationData.isValid) {
             return;
@@ -407,18 +452,23 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
 
     private getValidityData({
         fields,
-    }: PayPalCommerceHostedFieldsState): HostedFieldValidateEventData {
-        const fieldsKeys = Object.keys(fields) as Array<
-            keyof PayPalCommerceHostedFieldsState['fields']
+    }: PayPalCommerceCardFieldsState): HostedFieldValidateEventData {
+        const updatedFields = { ...fields };
+
+        delete updatedFields.cardNameField;
+
+        const fieldsKeys = Object.keys(updatedFields) as Array<
+            keyof PayPalCommerceCardFieldsState['fields']
         >;
 
-        const isValid = fieldsKeys.every((key) => fields[key]?.isValid);
+        const isValid = fieldsKeys.every((key) => updatedFields[key]?.isValid);
+
         const errors = fieldsKeys.reduce((fieldsErrors, key) => {
             const fieldType = this.mapFieldType(key);
 
             return {
                 ...fieldsErrors,
-                [fieldType]: fields[key]?.isValid
+                [fieldType]: updatedFields[key]?.isValid
                     ? undefined
                     : [this.getInvalidErrorByFieldType(fieldType)],
             };
@@ -446,6 +496,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
                 };
 
             case HostedFieldType.CardExpiry:
+            case HostedFieldType.CardExpiryVerification:
                 return {
                     fieldType,
                     message: 'Invalid card expiry',
@@ -488,14 +539,22 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
      */
     private mapFieldType(type: string): HostedFieldType {
         switch (type) {
+            case 'name':
+                return HostedFieldType.CardName;
+
+            case 'cardNumberField':
             case 'number':
                 return this.isCreditCardForm
                     ? HostedFieldType.CardNumber
                     : HostedFieldType.CardNumberVerification;
 
-            case 'expirationDate':
-                return HostedFieldType.CardExpiry;
+            case 'cardExpiryField':
+            case 'expiry':
+                return this.isCreditCardForm
+                    ? HostedFieldType.CardExpiry
+                    : HostedFieldType.CardExpiryVerification;
 
+            case 'cardCvvField':
             case 'cvv':
                 return this.isCreditCardForm
                     ? HostedFieldType.CardCode
@@ -504,52 +563,6 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
             default:
                 throw new Error('Unexpected field type');
         }
-    }
-
-    private mapFieldOptions(
-        fields: HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap,
-    ): PayPalCommerceHostedFieldsRenderOptions['fields'] {
-        if (isCreditCardFormFields(fields)) {
-            const { cardNumber, cardExpiry, cardCode } = fields;
-
-            return {
-                ...(cardNumber && {
-                    number: {
-                        selector: `#${cardNumber.containerId}`,
-                        placeholder: cardNumber.placeholder,
-                    },
-                }),
-                ...(cardExpiry && {
-                    expirationDate: {
-                        selector: `#${cardExpiry.containerId}`,
-                        placeholder: cardExpiry.placeholder,
-                    },
-                }),
-                ...(cardCode && {
-                    cvv: {
-                        selector: `#${cardCode.containerId}`,
-                        placeholder: cardCode.placeholder,
-                    },
-                }),
-            };
-        }
-
-        const { cardNumberVerification, cardCodeVerification } = fields;
-
-        return {
-            ...(cardNumberVerification && {
-                number: {
-                    selector: `#${cardNumberVerification.containerId}`,
-                    placeholder: cardNumberVerification.placeholder,
-                },
-            }),
-            ...(cardCodeVerification && {
-                cvv: {
-                    selector: `#${cardCodeVerification.containerId}`,
-                    placeholder: cardCodeVerification.placeholder,
-                },
-            }),
-        };
     }
 
     /**
@@ -571,24 +584,103 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         return omitBy(objectWithKebabCaseKeys(styles), isNil);
     }
 
-    private getValidStyleString(styles: HostedInputStyles = {}): string {
-        const validStyles = this.mapStyles(styles);
-
-        return Object.keys(validStyles)
-            .map((key) => `${key}: ${validStyles[key]}`)
-            .join(';');
-    }
-
     /**
      *
      * Utils
      *
      */
-    private getHostedFieldsOrThrow(): PayPalCommerceHostedFields {
-        if (!this.hostedFields) {
+    private getCardFieldsOrThrow(): PayPalCommerceCardFields {
+        if (!this.cardFields) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        return this.hostedFields;
+        return this.cardFields;
+    }
+
+    private getInputStyles(
+        styles?: HostedFieldStylesMap,
+    ): PayPalCommerceHostedFieldsRenderOptions['styles'] {
+        const defaultStyles = {
+            input: {
+                'font-size': '1rem',
+                'font-family': 'Montserrat, Arial, Helvetica, sans-serif',
+                color: '#5f5f5f',
+                outline: 'none',
+                padding: '9px 13px',
+            },
+        };
+        const mappedStyles = styles ? this.mapStyleOptions(styles) : null;
+
+        return mappedStyles
+            ? {
+                  ...mappedStyles,
+                  input: {
+                      ...mappedStyles.input,
+                      outline: 'none',
+                      padding: '9px 13px',
+                  },
+              }
+            : defaultStyles;
+    }
+
+    private stylizeInputContainers(
+        fields: HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap,
+    ): void {
+        Object.values(fields || {}).forEach((id: HostedCardFieldOptions) => {
+            const element = document.getElementById(`${id?.containerId || ''}`);
+
+            if (element) {
+                element.style.padding = '0px';
+                element.style.boxShadow = 'none';
+                element.style.border = 'none';
+                element.style.background = 'transparent';
+                element.style.marginBottom = '10px';
+                element.style.marginLeft = '-5px';
+            }
+        });
+    }
+
+    private hasUndefinedValues() {
+        if (this.hostedFormOptions) {
+            return Object.values(this.hostedFormOptions.fields).some(
+                (value) => value === undefined,
+            );
+        }
+
+        return true;
+    }
+
+    /**
+     *
+     * Input events methods
+     *
+     */
+
+    private onChangeHandler(
+        formOptions: HostedFormOptions,
+        event: PayPalCommerceCardFieldsState,
+    ): void {
+        formOptions?.onValidate?.(this.getValidityData(event));
+    }
+
+    private onFocusHandler(
+        formOptions: HostedFormOptions,
+        event: PayPalCommerceCardFieldsState,
+    ): void {
+        formOptions?.onFocus?.(this.getFieldTypeByEmittedField(event));
+    }
+
+    private onBlurHandler(
+        formOptions: HostedFormOptions,
+        event: PayPalCommerceCardFieldsState,
+    ): void {
+        formOptions?.onBlur?.(this.getFieldTypeByEmittedField(event));
+    }
+
+    private onInputSubmitRequest(
+        formOptions: HostedFormOptions,
+        event: PayPalCommerceCardFieldsState,
+    ): void {
+        formOptions?.onEnter?.(this.getFieldTypeByEmittedField(event));
     }
 }
