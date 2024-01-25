@@ -197,7 +197,7 @@ describe('PayPalCommerceAcceleratedCheckoutPaymentStrategy', () => {
 
             expect(
                 paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect,
-            ).toHaveBeenCalledWith(paypalAxoSdk, false);
+            ).toHaveBeenCalledWith(paypalAxoSdk, false, undefined);
         });
 
         it('initializes paypal connect in test mode', async () => {
@@ -212,7 +212,7 @@ describe('PayPalCommerceAcceleratedCheckoutPaymentStrategy', () => {
 
             expect(
                 paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect,
-            ).toHaveBeenCalledWith(paypalAxoSdk, true);
+            ).toHaveBeenCalledWith(paypalAxoSdk, true, undefined);
         });
 
         it('does not trigger lookup method if the customer already authenticated with PayPal Connect', async () => {
@@ -253,7 +253,7 @@ describe('PayPalCommerceAcceleratedCheckoutPaymentStrategy', () => {
             ).toHaveBeenCalledWith(customer.email);
             expect(
                 paypalCommerceAcceleratedCheckoutUtils.triggerAuthenticationFlowOrThrow,
-            ).toHaveBeenCalledWith(customerContextId, undefined);
+            ).toHaveBeenCalledWith(customerContextId);
             expect(
                 paypalCommerceAcceleratedCheckoutUtils.mapPayPalConnectProfileToBcCustomerData,
             ).toHaveBeenCalledWith(methodId, authenticationResultMock);

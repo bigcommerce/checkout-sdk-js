@@ -90,23 +90,14 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
 
     describe('#triggerAuthenticationFlowOrThrow', () => {
         const customerContextIdMock = 'ryanRecognised123';
-        const paypalConnectStylesMock = {
-            root: {
-                backgroundColorPrimary: 'white',
-            },
-        };
 
         it('successfully triggers authentication flow with provided customer id and styles', async () => {
             const paypalConnectMock = await subject.initializePayPalConnect(paypalAxoSdk, false);
 
-            await subject.triggerAuthenticationFlowOrThrow(
-                customerContextIdMock,
-                paypalConnectStylesMock,
-            );
+            await subject.triggerAuthenticationFlowOrThrow(customerContextIdMock);
 
             expect(paypalConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalledWith(
                 customerContextIdMock,
-                { styles: paypalConnectStylesMock },
             );
         });
 

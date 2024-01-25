@@ -33,13 +33,22 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
     async initializePayPalConnect(
         paypalAxoSdk: PayPalAxoSdk,
         isTestModeEnabled: boolean,
+        styles?: PayPalCommerceConnectStylesOption,
     ): Promise<PayPalCommerceConnect> {
         if (isTestModeEnabled) {
             window.localStorage.setItem('axoEnv', 'sandbox');
         }
 
         if (!this.window.paypalConnect) {
-            this.window.paypalConnect = await paypalAxoSdk.Connect();
+            const defaultStyles = {
+                root: {
+                    backgroundColorPrimary: 'transparent',
+                },
+            };
+
+            this.window.paypalConnect = await paypalAxoSdk.Connect({
+                styles: styles || defaultStyles,
+            });
         }
 
         return this.window.paypalConnect;
@@ -75,7 +84,6 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
      */
     async triggerAuthenticationFlowOrThrow(
         customerContextId?: string,
-        styles?: PayPalCommerceConnectStylesOption,
     ): Promise<PayPalCommerceConnectAuthenticationResult> {
         if (!customerContextId) {
             return {};
@@ -83,7 +91,7 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
 
         const paypalConnect = this.getPayPalConnectOrThrow();
 
-        return paypalConnect.identity.triggerAuthenticationFlow(customerContextId, { styles });
+        return paypalConnect.identity.triggerAuthenticationFlow(customerContextId);
     }
 
     /**

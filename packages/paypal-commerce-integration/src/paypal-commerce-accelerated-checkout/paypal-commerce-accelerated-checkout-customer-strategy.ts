@@ -11,7 +11,6 @@ import {
     PayPalCommerceAcceleratedCheckoutUtils,
     PayPalCommerceConnectAuthenticationResult,
     PayPalCommerceConnectAuthenticationState,
-    PayPalCommerceConnectStylesOption,
     PayPalCommerceInitializationData,
     PayPalCommerceSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
@@ -19,8 +18,6 @@ import {
 import { WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions } from './paypal-commerce-accelerated-checkout-customer-initialize-options';
 
 export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implements CustomerStrategy {
-    private paypalConnectStyles?: PayPalCommerceConnectStylesOption;
-
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceSdk: PayPalCommerceSdk,
@@ -47,14 +44,13 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
             const paymentMethod =
                 state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
-            this.paypalConnectStyles = paypalcommerceacceleratedcheckout?.styles;
-
             const paypalAxoSdk = await this.paypalCommerceSdk.getPayPalAxo(paymentMethod, currency);
             const isTestModeEnabled = !!paymentMethod.initializationData?.isDeveloperModeApplicable;
 
             await this.paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect(
                 paypalAxoSdk,
                 isTestModeEnabled,
+                paypalcommerceacceleratedcheckout?.styles,
             );
         }
 
@@ -153,7 +149,6 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
             const authenticationResult =
                 await this.paypalCommerceAcceleratedCheckoutUtils.triggerAuthenticationFlowOrThrow(
                     customerContextId,
-                    this.paypalConnectStyles,
                 );
 
             const isAuthenticationFlowCanceled =
