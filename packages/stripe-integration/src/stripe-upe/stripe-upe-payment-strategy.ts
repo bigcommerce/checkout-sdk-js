@@ -28,9 +28,9 @@ import {
 
 import formatLocale from './format-locale';
 import isStripeAcceleratedCheckoutCustomer from './is-stripe-accelerated-checkout-customer';
+import { isStripeUPEPaymentMethodLike } from './is-stripe-upe-payment-method-like';
 import {
     AddressOptions,
-    isStripeUPEPaymentMethodLike,
     StripeConfirmPaymentData,
     StripeElement,
     StripeElements,
@@ -380,7 +380,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             };
         }
 
-        this._stripeElements = this.scriptLoader.getElements(this._stripeUPEClient, {
+        this._stripeElements = await this.scriptLoader.getElements(this._stripeUPEClient, {
             clientSecret: paymentMethod.clientToken,
             locale: formatLocale(shopperLanguage),
             appearance,

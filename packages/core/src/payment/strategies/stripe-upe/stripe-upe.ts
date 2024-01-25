@@ -293,7 +293,6 @@ export interface StripeUPEAppearanceOptions {
         spacingUnit?: string;
         borderRadius?: string;
     };
-
     rules?: {
         '.Input'?: {
             borderColor?: string;

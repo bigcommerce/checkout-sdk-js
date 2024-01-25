@@ -11,8 +11,8 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import isStripeAcceleratedCheckoutCustomer from './is-stripe-accelerated-checkout-customer';
+import { isStripeUPEPaymentMethodLike } from './is-stripe-upe-payment-method-like';
 import {
-    isStripeUPEPaymentMethodLike,
     StripeElements,
     StripeElementType,
     StripeEventType,
@@ -110,7 +110,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
                 stripeConnectedAccount,
             );
 
-            this._stripeElements = this.scriptLoader.getElements(stripeUPEClient, {
+            this._stripeElements = await this.scriptLoader.getElements(stripeUPEClient, {
                 clientSecret: clientToken,
                 appearance,
             });

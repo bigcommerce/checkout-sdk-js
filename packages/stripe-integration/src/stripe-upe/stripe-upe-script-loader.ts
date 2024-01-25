@@ -44,7 +44,10 @@ export default class StripeUPEScriptLoader {
         return stripeClient;
     }
 
-    getElements(stripeClient: StripeUPEClient, options: StripeElementsOptions): StripeElements {
+    async getElements(
+        stripeClient: StripeUPEClient,
+        options: StripeElementsOptions,
+    ): Promise<StripeElements> {
         let stripeElements = this.stripeWindow.bcStripeElements;
 
         if (!stripeElements) {
@@ -52,7 +55,7 @@ export default class StripeUPEScriptLoader {
 
             Object.assign(this.stripeWindow, { bcStripeElements: stripeElements });
         } else {
-            stripeElements.fetchUpdates();
+            await stripeElements.fetchUpdates();
             stripeElements.update(options);
         }
 
@@ -60,10 +63,12 @@ export default class StripeUPEScriptLoader {
     }
 
     private async load() {
-        await this.scriptLoader.loadScript('https://js.stripe.com/v3/');
-
         if (!this.stripeWindow.Stripe) {
-            throw new PaymentMethodClientUnavailableError();
+            await this.scriptLoader.loadScript('https://js.stripe.com/v3/');
+
+            if (!this.stripeWindow.Stripe) {
+                throw new PaymentMethodClientUnavailableError();
+            }
         }
 
         return this.stripeWindow.Stripe;

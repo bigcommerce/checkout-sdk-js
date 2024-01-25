@@ -68,14 +68,7 @@ export interface StripeShippingEvent extends StripeEvent {
     isNewAddress?: boolean;
     phoneFieldRequired: boolean;
     value: {
-        address: {
-            city: string;
-            country: string;
-            line1: string;
-            line2?: string;
-            postal_code: string;
-            state: string;
-        };
+        address: Address;
         name?: string;
         firstName?: string;
         lastName?: string;
@@ -89,20 +82,22 @@ export interface StripeShippingEvent extends StripeEvent {
     };
 }
 
+interface Address {
+    city: string;
+    country: string;
+    line1: string;
+    line2?: string;
+    postal_code: string;
+    state: string;
+}
+
 export type StripeEventType = StripeShippingEvent | StripeCustomerEvent;
 
 /**
  * Object definition for part of the data sent to confirm the PaymentIntent.
  * https://stripe.com/docs/api/payment_intents/confirm#confirm_payment_intent-shipping
  */
-export interface AddressOptions {
-    city?: string;
-    country?: string;
-    state?: string;
-    postal_code?: string;
-    line1?: string;
-    line2?: string;
-}
+export type AddressOptions = Partial<Address>;
 
 /**
  * Object definition for part of the data sent to confirm the PaymentIntent.
@@ -216,14 +211,7 @@ interface ShippingDefaultValues {
     firstName?: string;
     lastName?: string;
     phone: string;
-    address: {
-        line1: string;
-        line2: string;
-        city: string;
-        state: string;
-        postal_code: string;
-        country: string;
-    };
+    address: Address;
 }
 
 /*
@@ -427,6 +415,7 @@ export enum StripeUPEPaymentIntentStatus {
     SUCCEEDED = 'succeeded',
     CANCELED = 'canceled',
 }
+
 export interface StripeUPEPaymentMethod extends PaymentMethod {
     initializationData: StripeUPEInitializationData;
 }
@@ -435,17 +424,4 @@ export interface StripeUPEInitializationData {
     stripePublishableKey: string;
     stripeConnectedAccount: string;
     shopperLanguage: string;
-}
-
-export function isStripeUPEPaymentMethodLike(
-    paymentMethod: any,
-): paymentMethod is StripeUPEPaymentMethod {
-    return (
-        typeof paymentMethod === 'object' &&
-        paymentMethod !== null &&
-        'initializationData' in paymentMethod &&
-        typeof paymentMethod.initializationData.stripePublishableKey !== 'undefined' &&
-        typeof paymentMethod.initializationData.stripeConnectedAccount !== 'undefined' &&
-        typeof paymentMethod.initializationData.shopperLanguage !== 'undefined'
-    );
 }
