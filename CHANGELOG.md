@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.525.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.524.0...v1.525.0) (2024-01-25)
+
+
+### Features
+
+* **payment:** PAYPAL-3493 updated PPCP AXO credit card component form background transparent ([#2343](https://github.com/bigcommerce/checkout-sdk-js/issues/2343)) ([daaf080](https://github.com/bigcommerce/checkout-sdk-js/commit/daaf0809eeb938edba49ee1b59b941f68c960958))
+
 ## [1.524.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.523.0...v1.524.0) (2024-01-25)
 
 
