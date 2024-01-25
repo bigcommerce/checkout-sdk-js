@@ -83,7 +83,7 @@ export type PayPalSdkComponents = Array<'connect' | 'messages'>;
  *
  */
 export interface PayPalAxoSdk {
-    Connect(): Promise<PayPalCommerceConnect>;
+    Connect(options?: PayPalCommerceConnectOptions): Promise<PayPalCommerceConnect>;
 }
 
 export interface PayPalMessagesSdk {
@@ -126,11 +126,14 @@ export interface PayPalCommerceConnect {
     ): PayPalCommerceConnectCardComponentMethods;
 }
 
+export interface PayPalCommerceConnectOptions {
+    styles?: PayPalCommerceConnectStylesOption;
+}
+
 export interface PayPalCommerceConnectIdentity {
     lookupCustomerByEmail(email: string): Promise<PayPalCommerceConnectLookupCustomerByEmailResult>;
     triggerAuthenticationFlow(
         customerContextId: string,
-        options?: PayPalCommerceConnectAuthenticationOptions,
     ): Promise<PayPalCommerceConnectAuthenticationResult>;
 }
 
@@ -206,10 +209,6 @@ export interface PayPalConnectProfileToBcCustomerDataMappingResult {
     billingAddress?: CustomerAddress;
     shippingAddress?: CustomerAddress;
     instruments: CardInstrument[];
-}
-
-export interface PayPalCommerceConnectAuthenticationOptions {
-    styles?: PayPalCommerceConnectStylesOption;
 }
 
 export interface PayPalCommerceConnectStylesOption {

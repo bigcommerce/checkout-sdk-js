@@ -226,7 +226,11 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
 
             expect(
                 paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect,
-            ).toHaveBeenCalledWith(paypalAxoSdk, false);
+            ).toHaveBeenCalledWith(
+                paypalAxoSdk,
+                false,
+                initializationOptions.paypalcommerceacceleratedcheckout.styles,
+            );
         });
 
         it('loads paypal sdk and initialises paypal connect in test mode', async () => {
@@ -246,7 +250,11 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
 
             expect(
                 paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect,
-            ).toHaveBeenCalledWith(paypalAxoSdk, true);
+            ).toHaveBeenCalledWith(
+                paypalAxoSdk,
+                true,
+                initializationOptions.paypalcommerceacceleratedcheckout.styles,
+            );
         });
     });
 
@@ -360,7 +368,7 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
 
             expect(
                 paypalCommerceAcceleratedCheckoutUtils.triggerAuthenticationFlowOrThrow,
-            ).toHaveBeenCalledWith(customerContextIdMock, undefined);
+            ).toHaveBeenCalledWith(customerContextIdMock);
             expect(
                 paypalCommerceAcceleratedCheckoutUtils.mapPayPalConnectProfileToBcCustomerData,
             ).toHaveBeenCalledWith(methodId, authenticationResultMock);
