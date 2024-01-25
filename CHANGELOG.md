@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.524.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.523.0...v1.524.0) (2024-01-25)
+
+
+### Features
+
+* **payment:** PAYPAL-3113 Create a class to work with cookies ([#2301](https://github.com/bigcommerce/checkout-sdk-js/issues/2301)) ([6bfd6c8](https://github.com/bigcommerce/checkout-sdk-js/commit/6bfd6c8beb28c461a9b82d3de1e4778b58854446))
+
 ## [1.523.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.522.0...v1.523.0) (2024-01-25)
 
 
