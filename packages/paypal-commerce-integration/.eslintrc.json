@@ -29,7 +29,8 @@
                 "@typescript-eslint/no-floating-promises": "off",
                 "jest/valid-expect": "off",
                 "@typescript-eslint/no-unnecessary-condition": "off",
-                "@typescript-eslint/no-unsafe-call": "off"
+                "@typescript-eslint/no-unsafe-call": "off",
+                "@typescript-eslint/no-throw-literal": "off"
             }
         },
         {
