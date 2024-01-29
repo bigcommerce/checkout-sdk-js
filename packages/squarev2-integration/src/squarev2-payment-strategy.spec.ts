@@ -254,7 +254,7 @@ describe('SquareV2PaymentStrategy', () => {
                     paymentData: {
                         formattedPayload: {
                             credit_card_token: {
-                                token: '{"nonce":"cnon:xxx","store_card_nonce":"cnon:xxx","token":"verf:yyy","store_card_token":"verf:yyy"}',
+                                token: '{"nonce":"cnon:xxx","token":"verf:yyy","store_card_nonce":"cnon:xxx","store_card_token":"verf:yyy"}',
                             },
                             vault_payment_instrument: true,
                             set_as_default_stored_instrument: false,

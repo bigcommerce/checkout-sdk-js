@@ -1,22 +1,22 @@
 import {
-    FormattedPayload,
     InvalidArgumentError,
     isHostedInstrumentLike,
     isVaultedInstrument,
     OrderFinalizationNotRequiredError,
-    OrderPaymentRequestBody,
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentMethodInvalidError,
     PaymentStrategy,
+    VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { SquareIntent } from './enums';
 import { WithSquareV2PaymentInitializeOptions } from './squarev2-payment-initialize-options';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
 import {
+    SquareCreditCardTokens,
     SquareFormattedVaultedInstrument,
     SquareInitializationData,
     SquarePaymentMethodInitializationData,
@@ -63,8 +63,7 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const { paymentData } = payment;
-
+        const { methodId, paymentData } = payment;
         const { shouldSaveInstrument, shouldSetAsDefaultInstrument } = isHostedInstrumentLike(
             paymentData,
         )
@@ -73,52 +72,16 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
 
         await this._paymentIntegrationService.submitOrder();
 
-        if (paymentData && isVaultedInstrument(paymentData)) {
-            await this._processWithVaultedInstrument(
-                payment,
-                shouldSaveInstrument,
-                shouldSetAsDefaultInstrument,
-            );
-
-            return;
-        }
-
-        let nonce = await this._squareV2PaymentProcessor.tokenize();
-
-        if (this._shouldVerify()) {
-            if (shouldSaveInstrument) {
-                const storeCardNonce = await this._squareV2PaymentProcessor.tokenize();
-
-                nonce = JSON.stringify({
-                    nonce,
-                    store_card_nonce: storeCardNonce,
-                    token: await this._squareV2PaymentProcessor.verifyBuyer(
-                        nonce,
-                        SquareIntent.CHARGE,
-                    ),
-                    store_card_token: await this._squareV2PaymentProcessor.verifyBuyer(
-                        storeCardNonce,
-                        SquareIntent.STORE,
-                    ),
-                });
-            } else {
-                nonce = JSON.stringify({
-                    nonce,
-                    token: await this._squareV2PaymentProcessor.verifyBuyer(
-                        nonce,
-                        SquareIntent.CHARGE,
-                    ),
-                });
-            }
-        }
+        const submitPaymentPayload =
+            paymentData && isVaultedInstrument(paymentData)
+                ? await this._getVaultedInstrumentPayload(methodId, paymentData)
+                : await this._getCardPayload(shouldSaveInstrument);
 
         await this._paymentIntegrationService.submitPayment({
             ...payment,
             paymentData: {
                 formattedPayload: {
-                    credit_card_token: {
-                        token: nonce,
-                    },
+                    ...submitPaymentPayload,
                     vault_payment_instrument: shouldSaveInstrument || false,
                     set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
                 },
@@ -142,19 +105,51 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
         return features['PROJECT-3828.add_3ds_support_on_squarev2'];
     }
 
-    private async _processWithVaultedInstrument(
-        payment: OrderPaymentRequestBody,
-        shouldSaveInstrument = false,
-        shouldSetAsDefaultInstrument = false,
-    ): Promise<void> {
-        const { methodId, paymentData } = payment;
+    private async _getCardPayload(shouldSaveInstrument?: boolean) {
+        const cardTokenizationResult = await this._squareV2PaymentProcessor.tokenize();
 
-        // TODO: optimize type guard (the same in execute method)
-        // need some refactoring in execute method
-        if (!paymentData || !isVaultedInstrument(paymentData)) {
-            return;
+        if (!this._shouldVerify()) {
+            return {
+                credit_card_token: {
+                    token: cardTokenizationResult,
+                },
+            };
         }
 
+        let tokenData: SquareCreditCardTokens = {
+            nonce: cardTokenizationResult,
+            token: await this._squareV2PaymentProcessor.verifyBuyer(
+                cardTokenizationResult,
+                SquareIntent.CHARGE,
+            ),
+        };
+
+        if (shouldSaveInstrument) {
+            // INFO: additional 'tokenize' is required to verify and save the card
+            // for each 'verifyBuyer' we need to generate new token
+            const tokenForSavingCard = await this._squareV2PaymentProcessor.tokenize();
+
+            tokenData = {
+                ...tokenData,
+                store_card_nonce: tokenForSavingCard,
+                store_card_token: await this._squareV2PaymentProcessor.verifyBuyer(
+                    tokenForSavingCard,
+                    SquareIntent.STORE,
+                ),
+            };
+        }
+
+        return {
+            credit_card_token: {
+                token: JSON.stringify(tokenData),
+            },
+        };
+    }
+
+    private async _getVaultedInstrumentPayload(
+        methodId: string,
+        paymentData: VaultedInstrument,
+    ): Promise<SquareFormattedVaultedInstrument> {
         const { instrumentId } = paymentData;
         const verificationToken = this._shouldVerify()
             ? await this._squareV2PaymentProcessor.verifyBuyer(
@@ -163,21 +158,12 @@ export default class SquareV2PaymentStrategy implements PaymentStrategy {
               )
             : undefined;
 
-        const submitPaymentPayload: FormattedPayload<SquareFormattedVaultedInstrument> = {
-            formattedPayload: {
-                bigpay_token: {
-                    token: instrumentId,
-                    ...(verificationToken && { three_d_secure: { token: verificationToken } }),
-                },
-                vault_payment_instrument: shouldSaveInstrument,
-                set_as_default_stored_instrument: shouldSetAsDefaultInstrument,
+        return {
+            bigpay_token: {
+                token: instrumentId,
+                ...(verificationToken && { three_d_secure: { token: verificationToken } }),
             },
         };
-
-        await this._paymentIntegrationService.submitPayment({
-            ...payment,
-            paymentData: submitPaymentPayload,
-        });
     }
 
     private async _getSquareCardIdOrThrow(methodId: string, instrumentId: string): Promise<string> {
