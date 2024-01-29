@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.526.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.525.0...v1.526.0) (2024-01-29)
+
+
+### Features
+
+* **payment:** PI-1368 SquareV2 - fix types for payment submit payload ([b26c114](https://github.com/bigcommerce/checkout-sdk-js/commit/b26c11430dc9a22f3e86ece77781dc181cb60ca4))
+* **payment:** PI-1368 SquareV2 - fix types for payment submit payload ([2e8c0cd](https://github.com/bigcommerce/checkout-sdk-js/commit/2e8c0cdbae660d7402b5d9f1b0e7e6fb7e7d968d))
+
 ## [1.525.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.524.0...v1.525.0) (2024-01-25)
 
 
