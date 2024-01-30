@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 
 import {
+    Cart,
     HostedFieldType,
     InvalidArgumentError,
     NotInitializedError,
@@ -12,7 +13,18 @@ import {
     PaymentInvalidFormError,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getCart,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    createPayPalCommerceAcceleratedCheckoutUtils,
+    createPayPalCommerceSdk,
+    getPayPalAxoSdk,
+    PayPalAxoSdk,
+    PayPalCommerceAcceleratedCheckoutUtils,
+    PayPalCommerceSdk,
+} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import {
     getPayPalCommerceIntegrationServiceMock,
@@ -30,10 +42,14 @@ import PayPalCommerceCreditCardsPaymentInitializeOptions from './paypal-commerce
 import PayPalCommerceCreditCardsPaymentStrategy from './paypal-commerce-credit-cards-payment-strategy';
 
 describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
+    let cart: Cart;
     let strategy: PayPalCommerceCreditCardsPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
+    let paypalCommerceSdk: PayPalCommerceSdk;
+    let paypalAxoSdk: PayPalAxoSdk;
+    let paypalCommerceAcceleratedCheckoutUtils: PayPalCommerceAcceleratedCheckoutUtils;
     let paypalSdk: PayPalSDK;
     let eventEmitter: EventEmitter;
     const mockRender = jest.fn();
@@ -121,15 +137,21 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
     };
 
     beforeEach(() => {
+        cart = getCart();
         eventEmitter = new EventEmitter();
         paymentMethod = { ...getPayPalCommercePaymentMethod(), id: methodId };
         paypalSdk = getPayPalSDKMock();
+        paypalAxoSdk = getPayPalAxoSdk();
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+        paypalCommerceSdk = createPayPalCommerceSdk();
+        paypalCommerceAcceleratedCheckoutUtils = createPayPalCommerceAcceleratedCheckoutUtils();
 
         strategy = new PayPalCommerceCreditCardsPaymentStrategy(
             paymentIntegrationService,
             paypalCommerceIntegrationService,
+            paypalCommerceSdk,
+            paypalCommerceAcceleratedCheckoutUtils,
         );
 
         paypalCardNameFieldElement = document.createElement('div');
@@ -139,6 +161,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethod,
         );
+        jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(cart);
 
         jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(paypalSdk);
         jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
@@ -161,6 +184,13 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                 return cardFieldsInstanceMock;
             },
         );
+
+        jest.spyOn(paypalCommerceSdk, 'getPayPalAxo').mockImplementation(() => paypalAxoSdk);
+
+        jest.spyOn(
+            paypalCommerceAcceleratedCheckoutUtils,
+            'initializePayPalConnect',
+        ).mockImplementation(() => jest.fn());
     });
 
     afterEach(() => {
@@ -213,6 +243,35 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                 true,
                 true,
             );
+        });
+
+        it('loads paypal connect sdk if paypal commerce connect analytic is enabled', async () => {
+            const mockedPaymentMethod = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod,
+                    connectClientToken: 'connectClientToken123',
+                    isAcceleratedCheckoutEnabled: true,
+                    isPayPalCommerceAnalyticsV2Enabled: true,
+                    isDeveloperModeApplicable: false,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(mockedPaymentMethod);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalCommerceSdk.getPayPalAxo).toHaveBeenCalledWith(
+                mockedPaymentMethod,
+                cart.currency.code,
+            );
+
+            expect(
+                paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect,
+            ).toHaveBeenCalledWith(paypalAxoSdk, false);
         });
     });
 
