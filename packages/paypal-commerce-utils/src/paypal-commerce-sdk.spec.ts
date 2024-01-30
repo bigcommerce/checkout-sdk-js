@@ -74,6 +74,34 @@ describe('PayPalCommerceSdk', () => {
             );
         });
 
+        // TODO: remove this test when A/B testing will be finished
+        it('loads PayPal Axo sdk script with connectClientToken for paypalcommercecreditcards method', async () => {
+            const mockPaymentMethod = {
+                ...paymentMethod,
+                methodId: 'paypalcommercecreditcards',
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    clientToken: undefined,
+                    connectClientToken: 'connectClientToken123',
+                },
+            };
+
+            await subject.getPayPalAxo(mockPaymentMethod, 'USD');
+
+            expect(loader.loadScript).toHaveBeenCalledWith(
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=connect&currency=USD&intent=capture',
+                {
+                    async: true,
+                    attributes: {
+                        'data-client-metadata-id': 'sandbox',
+                        'data-namespace': 'paypalAxo',
+                        'data-partner-attribution-id': '1123JLKJASD12',
+                        'data-user-id-token': 'connectClientToken123',
+                    },
+                },
+            );
+        });
+
         it('throws an error if there was an issue with loading paypal axo sdk', async () => {
             jest.spyOn(loader, 'loadScript').mockImplementation(jest.fn());
 

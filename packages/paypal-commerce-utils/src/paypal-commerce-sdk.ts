@@ -98,7 +98,13 @@ export default class PayPalCommerceSdk {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { intent, clientId, merchantId, attributionId } = initializationData;
+        const {
+            intent,
+            clientId,
+            merchantId,
+            attributionId,
+            connectClientToken, // TODO: remove when PPCP AXO A/B testing will be finished
+        } = initializationData;
 
         return {
             options: {
@@ -113,7 +119,7 @@ export default class PayPalCommerceSdk {
                 'data-client-metadata-id': 'sandbox', // TODO: should be updated when paypal will be ready for production
                 'data-namespace': 'paypalAxo',
                 'data-partner-attribution-id': attributionId,
-                'data-user-id-token': clientToken,
+                'data-user-id-token': connectClientToken || clientToken,
             },
         };
     }

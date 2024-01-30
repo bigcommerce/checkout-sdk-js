@@ -19,6 +19,7 @@ export interface PayPalCommerceInitializationData {
     buyerCountry?: string;
     clientId: string;
     clientToken?: string;
+    connectClientToken?: string;
     enabledAlternativePaymentMethods: FundingType;
     isDeveloperModeApplicable?: boolean;
     intent?: PayPalCommerceIntent;
