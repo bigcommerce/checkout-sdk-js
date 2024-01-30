@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.528.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.527.0...v1.528.0) (2024-01-30)
+
+
+### Features
+
+* **payment:** PAYPAL-3497 updated PPCP AXO SDK option data-client-metadata-id with uuidv4 value ([#2344](https://github.com/bigcommerce/checkout-sdk-js/issues/2344)) ([bf04b4f](https://github.com/bigcommerce/checkout-sdk-js/commit/bf04b4fb5ef760350ae6d0ae30a2e1b4fae37609))
+
 ## [1.527.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.526.0...v1.527.0) (2024-01-30)
 
 
