@@ -106,6 +106,11 @@ export default class PayPalCommerceSdk {
             connectClientToken, // TODO: remove when PPCP AXO A/B testing will be finished
         } = initializationData;
 
+        // TODO: remove ts-ignore when typescript version will be 4.6+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const clientMetadataId = crypto.randomUUID().replace(/-/g, '');
+
         return {
             options: {
                 'client-id': clientId,
@@ -116,7 +121,7 @@ export default class PayPalCommerceSdk {
                 intent,
             },
             attributes: {
-                'data-client-metadata-id': 'sandbox', // TODO: should be updated when paypal will be ready for production
+                'data-client-metadata-id': clientMetadataId,
                 'data-namespace': 'paypalAxo',
                 'data-partner-attribution-id': attributionId,
                 'data-user-id-token': connectClientToken || clientToken,

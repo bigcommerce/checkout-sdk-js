@@ -15,9 +15,16 @@ describe('PayPalCommerceSdk', () => {
     let paymentMethod: PaymentMethod;
     let paypalAxoSdk: PayPalAxoSdk;
     let subject: PayPalCommerceSdk;
+
     const paypalMessagesSdk: PayPalMessagesSdk = {
         Messages: jest.fn(),
     };
+
+    Object.defineProperty(window, 'crypto', {
+        value: {
+            randomUUID: () => '123456789',
+        },
+    });
 
     beforeEach(() => {
         loader = createScriptLoader();
@@ -65,7 +72,7 @@ describe('PayPalCommerceSdk', () => {
                 {
                     async: true,
                     attributes: {
-                        'data-client-metadata-id': 'sandbox',
+                        'data-client-metadata-id': '123456789',
                         'data-namespace': 'paypalAxo',
                         'data-partner-attribution-id': '1123JLKJASD12',
                         'data-user-id-token': 'asdcvY7XFSQasd',
@@ -93,7 +100,7 @@ describe('PayPalCommerceSdk', () => {
                 {
                     async: true,
                     attributes: {
-                        'data-client-metadata-id': 'sandbox',
+                        'data-client-metadata-id': '123456789',
                         'data-namespace': 'paypalAxo',
                         'data-partner-attribution-id': '1123JLKJASD12',
                         'data-user-id-token': 'connectClientToken123',
