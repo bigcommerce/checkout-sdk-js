@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.527.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.526.0...v1.527.0) (2024-01-30)
+
+
+### Features
+
+* **payment:** PAYPAL-3425 updated paypal commerce credit card payment strategy to load paypal connect sdk when its needed ([#2342](https://github.com/bigcommerce/checkout-sdk-js/issues/2342)) ([a5fd129](https://github.com/bigcommerce/checkout-sdk-js/commit/a5fd1291ffed862c07abce0e72c7675a57772722))
+
 ## [1.526.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.525.0...v1.526.0) (2024-01-29)
 
 
