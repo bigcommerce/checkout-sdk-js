@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.530.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.529.0...v1.530.0) (2024-01-31)
+
+
+### Features
+
+* **payment:** PAYPAL-3419 added PayPalCommerceAcceleratedCheckout shipping strategy ([#2339](https://github.com/bigcommerce/checkout-sdk-js/issues/2339)) ([94a7ba8](https://github.com/bigcommerce/checkout-sdk-js/commit/94a7ba8ffa35abe9ab826a834364e1862c1c3e79))
+
 ## [1.529.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.528.0...v1.529.0) (2024-01-31)
 
 
