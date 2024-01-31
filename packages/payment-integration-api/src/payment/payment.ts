@@ -258,9 +258,12 @@ export interface WithEcpInstrument {
     accountType: BankAccountType | EcpAccountType;
     shopperPermission: boolean;
     routingNumber: string;
+    shouldSaveInstrument?: boolean;
+    shouldSetAsDefaultInstrument?: boolean;
+    instrumentId?: string;
 }
 
-export interface BlueSnapDirectEcpPayload {
+export interface BlueSnapDirectEcpPayload extends FormattedHostedInstrument {
     ecp: {
         account_number: string;
         account_type: EcpAccountType | BankAccountType;

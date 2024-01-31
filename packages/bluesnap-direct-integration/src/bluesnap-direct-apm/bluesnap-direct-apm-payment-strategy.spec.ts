@@ -34,6 +34,35 @@ describe('BlueSnapDirectAPMPaymentStrategy', () => {
             await expect(strategy.execute({})).rejects.toThrow(PaymentArgumentInvalidError);
         });
 
+        it('should submit stored instrument payment', async () => {
+            await strategy.initialize();
+
+            const payload = {
+                payment: {
+                    gatewayId: 'bluesnapdirect',
+                    methodId: 'ecp',
+                    paymentData: {
+                        instrumentId: '223344556',
+                        shouldSetAsDefaultInstrument: false,
+                    },
+                },
+            };
+
+            const expectedPayment = {
+                gatewayId: 'bluesnapdirect',
+                methodId: 'ecp',
+                paymentData: {
+                    instrumentId: '223344556',
+                    shouldSetAsDefaultInstrument: false,
+                },
+            };
+
+            await strategy.execute(payload);
+
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(expectedPayment);
+        });
+
         it('should submit the ECP payment', async () => {
             await strategy.initialize();
 
