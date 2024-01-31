@@ -60,20 +60,20 @@ export default class PayPalCommerceAcceleratedCheckoutShippingStrategy implement
             );
         }
 
-        if (!this._shouldRunAuthenticationFlow()) {
-            return Promise.resolve(this._store.getState());
-        }
+        const isAuthenticatedUser = !this._shouldRunAuthenticationFlow();
 
-        try {
-            await this._store.dispatch(
-                this._paymentMethodActionCreator.loadPaymentMethod(methodId),
-            );
+        if (!isAuthenticatedUser) {
+            try {
+                await this._store.dispatch(
+                    this._paymentMethodActionCreator.loadPaymentMethod(methodId),
+                );
 
-            await this._initializePayPalSdk(methodId, styles);
-            await this._runAuthenticationFlowOrThrow(methodId);
-        } catch (error) {
-            // Info: we should not throw any error here to avoid customer stuck on
-            // shipping step due to the payment provider custom flow
+                await this._initializePayPalSdk(methodId, styles);
+                await this._runAuthenticationFlowOrThrow(methodId);
+            } catch (error) {
+                // Info: we should not throw any error here to avoid customer stuck on
+                // shipping step due to the payment provider custom flow
+            }
         }
 
         return Promise.resolve(this._store.getState());
