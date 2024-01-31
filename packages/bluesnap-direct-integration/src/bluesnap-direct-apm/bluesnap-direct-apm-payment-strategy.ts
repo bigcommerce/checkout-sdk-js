@@ -1,4 +1,6 @@
 import {
+    isHostedInstrumentLike,
+    isVaultedInstrument,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentArgumentInvalidError,
@@ -61,6 +63,21 @@ export default class BlueSnapDirectAPMPaymentStrategy implements PaymentStrategy
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
+        if (
+            payment.paymentData &&
+            isVaultedInstrument(payment.paymentData) &&
+            isHostedInstrumentLike(payment.paymentData)
+        ) {
+            return {
+                ...payment,
+                paymentData: {
+                    instrumentId: payment.paymentData.instrumentId,
+                    shouldSetAsDefaultInstrument:
+                        !!payment.paymentData.shouldSetAsDefaultInstrument,
+                },
+            };
+        }
+
         if (isEcpInstrument(payment.paymentData)) {
             return {
                 ...payment,
@@ -72,6 +89,9 @@ export default class BlueSnapDirectAPMPaymentStrategy implements PaymentStrategy
                             shopper_permission: payment.paymentData.shopperPermission,
                             routing_number: payment.paymentData.routingNumber,
                         },
+                        vault_payment_instrument: payment.paymentData.shouldSaveInstrument,
+                        set_as_default_stored_instrument:
+                            payment.paymentData.shouldSetAsDefaultInstrument,
                     },
                 },
             };

@@ -113,6 +113,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'bluesnapdirect',
         method: 'credit_card',
     },
+    'bluesnapdirect.ecp': {
+        provider: 'bluesnapdirect',
+        method: 'ecp',
+    },
     orbital: {
         provider: 'orbital',
         method: 'credit_card',
