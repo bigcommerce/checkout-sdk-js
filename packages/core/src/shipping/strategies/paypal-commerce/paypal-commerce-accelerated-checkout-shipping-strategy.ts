@@ -3,6 +3,7 @@ import {
     PayPalCommerceAcceleratedCheckoutUtils,
     PayPalCommerceConnectAuthenticationState,
     PayPalCommerceConnectStylesOption,
+    PayPalCommerceSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import { AddressRequestBody } from '../../../address';
@@ -24,6 +25,7 @@ export default class PayPalCommerceAcceleratedCheckoutShippingStrategy implement
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator,
+        private _paypalCommerceSdk: PayPalCommerceSdk,
         private _paypalCommerceAcceleratedCheckoutUtils: PayPalCommerceAcceleratedCheckoutUtils,
     ) {}
 
@@ -58,22 +60,20 @@ export default class PayPalCommerceAcceleratedCheckoutShippingStrategy implement
             );
         }
 
-        // Should run Authentication flow
         if (!this._shouldRunAuthenticationFlow()) {
             return Promise.resolve(this._store.getState());
         }
 
-        // Load payment method
-        // Load run auth flow
         try {
             await this._store.dispatch(
                 this._paymentMethodActionCreator.loadPaymentMethod(methodId),
             );
-            await this._runAuthenticationFlowOrThrow(methodId, styles);
+
+            await this._initializePayPalSdk(methodId, styles);
+            await this._runAuthenticationFlowOrThrow(methodId);
         } catch (error) {
-            // Info: we should not throw any error here to avoid
-            // customer stuck on shipping step due to the payment provider
-            // custom flow
+            // Info: we should not throw any error here to avoid customer stuck on
+            // shipping step due to the payment provider custom flow
         }
 
         return Promise.resolve(this._store.getState());
@@ -106,10 +106,25 @@ export default class PayPalCommerceAcceleratedCheckoutShippingStrategy implement
         );
     }
 
-    private async _runAuthenticationFlowOrThrow(
+    private async _initializePayPalSdk(
         methodId: string,
         styles?: PayPalCommerceConnectStylesOption,
     ): Promise<void> {
+        const state = this._store.getState();
+
+        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const currencyCode = state.cart.getCartOrThrow().currency.code;
+
+        const paypalAxo = await this._paypalCommerceSdk.getPayPalAxo(paymentMethod, currencyCode);
+
+        await this._paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect(
+            paypalAxo,
+            paymentMethod.initializationData.isDeveloperModeApplicable,
+            styles,
+        );
+    }
+
+    private async _runAuthenticationFlowOrThrow(methodId: string): Promise<void> {
         try {
             const state = this._store.getState();
             const cart = state.cart.getCartOrThrow();
@@ -117,16 +132,12 @@ export default class PayPalCommerceAcceleratedCheckoutShippingStrategy implement
             const billingAddressEmail = state.billingAddress.getBillingAddress()?.email;
             const email = customerEmail || billingAddressEmail || '';
 
-            // Info: calls look up method to detect if user is a PayPal Connect member
             const { customerContextId } =
                 await this._paypalCommerceAcceleratedCheckoutUtils.lookupCustomerOrThrow(email);
 
-            // Info: triggers PayPal Connect authentication flow (show OTP if needed)
-            // if the user recognised as PayPal Connect Customer
             const authenticationResult =
                 await this._paypalCommerceAcceleratedCheckoutUtils.triggerAuthenticationFlowOrThrow(
                     customerContextId,
-                    styles,
                 );
 
             const { authenticationState, addresses, billingAddress, shippingAddress, instruments } =
@@ -135,7 +146,6 @@ export default class PayPalCommerceAcceleratedCheckoutShippingStrategy implement
                     authenticationResult,
                 );
 
-            // Info: updates checkout state with PayPal Connect data to let user use it in checkout flow
             await this._store.dispatch(
                 this._paymentProviderCustomerActionCreator.updatePaymentProviderCustomer({
                     authenticationState,
@@ -162,14 +172,14 @@ export default class PayPalCommerceAcceleratedCheckoutShippingStrategy implement
                 );
             }
 
-            // Info: if not a digital item
             if (shippingAddress && cart.lineItems.physicalItems.length > 0) {
                 await this._store.dispatch(
                     this._consignmentActionCreator.updateAddress(shippingAddress),
                 );
             }
         } catch (error) {
-            // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
+            // Info: Do not throw anything here to avoid blocking customer
+            // from passing checkout flow
         }
     }
 }

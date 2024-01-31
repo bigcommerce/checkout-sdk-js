@@ -9,9 +9,13 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
     createPayPalCommerceAcceleratedCheckoutUtils,
+    createPayPalCommerceSdk,
+    getPayPalAxoSdk,
     getPayPalCommerceAcceleratedCheckoutPaymentMethod,
     getPayPalConnectAuthenticationResultMock,
+    PayPalAxoSdk,
     PayPalCommerceAcceleratedCheckoutUtils,
+    PayPalCommerceSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import { BillingAddress, BillingAddressActionCreator } from '../../../billing';
@@ -40,6 +44,8 @@ describe('PayPalCommerceAcceleratedCheckoutShippingStrategy', () => {
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethod: PaymentMethod;
     let paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator;
+    let paypalAxoSdk: PayPalAxoSdk;
+    let paypalCommerceSdk: PayPalCommerceSdk;
     let paypalCommerceAcceleratedCheckoutUtils: PayPalCommerceAcceleratedCheckoutUtils;
     let store: CheckoutStore;
     let strategy: PayPalCommerceAcceleratedCheckoutShippingStrategy;
@@ -86,6 +92,7 @@ describe('PayPalCommerceAcceleratedCheckoutShippingStrategy', () => {
         cart = getCart();
         customer = getCustomer();
         paymentMethod = getPayPalCommerceAcceleratedCheckoutPaymentMethod();
+        paypalAxoSdk = getPayPalAxoSdk();
 
         store = createCheckoutStore();
         billingAddressActionCreator = new BillingAddressActionCreator(
@@ -100,6 +107,7 @@ describe('PayPalCommerceAcceleratedCheckoutShippingStrategy', () => {
             new PaymentMethodRequestSender(requestSender),
         );
         paymentProviderCustomerActionCreator = new PaymentProviderCustomerActionCreator();
+        paypalCommerceSdk = createPayPalCommerceSdk();
         paypalCommerceAcceleratedCheckoutUtils = createPayPalCommerceAcceleratedCheckoutUtils();
 
         strategy = new PayPalCommerceAcceleratedCheckoutShippingStrategy(
@@ -108,6 +116,7 @@ describe('PayPalCommerceAcceleratedCheckoutShippingStrategy', () => {
             consignmentActionCreator,
             paymentMethodActionCreator,
             paymentProviderCustomerActionCreator,
+            paypalCommerceSdk,
             paypalCommerceAcceleratedCheckoutUtils,
         );
 
@@ -120,6 +129,9 @@ describe('PayPalCommerceAcceleratedCheckoutShippingStrategy', () => {
             store.getState().paymentProviderCustomer,
             'getPaymentProviderCustomerOrThrow',
         ).mockReturnValue({});
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethod,
+        );
 
         jest.spyOn(billingAddressActionCreator, 'updateAddress').mockImplementation(() =>
             jest.fn(),
@@ -130,6 +142,12 @@ describe('PayPalCommerceAcceleratedCheckoutShippingStrategy', () => {
         );
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(paymentMethod);
 
+        jest.spyOn(paypalCommerceSdk, 'getPayPalAxo').mockImplementation(() => paypalAxoSdk);
+
+        jest.spyOn(
+            paypalCommerceAcceleratedCheckoutUtils,
+            'initializePayPalConnect',
+        ).mockImplementation(() => jest.fn());
         jest.spyOn(paypalCommerceAcceleratedCheckoutUtils, 'getStorageSessionId').mockReturnValue(
             cart.id,
         );
@@ -228,12 +246,23 @@ describe('PayPalCommerceAcceleratedCheckoutShippingStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+            expect(paypalCommerceSdk.getPayPalAxo).toHaveBeenCalledWith(
+                paymentMethod,
+                cart.currency.code,
+            );
+            expect(
+                paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect,
+            ).toHaveBeenCalledWith(
+                paypalAxoSdk,
+                paymentMethod.initializationData.isDeveloperModeApplicable,
+                undefined,
+            );
             expect(
                 paypalCommerceAcceleratedCheckoutUtils.lookupCustomerOrThrow,
             ).toHaveBeenCalledWith(customer.email);
             expect(
                 paypalCommerceAcceleratedCheckoutUtils.triggerAuthenticationFlowOrThrow,
-            ).toHaveBeenCalledWith(customerContextId, undefined);
+            ).toHaveBeenCalledWith(customerContextId);
             expect(
                 paypalCommerceAcceleratedCheckoutUtils.mapPayPalConnectProfileToBcCustomerData,
             ).toHaveBeenCalledWith(methodId, authenticationResultMock);
