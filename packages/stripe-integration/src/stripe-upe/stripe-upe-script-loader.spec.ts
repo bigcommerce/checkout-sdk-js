@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { StandardError } from '../../../common/error/errors';
+import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { StripeElementsOptions, StripeHostWindow } from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
@@ -48,8 +48,8 @@ describe('StripeUPEPayScriptLoader', () => {
                 'STRIPE_CONNECTED_ACCOUNT',
             );
 
-            await stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);
-            await stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);
+            stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);
+            stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);
 
             expect(stripeUPEJsMock.elements).toHaveBeenCalledTimes(1);
         });

@@ -36,3 +36,7 @@ export default interface StripeUPEPaymentInitializeOptions {
 
     render(): void;
 }
+
+export interface WithStripeUPEPaymentInitializeOptions {
+    stripeupe?: StripeUPEPaymentInitializeOptions;
+}

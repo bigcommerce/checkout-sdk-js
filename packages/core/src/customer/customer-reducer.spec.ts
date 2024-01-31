@@ -4,7 +4,6 @@ import {
     CreateCustomerAction,
     CreateCustomerAddressAction,
     CustomerActionType,
-    StripeLinkAuthenticatedAction,
 } from './customer-actions';
 import customerReducer from './customer-reducer';
 import CustomerState, { DEFAULT_STATE } from './customer-state';
@@ -93,19 +92,6 @@ describe('customerReducer()', () => {
             expect.objectContaining({
                 statuses: { isCreatingAddress: false },
                 errors: { createAddressError: action.payload },
-            }),
-        );
-    });
-
-    it('returns is stripe link authenticated value when succeeded', () => {
-        const action: StripeLinkAuthenticatedAction = {
-            type: CustomerActionType.StripeLinkAuthenticated,
-            payload: true,
-        };
-
-        expect(customerReducer(initialState, action)).toEqual(
-            expect.objectContaining({
-                data: { isStripeLinkAuthenticated: action.payload },
             }),
         );
     });

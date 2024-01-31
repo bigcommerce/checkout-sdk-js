@@ -36,6 +36,7 @@ export {
     CustomerAddress,
     CustomerRequestOptions,
     CustomerInitializeOptions,
+    InternalCustomer,
     ExecutePaymentMethodCheckoutOptions,
 } from './customer';
 export { Discount } from './discount';
@@ -119,6 +120,7 @@ export {
     IdealPayload,
     CardInstrument,
     CreditCardInstrument,
+    FormattedHostedInstrument,
     WithBankAccountInstrument,
     isVaultedInstrument,
     isHostedInstrumentLike,
@@ -140,6 +142,7 @@ export {
     PaymentStrategyResolveId,
     VaultedInstrument,
     WithAccountCreation,
+    StripeUPEIntent,
     StripeV3FormattedPayload,
     PaypalInstrument,
     FormattedPayload,

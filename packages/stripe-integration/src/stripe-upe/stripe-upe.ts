@@ -1,6 +1,11 @@
-import { CustomFont, PaymentIntent, StripeConfigurationOptions } from '../stripev3';
+import {
+    CustomFont,
+    PaymentIntent,
+    PaymentMethod,
+    StripeConfigurationOptions,
+} from '../stripev3/stripev3';
 
-export { StripeAdditionalAction } from '../stripev3';
+export { StripeAdditionalAction } from '../stripev3/stripev3';
 
 export interface StripeError {
     /**
@@ -63,14 +68,7 @@ export interface StripeShippingEvent extends StripeEvent {
     isNewAddress?: boolean;
     phoneFieldRequired: boolean;
     value: {
-        address: {
-            city: string;
-            country: string;
-            line1: string;
-            line2?: string;
-            postal_code: string;
-            state: string;
-        };
+        address: Address;
         name?: string;
         firstName?: string;
         lastName?: string;
@@ -84,20 +82,22 @@ export interface StripeShippingEvent extends StripeEvent {
     };
 }
 
+interface Address {
+    city: string;
+    country: string;
+    line1: string;
+    line2?: string;
+    postal_code: string;
+    state: string;
+}
+
 export type StripeEventType = StripeShippingEvent | StripeCustomerEvent;
 
 /**
  * Object definition for part of the data sent to confirm the PaymentIntent.
  * https://stripe.com/docs/api/payment_intents/confirm#confirm_payment_intent-shipping
  */
-export interface AddressOptions {
-    city?: string;
-    country?: string;
-    state?: string;
-    postal_code?: string;
-    line1?: string;
-    line2?: string;
-}
+export type AddressOptions = Partial<Address>;
 
 /**
  * Object definition for part of the data sent to confirm the PaymentIntent.
@@ -143,7 +143,7 @@ export interface PaymentMethodDataOptions {
  * Parameters that will be passed on to the Stripe API to confirm the PaymentIntent.
  */
 export interface StripeUPEConfirmParams {
-    /**
+    /*
      * If you are [handling next actions yourself](https://stripe.com/docs/payments/payment-intents/verifying-status#next-actions), pass in a return_url. If the subsequent action
      * is redirect_to_url, this URL will be used on the return path for the redirect.
      *
@@ -211,14 +211,7 @@ interface ShippingDefaultValues {
     firstName?: string;
     lastName?: string;
     phone: string;
-    address: {
-        line1: string;
-        line2: string;
-        city: string;
-        state: string;
-        postal_code: string;
-        country: string;
-    };
+    address: Address;
 }
 
 /*
@@ -273,7 +266,7 @@ export interface StripeElements {
      * and reflects these updates in the Payment Element.
      * https://stripe.com/docs/js/elements_object/fetch_updates
      */
-    fetchUpdates(): void;
+    fetchUpdates(): Promise<void>;
 }
 
 /**
@@ -293,6 +286,7 @@ export interface StripeUPEAppearanceOptions {
         spacingUnit?: string;
         borderRadius?: string;
     };
+
     rules?: {
         '.Input'?: {
             borderColor?: string;
@@ -420,4 +414,14 @@ export enum StripeUPEPaymentIntentStatus {
     PROCESSING = 'processing',
     SUCCEEDED = 'succeeded',
     CANCELED = 'canceled',
+}
+
+export interface StripeUPEPaymentMethod extends PaymentMethod {
+    initializationData: StripeUPEInitializationData;
+}
+
+export interface StripeUPEInitializationData {
+    stripePublishableKey: string;
+    stripeConnectedAccount: string;
+    shopperLanguage: string;
 }

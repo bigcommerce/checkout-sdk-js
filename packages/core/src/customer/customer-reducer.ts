@@ -45,9 +45,6 @@ function dataReducer(data: Customer | undefined, action: ReducerActionType): Cus
         case CustomerActionType.CreateCustomerAddressSucceeded:
             return objectMerge(data, action.payload);
 
-        case CustomerActionType.StripeLinkAuthenticated:
-            return objectSet(data, 'isStripeLinkAuthenticated', action.payload);
-
         default:
             return data;
     }

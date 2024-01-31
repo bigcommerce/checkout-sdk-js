@@ -18,7 +18,6 @@ import { MonerisPaymentInitializeOptions } from './strategies/moneris';
 import { OpyPaymentInitializeOptions } from './strategies/opy';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 import { SquarePaymentInitializeOptions } from './strategies/square';
-import { StripeUPEPaymentInitializeOptions } from './strategies/stripe-upe';
 import { WorldpayAccessPaymentInitializeOptions } from './strategies/worldpayaccess';
 
 export { PaymentInitializeOptions } from '../generated/payment-initialize-options';
@@ -192,12 +191,6 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support GooglePay.
      */
     googlepaystripeupe?: GooglePayPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the StripeUPE payment method.
-     * They can be omitted unless you need to support StripeUPE.
-     */
-    stripeupe?: StripeUPEPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Worldpay payment method.
