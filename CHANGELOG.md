@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.529.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.528.0...v1.529.0) (2024-01-31)
+
+
+### Features
+
+* **payment:** PI-517 Move Stripe UPE customer and payment strategy t… ([#2193](https://github.com/bigcommerce/checkout-sdk-js/issues/2193)) ([7440eec](https://github.com/bigcommerce/checkout-sdk-js/commit/7440eec4575049c932e98eb83acf288553de7332))
+
 ## [1.528.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.527.0...v1.528.0) (2024-01-30)
 
 

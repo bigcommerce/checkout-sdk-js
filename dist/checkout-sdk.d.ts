@@ -1117,11 +1117,6 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      */
     googlepaystripeupe?: GooglePayCustomerInitializeOptions;
     /**
-     * The options that are required to initialize the Customer Stripe Upe payment method.
-     * They can be omitted unless you need to support Customer Stripe Upe.
-     */
-    stripeupe?: StripeUPECustomerInitializeOptions;
-    /**
      * The options that are required to initialize the GooglePay payment method.
      * They can be omitted unless you need to support GooglePay.
      */
@@ -1296,11 +1291,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support GooglePay.
      */
     googlepaystripeupe?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the StripeUPE payment method.
-     * They can be omitted unless you need to support StripeUPE.
-     */
-    stripeupe?: StripeUPEPaymentInitializeOptions;
     /**
      * The options that are required to initialize the Worldpay payment method.
      * They can be omitted unless you need to support Worldpay.
@@ -4961,7 +4951,6 @@ declare interface Customer {
      * Note: You need to enable "Prompt existing accounts to sign in" in your Checkout Settings.
      */
     shouldEncourageSignIn: boolean;
-    isStripeLinkAuthenticated?: boolean;
     customerGroup?: CustomerGroup;
 }
 
@@ -4994,7 +4983,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithGooglePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions & WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithGooglePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions & WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions & WithStripeUPECustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -7837,7 +7826,7 @@ declare class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest;
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceAcceleratedCheckoutPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceAcceleratedCheckoutPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -9396,6 +9385,18 @@ declare interface WithSquareV2PaymentInitializeOptions {
      * They can be omitted unless you need to support Square.
      */
     squarev2?: SquareV2PaymentInitializeOptions;
+}
+
+declare interface WithStripeUPECustomerInitializeOptions {
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using StripeUPE.
+     */
+    stripeupe?: StripeUPECustomerInitializeOptions;
+}
+
+declare interface WithStripeUPEPaymentInitializeOptions {
+    stripeupe?: StripeUPEPaymentInitializeOptions;
 }
 
 declare interface WithStripeV3PaymentInitializeOptions {

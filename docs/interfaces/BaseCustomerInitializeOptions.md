@@ -42,7 +42,6 @@ information in order to initialize the customer step of checkout.
 - [masterpass](BaseCustomerInitializeOptions.md#masterpass)
 - [methodId](BaseCustomerInitializeOptions.md#methodid)
 - [params](BaseCustomerInitializeOptions.md#params)
-- [stripeupe](BaseCustomerInitializeOptions.md#stripeupe)
 - [timeout](BaseCustomerInitializeOptions.md#timeout)
 
 ## Properties
@@ -210,15 +209,6 @@ The parameters of the request, if required.
 #### Inherited from
 
 [CustomerRequestOptions](CustomerRequestOptions.md).[params](CustomerRequestOptions.md#params)
-
-___
-
-### stripeupe
-
-• `Optional` **stripeupe**: [`StripeUPECustomerInitializeOptions`](StripeUPECustomerInitializeOptions.md)
-
-The options that are required to initialize the Customer Stripe Upe payment method.
-They can be omitted unless you need to support Customer Stripe Upe.
 
 ___
 

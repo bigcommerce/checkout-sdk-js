@@ -43,7 +43,6 @@ current checkout flow.
 - [params](BasePaymentInitializeOptions.md#params)
 - [paypalexpress](BasePaymentInitializeOptions.md#paypalexpress)
 - [square](BasePaymentInitializeOptions.md#square)
-- [stripeupe](BasePaymentInitializeOptions.md#stripeupe)
 - [timeout](BasePaymentInitializeOptions.md#timeout)
 - [worldpay](BasePaymentInitializeOptions.md#worldpay)
 
@@ -312,15 +311,6 @@ ___
 
 The options that are required to initialize the Square payment method.
 They can be omitted unless you need to support Square.
-
-___
-
-### stripeupe
-
-• `Optional` **stripeupe**: [`StripeUPEPaymentInitializeOptions`](StripeUPEPaymentInitializeOptions.md)
-
-The options that are required to initialize the StripeUPE payment method.
-They can be omitted unless you need to support StripeUPE.
 
 ___
 
