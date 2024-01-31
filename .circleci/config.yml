@@ -135,6 +135,7 @@ workflows:
 
       # Only build and push CDN artifact when commits are merged to canonical repo
       - build_cdn:
+          context: "GCR + Artifact Bucket Access"
           filters:
             branches:
               ignore: /pull\/[0-9]+/
@@ -153,6 +154,7 @@ workflows:
           requires:
             - build_cdn
       - ci/notify-success:
+          context: "GCR + Artifact Bucket Access"
           requires:
             - ci/build-js-artifact
 
