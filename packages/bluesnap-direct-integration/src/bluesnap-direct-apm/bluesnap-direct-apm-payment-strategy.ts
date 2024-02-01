@@ -108,6 +108,9 @@ export default class BlueSnapDirectAPMPaymentStrategy implements PaymentStrategy
                             last_name: payment.paymentData.lastName,
                             shopper_permission: payment.paymentData.shopperPermission,
                         },
+                        vault_payment_instrument: payment.paymentData.shouldSaveInstrument,
+                        set_as_default_stored_instrument:
+                            payment.paymentData.shouldSetAsDefaultInstrument,
                     },
                 },
             };

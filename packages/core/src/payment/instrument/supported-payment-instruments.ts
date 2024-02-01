@@ -117,6 +117,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'bluesnapdirect',
         method: 'ecp',
     },
+    'bluesnapdirect.sepa_direct_debit': {
+        provider: 'bluesnapdirect',
+        method: 'sepa_direct_debit',
+    },
     orbital: {
         provider: 'orbital',
         method: 'credit_card',

@@ -277,9 +277,12 @@ export interface WithSepaInstrument {
     lastName: string;
     iban: string;
     shopperPermission: boolean;
+    shouldSaveInstrument?: boolean;
+    shouldSetAsDefaultInstrument?: boolean;
+    instrumentId?: string;
 }
 
-export interface BlueSnapDirectSepaPayload {
+export interface BlueSnapDirectSepaPayload extends FormattedHostedInstrument {
     sepa_direct_debit: {
         first_name: string;
         last_name: string;
