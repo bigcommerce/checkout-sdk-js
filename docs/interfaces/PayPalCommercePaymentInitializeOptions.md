@@ -78,7 +78,7 @@ A callback for displaying error popup. This callback requires error object as pa
 
 | Name | Type |
 | :------ | :------ |
-| `error` | `Error` |
+| `error` | `unknown` |
 
 #### Returns
 

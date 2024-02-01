@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.531.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.530.0...v1.531.0) (2024-02-01)
+
+
+### Features
+
+* **payment:** PAYPAL-3439 added restart flow for PPCP ([#2320](https://github.com/bigcommerce/checkout-sdk-js/issues/2320)) ([b0cbe91](https://github.com/bigcommerce/checkout-sdk-js/commit/b0cbe918bfa38412d75e88546818517c04f9a967))
+
 ## [1.530.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.529.0...v1.530.0) (2024-01-31)
 
 
