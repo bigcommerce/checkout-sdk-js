@@ -133,6 +133,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             onError: (error) => this.handleError(error, onError),
         };
 
+
         this.paypalButton = paypalSdk.Buttons(buttonOptions);
 
         if (!this.paypalButton.isEligible()) {
