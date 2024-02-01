@@ -129,10 +129,9 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
                 this.paypalCommerceIntegrationService.createOrder('paypalcommercecheckout'),
             onClick: (_, actions) => this.handleClick(actions, onValidate),
             onApprove: (data) => this.handleApprove(data, submitForm),
-            onCancel: () => this.toggleLoadingIndicator(false),
             onError: (error) => this.handleError(error, onError),
+            onCancel: () => this.toggleLoadingIndicator(false),
         };
-
 
         this.paypalButton = paypalSdk.Buttons(buttonOptions);
 
