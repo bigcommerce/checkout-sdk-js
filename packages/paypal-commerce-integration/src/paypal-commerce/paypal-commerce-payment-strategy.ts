@@ -9,6 +9,7 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isPaypalCommerceProviderError } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
@@ -28,6 +29,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?: string;
     private orderId?: string;
     private paypalButton?: PayPalCommerceButtons;
+    private paypalcommerce?: PayPalCommercePaymentInitializeOptions;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -39,6 +41,8 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         options?: PaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions,
     ): Promise<void> {
         const { methodId, paypalcommerce } = options || {};
+
+        this.paypalcommerce = paypalcommerce;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -58,6 +62,8 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
+        this.loadingIndicatorContainer = paypalcommerce.container.split('#')[1];
+
         // Info:
         // The PayPal button and fields should not be rendered when shopper was redirected to Checkout page
         // after using smart payment button on PDP or Cart page. In this case backend returns order id if
@@ -70,13 +76,16 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
 
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
 
-        this.loadingIndicatorContainer = paypalcommerce.container.split('#')[1];
-
         this.renderButton(methodId, paypalcommerce);
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = payload;
+        const { onError } = this.paypalcommerce || {};
+        const state = this.paymentIntegrationService.getState();
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+        const shouldHandleInstrumentDeclinedError =
+            features && features['PAYPAL-3438.handling_instrument_declined_error_ppc'];
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
@@ -86,8 +95,31 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             throw new PaymentMethodInvalidError();
         }
 
-        await this.paymentIntegrationService.submitOrder(order, options);
-        await this.paypalCommerceIntegrationService.submitPayment(payment.methodId, this.orderId);
+        try {
+            await this.paymentIntegrationService.submitOrder(order, options);
+            await this.paypalCommerceIntegrationService.submitPayment(
+                payment.methodId,
+                this.orderId,
+            );
+        } catch (error: unknown) {
+            if (this.isProviderError(error) && shouldHandleInstrumentDeclinedError) {
+                await this.paypalCommerceIntegrationService.loadPayPalSdk(payment.methodId);
+
+                await new Promise((_resolve, reject) => {
+                    if (this.paypalcommerce) {
+                        this.paypalButton?.close();
+                        this.renderButton(payment.methodId, this.paypalcommerce);
+                        this.handleError(new Error('INSTRUMENT_DECLINED'), onError);
+                    }
+
+                    reject();
+                });
+            }
+
+            this.handleError(error, onError);
+
+            return Promise.reject();
+        }
     }
 
     finalize(): Promise<void> {
@@ -100,6 +132,16 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         this.paypalButton?.close();
 
         return Promise.resolve();
+    }
+
+    private isProviderError(error: unknown) {
+        if (isPaypalCommerceProviderError(error)) {
+            const paypalProviderError = error?.errors?.filter((e: any) => e.provider_error) || [];
+
+            return paypalProviderError[0].provider_error?.code === 'INSTRUMENT_DECLINED';
+        }
+
+        return false;
     }
 
     /**
@@ -171,7 +213,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
     }
 
     private handleError(
-        error: Error,
+        error: unknown,
         onError: PayPalCommercePaymentInitializeOptions['onError'],
     ): void {
         this.toggleLoadingIndicator(false);

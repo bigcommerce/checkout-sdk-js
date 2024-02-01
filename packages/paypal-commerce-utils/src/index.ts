@@ -17,3 +17,5 @@ export { default as PayPalCommerceSdk } from './paypal-commerce-sdk';
  */
 export { default as createPayPalCommerceAcceleratedCheckoutUtils } from './create-paypal-commerce-accelerated-checkout-utils';
 export { default as PayPalCommerceAcceleratedCheckoutUtils } from './paypal-commerce-accelerated-checkout-utils';
+
+export { default as isPaypalCommerceProviderError } from './utils/is-paypal-commerce-provider-error';

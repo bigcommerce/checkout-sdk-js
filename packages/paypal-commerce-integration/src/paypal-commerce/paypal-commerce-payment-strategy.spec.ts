@@ -9,7 +9,10 @@ import {
     PaymentMethod,
     PaymentMethodInvalidError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getConfig,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import {
@@ -37,6 +40,17 @@ describe('PayPalCommercePaymentStrategy', () => {
     let strategy: PayPalCommercePaymentStrategy;
 
     const paypalOrderId = 'paypal123';
+    const storeConfig = getConfig().storeConfig;
+    const storeConfigWithFeaturesOn = {
+        ...storeConfig,
+        checkoutSettings: {
+            ...storeConfig.checkoutSettings,
+            features: {
+                ...storeConfig.checkoutSettings.features,
+                'PAYPAL-3438.handling_instrument_declined_error_ppc': true,
+            },
+        },
+    };
 
     const defaultMethodId = 'paypalcommerce';
     const defaultContainerId = '#container';
@@ -409,6 +423,239 @@ describe('PayPalCommercePaymentStrategy', () => {
                 payload.payment.methodId,
                 paypalOrderId,
             );
+        });
+
+        it('loads paypalsdk script if receive INSTRUMENT_DECLINED error and experiment is on', async () => {
+            paymentMethod.initializationData.orderId = '1';
+
+            const payload = {
+                payment: {
+                    methodId: defaultMethodId,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithFeaturesOn);
+
+            const providerError = {
+                status: 'error',
+                three_ds_result: {
+                    acs_url: null,
+                    payer_auth_request: null,
+                    merchant_data: null,
+                    callback_url: null,
+                },
+                errors: [
+                    {
+                        code: 'invalid_request_error',
+                        message:
+                            'Were experiencing difficulty processing your transaction. Please contact us or try again later.',
+                    },
+                    {
+                        code: 'transaction_rejected',
+                        message: 'Payment was declined. Please try again.',
+                        provider_error: {
+                            code: 'INSTRUMENT_DECLINED',
+                        },
+                    },
+                ],
+            };
+
+            jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockImplementation(() => {
+                throw providerError;
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            try {
+                await strategy.execute(payload);
+            } catch (_error: unknown) {
+                expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalled();
+            }
+        });
+
+        it('renders paypal spb if receive INSTRUMENT_DECLINED error and experiment is on', async () => {
+            paymentMethod.initializationData.orderId = '1';
+
+            const payload = {
+                payment: {
+                    methodId: defaultMethodId,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithFeaturesOn);
+
+            const providerError = {
+                status: 'error',
+                three_ds_result: {
+                    acs_url: null,
+                    payer_auth_request: null,
+                    merchant_data: null,
+                    callback_url: null,
+                },
+                errors: [
+                    {
+                        code: 'invalid_request_error',
+                        message:
+                            'Were experiencing difficulty processing your transaction. Please contact us or try again later.',
+                    },
+                    {
+                        code: 'transaction_rejected',
+                        message: 'Payment was declined. Please try again.',
+                        provider_error: {
+                            code: 'INSTRUMENT_DECLINED',
+                        },
+                    },
+                ],
+            };
+
+            jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockImplementation(() => {
+                throw providerError;
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            try {
+                await strategy.execute(payload);
+            } catch (_error: unknown) {
+                expect(paypalSdk.Buttons).toHaveBeenCalled();
+            }
+        });
+
+        it('close paypal buttons before render new buttons after getting INSTRUMENT_DECLINED error', async () => {
+            const paypalCommerceSdkCloseMock = jest.fn();
+
+            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
+                (options: PayPalCommerceButtonsOptions) => {
+                    eventEmitter.on('onApprove', () => {
+                        if (options.onApprove) {
+                            options.onApprove(
+                                { orderID: paypalOrderId },
+                                {
+                                    order: {
+                                        get: jest.fn(),
+                                    },
+                                },
+                            );
+                        }
+                    });
+
+                    return {
+                        isEligible: jest.fn(() => true),
+                        render: jest.fn(),
+                        close: paypalCommerceSdkCloseMock,
+                    };
+                },
+            );
+
+            const payload = {
+                payment: {
+                    methodId: defaultMethodId,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithFeaturesOn);
+
+            const providerError = {
+                status: 'error',
+                three_ds_result: {
+                    acs_url: null,
+                    payer_auth_request: null,
+                    merchant_data: null,
+                    callback_url: null,
+                },
+                errors: [
+                    {
+                        code: 'invalid_request_error',
+                        message:
+                            'Were experiencing difficulty processing your transaction. Please contact us or try again later.',
+                    },
+                    {
+                        code: 'transaction_rejected',
+                        message: 'Payment was declined. Please try again.',
+                        provider_error: {
+                            code: 'INSTRUMENT_DECLINED',
+                        },
+                    },
+                ],
+            };
+
+            jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockImplementation(() => {
+                throw providerError;
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onApprove');
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            try {
+                await strategy.execute(payload);
+            } catch (_error: unknown) {
+                expect(paypalCommerceSdkCloseMock).toHaveBeenCalled();
+            }
+        });
+
+        it('throws specific error if receive INSTRUMENT_DECLINED error and experiment is on', async () => {
+            paymentMethod.initializationData.orderId = '1';
+
+            const payload = {
+                payment: {
+                    methodId: defaultMethodId,
+                },
+            };
+
+            paypalCommerceOptions.onError = jest.fn();
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithFeaturesOn);
+
+            const providerError = {
+                status: 'error',
+                three_ds_result: {
+                    acs_url: null,
+                    payer_auth_request: null,
+                    merchant_data: null,
+                    callback_url: null,
+                },
+                errors: [
+                    {
+                        code: 'invalid_request_error',
+                        message:
+                            'Were experiencing difficulty processing your transaction. Please contact us or try again later.',
+                    },
+                    {
+                        code: 'transaction_rejected',
+                        message: 'Payment was declined. Please try again.',
+                        provider_error: {
+                            code: 'INSTRUMENT_DECLINED',
+                        },
+                    },
+                ],
+            };
+
+            jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockImplementation(() => {
+                throw providerError;
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            try {
+                await strategy.execute(payload);
+            } catch (_error: unknown) {
+                expect(paypalCommerceOptions.onError).toHaveBeenCalledWith(
+                    new Error('INSTRUMENT_DECLINED'),
+                );
+            }
         });
     });
 
