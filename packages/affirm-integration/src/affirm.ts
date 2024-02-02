@@ -94,6 +94,6 @@ export interface AffirmAddress {
 }
 
 export interface AffirmScripts {
-    PROD: string;
-    SANDBOX: string;
+    prod: string;
+    sandbox: string;
 }

@@ -1,13 +1,13 @@
-import { StandardError } from '../../../common/error/errors';
+import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { Affirm, AffirmHostWindow } from './affirm';
 import AffirmScriptLoader from './affirm-script-loader';
 import { getAffirmScriptMock } from './affirm.mock';
-import { default as affirmJS } from './affirmJs';
+import loadAffirmJS from './affirmJs';
 
 jest.mock('./affirmJs');
 
-const affirmJsMock = affirmJS as jest.Mock<void>;
+const affirmJsMock = loadAffirmJS as jest.Mock<void>;
 
 describe('AffirmScriptLoader', () => {
     let affirmScriptLoader: AffirmScriptLoader;
@@ -31,7 +31,7 @@ describe('AffirmScriptLoader', () => {
         it('loads the Script with testMode equals to false', async () => {
             await affirmScriptLoader.load('apiKeyTest', false);
 
-            expect(affirmJS).toHaveBeenCalledWith(
+            expect(loadAffirmJS).toHaveBeenCalledWith(
                 'apiKeyTest',
                 '//cdn1.affirm.com/js/v2/affirm.js',
             );
@@ -40,16 +40,14 @@ describe('AffirmScriptLoader', () => {
         it('loads the Script with testMode equals to true', async () => {
             await affirmScriptLoader.load('apiKeyTest', true);
 
-            expect(affirmJS).toHaveBeenCalledWith(
+            expect(loadAffirmJS).toHaveBeenCalledWith(
                 'apiKeyTest',
                 '//cdn1-sandbox.affirm.com/js/v2/affirm.js',
             );
         });
 
         it('returns the Script from the window', async () => {
-            const Affirm = await affirmScriptLoader.load();
-
-            expect(Affirm).toBe(affirmScript);
+            expect(await affirmScriptLoader.load()).toBe(affirmScript);
         });
 
         it('throws error when window is not set', async () => {
