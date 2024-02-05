@@ -182,10 +182,14 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         }
 
         const { three_ds_result: threeDSResult }: TdOnlineMartThreeDSErrorBody = error.body;
-        const { formUrl, threeDSSessionData, creq } = threeDSResult || {};
+        const {
+            acs_url: formUrl,
+            payer_auth_request: threeDSSessionData,
+            merchant_data: creq,
+        } = threeDSResult || {};
 
         if (!formUrl || !threeDSSessionData || !creq) {
-            throw new PaymentArgumentInvalidError(['formUrl', 'threeDSSessionData', 'sreq']);
+            throw new PaymentArgumentInvalidError(['formUrl', 'threeDSSessionData', 'creq']);
         }
 
         return new Promise((resolve) => {
