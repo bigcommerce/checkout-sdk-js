@@ -70,7 +70,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
         await this.paymentIntegrationService.submitOrder({ useStoreCredit }, options);
 
-        const affirmCheckout = await this.initiateAffirmCheckout();
+        const affirmCheckout = await this.initializeAffirmCheckout();
 
         const paymentPayload = {
             methodId,
@@ -92,7 +92,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    private initiateAffirmCheckout(): Promise<AffirmSuccessResponse> {
+    private initializeAffirmCheckout(): Promise<AffirmSuccessResponse> {
         this.affirm?.checkout(this.getCheckoutInformation());
 
         return new Promise((resolve, reject) => {
@@ -161,7 +161,10 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
         const consignment = consignments[0];
 
-        return consignment.selectedShippingOption ? consignment.selectedShippingOption.type : '';
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        return consignment && consignment.selectedShippingOption
+            ? consignment.selectedShippingOption.type
+            : '';
     }
 
     private getBillingAddress(): AffirmAddress {
