@@ -737,7 +737,7 @@ export interface BraintreeConnectStylesOption {
 export enum BraintreeConnectAuthenticationState {
     SUCCEEDED = 'succeeded',
     FAILED = 'failed',
-    CANCELED = 'canceled',
+    CANCELED = 'cancelled',
     UNRECOGNIZED = 'unrecognized',
 }
 

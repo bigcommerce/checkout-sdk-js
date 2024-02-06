@@ -150,7 +150,7 @@ export interface PayPalCommerceConnectAuthenticationResult {
 export enum PayPalCommerceConnectAuthenticationState {
     SUCCEEDED = 'succeeded',
     FAILED = 'failed',
-    CANCELED = 'canceled',
+    CANCELED = 'cancelled',
     UNRECOGNIZED = 'unrecognized',
 }
 

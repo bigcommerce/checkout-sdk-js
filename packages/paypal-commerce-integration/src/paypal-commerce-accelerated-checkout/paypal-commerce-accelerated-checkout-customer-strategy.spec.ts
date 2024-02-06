@@ -34,6 +34,7 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
     const customer = getCustomer();
 
     const methodId = 'paypalcommerceacceleratedcheckout';
+    const secondaryMethodId = 'paypalcommercecreditcards';
     const customerContextIdMock = 'customerId123';
     const authenticationResultMock = {
         authenticationState: PayPalCommerceConnectAuthenticationState.SUCCEEDED,
@@ -147,7 +148,6 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
 
         const state = paymentIntegrationService.getState();
 
-        // jest.spyOn(paymentIntegrationService, 'getState');
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
         jest.spyOn(paymentIntegrationService, 'updatePaymentProviderCustomer');
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress');
@@ -196,10 +196,63 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
             }
         });
 
-        it('loads paypal accelerated checkout payment method', async () => {
+        it('loads paypal commerce accelerated checkout payment method', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+        });
+
+        it('loads paypal commerce credit cards payment method on trigger strategy for not know control/test group', async () => {
+            await strategy.initialize({
+                ...initializationOptions,
+                methodId: secondaryMethodId,
+            });
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                secondaryMethodId,
+            );
+        });
+
+        it('loads primary payment method if the secondary payment method load throws an error', async () => {
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockImplementationOnce(
+                () => {
+                    throw new Error();
+                },
+            );
+
+            await strategy.initialize({
+                ...initializationOptions,
+                methodId: secondaryMethodId,
+            });
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                secondaryMethodId,
+            );
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+        });
+
+        it('loads secondary payment method if the primary payment method load throws an error', async () => {
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockImplementationOnce(
+                () => {
+                    throw new Error();
+                },
+            );
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                secondaryMethodId,
+            );
+        });
+
+        it('does not load secondary payment method if primary payment method was loaded successfully', async () => {
+            await strategy.initialize(initializationOptions);
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
+            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalledWith(
+                secondaryMethodId,
+            );
         });
 
         it('do nothing if accelerated checkout feature is disabled', async () => {
@@ -324,18 +377,21 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
         });
 
         it('loads payment method to get related data', async () => {
+            await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout(executionOptions);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
         });
 
         it('triggers checkoutPaymentMethodExecuted if it is provided', async () => {
+            await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout(executionOptions);
 
             expect(executionOptions.checkoutPaymentMethodExecuted).toHaveBeenCalled();
         });
 
         it('does not call checkoutPaymentMethodExecuted if it is not provided', async () => {
+            await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout({
                 ...executionOptions,
                 checkoutPaymentMethodExecuted: undefined,
@@ -352,6 +408,7 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(paymentMethod);
 
+            await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout(executionOptions);
 
             expect(
@@ -360,6 +417,7 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
         });
 
         it('runs paypal connect authentication flow and updates customers data in checkout state', async () => {
+            await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout(executionOptions);
 
             expect(
@@ -389,6 +447,7 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
         });
 
         it('calls continueWithCheckoutCallback callback in the end of execution flow', async () => {
+            await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout(executionOptions);
 
             expect(executionOptions.continueWithCheckoutCallback).toHaveBeenCalled();
