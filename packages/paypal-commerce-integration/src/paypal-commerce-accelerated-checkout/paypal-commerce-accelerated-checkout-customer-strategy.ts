@@ -5,6 +5,7 @@ import {
     ExecutePaymentMethodCheckoutOptions,
     InvalidArgumentError,
     PaymentIntegrationService,
+    PaymentMethod,
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -18,6 +19,10 @@ import {
 import { WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions } from './paypal-commerce-accelerated-checkout-customer-initialize-options';
 
 export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implements CustomerStrategy {
+    private isAcceleratedCheckoutFeatureEnabled = false;
+    private primaryMethodId = 'paypalcommerceacceleratedcheckout';
+    private secondaryMethodId = 'paypalcommercecreditcards';
+
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceSdk: PayPalCommerceSdk,
@@ -36,13 +41,14 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
             );
         }
 
-        await this.paymentIntegrationService.loadPaymentMethod(methodId);
+        const paymentMethod = await this.getValidPaymentMethodOrThrow(methodId);
 
-        if (this.isAcceleratedCheckoutFeatureEnabled(methodId)) {
+        this.isAcceleratedCheckoutFeatureEnabled =
+            !!paymentMethod.initializationData?.isAcceleratedCheckoutEnabled;
+
+        if (this.isAcceleratedCheckoutFeatureEnabled) {
             const state = this.paymentIntegrationService.getState();
             const currency = state.getCartOrThrow().currency.code;
-            const paymentMethod =
-                state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
             const paypalAxoSdk = await this.paypalCommerceSdk.getPayPalAxo(paymentMethod, currency);
             const isTestModeEnabled = !!paymentMethod.initializationData?.isDeveloperModeApplicable;
@@ -87,8 +93,8 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
             );
         }
 
-        if (this.isAcceleratedCheckoutFeatureEnabled(methodId)) {
-            const shouldRunAuthenticationFlow = await this.shouldRunAuthenticationFlow(methodId);
+        if (this.isAcceleratedCheckoutFeatureEnabled) {
+            const shouldRunAuthenticationFlow = await this.shouldRunAuthenticationFlow();
 
             if (
                 checkoutPaymentMethodExecuted &&
@@ -98,7 +104,7 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
             }
 
             if (shouldRunAuthenticationFlow) {
-                await this.runPayPalConnectAuthenticationFlowOrThrow(methodId);
+                await this.runPayPalConnectAuthenticationFlowOrThrow();
             }
         }
 
@@ -110,22 +116,15 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
      * Authentication flow methods
      *
      */
-    private isAcceleratedCheckoutFeatureEnabled(methodId: string): boolean {
-        const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-
-        return !!paymentMethod.initializationData?.isAcceleratedCheckoutEnabled;
-    }
-
     // TODO: remove when A/B testing will be finished
-    private async shouldRunAuthenticationFlow(methodId: string): Promise<boolean> {
+    private async shouldRunAuthenticationFlow(): Promise<boolean> {
         try {
-            await this.paymentIntegrationService.loadPaymentMethod(methodId);
+            await this.paymentIntegrationService.loadPaymentMethod(this.primaryMethodId);
 
             const state = this.paymentIntegrationService.getState();
-            const paymentMethod =
-                state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+            const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
+                this.primaryMethodId,
+            );
 
             return paymentMethod.initializationData?.shouldRunAcceleratedCheckout || false;
         } catch (_) {
@@ -133,7 +132,7 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
         }
     }
 
-    private async runPayPalConnectAuthenticationFlowOrThrow(methodId: string): Promise<void> {
+    private async runPayPalConnectAuthenticationFlowOrThrow(): Promise<void> {
         try {
             const state = this.paymentIntegrationService.getState();
             const cart = state.getCartOrThrow();
@@ -155,7 +154,7 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
                 authenticationResult.authenticationState ===
                 PayPalCommerceConnectAuthenticationState.CANCELED;
 
-            await this.updateCustomerDataState(methodId, authenticationResult);
+            await this.updateCustomerDataState(this.primaryMethodId, authenticationResult);
             this.paypalCommerceAcceleratedCheckoutUtils.updateStorageSessionId(
                 isAuthenticationFlowCanceled,
                 cart.id,
@@ -192,5 +191,28 @@ export default class PayPalCommerceAcceleratedCheckoutCustomerStrategy implement
         if (shippingAddress && cart.lineItems.physicalItems.length > 0) {
             await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
         }
+    }
+
+    /**
+     *
+     * Other
+     *
+     */
+    private async getValidPaymentMethodOrThrow(
+        methodId: string,
+    ): Promise<PaymentMethod<PayPalCommerceInitializationData>> {
+        let validPaymentMethodId = methodId;
+
+        try {
+            await this.paymentIntegrationService.loadPaymentMethod(validPaymentMethodId);
+        } catch {
+            validPaymentMethodId =
+                methodId === this.secondaryMethodId ? this.primaryMethodId : this.secondaryMethodId;
+            await this.paymentIntegrationService.loadPaymentMethod(validPaymentMethodId);
+        }
+
+        return this.paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow<PayPalCommerceInitializationData>(validPaymentMethodId);
     }
 }
