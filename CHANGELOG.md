@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.533.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.532.0...v1.533.0) (2024-02-06)
+
+
+### Features
+
+* **payment:** PAYPAL-3560 updated PayPalCommerceAcceleratedCheckoutCustomerStrategy to load it with ppcp credit cards method id ([#2351](https://github.com/bigcommerce/checkout-sdk-js/issues/2351)) ([3cc87f3](https://github.com/bigcommerce/checkout-sdk-js/commit/3cc87f32d6faa4e2a99bf13cf8309ca19c355768))
+
 ## [1.532.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.531.0...v1.532.0) (2024-02-06)
 
 
