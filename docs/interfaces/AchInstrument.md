@@ -57,7 +57,7 @@ ___
 
 ### method
 
-• **method**: ``"ach"``
+• **method**: ``"ach"`` \| ``"ecp"``
 
 #### Overrides
 

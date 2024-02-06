@@ -36,7 +36,7 @@ declare interface AchInstrument extends BaseAccountInstrument {
     issuer: string;
     accountNumber: string;
     type: 'bank';
-    method: 'ach';
+    method: 'ach' | 'ecp';
 }
 
 declare interface Address extends AddressRequestBody {
