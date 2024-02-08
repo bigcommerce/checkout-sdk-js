@@ -34,7 +34,6 @@ import {
 export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     private _methodId?: keyof WithGooglePayPaymentInitializeOptions;
     private _buyNowCart?: Cart;
-    private _buyNowInitializeOptions?: GooglePayBuyNowInitializeOptions;
     private _currencyCode?: string;
 
     constructor(
@@ -76,7 +75,6 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             }
 
             this._currencyCode = currencyCode;
-            this._buyNowInitializeOptions = buyNowInitializeOptions;
 
             await this._googlePayPaymentProcessor.initialize(
                 () =>
@@ -91,10 +89,14 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             );
         } else {
             await this._paymentIntegrationService.loadDefaultCheckout();
-            await this._googlePayPaymentProcessor.initialize(() =>
-                this._paymentIntegrationService
-                    .getState()
-                    .getPaymentMethodOrThrow<GooglePayInitializationData>(this._getMethodOrThrow()),
+            await this._googlePayPaymentProcessor.initialize(
+                () =>
+                    this._paymentIntegrationService
+                        .getState()
+                        .getPaymentMethodOrThrow<GooglePayInitializationData>(
+                            this._getMethodOrThrow(),
+                        ),
+                this._getGooglePayClientOptions(googlePayOptions),
             );
         }
 
@@ -140,10 +142,6 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     }
 
     private async _interactWithPaymentSheet(): Promise<void> {
-        if (!this._buyNowInitializeOptions) {
-            await this._paymentIntegrationService.loadCheckout();
-        }
-
         const response = await this._googlePayPaymentProcessor.showPaymentSheet();
         const billingAddress =
             this._googlePayPaymentProcessor.mapToBillingAddressRequestBody(response);

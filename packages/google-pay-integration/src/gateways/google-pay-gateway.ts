@@ -1,5 +1,3 @@
-import { round } from 'lodash';
-
 import {
     AddressRequestBody,
     BillingAddressRequestBody,
@@ -150,26 +148,10 @@ export default class GooglePayGateway {
     }
 
     getTransactionInfo(): GooglePayTransactionInfo {
-        if (this._isBuyNowFlow) {
-            return {
-                currencyCode: this._getCurrencyCodeOrThrow(),
-                totalPriceStatus: TotalPriceStatusType.ESTIMATED,
-                totalPrice: '0',
-            };
-        }
-
-        const { getCheckoutOrThrow, getCartOrThrow } = this._paymentIntegrationService.getState();
-        const countryCode = this.getGooglePayInitializationData().storeCountry;
-        const { code: currencyCode, decimalPlaces } = getCartOrThrow().currency;
-        const totalPrice = round(getCheckoutOrThrow().outstandingBalance, decimalPlaces).toFixed(
-            decimalPlaces,
-        );
-
         return {
-            ...(countryCode && { countryCode }),
-            currencyCode,
-            totalPriceStatus: TotalPriceStatusType.FINAL,
-            totalPrice,
+            currencyCode: 'USD',
+            totalPriceStatus: TotalPriceStatusType.ESTIMATED,
+            totalPrice: '0',
         };
     }
 

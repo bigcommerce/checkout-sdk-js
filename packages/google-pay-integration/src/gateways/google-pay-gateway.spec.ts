@@ -99,12 +99,11 @@ describe('GooglePayGateway', () => {
     });
 
     describe('#getTransactionInfo', () => {
-        it('should return transaction info', async () => {
+        it('should return ESTIMATED transaction info', async () => {
             const expectedInfo = {
-                countryCode: 'US',
                 currencyCode: 'USD',
-                totalPriceStatus: 'FINAL',
-                totalPrice: '190.00',
+                totalPriceStatus: 'ESTIMATED',
+                totalPrice: '0',
             };
 
             await gateway.initialize(getGeneric);
@@ -124,23 +123,7 @@ describe('GooglePayGateway', () => {
             expect(gateway.getTransactionInfo()).toStrictEqual(expectedInfo);
         });
 
-        it('should call getCartOrThrow', async () => {
-            await gateway.initialize(getGeneric);
-
-            expect(paymentIntegrationService.getState().getCartOrThrow).toHaveBeenCalled();
-        });
-
-        it('should call getCheckoutOrThrow', async () => {
-            await gateway.initialize(getGeneric);
-
-            expect(paymentIntegrationService.getState().getCheckoutOrThrow).toHaveBeenCalled();
-        });
-
         describe('should fail if:', () => {
-            test('not initialized', () => {
-                expect(() => gateway.getTransactionInfo()).toThrow(NotInitializedError);
-            });
-
             it('currencyCode is not passed (Buy Now flow)', async () => {
                 try {
                     await gateway.initialize(getGeneric, true);

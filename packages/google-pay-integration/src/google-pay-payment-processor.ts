@@ -37,7 +37,6 @@ export default class GooglePayPaymentProcessor {
     private _cardPaymentMethod?: GooglePayCardPaymentMethod;
     private _paymentDataRequest?: GooglePayPaymentDataRequest;
     private _isReadyToPayRequest?: GooglePayIsReadyToPayRequest;
-    private _isBuyNowFlow = false;
 
     constructor(
         private _scriptLoader: GooglePayScriptLoader,
@@ -56,8 +55,6 @@ export default class GooglePayPaymentProcessor {
             getPaymentMethod().config.testMode,
             googlePayPaymentOptions,
         );
-
-        this._isBuyNowFlow = Boolean(isBuyNowFlow);
 
         await this._gateway.initialize(getPaymentMethod, isBuyNowFlow, currencyCode);
 
@@ -98,8 +95,6 @@ export default class GooglePayPaymentProcessor {
 
     async showPaymentSheet(): Promise<GooglePayCardDataResponse> {
         const paymentDataRequest = this._getPaymentDataRequest();
-
-        paymentDataRequest.transactionInfo = this._gateway.getTransactionInfo();
 
         return this._getPaymentsClient().loadPaymentData(paymentDataRequest);
     }
@@ -223,7 +218,7 @@ export default class GooglePayPaymentProcessor {
             transactionInfo: this._gateway.getTransactionInfo(),
             merchantInfo: this._gateway.getMerchantInfo(),
             ...(await this._gateway.getRequiredData()),
-            ...(this._isBuyNowFlow && { callbackIntents: [CallbackIntentsType.OFFER] }),
+            callbackIntents: [CallbackIntentsType.OFFER],
         };
         this._isReadyToPayRequest = {
             ...this._baseRequest,

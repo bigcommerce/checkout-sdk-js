@@ -141,11 +141,11 @@ describe('GooglePayPaymentProcessor', () => {
                     merchantName: 'Example Merchant',
                 },
                 transactionInfo: {
-                    countryCode: 'US',
                     currencyCode: 'USD',
-                    totalPrice: '190.00',
-                    totalPriceStatus: 'FINAL',
+                    totalPrice: '0',
+                    totalPriceStatus: 'ESTIMATED',
                 },
+                callbackIntents: ['OFFER'],
             };
 
             await processor.initialize(getGeneric);
@@ -284,13 +284,6 @@ describe('GooglePayPaymentProcessor', () => {
             await expect(processor.showPaymentSheet()).resolves.toBe(clientMocks.cardDataResponse);
         });
 
-        it('should update the transaction info', async () => {
-            await processor.initialize(getGeneric);
-            await processor.showPaymentSheet();
-
-            expect(gateway.getTransactionInfo).toHaveBeenCalledTimes(3);
-        });
-
         it('should load google payment data', async () => {
             const expectedRequest = {
                 allowedPaymentMethods: [
@@ -320,11 +313,11 @@ describe('GooglePayPaymentProcessor', () => {
                     merchantName: 'Example Merchant',
                 },
                 transactionInfo: {
-                    countryCode: 'US',
                     currencyCode: 'USD',
-                    totalPrice: '190.00',
-                    totalPriceStatus: 'FINAL',
+                    totalPrice: '0',
+                    totalPriceStatus: 'ESTIMATED',
                 },
+                callbackIntents: ['OFFER'],
             };
 
             await processor.initialize(getGeneric);

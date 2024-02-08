@@ -166,8 +166,12 @@ describe('GooglePayButtonStrategy', () => {
 
         describe('initialization of strategy without buy now required options', () => {
             it('should initialize the strategy', async () => {
+                const paymentDataCallbacks = () =>
+                    (processor.initialize as jest.Mock).mock.calls[0][1];
+
                 expect(await buttonStrategy.initialize(options)).toBeUndefined();
                 expect(paymentIntegrationService.loadDefaultCheckout).toHaveBeenCalled();
+                expect(paymentDataCallbacks()).toBeDefined();
             });
 
             it('should initialize processor', async () => {
