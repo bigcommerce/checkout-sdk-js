@@ -138,6 +138,7 @@ describe('GooglePayButtonStrategy', () => {
                 expect(getPaymentMethod()).toBe(paymentMethod);
             });
 
+            // test
             it('should create Buy Now cart on google pay button click', async () => {
                 jest.spyOn(processor, 'initialize').mockImplementation(
                     (_, googlePayClientOptions) => {
