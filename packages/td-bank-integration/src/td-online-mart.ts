@@ -39,9 +39,9 @@ export interface CreateTokenError {
 export interface TdOnlineMartThreeDSErrorBody {
     errors?: Array<{ code: string }>;
     three_ds_result?: {
-        formUrl: string;
-        threeDSSessionData: string;
-        creq: string;
+        acs_url: string;
+        payer_auth_request: string;
+        merchant_data: string;
     };
 }
 /* eslint-enable @typescript-eslint/naming-convention */

@@ -336,12 +336,13 @@ describe('TDOnlineMartPaymentStrategy', () => {
                                 code: 'three_ds_result',
                             },
                         ],
-                        // eslint-disable-next-line @typescript-eslint/naming-convention
+                        /* eslint-disable @typescript-eslint/naming-convention */
                         three_ds_result: {
-                            formUrl: 'https://example.com',
-                            threeDSSessionData: '3ds_session_data',
-                            creq: 'creq_data',
+                            acs_url: 'https://example.com',
+                            payer_auth_request: '3ds_session_data',
+                            merchant_data: 'creq_data',
                         },
+                        /* eslint-enable @typescript-eslint/naming-convention */
                     },
                 });
 
