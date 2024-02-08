@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.534.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.533.0...v1.534.0) (2024-02-08)
+
+
+### Features
+
+* **payment:** PI-1487 Update 3DS options ([99195a6](https://github.com/bigcommerce/checkout-sdk-js/commit/99195a69a7f8e08d7d0844c867b99a8acb4215bd))
+
 ## [1.533.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.532.0...v1.533.0) (2024-02-06)
 
 
