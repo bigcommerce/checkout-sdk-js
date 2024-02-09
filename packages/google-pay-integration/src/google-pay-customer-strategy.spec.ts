@@ -302,6 +302,7 @@ describe('GooglePayCustomerStrategy', () => {
                 expect(paymentIntegrationService.getState().getCartOrThrow).toHaveBeenCalled();
             });
 
+            // test
             it('should call getCheckoutOrThrow', async () => {
                 await strategy.initialize(options);
 
