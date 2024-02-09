@@ -1,8 +1,9 @@
 import { filter, find, keyBy, reduce } from 'lodash';
 
+import { AmountTransformer } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { LineItem, mapToInternalLineItems } from '../cart';
 import { Checkout } from '../checkout';
-import { AmountTransformer } from '../common/utility';
 import { mapToInternalCoupon } from '../coupon';
 import { HOSTED } from '../payment';
 

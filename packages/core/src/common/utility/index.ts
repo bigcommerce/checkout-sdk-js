@@ -1,4 +1,3 @@
-export { default as AmountTransformer } from './amount-transformer';
 export { default as arrayReplace } from './array-replace';
 export { default as bindDecorator } from './bind-decorator';
 export { default as clone } from './clone-decorator';
