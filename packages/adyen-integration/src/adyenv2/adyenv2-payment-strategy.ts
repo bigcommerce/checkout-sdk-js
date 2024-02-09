@@ -387,6 +387,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                         .getState()
                         .getBillingAddress();
                     const { prefillCardHolderName } = paymentMethod.initializationData;
+
                     paymentComponent = adyenClient.create(paymentMethod.method, {
                         ...adyenv2.options,
                         onChange: (componentState) => this._updateComponentState(componentState),
@@ -496,6 +497,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         const cardComponent = adyenv2.hasVaultedInstruments
             ? this._cardVerificationComponent
             : this._paymentComponent;
+        const isEmptyString = (value: string) => value.toString().trim().length === 0;
 
         if (!cardComponent?.componentRef?.showValidation || !cardComponent.state) {
             return;
@@ -509,7 +511,10 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
          */
         if (
             Object.keys(cardComponent.state).length === 0 ||
-            (!cardComponent.state.isValid && !cardComponent.state.issuer)
+            (!cardComponent.state.isValid && !cardComponent.state.issuer) ||
+            // prevent empty sepa fields from being sent
+            (cardComponent.props?.type === 'sepadirectdebit' &&
+                Object.values(cardComponent.state.data).some(isEmptyString))
         ) {
             throw new PaymentInvalidFormError(this._mapCardErrors(cardComponent.state.errors));
         }
