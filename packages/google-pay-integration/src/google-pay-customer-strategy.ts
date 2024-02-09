@@ -1,3 +1,5 @@
+import { round } from 'lodash';
+
 import {
     CustomerInitializeOptions,
     CustomerStrategy,
@@ -19,11 +21,19 @@ import GooglePayCustomerInitializeOptions, {
 import GooglePayPaymentProcessor from './google-pay-payment-processor';
 import isGooglePayErrorObject from './guards/is-google-pay-error-object';
 import isGooglePayKey from './guards/is-google-pay-key';
-import { GooglePayInitializationData } from './types';
+import {
+    CallbackTriggerType,
+    GooglePayInitializationData,
+    GooglePayPaymentOptions,
+    IntermediatePaymentData,
+    NewTransactionInfo,
+    TotalPriceStatusType,
+} from './types';
 
 export default class GooglePayCustomerStrategy implements CustomerStrategy {
     private _paymentButton?: HTMLElement;
     private _methodId?: keyof WithGooglePayCustomerInitializeOptions;
+    private _countryCode?: string;
 
     constructor(
         private _paymentIntegrationService: PaymentIntegrationService,
@@ -57,8 +67,13 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             paymentMethod = state.getPaymentMethodOrThrow(this._getMethodId());
         }
 
+        this._countryCode = paymentMethod.initializationData?.storeCountry;
+
         try {
-            await this._googlePayPaymentProcessor.initialize(() => paymentMethod);
+            await this._googlePayPaymentProcessor.initialize(
+                () => paymentMethod,
+                this._getGooglePayClientOptions(),
+            );
         } catch {
             return;
         }
@@ -94,6 +109,39 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         this._methodId = undefined;
 
         return Promise.resolve();
+    }
+
+    private _getGooglePayClientOptions(): GooglePayPaymentOptions {
+        return {
+            paymentDataCallbacks: {
+                onPaymentDataChanged: async ({
+                    callbackTrigger,
+                }: IntermediatePaymentData): Promise<NewTransactionInfo | void> => {
+                    if (callbackTrigger !== CallbackTriggerType.INITIALIZE) {
+                        return;
+                    }
+
+                    await this._paymentIntegrationService.loadCheckout();
+
+                    const { getCheckoutOrThrow, getCartOrThrow } =
+                        this._paymentIntegrationService.getState();
+                    const { code: currencyCode, decimalPlaces } = getCartOrThrow().currency;
+                    const totalPrice = round(
+                        getCheckoutOrThrow().outstandingBalance,
+                        decimalPlaces,
+                    ).toFixed(decimalPlaces);
+
+                    return {
+                        newTransactionInfo: {
+                            ...(this._countryCode && { countryCode: this._countryCode }),
+                            currencyCode,
+                            totalPriceStatus: TotalPriceStatusType.FINAL,
+                            totalPrice,
+                        },
+                    };
+                },
+            },
+        };
     }
 
     private _addPaymentButton({
@@ -149,8 +197,6 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     }
 
     private async _interactWithPaymentSheet(): Promise<void> {
-        await this._paymentIntegrationService.loadCheckout();
-
         const response = await this._googlePayPaymentProcessor.showPaymentSheet();
         const billingAddress =
             this._googlePayPaymentProcessor.mapToBillingAddressRequestBody(response);

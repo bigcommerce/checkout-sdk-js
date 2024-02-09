@@ -1,6 +1,7 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { EventEmitter } from 'events';
 
 import {
     InvalidArgumentError,
@@ -19,8 +20,14 @@ import { WithGooglePayPaymentInitializeOptions } from './google-pay-payment-init
 import GooglePayPaymentProcessor from './google-pay-payment-processor';
 import GooglePayPaymentStrategy from './google-pay-payment-strategy';
 import GooglePayScriptLoader from './google-pay-script-loader';
+import getCardDataResponse from './mocks/google-pay-card-data-response.mock';
 import { getGeneric } from './mocks/google-pay-payment-method.mock';
-import { GooglePayInitializationData } from './types';
+import {
+    CallbackTriggerType,
+    GooglePayButtonOptions,
+    GooglePayInitializationData,
+    NewTransactionInfo,
+} from './types';
 
 describe('GooglePayPaymentStrategy', () => {
     const BUTTON_ID = 'my_awesome_google_pay_button';
@@ -30,9 +37,11 @@ describe('GooglePayPaymentStrategy', () => {
     let strategy: GooglePayPaymentStrategy;
     let options: PaymentInitializeOptions & WithGooglePayPaymentInitializeOptions;
     let button: HTMLDivElement;
+    let eventEmitter: EventEmitter;
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+        eventEmitter = new EventEmitter();
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             getGeneric(),
@@ -251,6 +260,94 @@ describe('GooglePayPaymentStrategy', () => {
                 ).mockReturnValue(getGeneric());
 
                 await expect(execute()).rejects.toThrow(MissingDataError);
+            });
+        });
+    });
+
+    describe('#handleClick', () => {
+        beforeEach(() => {
+            jest.spyOn(processor, 'addPaymentButton').mockImplementation(
+                (
+                    _: string,
+                    buttonOptions: Omit<GooglePayButtonOptions, 'allowedPaymentMethods'>,
+                ) => {
+                    button.onclick = buttonOptions.onClick;
+
+                    return button;
+                },
+            );
+        });
+
+        describe('#getGooglePayClientOptions', () => {
+            let mockReturnedPaymentDataChangedValue: NewTransactionInfo;
+
+            beforeEach(() => {
+                jest.spyOn(processor, 'initialize').mockImplementation(
+                    (_, googlePayClientOptions) => {
+                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                        eventEmitter.on('onPaymentDataChanged', async () => {
+                            mockReturnedPaymentDataChangedValue =
+                                await googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged(
+                                    {
+                                        callbackTrigger: CallbackTriggerType.INITIALIZE,
+                                    },
+                                );
+                        });
+                    },
+                );
+
+                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
+                    eventEmitter.emit('onPaymentDataChanged');
+
+                    return getCardDataResponse();
+                });
+            });
+
+            it('should load checkout via onPaymentDataChanged callback', async () => {
+                await strategy.initialize(options);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
+            });
+
+            it('should return updated transactionInfo', async () => {
+                await strategy.initialize(options);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(mockReturnedPaymentDataChangedValue).toStrictEqual({
+                    newTransactionInfo: {
+                        countryCode: 'US',
+                        currencyCode: 'USD',
+                        totalPriceStatus: 'FINAL',
+                        totalPrice: '190.00',
+                    },
+                });
+            });
+
+            it('should call getCartOrThrow', async () => {
+                await strategy.initialize(options);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.getState().getCartOrThrow).toHaveBeenCalled();
+            });
+
+            it('should call getCheckoutOrThrow', async () => {
+                await strategy.initialize(options);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.getState().getCheckoutOrThrow).toHaveBeenCalled();
             });
         });
     });
