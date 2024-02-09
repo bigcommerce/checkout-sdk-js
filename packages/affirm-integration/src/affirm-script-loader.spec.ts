@@ -7,6 +7,7 @@ import loadAffirmJS from './affirmJs';
 
 jest.mock('./affirmJs');
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const affirmJsMock = loadAffirmJS as jest.Mock<void>;
 
 describe('AffirmScriptLoader', () => {
@@ -14,8 +15,13 @@ describe('AffirmScriptLoader', () => {
     let affirmWindow: AffirmHostWindow;
 
     beforeEach(() => {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         affirmWindow = {} as AffirmHostWindow;
         affirmScriptLoader = new AffirmScriptLoader(affirmWindow);
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     describe('#load()', () => {
@@ -58,6 +64,7 @@ describe('AffirmScriptLoader', () => {
             try {
                 await affirmScriptLoader.load();
             } catch (error) {
+                // eslint-disable-next-line jest/no-conditional-expect
                 expect(error).toBeInstanceOf(StandardError);
             }
         });

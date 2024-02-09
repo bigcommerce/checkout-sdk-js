@@ -11,9 +11,9 @@ For additional information on Affirm API, please refer to [Affirm API documentat
 
 This package uses [Jest](https://jestjs.io) for testing.
 
-Run `nx test stripe-integration` to execute all the unit tests for this package.
+Run `nx test affirm-integration` to execute all the unit tests for this package.
 
-Run `nx test stripe-integration --testFile="<FILE_NAME>"` to execute unit tests for a single file.
+Run `nx test affirm-integration --testFile="<FILE_NAME>"` to execute unit tests for a single file.
 
 ## Running lint
 

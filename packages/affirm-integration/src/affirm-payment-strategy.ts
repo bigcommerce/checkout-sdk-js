@@ -42,22 +42,20 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
         const state = this.paymentIntegrationService.getState();
 
-        const paymentMethod = state.getPaymentMethod(options.methodId);
+        const {
+            clientToken,
+            config: { testMode },
+        } = state.getPaymentMethodOrThrow(options.methodId);
 
-        if (!paymentMethod || !paymentMethod.clientToken) {
+        if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const {
-            config: { testMode },
-            clientToken: publicKey,
-        } = paymentMethod;
-
-        this.affirm = await this.affirmScriptLoader.load(publicKey, testMode);
+        this.affirm = await this.affirmScriptLoader.load(clientToken, testMode);
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
-        const methodId = payload.payment && payload.payment.methodId;
+        const methodId = payload.payment?.methodId;
         const { useStoreCredit } = payload;
 
         if (!this.affirm) {
@@ -98,10 +96,11 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         return new Promise((resolve, reject) => {
             this.affirm?.checkout.open({
                 onFail: (failObject: AffirmFailResponse) => {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                    failObject.reason === 'canceled'
-                        ? reject(new PaymentMethodCancelledError())
-                        : reject(new PaymentMethodInvalidError());
+                    if (failObject.reason === 'canceled') {
+                        reject(new PaymentMethodCancelledError());
+                    } else {
+                        reject(new PaymentMethodInvalidError());
+                    }
                 },
                 onSuccess: (successObject) => {
                     resolve(successObject);
@@ -162,9 +161,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         const consignment = consignments[0];
 
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        return consignment && consignment.selectedShippingOption
-            ? consignment.selectedShippingOption.type
-            : '';
+        return consignment?.selectedShippingOption ? consignment.selectedShippingOption.type : '';
     }
 
     private getBillingAddress(): AffirmAddress {

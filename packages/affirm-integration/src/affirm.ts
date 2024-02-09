@@ -93,7 +93,7 @@ export interface AffirmAddress {
     email?: string;
 }
 
-export interface AffirmScripts {
-    prod: string;
-    sandbox: string;
+export enum AFFIRM_SCRIPTS {
+    PROD = '//cdn1.affirm.com/js/v2/affirm.js',
+    SANDBOX = '//cdn1-sandbox.affirm.com/js/v2/affirm.js',
 }

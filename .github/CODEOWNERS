@@ -52,6 +52,7 @@
 /packages/core/src/payment/strategies/zip @bigcommerce/team-integrations
 
 /packages/adyen-integration @bigcommerce/team-integrations
+/packages/affirm-integration @bigcommerce/team-integrations
 /packages/bluesnap-direct-integration @bigcommerce/team-integrations
 /packages/bolt-integration @bigcommerce/team-integrations
 /packages/mollie-integration @bigcommerce/team-integrations

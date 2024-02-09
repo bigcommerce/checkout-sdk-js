@@ -49,7 +49,7 @@ describe('AffirmPaymentStrategy', () => {
 
         jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(submitPaymentAction);
 
-        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockReturnValue(
+        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethod,
         );
 
@@ -71,9 +71,16 @@ describe('AffirmPaymentStrategy', () => {
         });
     });
 
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     describe('#initialize()', () => {
         it('throws error if client token is missing', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockReturnValue({
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
                 ...paymentMethod,
                 clientToken: null,
             });
@@ -105,6 +112,7 @@ describe('AffirmPaymentStrategy', () => {
             });
 
             jest.spyOn(affirm.checkout, 'open').mockImplementation(({ onSuccess }) => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 onSuccess({
                     checkout_token: '1234',
                     created: '1234',
@@ -235,6 +243,7 @@ describe('AffirmPaymentStrategy', () => {
 
         it('returns cancel error on affirm if users cancel flow', async () => {
             jest.spyOn(affirm.checkout, 'open').mockImplementation(({ onFail }) => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 onFail({
                     reason: 'canceled',
                 });
@@ -245,6 +254,7 @@ describe('AffirmPaymentStrategy', () => {
 
         it('returns invalid error on affirm if payment method was invalid', async () => {
             jest.spyOn(affirm.checkout, 'open').mockImplementation(({ onFail }) => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 onFail({
                     reason: 'not canceled',
                 });
@@ -259,6 +269,7 @@ describe('AffirmPaymentStrategy', () => {
             try {
                 await strategy.execute(payload);
             } catch (error) {
+                // eslint-disable-next-line jest/no-conditional-expect
                 expect(error).toBeInstanceOf(PaymentArgumentInvalidError);
             }
         });
