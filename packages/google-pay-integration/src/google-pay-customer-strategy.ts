@@ -33,7 +33,6 @@ import {
 export default class GooglePayCustomerStrategy implements CustomerStrategy {
     private _paymentButton?: HTMLElement;
     private _methodId?: keyof WithGooglePayCustomerInitializeOptions;
-    private _countryCode?: string;
 
     constructor(
         private _paymentIntegrationService: PaymentIntegrationService,
@@ -67,12 +66,10 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             paymentMethod = state.getPaymentMethodOrThrow(this._getMethodId());
         }
 
-        this._countryCode = paymentMethod.initializationData?.storeCountry;
-
         try {
             await this._googlePayPaymentProcessor.initialize(
                 () => paymentMethod,
-                this._getGooglePayClientOptions(),
+                this._getGooglePayClientOptions(paymentMethod.initializationData?.storeCountry),
             );
         } catch {
             return;
@@ -111,7 +108,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
         return Promise.resolve();
     }
 
-    private _getGooglePayClientOptions(): GooglePayPaymentOptions {
+    private _getGooglePayClientOptions(countryCode?: string): GooglePayPaymentOptions {
         return {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async ({
@@ -133,7 +130,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
 
                     return {
                         newTransactionInfo: {
-                            ...(this._countryCode && { countryCode: this._countryCode }),
+                            ...(countryCode && { countryCode }),
                             currencyCode,
                             totalPriceStatus: TotalPriceStatusType.FINAL,
                             totalPrice,

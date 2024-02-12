@@ -219,6 +219,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
                 return {
                     newTransactionInfo: {
+                        ...(this._countryCode && { countryCode: this._countryCode }),
                         currencyCode: this._getCurrencyCodeOrThrow(),
                         totalPrice: String(cartAmount),
                         totalPriceStatus: TotalPriceStatusType.FINAL,

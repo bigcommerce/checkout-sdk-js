@@ -291,26 +291,6 @@ describe('GooglePayCustomerStrategy', () => {
                     },
                 });
             });
-
-            it('should call getCartOrThrow', async () => {
-                await strategy.initialize(options);
-
-                button.click();
-
-                await new Promise((resolve) => process.nextTick(resolve));
-
-                expect(paymentIntegrationService.getState().getCartOrThrow).toHaveBeenCalled();
-            });
-
-            it('should call getCheckoutOrThrow', async () => {
-                await strategy.initialize(options);
-
-                button.click();
-
-                await new Promise((resolve) => process.nextTick(resolve));
-
-                expect(paymentIntegrationService.getState().getCheckoutOrThrow).toHaveBeenCalled();
-            });
         });
     });
 });

@@ -34,7 +34,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     private _paymentButton?: HTMLElement;
     private _clickListener?: (event: MouseEvent) => unknown;
     private _methodId?: keyof WithGooglePayPaymentInitializeOptions;
-    private _countryCode?: string;
 
     constructor(
         protected _paymentIntegrationService: PaymentIntegrationService,
@@ -66,11 +65,9 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             .getState()
             .getPaymentMethodOrThrow<GooglePayInitializationData>(this._getMethodId());
 
-        this._countryCode = paymentMethod.initializationData?.storeCountry;
-
         await this._googlePayPaymentProcessor.initialize(
             () => paymentMethod,
-            this._getGooglePayClientOptions(),
+            this._getGooglePayClientOptions(paymentMethod.initializationData?.storeCountry),
         );
 
         this._addPaymentButton(walletButton, callbacks);
@@ -188,7 +185,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         );
     }
 
-    protected _getGooglePayClientOptions(): GooglePayPaymentOptions {
+    protected _getGooglePayClientOptions(countryCode?: string): GooglePayPaymentOptions {
         return {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async ({
@@ -210,7 +207,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
                     return {
                         newTransactionInfo: {
-                            ...(this._countryCode && { countryCode: this._countryCode }),
+                            ...(countryCode && { countryCode }),
                             currencyCode,
                             totalPriceStatus: TotalPriceStatusType.FINAL,
                             totalPrice,
