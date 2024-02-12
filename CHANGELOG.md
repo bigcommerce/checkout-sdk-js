@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.535.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.534.0...v1.535.0) (2024-02-12)
+
+
+### Features
+
+* **payment:** PAYPAL-3405 GooglePay not working 404 (iOS devices) ([#2354](https://github.com/bigcommerce/checkout-sdk-js/issues/2354)) ([bcae4f4](https://github.com/bigcommerce/checkout-sdk-js/commit/bcae4f4657575cbd866b9a6fd60586b0da08eeec))
+
 ## [1.534.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.533.0...v1.534.0) (2024-02-08)
 
 
