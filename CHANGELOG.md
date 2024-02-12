@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.536.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.535.0...v1.536.0) (2024-02-12)
+
+
+### Features
+
+* **payment:** PI-1604 Moving AmountTransformer to shared package and updating all imports ([#2358](https://github.com/bigcommerce/checkout-sdk-js/issues/2358)) ([6e60128](https://github.com/bigcommerce/checkout-sdk-js/commit/6e6012816afa7b39fa8174a4377bca86f32d3b39))
+
 ## [1.535.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.534.0...v1.535.0) (2024-02-12)
 
 
