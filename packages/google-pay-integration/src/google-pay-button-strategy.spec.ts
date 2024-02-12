@@ -43,6 +43,8 @@ describe('GooglePayButtonStrategy', () => {
     };
 
     beforeEach(() => {
+        jest.clearAllMocks();
+
         eventEmitter = new EventEmitter();
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -166,8 +168,37 @@ describe('GooglePayButtonStrategy', () => {
 
         describe('initialization of strategy without buy now required options', () => {
             it('should initialize the strategy', async () => {
+                const paymentDataCallbacks = () =>
+                    (processor.initialize as jest.Mock).mock.calls[0][1];
+
                 expect(await buttonStrategy.initialize(options)).toBeUndefined();
                 expect(paymentIntegrationService.loadDefaultCheckout).toHaveBeenCalled();
+                expect(paymentDataCallbacks()).toBeDefined();
+            });
+
+            it('should load checkout via onPaymentDataChanged callback on clicking the google pay button', async () => {
+                jest.spyOn(processor, 'initialize').mockImplementation(
+                    (_, googlePayClientOptions) => {
+                        eventEmitter.on('onPaymentDataChanged', () => {
+                            googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged({
+                                callbackTrigger: CallbackTriggerType.INITIALIZE,
+                            });
+                        });
+                    },
+                );
+
+                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
+                    eventEmitter.emit('onPaymentDataChanged');
+
+                    return getCardDataResponse();
+                });
+
+                await buttonStrategy.initialize(options);
+
+                button.click();
+
+                expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
+                expect(paymentIntegrationService.createBuyNowCart).not.toHaveBeenCalled();
             });
 
             it('should initialize processor', async () => {
