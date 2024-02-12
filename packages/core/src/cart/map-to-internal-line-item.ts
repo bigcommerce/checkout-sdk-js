@@ -1,4 +1,4 @@
-import { AmountTransformer } from '../common/utility';
+import { AmountTransformer } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import InternalLineItem from './internal-line-item';
 import { DigitalItem, LineItem } from './line-item';

@@ -1,4 +1,7 @@
-import { PaymentMethodInvalidError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    AmountTransformer,
+    PaymentMethodInvalidError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { LineItemCategory } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
@@ -8,7 +11,6 @@ import {
     NotInitializedError,
     NotInitializedErrorType,
 } from '../../../common/error/errors';
-import { AmountTransformer } from '../../../common/utility';
 import { Order, OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { Consignment } from '../../../shipping';
