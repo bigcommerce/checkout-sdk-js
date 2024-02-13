@@ -19,7 +19,7 @@ export interface PayPalCommerceInitializationData {
     buyerCountry?: string;
     clientId: string;
     clientToken?: string;
-    connectClientToken?: string;
+    connectClientToken?: string; // TODO: remove when PPCP Fastlane A/B test will be finished
     enabledAlternativePaymentMethods: FundingType;
     isDeveloperModeApplicable?: boolean;
     intent?: PayPalCommerceIntent;
@@ -32,7 +32,7 @@ export interface PayPalCommerceInitializationData {
     merchantId?: string;
     orderId?: string;
     shouldRenderFields?: boolean;
-    shouldRunAcceleratedCheckout?: boolean; // PayPal Connect related
+    shouldRunAcceleratedCheckout?: boolean; // TODO: remove when PPCP Fastlane A/B test will be finished
     // paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>; // TODO: PayPalButtonStyleOptions interface will be moved in the future
 }
 
@@ -43,8 +43,10 @@ export interface PayPalCommerceInitializationData {
  *
  */
 export interface PayPalCommerceHostWindow extends Window {
-    paypalAxo?: PayPalAxoSdk;
-    paypalConnect?: PayPalCommerceConnect;
+    paypalAxo?: PayPalAxoSdk; // TODO: remove when PPCP Fastlane experiment will be rolled out to 100%
+    paypalConnect?: PayPalCommerceConnect; // TODO: remove when PPCP Fastlane experiment will be rolled out to 100%
+    paypalFastlane?: PayPalFastlane;
+    paypalFastlaneSdk?: PayPalFastlaneSdk;
     paypalMessages?: PayPalMessagesSdk;
 }
 
@@ -76,7 +78,8 @@ export enum PayPalCommerceIntent {
     CAPTURE = 'capture',
 }
 
-export type PayPalSdkComponents = Array<'connect' | 'messages'>;
+// TODO: remove 'connect' when PPCP Fastlane experiment will be rolled out to 100%
+export type PayPalSdkComponents = Array<'connect' | 'fastlane' | 'messages'>;
 
 /**
  *
@@ -85,6 +88,10 @@ export type PayPalSdkComponents = Array<'connect' | 'messages'>;
  */
 export interface PayPalAxoSdk {
     Connect(options?: PayPalCommerceConnectOptions): Promise<PayPalCommerceConnect>;
+}
+
+export interface PayPalFastlaneSdk {
+    Fastlane(options?: PayPalFastlaneOptions): Promise<PayPalFastlane>;
 }
 
 export interface PayPalMessagesSdk {
@@ -115,7 +122,8 @@ export interface MessagingOptions {
 
 /**
  *
- * PayPal Axo related types
+ * PayPal Connect related types
+ * TODO: remove all PayPal Connect related types when PPCP Fastlane experiment will be rolled out to 100%
  *
  */
 export interface PayPalCommerceConnect {
@@ -325,6 +333,217 @@ export interface PayPalCommerceConnectEmailEnteredEventOptions
 
 export interface PayPalCommerceConnectOrderPlacedEventOptions
     extends PayPalCommerceConnectEventCommonOptions {
+    selected_payment_method: string;
+    currency_code: string;
+}
+
+/**
+ *
+ * PayPal Fastlane related types
+ *
+ */
+export interface PayPalFastlane {
+    identity: PayPalFastlaneIdentity;
+    events: PayPalFastlaneEvents;
+    profile: PayPalFastlaneProfile;
+    FastlaneCardComponent(
+        options: PayPalFastlaneCardComponentOptions,
+    ): PayPalFastlaneCardComponentMethods;
+}
+
+export interface PayPalFastlaneOptions {
+    styles?: PayPalFastlaneStylesOption;
+}
+
+export interface PayPalFastlaneIdentity {
+    lookupCustomerByEmail(email: string): Promise<PayPalFastlaneLookupCustomerByEmailResult>;
+    triggerAuthenticationFlow(
+        customerContextId: string,
+    ): Promise<PayPalFastlaneAuthenticationResult>;
+}
+
+export interface PayPalFastlaneLookupCustomerByEmailResult {
+    customerContextId?: string;
+}
+
+export interface PayPalFastlaneAuthenticationResult {
+    authenticationState?: PayPalFastlaneAuthenticationState;
+    profileData?: PayPalFastlaneProfileData;
+}
+
+export enum PayPalFastlaneAuthenticationState {
+    SUCCEEDED = 'succeeded',
+    FAILED = 'failed',
+    CANCELED = 'cancelled',
+    UNRECOGNIZED = 'unrecognized',
+}
+
+export interface PayPalFastlaneProfileData {
+    name: PayPalFastlaneProfileName;
+    shippingAddress: PayPalFastlaneShippingAddress;
+    card: PayPalFastlaneProfileCard;
+}
+
+export interface PayPalFastlaneProfileName {
+    fullName: string;
+    firstName: string;
+    lastName: string;
+}
+
+export interface PayPalFastlaneProfilePhone {
+    countryCode: string;
+    nationalNumber: string;
+}
+
+export interface PayPalFastlaneShippingAddress {
+    name: PayPalFastlaneProfileName;
+    phoneNumber: PayPalFastlaneProfilePhone;
+    address: PayPalFastlaneAddress;
+}
+
+export interface PayPalFastlaneProfileCard {
+    id: string; // nonce / token
+    paymentSource: PayPalFastlanePaymentSource;
+}
+
+export interface PayPalFastlanePaymentSource {
+    card: PayPalFastlaneCardSource;
+}
+
+export interface PayPalFastlaneCardSource {
+    brand: string;
+    expiry: string; // "YYYY-MM"
+    lastDigits: string; // "1111"
+    name: string;
+    billingAddress: PayPalFastlaneAddress;
+}
+
+export interface PayPalFastlaneAddress {
+    company?: string;
+    addressLine1: string;
+    addressLine2?: string;
+    adminArea1: string; // State
+    adminArea2: string; // City
+    postalCode: string;
+    countryCode?: string;
+}
+
+export interface PayPalFastlaneProfileToBcCustomerDataMappingResult {
+    authenticationState: PayPalFastlaneAuthenticationState;
+    addresses: CustomerAddress[];
+    billingAddress?: CustomerAddress;
+    shippingAddress?: CustomerAddress;
+    instruments: CardInstrument[];
+}
+
+export interface PayPalFastlaneStylesOption {
+    root?: {
+        backgroundColorPrimary?: string;
+        errorColor?: string;
+        fontFamily?: string;
+    };
+    input?: {
+        borderRadius?: string;
+        borderColor?: string;
+        focusBorderColor?: string;
+    };
+    toggle?: {
+        colorPrimary?: string;
+        colorSecondary?: string;
+    };
+    text?: {
+        body?: {
+            color?: string;
+            fontSize?: string;
+        };
+        caption?: {
+            color?: string;
+            fontSize?: string;
+        };
+    };
+    branding?: string; // 'light' | 'dark'
+}
+
+export interface PayPalFastlaneProfile {
+    showCardSelector(): Promise<PayPalFastlaneCardSelectorResponse>;
+}
+
+export interface PayPalFastlaneCardSelectorResponse {
+    selectionChanged: boolean;
+    selectedCard: PayPalFastlaneProfileCard;
+}
+
+export interface PayPalFastlaneCardComponentMethods {
+    tokenize(options: PayPalFastlaneTokenizeOptions): Promise<PayPalFastlaneTokenizeResult>;
+    render(element: string): void;
+}
+
+export interface PayPalFastlaneCardComponentOptions {
+    fields?: PayPalFastlaneCardComponentFields;
+}
+
+export interface PayPalFastlaneCardComponentFields {
+    [key: string]: PayPalFastlaneCardComponentField;
+}
+export interface PayPalFastlaneCardComponentField {
+    placeholder?: string;
+    prefill?: string;
+}
+
+export interface PayPalFastlaneTokenizeResult {
+    nonce: string;
+    details: PayPalFastlaneTokenizeDetails;
+    description: string;
+    type: string;
+}
+
+export interface PayPalFastlaneTokenizeDetails {
+    bin: string;
+    cardType: string;
+    expirationMoth: string;
+    expirationYear: string;
+    cardholderName: string;
+    lastFour: string;
+    lastTwo: string;
+}
+
+export interface PayPalFastlaneTokenizeOptions {
+    billingAddress?: PayPalFastlaneAddress;
+    shippingAddress?: PayPalFastlaneAddress;
+}
+
+export interface PayPalFastlaneEvents {
+    apmSelected: (options: PayPalFastlaneApmSelectedEventOptions) => void;
+    emailSubmitted: (options: PayPalFastlaneEmailEnteredEventOptions) => void;
+    orderPlaced: (options: PayPalFastlaneOrderPlacedEventOptions) => void;
+}
+
+export interface PayPalFastlaneEventCommonOptions {
+    context_type: 'cs_id';
+    context_id: string; // checkout session id
+    page_type: 'checkout_page';
+    page_name: string; // title of the checkout initiation page
+    partner_name: 'bigc';
+    user_type: 'store_member' | 'store_guest'; // type of the user on the merchant site
+    store_id: string;
+    merchant_name: string;
+    experiment: string; // stringify JSON object "[{ treatment_group: 'test' | 'control' }]"
+}
+
+export interface PayPalFastlaneApmSelectedEventOptions extends PayPalFastlaneEventCommonOptions {
+    apm_shown: '0' | '1'; // alternate payment shown on the checkout page
+    apm_list: string; // list of alternate payment shown on checkout page
+    apm_selected: string; // alternate payment method selected / methodId
+    apm_location: 'pre-email section' | 'payment section'; // placement of APM, whether it be above the email entry or in the radio buttons
+}
+
+export interface PayPalFastlaneEmailEnteredEventOptions extends PayPalFastlaneEventCommonOptions {
+    user_email_saved: boolean; // shows whether checkout was loaded with or without a saved email
+    apm_shown: '0' | '1'; // alternate payment shown on the checkout page
+    apm_list: string; // list of alternate payment shown on checkout page 'applepay,googlepay,paypal'
+}
+
+export interface PayPalFastlaneOrderPlacedEventOptions extends PayPalFastlaneEventCommonOptions {
     selected_payment_method: string;
     currency_code: string;
 }

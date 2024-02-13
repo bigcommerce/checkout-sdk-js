@@ -1,31 +1,39 @@
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
-import { getPayPalAxoSdk, getPayPalConnectAuthenticationResultMock } from './mocks';
-import PayPalCommerceAcceleratedCheckoutUtils from './paypal-commerce-accelerated-checkout-utils';
+import {
+    getPayPalAxoSdk,
+    getPayPalFastlaneAuthenticationResultMock,
+    getPayPalFastlaneSdk,
+} from './mocks';
+import PayPalCommerceFastlaneUtils from './paypal-commerce-fastlane-utils';
 import {
     PayPalAxoSdk,
     PayPalCommerceConnectAuthenticationState,
     PayPalCommerceHostWindow,
+    PayPalFastlaneAuthenticationState,
+    PayPalFastlaneSdk,
 } from './paypal-commerce-types';
 
-// TODO: remove this file when PPCP AXO strategies will be moved to PayPal Fastlane
-describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
+describe('PayPalCommerceFastlaneUtils', () => {
     let browserStorage: BrowserStorage;
     let paypalAxoSdk: PayPalAxoSdk;
-    let subject: PayPalCommerceAcceleratedCheckoutUtils;
+    let paypalFastlaneSdk: PayPalFastlaneSdk;
+    let subject: PayPalCommerceFastlaneUtils;
 
     beforeEach(() => {
-        browserStorage = new BrowserStorage('paypalConnect');
+        browserStorage = new BrowserStorage('paypalFastlane');
         paypalAxoSdk = getPayPalAxoSdk();
+        paypalFastlaneSdk = getPayPalFastlaneSdk();
 
-        subject = new PayPalCommerceAcceleratedCheckoutUtils(browserStorage);
+        subject = new PayPalCommerceFastlaneUtils(browserStorage);
 
         jest.spyOn(Date, 'now').mockImplementation(() => 1);
     });
 
     afterEach(() => {
         (window as PayPalCommerceHostWindow).paypalConnect = undefined;
+        (window as PayPalCommerceHostWindow).paypalFastlane = undefined;
 
         jest.resetAllMocks();
         jest.restoreAllMocks();
@@ -33,6 +41,7 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
         localStorage.clear();
     });
 
+    // TODO: remove this tests when PPCP Fastlane experiment will be rollout to 100%
     describe('#initializePayPalConnect', () => {
         it('initializes paypal connect with paypal sdk', async () => {
             jest.spyOn(paypalAxoSdk, 'Connect');
@@ -51,6 +60,25 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
         });
     });
 
+    describe('#initializePayPalFastlane', () => {
+        it('initializes paypal fastlane with paypal sdk', async () => {
+            jest.spyOn(paypalFastlaneSdk, 'Fastlane');
+
+            await subject.initializePayPalFastlane(paypalFastlaneSdk, false);
+
+            expect(paypalFastlaneSdk.Fastlane).toHaveBeenCalled();
+        });
+
+        it('sets axo to sandbox mode if test mode is enabled', async () => {
+            jest.spyOn(Storage.prototype, 'setItem').mockImplementation(jest.fn);
+
+            await subject.initializePayPalFastlane(paypalFastlaneSdk, true);
+
+            expect(window.localStorage.setItem).toHaveBeenCalledWith('axoEnv', 'sandbox');
+        });
+    });
+
+    // TODO: remove this tests when PPCP Fastlane experiment will be rollout to 100%
     describe('#getPayPalConnectOrThrow', () => {
         it('successfully returns paypal connect with no errors', async () => {
             const expectedResult = await subject.initializePayPalConnect(paypalAxoSdk, false);
@@ -67,13 +95,30 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
         });
     });
 
-    describe('#lookupCustomerOrThrow', () => {
+    describe('#getPayPalFastlaneOrThrow', () => {
+        it('successfully returns paypal fastlane with no errors', async () => {
+            const expectedResult = await subject.initializePayPalFastlane(paypalFastlaneSdk, false);
+
+            expect(subject.getPayPalFastlaneOrThrow()).toEqual(expectedResult);
+        });
+
+        it('throws an error if paypal fastlane did not initialize before', () => {
+            try {
+                subject.getPayPalFastlaneOrThrow();
+            } catch (error: unknown) {
+                expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
+            }
+        });
+    });
+
+    // TODO: remove this tests when PPCP Fastlane experiment will be rollout to 100%
+    describe('#connectLookupCustomerOrThrow', () => {
         const testEmail = 'john@doe.com';
 
         it('successfully triggers lookup method with provided email', async () => {
             const paypalConnectMock = await subject.initializePayPalConnect(paypalAxoSdk, false);
 
-            await subject.lookupCustomerOrThrow(testEmail);
+            await subject.connectLookupCustomerOrThrow(testEmail);
 
             expect(paypalConnectMock.identity.lookupCustomerByEmail).toHaveBeenCalledWith(
                 testEmail,
@@ -82,7 +127,55 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
 
         it('throws an error if paypal connect did not initialize before', async () => {
             try {
+                await subject.connectLookupCustomerOrThrow(testEmail);
+            } catch (error: unknown) {
+                expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
+            }
+        });
+    });
+
+    describe('#lookupCustomerOrThrow', () => {
+        const testEmail = 'john@doe.com';
+
+        it('successfully triggers lookup method with provided email', async () => {
+            const paypalConnectMock = await subject.initializePayPalFastlane(
+                paypalFastlaneSdk,
+                false,
+            );
+
+            await subject.lookupCustomerOrThrow(testEmail);
+
+            expect(paypalConnectMock.identity.lookupCustomerByEmail).toHaveBeenCalledWith(
+                testEmail,
+            );
+        });
+
+        it('throws an error if paypal fastlane did not initialize before', async () => {
+            try {
                 await subject.lookupCustomerOrThrow(testEmail);
+            } catch (error: unknown) {
+                expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
+            }
+        });
+    });
+
+    // TODO: remove this tests when PPCP Fastlane experiment will be rollout to 100%
+    describe('#connectTriggerAuthenticationFlowOrThrow', () => {
+        const customerContextIdMock = 'ryanRecognised123';
+
+        it('successfully triggers authentication flow with provided customer id and styles', async () => {
+            const paypalConnectMock = await subject.initializePayPalConnect(paypalAxoSdk, false);
+
+            await subject.connectTriggerAuthenticationFlowOrThrow(customerContextIdMock);
+
+            expect(paypalConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalledWith(
+                customerContextIdMock,
+            );
+        });
+
+        it('throws an error if paypal connect did not initialize before', async () => {
+            try {
+                await subject.connectTriggerAuthenticationFlowOrThrow(customerContextIdMock);
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
@@ -93,16 +186,19 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
         const customerContextIdMock = 'ryanRecognised123';
 
         it('successfully triggers authentication flow with provided customer id and styles', async () => {
-            const paypalConnectMock = await subject.initializePayPalConnect(paypalAxoSdk, false);
+            const paypalFastlaneMock = await subject.initializePayPalFastlane(
+                paypalFastlaneSdk,
+                false,
+            );
 
             await subject.triggerAuthenticationFlowOrThrow(customerContextIdMock);
 
-            expect(paypalConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalledWith(
+            expect(paypalFastlaneMock.identity.triggerAuthenticationFlow).toHaveBeenCalledWith(
                 customerContextIdMock,
             );
         });
 
-        it('throws an error if paypal connect did not initialize before', async () => {
+        it('throws an error if paypal fastlane did not initialize before', async () => {
             try {
                 await subject.triggerAuthenticationFlowOrThrow(customerContextIdMock);
             } catch (error: unknown) {
@@ -141,12 +237,12 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
         });
     });
 
-    describe('#mapPayPalConnectProfileToBcCustomerData', () => {
+    describe('#mapPayPalFastlaneProfileToBcCustomerData', () => {
         const methodIdMock = 'paypalcommerceacceleratedcheckout';
-        const authenticationResultMock = getPayPalConnectAuthenticationResultMock();
+        const authenticationResultMock = getPayPalFastlaneAuthenticationResultMock();
 
         it('returns default "empty" data if authenticationResult is undefined', () => {
-            expect(subject.mapPayPalConnectProfileToBcCustomerData(methodIdMock, {})).toEqual({
+            expect(subject.mapPayPalFastlaneProfileToBcCustomerData(methodIdMock, {})).toEqual({
                 authenticationState: PayPalCommerceConnectAuthenticationState.UNRECOGNIZED,
                 addresses: [],
                 billingAddress: undefined,
@@ -155,7 +251,7 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
             });
         });
 
-        it('returns mapped PayPal Connect Profile to BC like data', () => {
+        it('returns mapped PayPal Fastlane Profile to BC like data', () => {
             const addressMock = {
                 id: 1,
                 address1: 'addressLine1',
@@ -189,12 +285,12 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
             };
 
             expect(
-                subject.mapPayPalConnectProfileToBcCustomerData(
+                subject.mapPayPalFastlaneProfileToBcCustomerData(
                     methodIdMock,
                     authenticationResultMock,
                 ),
             ).toEqual({
-                authenticationState: PayPalCommerceConnectAuthenticationState.SUCCEEDED,
+                authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
                 addresses: [addressMock],
                 billingAddress: addressMock,
                 shippingAddress: addressMock,

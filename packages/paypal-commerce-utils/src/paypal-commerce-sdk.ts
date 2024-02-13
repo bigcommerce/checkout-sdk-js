@@ -11,6 +11,7 @@ import {
     PayPalAxoSdk,
     PayPalCommerceHostWindow,
     PayPalCommerceInitializationData,
+    PayPalFastlaneSdk,
     PayPalMessagesSdk,
     PayPalSdkConfig,
 } from './paypal-commerce-types';
@@ -22,7 +23,7 @@ export default class PayPalCommerceSdk {
         this.window = window;
     }
 
-    // Info: PayPalAxo = PayPal Connect for PayPal Commerce
+    // TODO: remove this method when PPCP Fastlane experiment will be rollout to 100%
     async getPayPalAxo(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
@@ -41,6 +42,23 @@ export default class PayPalCommerceSdk {
         }
 
         return this.window.paypalAxo;
+    }
+
+    async getPayPalFastlaneSdk(
+        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
+        currencyCode: string,
+    ): Promise<PayPalFastlaneSdk> {
+        if (!this.window.paypalFastlaneSdk) {
+            const config = this.getPayPalFastlaneSdkConfiguration(paymentMethod, currencyCode);
+
+            await this.loadPayPalSdk(config);
+
+            if (!this.window.paypalFastlaneSdk) {
+                throw new PaymentMethodClientUnavailableError();
+            }
+        }
+
+        return this.window.paypalFastlaneSdk;
     }
 
     async getPayPalMessages(
@@ -88,6 +106,7 @@ export default class PayPalCommerceSdk {
      * Configurations section
      *
      */
+    // TODO: remove this method when PPCP Fastlane experiment will be rolled out to 100%
     private getPayPalSdkConnectConfiguration(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
@@ -123,6 +142,47 @@ export default class PayPalCommerceSdk {
             attributes: {
                 'data-client-metadata-id': clientMetadataId,
                 'data-namespace': 'paypalAxo',
+                'data-partner-attribution-id': attributionId,
+                'data-user-id-token': connectClientToken || clientToken,
+            },
+        };
+    }
+
+    private getPayPalFastlaneSdkConfiguration(
+        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
+        currencyCode: string,
+    ): PayPalSdkConfig {
+        const { clientToken, initializationData } = paymentMethod;
+
+        if (!initializationData || !initializationData.clientId) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const {
+            intent,
+            clientId,
+            merchantId,
+            attributionId,
+            connectClientToken, // TODO: remove when PPCP Fastlane A/B testing will be finished
+        } = initializationData;
+
+        // TODO: remove ts-ignore when typescript version will be 4.6+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const clientMetadataId = crypto.randomUUID().replace(/-/g, '');
+
+        return {
+            options: {
+                'client-id': clientId,
+                'merchant-id': merchantId,
+                commit: true,
+                components: ['fastlane'],
+                currency: currencyCode,
+                intent,
+            },
+            attributes: {
+                'data-client-metadata-id': clientMetadataId,
+                'data-namespace': 'paypalFastlane',
                 'data-partner-attribution-id': attributionId,
                 'data-user-id-token': connectClientToken || clientToken,
             },
