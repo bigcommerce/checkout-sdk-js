@@ -200,7 +200,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         const { resolve, reject } = actions;
 
         if (!this.isNonInstantPaymentMethod(methodId)) {
-            await this.initializePollingMechanism(methodId, gatewayId, paypalOptions);
+            this.initializePollingMechanism(methodId, gatewayId, paypalOptions);
         }
 
         const onValidationPassed = () => {
