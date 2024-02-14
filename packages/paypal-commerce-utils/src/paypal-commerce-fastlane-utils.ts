@@ -13,7 +13,6 @@ import {
     PayPalCommerceConnect,
     PayPalCommerceConnectAddress,
     PayPalCommerceConnectAuthenticationResult,
-    PayPalCommerceConnectAuthenticationState,
     PayPalCommerceConnectLookupCustomerByEmailResult,
     PayPalCommerceConnectProfileCard,
     PayPalCommerceConnectProfileName,
@@ -21,16 +20,27 @@ import {
     PayPalCommerceConnectStylesOption,
     PayPalCommerceHostWindow,
     PayPalConnectProfileToBcCustomerDataMappingResult,
+    PayPalFastlane,
+    PayPalFastlaneAddress,
+    PayPalFastlaneAuthenticationResult,
+    PayPalFastlaneAuthenticationState,
+    PayPalFastlaneLookupCustomerByEmailResult,
+    PayPalFastlaneProfileCard,
+    PayPalFastlaneProfileName,
+    PayPalFastlaneProfilePhone,
+    PayPalFastlaneProfileToBcCustomerDataMappingResult,
+    PayPalFastlaneSdk,
+    PayPalFastlaneStylesOption,
 } from './paypal-commerce-types';
 
-// TODO: remove this file when PPCP AXO strategies will be moved to PayPal Fastlane
-export default class PayPalCommerceAcceleratedCheckoutUtils {
+export default class PayPalCommerceFastlaneUtils {
     private window: PayPalCommerceHostWindow;
 
     constructor(private browserStorage: BrowserStorage) {
         this.window = window;
     }
 
+    // TODO: remove this method when PPCP Fastlane experiment will be rolled out to 100%
     async initializePayPalConnect(
         paypalAxoSdk: PayPalAxoSdk,
         isTestModeEnabled: boolean,
@@ -55,6 +65,31 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
         return this.window.paypalConnect;
     }
 
+    async initializePayPalFastlane(
+        paypalFastlaneSdk: PayPalFastlaneSdk,
+        isTestModeEnabled: boolean,
+        styles?: PayPalFastlaneStylesOption,
+    ): Promise<PayPalFastlane> {
+        if (isTestModeEnabled) {
+            window.localStorage.setItem('axoEnv', 'sandbox');
+        }
+
+        if (!this.window.paypalFastlane) {
+            const defaultStyles = {
+                root: {
+                    backgroundColorPrimary: 'transparent',
+                },
+            };
+
+            this.window.paypalFastlane = await paypalFastlaneSdk.Fastlane({
+                styles: styles || defaultStyles,
+            });
+        }
+
+        return this.window.paypalFastlane;
+    }
+
+    // TODO: remove this method when PPCP Fastlane experiment will be rolled out to 100%
     getPayPalConnectOrThrow(): PayPalCommerceConnect {
         if (!this.window.paypalConnect) {
             throw new PaymentMethodClientUnavailableError();
@@ -63,18 +98,33 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
         return this.window.paypalConnect;
     }
 
+    getPayPalFastlaneOrThrow(): PayPalFastlane {
+        if (!this.window.paypalFastlane) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this.window.paypalFastlane;
+    }
+
     /**
      *
      * Detects the customer to PayPal Connect relation and
      * returns customerContextId to use it for authentication
      *
      */
-    async lookupCustomerOrThrow(
+    // TODO: remove this method when PPCP Fastlane experiment will be rolled out to 100%
+    async connectLookupCustomerOrThrow(
         email: string,
     ): Promise<PayPalCommerceConnectLookupCustomerByEmailResult> {
         const paypalConnect = this.getPayPalConnectOrThrow();
 
         return paypalConnect.identity.lookupCustomerByEmail(email);
+    }
+
+    async lookupCustomerOrThrow(email: string): Promise<PayPalFastlaneLookupCustomerByEmailResult> {
+        const paypalFastlane = this.getPayPalFastlaneOrThrow();
+
+        return paypalFastlane.identity.lookupCustomerByEmail(email);
     }
 
     /**
@@ -83,7 +133,8 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
      * and returns PayPal Connect Profile data to use it in BC checkout
      *
      */
-    async triggerAuthenticationFlowOrThrow(
+    // TODO: remove this method when PPCP Fastlane experiment will be rolled out to 100%
+    async connectTriggerAuthenticationFlowOrThrow(
         customerContextId?: string,
     ): Promise<PayPalCommerceConnectAuthenticationResult> {
         if (!customerContextId) {
@@ -93,6 +144,18 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
         const paypalConnect = this.getPayPalConnectOrThrow();
 
         return paypalConnect.identity.triggerAuthenticationFlow(customerContextId);
+    }
+
+    async triggerAuthenticationFlowOrThrow(
+        customerContextId?: string,
+    ): Promise<PayPalFastlaneAuthenticationResult> {
+        if (!customerContextId) {
+            return {};
+        }
+
+        const paypalFastlane = this.getPayPalFastlaneOrThrow();
+
+        return paypalFastlane.identity.triggerAuthenticationFlow(customerContextId);
     }
 
     /**
@@ -124,16 +187,20 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
 
     /**
      *
-     * 'mapPayPalConnectProfileToBcCustomerData' method is responsible for:
+     * 'mapPayPalFastlaneProfileToBcCustomerData' method is responsible for:
      * - mapping PayPal Connect Profile data to BC data shape
      * - returning mapped data to use for updating PaymentProviderCustomer state and
      * update shipping and billing addresses
      *
      */
-    mapPayPalConnectProfileToBcCustomerData(
+    mapPayPalFastlaneProfileToBcCustomerData(
         methodId: string,
-        authenticationResult: PayPalCommerceConnectAuthenticationResult,
-    ): PayPalConnectProfileToBcCustomerDataMappingResult {
+        authenticationResult:
+            | PayPalCommerceConnectAuthenticationResult
+            | PayPalFastlaneAuthenticationResult,
+    ):
+        | PayPalConnectProfileToBcCustomerDataMappingResult
+        | PayPalFastlaneProfileToBcCustomerDataMappingResult {
         const { authenticationState, profileData } = authenticationResult;
 
         const paypalBillingAddress = profileData?.card?.paymentSource?.card?.billingAddress;
@@ -164,7 +231,7 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
 
         return {
             authenticationState:
-                authenticationState || PayPalCommerceConnectAuthenticationState.UNRECOGNIZED,
+                authenticationState || PayPalFastlaneAuthenticationState.UNRECOGNIZED,
             addresses,
             billingAddress,
             shippingAddress,
@@ -174,7 +241,7 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
 
     mapPayPalToBcInstrument(
         methodId: string,
-        instrument: PayPalCommerceConnectProfileCard,
+        instrument: PayPalCommerceConnectProfileCard | PayPalFastlaneProfileCard,
     ): CardInstrument[] {
         const { id, paymentSource } = instrument;
         const { brand, expiry, lastDigits } = paymentSource.card;
@@ -198,7 +265,7 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
         ];
     }
 
-    mapBcToPayPalAddress(address?: Address): PayPalCommerceConnectAddress {
+    mapBcToPayPalAddress(address?: Address): PayPalCommerceConnectAddress | PayPalFastlaneAddress {
         return {
             company: address?.company || '',
             addressLine1: address?.address1 || '',
@@ -211,9 +278,9 @@ export default class PayPalCommerceAcceleratedCheckoutUtils {
     }
 
     private mapPayPalToBcAddress(
-        address: PayPalCommerceConnectAddress,
-        profileName: PayPalCommerceConnectProfileName,
-        phone?: PayPalCommerceConnectProfilePhone,
+        address: PayPalCommerceConnectAddress | PayPalFastlaneAddress,
+        profileName: PayPalCommerceConnectProfileName | PayPalFastlaneProfileName,
+        phone?: PayPalCommerceConnectProfilePhone | PayPalFastlaneProfilePhone,
     ): CustomerAddress {
         const [firstName, lastName] = profileName.fullName.split(' ');
 
