@@ -147,6 +147,7 @@ export {
     PaypalInstrument,
     FormattedPayload,
     isHostedVaultedInstrument,
+    UntrustedShippingCardVerificationType,
 } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';

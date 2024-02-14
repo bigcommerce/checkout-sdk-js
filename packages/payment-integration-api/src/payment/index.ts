@@ -1,5 +1,10 @@
 export { default as InitializeOffsitePaymentConfig } from './initialize-offsite-payment-config';
-export { AccountInstrument, CardInstrument } from './instrument';
+export {
+    AccountInstrument,
+    CardInstrument,
+    UntrustedShippingCardVerificationType,
+    PayPalInstrument,
+} from './instrument';
 
 export {
     default as Payment,

@@ -185,6 +185,7 @@ describe('PayPalCommerceAcceleratedCheckoutUtils', () => {
                 provider: 'paypalcommerceacceleratedcheckout',
                 trustedShippingAddress: false,
                 type: 'card',
+                untrustedShippingCardVerificationMode: 'pan',
             };
 
             expect(

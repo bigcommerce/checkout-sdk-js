@@ -4,6 +4,7 @@ import {
     Payment,
     PaymentMethod,
     PaymentResponseBody,
+    UntrustedShippingCardVerificationType,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -53,6 +54,7 @@ export function getCardInstrument(): CardInstrument {
         iin: '1234',
         last4: '1111',
         type: 'card',
+        untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
     };
 }
 

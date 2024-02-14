@@ -19,6 +19,7 @@ import {
     MissingDataErrorType,
     PaymentIntegrationService,
     PaymentMethodClientUnavailableError,
+    UntrustedShippingCardVerificationType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
@@ -276,6 +277,7 @@ export default class BraintreeAcceleratedCheckoutUtils {
                 provider: methodId,
                 trustedShippingAddress: false,
                 type: 'card',
+                untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
             };
         });
     }
