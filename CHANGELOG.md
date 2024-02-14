@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.539.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.538.0...v1.539.0) (2024-02-14)
+
+
+### Features
+
+* **payment:** PI-1355 stored sepa for bluesnap ([36d03c0](https://github.com/bigcommerce/checkout-sdk-js/commit/36d03c0bc2bfcf1da96da31383dc748f300c1caa))
+
 ## [1.538.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.537.0...v1.538.0) (2024-02-14)
 
 
