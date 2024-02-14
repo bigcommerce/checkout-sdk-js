@@ -73,11 +73,12 @@ export { WithPayPalCommerceRatePayPaymentInitializeOptions } from './paypal-comm
 
 /**
  *
- * PayPalCommerce Accelerated Checkout strategy
+ * PayPalCommerce Fastlane strategy
  *
  */
-export { default as createPayPalCommerceAcceleratedCheckoutCustomerStrategy } from './paypal-commerce-accelerated-checkout/create-paypal-commerce-accelerated-checkout-customer-strategy';
-export { WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions } from './paypal-commerce-accelerated-checkout/paypal-commerce-accelerated-checkout-customer-initialize-options';
+export { default as createPayPalCommerceFastlaneCustomerStrategy } from './paypal-commerce-fastlane/create-paypal-commerce-fastlane-customer-strategy';
+export { WithPayPalCommerceFastlaneCustomerInitializeOptions } from './paypal-commerce-fastlane/paypal-commerce-fastlane-customer-initialize-options';
 
+// TODO: update payment strategy with Fastlane
 export { default as createPayPalCommerceAcceleratedCheckoutPaymentStrategy } from './paypal-commerce-accelerated-checkout/create-paypal-commerce-accelerated-checkout-payment-strategy';
 export { WithPayPalCommerceAcceleratedCheckoutPaymentInitializeOptions } from './paypal-commerce-accelerated-checkout/paypal-commerce-accelerated-checkout-payment-initialize-options';

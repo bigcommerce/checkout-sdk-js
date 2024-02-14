@@ -19,7 +19,6 @@ import {
     PayPalCommerceConnectProfilePhone,
     PayPalCommerceConnectStylesOption,
     PayPalCommerceHostWindow,
-    PayPalConnectProfileToBcCustomerDataMappingResult,
     PayPalFastlane,
     PayPalFastlaneAddress,
     PayPalFastlaneAuthenticationResult,
@@ -136,7 +135,7 @@ export default class PayPalCommerceFastlaneUtils {
     // TODO: remove this method when PPCP Fastlane experiment will be rolled out to 100%
     async connectTriggerAuthenticationFlowOrThrow(
         customerContextId?: string,
-    ): Promise<PayPalCommerceConnectAuthenticationResult> {
+    ): Promise<PayPalCommerceConnectAuthenticationResult | PayPalFastlaneAuthenticationResult> {
         if (!customerContextId) {
             return {};
         }
@@ -198,9 +197,7 @@ export default class PayPalCommerceFastlaneUtils {
         authenticationResult:
             | PayPalCommerceConnectAuthenticationResult
             | PayPalFastlaneAuthenticationResult,
-    ):
-        | PayPalConnectProfileToBcCustomerDataMappingResult
-        | PayPalFastlaneProfileToBcCustomerDataMappingResult {
+    ): PayPalFastlaneProfileToBcCustomerDataMappingResult {
         const { authenticationState, profileData } = authenticationResult;
 
         const paypalBillingAddress = profileData?.card?.paymentSource?.card?.billingAddress;
