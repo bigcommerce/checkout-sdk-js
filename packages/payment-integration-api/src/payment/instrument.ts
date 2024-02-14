@@ -11,6 +11,11 @@ interface BaseInstrument {
     type: string;
 }
 
+export enum UntrustedShippingCardVerificationType {
+    CVV = 'cvv',
+    PAN = 'pan',
+}
+
 export interface CardInstrument extends BaseInstrument {
     brand: string;
     expiryMonth: string;
@@ -18,16 +23,24 @@ export interface CardInstrument extends BaseInstrument {
     iin: string;
     last4: string;
     type: 'card';
+    untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType;
 }
 
 interface BaseAccountInstrument extends BaseInstrument {
-    externalId: string;
     method: string;
     type: 'account' | 'bank';
 }
 
 export interface PayPalInstrument extends BaseAccountInstrument {
+    externalId: string;
     method: 'paypal';
+}
+
+export interface AchInstrument extends BaseAccountInstrument {
+    issuer: string;
+    accountNumber: string;
+    type: 'bank';
+    method: 'ach' | 'ecp';
 }
 
 export interface BankInstrument extends BaseAccountInstrument {
@@ -38,7 +51,7 @@ export interface BankInstrument extends BaseAccountInstrument {
     type: 'bank';
 }
 
-export type AccountInstrument = PayPalInstrument | BankInstrument;
+export type AccountInstrument = PayPalInstrument | BankInstrument | AchInstrument;
 
 export interface VaultAccessToken {
     vaultAccessToken: string;

@@ -11,7 +11,7 @@ export default function createPaymentIntegrationSelectors({
     consignments: { getConsignments, getConsignmentsOrThrow },
     countries: { getCountries },
     customer: { getCustomer, getCustomerOrThrow },
-    instruments: { getCardInstrument, getCardInstrumentOrThrow },
+    instruments: { getCardInstrument, getCardInstrumentOrThrow, getInstruments },
     order: { getOrder, getOrderOrThrow },
     payment: {
         getPaymentToken,
@@ -52,6 +52,7 @@ export default function createPaymentIntegrationSelectors({
         getCustomer: clone(getCustomer),
         getCustomerOrThrow: clone(getCustomerOrThrow),
         getCardInstrument: clone(getCardInstrument),
+        getInstruments: clone(getInstruments),
         getCardInstrumentOrThrow: clone(getCardInstrumentOrThrow),
         getOrder: clone(getOrder),
         getOrderOrThrow: clone(getOrderOrThrow),

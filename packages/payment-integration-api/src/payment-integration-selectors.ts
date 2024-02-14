@@ -6,7 +6,7 @@ import { Customer } from './customer';
 import { Country } from './geography';
 import { Order } from './order';
 import { PaymentProviderCustomer } from './payment-provider-customer';
-import { CardInstrument } from './payment/instrument';
+import PaymentInstrument, { CardInstrument } from './payment/instrument';
 import PaymentMethod from './payment/payment-method';
 import { Consignment, ShippingAddress } from './shipping';
 
@@ -36,6 +36,8 @@ export default interface PaymentIntegrationSelectors {
 
     getCardInstrument(instrumentId: string): CardInstrument | undefined;
     getCardInstrumentOrThrow(instrumentId: string): CardInstrument;
+
+    getInstruments(): PaymentInstrument[] | undefined;
 
     getOrder(): Order | undefined;
     getOrderOrThrow(): Order;

@@ -219,6 +219,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                         provider: 'braintreeacceleratedcheckout',
                         trustedShippingAddress: false,
                         type: 'card',
+                        untrustedShippingCardVerificationMode: 'pan',
                     },
                 ],
             };
@@ -299,6 +300,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
                         provider: 'braintreeacceleratedcheckout',
                         trustedShippingAddress: false,
                         type: 'card',
+                        untrustedShippingCardVerificationMode: 'pan',
                     },
                 ],
             };
