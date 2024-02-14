@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.538.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.537.0...v1.538.0) (2024-02-14)
+
+
+### Features
+
+* **payment:** PAYPAL-3453 added getInstruments to payment integration selectors ([51ee0d0](https://github.com/bigcommerce/checkout-sdk-js/commit/51ee0d0a8d594ff993b70156bb8f3d57b6ed6afd))
+
 ## [1.537.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.536.0...v1.537.0) (2024-02-14)
 
 
