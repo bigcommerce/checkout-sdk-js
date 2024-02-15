@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.540.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.539.0...v1.540.0) (2024-02-15)
+
+
+### Features
+
+* **payment:** PAYPAL-3573 updated and renamed paypal commerce axo customer strategy to support Connect and Fastlane ([#2361](https://github.com/bigcommerce/checkout-sdk-js/issues/2361)) ([e94dd05](https://github.com/bigcommerce/checkout-sdk-js/commit/e94dd05c3579750e37973fc5f6221cd2e10cec3f))
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3573 updated PayPal to BC instrument mapper with untrustedShippingCardVerificationMode ([#2362](https://github.com/bigcommerce/checkout-sdk-js/issues/2362)) ([43e16de](https://github.com/bigcommerce/checkout-sdk-js/commit/43e16de6411b79dabdcb3cb53182bc17106b0c39))
+
 ## [1.539.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.538.0...v1.539.0) (2024-02-14)
 
 

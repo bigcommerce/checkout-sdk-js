@@ -373,7 +373,6 @@
 - [PasswordRequirements](interfaces/PasswordRequirements.md)
 - [PayPalButtonStyleOptions](interfaces/PayPalButtonStyleOptions.md)
 - [PayPalBuyNowInitializeOptions](interfaces/PayPalBuyNowInitializeOptions.md)
-- [PayPalCommerceAcceleratedCheckoutCustomerInitializeOptions](interfaces/PayPalCommerceAcceleratedCheckoutCustomerInitializeOptions.md)
 - [PayPalCommerceAcceleratedCheckoutPaymentInitializeOptions](interfaces/PayPalCommerceAcceleratedCheckoutPaymentInitializeOptions.md)
 - [PayPalCommerceAlternativeMethodsButtonOptions](interfaces/PayPalCommerceAlternativeMethodsButtonOptions.md)
 - [PayPalCommerceAlternativeMethodsPaymentOptions](interfaces/PayPalCommerceAlternativeMethodsPaymentOptions.md)
@@ -384,6 +383,7 @@
 - [PayPalCommerceCreditCustomerInitializeOptions](interfaces/PayPalCommerceCreditCustomerInitializeOptions.md)
 - [PayPalCommerceCreditPaymentInitializeOptions](interfaces/PayPalCommerceCreditPaymentInitializeOptions.md)
 - [PayPalCommerceCustomerInitializeOptions](interfaces/PayPalCommerceCustomerInitializeOptions.md)
+- [PayPalCommerceFastlaneCustomerInitializeOptions](interfaces/PayPalCommerceFastlaneCustomerInitializeOptions.md)
 - [PayPalCommerceFieldsStyleOptions](interfaces/PayPalCommerceFieldsStyleOptions.md)
 - [PayPalCommercePaymentInitializeOptions](interfaces/PayPalCommercePaymentInitializeOptions.md)
 - [PayPalCommerceVenmoButtonInitializeOptions](interfaces/PayPalCommerceVenmoButtonInitializeOptions.md)
@@ -501,7 +501,6 @@
 - [WithIdealInstrument](interfaces/WithIdealInstrument.md)
 - [WithMollieIssuerInstrument](interfaces/WithMollieIssuerInstrument.md)
 - [WithMolliePaymentInitializeOptions](interfaces/WithMolliePaymentInitializeOptions.md)
-- [WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions](interfaces/WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions.md)
 - [WithPayPalCommerceAcceleratedCheckoutPaymentInitializeOptions](interfaces/WithPayPalCommerceAcceleratedCheckoutPaymentInitializeOptions.md)
 - [WithPayPalCommerceAlternativeMethodsButtonInitializeOptions](interfaces/WithPayPalCommerceAlternativeMethodsButtonInitializeOptions.md)
 - [WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions](interfaces/WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions.md)
@@ -511,6 +510,7 @@
 - [WithPayPalCommerceCreditCustomerInitializeOptions](interfaces/WithPayPalCommerceCreditCustomerInitializeOptions.md)
 - [WithPayPalCommerceCreditPaymentInitializeOptions](interfaces/WithPayPalCommerceCreditPaymentInitializeOptions.md)
 - [WithPayPalCommerceCustomerInitializeOptions](interfaces/WithPayPalCommerceCustomerInitializeOptions.md)
+- [WithPayPalCommerceFastlaneCustomerInitializeOptions](interfaces/WithPayPalCommerceFastlaneCustomerInitializeOptions.md)
 - [WithPayPalCommercePaymentInitializeOptions](interfaces/WithPayPalCommercePaymentInitializeOptions.md)
 - [WithPayPalCommerceRatePayPaymentInitializeOptions](interfaces/WithPayPalCommerceRatePayPaymentInitializeOptions.md)
 - [WithPayPalCommerceVenmoButtonInitializeOptions](interfaces/WithPayPalCommerceVenmoButtonInitializeOptions.md)
@@ -722,7 +722,7 @@ ___
 
 ### CustomerInitializeOptions
 
-Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md) & [`WithBoltCustomerInitializeOptions`](interfaces/WithBoltCustomerInitializeOptions.md) & [`WithBraintreePaypalCustomerInitializeOptions`](interfaces/WithBraintreePaypalCustomerInitializeOptions.md) & [`WithGooglePayCustomerInitializeOptions`](README.md#withgooglepaycustomerinitializeoptions) & [`WithPayPalCommerceCustomerInitializeOptions`](interfaces/WithPayPalCommerceCustomerInitializeOptions.md) & [`WithPayPalCommerceCreditCustomerInitializeOptions`](interfaces/WithPayPalCommerceCreditCustomerInitializeOptions.md) & [`WithPayPalCommerceVenmoCustomerInitializeOptions`](interfaces/WithPayPalCommerceVenmoCustomerInitializeOptions.md) & [`WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions`](interfaces/WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions.md) & [`WithStripeUPECustomerInitializeOptions`](interfaces/WithStripeUPECustomerInitializeOptions.md)
+Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md) & [`WithBoltCustomerInitializeOptions`](interfaces/WithBoltCustomerInitializeOptions.md) & [`WithBraintreePaypalCustomerInitializeOptions`](interfaces/WithBraintreePaypalCustomerInitializeOptions.md) & [`WithGooglePayCustomerInitializeOptions`](README.md#withgooglepaycustomerinitializeoptions) & [`WithPayPalCommerceCustomerInitializeOptions`](interfaces/WithPayPalCommerceCustomerInitializeOptions.md) & [`WithPayPalCommerceCreditCustomerInitializeOptions`](interfaces/WithPayPalCommerceCreditCustomerInitializeOptions.md) & [`WithPayPalCommerceVenmoCustomerInitializeOptions`](interfaces/WithPayPalCommerceVenmoCustomerInitializeOptions.md) & [`WithPayPalCommerceFastlaneCustomerInitializeOptions`](interfaces/WithPayPalCommerceFastlaneCustomerInitializeOptions.md) & [`WithStripeUPECustomerInitializeOptions`](interfaces/WithStripeUPECustomerInitializeOptions.md)
 
 ___
 
