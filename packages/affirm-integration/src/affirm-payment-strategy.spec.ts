@@ -2,6 +2,7 @@ import { merge } from 'lodash';
 
 import {
     MissingDataError,
+    NotInitializedError,
     OrderActionType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
@@ -105,12 +106,7 @@ describe('AffirmPaymentStrategy', () => {
     });
 
     describe('#execute()', () => {
-        beforeEach(async () => {
-            await strategy.initialize({
-                methodId: paymentMethod.id,
-                gatewayId: paymentMethod.gateway,
-            });
-
+        beforeEach(() => {
             jest.spyOn(affirm.checkout, 'open').mockImplementation(({ onSuccess }) => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 onSuccess({
@@ -118,6 +114,10 @@ describe('AffirmPaymentStrategy', () => {
                     created: '1234',
                 });
             });
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
         });
 
         it('creates order, checkout and payment', async () => {
@@ -132,6 +132,11 @@ describe('AffirmPaymentStrategy', () => {
                     ],
                 },
             };
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
 
             await strategy.execute(payload, options);
 
@@ -236,9 +241,29 @@ describe('AffirmPaymentStrategy', () => {
 
             const options = { methodId: 'affirm', gatewayId: undefined };
 
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
+
             await strategy.execute(payload, options);
 
             expect(affirm.checkout).toHaveBeenCalledWith(checkoutPayload);
+        });
+
+        it('does not create affirm object if shippingAddress does not exist', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getShippingAddress').mockReturnValue(
+                undefined,
+            );
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
+
+            await strategy.execute(payload);
+
+            expect(paymentIntegrationService.getState().getShippingAddress).toHaveBeenCalled();
         });
 
         it('returns cancel error on affirm if users cancel flow', async () => {
@@ -247,6 +272,11 @@ describe('AffirmPaymentStrategy', () => {
                 onFail({
                     reason: 'canceled',
                 });
+            });
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
             });
 
             await expect(strategy.execute(payload)).rejects.toThrow(PaymentMethodCancelledError);
@@ -260,11 +290,32 @@ describe('AffirmPaymentStrategy', () => {
                 });
             });
 
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
+
             await expect(strategy.execute(payload)).rejects.toThrow(PaymentMethodInvalidError);
+        });
+
+        it('throw NotInitializedError if Affirm script is not initialized', async () => {
+            jest.spyOn(affirmScriptLoader, 'load').mockReturnValue(undefined);
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
+
+            await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
         });
 
         it('does not create order/payment if methodId is not passed', async () => {
             payload.payment = undefined;
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
 
             try {
                 await strategy.execute(payload);
@@ -274,24 +325,54 @@ describe('AffirmPaymentStrategy', () => {
             }
         });
 
-        it('does not create affirm object if config does not exist', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
-                undefined,
-            );
-
-            await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
-        });
-
         it('does not create affirm object if billingAddress does not exist', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
                 undefined,
             );
 
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
+
             await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
+        });
+
+        it('execute checkout on Affirm script without shipping_type', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValue(
+                undefined,
+            );
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
+
+            await strategy.execute(payload);
+
+            expect(affirm.checkout).toHaveBeenCalled();
         });
 
         it('does not create affirm object if order does not exist', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getOrder').mockReturnValue(undefined);
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
+
+            await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
+        });
+
+        it('does not create affirm object if config does not exist', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
+                undefined,
+            );
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
 
             await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
         });
@@ -299,6 +380,17 @@ describe('AffirmPaymentStrategy', () => {
 
     describe('#deinitialize()', () => {
         it('deinitializes strategy', async () => {
+            const result = await strategy.deinitialize();
+
+            expect(result).toBeUndefined();
+        });
+
+        it('deinitializes when Affirm script exist', async () => {
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
+
             const result = await strategy.deinitialize();
 
             expect(result).toBeUndefined();

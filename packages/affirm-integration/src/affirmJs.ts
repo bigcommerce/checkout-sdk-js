@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 /* eslint-disable prefer-rest-params */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unsafe-call */

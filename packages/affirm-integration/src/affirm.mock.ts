@@ -1,6 +1,8 @@
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-export function getAffirmScriptMock(): unknown {
+import { Affirm } from './affirm';
+
+export function getAffirmScriptMock(): Affirm {
     return {
         checkout: jest.fn(),
         ui: {
