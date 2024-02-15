@@ -5,6 +5,7 @@ import {
     CardInstrument,
     CustomerAddress,
     PaymentMethodClientUnavailableError,
+    UntrustedShippingCardVerificationType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
@@ -257,6 +258,7 @@ export default class PayPalCommerceFastlaneUtils {
                 method: methodId,
                 provider: methodId,
                 trustedShippingAddress: false,
+                untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
                 type: 'card',
             },
         ];

@@ -1,4 +1,7 @@
-import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    PaymentMethodClientUnavailableError,
+    UntrustedShippingCardVerificationType,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import {
@@ -281,6 +284,7 @@ describe('PayPalCommerceFastlaneUtils', () => {
                 method: 'paypalcommerceacceleratedcheckout',
                 provider: 'paypalcommerceacceleratedcheckout',
                 trustedShippingAddress: false,
+                untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
                 type: 'card',
             };
 
