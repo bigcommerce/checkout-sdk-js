@@ -23,9 +23,10 @@ export interface PayPalCommerceInitializationData {
     enabledAlternativePaymentMethods: FundingType;
     isDeveloperModeApplicable?: boolean;
     intent?: PayPalCommerceIntent;
-    isAcceleratedCheckoutEnabled?: boolean; // PayPal Connect related
+    isAcceleratedCheckoutEnabled?: boolean; // PayPal Fastlane related
+    isFastlaneEnabled?: boolean; // TODO: remove this line when fastlane experiment will be rolled out to 100%
     isHostedCheckoutEnabled?: boolean;
-    isPayPalCommerceAnalyticsV2Enabled?: boolean; // PayPal Connect related
+    isPayPalCommerceAnalyticsV2Enabled?: boolean; // PayPal Fastlane related
     isPayPalCreditAvailable?: boolean;
     isVenmoEnabled?: boolean;
     isGooglePayEnabled?: boolean;
@@ -429,7 +430,9 @@ export interface PayPalFastlaneAddress {
 }
 
 export interface PayPalFastlaneProfileToBcCustomerDataMappingResult {
-    authenticationState: PayPalFastlaneAuthenticationState;
+    authenticationState:
+        | PayPalCommerceConnectAuthenticationState
+        | PayPalFastlaneAuthenticationState;
     addresses: CustomerAddress[];
     billingAddress?: CustomerAddress;
     shippingAddress?: CustomerAddress;

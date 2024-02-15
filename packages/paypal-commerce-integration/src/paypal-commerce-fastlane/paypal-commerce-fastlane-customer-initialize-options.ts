@@ -1,13 +1,13 @@
-import { PayPalCommerceConnectStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 /**
- * A set of options that are optional to initialize the PayPalCommerce Accelerated Checkout customer strategy
- * that are responsible for PayPalCommerce Accelerated Checkout components styling and initialization
+ * A set of options that are optional to initialize the PayPalCommerce Fastlane customer strategy
+ * that are responsible for PayPalCommerce Fastlane components styling and initialization
  *
  * ```js
  * service.initializeCustomer({
- *     methodId: 'paypalcommerceacceleratedcheckout',
- *     paypalcommerceacceleratedcheckout: {
+ *     methodId: 'paypalcommerceacceleratedcheckout', // PayPalCommerce Fastlane has 'paypalcommerceacceleratedcheckout' method id
+ *     paypalcommercefastlane: {
  *         styles: {
  *              root: {
  *                  backgroundColorPrimary: 'transparent',
@@ -39,17 +39,17 @@ import { PayPalCommerceConnectStylesOption } from '@bigcommerce/checkout-sdk/pay
  * });
  * ```
  */
-export default interface PayPalCommerceAcceleratedCheckoutCustomerInitializeOptions {
+export default interface PayPalCommerceFastlaneCustomerInitializeOptions {
     /**
-     * Is a stylisation options for customizing PayPal Connect components
+     * Is a stylisation options for customizing PayPal Fastlane components
      *
-     * Note: the styles for all PayPalCommerce Accelerated Checkout strategies should be the same,
+     * Note: the styles for all PayPalCommerce Fastlane strategies should be the same,
      * because they will be provided to PayPal library only for the first strategy initialization
-     * no matter what strategy was initialised first
+     * no matter which strategy was initialised first
      */
-    styles?: PayPalCommerceConnectStylesOption;
+    styles?: PayPalFastlaneStylesOption;
 }
 
-export interface WithPayPalCommerceAcceleratedCheckoutCustomerInitializeOptions {
-    paypalcommerceacceleratedcheckout?: PayPalCommerceAcceleratedCheckoutCustomerInitializeOptions;
+export interface WithPayPalCommerceFastlaneCustomerInitializeOptions {
+    paypalcommercefastlane?: PayPalCommerceFastlaneCustomerInitializeOptions;
 }

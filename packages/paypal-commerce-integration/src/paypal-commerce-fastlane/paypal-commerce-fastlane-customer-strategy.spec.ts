@@ -10,25 +10,28 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
-    createPayPalCommerceAcceleratedCheckoutUtils,
+    createPayPalCommerceFastlaneUtils,
     createPayPalCommerceSdk,
     getPayPalAxoSdk,
     getPayPalCommerceAcceleratedCheckoutPaymentMethod,
+    getPayPalFastlaneSdk,
     PayPalAxoSdk,
-    PayPalCommerceAcceleratedCheckoutUtils,
-    PayPalCommerceConnectAuthenticationState,
+    PayPalCommerceFastlaneUtils,
     PayPalCommerceSdk,
+    PayPalFastlaneAuthenticationState,
+    PayPalFastlaneSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
-import PayPalCommerceAcceleratedCheckoutCustomerStrategy from './paypal-commerce-accelerated-checkout-customer-strategy';
+import PayPalCommerceFastlaneCustomerStrategy from './paypal-commerce-fastlane-customer-strategy';
 
-describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
+describe('PayPalCommerceFastlaneCustomerStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
-    let paypalCommerceAcceleratedCheckoutUtils: PayPalCommerceAcceleratedCheckoutUtils;
+    let paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils;
     let paypalCommerceSdk: PayPalCommerceSdk;
     let paypalAxoSdk: PayPalAxoSdk;
-    let strategy: PayPalCommerceAcceleratedCheckoutCustomerStrategy;
+    let paypalFastlaneSdk: PayPalFastlaneSdk;
+    let strategy: PayPalCommerceFastlaneCustomerStrategy;
 
     const cart = getCart();
     const customer = getCustomer();
@@ -37,7 +40,7 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
     const secondaryMethodId = 'paypalcommercecreditcards';
     const customerContextIdMock = 'customerId123';
     const authenticationResultMock = {
-        authenticationState: PayPalCommerceConnectAuthenticationState.SUCCEEDED,
+        authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
         profileData: {
             name: {
                 fullName: 'John Doe',
@@ -117,7 +120,7 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
 
     const initializationOptions = {
         methodId,
-        paypalcommerceacceleratedcheckout: {
+        paypalcommercefastlane: {
             styles: {
                 root: {
                     backgroundColorPrimary: 'white',
@@ -135,15 +138,16 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
     beforeEach(() => {
         paymentMethod = getPayPalCommerceAcceleratedCheckoutPaymentMethod();
         paypalAxoSdk = getPayPalAxoSdk();
+        paypalFastlaneSdk = getPayPalFastlaneSdk();
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         paypalCommerceSdk = createPayPalCommerceSdk();
-        paypalCommerceAcceleratedCheckoutUtils = createPayPalCommerceAcceleratedCheckoutUtils();
+        paypalCommerceFastlaneUtils = createPayPalCommerceFastlaneUtils();
 
-        strategy = new PayPalCommerceAcceleratedCheckoutCustomerStrategy(
+        strategy = new PayPalCommerceFastlaneCustomerStrategy(
             paymentIntegrationService,
             paypalCommerceSdk,
-            paypalCommerceAcceleratedCheckoutUtils,
+            paypalCommerceFastlaneUtils,
         );
 
         const state = paymentIntegrationService.getState();
@@ -158,24 +162,34 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
         jest.spyOn(state, 'getBillingAddress').mockReturnValue(getBillingAddress());
 
         jest.spyOn(paypalCommerceSdk, 'getPayPalAxo').mockImplementation(() => paypalAxoSdk);
+        jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(
+            () => paypalFastlaneSdk,
+        );
 
-        jest.spyOn(paypalCommerceAcceleratedCheckoutUtils, 'initializePayPalConnect');
-        jest.spyOn(paypalCommerceAcceleratedCheckoutUtils, 'updateStorageSessionId');
-        jest.spyOn(
-            paypalCommerceAcceleratedCheckoutUtils,
-            'lookupCustomerOrThrow',
-        ).mockImplementation(() => ({
+        jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalConnect');
+        jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalFastlane');
+        jest.spyOn(paypalCommerceFastlaneUtils, 'updateStorageSessionId');
+        jest.spyOn(paypalCommerceFastlaneUtils, 'connectLookupCustomerOrThrow').mockImplementation(
+            () => ({
+                customerContextId: customerContextIdMock,
+            }),
+        );
+        jest.spyOn(paypalCommerceFastlaneUtils, 'lookupCustomerOrThrow').mockImplementation(() => ({
             customerContextId: customerContextIdMock,
         }));
         jest.spyOn(
-            paypalCommerceAcceleratedCheckoutUtils,
+            paypalCommerceFastlaneUtils,
+            'connectTriggerAuthenticationFlowOrThrow',
+        ).mockImplementation(() => authenticationResultMock);
+        jest.spyOn(
+            paypalCommerceFastlaneUtils,
             'triggerAuthenticationFlowOrThrow',
         ).mockImplementation(() => authenticationResultMock);
         jest.spyOn(
-            paypalCommerceAcceleratedCheckoutUtils,
-            'mapPayPalConnectProfileToBcCustomerData',
+            paypalCommerceFastlaneUtils,
+            'mapPayPalFastlaneProfileToBcCustomerData',
         ).mockImplementation(() => ({
-            authenticationState: PayPalCommerceConnectAuthenticationState.SUCCEEDED,
+            authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
             addresses: [bcAddressMock],
             billingAddress: bcAddressMock,
             shippingAddress: bcAddressMock,
@@ -269,7 +283,10 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
             expect(result).toBeUndefined();
         });
 
+        // TODO: this test should be removed after PP Fastlane experiment rollout to 100%
         it('loads paypal sdk and initialises paypal connect in production mode', async () => {
+            paymentMethod.initializationData.isFastlaneEnabled = false;
+
             await strategy.initialize(initializationOptions);
 
             expect(paypalCommerceSdk.getPayPalAxo).toHaveBeenCalledWith(
@@ -277,17 +294,17 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
                 cart.currency.code,
             );
 
-            expect(
-                paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect,
-            ).toHaveBeenCalledWith(
+            expect(paypalCommerceFastlaneUtils.initializePayPalConnect).toHaveBeenCalledWith(
                 paypalAxoSdk,
                 false,
-                initializationOptions.paypalcommerceacceleratedcheckout.styles,
+                initializationOptions.paypalcommercefastlane.styles,
             );
         });
 
+        // TODO: this test should be removed after PP Fastlane experiment rollout to 100%
         it('loads paypal sdk and initialises paypal connect in test mode', async () => {
             paymentMethod.initializationData.isDeveloperModeApplicable = true;
+            paymentMethod.initializationData.isFastlaneEnabled = false;
 
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -301,12 +318,50 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
                 cart.currency.code,
             );
 
-            expect(
-                paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect,
-            ).toHaveBeenCalledWith(
+            expect(paypalCommerceFastlaneUtils.initializePayPalConnect).toHaveBeenCalledWith(
                 paypalAxoSdk,
                 true,
-                initializationOptions.paypalcommerceacceleratedcheckout.styles,
+                initializationOptions.paypalcommercefastlane.styles,
+            );
+        });
+
+        it('loads paypal sdk and initialises paypal fastlane in production mode', async () => {
+            paymentMethod.initializationData.isFastlaneEnabled = true;
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalCommerceSdk.getPayPalFastlaneSdk).toHaveBeenCalledWith(
+                paymentMethod,
+                cart.currency.code,
+            );
+
+            expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
+                paypalFastlaneSdk,
+                false,
+                initializationOptions.paypalcommercefastlane.styles,
+            );
+        });
+
+        it('loads paypal sdk and initialises paypal fastlane in test mode', async () => {
+            paymentMethod.initializationData.isDeveloperModeApplicable = true;
+            paymentMethod.initializationData.isFastlaneEnabled = true;
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethod);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalCommerceSdk.getPayPalFastlaneSdk).toHaveBeenCalledWith(
+                paymentMethod,
+                cart.currency.code,
+            );
+
+            expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
+                paypalFastlaneSdk,
+                true,
+                initializationOptions.paypalcommercefastlane.styles,
             );
         });
     });
@@ -371,9 +426,7 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
             await strategy.executePaymentMethodCheckout(executionOptions);
 
             expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
-            expect(
-                paypalCommerceAcceleratedCheckoutUtils.lookupCustomerOrThrow,
-            ).not.toHaveBeenCalled();
+            expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
         });
 
         it('loads payment method to get related data', async () => {
@@ -400,8 +453,10 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
             expect(executionOptions.checkoutPaymentMethodExecuted).not.toHaveBeenCalled();
         });
 
+        // TODO: this test should be removed after PP Fastlane experiment rollout to 100%
         it('does not call paypal connect lookup method if it should not been called for customer due to A/B testing', async () => {
             paymentMethod.initializationData.shouldRunAcceleratedCheckout = false;
+            paymentMethod.initializationData.isFastlaneEnabled = false;
 
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -411,24 +466,40 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
             await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout(executionOptions);
 
-            expect(
-                paypalCommerceAcceleratedCheckoutUtils.lookupCustomerOrThrow,
-            ).not.toHaveBeenCalled();
+            expect(paypalCommerceFastlaneUtils.connectLookupCustomerOrThrow).not.toHaveBeenCalled();
         });
 
-        it('runs paypal connect authentication flow and updates customers data in checkout state', async () => {
+        it('does not call paypal fastlane lookup method if it should not been called for customer due to A/B testing', async () => {
+            paymentMethod.initializationData.shouldRunAcceleratedCheckout = false;
+            paymentMethod.initializationData.isFastlaneEnabled = true;
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethod);
+
             await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout(executionOptions);
 
-            expect(
-                paypalCommerceAcceleratedCheckoutUtils.lookupCustomerOrThrow,
-            ).toHaveBeenCalledWith(customer.email);
+            expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
+        });
+
+        // TODO: this test should be removed after PP Fastlane experiment rollout to 100%
+        it('runs paypal connect authentication flow and updates customers data in checkout state', async () => {
+            paymentMethod.initializationData.isFastlaneEnabled = false;
+
+            await strategy.initialize(initializationOptions);
+            await strategy.executePaymentMethodCheckout(executionOptions);
+
+            expect(paypalCommerceFastlaneUtils.connectLookupCustomerOrThrow).toHaveBeenCalledWith(
+                customer.email,
+            );
 
             expect(
-                paypalCommerceAcceleratedCheckoutUtils.triggerAuthenticationFlowOrThrow,
+                paypalCommerceFastlaneUtils.connectTriggerAuthenticationFlowOrThrow,
             ).toHaveBeenCalledWith(customerContextIdMock);
             expect(
-                paypalCommerceAcceleratedCheckoutUtils.mapPayPalConnectProfileToBcCustomerData,
+                paypalCommerceFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData,
             ).toHaveBeenCalledWith(methodId, authenticationResultMock);
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
                 authenticationState: authenticationResultMock.authenticationState,
@@ -441,9 +512,43 @@ describe('PayPalCommerceAcceleratedCheckoutCustomerStrategy', () => {
             expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
                 bcAddressMock,
             );
+            expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
+                false,
+                cart.id,
+            );
+        });
+
+        it('runs paypal fastlane authentication flow and updates customers data in checkout state', async () => {
+            paymentMethod.initializationData.isFastlaneEnabled = true;
+
+            await strategy.initialize(initializationOptions);
+            await strategy.executePaymentMethodCheckout(executionOptions);
+
+            expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).toHaveBeenCalledWith(
+                customer.email,
+            );
+
             expect(
-                paypalCommerceAcceleratedCheckoutUtils.updateStorageSessionId,
-            ).toHaveBeenCalledWith(false, cart.id);
+                paypalCommerceFastlaneUtils.triggerAuthenticationFlowOrThrow,
+            ).toHaveBeenCalledWith(customerContextIdMock);
+            expect(
+                paypalCommerceFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData,
+            ).toHaveBeenCalledWith(methodId, authenticationResultMock);
+            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
+                authenticationState: authenticationResultMock.authenticationState,
+                addresses: [bcAddressMock],
+                instruments: [bcInstrumentMock],
+            });
+            expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith(
+                bcAddressMock,
+            );
+            expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
+                bcAddressMock,
+            );
+            expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
+                false,
+                cart.id,
+            );
         });
 
         it('calls continueWithCheckoutCallback callback in the end of execution flow', async () => {
