@@ -6,11 +6,11 @@ import PaymentAdditionalAction from './payment-additional-action';
 export default interface Payment {
     methodId: string;
     gatewayId?: string;
-    paymentData?: PaymentInstrument & PaymentInstrumentMeta;
+    paymentData?: PaymentInstrumentPayload & PaymentInstrumentMeta;
     additionalAction?: PaymentAdditionalAction;
 }
 
-export type PaymentInstrument =
+export type PaymentInstrumentPayload =
     | WithEcpInstrument
     | WithSepaInstrument
     | WithIdealInstrument

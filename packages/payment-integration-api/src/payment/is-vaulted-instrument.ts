@@ -2,18 +2,18 @@ import {
     FormattedPayload,
     FormattedVaultedInstrument,
     HostedVaultedInstrument,
-    PaymentInstrument,
+    PaymentInstrumentPayload,
     VaultedInstrument,
 } from './payment';
 
 export default function isVaultedInstrument(
-    instrument: PaymentInstrument,
+    instrument: PaymentInstrumentPayload,
 ): instrument is VaultedInstrument {
     return Boolean((instrument as VaultedInstrument).instrumentId);
 }
 
 export function isHostedVaultedInstrument(
-    instrument: PaymentInstrument,
+    instrument: PaymentInstrumentPayload,
 ): instrument is HostedVaultedInstrument {
     return (
         Boolean((instrument as HostedVaultedInstrument).instrumentId) &&
@@ -23,7 +23,7 @@ export function isHostedVaultedInstrument(
 }
 
 export function isFormattedVaultedInstrument(
-    instrument: PaymentInstrument,
+    instrument: PaymentInstrumentPayload,
 ): instrument is FormattedPayload<FormattedVaultedInstrument> {
     const formattedInstrument = (instrument as FormattedPayload<FormattedVaultedInstrument>)
         .formattedPayload;

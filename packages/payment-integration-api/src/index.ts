@@ -137,7 +137,7 @@ export {
     PaymentResponseBody,
     PaymentStatusTypes,
     PaymentStrategy,
-    PaymentInstrument,
+    PaymentInstrumentPayload,
     PaymentStrategyFactory,
     PaymentStrategyResolveId,
     VaultedInstrument,
@@ -148,6 +148,8 @@ export {
     FormattedPayload,
     isHostedVaultedInstrument,
     UntrustedShippingCardVerificationType,
+    AccountInstrument,
+    PaymentInstrument,
 } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
