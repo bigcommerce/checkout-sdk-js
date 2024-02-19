@@ -1,13 +1,19 @@
 import {
+    HostedInstrument,
     InvalidArgumentError,
+    isHostedInstrumentLike,
+    isVaultedInstrument,
     OrderFinalizationNotRequiredError,
+    OrderPaymentRequestBody,
     OrderRequestBody,
+    Payment,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentMethodInvalidError,
     PaymentRequestOptions,
     PaymentStrategy,
+    VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { isPaypalCommerceProviderError } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
@@ -76,7 +82,15 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
 
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
 
-        this.renderButton(methodId, paypalcommerce);
+        if (paypalcommerce.onInit && typeof paypalcommerce.onInit === 'function') {
+            paypalcommerce.onInit(() => this.renderButton(methodId, paypalcommerce));
+
+            return;
+        }
+
+        if (!paypalcommerce.shouldNotRenderOnInitialization) {
+            this.renderButton(methodId, paypalcommerce);
+        }
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -91,16 +105,45 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
+        const { paymentData } = payment;
+        const isVaultedFlow =
+            paymentData && isVaultedInstrument(paymentData) && isHostedInstrumentLike(paymentData);
+
         if (!this.orderId) {
-            throw new PaymentMethodInvalidError();
+            if (isVaultedFlow) {
+                this.orderId = await this.createOrder();
+            } else {
+                throw new PaymentMethodInvalidError();
+            }
+        }
+
+        let isTrustedVaultingFlow = true;
+
+        if (paymentData && isVaultedInstrument(paymentData)) {
+            const instruments = state.getInstruments();
+
+            const { trustedShippingAddress } =
+                instruments?.find(({ bigpayToken }) => bigpayToken === paymentData.instrumentId) ||
+                {};
+
+            isTrustedVaultingFlow = Boolean(trustedShippingAddress);
         }
 
         try {
+            const paymentPayload =
+                paymentData &&
+                isVaultedInstrument(paymentData) &&
+                isHostedInstrumentLike(paymentData) &&
+                isTrustedVaultingFlow
+                    ? this.prepareVaultedInstrumentPaymentPayload(
+                          payment.methodId,
+                          this.orderId,
+                          paymentData,
+                      )
+                    : this.preparePaymentPayload(payment.methodId, this.orderId, paymentData);
+
             await this.paymentIntegrationService.submitOrder(order, options);
-            await this.paypalCommerceIntegrationService.submitPayment(
-                payment.methodId,
-                this.orderId,
-            );
+            await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error: unknown) {
             if (this.isProviderError(error) && shouldHandleInstrumentDeclinedError) {
                 await this.paypalCommerceIntegrationService.loadPayPalSdk(payment.methodId);
@@ -144,6 +187,64 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         return false;
     }
 
+    private prepareVaultedInstrumentPaymentPayload(
+        methodId: string,
+        paypalOrderId: string,
+        paymentData: VaultedInstrument & HostedInstrument,
+    ): Payment {
+        const { instrumentId, shouldSetAsDefaultInstrument } = paymentData;
+
+        return {
+            methodId,
+            paymentData: {
+                formattedPayload: {
+                    vault_payment_instrument: null,
+                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
+                    device_info: null,
+                    method_id: methodId,
+                    paypal_account: {
+                        order_id: paypalOrderId,
+                    },
+                    bigpay_token: {
+                        token: instrumentId,
+                    },
+                },
+            },
+        };
+    }
+
+    private preparePaymentPayload(
+        methodId: string,
+        paypalOrderId: string,
+        paymentData: OrderPaymentRequestBody['paymentData'],
+    ): Payment {
+        const { getFieldsValues } = this.paypalcommerce || {};
+
+        const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
+            isHostedInstrumentLike(paymentData)
+                ? {
+                      ...paymentData,
+                      shouldSaveInstrument:
+                          getFieldsValues?.().shouldSaveInstrument ||
+                          paymentData.shouldSaveInstrument,
+                  }
+                : {};
+
+        return {
+            methodId,
+            paymentData: {
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
+                formattedPayload: {
+                    method_id: methodId,
+                    paypal_account: {
+                        order_id: paypalOrderId,
+                    },
+                },
+            },
+        };
+    }
+
     /**
      *
      * Button methods/callbacks
@@ -167,12 +268,11 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             style: this.paypalCommerceIntegrationService.getValidButtonStyle(
                 checkoutPaymentButtonStyles,
             ),
-            createOrder: () =>
-                this.paypalCommerceIntegrationService.createOrder('paypalcommercecheckout'),
+            createOrder: () => this.createOrder(),
             onClick: (_, actions) => this.handleClick(actions, onValidate),
             onApprove: (data) => this.handleApprove(data, submitForm),
-            onCancel: () => this.toggleLoadingIndicator(false),
             onError: (error) => this.handleError(error, onError),
+            onCancel: () => this.toggleLoadingIndicator(false),
         };
 
         this.paypalButton = paypalSdk.Buttons(buttonOptions);
@@ -221,6 +321,14 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         if (onError && typeof onError === 'function') {
             onError(error);
         }
+    }
+
+    private async createOrder() {
+        const { getFieldsValues } = this.paypalcommerce || {};
+
+        return this.paypalCommerceIntegrationService.createOrder('paypalcommercecheckout', {
+            shouldSaveInstrument: getFieldsValues?.().shouldSaveInstrument || false,
+        });
     }
 
     /**

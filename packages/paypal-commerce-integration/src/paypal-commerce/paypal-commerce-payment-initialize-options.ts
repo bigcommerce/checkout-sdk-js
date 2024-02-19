@@ -1,3 +1,5 @@
+import { HostedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 /**
  * A set of options that are required to initialize the PayPal Commerce payment
  * method for presenting its PayPal button.
@@ -48,6 +50,10 @@ export default interface PayPalCommercePaymentInitializeOptions {
      */
     container: string;
 
+    shouldNotRenderOnInitialization?: boolean;
+
+    getFieldsValues?: () => HostedInstrument;
+
     /**
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
@@ -58,6 +64,8 @@ export default interface PayPalCommercePaymentInitializeOptions {
      * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
      */
     onRenderButton?(): void;
+
+    onInit?(renderButtonCallback: () => void): void;
 
     /**
      * A callback that gets called when a buyer click on Smart Payment Button
