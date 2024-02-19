@@ -1,5 +1,6 @@
 export { default as InitializeOffsitePaymentConfig } from './initialize-offsite-payment-config';
 export {
+    default as PaymentInstrument,
     AccountInstrument,
     CardInstrument,
     UntrustedShippingCardVerificationType,
@@ -23,7 +24,7 @@ export {
     HostedInstrument,
     HostedVaultedInstrument,
     VaultedInstrument,
-    PaymentInstrument,
+    PaymentInstrumentPayload,
     PaymentInstrumentMeta,
     NonceInstrument,
     ThreeDSecure,

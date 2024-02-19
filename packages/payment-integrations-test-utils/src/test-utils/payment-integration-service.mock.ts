@@ -9,7 +9,7 @@ import getCountries from './countries.mock';
 import { getCustomer } from './customer.mock';
 import { getOrder } from './orders.mock';
 import getPaymentId from './payment-id.mock';
-import { getCardInstrument } from './payments.mock';
+import { getCardInstrument, getInstruments } from './payments.mock';
 
 const subscribe = jest.fn();
 const state = {
@@ -18,6 +18,7 @@ const state = {
     getCart: jest.fn(() => getCart()),
     getCartOrThrow: jest.fn(() => getCart()),
     getCardInstrumentOrThrow: jest.fn(() => getCardInstrument()),
+    getInstruments: jest.fn(() => getInstruments()),
     getCheckout: jest.fn(() => getCheckout()),
     getCheckoutOrThrow: jest.fn(() => getCheckout()),
     getConsignments: jest.fn(() => [getConsignment()]),

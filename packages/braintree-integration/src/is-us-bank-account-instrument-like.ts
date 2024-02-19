@@ -1,10 +1,10 @@
 import {
-    PaymentInstrument,
+    PaymentInstrumentPayload,
     WithBankAccountInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default function isUsBankAccountInstrumentLike(
-    instrument?: PaymentInstrument,
+    instrument?: PaymentInstrumentPayload,
 ): instrument is WithBankAccountInstrument {
     if (!instrument) {
         return false;

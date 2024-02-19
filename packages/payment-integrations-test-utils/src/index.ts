@@ -22,4 +22,5 @@ export {
     getErrorPaymentResponseBody,
     getShippingAddress,
     getShippingAddressWithCustomFields,
+    getInstruments,
 } from './test-utils';

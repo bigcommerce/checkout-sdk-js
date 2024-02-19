@@ -17,6 +17,7 @@ export {
     getCreditCardInstrument,
     getVaultedInstrument,
     getErrorPaymentResponseBody,
+    getInstruments,
 } from './payments.mock';
 
 export { getShippingAddress, getShippingAddressWithCustomFields } from './shipping-addresses.mock';
