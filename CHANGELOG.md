@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.542.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.541.0...v1.542.0) (2024-02-19)
+
+
+### Features
+
+* **payment:** PAYPAL-3453 renaming, added mocks ([e565804](https://github.com/bigcommerce/checkout-sdk-js/commit/e565804cea7993f64fabfc7cbb336a19d72495ad))
+
 ## [1.541.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.540.0...v1.541.0) (2024-02-19)
 
 
