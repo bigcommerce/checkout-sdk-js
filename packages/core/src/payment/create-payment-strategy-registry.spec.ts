@@ -8,7 +8,6 @@ import { createSpamProtection } from '../spam-protection';
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
-import { AffirmPaymentStrategy } from './strategies/affirm';
 import { AfterpayPaymentStrategy } from './strategies/afterpay';
 import { AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
@@ -75,12 +74,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.ADYENV3_GOOGLEPAY);
 
         expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
-    });
-
-    it('can instantiate affirm', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.AFFIRM);
-
-        expect(paymentStrategy).toBeInstanceOf(AffirmPaymentStrategy);
     });
 
     it('can instantiate amazonpay', () => {

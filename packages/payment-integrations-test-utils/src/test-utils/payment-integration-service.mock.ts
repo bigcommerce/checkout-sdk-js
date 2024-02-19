@@ -46,6 +46,7 @@ const state = {
 
 const createBuyNowCart = jest.fn();
 const createHostedForm = jest.fn();
+const getConsignments = jest.fn();
 const getState = jest.fn(() => state);
 const getPaymentProviderCustomerOrThrow = jest.fn();
 const deleteConsignment = jest.fn();
@@ -75,6 +76,7 @@ const PaymentIntegrationServiceMock = jest
             createHostedForm,
             deleteConsignment,
             subscribe,
+            getConsignments,
             getPaymentProviderCustomerOrThrow,
             getState,
             initializeOffsitePayment,

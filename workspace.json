@@ -2,6 +2,7 @@
     "version": 2,
     "projects": {
         "adyen-integration": "packages/adyen-integration",
+        "affirm-integration": "packages/affirm-integration",
         "analytics": "packages/analytics",
         "apple-pay-integration": "packages/apple-pay-integration",
         "bluesnap-direct-integration": "packages/bluesnap-direct-integration",

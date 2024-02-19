@@ -14,6 +14,7 @@ export {
     CustomItem,
     DigitalItem,
     GiftCertificateItem,
+    LineItemCategory,
     LineItemMap,
     PhysicalItem,
 } from './cart';

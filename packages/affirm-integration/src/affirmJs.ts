@@ -1,3 +1,15 @@
+/* istanbul ignore file */
+
+/* eslint-disable prefer-rest-params */
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable no-plusplus */
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable no-underscore-dangle */
 /**
  * Used this approach as Affirm uses snipped for initializing. Please refer to Affirm documentation in: https://docs.affirm.com/Integrate_Affirm/Direct_API#1._Add_Affirm.js
  */
@@ -29,7 +41,7 @@ export default function loadAffirmJS(apiKey: string, scriptURL: string) {
         const p = document.getElementsByTagName(e)[0];
         const l = function bar(a: Affirm | any, b: keyof Affirm, c: string) {
             return function baz() {
-                a[b]._.push([c, arguments]); /* eslint-disable-line */
+                a[b]._.push([c, arguments]);
             };
         };
 
@@ -44,7 +56,7 @@ export default function loadAffirmJS(apiKey: string, scriptURL: string) {
         b[a][h] = l(b, a, h);
 
         b[c] = function qux() {
-            b._.push([h, arguments]); /* eslint-disable-line */
+            b._.push([h, arguments]);
         };
 
         let a1 = 0;
