@@ -1,8 +1,8 @@
-import { PayPalCommerceConnectAuthenticationState } from '../paypal-commerce-types';
+import { PayPalFastlaneAuthenticationState } from '../paypal-commerce-types';
 
-export default function getPayPalConnectAuthenticationResultMock() {
+export default function getPayPalFastlaneAuthenticationResultMock() {
     return {
-        authenticationState: PayPalCommerceConnectAuthenticationState.SUCCEEDED,
+        authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
         profileData: {
             name: {
                 fullName: 'John Doe',

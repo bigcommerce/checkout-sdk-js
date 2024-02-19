@@ -5,27 +5,27 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    createPayPalCommerceAcceleratedCheckoutUtils,
+    createPayPalCommerceFastlaneUtils,
     createPayPalCommerceSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 
-import PayPalCommerceAcceleratedCheckoutPaymentStrategy from './paypal-commerce-accelerated-checkout-payment-strategy';
+import PayPalCommerceFastlanePaymentStrategy from './paypal-commerce-fastlane-payment-strategy';
 
-const createPayPalCommerceAcceleratedCheckoutPaymentStrategy: PaymentStrategyFactory<
-    PayPalCommerceAcceleratedCheckoutPaymentStrategy
+const createPayPalCommerceFastlanePaymentStrategy: PaymentStrategyFactory<
+    PayPalCommerceFastlanePaymentStrategy
 > = (paymentIntegrationService) => {
     const { getHost } = paymentIntegrationService.getState();
 
-    return new PayPalCommerceAcceleratedCheckoutPaymentStrategy(
+    return new PayPalCommerceFastlanePaymentStrategy(
         paymentIntegrationService,
         new PayPalCommerceRequestSender(createRequestSender({ host: getHost() })),
         createPayPalCommerceSdk(),
-        createPayPalCommerceAcceleratedCheckoutUtils(),
+        createPayPalCommerceFastlaneUtils(),
     );
 };
 
-export default toResolvableModule(createPayPalCommerceAcceleratedCheckoutPaymentStrategy, [
-    { id: 'paypalcommerceacceleratedcheckout' },
+export default toResolvableModule(createPayPalCommerceFastlanePaymentStrategy, [
+    { id: 'paypalcommerceacceleratedcheckout' }, // PayPal Fastlane relates to 'paypalcommerceacceleratedcheckout' method id
 ]);
