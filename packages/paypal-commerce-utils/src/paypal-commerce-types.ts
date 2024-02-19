@@ -387,8 +387,8 @@ export interface PayPalFastlaneProfileData {
 
 export interface PayPalFastlaneProfileName {
     fullName: string;
-    firstName: string;
-    lastName: string;
+    firstName?: string;
+    lastName?: string;
 }
 
 export interface PayPalFastlaneProfilePhone {
@@ -511,6 +511,7 @@ export interface PayPalFastlaneTokenizeDetails {
 }
 
 export interface PayPalFastlaneTokenizeOptions {
+    name?: PayPalFastlaneProfileName;
     billingAddress?: PayPalFastlaneAddress;
     shippingAddress?: PayPalFastlaneAddress;
 }
@@ -551,8 +552,12 @@ export interface PayPalFastlaneOrderPlacedEventOptions extends PayPalFastlaneEve
     currency_code: string;
 }
 
-export interface PayPalCommerceConnectPaymentFormattedPayload {
-    paypal_connect_token: {
+export interface PayPalFastlanePaymentFormattedPayload {
+    paypal_connect_token?: {
+        order_id?: string;
+        token: string;
+    };
+    paypal_fastlane_token?: {
         order_id?: string;
         token: string;
     };
