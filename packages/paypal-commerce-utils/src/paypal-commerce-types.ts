@@ -550,3 +550,10 @@ export interface PayPalFastlaneOrderPlacedEventOptions extends PayPalFastlaneEve
     selected_payment_method: string;
     currency_code: string;
 }
+
+export interface PayPalCommerceConnectPaymentFormattedPayload {
+    paypal_connect_token: {
+        order_id?: string;
+        token: string;
+    };
+}
