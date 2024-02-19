@@ -3,14 +3,14 @@ import { Omit } from '../util-types';
 
 import PaymentAdditionalAction from './payment-additional-action';
 
-export default interface Payment<FP = unknown> {
+export default interface Payment<T = unknown> {
     methodId: string;
     gatewayId?: string;
-    paymentData?: PaymentInstrumentPayload<FP> & PaymentInstrumentMeta;
+    paymentData?: PaymentInstrumentPayload<T> & PaymentInstrumentMeta;
     additionalAction?: PaymentAdditionalAction;
 }
 
-export type PaymentInstrumentPayload<FP = unknown> =
+export type PaymentInstrumentPayload<T = unknown> =
     | WithEcpInstrument
     | WithSepaInstrument
     | WithIdealInstrument
@@ -41,7 +41,7 @@ export type PaymentInstrumentPayload<FP = unknown> =
           | StripeUPEIntent
           | WithMollieIssuerInstrument
           | PaypalGooglePayInstrument
-          | FP
+          | T
       >
     | HostedInstrument
     | NonceInstrument
