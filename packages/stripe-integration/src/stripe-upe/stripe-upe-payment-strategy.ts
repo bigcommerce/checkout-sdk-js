@@ -333,13 +333,14 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
     private async _loadStripeElement(
         stripeupe: StripeUPEPaymentInitializeOptions,
-        gatewayId: string,
+        _gatewayId: string,
         methodId: string,
     ) {
         const { containerId, style, render, initStripeElementUpdateTrigger } = stripeupe;
-        const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
-            params: { method: methodId },
-        });
+        // const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+        //     params: { method: methodId },
+        // });
+        const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
         const { checkoutSettings } = state.getStoreConfigOrThrow();
 
@@ -351,9 +352,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             initializationData: { stripePublishableKey, stripeConnectedAccount, shopperLanguage },
         } = paymentMethod;
 
-        if (!paymentMethod.clientToken) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
+        // if (!paymentMethod.clientToken) {
+        //     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        // }
 
         this._stripeUPEClient = await this._loadStripeJs(
             stripePublishableKey,
@@ -377,6 +378,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     colorTextSecondary: styles.labelText,
                     colorTextPlaceholder: styles.fieldPlaceholderText,
                     colorIcon: styles.fieldPlaceholderText,
+                    fontFamily: 'Montserrat, Arial, Helvetica',
                 },
                 rules: {
                     '.Input': {
@@ -384,14 +386,48 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         color: styles.fieldText,
                         boxShadow: styles.fieldInnerShadow,
                     },
+                    '.AccordionItem': {
+                        borderRadius: '0',
+                        // borderLeftWidth: '0',
+                        // borderRightWidth: '0',
+                        boxShadow: 'none',
+                        fontSize: '15px',
+                        fontWeight: '700',
+                        padding: '13px 20px 13px',
+                        paddingBottom: '13px',
+                        borderBottom: '1px solid #e6e6e6',
+                    },
+                    '.TabLabel, .AccordionItem': {
+                        fontSize: '15px',
+                        fontWeight: '700',
+                    },
+                    '.TabLabel--selected': {
+                        fontWeight: '700',
+                    },
                 },
             };
         }
 
+        const { outstandingBalance } = state.getCheckoutOrThrow();
+        const { currency } = state.getCartOrThrow();
+        const amount = outstandingBalance * 100;
+
+        console.log({ outstandingBalance });
+
         this._stripeElements = await this.scriptLoader.getElements(this._stripeUPEClient, {
-            clientSecret: paymentMethod.clientToken,
+            // clientSecret: paymentMethod.clientToken,
             locale: formatLocale(shopperLanguage),
             appearance,
+
+            mode: 'payment',
+            amount,
+            currency: currency.code.toLowerCase(),
+            paymentMethodTypes: ['card', 'alipay', 'klarna'],
+            fonts: [
+                {
+                    cssSrc: 'https://fonts.googleapis.com/css?family=Montserrat:700,500,400%7CKarla:400&display=swap',
+                },
+            ],
         });
 
         const { getBillingAddress, getShippingAddress } = state;
@@ -417,6 +453,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     googlePay: StripeStringConstants.NEVER,
                 },
                 ...this._getStripeElementTerms(),
+                layout: {
+                    type: 'accordion',
+                    defaultCollapsed: false,
+                    radios: true,
+                    spacedAccordionItems: false,
+                },
             });
 
         this._mountElement(stripeElement, containerId);
@@ -436,6 +478,27 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         if (this._isStripeElementUpdateEnabled) {
             initStripeElementUpdateTrigger?.(this._updateStripeElement.bind(this));
         }
+
+        stripeElement.on('change', (e) => {
+            console.log('*** change event', e);
+        });
+
+        this.addDemoStyle();
+    }
+
+    private addDemoStyle() {
+        const style = document.createElement('style');
+
+        style.innerHTML = `
+            .form-checklist-item:first-of-type .form-checklist-body {
+                margin: 0 !important;
+            }
+            .form-checklist-item:first-of-type .payment-widget,
+            .form-checklist-item:first-of-type .paymentMethod--hosted {
+                padding: 0 !important;
+            }
+        `;
+        document.body.appendChild(style);
     }
 
     // TODO: complexity of _processAdditionalAction method
