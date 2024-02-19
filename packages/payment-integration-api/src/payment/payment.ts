@@ -3,14 +3,14 @@ import { Omit } from '../util-types';
 
 import PaymentAdditionalAction from './payment-additional-action';
 
-export default interface Payment {
+export default interface Payment<T = unknown> {
     methodId: string;
     gatewayId?: string;
-    paymentData?: PaymentInstrumentPayload & PaymentInstrumentMeta;
+    paymentData?: PaymentInstrumentPayload<T> & PaymentInstrumentMeta;
     additionalAction?: PaymentAdditionalAction;
 }
 
-export type PaymentInstrumentPayload =
+export type PaymentInstrumentPayload<T = unknown> =
     | WithEcpInstrument
     | WithSepaInstrument
     | WithIdealInstrument
@@ -40,8 +40,8 @@ export type PaymentInstrumentPayload =
           | StripeV3FormattedPayload
           | StripeUPEIntent
           | WithMollieIssuerInstrument
-          | WithPayPalConnectInstrument
           | PaypalGooglePayInstrument
+          | T
       >
     | HostedInstrument
     | NonceInstrument
@@ -97,13 +97,6 @@ export interface WithDocumentInstrument {
 export interface WithMollieIssuerInstrument {
     issuer: string;
     shopper_locale: string;
-}
-
-export interface WithPayPalConnectInstrument {
-    paypal_connect_token: {
-        order_id?: string;
-        token: string;
-    };
 }
 
 export interface WithIdealInstrument {

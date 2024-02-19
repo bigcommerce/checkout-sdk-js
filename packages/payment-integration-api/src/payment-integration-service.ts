@@ -44,7 +44,7 @@ export default interface PaymentIntegrationService {
         options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors>;
 
-    submitPayment(payment: Payment): Promise<PaymentIntegrationSelectors>;
+    submitPayment<T = unknown>(payment: Payment<T>): Promise<PaymentIntegrationSelectors>;
 
     finalizeOrder(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 

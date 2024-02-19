@@ -21,6 +21,7 @@ import {
     PayPalCommerceConnectAuthenticationState,
     PayPalCommerceConnectCardComponentMethods,
     PayPalCommerceConnectCardComponentOptions,
+    PayPalCommerceConnectPaymentFormattedPayload,
     PayPalCommerceInitializationData,
     PayPalCommerceSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
@@ -131,7 +132,9 @@ export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements
                 : await this.preparePaymentPayload(methodId, orderId, paymentData);
 
         await this.paymentIntegrationService.submitOrder(order, options);
-        await this.paymentIntegrationService.submitPayment(paymentPayload);
+        await this.paymentIntegrationService.submitPayment<PayPalCommerceConnectPaymentFormattedPayload>(
+            paymentPayload,
+        );
 
         this.paypalCommerceAcceleratedCheckoutUtils.updateStorageSessionId(true);
     }
@@ -277,7 +280,7 @@ export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements
         methodId: string,
         paypalOrderId: string,
         paymentData: VaultedInstrument,
-    ): Payment {
+    ): Payment<PayPalCommerceConnectPaymentFormattedPayload> {
         const { instrumentId } = paymentData;
 
         return {
@@ -297,7 +300,7 @@ export default class PayPalCommerceAcceleratedCheckoutPaymentStrategy implements
         methodId: string,
         paypalOrderId: string,
         paymentData: OrderPaymentRequestBody['paymentData'],
-    ): Promise<Payment> {
+    ): Promise<Payment<PayPalCommerceConnectPaymentFormattedPayload>> {
         const state = this.paymentIntegrationService.getState();
         const billingAddress = state.getBillingAddressOrThrow();
         // Info: shipping can be unavailable for carts with digital items
