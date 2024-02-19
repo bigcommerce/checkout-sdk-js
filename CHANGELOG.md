@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.541.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.540.0...v1.541.0) (2024-02-19)
+
+
+### Features
+
+* **payment:** PI-1369 Move Affirm payment strategy to package [Check… ([#2348](https://github.com/bigcommerce/checkout-sdk-js/issues/2348)) ([a04f260](https://github.com/bigcommerce/checkout-sdk-js/commit/a04f260ca4f92f46dbc05712b3344b931934d920))
+
 ## [1.540.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.539.0...v1.540.0) (2024-02-15)
 
 
