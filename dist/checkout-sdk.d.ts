@@ -13,7 +13,6 @@ import { HostedFormOptions as HostedFormOptions_2 } from '@bigcommerce/checkout-
 import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 import { Observable } from 'rxjs';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PayPalCommerceConnectStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PaymentErrorData } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -7088,74 +7087,6 @@ declare interface PayPalBuyNowInitializeOptions {
     getBuyNowCartRequestBody(): BuyNowCartRequestBody_2;
 }
 
-/**
- * A set of options that are required to initialize the PayPalCommerce Accelerated Checkout payment
- * method for presenting on the page.
- *
- *
- * Also, PayPalCommerce requires specific options to initialize PayPalCommerce Accelerated Checkout Credit Card Component
- * ```html
- * <!-- This is where the PayPalCommerce Credit Card Component will be inserted -->
- * <div id="container"></div>
- * ```
- * ```js
- * service.initializePayment({
- *     methodId: 'paypalcommerceacceleratedcheckout',
- *     paypalcommerceacceleratedcheckout: {
- *         onInit: (renderPayPalComponentMethod) => renderPayPalComponentMethod('#container-id'),
- *         onChange: (showPayPalConnectCardSelector) => showPayPalConnectCardSelector(),
- *         styles: {
- *              root: {
- *                  backgroundColorPrimary: 'transparent',
- *                  errorColor: '#C40B0B',
- *                  fontFamily: 'Montserrat, Helvetica, Arial, sans-serif',
- *              },
- *              input: {
- *                  borderRadius: '0.25rem',
- *                  borderColor: '#9E9E9E',
- *                  focusBorderColor: '#4496F6',
- *              },
- *              toggle: {
- *                  colorPrimary: '#0F005E',
- *                  colorSecondary: '#ffffff',
- *              },
- *              text: {
- *                  body: {
- *                      color: '#222222',
- *                      fontSize: '1rem',
- *                  },
- *                  caption: {
- *                      color: '#515151',
- *                      fontSize: '0.875rem',
- *                  },
- *              },
- *              branding: 'light',
- *         },
- *     },
- * });
- * ```
- */
-declare interface PayPalCommerceAcceleratedCheckoutPaymentInitializeOptions {
-    /**
-     * Is a callback that takes the CSS selector of a container
-     * where the PayPal Connect form should be inserted into.
-     */
-    onInit?: (renderPayPalConnectCardComponent: (container: string) => void) => void;
-    /**
-     * Is a callback that shows PayPal stored instruments
-     * when get triggered
-     */
-    onChange?: (showPayPalConnectCardSelector: () => Promise<CardInstrument_2 | undefined>) => void;
-    /**
-     * Is a stylisation options for customizing PayPal Connect components
-     *
-     * Note: the styles for all PayPalCommerce Accelerated Checkout strategies should be the same,
-     * because they will be provided to PayPal library only for the first strategy initialization
-     * no matter what strategy was initialised first
-     */
-    styles?: PayPalCommerceConnectStylesOption;
-}
-
 declare interface PayPalCommerceAlternativeMethodsButtonOptions {
     /**
      * Alternative payment method id what used for initialization PayPal button as funding source.
@@ -7599,6 +7530,74 @@ declare interface PayPalCommerceFastlaneCustomerInitializeOptions {
     styles?: PayPalFastlaneStylesOption;
 }
 
+/**
+ * A set of options that are required to initialize the PayPalCommerce Accelerated Checkout payment
+ * method for presenting on the page.
+ *
+ *
+ * Also, PayPalCommerce requires specific options to initialize PayPal Fastlane Card Component
+ * ```html
+ * <!-- This is where the PayPal Fastlane Card Component will be inserted -->
+ * <div id="container"></div>
+ * ```
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'paypalcommerceacceleratedcheckout', // PayPal Fastlane has 'paypalcommerceacceleratedcheckout' method id
+ *     paypalcommercefastlane: {
+ *         onInit: (renderPayPalCardComponent) => renderPayPalCardComponent('#container-id'),
+ *         onChange: (showPayPalCardSelector) => showPayPalCardSelector(),
+ *         styles: {
+ *              root: {
+ *                  backgroundColorPrimary: 'transparent',
+ *                  errorColor: '#C40B0B',
+ *                  fontFamily: 'Montserrat, Helvetica, Arial, sans-serif',
+ *              },
+ *              input: {
+ *                  borderRadius: '0.25rem',
+ *                  borderColor: '#9E9E9E',
+ *                  focusBorderColor: '#4496F6',
+ *              },
+ *              toggle: {
+ *                  colorPrimary: '#0F005E',
+ *                  colorSecondary: '#ffffff',
+ *              },
+ *              text: {
+ *                  body: {
+ *                      color: '#222222',
+ *                      fontSize: '1rem',
+ *                  },
+ *                  caption: {
+ *                      color: '#515151',
+ *                      fontSize: '0.875rem',
+ *                  },
+ *              },
+ *              branding: 'light',
+ *         },
+ *     },
+ * });
+ * ```
+ */
+declare interface PayPalCommerceFastlanePaymentInitializeOptions {
+    /**
+     * Is a callback that takes the CSS selector of a container
+     * where the PayPal Fastlane form should be inserted into.
+     */
+    onInit?: (renderPayPalCardComponent: (container: string) => void) => void;
+    /**
+     * Is a callback that shows PayPal stored instruments
+     * when get triggered
+     */
+    onChange?: (showPayPalCardSelector: () => Promise<CardInstrument_2 | undefined>) => void;
+    /**
+     * Is a stylisation options for customizing PayPal Fastlane components
+     *
+     * Note: the styles for all PayPalCommerceFastlane strategies should be the same,
+     * because they will be provided to PayPal library only for the first strategy initialization
+     * no matter what strategy was initialised first
+     */
+    styles?: PayPalFastlaneStylesOption;
+}
+
 declare interface PayPalCommerceFieldsStyleOptions {
     variables?: {
         fontFamily?: string;
@@ -7827,7 +7826,7 @@ declare class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest;
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceAcceleratedCheckoutPaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -9312,10 +9311,6 @@ declare interface WithMolliePaymentInitializeOptions {
     mollie?: MolliePaymentInitializeOptions;
 }
 
-declare interface WithPayPalCommerceAcceleratedCheckoutPaymentInitializeOptions {
-    paypalcommerceacceleratedcheckout?: PayPalCommerceAcceleratedCheckoutPaymentInitializeOptions;
-}
-
 declare interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {
     paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsButtonOptions;
 }
@@ -9357,6 +9352,11 @@ declare interface WithPayPalCommerceCustomerInitializeOptions {
 
 declare interface WithPayPalCommerceFastlaneCustomerInitializeOptions {
     paypalcommercefastlane?: PayPalCommerceFastlaneCustomerInitializeOptions;
+}
+
+declare interface WithPayPalCommerceFastlanePaymentInitializeOptions {
+    paypalcommerceacceleratedcheckout?: PayPalCommerceFastlanePaymentInitializeOptions;
+    paypalcommercefastlane?: PayPalCommerceFastlanePaymentInitializeOptions;
 }
 
 declare interface WithPayPalCommercePaymentInitializeOptions {
