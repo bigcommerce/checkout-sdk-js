@@ -29,6 +29,9 @@
             "@bigcommerce/checkout-sdk/amazon-pay-utils": [
                 "packages/amazon-pay-utils/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/afterpay-integration": [
+                "packages/afterpay-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/analytics": ["packages/analytics/src/index.ts"],
             "@bigcommerce/checkout-sdk/apple-pay-integration": [
                 "packages/apple-pay-integration/src/index.ts"
