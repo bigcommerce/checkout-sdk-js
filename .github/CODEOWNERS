@@ -53,6 +53,7 @@
 
 /packages/adyen-integration @bigcommerce/team-integrations
 /packages/affirm-integration @bigcommerce/team-integrations
+/packages/afterpay-integration @bigcommerce/team-integrations
 /packages/amazon-pay-utils @bigcommerce/team-integrations
 /packages/bluesnap-direct-integration @bigcommerce/team-integrations
 /packages/bolt-integration @bigcommerce/team-integrations

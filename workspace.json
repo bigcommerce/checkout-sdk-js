@@ -3,6 +3,7 @@
     "projects": {
         "adyen-integration": "packages/adyen-integration",
         "affirm-integration": "packages/affirm-integration",
+        "afterpay-integration": "packages/afterpay-integration",
         "amazon-pay-utils": "packages/amazon-pay-utils",
         "analytics": "packages/analytics",
         "apple-pay-integration": "packages/apple-pay-integration",
