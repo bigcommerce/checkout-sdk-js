@@ -9,6 +9,7 @@ import {
     Payment,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
+    PaymentInstrumentPayload,
     PaymentIntegrationService,
     PaymentMethodInvalidError,
     PaymentRequestOptions,
@@ -84,11 +85,12 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
 
         if (paypalcommerce.onInit && typeof paypalcommerce.onInit === 'function') {
             paypalcommerce.onInit(() => this.renderButton(methodId, paypalcommerce));
-
-            return;
         }
 
-        if (!paypalcommerce.shouldNotRenderOnInitialization) {
+        if (
+            paypalcommerce.shouldRenderPayPalButtonOnInitialization === undefined ||
+            paypalcommerce.shouldRenderPayPalButtonOnInitialization
+        ) {
             this.renderButton(methodId, paypalcommerce);
         }
     }
@@ -109,24 +111,12 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         const isVaultedFlow =
             paymentData && isVaultedInstrument(paymentData) && isHostedInstrumentLike(paymentData);
 
-        if (!this.orderId) {
-            if (isVaultedFlow) {
-                this.orderId = await this.createOrder();
-            } else {
-                throw new PaymentMethodInvalidError();
-            }
+        if (!this.orderId && isVaultedFlow) {
+            this.orderId = await this.createOrder();
         }
 
-        let isTrustedVaultingFlow = true;
-
-        if (paymentData && isVaultedInstrument(paymentData)) {
-            const instruments = state.getInstruments();
-
-            const { trustedShippingAddress } =
-                instruments?.find(({ bigpayToken }) => bigpayToken === paymentData.instrumentId) ||
-                {};
-
-            isTrustedVaultingFlow = Boolean(trustedShippingAddress);
+        if (!this.orderId) {
+            throw new PaymentMethodInvalidError();
         }
 
         try {
@@ -134,7 +124,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
                 paymentData &&
                 isVaultedInstrument(paymentData) &&
                 isHostedInstrumentLike(paymentData) &&
-                isTrustedVaultingFlow
+                this.isTrustedVaultingFlow(paymentData)
                     ? this.prepareVaultedInstrumentPaymentPayload(
                           payment.methodId,
                           this.orderId,
@@ -201,7 +191,6 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
                     vault_payment_instrument: null,
                     set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
                     device_info: null,
-                    method_id: methodId,
                     paypal_account: {
                         order_id: paypalOrderId,
                     },
@@ -218,15 +207,14 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         paypalOrderId: string,
         paymentData: OrderPaymentRequestBody['paymentData'],
     ): Payment {
-        const { getFieldsValues } = this.paypalcommerce || {};
+        const fieldsValues = this.getFieldsValues();
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData)
                 ? {
                       ...paymentData,
                       shouldSaveInstrument:
-                          getFieldsValues?.().shouldSaveInstrument ||
-                          paymentData.shouldSaveInstrument,
+                          fieldsValues?.shouldSaveInstrument || paymentData.shouldSaveInstrument,
                   }
                 : {};
 
@@ -324,11 +312,35 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
     }
 
     private async createOrder() {
-        const { getFieldsValues } = this.paypalcommerce || {};
+        const fieldsValues = this.getFieldsValues();
 
         return this.paypalCommerceIntegrationService.createOrder('paypalcommercecheckout', {
-            shouldSaveInstrument: getFieldsValues?.().shouldSaveInstrument || false,
+            shouldSaveInstrument: fieldsValues?.shouldSaveInstrument || false,
         });
+    }
+
+    private getFieldsValues() {
+        const { getFieldsValues } = this.paypalcommerce || {};
+
+        if (typeof getFieldsValues === 'function') {
+            return getFieldsValues();
+        }
+    }
+
+    private isTrustedVaultingFlow(paymentData?: PaymentInstrumentPayload) {
+        if (paymentData && isVaultedInstrument(paymentData)) {
+            const state = this.paymentIntegrationService.getState();
+
+            const instruments = state.getInstruments();
+
+            const { trustedShippingAddress } =
+                instruments?.find(({ bigpayToken }) => bigpayToken === paymentData.instrumentId) ||
+                {};
+
+            return !!trustedShippingAddress;
+        }
+
+        return false;
     }
 
     /**

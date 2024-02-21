@@ -50,9 +50,16 @@ export default interface PayPalCommercePaymentInitializeOptions {
      */
     container: string;
 
-    shouldNotRenderOnInitialization?: boolean;
+    /**
+     * If there is no need to initialize the Smart Payment Button, simply pass false as the option value.
+     * The default value is true
+     */
+    shouldRenderPayPalButtonOnInitialization?: boolean;
 
-    getFieldsValues?: () => HostedInstrument;
+    /**
+     * A callback for getting form fields values.
+     */
+    getFieldsValues?(): HostedInstrument;
 
     /**
      * A callback for displaying error popup. This callback requires error object as parameter.
@@ -65,7 +72,10 @@ export default interface PayPalCommercePaymentInitializeOptions {
      */
     onRenderButton?(): void;
 
-    onInit?(renderButtonCallback: () => void): void;
+    /**
+     * A callback that gets called when strategy is in the process of initialization before rendering Smart Payment Button.
+     */
+    onInit?(callback: () => void): void;
 
     /**
      * A callback that gets called when a buyer click on Smart Payment Button

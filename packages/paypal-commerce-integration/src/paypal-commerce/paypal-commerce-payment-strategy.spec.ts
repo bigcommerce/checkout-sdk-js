@@ -256,7 +256,6 @@ describe('PayPalCommercePaymentStrategy', () => {
                 ...initializationOptions,
                 paypalcommerce: {
                     ...paypalCommerceOptions,
-                    shouldNotRenderOnInitialization: true,
                 },
             });
 
@@ -582,7 +581,6 @@ describe('PayPalCommercePaymentStrategy', () => {
                 methodId: payload.payment.methodId,
                 paymentData: {
                     formattedPayload: {
-                        method_id: 'paypalcommerce',
                         device_info: null,
                         paypal_account: { order_id: paypalOrderId },
                         bigpay_token: { token: bigpayToken },
