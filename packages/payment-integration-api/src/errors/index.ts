@@ -7,6 +7,7 @@ export {
     default as PaymentInvalidFormError,
     PaymentInvalidFormErrorDetails,
 } from './payment-invalid-form-error';
+export { default as OrderFinalizationNotCompletedError } from './order-finalization-not-completed-error';
 export { default as OrderFinalizationNotRequiredError } from './order-finalization-not-required-error';
 export { default as PaymentArgumentInvalidError } from './payment-argument-invalid-error';
 export { default as PaymentMethodCancelledError } from './payment-method-cancelled-error';

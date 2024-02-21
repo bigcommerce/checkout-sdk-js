@@ -51,6 +51,7 @@ export {
     NotImplementedError,
     NotInitializedError,
     NotInitializedErrorType,
+    OrderFinalizationNotCompletedError,
     OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
     PaymentErrorData,
