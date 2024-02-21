@@ -38,6 +38,8 @@ export default interface PaymentIntegrationService {
         options?: RequestOptions & { useCache?: boolean },
     ): Promise<PaymentIntegrationSelectors>;
 
+    loadPaymentMethods(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
+
     loadCurrentOrder(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 
     submitOrder(

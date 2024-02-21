@@ -110,6 +110,12 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         return this._storeProjection.getState();
     }
 
+    async loadPaymentMethods(options?: RequestOptions): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethods(options));
+
+        return this._storeProjection.getState();
+    }
+
     async submitOrder(
         payload?: OrderRequestBody,
         options?: RequestOptions,
