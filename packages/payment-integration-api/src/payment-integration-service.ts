@@ -6,6 +6,7 @@ import { OrderRequestBody } from './order';
 import { InitializeOffsitePaymentConfig, Payment } from './payment';
 import PaymentIntegrationSelectors from './payment-integration-selectors';
 import { PaymentProviderCustomer } from './payment-provider-customer';
+import { InitializePaymentOptions } from './payment/payment-initialize-options';
 import { ShippingAddressRequestBody } from './shipping';
 import { RequestOptions } from './util-types';
 
@@ -80,4 +81,10 @@ export default interface PaymentIntegrationService {
     ): Promise<PaymentIntegrationSelectors>;
 
     loadShippingCountries(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
+
+    initializePayment(
+        methodId: string,
+        params?: InitializePaymentOptions,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors>;
 }

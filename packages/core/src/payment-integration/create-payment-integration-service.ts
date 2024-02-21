@@ -25,6 +25,7 @@ import {
     PaymentRequestTransformer,
 } from '../payment';
 import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import {
     ConsignmentActionCreator,
     ConsignmentRequestSender,
@@ -119,6 +120,11 @@ export default function createPaymentIntegrationService(
         new ShippingCountryRequestSender(requestSender, { locale: getLocale() }),
     );
 
+    const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
+        new RemoteCheckoutRequestSender(requestSender),
+        checkoutActionCreator,
+    );
+
     return new DefaultPaymentIntegrationService(
         store,
         storeProjectionFactory,
@@ -135,5 +141,6 @@ export default function createPaymentIntegrationService(
         spamProtectionActionCreator,
         paymentProviderCustomerActionCreator,
         shippingCountryActionCreator,
+        remoteCheckoutActionCreator,
     );
 }
