@@ -269,4 +269,15 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
 
         return this._storeProjection.getState();
     }
+
+    async forgetCheckout(
+        methodId: string,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._remoteCheckoutActionCreator.forgetCheckout(methodId, options),
+        );
+
+        return this._storeProjection.getState();
+    }
 }

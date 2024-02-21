@@ -89,4 +89,9 @@ export default interface PaymentIntegrationService {
         params?: InitializePaymentOptions,
         options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors>;
+
+    forgetCheckout(
+        methodId: string,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors>;
 }
