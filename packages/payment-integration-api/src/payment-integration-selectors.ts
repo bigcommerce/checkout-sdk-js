@@ -2,6 +2,7 @@ import { BillingAddress } from './billing';
 import { Cart } from './cart';
 import { Checkout } from './checkout';
 import { StoreConfig } from './config';
+import { ContextConfig } from './config/config';
 import { Customer } from './customer';
 import { Country } from './geography';
 import { Order } from './order';
@@ -30,6 +31,8 @@ export default interface PaymentIntegrationSelectors {
 
     getConsignments(): Consignment[] | undefined;
     getConsignmentsOrThrow(): Consignment[];
+
+    getContextConfig(): ContextConfig | undefined;
 
     getCustomer(): Customer | undefined;
     getCustomerOrThrow(): Customer;

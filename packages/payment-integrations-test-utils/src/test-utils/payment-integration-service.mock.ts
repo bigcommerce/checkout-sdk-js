@@ -23,6 +23,7 @@ const state = {
     getCheckoutOrThrow: jest.fn(() => getCheckout()),
     getConsignments: jest.fn(() => [getConsignment()]),
     getConsignmentsOrThrow: jest.fn(() => [getConsignment()]),
+    getContextConfig: jest.fn(() => getConfig().context),
     getCountries: jest.fn(() => getCountries()),
     getCustomer: jest.fn(() => getCustomer()),
     getCustomerOrThrow: jest.fn(() => getCustomer()),
