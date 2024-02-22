@@ -311,7 +311,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private async createOrder() {
+    private async createOrder(): Promise<string> {
         const fieldsValues = this.getFieldsValues();
 
         return this.paypalCommerceIntegrationService.createOrder('paypalcommercecheckout', {

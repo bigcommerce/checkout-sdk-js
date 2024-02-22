@@ -74,6 +74,8 @@ export default interface PayPalCommercePaymentInitializeOptions {
 
     /**
      * A callback that gets called when strategy is in the process of initialization before rendering Smart Payment Button.
+     *
+     * @param callback - A function, that calls the method to render the Smart Payment Button.
      */
     onInit?(callback: () => void): void;
 
