@@ -545,7 +545,6 @@ describe('PayPalCommercePaymentStrategy', () => {
                 methodId: payload.payment.methodId,
                 paymentData: {
                     formattedPayload: {
-                        method_id: 'paypalcommerce',
                         paypal_account: { order_id: paypalOrderId },
                     },
                     shouldSaveInstrument: false,
@@ -580,12 +579,10 @@ describe('PayPalCommercePaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId: payload.payment.methodId,
                 paymentData: {
+                    instrumentId: '45312',
+                    shouldSetAsDefaultInstrument: true,
                     formattedPayload: {
-                        device_info: null,
                         paypal_account: { order_id: paypalOrderId },
-                        bigpay_token: { token: bigpayToken },
-                        set_as_default_stored_instrument: true,
-                        vault_payment_instrument: null,
                     },
                 },
             });

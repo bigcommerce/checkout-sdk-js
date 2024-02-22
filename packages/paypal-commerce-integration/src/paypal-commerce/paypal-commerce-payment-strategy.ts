@@ -107,31 +107,23 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        const { paymentData } = payment;
-        const isVaultedFlow =
-            paymentData && isVaultedInstrument(paymentData) && isHostedInstrumentLike(paymentData);
+        const { methodId, paymentData } = payment;
 
-        if (!this.orderId && isVaultedFlow) {
-            this.orderId = await this.createOrder();
+        if (this.isPayPalVaultedInstrumentPaymentData(paymentData)) {
+            if (!this.orderId) {
+                this.orderId = await this.createOrder();
+            }
         }
 
         if (!this.orderId) {
             throw new PaymentMethodInvalidError();
         }
 
-        try {
-            const paymentPayload =
-                paymentData &&
-                isVaultedInstrument(paymentData) &&
-                isHostedInstrumentLike(paymentData) &&
-                this.isTrustedVaultingFlow(paymentData)
-                    ? this.prepareVaultedInstrumentPaymentPayload(
-                          payment.methodId,
-                          this.orderId,
-                          paymentData,
-                      )
-                    : this.preparePaymentPayload(payment.methodId, this.orderId, paymentData);
+        const paymentPayload = this.isPayPalVaultedInstrumentPaymentData(paymentData)
+            ? this.prepareVaultedInstrumentPaymentPayload(methodId, this.orderId, paymentData)
+            : this.preparePaymentPayload(methodId, this.orderId, paymentData);
 
+        try {
             await this.paymentIntegrationService.submitOrder(order, options);
             await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error: unknown) {
@@ -167,16 +159,6 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
-    private isProviderError(error: unknown) {
-        if (isPaypalCommerceProviderError(error)) {
-            const paypalProviderError = error?.errors?.filter((e: any) => e.provider_error) || [];
-
-            return paypalProviderError[0].provider_error?.code === 'INSTRUMENT_DECLINED';
-        }
-
-        return false;
-    }
-
     private prepareVaultedInstrumentPaymentPayload(
         methodId: string,
         paypalOrderId: string,
@@ -184,18 +166,31 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
     ): Payment {
         const { instrumentId, shouldSetAsDefaultInstrument } = paymentData;
 
+        const shouldConfirmInstrument = !this.isTrustedVaultingFlow(paymentData);
+
+        if (shouldConfirmInstrument) {
+            return {
+                methodId,
+                paymentData: {
+                    shouldSaveInstrument: shouldConfirmInstrument,
+                    shouldSetAsDefaultInstrument,
+                    formattedPayload: {
+                        paypal_account: {
+                            order_id: paypalOrderId,
+                        },
+                    },
+                },
+            };
+        }
+
         return {
             methodId,
             paymentData: {
+                instrumentId,
+                shouldSetAsDefaultInstrument,
                 formattedPayload: {
-                    vault_payment_instrument: null,
-                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
-                    device_info: null,
                     paypal_account: {
                         order_id: paypalOrderId,
-                    },
-                    bigpay_token: {
-                        token: instrumentId,
                     },
                 },
             },
@@ -207,16 +202,8 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         paypalOrderId: string,
         paymentData: OrderPaymentRequestBody['paymentData'],
     ): Payment {
-        const fieldsValues = this.getFieldsValues();
-
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
-            isHostedInstrumentLike(paymentData)
-                ? {
-                      ...paymentData,
-                      shouldSaveInstrument:
-                          fieldsValues?.shouldSaveInstrument || paymentData.shouldSaveInstrument,
-                  }
-                : {};
+            isHostedInstrumentLike(paymentData) ? paymentData : {};
 
         return {
             methodId,
@@ -224,7 +211,6 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
                 shouldSaveInstrument,
                 shouldSetAsDefaultInstrument,
                 formattedPayload: {
-                    method_id: methodId,
                     paypal_account: {
                         order_id: paypalOrderId,
                     },
@@ -319,6 +305,11 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         });
     }
 
+    /**
+     *
+     * Vaulting flow methods
+     *
+     * */
     private getFieldsValues() {
         const { getFieldsValues } = this.paypalcommerce || {};
 
@@ -327,7 +318,7 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private isTrustedVaultingFlow(paymentData?: PaymentInstrumentPayload) {
+    private isTrustedVaultingFlow(paymentData?: PaymentInstrumentPayload): boolean {
         if (paymentData && isVaultedInstrument(paymentData)) {
             const state = this.paymentIntegrationService.getState();
 
@@ -354,5 +345,28 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
         } else {
             this.loadingIndicator.hide();
         }
+    }
+
+    /**
+     *
+     * Guards
+     *
+     */
+    private isPayPalVaultedInstrumentPaymentData(
+        paymentData?: PaymentInstrumentPayload,
+    ): paymentData is VaultedInstrument & HostedInstrument {
+        return (
+            !!paymentData && isVaultedInstrument(paymentData) && isHostedInstrumentLike(paymentData)
+        );
+    }
+
+    private isProviderError(error: unknown): boolean {
+        if (isPaypalCommerceProviderError(error)) {
+            const paypalProviderError = error?.errors?.filter((e: any) => e.provider_error) || [];
+
+            return paypalProviderError[0].provider_error?.code === 'INSTRUMENT_DECLINED';
+        }
+
+        return false;
     }
 }
