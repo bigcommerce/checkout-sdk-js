@@ -196,16 +196,18 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
                     set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
                     device_info: null,
                     method_id: methodId,
-                    ...(vaultedToken
-                        ? {
-                              bigpay_token: { token: vaultedToken },
-                          }
-                        : {}),
-                    ...(setupToken
-                        ? {
-                              setup_token: setupToken,
-                          }
-                        : {}),
+                    bigpay_token: {
+                        ...(vaultedToken
+                            ? {
+                                token: vaultedToken ,
+                            }
+                            : {}),
+                        ...(setupToken
+                            ? {
+                                setup_token: setupToken,
+                            }
+                            : {}),
+                    },
                     ...(orderId
                         ? {
                               card_with_order: {
