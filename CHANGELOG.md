@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.545.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.544.1...v1.545.0) (2024-02-22)
+
+
+### Features
+
+* **payment:** PAYPAL-3646 updated paypal fastlane analytic related code with modified sessionId ([#2377](https://github.com/bigcommerce/checkout-sdk-js/issues/2377)) ([214f7fa](https://github.com/bigcommerce/checkout-sdk-js/commit/214f7fa04760524bc2189268211bf2c57eb06de2))
+
 ### [1.544.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.544.0...v1.544.1) (2024-02-22)
 
 
