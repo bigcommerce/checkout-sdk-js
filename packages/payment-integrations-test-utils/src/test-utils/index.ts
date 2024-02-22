@@ -21,3 +21,4 @@ export {
 } from './payments.mock';
 
 export { getShippingAddress, getShippingAddressWithCustomFields } from './shipping-addresses.mock';
+export { getAddress } from './address.mock';

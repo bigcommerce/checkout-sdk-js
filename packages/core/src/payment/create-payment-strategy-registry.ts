@@ -102,11 +102,6 @@ import {
 } from './strategies/googlepay';
 import { HummPaymentStrategy } from './strategies/humm';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
-import {
-    KlarnaV2PaymentStrategy,
-    KlarnaV2ScriptLoader,
-    KlarnaV2TokenUpdater,
-} from './strategies/klarnav2';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { MonerisPaymentStrategy } from './strategies/moneris';
 import { OpyPaymentStrategy, OpyScriptLoader } from './strategies/opy';
@@ -572,18 +567,6 @@ export default function createPaymentStrategyRegistry(
                 paymentMethodActionCreator,
                 remoteCheckoutActionCreator,
                 new KlarnaScriptLoader(scriptLoader),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.KLARNAV2,
-        () =>
-            new KlarnaV2PaymentStrategy(
-                store,
-                orderActionCreator,
-                remoteCheckoutActionCreator,
-                new KlarnaV2ScriptLoader(scriptLoader),
-                new KlarnaV2TokenUpdater(requestSender),
             ),
     );
 
