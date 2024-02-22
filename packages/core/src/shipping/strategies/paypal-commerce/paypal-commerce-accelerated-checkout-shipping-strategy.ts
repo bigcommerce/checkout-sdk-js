@@ -111,11 +111,14 @@ export default class PayPalCommerceAcceleratedCheckoutShippingStrategy implement
         styles?: PayPalCommerceConnectStylesOption,
     ): Promise<void> {
         const state = this._store.getState();
-
+        const cart = state.cart.getCartOrThrow();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        const currencyCode = state.cart.getCartOrThrow().currency.code;
 
-        const paypalAxo = await this._paypalCommerceSdk.getPayPalAxo(paymentMethod, currencyCode);
+        const paypalAxo = await this._paypalCommerceSdk.getPayPalAxo(
+            paymentMethod,
+            cart.currency.code,
+            cart.id,
+        );
 
         await this._paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect(
             paypalAxo,

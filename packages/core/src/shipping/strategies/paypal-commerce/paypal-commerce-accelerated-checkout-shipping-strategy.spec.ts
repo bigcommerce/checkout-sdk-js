@@ -249,6 +249,7 @@ describe('PayPalCommerceAcceleratedCheckoutShippingStrategy', () => {
             expect(paypalCommerceSdk.getPayPalAxo).toHaveBeenCalledWith(
                 paymentMethod,
                 cart.currency.code,
+                cart.id,
             );
             expect(
                 paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect,

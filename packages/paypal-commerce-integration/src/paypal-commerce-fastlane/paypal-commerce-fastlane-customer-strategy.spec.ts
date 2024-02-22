@@ -292,6 +292,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
             expect(paypalCommerceSdk.getPayPalAxo).toHaveBeenCalledWith(
                 paymentMethod,
                 cart.currency.code,
+                cart.id,
             );
 
             expect(paypalCommerceFastlaneUtils.initializePayPalConnect).toHaveBeenCalledWith(
@@ -316,6 +317,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
             expect(paypalCommerceSdk.getPayPalAxo).toHaveBeenCalledWith(
                 paymentMethod,
                 cart.currency.code,
+                cart.id,
             );
 
             expect(paypalCommerceFastlaneUtils.initializePayPalConnect).toHaveBeenCalledWith(
@@ -333,6 +335,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
             expect(paypalCommerceSdk.getPayPalFastlaneSdk).toHaveBeenCalledWith(
                 paymentMethod,
                 cart.currency.code,
+                cart.id,
             );
 
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
@@ -356,6 +359,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
             expect(paypalCommerceSdk.getPayPalFastlaneSdk).toHaveBeenCalledWith(
                 paymentMethod,
                 cart.currency.code,
+                cart.id,
             );
 
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(

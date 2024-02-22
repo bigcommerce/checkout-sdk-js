@@ -27,11 +27,13 @@ export default class PayPalCommerceSdk {
     async getPayPalAxo(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
+        sessionId: string,
     ): Promise<PayPalAxoSdk> {
         if (!this.window.paypalAxo) {
             const paypalSdkConnectConfig = this.getPayPalSdkConnectConfiguration(
                 paymentMethod,
                 currencyCode,
+                sessionId,
             );
 
             await this.loadPayPalSdk(paypalSdkConnectConfig);
@@ -47,9 +49,14 @@ export default class PayPalCommerceSdk {
     async getPayPalFastlaneSdk(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
+        sessionId: string,
     ): Promise<PayPalFastlaneSdk> {
         if (!this.window.paypalFastlaneSdk) {
-            const config = this.getPayPalFastlaneSdkConfiguration(paymentMethod, currencyCode);
+            const config = this.getPayPalFastlaneSdkConfiguration(
+                paymentMethod,
+                currencyCode,
+                sessionId,
+            );
 
             await this.loadPayPalSdk(config);
 
@@ -110,6 +117,7 @@ export default class PayPalCommerceSdk {
     private getPayPalSdkConnectConfiguration(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
+        sessionId: string,
     ): PayPalSdkConfig {
         const { clientToken, initializationData } = paymentMethod;
 
@@ -125,11 +133,6 @@ export default class PayPalCommerceSdk {
             connectClientToken, // TODO: remove when PPCP AXO A/B testing will be finished
         } = initializationData;
 
-        // TODO: remove ts-ignore when typescript version will be 4.6+
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const clientMetadataId = crypto.randomUUID().replace(/-/g, '');
-
         return {
             options: {
                 'client-id': clientId,
@@ -140,7 +143,7 @@ export default class PayPalCommerceSdk {
                 intent,
             },
             attributes: {
-                'data-client-metadata-id': clientMetadataId,
+                'data-client-metadata-id': sessionId.replace(/-/g, ''),
                 'data-namespace': 'paypalAxo',
                 'data-partner-attribution-id': attributionId,
                 'data-user-id-token': connectClientToken || clientToken,
@@ -151,6 +154,7 @@ export default class PayPalCommerceSdk {
     private getPayPalFastlaneSdkConfiguration(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
+        sessionId: string,
     ): PayPalSdkConfig {
         const { clientToken, initializationData } = paymentMethod;
 
@@ -166,11 +170,6 @@ export default class PayPalCommerceSdk {
             connectClientToken, // TODO: remove when PPCP Fastlane A/B testing will be finished
         } = initializationData;
 
-        // TODO: remove ts-ignore when typescript version will be 4.6+
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const clientMetadataId = crypto.randomUUID().replace(/-/g, '');
-
         return {
             options: {
                 'client-id': clientId,
@@ -181,7 +180,7 @@ export default class PayPalCommerceSdk {
                 intent,
             },
             attributes: {
-                'data-client-metadata-id': clientMetadataId,
+                'data-client-metadata-id': sessionId.replace(/-/g, ''),
                 'data-namespace': 'paypalFastlane',
                 'data-partner-attribution-id': attributionId,
                 'data-user-id-token': connectClientToken || clientToken,

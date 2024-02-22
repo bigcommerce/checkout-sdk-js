@@ -117,14 +117,15 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
         styles?: PayPalCommerceConnectStylesOption,
     ): Promise<void> {
         const state = this._store.getState();
+        const cart = state.cart.getCartOrThrow();
 
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        const currencyCode = state.cart.getCartOrThrow().currency.code;
 
         if (this._isFastlaneEnabled) {
             const paypalFastlaneSdk = await this._paypalCommerceSdk.getPayPalFastlaneSdk(
                 paymentMethod,
-                currencyCode,
+                cart.currency.code,
+                cart.id,
             );
 
             await this._paypalCommerceFastlaneUtils.initializePayPalFastlane(
@@ -135,7 +136,8 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
         } else {
             const paypalAxo = await this._paypalCommerceSdk.getPayPalAxo(
                 paymentMethod,
-                currencyCode,
+                cart.currency.code,
+                cart.id,
             );
 
             await this._paypalCommerceFastlaneUtils.initializePayPalConnect(
