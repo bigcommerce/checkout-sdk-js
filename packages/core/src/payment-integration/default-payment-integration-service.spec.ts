@@ -27,6 +27,7 @@ import { PaymentProviderCustomerActionCreator } from '../payment-provider-custom
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
 import { getPayment } from '../payment/payments.mock';
+import { RemoteCheckoutActionCreator } from '../remote-checkout';
 import { ConsignmentActionCreator, ShippingCountryActionCreator } from '../shipping';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { SpamProtectionActionCreator } from '../spam-protection';
@@ -74,6 +75,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let storeCreditActionCreator: Pick<StoreCreditActionCreator, 'applyStoreCredit'>;
     let paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator;
     let shippingCountryActionCreator: Pick<ShippingCountryActionCreator, 'loadCountries'>;
+    let remoteCheckoutActionCreator: Pick<RemoteCheckoutActionCreator, 'initializePayment'>;
 
     beforeEach(() => {
         requestSender = createRequestSender();
@@ -168,6 +170,12 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
+        remoteCheckoutActionCreator = {
+            initializePayment: jest.fn(
+                async () => () => createAction('INITIALIZE_REMOTE_PAYMENT_REQUESTED'),
+            ),
+        };
+
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
@@ -184,6 +192,7 @@ describe('DefaultPaymentIntegrationService', () => {
             spamProtectionActionCreator as SpamProtectionActionCreator,
             paymentProviderCustomerActionCreator,
             shippingCountryActionCreator as ShippingCountryActionCreator,
+            remoteCheckoutActionCreator as RemoteCheckoutActionCreator,
         );
     });
 
@@ -458,6 +467,18 @@ describe('DefaultPaymentIntegrationService', () => {
             expect(consignmentActionCreator.deleteConsignment).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(
                 consignmentActionCreator.deleteConsignment('ID'),
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#initializePayment', () => {
+        it('initialize payment', async () => {
+            const output = await subject.initializePayment('methodId');
+
+            expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(
+                remoteCheckoutActionCreator.initializePayment('methodId'),
             );
             expect(output).toEqual(paymentIntegrationSelectors);
         });

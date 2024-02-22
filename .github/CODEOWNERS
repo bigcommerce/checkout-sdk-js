@@ -69,6 +69,7 @@
 /packages/core/src/checkout-buttons/strategies/paypal @bigcommerce/team-paypal
 /packages/core/src/customer/strategies/braintree @bigcommerce/team-paypal
 /packages/core/src/shipping/strategies/braintree @bigcommerce/team-paypal
+/packages/core/src/shipping/strategies/paypal-commerce @bigcommerce/team-paypal
 /packages/core/src/payment/strategies/braintree @bigcommerce/team-paypal
 /packages/core/src/payment/strategies/paypal @bigcommerce/team-paypal
 

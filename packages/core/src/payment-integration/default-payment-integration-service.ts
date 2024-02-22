@@ -26,6 +26,8 @@ import {
 } from '../payment-provider-customer';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
+import { RemoteCheckoutActionCreator } from '../remote-checkout';
+import { InitializePaymentOptions } from '../remote-checkout/remote-checkout-request-sender';
 import { ConsignmentActionCreator, ShippingCountryActionCreator } from '../shipping';
 import { SpamProtectionActionCreator } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
@@ -51,6 +53,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
         private _paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
+        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
     ) {
         this._storeProjection = this._storeProjectionFactory.create(this._store);
     }
@@ -244,6 +247,18 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
     ): Promise<PaymentIntegrationSelectors> {
         await this._store.dispatch(
             this._consignmentActionCreator.deleteConsignment(consignmentId, options),
+        );
+
+        return this._storeProjection.getState();
+    }
+
+    async initializePayment(
+        methodId: string,
+        params?: InitializePaymentOptions,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._remoteCheckoutActionCreator.initializePayment(methodId, params, options),
         );
 
         return this._storeProjection.getState();

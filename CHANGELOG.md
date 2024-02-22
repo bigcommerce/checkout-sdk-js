@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.544.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.543.1...v1.544.0) (2024-02-21)
+
+
+### Features
+
+* **payment:** PAYPAL-3575 updated paypal commerce AXO shipping strategy to support PP Connect + Fastlane ([#2370](https://github.com/bigcommerce/checkout-sdk-js/issues/2370)) ([cdf69a9](https://github.com/bigcommerce/checkout-sdk-js/commit/cdf69a9dd0c9af39ca802902bf921c0ba3500f2b))
+* **payment:** PI-1648 Make an ability to use initializePayment action from core package in integration checkout-sdk packages ([#2365](https://github.com/bigcommerce/checkout-sdk-js/issues/2365)) ([e006254](https://github.com/bigcommerce/checkout-sdk-js/commit/e006254ac143114b4de976ed8dba327d0a459eb0))
+
+### [1.543.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.543.0...v1.543.1) (2024-02-21)
+
+## [1.543.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.542.1...v1.543.0) (2024-02-20)
+
+
+### Features
+
+* **payment:** PAYPAL-3574 updated PPCP AXO payment strategy to support Connect + Fastlane ([#2364](https://github.com/bigcommerce/checkout-sdk-js/issues/2364)) ([5745ea5](https://github.com/bigcommerce/checkout-sdk-js/commit/5745ea577ee434ef58db48782f14194ef75ecff9))
+
+### [1.542.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.542.0...v1.542.1) (2024-02-19)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-3647 updated PaymentInstrumentPayload interface with generic ([#2366](https://github.com/bigcommerce/checkout-sdk-js/issues/2366)) ([a08750f](https://github.com/bigcommerce/checkout-sdk-js/commit/a08750fc96fc14f4c2fa48a3dab7c06ede1012a9))
+
 ## [1.542.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.541.0...v1.542.0) (2024-02-19)
 
 
