@@ -736,6 +736,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
             const paypalAxoSdk = await this.paypalCommerceSdk.getPayPalAxo(
                 paymentMethod,
                 cart.currency.code,
+                cart.id,
             );
 
             await this.paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect(

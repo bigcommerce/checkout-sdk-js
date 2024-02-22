@@ -52,6 +52,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
 
         if (this.isAcceleratedCheckoutFeatureEnabled) {
             const state = this.paymentIntegrationService.getState();
+            const cart = state.getCartOrThrow();
             const currency = state.getCartOrThrow().currency.code;
             const isTestModeEnabled = !!isDeveloperModeApplicable;
 
@@ -59,6 +60,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
                 const paypalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
                     paymentMethod,
                     currency,
+                    cart.id,
                 );
 
                 await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
@@ -70,6 +72,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
                 const paypalAxoSdk = await this.paypalCommerceSdk.getPayPalAxo(
                     paymentMethod,
                     currency,
+                    cart.id,
                 );
 
                 await this.paypalCommerceFastlaneUtils.initializePayPalConnect(

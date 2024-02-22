@@ -267,6 +267,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             expect(paypalCommerceSdk.getPayPalAxo).toHaveBeenCalledWith(
                 mockedPaymentMethod,
                 cart.currency.code,
+                cart.id,
             );
 
             expect(
