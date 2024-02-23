@@ -1,5 +1,5 @@
-import { HostedCardFieldOptionsMap, HostedStoredCardFieldOptionsMap } from './hosted-form-options';
 import HostedFieldType from './hosted-field-type';
+import { HostedCardFieldOptionsMap, HostedStoredCardFieldOptionsMap } from './hosted-form-options';
 
 export default function isCreditCardVaultedFormFields(
     fields: HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap,

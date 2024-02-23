@@ -8,6 +8,12 @@
                 "@typescript-eslint/naming-convention": "off",
                 "@typescript-eslint/restrict-template-expressions": "off"
             }
+        },
+        {
+            "files": ["*.spec.ts"],
+            "rules": {
+                "@typescript-eslint/no-non-null-assertion": "off"
+            }
         }
     ]
 }

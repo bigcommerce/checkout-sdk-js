@@ -56,6 +56,7 @@
         {
             "files": ["*.spec.ts"],
             "rules": {
+                "@typescript-eslint/no-non-null-assertion": "off",
                 "@typescript-eslint/no-unsafe-assignment": "off",
                 "@typescript-eslint/consistent-type-assertions": "off",
                 "@typescript-eslint/no-explicit-any": "off",

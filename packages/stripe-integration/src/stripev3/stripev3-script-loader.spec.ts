@@ -1,9 +1,10 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
+import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { StripeHostWindow } from './stripev3';
 import StripeV3ScriptLoader from './stripev3-script-loader';
 import { getStripeV3JsMock } from './stripev3.mock';
-import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 describe('StripeV3PayScriptLoader', () => {
     let stripeV3ScriptLoader: StripeV3ScriptLoader;

@@ -5,6 +5,8 @@
         {
             "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
             "rules": {
+                "import/no-named-as-default": "off",
+                "import/no-named-as-default-member": "off",
                 "import/no-extraneous-dependencies": "off",
                 "global-require": "off",
                 "import/no-dynamic-require": "off",

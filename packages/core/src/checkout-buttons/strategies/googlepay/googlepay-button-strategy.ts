@@ -24,12 +24,12 @@ import {
     NewTransactionInfo,
     TotalPriceStatusType,
 } from '../../../payment/strategies/googlepay';
-import { GooglePayBuyNowInitializeOptions } from './googlepay-button-types';
 import { getShippableItemsCount } from '../../../shipping';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 import { GooglePayButtonInitializeOptions } from './googlepay-button-options';
+import { GooglePayBuyNowInitializeOptions } from './googlepay-button-types';
 
 export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     private _methodId?: string;
@@ -73,6 +73,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             }
 
             const { buyNowInitializeOptions } = googlePayOptions;
+
             this._googlePayPaymentProcessor.updateBuyNowFlowFlag(this._isBuyNowFlow);
 
             await this._googlePayPaymentProcessor.initialize(
@@ -291,6 +292,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                     callbackIntents: [CallbackIntentsType.OFFER],
                 });
             }
+
             const paymentData = await this._googlePayPaymentProcessor.displayWallet();
 
             await this._googlePayPaymentProcessor.handleSuccess(paymentData);

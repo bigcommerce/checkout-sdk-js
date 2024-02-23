@@ -1,13 +1,13 @@
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
-import { getAmazonPayV2ButtonParamsMock } from '../../../payment/strategies/amazon-pay-v2/amazon-pay-v2.mock';
-import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
-import CheckoutButtonMethodType from '../checkout-button-method-type';
 import {
     AmazonPayV2LedgerCurrency,
     AmazonPayV2Placement,
 } from '../../../payment/strategies/amazon-pay-v2';
+import { getAmazonPayV2ButtonParamsMock } from '../../../payment/strategies/amazon-pay-v2/amazon-pay-v2.mock';
+import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
+import CheckoutButtonMethodType from '../checkout-button-method-type';
 
 export enum Mode {
     Full,

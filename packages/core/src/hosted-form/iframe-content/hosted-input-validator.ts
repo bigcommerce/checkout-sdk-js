@@ -29,6 +29,7 @@ export default class HostedInputValidator {
         };
 
         let requiredField: keyof HostedInputValues;
+
         for (requiredField in values) {
             if (Object.prototype.hasOwnProperty.call(values, requiredField)) {
                 schemas[requiredField] = this._completeSchema[requiredField];

@@ -2,6 +2,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
+import { createDataStoreProjection } from '../common/data-store';
 import { ErrorActionCreator } from '../common/error';
 import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
@@ -62,9 +63,8 @@ import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutRequestSender from './checkout-request-sender';
 import CheckoutService from './checkout-service';
 import CheckoutValidator from './checkout-validator';
-import createCheckoutStore from './create-checkout-store';
 import { createCheckoutSelectorsFactory } from './create-checkout-selectors';
-import { createDataStoreProjection } from '../common/data-store';
+import createCheckoutStore from './create-checkout-store';
 
 /**
  * Creates an instance of `CheckoutService`.
