@@ -109,10 +109,8 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
 
         const { methodId, paymentData } = payment;
 
-        if (this.isPayPalVaultedInstrumentPaymentData(paymentData)) {
-            if (!this.orderId) {
-                this.orderId = await this.createOrder();
-            }
+        if (this.isPayPalVaultedInstrumentPaymentData(paymentData) && !this.orderId) {
+            this.orderId = await this.createOrder();
         }
 
         if (!this.orderId) {
@@ -191,6 +189,9 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
                 formattedPayload: {
                     paypal_account: {
                         order_id: paypalOrderId,
+                    },
+                    bigpay_token: {
+                        token: instrumentId,
                     },
                 },
             },
@@ -310,12 +311,10 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
      * Vaulting flow methods
      *
      * */
-    private getFieldsValues() {
+    private getFieldsValues(): HostedInstrument | undefined {
         const { getFieldsValues } = this.paypalcommerce || {};
 
-        if (typeof getFieldsValues === 'function') {
-            return getFieldsValues();
-        }
+        return typeof getFieldsValues === 'function' ? getFieldsValues() : undefined;
     }
 
     private isTrustedVaultingFlow(paymentData?: PaymentInstrumentPayload): boolean {

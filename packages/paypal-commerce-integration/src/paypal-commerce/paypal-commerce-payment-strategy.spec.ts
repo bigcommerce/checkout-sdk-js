@@ -583,6 +583,7 @@ describe('PayPalCommercePaymentStrategy', () => {
                     shouldSetAsDefaultInstrument: true,
                     formattedPayload: {
                         paypal_account: { order_id: paypalOrderId },
+                        bigpay_token: { token: bigpayToken },
                     },
                 },
             });
