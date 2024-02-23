@@ -39,7 +39,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     isPayPalCommerceAcceleratedCheckoutCustomer,
-    PayPalCommerceAcceleratedCheckoutUtils,
+    PayPalCommerceFastlaneUtils,
     PayPalCommerceInitializationData,
     PayPalCommerceSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
@@ -75,7 +75,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
         private paypalCommerceSdk: PayPalCommerceSdk,
-        private paypalCommerceAcceleratedCheckoutUtils: PayPalCommerceAcceleratedCheckoutUtils,
+        private paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils,
     ) {}
 
     async initialize(
@@ -109,8 +109,8 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
             await this.initializeFields(form);
         }
 
-        if (this.shouldInitializePayPalConnect(methodId)) {
-            await this.initializePayPalConnectOrThrow(methodId);
+        if (this.shouldInitializePayPalFastlane(methodId)) {
+            await this.initializePayPalFastlaneOrThrow(methodId);
         }
     }
 
@@ -702,7 +702,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
      *
      */
     // TODO: remove this part when PPCP AXO A/B testing will be finished
-    private shouldInitializePayPalConnect(methodId: string) {
+    private shouldInitializePayPalFastlane(methodId: string) {
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
@@ -721,7 +721,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
     }
 
     // TODO: remove this part when PPCP AXO A/B testing will be finished
-    private async initializePayPalConnectOrThrow(methodId: string): Promise<void> {
+    private async initializePayPalFastlaneOrThrow(methodId: string): Promise<void> {
         try {
             const state = this.paymentIntegrationService.getState();
             const cart = state.getCartOrThrow();
@@ -733,16 +733,29 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
                 return;
             }
 
-            const paypalAxoSdk = await this.paypalCommerceSdk.getPayPalAxo(
-                paymentMethod,
-                cart.currency.code,
-                cart.id,
-            );
+            if (initializationData.isFastlaneEnabled) {
+                const payPalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
+                    paymentMethod,
+                    cart.currency.code,
+                    cart.id,
+                );
 
-            await this.paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect(
-                paypalAxoSdk,
-                !!initializationData?.isDeveloperModeApplicable,
-            );
+                await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
+                    payPalFastlaneSdk,
+                    !!initializationData?.isDeveloperModeApplicable,
+                );
+            } else {
+                const paypalAxoSdk = await this.paypalCommerceSdk.getPayPalAxo(
+                    paymentMethod,
+                    cart.currency.code,
+                    cart.id,
+                );
+
+                await this.paypalCommerceFastlaneUtils.initializePayPalConnect(
+                    paypalAxoSdk,
+                    !!initializationData?.isDeveloperModeApplicable,
+                );
+            }
         } catch (_: unknown) {
             // We should avoid throwing any error from this flow to do no brake default flow
             // This flow is optional

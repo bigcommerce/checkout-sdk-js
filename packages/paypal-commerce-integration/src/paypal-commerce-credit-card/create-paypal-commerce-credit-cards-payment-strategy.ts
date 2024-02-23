@@ -3,7 +3,7 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    createPayPalCommerceAcceleratedCheckoutUtils,
+    createPayPalCommerceFastlaneUtils,
     createPayPalCommerceSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
@@ -18,7 +18,7 @@ const createPaypalCommerceCreditCardsPaymentStrategy: PaymentStrategyFactory<
         paymentIntegrationService,
         createPayPalCommerceIntegrationService(paymentIntegrationService),
         createPayPalCommerceSdk(),
-        createPayPalCommerceAcceleratedCheckoutUtils(),
+        createPayPalCommerceFastlaneUtils(),
     );
 
 export default toResolvableModule(createPaypalCommerceCreditCardsPaymentStrategy, [

@@ -18,12 +18,14 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
-    createPayPalCommerceAcceleratedCheckoutUtils,
+    createPayPalCommerceFastlaneUtils,
     createPayPalCommerceSdk,
     getPayPalAxoSdk,
+    getPayPalFastlaneSdk,
     PayPalAxoSdk,
-    PayPalCommerceAcceleratedCheckoutUtils,
+    PayPalCommerceFastlaneUtils,
     PayPalCommerceSdk,
+    PayPalFastlaneSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import {
@@ -49,7 +51,8 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
     let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
     let paypalCommerceSdk: PayPalCommerceSdk;
     let paypalAxoSdk: PayPalAxoSdk;
-    let paypalCommerceAcceleratedCheckoutUtils: PayPalCommerceAcceleratedCheckoutUtils;
+    let paypalFastlaneSdk: PayPalFastlaneSdk;
+    let paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils;
     let paypalSdk: PayPalSDK;
     let eventEmitter: EventEmitter;
     const mockRender = jest.fn();
@@ -142,16 +145,17 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         paymentMethod = { ...getPayPalCommercePaymentMethod(), id: methodId };
         paypalSdk = getPayPalSDKMock();
         paypalAxoSdk = getPayPalAxoSdk();
+        paypalFastlaneSdk = getPayPalFastlaneSdk();
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         paypalCommerceSdk = createPayPalCommerceSdk();
-        paypalCommerceAcceleratedCheckoutUtils = createPayPalCommerceAcceleratedCheckoutUtils();
+        paypalCommerceFastlaneUtils = createPayPalCommerceFastlaneUtils();
 
         strategy = new PayPalCommerceCreditCardsPaymentStrategy(
             paymentIntegrationService,
             paypalCommerceIntegrationService,
             paypalCommerceSdk,
-            paypalCommerceAcceleratedCheckoutUtils,
+            paypalCommerceFastlaneUtils,
         );
 
         paypalCardNameFieldElement = document.createElement('div');
@@ -186,11 +190,16 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         );
 
         jest.spyOn(paypalCommerceSdk, 'getPayPalAxo').mockImplementation(() => paypalAxoSdk);
+        jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(
+            () => paypalFastlaneSdk,
+        );
 
-        jest.spyOn(
-            paypalCommerceAcceleratedCheckoutUtils,
-            'initializePayPalConnect',
-        ).mockImplementation(() => jest.fn());
+        jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalConnect').mockImplementation(() =>
+            jest.fn(),
+        );
+        jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalFastlane').mockImplementation(() =>
+            jest.fn(),
+        );
     });
 
     afterEach(() => {
@@ -270,9 +279,42 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                 cart.id,
             );
 
-            expect(
-                paypalCommerceAcceleratedCheckoutUtils.initializePayPalConnect,
-            ).toHaveBeenCalledWith(paypalAxoSdk, false);
+            expect(paypalCommerceFastlaneUtils.initializePayPalConnect).toHaveBeenCalledWith(
+                paypalAxoSdk,
+                false,
+            );
+        });
+
+        it('loads paypal fastlane sdk if paypal commerce fastlane analytic is enabled', async () => {
+            const mockedPaymentMethod = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod,
+                    connectClientToken: 'connectClientToken123',
+                    isAcceleratedCheckoutEnabled: true,
+                    isPayPalCommerceAnalyticsV2Enabled: true,
+                    isDeveloperModeApplicable: false,
+                    isFastlaneEnabled: true,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(mockedPaymentMethod);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalCommerceSdk.getPayPalFastlaneSdk).toHaveBeenCalledWith(
+                mockedPaymentMethod,
+                cart.currency.code,
+                cart.id,
+            );
+
+            expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
+                paypalFastlaneSdk,
+                false,
+            );
         });
     });
 
