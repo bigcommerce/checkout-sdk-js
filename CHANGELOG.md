@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.546.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.545.0...v1.546.0) (2024-02-26)
+
+
+### Features
+
+* **payment:** PAYPAL-3683 updated paypal-commerce-credit-cards-payment-strategy to support PayPal Connect and Fastlane initialization ([#2379](https://github.com/bigcommerce/checkout-sdk-js/issues/2379)) ([3a662fc](https://github.com/bigcommerce/checkout-sdk-js/commit/3a662fcf2fe1390ea5757cb6740f88666ea832be))
+
+
+### Code Refactoring
+
+* **common:** PAYPAL-000 fixed all eslint warnings ([#2380](https://github.com/bigcommerce/checkout-sdk-js/issues/2380)) ([477a19f](https://github.com/bigcommerce/checkout-sdk-js/commit/477a19f8cf731d92a4ce367d642ece4b8e203e83))
+
 ## [1.545.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.544.1...v1.545.0) (2024-02-22)
 
 
