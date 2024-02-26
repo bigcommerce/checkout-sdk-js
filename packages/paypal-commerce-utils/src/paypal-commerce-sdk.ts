@@ -181,7 +181,7 @@ export default class PayPalCommerceSdk {
             },
             attributes: {
                 'data-client-metadata-id': sessionId.replace(/-/g, ''),
-                'data-namespace': 'paypalFastlane',
+                'data-namespace': 'paypalFastlaneSdk',
                 'data-partner-attribution-id': attributionId,
                 'data-user-id-token': connectClientToken || clientToken,
             },

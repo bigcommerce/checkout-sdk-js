@@ -162,7 +162,7 @@ describe('PayPalCommerceSdk', () => {
                     async: true,
                     attributes: {
                         'data-client-metadata-id': expectedSessionId,
-                        'data-namespace': 'paypalFastlane',
+                        'data-namespace': 'paypalFastlaneSdk',
                         'data-partner-attribution-id': '1123JLKJASD12',
                         'data-user-id-token': 'asdcvY7XFSQasd',
                     },
@@ -190,7 +190,7 @@ describe('PayPalCommerceSdk', () => {
                     async: true,
                     attributes: {
                         'data-client-metadata-id': expectedSessionId,
-                        'data-namespace': 'paypalFastlane',
+                        'data-namespace': 'paypalFastlaneSdk',
                         'data-partner-attribution-id': '1123JLKJASD12',
                         'data-user-id-token': 'connectClientToken123',
                     },
