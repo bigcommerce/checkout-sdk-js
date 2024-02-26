@@ -1,5 +1,6 @@
 import { find, reject } from 'lodash';
 
+import { ExtensionRegion } from '../extension';
 import { FormField } from '../form';
 import { getAddressFormFields } from '../form/form.mock';
 import { getUnitedStates } from '../geography/countries.mock';
@@ -15,7 +16,6 @@ import CheckoutStoreState from './checkout-store-state';
 import { getCheckoutStoreStateWithOrder } from './checkouts.mock';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
-import { ExtensionRegion } from '../extension';
 
 describe('CheckoutStoreSelector', () => {
     let createCheckoutStoreSelector: CheckoutStoreSelectorFactory;

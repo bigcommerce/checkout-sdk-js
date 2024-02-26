@@ -584,6 +584,7 @@ describe('AdyenV2PaymentStrategy', () => {
 
                 await strategy.initialize(options);
                 await strategy.execute(getOrderRequestBody(AdyenPaymentMethodType.ACH));
+
                 expect(adyenCheckout.create).toHaveBeenCalledTimes(1);
                 expect(adyenCheckout.create).toHaveBeenCalledWith('ach', {
                     hasHolderName: expect.any(Boolean),

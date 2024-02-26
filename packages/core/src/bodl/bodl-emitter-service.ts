@@ -1,7 +1,8 @@
+import { flatten } from 'lodash';
+
 import { LineItem, LineItemMap } from '../cart';
 import { CheckoutSelectors, CheckoutStoreSelector } from '../checkout';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
-import { flatten } from 'lodash';
 
 import { AnalyticStepOrder, AnalyticStepType } from './analytics-steps';
 import BodlService from './bodl-service';

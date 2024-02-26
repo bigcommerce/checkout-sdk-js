@@ -35,7 +35,7 @@ describe('TDOnlineMartScriptLoader', () => {
         it('check if scriptLoader is called with proper url', async () => {
             await tdOnlineMartScriptLoader.load();
 
-            expect(scriptLoader.loadScript).toBeCalledWith(
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 'https://libs.na.bambora.com/customcheckout/1/customcheckout.js',
             );
         });

@@ -1,6 +1,5 @@
 import { NotInitializedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input';
 import {
     BlueSnapDirectErrorCode as ErrorCode,
     BlueSnapDirectErrorDescription as ErrorDescription,
@@ -8,6 +7,8 @@ import {
     BlueSnapDirectHostedFieldTagId as HostedFieldTagId,
     BlueSnapDirectHostedPaymentFieldsOptions as HostedPaymentFieldsOptions,
 } from '../types';
+
+import BluesnapDirectNameOnCardInput from './bluesnap-direct-name-on-card-input';
 
 describe('BluesnapDirectNameOnCardInput', () => {
     let nameOnCardInput: BluesnapDirectNameOnCardInput;

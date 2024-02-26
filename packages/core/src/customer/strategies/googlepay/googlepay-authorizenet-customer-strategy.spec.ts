@@ -1,5 +1,7 @@
+import { createAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster/';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { of } from 'rxjs';
 
 import { getCart, getCartState } from '../../../cart/carts.mock';
 import {
@@ -31,8 +33,6 @@ import CustomerStrategy from '../customer-strategy';
 
 import { getAuthNetCustomerInitializeOptions, Mode } from './googlepay-customer-mock';
 import GooglePayCustomerStrategy from './googlepay-customer-strategy';
-import { of } from 'rxjs';
-import { createAction } from '@bigcommerce/data-store';
 
 describe('GooglePayCustomerStrategy', () => {
     let checkoutActionCreator: CheckoutActionCreator;

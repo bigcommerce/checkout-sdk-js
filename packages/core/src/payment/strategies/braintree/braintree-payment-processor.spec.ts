@@ -338,7 +338,9 @@ describe('BraintreePaymentProcessor', () => {
 
         describe('when popups are supported', () => {
             it('toggles overlay', async () => {
-                braintreeBrowserDetection.supportsPopups = jest.fn(() => true);
+                jest.spyOn(braintreeBrowserDetection, 'supportsPopups').mockImplementation(
+                    jest.fn(() => true),
+                );
 
                 const processor = new BraintreePaymentProcessor(
                     braintreeSDKCreator,
@@ -358,7 +360,9 @@ describe('BraintreePaymentProcessor', () => {
             });
 
             it('removes overlay if tokenization fails', async () => {
-                braintreeBrowserDetection.supportsPopups = jest.fn(() => true);
+                jest.spyOn(braintreeBrowserDetection, 'supportsPopups').mockImplementation(
+                    jest.fn(() => true),
+                );
 
                 jest.spyOn(paypal, 'tokenize').mockRejectedValue(new Error());
 
@@ -380,7 +384,9 @@ describe('BraintreePaymentProcessor', () => {
             });
 
             it('focus PayPal window when overlay is clicked', async () => {
-                braintreeBrowserDetection.supportsPopups = jest.fn(() => true);
+                jest.spyOn(braintreeBrowserDetection, 'supportsPopups').mockImplementation(
+                    jest.fn(() => true),
+                );
 
                 const processor = new BraintreePaymentProcessor(
                     braintreeSDKCreator,
@@ -404,7 +410,9 @@ describe('BraintreePaymentProcessor', () => {
 
         describe('when popups are not supported', () => {
             it('does not toggle the overlay', async () => {
-                braintreeBrowserDetection.supportsPopups = jest.fn(() => false);
+                jest.spyOn(braintreeBrowserDetection, 'supportsPopups').mockImplementation(
+                    jest.fn(() => false),
+                );
 
                 const processor = new BraintreePaymentProcessor(
                     braintreeSDKCreator,

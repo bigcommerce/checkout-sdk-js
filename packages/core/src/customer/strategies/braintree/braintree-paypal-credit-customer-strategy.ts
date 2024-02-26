@@ -1,5 +1,5 @@
-import { noop } from 'lodash';
 import { FormPoster } from '@bigcommerce/form-poster';
+import { noop } from 'lodash';
 
 import {
     DefaultCheckoutButtonHeight,

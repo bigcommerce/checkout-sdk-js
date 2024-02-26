@@ -2,11 +2,11 @@ import { CheckoutSelectors, CheckoutService, createCheckoutService } from '../ch
 import { getCheckoutWithCoupons } from '../checkout/checkouts.mock';
 import { getConfig } from '../config/configs.mock';
 import { getOrder } from '../order/orders.mock';
+import { getShippingOption } from '../shipping/shipping-options.mock';
 
 import { AnalyticStepType } from './analytics-steps';
 import BodlEmitterService from './bodl-emitter-service';
 import { BodlEventsCheckout, BodlEventsPayload } from './bodl-window';
-import { getShippingOption } from '../shipping/shipping-options.mock';
 
 describe('BodlEmitterService', () => {
     let checkoutService: CheckoutService;
@@ -156,6 +156,7 @@ describe('BodlEmitterService', () => {
     describe('#orderPurchased()', () => {
         beforeEach(() => {
             const orderMock = getOrder();
+
             delete orderMock.lineItems.physicalItems[0].categoryNames;
 
             jest.spyOn(checkoutService.getState().data, 'getOrder').mockReturnValue(orderMock);

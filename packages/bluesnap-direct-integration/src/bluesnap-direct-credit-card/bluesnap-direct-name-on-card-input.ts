@@ -4,7 +4,6 @@ import {
     NotInitializedErrorType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import isArrayOfAllowedProps from '../utils/is-array-of-allowed-props';
 import {
     BluesnapDirectNocInputAllowedStyle as AllowedStyle,
     BlueSnapDirectStyle,
@@ -15,6 +14,7 @@ import {
     BlueSnapDirectHostedPaymentFieldsOptions as HostedPaymentFieldsOptions,
     BlueSnapDirectStyleDeclaration as StyleDeclaration,
 } from '../types';
+import isArrayOfAllowedProps from '../utils/is-array-of-allowed-props';
 
 export default class BluesnapDirectNameOnCardInput {
     private _input?: HTMLInputElement;

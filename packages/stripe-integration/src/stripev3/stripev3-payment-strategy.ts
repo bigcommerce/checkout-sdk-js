@@ -354,6 +354,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
             await form.validate();
             await form.submit(payment);
+
             return this.paymentIntegrationService.loadCurrentOrder();
         }
 

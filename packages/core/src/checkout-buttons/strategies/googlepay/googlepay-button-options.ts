@@ -1,4 +1,5 @@
 import { ButtonColor, ButtonType } from '../../../payment/strategies/googlepay';
+
 import { GooglePayBuyNowInitializeOptions } from './googlepay-button-types';
 
 export interface GooglePayButtonInitializeOptions {
