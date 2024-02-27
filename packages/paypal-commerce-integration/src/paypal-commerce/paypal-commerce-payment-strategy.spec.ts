@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 
 import {
+    AccountInstrument,
     InvalidArgumentError,
     OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
@@ -11,6 +12,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getConfig,
+    getInstruments,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
@@ -27,7 +29,9 @@ import {
     PayPalSDK,
 } from '../paypal-commerce-types';
 
-import PayPalCommercePaymentInitializeOptions from './paypal-commerce-payment-initialize-options';
+import PayPalCommercePaymentInitializeOptions, {
+    WithPayPalCommercePaymentInitializeOptions,
+} from './paypal-commerce-payment-initialize-options';
 import PayPalCommercePaymentStrategy from './paypal-commerce-payment-strategy';
 
 describe('PayPalCommercePaymentStrategy', () => {
@@ -61,10 +65,16 @@ describe('PayPalCommercePaymentStrategy', () => {
         submitForm: jest.fn(),
     };
 
-    const initializationOptions: PaymentInitializeOptions = {
+    const initializationOptions: PaymentInitializeOptions &
+        WithPayPalCommercePaymentInitializeOptions = {
         methodId: defaultMethodId,
         paypalcommerce: paypalCommerceOptions,
     };
+
+    const paymentInstruments = getInstruments();
+    const accountInstrument = paymentInstruments.find(
+        (instrument) => instrument.provider === 'paypalcommerce',
+    );
 
     beforeEach(() => {
         eventEmitter = new EventEmitter();
@@ -234,6 +244,76 @@ describe('PayPalCommercePaymentStrategy', () => {
             expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalled();
         });
 
+        it('does not render paypal button if shouldNotRenderOnInitialization option is true', async () => {
+            const paypalCommerceSdkRenderMock = jest.fn();
+
+            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                isEligible: jest.fn(() => false),
+                render: paypalCommerceSdkRenderMock,
+            }));
+
+            await strategy.initialize({
+                ...initializationOptions,
+                paypalcommerce: {
+                    ...paypalCommerceOptions,
+                },
+            });
+
+            expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalled();
+        });
+
+        it('renders paypal button if onInit callback is passed', async () => {
+            const paypalCommerceSdkRenderMock = jest.fn();
+
+            const options = {
+                ...initializationOptions,
+                paypalcommerce: {
+                    ...paypalCommerceOptions,
+                    onInit: jest.fn().mockImplementation((renderButtonCallback) => {
+                        eventEmitter.on('onInit', () => {
+                            renderButtonCallback();
+                        });
+                    }),
+                },
+            };
+
+            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                isEligible: jest.fn(() => true),
+                render: paypalCommerceSdkRenderMock,
+            }));
+
+            await strategy.initialize(options);
+
+            eventEmitter.emit('onInit');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceSdkRenderMock).toHaveBeenCalled();
+        });
+
+        it('calls the onRenderButton callback if it is provided', async () => {
+            const paypalCommerceSdkRenderMock = jest.fn();
+
+            const options = {
+                ...initializationOptions,
+                paypalcommerce: {
+                    ...paypalCommerceOptions,
+                    onRenderButton: jest.fn(),
+                },
+            };
+
+            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                isEligible: jest.fn(() => true),
+                render: paypalCommerceSdkRenderMock,
+            }));
+
+            await strategy.initialize(options);
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(options.paypalcommerce.onRenderButton).toHaveBeenCalled();
+        });
+
         it('renders paypal button if it is eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
@@ -258,6 +338,30 @@ describe('PayPalCommercePaymentStrategy', () => {
 
             expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
                 'paypalcommercecheckout',
+                { shouldSaveInstrument: false },
+            );
+        });
+
+        it('creates paypal order with the shouldSaveInstrument gotten from getFieldsValues callback', async () => {
+            const options = {
+                ...initializationOptions,
+                paypalcommerce: {
+                    ...paypalCommerceOptions,
+                    getFieldsValues: jest.fn().mockReturnValue({
+                        shouldSaveInstrument: true,
+                    }),
+                },
+            };
+
+            await strategy.initialize(options);
+
+            eventEmitter.emit('createOrder');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
+                'paypalcommercecheckout',
+                { shouldSaveInstrument: true },
             );
         });
     });
@@ -279,6 +383,24 @@ describe('PayPalCommercePaymentStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(onValidateMock).toHaveBeenCalled();
+        });
+
+        it('triggers the indicator through the validation callback call with provided params', async () => {
+            await strategy.initialize({
+                ...initializationOptions,
+                paypalcommerce: {
+                    ...paypalCommerceOptions,
+                    onValidate: jest.fn().mockImplementation((onValidationPassed) => {
+                        onValidationPassed();
+                    }),
+                },
+            });
+
+            eventEmitter.emit('onClick');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(loadingIndicator.show).toHaveBeenCalled();
         });
     });
 
@@ -419,10 +541,52 @@ describe('PayPalCommercePaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(paypalCommerceIntegrationService.submitPayment).toHaveBeenCalledWith(
-                payload.payment.methodId,
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId: payload.payment.methodId,
+                paymentData: {
+                    formattedPayload: {
+                        paypal_account: { order_id: paypalOrderId },
+                    },
+                    shouldSaveInstrument: false,
+                    shouldSetAsDefaultInstrument: false,
+                },
+            });
+        });
+
+        it('submits payment with provided vaulting data', async () => {
+            const { bigpayToken } = accountInstrument as AccountInstrument;
+
+            jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockReturnValue(
                 paypalOrderId,
             );
+
+            const payload = {
+                payment: {
+                    methodId: defaultMethodId,
+                    paymentData: {
+                        instrumentId: bigpayToken,
+                        shouldSetAsDefaultInstrument: true,
+                    },
+                },
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            await strategy.execute(payload);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId: payload.payment.methodId,
+                paymentData: {
+                    instrumentId: '45312',
+                    shouldSetAsDefaultInstrument: true,
+                    formattedPayload: {
+                        paypal_account: { order_id: paypalOrderId },
+                        bigpay_token: { token: bigpayToken },
+                    },
+                },
+            });
         });
 
         it('loads paypalsdk script if receive INSTRUMENT_DECLINED error and experiment is on', async () => {
@@ -463,7 +627,7 @@ describe('PayPalCommercePaymentStrategy', () => {
                 ],
             };
 
-            jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockImplementation(() => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
                 throw providerError;
             });
 
@@ -473,6 +637,33 @@ describe('PayPalCommercePaymentStrategy', () => {
                 await strategy.execute(payload);
             } catch (_error: unknown) {
                 expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalled();
+            }
+        });
+
+        it('paypalsdk script should not be loaded if the INSTRUMENT_DECLINED error is not received and the experiment is enabled', async () => {
+            paymentMethod.initializationData.orderId = '1';
+
+            const payload = {
+                payment: {
+                    methodId: defaultMethodId,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithFeaturesOn);
+
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
+                throw new Error();
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            try {
+                await strategy.execute(payload);
+            } catch (_error: unknown) {
+                expect(paypalCommerceIntegrationService.loadPayPalSdk).not.toHaveBeenCalled();
             }
         });
 
@@ -514,7 +705,7 @@ describe('PayPalCommercePaymentStrategy', () => {
                 ],
             };
 
-            jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockImplementation(() => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
                 throw providerError;
             });
 
@@ -588,7 +779,7 @@ describe('PayPalCommercePaymentStrategy', () => {
                 ],
             };
 
-            jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockImplementation(() => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
                 throw providerError;
             });
 
@@ -643,7 +834,7 @@ describe('PayPalCommercePaymentStrategy', () => {
                 ],
             };
 
-            jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockImplementation(() => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
                 throw providerError;
             });
 
