@@ -63,7 +63,7 @@ describe('DefaultPaymentIntegrationService', () => {
     >;
     let paymentMethodActionCreator: Pick<
         PaymentMethodActionCreator,
-        'loadPaymentMethod' | 'loadPaymentMethods'
+        'loadPaymentMethod'
     >;
     let paymentActionCreator: Pick<
         PaymentActionCreator,
@@ -138,7 +138,6 @@ describe('DefaultPaymentIntegrationService', () => {
 
         paymentMethodActionCreator = {
             loadPaymentMethod: jest.fn(async () => () => createAction('LOAD_PAYMENT_METHOD')),
-            loadPaymentMethods: jest.fn(async () => () => createAction('LOAD_PAYMENT_METHODS')),
         };
 
         paymentActionCreator = {
@@ -281,34 +280,6 @@ describe('DefaultPaymentIntegrationService', () => {
             );
             expect(store.dispatch).toHaveBeenCalledWith(
                 paymentMethodActionCreator.loadPaymentMethod('bluesnapdirect', {
-                    params: { method: 'cc' },
-                }),
-            );
-            expect(output).toEqual(paymentIntegrationSelectors);
-        });
-    });
-
-    describe('#loadPaymentMethods', () => {
-        it('loads payment methods', async () => {
-            const output = await subject.loadPaymentMethods();
-
-            expect(paymentMethodActionCreator.loadPaymentMethods).toHaveBeenCalledWith(undefined);
-            expect(store.dispatch).toHaveBeenCalledWith(
-                paymentMethodActionCreator.loadPaymentMethods(undefined),
-            );
-            expect(output).toEqual(paymentIntegrationSelectors);
-        });
-
-        it('loads payment method with params', async () => {
-            const output = await subject.loadPaymentMethods({
-                params: { method: 'cc' },
-            });
-
-            expect(paymentMethodActionCreator.loadPaymentMethods).toHaveBeenCalledWith({
-                params: { method: 'cc' },
-            });
-            expect(store.dispatch).toHaveBeenCalledWith(
-                paymentMethodActionCreator.loadPaymentMethods({
                     params: { method: 'cc' },
                 }),
             );
