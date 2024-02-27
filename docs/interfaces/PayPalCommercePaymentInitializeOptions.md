@@ -50,10 +50,13 @@ service.initializePayment({
 ### Properties
 
 - [container](PayPalCommercePaymentInitializeOptions.md#container)
+- [shouldRenderPayPalButtonOnInitialization](PayPalCommercePaymentInitializeOptions.md#shouldrenderpaypalbuttononinitialization)
 
 ### Methods
 
+- [getFieldsValues](PayPalCommercePaymentInitializeOptions.md#getfieldsvalues)
 - [onError](PayPalCommercePaymentInitializeOptions.md#onerror)
+- [onInit](PayPalCommercePaymentInitializeOptions.md#oninit)
 - [onRenderButton](PayPalCommercePaymentInitializeOptions.md#onrenderbutton)
 - [onValidate](PayPalCommercePaymentInitializeOptions.md#onvalidate)
 - [submitForm](PayPalCommercePaymentInitializeOptions.md#submitform)
@@ -66,7 +69,28 @@ service.initializePayment({
 
 The CSS selector of a container where the payment widget should be inserted into.
 
+___
+
+### shouldRenderPayPalButtonOnInitialization
+
+• `Optional` **shouldRenderPayPalButtonOnInitialization**: `boolean`
+
+If there is no need to initialize the Smart Payment Button, simply pass false as the option value.
+The default value is true
+
 ## Methods
+
+### getFieldsValues
+
+▸ `Optional` **getFieldsValues**(): `HostedInstrument`
+
+A callback for getting form fields values.
+
+#### Returns
+
+`HostedInstrument`
+
+___
 
 ### onError
 
@@ -79,6 +103,24 @@ A callback for displaying error popup. This callback requires error object as pa
 | Name | Type |
 | :------ | :------ |
 | `error` | `unknown` |
+
+#### Returns
+
+`void`
+
+___
+
+### onInit
+
+▸ `Optional` **onInit**(`callback`): `void`
+
+A callback that gets called when strategy is in the process of initialization before rendering Smart Payment Button.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `callback` | () => `void` | A function, that calls the method to render the Smart Payment Button. |
 
 #### Returns
 

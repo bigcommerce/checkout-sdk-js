@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.548.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.547.1...v1.548.0) (2024-02-27)
+
+
+### Features
+
+* **payment:** PAYPAL-3453 Support saving PPCP PayPal Account to the vault ([#2352](https://github.com/bigcommerce/checkout-sdk-js/issues/2352)) ([6508434](https://github.com/bigcommerce/checkout-sdk-js/commit/6508434fcc7c6484303db8fa0a637bdae62dce67))
+* **payment:** PAYPAL-3453 supported payment instrument ([e83c052](https://github.com/bigcommerce/checkout-sdk-js/commit/e83c0522ffc9ab70493f04dcf86bf1b73ba76e5e))
+
 ### [1.547.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.547.0...v1.547.1) (2024-02-27)
 
 
