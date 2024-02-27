@@ -387,6 +387,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                         .getState()
                         .getBillingAddress();
                     const { prefillCardHolderName } = paymentMethod.initializationData;
+
                     paymentComponent = adyenClient.create(paymentMethod.method, {
                         ...adyenv2.options,
                         onChange: (componentState) => this._updateComponentState(componentState),

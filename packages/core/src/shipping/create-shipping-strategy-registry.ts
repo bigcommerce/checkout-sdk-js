@@ -7,7 +7,7 @@ import {
     BraintreeScriptLoader,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
-    createPayPalCommerceAcceleratedCheckoutUtils,
+    createPayPalCommerceFastlaneUtils,
     createPayPalCommerceSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
@@ -27,7 +27,7 @@ import { ShippingStrategy } from './strategies';
 import { AmazonPayV2ShippingStrategy } from './strategies/amazon-pay-v2';
 import { BraintreeAcceleratedCheckoutShippingStrategy } from './strategies/braintree';
 import { DefaultShippingStrategy } from './strategies/default';
-import { PayPalCommerceAcceleratedCheckoutShippingStrategy } from './strategies/paypal-commerce';
+import { PayPalCommerceFastlaneShippingStrategy } from './strategies/paypal-commerce';
 import { StripeUPEShippingStrategy } from './strategies/stripe-upe';
 
 export default function createShippingStrategyRegistry(
@@ -96,14 +96,14 @@ export default function createShippingStrategyRegistry(
     registry.register(
         'paypalcommerceacceleratedcheckout',
         () =>
-            new PayPalCommerceAcceleratedCheckoutShippingStrategy(
+            new PayPalCommerceFastlaneShippingStrategy(
                 store,
                 billingAddressActionCreator,
                 consignmentActionCreator,
                 paymentMethodActionCreator,
                 new PaymentProviderCustomerActionCreator(),
                 createPayPalCommerceSdk(),
-                createPayPalCommerceAcceleratedCheckoutUtils(),
+                createPayPalCommerceFastlaneUtils(),
             ),
     );
 

@@ -117,7 +117,7 @@ export default class PayPalCommerceConnectTracker implements PayPalCommerceConne
 
         return {
             context_type: 'cs_id',
-            context_id: cart?.id || '',
+            context_id: cart?.id.replace(/-/g, '') || '',
             page_type: 'checkout_page',
             page_name: window.document.title,
             partner_name: 'bigc',

@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.547.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.547.0...v1.547.1) (2024-02-27)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-3708 removed unused ppcp accelerated checkout code ([#2382](https://github.com/bigcommerce/checkout-sdk-js/issues/2382)) ([e8c7601](https://github.com/bigcommerce/checkout-sdk-js/commit/e8c7601399f1d7055cbcf9c6991909fde85b318d))
+
+## [1.547.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.546.0...v1.547.0) (2024-02-26)
+
+
+### Features
+
+* **payment:** PAYPAL-3371 bump form-poster version ([f820ed0](https://github.com/bigcommerce/checkout-sdk-js/commit/f820ed0660efbfe480b4d2304fbb46ec7208f86c))
+
+## [1.546.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.545.0...v1.546.0) (2024-02-26)
+
+
+### Features
+
+* **payment:** PAYPAL-3683 updated paypal-commerce-credit-cards-payment-strategy to support PayPal Connect and Fastlane initialization ([#2379](https://github.com/bigcommerce/checkout-sdk-js/issues/2379)) ([3a662fc](https://github.com/bigcommerce/checkout-sdk-js/commit/3a662fcf2fe1390ea5757cb6740f88666ea832be))
+
+
+### Code Refactoring
+
+* **common:** PAYPAL-000 fixed all eslint warnings ([#2380](https://github.com/bigcommerce/checkout-sdk-js/issues/2380)) ([477a19f](https://github.com/bigcommerce/checkout-sdk-js/commit/477a19f8cf731d92a4ce367d642ece4b8e203e83))
+
+## [1.545.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.544.1...v1.545.0) (2024-02-22)
+
+
+### Features
+
+* **payment:** PAYPAL-3646 updated paypal fastlane analytic related code with modified sessionId ([#2377](https://github.com/bigcommerce/checkout-sdk-js/issues/2377)) ([214f7fa](https://github.com/bigcommerce/checkout-sdk-js/commit/214f7fa04760524bc2189268211bf2c57eb06de2))
+
+### [1.544.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.544.0...v1.544.1) (2024-02-22)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-3575 updated shipping regestry with paypal commerce fastlane shipping strategy instead of accelerated checkout ([#2376](https://github.com/bigcommerce/checkout-sdk-js/issues/2376)) ([ff7dd32](https://github.com/bigcommerce/checkout-sdk-js/commit/ff7dd329e866facd205aee5b8db88a822c7e5dc3))
+
 ## [1.544.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.543.1...v1.544.0) (2024-02-21)
 
 

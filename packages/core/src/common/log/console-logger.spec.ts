@@ -18,6 +18,7 @@ describe('ConsoleLogger', () => {
         it('logs messages to console', () => {
             logger.log('hello', 'world');
 
+            // eslint-disable-next-line no-console
             expect(console.log).toHaveBeenCalled();
         });
 
@@ -32,6 +33,7 @@ describe('ConsoleLogger', () => {
         it('logs info messages to console', () => {
             logger.info('hello', 'world');
 
+            // eslint-disable-next-line no-console
             expect(console.info).toHaveBeenCalled();
         });
     });
@@ -40,6 +42,7 @@ describe('ConsoleLogger', () => {
         it('logs warning messages to console', () => {
             logger.warn('hello', 'world');
 
+            // eslint-disable-next-line no-console
             expect(console.warn).toHaveBeenCalled();
         });
     });
@@ -48,6 +51,7 @@ describe('ConsoleLogger', () => {
         it('logs error messages to console', () => {
             logger.error('hello', 'world');
 
+            // eslint-disable-next-line no-console
             expect(console.error).toHaveBeenCalled();
         });
     });
@@ -56,6 +60,7 @@ describe('ConsoleLogger', () => {
         it('logs debug messages to console', () => {
             logger.debug('hello', 'world');
 
+            // eslint-disable-next-line no-console
             expect(console.debug).toHaveBeenCalled();
         });
     });

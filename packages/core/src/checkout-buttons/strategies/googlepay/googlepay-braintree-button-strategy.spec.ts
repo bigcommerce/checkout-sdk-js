@@ -1,6 +1,7 @@
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { EventEmitter } from 'events';
 
 import {
     CartSource,
@@ -35,7 +36,6 @@ import CheckoutButtonMethodType from '../checkout-button-method-type';
 
 import GooglePayButtonStrategy from './googlepay-button-strategy';
 import { getCheckoutButtonOptions, getPaymentMethod, Mode } from './googlepay-button.mock';
-import { EventEmitter } from 'events';
 
 describe('GooglePayCheckoutButtonStrategy', () => {
     let cart: Cart;

@@ -20,7 +20,3 @@ export { default as PayPalCommerceSdk } from './paypal-commerce-sdk';
  */
 export { default as createPayPalCommerceFastlaneUtils } from './create-paypal-commerce-fastlane-utils';
 export { default as PayPalCommerceFastlaneUtils } from './paypal-commerce-fastlane-utils';
-
-// TODO: remove this imports when all PayPal Commerce Accelerated checkout strategies will be updated with Fastlane
-export { default as createPayPalCommerceAcceleratedCheckoutUtils } from './create-paypal-commerce-accelerated-checkout-utils';
-export { default as PayPalCommerceAcceleratedCheckoutUtils } from './paypal-commerce-accelerated-checkout-utils';

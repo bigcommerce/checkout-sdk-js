@@ -2,13 +2,14 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import BlueSnapDirect3ds from './bluesnap-direct-3ds';
-import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
 import getBlueSnapDirectSdkMock, {
     previouslyUsedCardDataMock,
     threeDSdata,
 } from '../mocks/bluesnap-direct-sdk.mock';
 import { BlueSnapDirectSdk } from '../types';
+
+import BlueSnapDirect3ds from './bluesnap-direct-3ds';
+import BlueSnapDirectScriptLoader from './bluesnap-direct-script-loader';
 
 describe('BlueSnapDirectHostedForm', () => {
     let sdkMocks: ReturnType<typeof getBlueSnapDirectSdkMock>;

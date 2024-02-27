@@ -88,7 +88,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
         const state = this.paymentIntegrationService.getState();
-        const currencyCode = state.getCartOrThrow().currency.code;
+        const cart = state.getCartOrThrow();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
         const {
@@ -101,7 +101,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         if (this.isFastlaneEnabled) {
             const paypalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
                 paymentMethod,
-                currencyCode,
+                cart.currency.code,
+                cart.id,
             );
 
             await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
@@ -112,7 +113,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         } else {
             const paypalAxoSdk = await this.paypalCommerceSdk.getPayPalAxo(
                 paymentMethod,
-                currencyCode,
+                cart.currency.code,
+                cart.id,
             );
 
             await this.paypalCommerceFastlaneUtils.initializePayPalConnect(

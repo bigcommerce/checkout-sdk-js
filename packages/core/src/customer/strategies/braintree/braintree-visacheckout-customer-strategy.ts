@@ -50,6 +50,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
             .dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then((state) => {
                 this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+
                 const { clientToken } = this._paymentMethod;
 
                 const checkout = state.checkout.getCheckout();

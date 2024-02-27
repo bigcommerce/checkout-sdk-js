@@ -30,11 +30,8 @@ describe('PayPalCommerceSdk', () => {
         Messages: jest.fn(),
     };
 
-    Object.defineProperty(window, 'crypto', {
-        value: {
-            randomUUID: () => '123456789',
-        },
-    });
+    const sessionId = '8a232bf4-d9ba-4621-a1a9-ed8f685f92d1';
+    const expectedSessionId = sessionId.replace(/-/g, '');
 
     beforeEach(() => {
         loader = createScriptLoader();
@@ -71,21 +68,21 @@ describe('PayPalCommerceSdk', () => {
             };
 
             try {
-                await subject.getPayPalAxo(mockPaymentMethod, 'USD');
+                await subject.getPayPalAxo(mockPaymentMethod, 'USD', sessionId);
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
         });
 
         it('loads PayPal Axo sdk script', async () => {
-            await subject.getPayPalAxo(paymentMethod, 'USD');
+            await subject.getPayPalAxo(paymentMethod, 'USD', sessionId);
 
             expect(loader.loadScript).toHaveBeenCalledWith(
                 'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=connect&currency=USD&intent=capture',
                 {
                     async: true,
                     attributes: {
-                        'data-client-metadata-id': '123456789',
+                        'data-client-metadata-id': expectedSessionId,
                         'data-namespace': 'paypalAxo',
                         'data-partner-attribution-id': '1123JLKJASD12',
                         'data-user-id-token': 'asdcvY7XFSQasd',
@@ -106,14 +103,14 @@ describe('PayPalCommerceSdk', () => {
                 },
             };
 
-            await subject.getPayPalAxo(mockPaymentMethod, 'USD');
+            await subject.getPayPalAxo(mockPaymentMethod, 'USD', sessionId);
 
             expect(loader.loadScript).toHaveBeenCalledWith(
                 'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=connect&currency=USD&intent=capture',
                 {
                     async: true,
                     attributes: {
-                        'data-client-metadata-id': '123456789',
+                        'data-client-metadata-id': expectedSessionId,
                         'data-namespace': 'paypalAxo',
                         'data-partner-attribution-id': '1123JLKJASD12',
                         'data-user-id-token': 'connectClientToken123',
@@ -126,14 +123,14 @@ describe('PayPalCommerceSdk', () => {
             jest.spyOn(loader, 'loadScript').mockImplementation(jest.fn());
 
             try {
-                await subject.getPayPalAxo(paymentMethod, 'USD');
+                await subject.getPayPalAxo(paymentMethod, 'USD', sessionId);
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
         });
 
         it('returns PayPal AXO Sdk', async () => {
-            const result = await subject.getPayPalAxo(paymentMethod, 'USD');
+            const result = await subject.getPayPalAxo(paymentMethod, 'USD', sessionId);
 
             expect(result).toEqual(paypalAxoSdk);
         });
@@ -150,22 +147,22 @@ describe('PayPalCommerceSdk', () => {
             };
 
             try {
-                await subject.getPayPalFastlaneSdk(mockPaymentMethod, 'USD');
+                await subject.getPayPalFastlaneSdk(mockPaymentMethod, 'USD', sessionId);
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
         });
 
         it('loads PayPal Fastlane sdk script', async () => {
-            await subject.getPayPalFastlaneSdk(paymentMethod, 'USD');
+            await subject.getPayPalFastlaneSdk(paymentMethod, 'USD', sessionId);
 
             expect(loader.loadScript).toHaveBeenCalledWith(
                 'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=fastlane&currency=USD&intent=capture',
                 {
                     async: true,
                     attributes: {
-                        'data-client-metadata-id': '123456789',
-                        'data-namespace': 'paypalFastlane',
+                        'data-client-metadata-id': expectedSessionId,
+                        'data-namespace': 'paypalFastlaneSdk',
                         'data-partner-attribution-id': '1123JLKJASD12',
                         'data-user-id-token': 'asdcvY7XFSQasd',
                     },
@@ -185,15 +182,15 @@ describe('PayPalCommerceSdk', () => {
                 },
             };
 
-            await subject.getPayPalFastlaneSdk(mockPaymentMethod, 'USD');
+            await subject.getPayPalFastlaneSdk(mockPaymentMethod, 'USD', sessionId);
 
             expect(loader.loadScript).toHaveBeenCalledWith(
                 'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=fastlane&currency=USD&intent=capture',
                 {
                     async: true,
                     attributes: {
-                        'data-client-metadata-id': '123456789',
-                        'data-namespace': 'paypalFastlane',
+                        'data-client-metadata-id': expectedSessionId,
+                        'data-namespace': 'paypalFastlaneSdk',
                         'data-partner-attribution-id': '1123JLKJASD12',
                         'data-user-id-token': 'connectClientToken123',
                     },
@@ -205,14 +202,14 @@ describe('PayPalCommerceSdk', () => {
             jest.spyOn(loader, 'loadScript').mockImplementation(jest.fn());
 
             try {
-                await subject.getPayPalAxo(paymentMethod, 'USD');
+                await subject.getPayPalAxo(paymentMethod, 'USD', sessionId);
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
         });
 
         it('returns PayPal Fastlane Sdk', async () => {
-            const result = await subject.getPayPalFastlaneSdk(paymentMethod, 'USD');
+            const result = await subject.getPayPalFastlaneSdk(paymentMethod, 'USD', sessionId);
 
             expect(result).toEqual(paypalFastlaneSdk);
         });

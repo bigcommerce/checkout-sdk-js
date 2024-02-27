@@ -48,7 +48,7 @@ export interface TdOnlineMartThreeDSErrorBody {
 
 export type TdOnlineMartAdditionalAction = RequestError<TdOnlineMartThreeDSErrorBody>;
 
-//Note: The style property affects the remote styling of text inside the iframe input. The classes property updates the class list of the element the field is mounted to on your page.
+// Note: The style property affects the remote styling of text inside the iframe input. The classes property updates the class list of the element the field is mounted to on your page.
 interface FieldOptions {
     placeholder?: string;
     style?: Styles;

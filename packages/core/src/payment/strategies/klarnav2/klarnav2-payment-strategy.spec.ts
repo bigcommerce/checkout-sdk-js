@@ -231,7 +231,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             await createAction(CouponActionType.RemoveCouponSucceeded, getCheckout());
             await store.notifyState();
 
-            expect(klarnaPayments.init).toBeCalledTimes(3);
+            expect(klarnaPayments.init).toHaveBeenCalledTimes(3);
             expect(isInitialized).toHaveBeenCalledTimes(3);
         });
 
