@@ -130,7 +130,6 @@ describe('HostedInput', () => {
     it('configures input with expected attributes', () => {
         input.attach();
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
         expect(element.id).toBe('card-name');
@@ -159,7 +158,6 @@ describe('HostedInput', () => {
 
         cardNumberInput.attach();
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         expect(container.querySelector('input')!.inputMode).toBe('numeric');
 
         cardNumberInput.detach();
@@ -180,7 +178,6 @@ describe('HostedInput', () => {
     it('applies default styles to input', () => {
         input.attach();
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
         expect(element.style.color).toBe('rgb(255, 255, 255)');
@@ -212,7 +209,6 @@ describe('HostedInput', () => {
 
         input.attach();
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.value = '123';
@@ -231,7 +227,6 @@ describe('HostedInput', () => {
 
         input.attach();
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.dispatchEvent(new Event('focus', { bubbles: true }));
@@ -249,7 +244,6 @@ describe('HostedInput', () => {
 
         input.attach();
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.dispatchEvent(new Event('blur', { bubbles: true }));
@@ -265,7 +259,6 @@ describe('HostedInput', () => {
     it('validates form when input loses focus', () => {
         input.attach();
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const element = container.querySelector('input')!;
 
         element.dispatchEvent(new Event('blur', { bubbles: true }));

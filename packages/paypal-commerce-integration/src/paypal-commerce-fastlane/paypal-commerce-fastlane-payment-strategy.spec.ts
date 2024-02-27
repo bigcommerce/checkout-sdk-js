@@ -208,6 +208,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 expect(paypalCommerceSdk.getPayPalAxo).toHaveBeenCalledWith(
                     paymentMethod,
                     cart.currency.code,
+                    cart.id,
                 );
             });
 
@@ -309,6 +310,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 expect(paypalCommerceSdk.getPayPalFastlaneSdk).toHaveBeenCalledWith(
                     paymentMethod,
                     cart.currency.code,
+                    cart.id,
                 );
             });
 
