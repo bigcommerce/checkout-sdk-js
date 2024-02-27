@@ -1,2 +1,4 @@
-export { default as createPayPalCommerceConnectTracker } from './create-paypal-commerce-connect-tracker';
-export { default as PayPalCommerceConnectTrackerService } from './paypal-commerce-connect-tracker-service';
+// TODO: update createPayPalCommerceConnectTracker with createPayPalCommerceAnalyticTracker
+export { default as createPayPalCommerceConnectTracker } from './create-paypal-commerce-analytic-tracker';
+// TODO: update PayPalCommerceConnectTrackerService with PayPalCommerceAnalyticTrackerService
+export { default as PayPalCommerceConnectTrackerService } from './paypal-commerce-analytic-tracker-service';
