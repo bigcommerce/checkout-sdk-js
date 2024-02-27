@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.547.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.547.0...v1.547.1) (2024-02-27)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-3708 removed unused ppcp accelerated checkout code ([#2382](https://github.com/bigcommerce/checkout-sdk-js/issues/2382)) ([e8c7601](https://github.com/bigcommerce/checkout-sdk-js/commit/e8c7601399f1d7055cbcf9c6991909fde85b318d))
+
 ## [1.547.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.546.0...v1.547.0) (2024-02-26)
 
 
