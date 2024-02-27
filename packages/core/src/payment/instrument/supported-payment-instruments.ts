@@ -161,10 +161,6 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'paypalcommerce',
         method: 'credit_card',
     },
-    paypalcommerce: {
-        provider: 'paypalcommerce',
-        method: 'paypal',
-    },
 };
 
 export default supportedInstruments;
