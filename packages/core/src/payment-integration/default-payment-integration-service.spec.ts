@@ -61,10 +61,7 @@ describe('DefaultPaymentIntegrationService', () => {
         ConsignmentActionCreator,
         'updateAddress' | 'selectShippingOption' | 'deleteConsignment'
     >;
-    let paymentMethodActionCreator: Pick<
-        PaymentMethodActionCreator,
-        'loadPaymentMethod'
-    >;
+    let paymentMethodActionCreator: Pick<PaymentMethodActionCreator, 'loadPaymentMethod'>;
     let paymentActionCreator: Pick<
         PaymentActionCreator,
         'submitPayment' | 'initializeOffsitePayment'
