@@ -183,7 +183,7 @@ console.log(state.data.getBillingAddress().email);
 #### Passwordless Sign-in
 Customers could sign in using a single-use link sent to their email address. Once they click on the link, they will be redirected back to the store as a signed-in user.
 
-Learn more about it at [CheckoutService#sendSignInEmail](docs/classes/checkoutservice.md#sendSignInEmail)
+Learn more about it at [CheckoutService#sendSignInEmail](docs/classes/CheckoutService.md#sendSignInEmail)
 
 ### Continue as guest
 
@@ -196,7 +196,7 @@ console.log(state.data.getBillingAddress());
 console.log(state.data.getCustomer());
 ```
 
-Learn more about it at [CheckoutService#continueAsGuest](docs/classes/checkoutservice.md#continueasguest)
+Learn more about it at [CheckoutService#continueAsGuest](docs/classes/CheckoutService.md#continueasguest)
 
 ### Set shipping details
 
@@ -288,7 +288,7 @@ You can also enable bot protection to prevent bots and other types of automated 
 await service.executeSpamCheck();
 ```
 
-Learn more about it at [CheckoutService#executeSpamCheck](docs/classes/checkoutservice.md#executespamcheck).
+Learn more about it at [CheckoutService#executeSpamCheck](docs/classes/CheckoutService.md#executespamcheck).
 
 ### Submit payment and order
 
