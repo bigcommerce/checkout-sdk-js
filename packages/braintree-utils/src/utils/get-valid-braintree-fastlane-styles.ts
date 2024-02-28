@@ -1,8 +1,8 @@
-import { BraintreeConnectStylesOption } from '../braintree';
+import { BraintreeFastlaneStylesOption } from '../braintree';
 
-export default function getValidBraintreeConnectStyles(
-    styles?: BraintreeConnectStylesOption,
-): BraintreeConnectStylesOption | undefined {
+export default function getValidBraintreeFastlaneStyles(
+    styles?: BraintreeFastlaneStylesOption,
+): BraintreeFastlaneStylesOption | undefined {
     return {
         root: {
             backgroundColorPrimary:

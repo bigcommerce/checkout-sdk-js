@@ -7,6 +7,7 @@ import {
     BraintreeClientCreator,
     BraintreeConnect,
     BraintreeDataCollector,
+    BraintreeFastlane,
     BraintreeHostWindow,
     BraintreeLocalPaymentCreator,
     BraintreeModuleCreator,
@@ -22,6 +23,7 @@ import {
     getClientMock,
     getConnectMock,
     getDataCollectorMock,
+    getFastlaneMock,
     getGooglePayMock,
     getModuleCreatorMock,
     getPaypalCheckoutMock,
@@ -169,6 +171,69 @@ describe('BraintreeScriptLoader', () => {
 
             try {
                 await braintreeScriptLoader.loadConnect();
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
+            }
+        });
+    });
+
+    describe('#loadFastlane()', () => {
+        let fastlaneCreatorMock: BraintreeModuleCreator<BraintreeFastlane>;
+
+        beforeEach(() => {
+            fastlaneCreatorMock = getModuleCreatorMock(getFastlaneMock());
+            scriptLoader.loadScript = jest.fn(() => {
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.fastlane = fastlaneCreatorMock;
+                }
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads the fastlane', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const fastlane = await braintreeScriptLoader.loadFastlane();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/fastlane.min.js`,
+            );
+            expect(fastlane).toBe(fastlaneCreatorMock);
+        });
+
+        it('loads the fastlane with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            const fastlane = await braintreeScriptLoader.loadFastlane();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/fastlane.min.js`,
+            );
+            expect(fastlane).toBe(fastlaneCreatorMock);
+        });
+
+        it('loads the fastlane throw error if braintree does not exist in window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(
+                scriptLoader,
+                {} as BraintreeHostWindow,
+            );
+
+            try {
+                await braintreeScriptLoader.loadFastlane();
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
+            }
+        });
+
+        it('loads the client throw error if fastlane does not exist in window.braintree', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, {
+                braintree: {},
+            } as BraintreeHostWindow);
+
+            try {
+                await braintreeScriptLoader.loadFastlane();
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }

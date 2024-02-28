@@ -6,6 +6,9 @@ import {
     BraintreeConnectAuthenticationState,
     BraintreeConnectProfileData,
     BraintreeDataCollector,
+    BraintreeFastlane,
+    BraintreeFastlaneAuthenticationState,
+    BraintreeFastlaneProfileData,
     BraintreeModule,
     BraintreeModuleCreator,
     BraintreePaypal,
@@ -115,6 +118,55 @@ export function getBraintreeConnectProfileDataMock(): BraintreeConnectProfileDat
     };
 }
 
+export function getBraintreeFastlaneProfileDataMock(): BraintreeFastlaneProfileData {
+    return {
+        fastlaneCustomerAuthAssertionToken: 'some_token',
+        fastlaneCustomerId: 'asdasd',
+        shippingAddress: {
+            id: '123123',
+            company: undefined,
+            extendedAddress: undefined,
+            firstName: 'John',
+            lastName: 'Doe',
+            streetAddress: 'Hello World Address',
+            locality: 'Bellingham',
+            region: 'WA',
+            postalCode: '98225',
+            countryCodeNumeric: 0,
+            countryCodeAlpha2: 'US',
+            countryCodeAlpha3: '',
+        },
+        card: {
+            id: 'pp-vaulted-instrument-id',
+            paymentSource: {
+                card: {
+                    brand: 'VISA',
+                    expiry: '02/2037',
+                    lastDigits: '1111',
+                    billingAddress: {
+                        id: '321',
+                        company: undefined,
+                        extendedAddress: undefined,
+                        firstName: undefined,
+                        lastName: undefined,
+                        streetAddress: 'Hello World Address',
+                        locality: 'Bellingham',
+                        region: 'WA',
+                        postalCode: '98225',
+                        countryCodeNumeric: 0,
+                        countryCodeAlpha2: 'US',
+                        countryCodeAlpha3: '',
+                    },
+                },
+            },
+        },
+        name: {
+            given_name: 'John',
+            surname: 'Doe',
+        },
+    };
+}
+
 export function getConnectMock(): BraintreeConnect {
     return {
         identity: {
@@ -126,6 +178,25 @@ export function getConnectMock(): BraintreeConnect {
                 }),
         },
         ConnectCardComponent: jest.fn(),
+        events: {
+            apmSelected: jest.fn(),
+            emailSubmitted: jest.fn(),
+            orderPlaced: jest.fn(),
+        },
+    };
+}
+
+export function getFastlaneMock(): BraintreeFastlane {
+    return {
+        identity: {
+            lookupCustomerByEmail: () => Promise.resolve({ customerContextId: 'customerId' }),
+            triggerAuthenticationFlow: () =>
+                Promise.resolve({
+                    authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
+                    profileData: getBraintreeFastlaneProfileDataMock(),
+                }),
+        },
+        FastlaneCardComponent: jest.fn(),
         events: {
             apmSelected: jest.fn(),
             emailSubmitted: jest.fn(),
@@ -157,7 +228,12 @@ export function getDeviceDataMock(): string {
 }
 
 export function getModuleCreatorMock<T>(
-    module?: BraintreeModule | BraintreeClient | BraintreeConnect | BraintreePaypal,
+    module?:
+        | BraintreeModule
+        | BraintreeClient
+        | BraintreeConnect
+        | BraintreePaypal
+        | BraintreeFastlane,
 ): BraintreeModuleCreator<T> {
     return {
         create: jest.fn(() => Promise.resolve(module || {})),
