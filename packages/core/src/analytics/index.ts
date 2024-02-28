@@ -7,6 +7,6 @@ export {
 } from './braintree-connect-tracker';
 
 export {
-    createPayPalCommerceConnectTracker,
-    PayPalCommerceConnectTrackerService,
-} from './paypal-commerce-connect-tracker';
+    createPayPalCommerceAnalyticTracker,
+    PayPalCommerceAnalyticTrackerService,
+} from './paypal-commerce-analytic-tracker';

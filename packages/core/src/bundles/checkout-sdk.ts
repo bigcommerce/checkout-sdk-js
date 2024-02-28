@@ -9,7 +9,7 @@ export { createCurrencyService } from '../currency';
 export {
     createStepTracker,
     createBraintreeConnectTracker,
-    createPayPalCommerceConnectTracker,
+    createPayPalCommerceAnalyticTracker,
 } from '../analytics';
 export { createStoredCardHostedFormService } from '../hosted-form';
 export { createBodlService } from '../bodl';
