@@ -591,7 +591,7 @@
 - [createCurrencyService](README.md#createcurrencyservice)
 - [createEmbeddedCheckoutMessenger](README.md#createembeddedcheckoutmessenger)
 - [createLanguageService](README.md#createlanguageservice)
-- [createPayPalCommerceConnectTracker](README.md#createpaypalcommerceconnecttracker)
+- [createPayPalCommerceAnalyticTracker](README.md#createpaypalcommerceanalytictracker)
 - [createStepTracker](README.md#createsteptracker)
 - [createStoredCardHostedFormService](README.md#createstoredcardhostedformservice)
 - [embedCheckout](README.md#embedcheckout)
@@ -1182,9 +1182,9 @@ An instance of `LanguageService`.
 
 ___
 
-### createPayPalCommerceConnectTracker
+### createPayPalCommerceAnalyticTracker
 
-▸ **createPayPalCommerceConnectTracker**(`checkoutService`): [`PayPalCommerceAnalyticTrackerService`](interfaces/PayPalCommerceAnalyticTrackerService.md)
+▸ **createPayPalCommerceAnalyticTracker**(`checkoutService`): [`PayPalCommerceAnalyticTrackerService`](interfaces/PayPalCommerceAnalyticTrackerService.md)
 
 Creates an instance of `PayPalCommerceAnalyticTrackerService`.
 

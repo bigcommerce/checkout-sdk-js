@@ -9597,7 +9597,7 @@ export declare function createLanguageService(config?: Partial<LanguageConfig>):
  *
  * @returns an instance of `PayPalCommerceAnalyticTrackerService`.
  */
-export declare function createPayPalCommerceConnectTracker(checkoutService: CheckoutService): PayPalCommerceAnalyticTrackerService;
+export declare function createPayPalCommerceAnalyticTracker(checkoutService: CheckoutService): PayPalCommerceAnalyticTrackerService;
 
 /**
  * Creates an instance of `StepTracker`.

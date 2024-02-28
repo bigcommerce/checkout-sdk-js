@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.549.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.549.0...v1.549.1) (2024-02-28)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-3602 updated imports for paypal commerce analytic tracker ([#2385](https://github.com/bigcommerce/checkout-sdk-js/issues/2385)) ([e89acdf](https://github.com/bigcommerce/checkout-sdk-js/commit/e89acdfea25b4c6df71ebc7509e708a481a5b1e5))
+
 ## [1.549.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.548.0...v1.549.0) (2024-02-28)
 
 
