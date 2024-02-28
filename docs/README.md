@@ -375,8 +375,8 @@
 - [PayPalBuyNowInitializeOptions](interfaces/PayPalBuyNowInitializeOptions.md)
 - [PayPalCommerceAlternativeMethodsButtonOptions](interfaces/PayPalCommerceAlternativeMethodsButtonOptions.md)
 - [PayPalCommerceAlternativeMethodsPaymentOptions](interfaces/PayPalCommerceAlternativeMethodsPaymentOptions.md)
+- [PayPalCommerceAnalyticTrackerService](interfaces/PayPalCommerceAnalyticTrackerService.md)
 - [PayPalCommerceButtonInitializeOptions](interfaces/PayPalCommerceButtonInitializeOptions.md)
-- [PayPalCommerceConnectTrackerService](interfaces/PayPalCommerceConnectTrackerService.md)
 - [PayPalCommerceCreditButtonInitializeOptions](interfaces/PayPalCommerceCreditButtonInitializeOptions.md)
 - [PayPalCommerceCreditCardsPaymentInitializeOptions](interfaces/PayPalCommerceCreditCardsPaymentInitializeOptions.md)
 - [PayPalCommerceCreditCustomerInitializeOptions](interfaces/PayPalCommerceCreditCustomerInitializeOptions.md)
@@ -1184,20 +1184,20 @@ ___
 
 ### createPayPalCommerceConnectTracker
 
-▸ **createPayPalCommerceConnectTracker**(`checkoutService`): [`PayPalCommerceConnectTrackerService`](interfaces/PayPalCommerceConnectTrackerService.md)
+▸ **createPayPalCommerceConnectTracker**(`checkoutService`): [`PayPalCommerceAnalyticTrackerService`](interfaces/PayPalCommerceAnalyticTrackerService.md)
 
-Creates an instance of `PayPalCommerceConnectTrackerService`.
+Creates an instance of `PayPalCommerceAnalyticTrackerService`.
 
 **`remarks`**
 ```js
 const checkoutService = createCheckoutService();
 await checkoutService.loadCheckout();
-const paypalCommerceConnectTracker = createPayPalCommerceConnectTracker(checkoutService);
+const paypalCommerceAnalyticTracker = createPayPalCommerceAnalyticTracker(checkoutService);
 
-paypalCommerceConnectTracker.customerPaymentMethodExecuted();
-paypalCommerceConnectTracker.paymentComplete();
-paypalCommerceConnectTracker.selectedPaymentMethod('applepay');
-paypalCommerceConnectTracker.walletButtonClick('paypal');
+paypalCommerceAnalyticTracker.customerPaymentMethodExecuted();
+paypalCommerceAnalyticTracker.paymentComplete();
+paypalCommerceAnalyticTracker.selectedPaymentMethod('applepay');
+paypalCommerceAnalyticTracker.walletButtonClick('paypal');
 ```
 
 #### Parameters
@@ -1208,9 +1208,9 @@ paypalCommerceConnectTracker.walletButtonClick('paypal');
 
 #### Returns
 
-[`PayPalCommerceConnectTrackerService`](interfaces/PayPalCommerceConnectTrackerService.md)
+[`PayPalCommerceAnalyticTrackerService`](interfaces/PayPalCommerceAnalyticTrackerService.md)
 
-an instance of `PayPalCommerceConnectTrackerService`.
+an instance of `PayPalCommerceAnalyticTrackerService`.
 
 ___
 

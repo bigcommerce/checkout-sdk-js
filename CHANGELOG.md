@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.549.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.548.0...v1.549.0) (2024-02-28)
+
+
+### Features
+
+* **payment:** PAYPAL-3602 renamed PayPalCommerceConnectTracker to PayPalCommerceAnalyticTracker + added Fastlane support ([#2384](https://github.com/bigcommerce/checkout-sdk-js/issues/2384)) ([b7054e5](https://github.com/bigcommerce/checkout-sdk-js/commit/b7054e55dd334053691902b0c7e2587ebb9ddc0d))
+
 ## [1.548.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.547.1...v1.548.0) (2024-02-27)
 
 

@@ -1,15 +1,15 @@
-[@bigcommerce/checkout-sdk](../README.md) / PayPalCommerceConnectTrackerService
+[@bigcommerce/checkout-sdk](../README.md) / PayPalCommerceAnalyticTrackerService
 
-# Interface: PayPalCommerceConnectTrackerService
+# Interface: PayPalCommerceAnalyticTrackerService
 
 ## Table of contents
 
 ### Methods
 
-- [customerPaymentMethodExecuted](PayPalCommerceConnectTrackerService.md#customerpaymentmethodexecuted)
-- [paymentComplete](PayPalCommerceConnectTrackerService.md#paymentcomplete)
-- [selectedPaymentMethod](PayPalCommerceConnectTrackerService.md#selectedpaymentmethod)
-- [walletButtonClick](PayPalCommerceConnectTrackerService.md#walletbuttonclick)
+- [customerPaymentMethodExecuted](PayPalCommerceAnalyticTrackerService.md#customerpaymentmethodexecuted)
+- [paymentComplete](PayPalCommerceAnalyticTrackerService.md#paymentcomplete)
+- [selectedPaymentMethod](PayPalCommerceAnalyticTrackerService.md#selectedpaymentmethod)
+- [walletButtonClick](PayPalCommerceAnalyticTrackerService.md#walletbuttonclick)
 
 ## Methods
 

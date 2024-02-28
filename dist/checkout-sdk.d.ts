@@ -7222,6 +7222,13 @@ declare interface PayPalCommerceAlternativeMethodsPaymentOptions {
     onInitButton(actions: InitCallbackActions): Promise<void>;
 }
 
+declare interface PayPalCommerceAnalyticTrackerService {
+    customerPaymentMethodExecuted(): void;
+    paymentComplete(): void;
+    selectedPaymentMethod(methodId: string): void;
+    walletButtonClick(methodId: string): void;
+}
+
 /**
  * A set of options that are required to initialize PayPalCommerce in cart or product details page.
  *
@@ -7245,13 +7252,6 @@ declare interface PayPalCommerceButtonInitializeOptions {
      * A callback that gets called when payment complete on paypal side.
      */
     onComplete?(): void;
-}
-
-declare interface PayPalCommerceConnectTrackerService {
-    customerPaymentMethodExecuted(): void;
-    paymentComplete(): void;
-    selectedPaymentMethod(methodId: string): void;
-    walletButtonClick(methodId: string): void;
 }
 
 declare interface PayPalCommerceCreditButtonInitializeOptions {
@@ -9581,23 +9581,23 @@ export declare function createEmbeddedCheckoutMessenger(options: EmbeddedCheckou
 export declare function createLanguageService(config?: Partial<LanguageConfig>): LanguageService;
 
 /**
- * Creates an instance of `PayPalCommerceConnectTrackerService`.
+ * Creates an instance of `PayPalCommerceAnalyticTrackerService`.
  *
  * @remarks
  * ```js
  * const checkoutService = createCheckoutService();
  * await checkoutService.loadCheckout();
- * const paypalCommerceConnectTracker = createPayPalCommerceConnectTracker(checkoutService);
+ * const paypalCommerceAnalyticTracker = createPayPalCommerceAnalyticTracker(checkoutService);
  *
- * paypalCommerceConnectTracker.customerPaymentMethodExecuted();
- * paypalCommerceConnectTracker.paymentComplete();
- * paypalCommerceConnectTracker.selectedPaymentMethod('applepay');
- * paypalCommerceConnectTracker.walletButtonClick('paypal');
+ * paypalCommerceAnalyticTracker.customerPaymentMethodExecuted();
+ * paypalCommerceAnalyticTracker.paymentComplete();
+ * paypalCommerceAnalyticTracker.selectedPaymentMethod('applepay');
+ * paypalCommerceAnalyticTracker.walletButtonClick('paypal');
  * ```
  *
- * @returns an instance of `PayPalCommerceConnectTrackerService`.
+ * @returns an instance of `PayPalCommerceAnalyticTrackerService`.
  */
-export declare function createPayPalCommerceConnectTracker(checkoutService: CheckoutService): PayPalCommerceConnectTrackerService;
+export declare function createPayPalCommerceConnectTracker(checkoutService: CheckoutService): PayPalCommerceAnalyticTrackerService;
 
 /**
  * Creates an instance of `StepTracker`.
