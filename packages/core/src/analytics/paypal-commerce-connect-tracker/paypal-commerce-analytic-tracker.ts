@@ -1,66 +1,72 @@
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     isPayPalCommerceConnectWindow,
-    PayPalCommerceConnectApmSelectedEventOptions,
-    PayPalCommerceConnectEmailEnteredEventOptions,
-    PayPalCommerceConnectEventCommonOptions,
-    PayPalCommerceConnectEvents,
-    PayPalCommerceConnectOrderPlacedEventOptions,
+    isPayPalCommerceFastlaneWindow,
+    PayPalFastlaneApmSelectedEventOptions,
+    PayPalFastlaneEmailEnteredEventOptions,
+    PayPalFastlaneEventCommonOptions,
+    PayPalFastlaneEvents,
+    PayPalFastlaneOrderPlacedEventOptions,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import { CheckoutService } from '../../checkout';
 
-import PayPalCommerceConnectTrackerService from './paypal-commerce-connect-tracker-service';
+import PayPalCommerceAnalyticTrackerService from './paypal-commerce-analytic-tracker-service';
 
-export default class PayPalCommerceConnectTracker implements PayPalCommerceConnectTrackerService {
+export default class PayPalCommerceAnalyticTracker implements PayPalCommerceAnalyticTrackerService {
     private _selectedPaymentMethodId = 'paypalcommerceacceleratedcheckout';
 
     constructor(private _checkoutService: CheckoutService) {}
 
-    customerPaymentMethodExecuted() {
-        if (this._shouldTrackEvent()) {
+    customerPaymentMethodExecuted(): void {
+        if (this._shouldTrackFastlaneEvent()) {
             this._trackEmailSubmitted();
         }
     }
 
-    paymentComplete() {
-        if (this._shouldTrackEvent()) {
+    paymentComplete(): void {
+        if (this._shouldTrackFastlaneEvent()) {
             this._trackOrderPlaced(this._selectedPaymentMethodId);
         }
     }
 
     selectedPaymentMethod(methodId: string): void {
-        if (this._shouldTrackEvent() && methodId) {
+        if (this._shouldTrackFastlaneEvent() && methodId) {
             this._selectedPaymentMethodId = methodId;
 
             this._trackApmSelected(methodId, false);
         }
     }
 
-    walletButtonClick(methodId: string) {
-        if (this._shouldTrackEvent() && methodId) {
+    walletButtonClick(methodId: string): void {
+        if (this._shouldTrackFastlaneEvent() && methodId) {
             this._selectedPaymentMethodId = methodId;
 
             this._trackApmSelected(methodId, true);
         }
     }
 
-    private _shouldTrackEvent() {
+    private _shouldTrackFastlaneEvent(): boolean {
         const state = this._checkoutService.getState();
         const paymentMethod = state.data.getPaymentMethod('paypalcommerce');
-        const isAnalyticEnabled =
-            paymentMethod?.initializationData.isPayPalCommerceAnalyticsV2Enabled;
+        const initializationData = paymentMethod?.initializationData || {};
+        const isAnalyticEnabled = initializationData.isPayPalCommerceAnalyticsV2Enabled;
+        const isFastlaneEnabled = initializationData.isFastlaneEnabled;
 
-        return (
-            isPayPalCommerceConnectWindow(window) &&
-            window.paypalConnect?.events &&
-            isAnalyticEnabled
-        );
+        const isAvailableAnalyticEventsMethods = isFastlaneEnabled
+            ? isPayPalCommerceFastlaneWindow(window) && window.paypalFastlane?.events
+            : isPayPalCommerceConnectWindow(window) && window.paypalConnect?.events;
+
+        return isAnalyticEnabled && isAvailableAnalyticEventsMethods;
     }
 
-    private _getPayPalCommerceConnectEventsOrThrow(): PayPalCommerceConnectEvents {
+    private _getPayPalEventsOrThrow(): PayPalFastlaneEvents {
         if (isPayPalCommerceConnectWindow(window) && window.paypalConnect) {
             return window.paypalConnect.events;
+        }
+
+        if (isPayPalCommerceFastlaneWindow(window) && window.paypalFastlane) {
+            return window.paypalFastlane.events;
         }
 
         throw new PaymentMethodClientUnavailableError();
@@ -68,25 +74,25 @@ export default class PayPalCommerceConnectTracker implements PayPalCommerceConne
 
     /**
      *
-     * PayPal Commerce Connect Event track methods
+     * Analytic Event track methods
      *
      */
     private _trackEmailSubmitted(): void {
-        const { emailSubmitted } = this._getPayPalCommerceConnectEventsOrThrow();
+        const { emailSubmitted } = this._getPayPalEventsOrThrow();
         const eventOptions = this._getEmailSubmittedEventOptions();
 
         emailSubmitted(eventOptions);
     }
 
     private _trackApmSelected(methodId: string, isWalletButton: boolean): void {
-        const { apmSelected } = this._getPayPalCommerceConnectEventsOrThrow();
+        const { apmSelected } = this._getPayPalEventsOrThrow();
         const eventOptions = this._getApmSelectedEventOptions(methodId, isWalletButton);
 
         apmSelected(eventOptions);
     }
 
     private _trackOrderPlaced(methodId: string): void {
-        const { orderPlaced } = this._getPayPalCommerceConnectEventsOrThrow();
+        const { orderPlaced } = this._getPayPalEventsOrThrow();
         const eventOptions = this._getOrderPlacedEventOptions(methodId);
 
         orderPlaced(eventOptions);
@@ -97,7 +103,7 @@ export default class PayPalCommerceConnectTracker implements PayPalCommerceConne
      * Event options methods
      *
      */
-    private _getEventCommonOptions(): PayPalCommerceConnectEventCommonOptions {
+    private _getEventCommonOptions(): PayPalFastlaneEventCommonOptions {
         const state = this._checkoutService.getState();
         const cart = state.data.getCart();
         const storeProfile = state.data.getConfig()?.storeProfile;
@@ -128,7 +134,7 @@ export default class PayPalCommerceConnectTracker implements PayPalCommerceConne
         };
     }
 
-    private _getEmailSubmittedEventOptions(): PayPalCommerceConnectEmailEnteredEventOptions {
+    private _getEmailSubmittedEventOptions(): PayPalFastlaneEmailEnteredEventOptions {
         const state = this._checkoutService.getState().data;
         const paymentMethods = state.getPaymentMethods() || [];
         const apmList = paymentMethods.map(({ id }) => id);
@@ -144,7 +150,7 @@ export default class PayPalCommerceConnectTracker implements PayPalCommerceConne
     private _getApmSelectedEventOptions(
         methodId: string,
         isWalletButton: boolean,
-    ): PayPalCommerceConnectApmSelectedEventOptions {
+    ): PayPalFastlaneApmSelectedEventOptions {
         const state = this._checkoutService.getState().data;
         const paymentMethods = state.getPaymentMethods() || [];
         const apmList = paymentMethods.map(({ id }) => id);
@@ -158,9 +164,7 @@ export default class PayPalCommerceConnectTracker implements PayPalCommerceConne
         };
     }
 
-    private _getOrderPlacedEventOptions(
-        methodId: string,
-    ): PayPalCommerceConnectOrderPlacedEventOptions {
+    private _getOrderPlacedEventOptions(methodId: string): PayPalFastlaneOrderPlacedEventOptions {
         const state = this._checkoutService.getState().data;
         const cart = state.getCart();
 
