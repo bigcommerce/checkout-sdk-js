@@ -177,42 +177,28 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         orderId?: string,
         setupToken?: string,
     ): Payment {
-        let vaultedToken: string | undefined;
-
-        if (paymentData && isVaultedInstrument(paymentData)) {
-            const { instrumentId } = paymentData;
-
-            vaultedToken = instrumentId;
-        }
-
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
+
+        const token =
+            paymentData && isVaultedInstrument(paymentData) ? paymentData.instrumentId : undefined;
+
+        const bigpay_token = omitBy(
+            {
+                verification_nonce: setupToken,
+                token,
+            },
+            isNil,
+        );
 
         return {
             methodId,
             paymentData: {
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
                 formattedPayload: {
-                    vault_payment_instrument: shouldSaveInstrument || false,
-                    set_as_default_stored_instrument: shouldSetAsDefaultInstrument || false,
-                    device_info: null,
-                    method_id: methodId,
-                    ...(vaultedToken
-                        ? {
-                              bigpay_token: { token: vaultedToken },
-                          }
-                        : {}),
-                    ...(setupToken
-                        ? {
-                              setup_token: setupToken,
-                          }
-                        : {}),
-                    ...(orderId
-                        ? {
-                              card_with_order: {
-                                  order_id: orderId,
-                              },
-                          }
-                        : {}),
+                    ...(setupToken || token ? { bigpay_token } : {}),
+                    ...(orderId ? { card_with_order: { order_id: orderId } } : {}),
                 },
             },
         };
