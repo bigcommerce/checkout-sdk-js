@@ -420,11 +420,9 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId,
                 paymentData: {
+                    shouldSaveInstrument: false,
+                    shouldSetAsDefaultInstrument: false,
                     formattedPayload: {
-                        vault_payment_instrument: false,
-                        set_as_default_stored_instrument: false,
-                        device_info: null,
-                        method_id: methodId,
                         card_with_order: {
                             order_id: hostedFormOrderId,
                         },
@@ -450,11 +448,9 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId,
                 paymentData: {
+                    shouldSaveInstrument: true,
+                    shouldSetAsDefaultInstrument: true,
                     formattedPayload: {
-                        vault_payment_instrument: true,
-                        set_as_default_stored_instrument: true,
-                        device_info: null,
-                        method_id: methodId,
                         card_with_order: {
                             order_id: hostedFormOrderId,
                         },
@@ -498,18 +494,16 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId,
                 paymentData: {
+                    shouldSaveInstrument: false,
+                    shouldSetAsDefaultInstrument: false,
                     formattedPayload: {
                         bigpay_token: {
+                            verification_nonce: 'vaultSetupToken',
                             token: 'bc_instrument_id',
                         },
                         card_with_order: {
                             order_id: 'orderId',
                         },
-                        setup_token: 'vaultSetupToken',
-                        device_info: null,
-                        method_id: 'paypalcommercecreditcards',
-                        set_as_default_stored_instrument: false,
-                        vault_payment_instrument: false,
                     },
                 },
             });
