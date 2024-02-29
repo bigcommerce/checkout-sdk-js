@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.550.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.549.1...v1.550.0) (2024-02-29)
+
+
+### Features
+
+* **payment:** PAYPAL-3705 PPCP Card Fields payment payload updated ([526d26c](https://github.com/bigcommerce/checkout-sdk-js/commit/526d26ccf96af1176d5087319f8867eebcab094d))
+
 ### [1.549.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.549.0...v1.549.1) (2024-02-28)
 
 
