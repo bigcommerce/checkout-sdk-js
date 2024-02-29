@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.551.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.550.0...v1.551.0) (2024-02-29)
+
+
+### Features
+
+* **payment:** PAYPAL-3585 updated braintree scriptloader to load fastlane ([#2388](https://github.com/bigcommerce/checkout-sdk-js/issues/2388)) ([be0d328](https://github.com/bigcommerce/checkout-sdk-js/commit/be0d328015ee937089b5e1ef49fa5c067a1886c7))
+
 ## [1.550.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.549.1...v1.550.0) (2024-02-29)
 
 
