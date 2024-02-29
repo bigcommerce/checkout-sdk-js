@@ -1,8 +1,8 @@
-import getValidBraintreeConnectStyles from './get-valid-braintree-connect-styles';
+import getValidBraintreeFastlaneStyles from './get-valid-braintree-fastlane-styles';
 
-describe('#getValidBraintreeConnectStyles()', () => {
+describe('#getValidBraintreeFastlaneStyles()', () => {
     it('returns default styles options if styles not provided', () => {
-        expect(getValidBraintreeConnectStyles()).toEqual({
+        expect(getValidBraintreeFastlaneStyles()).toEqual({
             root: {
                 backgroundColorPrimary: 'transparent',
                 errorColor: '#C40B0B',
@@ -39,7 +39,7 @@ describe('#getValidBraintreeConnectStyles()', () => {
             },
         };
 
-        expect(getValidBraintreeConnectStyles(styles)).toEqual({
+        expect(getValidBraintreeFastlaneStyles(styles)).toEqual({
             root: {
                 backgroundColorPrimary: 'transparent',
                 errorColor: '#C40B0B',

@@ -18,6 +18,7 @@ import {
     BraintreeDetails,
     BraintreeEnv,
     BraintreeError,
+    BraintreeFastlaneStylesOption,
     BraintreeHostWindow,
     BraintreeModule,
     BraintreePaypal,
@@ -33,7 +34,7 @@ import {
 import BraintreeScriptLoader from './braintree-script-loader';
 import isBraintreeError from './is-braintree-error';
 import { PAYPAL_COMPONENTS } from './paypal';
-import getValidBraintreeConnectStyles from './utils/get-valid-braintree-connect-styles';
+import getValidBraintreeFastlaneStyles from './utils/get-valid-braintree-fastlane-styles';
 
 export interface PaypalConfig {
     amount: number;
@@ -92,11 +93,38 @@ export default class BraintreeIntegrationService {
                 authorization: clientToken,
                 client,
                 deviceData,
-                styles: getValidBraintreeConnectStyles(styles),
+                styles: getValidBraintreeFastlaneStyles(styles),
             });
         }
 
         return this.braintreeHostWindow.braintreeConnect;
+    }
+
+    async getBraintreeFastlane(
+        cardId?: string,
+        isTestModeEnabled?: boolean,
+        styles?: BraintreeFastlaneStylesOption,
+    ) {
+        if (isTestModeEnabled) {
+            window.localStorage.setItem('axoEnv', 'sandbox');
+        }
+
+        if (!this.braintreeHostWindow.braintreeFastlane) {
+            const clientToken = this.getClientTokenOrThrow();
+            const client = await this.getClient();
+            const deviceData = await this.getSessionId(cardId);
+
+            const braintreeFastlaneCreator = await this.braintreeScriptLoader.loadFastlane();
+
+            this.braintreeHostWindow.braintreeFastlane = await braintreeFastlaneCreator.create({
+                authorization: clientToken,
+                client,
+                deviceData,
+                styles: getValidBraintreeFastlaneStyles(styles),
+            });
+        }
+
+        return this.braintreeHostWindow.braintreeFastlane;
     }
 
     async getClient(): Promise<BraintreeClient> {

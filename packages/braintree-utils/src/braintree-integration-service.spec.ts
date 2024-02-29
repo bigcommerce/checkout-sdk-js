@@ -10,6 +10,7 @@ import {
     BraintreeClient,
     BraintreeConnect,
     BraintreeDataCollector,
+    BraintreeFastlane,
     BraintreeHostWindow,
     BraintreeModuleCreator,
     BraintreePaypalCheckout,
@@ -23,6 +24,7 @@ import {
     getConnectMock,
     getDataCollectorMock,
     getDeviceDataMock,
+    getFastlaneMock,
     getModuleCreatorMock,
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
@@ -32,7 +34,9 @@ import { PaypalSDK } from './paypal';
 
 describe('BraintreeIntegrationService', () => {
     let braintreeConnectMock: BraintreeConnect;
+    let braintreeFastlaneMock: BraintreeFastlane;
     let braintreeConnectCreatorMock: BraintreeModuleCreator<BraintreeConnect>;
+    let braintreeFastlaneCreatorMock: BraintreeModuleCreator<BraintreeFastlane>;
     let braintreeHostWindowMock: BraintreeHostWindow;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
@@ -63,7 +67,9 @@ describe('BraintreeIntegrationService', () => {
 
     beforeEach(() => {
         braintreeConnectMock = getConnectMock();
+        braintreeFastlaneMock = getFastlaneMock();
         braintreeConnectCreatorMock = getModuleCreatorMock(braintreeConnectMock);
+        braintreeFastlaneCreatorMock = getModuleCreatorMock(braintreeFastlaneMock);
         clientMock = getClientMock();
         clientCreatorMock = getModuleCreatorMock(clientMock);
         dataCollectorMock = getDataCollectorMock();
@@ -85,6 +91,9 @@ describe('BraintreeIntegrationService', () => {
         jest.spyOn(braintreeScriptLoader, 'loadClient').mockImplementation(() => clientCreatorMock);
         jest.spyOn(braintreeScriptLoader, 'loadConnect').mockImplementation(
             () => braintreeConnectCreatorMock,
+        );
+        jest.spyOn(braintreeScriptLoader, 'loadFastlane').mockImplementation(
+            () => braintreeFastlaneCreatorMock,
         );
         jest.spyOn(braintreeScriptLoader, 'loadDataCollector').mockImplementation(
             () => dataCollectorCreatorMock,
@@ -220,6 +229,83 @@ describe('BraintreeIntegrationService', () => {
             braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
 
             await braintreeIntegrationService.getBraintreeConnect('asd123', false);
+
+            expect(window.localStorage.setItem).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('#getBraintreeFastlane()', () => {
+        it('throws an error if client token is not provided', async () => {
+            braintreeIntegrationService.initialize('', storeConfigWithFeaturesOn);
+
+            try {
+                await braintreeIntegrationService.getBraintreeFastlane();
+            } catch (error) {
+                expect(error).toBeInstanceOf(NotInitializedError);
+            }
+        });
+
+        it('loads braintree fastlane and creates an instance of fastlane object', async () => {
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
+
+            const result = await braintreeIntegrationService.getBraintreeFastlane();
+
+            expect(braintreeScriptLoader.loadClient).toHaveBeenCalled();
+            expect(braintreeScriptLoader.loadDataCollector).toHaveBeenCalled();
+            expect(braintreeScriptLoader.loadFastlane).toHaveBeenCalled();
+
+            expect(braintreeFastlaneCreatorMock.create).toHaveBeenCalledWith({
+                authorization: clientToken,
+                client: clientMock,
+                deviceData: getDeviceDataMock(),
+                styles: {
+                    root: {
+                        backgroundColorPrimary: 'transparent',
+                        errorColor: '#C40B0B',
+                        fontFamily: 'Montserrat, Helvetica, Arial, sans-serif',
+                    },
+                    input: {
+                        borderRadius: '0.25rem',
+                        borderColor: '#9E9E9E',
+                        focusBorderColor: '#4496F6',
+                    },
+                    toggle: {
+                        colorPrimary: '#0F005E',
+                        colorSecondary: '#ffffff',
+                    },
+                    text: {
+                        body: {
+                            color: '#222222',
+                            fontSize: '1rem',
+                        },
+                        caption: {
+                            color: '#515151',
+                            fontSize: '1rem',
+                        },
+                    },
+                    branding: 'light',
+                },
+            });
+
+            expect(result).toEqual(braintreeFastlaneMock);
+        });
+
+        it('sets axo to sandbox mode if test mode is enabled', async () => {
+            jest.spyOn(Storage.prototype, 'setItem').mockImplementation(jest.fn);
+
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
+
+            await braintreeIntegrationService.getBraintreeFastlane('asd123', true);
+
+            expect(window.localStorage.setItem).toHaveBeenCalledWith('axoEnv', 'sandbox');
+        });
+
+        it('does not switch axo to sandbox mode if test mode is disabled', async () => {
+            jest.spyOn(Storage.prototype, 'setItem').mockImplementation(jest.fn);
+
+            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
+
+            await braintreeIntegrationService.getBraintreeFastlane('asd123', false);
 
             expect(window.localStorage.setItem).not.toHaveBeenCalled();
         });
