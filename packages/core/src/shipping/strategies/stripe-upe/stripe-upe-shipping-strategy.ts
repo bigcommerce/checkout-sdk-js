@@ -145,7 +145,6 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
         const shippingPhoneField = shippingFields.find((field) => field.name === 'phone');
         let option: StripeElementsCreateOptions = {
             mode: StripeFormMode.SHIPPING,
-            allowedCountries: [availableCountries],
             fields: {
                 phone: 'always',
             },
@@ -159,6 +158,13 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
                 name: DisplayName.SPLIT,
             },
         };
+
+        if (availableCountries) {
+            option = {
+                ...option,
+                allowedCountries: availableCountries,
+            };
+        }
 
         if (shipping) {
             const {

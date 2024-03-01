@@ -11,7 +11,7 @@ export default interface StripeUPEShippingInitializeOptions {
     /**
      * Available countries configured on BC shipping setup.
      */
-    availableCountries: string;
+    availableCountries: string[] | undefined;
 
     /**
      * The ID of a container which the stripe iframe should be inserted.

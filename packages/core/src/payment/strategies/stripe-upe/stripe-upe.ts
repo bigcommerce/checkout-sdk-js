@@ -192,7 +192,7 @@ export interface StripeElementsCreateOptions {
     mode?: string;
     fields?: FieldsOptions;
     wallets?: WalletOptions;
-    allowedCountries?: string[];
+    allowedCountries?: string[] | undefined;
     defaultValues?: ShippingDefaultValues | CustomerDefaultValues;
     validation?: validationElement;
     display?: { name: DisplayName };
