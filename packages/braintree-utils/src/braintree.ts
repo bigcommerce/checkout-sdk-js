@@ -72,8 +72,10 @@ export interface BraintreeInitializationData {
     intent?: 'authorize' | 'order' | 'sale';
     isCreditEnabled?: boolean;
     isAcceleratedCheckoutEnabled?: boolean;
+    isFastlaneEnabled?: boolean; // TODO: CHECK IF NEEDED
     isBraintreeAnalyticsV2Enabled?: boolean;
     shouldRunAcceleratedCheckout?: boolean; // TODO: only for BT AXO A/B testing purposes, hence should be removed after testing
+    shouldRunFastlane?: boolean; // TODO: CHECK IF NEEDED
     paymentButtonStyles?: Record<string, PaypalStyleOptions>;
 }
 
