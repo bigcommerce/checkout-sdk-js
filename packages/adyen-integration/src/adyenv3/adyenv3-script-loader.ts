@@ -16,12 +16,12 @@ export default class AdyenV3ScriptLoader {
             this._stylesheetLoader.loadStylesheet(
                 `https://checkoutshopper-${
                     configuration.environment ?? ''
-                }.adyen.com/checkoutshopper/sdk/5.24.0/adyen.css`,
+                }.adyen.com/checkoutshopper/sdk/5.58.0/adyen.css`,
             ),
             this._scriptLoader.loadScript(
                 `https://checkoutshopper-${
                     configuration.environment ?? ''
-                }.adyen.com/checkoutshopper/sdk/5.24.0/adyen.js`,
+                }.adyen.com/checkoutshopper/sdk/5.58.0/adyen.js`,
             ),
         ]);
 
