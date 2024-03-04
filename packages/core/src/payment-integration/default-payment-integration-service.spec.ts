@@ -75,7 +75,10 @@ describe('DefaultPaymentIntegrationService', () => {
     let storeCreditActionCreator: Pick<StoreCreditActionCreator, 'applyStoreCredit'>;
     let paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator;
     let shippingCountryActionCreator: Pick<ShippingCountryActionCreator, 'loadCountries'>;
-    let remoteCheckoutActionCreator: Pick<RemoteCheckoutActionCreator, 'initializePayment'>;
+    let remoteCheckoutActionCreator: Pick<
+        RemoteCheckoutActionCreator,
+        'initializePayment' | 'forgetCheckout'
+    >;
 
     beforeEach(() => {
         requestSender = createRequestSender();
@@ -171,6 +174,9 @@ describe('DefaultPaymentIntegrationService', () => {
         };
 
         remoteCheckoutActionCreator = {
+            forgetCheckout: jest.fn(
+                async () => () => createAction('INITIALIZE_REMOTE_PAYMENT_REQUESTED'),
+            ),
             initializePayment: jest.fn(
                 async () => () => createAction('INITIALIZE_REMOTE_PAYMENT_REQUESTED'),
             ),
@@ -479,6 +485,18 @@ describe('DefaultPaymentIntegrationService', () => {
             expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(
                 remoteCheckoutActionCreator.initializePayment('methodId'),
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#forgetCheckout', () => {
+        it('forgets checkout', async () => {
+            const output = await subject.forgetCheckout('methodId');
+
+            expect(remoteCheckoutActionCreator.forgetCheckout).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(
+                remoteCheckoutActionCreator.forgetCheckout('methodId'),
             );
             expect(output).toEqual(paymentIntegrationSelectors);
         });
