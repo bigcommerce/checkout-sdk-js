@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.554.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.553.1...v1.554.0) (2024-03-05)
+
+
+### Features
+
+* **payment:** PI-1502 [KlarnaV2] [CheckoutSKD] Refactor the existing `klarnav2` payment strategy in Checkout SDK to use the new checkout payment integration JS API ([#2373](https://github.com/bigcommerce/checkout-sdk-js/issues/2373)) ([178f670](https://github.com/bigcommerce/checkout-sdk-js/commit/178f670caa700bc4abd8c83e1f437fb8e24ea3e1))
+
 ### [1.553.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.553.0...v1.553.1) (2024-03-05)
 
 ## [1.553.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.552.0...v1.553.0) (2024-03-04)
