@@ -1,5 +1,9 @@
-import { Address } from '../../../address';
-import { BillingAddress } from '../../../billing/';
+/* eslint-disable @typescript-eslint/naming-convention */
+import {
+    Address,
+    BillingAddress,
+    PaymentMethod,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { KlarnaUpdateSessionParams } from './klarna-payments';
 
@@ -51,6 +55,7 @@ export function getEUBillingAddress(): BillingAddress {
 }
 
 export function getOCBillingAddress(): BillingAddress {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return {
         ...getEUBillingAddress(),
         countryCode: 'AU',
@@ -136,5 +141,21 @@ export function getKlarnaV2UpdateSessionParamsForOC(): KlarnaUpdateSessionParams
             email: 'test@bigcommerce.com',
             phone: '555-555-5555',
         },
+    };
+}
+
+export function getKlarna(): PaymentMethod {
+    return {
+        id: 'klarna',
+        logoUrl: '',
+        method: 'widget',
+        supportedCards: [],
+        config: {
+            displayName: 'Pay Over Time',
+            helpText: 'Type any special instructions in here.',
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'foo',
     };
 }

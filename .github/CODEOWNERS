@@ -59,6 +59,7 @@
 /packages/squarev2-integration @bigcommerce/team-integrations
 /packages/stripe-integration @bigcommerce/team-integrations
 /packages/td-bank-integration @bigcommerce/team-integrations
+/packages/klarna-integration @bigcommerce/team-integrations
 
 
 ## PayPal team

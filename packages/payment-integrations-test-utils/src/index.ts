@@ -1,5 +1,6 @@
 export {
     PaymentIntegrationServiceMock,
+    getAddress,
     getBillingAddress,
     getBuyNowCart,
     getBuyNowCartRequestBody,

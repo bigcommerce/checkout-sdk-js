@@ -69,6 +69,7 @@ const selectShippingOption = jest.fn();
 const applyStoreCredit = jest.fn();
 const verifyCheckoutSpamProtection = jest.fn();
 const updatePaymentProviderCustomer = jest.fn();
+const initializePayment = jest.fn();
 
 const PaymentIntegrationServiceMock = jest
     .fn<PaymentIntegrationService>()
@@ -98,6 +99,7 @@ const PaymentIntegrationServiceMock = jest
             applyStoreCredit,
             verifyCheckoutSpamProtection,
             updatePaymentProviderCustomer,
+            initializePayment,
         };
     });
 
