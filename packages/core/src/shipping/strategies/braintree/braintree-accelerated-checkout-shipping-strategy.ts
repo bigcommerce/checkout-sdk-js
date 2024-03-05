@@ -2,11 +2,11 @@ import { isEqual, omit } from 'lodash';
 
 import {
     BraintreeConnectAddress,
-    BraintreeConnectAuthenticationState,
     BraintreeConnectPhone,
     BraintreeConnectProfileData,
     BraintreeConnectStylesOption,
     BraintreeConnectVaultedInstrument,
+    BraintreeFastlaneAuthenticationState,
     BraintreeIntegrationService,
     isBraintreeAcceleratedCheckoutCustomer,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -108,7 +108,7 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
 
         if (
             braintreePaymentProviderCustomer?.authenticationState ===
-            BraintreeConnectAuthenticationState.CANCELED
+            BraintreeFastlaneAuthenticationState.CANCELED
         ) {
             return false;
         }
@@ -162,7 +162,7 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
             customerContextId,
         );
 
-        if (authenticationState === BraintreeConnectAuthenticationState.CANCELED) {
+        if (authenticationState === BraintreeFastlaneAuthenticationState.CANCELED) {
             await this._store.dispatch(
                 this._paymentProviderCustomerActionCreator.updatePaymentProviderCustomer({
                     authenticationState,

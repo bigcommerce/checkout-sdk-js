@@ -14,6 +14,7 @@ import { WithBraintreeFastlaneCustomerInitializeOptions } from './braintree-fast
 import BraintreeFastlaneUtils from './braintree-fastlane-utils';
 
 export default class BraintreeFastlaneCustomerStrategy implements CustomerStrategy {
+    private isAcceleratedCheckoutEnabled = false;
     private isFastlaneEnabled = false;
 
     constructor(
@@ -23,9 +24,8 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
 
     async initialize({
         methodId,
-        braintreefastlane,
-    }: CustomerInitializeOptions &
-        WithBraintreeFastlaneCustomerInitializeOptions): Promise<void> {
+        braintreeafastlane,
+    }: CustomerInitializeOptions & WithBraintreeFastlaneCustomerInitializeOptions): Promise<void> {
         if (!methodId) {
             throw new InvalidArgumentError(
                 'Unable to proceed because "methodId" argument is not provided.',
@@ -34,13 +34,15 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
 
         const paymentMethod = await this.getValidPaymentMethodOrThrow(methodId);
 
-        this.isFastlaneEnabled =
-            !!paymentMethod.initializationData?.isFastlaneEnabled;
+        this.isAcceleratedCheckoutEnabled =
+            !!paymentMethod.initializationData?.isAcceleratedCheckoutEnabled;
 
-        if (this.isFastlaneEnabled) {
-            await this.braintreeFastlaneUtils.initializeBraintreeConnectOrThrow(
+        this.isFastlaneEnabled = !!paymentMethod.initializationData?.isFastlaneEnabled;
+
+        if (this.isAcceleratedCheckoutEnabled) {
+            await this.braintreeFastlaneUtils.initializeBraintreeAcceleratedCheckoutOrThrow(
                 paymentMethod.id,
-                braintreefastlane?.styles,
+                braintreeafastlane?.styles,
             );
         }
 
@@ -70,7 +72,7 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
             );
         }
 
-        if (this.isFastlaneEnabled) {
+        if (this.isAcceleratedCheckoutEnabled) {
             const shouldRunAuthenticationFlow = await this.shouldRunAuthenticationFlow();
 
             if (
@@ -80,8 +82,12 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
                 checkoutPaymentMethodExecuted();
             }
 
-            if (shouldRunAuthenticationFlow) {
+            if (shouldRunAuthenticationFlow && !this.isFastlaneEnabled) {
                 await this.braintreeFastlaneUtils.runPayPalConnectAuthenticationFlowOrThrow();
+            }
+
+            if (shouldRunAuthenticationFlow && this.isFastlaneEnabled) {
+                await this.braintreeFastlaneUtils.runPayPalFastlaneAuthenticationFlowOrThrow();
             }
         }
 
@@ -104,7 +110,7 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
             // Info: shouldRunAcceleratedCheckout is responsible for the flow of A/B testing purposes
             // when shouldRunAcceleratedCheckout is true, the lookup PayPal Connect method should be called,
             // otherwise AcceleratedCheckout should not be available for the customer
-            return paymentMethod.initializationData?.shouldRunFastlane || false;
+            return paymentMethod.initializationData?.shouldRunAcceleratedCheckout || false;
         } catch (_) {
             return false;
         }
@@ -119,7 +125,7 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
             await this.paymentIntegrationService.loadPaymentMethod(validPaymentMethodId);
         } catch {
             validPaymentMethodId =
-                methodId === 'braintree' ? 'braintreefastlane' : 'braintree';
+                methodId === 'braintree' ? 'braintreeacceleratedcheckout' : 'braintree';
             await this.paymentIntegrationService.loadPaymentMethod(validPaymentMethodId);
         }
 

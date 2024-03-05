@@ -3,11 +3,15 @@ import { isEqual, omit } from 'lodash';
 import {
     BraintreeConnect,
     BraintreeConnectAddress,
-    BraintreeConnectAuthenticationState,
     BraintreeConnectPhone,
     BraintreeConnectProfileData,
-    BraintreeConnectStylesOption,
     BraintreeConnectVaultedInstrument,
+    BraintreeFastlane,
+    BraintreeFastlaneAddress,
+    BraintreeFastlaneAuthenticationState,
+    BraintreeFastlaneProfileData,
+    BraintreeFastlaneStylesOption,
+    BraintreeFastlaneVaultedInstrument,
     BraintreeInitializationData,
     BraintreeIntegrationService,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -25,6 +29,7 @@ import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 export default class BraintreeFastlaneUtils {
     private braintreeConnect?: BraintreeConnect;
+    private braintreeFastlane?: BraintreeFastlane;
     private methodId?: string;
 
     constructor(
@@ -44,9 +49,10 @@ export default class BraintreeFastlaneUtils {
      * Initialization method
      *
      */
-    async initializeBraintreeConnectOrThrow(
+    async initializeBraintreeAcceleratedCheckoutOrThrow(
+        // TODO: Rename to initializeBraintreeFastlaneOrThrow when connect will be deprecated
         methodId: string,
-        styles?: BraintreeConnectStylesOption,
+        styles?: BraintreeFastlaneStylesOption,
     ) {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCart();
@@ -61,11 +67,20 @@ export default class BraintreeFastlaneUtils {
         this.methodId = methodId;
 
         this.braintreeIntegrationService.initialize(clientToken, storeConfig);
-        this.braintreeConnect = await this.braintreeIntegrationService.getBraintreeConnect(
-            cart?.id,
-            config.testMode,
-            styles,
-        );
+
+        if (initializationData?.isFastlaneEnabled) {
+            this.braintreeFastlane = await this.braintreeIntegrationService.getBraintreeFastlane(
+                cart?.id,
+                config.testMode,
+                styles,
+            );
+        } else {
+            this.braintreeConnect = await this.braintreeIntegrationService.getBraintreeConnect(
+                cart?.id,
+                config.testMode,
+                styles,
+            );
+        }
     }
 
     /**
@@ -85,6 +100,25 @@ export default class BraintreeFastlaneUtils {
         const braintreeConnect = this.getBraintreeConnectOrThrow();
 
         return braintreeConnect.ConnectCardComponent;
+    }
+
+    /**
+     *
+     * Braintree Fastlane methods
+     *
+     */
+    getBraintreeFastlaneOrThrow(): BraintreeFastlane {
+        if (!this.braintreeFastlane) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this.braintreeFastlane;
+    }
+
+    getBraintreeFastlaneComponentOrThrow(): BraintreeFastlane['FastlaneCardComponent'] {
+        const braintreeFastlane = this.getBraintreeFastlaneOrThrow();
+
+        return braintreeFastlane.FastlaneCardComponent;
     }
 
     /**
@@ -111,7 +145,7 @@ export default class BraintreeFastlaneUtils {
             if (!customerContextId) {
                 // Info: we should clean up previous experience with default data and related authenticationState
                 await this.paymentIntegrationService.updatePaymentProviderCustomer({
-                    authenticationState: BraintreeConnectAuthenticationState.UNRECOGNIZED,
+                    authenticationState: BraintreeFastlaneAuthenticationState.UNRECOGNIZED,
                     addresses: [],
                     instruments: [],
                 });
@@ -125,7 +159,7 @@ export default class BraintreeFastlaneUtils {
                 customerContextId,
             );
 
-            if (authenticationState === BraintreeConnectAuthenticationState.CANCELED) {
+            if (authenticationState === BraintreeFastlaneAuthenticationState.CANCELED) {
                 await this.paymentIntegrationService.updatePaymentProviderCustomer({
                     authenticationState,
                     addresses: [],
@@ -169,17 +203,94 @@ export default class BraintreeFastlaneUtils {
         }
     }
 
+    async runPayPalFastlaneAuthenticationFlowOrThrow(email?: string): Promise<void> {
+        try {
+            const methodId = this.getMethodIdOrThrow();
+
+            const braintreeFastlane = this.getBraintreeFastlaneOrThrow();
+            const { lookupCustomerByEmail, triggerAuthenticationFlow } = braintreeFastlane.identity;
+
+            const state = this.paymentIntegrationService.getState();
+            const cart = state.getCartOrThrow();
+            const customer = state.getCustomer();
+            const billingAddress = state.getBillingAddress();
+
+            const customerEmail = email || customer?.email || billingAddress?.email || '';
+
+            const { customerContextId } = await lookupCustomerByEmail(customerEmail);
+
+            if (!customerContextId) {
+                // Info: we should clean up previous experience with default data and related authenticationState
+                await this.paymentIntegrationService.updatePaymentProviderCustomer({
+                    authenticationState: BraintreeFastlaneAuthenticationState.UNRECOGNIZED,
+                    addresses: [],
+                    instruments: [],
+                });
+
+                this.browserStorage.setItem('sessionId', cart.id);
+
+                return;
+            }
+
+            const { authenticationState, profileData } = await triggerAuthenticationFlow(
+                customerContextId,
+            );
+
+            if (authenticationState === BraintreeFastlaneAuthenticationState.CANCELED) {
+                await this.paymentIntegrationService.updatePaymentProviderCustomer({
+                    authenticationState,
+                    addresses: [],
+                    instruments: [],
+                });
+
+                this.browserStorage.removeItem('sessionId');
+
+                return;
+            }
+
+            const shippingAddresses =
+                this.mapPayPalToBcAddress([profileData.shippingAddress]) || [];
+            const paypalBillingAddress = this.getPayPalFastlaneBillingAddress(profileData);
+            const billingAddresses = paypalBillingAddress
+                ? this.mapPayPalToBcAddress([paypalBillingAddress])
+                : [];
+            const instruments = this.mapPayPalToBcInstrument(methodId, [profileData.card]) || [];
+            const addresses = this.mergeShippingAndBillingAddresses(
+                shippingAddresses,
+                billingAddresses,
+            );
+
+            this.browserStorage.setItem('sessionId', cart.id);
+            await this.paymentIntegrationService.updatePaymentProviderCustomer({
+                authenticationState,
+                addresses,
+                instruments,
+            });
+
+            if (billingAddresses.length > 0) {
+                await this.paymentIntegrationService.updateBillingAddress(billingAddresses[0]);
+            }
+
+            if (shippingAddresses.length > 0 && cart.lineItems.physicalItems.length > 0) {
+                await this.paymentIntegrationService.updateShippingAddress(shippingAddresses[0]);
+            }
+        } catch (error) {
+            // TODO: we should figure out what to do here
+            // TODO: because we should not to stop the flow if the error occurs on paypal side
+        }
+    }
+
     /**
      *
      * PayPal to BC data mappers
      *
      * */
     private mapPayPalToBcAddress(
-        addresses?: BraintreeConnectAddress[],
+        addresses?: BraintreeFastlaneAddress[],
         phones?: BraintreeConnectPhone[],
-    ): CustomerAddress[] | undefined {
+    ): CustomerAddress[] {
         if (!addresses) {
-            return;
+            return [];
         }
 
         const countries = this.paymentIntegrationService.getState().getCountries() || [];
@@ -193,7 +304,7 @@ export default class BraintreeFastlaneUtils {
         };
 
         return addresses.map((address) => ({
-            id: Number(address.id),
+            id: Date.now(),
             type: 'paypal-address',
             firstName: address.firstName || '',
             lastName: address.lastName || '',
@@ -251,9 +362,34 @@ export default class BraintreeFastlaneUtils {
         );
     }
 
+    private getPayPalFastlaneBillingAddress(
+        profileData?: BraintreeFastlaneProfileData,
+    ): BraintreeFastlaneAddress | undefined {
+        const { card, name } = profileData || {};
+
+        if (!card) {
+            return;
+        }
+
+        const { firstName, lastName } = card.paymentSource.card.billingAddress;
+        const { given_name, surname } = name || {};
+        const { shippingAddress } = profileData || {};
+        const address = {
+            ...card.paymentSource.card.billingAddress,
+            firstName: firstName || given_name,
+            lastName: lastName || surname,
+        };
+
+        const isAddressExist =
+            shippingAddress &&
+            isEqual(this.normalizeAddress(address), this.normalizeAddress(shippingAddress));
+
+        return isAddressExist ? shippingAddress : address;
+    }
+
     private mapPayPalToBcInstrument(
         methodId: string,
-        instruments?: BraintreeConnectVaultedInstrument[],
+        instruments?: BraintreeConnectVaultedInstrument[] | BraintreeFastlaneVaultedInstrument[],
     ): CardInstrument[] | undefined {
         if (!instruments) {
             return;
@@ -282,7 +418,9 @@ export default class BraintreeFastlaneUtils {
         });
     }
 
-    private normalizeAddress(address: CustomerAddress | BraintreeConnectAddress) {
+    private normalizeAddress(
+        address: CustomerAddress | BraintreeConnectAddress | BraintreeFastlaneAddress,
+    ) {
         return omit(address, ['id']);
     }
 

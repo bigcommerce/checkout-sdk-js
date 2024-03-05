@@ -22,24 +22,21 @@ const createBraintreeFastlaneCustomerStrategy: CustomerStrategyFactory<
         new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
         braintreeHostWindow,
     );
-    const browserStorage = new BrowserStorage('paypalConnect');
+    const browserStorage = new BrowserStorage('paypalFastlane');
     const braintreeFastlaneUtils = new BraintreeFastlaneUtils(
         paymentIntegrationService,
         braintreeIntegrationService,
         browserStorage,
     );
 
-    return new BraintreeFastlaneCustomerStrategy(
-        paymentIntegrationService,
-        braintreeFastlaneUtils,
-    );
+    return new BraintreeFastlaneCustomerStrategy(paymentIntegrationService, braintreeFastlaneUtils);
 };
 
 // Info: braintree method id was added only for A/B testing purposes.
-// The main reason why we can't go in other way, because braintreefastlane
+// The main reason why we can't go in other way, because braintreeacceleratedcheckout
 // may be turned on only when BE knows customer's email address (to understand should we show the feature for the user or not).
 // So { id: 'braintree' }, should be removed after A/B testing
 export default toResolvableModule(createBraintreeFastlaneCustomerStrategy, [
-    { id: 'braintreefastlane' },
+    { id: 'braintreeacceleratedcheckout' },
     { id: 'braintree' },
 ]);

@@ -3,7 +3,7 @@ import { noop } from 'lodash';
 
 import {
     BraintreeConnect,
-    BraintreeConnectAuthenticationState,
+    BraintreeFastlaneAuthenticationState,
     BraintreeIntegrationService,
     BraintreeScriptLoader,
     getConnectMock,
@@ -174,7 +174,7 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
                 paymentIntegrationService.getState(),
                 'getPaymentProviderCustomerOrThrow',
             ).mockReturnValue({
-                authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
+                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
             });
 
             await strategy.initialize(defaultInitializationOptions);
@@ -189,7 +189,7 @@ describe('BraintreeAcceleratedCheckoutPaymentStrategy', () => {
                 paymentIntegrationService.getState(),
                 'getPaymentProviderCustomerOrThrow',
             ).mockReturnValue({
-                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
+                authenticationState: BraintreeFastlaneAuthenticationState.CANCELED,
             });
 
             await strategy.initialize(defaultInitializationOptions);

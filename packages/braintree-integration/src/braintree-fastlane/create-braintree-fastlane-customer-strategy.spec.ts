@@ -12,8 +12,7 @@ describe('createBraintreeFastlaneCustomerStrategy', () => {
     });
 
     it('instantiates braintree fastlane checkout customer strategy', () => {
-        const strategy =
-            createBraintreeFastlaneCustomerStrategy(paymentIntegrationService);
+        const strategy = createBraintreeFastlaneCustomerStrategy(paymentIntegrationService);
 
         expect(strategy).toBeInstanceOf(BraintreeFastlaneCustomerStrategy);
     });

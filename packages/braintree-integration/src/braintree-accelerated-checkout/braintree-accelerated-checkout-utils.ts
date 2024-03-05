@@ -3,11 +3,11 @@ import { isEqual, omit } from 'lodash';
 import {
     BraintreeConnect,
     BraintreeConnectAddress,
-    BraintreeConnectAuthenticationState,
     BraintreeConnectPhone,
     BraintreeConnectProfileData,
     BraintreeConnectStylesOption,
     BraintreeConnectVaultedInstrument,
+    BraintreeFastlaneAuthenticationState,
     BraintreeInitializationData,
     BraintreeIntegrationService,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -111,7 +111,7 @@ export default class BraintreeAcceleratedCheckoutUtils {
             if (!customerContextId) {
                 // Info: we should clean up previous experience with default data and related authenticationState
                 await this.paymentIntegrationService.updatePaymentProviderCustomer({
-                    authenticationState: BraintreeConnectAuthenticationState.UNRECOGNIZED,
+                    authenticationState: BraintreeFastlaneAuthenticationState.UNRECOGNIZED,
                     addresses: [],
                     instruments: [],
                 });
@@ -125,7 +125,7 @@ export default class BraintreeAcceleratedCheckoutUtils {
                 customerContextId,
             );
 
-            if (authenticationState === BraintreeConnectAuthenticationState.CANCELED) {
+            if (authenticationState === BraintreeFastlaneAuthenticationState.CANCELED) {
                 await this.paymentIntegrationService.updatePaymentProviderCustomer({
                     authenticationState,
                     addresses: [],

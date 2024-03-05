@@ -6,7 +6,7 @@ import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintr
  *
  * ```js
  * service.initializeCustomer({
- *     methodId: 'braintreefastlane', // 'braintree' only for A/B testing
+ *     methodId: 'braintreeacceleratedcheckout', // 'braintree' only for A/B testing
  *     braintreefastlane: {
  *         styles: {
  *              root: {
@@ -41,9 +41,9 @@ import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintr
  */
 export default interface BraintreeFastlaneCustomerInitializeOptions {
     /**
-     * Is a stylisation options for customizing PayPal Connect components
+     * Is a stylisation options for customizing PayPal Fastlane components
      *
-     * Note: the styles for all Braintree Accelerated Checkout strategies should be the same,
+     * Note: the styles for all Braintree Fastlane strategies should be the same,
      * because they will be provided to PayPal library only for the first strategy initialization
      * no matter what strategy was initialised first
      */
@@ -51,5 +51,5 @@ export default interface BraintreeFastlaneCustomerInitializeOptions {
 }
 
 export interface WithBraintreeFastlaneCustomerInitializeOptions {
-    braintreefastlane?: BraintreeFastlaneCustomerInitializeOptions;
+    braintreeafastlane?: BraintreeFastlaneCustomerInitializeOptions;
 }

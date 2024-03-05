@@ -1,5 +1,5 @@
 import {
-    BraintreeConnectAuthenticationState,
+    BraintreeFastlaneAuthenticationState,
     BraintreeIntegrationService,
     getBraintreeConnectProfileDataMock,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -237,7 +237,7 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
                 store.getState().paymentProviderCustomer,
                 'getPaymentProviderCustomer',
             ).mockReturnValue({
-                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
+                authenticationState: BraintreeFastlaneAuthenticationState.CANCELED,
                 addresses: [],
                 instruments: [],
             });
@@ -321,7 +321,7 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
             const updatePaymentProviderCustomerMock = jest.fn();
             const lookupCustomerByEmailMock = () => ({ customerContextId: 'asd' });
             const triggerAuthenticationFlowMock = jest.fn().mockImplementation(() => ({
-                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
+                authenticationState: BraintreeFastlaneAuthenticationState.CANCELED,
                 profileData: {},
             }));
 
@@ -346,7 +346,7 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
             expect(triggerAuthenticationFlowMock).toHaveBeenCalled();
             expect(BrowserStorage.prototype.removeItem).toHaveBeenCalledWith('sessionId');
             expect(updatePaymentProviderCustomerMock).toHaveBeenCalledWith({
-                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
+                authenticationState: BraintreeFastlaneAuthenticationState.CANCELED,
                 addresses: [],
                 instruments: [],
             });

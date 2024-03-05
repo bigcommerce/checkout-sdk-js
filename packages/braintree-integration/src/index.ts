@@ -25,6 +25,7 @@ export { WithBraintreeLocalMethodsPaymentInitializeOptions } from './braintree-l
 /**
  * Braintree AXO strategies
  */
-export { default as createBraintreeAcceleratedCheckoutCustomerStrategy } from './braintree-accelerated-checkout/create-braintree-accelerated-checkout-customer-strategy';
+export { default as createBraintreeFastlaneCustomerStrategy } from './braintree-fastlane/create-braintree-fastlane-customer-strategy';
 export { default as createBraintreeAcceleratedCheckoutPaymentStrategy } from './braintree-accelerated-checkout/create-braintree-accelerated-checkout-payment-strategy';
+export { WithBraintreeFastlaneCustomerInitializeOptions } from './braintree-fastlane/braintree-fastlane-customer-initialize-options';
 export { WithBraintreeAcceleratedCheckoutPaymentInitializeOptions } from './braintree-accelerated-checkout/braintree-accelerated-checkout-payment-initialize-options';

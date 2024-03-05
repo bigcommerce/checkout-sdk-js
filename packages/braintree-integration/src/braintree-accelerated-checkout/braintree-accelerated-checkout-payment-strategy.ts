@@ -1,8 +1,8 @@
 import {
     BraintreeConnectAddress,
-    BraintreeConnectAuthenticationState,
     BraintreeConnectCardComponent,
     BraintreeConnectCardComponentOptions,
+    BraintreeFastlaneAuthenticationState,
     isBraintreeAcceleratedCheckoutCustomer,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -254,7 +254,7 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
 
         if (
             braintreePaymentProviderCustomer?.authenticationState ===
-            BraintreeConnectAuthenticationState.CANCELED
+            BraintreeFastlaneAuthenticationState.CANCELED
         ) {
             return false;
         }
