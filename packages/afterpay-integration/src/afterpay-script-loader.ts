@@ -27,7 +27,7 @@ export default class AfterpayScriptLoader {
      *
      * @param {PaymentMethod} method the payment method data
      */
-    load(method: PaymentMethod, countryCode: string): Promise<AfterpaySdk> {
+    async load(method: PaymentMethod, countryCode: string): Promise<AfterpaySdk> {
         const testMode = method.config.testMode || false;
         const scriptURI = this._getScriptURI(countryCode, testMode);
 
