@@ -5,6 +5,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { StripePaymentMethodType, StripeUPEClient } from './stripe-upe';
+import { WithStripeUPEPaymentInitializeOptions } from './stripe-upe-initialize-options';
 
 const gatewayId = 'stripeupe';
 
@@ -38,6 +39,7 @@ export function getStripeUPEJsMock(): StripeUPEClient {
                 mount: jest.fn(),
                 unmount: jest.fn(),
                 on: jest.fn((_, callback) => callback()),
+                update: jest.fn(),
             })),
             getElement: jest.fn().mockReturnValue(null),
             update: jest.fn(),
@@ -71,7 +73,7 @@ export function getFailingStripeUPEJsMock(): StripeUPEClient {
 export function getStripeUPEInitializeOptionsMock(
     stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.CreditCard,
     style: { [key: string]: string } = { fieldText: '#ccc' },
-): PaymentInitializeOptions {
+): PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions {
     return {
         methodId: stripePaymentMethodType,
         gatewayId,

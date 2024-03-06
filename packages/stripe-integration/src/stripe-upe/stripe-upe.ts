@@ -47,6 +47,12 @@ export interface StripeElement {
      * https://stripe.com/docs/js/element/events/on_change?type=paymentElement
      */
     on(event: 'change' | 'ready', handler: (event: StripeEventType) => void): void;
+
+    /**
+     * Updates the options the Payment Element was initialized with. Updates are merged into the existing configuration.
+     * https://docs.stripe.com/js/elements_object/update_payment_element
+     */
+    update(options?: StripeElementsCreateOptions): void;
 }
 
 export interface StripeEvent {
@@ -185,6 +191,10 @@ export interface WalletOptions {
     googlePay?: AutoOrNever;
 }
 
+export interface TermOptions {
+    card?: AutoOrNever;
+}
+
 /**
  * All available options are here https://stripe.com/docs/js/elements_object/create_payment_element
  */
@@ -196,6 +206,7 @@ export interface StripeElementsCreateOptions {
     defaultValues?: ShippingDefaultValues | CustomerDefaultValues;
     validation?: validationElement;
     display?: { name: DisplayName };
+    terms?: TermOptions;
 }
 
 interface validationElement {
@@ -424,4 +435,8 @@ export interface StripeUPEInitializationData {
     stripePublishableKey: string;
     stripeConnectedAccount: string;
     shopperLanguage: string;
+}
+
+export interface StripeElementUpdateOptions {
+    shouldShowTerms?: boolean;
 }

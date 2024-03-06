@@ -29,9 +29,12 @@ import {
 import {
     StripeElementsOptions,
     StripeElementType,
+    StripeElementUpdateOptions,
     StripePaymentMethodType,
+    StripeStringConstants,
     StripeUPEClient,
 } from './stripe-upe';
+import { WithStripeUPEPaymentInitializeOptions } from './stripe-upe-initialize-options';
 import StripeUPEPaymentStrategy from './stripe-upe-payment-strategy';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import {
@@ -108,7 +111,7 @@ describe('StripeUPEPaymentStrategy', () => {
     });
 
     describe('#initialize()', () => {
-        let options: PaymentInitializeOptions;
+        let options: PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
         const elementsOptions: StripeElementsOptions = { clientSecret: 'clientToken' };
         let stripeUPEJsMock: StripeUPEClient;
         const testColor = '#123456';
@@ -275,6 +278,189 @@ describe('StripeUPEPaymentStrategy', () => {
                 await strategy.initialize(options);
 
                 expect(mountMock).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('Update stripe payment element', () => {
+            let updateTriggerFn: (payload: StripeElementUpdateOptions) => void = jest.fn();
+
+            const setUpdateElementExperiment = (enabled?: boolean) => {
+                const storeConfig = {
+                    checkoutSettings: {
+                        features: {
+                            'PI-1679.trigger_update_stripe_payment_element': enabled,
+                        },
+                    },
+                };
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue(storeConfig);
+            };
+
+            const getPaymentElementActionsMock = (isElementCreated = true) => {
+                const updateMock = jest.fn();
+                const stripePaymentElementMock = {
+                    mount: jest.fn(),
+                    unmount: jest.fn(),
+                    on: jest.fn((_, callback) => callback()),
+                    update: updateMock,
+                };
+                const createElementMock = jest.fn(() => stripePaymentElementMock);
+                const getElementMock = jest.fn(() =>
+                    isElementCreated ? stripePaymentElementMock : null,
+                );
+                const stripeElementsMock = {
+                    create: createElementMock,
+                    getElement: getElementMock,
+                    update: jest.fn(),
+                    fetchUpdates: jest.fn(),
+                };
+
+                stripeUPEJsMock = {
+                    ...getStripeUPEJsMock(),
+                    elements: jest.fn(() => stripeElementsMock),
+                };
+
+                jest.spyOn(stripeScriptLoader, 'getStripeClient').mockReturnValue(
+                    Promise.resolve(stripeUPEJsMock),
+                );
+                jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
+                    Promise.resolve(stripeElementsMock),
+                );
+
+                return {
+                    updateMock,
+                    createElementMock,
+                };
+            };
+
+            beforeEach(() => {
+                setUpdateElementExperiment(true);
+
+                options.stripeupe!.initStripeElementUpdateTrigger = (stripeElementUpdateFn) => {
+                    updateTriggerFn = stripeElementUpdateFn;
+                };
+            });
+
+            it('should show terms text by default if experiment disabled', async () => {
+                setUpdateElementExperiment(false);
+
+                const { createElementMock } = getPaymentElementActionsMock(false);
+
+                await strategy.initialize(options);
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(createElementMock).toHaveBeenCalledWith(
+                    'payment',
+                    expect.objectContaining({
+                        terms: {
+                            card: StripeStringConstants.AUTO,
+                        },
+                    }),
+                );
+            });
+
+            it('should show terms text by default if update trigger does not set', async () => {
+                setUpdateElementExperiment();
+                options.stripeupe!.initStripeElementUpdateTrigger = undefined;
+
+                const { createElementMock } = getPaymentElementActionsMock(false);
+
+                await strategy.initialize(options);
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(createElementMock).toHaveBeenCalledWith(
+                    'payment',
+                    expect.objectContaining({
+                        terms: {
+                            card: StripeStringConstants.AUTO,
+                        },
+                    }),
+                );
+            });
+
+            it('should not show terms text by default if experiment enabled', async () => {
+                const { createElementMock } = getPaymentElementActionsMock(false);
+
+                await strategy.initialize(options);
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(createElementMock).toHaveBeenCalledWith(
+                    'payment',
+                    expect.objectContaining({
+                        terms: {
+                            card: StripeStringConstants.NEVER,
+                        },
+                    }),
+                );
+            });
+
+            it('should update stripe element and show terms text', async () => {
+                const { updateMock } = getPaymentElementActionsMock();
+
+                await strategy.initialize(options);
+                await new Promise((resolve) => process.nextTick(resolve));
+                updateTriggerFn({ shouldShowTerms: true });
+
+                expect(updateMock).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        terms: {
+                            card: StripeStringConstants.AUTO,
+                        },
+                    }),
+                );
+            });
+
+            it('should update stripe element and should not show terms text', async () => {
+                const { updateMock } = getPaymentElementActionsMock();
+
+                await strategy.initialize(options);
+                await new Promise((resolve) => process.nextTick(resolve));
+                updateTriggerFn({ shouldShowTerms: false });
+
+                expect(updateMock).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        terms: {
+                            card: StripeStringConstants.NEVER,
+                        },
+                    }),
+                );
+            });
+
+            it('should not update element when experiment disabled', async () => {
+                setUpdateElementExperiment(false);
+
+                const { updateMock } = getPaymentElementActionsMock();
+
+                await strategy.initialize(options);
+                await new Promise((resolve) => process.nextTick(resolve));
+                updateTriggerFn({ shouldShowTerms: false });
+
+                expect(updateMock).not.toHaveBeenCalled();
+            });
+
+            it('should not update element without trigger function initialization', async () => {
+                options.stripeupe!.initStripeElementUpdateTrigger = undefined;
+
+                const { updateMock } = getPaymentElementActionsMock();
+
+                await strategy.initialize(options);
+                await new Promise((resolve) => process.nextTick(resolve));
+                updateTriggerFn({ shouldShowTerms: false });
+
+                expect(updateMock).not.toHaveBeenCalled();
+            });
+
+            it('should not update if payment element not exist', async () => {
+                const { updateMock } = getPaymentElementActionsMock(false);
+
+                await strategy.initialize(options);
+                await new Promise((resolve) => process.nextTick(resolve));
+                updateTriggerFn({ shouldShowTerms: false });
+
+                expect(updateMock).not.toHaveBeenCalled();
             });
         });
     });
