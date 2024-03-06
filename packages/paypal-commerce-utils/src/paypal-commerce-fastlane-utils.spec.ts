@@ -77,7 +77,7 @@ describe('PayPalCommerceFastlaneUtils', () => {
 
             await subject.initializePayPalFastlane(paypalFastlaneSdk, true);
 
-            expect(window.localStorage.setItem).toHaveBeenCalledWith('axoEnv', 'sandbox');
+            expect(window.localStorage.setItem).toHaveBeenCalledWith('fastlaneEnv', 'sandbox');
         });
     });
 
