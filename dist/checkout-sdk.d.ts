@@ -8768,6 +8768,10 @@ declare interface StripeElementStyleVariant extends StripeElementCSSProperties {
     };
 }
 
+declare interface StripeElementUpdateOptions {
+    shouldShowTerms?: boolean;
+}
+
 declare interface StripeEvent {
     complete: boolean;
     elementType: string;
@@ -8870,6 +8874,7 @@ declare interface StripeUPEPaymentInitializeOptions {
     };
     onError?(error?: Error): void;
     render(): void;
+    initStripeElementUpdateTrigger?(updateTriggerFn: (payload: StripeElementUpdateOptions) => void): void;
 }
 
 /**

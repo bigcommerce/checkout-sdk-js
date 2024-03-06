@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.555.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.554.0...v1.555.0) (2024-03-06)
+
+
+### Features
+
+* **payment:** PI-1679 toggle Stripe terms text ([503d35f](https://github.com/bigcommerce/checkout-sdk-js/commit/503d35fa14b5a7b3171518df856eb05adf4fe513))
+
 ## [1.554.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.553.1...v1.554.0) (2024-03-05)
 
 

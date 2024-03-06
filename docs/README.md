@@ -454,6 +454,7 @@
 - [StripeElementClasses](interfaces/StripeElementClasses.md)
 - [StripeElementStyle](interfaces/StripeElementStyle.md)
 - [StripeElementStyleVariant](interfaces/StripeElementStyleVariant.md)
+- [StripeElementUpdateOptions](interfaces/StripeElementUpdateOptions.md)
 - [StripeEvent](interfaces/StripeEvent.md)
 - [StripeShippingEvent](interfaces/StripeShippingEvent.md)
 - [StripeUPECustomerInitializeOptions](interfaces/StripeUPECustomerInitializeOptions.md)

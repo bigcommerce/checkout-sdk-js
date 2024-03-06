@@ -31,6 +31,7 @@ service.initializePayment({
 
 ### Methods
 
+- [initStripeElementUpdateTrigger](StripeUPEPaymentInitializeOptions.md#initstripeelementupdatetrigger)
 - [onError](StripeUPEPaymentInitializeOptions.md#onerror)
 - [render](StripeUPEPaymentInitializeOptions.md#render)
 
@@ -55,6 +56,22 @@ Checkout styles from store theme
 ▪ [key: `string`]: `string`
 
 ## Methods
+
+### initStripeElementUpdateTrigger
+
+▸ `Optional` **initStripeElementUpdateTrigger**(`updateTriggerFn`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `updateTriggerFn` | (`payload`: [`StripeElementUpdateOptions`](StripeElementUpdateOptions.md)) => `void` |
+
+#### Returns
+
+`void`
+
+___
 
 ### onError
 
