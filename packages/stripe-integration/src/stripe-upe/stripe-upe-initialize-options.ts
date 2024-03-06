@@ -1,3 +1,5 @@
+import { StripeElementUpdateOptions } from './stripe-upe';
+
 /**
  * A set of options that are required to initialize the Stripe payment method.
  *
@@ -35,6 +37,10 @@ export default interface StripeUPEPaymentInitializeOptions {
     onError?(error?: Error): void;
 
     render(): void;
+
+    initStripeElementUpdateTrigger?(
+        updateTriggerFn: (payload: StripeElementUpdateOptions) => void,
+    ): void;
 }
 
 export interface WithStripeUPEPaymentInitializeOptions {

@@ -34,7 +34,9 @@ import {
     StripeConfirmPaymentData,
     StripeElement,
     StripeElements,
+    StripeElementsCreateOptions,
     StripeElementType,
+    StripeElementUpdateOptions,
     StripeError,
     StripePaymentMethodType,
     StripeStringConstants,
@@ -63,6 +65,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     private _stripeElements?: StripeElements;
     private _isMounted = false;
     private _unsubscribe?: () => void;
+    private _isStripeElementUpdateEnabled?: boolean;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -332,11 +335,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         gatewayId: string,
         methodId: string,
     ) {
-        const { containerId, style, render } = stripeupe;
+        const { containerId, style, render, initStripeElementUpdateTrigger } = stripeupe;
         const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
             params: { method: methodId },
         });
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
+        const { checkoutSettings } = state.getStoreConfigOrThrow();
 
         if (!isStripeUPEPaymentMethodLike(paymentMethod)) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -354,6 +358,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             stripePublishableKey,
             stripeConnectedAccount,
         );
+        this._isStripeElementUpdateEnabled =
+            !!checkoutSettings.features['PI-1679.trigger_update_stripe_payment_element'] &&
+            typeof initStripeElementUpdateTrigger === 'function';
 
         let appearance: StripeUPEAppearanceOptions | undefined;
 
@@ -408,6 +415,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     applePay: StripeStringConstants.NEVER,
                     googlePay: StripeStringConstants.NEVER,
                 },
+                ...this._getStripeElementTerms(),
             });
 
         this._mountElement(stripeElement, containerId);
@@ -415,6 +423,10 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         stripeElement.on('ready', () => {
             render();
         });
+
+        if (this._isStripeElementUpdateEnabled) {
+            initStripeElementUpdateTrigger?.(this._updateStripeElement.bind(this));
+        }
     }
 
     // TODO: complexity of _processAdditionalAction method
@@ -647,6 +659,30 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             methodId,
             paymentData: {
                 formattedPayload,
+            },
+        };
+    }
+
+    private _updateStripeElement({ shouldShowTerms }: StripeElementUpdateOptions): void {
+        const stripeElement = this._stripeElements?.getElement(StripeElementType.PAYMENT);
+
+        stripeElement?.update({
+            ...this._getStripeElementTerms(shouldShowTerms),
+        });
+    }
+
+    private _getStripeElementTerms(
+        shouldShowTerms?: boolean,
+    ): Pick<StripeElementsCreateOptions, 'terms'> {
+        let card = StripeStringConstants.AUTO;
+
+        if (this._isStripeElementUpdateEnabled) {
+            card = shouldShowTerms ? StripeStringConstants.AUTO : StripeStringConstants.NEVER;
+        }
+
+        return {
+            terms: {
+                card,
             },
         };
     }
