@@ -17,7 +17,7 @@ describe('AfterpayScriptLoader', () => {
 
     afterEach(() => {
         jest.clearAllMocks();
-    })
+    });
 
     it('loads widget script for AU & NZ', async () => {
         const method = getAfterpay();
