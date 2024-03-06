@@ -297,7 +297,7 @@ describe('BraintreeIntegrationService', () => {
 
             await braintreeIntegrationService.getBraintreeFastlane('asd123', true);
 
-            expect(window.localStorage.setItem).toHaveBeenCalledWith('axoEnv', 'sandbox');
+            expect(window.localStorage.setItem).toHaveBeenCalledWith('fastlaneEnv', 'sandbox');
         });
 
         it('does not switch axo to sandbox mode if test mode is disabled', async () => {
