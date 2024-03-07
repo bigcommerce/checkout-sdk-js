@@ -5,6 +5,7 @@ import {
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import PayPalCommerceButton from '../paypal-commerce-button';
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
     ApproveCallbackPayload,
@@ -22,16 +23,13 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private paypalCommerceButton: PayPalCommerceButton
     ) {}
 
     async initialize(
         options: CheckoutButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions,
     ): Promise<void> {
         const { paypalcommercevenmo, containerId, methodId } = options;
-        const { buyNowInitializeOptions, currencyCode: providedCurrencyCode } =
-            paypalcommercevenmo || {};
-
-        const isBuyNowFlow = !!buyNowInitializeOptions;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -51,14 +49,38 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
             );
         }
 
-        if (isBuyNowFlow && !providedCurrencyCode) {
-            throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.paypalcommercevenmo.currencyCode" argument is not provided.`,
-            );
+        if (paypalcommercevenmo.buyNowInitializeOptions) {
+            await this.initializeAsBuyNowFlowOrThrow(methodId, paypalcommercevenmo);
+        } else {
+            await this.initializeAsDefaultFlow(methodId);
         }
 
+        // this.renderButton(containerId, methodId, paypalcommercevenmo);
+    }
+
+    deinitialize(): Promise<void> {
+        return Promise.resolve();
+    }
+
+    private async initializeAsDefaultFlow(methodId: string): Promise<void> {
+        await this.paymentIntegrationService.loadDefaultCheckout();
+
+        const state = this.paymentIntegrationService.getState();
+        const currencyCode = state.getCartOrThrow().currency.code;
+
+        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
+
+        this.paypalCommerceButton.render({});
+    }
+
+    private async initializeAsBuyNowFlowOrThrow(
+        methodId: string,
+        paypalcommercevenmo: PayPalCommerceVenmoButtonInitializeOptions,
+    ): Promise<void> {
+        const { buyNowInitializeOptions, currencyCode } = paypalcommercevenmo;
+
         if (
-            isBuyNowFlow &&
+            buyNowInitializeOptions &&
             typeof buyNowInitializeOptions?.getBuyNowCartRequestBody !== 'function'
         ) {
             throw new InvalidArgumentError(
@@ -66,26 +88,15 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
             );
         }
 
-        if (!isBuyNowFlow) {
-            // Info: default checkout should not be loaded for BuyNow flow,
-            // since there is no checkout session available for that.
-            await this.paymentIntegrationService.loadDefaultCheckout();
+        if (!currencyCode) {
+            throw new InvalidArgumentError(
+                `Unable to initialize payment because "options.paypalcommercevenmo.currencyCode" argument is not provided.`,
+            );
         }
-
-        // Info: we are using provided currency code for buy now cart,
-        // because checkout session is not available before buy now cart creation,
-        // hence application will throw an error on getCartOrThrow method call
-        const currencyCode = isBuyNowFlow
-            ? providedCurrencyCode
-            : this.paymentIntegrationService.getState().getCartOrThrow().currency.code;
 
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
 
-        this.renderButton(containerId, methodId, paypalcommercevenmo);
-    }
-
-    deinitialize(): Promise<void> {
-        return Promise.resolve();
+        this.paypalCommerceButton.render({});
     }
 
     private renderButton(
@@ -117,17 +128,18 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
             ...(buyNowInitializeOptions && buyNowFlowCallbacks),
         };
 
-        const paypalButtonRender = paypalSdk.Buttons(buttonRenderOptions);
-
-        if (paypalButtonRender.isEligible()) {
-            paypalButtonRender.render(`#${containerId}`);
-        } else {
-            this.paypalCommerceIntegrationService.removeElement(containerId);
-        }
+        this.paypalCommerceButton.render({
+            containerId,
+            paypalSdk,
+            config: buttonRenderOptions,
+            onEligibleFailed: () => {
+                this.paypalCommerceIntegrationService.removeElement(containerId);
+            },
+        });
     }
 
     private getValidVenmoButtonStyles(style: PayPalButtonStyleOptions | undefined) {
-        const validButtonStyle = this.paypalCommerceIntegrationService.getValidButtonStyle(style);
+        const validButtonStyle = this.paypalCommerceButton.getValidButtonStyle(style);
 
         if (validButtonStyle.color === StyleButtonColor.gold) {
             return {

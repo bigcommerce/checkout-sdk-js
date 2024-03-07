@@ -108,7 +108,8 @@ export default class PayPalCommerceVenmoCustomerStrategy implements CustomerStra
                 this.paypalCommerceIntegrationService.createOrder('paypalcommercevenmo'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
-            ...(onClick && { onClick: () => onClick() }),
+            // ...(onClick && { onClick: () => onClick() }),
+            onClick: onClick || undefined,
         };
 
         const paypalButtonRender = paypalSdk.Buttons(buttonRenderOptions);

@@ -14,21 +14,23 @@ import {
     RequestOptions,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    PayPalButtonStyleOptions,
+    PayPalOrderDetails,
+    PayPalButtonStyleColor,
+    PayPalButtonStyleLabel,
+    PayPalButtonStyleShape,
+} from '@bigcommerce/checkout-sdk/paypal-commerce-utils'
 
 import PayPalCommerceRequestSender from './paypal-commerce-request-sender';
 import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
 import {
-    PayPalButtonStyleOptions,
     PayPalBuyNowInitializeOptions,
     PayPalCommerceInitializationData,
     PayPalCreateOrderCardFieldsResponse,
     PayPalCreateOrderRequestBody,
-    PayPalOrderDetails,
     PayPalOrderStatus,
     PayPalSDK,
-    StyleButtonColor,
-    StyleButtonLabel,
-    StyleButtonShape,
 } from './paypal-commerce-types';
 
 export default class PayPalCommerceIntegrationService {
@@ -288,19 +290,21 @@ export default class PayPalCommerceIntegrationService {
      * Buttons style methods
      *
      */
+    // TODO: remove this method when all PP buttons will be updated with PayPalCommerceButton class
     getValidButtonStyle(style?: PayPalButtonStyleOptions): PayPalButtonStyleOptions {
         const { color, height, label, shape } = style || {};
 
         const validStyles = {
-            color: color && StyleButtonColor[color] ? color : undefined,
+            color: color && PayPalButtonStyleColor[color] ? color : undefined,
             height: this.getValidHeight(height),
-            label: label && StyleButtonLabel[label] ? label : undefined,
-            shape: shape && StyleButtonShape[shape] ? shape : undefined,
+            label: label && PayPalButtonStyleLabel[label] ? label : undefined,
+            shape: shape && PayPalButtonStyleShape[shape] ? shape : undefined,
         };
 
         return omitBy(validStyles, isNil);
     }
 
+    // TODO: remove this method when all PP buttons will be updated with PayPalCommerceButton class
     getValidHeight(height?: number): number {
         const defaultHeight = 40;
         const minHeight = 25;

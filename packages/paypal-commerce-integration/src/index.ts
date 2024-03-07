@@ -1,3 +1,4 @@
+export { default as PayPalCommerceButton } from './paypal-commerce-button';
 export { default as PayPalCommerceIntegrationService } from './paypal-commerce-integration-service';
 export { default as PayPalCommerceRequestSender } from './paypal-commerce-request-sender';
 export { default as PayPalCommerceScriptLoader } from './paypal-commerce-script-loader';

@@ -15,7 +15,7 @@ export type FundingType = string[];
 export interface PayPalCommerceInitializationData {
     attributionId?: string;
     availableAlternativePaymentMethods: FundingType;
-    // buttonStyle?: PayPalButtonStyleOptions; // TODO: PayPalButtonStyleOptions interface will be moved in the future
+    buttonStyle?: PayPalButtonStyleOptions;
     buyerCountry?: string;
     clientId: string;
     clientToken?: string;
@@ -34,7 +34,7 @@ export interface PayPalCommerceInitializationData {
     orderId?: string;
     shouldRenderFields?: boolean;
     shouldRunAcceleratedCheckout?: boolean; // TODO: remove when PPCP Fastlane A/B test will be finished
-    // paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>; // TODO: PayPalButtonStyleOptions interface will be moved in the future
+    paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
 }
 
 /**
@@ -49,6 +49,7 @@ export interface PayPalCommerceHostWindow extends Window {
     paypalFastlane?: PayPalFastlane;
     paypalFastlaneSdk?: PayPalFastlaneSdk;
     paypalMessages?: PayPalMessagesSdk;
+    paypalButtonsSdk?: PayPalButtonsSdk;
 }
 
 /**
@@ -99,9 +100,14 @@ export interface PayPalMessagesSdk {
     Messages(options: MessagingOptions): MessagingRender;
 }
 
+export interface PayPalButtonsSdk {
+    Buttons(options: PayPalCommerceButtonsOptions): PayPalCommerceButtonMethods;
+}
+
+
 /**
  *
- * PayLater Messages related types
+ * PayPal Messages related types
  *
  */
 export interface MessagingRender {
@@ -119,6 +125,142 @@ export interface MessagingOptions {
     amount: number;
     placement: string;
     style?: MessagesStyleOptions;
+}
+
+/**
+ *
+ * PayPal Buttons related types
+ *
+ */
+export interface PayPalCommerceButtonMethods {
+    render(id: string): void;
+    close(): void;
+    isEligible(): boolean;
+}
+
+export interface PayPalCommerceButtonsOptions {
+    style?: PayPalButtonStyleOptions;
+    fundingSource?: string;
+    createOrder?(): Promise<string>;
+    onApprove?(
+        data: ApproveCallbackPayload,
+        actions: ApproveCallbackActions,
+    ): Promise<boolean | void> | void;
+    onInit?(data: InitCallbackPayload, actions: InitCallbackActions): Promise<void>;
+    onComplete?(data: CompleteCallbackDataPayload): Promise<void>;
+    onClick?(data: ClickCallbackPayload, actions: ClickCallbackActions): Promise<void> | void;
+    onError?(error: Error): void;
+    onCancel?(): void;
+    onShippingChange?(data: ShippingChangeCallbackPayload): Promise<void>;
+}
+
+export interface ClickCallbackPayload {
+    fundingSource: string;
+}
+
+export interface ClickCallbackActions {
+    reject(): void;
+    resolve(): void;
+}
+
+export interface InitCallbackPayload {
+    correlationID: string;
+}
+
+export interface InitCallbackActions {
+    disable(): void;
+    enable(): void;
+}
+
+export interface ShippingChangeCallbackPayload {
+    orderID: string;
+    shipping_address: PayPalShippingAddress;
+    selected_shipping_option: PayPalSelectedShippingOption;
+}
+
+export interface PayPalShippingAddress {
+    city: string;
+    country_code: string;
+    postal_code: string;
+    state: string;
+}
+
+export interface PayPalSelectedShippingOption {
+    amount: {
+        currency_code: string;
+        value: string;
+    };
+    id: string;
+    label: string;
+    selected: boolean;
+    type: string;
+}
+
+export interface ApproveCallbackPayload {
+    orderID?: string;
+}
+
+export interface ApproveCallbackActions {
+    order: {
+        get: () => Promise<PayPalOrderDetails>;
+    };
+}
+
+export interface PayPalOrderDetails {
+    payer: {
+        name: {
+            given_name: string;
+            surname: string;
+        };
+        email_address: string;
+        address: PayPalOrderAddress;
+    };
+    purchase_units: Array<{
+        shipping: {
+            address: PayPalOrderAddress;
+        };
+    }>;
+}
+
+export interface PayPalOrderAddress {
+    address_line_1: string;
+    admin_area_2: string;
+    admin_area_1?: string;
+    postal_code: string;
+    country_code: string;
+}
+
+export interface CompleteCallbackDataPayload {
+    intent: string;
+    orderID: string;
+}
+
+export enum PayPalButtonStyleColor {
+    gold = 'gold',
+    blue = 'blue',
+    silver = 'silver',
+    black = 'black',
+    white = 'white',
+}
+
+export enum PayPalButtonStyleLabel {
+    paypal = 'paypal',
+    checkout = 'checkout',
+    buynow = 'buynow',
+    pay = 'pay',
+    installment = 'installment',
+}
+
+export enum PayPalButtonStyleShape {
+    pill = 'pill',
+    rect = 'rect',
+}
+
+export interface PayPalButtonStyleOptions {
+    color?: PayPalButtonStyleColor;
+    height?: number;
+    label?: PayPalButtonStyleLabel;
+    shape?: PayPalButtonStyleShape;
 }
 
 /**

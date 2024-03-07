@@ -4,6 +4,11 @@ import {
     ShippingOption,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    PayPalCommerceButtonsOptions,
+    PayPalCommerceButtonMethods,
+    PayPalButtonStyleOptions,
+} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 /**
  *
@@ -107,7 +112,7 @@ export interface PayPalSDK {
         render(data: PayPalCommerceHostedFieldsRenderOptions): Promise<PayPalCommerceHostedFields>;
     };
     Legal: PayPalLegal & LegalFunding;
-    Buttons(options: PayPalCommerceButtonsOptions): PayPalCommerceButtons;
+    Buttons(options: PayPalCommerceButtonsOptions): PayPalCommerceButtonMethods;
     PaymentFields(options: PayPalCommercePaymentFieldsOptions): PayPalCommercePaymentFields;
     Messages(options: PayPalCommerceMessagesOptions): PayPalCommerceMessages;
 }
@@ -219,6 +224,7 @@ export interface PayPalCommerceHostWindow extends Window {
  * PayPal Commerce Initialization Data
  *
  */
+// TODO: remove this interface because it was moved to paypal-commerce-utils package
 export interface PayPalCommerceInitializationData {
     attributionId?: string;
     availableAlternativePaymentMethods: FundingType;
@@ -322,143 +328,6 @@ export interface PayPalCommerceHostedFieldsFieldData {
     isEmpty: boolean;
     isPotentiallyValid: boolean;
     isValid: boolean;
-}
-
-/**
- *
- * PayPal Commerce Buttons
- *
- */
-export interface PayPalCommerceButtons {
-    render(id: string): void;
-    close(): void;
-    isEligible(): boolean;
-}
-
-export interface PayPalCommerceButtonsOptions {
-    experience?: string;
-    style?: PayPalButtonStyleOptions;
-    fundingSource: string;
-    createOrder(): Promise<string>;
-    onApprove(
-        data: ApproveCallbackPayload,
-        actions: ApproveCallbackActions,
-    ): Promise<boolean | void> | void;
-    onInit?(data: InitCallbackPayload, actions: InitCallbackActions): Promise<void>;
-    onComplete?(data: CompleteCallbackDataPayload): Promise<void>;
-    onClick?(data: ClickCallbackPayload, actions: ClickCallbackActions): Promise<void> | void;
-    onError?(error: Error): void;
-    onCancel?(): void;
-    onShippingChange?(data: ShippingChangeCallbackPayload): Promise<void>;
-}
-
-export interface ClickCallbackPayload {
-    fundingSource: string;
-}
-
-export interface ClickCallbackActions {
-    reject(): void;
-    resolve(): void;
-}
-
-export interface InitCallbackPayload {
-    correlationID: string;
-}
-
-export interface InitCallbackActions {
-    disable(): void;
-    enable(): void;
-}
-
-export interface ShippingChangeCallbackPayload {
-    orderID: string;
-    shipping_address: PayPalAddress;
-    selected_shipping_option: PayPalSelectedShippingOption;
-}
-
-export interface PayPalAddress {
-    city: string;
-    country_code: string;
-    postal_code: string;
-    state: string;
-}
-
-export interface PayPalSelectedShippingOption {
-    amount: {
-        currency_code: string;
-        value: string;
-    };
-    id: string;
-    label: string;
-    selected: boolean;
-    type: string;
-}
-
-export interface ApproveCallbackPayload {
-    orderID?: string;
-}
-
-export interface ApproveCallbackActions {
-    order: {
-        get: () => Promise<PayPalOrderDetails>;
-    };
-}
-
-export interface PayPalOrderDetails {
-    payer: {
-        name: {
-            given_name: string;
-            surname: string;
-        };
-        email_address: string;
-        address: PayPalOrderAddress;
-    };
-    purchase_units: Array<{
-        shipping: {
-            address: PayPalOrderAddress;
-        };
-    }>;
-}
-
-export interface PayPalOrderAddress {
-    address_line_1: string;
-    admin_area_2: string;
-    admin_area_1?: string;
-    postal_code: string;
-    country_code: string;
-}
-
-export interface CompleteCallbackDataPayload {
-    intent: string;
-    orderID: string;
-}
-
-export enum StyleButtonLabel {
-    paypal = 'paypal',
-    checkout = 'checkout',
-    buynow = 'buynow',
-    pay = 'pay',
-    installment = 'installment',
-}
-
-export enum StyleButtonColor {
-    gold = 'gold',
-    blue = 'blue',
-    silver = 'silver',
-    black = 'black',
-    white = 'white',
-}
-
-export enum StyleButtonShape {
-    pill = 'pill',
-    rect = 'rect',
-}
-
-export interface PayPalButtonStyleOptions {
-    color?: StyleButtonColor;
-    shape?: StyleButtonShape;
-    height?: number;
-    label?: StyleButtonLabel;
 }
 
 /**
