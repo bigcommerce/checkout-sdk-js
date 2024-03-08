@@ -8,5 +8,7 @@ export {
     GiftCertificateItem,
     CustomItem,
     LineItemCategory,
+    LineItem,
 } from './line-item';
 export { default as LineItemMap } from './line-item-map';
+export { getPhysicalItem } from './line-items.mock';

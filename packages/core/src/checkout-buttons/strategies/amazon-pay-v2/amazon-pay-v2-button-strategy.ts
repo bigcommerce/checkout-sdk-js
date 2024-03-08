@@ -1,3 +1,5 @@
+import { getShippableItemsCount } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CartRequestSender } from '../../../cart';
 import { BuyNowCartCreationError } from '../../../cart/errors';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
@@ -12,7 +14,6 @@ import {
     AmazonPayV2PayOptions,
     AmazonPayV2Placement,
 } from '../../../payment/strategies/amazon-pay-v2';
-import { getShippableItemsCount } from '../../../shipping';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
