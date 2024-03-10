@@ -286,6 +286,7 @@ export interface BraintreeHostedFieldsCreatorConfig extends BraintreeModuleCreat
         expirationYear?: BraintreeHostedFieldOption;
         cvv?: BraintreeHostedFieldOption;
         postalCode?: BraintreeHostedFieldOption;
+        cardholderName?: BraintreeHostedFieldOption;
     };
     styles?: {
         input?: { [key: string]: string };

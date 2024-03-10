@@ -24,7 +24,6 @@ import {
     BraintreeFormOptions,
     BraintreeStoredCardFieldsMap,
 } from './braintree-payment-options';
-import BraintreeRegularField from './braintree-regular-field';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import { isBraintreeFormFieldsMap } from './is-braintree-form-fields-map';
 
@@ -35,7 +34,6 @@ enum BraintreeHostedFormType {
 
 export default class BraintreeHostedForm {
     private _cardFields?: BraintreeHostedFields;
-    private _cardNameField?: BraintreeRegularField;
     private _formOptions?: BraintreeFormOptions;
     private _type?: BraintreeHostedFormType;
     private _isInitializedHostedForm = false;
@@ -68,16 +66,6 @@ export default class BraintreeHostedForm {
         this._cardFields.on('validityChange', this._handleValidityChange);
         this._cardFields.on('inputSubmitRequest', this._handleInputSubmitRequest);
 
-        if (isBraintreeFormFieldsMap(options.fields)) {
-            this._cardNameField = new BraintreeRegularField(
-                options.fields.cardName,
-                options.styles,
-            );
-            this._cardNameField.on('blur', this._handleNameBlur);
-            this._cardNameField.on('focus', this._handleNameFocus);
-            this._cardNameField.attach();
-        }
-
         this._isInitializedHostedForm = true;
     }
 
@@ -89,7 +77,6 @@ export default class BraintreeHostedForm {
         this._isInitializedHostedForm = false;
 
         await this._cardFields?.teardown();
-        this._cardNameField?.detach();
     }
 
     validate() {
@@ -118,7 +105,6 @@ export default class BraintreeHostedForm {
                 omitBy(
                     {
                         billingAddress: billingAddress && this._mapBillingAddress(billingAddress),
-                        cardholderName: this._cardNameField?.getValue(),
                     },
                     isNil,
                 ),
@@ -155,14 +141,7 @@ export default class BraintreeHostedForm {
         }
 
         try {
-            const tokenizationPayload = await this._cardFields.tokenize(
-                omitBy(
-                    {
-                        cardholderName: this._cardNameField?.getValue(),
-                    },
-                    isNil,
-                ),
-            );
+            const tokenizationPayload = await this._cardFields.tokenize();
 
             this._formOptions?.onValidate?.({
                 isValid: true,
@@ -220,6 +199,11 @@ export default class BraintreeHostedForm {
                         placeholder: fields.cardCode.placeholder,
                         internalLabel: fields.cardCode.accessibilityLabel,
                     },
+                    cardholderName: {
+                        container: `#${fields.cardName.containerId}`,
+                        placeholder: fields.cardName.placeholder,
+                        internalLabel: fields.cardName.accessibilityLabel,
+                    },
                 },
                 isNil,
             );
@@ -275,6 +259,9 @@ export default class BraintreeHostedForm {
                 return this._type === BraintreeHostedFormType.StoredCardVerification
                     ? BraintreeFormFieldType.CardCodeVerification
                     : BraintreeFormFieldType.CardCode;
+
+            case 'cardholderName':
+                return BraintreeFormFieldType.CardName;
 
             default:
                 throw new Error('Unexpected field type');
@@ -454,21 +441,9 @@ export default class BraintreeHostedForm {
         });
     };
 
-    private _handleNameBlur: () => void = () => {
-        this._formOptions?.onBlur?.({
-            fieldType: BraintreeFormFieldType.CardName,
-        });
-    };
-
     private _handleFocus: (event: BraintreeHostedFieldsState) => void = (event) => {
         this._formOptions?.onFocus?.({
             fieldType: this._mapFieldType(event.emittedBy),
-        });
-    };
-
-    private _handleNameFocus: () => void = () => {
-        this._formOptions?.onFocus?.({
-            fieldType: BraintreeFormFieldType.CardName,
         });
     };
 
