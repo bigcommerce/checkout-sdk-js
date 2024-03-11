@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.556.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.555.0...v1.556.0) (2024-03-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3745 updated axoEnv sandbox key to fastlaneEnv in braintree-integration-service file ([#2393](https://github.com/bigcommerce/checkout-sdk-js/issues/2393)) ([c8b66e0](https://github.com/bigcommerce/checkout-sdk-js/commit/c8b66e084eadb4eeb00075bdd93a51dfbbea07e8))
+
 ## [1.555.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.554.0...v1.555.0) (2024-03-06)
 
 
