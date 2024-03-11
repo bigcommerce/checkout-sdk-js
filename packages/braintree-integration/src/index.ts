@@ -14,7 +14,7 @@ export { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-payp
 /**
  * Braintree PayPal Credit strategies
  */
-export { default as createBraintreePaypalCreditCustomerStrategy } from './braintree-paypal/create-braintree-paypal-credit-customer-strategy';
+export { default as createBraintreePaypalCreditCustomerStrategy } from './braintree-paypal-credit/create-braintree-paypal-credit-customer-strategy';
 
 /**
  * Braintree LPMs strategies
