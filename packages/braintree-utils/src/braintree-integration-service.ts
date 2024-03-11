@@ -12,12 +12,14 @@ import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 import {
     BraintreeBankAccount,
     BraintreeClient,
+    BraintreeConnect,
     BraintreeConnectStylesOption,
     BraintreeDataCollector,
     BraintreeDataCollectorCreatorConfig,
     BraintreeDetails,
     BraintreeEnv,
     BraintreeError,
+    BraintreeFastlane,
     BraintreeFastlaneStylesOption,
     BraintreeHostWindow,
     BraintreeModule,
@@ -77,7 +79,7 @@ export default class BraintreeIntegrationService {
         cardId?: string,
         isTestModeEnabled?: boolean,
         styles?: BraintreeConnectStylesOption,
-    ) {
+    ): Promise<BraintreeConnect> {
         if (isTestModeEnabled) {
             window.localStorage.setItem('axoEnv', 'sandbox');
         }
@@ -104,9 +106,9 @@ export default class BraintreeIntegrationService {
         cardId?: string,
         isTestModeEnabled?: boolean,
         styles?: BraintreeFastlaneStylesOption,
-    ) {
+    ): Promise<BraintreeFastlane> {
         if (isTestModeEnabled) {
-            window.localStorage.setItem('axoEnv', 'sandbox');
+            window.localStorage.setItem('fastlaneEnv', 'sandbox');
         }
 
         if (!this.braintreeHostWindow.braintreeFastlane) {
