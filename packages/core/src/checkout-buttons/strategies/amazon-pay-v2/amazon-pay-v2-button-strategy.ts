@@ -1,3 +1,9 @@
+import {
+    AmazonPayV2CheckoutSessionConfig,
+    AmazonPayV2PaymentProcessor,
+    AmazonPayV2PayOptions,
+    AmazonPayV2Placement,
+} from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import { getShippableItemsCount } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { CartRequestSender } from '../../../cart';
@@ -8,12 +14,6 @@ import {
     MissingDataError,
     MissingDataErrorType,
 } from '../../../common/error/errors';
-import {
-    AmazonPayV2CheckoutSessionConfig,
-    AmazonPayV2PaymentProcessor,
-    AmazonPayV2PayOptions,
-    AmazonPayV2Placement,
-} from '../../../payment/strategies/amazon-pay-v2';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 

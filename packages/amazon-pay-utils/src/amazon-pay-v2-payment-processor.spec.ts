@@ -1,44 +1,48 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethod } from '../../';
-import { getConfig, getConfigState } from '../../../../src/config/configs.mock';
-import { getCart } from '../../../cart/carts.mock';
-import { CheckoutStore, createCheckoutStore } from '../../../checkout';
-import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import {
     InvalidArgumentError,
     MissingDataError,
+    MissingDataErrorType,
     NotInitializedError,
-} from '../../../common/error/errors';
-import { getAmazonPayV2, getPaymentMethodsState } from '../../payment-methods.mock';
+    PaymentMethod,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    getCart,
+    getCheckout,
+    getConfig,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import {
     AmazonPayV2Button,
     AmazonPayV2ButtonParameters,
     AmazonPayV2ButtonParams,
     AmazonPayV2CheckoutSessionConfig,
+    AmazonPayV2InitializeOptions,
     AmazonPayV2NewButtonParams,
     AmazonPayV2PayOptions,
     AmazonPayV2Placement,
     AmazonPayV2Price,
     AmazonPayV2SDK,
+    InternalCheckoutSelectors,
 } from './amazon-pay-v2';
 import AmazonPayV2PaymentProcessor from './amazon-pay-v2-payment-processor';
 import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
 import {
     getAmazonPayBaseButtonParamsMock,
+    getAmazonPayV2,
     getAmazonPayV2ButtonParamsMock,
     getAmazonPayV2Ph4ButtonParamsMock,
     getAmazonPayV2SDKMock,
     getPaymentMethodMockUndefinedLedgerCurrency,
     getPaymentMethodMockUndefinedMerchant,
-} from './amazon-pay-v2.mock';
+} from './mocks/amazon-pay-v2.mock';
 
 describe('AmazonPayV2PaymentProcessor', () => {
     let amazonPayV2ScriptLoader: AmazonPayV2ScriptLoader;
     let processor: AmazonPayV2PaymentProcessor;
     let amazonPayV2SDKMock: AmazonPayV2SDK;
-    let amazonPayV2Mock: PaymentMethod;
+    let amazonPayV2Mock: PaymentMethod<AmazonPayV2InitializeOptions>;
 
     beforeEach(() => {
         amazonPayV2ScriptLoader = new AmazonPayV2ScriptLoader(createScriptLoader());
@@ -337,12 +341,22 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
     describe('#renderAmazonPayButton', () => {
         const CONTAINER_ID = 'container_passed_by_the_client';
+        let checkoutState: InternalCheckoutSelectors;
+
+        const getCheckoutStateMock = () => {
+            return {
+                cart: { getCart: jest.fn(() => getCart()) },
+                checkout: { getCheckout: jest.fn(() => getCheckout()) },
+                config: { getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig) },
+                paymentMethods: { getPaymentMethodOrThrow: jest.fn(() => getAmazonPayV2()) },
+            };
+        };
         const renderAmazonPayButton = (
             containerId = CONTAINER_ID,
             decoupleCheckoutInitiation = false,
         ) =>
             processor.renderAmazonPayButton({
-                checkoutState: store.getState(),
+                checkoutState,
                 containerId,
                 decoupleCheckoutInitiation,
                 methodId: 'amazonpay',
@@ -352,8 +366,6 @@ describe('AmazonPayV2PaymentProcessor', () => {
             /^#amazonpay_button_parent_container_[0-9a-f]{4}$/,
         );
 
-        let store: CheckoutStore;
-
         beforeAll(() => {
             const container = document.createElement('div');
 
@@ -362,7 +374,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
         });
 
         beforeEach(() => {
-            store = createCheckoutStore(getCheckoutStoreState());
+            checkoutState = getCheckoutStateMock();
         });
 
         it('should return the buttonParentContainer', async () => {
@@ -389,7 +401,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
             cartMock.lineItems.physicalItems = [];
 
-            jest.spyOn(store.getState().cart, 'getCart').mockReturnValueOnce(cartMock);
+            jest.spyOn(checkoutState.cart, 'getCart').mockReturnValueOnce(cartMock);
 
             await processor.initialize(amazonPayV2Mock);
             renderAmazonPayButton();
@@ -411,7 +423,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
                 'INT-5826.amazon_relative_url': true,
             };
 
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValueOnce(
+            jest.spyOn(checkoutState.config, 'getStoreConfigOrThrow').mockReturnValueOnce(
                 storeConfigMock,
             );
 
@@ -432,7 +444,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
                     'PROJECT-3483.amazon_pay_ph4': true,
                 };
 
-                jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValueOnce(
+                jest.spyOn(checkoutState.config, 'getStoreConfigOrThrow').mockReturnValueOnce(
                     storeConfigMock,
                 );
             });
@@ -443,7 +455,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
                 const storeConfigMock = getConfig().storeConfig;
 
-                jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValueOnce(
+                jest.spyOn(checkoutState.config, 'getStoreConfigOrThrow').mockReturnValueOnce(
                     storeConfigMock,
                 );
 
@@ -482,12 +494,15 @@ describe('AmazonPayV2PaymentProcessor', () => {
                     publicKeyId: 'foo',
                 };
 
-                const amazonPayV2Mock = getAmazonPayV2();
+                amazonPayV2Mock = getAmazonPayV2();
 
-                amazonPayV2Mock.initializationData.publicKeyId = 'foo';
+                amazonPayV2Mock.initializationData = {
+                    ...amazonPayV2Mock.initializationData,
+                    publicKeyId: 'foo',
+                };
 
                 jest.spyOn(
-                    store.getState().paymentMethods,
+                    checkoutState.paymentMethods,
                     'getPaymentMethodOrThrow',
                 ).mockReturnValueOnce(amazonPayV2Mock);
 
@@ -506,7 +521,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
                 delete expectedOptions.estimatedOrderAmount;
 
-                jest.spyOn(store.getState().checkout, 'getCheckout').mockReturnValueOnce(undefined);
+                jest.spyOn(checkoutState.checkout, 'getCheckout').mockReturnValueOnce(undefined);
 
                 await processor.initialize(amazonPayV2Mock);
                 renderAmazonPayButton();
@@ -523,7 +538,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
                 delete expectedOptions.estimatedOrderAmount;
 
-                jest.spyOn(store.getState().cart, 'getCart').mockReturnValueOnce(undefined);
+                jest.spyOn(checkoutState.cart, 'getCart').mockReturnValueOnce(undefined);
 
                 await processor.initialize(amazonPayV2Mock);
                 renderAmazonPayButton();
@@ -566,10 +581,12 @@ describe('AmazonPayV2PaymentProcessor', () => {
             });
 
             test('if there is no payment methods data', async () => {
-                const paymentMethods = { ...getPaymentMethodsState(), data: undefined };
-                const state = { ...getCheckoutStoreState(), paymentMethods };
-
-                store = createCheckoutStore(state);
+                jest.spyOn(
+                    checkoutState.paymentMethods,
+                    'getPaymentMethodOrThrow',
+                ).mockImplementation(() => {
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                });
 
                 await processor.initialize(amazonPayV2Mock);
 
@@ -578,10 +595,9 @@ describe('AmazonPayV2PaymentProcessor', () => {
             });
 
             test('if there is no store config data', async () => {
-                const config = { ...getConfigState(), data: undefined };
-                const state = { ...getCheckoutStoreState(), config };
-
-                store = createCheckoutStore(state);
+                jest.spyOn(checkoutState.config, 'getStoreConfigOrThrow').mockImplementation(() => {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                });
 
                 await processor.initialize(amazonPayV2Mock);
 
@@ -590,10 +606,9 @@ describe('AmazonPayV2PaymentProcessor', () => {
             });
 
             test('if merchantId is undefined', async () => {
-                jest.spyOn(
-                    store.getState().paymentMethods,
-                    'getPaymentMethodOrThrow',
-                ).mockReturnValue(getPaymentMethodMockUndefinedMerchant());
+                jest.spyOn(checkoutState.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                    getPaymentMethodMockUndefinedMerchant(),
+                );
 
                 await processor.initialize(amazonPayV2Mock);
 
@@ -602,10 +617,9 @@ describe('AmazonPayV2PaymentProcessor', () => {
             });
 
             test('if ledgerCurrency is undefined', async () => {
-                jest.spyOn(
-                    store.getState().paymentMethods,
-                    'getPaymentMethodOrThrow',
-                ).mockReturnValue(getPaymentMethodMockUndefinedLedgerCurrency());
+                jest.spyOn(checkoutState.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+                    getPaymentMethodMockUndefinedLedgerCurrency(),
+                );
 
                 await processor.initialize(amazonPayV2Mock);
 

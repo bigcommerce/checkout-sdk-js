@@ -6,6 +6,15 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable, of } from 'rxjs';
 
 import {
+    AmazonPayV2NewButtonParams,
+    AmazonPayV2PaymentProcessor,
+    AmazonPayV2Placement,
+    createAmazonPayV2PaymentProcessor,
+    getAmazonPayV2,
+    getAmazonPayV2Ph4ButtonParamsMock,
+} from '@bigcommerce/checkout-sdk/amazon-pay-utils';
+
+import {
     createPaymentStrategyRegistry,
     createPaymentStrategyRegistryV2,
     PaymentActionCreator,
@@ -45,7 +54,7 @@ import {
 } from '../../../spam-protection';
 import { PaymentArgumentInvalidError } from '../../errors';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
-import { getAmazonPayV2, getPaymentMethodsState } from '../../payment-methods.mock';
+import { getPaymentMethodsState } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
@@ -53,12 +62,8 @@ import PaymentStrategyActionCreator from '../../payment-strategy-action-creator'
 import { PaymentStrategyActionType } from '../../payment-strategy-actions';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 
-import { AmazonPayV2NewButtonParams, AmazonPayV2Placement } from './amazon-pay-v2';
 import AmazonPayV2PaymentInitializeOptions from './amazon-pay-v2-payment-initialize-options';
-import AmazonPayV2PaymentProcessor from './amazon-pay-v2-payment-processor';
 import AmazonPayV2PaymentStrategy from './amazon-pay-v2-payment-strategy';
-import { getAmazonPayV2Ph4ButtonParamsMock } from './amazon-pay-v2.mock';
-import createAmazonPayV2PaymentProcessor from './create-amazon-pay-v2-payment-processor';
 
 describe('AmazonPayV2PaymentStrategy', () => {
     let amazonPayV2PaymentProcessor: AmazonPayV2PaymentProcessor;
@@ -469,6 +474,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
             );
 
             const { publicKeyId, createCheckoutSessionConfig } =
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
                 getAmazonPayV2Ph4ButtonParamsMock() as AmazonPayV2NewButtonParams;
             const expectedConfig = {
                 publicKeyId,

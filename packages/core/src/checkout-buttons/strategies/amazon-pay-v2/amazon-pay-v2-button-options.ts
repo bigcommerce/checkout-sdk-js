@@ -1,8 +1,9 @@
-import { BuyNowCartRequestBody } from '../../../cart';
 import {
     AmazonPayV2ButtonConfig,
     AmazonPayV2ButtonParameters,
-} from '../../../payment/strategies/amazon-pay-v2';
+} from '@bigcommerce/checkout-sdk/amazon-pay-utils';
+
+import { BuyNowCartRequestBody } from '../../../cart';
 
 export function isWithBuyNowFeatures(options: unknown): options is WithBuyNowFeature {
     if (!(options instanceof Object)) {

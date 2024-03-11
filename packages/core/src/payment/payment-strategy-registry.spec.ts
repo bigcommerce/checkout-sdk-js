@@ -1,16 +1,12 @@
+import { getAmazonPayV2 } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
+
 import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../checkout';
 import { InvalidArgumentError } from '../common/error/errors';
 import { getConfig, getConfigState } from '../config/configs.mock';
 import { getFormFieldsState } from '../form/form.mock';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 
-import {
-    getAmazonPayV2,
-    getBankDeposit,
-    getBraintree,
-    getPPSDK,
-    getSquare,
-} from './payment-methods.mock';
+import { getBankDeposit, getBraintree, getPPSDK, getSquare } from './payment-methods.mock';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';
