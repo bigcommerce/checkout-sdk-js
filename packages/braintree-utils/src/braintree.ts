@@ -43,20 +43,50 @@ export interface BraintreeModule {
     teardown(): Promise<void>;
 }
 
+export enum BraintreeModuleName {
+    client = 'client',
+    connect = 'connect',
+    dataCollector = 'dataCollector',
+    fastlane = 'fastlane',
+    googlePayment = 'googlePayment',
+    hostedFields = 'hostedFields',
+    localPayment = 'localPayment',
+    paypal = 'paypal',
+    paypalCheckout = 'paypalCheckout',
+    threeDSecure = 'threeDSecure',
+    usBankAccount = 'usBankAccount',
+    venmo = 'venmo',
+}
+
+export type BraintreeModuleCreators =
+    | BraintreeClientCreator
+    | BraintreeConnectCreator
+    | BraintreeFastlaneCreator
+    | BraintreeDataCollectorCreator
+    | GooglePayCreator
+    | BraintreeHostedFieldsCreator
+    | BraintreePaypalCreator
+    | BraintreePaypalCheckoutCreator
+    | BraintreeThreeDSecureCreator
+    | BraintreeVenmoCheckoutCreator
+    // | BraintreeVisaCheckoutCreator
+    | BraintreeBankAccountCreator
+    | BraintreeLocalPaymentCreator;
+
 export interface BraintreeSDK {
-    client?: BraintreeClientCreator;
-    connect?: BraintreeConnectCreator;
-    fastlane?: BraintreeFastlaneCreator;
-    dataCollector?: BraintreeDataCollectorCreator;
-    googlePayment?: GooglePayCreator;
-    hostedFields?: BraintreeHostedFieldsCreator;
-    paypal?: BraintreePaypalCreator;
-    paypalCheckout?: BraintreePaypalCheckoutCreator;
-    threeDSecure?: BraintreeThreeDSecureCreator;
-    venmo?: BraintreeVenmoCheckoutCreator;
-    // visaCheckout?: BraintreeVisaCheckoutCreator; // TODO: should be added in future migration
-    usBankAccount?: BraintreeBankAccountCreator;
-    localPayment?: BraintreeLocalPaymentCreator;
+    [BraintreeModuleName.client]?: BraintreeClientCreator;
+    [BraintreeModuleName.connect]?: BraintreeConnectCreator;
+    [BraintreeModuleName.fastlane]?: BraintreeFastlaneCreator;
+    [BraintreeModuleName.dataCollector]?: BraintreeDataCollectorCreator;
+    [BraintreeModuleName.googlePayment]?: GooglePayCreator;
+    [BraintreeModuleName.hostedFields]?: BraintreeHostedFieldsCreator;
+    [BraintreeModuleName.paypal]?: BraintreePaypalCreator;
+    [BraintreeModuleName.paypalCheckout]?: BraintreePaypalCheckoutCreator;
+    [BraintreeModuleName.threeDSecure]?: BraintreeThreeDSecureCreator;
+    [BraintreeModuleName.venmo]?: BraintreeVenmoCheckoutCreator;
+    // [BraintreeModuleName.visaCheckout]?: BraintreeVisaCheckoutCreator; // TODO: should be added in future migration
+    [BraintreeModuleName.usBankAccount]?: BraintreeBankAccountCreator;
+    [BraintreeModuleName.localPayment]?: BraintreeLocalPaymentCreator;
 }
 
 export type BraintreeLocalPaymentCreator = BraintreeModuleCreator<

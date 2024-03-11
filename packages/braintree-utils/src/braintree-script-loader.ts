@@ -13,6 +13,8 @@ import {
     BraintreeFastlaneCreator,
     BraintreeHostWindow,
     BraintreeLocalPaymentCreator,
+    BraintreeModuleCreators,
+    BraintreeModuleName,
     BraintreePaypalCheckoutCreator,
     BraintreePaypalCreator,
     BraintreeThreeDSecureCreator,
@@ -28,7 +30,7 @@ export default class BraintreeScriptLoader {
         private braintreeHostWindow: BraintreeHostWindow,
     ) {}
 
-    // TODO: this method is needed only for braintree AXO
+    // TODO: this method is needed only for braintree Faslane
     // So can be removed after Beta state
     initialize(storeConfig?: StoreConfig) {
         const features = storeConfig?.checkoutSettings.features;
@@ -41,149 +43,90 @@ export default class BraintreeScriptLoader {
     }
 
     async loadClient(): Promise<BraintreeClientCreator> {
-        await this.scriptLoader.loadScript(
-            `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/client.min.js`,
+        return this.loadBraintreeModuleOrThrow<BraintreeClientCreator>(
+            BraintreeModuleName.client,
+            'client.min.js',
         );
-
-        if (!this.braintreeHostWindow.braintree || !this.braintreeHostWindow.braintree.client) {
-            throw new PaymentMethodClientUnavailableError();
-        }
-
-        return this.braintreeHostWindow.braintree.client;
     }
 
     async loadConnect(): Promise<BraintreeConnectCreator> {
-        await this.scriptLoader.loadScript(
-            `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/connect.min.js`,
+        return this.loadBraintreeModuleOrThrow<BraintreeConnectCreator>(
+            BraintreeModuleName.connect,
+            'connect.min.js',
         );
-
-        if (!this.braintreeHostWindow.braintree || !this.braintreeHostWindow.braintree.connect) {
-            throw new PaymentMethodClientUnavailableError();
-        }
-
-        return this.braintreeHostWindow.braintree.connect;
     }
 
     async loadFastlane(): Promise<BraintreeFastlaneCreator> {
-        await this.scriptLoader.loadScript(
-            `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/fastlane.min.js`,
+        return this.loadBraintreeModuleOrThrow<BraintreeFastlaneCreator>(
+            BraintreeModuleName.fastlane,
+            'fastlane.min.js',
         );
-
-        if (!this.braintreeHostWindow.braintree || !this.braintreeHostWindow.braintree.fastlane) {
-            throw new PaymentMethodClientUnavailableError();
-        }
-
-        return this.braintreeHostWindow.braintree.fastlane;
     }
 
     async loadPaypalCheckout(): Promise<BraintreePaypalCheckoutCreator> {
-        await this.scriptLoader.loadScript(
-            `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/paypal-checkout.min.js`,
+        return this.loadBraintreeModuleOrThrow<BraintreePaypalCheckoutCreator>(
+            BraintreeModuleName.paypalCheckout,
+            'paypal-checkout.min.js',
         );
-
-        if (
-            !this.braintreeHostWindow.braintree ||
-            !this.braintreeHostWindow.braintree.paypalCheckout
-        ) {
-            throw new PaymentMethodClientUnavailableError();
-        }
-
-        return this.braintreeHostWindow.braintree.paypalCheckout;
     }
 
     async loadPaypal(): Promise<BraintreePaypalCreator> {
-        return this.scriptLoader
-            .loadScript(
-                `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/paypal.min.js`,
-            )
-            .then(() => {
-                if (
-                    !this.braintreeHostWindow.braintree ||
-                    !this.braintreeHostWindow.braintree.paypal
-                ) {
-                    throw new PaymentMethodClientUnavailableError();
-                }
-
-                return this.braintreeHostWindow.braintree.paypal;
-            });
+        return this.loadBraintreeModuleOrThrow<BraintreePaypalCreator>(
+            BraintreeModuleName.paypal,
+            'paypal.min.js',
+        );
     }
 
     async loadBraintreeLocalMethods(): Promise<BraintreeLocalPaymentCreator> {
-        await this.scriptLoader.loadScript(
-            `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/local-payment.min.js`,
+        return this.loadBraintreeModuleOrThrow<BraintreeLocalPaymentCreator>(
+            BraintreeModuleName.localPayment,
+            'local-payment.min.js',
         );
-
-        if (
-            !this.braintreeHostWindow.braintree ||
-            !this.braintreeHostWindow.braintree.localPayment
-        ) {
-            throw new PaymentMethodClientUnavailableError();
-        }
-
-        return this.braintreeHostWindow.braintree.localPayment;
     }
 
     async loadDataCollector(): Promise<BraintreeDataCollectorCreator> {
-        await this.scriptLoader.loadScript(
-            `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/data-collector.min.js`,
+        return this.loadBraintreeModuleOrThrow<BraintreeDataCollectorCreator>(
+            BraintreeModuleName.dataCollector,
+            'data-collector.min.js',
         );
-
-        if (
-            !this.braintreeHostWindow.braintree ||
-            !this.braintreeHostWindow.braintree.dataCollector
-        ) {
-            throw new PaymentMethodClientUnavailableError();
-        }
-
-        return this.braintreeHostWindow.braintree.dataCollector;
     }
 
     async loadUsBankAccount(): Promise<BraintreeBankAccountCreator> {
-        await this.scriptLoader.loadScript(
-            `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/us-bank-account.min.js`,
+        return this.loadBraintreeModuleOrThrow<BraintreeBankAccountCreator>(
+            BraintreeModuleName.usBankAccount,
+            'us-bank-account.min.js',
         );
+    }
 
-        if (
-            !this.braintreeHostWindow.braintree ||
-            !this.braintreeHostWindow.braintree.usBankAccount
-        ) {
+    async loadGooglePayment(): Promise<GooglePayCreator> {
+        return this.loadBraintreeModuleOrThrow<GooglePayCreator>(
+            BraintreeModuleName.googlePayment,
+            'google-payment.min.js',
+        );
+    }
+
+    async load3DS(): Promise<BraintreeThreeDSecureCreator> {
+        return this.loadBraintreeModuleOrThrow<BraintreeThreeDSecureCreator>(
+            BraintreeModuleName.threeDSecure,
+            'three-d-secure.min.js',
+        );
+    }
+
+    private async loadBraintreeModuleOrThrow<T extends BraintreeModuleCreators>(
+        braintreeModuleName: BraintreeModuleName,
+        fileName: string,
+    ): Promise<T> {
+        const scriptPath = `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/${fileName}`;
+
+        await this.scriptLoader.loadScript(scriptPath);
+
+        const braintreeModule = this.braintreeHostWindow.braintree?.[braintreeModuleName];
+
+        if (!braintreeModule) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this.braintreeHostWindow.braintree.usBankAccount;
-    }
-
-    loadGooglePayment(): Promise<GooglePayCreator> {
-        return this.scriptLoader
-            .loadScript(
-                `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/google-payment.min.js`,
-            )
-            .then(() => {
-                if (
-                    !this.braintreeHostWindow.braintree ||
-                    !this.braintreeHostWindow.braintree.googlePayment
-                ) {
-                    throw new PaymentMethodClientUnavailableError();
-                }
-
-                return this.braintreeHostWindow.braintree.googlePayment;
-            });
-    }
-
-    load3DS(): Promise<BraintreeThreeDSecureCreator> {
-        return this.scriptLoader
-            .loadScript(
-                `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/three-d-secure.min.js`,
-            )
-            .then(() => {
-                if (
-                    !this.braintreeHostWindow.braintree ||
-                    !this.braintreeHostWindow.braintree.threeDSecure
-                ) {
-                    throw new PaymentMethodClientUnavailableError();
-                }
-
-                return this.braintreeHostWindow.braintree.threeDSecure;
-            });
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        return braintreeModule as T;
     }
 }
