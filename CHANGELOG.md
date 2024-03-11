@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.557.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.556.0...v1.557.0) (2024-03-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3743 updated axoEnv sandbox key to fastlaneEnv in paypal-commerce-fastlane-utils file ([#2392](https://github.com/bigcommerce/checkout-sdk-js/issues/2392)) ([79ae6df](https://github.com/bigcommerce/checkout-sdk-js/commit/79ae6dfd78a591d690efbc2c555212bc93c8d923))
+
 ## [1.556.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.555.0...v1.556.0) (2024-03-11)
 
 
