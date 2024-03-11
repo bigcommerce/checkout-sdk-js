@@ -71,7 +71,7 @@ export default class PayPalCommerceFastlaneUtils {
         styles?: PayPalFastlaneStylesOption,
     ): Promise<PayPalFastlane> {
         if (isTestModeEnabled) {
-            window.localStorage.setItem('axoEnv', 'sandbox');
+            window.localStorage.setItem('fastlaneEnv', 'sandbox');
         }
 
         if (!this.window.paypalFastlane) {

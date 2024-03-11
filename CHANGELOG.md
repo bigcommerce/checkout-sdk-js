@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.557.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.557.2...v1.557.3) (2024-03-11)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-000 moved braintree paypal credit related code to separate folder ([#2400](https://github.com/bigcommerce/checkout-sdk-js/issues/2400)) ([2e62fcb](https://github.com/bigcommerce/checkout-sdk-js/commit/2e62fcb5b9fcee7131f0eafc1f46cbef180efd7e))
+
+### [1.557.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.557.1...v1.557.2) (2024-03-11)
+
+
+### Code Refactoring
+
+* **payment:** PI-1736 move getShippableItemsCount to package ([b297d27](https://github.com/bigcommerce/checkout-sdk-js/commit/b297d27cdff2e829959f8d0034ff86ce21f95294))
+
+### [1.557.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.557.0...v1.557.1) (2024-03-11)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-000 removed duplications and created generic method in braintree-script-loader file ([#2395](https://github.com/bigcommerce/checkout-sdk-js/issues/2395)) ([bf10c05](https://github.com/bigcommerce/checkout-sdk-js/commit/bf10c056626c20251cd3d932607aadcfeda73d99))
+
+## [1.557.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.556.0...v1.557.0) (2024-03-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3743 updated axoEnv sandbox key to fastlaneEnv in paypal-commerce-fastlane-utils file ([#2392](https://github.com/bigcommerce/checkout-sdk-js/issues/2392)) ([79ae6df](https://github.com/bigcommerce/checkout-sdk-js/commit/79ae6dfd78a591d690efbc2c555212bc93c8d923))
+
+## [1.556.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.555.0...v1.556.0) (2024-03-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3745 updated axoEnv sandbox key to fastlaneEnv in braintree-integration-service file ([#2393](https://github.com/bigcommerce/checkout-sdk-js/issues/2393)) ([c8b66e0](https://github.com/bigcommerce/checkout-sdk-js/commit/c8b66e084eadb4eeb00075bdd93a51dfbbea07e8))
+
 ## [1.555.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.554.0...v1.555.0) (2024-03-06)
 
 

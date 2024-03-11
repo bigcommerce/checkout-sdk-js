@@ -1,6 +1,7 @@
+import { getShippableItemsCount } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { PaymentMethod } from '../..';
 import { InternalCheckoutSelectors } from '../../../../../core/src/checkout';
-import { getShippableItemsCount } from '../../../../../core/src/shipping';
 import { guard } from '../../../../src/common/utility';
 import { StoreProfile } from '../../../../src/config';
 import { CheckoutSettings } from '../../../../src/config/config';
