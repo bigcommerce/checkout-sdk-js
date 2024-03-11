@@ -214,6 +214,8 @@ export default class AmazonPayV2PaymentProcessor {
             initializationData,
         } = getPaymentMethodOrThrow(methodId);
 
+        console.log('*** initializationData', initializationData);
+
         if (!initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
