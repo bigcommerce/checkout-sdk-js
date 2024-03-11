@@ -10,11 +10,11 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import BraintreeAchPaymentStrategy from './braintree-paypal-ach-payment-strategy';
+import BraintreeAchPaymentStrategy from './braintree-ach-payment-strategy';
 
-const createBraintreePaypalAchPaymentStrategy: PaymentStrategyFactory<
-    BraintreeAchPaymentStrategy
-> = (paymentIntegrationService) => {
+const createBraintreeAchPaymentStrategy: PaymentStrategyFactory<BraintreeAchPaymentStrategy> = (
+    paymentIntegrationService,
+) => {
     const braintreeHostWindow: BraintreeHostWindow = window;
     const braintreeIntegrationService = new BraintreeIntegrationService(
         new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
@@ -24,6 +24,4 @@ const createBraintreePaypalAchPaymentStrategy: PaymentStrategyFactory<
     return new BraintreeAchPaymentStrategy(paymentIntegrationService, braintreeIntegrationService);
 };
 
-export default toResolvableModule(createBraintreePaypalAchPaymentStrategy, [
-    { id: 'braintreeach' },
-]);
+export default toResolvableModule(createBraintreeAchPaymentStrategy, [{ id: 'braintreeach' }]);

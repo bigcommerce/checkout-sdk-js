@@ -23,11 +23,11 @@ import {
 
 import { getBankAccountMock, getBraintreeAch } from '../mocks/braintree.mock';
 
-import { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-paypal-ach-initialize-options';
-import BraintreePaypalAchPaymentStrategy from './braintree-paypal-ach-payment-strategy';
+import { WithBraintreeAchPaymentInitializeOptions } from './braintree-ach-initialize-options';
+import BraintreeAchPaymentStrategy from './braintree-ach-payment-strategy';
 
-describe('BraintreePaypalAchPaymentStrategy', () => {
-    let strategy: BraintreePaypalAchPaymentStrategy;
+describe('BraintreeAchPaymentStrategy', () => {
+    let strategy: BraintreeAchPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
 
     let braintreeIntegrationService: BraintreeIntegrationService;
@@ -39,7 +39,7 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
     const methodId = 'ach';
     const deviceSessionId = 'deviceSessionId';
 
-    const mockOptions: PaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions = {
+    const mockOptions: PaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions = {
         methodId,
         braintreeach: {
             getMandateText: () => 'text',
@@ -132,14 +132,14 @@ describe('BraintreePaypalAchPaymentStrategy', () => {
             mockBankAccount,
         );
 
-        strategy = new BraintreePaypalAchPaymentStrategy(
+        strategy = new BraintreeAchPaymentStrategy(
             paymentIntegrationService,
             braintreeIntegrationService,
         );
     });
 
-    it('instantiates braintree paypal ach payment strategy', () => {
-        expect(strategy).toBeInstanceOf(BraintreePaypalAchPaymentStrategy);
+    it('instantiates braintree ach payment strategy', () => {
+        expect(strategy).toBeInstanceOf(BraintreeAchPaymentStrategy);
     });
 
     describe('#initialize', () => {
