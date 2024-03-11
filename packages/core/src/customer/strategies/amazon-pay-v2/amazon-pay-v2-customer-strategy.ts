@@ -1,12 +1,12 @@
+import {
+    AmazonPayV2PaymentProcessor,
+    AmazonPayV2Placement,
+} from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, NotImplementedError } from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
-import {
-    AmazonPayV2PaymentProcessor,
-    AmazonPayV2Placement,
-} from '../../../payment/strategies/amazon-pay-v2';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import {
     CustomerInitializeOptions,

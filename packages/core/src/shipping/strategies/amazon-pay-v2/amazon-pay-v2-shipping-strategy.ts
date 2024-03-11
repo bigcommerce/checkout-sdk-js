@@ -1,5 +1,10 @@
 import { noop } from 'rxjs';
 
+import {
+    AmazonPayV2ChangeActionType,
+    AmazonPayV2PaymentProcessor,
+} from '@bigcommerce/checkout-sdk/amazon-pay-utils';
+
 import { ConsignmentActionCreator, ShippingStrategyActionCreator } from '../..';
 import { AddressRequestBody } from '../../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
@@ -9,10 +14,6 @@ import {
     MissingDataErrorType,
 } from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
-import {
-    AmazonPayV2ChangeActionType,
-    AmazonPayV2PaymentProcessor,
-} from '../../../payment/strategies/amazon-pay-v2';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
 

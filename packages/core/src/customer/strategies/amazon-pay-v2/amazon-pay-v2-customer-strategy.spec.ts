@@ -3,6 +3,13 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { of } from 'rxjs';
 
 import {
+    AmazonPayV2PaymentProcessor,
+    AmazonPayV2Placement,
+    createAmazonPayV2PaymentProcessor,
+    getAmazonPayV2,
+} from '@bigcommerce/checkout-sdk/amazon-pay-utils';
+
+import {
     CheckoutActionCreator,
     CheckoutRequestSender,
     CheckoutStore,
@@ -17,12 +24,7 @@ import {
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
-import { getAmazonPayV2, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import {
-    AmazonPayV2PaymentProcessor,
-    AmazonPayV2Placement,
-    createAmazonPayV2PaymentProcessor,
-} from '../../../payment/strategies/amazon-pay-v2';
+import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import {
     RemoteCheckoutActionCreator,
     RemoteCheckoutActionType,

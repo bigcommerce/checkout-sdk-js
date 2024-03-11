@@ -1,4 +1,9 @@
-import { InternalCheckoutSelectors } from '../../../../../core/src/checkout';
+import {
+    Cart,
+    Checkout,
+    PaymentMethod,
+    StoreConfig,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export type EnvironmentType = 'PRODUCTION' | 'TEST';
 
@@ -7,6 +12,7 @@ export interface AmazonPayV2Options {
 }
 
 export interface AmazonPayV2SDK {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     Pay: AmazonPayV2Client;
 }
 
@@ -20,7 +26,7 @@ export interface AmazonPayV2Button {
     /**
      * Allows you to define custom actions.
      */
-    onClick: (callback: () => void) => void;
+    onClick: (callback: () => void | Promise<void>) => void;
 
     /**
      * Initiates the Amazon Pay checkout.
@@ -189,13 +195,14 @@ export interface AmazonPayV2ChangeActionOptions {
     changeAction: AmazonPayV2ChangeActionType;
 }
 
-export enum AmazonPayV2Regions {
-    de = 'eu',
-    jp = 'fe',
-    uk = 'eu',
-    us = 'na',
-}
+export const amazonPayV2Regions: { [key: string]: string } = {
+    de: 'eu',
+    jp: 'fe',
+    uk: 'eu',
+    us: 'na',
+};
 
+/* eslint-disable @typescript-eslint/naming-convention */
 export enum AmazonPayV2CheckoutLanguage {
     en_US = 'en_US',
     en_GB = 'en_GB',
@@ -205,7 +212,9 @@ export enum AmazonPayV2CheckoutLanguage {
     es_ES = 'es_ES',
     ja_JP = 'ja_JP',
 }
+/* eslint-enable @typescript-eslint/naming-convention */
 
+/* eslint-disable @typescript-eslint/no-shadow */
 export enum AmazonPayV2Placement {
     /** Initial or main page. */
     Home = 'Home',
@@ -222,6 +231,7 @@ export enum AmazonPayV2Placement {
     /** Any page that doesn't fit the previous descriptions. */
     Other = 'Other',
 }
+/* eslint-enable @typescript-eslint/no-shadow */
 
 export enum AmazonPayV2LedgerCurrency {
     USD = 'USD',
@@ -246,6 +256,35 @@ export enum AmazonPayV2ButtonColor {
 
 export enum AmazonPayV2ButtonDesign {
     C0001 = 'C0001',
+}
+
+// TODO: after migration AmazonPay strategies to integration package
+// <InternalCheckoutSelectors> should be removed
+// and replaced usage with <PaymentIntegrationService>
+export interface InternalCheckoutSelectors {
+    cart: {
+        getCart: () => Cart | undefined;
+    };
+    checkout: {
+        getCheckout: () => Checkout | undefined;
+    };
+    config: {
+        getStoreConfigOrThrow: () => StoreConfig;
+    };
+    paymentMethods: {
+        getPaymentMethodOrThrow: (methodId: string) => PaymentMethod<AmazonPayV2InitializeOptions>;
+    };
+}
+
+export interface AmazonPayV2InitializeOptions {
+    buttonColor?: AmazonPayV2ButtonColor;
+    checkoutLanguage?: AmazonPayV2CheckoutLanguage;
+    checkoutSessionMethod?: 'GET' | 'POST';
+    createCheckoutSessionConfig?: AmazonPayV2CheckoutSessionConfig;
+    extractAmazonCheckoutSessionId?: string;
+    ledgerCurrency?: AmazonPayV2LedgerCurrency;
+    publicKeyId?: string;
+    region?: string;
 }
 
 export interface AmazonPayV2ButtonRenderingOptions {

@@ -1,5 +1,4 @@
-import PaymentMethod from '../../payment-method';
-import { getAmazonPayV2 } from '../../payment-methods.mock';
+import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
     AmazonPayV2ButtonColor,
@@ -7,14 +6,16 @@ import {
     AmazonPayV2ButtonDesign,
     AmazonPayV2ButtonParameters,
     AmazonPayV2CheckoutLanguage,
+    AmazonPayV2InitializeOptions,
     AmazonPayV2LedgerCurrency,
     AmazonPayV2PayOptions,
     AmazonPayV2Placement,
     AmazonPayV2SDK,
-} from './amazon-pay-v2';
+} from '../amazon-pay-v2';
 
 export function getAmazonPayV2SDKMock(): AmazonPayV2SDK {
     return {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         Pay: {
             renderButton: jest.fn().mockReturnValue({
                 onClick: jest.fn(),
@@ -37,7 +38,8 @@ export function getPaymentMethodMockUndefinedMerchant(): PaymentMethod {
 export function getPaymentMethodMockUndefinedLedgerCurrency(): PaymentMethod {
     const amazonMock = getAmazonPayV2();
 
-    amazonMock.initializationData.ledgerCurrency = undefined;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    amazonMock.initializationData!.ledgerCurrency = undefined;
 
     return amazonMock;
 }
@@ -90,5 +92,36 @@ export function getAmazonPayV2ButtonParamsMock(): AmazonPayV2ButtonParameters {
         productType: AmazonPayV2PayOptions.PayAndShip,
         sandbox: true,
         design: AmazonPayV2ButtonDesign.C0001,
+    };
+}
+
+export function getAmazonPayV2(region = 'us'): PaymentMethod<AmazonPayV2InitializeOptions> {
+    return {
+        config: {
+            displayName: 'AMAZON PAY',
+            helpText: '',
+            isVaultingEnabled: false,
+            merchantId: 'checkout_amazonpay',
+            requireCustomerCode: false,
+            testMode: true,
+        },
+        id: 'amazonpay',
+        initializationData: {
+            buttonColor: AmazonPayV2ButtonColor.Gold,
+            checkoutLanguage: AmazonPayV2CheckoutLanguage.en_US,
+            checkoutSessionMethod: 'GET',
+            createCheckoutSessionConfig: {
+                payloadJSON: 'payload',
+                signature: 'xxxx',
+            },
+            extractAmazonCheckoutSessionId: 'token',
+            ledgerCurrency: AmazonPayV2LedgerCurrency.USD,
+            publicKeyId: 'SANDBOX-XXXXXXXX',
+            region,
+        },
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: ['VISA', 'AMEX', 'MC'],
+        type: 'PAYMENT_TYPE_API',
     };
 }
