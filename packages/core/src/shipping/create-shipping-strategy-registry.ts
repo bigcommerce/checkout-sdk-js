@@ -1,6 +1,7 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
+import { createAmazonPayV2PaymentProcessor } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import {
     BraintreeHostWindow,
     BraintreeIntegrationService,
@@ -16,7 +17,6 @@ import { CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
-import { createAmazonPayV2PaymentProcessor } from '../payment/strategies/amazon-pay-v2';
 import { StripeScriptLoader } from '../payment/strategies/stripe-upe';
 import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 

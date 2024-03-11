@@ -6,6 +6,7 @@ import {
     getStylesheetLoader,
 } from '@bigcommerce/script-loader';
 
+import { createAmazonPayV2PaymentProcessor } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import {
     BraintreeIntegrationService,
     BraintreeScriptLoader,
@@ -48,10 +49,7 @@ import StorefrontPaymentRequestSender from './storefront-payment-request-sender'
 import { AdyenV2ScriptLoader } from './strategies/adyenv2';
 import { AdyenV3ScriptLoader } from './strategies/adyenv3';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
-import {
-    AmazonPayV2PaymentStrategy,
-    createAmazonPayV2PaymentProcessor,
-} from './strategies/amazon-pay-v2';
+import { AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BNZPaymentStrategy } from './strategies/bnz';
