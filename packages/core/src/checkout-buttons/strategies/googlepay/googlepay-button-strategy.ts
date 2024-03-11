@@ -1,6 +1,7 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 
 import {
+    getShippableItemsCount,
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
@@ -24,7 +25,6 @@ import {
     NewTransactionInfo,
     TotalPriceStatusType,
 } from '../../../payment/strategies/googlepay';
-import { getShippableItemsCount } from '../../../shipping';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 

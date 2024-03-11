@@ -63,6 +63,5 @@ export {
 export { default as ShippingStrategyState } from './shipping-strategy-state';
 export { default as shippingStrategyReducer } from './shipping-strategy-reducer';
 
-export { default as getShippableItemsCount } from './getShippableItemsCount';
 export { default as mapToInternalShippingOption } from './map-to-internal-shipping-option';
 export { default as mapToInternalShippingOptions } from './map-to-internal-shipping-options';
