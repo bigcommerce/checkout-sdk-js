@@ -1,15 +1,15 @@
 /**
  * Braintree ACH strategies
  */
-export { default as createBraintreePaypalAchPaymentStrategy } from './braintree-paypal-ach/create-braintree-paypal-ach-payment-strategy';
-export { WithBraintreePaypalCustomerInitializeOptions } from './braintree-paypal/braintree-paypal-customer-initialize-options';
+export { default as createBraintreeAchPaymentStrategy } from './braintree-ach/create-braintree-ach-payment-strategy';
+export { WithBraintreeAchPaymentInitializeOptions } from './braintree-ach/braintree-ach-initialize-options';
 
 /**
  * Braintree PayPal strategies
  */
 export { default as createBraintreePaypalCustomerStrategy } from './braintree-paypal/create-braintree-paypal-customer-strategy';
+export { WithBraintreePaypalCustomerInitializeOptions } from './braintree-paypal/braintree-paypal-customer-initialize-options';
 export { default as createBraintreePaypalPaymentStrategy } from './braintree-paypal/create-braintree-paypal-payment-strategy';
-export { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-paypal-ach/braintree-paypal-ach-initialize-options';
 
 /**
  * Braintree PayPal Credit strategies

@@ -28,9 +28,9 @@ import {
 
 import isUsBankAccountInstrumentLike from '../is-us-bank-account-instrument-like';
 
-import { WithBraintreePaypalAchPaymentInitializeOptions } from './braintree-paypal-ach-initialize-options';
+import { WithBraintreeAchPaymentInitializeOptions } from './braintree-ach-initialize-options';
 
-export default class BraintreePaypalAchPaymentStrategy implements PaymentStrategy {
+export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
     private usBankAccount?: BraintreeBankAccount;
     private getMandateText?: () => string;
 
@@ -40,7 +40,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
     ) {}
 
     async initialize(
-        options: PaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions,
+        options: PaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions,
     ): Promise<void> {
         const { getMandateText } = options.braintreeach || {};
 
@@ -119,6 +119,7 @@ export default class BraintreePaypalAchPaymentStrategy implements PaymentStrateg
         const { shouldSaveInstrument, shouldSetAsDefaultInstrument, routingNumber, accountNumber } =
             paymentData;
 
+        // TODO: update payment payload with data shape based on mapping in bigpay-client-js project
         const paymentPayload = {
             formattedPayload: {
                 vault_payment_instrument: shouldSaveInstrument || null,
