@@ -3,6 +3,7 @@
 /// <reference types="lodash" />
 import { BraintreeConnectStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeError as BraintreeError_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CardInstrument as CardInstrument_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -1675,6 +1676,56 @@ declare interface BraintreeError extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
     details?: unknown;
+}
+
+/**
+ * A set of options that are optional to initialize the Braintree Fastlane customer strategy
+ * that are responsible for Braintree Fastlane components styling and initialization
+ *
+ * ```js
+ * service.initializeCustomer({
+ *     methodId: 'braintreeacceleratedcheckout', // 'braintree' only for A/B testing
+ *     braintreefastlane: {
+ *         styles: {
+ *              root: {
+ *                  backgroundColorPrimary: 'transparent',
+ *                  errorColor: '#C40B0B',
+ *                  fontFamily: 'Montserrat, Helvetica, Arial, sans-serif',
+ *              },
+ *              input: {
+ *                  borderRadius: '0.25rem',
+ *                  borderColor: '#9E9E9E',
+ *                  focusBorderColor: '#4496F6',
+ *              },
+ *              toggle: {
+ *                  colorPrimary: '#0F005E',
+ *                  colorSecondary: '#ffffff',
+ *              },
+ *              text: {
+ *                  body: {
+ *                      color: '#222222',
+ *                      fontSize: '1rem',
+ *                  },
+ *                  caption: {
+ *                      color: '#515151',
+ *                      fontSize: '0.875rem',
+ *                  },
+ *              },
+ *              branding: 'light',
+ *         },
+ *     },
+ * });
+ * ```
+ */
+declare interface BraintreeFastlaneCustomerInitializeOptions {
+    /**
+     * Is a stylisation options for customizing PayPal Fastlane components
+     *
+     * Note: the styles for all Braintree Fastlane strategies should be the same,
+     * because they will be provided to PayPal library only for the first strategy initialization
+     * no matter what strategy was initialised first
+     */
+    styles?: BraintreeFastlaneStylesOption;
 }
 
 declare type BraintreeFormErrorData = Omit<BraintreeFormFieldState, 'isFocused'>;
@@ -4984,7 +5035,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithGooglePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions & WithStripeUPECustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithBraintreeFastlaneCustomerInitializeOptions & WithGooglePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions & WithStripeUPECustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -9250,6 +9301,10 @@ declare interface WithBoltPaymentInitializeOptions {
 
 declare interface WithBraintreeAcceleratedCheckoutPaymentInitializeOptions {
     braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutPaymentInitializeOptions;
+}
+
+declare interface WithBraintreeFastlaneCustomerInitializeOptions {
+    braintreeafastlane?: BraintreeFastlaneCustomerInitializeOptions;
 }
 
 declare interface WithBraintreeLocalMethodsPaymentInitializeOptions {
