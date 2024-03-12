@@ -1664,6 +1664,13 @@ declare interface BraintreeAcceleratedCheckoutShippingInitializeOptions {
     styles?: BraintreeConnectStylesOption;
 }
 
+declare interface BraintreeAchInitializeOptions {
+    /**
+     * A callback that returns text that should be displayed to the customer in UI for proof of authorization
+     */
+    getMandateText: () => string;
+}
+
 declare interface BraintreeConnectTrackerService {
     trackStepViewed(step: string): void;
     customerPaymentMethodExecuted(): void;
@@ -1927,13 +1934,6 @@ declare interface BraintreePaymentInitializeOptions {
      * The location to insert the Pay Later Messages.
      */
     bannerContainerId?: string;
-}
-
-declare interface BraintreePaypalAchInitializeOptions {
-    /**
-     * A callback that returns text that should be displayed to the customer in UI for proof of authorization
-     */
-    getMandateText: () => string;
 }
 
 declare interface BraintreePaypalButtonInitializeOptions {
@@ -7893,7 +7893,7 @@ declare class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest;
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreePaypalAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -9303,20 +9303,20 @@ declare interface WithBraintreeAcceleratedCheckoutPaymentInitializeOptions {
     braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutPaymentInitializeOptions;
 }
 
+declare interface WithBraintreeAchPaymentInitializeOptions {
+    /**
+     * The options that are required to initialize the Braintree ACH payment
+     * method. They can be omitted unless you need to support Apple Pay.
+     */
+    braintreeach?: BraintreeAchInitializeOptions;
+}
+
 declare interface WithBraintreeFastlaneCustomerInitializeOptions {
     braintreeafastlane?: BraintreeFastlaneCustomerInitializeOptions;
 }
 
 declare interface WithBraintreeLocalMethodsPaymentInitializeOptions {
     braintreelocalmethods?: BraintreeLocalMethods;
-}
-
-declare interface WithBraintreePaypalAchPaymentInitializeOptions {
-    /**
-     * The options that are required to initialize the Braintree ACH payment
-     * method. They can be omitted unless you need to support Apple Pay.
-     */
-    braintreeach?: BraintreePaypalAchInitializeOptions;
 }
 
 declare interface WithBraintreePaypalCustomerInitializeOptions {

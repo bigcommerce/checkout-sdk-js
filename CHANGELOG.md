@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.558.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.558.0...v1.558.1) (2024-03-12)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-000 renamed BraintreePayPalAch with BraintreeAch to match naming in all places ([#2401](https://github.com/bigcommerce/checkout-sdk-js/issues/2401)) ([48c1c7f](https://github.com/bigcommerce/checkout-sdk-js/commit/48c1c7f273e71d50d8e85e7aa13a99634b02a20c))
+
 ## [1.558.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.557.3...v1.558.0) (2024-03-12)
 
 
