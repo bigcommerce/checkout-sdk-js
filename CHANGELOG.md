@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.558.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.558.1...v1.558.2) (2024-03-12)
+
+
+### Bug Fixes
+
+* **payment:** PI-1287 fixed 3ds challange for WorldPay ([6049c43](https://github.com/bigcommerce/checkout-sdk-js/commit/6049c43f07f91319b9f1edf4dc491c67f836575f))
+
 ### [1.558.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.558.0...v1.558.1) (2024-03-12)
 
 
