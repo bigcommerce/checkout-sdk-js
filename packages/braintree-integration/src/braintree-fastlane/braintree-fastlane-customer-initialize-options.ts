@@ -1,13 +1,13 @@
-import { BraintreeConnectStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 /**
- * A set of options that are optional to initialize the Braintree Accelerated Checkout customer strategy
- * that are responsible for Braintree Accelerated Checkout components styling and initialization
+ * A set of options that are optional to initialize the Braintree Fastlane customer strategy
+ * that are responsible for Braintree Fastlane components styling and initialization
  *
  * ```js
  * service.initializeCustomer({
  *     methodId: 'braintreeacceleratedcheckout', // 'braintree' only for A/B testing
- *     braintreeacceleratedcheckout: {
+ *     braintreefastlane: {
  *         styles: {
  *              root: {
  *                  backgroundColorPrimary: 'transparent',
@@ -39,17 +39,17 @@ import { BraintreeConnectStylesOption } from '@bigcommerce/checkout-sdk/braintre
  * });
  * ```
  */
-export default interface BraintreeAcceleratedCheckoutCustomerInitializeOptions {
+export default interface BraintreeFastlaneCustomerInitializeOptions {
     /**
-     * Is a stylisation options for customizing PayPal Connect components
+     * Is a stylisation options for customizing PayPal Fastlane components
      *
-     * Note: the styles for all Braintree Accelerated Checkout strategies should be the same,
+     * Note: the styles for all Braintree Fastlane strategies should be the same,
      * because they will be provided to PayPal library only for the first strategy initialization
      * no matter what strategy was initialised first
      */
-    styles?: BraintreeConnectStylesOption;
+    styles?: BraintreeFastlaneStylesOption;
 }
 
-export interface WithBraintreeAcceleratedCheckoutCustomerInitializeOptions {
-    braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutCustomerInitializeOptions;
+export interface WithBraintreeFastlaneCustomerInitializeOptions {
+    braintreeafastlane?: BraintreeFastlaneCustomerInitializeOptions;
 }

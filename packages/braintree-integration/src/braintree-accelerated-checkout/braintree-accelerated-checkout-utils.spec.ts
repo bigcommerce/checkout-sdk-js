@@ -2,7 +2,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
     BraintreeConnect,
-    BraintreeConnectAuthenticationState,
+    BraintreeFastlaneAuthenticationState,
     BraintreeIntegrationService,
     BraintreeScriptLoader,
     getBraintreeConnectProfileDataMock,
@@ -89,7 +89,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             customerContextId: 'customerContextId',
         });
         jest.spyOn(braintreeConnectMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
-            authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
+            authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
             profileData: getBraintreeConnectProfileDataMock(),
         });
     });
@@ -170,7 +170,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
 
             expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
-                authenticationState: BraintreeConnectAuthenticationState.UNRECOGNIZED,
+                authenticationState: BraintreeFastlaneAuthenticationState.UNRECOGNIZED,
                 addresses: [],
                 instruments: [],
             });
@@ -186,7 +186,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
 
         it('successfully authenticate customer with PP Connect', async () => {
             const updatePaymentProviderCustomerPayload = {
-                authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
+                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
                 addresses: [
                     {
                         id: 123123,
@@ -245,12 +245,12 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
             };
 
             jest.spyOn(braintreeConnectMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
-                authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
+                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
                 profileData,
             });
 
             const updatePaymentProviderCustomerPayload = {
-                authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
+                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
                 addresses: [
                     {
                         id: 123123,
@@ -317,12 +317,12 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
 
         it('does not authenticate customer if the authentication was canceled or failed', async () => {
             jest.spyOn(braintreeConnectMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
-                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
+                authenticationState: BraintreeFastlaneAuthenticationState.CANCELED,
                 profileData: {},
             });
 
             const updatePaymentProviderCustomerPayload = {
-                authenticationState: BraintreeConnectAuthenticationState.CANCELED,
+                authenticationState: BraintreeFastlaneAuthenticationState.CANCELED,
                 addresses: [],
                 instruments: [],
             };
@@ -385,7 +385,7 @@ describe('BraintreeAcceleratedCheckoutUtils', () => {
 
         it('do not update billing and shipping address if paypal does not return any address in profile data', async () => {
             jest.spyOn(braintreeConnectMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
-                authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
+                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
                 profileData: {
                     addresses: [],
                     instruments: [],

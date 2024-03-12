@@ -14,7 +14,9 @@ export { default as BraintreeScriptLoader } from './braintree-script-loader';
 export { default as isBraintreeError } from './is-braintree-error';
 export {
     getBraintreeConnectProfileDataMock,
+    getBraintreeFastlaneProfileDataMock,
     getConnectMock,
+    getFastlaneMock,
     getDataCollectorMock,
     getPaypalCheckoutMock,
     getPayPalCheckoutCreatorMock,

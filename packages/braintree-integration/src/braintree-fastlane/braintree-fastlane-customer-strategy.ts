@@ -10,22 +10,22 @@ import {
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { WithBraintreeAcceleratedCheckoutCustomerInitializeOptions } from './braintree-accelerated-checkout-customer-initialize-options';
-import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
+import { WithBraintreeFastlaneCustomerInitializeOptions } from './braintree-fastlane-customer-initialize-options';
+import BraintreeFastlaneUtils from './braintree-fastlane-utils';
 
-export default class BraintreeAcceleratedCheckoutCustomerStrategy implements CustomerStrategy {
+export default class BraintreeFastlaneCustomerStrategy implements CustomerStrategy {
     private isAcceleratedCheckoutEnabled = false;
+    private isFastlaneEnabled = false;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private braintreeAcceleratedCheckoutUtils: BraintreeAcceleratedCheckoutUtils,
+        private braintreeFastlaneUtils: BraintreeFastlaneUtils,
     ) {}
 
     async initialize({
         methodId,
-        braintreeacceleratedcheckout,
-    }: CustomerInitializeOptions &
-        WithBraintreeAcceleratedCheckoutCustomerInitializeOptions): Promise<void> {
+        braintreeafastlane,
+    }: CustomerInitializeOptions & WithBraintreeFastlaneCustomerInitializeOptions): Promise<void> {
         if (!methodId) {
             throw new InvalidArgumentError(
                 'Unable to proceed because "methodId" argument is not provided.',
@@ -37,10 +37,12 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
         this.isAcceleratedCheckoutEnabled =
             !!paymentMethod.initializationData?.isAcceleratedCheckoutEnabled;
 
+        this.isFastlaneEnabled = !!paymentMethod.initializationData?.isFastlaneEnabled;
+
         if (this.isAcceleratedCheckoutEnabled) {
-            await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(
+            await this.braintreeFastlaneUtils.initializeBraintreeAcceleratedCheckoutOrThrow(
                 paymentMethod.id,
-                braintreeacceleratedcheckout?.styles,
+                braintreeafastlane?.styles,
             );
         }
 
@@ -80,8 +82,12 @@ export default class BraintreeAcceleratedCheckoutCustomerStrategy implements Cus
                 checkoutPaymentMethodExecuted();
             }
 
-            if (shouldRunAuthenticationFlow) {
-                await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow();
+            if (shouldRunAuthenticationFlow && !this.isFastlaneEnabled) {
+                await this.braintreeFastlaneUtils.runPayPalConnectAuthenticationFlowOrThrow();
+            }
+
+            if (shouldRunAuthenticationFlow && this.isFastlaneEnabled) {
+                await this.braintreeFastlaneUtils.runPayPalFastlaneAuthenticationFlowOrThrow();
             }
         }
 

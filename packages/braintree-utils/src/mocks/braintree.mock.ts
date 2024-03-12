@@ -3,7 +3,6 @@ import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api
 import {
     BraintreeClient,
     BraintreeConnect,
-    BraintreeConnectAuthenticationState,
     BraintreeConnectProfileData,
     BraintreeDataCollector,
     BraintreeFastlane,
@@ -173,7 +172,7 @@ export function getConnectMock(): BraintreeConnect {
             lookupCustomerByEmail: () => Promise.resolve({ customerContextId: 'customerId' }),
             triggerAuthenticationFlow: () =>
                 Promise.resolve({
-                    authenticationState: BraintreeConnectAuthenticationState.SUCCEEDED,
+                    authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
                     profileData: getBraintreeConnectProfileDataMock(),
                 }),
         },

@@ -102,6 +102,7 @@ export interface BraintreeInitializationData {
     intent?: 'authorize' | 'order' | 'sale';
     isCreditEnabled?: boolean;
     isAcceleratedCheckoutEnabled?: boolean;
+    isFastlaneEnabled?: boolean;
     isBraintreeAnalyticsV2Enabled?: boolean;
     shouldRunAcceleratedCheckout?: boolean; // TODO: only for BT AXO A/B testing purposes, hence should be removed after testing
     paymentButtonStyles?: Record<string, PaypalStyleOptions>;
@@ -765,15 +766,8 @@ export interface BraintreeConnectStylesOption {
     branding?: string; // 'light' | 'dark'
 }
 
-export enum BraintreeConnectAuthenticationState {
-    SUCCEEDED = 'succeeded',
-    FAILED = 'failed',
-    CANCELED = 'cancelled',
-    UNRECOGNIZED = 'unrecognized',
-}
-
 export interface BraintreeConnectAuthenticationCustomerResult {
-    authenticationState: BraintreeConnectAuthenticationState;
+    authenticationState: BraintreeFastlaneAuthenticationState;
     profileData: BraintreeConnectProfileData;
 }
 
