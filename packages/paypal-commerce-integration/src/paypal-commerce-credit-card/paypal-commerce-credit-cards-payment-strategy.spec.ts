@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 
 import {
+    BillingAddress,
     Cart,
     HostedFieldType,
     InvalidArgumentError,
@@ -14,6 +15,7 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getBillingAddress,
     getCart,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -44,6 +46,7 @@ import PayPalCommerceCreditCardsPaymentInitializeOptions from './paypal-commerce
 import PayPalCommerceCreditCardsPaymentStrategy from './paypal-commerce-credit-cards-payment-strategy';
 
 describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
+    let billingAddress: BillingAddress;
     let cart: Cart;
     let strategy: PayPalCommerceCreditCardsPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
@@ -141,6 +144,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
 
     beforeEach(() => {
         cart = getCart();
+        billingAddress = getBillingAddress();
         eventEmitter = new EventEmitter();
         paymentMethod = { ...getPayPalCommercePaymentMethod(), id: methodId };
         paypalSdk = getPayPalSDKMock();
@@ -166,6 +170,10 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             paymentMethod,
         );
         jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(cart);
+        jest.spyOn(
+            paymentIntegrationService.getState(),
+            'getBillingAddressOrThrow',
+        ).mockReturnValue(billingAddress);
 
         jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(paypalSdk);
         jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
@@ -546,7 +554,17 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
 
             await strategy.execute(defaultExecutePayload);
 
-            expect(submitMock).toHaveBeenCalled();
+            expect(submitMock).toHaveBeenCalledWith({
+                billingAddress: {
+                    company: billingAddress.company,
+                    addressLine1: billingAddress.address1,
+                    addressLine2: billingAddress.address2,
+                    adminArea1: billingAddress.stateOrProvinceCode,
+                    adminArea2: billingAddress.city,
+                    postalCode: billingAddress.postalCode,
+                    countryCode: billingAddress.countryCode,
+                },
+            });
         });
     });
 
