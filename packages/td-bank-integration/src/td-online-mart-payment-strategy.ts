@@ -25,6 +25,7 @@ import {
     FieldType,
     TDCustomCheckoutSDK,
     TdOnlineMartElement,
+    TdOnlineMartPaymentTokens,
     TdOnlineMartThreeDSErrorBody,
 } from './td-online-mart';
 import TDOnlineMartScriptLoader from './td-online-mart-script-loader';
@@ -92,7 +93,6 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
 
     private async getPaymentPayloadOrThrow(payment: OrderPaymentRequestBody) {
         const { methodId, paymentData } = payment;
-
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
         const commonPaymentData = {
@@ -100,8 +100,6 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             browser_info: getBrowserInfo(),
             shouldSetAsDefaultInstrument,
         };
-
-        let paymentToken;
 
         if (
             isHostedInstrumentLike(paymentData) &&
@@ -117,8 +115,21 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             };
         }
 
+        let creditCardToken: TdOnlineMartPaymentTokens;
+
         try {
-            paymentToken = await this.getTokenOrThrow();
+            creditCardToken = {
+                token: await this.getTokenOrThrow(),
+            };
+
+            if (shouldSaveInstrument) {
+                // INFO: instrument saving requires additional token
+                creditCardToken = {
+                    ...creditCardToken,
+                    // eslint-disable-next-line @typescript-eslint/naming-convention
+                    profile_token: await this.getTokenOrThrow(),
+                };
+            }
         } catch (error) {
             this.throwTokenizationError(error);
         }
@@ -126,9 +137,12 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         return {
             methodId,
             paymentData: {
-                ...commonPaymentData,
-                nonce: paymentToken,
-                shouldSaveInstrument,
+                formattedPayload: {
+                    ...commonPaymentData,
+                    // eslint-disable-next-line @typescript-eslint/naming-convention
+                    credit_card_token: creditCardToken,
+                    shouldSaveInstrument,
+                },
             },
         };
     }
@@ -205,7 +219,7 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         });
     }
 
-    private throwTokenizationError(error: unknown) {
+    private throwTokenizationError(error: unknown): never {
         if (!isCreateTokenError(error)) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
         }
