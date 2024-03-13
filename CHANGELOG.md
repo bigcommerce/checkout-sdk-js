@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.559.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.558.2...v1.559.0) (2024-03-13)
+
+
+### Features
+
+* **payment:** PAYPAL-3784 added billing address data to the submit payload for PPCP credit card form action ([#2403](https://github.com/bigcommerce/checkout-sdk-js/issues/2403)) ([a8f35fa](https://github.com/bigcommerce/checkout-sdk-js/commit/a8f35facfb7ac33d98c6448137491d1dd9bed31c))
+
 ### [1.558.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.558.1...v1.558.2) (2024-03-12)
 
 
