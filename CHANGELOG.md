@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.560.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.559.0...v1.560.0) (2024-03-13)
+
+
+### Features
+
+* **payment:** PI-1753 Pass an additional Single-Use Token to bigpay ([e35624f](https://github.com/bigcommerce/checkout-sdk-js/commit/e35624f2e0a6c9231a7777a4af50befc7b4ff0ad))
+
 ## [1.559.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.558.2...v1.559.0) (2024-03-13)
 
 
