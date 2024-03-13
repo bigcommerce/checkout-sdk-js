@@ -36,6 +36,11 @@ export interface CreateTokenError {
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
+export interface TdOnlineMartPaymentTokens {
+    token: string;
+    profile_token?: string;
+}
+
 export interface TdOnlineMartThreeDSErrorBody {
     errors?: Array<{ code: string }>;
     three_ds_result?: {

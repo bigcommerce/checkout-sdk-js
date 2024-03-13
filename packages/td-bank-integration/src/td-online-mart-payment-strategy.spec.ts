@@ -60,7 +60,7 @@ describe('TDOnlineMartPaymentStrategy', () => {
 
         tdOnlineMartClient.createToken = jest.fn((callback) => {
             callback({
-                token: 'c49-70ef7c47-742e-465c-9290-f6a07b60c024',
+                token: 'td-online-mart-token',
             });
         });
     });
@@ -116,7 +116,72 @@ describe('TDOnlineMartPaymentStrategy', () => {
             );
             await tdOnlineMartPaymentStrategy.execute(payload);
 
-            expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId: 'tdonlinemart',
+                paymentData: {
+                    formattedPayload: expect.objectContaining({
+                        /* eslint-disable @typescript-eslint/naming-convention */
+                        browser_info: expect.objectContaining({
+                            color_depth: expect.any(Number),
+                            java_enabled: expect.any(Boolean),
+                            language: expect.any(String),
+                            screen_height: expect.any(Number),
+                            screen_width: expect.any(Number),
+                            time_zone_offset: expect.any(String),
+                        }),
+                        credit_card_token: {
+                            token: 'td-online-mart-token',
+                        },
+                        shouldSaveInstrument: false,
+                        /* eslint-enable @typescript-eslint/naming-convention */
+                    }),
+                },
+            });
+        });
+
+        it('successfully executes the td online mart strategy with instrument saving', async () => {
+            const executePayload: OrderRequestBody = {
+                ...payload,
+                payment: {
+                    methodId: 'tdonlinemart',
+                    paymentData: {
+                        shouldSaveInstrument: true,
+                    },
+                },
+            };
+
+            jest.spyOn(tdOnlineMartClient, 'createToken')
+                .mockImplementationOnce((callback) => {
+                    callback({
+                        token: 'td-online-mart-token-1',
+                    });
+                })
+                .mockImplementationOnce((callback) => {
+                    callback({
+                        token: 'td-online-mart-token-2',
+                    });
+                });
+
+            await tdOnlineMartPaymentStrategy.initialize(
+                tdOnlineMartClientScriptInitializationOptions,
+            );
+            await tdOnlineMartPaymentStrategy.execute(executePayload);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId: 'tdonlinemart',
+                paymentData: {
+                    formattedPayload: expect.objectContaining({
+                        /* eslint-disable @typescript-eslint/naming-convention */
+                        browser_info: expect.any(Object),
+                        credit_card_token: {
+                            token: 'td-online-mart-token-1',
+                            profile_token: 'td-online-mart-token-2',
+                        },
+                        shouldSaveInstrument: true,
+                        /* eslint-enable @typescript-eslint/naming-convention */
+                    }),
+                },
+            });
         });
 
         it('fails to execute the td online mart strategy strategy if no payment is provided when using td online mart strategy client', async () => {
