@@ -87,8 +87,20 @@ export interface PayPalCommerceCardFields {
     ExpiryField(config?: PayPalCommerceFieldsInitializationData): PayPalCommerceFields;
     NameField(config?: PayPalCommerceFieldsInitializationData): PayPalCommerceFields;
     NumberField(config?: PayPalCommerceFieldsInitializationData): PayPalCommerceFields;
-    submit(): Promise<void>;
+    submit(config?: PayPalCommerceCardFieldsSubmitConfig): Promise<void>;
     getState(): Promise<PayPalCommerceCardFieldsState>;
+}
+
+export interface PayPalCommerceCardFieldsSubmitConfig {
+    billingAddress: {
+        company?: string;
+        addressLine1: string;
+        addressLine2?: string;
+        adminArea1: string; // State
+        adminArea2: string; // City
+        postalCode: string;
+        countryCode?: string;
+    };
 }
 
 export interface PayPalSDK {

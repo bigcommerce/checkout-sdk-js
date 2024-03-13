@@ -421,12 +421,28 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
      * */
     private async submitHostedForm() {
         const cardFields = this.getCardFieldsOrThrow();
+        const state = this.paymentIntegrationService.getState();
+        const billingAddress = state.getBillingAddressOrThrow();
 
-        await cardFields.submit().catch(() => {
+        const submitConfig = {
+            billingAddress: {
+                company: billingAddress.company,
+                addressLine1: billingAddress.address1,
+                addressLine2: billingAddress.address2,
+                adminArea1: billingAddress.stateOrProvinceCode,
+                adminArea2: billingAddress.city,
+                postalCode: billingAddress.postalCode,
+                countryCode: billingAddress.countryCode,
+            },
+        };
+
+        try {
+            await cardFields.submit(submitConfig);
+        } catch (_) {
             throw new PaymentMethodFailedError(
                 'Failed authentication. Please try to authorize again.',
             );
-        });
+        }
     }
 
     /**
