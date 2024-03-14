@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.561.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.560.0...v1.561.0) (2024-03-14)
+
+
+### Features
+
+* **payment:** PAYPAL-0000 revert BT SDK ALPHA version ([#2407](https://github.com/bigcommerce/checkout-sdk-js/issues/2407)) ([5a540b4](https://github.com/bigcommerce/checkout-sdk-js/commit/5a540b4081ce12e2023f436b32313d6e538c9363))
+
 ## [1.560.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.559.0...v1.560.0) (2024-03-13)
 
 
