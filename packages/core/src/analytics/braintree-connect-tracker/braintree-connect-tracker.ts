@@ -13,7 +13,7 @@ import { CheckoutService } from '../../checkout';
 import BraintreeConnectTrackerService from './braintree-connect-tracker-service';
 
 export default class BraintreeConnectTracker implements BraintreeConnectTrackerService {
-    private _selectedPaymentMethodId = 'braintreeacceleratedcheckout';
+    private _selectedPaymentMethodId = '';
 
     constructor(private checkoutService: CheckoutService) {}
 
