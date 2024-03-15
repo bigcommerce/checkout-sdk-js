@@ -174,6 +174,7 @@ export default class KlarnaV2PaymentStrategy {
         console.log('*** after get Klarna config ***');
 
         return new Promise<KlarnaLoadResponse>((resolve) => {
+            const state = this.paymentIntegrationService.getState();
             const paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
             if (!this.klarnaPayments || !paymentMethod.clientToken) {
