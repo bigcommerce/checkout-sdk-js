@@ -1671,8 +1671,7 @@ declare interface BraintreeAchInitializeOptions {
     getMandateText: () => string;
 }
 
-declare interface BraintreeConnectTrackerService {
-    trackStepViewed(step: string): void;
+declare interface BraintreeAnalyticTrackerService {
     customerPaymentMethodExecuted(): void;
     paymentComplete(): void;
     selectedPaymentMethod(methodId: string): void;
@@ -9515,24 +9514,23 @@ declare interface ZipCodeElementOptions {
 export declare function createBodlService(subscribe: (subscriber: (state: CheckoutSelectors) => void) => void): BodlService;
 
 /**
- * Creates an instance of `BraintreeConnectTrackerService`.
+ * Creates an instance of `BraintreeAnalyticTrackerService`.
  *
  * @remarks
  * ```js
  * const checkoutService = createCheckoutService();
  * await checkoutService.loadCheckout();
- * const braintreeConnectTracker = createBraintreeConnectTracker(checkoutService);
+ * const braintreeAnalyticTracker = createBraintreeAnalyticTracker(checkoutService);
  *
- * braintreeConnectTracker.customerPaymentMethodExecuted();
- * braintreeConnectTracker.trackStepViewed('customer');
- * braintreeConnectTracker.paymentComplete();
- * braintreeConnectTracker.selectedPaymentMethod('applepay');
- * braintreeConnectTracker.walletButtonClick('paypal');
+ * braintreeAnalyticTracker.customerPaymentMethodExecuted();
+ * braintreeAnalyticTracker.paymentComplete();
+ * braintreeAnalyticTracker.selectedPaymentMethod('applepay');
+ * braintreeAnalyticTracker.walletButtonClick('paypal');
  * ```
  *
- * @returns an instance of `BraintreeConnectTrackerService`.
+ * @returns an instance of `BraintreeAnalyticTrackerService`.
  */
-export declare function createBraintreeConnectTracker(checkoutService: CheckoutService): BraintreeConnectTrackerService;
+export declare function createBraintreeConnectTracker(checkoutService: CheckoutService): BraintreeAnalyticTrackerService;
 
 /**
  * Creates an instance of `CheckoutButtonInitializer`.

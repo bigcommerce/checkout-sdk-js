@@ -138,7 +138,7 @@
 - [BraintreeAcceleratedCheckoutPaymentInitializeOptions](interfaces/BraintreeAcceleratedCheckoutPaymentInitializeOptions.md)
 - [BraintreeAcceleratedCheckoutShippingInitializeOptions](interfaces/BraintreeAcceleratedCheckoutShippingInitializeOptions.md)
 - [BraintreeAchInitializeOptions](interfaces/BraintreeAchInitializeOptions.md)
-- [BraintreeConnectTrackerService](interfaces/BraintreeConnectTrackerService.md)
+- [BraintreeAnalyticTrackerService](interfaces/BraintreeAnalyticTrackerService.md)
 - [BraintreeError](interfaces/BraintreeError.md)
 - [BraintreeFastlaneCustomerInitializeOptions](interfaces/BraintreeFastlaneCustomerInitializeOptions.md)
 - [BraintreeFormFieldCardTypeChangeEventData](interfaces/BraintreeFormFieldCardTypeChangeEventData.md)
@@ -988,21 +988,20 @@ ___
 
 ### createBraintreeConnectTracker
 
-▸ **createBraintreeConnectTracker**(`checkoutService`): [`BraintreeConnectTrackerService`](interfaces/BraintreeConnectTrackerService.md)
+▸ **createBraintreeConnectTracker**(`checkoutService`): [`BraintreeAnalyticTrackerService`](interfaces/BraintreeAnalyticTrackerService.md)
 
-Creates an instance of `BraintreeConnectTrackerService`.
+Creates an instance of `BraintreeAnalyticTrackerService`.
 
 **`remarks`**
 ```js
 const checkoutService = createCheckoutService();
 await checkoutService.loadCheckout();
-const braintreeConnectTracker = createBraintreeConnectTracker(checkoutService);
+const braintreeAnalyticTracker = createBraintreeAnalyticTracker(checkoutService);
 
-braintreeConnectTracker.customerPaymentMethodExecuted();
-braintreeConnectTracker.trackStepViewed('customer');
-braintreeConnectTracker.paymentComplete();
-braintreeConnectTracker.selectedPaymentMethod('applepay');
-braintreeConnectTracker.walletButtonClick('paypal');
+braintreeAnalyticTracker.customerPaymentMethodExecuted();
+braintreeAnalyticTracker.paymentComplete();
+braintreeAnalyticTracker.selectedPaymentMethod('applepay');
+braintreeAnalyticTracker.walletButtonClick('paypal');
 ```
 
 #### Parameters
@@ -1013,9 +1012,9 @@ braintreeConnectTracker.walletButtonClick('paypal');
 
 #### Returns
 
-[`BraintreeConnectTrackerService`](interfaces/BraintreeConnectTrackerService.md)
+[`BraintreeAnalyticTrackerService`](interfaces/BraintreeAnalyticTrackerService.md)
 
-an instance of `BraintreeConnectTrackerService`.
+an instance of `BraintreeAnalyticTrackerService`.
 
 ___
 
