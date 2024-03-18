@@ -9530,7 +9530,7 @@ export declare function createBodlService(subscribe: (subscriber: (state: Checko
  *
  * @returns an instance of `BraintreeAnalyticTrackerService`.
  */
-export declare function createBraintreeConnectTracker(checkoutService: CheckoutService): BraintreeAnalyticTrackerService;
+export declare function createBraintreeAnalyticTracker(checkoutService: CheckoutService): BraintreeAnalyticTrackerService;
 
 /**
  * Creates an instance of `CheckoutButtonInitializer`.

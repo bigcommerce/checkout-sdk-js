@@ -588,7 +588,7 @@
 ### Functions
 
 - [createBodlService](README.md#createbodlservice)
-- [createBraintreeConnectTracker](README.md#createbraintreeconnecttracker)
+- [createBraintreeAnalyticTracker](README.md#createbraintreeanalytictracker)
 - [createCheckoutButtonInitializer](README.md#createcheckoutbuttoninitializer)
 - [createCheckoutService](README.md#createcheckoutservice)
 - [createCurrencyService](README.md#createcurrencyservice)
@@ -986,9 +986,9 @@ an instance of `BodlService`.
 
 ___
 
-### createBraintreeConnectTracker
+### createBraintreeAnalyticTracker
 
-▸ **createBraintreeConnectTracker**(`checkoutService`): [`BraintreeAnalyticTrackerService`](interfaces/BraintreeAnalyticTrackerService.md)
+▸ **createBraintreeAnalyticTracker**(`checkoutService`): [`BraintreeAnalyticTrackerService`](interfaces/BraintreeAnalyticTrackerService.md)
 
 Creates an instance of `BraintreeAnalyticTrackerService`.
 
