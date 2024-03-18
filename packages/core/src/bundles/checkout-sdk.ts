@@ -8,7 +8,7 @@ export { createLanguageService } from '../locale';
 export { createCurrencyService } from '../currency';
 export {
     createStepTracker,
-    createBraintreeConnectTracker,
+    createBraintreeAnalyticTracker,
     createPayPalCommerceAnalyticTracker,
 } from '../analytics';
 export { createStoredCardHostedFormService } from '../hosted-form';
