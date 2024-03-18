@@ -118,24 +118,24 @@ describe('TDOnlineMartPaymentStrategy', () => {
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId: 'tdonlinemart',
-                paymentData: {
+                paymentData: expect.objectContaining({
+                    /* eslint-disable @typescript-eslint/naming-convention */
+                    browser_info: expect.objectContaining({
+                        color_depth: expect.any(Number),
+                        java_enabled: expect.any(Boolean),
+                        language: expect.any(String),
+                        screen_height: expect.any(Number),
+                        screen_width: expect.any(Number),
+                        time_zone_offset: expect.any(String),
+                    }),
+                    shouldSaveInstrument: false,
                     formattedPayload: expect.objectContaining({
-                        /* eslint-disable @typescript-eslint/naming-convention */
-                        browser_info: expect.objectContaining({
-                            color_depth: expect.any(Number),
-                            java_enabled: expect.any(Boolean),
-                            language: expect.any(String),
-                            screen_height: expect.any(Number),
-                            screen_width: expect.any(Number),
-                            time_zone_offset: expect.any(String),
-                        }),
                         credit_card_token: {
                             token: 'td-online-mart-token',
                         },
-                        shouldSaveInstrument: false,
-                        /* eslint-enable @typescript-eslint/naming-convention */
                     }),
-                },
+                    /* eslint-enable @typescript-eslint/naming-convention */
+                }),
             });
         });
 
@@ -169,18 +169,18 @@ describe('TDOnlineMartPaymentStrategy', () => {
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId: 'tdonlinemart',
-                paymentData: {
+                paymentData: expect.objectContaining({
+                    /* eslint-disable @typescript-eslint/naming-convention */
+                    browser_info: expect.any(Object),
+                    shouldSaveInstrument: true,
                     formattedPayload: expect.objectContaining({
-                        /* eslint-disable @typescript-eslint/naming-convention */
-                        browser_info: expect.any(Object),
                         credit_card_token: {
                             token: 'td-online-mart-token-1',
                             profile_token: 'td-online-mart-token-2',
                         },
-                        shouldSaveInstrument: true,
-                        /* eslint-enable @typescript-eslint/naming-convention */
                     }),
-                },
+                    /* eslint-enable @typescript-eslint/naming-convention */
+                }),
             });
         });
 

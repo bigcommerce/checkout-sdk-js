@@ -98,6 +98,7 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         const commonPaymentData = {
             // eslint-disable-next-line @typescript-eslint/naming-convention
             browser_info: getBrowserInfo(),
+            shouldSaveInstrument,
             shouldSetAsDefaultInstrument,
         };
 
@@ -137,11 +138,10 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         return {
             methodId,
             paymentData: {
+                ...commonPaymentData,
                 formattedPayload: {
-                    ...commonPaymentData,
                     // eslint-disable-next-line @typescript-eslint/naming-convention
                     credit_card_token: creditCardToken,
-                    shouldSaveInstrument,
                 },
             },
         };
