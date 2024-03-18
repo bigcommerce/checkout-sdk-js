@@ -4,4 +4,6 @@ export default interface InitializeOffsitePaymentConfig {
     instrumentId?: string;
     shouldSaveInstrument?: boolean;
     shouldSetAsDefaultInstrument?: boolean;
+    target?: string;
+    promise?: Promise<undefined>;
 }

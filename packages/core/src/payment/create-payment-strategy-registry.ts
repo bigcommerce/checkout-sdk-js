@@ -53,7 +53,6 @@ import {
     createAmazonPayV2PaymentProcessor,
 } from './strategies/amazon-pay-v2';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
-import { BlueSnapV2PaymentStrategy } from './strategies/bluesnapv2';
 import { BNZPaymentStrategy } from './strategies/bnz';
 import {
     BraintreeCreditCardPaymentStrategy,
@@ -286,11 +285,6 @@ export default function createPaymentStrategyRegistry(
                     new CardinalClient(new CardinalScriptLoader(scriptLoader)),
                 ),
             ),
-    );
-
-    registry.register(
-        PaymentStrategyType.BLUESNAPV2,
-        () => new BlueSnapV2PaymentStrategy(store, orderActionCreator, paymentActionCreator),
     );
 
     registry.register(
