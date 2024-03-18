@@ -404,27 +404,32 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     private async handlePayPalStoredInstrumentChange(
         methodId: string,
     ): Promise<CardInstrument | undefined> {
-        if (this.isFastlaneEnabled) {
-            const paypalFastlaneSdk = this.paypalCommerceFastlaneUtils.getPayPalFastlaneOrThrow();
-            const { selectionChanged, selectedCard } =
-                await paypalFastlaneSdk.profile.showCardSelector();
+        const paypalAxoSdk = this.isFastlaneEnabled
+            ? this.paypalCommerceFastlaneUtils.getPayPalFastlaneOrThrow()
+            : this.paypalCommerceFastlaneUtils.getPayPalConnectOrThrow();
 
-            return selectionChanged
-                ? this.paypalCommerceFastlaneUtils.mapPayPalToBcInstrument(
-                      methodId,
-                      selectedCard,
-                  )[0]
-                : undefined;
+        const { selectionChanged, selectedCard } = await paypalAxoSdk.profile.showCardSelector();
+
+        if (selectionChanged) {
+            const state = this.paymentIntegrationService.getState();
+            const paymentProviderCustomer = state.getPaymentProviderCustomer();
+            const paypalFastlaneCustomer = isPayPalFastlaneCustomer(paymentProviderCustomer)
+                ? paymentProviderCustomer
+                : {};
+
+            const selectedInstrument = this.paypalCommerceFastlaneUtils.mapPayPalToBcInstrument(
+                methodId,
+                selectedCard,
+            )[0];
+
+            await this.paymentIntegrationService.updatePaymentProviderCustomer({
+                ...paypalFastlaneCustomer,
+                instruments: [selectedInstrument],
+            });
+
+            return selectedInstrument;
         }
 
-        const paypalAxoSdk = this.paypalCommerceFastlaneUtils.getPayPalConnectOrThrow();
-        const cardSelectorResponse = await paypalAxoSdk.profile.showCardSelector();
-
-        return cardSelectorResponse.selectionChanged
-            ? this.paypalCommerceFastlaneUtils.mapPayPalToBcInstrument(
-                  methodId,
-                  cardSelectorResponse.selectedCard,
-              )[0]
-            : undefined;
+        return undefined;
     }
 }
