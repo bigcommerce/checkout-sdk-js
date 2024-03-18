@@ -1,8 +1,10 @@
 import {
     BraintreeConnectAddress,
     BraintreeConnectCardComponent,
-    BraintreeConnectCardComponentOptions,
     BraintreeFastlaneAuthenticationState,
+    BraintreeFastlaneCardComponent,
+    BraintreeFastlaneCardComponentOptions,
+    BraintreeInitializationData,
     isBraintreeAcceleratedCheckoutCustomer,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -17,6 +19,7 @@ import {
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
+    PaymentMethod,
     PaymentMethodClientUnavailableError,
     PaymentRequestOptions,
     PaymentStrategy,
@@ -24,15 +27,18 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
-import { WithBraintreeAcceleratedCheckoutPaymentInitializeOptions } from './braintree-accelerated-checkout-payment-initialize-options';
-import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
+import { WithBraintreeFastlanePaymentInitializeOptions } from './braintree-fastlane-payment-initialize-options';
+import BraintreeFastlaneUtils from './braintree-fastlane-utils';
+import isBraintreeConnectCardComponent from './is-braintree-connect-card-component';
+import isBraintreeFastlaneCardComponent from './is-braintree-fastlane-card-component';
 
-export default class BraintreeAcceleratedCheckoutPaymentStrategy implements PaymentStrategy {
-    private braintreeConnectCardComponent?: BraintreeConnectCardComponent;
+export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy {
+    private braintreeCardComponent?: BraintreeFastlaneCardComponent | BraintreeConnectCardComponent;
+    private isFastlaneEnabled?: boolean;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private braintreeAcceleratedCheckoutUtils: BraintreeAcceleratedCheckoutUtils,
+        private braintreeFastlaneUtils: BraintreeFastlaneUtils,
         private browserStorage: BrowserStorage,
     ) {}
 
@@ -42,10 +48,9 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
      *
      * */
     async initialize(
-        options: PaymentInitializeOptions &
-            WithBraintreeAcceleratedCheckoutPaymentInitializeOptions,
+        options: PaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions,
     ): Promise<void> {
-        const { methodId, braintreeacceleratedcheckout } = options;
+        const { methodId, braintreefastlane } = options;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -53,36 +58,38 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
             );
         }
 
-        if (!braintreeacceleratedcheckout) {
+        if (!braintreefastlane) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.braintreeacceleratedcheckout" argument is not provided.',
+                'Unable to initialize payment because "options.braintreefastlane" argument is not provided.',
             );
         }
 
-        if (
-            !braintreeacceleratedcheckout.onInit ||
-            typeof braintreeacceleratedcheckout.onInit !== 'function'
-        ) {
+        if (!braintreefastlane.onInit || typeof braintreefastlane.onInit !== 'function') {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.braintreeacceleratedcheckout.onInit" argument is not provided or it is not a function.',
+                'Unable to initialize payment because "options.braintreefastlane.onInit" argument is not provided or it is not a function.',
             );
         }
 
-        await this.paymentIntegrationService.loadPaymentMethod(methodId);
-        await this.braintreeAcceleratedCheckoutUtils.initializeBraintreeConnectOrThrow(
+        const paymentMethod = await this.getValidPaymentMethodOrThrow(methodId);
+
+        this.isFastlaneEnabled = !!paymentMethod?.initializationData?.isFastlaneEnabled;
+
+        await this.braintreeFastlaneUtils.initializeBraintreeAcceleratedCheckoutOrThrow(
             methodId,
-            braintreeacceleratedcheckout.styles,
+            braintreefastlane.styles,
         );
 
-        if (this.shouldRunAuthenticationFlow()) {
-            await this.braintreeAcceleratedCheckoutUtils.runPayPalConnectAuthenticationFlowOrThrow();
+        if (this.shouldRunAuthenticationFlow() && !this.isFastlaneEnabled) {
+            await this.braintreeFastlaneUtils.runPayPalConnectAuthenticationFlowOrThrow();
         }
 
-        this.initializeConnectCardComponent();
+        if (this.shouldRunAuthenticationFlow() && this.isFastlaneEnabled) {
+            await this.braintreeFastlaneUtils.runPayPalFastlaneAuthenticationFlowOrThrow();
+        }
 
-        braintreeacceleratedcheckout.onInit((container) =>
-            this.renderBraintreeAXOComponent(container),
-        );
+        this.initializeCardComponent();
+
+        braintreefastlane.onInit((container) => this.renderBraintreeAXOComponent(container));
     }
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -110,7 +117,7 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
     }
 
     async deinitialize(): Promise<void> {
-        this.braintreeConnectCardComponent = undefined;
+        this.braintreeCardComponent = undefined;
 
         return Promise.resolve();
     }
@@ -120,11 +127,12 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
      * Braintree AXO Component rendering method
      *
      */
-    private initializeConnectCardComponent() {
+    private initializeCardComponent() {
         const state = this.paymentIntegrationService.getState();
         const { phone } = state.getBillingAddressOrThrow();
 
-        const cardComponentOptions: BraintreeConnectCardComponentOptions = {
+        const cardComponentOptions: BraintreeFastlaneCardComponentOptions = {
+            styles: {},
             fields: {
                 ...(phone && {
                     phoneNumber: {
@@ -134,14 +142,21 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
             },
         };
 
-        const paypalConnectCreditCardComponent =
-            this.braintreeAcceleratedCheckoutUtils.getBraintreeConnectComponentOrThrow();
+        let paypalCreditCardComponent;
 
-        this.braintreeConnectCardComponent = paypalConnectCreditCardComponent(cardComponentOptions);
+        if (this.isFastlaneEnabled) {
+            paypalCreditCardComponent =
+                this.braintreeFastlaneUtils.getBraintreeFastlaneComponentOrThrow();
+        } else {
+            paypalCreditCardComponent =
+                this.braintreeFastlaneUtils.getBraintreeConnectComponentOrThrow();
+        }
+
+        this.braintreeCardComponent = paypalCreditCardComponent(cardComponentOptions);
     }
 
     private renderBraintreeAXOComponent(container?: string) {
-        const braintreeConnectCardComponent = this.getBraintreeCardComponentOrThrow();
+        const braintreeCardComponent = this.getBraintreeCardComponentOrThrow();
 
         if (!container) {
             throw new InvalidArgumentError(
@@ -149,7 +164,7 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
             );
         }
 
-        braintreeConnectCardComponent.render(container);
+        braintreeCardComponent.render(container);
     }
 
     /**
@@ -161,19 +176,27 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
         methodId: string,
         paymentData: VaultedInstrument,
     ): Promise<Payment> {
-        const deviceSessionId = await this.braintreeAcceleratedCheckoutUtils.getDeviceSessionId();
+        const deviceSessionId = await this.braintreeFastlaneUtils.getDeviceSessionId();
 
         const { instrumentId } = paymentData;
 
-        if (this.isPayPalConnectInstrument(instrumentId)) {
+        if (this.isPayPalFastlaneInstrument(instrumentId)) {
             return {
                 methodId,
                 paymentData: {
                     deviceSessionId,
                     formattedPayload: {
-                        paypal_connect_token: {
-                            token: instrumentId,
-                        },
+                        ...(this.isFastlaneEnabled
+                            ? {
+                                  paypal_fastlane_token: {
+                                      token: instrumentId,
+                                  },
+                              }
+                            : {
+                                  paypal_connect_token: {
+                                      token: instrumentId,
+                                  },
+                              }),
                     },
                 },
             };
@@ -198,20 +221,35 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
         // Info: shipping can be unavailable for carts with digital items
         const shippingAddress = state.getShippingAddress();
 
-        const deviceSessionId = await this.braintreeAcceleratedCheckoutUtils.getDeviceSessionId();
+        const deviceSessionId = await this.braintreeFastlaneUtils.getDeviceSessionId();
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
 
-        const braintreeConnectCreditCardComponent = this.getBraintreeCardComponentOrThrow();
+        const braintreeCreditCardComponent = this.getBraintreeCardComponentOrThrow();
 
         const paypalBillingAddress = this.mapToPayPalAddress(billingAddress);
         const paypalShippingAddress = shippingAddress && this.mapToPayPalAddress(shippingAddress);
 
-        const { nonce } = await braintreeConnectCreditCardComponent.tokenize({
-            billingAddress: paypalBillingAddress,
-            ...(paypalShippingAddress && { shippingAddress: paypalShippingAddress }),
-        });
+        let token;
+
+        if (
+            this.isFastlaneEnabled &&
+            isBraintreeFastlaneCardComponent(braintreeCreditCardComponent)
+        ) {
+            const { id } = await braintreeCreditCardComponent.getPaymentToken({
+                billingAddress: paypalBillingAddress,
+            });
+
+            token = id;
+        } else if (isBraintreeConnectCardComponent(braintreeCreditCardComponent)) {
+            const { nonce } = await braintreeCreditCardComponent.tokenize({
+                billingAddress: paypalBillingAddress,
+                ...(paypalShippingAddress && { shippingAddress: paypalShippingAddress }),
+            });
+
+            token = nonce;
+        }
 
         return {
             methodId,
@@ -220,7 +258,7 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
                 deviceSessionId,
                 shouldSaveInstrument,
                 shouldSetAsDefaultInstrument,
-                nonce,
+                nonce: token,
             },
         };
     }
@@ -250,7 +288,7 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
             ? paymentProviderCustomer
             : {};
 
-        const paypalConnectSessionId = this.browserStorage.getItem('sessionId');
+        const paypalFastlaneSessionId = this.browserStorage.getItem('sessionId');
 
         if (
             braintreePaymentProviderCustomer?.authenticationState ===
@@ -261,19 +299,19 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
 
         return (
             !braintreePaymentProviderCustomer?.authenticationState &&
-            paypalConnectSessionId === cart.id
+            paypalFastlaneSessionId === cart.id
         );
     }
 
     private getBraintreeCardComponentOrThrow() {
-        if (!this.braintreeConnectCardComponent) {
+        if (!this.braintreeCardComponent) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this.braintreeConnectCardComponent;
+        return this.braintreeCardComponent;
     }
 
-    private isPayPalConnectInstrument(instrumentId: string): boolean {
+    private isPayPalFastlaneInstrument(instrumentId: string): boolean {
         const state = this.paymentIntegrationService.getState();
         const paymentProviderCustomer = state.getPaymentProviderCustomerOrThrow();
         const braintreePaymentProviderCustomer = isBraintreeAcceleratedCheckoutCustomer(
@@ -287,5 +325,23 @@ export default class BraintreeAcceleratedCheckoutPaymentStrategy implements Paym
         return !!paypalConnectInstruments.find(
             (instrument) => instrument.bigpayToken === instrumentId,
         );
+    }
+
+    private async getValidPaymentMethodOrThrow(
+        methodId: string,
+    ): Promise<PaymentMethod<BraintreeInitializationData>> {
+        let validPaymentMethodId = methodId;
+
+        try {
+            await this.paymentIntegrationService.loadPaymentMethod(validPaymentMethodId);
+        } catch {
+            validPaymentMethodId =
+                methodId === 'braintree' ? 'braintreeacceleratedcheckout' : 'braintree';
+            await this.paymentIntegrationService.loadPaymentMethod(validPaymentMethodId);
+        }
+
+        return this.paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow<BraintreeInitializationData>(validPaymentMethodId);
     }
 }

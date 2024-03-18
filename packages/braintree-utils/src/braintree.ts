@@ -1035,6 +1035,7 @@ export interface BraintreeFastlaneVaultedInstrument {
 }
 
 export interface BraintreeFastlaneCardComponentOptions {
+    styles: BraintreeFastlaneStylesOption;
     fields: BraintreeFastlaneCardComponentFields;
 }
 
@@ -1045,13 +1046,6 @@ export interface BraintreeFastlaneCardComponentFields {
 export interface BraintreeFastlaneCardComponentField {
     placeholder?: string;
     prefill?: string;
-}
-
-export interface BraintreeFastlaneTokenizeResult {
-    nonce: string;
-    details: BraintreeFastlaneTokenizeDetails;
-    description: string;
-    type: string;
 }
 
 export interface BraintreeFastlaneTokenizeDetails {
@@ -1110,7 +1104,9 @@ export interface BraintreeFastlaneOrderPlacedEventOptions
 
 export interface BraintreeFastlaneCardComponent {
     (options: BraintreeFastlaneCardComponentOptions): BraintreeFastlaneCardComponent;
-    tokenize(options: BraintreeFastlaneTokenizeOptions): Promise<BraintreeFastlaneTokenizeResult>;
+    getPaymentToken(
+        options: BraintreeFastlaneTokenizeOptions,
+    ): Promise<BraintreeFastlaneVaultedInstrument>;
     render(element: string): void;
 }
 

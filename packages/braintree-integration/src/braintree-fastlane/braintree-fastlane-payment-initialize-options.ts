@@ -1,11 +1,11 @@
-import { BraintreeConnectStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 /**
- * A set of options that are required to initialize the Braintree Accelerated Checkout payment
+ * A set of options that are required to initialize the Braintree Fastlane payment
  * method for presenting on the page.
  *
  *
- * Also, Braintree requires specific options to initialize Braintree Accelerated Checkout Credit Card Component
+ * Also, Braintree requires specific options to initialize Braintree Fastlane Credit Card Component
  * ```html
  * <!-- This is where the Braintree Credit Card Component will be inserted -->
  * <div id="container"></div>
@@ -14,7 +14,7 @@ import { BraintreeConnectStylesOption } from '@bigcommerce/checkout-sdk/braintre
  * ```js
  * service.initializePayment({
  *     methodId: 'braintreeacceleratedcheckout',
- *     braintreeacceleratedcheckout: {
+ *     braintreefastlane: {
  *         onInit: (renderPayPalComponentMethod) => renderPayPalComponentMethod('#container-id'),
  *         styles: {
  *              root: {
@@ -47,7 +47,7 @@ import { BraintreeConnectStylesOption } from '@bigcommerce/checkout-sdk/braintre
  * });
  * ```
  */
-export default interface BraintreeAcceleratedCheckoutPaymentInitializeOptions {
+export default interface BraintreeFastlanePaymentInitializeOptions {
     /**
      * Is a callback that takes the CSS selector of a container
      * where the PayPal Connect form should be inserted into.
@@ -61,9 +61,9 @@ export default interface BraintreeAcceleratedCheckoutPaymentInitializeOptions {
      * because they will be provided to PayPal library only for the first strategy initialization
      * no matter what strategy was initialised first
      */
-    styles?: BraintreeConnectStylesOption;
+    styles?: BraintreeFastlaneStylesOption;
 }
 
-export interface WithBraintreeAcceleratedCheckoutPaymentInitializeOptions {
-    braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutPaymentInitializeOptions;
+export interface WithBraintreeFastlanePaymentInitializeOptions {
+    braintreefastlane?: BraintreeFastlanePaymentInitializeOptions;
 }
