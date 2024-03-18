@@ -101,7 +101,6 @@ import {
     GooglePayWorldpayAccessInitializer,
 } from './strategies/googlepay';
 import { HummPaymentStrategy } from './strategies/humm';
-import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { MonerisPaymentStrategy } from './strategies/moneris';
 import { OpyPaymentStrategy, OpyScriptLoader } from './strategies/opy';
@@ -555,18 +554,6 @@ export default function createPaymentStrategyRegistry(
                 storeCreditActionCreator,
                 new DigitalRiverScriptLoader(scriptLoader, getStylesheetLoader()),
                 billingAddressActionCreator,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.KLARNA,
-        () =>
-            new KlarnaPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentMethodActionCreator,
-                remoteCheckoutActionCreator,
-                new KlarnaScriptLoader(scriptLoader),
             ),
     );
 

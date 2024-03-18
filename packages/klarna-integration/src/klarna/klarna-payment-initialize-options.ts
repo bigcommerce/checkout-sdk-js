@@ -1,10 +1,10 @@
-import { KlarnaLoadResponse } from './klarna-payments';
+import { KlarnaLoadResponse } from './klarna-credit';
 
 /**
- * A set of options that are required to initialize the KlarnaV2 payment method.
+ * A set of options that are required to initialize the Klarna payment method.
  *
- * When KlarnaV2 is initialized, a list of payment options will be displayed for the customer to choose from.
- * Each one with its own widget.
+ * When Klarna is initialized, a widget will be inserted into the DOM. The
+ * widget has a list of payment options for the customer to choose from.
  *
  * ```html
  * <!-- This is where the widget will be inserted -->
@@ -13,8 +13,8 @@ import { KlarnaLoadResponse } from './klarna-payments';
  *
  * ```js
  * service.initializePayment({
- *     methodId: 'klarnav2',
- *     klarnav2: {
+ *     methodId: 'klarna',
+ *     klarna: {
  *         container: 'container'
  *     },
  * });
@@ -34,7 +34,7 @@ import { KlarnaLoadResponse } from './klarna-payments';
  * });
  * ```
  */
-export default interface KlarnaV2PaymentInitializeOptions {
+export default interface KlarnaPaymentInitializeOptions {
     /**
      * The ID of a container which the payment widget should insert into.
      */
@@ -48,4 +48,8 @@ export default interface KlarnaV2PaymentInitializeOptions {
      * or not the widget is loaded successfully.
      */
     onLoad?(response: KlarnaLoadResponse): void;
+}
+
+export interface WithKlarnaPaymentInitializeOptions {
+    klarna?: KlarnaPaymentInitializeOptions;
 }
