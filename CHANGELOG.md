@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.562.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.562.1...v1.562.2) (2024-03-18)
+
+
+### Bug Fixes
+
+* **payment:** PI-1138 TD Bank vaulting options ([7247b71](https://github.com/bigcommerce/checkout-sdk-js/commit/7247b71606eff1e2dabeff0507f9bc7d14972249))
+
 ### [1.562.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.562.0...v1.562.1) (2024-03-18)
 
 
