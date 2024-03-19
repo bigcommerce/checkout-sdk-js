@@ -262,6 +262,9 @@ export interface PayPalCommerceConnectCardComponentMethods {
     tokenize(
         options: PayPalCommerceConnectTokenizeOptions,
     ): Promise<PayPalCommerceConnectTokenizeResult>;
+    getPaymentToken(
+        options: PayPalFastlaneGetPaymentTokenOptions,
+    ): Promise<PayPalFastlaneProfileCard>; // TODO: this method does not support by PayPal Connect
     render(element: string): void;
 }
 
@@ -477,7 +480,10 @@ export interface PayPalFastlaneCardSelectorResponse {
 }
 
 export interface PayPalFastlaneCardComponentMethods {
-    tokenize(options: PayPalFastlaneTokenizeOptions): Promise<PayPalFastlaneTokenizeResult>;
+    tokenize(options: PayPalFastlaneTokenizeOptions): Promise<PayPalFastlaneTokenizeResult>; // TODO: remove with PayPal Connect implementation
+    getPaymentToken(
+        options: PayPalFastlaneGetPaymentTokenOptions,
+    ): Promise<PayPalFastlaneProfileCard>;
     render(element: string): void;
 }
 
@@ -514,6 +520,10 @@ export interface PayPalFastlaneTokenizeOptions {
     name?: PayPalFastlaneProfileName;
     billingAddress?: PayPalFastlaneAddress;
     shippingAddress?: PayPalFastlaneAddress;
+}
+
+export interface PayPalFastlaneGetPaymentTokenOptions {
+    billingAddress?: PayPalFastlaneAddress;
 }
 
 export interface PayPalFastlaneEvents {

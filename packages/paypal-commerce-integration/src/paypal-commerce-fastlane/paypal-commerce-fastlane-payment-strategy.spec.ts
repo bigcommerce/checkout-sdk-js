@@ -549,7 +549,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                         formattedPayload: {
                             paypal_fastlane_token: {
                                 order_id: paypalOrderId,
-                                token: 'paypal_fastlane_tokenize_nonce',
+                                token: 'paypal_fastlane_instrument_id_nonce',
                             },
                         },
                     },

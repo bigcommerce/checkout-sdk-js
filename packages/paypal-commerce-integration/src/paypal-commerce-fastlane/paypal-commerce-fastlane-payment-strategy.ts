@@ -350,7 +350,29 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
 
-        const { tokenize } = this.getPayPalCardComponentMethodsOrThrow();
+        const { getPaymentToken, tokenize } = this.getPayPalCardComponentMethodsOrThrow();
+
+        if (this.isFastlaneEnabled) {
+            const { id } = await getPaymentToken({
+                billingAddress:
+                    this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(billingAddress),
+            });
+
+            return {
+                methodId,
+                paymentData: {
+                    ...paymentData,
+                    shouldSaveInstrument,
+                    shouldSetAsDefaultInstrument,
+                    formattedPayload: {
+                        paypal_fastlane_token: {
+                            order_id: paypalOrderId,
+                            token: id,
+                        },
+                    },
+                },
+            };
+        }
 
         const { nonce } = await tokenize({
             name: {
@@ -362,23 +384,6 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                     this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(shippingAddress),
             }),
         });
-
-        if (this.isFastlaneEnabled) {
-            return {
-                methodId,
-                paymentData: {
-                    ...paymentData,
-                    shouldSaveInstrument,
-                    shouldSetAsDefaultInstrument,
-                    formattedPayload: {
-                        paypal_fastlane_token: {
-                            order_id: paypalOrderId,
-                            token: nonce,
-                        },
-                    },
-                },
-            };
-        }
 
         return {
             methodId,
