@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.562.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.562.2...v1.562.3) (2024-03-19)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3774 update paypal card selection implementation for PayPal Commerce Fastlane component ([#2416](https://github.com/bigcommerce/checkout-sdk-js/issues/2416)) ([9192531](https://github.com/bigcommerce/checkout-sdk-js/commit/9192531ee870fca33c337c9aa2391eb7331955fb))
+
 ### [1.562.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.562.1...v1.562.2) (2024-03-18)
 
 
