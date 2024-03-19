@@ -64,6 +64,36 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
         },
     };
 
+    const bcAddressMock = {
+        address1: 'addressLine1',
+        address2: 'addressLine2',
+        city: 'addressCity',
+        company: 'BigCommerce',
+        countryCode: 'US',
+        customFields: [],
+        firstName: 'John',
+        lastName: 'Doe',
+        phone: '333333333333',
+        postalCode: '03004',
+        stateOrProvince: 'addressState',
+        stateOrProvinceCode: 'addressState',
+    };
+
+    const bcCardMock = {
+        bigpayToken: 'nonce/token',
+        brand: 'Visa',
+        defaultInstrument: false,
+        expiryMonth: '09',
+        expiryYear: '2031',
+        iin: '',
+        last4: '2233',
+        method: 'paypalcommerceacceleratedcheckout',
+        provider: 'paypalcommerceacceleratedcheckout',
+        trustedShippingAddress: false,
+        type: 'card',
+        untrustedShippingCardVerificationMode: 'pan',
+    };
+
     beforeEach(async () => {
         paypalAxoSdk = getPayPalAxoSdk();
         paypalConnect = await paypalAxoSdk.Connect();
@@ -86,6 +116,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
         jest.spyOn(paymentIntegrationService, 'submitOrder');
         jest.spyOn(paymentIntegrationService, 'submitPayment');
+        jest.spyOn(paymentIntegrationService, 'updatePaymentProviderCustomer');
         jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(cart);
         jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(customer);
         jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
@@ -636,6 +667,15 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
     describe('#onChange option callback', () => {
         describe('test onChange callback with PayPal Connect', () => {
             it('returns selected card instrument', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentProviderCustomer',
+                ).mockReturnValue({
+                    authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
+                    addresses: [bcAddressMock],
+                    instruments: [bcCardMock],
+                });
+
                 jest.spyOn(paypalConnect.profile, 'showCardSelector').mockImplementation(() => ({
                     selectionChanged: true,
                     selectedCard: {
@@ -680,7 +720,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
                 const result = await onChangeCallback();
 
-                expect(result).toEqual({
+                const paypalToBcInstrument = {
                     bigpayToken: 'nonce/token',
                     brand: 'Visa',
                     defaultInstrument: false,
@@ -693,7 +733,17 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     trustedShippingAddress: false,
                     type: 'card',
                     untrustedShippingCardVerificationMode: 'pan',
+                };
+
+                expect(
+                    paymentIntegrationService.updatePaymentProviderCustomer,
+                ).toHaveBeenCalledWith({
+                    authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
+                    addresses: [bcAddressMock],
+                    instruments: [paypalToBcInstrument],
                 });
+
+                expect(result).toEqual(paypalToBcInstrument);
             });
 
             it('returns undefined if the customer selects the same instrument or closes a popup window', async () => {
@@ -727,6 +777,15 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
         describe('test onChange callback with PayPal Fastlane', () => {
             it('returns selected card instrument', async () => {
                 paymentMethod.initializationData.isFastlaneEnabled = true;
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentProviderCustomer',
+                ).mockReturnValue({
+                    authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
+                    addresses: [bcAddressMock],
+                    instruments: [bcCardMock],
+                });
 
                 jest.spyOn(paypalFastlane.profile, 'showCardSelector').mockImplementation(() => ({
                     selectionChanged: true,
@@ -772,7 +831,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
                 const result = await onChangeCallback();
 
-                expect(result).toEqual({
+                const paypalToBcInstrument = {
                     bigpayToken: 'nonce/token',
                     brand: 'Visa',
                     defaultInstrument: false,
@@ -785,7 +844,17 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     trustedShippingAddress: false,
                     type: 'card',
                     untrustedShippingCardVerificationMode: 'pan',
+                };
+
+                expect(
+                    paymentIntegrationService.updatePaymentProviderCustomer,
+                ).toHaveBeenCalledWith({
+                    authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
+                    addresses: [bcAddressMock],
+                    instruments: [paypalToBcInstrument],
                 });
+
+                expect(result).toEqual(paypalToBcInstrument);
             });
 
             it('returns undefined if the customer selects the same instrument or closes a popup window', async () => {
