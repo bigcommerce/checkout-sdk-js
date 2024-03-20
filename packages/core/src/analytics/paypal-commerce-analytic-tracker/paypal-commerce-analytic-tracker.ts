@@ -14,7 +14,7 @@ import { CheckoutService } from '../../checkout';
 import PayPalCommerceAnalyticTrackerService from './paypal-commerce-analytic-tracker-service';
 
 export default class PayPalCommerceAnalyticTracker implements PayPalCommerceAnalyticTrackerService {
-    private _selectedPaymentMethodId = 'paypalcommerceacceleratedcheckout';
+    private _selectedPaymentMethodId = '';
 
     constructor(private _checkoutService: CheckoutService) {}
 

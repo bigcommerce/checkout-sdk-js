@@ -14,7 +14,7 @@ import { CheckoutService } from '../../checkout';
 import BraintreeAnalyticTrackerService from './braintree-analytic-tracker-service';
 
 export default class BraintreeAnalyticTracker implements BraintreeAnalyticTrackerService {
-    private _selectedPaymentMethodId = 'braintreeacceleratedcheckout';
+    private _selectedPaymentMethodId = '';
 
     constructor(private checkoutService: CheckoutService) {}
 
