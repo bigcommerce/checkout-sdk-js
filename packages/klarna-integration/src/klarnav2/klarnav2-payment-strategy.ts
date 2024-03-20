@@ -147,7 +147,7 @@ export default class KlarnaV2PaymentStrategy {
         }
 
         // #1 - old request
-        const state = this.paymentIntegrationService.getState();
+        // const state = this.paymentIntegrationService.getState();
         // const cartId = state.getCartOrThrow().id;
         // const params = { params: cartId };
 
@@ -156,7 +156,9 @@ export default class KlarnaV2PaymentStrategy {
         // });
 
         // #2 - new with params
-        const { method } = state.getPaymentMethodOrThrow(methodId);
+        const { method } = this.paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow(methodId);
 
         await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
             ...options,
@@ -175,7 +177,9 @@ export default class KlarnaV2PaymentStrategy {
 
         return new Promise<KlarnaLoadResponse>((resolve) => {
             const state = this.paymentIntegrationService.getState();
-            const paymentMethod = state.getPaymentMethodOrThrow(methodId);
+            const paymentMethod = state.getPaymentMethodOrThrow(methodId, gatewayId);
+
+            console.log('*** paymentMethod', paymentMethod);
 
             if (!this.klarnaPayments || !paymentMethod.clientToken) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
