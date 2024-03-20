@@ -12,9 +12,3 @@ export interface PayPalConnectCustomer {
 export interface StripeAcceleratedCheckoutCustomer {
     stripeLinkAuthenticationState?: boolean;
 }
-
-export interface BraintreeFastlaneCustomer {
-    authenticationState?: string;
-    addresses?: CustomerAddress[];
-    instruments?: CardInstrument[];
-}

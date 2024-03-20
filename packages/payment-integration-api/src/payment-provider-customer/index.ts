@@ -1,5 +1,4 @@
 export {
-    BraintreeFastlaneCustomer,
     PaymentProviderCustomer,
     PayPalConnectCustomer,
     StripeAcceleratedCheckoutCustomer,

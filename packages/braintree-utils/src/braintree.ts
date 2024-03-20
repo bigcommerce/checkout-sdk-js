@@ -899,7 +899,7 @@ export interface BraintreeFastlane {
 }
 
 export interface BraintreeFastlaneProfile {
-    showCardSelector(): Promise<BraintreeFastlaneCardSelectorResponse>
+    showCardSelector(): Promise<BraintreeFastlaneCardSelectorResponse>;
 }
 
 export interface BraintreeFastlaneCardSelectorResponse {

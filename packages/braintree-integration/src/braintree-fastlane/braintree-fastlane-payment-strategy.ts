@@ -9,6 +9,7 @@ import {
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     Address,
+    CardInstrument,
     InvalidArgumentError,
     isHostedInstrumentLike,
     isVaultedInstrument,
@@ -25,14 +26,13 @@ import {
     PaymentStrategy,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isPayPalFastlaneCustomer } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { WithBraintreeFastlanePaymentInitializeOptions } from './braintree-fastlane-payment-initialize-options';
 import BraintreeFastlaneUtils from './braintree-fastlane-utils';
 import isBraintreeConnectCardComponent from './is-braintree-connect-card-component';
 import isBraintreeFastlaneCardComponent from './is-braintree-fastlane-card-component';
-import { CardInstrument } from '@bigcommerce/checkout-sdk/core';
-import isBraintreeFastlaneCustomer from './is-braintree-fastlane-customer';
 
 export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy {
     private braintreeCardComponent?: BraintreeFastlaneCardComponent | BraintreeConnectCardComponent;
@@ -76,7 +76,10 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
 
         this.isFastlaneEnabled = !!paymentMethod?.initializationData?.isFastlaneEnabled;
 
-        if (this.isFastlaneEnabled && !braintreefastlane.onChange || typeof braintreefastlane.onChange !== 'function') {
+        if (
+            this.isFastlaneEnabled &&
+            (!braintreefastlane.onChange || typeof braintreefastlane.onChange !== 'function')
+        ) {
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.braintreefastlane.onChange" argument is not provided or it is not a function.',
             );
@@ -98,7 +101,14 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         this.initializeCardComponent();
 
         braintreefastlane.onInit((container) => this.renderBraintreeAXOComponent(container));
-        braintreefastlane?.onChange(() => this.handleBraintreeStoredInstrumentChange(methodId));
+
+        if (
+            this.isFastlaneEnabled &&
+            braintreefastlane.onChange &&
+            typeof braintreefastlane.onChange === 'function'
+        ) {
+            braintreefastlane.onChange(() => this.handleBraintreeStoredInstrumentChange(methodId));
+        }
     }
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -362,30 +372,30 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
     private async handleBraintreeStoredInstrumentChange(
         methodId: string,
     ): Promise<CardInstrument | undefined> {
-        const paypalAxoSdk = this.braintreeFastlaneUtils.getBraintreeFastlaneOrThrow()
+        const paypalAxoSdk = this.braintreeFastlaneUtils.getBraintreeFastlaneOrThrow();
 
         const { selectionChanged, selectedCard } = await paypalAxoSdk.profile.showCardSelector();
 
         if (selectionChanged) {
             const state = this.paymentIntegrationService.getState();
             const paymentProviderCustomer = state.getPaymentProviderCustomer();
-            const braintreeFastlaneCustomer = isBraintreeFastlaneCustomer(paymentProviderCustomer)
+            const braintreeFastlaneCustomer = isPayPalFastlaneCustomer(paymentProviderCustomer)
                 ? paymentProviderCustomer
                 : {};
 
-
-            // @ts-ignore // TODO: FIX
             const selectedInstrument = this.braintreeFastlaneUtils.mapPayPalToBcInstrument(
                 methodId,
                 [selectedCard],
-            )[0];
+            );
 
-            await this.paymentIntegrationService.updatePaymentProviderCustomer({
-                ...braintreeFastlaneCustomer,
-                instruments: [selectedInstrument],
-            });
+            if (selectedInstrument && selectedInstrument.length > 0) {
+                await this.paymentIntegrationService.updatePaymentProviderCustomer({
+                    ...braintreeFastlaneCustomer,
+                    instruments: [...selectedInstrument],
+                });
 
-            return selectedInstrument;
+                return selectedInstrument[0];
+            }
         }
 
         return undefined;

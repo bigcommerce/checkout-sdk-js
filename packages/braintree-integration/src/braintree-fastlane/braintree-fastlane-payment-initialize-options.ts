@@ -1,5 +1,5 @@
 import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
-import { CardInstrument } from '@bigcommerce/checkout-sdk/core';
+import { CardInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
  * A set of options that are required to initialize the Braintree Fastlane payment
