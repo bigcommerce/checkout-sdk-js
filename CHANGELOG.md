@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.563.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.563.0...v1.563.1) (2024-03-20)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3838 removed hardcoded payment method id value in braintree and paypal commerce analytic trackers ([#2417](https://github.com/bigcommerce/checkout-sdk-js/issues/2417)) ([1060fb7](https://github.com/bigcommerce/checkout-sdk-js/commit/1060fb74985e61dda8fda0bb1baf00745a796c35))
+
 ## [1.563.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.562.3...v1.563.0) (2024-03-19)
 
 
