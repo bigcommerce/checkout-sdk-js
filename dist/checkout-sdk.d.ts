@@ -1583,69 +1583,6 @@ declare interface BoltPaymentInitializeOptions {
 }
 
 /**
- * A set of options that are required to initialize the Braintree Accelerated Checkout payment
- * method for presenting on the page.
- *
- *
- * Also, Braintree requires specific options to initialize Braintree Accelerated Checkout Credit Card Component
- * ```html
- * <!-- This is where the Braintree Credit Card Component will be inserted -->
- * <div id="container"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'braintreeacceleratedcheckout',
- *     braintreeacceleratedcheckout: {
- *         onInit: (renderPayPalComponentMethod) => renderPayPalComponentMethod('#container-id'),
- *         styles: {
- *              root: {
- *                  backgroundColorPrimary: 'transparent',
- *                  errorColor: '#C40B0B',
- *                  fontFamily: 'Montserrat, Helvetica, Arial, sans-serif',
- *              },
- *              input: {
- *                  borderRadius: '0.25rem',
- *                  borderColor: '#9E9E9E',
- *                  focusBorderColor: '#4496F6',
- *              },
- *              toggle: {
- *                  colorPrimary: '#0F005E',
- *                  colorSecondary: '#ffffff',
- *              },
- *              text: {
- *                  body: {
- *                      color: '#222222',
- *                      fontSize: '1rem',
- *                  },
- *                  caption: {
- *                      color: '#515151',
- *                      fontSize: '0.875rem',
- *                  },
- *              },
- *              branding: 'light',
- *         },
- *     },
- * });
- * ```
- */
-declare interface BraintreeAcceleratedCheckoutPaymentInitializeOptions {
-    /**
-     * Is a callback that takes the CSS selector of a container
-     * where the PayPal Connect form should be inserted into.
-     */
-    onInit?: (renderPayPalComponentMethod: (container: string) => void) => void;
-    /**
-     * Is a stylisation options for customizing PayPal Connect components
-     *
-     * Note: the styles for all Braintree Accelerated Checkout strategies should be the same,
-     * because they will be provided to PayPal library only for the first strategy initialization
-     * no matter what strategy was initialised first
-     */
-    styles?: BraintreeConnectStylesOption;
-}
-
-/**
  * A set of options that are required to initialize the shipping step of
  * checkout in order to support Braintree Accelerated Checkout.
  */
@@ -1728,6 +1665,69 @@ declare interface BraintreeFastlaneCustomerInitializeOptions {
      * Is a stylisation options for customizing PayPal Fastlane components
      *
      * Note: the styles for all Braintree Fastlane strategies should be the same,
+     * because they will be provided to PayPal library only for the first strategy initialization
+     * no matter what strategy was initialised first
+     */
+    styles?: BraintreeFastlaneStylesOption;
+}
+
+/**
+ * A set of options that are required to initialize the Braintree Fastlane payment
+ * method for presenting on the page.
+ *
+ *
+ * Also, Braintree requires specific options to initialize Braintree Fastlane Credit Card Component
+ * ```html
+ * <!-- This is where the Braintree Credit Card Component will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'braintreeacceleratedcheckout',
+ *     braintreefastlane: {
+ *         onInit: (renderPayPalComponentMethod) => renderPayPalComponentMethod('#container-id'),
+ *         styles: {
+ *              root: {
+ *                  backgroundColorPrimary: 'transparent',
+ *                  errorColor: '#C40B0B',
+ *                  fontFamily: 'Montserrat, Helvetica, Arial, sans-serif',
+ *              },
+ *              input: {
+ *                  borderRadius: '0.25rem',
+ *                  borderColor: '#9E9E9E',
+ *                  focusBorderColor: '#4496F6',
+ *              },
+ *              toggle: {
+ *                  colorPrimary: '#0F005E',
+ *                  colorSecondary: '#ffffff',
+ *              },
+ *              text: {
+ *                  body: {
+ *                      color: '#222222',
+ *                      fontSize: '1rem',
+ *                  },
+ *                  caption: {
+ *                      color: '#515151',
+ *                      fontSize: '0.875rem',
+ *                  },
+ *              },
+ *              branding: 'light',
+ *         },
+ *     },
+ * });
+ * ```
+ */
+declare interface BraintreeFastlanePaymentInitializeOptions {
+    /**
+     * Is a callback that takes the CSS selector of a container
+     * where the PayPal Connect form should be inserted into.
+     */
+    onInit?: (renderPayPalComponentMethod: (container: string) => void) => void;
+    /**
+     * Is a stylisation options for customizing PayPal Connect components
+     *
+     * Note: the styles for all Braintree Accelerated Checkout strategies should be the same,
      * because they will be provided to PayPal library only for the first strategy initialization
      * no matter what strategy was initialised first
      */
@@ -7892,7 +7892,7 @@ declare class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest;
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeAcceleratedCheckoutPaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -9298,10 +9298,6 @@ declare interface WithBoltPaymentInitializeOptions {
     bolt?: BoltPaymentInitializeOptions;
 }
 
-declare interface WithBraintreeAcceleratedCheckoutPaymentInitializeOptions {
-    braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutPaymentInitializeOptions;
-}
-
 declare interface WithBraintreeAchPaymentInitializeOptions {
     /**
      * The options that are required to initialize the Braintree ACH payment
@@ -9312,6 +9308,10 @@ declare interface WithBraintreeAchPaymentInitializeOptions {
 
 declare interface WithBraintreeFastlaneCustomerInitializeOptions {
     braintreeafastlane?: BraintreeFastlaneCustomerInitializeOptions;
+}
+
+declare interface WithBraintreeFastlanePaymentInitializeOptions {
+    braintreefastlane?: BraintreeFastlanePaymentInitializeOptions;
 }
 
 declare interface WithBraintreeLocalMethodsPaymentInitializeOptions {
