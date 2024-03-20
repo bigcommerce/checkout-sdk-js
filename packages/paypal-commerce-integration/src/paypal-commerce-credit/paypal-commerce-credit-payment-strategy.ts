@@ -10,6 +10,11 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    MessagingOptions,
+    PayPalCommerceSdk,
+    PayPalMessagesSdk,
+} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
@@ -34,6 +39,7 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
         private loadingIndicator: LoadingIndicator,
+        private paypalCommerceSdk: PayPalCommerceSdk,
     ) {}
 
     async initialize(
@@ -60,6 +66,17 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+
+        if (paypalOptions?.bannerContainerId) {
+            const paypalMessages = await this.paypalCommerceSdk.getPayPalMessages(
+                paymentMethod,
+                state.getCartOrThrow().currency.code,
+            );
+
+            this.renderMessages(paypalMessages, paypalOptions?.bannerContainerId);
+
+            return;
+        }
 
         // Info:
         // The PayPal button and fields should not be rendered when shopper was redirected to Checkout page
@@ -213,6 +230,30 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
             this.loadingIndicator.show(this.loadingIndicatorContainer);
         } else {
             this.loadingIndicator.hide();
+        }
+    }
+
+    /**
+     *
+     * Render Pay Later Messages
+     *
+     * */
+    private renderMessages(paypalMessages: PayPalMessagesSdk, bannerContainerId: string): void {
+        if (bannerContainerId && document.getElementById(bannerContainerId)) {
+            const cart = this.paymentIntegrationService.getState().getCartOrThrow();
+
+            const paypalMessagesOptions: MessagingOptions = {
+                amount: cart.cartAmount,
+                placement: 'payment',
+                style: {
+                    layout: 'text',
+                    logo: {
+                        type: 'inline',
+                    },
+                },
+            };
+
+            paypalMessages.Messages(paypalMessagesOptions).render(`#${bannerContainerId}`);
         }
     }
 }
