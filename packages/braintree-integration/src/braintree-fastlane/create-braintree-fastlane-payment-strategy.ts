@@ -11,32 +11,32 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
-import BraintreeAcceleratedCheckoutPaymentStrategy from './braintree-accelerated-checkout-payment-strategy';
-import BraintreeAcceleratedCheckoutUtils from './braintree-accelerated-checkout-utils';
+import BraintreeFastlanePaymentStrategy from './braintree-fastlane-payment-strategy';
+import BraintreeFastlaneUtils from './braintree-fastlane-utils';
 
-const createBraintreeAcceleratedCheckoutPaymentStrategy: PaymentStrategyFactory<
-    BraintreeAcceleratedCheckoutPaymentStrategy
+const createBraintreeFastlanePaymentStrategy: PaymentStrategyFactory<
+    BraintreeFastlanePaymentStrategy
 > = (paymentIntegrationService) => {
     const braintreeHostWindow: BraintreeHostWindow = window;
     const braintreeIntegrationService = new BraintreeIntegrationService(
         new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
         braintreeHostWindow,
     );
-    const browserStorage = new BrowserStorage('paypalConnect');
+    const browserStorage = new BrowserStorage('paypalFastlane');
 
-    const braintreeAcceleratedCheckoutUtils = new BraintreeAcceleratedCheckoutUtils(
+    const braintreeFastlaneUtils = new BraintreeFastlaneUtils(
         paymentIntegrationService,
         braintreeIntegrationService,
         browserStorage,
     );
 
-    return new BraintreeAcceleratedCheckoutPaymentStrategy(
+    return new BraintreeFastlanePaymentStrategy(
         paymentIntegrationService,
-        braintreeAcceleratedCheckoutUtils,
+        braintreeFastlaneUtils,
         browserStorage,
     );
 };
 
-export default toResolvableModule(createBraintreeAcceleratedCheckoutPaymentStrategy, [
+export default toResolvableModule(createBraintreeFastlanePaymentStrategy, [
     { id: 'braintreeacceleratedcheckout' },
 ]);
