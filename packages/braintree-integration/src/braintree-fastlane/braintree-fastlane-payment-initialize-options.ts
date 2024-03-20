@@ -1,4 +1,5 @@
 import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { CardInstrument } from '@bigcommerce/checkout-sdk/core';
 
 /**
  * A set of options that are required to initialize the Braintree Fastlane payment
@@ -53,6 +54,11 @@ export default interface BraintreeFastlanePaymentInitializeOptions {
      * where the PayPal Connect form should be inserted into.
      */
     onInit?: (renderPayPalComponentMethod: (container: string) => void) => void;
+    /**
+     * Is a callback that shows Braintree stored instruments
+     * when get triggered
+     */
+    onChange?: (showPayPalCardSelector: () => Promise<CardInstrument | undefined>) => void;
 
     /**
      * Is a stylisation options for customizing PayPal Connect components

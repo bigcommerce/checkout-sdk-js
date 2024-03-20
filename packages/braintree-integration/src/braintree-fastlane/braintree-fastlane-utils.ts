@@ -285,6 +285,37 @@ export default class BraintreeFastlaneUtils {
      * PayPal to BC data mappers
      *
      * */
+    mapPayPalToBcInstrument(
+        methodId: string,
+        instruments?: BraintreeConnectVaultedInstrument[] | BraintreeFastlaneVaultedInstrument[],
+    ): CardInstrument[] | undefined {
+        if (!instruments) {
+            return;
+        }
+
+        return instruments.map((instrument) => {
+            const { id, paymentSource } = instrument;
+            const { brand, expiry, lastDigits } = paymentSource.card;
+
+            const [expiryYear, expiryMonth] = expiry.split('-');
+
+            return {
+                bigpayToken: id,
+                brand,
+                defaultInstrument: false,
+                expiryMonth,
+                expiryYear,
+                iin: '',
+                last4: lastDigits,
+                method: methodId,
+                provider: methodId,
+                trustedShippingAddress: false,
+                type: 'card',
+                untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
+            };
+        });
+    }
+
     private mapPayPalToBcAddress(
         addresses?: BraintreeFastlaneAddress[],
         phones?: BraintreeConnectPhone[],
@@ -385,37 +416,6 @@ export default class BraintreeFastlaneUtils {
             isEqual(this.normalizeAddress(address), this.normalizeAddress(shippingAddress));
 
         return isAddressExist ? shippingAddress : address;
-    }
-
-    private mapPayPalToBcInstrument(
-        methodId: string,
-        instruments?: BraintreeConnectVaultedInstrument[] | BraintreeFastlaneVaultedInstrument[],
-    ): CardInstrument[] | undefined {
-        if (!instruments) {
-            return;
-        }
-
-        return instruments.map((instrument) => {
-            const { id, paymentSource } = instrument;
-            const { brand, expiry, lastDigits } = paymentSource.card;
-
-            const [expiryYear, expiryMonth] = expiry.split('-');
-
-            return {
-                bigpayToken: id,
-                brand,
-                defaultInstrument: false,
-                expiryMonth,
-                expiryYear,
-                iin: '',
-                last4: lastDigits,
-                method: methodId,
-                provider: methodId,
-                trustedShippingAddress: false,
-                type: 'card',
-                untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
-            };
-        });
     }
 
     private normalizeAddress(

@@ -710,11 +710,16 @@ export interface BraintreeConnectConfig {
 }
 
 export interface BraintreeConnect {
+    profile: BraintreeConnectProfile;
     identity: BraintreeConnectIdentity;
     ConnectCardComponent: (
         options: BraintreeConnectCardComponentOptions,
     ) => BraintreeConnectCardComponent;
     events: BraintreeFastlaneEvents;
+}
+
+export interface BraintreeConnectProfile {
+    showCardSelector(): Promise<BraintreeFastlaneCardSelectorResponse>;
 }
 
 export interface BraintreeConnectWindow extends Window {
@@ -886,10 +891,20 @@ export interface BraintreeFastlaneConfig {
 
 export interface BraintreeFastlane {
     identity: BraintreeFastlaneIdentity;
+    profile: BraintreeFastlaneProfile;
     FastlaneCardComponent: (
         options: BraintreeFastlaneCardComponentOptions,
     ) => BraintreeFastlaneCardComponent;
     events: BraintreeFastlaneEvents;
+}
+
+export interface BraintreeFastlaneProfile {
+    showCardSelector(): Promise<BraintreeFastlaneCardSelectorResponse>
+}
+
+export interface BraintreeFastlaneCardSelectorResponse {
+    selectionChanged: boolean;
+    selectedCard: BraintreeFastlaneVaultedInstrument;
 }
 
 export interface BraintreeFastlaneWindow extends Window {
