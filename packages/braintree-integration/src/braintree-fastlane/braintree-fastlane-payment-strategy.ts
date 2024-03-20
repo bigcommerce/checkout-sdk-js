@@ -362,9 +362,7 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
     private async handleBraintreeStoredInstrumentChange(
         methodId: string,
     ): Promise<CardInstrument | undefined> {
-        const paypalAxoSdk = this.isFastlaneEnabled
-            ? this.braintreeFastlaneUtils.getBraintreeFastlaneOrThrow()
-            : this.braintreeFastlaneUtils.getBraintreeConnectOrThrow();
+        const paypalAxoSdk = this.braintreeFastlaneUtils.getBraintreeFastlaneOrThrow()
 
         const { selectionChanged, selectedCard } = await paypalAxoSdk.profile.showCardSelector();
 
@@ -375,6 +373,8 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
                 ? paymentProviderCustomer
                 : {};
 
+
+            // @ts-ignore // TODO: FIX
             const selectedInstrument = this.braintreeFastlaneUtils.mapPayPalToBcInstrument(
                 methodId,
                 [selectedCard],
