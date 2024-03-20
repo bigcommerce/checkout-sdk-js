@@ -9,6 +9,7 @@ version: 2.1
 orbs:
   ci: bigcommerce/internal@volatile
   node: bigcommerce/internal-node@volatile
+  security: bigcommerce/internal-security@volatile
 
 jobs:
   test-packages:
@@ -157,6 +158,10 @@ workflows:
           context: "GCR + Artifact Bucket Access"
           requires:
             - ci/build-js-artifact
+      - security/scan:
+          name: "Gitleaks secrets scan"
+          context: org-global
+          GITLEAKS_BLOCK: "false"
 
       # Only release to NPM registry when commits are merged to master and new version is approved
       - approve_npm_release:
