@@ -67,15 +67,15 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
-        if (paypalOptions?.bannerContainerId) {
+        const { bannerContainerId = '' } = paypalOptions;
+
+        if (document.getElementById(bannerContainerId)) {
             const paypalMessages = await this.paypalCommerceSdk.getPayPalMessages(
                 paymentMethod,
                 state.getCartOrThrow().currency.code,
             );
 
-            this.renderMessages(paypalMessages, paypalOptions?.bannerContainerId);
-
-            return;
+            return this.renderMessages(paypalMessages, bannerContainerId);
         }
 
         // Info:
@@ -239,21 +239,19 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
      *
      * */
     private renderMessages(paypalMessages: PayPalMessagesSdk, bannerContainerId: string): void {
-        if (bannerContainerId && document.getElementById(bannerContainerId)) {
-            const cart = this.paymentIntegrationService.getState().getCartOrThrow();
+        const cart = this.paymentIntegrationService.getState().getCartOrThrow();
 
-            const paypalMessagesOptions: MessagingOptions = {
-                amount: cart.cartAmount,
-                placement: 'payment',
-                style: {
-                    layout: 'text',
-                    logo: {
-                        type: 'inline',
-                    },
+        const paypalMessagesOptions: MessagingOptions = {
+            amount: cart.cartAmount,
+            placement: 'payment',
+            style: {
+                layout: 'text',
+                logo: {
+                    type: 'inline',
                 },
-            };
+            },
+        };
 
-            paypalMessages.Messages(paypalMessagesOptions).render(`#${bannerContainerId}`);
-        }
+        paypalMessages.Messages(paypalMessagesOptions).render(`#${bannerContainerId}`);
     }
 }
