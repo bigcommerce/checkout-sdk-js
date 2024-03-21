@@ -57,6 +57,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 .getPaymentMethodOrThrow(methodId);
         }
 
+        // Messages
         if (this.paymentMethod.clientToken && braintreeOptions?.bannerContainerId) {
             await this.loadPaypal();
 
@@ -67,6 +68,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             return this.loadPaypal();
         }
 
+        // why do we need to load payment method here?
         const state = await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
         this.paymentMethod = state.getPaymentMethodOrThrow(methodId);
@@ -120,10 +122,12 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingCheckout);
         }
 
+        // TODO: getConfigOrThrow instead of this error
         if (!config) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
+        // Why do we need this payment method?
         if (!this.paymentMethod) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -133,7 +137,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             storeProfile: { storeLanguage },
         } = config;
         const {
-            nonce,
+            nonce, // ?
             config: { isVaultingEnabled },
         } = this.paymentMethod;
         const { methodId, paymentData = {} } = payment;
@@ -179,7 +183,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 amount: grandTotal,
                 locale: storeLanguage,
                 currency: currency.code,
-                offerCredit: this.paymentMethod.id === 'braintreepaypalcredit',
+                offerCredit: this.paymentMethod.id === 'braintreepaypalcredit', // ? wtf this strategy is only for braintreepaypal
                 shippingAddressOverride,
                 shouldSaveInstrument: shouldSaveInstrument || false,
                 shippingAddressEditable: false,
@@ -217,6 +221,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         };
     }
 
+    // This is wrong method name based on what is going on in the method
     private async loadPaypalCheckoutInstance(
         braintreeOptions?: BraintreePaypalPaymentInitializeOptions,
     ) {
@@ -245,6 +250,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 isCreditEnabled: initializationData?.isCreditEnabled,
             };
 
+            // ? wtf
             await this.braintreeIntegrationService.getPaypalCheckout(
                 paypalCheckoutConfig,
                 () => {
@@ -261,6 +267,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         const isMessageContainerAvailable =
             containerId && Boolean(document.getElementById(containerId));
 
+        // TODO: getPayPalSdk should be better then this.braintreeHostWindow.paypal
         if (this.braintreeHostWindow.paypal && isMessageContainerAvailable) {
             const state = this.paymentIntegrationService.getState();
             const checkout = state.getCheckout();

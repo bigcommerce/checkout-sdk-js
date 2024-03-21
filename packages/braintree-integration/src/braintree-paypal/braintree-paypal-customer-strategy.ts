@@ -165,6 +165,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
                 paypalButtonRender.render(`#${container}`);
             }
         } else {
+            // we should not do that in sdk
             this.braintreeIntegrationService.removeElement(container);
         }
     }
@@ -175,6 +176,8 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         methodId: string,
     ): Promise<string | void> {
         try {
+            // TODO: why do we need to load default checkout here?
+            // to get outstandingBalance?
             await this.paymentIntegrationService.loadDefaultCheckout();
 
             const state = this.paymentIntegrationService.getState();
@@ -245,6 +248,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         buttonContainerId: string,
         onErrorCallback?: (error: BraintreeError | StandardError) => void,
     ): void {
+        // we should not do that in sdk
         this.braintreeIntegrationService.removeElement(buttonContainerId);
 
         if (onErrorCallback && isBraintreeError(error)) {

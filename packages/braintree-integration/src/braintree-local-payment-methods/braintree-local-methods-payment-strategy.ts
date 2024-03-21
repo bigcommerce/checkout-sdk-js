@@ -147,11 +147,15 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                     payloadData: LocalPaymentsPayload,
                 ) => {
                     if (startPaymentError) {
+                        // If closed popup window then remove loading indicator and reject
+                        // otherwise throw an error and remove loading indicator
+
                         if (startPaymentError.code !== 'LOCAL_PAYMENT_WINDOW_CLOSED') {
                             reject(() => this.handleError(startPaymentError));
                         }
 
                         this.toggleLoadingIndicator(false);
+
                         reject();
                     } else {
                         if (!this.orderId) {
@@ -188,6 +192,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         });
     }
 
+    // TODO: Why do we need this method?
     private getLocalPaymentInstance(localPaymentInstance: LocalPaymentInstance) {
         if (!this.localPaymentInstance) {
             this.localPaymentInstance = localPaymentInstance;

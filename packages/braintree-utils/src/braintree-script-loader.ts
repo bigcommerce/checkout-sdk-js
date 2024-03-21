@@ -30,7 +30,7 @@ export default class BraintreeScriptLoader {
         private braintreeHostWindow: BraintreeHostWindow,
     ) {}
 
-    // TODO: this method is needed only for braintree Faslane
+    // TODO: this method is needed only for braintree Fastlane
     // So can be removed after Beta state
     initialize(storeConfig?: StoreConfig) {
         const features = storeConfig?.checkoutSettings.features;
@@ -70,6 +70,7 @@ export default class BraintreeScriptLoader {
         );
     }
 
+    // Where do you get this?
     async loadPaypal(): Promise<BraintreePaypalCreator> {
         return this.loadBraintreeModuleOrThrow<BraintreePaypalCreator>(
             BraintreeModuleName.paypal,
