@@ -160,16 +160,16 @@ export default class KlarnaV2PaymentStrategy {
         //     .getState()
         //     .getPaymentMethodOrThrow(methodId);
 
-        // await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
-        //     ...options,
-        //     params: {
-        //         ...options.params,
-        //         method,
-        //     },
-        // });
+        await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+            ...options,
+            params: {
+                ...options.params,
+                method: methodId,
+            },
+        });
 
         // #3 - new without methodId
-        await this.paymentIntegrationService.loadPaymentMethod(gatewayId);
+        // await this.paymentIntegrationService.loadPaymentMethod(gatewayId);
 
         // const state = this.paymentIntegrationService.getState();
 
