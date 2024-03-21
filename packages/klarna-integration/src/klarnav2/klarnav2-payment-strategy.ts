@@ -156,20 +156,20 @@ export default class KlarnaV2PaymentStrategy {
         // });
 
         // #2 - new with params
-        const { method } = this.paymentIntegrationService
-            .getState()
-            .getPaymentMethodOrThrow(methodId);
+        // const { method } = this.paymentIntegrationService
+        //     .getState()
+        //     .getPaymentMethodOrThrow(methodId);
 
-        await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
-            ...options,
-            params: {
-                ...options.params,
-                method,
-            },
-        });
+        // await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+        //     ...options,
+        //     params: {
+        //         ...options.params,
+        //         method,
+        //     },
+        // });
 
         // #3 - new without methodId
-        // await this.paymentIntegrationService.loadPaymentMethod(gatewayId);
+        await this.paymentIntegrationService.loadPaymentMethod(gatewayId);
 
         // const state = this.paymentIntegrationService.getState();
 
