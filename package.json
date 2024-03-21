@@ -56,7 +56,7 @@
     "@bigcommerce/data-store": "^1.0.1",
     "@bigcommerce/form-poster": "^1.5.0",
     "@bigcommerce/memoize": "^1.0.0",
-    "@bigcommerce/request-sender": "^1.2.3",
+    "@bigcommerce/request-sender": "^1.2.4",
     "@bigcommerce/script-loader": "^2.2.2",
     "@braintree/browser-detection": "^1.16.0",
     "@types/card-validator": "^4.1.0",
