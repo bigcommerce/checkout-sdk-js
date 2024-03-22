@@ -40,7 +40,9 @@ export default class KlarnaV2PaymentStrategy {
         private paymentIntegrationService: PaymentIntegrationService,
         private klarnav2ScriptLoader: KlarnaV2ScriptLoader,
         private klarnav2TokenUpdater: KlarnaV2TokenUpdater,
-    ) {}
+    ) {
+        console.log('*** unused', this.klarnav2TokenUpdater);
+    }
 
     async initialize(
         options: PaymentInitializeOptions & WithKlarnaV2PaymentInitializeOptions,
@@ -136,22 +138,48 @@ export default class KlarnaV2PaymentStrategy {
             klarnav2: { container, onLoad },
         } = options;
 
+        console.log('*** options', options);
+
         if (!gatewayId) {
             throw new InvalidArgumentError(
                 'Unable to proceed because "payload.payment.gatewayId" argument is not provided.',
             );
         }
 
-        const state = this.paymentIntegrationService.getState();
-        const cartId = state.getCartOrThrow().id;
-        const params = { params: cartId };
+        // #1 - old request
+        // const state = this.paymentIntegrationService.getState();
+        // const cartId = state.getCartOrThrow().id;
+        // const params = { params: cartId };
 
-        await this.klarnav2TokenUpdater.updateClientToken(gatewayId, { params }).catch(() => {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        // await this.klarnav2TokenUpdater.updateClientToken(gatewayId, { params }).catch(() => {
+        //     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        // });
+
+        // #2 - new with params
+        // const { method } = this.paymentIntegrationService
+        //     .getState()
+        //     .getPaymentMethodOrThrow(methodId);
+
+        await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+            ...options,
+            params: {
+                ...options.params,
+                method: methodId,
+            },
         });
 
+        // #3 - new without methodId
+        // await this.paymentIntegrationService.loadPaymentMethod(gatewayId);
+
+        // const state = this.paymentIntegrationService.getState();
+
+        console.log('*** after get Klarna config ***');
+
         return new Promise<KlarnaLoadResponse>((resolve) => {
-            const paymentMethod = state.getPaymentMethodOrThrow(methodId);
+            const state = this.paymentIntegrationService.getState();
+            const paymentMethod = state.getPaymentMethodOrThrow(methodId, gatewayId);
+
+            console.log('*** paymentMethod', paymentMethod);
 
             if (!this.klarnaPayments || !paymentMethod.clientToken) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
