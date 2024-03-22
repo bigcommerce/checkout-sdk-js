@@ -188,7 +188,7 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
         methodId: string,
     ): Promise<string | void> {
         try {
-            await this.paymentIntegrationService.loadDefaultCheckout();
+            await this.paymentIntegrationService.loadDefaultCheckout(); // Why do we need to load default checkout?
 
             const state = this.paymentIntegrationService.getState();
             const amount = state.getCheckoutOrThrow().outstandingBalance;

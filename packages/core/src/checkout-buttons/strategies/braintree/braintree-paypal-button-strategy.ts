@@ -218,6 +218,9 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         let state: InternalCheckoutSelectors;
 
         try {
+            // this method should be updated
+            // it does not quite understandable what is going on here
+            // because we should check do we need to create buy now cart first and then create it..
             this._buyNowCart = await this._createBuyNowCart({ buyNowInitializeOptions });
 
             if (this._buyNowCart) {

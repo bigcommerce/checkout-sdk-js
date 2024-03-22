@@ -66,7 +66,13 @@ export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
         }
 
         try {
+            // TODO: update with this.braintreeSdk.setBraintreeSdkVersion(...)
+            // TODO: update with this.braintreeSdk.setClientToken(...)
             this.braintreeIntegrationService.initialize(clientToken, storeConfig);
+
+            // TODO: update with await this.braintreeSdk.getUsBankAccount()
+            // without setting it into variable because this value can get from same method
+            // Should we separate loadUsBankAccount and getUsBankAccount methods to handle an error inside?
             this.usBankAccount = await this.braintreeIntegrationService.getUsBankAccount();
         } catch (error) {
             this.handleError(error);
@@ -163,8 +169,6 @@ export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
     }
 
     private async tokenizePayment({ paymentData }: OrderPaymentRequestBody): Promise<string> {
-        const usBankAccount = this.getUsBankAccountOrThrow();
-
         if (!isUsBankAccountInstrumentLike(paymentData)) {
             throw new PaymentArgumentInvalidError(['payment.paymentData']);
         }
@@ -180,6 +184,7 @@ export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
         }
 
         try {
+            const usBankAccount = this.getUsBankAccountOrThrow();
             const { nonce } = await usBankAccount.tokenize({
                 bankDetails: this.getBankDetails(paymentData),
                 mandateText,
@@ -201,7 +206,7 @@ export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
 
         if (!config.isVaultingEnabled) {
             throw new InvalidArgumentError(
-                'Vaulting is disabled but a vaulted instrument was being used for this transaction',
+                'Vaulting is disabled but a vaulted instrument was used for this transaction',
             );
         }
 
@@ -240,6 +245,7 @@ export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
         };
     }
 
+    // TODO: remove this method when BraintreeSdk is added to the class
     private getUsBankAccountOrThrow(): BraintreeBankAccount {
         if (!this.usBankAccount) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);

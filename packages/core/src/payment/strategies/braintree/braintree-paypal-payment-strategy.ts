@@ -238,6 +238,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         };
     }
 
+    // TODO: It is not necessary to have this method here
     private async _loadPaypalCheckoutInstance(
         braintreeOptions?: BraintreePaymentInitializeOptions,
     ) {
@@ -291,6 +292,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
+            // this._braintreeHostWindow.paypal should be updated with getPayPalSdkOrThrow from BraintreeSdk class
             this._braintreeHostWindow.paypal
                 .Messages({
                     amount: checkout.subtotal,

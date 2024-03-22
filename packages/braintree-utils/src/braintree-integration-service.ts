@@ -132,8 +132,11 @@ export default class BraintreeIntegrationService {
     async getClient(): Promise<BraintreeClient> {
         if (!this.client) {
             const clientToken = this.getClientTokenOrThrow();
+            // TODO: Do we have client instance in window.braintree.client?
+            // Why do we need to load it here then?
             const clientCreator = await this.braintreeScriptLoader.loadClient();
 
+            // We can have different clientTokens so it's ok
             this.client = clientCreator.create({ authorization: clientToken });
         }
 
@@ -151,6 +154,7 @@ export default class BraintreeIntegrationService {
         return this.braintreePaypal;
     }
 
+    // only used in braintree paypal payment strategy
     paypal({ shouldSaveInstrument, ...config }: PaypalConfig): Promise<BraintreeTokenizePayload> {
         const newWindowFlow = supportsPopups();
 
@@ -384,7 +388,7 @@ export default class BraintreeIntegrationService {
 
     async getSessionId(cartId?: string): Promise<string | undefined> {
         const { deviceData } = await this.getDataCollector({
-            riskCorrelationId: cartId,
+            riskCorrelationId: cartId, // used for braintree analytics
         });
 
         return deviceData;
