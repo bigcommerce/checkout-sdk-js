@@ -102,6 +102,11 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
     ): void {
         const { buyNowInitializeOptions, style, onComplete } = paypalcommercecredit;
 
+        // container id
+        // paypal sdk
+        // config
+        // onEligibleFail
+
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =

@@ -16,17 +16,17 @@ import {
     PaymentStrategy,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { isPaypalCommerceProviderError } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import {
+    isPaypalCommerceProviderError,
+    ApproveCallbackPayload,
+    ClickCallbackActions,
+    PayPalCommerceButtonMethods,
+    PayPalCommerceButtonsOptions,
+} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import {
-    ApproveCallbackPayload,
-    ClickCallbackActions,
-    PayPalCommerceButtons,
-    PayPalCommerceButtonsOptions,
-    PayPalCommerceInitializationData,
-} from '../paypal-commerce-types';
+import { PayPalCommerceInitializationData } from '../paypal-commerce-types';
 
 import PayPalCommercePaymentInitializeOptions, {
     WithPayPalCommercePaymentInitializeOptions,
@@ -35,7 +35,7 @@ import PayPalCommercePaymentInitializeOptions, {
 export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?: string;
     private orderId?: string;
-    private paypalButton?: PayPalCommerceButtons;
+    private paypalButton?: PayPalCommerceButtonMethods;
     private paypalcommerce?: PayPalCommercePaymentInitializeOptions;
 
     constructor(
