@@ -160,6 +160,9 @@ workflows:
             - ci/build-js-artifact
       - security/scan:
           name: "Gitleaks secrets scan"
+          filters:
+            branches:
+              ignore: /pull\/[0-9]+/
           context: org-global
           GITLEAKS_BLOCK: "false"
 
