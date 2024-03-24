@@ -184,4 +184,18 @@ describe('ResizableIframeCreator', () => {
             );
         }
     });
+
+    it('inserts the iframe even if the message comes from the www version of the url', async () => {
+        setTimeout(() => {
+            eventEmitter.emit('message', {
+                origin: 'http://www.mybigcommerce.com',
+                data: { type: EmbeddedCheckoutEventType.FrameLoaded },
+            });
+        });
+
+        const frame = await iframeCreator.createFrame(url, 'checkout');
+
+        expect(frame.tagName).toBe('IFRAME');
+        expect(frame.src).toEqual(url);
+    });
 });
