@@ -6,16 +6,6 @@ import {
     getShippingAddress,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import {
-    BraintreeClient,
-    BraintreeConnect,
-    BraintreeDataCollector,
-    BraintreeFastlane,
-    BraintreeHostWindow,
-    BraintreeModuleCreator,
-    BraintreePaypalCheckout,
-    BraintreeThreeDSecure,
-} from './braintree';
 import BraintreeIntegrationService from './braintree-integration-service';
 import BraintreeScriptLoader from './braintree-script-loader';
 import {
@@ -31,6 +21,16 @@ import {
     getThreeDSecureMock,
 } from './mocks/braintree.mock';
 import { PaypalSDK } from './paypal';
+import {
+    BraintreeClient,
+    BraintreeConnect,
+    BraintreeDataCollector,
+    BraintreeFastlane,
+    BraintreeHostWindow,
+    BraintreeModuleCreator,
+    BraintreePaypalCheckout,
+    BraintreeThreeDSecure,
+} from './types';
 
 describe('BraintreeIntegrationService', () => {
     let braintreeConnectMock: BraintreeConnect;

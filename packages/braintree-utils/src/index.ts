@@ -1,17 +1,9 @@
-export * from './braintree';
+export * from './types';
 export * from './utils';
 
-export {
-    PaypalSDK,
-    PaypalButtonOptions,
-    PaypalAuthorizeData,
-    PaypalButtonStyleColorOption,
-    PaypalButtonStyleLabelOption,
-    PaypalStyleOptions,
-} from './paypal';
 export { default as BraintreeIntegrationService } from './braintree-integration-service';
 export { default as BraintreeScriptLoader } from './braintree-script-loader';
-export { default as isBraintreeError } from './is-braintree-error';
+export { default as BraintreeSdk } from './braintree-sdk';
 export {
     getBraintreeConnectProfileDataMock,
     getBraintreeFastlaneProfileDataMock,
