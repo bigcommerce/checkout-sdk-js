@@ -165,6 +165,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'paypalcommerce',
         method: 'paypal',
     },
+    tdonlinemart: {
+        provider: 'tdonlinemart',
+        method: 'credit_card',
+    },
 };
 
 export default supportedInstruments;
