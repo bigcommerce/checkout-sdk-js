@@ -48,7 +48,6 @@ import PaymentStrategyType from './payment-strategy-type';
 import StorefrontPaymentRequestSender from './storefront-payment-request-sender';
 import { AdyenV2ScriptLoader } from './strategies/adyenv2';
 import { AdyenV3ScriptLoader } from './strategies/adyenv3';
-import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BNZPaymentStrategy } from './strategies/bnz';
@@ -227,7 +226,7 @@ export default function createPaymentStrategyRegistry(
             ),
     );
 
-    registry.register(
+    /* registry.register(
         PaymentStrategyType.AFTERPAY,
         () =>
             new AfterpayPaymentStrategy(
@@ -240,7 +239,7 @@ export default function createPaymentStrategyRegistry(
                 storeCreditActionCreator,
                 new AfterpayScriptLoader(scriptLoader),
             ),
-    );
+    ); */
 
     registry.register(
         PaymentStrategyType.AMAZONPAY,

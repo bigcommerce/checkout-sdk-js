@@ -30,12 +30,13 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
 
     async initialize(options: PaymentInitializeOptions): Promise<void> {
         const state = this._paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow(
-            options.methodId,
-            options.gatewayId,
-        );
+        const paymentMethod = state.getPaymentMethod(options.methodId, options.gatewayId);
         const currencyCode = state.getCart()?.currency.code || '';
         const countryCode = this._mapCurrencyToISO2(currencyCode);
+
+        if (!paymentMethod) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
 
         this._afterpaySdk = await this._afterpayScriptLoader.load(paymentMethod, countryCode);
     }
@@ -48,10 +49,7 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
-    async execute(
-        payload: OrderRequestBody,
-        options?: PaymentRequestOptions,
-    ): Promise<void> {
+    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         if (!payload.payment) {
             throw new PaymentArgumentInvalidError(['payment.gatewayId', 'payment.methodId']);
         }
@@ -71,16 +69,14 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             await this._paymentIntegrationService.applyStoreCredit(useStoreCredit);
         }
 
-        await this._checkoutValidator.validate(state.getCheckout(), options);
-
         await this._loadPaymentMethod(gatewayId, methodId, options);
 
-        await this._redirectToAfterpay(
-            countryCode,
-            state.getPaymentMethod(methodId, gatewayId),
-        );
+        state = this._paymentIntegrationService.getState();
+
+        this._redirectToAfterpay(countryCode, state.getPaymentMethod(methodId, gatewayId));
 
         // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         return new Promise<never>(() => {});
     }
 
@@ -107,10 +103,11 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         try {
             await this._paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            await this._remoteCheckoutRequestSender.forgetCheckout();
-            await this._paymentIntegrationService.loadPaymentMethods();
+            await this._paymentIntegrationService.forgetCheckout(payment.providerId);
+            // TODO
+            // await this._paymentIntegrationService.loadPaymentMethods();
 
-            throw new OrderFinalizationNotCompletedError(error.body?.errors?.[0]?.message);
+            throw new OrderFinalizationNotCompletedError();
         }
     }
 
@@ -141,10 +138,11 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
     ): Promise<PaymentIntegrationSelectors> {
         try {
             return await this._paymentIntegrationService.loadPaymentMethod(gatewayId, {
-                    ...options,
-                    params: { ...options?.params, method: methodId },
-                });
+                ...options,
+                params: { ...options?.params, method: methodId },
+            });
         } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if (error instanceof RequestError && error.body?.status === 422) {
                 throw new InvalidArgumentError(
                     "Afterpay can't process your payment for this order, please try another payment method",
