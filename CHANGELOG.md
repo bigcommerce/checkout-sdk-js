@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.565.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.565.0...v1.565.1) (2024-03-25)
+
+
+### Bug Fixes
+
+* **payment:** PI-1835 add TDBant to supported instruments ([95a51f9](https://github.com/bigcommerce/checkout-sdk-js/commit/95a51f90fa977040d9178df750212efd9db59a55))
+
 ## [1.565.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.564.2...v1.565.0) (2024-03-25)
 
 
