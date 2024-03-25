@@ -9,6 +9,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
+import BraintreeScriptLoader from './braintree-script-loader';
 import {
     BraintreeBankAccount,
     BraintreeClient,
@@ -16,6 +17,7 @@ import {
     BraintreeConnectStylesOption,
     BraintreeDataCollector,
     BraintreeDataCollectorCreatorConfig,
+    BraintreeDataCollectors,
     BraintreeDetails,
     BraintreeEnv,
     BraintreeError,
@@ -32,11 +34,10 @@ import {
     GetLocalPaymentInstance,
     GooglePayBraintreeSDK,
     LocalPaymentInstance,
-} from './braintree';
-import BraintreeScriptLoader from './braintree-script-loader';
-import isBraintreeError from './is-braintree-error';
-import { PAYPAL_COMPONENTS } from './paypal';
+    PAYPAL_COMPONENTS,
+} from './types';
 import getValidBraintreeFastlaneStyles from './utils/get-valid-braintree-fastlane-styles';
+import isBraintreeError from './utils/is-braintree-error';
 
 export interface PaypalConfig {
     amount: number;
@@ -48,15 +49,11 @@ export interface PaypalConfig {
     shouldSaveInstrument?: boolean;
 }
 
-interface DataCollectors {
-    default?: BraintreeDataCollector;
-    paypal?: BraintreeDataCollector;
-}
-
+// Info: this class is deprecated and will be removed in a nearest future. Please, do not add anything here.
 export default class BraintreeIntegrationService {
     private client?: Promise<BraintreeClient>;
     private clientToken?: string;
-    private dataCollectors: DataCollectors = {};
+    private dataCollectors: BraintreeDataCollectors = {};
     private paypalCheckout?: BraintreePaypalCheckout;
     private usBankAccount?: Promise<BraintreeBankAccount>;
     private braintreeLocalMethods?: LocalPaymentInstance;
@@ -129,6 +126,7 @@ export default class BraintreeIntegrationService {
         return this.braintreeHostWindow.braintreeFastlane;
     }
 
+    // Info: This method is deprecated. Use getClient method from BraintreeSdk class instead
     async getClient(): Promise<BraintreeClient> {
         if (!this.client) {
             const clientToken = this.getClientTokenOrThrow();
@@ -275,7 +273,7 @@ export default class BraintreeIntegrationService {
     async getDataCollector(
         options?: Partial<BraintreeDataCollectorCreatorConfig>,
     ): Promise<BraintreeDataCollector> {
-        const cacheKey: keyof DataCollectors = options?.paypal ? 'paypal' : 'default';
+        const cacheKey: keyof BraintreeDataCollectors = options?.paypal ? 'paypal' : 'default';
 
         let cached = this.dataCollectors[cacheKey];
 

@@ -5,6 +5,7 @@ import {
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
 import {
     BraintreeBankAccountCreator,
     BraintreeClientCreator,
@@ -19,8 +20,7 @@ import {
     BraintreePaypalCreator,
     BraintreeThreeDSecureCreator,
     GooglePayCreator,
-} from './braintree';
-import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
+} from './types';
 
 export default class BraintreeScriptLoader {
     private braintreeSdkVersion = BRAINTREE_SDK_STABLE_VERSION;
@@ -30,8 +30,8 @@ export default class BraintreeScriptLoader {
         private braintreeHostWindow: BraintreeHostWindow,
     ) {}
 
-    // TODO: this method is needed only for braintree Faslane
-    // So can be removed after Beta state
+    // TODO: this method is needed only for braintree Fastlane, so can be removed after Beta state
+    // TODO: this method should be moved to BraintreeSdk class in the future
     initialize(storeConfig?: StoreConfig) {
         const features = storeConfig?.checkoutSettings.features;
         const shouldUseBraintreeAlphaVersion =

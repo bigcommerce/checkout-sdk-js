@@ -7,6 +7,16 @@ import {
     PaypalSDK,
     PaypalStyleOptions,
 } from './paypal';
+import {
+    BraintreeClient,
+    BraintreeClientCreator,
+    BraintreeDataCollectorCreator,
+    BraintreeError,
+    BraintreeModule,
+    BraintreeModuleCreator,
+    BraintreeModuleCreatorConfig,
+    BraintreeWindow,
+} from './types';
 
 /**
  *
@@ -23,26 +33,6 @@ export enum BraintreeEnv {
  * Common
  *
  */
-export interface BraintreeModuleCreator<
-    TInstance,
-    TOptions = BraintreeModuleCreatorConfig,
-    TError = BraintreeError,
-> {
-    create(
-        config: TOptions,
-        callback?: (error: TError, instance: TInstance) => void,
-    ): Promise<TInstance>;
-}
-
-export interface BraintreeModuleCreatorConfig {
-    client?: BraintreeClient;
-    authorization?: string;
-}
-
-export interface BraintreeModule {
-    teardown(): Promise<void>;
-}
-
 export enum BraintreeModuleName {
     client = 'client',
     connect = 'connect',
@@ -195,12 +185,6 @@ export interface BraintreeVerifyPayload {
     liabilityShifted: boolean;
 }
 
-export interface BraintreeError extends Error {
-    type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
-    code: string;
-    details?: unknown;
-}
-
 export type BraintreeFormErrorData = Omit<BraintreeFormFieldState, 'isFocused'>;
 
 export type BraintreeFormErrorDataKeys =
@@ -214,65 +198,6 @@ export type BraintreeFormErrorDataKeys =
 export type BraintreeFormErrorsData = Partial<
     Record<BraintreeFormErrorDataKeys, BraintreeFormErrorData>
 >;
-
-/**
- *
- * Braintree Client
- *
- */
-export type BraintreeClientCreator = BraintreeModuleCreator<BraintreeClient>;
-
-export interface BraintreeClient {
-    request(payload: BraintreeRequestData): Promise<BraintreeTokenizeResponse>;
-    getVersion(): string | void;
-}
-
-export interface BraintreeRequestData {
-    data: {
-        creditCard: {
-            billingAddress?: {
-                countryCodeAlpha2: string;
-                locality: string;
-                countryName: string;
-                postalCode: string;
-                streetAddress: string;
-            };
-            cardholderName: string;
-            cvv?: string;
-            expirationDate: string;
-            number: string;
-            options: {
-                validate: boolean;
-            };
-        };
-    };
-    endpoint: string;
-    method: string;
-}
-
-export interface BraintreeTokenizeResponse {
-    creditCards: Array<{ nonce: string }>;
-}
-
-/**
- *
- * Braintree Data Collector
- *
- */
-export type BraintreeDataCollectorCreator = BraintreeModuleCreator<
-    BraintreeDataCollector,
-    BraintreeDataCollectorCreatorConfig
->;
-
-export interface BraintreeDataCollectorCreatorConfig extends BraintreeModuleCreatorConfig {
-    kount?: boolean;
-    paypal?: boolean;
-    riskCorrelationId?: string; // Info: the option is needed for PayPal Analytics
-}
-
-export interface BraintreeDataCollector extends BraintreeModule {
-    deviceData?: string;
-}
 
 /**
  *
@@ -1203,7 +1128,7 @@ export interface GooglePayBraintreeSDK extends BraintreeModule {
  * Other
  *
  */
-export interface BraintreeHostWindow extends Window {
+export interface BraintreeHostWindow extends BraintreeWindow {
     braintree?: BraintreeSDK;
     paypal?: PaypalSDK;
     braintreeConnect?: BraintreeConnect;

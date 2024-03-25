@@ -20,12 +20,11 @@ import {
     GooglePayBraintreeSDK,
     LocalPaymentInstance,
     TotalPriceStatusType,
-} from '../braintree';
+} from '../types';
 
 export function getClientMock(): BraintreeClient {
     return {
         request: jest.fn(),
-        getVersion: jest.fn(),
     };
 }
 
