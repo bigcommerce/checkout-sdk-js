@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.564.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.564.1...v1.564.2) (2024-03-25)
+
+
+### Bug Fixes
+
+* **embedded-checkout:** ISSUE-2425 Handle www redirects on embed checkout links ([#2426](https://github.com/bigcommerce/checkout-sdk-js/issues/2426)) ([05f6dc8](https://github.com/bigcommerce/checkout-sdk-js/commit/05f6dc896f006510fa00c3c26b1540acf98150b9))
+
 ### [1.564.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.564.0...v1.564.1) (2024-03-21)
 
 ## [1.564.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.563.1...v1.564.0) (2024-03-20)
