@@ -167,6 +167,9 @@ export function getBraintreeFastlaneProfileDataMock(): BraintreeFastlaneProfileD
 
 export function getConnectMock(): BraintreeConnect {
     return {
+        profile: {
+            showCardSelector: jest.fn(),
+        },
         identity: {
             lookupCustomerByEmail: () => Promise.resolve({ customerContextId: 'customerId' }),
             triggerAuthenticationFlow: () =>
@@ -186,6 +189,9 @@ export function getConnectMock(): BraintreeConnect {
 
 export function getFastlaneMock(): BraintreeFastlane {
     return {
+        profile: {
+            showCardSelector: jest.fn(),
+        },
         identity: {
             lookupCustomerByEmail: () => Promise.resolve({ customerContextId: 'customerId' }),
             triggerAuthenticationFlow: () =>

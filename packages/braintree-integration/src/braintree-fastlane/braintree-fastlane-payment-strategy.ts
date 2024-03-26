@@ -9,6 +9,7 @@ import {
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     Address,
+    CardInstrument,
     InvalidArgumentError,
     isHostedInstrumentLike,
     isVaultedInstrument,
@@ -25,6 +26,7 @@ import {
     PaymentStrategy,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isPayPalFastlaneCustomer } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { WithBraintreeFastlanePaymentInitializeOptions } from './braintree-fastlane-payment-initialize-options';
@@ -74,6 +76,15 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
 
         this.isFastlaneEnabled = !!paymentMethod?.initializationData?.isFastlaneEnabled;
 
+        if (
+            this.isFastlaneEnabled &&
+            (!braintreefastlane.onChange || typeof braintreefastlane.onChange !== 'function')
+        ) {
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "options.braintreefastlane.onChange" argument is not provided or it is not a function.',
+            );
+        }
+
         await this.braintreeFastlaneUtils.initializeBraintreeAcceleratedCheckoutOrThrow(
             methodId,
             braintreefastlane.styles,
@@ -90,6 +101,14 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         this.initializeCardComponent();
 
         braintreefastlane.onInit((container) => this.renderBraintreeAXOComponent(container));
+
+        if (
+            this.isFastlaneEnabled &&
+            braintreefastlane.onChange &&
+            typeof braintreefastlane.onChange === 'function'
+        ) {
+            braintreefastlane.onChange(() => this.handleBraintreeStoredInstrumentChange(methodId));
+        }
     }
 
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -343,5 +362,42 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         return this.paymentIntegrationService
             .getState()
             .getPaymentMethodOrThrow<BraintreeInitializationData>(validPaymentMethodId);
+    }
+
+    /**
+     *
+     * Braintree Fastlane instrument change
+     *
+     */
+    private async handleBraintreeStoredInstrumentChange(
+        methodId: string,
+    ): Promise<CardInstrument | undefined> {
+        const paypalAxoSdk = this.braintreeFastlaneUtils.getBraintreeFastlaneOrThrow();
+
+        const { selectionChanged, selectedCard } = await paypalAxoSdk.profile.showCardSelector();
+
+        if (selectionChanged) {
+            const state = this.paymentIntegrationService.getState();
+            const paymentProviderCustomer = state.getPaymentProviderCustomer();
+            const braintreeFastlaneCustomer = isPayPalFastlaneCustomer(paymentProviderCustomer)
+                ? paymentProviderCustomer
+                : {};
+
+            const selectedInstrument = this.braintreeFastlaneUtils.mapPayPalToBcInstrument(
+                methodId,
+                [selectedCard],
+            );
+
+            if (selectedInstrument && selectedInstrument.length > 0) {
+                await this.paymentIntegrationService.updatePaymentProviderCustomer({
+                    ...braintreeFastlaneCustomer,
+                    instruments: [...selectedInstrument],
+                });
+
+                return selectedInstrument[0];
+            }
+        }
+
+        return undefined;
     }
 }

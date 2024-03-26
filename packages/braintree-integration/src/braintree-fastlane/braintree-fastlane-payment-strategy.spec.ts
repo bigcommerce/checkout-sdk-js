@@ -12,6 +12,7 @@ import {
     getFastlaneMock,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
+    CardInstrument,
     InvalidArgumentError,
     OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
@@ -54,10 +55,41 @@ describe('BraintreeFastlanePaymentStrategy', () => {
         },
     };
 
+    const bcAddressMock = {
+        address1: 'addressLine1',
+        address2: 'addressLine2',
+        city: 'addressCity',
+        company: 'BigCommerce',
+        countryCode: 'US',
+        customFields: [],
+        firstName: 'John',
+        lastName: 'Doe',
+        phone: '333333333333',
+        postalCode: '03004',
+        stateOrProvince: 'addressState',
+        stateOrProvinceCode: 'addressState',
+    };
+
+    const bcCardMock = {
+        bigpayToken: 'nonce/token',
+        brand: 'Visa',
+        defaultInstrument: false,
+        expiryMonth: '09',
+        expiryYear: '2031',
+        iin: '',
+        last4: '2233',
+        method: 'braintreeacceleratedcheckout',
+        provider: 'braintreeacceleratedcheckout',
+        trustedShippingAddress: false,
+        type: 'card',
+        untrustedShippingCardVerificationMode: 'pan',
+    };
+
     const defaultInitializationOptions = {
         methodId,
         braintreefastlane: {
             onInit: jest.fn(),
+            onChange: jest.fn(),
         },
     };
 
@@ -107,6 +139,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethod,
         );
+        jest.spyOn(paymentIntegrationService, 'updatePaymentProviderCustomer');
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
         jest.spyOn(paymentIntegrationService, 'submitOrder');
         jest.spyOn(paymentIntegrationService, 'submitPayment');
@@ -163,6 +196,23 @@ describe('BraintreeFastlanePaymentStrategy', () => {
     describe('#initialize()', () => {
         it('throws an error if methodId is not provided', async () => {
             const options = {} as PaymentInitializeOptions;
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
+        it('throws an error if fastlane enabled and onChange callback is not provided', async () => {
+            paymentMethod.initializationData.isFastlaneEnabled = true;
+
+            const options = {
+                ...defaultInitializationOptions,
+                braintreefastlane: {
+                    onInit: jest.fn(),
+                },
+            };
 
             try {
                 await strategy.initialize(options);
@@ -293,6 +343,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
         });
 
         it('triggers OTP flow', async () => {
+            paymentMethod.initializationData.isFastlaneEnabled = false;
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentProviderCustomerOrThrow',
@@ -318,6 +369,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
                 onInit: (renderComponent: (containerId: string) => void) => {
                     callback = renderComponent;
                 },
+                onChange: jest.fn(),
             },
         };
 
@@ -623,6 +675,208 @@ describe('BraintreeFastlanePaymentStrategy', () => {
                     countryCodeAlpha2: 'US',
                 },
             });
+        });
+    });
+
+    describe('#onChange option callback', () => {
+        beforeEach(() => {
+            jest.spyOn(
+                braintreeFastlaneUtils,
+                'initializeBraintreeAcceleratedCheckoutOrThrow',
+            ).mockImplementation(jest.fn);
+            jest.spyOn(braintreeFastlaneUtils, 'mapPayPalToBcInstrument');
+            jest.spyOn(braintreeFastlaneUtils, 'getBraintreeFastlaneOrThrow').mockReturnValue(
+                braintreeFastlaneMock,
+            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentProviderCustomer',
+            ).mockReturnValue({
+                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
+                addresses: [bcAddressMock],
+                instruments: [bcCardMock],
+            });
+
+            jest.spyOn(braintreeFastlaneMock.profile, 'showCardSelector').mockImplementation(
+                () => ({
+                    selectionChanged: true,
+                    selectedCard: {
+                        id: 'nonce/token',
+                        paymentSource: {
+                            card: {
+                                brand: 'Visa',
+                                expiry: '2030-12',
+                                lastDigits: '1111',
+                                name: 'John Doe',
+                                billingAddress: {
+                                    firstName: 'John',
+                                    lastName: 'Doe',
+                                    company: 'BigCommerce',
+                                    streetAddress: 'addressLine1',
+                                    extendedAddress: 'addressLine2',
+                                    locality: 'addressCity',
+                                    region: 'addressState',
+                                    postalCode: '03004',
+                                    countryCodeAlpha2: 'US',
+                                },
+                            },
+                        },
+                    },
+                }),
+            );
+        });
+
+        it('returns selected card instrument', async () => {
+            paymentMethod.initializationData.isFastlaneEnabled = true;
+
+            let onChangeCallback: () => Promise<CardInstrument | undefined> = () =>
+                Promise.resolve(undefined);
+            const onChangeImplementation = (
+                showCardSelector: () => Promise<CardInstrument | undefined>,
+            ) => {
+                onChangeCallback = showCardSelector;
+            };
+
+            await strategy.initialize({
+                methodId,
+                braintreefastlane: {
+                    onInit: jest.fn(),
+                    onChange: jest.fn(onChangeImplementation),
+                },
+            });
+
+            const result = await onChangeCallback();
+
+            const paypalToBcInstrument = {
+                bigpayToken: 'nonce/token',
+                brand: 'Visa',
+                defaultInstrument: false,
+                expiryMonth: '12',
+                expiryYear: '2030',
+                iin: '',
+                last4: '1111',
+                method: 'braintreeacceleratedcheckout',
+                provider: 'braintreeacceleratedcheckout',
+                trustedShippingAddress: false,
+                type: 'card',
+                untrustedShippingCardVerificationMode: 'pan',
+            };
+
+            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
+                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
+                addresses: [bcAddressMock],
+                instruments: [paypalToBcInstrument],
+            });
+
+            expect(result).toEqual(paypalToBcInstrument);
+        });
+
+        it('returns undefined if the customer selects the same instrument or closes a popup window', async () => {
+            paymentMethod.initializationData.isFastlaneEnabled = true;
+            jest.spyOn(braintreeFastlaneMock.profile, 'showCardSelector').mockImplementation(
+                () => ({
+                    selectionChanged: false,
+                    selectedCard: {},
+                }),
+            );
+
+            let onChangeCallback: () => Promise<CardInstrument | undefined> = () =>
+                Promise.resolve(undefined);
+            const onChangeImplementation = (
+                showPayPalCardSelector: () => Promise<CardInstrument | undefined>,
+            ) => {
+                onChangeCallback = showPayPalCardSelector;
+            };
+
+            await strategy.initialize({
+                methodId,
+                braintreefastlane: {
+                    onInit: jest.fn(),
+                    onChange: jest.fn(onChangeImplementation),
+                },
+            });
+
+            const result = await onChangeCallback();
+
+            expect(result).toBeUndefined();
+        });
+
+        it('calls mapPayPalToBcInstrument', async () => {
+            paymentMethod.initializationData.isFastlaneEnabled = true;
+
+            const selectedInstrumentMock = {
+                id: 'nonce/token',
+                paymentSource: {
+                    card: {
+                        brand: 'Visa',
+                        expiry: '2030-12',
+                        lastDigits: '1111',
+                        name: 'John Doe',
+                        billingAddress: {
+                            company: 'BigCommerce',
+                            streetAddress: 'addressLine1',
+                            locality: 'addressCity',
+                            region: 'addressState',
+                            postalCode: '03004',
+                            countryCodeAlpha2: 'US',
+                            extendedAddress: 'addressLine2',
+                            firstName: 'John',
+                            lastName: 'Doe',
+                        },
+                    },
+                },
+            };
+
+            let onChangeCallback: () => Promise<CardInstrument | undefined> = () =>
+                Promise.resolve(undefined);
+            const onChangeImplementation = (
+                showCardSelector: () => Promise<CardInstrument | undefined>,
+            ) => {
+                onChangeCallback = showCardSelector;
+            };
+
+            await strategy.initialize({
+                methodId,
+                braintreefastlane: {
+                    onInit: jest.fn(),
+                    onChange: jest.fn(onChangeImplementation),
+                },
+            });
+
+            await onChangeCallback();
+
+            expect(braintreeFastlaneUtils.mapPayPalToBcInstrument).toHaveBeenCalled();
+            expect(braintreeFastlaneUtils.mapPayPalToBcInstrument).toHaveBeenCalledWith(
+                'braintreeacceleratedcheckout',
+                [selectedInstrumentMock],
+            );
+        });
+
+        it('does not update payment provider customer if selected instruments exist', async () => {
+            paymentMethod.initializationData.isFastlaneEnabled = true;
+            jest.spyOn(braintreeFastlaneUtils, 'mapPayPalToBcInstrument').mockReturnValue(
+                undefined,
+            );
+
+            let onChangeCallback: () => Promise<CardInstrument | undefined> = () =>
+                Promise.resolve(undefined);
+            const onChangeImplementation = (
+                showCardSelector: () => Promise<CardInstrument | undefined>,
+            ) => {
+                onChangeCallback = showCardSelector;
+            };
+
+            await strategy.initialize({
+                methodId,
+                braintreefastlane: {
+                    onInit: jest.fn(),
+                    onChange: jest.fn(onChangeImplementation),
+                },
+            });
+
+            await onChangeCallback();
+
+            expect(paymentIntegrationService.updatePaymentProviderCustomer).not.toHaveBeenCalled();
         });
     });
 
