@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.566.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.565.1...v1.566.0) (2024-03-26)
+
+
+### Features
+
+* **payment:** PI-1579 Refactor bluesnapv2 payment strategy in checkout-sdk ([008da37](https://github.com/bigcommerce/checkout-sdk-js/commit/008da3748dc00306ce83abc1bdaec2452c496af1))
+
 ### [1.565.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.565.0...v1.565.1) (2024-03-25)
 
 
