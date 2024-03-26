@@ -1,16 +1,11 @@
-export default interface KlarnaPayments {
+/* eslint-disable @typescript-eslint/naming-convention */
+export default interface KlarnaCredit {
     authorize(
-        options: KlarnaAuthorizeOptions,
         data: KlarnaUpdateSessionParams,
         callback: (res: KlarnaAuthorizationResponse) => void,
     ): void;
     init(params: KlarnaInitParams): void;
     load(params: KlarnaLoadParams, callback: (res: KlarnaLoadResponse) => void): void;
-}
-
-export interface KlarnaAuthorizeOptions {
-    instance_id?: string;
-    payment_method_category: string;
 }
 
 export interface KlarnaInitParams {
@@ -33,9 +28,9 @@ export interface KlarnaLoadResponse {
 }
 
 export interface KlarnaAuthorizationResponse {
-    authorization_token?: string;
+    authorization_token: string;
     approved: boolean;
-    show_form?: boolean;
+    show_form: boolean;
     error?: {
         invalid_fields: string[];
     };
