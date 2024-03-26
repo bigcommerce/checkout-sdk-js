@@ -55,6 +55,7 @@ service.initializePayment({
 
 ### Methods
 
+- [onChange](BraintreeFastlanePaymentInitializeOptions.md#onchange)
 - [onInit](BraintreeFastlanePaymentInitializeOptions.md#oninit)
 
 ## Properties
@@ -70,6 +71,25 @@ because they will be provided to PayPal library only for the first strategy init
 no matter what strategy was initialised first
 
 ## Methods
+
+### onChange
+
+▸ `Optional` **onChange**(`showPayPalCardSelector`): `void`
+
+Is a callback that shows Braintree stored instruments
+when get triggered
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `showPayPalCardSelector` | () => `Promise`<`undefined` \| `CardInstrument`\> |
+
+#### Returns
+
+`void`
+
+___
 
 ### onInit
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.567.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.566.0...v1.567.0) (2024-03-26)
+
+
+### Features
+
+* **payment:** PAYPAL-3588 Update Braintree Fastlane payment strategy with PP Fastlane vaulting component ([#2418](https://github.com/bigcommerce/checkout-sdk-js/issues/2418)) ([5d746ce](https://github.com/bigcommerce/checkout-sdk-js/commit/5d746ce7703b6b93581657348136a8552452b665))
+
 ## [1.566.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.565.1...v1.566.0) (2024-03-26)
 
 

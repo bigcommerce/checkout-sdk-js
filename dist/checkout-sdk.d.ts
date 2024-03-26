@@ -1725,6 +1725,11 @@ declare interface BraintreeFastlanePaymentInitializeOptions {
      */
     onInit?: (renderPayPalComponentMethod: (container: string) => void) => void;
     /**
+     * Is a callback that shows Braintree stored instruments
+     * when get triggered
+     */
+    onChange?: (showPayPalCardSelector: () => Promise<CardInstrument_2 | undefined>) => void;
+    /**
      * Is a stylisation options for customizing PayPal Connect components
      *
      * Note: the styles for all Braintree Accelerated Checkout strategies should be the same,
