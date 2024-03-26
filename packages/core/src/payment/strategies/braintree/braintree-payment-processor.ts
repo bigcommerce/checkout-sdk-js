@@ -281,6 +281,7 @@ export default class BraintreePaymentProcessor {
                 onLookupComplete: (_data, next) => {
                     next();
                 },
+                collectDeviceData: true,
             }),
         );
 

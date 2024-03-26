@@ -415,6 +415,7 @@ export interface BraintreeThreeDSecureOptions {
     addFrame(error: Error | undefined, iframe: HTMLIFrameElement): void;
     removeFrame(): void;
     onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
+    collectDeviceData: boolean;
 }
 
 interface BraintreeThreeDSecureVerificationData {
