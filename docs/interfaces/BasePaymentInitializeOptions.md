@@ -34,8 +34,6 @@ current checkout flow.
 - [googlepaystripe](BasePaymentInitializeOptions.md#googlepaystripe)
 - [googlepaystripeupe](BasePaymentInitializeOptions.md#googlepaystripeupe)
 - [googlepayworldpayaccess](BasePaymentInitializeOptions.md#googlepayworldpayaccess)
-- [klarna](BasePaymentInitializeOptions.md#klarna)
-- [klarnav2](BasePaymentInitializeOptions.md#klarnav2)
 - [masterpass](BasePaymentInitializeOptions.md#masterpass)
 - [methodId](BasePaymentInitializeOptions.md#methodid)
 - [moneris](BasePaymentInitializeOptions.md#moneris)
@@ -224,24 +222,6 @@ ___
 
 The options that are required to initialize the GooglePay Worldpay Access payment method.
 They can be omitted unless you need to support GooglePay.
-
-___
-
-### klarna
-
-• `Optional` **klarna**: [`KlarnaPaymentInitializeOptions`](KlarnaPaymentInitializeOptions.md)
-
-The options that are required to initialize the Klarna payment method.
-They can be omitted unless you need to support Klarna.
-
-___
-
-### klarnav2
-
-• `Optional` **klarnav2**: [`KlarnaV2PaymentInitializeOptions`](KlarnaV2PaymentInitializeOptions.md)
-
-The options that are required to initialize the KlarnaV2 payment method.
-They can be omitted unless you need to support KlarnaV2.
 
 ___
 
