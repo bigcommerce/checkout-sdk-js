@@ -124,6 +124,12 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         [HostedFieldType.CardName]: { containerId: paypalCardNameFieldContainerId },
     };
 
+    const creditCardVaultedForm = {
+        [HostedFieldType.CardNumberVerification]: { containerId: 'card-number' },
+        [HostedFieldType.CardCodeVerification]: { containerId: 'card-code' },
+        [HostedFieldType.CardExpiryVerification]: { containerId: 'card-expiry' },
+    };
+
     const paypalCommerceCreditCardsOptions: PayPalCommerceCreditCardsPaymentInitializeOptions = {
         form: {
             fields: creditCardFormFields,
@@ -539,7 +545,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             }
         });
 
-        it('submits hosted form', async () => {
+        it('submits hosted form with billing address', async () => {
             const cardFields = paypalSdk.CardFields(
                 cardFieldsOptionsMock as PayPalCommerceCardFieldsConfig,
             );
@@ -565,6 +571,34 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                     countryCode: billingAddress.countryCode,
                 },
             });
+        });
+
+        it('submits hosted form without billing address if there is vaulted form', async () => {
+            const cardFields = paypalSdk.CardFields(
+                cardFieldsOptionsMock as PayPalCommerceCardFieldsConfig,
+            );
+            const optionsWithVaultingForm = {
+                ...initializationOptions,
+                paypalcommercecreditcards: {
+                    ...paypalCommerceCreditCardsOptions,
+                    form: {
+                        fields: creditCardVaultedForm,
+                    },
+                },
+            } as PaymentInitializeOptions;
+
+            const submitMock = jest.fn().mockReturnValue(Promise.resolve());
+
+            jest.spyOn(paypalSdk, 'CardFields').mockImplementation(() => ({
+                ...cardFields,
+                submit: submitMock,
+            }));
+
+            await strategy.initialize(optionsWithVaultingForm);
+
+            await strategy.execute(defaultExecutePayload);
+
+            expect(submitMock).toHaveBeenCalledWith();
         });
     });
 
