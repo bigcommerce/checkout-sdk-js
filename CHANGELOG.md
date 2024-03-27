@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.568.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.568.0...v1.568.1) (2024-03-27)
+
+
+### Bug Fixes
+
+* **payment:** ISSUE-2398 Braintree add-cardholder-name-to-hosted-fields ([#2399](https://github.com/bigcommerce/checkout-sdk-js/issues/2399)) ([8ce7442](https://github.com/bigcommerce/checkout-sdk-js/commit/8ce7442e952f1aef5b95bebd4a82c469169dacd5))
+
 ## [1.568.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.567.0...v1.568.0) (2024-03-26)
 
 
