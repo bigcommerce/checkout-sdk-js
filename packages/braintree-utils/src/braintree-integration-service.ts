@@ -11,14 +11,12 @@ import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
 import BraintreeScriptLoader from './braintree-script-loader';
 import {
-    BraintreeBankAccount,
     BraintreeClient,
     BraintreeConnect,
     BraintreeConnectStylesOption,
     BraintreeDataCollector,
     BraintreeDataCollectorCreatorConfig,
     BraintreeDataCollectors,
-    BraintreeDetails,
     BraintreeEnv,
     BraintreeError,
     BraintreeFastlane,
@@ -30,6 +28,7 @@ import {
     BraintreePaypalSdkCreatorConfig,
     BraintreeShippingAddressOverride,
     BraintreeThreeDSecure,
+    BraintreeTokenizationDetails,
     BraintreeTokenizePayload,
     GetLocalPaymentInstance,
     GooglePayBraintreeSDK,
@@ -55,7 +54,6 @@ export default class BraintreeIntegrationService {
     private clientToken?: string;
     private dataCollectors: BraintreeDataCollectors = {};
     private paypalCheckout?: BraintreePaypalCheckout;
-    private usBankAccount?: Promise<BraintreeBankAccount>;
     private braintreeLocalMethods?: LocalPaymentInstance;
     private googlePay?: Promise<GooglePayBraintreeSDK>;
     private threeDS?: Promise<BraintreeThreeDSecure>;
@@ -248,17 +246,6 @@ export default class BraintreeIntegrationService {
         return this.braintreeLocalMethods;
     }
 
-    async getUsBankAccount() {
-        if (!this.usBankAccount) {
-            const client = await this.getClient();
-            const usBankAccount = await this.braintreeScriptLoader.loadUsBankAccount();
-
-            this.usBankAccount = usBankAccount.create({ client });
-        }
-
-        return this.usBankAccount;
-    }
-
     get3DS(): Promise<BraintreeThreeDSecure> {
         if (!this.threeDS) {
             this.threeDS = Promise.all([
@@ -334,7 +321,7 @@ export default class BraintreeIntegrationService {
         };
     }
 
-    mapToLegacyShippingAddress(details: BraintreeDetails): Partial<LegacyAddress> {
+    mapToLegacyShippingAddress(details: BraintreeTokenizationDetails): Partial<LegacyAddress> {
         const { email, phone, shippingAddress } = details;
         const recipientName = shippingAddress?.recipientName || '';
         const [firstName, lastName] = recipientName.split(' ');
@@ -353,7 +340,7 @@ export default class BraintreeIntegrationService {
         };
     }
 
-    mapToLegacyBillingAddress(details: BraintreeDetails): Partial<LegacyAddress> {
+    mapToLegacyBillingAddress(details: BraintreeTokenizationDetails): Partial<LegacyAddress> {
         const { billingAddress, email, firstName, lastName, phone, shippingAddress } = details;
 
         const address = billingAddress || shippingAddress;

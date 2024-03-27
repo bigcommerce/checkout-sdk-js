@@ -1,15 +1,12 @@
+// TODO: separate mock in this file to different files by group
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
-    BraintreeClient,
     BraintreeConnect,
     BraintreeConnectProfileData,
-    BraintreeDataCollector,
     BraintreeFastlane,
     BraintreeFastlaneAuthenticationState,
     BraintreeFastlaneProfileData,
-    BraintreeModule,
-    BraintreeModuleCreator,
     BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
@@ -21,12 +18,6 @@ import {
     LocalPaymentInstance,
     TotalPriceStatusType,
 } from '../types';
-
-export function getClientMock(): BraintreeClient {
-    return {
-        request: jest.fn(),
-    };
-}
 
 export function getBraintree(): PaymentMethod {
     return {
@@ -209,13 +200,6 @@ export function getFastlaneMock(): BraintreeFastlane {
     };
 }
 
-export function getDataCollectorMock(): BraintreeDataCollector {
-    return {
-        deviceData: getDeviceDataMock(),
-        teardown: jest.fn(() => Promise.resolve()),
-    };
-}
-
 export function getBraintreeLocalPaymentMock(): LocalPaymentInstance {
     return {
         startPayment: jest.fn(
@@ -224,23 +208,6 @@ export function getBraintreeLocalPaymentMock(): LocalPaymentInstance {
             },
         ),
         teardown: jest.fn(() => Promise.resolve()),
-    };
-}
-
-export function getDeviceDataMock(): string {
-    return '{"device_session_id": "my_device_session_id", "fraud_merchant_id": "we_dont_use_this_field"}';
-}
-
-export function getModuleCreatorMock<T>(
-    module?:
-        | BraintreeModule
-        | BraintreeClient
-        | BraintreeConnect
-        | BraintreePaypal
-        | BraintreeFastlane,
-): BraintreeModuleCreator<T> {
-    return {
-        create: jest.fn(() => Promise.resolve(module || {})),
     };
 }
 

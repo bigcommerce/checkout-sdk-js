@@ -19,7 +19,7 @@ import {
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
     getThreeDSecureMock,
-} from './mocks/braintree.mock';
+} from './mocks';
 import { PaypalSDK } from './paypal';
 import {
     BraintreeClient,

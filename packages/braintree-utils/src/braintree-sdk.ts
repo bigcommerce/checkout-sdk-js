@@ -11,6 +11,7 @@ import {
     BraintreeDataCollectorCreatorConfig,
     BraintreeErrorCode,
     BraintreeModule,
+    BraintreeUsBankAccount,
 } from './types';
 import isBraintreeError from './utils/is-braintree-error';
 
@@ -18,6 +19,7 @@ export default class BraintreeSdk {
     private client?: BraintreeClient;
     private clientToken?: string;
     private dataCollector?: BraintreeDataCollector;
+    private usBankAccount?: BraintreeUsBankAccount;
 
     constructor(private braintreeScriptLoader: BraintreeScriptLoader) {}
 
@@ -85,6 +87,23 @@ export default class BraintreeSdk {
         }
 
         return this.dataCollector;
+    }
+
+    /**
+     *
+     * Braintree UsBankAccount
+     * braintree doc: https://braintree.github.io/braintree-web/current/module-braintree-web_us-bank-account.html
+     *
+     */
+    async getUsBankAccount() {
+        if (!this.usBankAccount) {
+            const client = await this.getClient();
+            const usBankAccount = await this.braintreeScriptLoader.loadUsBankAccount();
+
+            this.usBankAccount = await usBankAccount.create({ client });
+        }
+
+        return this.usBankAccount;
     }
 
     /**

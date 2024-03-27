@@ -101,6 +101,73 @@ export interface BraintreeDataCollectors {
 
 /**
  *
+ * Braintree US Bank Account
+ *
+ */
+export type BraintreeUsBankAccountCreator = BraintreeModuleCreator<BraintreeUsBankAccount>;
+
+export interface BraintreeUsBankAccount {
+    tokenize(
+        options: BraintreeUsBankAccountTokenizationOptions,
+    ): Promise<BraintreeUsBankAccountTokenizationResponse>;
+}
+
+export interface BraintreeUsBankAccountTokenizationOptions {
+    bankDetails: BraintreeUsBankAccountDetails;
+    mandateText: string;
+}
+
+export interface BraintreeUsBankAccountTokenizationResponse {
+    nonce: string;
+    details: BraintreeTokenizationDetails;
+}
+
+export interface BraintreeUsBankAccountDetails {
+    accountNumber: string;
+    routingNumber: string;
+    ownershipType: string;
+    accountType: string;
+    firstName?: string;
+    lastName?: string;
+    businessName?: string;
+    billingAddress: {
+        streetAddress: string;
+        extendedAddress: string;
+        locality: string;
+        region: string;
+        postalCode: string;
+    };
+}
+
+// TODO: move this interface in separate types group if it will be used in another (not ACH) strategies
+// This seems to be an interface which will be used in different places
+export interface BraintreeTokenizationDetails {
+    username?: string;
+    email?: string;
+    payerId?: string;
+    firstName?: string;
+    lastName?: string;
+    countryCode?: string;
+    phone?: string;
+    shippingAddress?: BraintreeShippingAddress;
+    billingAddress?: BraintreeAddress;
+}
+
+export interface BraintreeAddress {
+    line1: string;
+    line2: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    countryCode: string;
+}
+
+export interface BraintreeShippingAddress extends BraintreeAddress {
+    recipientName: string;
+}
+
+/**
+ *
  * Braintree Errors
  *
  */

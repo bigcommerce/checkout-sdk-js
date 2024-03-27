@@ -7,7 +7,6 @@ import {
 
 import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
 import {
-    BraintreeBankAccountCreator,
     BraintreeClientCreator,
     BraintreeConnectCreator,
     BraintreeDataCollectorCreator,
@@ -19,6 +18,7 @@ import {
     BraintreePaypalCheckoutCreator,
     BraintreePaypalCreator,
     BraintreeThreeDSecureCreator,
+    BraintreeUsBankAccountCreator,
     GooglePayCreator,
 } from './types';
 
@@ -91,8 +91,8 @@ export default class BraintreeScriptLoader {
         );
     }
 
-    async loadUsBankAccount(): Promise<BraintreeBankAccountCreator> {
-        return this.loadBraintreeModuleOrThrow<BraintreeBankAccountCreator>(
+    async loadUsBankAccount(): Promise<BraintreeUsBankAccountCreator> {
+        return this.loadBraintreeModuleOrThrow<BraintreeUsBankAccountCreator>(
             BraintreeModuleName.usBankAccount,
             'us-bank-account.min.js',
         );
