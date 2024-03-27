@@ -96,6 +96,10 @@ describe('BraintreeHostedForm', () => {
                         container: '#cardNumber',
                         placeholder: 'Card number',
                     },
+                    cardholderName: {
+                        container: '#cardName',
+                        placeholder: 'Card name',
+                    },
                 },
                 styles: {
                     input: {
@@ -206,9 +210,6 @@ describe('BraintreeHostedForm', () => {
             await subject.initialize(formOptions);
 
             const billingAddress = getBillingAddress();
-            const cardNameInput = document.querySelector('#cardName input') as HTMLInputElement;
-
-            cardNameInput.value = 'Foobar';
 
             await subject.tokenize(billingAddress);
 
@@ -218,7 +219,6 @@ describe('BraintreeHostedForm', () => {
                     postalCode: billingAddress.postalCode,
                     streetAddress: billingAddress.address1,
                 },
-                cardholderName: 'Foobar',
             });
         });
 
@@ -249,15 +249,9 @@ describe('BraintreeHostedForm', () => {
         it('tokenizes data through hosted fields for stored card verification', async () => {
             await subject.initialize(formOptions);
 
-            const cardNameInput = document.querySelector('#cardName input') as HTMLInputElement;
-
-            cardNameInput.value = 'Foobar';
-
             await subject.tokenizeForStoredCardVerification();
 
-            expect(cardFields.tokenize).toHaveBeenCalledWith({
-                cardholderName: 'Foobar',
-            });
+            expect(cardFields.tokenize).toHaveBeenCalled();
         });
 
         it('returns invalid form error when tokenizing store credit card with invalid form data', async () => {
