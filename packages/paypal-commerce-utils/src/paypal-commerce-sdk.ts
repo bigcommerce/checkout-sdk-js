@@ -192,13 +192,14 @@ export default class PayPalCommerceSdk {
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
     ): PayPalSdkConfig {
-        const { clientToken, initializationData } = paymentMethod;
+        const { initializationData } = paymentMethod;
 
         if (!initializationData || !initializationData.clientId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { clientId, merchantId, attributionId } = initializationData;
+        const { clientId, merchantId, attributionId, isDeveloperModeApplicable, buyerCountry } =
+            initializationData;
 
         return {
             options: {
@@ -206,11 +207,11 @@ export default class PayPalCommerceSdk {
                 'merchant-id': merchantId,
                 components: ['messages'],
                 currency: currencyCode,
+                ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
             },
             attributes: {
                 'data-namespace': 'paypalMessages',
                 'data-partner-attribution-id': attributionId,
-                'data-user-id-token': clientToken,
             },
         };
     }

@@ -2,6 +2,7 @@ import {
     CheckoutButtonStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { createPayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import createPayPalCommerceIntegrationService from '../create-paypal-commerce-integration-service';
 
@@ -13,6 +14,7 @@ const createPayPalCommerceCreditButtonStrategy: CheckoutButtonStrategyFactory<
     new PayPalCommerceCreditButtonStrategy(
         paymentIntegrationService,
         createPayPalCommerceIntegrationService(paymentIntegrationService),
+        createPayPalCommerceSdk(),
     );
 
 export default toResolvableModule(createPayPalCommerceCreditButtonStrategy, [

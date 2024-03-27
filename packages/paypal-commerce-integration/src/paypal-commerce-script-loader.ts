@@ -135,7 +135,6 @@ export default class PayPalCommerceScriptLoader {
                 components: [
                     'buttons',
                     'hosted-fields',
-                    'messages',
                     'payment-fields',
                     'legal',
                     ...googlePayComponent,

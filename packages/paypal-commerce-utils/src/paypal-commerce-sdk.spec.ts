@@ -242,7 +242,6 @@ describe('PayPalCommerceSdk', () => {
                     attributes: {
                         'data-namespace': 'paypalMessages',
                         'data-partner-attribution-id': '1123JLKJASD12',
-                        'data-user-id-token': 'asdcvY7XFSQasd',
                     },
                 },
             );
