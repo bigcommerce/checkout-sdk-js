@@ -15,6 +15,8 @@ import {
     BraintreeModule,
     BraintreeModuleCreator,
     BraintreeModuleCreatorConfig,
+    BraintreeTokenizationDetails,
+    BraintreeUsBankAccountCreator,
     BraintreeWindow,
 } from './types';
 
@@ -60,7 +62,7 @@ export type BraintreeModuleCreators =
     | BraintreeThreeDSecureCreator
     | BraintreeVenmoCheckoutCreator
     // | BraintreeVisaCheckoutCreator
-    | BraintreeBankAccountCreator
+    | BraintreeUsBankAccountCreator
     | BraintreeLocalPaymentCreator;
 
 export interface BraintreeSDK {
@@ -75,7 +77,7 @@ export interface BraintreeSDK {
     [BraintreeModuleName.threeDSecure]?: BraintreeThreeDSecureCreator;
     [BraintreeModuleName.venmo]?: BraintreeVenmoCheckoutCreator;
     // [BraintreeModuleName.visaCheckout]?: BraintreeVisaCheckoutCreator; // TODO: should be added in future migration
-    [BraintreeModuleName.usBankAccount]?: BraintreeBankAccountCreator;
+    [BraintreeModuleName.usBankAccount]?: BraintreeUsBankAccountCreator;
     [BraintreeModuleName.localPayment]?: BraintreeLocalPaymentCreator;
 }
 
@@ -128,7 +130,7 @@ export interface BraintreeShippingAddressOverride {
 export interface BraintreeTokenizePayload {
     nonce: string;
     type: 'PaypalAccount' | 'VenmoAccount';
-    details: BraintreeDetails;
+    details: BraintreeTokenizationDetails;
     creditFinancingOffered?: {
         totalCost: {
             value: string;
@@ -146,31 +148,6 @@ export interface BraintreeTokenizePayload {
         payerAcceptance: boolean;
         cartAmountImmutable: boolean;
     };
-}
-
-export interface BraintreeDetails {
-    username?: string;
-    email?: string;
-    payerId?: string;
-    firstName?: string;
-    lastName?: string;
-    countryCode?: string;
-    phone?: string;
-    shippingAddress?: BraintreeShippingAddress;
-    billingAddress?: BraintreeAddress;
-}
-
-export interface BraintreeAddress {
-    line1: string;
-    line2: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    countryCode: string;
-}
-
-export interface BraintreeShippingAddress extends BraintreeAddress {
-    recipientName: string;
 }
 
 export interface BraintreeVerifyPayload {
@@ -584,38 +561,6 @@ export interface BraintreeVenmoCreatorConfig extends BraintreeModuleCreatorConfi
 //     tokenize(payment: VisaCheckoutPaymentSuccessPayload): Promise<VisaCheckoutTokenizedPayload>;
 //     createInitOptions(options: Partial<VisaCheckoutInitOptions>): VisaCheckoutInitOptions;
 // }
-
-/**
- *
- * Braintree US Bank Account
- *
- */
-
-export interface BankAccountSuccessPayload {
-    accountNumber: string;
-    routingNumber: string;
-    ownershipType: string;
-    accountType: string;
-    firstName?: string;
-    lastName?: string;
-    businessName?: string;
-    billingAddress: {
-        streetAddress: string;
-        extendedAddress: string;
-        locality: string;
-        region: string;
-        postalCode: string;
-    };
-}
-
-export type BraintreeBankAccountCreator = BraintreeModuleCreator<BraintreeBankAccount>;
-
-export interface BraintreeBankAccount extends BraintreeModule {
-    tokenize(payload: {
-        bankDetails: BankAccountSuccessPayload;
-        mandateText: string;
-    }): Promise<{ nonce: string; details: BraintreeDetails }>;
-}
 
 /**
  *

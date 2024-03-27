@@ -14,7 +14,7 @@ import {
     getGooglePayMock,
     getModuleCreatorMock,
     getPaypalCheckoutMock,
-} from './mocks/braintree.mock';
+} from './mocks';
 import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
 import {
     BraintreeClientCreator,

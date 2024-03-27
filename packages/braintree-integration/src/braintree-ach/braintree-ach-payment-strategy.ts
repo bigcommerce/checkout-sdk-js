@@ -1,8 +1,8 @@
 import {
-    BankAccountSuccessPayload,
-    BraintreeBankAccount,
     BraintreeInitializationData,
-    BraintreeIntegrationService,
+    BraintreeSdk,
+    BraintreeUsBankAccount,
+    BraintreeUsBankAccountDetails,
     isBraintreeError,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -31,45 +31,44 @@ import isUsBankAccountInstrumentLike from '../is-us-bank-account-instrument-like
 import { WithBraintreeAchPaymentInitializeOptions } from './braintree-ach-initialize-options';
 
 export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
-    private usBankAccount?: BraintreeBankAccount;
+    private usBankAccount?: BraintreeUsBankAccount;
     private getMandateText?: () => string;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private braintreeIntegrationService: BraintreeIntegrationService,
+        private braintreeSdk: BraintreeSdk,
     ) {}
 
     async initialize(
         options: PaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions,
     ): Promise<void> {
-        const { getMandateText } = options.braintreeach || {};
+        const { methodId, braintreeach } = options || {};
 
-        if (!options.methodId) {
+        if (!methodId) {
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "options.methodId" argument is not provided.',
             );
         }
 
-        this.getMandateText = getMandateText;
+        this.getMandateText = braintreeach?.getMandateText;
 
-        await this.paymentIntegrationService.loadPaymentMethod(options.methodId);
+        await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
         const state = this.paymentIntegrationService.getState();
         const storeConfig = state.getStoreConfigOrThrow();
-        const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(
-            options.methodId,
-        );
+        const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
         const { clientToken, initializationData } = paymentMethod;
 
         if (!clientToken || !initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
+        this.braintreeSdk.initialize(clientToken, storeConfig);
+
         try {
-            this.braintreeIntegrationService.initialize(clientToken, storeConfig);
-            this.usBankAccount = await this.braintreeIntegrationService.getUsBankAccount();
+            this.usBankAccount = await this.braintreeSdk.getUsBankAccount();
         } catch (error) {
-            this.handleError(error);
+            this.handleBraintreeError(error);
         }
     }
 
@@ -99,67 +98,9 @@ export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
     }
 
     async deinitialize(): Promise<void> {
-        this.getMandateText = undefined;
+        await this.braintreeSdk.deinitialize();
 
         return Promise.resolve();
-    }
-
-    private async preparePaymentData(
-        nonce: string | null,
-        payment: OrderPaymentRequestBody,
-    ): Promise<Payment> {
-        const { paymentData = {} } = payment;
-
-        if (!isUsBankAccountInstrumentLike(paymentData)) {
-            throw new PaymentArgumentInvalidError(['payment.paymentData']);
-        }
-
-        const sessionId = await this.braintreeIntegrationService.getSessionId();
-
-        const { shouldSaveInstrument, shouldSetAsDefaultInstrument, routingNumber, accountNumber } =
-            paymentData;
-
-        // TODO: update payment payload with data shape based on mapping in bigpay-client-js project
-        const paymentPayload = {
-            formattedPayload: {
-                vault_payment_instrument: shouldSaveInstrument || null,
-                set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
-                device_info: sessionId || null,
-                tokenized_bank_account: {
-                    issuer: routingNumber,
-                    masked_account_number: accountNumber.substr(-4),
-                    token: nonce,
-                },
-            },
-        };
-
-        return {
-            methodId: payment.methodId,
-            paymentData: paymentPayload,
-        };
-    }
-
-    private async preparePaymentDataForVaultedInstrument(
-        nonce: string | null,
-        payment: OrderPaymentRequestBody,
-    ): Promise<Payment> {
-        const { paymentData = {} } = payment;
-
-        if (!isVaultedInstrument(paymentData) || !isHostedInstrumentLike(paymentData)) {
-            throw new PaymentArgumentInvalidError(['payment.paymentData']);
-        }
-
-        const sessionId = await this.braintreeIntegrationService.getSessionId();
-
-        return {
-            methodId: payment.methodId,
-            paymentData: {
-                deviceSessionId: sessionId,
-                instrumentId: paymentData.instrumentId,
-                shouldSetAsDefaultInstrument: paymentData.shouldSetAsDefaultInstrument,
-                ...(nonce && { nonce }),
-            },
-        };
     }
 
     private async tokenizePayment({ paymentData }: OrderPaymentRequestBody): Promise<string> {
@@ -187,7 +128,7 @@ export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
 
             return nonce;
         } catch (error) {
-            this.handleError(error);
+            this.handleBraintreeError(error);
         }
     }
 
@@ -210,7 +151,62 @@ export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
         return shouldVerifyVaultingInstrument ? this.tokenizePayment(payment) : null;
     }
 
-    private getBankDetails(paymentData: WithBankAccountInstrument): BankAccountSuccessPayload {
+    private async preparePaymentData(
+        nonce: string | null,
+        payment: OrderPaymentRequestBody,
+    ): Promise<Payment> {
+        const { methodId, paymentData = {} } = payment;
+
+        if (!isUsBankAccountInstrumentLike(paymentData)) {
+            throw new PaymentArgumentInvalidError(['payment.paymentData']);
+        }
+
+        const { deviceData } = await this.braintreeSdk.getDataCollectorOrThrow();
+        const { shouldSaveInstrument, shouldSetAsDefaultInstrument, routingNumber, accountNumber } =
+            paymentData;
+
+        return {
+            methodId,
+            paymentData: {
+                deviceSessionId: deviceData,
+                shouldSetAsDefaultInstrument,
+                shouldSaveInstrument,
+                formattedPayload: {
+                    tokenized_bank_account: {
+                        issuer: routingNumber,
+                        masked_account_number: accountNumber.substr(-4),
+                        token: nonce,
+                    },
+                },
+            },
+        };
+    }
+
+    private async preparePaymentDataForVaultedInstrument(
+        nonce: string | null,
+        payment: OrderPaymentRequestBody,
+    ): Promise<Payment> {
+        const { methodId, paymentData = {} } = payment;
+
+        if (!isVaultedInstrument(paymentData) || !isHostedInstrumentLike(paymentData)) {
+            throw new PaymentArgumentInvalidError(['payment.paymentData']);
+        }
+
+        const { deviceData } = await this.braintreeSdk.getDataCollectorOrThrow();
+        const { instrumentId, shouldSetAsDefaultInstrument } = paymentData;
+
+        return {
+            methodId,
+            paymentData: {
+                deviceSessionId: deviceData,
+                instrumentId,
+                shouldSetAsDefaultInstrument,
+                ...(nonce && { nonce }),
+            },
+        };
+    }
+
+    private getBankDetails(paymentData: WithBankAccountInstrument): BraintreeUsBankAccountDetails {
         const state = this.paymentIntegrationService.getState();
         const billingAddress = state.getBillingAddressOrThrow();
 
@@ -240,7 +236,7 @@ export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
         };
     }
 
-    private getUsBankAccountOrThrow(): BraintreeBankAccount {
+    private getUsBankAccountOrThrow(): BraintreeUsBankAccount {
         if (!this.usBankAccount) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -248,7 +244,7 @@ export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
         return this.usBankAccount;
     }
 
-    private handleError(error: unknown): never {
+    private handleBraintreeError(error: unknown): never {
         if (!isBraintreeError(error)) {
             throw error;
         }

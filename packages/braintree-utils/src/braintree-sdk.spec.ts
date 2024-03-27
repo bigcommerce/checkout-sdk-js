@@ -8,12 +8,18 @@ import { getConfig } from '@bigcommerce/checkout-sdk/payment-integrations-test-u
 
 import BraintreeScriptLoader from './braintree-script-loader';
 import BraintreeSdk from './braintree-sdk';
-import { getClientMock, getDataCollectorMock, getModuleCreatorMock } from './mocks/braintree.mock';
+import {
+    getClientMock,
+    getDataCollectorMock,
+    getModuleCreatorMock,
+    getUsBankAccountMock,
+} from './mocks';
 import {
     BraintreeClient,
     BraintreeDataCollector,
     BraintreeErrorCode,
     BraintreeModuleCreator,
+    BraintreeUsBankAccount,
     BraintreeWindow,
 } from './types';
 
@@ -21,10 +27,12 @@ describe('BraintreeSdk', () => {
     let braintreeSdk: BraintreeSdk;
     let braintreeScriptLoader: BraintreeScriptLoader;
     let braintreeWindowMock: BraintreeWindow;
-    let clientMock: BraintreeClient;
     let clientCreatorMock: BraintreeModuleCreator<BraintreeClient>;
-    let dataCollectorMock: BraintreeDataCollector;
+    let clientMock: BraintreeClient;
     let dataCollectorCreatorMock: BraintreeModuleCreator<BraintreeDataCollector>;
+    let dataCollectorMock: BraintreeDataCollector;
+    let usBankAccountCreatorMock: BraintreeModuleCreator<BraintreeUsBankAccount>;
+    let usBankAccountMock: BraintreeUsBankAccount;
 
     const clientTokenMock = 'clientTokenMock';
     const storeConfig: StoreConfig = getConfig().storeConfig;
@@ -39,6 +47,8 @@ describe('BraintreeSdk', () => {
         clientCreatorMock = getModuleCreatorMock(clientMock);
         dataCollectorMock = getDataCollectorMock();
         dataCollectorCreatorMock = getModuleCreatorMock(dataCollectorMock);
+        usBankAccountMock = getUsBankAccountMock();
+        usBankAccountCreatorMock = getModuleCreatorMock(usBankAccountMock);
 
         braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
 
@@ -46,6 +56,9 @@ describe('BraintreeSdk', () => {
         jest.spyOn(braintreeScriptLoader, 'loadClient').mockImplementation(() => clientCreatorMock);
         jest.spyOn(braintreeScriptLoader, 'loadDataCollector').mockImplementation(
             () => dataCollectorCreatorMock,
+        );
+        jest.spyOn(braintreeScriptLoader, 'loadUsBankAccount').mockImplementation(
+            () => usBankAccountCreatorMock,
         );
     });
 
@@ -154,6 +167,37 @@ describe('BraintreeSdk', () => {
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(Error);
             }
+        });
+    });
+
+    describe('#getUsBankAccount()', () => {
+        it('throws an error if client token was not provided', async () => {
+            try {
+                await braintreeSdk.getUsBankAccount();
+            } catch (error: unknown) {
+                expect(error).toBeInstanceOf(NotInitializedError);
+            }
+        });
+
+        it('creates braintree us bank account module', async () => {
+            braintreeSdk.initialize(clientTokenMock, storeConfig);
+
+            await braintreeSdk.getUsBankAccount();
+
+            expect(braintreeScriptLoader.loadUsBankAccount).toHaveBeenCalled();
+            expect(usBankAccountCreatorMock.create).toHaveBeenCalledWith({
+                client: clientMock,
+            });
+        });
+
+        it('returns the same us bank account module while calling method for second time', async () => {
+            braintreeSdk.initialize(clientTokenMock, storeConfig);
+
+            await braintreeSdk.getUsBankAccount();
+            await braintreeSdk.getUsBankAccount();
+
+            expect(braintreeScriptLoader.loadUsBankAccount).toHaveBeenCalledTimes(1);
+            expect(usBankAccountCreatorMock.create).toHaveBeenCalledTimes(1);
         });
     });
 
