@@ -44,9 +44,10 @@ describe('HummPaymentStrategy', () => {
         submitOrderAction = OrderActionType.SubmitOrderRequested;
         submitPaymentAction = PaymentActionType.SubmitPaymentRequested;
 
-        formPoster = createFormPoster();
-
-        jest.spyOn(formPoster, 'postForm').mockReturnValue(Promise.resolve());
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        formPoster = {
+            postForm: jest.fn(),
+        } as unknown as FormPoster;
 
         jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
 
@@ -64,7 +65,6 @@ describe('HummPaymentStrategy', () => {
         );
 
         strategy = new HummPaymentStrategy(paymentIntegrationService, formPoster);
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
     });
 
     afterEach(() => {
@@ -80,6 +80,13 @@ describe('HummPaymentStrategy', () => {
 
         it('redirect to Humm', async () => {
             console.log('======= START ======');
+
+            const postFormMock = jest.fn((_url, _options) =>
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                Promise.resolve(),
+            );
+
+            jest.spyOn(formPoster, 'postForm').mockImplementation(postFormMock);
 
             const data = JSON.stringify({ data: 'data' });
             const error = new RequestError(
@@ -104,7 +111,7 @@ describe('HummPaymentStrategy', () => {
             await strategy.execute(payload);
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(formPoster.postForm).toHaveBeenCalledWith('https://sandbox-payment.humm.com', {
+            expect(postFormMock).toHaveBeenCalledWith('https://sandbox-payment.humm.com', {
                 data: 'data',
             });
         });
@@ -129,6 +136,18 @@ describe('HummPaymentStrategy', () => {
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue(error);
 
             await expect(strategy.execute(getOrderRequestBody())).rejects.toThrow(error);
+        });
+    });
+
+    describe('#initialize()', () => {
+        it('deinitializes strategy', async () => {
+            await expect(strategy.initialize()).resolves.not.toThrow();
+        });
+    });
+
+    describe('#deinitialize()', () => {
+        it('deinitializes strategy', async () => {
+            await expect(strategy.deinitialize()).resolves.not.toThrow();
         });
     });
 });
