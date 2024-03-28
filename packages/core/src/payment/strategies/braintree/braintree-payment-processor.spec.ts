@@ -1,7 +1,4 @@
-import braintreeBrowserDetection from '@braintree/browser-detection';
 import { noop } from 'lodash';
-
-import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { NotInitializedError } from '../../../common/error/errors';
@@ -9,7 +6,7 @@ import { getConfig } from '../../../config/configs.mock';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import { NonceInstrument } from '../../payment';
 
-import { BraintreeClient, BraintreePaypal, BraintreeThreeDSecure } from './braintree';
+import { BraintreeClient, BraintreeThreeDSecure } from './braintree';
 import BraintreeHostedForm from './braintree-hosted-form';
 import { BraintreeFormOptions } from './braintree-payment-options';
 import BraintreePaymentProcessor from './braintree-payment-processor';
@@ -31,7 +28,6 @@ jest.mock('@braintree/browser-detection', () => ({
 describe('BraintreePaymentProcessor', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;
     let braintreeHostedForm: BraintreeHostedForm;
-    let overlay: Overlay;
 
     const clientToken = 'clientToken';
     const storeConfig = getConfig().storeConfig;
@@ -39,14 +35,12 @@ describe('BraintreePaymentProcessor', () => {
     beforeEach(() => {
         braintreeSDKCreator = {} as BraintreeSDKCreator;
         braintreeHostedForm = {} as BraintreeHostedForm;
-        overlay = new Overlay();
     });
 
     it('creates a instance of the payment processor', () => {
         const braintreePaymentProcessor = new BraintreePaymentProcessor(
             braintreeSDKCreator,
             braintreeHostedForm,
-            overlay,
         );
 
         expect(braintreePaymentProcessor).toBeInstanceOf(BraintreePaymentProcessor);
@@ -59,7 +53,6 @@ describe('BraintreePaymentProcessor', () => {
             const braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
 
             braintreePaymentProcessor.initialize(clientToken, storeConfig);
@@ -75,28 +68,11 @@ describe('BraintreePaymentProcessor', () => {
             const braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
 
             await braintreePaymentProcessor.deinitialize();
 
             expect(braintreeSDKCreator.teardown).toHaveBeenCalled();
-        });
-    });
-
-    describe('#preloadPaypal', () => {
-        it('gets paypal from the braintree sdk creator', async () => {
-            braintreeSDKCreator.getPaypal = jest.fn();
-
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-                overlay,
-            );
-
-            await braintreePaymentProcessor.preloadPaypal();
-
-            expect(braintreeSDKCreator.getPaypal).toHaveBeenCalled();
         });
     });
 
@@ -107,7 +83,6 @@ describe('BraintreePaymentProcessor', () => {
             const braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
 
             const config = {
@@ -138,7 +113,6 @@ describe('BraintreePaymentProcessor', () => {
             braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
         });
 
@@ -189,7 +163,6 @@ describe('BraintreePaymentProcessor', () => {
             braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
 
             jest.spyOn(braintreePaymentProcessor, 'tokenizeCard').mockReturnValue(
@@ -242,7 +215,6 @@ describe('BraintreePaymentProcessor', () => {
             const braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
             const expected = await braintreePaymentProcessor.appendSessionId(
                 Promise.resolve(processedPayment),
@@ -264,170 +236,10 @@ describe('BraintreePaymentProcessor', () => {
             const braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
             const expected = await braintreePaymentProcessor.getSessionId();
 
             expect(expected).toBe('my_device_session_id');
-        });
-    });
-
-    describe('#paypal()', () => {
-        let paypal: BraintreePaypal;
-
-        beforeEach(() => {
-            paypal = {
-                closeWindow: jest.fn(),
-                focusWindow: jest.fn(),
-                tokenize: jest.fn(),
-            };
-
-            braintreeSDKCreator.getPaypal = () => Promise.resolve(paypal);
-
-            jest.spyOn(overlay, 'show').mockImplementation();
-
-            jest.spyOn(overlay, 'remove').mockImplementation();
-        });
-
-        it('shows Paypal modal for tokenization', async () => {
-            const processor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-                overlay,
-            );
-
-            await processor.paypal({
-                amount: 200,
-                locale: 'en',
-                currency: 'USD',
-            });
-
-            expect(paypal.tokenize).toHaveBeenCalledWith({
-                amount: 200,
-                currency: 'USD',
-                enableShippingAddress: true,
-                flow: 'checkout',
-                locale: 'en',
-                useraction: 'commit',
-            });
-        });
-
-        it('shows Paypal modal for vaulting', async () => {
-            const processor = new BraintreePaymentProcessor(
-                braintreeSDKCreator,
-                braintreeHostedForm,
-                overlay,
-            );
-
-            await processor.paypal({
-                amount: 200,
-                locale: 'en',
-                currency: 'USD',
-                shouldSaveInstrument: true,
-            });
-
-            expect(paypal.tokenize).toHaveBeenCalledWith({
-                amount: 200,
-                currency: 'USD',
-                enableShippingAddress: true,
-                flow: 'vault',
-                locale: 'en',
-                useraction: 'commit',
-            });
-        });
-
-        describe('when popups are supported', () => {
-            it('toggles overlay', async () => {
-                jest.spyOn(braintreeBrowserDetection, 'supportsPopups').mockImplementation(
-                    jest.fn(() => true),
-                );
-
-                const processor = new BraintreePaymentProcessor(
-                    braintreeSDKCreator,
-                    braintreeHostedForm,
-                    overlay,
-                );
-
-                await processor.paypal({
-                    amount: 200,
-                    locale: 'en',
-                    currency: 'USD',
-                });
-
-                expect(overlay.show).toHaveBeenCalled();
-
-                expect(overlay.remove).toHaveBeenCalled();
-            });
-
-            it('removes overlay if tokenization fails', async () => {
-                jest.spyOn(braintreeBrowserDetection, 'supportsPopups').mockImplementation(
-                    jest.fn(() => true),
-                );
-
-                jest.spyOn(paypal, 'tokenize').mockRejectedValue(new Error());
-
-                const processor = new BraintreePaymentProcessor(
-                    braintreeSDKCreator,
-                    braintreeHostedForm,
-                    overlay,
-                );
-
-                try {
-                    await processor.paypal({
-                        amount: 200,
-                        locale: 'en',
-                        currency: 'USD',
-                    });
-                } catch (error) {
-                    expect(overlay.remove).toHaveBeenCalled();
-                }
-            });
-
-            it('focus PayPal window when overlay is clicked', async () => {
-                jest.spyOn(braintreeBrowserDetection, 'supportsPopups').mockImplementation(
-                    jest.fn(() => true),
-                );
-
-                const processor = new BraintreePaymentProcessor(
-                    braintreeSDKCreator,
-                    braintreeHostedForm,
-                    overlay,
-                );
-
-                await processor.paypal({
-                    amount: 200,
-                    locale: 'en',
-                    currency: 'USD',
-                });
-
-                const { onClick } = (overlay.show as jest.Mock).mock.calls[0][0];
-
-                onClick();
-
-                expect(paypal.focusWindow).toHaveBeenCalled();
-            });
-        });
-
-        describe('when popups are not supported', () => {
-            it('does not toggle the overlay', async () => {
-                jest.spyOn(braintreeBrowserDetection, 'supportsPopups').mockImplementation(
-                    jest.fn(() => false),
-                );
-
-                const processor = new BraintreePaymentProcessor(
-                    braintreeSDKCreator,
-                    braintreeHostedForm,
-                    overlay,
-                );
-
-                await processor.paypal({
-                    amount: 200,
-                    locale: 'en',
-                    currency: 'USD',
-                });
-
-                expect(overlay.show).not.toHaveBeenCalled();
-            });
         });
     });
 
@@ -440,7 +252,6 @@ describe('BraintreePaymentProcessor', () => {
             const braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
 
             hostedFormInitializationOptions = {
@@ -467,7 +278,6 @@ describe('BraintreePaymentProcessor', () => {
             const braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
 
             await braintreePaymentProcessor.deinitializeHostedForm();
@@ -482,7 +292,6 @@ describe('BraintreePaymentProcessor', () => {
             const braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
 
             await braintreeHostedForm.initialize({ fields: {} });
@@ -498,7 +307,6 @@ describe('BraintreePaymentProcessor', () => {
             const braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
 
             braintreePaymentProcessor.tokenizeHostedForm(getBillingAddress());
@@ -514,7 +322,6 @@ describe('BraintreePaymentProcessor', () => {
             const braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
 
             braintreePaymentProcessor.tokenizeHostedFormForStoredCardVerification();
@@ -528,7 +335,6 @@ describe('BraintreePaymentProcessor', () => {
             const braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
 
             braintreeHostedForm.tokenize = jest.fn();
@@ -571,7 +377,6 @@ describe('BraintreePaymentProcessor', () => {
             braintreePaymentProcessor = new BraintreePaymentProcessor(
                 braintreeSDKCreator,
                 braintreeHostedForm,
-                overlay,
             );
 
             braintreePaymentProcessor.initialize(clientToken, storeConfig, {

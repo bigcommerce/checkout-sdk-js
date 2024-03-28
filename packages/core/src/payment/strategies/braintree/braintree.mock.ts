@@ -17,7 +17,6 @@ import {
     BraintreeVenmoCheckout,
     BraintreeVerifyPayload,
     BraintreeVisaCheckout,
-    GooglePayBraintreeSDK,
 } from './braintree';
 import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
 
@@ -136,14 +135,6 @@ export function getTokenizeResponseBody(): BraintreeTokenizeResponse {
                 },
             },
         ],
-    };
-}
-
-export function getGooglePayMock(): GooglePayBraintreeSDK {
-    return {
-        createPaymentDataRequest: jest.fn(() => Promise.resolve()),
-        parseResponse: jest.fn(() => Promise.resolve()),
-        teardown: jest.fn(),
     };
 }
 

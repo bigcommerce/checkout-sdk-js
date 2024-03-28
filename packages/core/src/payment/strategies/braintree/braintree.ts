@@ -2,7 +2,6 @@ import { Omit } from '../../../common/types';
 import {
     GooglePayBraintreeDataRequest,
     GooglePayBraintreePaymentDataRequestV1,
-    GooglePayCreator,
     GooglePaymentData,
     TokenizePayload,
 } from '../googlepay';
@@ -49,7 +48,6 @@ export interface BraintreeModule {
 export interface BraintreeSDK {
     client?: BraintreeClientCreator;
     dataCollector?: BraintreeDataCollectorCreator;
-    googlePayment?: GooglePayCreator;
     hostedFields?: BraintreeHostedFieldsCreator;
     paypal?: BraintreePaypalCreator;
     paypalCheckout?: BraintreePaypalCheckoutCreator;

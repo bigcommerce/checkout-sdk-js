@@ -22,7 +22,6 @@ import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getGooglePay, getPaymentMethodsState } from '../../payment-methods.mock';
-import { BraintreeScriptLoader, BraintreeSDKCreator } from '../braintree';
 
 import {
     GooglePayClient,
@@ -32,7 +31,7 @@ import {
     TokenizePayload,
     TotalPriceStatusType,
 } from './googlepay';
-import GooglePayBraintreeInitializer from './googlepay-braintree-initializer';
+import GooglePayStripeUPEInitializer from './googlepay-stripe-upe-initializer';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 import GooglePayScriptLoader from './googlepay-script-loader';
 import {
@@ -73,10 +72,7 @@ describe('GooglePayPaymentProcessor', () => {
             new PaymentMethodRequestSender(requestSender),
         );
         googlePayScriptLoader = new GooglePayScriptLoader(scriptLoader);
-        googlePayInitializer = new GooglePayBraintreeInitializer(
-            store,
-            new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
-        );
+        googlePayInitializer = new GooglePayStripeUPEInitializer();
         requestSender = createRequestSender();
         googlePaySDK.payments.api.PaymentsClient = jest.fn(() => clientMock);
 

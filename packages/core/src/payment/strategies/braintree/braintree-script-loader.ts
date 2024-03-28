@@ -7,7 +7,6 @@ import {
 
 import { StoreConfig } from '../../../config';
 import { PaymentMethodClientUnavailableError } from '../../errors';
-import { GooglePayCreator } from '../googlepay';
 
 import {
     BraintreeClientCreator,
@@ -15,7 +14,6 @@ import {
     BraintreeHostedFieldsCreator,
     BraintreeHostWindow,
     BraintreePaypalCheckoutCreator,
-    BraintreePaypalCreator,
     BraintreeThreeDSecureCreator,
     BraintreeVenmoCheckoutCreator,
     BraintreeVisaCheckoutCreator,
@@ -83,20 +81,6 @@ export default class BraintreeScriptLoader {
             });
     }
 
-    loadPaypal(): Promise<BraintreePaypalCreator> {
-        return this._scriptLoader
-            .loadScript(
-                `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/paypal.min.js`,
-            )
-            .then(() => {
-                if (!this._window.braintree || !this._window.braintree.paypal) {
-                    throw new PaymentMethodClientUnavailableError();
-                }
-
-                return this._window.braintree.paypal;
-            });
-    }
-
     loadPaypalCheckout(): Promise<BraintreePaypalCheckoutCreator> {
         return this._scriptLoader
             .loadScript(
@@ -134,20 +118,6 @@ export default class BraintreeScriptLoader {
                 }
 
                 return this._window.braintree.venmo;
-            });
-    }
-
-    loadGooglePayment(): Promise<GooglePayCreator> {
-        return this._scriptLoader
-            .loadScript(
-                `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/google-payment.min.js`,
-            )
-            .then(() => {
-                if (!this._window.braintree || !this._window.braintree.googlePayment) {
-                    throw new PaymentMethodClientUnavailableError();
-                }
-
-                return this._window.braintree.googlePayment;
             });
     }
 

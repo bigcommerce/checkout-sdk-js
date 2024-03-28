@@ -1,7 +1,5 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { Overlay } from '@bigcommerce/checkout-sdk/ui';
-
 import BraintreeHostedForm from './braintree-hosted-form';
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreeScriptLoader from './braintree-script-loader';
@@ -11,7 +9,6 @@ export default function createBraintreePaymentProcessor(scriptLoader: ScriptLoad
     const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader);
     const braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
     const braintreeHostedForm = new BraintreeHostedForm(braintreeSDKCreator);
-    const overlay = new Overlay();
 
-    return new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm, overlay);
+    return new BraintreePaymentProcessor(braintreeSDKCreator, braintreeHostedForm);
 }

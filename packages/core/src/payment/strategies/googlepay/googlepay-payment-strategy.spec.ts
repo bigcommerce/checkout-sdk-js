@@ -55,7 +55,7 @@ import { BraintreeScriptLoader, BraintreeSDKCreator } from '../braintree';
 
 import createGooglePayPaymentProcessor from './create-googlepay-payment-processor';
 import GooglePayAdyenV2PaymentProcessor from './googlepay-adyenv2-payment-processor';
-import GooglePayBraintreeInitializer from './googlepay-braintree-initializer';
+import GooglePayStripeUPEInitializer from './googlepay-stripe-upe-initializer';
 import GooglePayCheckoutcomPaymentProcessor from './googlepay-checkoutcom-payment-processor';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 import GooglePayPaymentStrategy from './googlepay-payment-strategy';
@@ -145,7 +145,7 @@ describe('GooglePayPaymentStrategy', () => {
 
         googlePayPaymentProcessor = createGooglePayPaymentProcessor(
             store,
-            new GooglePayBraintreeInitializer(store, braintreeSDKCreator),
+            new GooglePayStripeUPEInitializer(),
         );
         googlePayAdyenV2PaymentProcessor = new GooglePayAdyenV2PaymentProcessor(
             store,
