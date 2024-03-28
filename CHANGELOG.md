@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.568.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.568.2...v1.568.3) (2024-03-28)
+
+
+### Bug Fixes
+
+* **payment:** PI-1841 Check fields containers before mount ([35fd8e4](https://github.com/bigcommerce/checkout-sdk-js/commit/35fd8e4dc779592efe75c1cf0e69ab284c189900))
+
 ### [1.568.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.568.1...v1.568.2) (2024-03-27)
 
 
