@@ -1,11 +1,7 @@
 import { PaymentInitializeOptions } from '../..';
 import { Checkout, InternalCheckoutSelectors } from '../../../checkout';
 import PaymentMethod from '../../payment-method';
-import {
-    BraintreeModuleCreator,
-    BraintreeVerifyPayload,
-    GooglePayBraintreeSDK,
-} from '../braintree';
+import { BraintreeVerifyPayload } from '../braintree';
 
 export enum CallbackTriggerType {
     INITIALIZE = 'INITIALIZE',
@@ -45,8 +41,6 @@ export interface GooglePayProviderProcessor {
     initialize(options: PaymentInitializeOptions): Promise<void>;
     processAdditionalAction(error: unknown): Promise<InternalCheckoutSelectors>;
 }
-
-export type GooglePayCreator = BraintreeModuleCreator<GooglePayBraintreeSDK>;
 
 export interface GooglePayPaymentOptions {
     environment: EnvironmentType;

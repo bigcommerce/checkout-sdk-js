@@ -8,7 +8,6 @@ import { Consignment } from '../../../shipping';
 import { Tax } from '../../../tax';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodConfig from '../../payment-method-config';
-import { GooglePayBraintreeSDK } from '../braintree';
 
 import {
     BillingAddressFormat,
@@ -370,36 +369,6 @@ export function getBNZTokenizedPayload(): TokenizePayload {
 }
 
 // Braintree
-export function getGooglePayBraintreeMock(): GooglePayBraintreeSDK {
-    return {
-        createPaymentDataRequest: jest.fn(() => getBraintreePaymentDataRequest()),
-        parseResponse: jest.fn(),
-        teardown: jest.fn(() => Promise.resolve()),
-    };
-}
-
-export function getBraintreePaymentDataPayload() {
-    return {
-        cardRequirements: {
-            billingAddressFormat: 'FULL',
-            billingAddressRequired: true,
-        },
-        emailRequired: true,
-        merchantInfo: {
-            authJwt: 'platformToken',
-            merchantId: '123',
-            merchantName: 'name',
-        },
-        phoneNumberRequired: true,
-        shippingAddressRequired: true,
-        transactionInfo: {
-            currencyCode: 'USD',
-            totalPrice: '1.00',
-            totalPriceStatus: TotalPriceStatusType.FINAL,
-        },
-    };
-}
-
 export function getBraintreePaymentDataRequest(): GooglePayBraintreePaymentDataRequestV1 {
     return {
         allowedPaymentMethods: [],

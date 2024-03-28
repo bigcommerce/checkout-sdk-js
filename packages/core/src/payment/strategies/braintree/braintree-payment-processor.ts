@@ -1,8 +1,6 @@
-import { supportsPopups } from '@braintree/browser-detection';
 import { isEmpty } from 'lodash';
 
 import { CancellablePromise } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
 import { Address } from '../../../address';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
@@ -18,13 +16,10 @@ import { CreditCardInstrument, NonceInstrument } from '../../payment';
 
 import {
     BraintreeError,
-    BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeRequestData,
-    BraintreeShippingAddressOverride,
     BraintreeThreeDSecure,
-    BraintreeTokenizePayload,
     BraintreeVenmoCheckout,
     BraintreeVerifyPayload,
     TokenizationPayload,
@@ -38,23 +33,12 @@ import {
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import isCreditCardInstrumentLike from './is-credit-card-instrument-like';
 
-export interface PaypalConfig {
-    amount: number;
-    currency: string;
-    locale: string;
-    offerCredit?: boolean;
-    shippingAddressEditable?: boolean;
-    shippingAddressOverride?: BraintreeShippingAddressOverride;
-    shouldSaveInstrument?: boolean;
-}
-
 export default class BraintreePaymentProcessor {
     private _threeDSecureOptions?: BraintreeThreeDSecureOptions;
 
     constructor(
         private _braintreeSDKCreator: BraintreeSDKCreator,
         private _braintreeHostedForm: BraintreeHostedForm,
-        private _overlay: Overlay,
     ) {}
 
     initialize(
@@ -68,10 +52,6 @@ export default class BraintreePaymentProcessor {
 
     deinitialize(): Promise<void> {
         return this._braintreeSDKCreator.teardown();
-    }
-
-    preloadPaypal(): Promise<BraintreePaypal> {
-        return this._braintreeSDKCreator.getPaypal();
     }
 
     preloadPaypalCheckout(
@@ -120,37 +100,6 @@ export default class BraintreePaymentProcessor {
         const tokenizationPayload = await this.tokenizeCard(payment, billingAddress);
 
         return this.challenge3DSVerification(tokenizationPayload, amount);
-    }
-
-    paypal({ shouldSaveInstrument, ...config }: PaypalConfig): Promise<BraintreeTokenizePayload> {
-        const newWindowFlow = supportsPopups();
-
-        return this._braintreeSDKCreator
-            .getPaypal()
-            .then((paypal) => {
-                if (newWindowFlow) {
-                    this._overlay.show({
-                        onClick: () => paypal.focusWindow(),
-                    });
-                }
-
-                return paypal.tokenize({
-                    enableShippingAddress: true,
-                    flow: shouldSaveInstrument ? 'vault' : 'checkout',
-                    useraction: 'commit',
-                    ...config,
-                });
-            })
-            .then((response) => {
-                this._overlay.remove();
-
-                return response;
-            })
-            .catch((error) => {
-                this._overlay.remove();
-
-                throw error;
-            });
     }
 
     getSessionId(): Promise<string | undefined> {
