@@ -437,7 +437,11 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         };
 
         try {
-            await cardFields.submit(submitConfig);
+            if (this.isCreditCardVaultedForm) {
+                await cardFields.submit();
+            } else {
+                await cardFields.submit(submitConfig);
+            }
         } catch (_) {
             throw new PaymentMethodFailedError(
                 'Failed authentication. Please try to authorize again.',
