@@ -27,6 +27,32 @@ let tdOnlineMartClientScriptInitializationOptions: PaymentInitializeOptions;
 let formPoster: FormPoster;
 
 describe('TDOnlineMartPaymentStrategy', () => {
+    const containers: Array<{
+        id: string;
+        element?: HTMLDivElement;
+    }> = [
+        { id: 'tdonlinemart-ccNumber' },
+        { id: 'tdonlinemart-ccCvv' },
+        { id: 'tdonlinemart-ccExpiry' },
+    ];
+    const createInputContainers = (elementContainers = containers) => {
+        elementContainers.forEach((container) => {
+            container.element = document.createElement('div');
+            container.element.setAttribute('id', container.id);
+            document.body.appendChild(container.element);
+        });
+    };
+    const removeInputContainers = () => {
+        containers.forEach((container) => {
+            if (!container.element) {
+                return;
+            }
+
+            document.body.removeChild(container.element);
+            container.element = undefined;
+        });
+    };
+
     beforeEach(() => {
         tdOnlineMartClient = getTDOnlineMartClient();
         scriptLoader = createScriptLoader();
@@ -63,10 +89,14 @@ describe('TDOnlineMartPaymentStrategy', () => {
                 token: 'td-online-mart-token',
             });
         });
+
+        createInputContainers();
     });
 
     afterEach(() => {
         jest.clearAllMocks();
+
+        removeInputContainers();
     });
 
     describe('initialize', () => {
@@ -107,6 +137,27 @@ describe('TDOnlineMartPaymentStrategy', () => {
             expect(tdOnlineMartClient.create).toHaveBeenCalled();
             expect(mountMock).toHaveBeenCalledTimes(3);
         });
+
+        it('mounts td online mart inputs if only one container exist', async () => {
+            const unmountMock = jest.fn();
+            const mountMock = jest.fn();
+
+            removeInputContainers();
+            createInputContainers([containers[0]]);
+
+            tdOnlineMartClient = getTDOnlineMartClient({ mount: mountMock, unmount: unmountMock });
+
+            jest.spyOn(tdOnlineScriptLoader, 'load').mockImplementation(() =>
+                Promise.resolve(tdOnlineMartClient),
+            );
+
+            await tdOnlineMartPaymentStrategy.initialize(
+                tdOnlineMartClientScriptInitializationOptions,
+            );
+
+            expect(tdOnlineMartClient.create).toHaveBeenCalled();
+            expect(mountMock).toHaveBeenCalledTimes(1);
+        });
     });
 
     describe('execute', () => {
@@ -129,11 +180,7 @@ describe('TDOnlineMartPaymentStrategy', () => {
                         time_zone_offset: expect.any(String),
                     }),
                     shouldSaveInstrument: false,
-                    formattedPayload: expect.objectContaining({
-                        credit_card_token: {
-                            token: 'td-online-mart-token',
-                        },
-                    }),
+                    nonce: 'td-online-mart-token',
                     /* eslint-enable @typescript-eslint/naming-convention */
                 }),
             });
@@ -150,18 +197,6 @@ describe('TDOnlineMartPaymentStrategy', () => {
                 },
             };
 
-            jest.spyOn(tdOnlineMartClient, 'createToken')
-                .mockImplementationOnce((callback) => {
-                    callback({
-                        token: 'td-online-mart-token-1',
-                    });
-                })
-                .mockImplementationOnce((callback) => {
-                    callback({
-                        token: 'td-online-mart-token-2',
-                    });
-                });
-
             await tdOnlineMartPaymentStrategy.initialize(
                 tdOnlineMartClientScriptInitializationOptions,
             );
@@ -173,12 +208,7 @@ describe('TDOnlineMartPaymentStrategy', () => {
                     /* eslint-disable @typescript-eslint/naming-convention */
                     browser_info: expect.any(Object),
                     shouldSaveInstrument: true,
-                    formattedPayload: expect.objectContaining({
-                        credit_card_token: {
-                            token: 'td-online-mart-token-1',
-                            profile_token: 'td-online-mart-token-2',
-                        },
-                    }),
+                    nonce: 'td-online-mart-token',
                     /* eslint-enable @typescript-eslint/naming-convention */
                 }),
             });
@@ -446,6 +476,27 @@ describe('TDOnlineMartPaymentStrategy', () => {
             await tdOnlineMartPaymentStrategy.deinitialize();
 
             expect(unmountMock).toHaveBeenCalledTimes(3);
+        });
+
+        it('unmount only existing td online mart hosted fields', async () => {
+            const unmountMock = jest.fn();
+            const mountMock = jest.fn();
+
+            removeInputContainers();
+            createInputContainers([containers[0]]);
+
+            tdOnlineMartClient = getTDOnlineMartClient({ mount: mountMock, unmount: unmountMock });
+            jest.spyOn(tdOnlineScriptLoader, 'load').mockImplementation(() =>
+                Promise.resolve(tdOnlineMartClient),
+            );
+
+            await tdOnlineMartPaymentStrategy.initialize(
+                tdOnlineMartClientScriptInitializationOptions,
+            );
+
+            await tdOnlineMartPaymentStrategy.deinitialize();
+
+            expect(unmountMock).toHaveBeenCalledTimes(1);
         });
     });
 });

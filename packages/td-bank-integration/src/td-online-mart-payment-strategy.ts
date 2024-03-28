@@ -24,17 +24,27 @@ import { isTdOnlineMartAdditionalAction } from './isTdOnlineMartAdditionalAction
 import {
     FieldType,
     TDCustomCheckoutSDK,
-    TdOnlineMartElement,
-    TdOnlineMartPaymentTokens,
+    TDOnlineMartInput,
     TdOnlineMartThreeDSErrorBody,
 } from './td-online-mart';
 import TDOnlineMartScriptLoader from './td-online-mart-script-loader';
 
 export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
     private tdOnlineMartClient?: TDCustomCheckoutSDK;
-    private cardNumberInput?: TdOnlineMartElement;
-    private cvvInput?: TdOnlineMartElement;
-    private expiryInput?: TdOnlineMartElement;
+    private tdInputs: TDOnlineMartInput[] = [
+        {
+            id: 'ccNumber',
+            fieldType: FieldType.CARD_NUMBER,
+        },
+        {
+            id: 'ccCvv',
+            fieldType: FieldType.CVV,
+        },
+        {
+            id: 'ccExpiry',
+            fieldType: FieldType.EXPIRY,
+        },
+    ];
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -84,9 +94,10 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
 
     deinitialize(): Promise<void> {
         this.tdOnlineMartClient = undefined;
-        this.cardNumberInput?.unmount();
-        this.cvvInput?.unmount();
-        this.expiryInput?.unmount();
+
+        this.tdInputs.forEach(({ inputElement }: TDOnlineMartInput) => {
+            inputElement?.unmount();
+        });
 
         return Promise.resolve();
     }
@@ -116,21 +127,10 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             };
         }
 
-        let creditCardToken: TdOnlineMartPaymentTokens;
+        let nonce: string;
 
         try {
-            creditCardToken = {
-                token: await this.getTokenOrThrow(),
-            };
-
-            if (shouldSaveInstrument) {
-                // INFO: instrument saving requires additional token
-                creditCardToken = {
-                    ...creditCardToken,
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
-                    profile_token: await this.getTokenOrThrow(),
-                };
-            }
+            nonce = await this.getTokenOrThrow();
         } catch (error) {
             this.throwTokenizationError(error);
         }
@@ -139,10 +139,7 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             methodId,
             paymentData: {
                 ...commonPaymentData,
-                formattedPayload: {
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
-                    credit_card_token: creditCardToken,
-                },
+                nonce,
             },
         };
     }
@@ -151,13 +148,16 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
         const options = this.getHostedFieldsOptions();
         const tdOnlineMartClient = this.getTDOnlineMartClientOrThrow();
 
-        this.cardNumberInput = tdOnlineMartClient.create(FieldType.CARD_NUMBER, options);
-        this.cvvInput = tdOnlineMartClient.create(FieldType.CVV, options);
-        this.expiryInput = tdOnlineMartClient.create(FieldType.EXPIRY, options);
+        this.tdInputs.forEach((input: TDOnlineMartInput) => {
+            const inputId = `${methodId}-${input.id}`;
 
-        this.cardNumberInput.mount(`#${methodId}-ccNumber`);
-        this.cvvInput.mount(`#${methodId}-ccCvv`);
-        this.expiryInput.mount(`#${methodId}-ccExpiry`);
+            if (!document.getElementById(inputId)) {
+                return;
+            }
+
+            input.inputElement = tdOnlineMartClient.create(input.fieldType, options);
+            input.inputElement.mount(`#${inputId}`);
+        });
     }
 
     private async loadTDOnlineMartJs(): Promise<TDCustomCheckoutSDK> {

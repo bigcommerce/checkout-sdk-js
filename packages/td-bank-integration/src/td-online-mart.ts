@@ -20,6 +20,12 @@ export enum FieldType {
     EXPIRY = 'expiry',
 }
 
+export interface TDOnlineMartInput {
+    id: string;
+    fieldType: FieldType;
+    inputElement?: TdOnlineMartElement;
+}
+
 interface CreateTokenResponse {
     code: string;
     error?: CreateTokenError;
@@ -36,11 +42,6 @@ export interface CreateTokenError {
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
-export interface TdOnlineMartPaymentTokens {
-    token: string;
-    profile_token?: string;
-}
-
 export interface TdOnlineMartThreeDSErrorBody {
     errors?: Array<{ code: string }>;
     three_ds_result?: {
