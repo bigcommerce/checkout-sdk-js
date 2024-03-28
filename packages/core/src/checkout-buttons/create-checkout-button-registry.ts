@@ -23,7 +23,6 @@ import {
     BraintreePaypalCreditButtonStrategy,
     BraintreeVenmoButtonStrategy,
 } from './strategies/braintree';
-import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
 
