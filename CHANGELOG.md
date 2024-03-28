@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.570.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.569.0...v1.570.0) (2024-03-28)
+
+
+### Features
+
+* **payment:** PAYPAL-3910 send billing address only with order creation ([f928a4d](https://github.com/bigcommerce/checkout-sdk-js/commit/f928a4d252cc6847c89c1ea6db2f6847186ca721))
+
 ## [1.569.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.568.3...v1.569.0) (2024-03-28)
 
 
