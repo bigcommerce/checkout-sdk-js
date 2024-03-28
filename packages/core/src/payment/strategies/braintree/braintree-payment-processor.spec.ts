@@ -633,6 +633,7 @@ describe('BraintreePaymentProcessor', () => {
                 bin: '123456',
                 nonce: 'tokenization_nonce',
                 onLookupComplete: expect.any(Function),
+                collectDeviceData: true,
             });
         });
 
