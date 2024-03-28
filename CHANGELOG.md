@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.569.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.568.3...v1.569.0) (2024-03-28)
+
+
+### Features
+
+* **payment:** PAYPAL-3881 added collectDeviceData flag to braintree sdk ([c4c1181](https://github.com/bigcommerce/checkout-sdk-js/commit/c4c11818d5859cf0d7bc388e472fe0e34e983fbd))
+
 ### [1.568.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.568.2...v1.568.3) (2024-03-28)
 
 
