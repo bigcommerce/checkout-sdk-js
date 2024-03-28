@@ -1,5 +1,13 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
+import {
+    AmazonPayV2ButtonColor,
+    AmazonPayV2PaymentProcessor,
+    AmazonPayV2Placement,
+    createAmazonPayV2PaymentProcessor,
+    getAmazonPayV2,
+} from '@bigcommerce/checkout-sdk/amazon-pay-utils';
+
 import { CartRequestSender } from '../../../cart';
 import { getCart } from '../../../cart/carts.mock';
 import {
@@ -13,13 +21,7 @@ import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
-import { getAmazonPayV2, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import {
-    AmazonPayV2ButtonColor,
-    AmazonPayV2PaymentProcessor,
-    AmazonPayV2Placement,
-    createAmazonPayV2PaymentProcessor,
-} from '../../../payment/strategies/amazon-pay-v2';
+import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
 import AmazonPayV2ButtonStrategy from './amazon-pay-v2-button-strategy';

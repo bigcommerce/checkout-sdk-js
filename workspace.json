@@ -3,6 +3,7 @@
     "projects": {
         "adyen-integration": "packages/adyen-integration",
         "affirm-integration": "packages/affirm-integration",
+        "amazon-pay-utils": "packages/amazon-pay-utils",
         "analytics": "packages/analytics",
         "apple-pay-integration": "packages/apple-pay-integration",
         "bluesnap-direct-integration": "packages/bluesnap-direct-integration",

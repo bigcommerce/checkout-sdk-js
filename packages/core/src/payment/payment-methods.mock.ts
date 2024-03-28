@@ -1,3 +1,4 @@
+import { getAmazonPayV2 } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import { DefaultCheckoutButtonHeight } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import PaymentMethod from './payment-method';
@@ -338,37 +339,6 @@ export function getAffirm(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
-    };
-}
-
-export function getAmazonPayV2(region = 'us'): PaymentMethod {
-    return {
-        config: {
-            displayName: 'AMAZON PAY',
-            helpText: '',
-            isVaultingEnabled: false,
-            merchantId: 'checkout_amazonpay',
-            requireCustomerCode: false,
-            testMode: true,
-        },
-        id: 'amazonpay',
-        initializationData: {
-            buttonColor: 'Gold',
-            checkoutLanguage: 'en_US',
-            checkoutSessionMethod: 'GET',
-            createCheckoutSessionConfig: {
-                payloadJSON: 'payload',
-                signature: 'xxxx',
-            },
-            extractAmazonCheckoutSessionId: 'token',
-            ledgerCurrency: 'USD',
-            publicKeyId: 'SANDBOX-XXXXXXXX',
-            region,
-        },
-        logoUrl: '',
-        method: 'credit-card',
-        supportedCards: ['VISA', 'AMEX', 'MC'],
-        type: 'PAYMENT_TYPE_API',
     };
 }
 

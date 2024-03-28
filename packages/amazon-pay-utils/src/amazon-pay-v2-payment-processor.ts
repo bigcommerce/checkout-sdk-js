@@ -1,17 +1,15 @@
-import { getShippableItemsCount } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { PaymentMethod } from '../..';
-import { InternalCheckoutSelectors } from '../../../../../core/src/checkout';
-import { guard } from '../../../../src/common/utility';
-import { StoreProfile } from '../../../../src/config';
-import { CheckoutSettings } from '../../../../src/config/config';
 import {
+    CheckoutSettings,
+    getShippableItemsCount,
+    guard,
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
-} from '../../../common/error/errors';
+    PaymentMethod,
+    StoreProfile,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
     AmazonPayV2Button,
@@ -22,34 +20,36 @@ import {
     AmazonPayV2ButtonRenderingOptions,
     AmazonPayV2ChangeActionType,
     AmazonPayV2CheckoutSessionConfig,
+    AmazonPayV2InitializeOptions,
     AmazonPayV2NewButtonParams,
     AmazonPayV2PayOptions,
     AmazonPayV2Placement,
     AmazonPayV2Price,
     AmazonPayV2SDK,
+    InternalCheckoutSelectors,
     RequestConfig,
 } from './amazon-pay-v2';
 import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
 
 export default class AmazonPayV2PaymentProcessor {
-    private _amazonPayV2SDK?: AmazonPayV2SDK;
-    private _buttonParentContainer?: HTMLDivElement;
-    private _amazonPayV2Button?: AmazonPayV2Button;
-    private _isBuyNowFlow?: boolean;
+    private amazonPayV2SDK?: AmazonPayV2SDK;
+    private buttonParentContainer?: HTMLDivElement;
+    private amazonPayV2Button?: AmazonPayV2Button;
+    private isBuyNowFlow?: boolean;
 
-    constructor(private _amazonPayV2ScriptLoader: AmazonPayV2ScriptLoader) {}
+    constructor(private amazonPayV2ScriptLoader: AmazonPayV2ScriptLoader) {}
 
-    async initialize(paymentMethod: PaymentMethod): Promise<void> {
-        this._amazonPayV2SDK = await this._amazonPayV2ScriptLoader.load(paymentMethod);
-        this._buttonParentContainer =
-            this._buttonParentContainer || this._createAmazonPayButtonParentContainer();
+    async initialize(paymentMethod: PaymentMethod<AmazonPayV2InitializeOptions>): Promise<void> {
+        this.amazonPayV2SDK = await this.amazonPayV2ScriptLoader.load(paymentMethod);
+        this.buttonParentContainer =
+            this.buttonParentContainer || this.createAmazonPayButtonParentContainer();
     }
 
     deinitialize(): Promise<void> {
-        this._amazonPayV2Button = undefined;
-        this._buttonParentContainer?.remove();
-        this._buttonParentContainer = undefined;
-        this._amazonPayV2SDK = undefined;
+        this.amazonPayV2Button = undefined;
+        this.buttonParentContainer?.remove();
+        this.buttonParentContainer = undefined;
+        this.amazonPayV2SDK = undefined;
 
         return Promise.resolve();
     }
@@ -59,24 +59,24 @@ export default class AmazonPayV2PaymentProcessor {
         sessionId: string,
         changeAction: AmazonPayV2ChangeActionType,
     ): void {
-        this._getAmazonPayV2SDK().Pay.bindChangeAction(`#${buttonId}`, {
+        this.getAmazonPayV2SDK().Pay.bindChangeAction(`#${buttonId}`, {
             amazonCheckoutSessionId: sessionId,
             changeAction,
         });
     }
 
     createButton(containerId: string, options: AmazonPayV2ButtonParameters): void {
-        this._amazonPayV2Button = this._getAmazonPayV2SDK().Pay.renderButton(
+        this.amazonPayV2Button = this.getAmazonPayV2SDK().Pay.renderButton(
             `#${containerId}`,
             options,
         );
     }
 
     prepareCheckout(createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>) {
-        const requestConfig = this._prepareRequestConfig(createCheckoutSessionConfig);
+        const requestConfig = this.prepareRequestConfig(createCheckoutSessionConfig);
 
-        this._getAmazonPayV2Button().onClick(() => {
-            this._getAmazonPayV2Button().initCheckout(requestConfig);
+        this.getAmazonPayV2Button().onClick(() => {
+            this.getAmazonPayV2Button().initCheckout(requestConfig);
         });
     }
 
@@ -90,24 +90,24 @@ export default class AmazonPayV2PaymentProcessor {
             | undefined
         >,
     ) {
-        this._getAmazonPayV2Button().onClick(async () => {
+        this.getAmazonPayV2Button().onClick(async () => {
             const config = await createCheckoutConfig();
 
             if (config) {
-                const requestConfig = this._prepareRequestConfig(
+                const requestConfig = this.prepareRequestConfig(
                     config.createCheckoutSessionConfig,
                     config.estimatedOrderAmount,
                     config.productType,
                 );
 
-                this._getAmazonPayV2Button().initCheckout(requestConfig);
+                this.getAmazonPayV2Button().initCheckout(requestConfig);
             }
         });
     }
 
     async signout(): Promise<void> {
-        if (this._amazonPayV2SDK) {
-            this._amazonPayV2SDK.Pay.signout();
+        if (this.amazonPayV2SDK) {
+            this.amazonPayV2SDK.Pay.signout();
         }
 
         return Promise.resolve();
@@ -130,7 +130,7 @@ export default class AmazonPayV2PaymentProcessor {
             );
         }
 
-        const { id: parentContainerId } = container.appendChild(this._getButtonParentContainer());
+        const { id: parentContainerId } = container.appendChild(this.getButtonParentContainer());
 
         if (options) {
             options.design = AmazonPayV2ButtonDesign.C0001;
@@ -138,7 +138,7 @@ export default class AmazonPayV2PaymentProcessor {
 
         const amazonPayV2ButtonOptions =
             options ??
-            this._getAmazonPayV2ButtonOptions(
+            this.getAmazonPayV2ButtonOptions(
                 checkoutState,
                 methodId,
                 placement,
@@ -148,11 +148,11 @@ export default class AmazonPayV2PaymentProcessor {
 
         this.createButton(parentContainerId, amazonPayV2ButtonOptions);
 
-        return this._getButtonParentContainer();
+        return this.getButtonParentContainer();
     }
 
     updateBuyNowFlowFlag(isBuyNowFlow?: boolean) {
-        this._isBuyNowFlow = Boolean(isBuyNowFlow);
+        this.isBuyNowFlow = Boolean(isBuyNowFlow);
     }
 
     /**
@@ -172,7 +172,7 @@ export default class AmazonPayV2PaymentProcessor {
         return isPh4Enabled;
     }
 
-    private _prepareRequestConfig(
+    private prepareRequestConfig(
         createCheckoutSessionConfig: Required<AmazonPayV2CheckoutSessionConfig>,
         estimatedOrderAmount?: AmazonPayV2Price,
         productType?: AmazonPayV2PayOptions,
@@ -180,7 +180,7 @@ export default class AmazonPayV2PaymentProcessor {
         const { publicKeyId, ...signedPayload } = createCheckoutSessionConfig;
 
         return {
-            createCheckoutSessionConfig: this._isEnvironmentSpecific(publicKeyId)
+            createCheckoutSessionConfig: this.isEnvironmentSpecific(publicKeyId)
                 ? signedPayload
                 : createCheckoutSessionConfig,
             ...(estimatedOrderAmount && { estimatedOrderAmount }),
@@ -188,7 +188,7 @@ export default class AmazonPayV2PaymentProcessor {
         };
     }
 
-    private _createAmazonPayButtonParentContainer(): HTMLDivElement {
+    private createAmazonPayButtonParentContainer(): HTMLDivElement {
         const uid = Math.random().toString(16).substr(-4);
         const parentContainer = document.createElement('div');
 
@@ -197,7 +197,7 @@ export default class AmazonPayV2PaymentProcessor {
         return parentContainer;
     }
 
-    private _getAmazonPayV2ButtonOptions(
+    private getAmazonPayV2ButtonOptions(
         {
             cart: { getCart },
             checkout: { getCheckout },
@@ -211,17 +211,23 @@ export default class AmazonPayV2PaymentProcessor {
     ): AmazonPayV2ButtonParameters {
         const {
             config: { merchantId, testMode },
-            initializationData: {
-                checkoutLanguage,
-                checkoutSessionMethod,
-                createCheckoutSessionConfig,
-                extractAmazonCheckoutSessionId,
-                ledgerCurrency,
-                publicKeyId,
-            },
+            initializationData,
         } = getPaymentMethodOrThrow(methodId);
 
-        if (!merchantId || !ledgerCurrency) {
+        if (!initializationData) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const {
+            checkoutLanguage,
+            checkoutSessionMethod,
+            createCheckoutSessionConfig,
+            extractAmazonCheckoutSessionId,
+            ledgerCurrency,
+            publicKeyId = '',
+        } = initializationData;
+
+        if (!merchantId || !ledgerCurrency || !createCheckoutSessionConfig) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
@@ -234,7 +240,7 @@ export default class AmazonPayV2PaymentProcessor {
             design: AmazonPayV2ButtonDesign.C0001,
         };
 
-        if (this._isBuyNowFlow) {
+        if (this.isBuyNowFlow) {
             return {
                 ...buttonBaseConfig,
                 sandbox: !!testMode,
@@ -259,7 +265,7 @@ export default class AmazonPayV2PaymentProcessor {
             const buttonOptions: AmazonPayV2NewButtonParams = { ...buttonBaseConfig };
             let tmpConfig: AmazonPayV2CheckoutSessionConfig;
 
-            if (this._isEnvironmentSpecific(publicKeyId)) {
+            if (this.isEnvironmentSpecific(publicKeyId)) {
                 buttonOptions.publicKeyId = publicKeyId;
                 tmpConfig = createCheckoutSessionConfig;
             } else {
@@ -293,23 +299,23 @@ export default class AmazonPayV2PaymentProcessor {
         };
     }
 
-    private _isEnvironmentSpecific(publicKeyId: string): boolean {
+    private isEnvironmentSpecific(publicKeyId: string): boolean {
         return /^(SANDBOX|LIVE)/.test(publicKeyId);
     }
 
-    private _getAmazonPayV2SDK(): AmazonPayV2SDK {
-        return this._getOrThrow(this._amazonPayV2SDK);
+    private getAmazonPayV2SDK(): AmazonPayV2SDK {
+        return this.getOrThrow(this.amazonPayV2SDK);
     }
 
-    private _getButtonParentContainer(): HTMLDivElement {
-        return this._getOrThrow(this._buttonParentContainer);
+    private getButtonParentContainer(): HTMLDivElement {
+        return this.getOrThrow(this.buttonParentContainer);
     }
 
-    private _getAmazonPayV2Button(): AmazonPayV2Button {
-        return this._getOrThrow(this._amazonPayV2Button);
+    private getAmazonPayV2Button(): AmazonPayV2Button {
+        return this.getOrThrow(this.amazonPayV2Button);
     }
 
-    private _getOrThrow<T>(value?: T): T {
+    private getOrThrow<T>(value?: T): T {
         return guard(
             value,
             () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),

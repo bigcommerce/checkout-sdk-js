@@ -5,6 +5,12 @@ import { noop } from 'lodash';
 import { of } from 'rxjs';
 
 import {
+    AmazonPayV2PaymentProcessor,
+    createAmazonPayV2PaymentProcessor,
+    getAmazonPayV2,
+} from '@bigcommerce/checkout-sdk/amazon-pay-utils';
+
+import {
     ConsignmentActionCreator,
     ConsignmentActionType,
     ConsignmentRequestSender,
@@ -19,11 +25,7 @@ import {
     PaymentMethodActionCreator,
     PaymentMethodRequestSender,
 } from '../../../payment';
-import { getAmazonPayV2, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import {
-    AmazonPayV2PaymentProcessor,
-    createAmazonPayV2PaymentProcessor,
-} from '../../../payment/strategies/amazon-pay-v2';
+import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { getFlatRateOption } from '../../internal-shipping-options.mock';
 import {
     getShippingAddress,
