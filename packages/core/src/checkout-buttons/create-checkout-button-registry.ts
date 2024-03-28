@@ -15,13 +15,13 @@ import {
     createGooglePayPaymentProcessor,
     GooglePayAdyenV2Initializer,
     GooglePayAdyenV3Initializer,
-    GooglePayAuthorizeNetInitializer,
-    GooglePayBNZInitializer,
-    GooglePayCheckoutcomInitializer,
-    GooglePayCybersourceV2Initializer,
-    GooglePayOrbitalInitializer,
-    GooglePayStripeInitializer,
-    GooglePayStripeUPEInitializer,
+    // GooglePayAuthorizeNetInitializer,
+    // GooglePayBNZInitializer,
+    // GooglePayCheckoutcomInitializer,
+    // GooglePayCybersourceV2Initializer,
+    // GooglePayOrbitalInitializer,
+    // GooglePayStripeInitializer,
+    // GooglePayStripeUPEInitializer,
     GooglePayWorldpayAccessInitializer,
 } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
@@ -135,93 +135,92 @@ export default function createCheckoutButtonRegistry(
                 cartRequestSender,
             ),
     );
+    // registry.register(
+    //     CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET,
+    //     () =>
+    //         new GooglePayButtonStrategy(
+    //             store,
+    //             formPoster,
+    //             checkoutActionCreator,
+    //             createGooglePayPaymentProcessor(store, new GooglePayAuthorizeNetInitializer()),
+    //             cartRequestSender,
+    //         ),
+    // );
 
-    registry.register(
-        CheckoutButtonMethodType.GOOGLEPAY_AUTHORIZENET,
-        () =>
-            new GooglePayButtonStrategy(
-                store,
-                formPoster,
-                checkoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayAuthorizeNetInitializer()),
-                cartRequestSender,
-            ),
-    );
+    // registry.register(
+    //     CheckoutButtonMethodType.GOOGLEPAY_BNZ,
+    //     () =>
+    //         new GooglePayButtonStrategy(
+    //             store,
+    //             formPoster,
+    //             checkoutActionCreator,
+    //             createGooglePayPaymentProcessor(store, new GooglePayBNZInitializer()),
+    //             cartRequestSender,
+    //         ),
+    // );
 
-    registry.register(
-        CheckoutButtonMethodType.GOOGLEPAY_BNZ,
-        () =>
-            new GooglePayButtonStrategy(
-                store,
-                formPoster,
-                checkoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayBNZInitializer()),
-                cartRequestSender,
-            ),
-    );
+    // registry.register(
+    //     CheckoutButtonMethodType.GOOGLEPAY_CHECKOUTCOM,
+    //     () =>
+    //         new GooglePayButtonStrategy(
+    //             store,
+    //             formPoster,
+    //             checkoutActionCreator,
+    //             createGooglePayPaymentProcessor(
+    //                 store,
+    //                 new GooglePayCheckoutcomInitializer(requestSender),
+    //             ),
+    //             cartRequestSender,
+    //         ),
+    // );
 
-    registry.register(
-        CheckoutButtonMethodType.GOOGLEPAY_CHECKOUTCOM,
-        () =>
-            new GooglePayButtonStrategy(
-                store,
-                formPoster,
-                checkoutActionCreator,
-                createGooglePayPaymentProcessor(
-                    store,
-                    new GooglePayCheckoutcomInitializer(requestSender),
-                ),
-                cartRequestSender,
-            ),
-    );
+    // registry.register(
+    //     CheckoutButtonMethodType.GOOGLEPAY_CYBERSOURCEV2,
+    //     () =>
+    //         new GooglePayButtonStrategy(
+    //             store,
+    //             formPoster,
+    //             checkoutActionCreator,
+    //             createGooglePayPaymentProcessor(store, new GooglePayCybersourceV2Initializer()),
+    //             cartRequestSender,
+    //         ),
+    // );
 
-    registry.register(
-        CheckoutButtonMethodType.GOOGLEPAY_CYBERSOURCEV2,
-        () =>
-            new GooglePayButtonStrategy(
-                store,
-                formPoster,
-                checkoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayCybersourceV2Initializer()),
-                cartRequestSender,
-            ),
-    );
+    // registry.register(
+    //     CheckoutButtonMethodType.GOOGLEPAY_ORBITAL,
+    //     () =>
+    //         new GooglePayButtonStrategy(
+    //             store,
+    //             formPoster,
+    //             checkoutActionCreator,
+    //             createGooglePayPaymentProcessor(store, new GooglePayOrbitalInitializer()),
+    //             cartRequestSender,
+    //         ),
+    // );
 
-    registry.register(
-        CheckoutButtonMethodType.GOOGLEPAY_ORBITAL,
-        () =>
-            new GooglePayButtonStrategy(
-                store,
-                formPoster,
-                checkoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayOrbitalInitializer()),
-                cartRequestSender,
-            ),
-    );
+    // registry.register(
+    //     CheckoutButtonMethodType.GOOGLEPAY_STRIPE,
+    //     () =>
+    //         new GooglePayButtonStrategy(
+    //             store,
+    //             formPoster,
+    //             checkoutActionCreator,
+    //             createGooglePayPaymentProcessor(store, new GooglePayStripeInitializer()),
+    //             cartRequestSender,
+    //         ),
+    // );
 
-    registry.register(
-        CheckoutButtonMethodType.GOOGLEPAY_STRIPE,
-        () =>
-            new GooglePayButtonStrategy(
-                store,
-                formPoster,
-                checkoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayStripeInitializer()),
-                cartRequestSender,
-            ),
-    );
-
-    registry.register(
-        CheckoutButtonMethodType.GOOGLEPAY_STRIPEUPE,
-        () =>
-            new GooglePayButtonStrategy(
-                store,
-                formPoster,
-                checkoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayStripeUPEInitializer()),
-                cartRequestSender,
-            ),
-    );
+    // registry.register(
+    //     CheckoutButtonMethodType.GOOGLEPAY_STRIPEUPE,
+    //     () =>
+    //         new GooglePayButtonStrategy(
+    //             store,
+    //             formPoster,
+    //             checkoutActionCreator,
+    //             createGooglePayPaymentProcessor(store, new GooglePayStripeUPEInitializer()),
+    //             cartRequestSender,
+    //         ),
+    // );
 
     registry.register(
         CheckoutButtonMethodType.MASTERPASS,
