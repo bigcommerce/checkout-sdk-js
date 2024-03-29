@@ -226,21 +226,6 @@ export default function createPaymentStrategyRegistry(
             ),
     );
 
-    /* registry.register(
-        PaymentStrategyType.AFTERPAY,
-        () =>
-            new AfterpayPaymentStrategy(
-                store,
-                checkoutValidator,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                remoteCheckoutRequestSender,
-                storeCreditActionCreator,
-                new AfterpayScriptLoader(scriptLoader),
-            ),
-    ); */
-
     registry.register(
         PaymentStrategyType.AMAZONPAY,
         () =>

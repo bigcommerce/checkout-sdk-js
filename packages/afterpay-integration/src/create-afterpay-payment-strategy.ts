@@ -17,4 +17,7 @@ const createAfterpayPaymentStrategy: PaymentStrategyFactory<AfterpayPaymentStrat
     );
 };
 
-export default toResolvableModule(createAfterpayPaymentStrategy, [{ gateway: 'afterpay' }]);
+export default toResolvableModule(createAfterpayPaymentStrategy, [
+    { gateway: 'afterpay' },
+    { id: 'afterpay' },
+]);
