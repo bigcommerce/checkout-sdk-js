@@ -15,7 +15,6 @@ import {
     createGooglePayPaymentProcessor,
     GooglePayAdyenV2Initializer,
     GooglePayAdyenV3Initializer,
-    GooglePayWorldpayAccessInitializer,
 } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
