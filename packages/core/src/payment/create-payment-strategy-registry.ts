@@ -99,7 +99,6 @@ import {
     GooglePayStripeUPEInitializer,
     GooglePayWorldpayAccessInitializer,
 } from './strategies/googlepay';
-import { HummPaymentStrategy } from './strategies/humm';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { MonerisPaymentStrategy } from './strategies/moneris';
 import { OpyPaymentStrategy, OpyScriptLoader } from './strategies/opy';
@@ -548,18 +547,6 @@ export default function createPaymentStrategyRegistry(
                 storeCreditActionCreator,
                 new DigitalRiverScriptLoader(scriptLoader, getStylesheetLoader()),
                 billingAddressActionCreator,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.HUMM,
-        () =>
-            new HummPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                formPoster,
-                paymentMethodActionCreator,
             ),
     );
 
