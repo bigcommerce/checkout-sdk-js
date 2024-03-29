@@ -182,21 +182,6 @@ export default function createPaymentStrategyRegistry(
     const hostedFormFactory = new HostedFormFactory(store);
     const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
 
-    /* registry.register(
-        PaymentStrategyType.AFTERPAY,
-        () =>
-            new AfterpayPaymentStrategy(
-                store,
-                checkoutValidator,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                remoteCheckoutRequestSender,
-                storeCreditActionCreator,
-                new AfterpayScriptLoader(scriptLoader),
-            ),
-    ); */
-
     registry.register(
         PaymentStrategyType.AMAZONPAY,
         () =>
