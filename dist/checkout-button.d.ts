@@ -1,3 +1,5 @@
+import { AmazonPayV2ButtonConfig } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
+import { AmazonPayV2ButtonParameters } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Timeout } from '@bigcommerce/request-sender';
@@ -26,163 +28,10 @@ declare interface AddressRequestBody {
     }>;
 }
 
-declare enum AmazonPayV2ButtonColor {
-    Gold = "Gold",
-    LightGray = "LightGray",
-    DarkGray = "DarkGray"
-}
-
-declare interface AmazonPayV2ButtonConfig {
-    /**
-     * Amazon Pay merchant account identifier.
-     */
-    merchantId: string;
-    /**
-     * Placement of the Amazon Pay button on your website.
-     */
-    placement: AmazonPayV2Placement;
-    /**
-     * Ledger currency provided during registration for the given merchant identifier.
-     */
-    ledgerCurrency: AmazonPayV2LedgerCurrency;
-    /**
-     * Product type selected for checkout. Default is 'PayAndShip'.
-     */
-    productType?: AmazonPayV2PayOptions;
-    /**
-     * Color of the Amazon Pay button.
-     */
-    buttonColor?: AmazonPayV2ButtonColor;
-    /**
-     * Language used to render the button and text on Amazon Pay hosted pages.
-     */
-    checkoutLanguage?: AmazonPayV2CheckoutLanguage;
-    /**
-     * Sets button to Sandbox environment. You do not have to set this parameter
-     * if your `publicKeyId` has an environment prefix. Default is false.
-     */
-    sandbox?: boolean;
-    /**
-     * Sets Amazon Pay button design.
-     */
-    design?: AmazonPayV2ButtonDesign;
-}
-
-declare enum AmazonPayV2ButtonDesign {
-    C0001 = "C0001"
-}
-
 /**
  * The required config to render the AmazonPayV2 button.
  */
 declare type AmazonPayV2ButtonInitializeOptions = AmazonPayV2ButtonParameters | WithBuyNowFeature;
-
-declare type AmazonPayV2ButtonParameters = AmazonPayV2ButtonParams | AmazonPayV2NewButtonParams;
-
-declare interface AmazonPayV2ButtonParams extends AmazonPayV2ButtonConfig {
-    /**
-     * Configuration for calling the endpoint to Create Checkout Session.
-     */
-    createCheckoutSession: AmazonPayV2CheckoutSession;
-}
-
-declare enum AmazonPayV2CheckoutLanguage {
-    en_US = "en_US",
-    en_GB = "en_GB",
-    de_DE = "de_DE",
-    fr_FR = "fr_FR",
-    it_IT = "it_IT",
-    es_ES = "es_ES",
-    ja_JP = "ja_JP"
-}
-
-declare interface AmazonPayV2CheckoutSession {
-    /**
-     * Endpoint URL to Create Checkout Session.
-     */
-    url: string;
-    /**
-     * HTTP request method. Default is 'POST'.
-     */
-    method?: 'GET' | 'POST';
-    /**
-     * Checkout Session ID parameter in the response. Default is 'checkoutSessionId'.
-     */
-    extractAmazonCheckoutSessionId?: string;
-}
-
-declare interface AmazonPayV2CheckoutSessionConfig {
-    /**
-     * A payload that Amazon Pay will use to create a Checkout Session object.
-     */
-    payloadJSON: string;
-    /**
-     * Payload's signature.
-     */
-    signature: string;
-    /**
-     * Credential provided by Amazon Pay. You do not have to set this parameter
-     * if your `publicKeyId` has an environment prefix.
-     */
-    publicKeyId?: string;
-}
-
-declare enum AmazonPayV2LedgerCurrency {
-    USD = "USD",
-    EUR = "EUR",
-    GBP = "GBP",
-    JPY = "JPY"
-}
-
-declare interface AmazonPayV2NewButtonParams extends AmazonPayV2ButtonConfig {
-    /**
-     * Credential provided by Amazon Pay. You must also set the `sandbox`
-     * parameter if your `publicKeyId` does not have an environment prefix.
-     */
-    publicKeyId?: string;
-    /**
-     * It does not have to match the final order amount if the buyer updates
-     * their order after starting checkout. Amazon Pay will use this value to
-     * assess transaction risk and prevent buyers from selecting payment methods
-     * that can't be used to process the order.
-     */
-    estimatedOrderAmount?: AmazonPayV2Price;
-    /**
-     * Create Checkout Session configuration.
-     */
-    createCheckoutSessionConfig?: AmazonPayV2CheckoutSessionConfig;
-}
-
-declare enum AmazonPayV2PayOptions {
-    /** Select this product type if you need the buyer's shipping details. */
-    PayAndShip = "PayAndShip",
-    /** Select this product type if you do not need the buyer's shipping details. */
-    PayOnly = "PayOnly"
-}
-
-declare enum AmazonPayV2Placement {
-    /** Initial or main page. */
-    Home = "Home",
-    /** Product details page. */
-    Product = "Product",
-    /** Cart review page before buyer starts checkout. */
-    Cart = "Cart",
-    /** Any page after buyer starts checkout. */
-    Checkout = "Checkout",
-    /** Any page that doesn't fit the previous descriptions. */
-    Other = "Other"
-}
-
-declare interface AmazonPayV2Price {
-    /**
-     * Transaction amount.
-     */
-    amount: string;
-    /**
-     * Transaction currency code in ISO 4217 format. Example: USD.
-     */
-    currencyCode: string;
-}
 
 /**
  * A set of options that are required to initialize ApplePay in cart.

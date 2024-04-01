@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.570.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.570.0...v1.570.1) (2024-04-01)
+
+
+### Code Refactoring
+
+* **payment:** PI-1726 create AmazonPay utils package ([9fa9ed3](https://github.com/bigcommerce/checkout-sdk-js/commit/9fa9ed3e4573bc782585c1dea982cbab7bab46e1))
+
 ## [1.570.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.569.0...v1.570.0) (2024-03-28)
 
 
