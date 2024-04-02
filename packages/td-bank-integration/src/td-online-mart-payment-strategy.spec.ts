@@ -9,7 +9,10 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getInstruments,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import * as TdOnlineMartAdditionalAction from './isTdOnlineMartAdditionalAction';
 import { FieldType, TDCustomCheckoutSDK } from './td-online-mart';
@@ -75,6 +78,24 @@ describe('TDOnlineMartPaymentStrategy', () => {
         jest.spyOn(tdOnlineScriptLoader, 'load').mockImplementation(() =>
             Promise.resolve(tdOnlineMartClient),
         );
+
+        const defaultPaymentInstrument = {
+            ...getInstruments()[0],
+            provider: 'tdonlinemart',
+        };
+
+        jest.spyOn(paymentIntegrationService.getState(), 'getInstruments').mockReturnValue([
+            {
+                ...defaultPaymentInstrument,
+                bigpayToken: 'testInstrumentId',
+                trustedShippingAddress: true,
+            },
+            {
+                ...defaultPaymentInstrument,
+                bigpayToken: 'testInstrumentId-trusted-false',
+                trustedShippingAddress: false,
+            },
+        ]);
 
         payload = {
             payment: {
@@ -300,8 +321,10 @@ describe('TDOnlineMartPaymentStrategy', () => {
                     1,
                     expect.objectContaining({
                         methodId: 'tdonlinemart',
-                        paymentData: expect.objectContaining({
+                        paymentData: {
                             instrumentId: 'testInstrumentId',
+                            shouldSaveInstrument: false,
+                            shouldSetAsDefaultInstrument: false,
                             /* eslint-disable @typescript-eslint/naming-convention */
                             browser_info: expect.objectContaining({
                                 color_depth: expect.any(Number),
@@ -312,6 +335,34 @@ describe('TDOnlineMartPaymentStrategy', () => {
                                 time_zone_offset: expect.any(String),
                             }),
                             /* eslint-enable @typescript-eslint/naming-convention */
+                        },
+                    }),
+                );
+            });
+
+            it('call submitPayment with untrusted instrument', async () => {
+                payload = {
+                    payment: {
+                        methodId: 'tdonlinemart',
+                        paymentData: {
+                            instrumentId: 'testInstrumentId-trusted-false',
+                        },
+                    },
+                };
+
+                await tdOnlineMartPaymentStrategy.initialize(
+                    tdOnlineMartClientScriptInitializationOptions,
+                );
+
+                await tdOnlineMartPaymentStrategy.execute(payload);
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
+                    1,
+                    expect.objectContaining({
+                        methodId: 'tdonlinemart',
+                        paymentData: expect.objectContaining({
+                            instrumentId: 'testInstrumentId-trusted-false',
+                            nonce: 'testInstrumentId-trusted-false',
                         }),
                     }),
                 );

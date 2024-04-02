@@ -118,11 +118,16 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             isVaultedInstrument(paymentData) &&
             paymentData.instrumentId
         ) {
+            const shouldAddVerificationToken = !this.isTrustedVaultingInstrument(
+                paymentData.instrumentId,
+            );
+
             return {
                 methodId,
                 paymentData: {
                     ...commonPaymentData,
                     instrumentId: paymentData.instrumentId,
+                    ...(shouldAddVerificationToken ? { nonce: paymentData.instrumentId } : {}),
                 },
             };
         }
@@ -242,5 +247,14 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             style,
             classes,
         };
+    }
+
+    private isTrustedVaultingInstrument(instrumentId: string): boolean {
+        const instruments = this.paymentIntegrationService.getState().getInstruments();
+
+        const { trustedShippingAddress } =
+            instruments?.find(({ bigpayToken }) => bigpayToken === instrumentId) || {};
+
+        return !!trustedShippingAddress;
     }
 }
