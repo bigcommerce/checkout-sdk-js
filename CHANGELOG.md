@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.571.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.571.0...v1.571.1) (2024-04-02)
+
+
+### Bug Fixes
+
+* **payment:** PI-1899 additional token for instrument verification ([ea9fb69](https://github.com/bigcommerce/checkout-sdk-js/commit/ea9fb690c6e1ae7d62a98405c9080e84026eb02a))
+
 ## [1.571.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.570.1...v1.571.0) (2024-04-02)
 
 
