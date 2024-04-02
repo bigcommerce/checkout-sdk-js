@@ -1,9 +1,8 @@
 # humm-integration
 
-This library was generated with [Nx](https://nx.dev).
+This package contains the integration layer for the [Humm](https://www.shophumm.com/) provider.
 
 # Humm
-This package contains the integration layer for the [Humm](https://www.shophumm.com/) provider.
 
 For additional information on Humm, please refer to [Humm documentation](https://docs.shophumm.com.au/).
 
