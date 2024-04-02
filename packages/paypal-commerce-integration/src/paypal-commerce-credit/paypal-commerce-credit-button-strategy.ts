@@ -6,6 +6,11 @@ import {
     MissingDataErrorType,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    MessagingOptions,
+    PayPalCommerceSdk,
+    PayPalMessagesSdk,
+} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
@@ -25,6 +30,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private paypalCommerceSdk: PayPalCommerceSdk,
     ) {}
 
     async initialize(
@@ -78,17 +84,30 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
             await this.paymentIntegrationService.loadDefaultCheckout();
         }
 
+        const state = this.paymentIntegrationService.getState();
+
         // Info: we are using provided currency code for buy now cart,
         // because checkout session is not available before buy now cart creation,
         // hence application will throw an error on getCartOrThrow method call
         const currencyCode = isBuyNowFlow
             ? providedCurrencyCode
-            : this.paymentIntegrationService.getState().getCartOrThrow().currency.code;
+            : state.getCartOrThrow().currency.code;
 
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
 
         this.renderButton(containerId, methodId, paypalcommercecredit);
-        this.renderMessages(messagingContainerId);
+
+        if (currencyCode && messagingContainerId) {
+            const paymentMethod =
+                state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+
+            const paypalSdk = await this.paypalCommerceSdk.getPayPalMessages(
+                paymentMethod,
+                currencyCode,
+            );
+
+            this.renderMessages(paypalSdk, messagingContainerId);
+        }
     }
 
     deinitialize(): Promise<void> {
@@ -233,13 +252,14 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         }
     }
 
-    private renderMessages(messagingContainerId?: string): void {
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
-
+    private renderMessages(
+        paypalMessagesSdk: PayPalMessagesSdk,
+        messagingContainerId: string,
+    ): void {
         if (messagingContainerId && document.getElementById(messagingContainerId)) {
             const cart = this.paymentIntegrationService.getState().getCartOrThrow();
 
-            const paypalMessagesOptions = {
+            const paypalMessagesOptions: MessagingOptions = {
                 amount: cart.cartAmount,
                 placement: 'cart',
                 style: {
@@ -247,7 +267,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
                 },
             };
 
-            const paypalMessages = paypalSdk.Messages(paypalMessagesOptions);
+            const paypalMessages = paypalMessagesSdk.Messages(paypalMessagesOptions);
 
             paypalMessages.render(`#${messagingContainerId}`);
         }
