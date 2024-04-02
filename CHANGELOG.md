@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.571.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.570.1...v1.571.0) (2024-04-02)
+
+
+### Features
+
+* **payment:** PAYPAL-3463 Added Pay Later messaging to Paywall Section ([#2419](https://github.com/bigcommerce/checkout-sdk-js/issues/2419)) ([7fd07ff](https://github.com/bigcommerce/checkout-sdk-js/commit/7fd07ffbe720a4cdc1190965431421e8ce0b34f9))
+
 ### [1.570.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.570.0...v1.570.1) (2024-04-01)
 
 

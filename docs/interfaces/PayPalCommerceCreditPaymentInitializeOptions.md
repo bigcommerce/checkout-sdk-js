@@ -49,6 +49,7 @@ service.initializePayment({
 
 ### Properties
 
+- [bannerContainerId](PayPalCommerceCreditPaymentInitializeOptions.md#bannercontainerid)
 - [container](PayPalCommerceCreditPaymentInitializeOptions.md#container)
 
 ### Methods
@@ -59,6 +60,14 @@ service.initializePayment({
 - [submitForm](PayPalCommerceCreditPaymentInitializeOptions.md#submitform)
 
 ## Properties
+
+### bannerContainerId
+
+• `Optional` **bannerContainerId**: `string`
+
+The location to insert the Pay Later Messages.
+
+___
 
 ### container
 
