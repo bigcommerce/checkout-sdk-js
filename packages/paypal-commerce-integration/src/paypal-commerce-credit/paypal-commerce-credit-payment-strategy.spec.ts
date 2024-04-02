@@ -287,6 +287,24 @@ describe('PayPalCommerceCreditPaymentStrategy', () => {
                 expect(error).toBeInstanceOf(NotImplementedError);
             }
         });
+
+        it('throws an error if container is not passed', async () => {
+            const paypalCommerceSdkRenderMock = jest.fn();
+
+            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                isEligible: jest.fn(() => false),
+                render: paypalCommerceSdkRenderMock,
+            }));
+
+            try {
+                await strategy.initialize({
+                    ...initializationOptions,
+                    paypalcommercecredit: {},
+                });
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
     });
 
     describe('#createOrder button callback', () => {

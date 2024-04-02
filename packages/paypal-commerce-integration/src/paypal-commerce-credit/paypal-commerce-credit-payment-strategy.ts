@@ -90,7 +90,7 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
 
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
 
-        this.loadingIndicatorContainer = paypalOptions.container.split('#')[1];
+        this.loadingIndicatorContainer = paypalOptions?.container?.split('#')[1];
 
         this.renderButton(methodId, paypalOptions);
     }
@@ -131,6 +131,12 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
         methodId: string,
         paypalOptions: PayPalCommerceCreditPaymentInitializeOptions,
     ): void {
+        if (!paypalOptions?.container) {
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "container" argument is not provided.',
+            );
+        }
+
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
 
         const state = this.paymentIntegrationService.getState();
@@ -197,7 +203,9 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
             return resolve();
         };
 
-        await onValidate(onValidationPassed, reject);
+        if (onValidate && typeof onValidate === 'function') {
+            await onValidate(onValidationPassed, reject);
+        }
     }
 
     private handleApprove(
@@ -206,7 +214,9 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
     ): void {
         this.orderId = orderID;
 
-        submitForm();
+        if (submitForm && typeof submitForm === 'function') {
+            submitForm();
+        }
     }
 
     private handleError(
