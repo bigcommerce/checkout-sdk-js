@@ -203,7 +203,9 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
             return resolve();
         };
 
-        await onValidate?.(onValidationPassed, reject);
+        if (onValidate && typeof onValidate === 'function') {
+            await onValidate(onValidationPassed, reject);
+        }
     }
 
     private handleApprove(
@@ -212,7 +214,9 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
     ): void {
         this.orderId = orderID;
 
-        submitForm?.();
+        if (submitForm && typeof submitForm === 'function') {
+            submitForm();
+        }
     }
 
     private handleError(
