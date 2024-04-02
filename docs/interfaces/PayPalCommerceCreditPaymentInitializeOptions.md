@@ -71,7 +71,7 @@ ___
 
 ### container
 
-• **container**: `string`
+• `Optional` **container**: `string`
 
 The CSS selector of a container where the payment widget should be inserted into.
 
@@ -110,7 +110,7 @@ ___
 
 ### onValidate
 
-▸ **onValidate**(`resolve`, `reject`): `Promise`<`void`\>
+▸ `Optional` **onValidate**(`resolve`, `reject`): `Promise`<`void`\>
 
 A callback that gets called when a buyer click on Smart Payment Button
 and should validate payment form.
@@ -132,7 +132,7 @@ ___
 
 ### submitForm
 
-▸ **submitForm**(): `void`
+▸ `Optional` **submitForm**(): `void`
 
 A callback for submitting payment form that gets called
 when buyer approved PayPal account.

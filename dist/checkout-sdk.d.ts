@@ -7210,7 +7210,7 @@ declare interface PayPalCommerceCreditPaymentInitializeOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
      */
-    container: string;
+    container?: string;
     /**
      * The location to insert the Pay Later Messages.
      */
@@ -7233,12 +7233,12 @@ declare interface PayPalCommerceCreditPaymentInitializeOptions {
      *
      * @returns reject() or resolve()
      */
-    onValidate(resolve: () => void, reject: () => void): Promise<void>;
+    onValidate?(resolve: () => void, reject: () => void): Promise<void>;
     /**
      * A callback for submitting payment form that gets called
      * when buyer approved PayPal account.
      */
-    submitForm(): void;
+    submitForm?(): void;
 }
 
 /**
