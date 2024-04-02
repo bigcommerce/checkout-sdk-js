@@ -1,12 +1,12 @@
 import { getScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader';
 
+import { AdyenV3ScriptLoader } from '@bigcommerce/checkout-sdk/adyen-utils';
 import {
     PaymentStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import AdyenV3PaymentStrategy from './adyenv3-payment-strategy';
-import AdyenV3ScriptLoader from './adyenv3-script-loader';
 
 const createAdyenV3PaymentStrategy: PaymentStrategyFactory<AdyenV3PaymentStrategy> = (
     paymentIntegrationService,

@@ -20,6 +20,9 @@
             "@bigcommerce/checkout-sdk/adyen-integration": [
                 "packages/adyen-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/adyen-utils": [
+                "packages/adyen-utils/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/affirm-integration": [
                 "packages/affirm-integration/src/index.ts"
             ],

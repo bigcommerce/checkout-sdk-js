@@ -1,4 +1,37 @@
-export enum AdyenActionType {
+export enum AdyenV3ActionType {
+    /*
+     * The payment qualifies for 3D Secure 2, and will go through either the frictionless
+     * or the challenge flow.
+     * */
+    ThreeDS2Fingerprint = 'threeDS2Fingerprint',
+
+    /*
+     * The payment qualifies for 3D Secure 2, and the issuer is initiating a challenge flow.
+     * */
+    ThreeDS2 = 'threeDS2',
+
+    /*
+     * We will initiate a 3D Secure 1 fallback, because the issuer does not support 3D Secure 2.
+     * */
+    Redirect = 'redirect',
+
+    /*
+     * The Component presents the QR code and calls the onAdditionalDetails event.
+     * */
+    QRCode = 'qrCode',
+
+    /*
+     * The Component displays the voucher which the shopper uses to complete the payment.
+     * */
+    Voucher = 'voucher',
+
+    /*
+     * The Component displays the widget which the shopper uses to complete the payment.
+     * */
+    Sdk = 'sdk',
+}
+
+export enum AdyenV2ActionType {
     /*
      * The payment qualifies for 3D Secure 2, and will go through either the frictionless
      * or the challenge flow.
@@ -69,6 +102,17 @@ interface WechatDataPaymentMethodState {
     paymentMethod: AdyenPaymentMethodState;
 }
 
+interface BoletoDataPaymentMethodState {
+    paymentMethod: {
+        type: string;
+    };
+    shopperName?: {
+        firstName?: string;
+        lastName?: string;
+    };
+    socialSecurityNumber?: string;
+}
+
 interface CardPaymentMethodState extends AdyenPaymentMethodState {
     encryptedCardNumber: string;
     encryptedExpiryMonth: string;
@@ -77,7 +121,7 @@ interface CardPaymentMethodState extends AdyenPaymentMethodState {
     holderName: string;
 }
 
-export interface AdyenAction {
+export interface AdyenV2Action {
     method: HTTPMethod;
 
     /**
@@ -92,7 +136,7 @@ export interface AdyenAction {
      * The Component performs additional front-end actions depending on the action.type.
      * Your next steps depend on the type of action that the Component performs.
      */
-    type: AdyenActionType;
+    type: AdyenV2ActionType;
 
     /**
      * The HTTP request method that you should use. After the shopper completes the payment,
@@ -100,6 +144,32 @@ export interface AdyenAction {
      */
     url: string;
 }
+
+export interface AdyenV3Action {
+    method: HTTPMethod;
+
+    /**
+     * Value that you need to submit in your /payments/details request when handling
+     * the redirect.
+     */
+    paymentData: string;
+
+    paymentMethodType: AdyenPaymentMethodType;
+
+    /*
+     * The Component performs additional front-end actions depending on the action.type.
+     * Your next steps depend on the type of action that the Component performs.
+     */
+    type: AdyenV3ActionType;
+
+    /**
+     * The HTTP request method that you should use. After the shopper completes the payment,
+     * they will be redirected back to your returnURL using the same method.
+     */
+    url: string;
+}
+
+export type AdyenAction = AdyenV2Action | AdyenV3Action;
 
 export interface AdyenAdditionalAction {
     resultCode: ResultCode;
@@ -169,6 +239,8 @@ export interface AdyenBaseCardComponentOptions {
      * for a list of supported properties.
      */
     styles?: StyleOptions;
+
+    showBrandsUnderCardNumber?: boolean;
 }
 
 export interface AdyenComponentEvents {
@@ -179,22 +251,28 @@ export interface AdyenComponentEvents {
     onChange?(state: AdyenComponentState, component: AdyenComponent): void;
 
     /**
+     * Called when the shopper selects the Pay button and payment details are valid.
+     */
+    onSubmit?(state: AdyenComponentState, component: AdyenComponent): void;
+
+    /**
      * Called in case of an invalid card number, invalid expiry date, or
      *  incomplete field. Called again when errors are cleared.
      */
-    onError?(state: AdyenV2ValidationState, component: AdyenComponent): void;
+    onError?(state: AdyenValidationState, component: AdyenComponent): void;
 
-    onFieldValid?(state: AdyenV2ValidationState, component: AdyenComponent): void;
+    onFieldValid?(state: AdyenValidationState, component: AdyenComponent): void;
 }
 
 export interface AdyenClient {
     create(type: string, componentOptions?: AdyenComponentOptions): AdyenComponent;
 
     createFromAction(
-        action: AdyenAction,
+        action: AdyenV2Action | AdyenV3Action,
         componentOptions?:
             | ThreeDS2DeviceFingerprintComponentOptions
-            | ThreeDS2ChallengeComponentOptions,
+            | AdyenV3ThreeDS2ChallengeComponentOptions
+            | AdyenV2ThreeDS2ChallengeComponentOptions,
     ): AdyenComponent;
 }
 
@@ -208,6 +286,7 @@ export interface AdyenComponent {
     state?: CardState;
     mount(containerId: string): HTMLElement;
     unmount(): void;
+    submit(): void;
 }
 
 export interface AdyenConfiguration {
@@ -240,6 +319,23 @@ export interface AdyenConfiguration {
     paymentMethodsResponse?: PaymentMethodsResponse;
 
     /**
+     * Configuration for specific payment methods.
+     */
+    paymentMethodsConfiguration?: {
+        klarna: {
+            useKlarnaWidget: boolean;
+        };
+        klarna_account: {
+            useKlarnaWidget: boolean;
+        };
+        klarna_paynow: {
+            useKlarnaWidget: boolean;
+        };
+    };
+
+    showPayButton?: boolean;
+
+    /**
      * If your shoppers use a language that isn't supported by the Components, you can create your own localization.
      * To create a localization:
      * Add a translations object to your payment page, specifying:
@@ -270,6 +366,8 @@ export interface AdyenConfiguration {
 }
 
 export interface AdyenPlaceholderData {
+    firstName?: string;
+    lastName?: string;
     holderName?: string;
     prefillCardHolderName?: boolean;
     billingAddress?: {
@@ -339,20 +437,32 @@ export interface AdyenCustomCardComponentOptions
     autofocus?: boolean;
 }
 
+type AdyenClientConstructor = (configuration: AdyenConfiguration) => Promise<AdyenClient>;
+
 export interface AdyenError {
     errorCode: string;
     message: string;
 }
 
-export interface AdyenHostWindow extends Window {
+export interface AdyenV3HostWindow extends Window {
+    AdyenCheckout?: AdyenClientConstructor;
+}
+
+export interface AdyenV2HostWindow extends Window {
     AdyenCheckout?: new (configuration: AdyenConfiguration) => AdyenClient;
 }
 
-export interface AdyenIdealComponentOptions extends AdyenBaseCardComponentOptions {
+export interface AdyenIdealComponentOptions {
     /**
      * Optional. Set to **false** to remove the bank logos from the iDEAL form.
      */
     showImage?: boolean;
+}
+
+export interface AdyenBoletoComponentOptions {
+    personalDetailsRequired?: boolean;
+    billingAddressRequired?: boolean;
+    showEmailAddress?: boolean;
 }
 
 export interface AdyenStoredPaymentMethod {
@@ -542,12 +652,20 @@ export interface CardState {
     errors?: CardStateErrors;
 }
 
+interface CardDataPaymentMethodState {
+    paymentMethod: CardPaymentMethodState;
+}
+
 export interface CardStateErrors {
     [key: string]: string;
 }
 
 export interface WechatState {
     data: WechatDataPaymentMethodState;
+}
+
+export interface BoletoState {
+    data: BoletoDataPaymentMethodState;
 }
 
 export interface CreditCardPlaceHolder {
@@ -850,7 +968,13 @@ export interface SubInputDetail {
     value?: string;
 }
 
-export interface ThreeDS2ChallengeComponentOptions {
+export interface AdyenV3ThreeDS2ChallengeComponentOptions {
+    challengeWindowSize?: string;
+    onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
+    onError(error: AdyenError): void;
+}
+
+export interface AdyenV2ThreeDS2ChallengeComponentOptions {
     size?: string;
     onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
     onError(error: AdyenError): void;
@@ -861,11 +985,9 @@ export interface ThreeDS2DeviceFingerprintComponentOptions {
     onError(error: AdyenError): void;
 }
 
-export type AdyenComponentState = CardState | WechatState;
-
-export interface AdyenV2ValidationState {
+export interface AdyenValidationState {
     valid: boolean;
-    fieldType?: AdyenV2CardFields;
+    fieldType?: AdyenCardFields;
     endDigits?: string;
     encryptedFieldName?: string;
     i18n?: string;
@@ -873,21 +995,36 @@ export interface AdyenV2ValidationState {
     errorKey?: string;
 }
 
-export enum AdyenV2CardFields {
+export enum AdyenCardFields {
     CardNumber = 'encryptedCardNumber',
     SecurityCode = 'encryptedSecurityCode',
     ExpiryDate = 'encryptedExpiryDate',
 }
 
+export type AdyenComponentState = CardState | WechatState | BoletoState;
+
 export type AdyenComponentOptions =
     | AdyenCreditCardComponentOptions
     | AdyenIdealComponentOptions
+    | AdyenBoletoComponentOptions
     | AdyenCustomCardComponentOptions;
 
-export function isCardState(param: any): param is CardState {
+export function isCardState(param: unknown): param is CardState {
     return (
-        (param && typeof param.data.paymentMethod.encryptedSecurityCode === 'string') ||
-        typeof param.data.paymentMethod.encryptedExpiryMonth === 'string'
+        (typeof param === 'object' &&
+            !!param &&
+            typeof (param as CardState).data.paymentMethod.encryptedSecurityCode === 'string') ||
+        typeof (param as CardState).data.paymentMethod.encryptedExpiryMonth === 'string'
+    );
+}
+
+export function isBoletoState(param: unknown): param is BoletoState {
+    return (
+        (typeof param === 'object' &&
+            !!param &&
+            typeof (param as BoletoState).data.socialSecurityNumber) === 'string' &&
+        typeof (param as BoletoState).data.shopperName?.firstName === 'string' &&
+        typeof (param as BoletoState).data.shopperName?.lastName === 'string'
     );
 }
 
@@ -897,7 +1034,14 @@ export function isAccountState(param: any): param is AccountState {
     return bankSupported.indexOf(param.data.paymentMethod.type) !== -1;
 }
 
-export interface AdyenPaymentMethodInitializationData {
+export interface AdyenV3PaymentMethodInitializationData {
+    clientKey?: string;
+    environment?: string;
+    paymentMethodsResponse?: PaymentMethodsResponse;
+    prefillCardHolderName?: boolean;
+}
+
+export interface AdyenV2PaymentMethodInitializationData {
     originKey?: string;
     clientKey?: string;
     environment?: string;

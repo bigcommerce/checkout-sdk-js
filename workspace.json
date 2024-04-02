@@ -2,6 +2,7 @@
     "version": 2,
     "projects": {
         "adyen-integration": "packages/adyen-integration",
+        "adyen-utils": "packages/adyen-utils",
         "affirm-integration": "packages/affirm-integration",
         "amazon-pay-utils": "packages/amazon-pay-utils",
         "analytics": "packages/analytics",

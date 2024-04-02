@@ -2,13 +2,13 @@ import { ScriptLoader, StylesheetLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { AdyenClient, AdyenConfiguration, AdyenHostWindow } from './adyenv2';
+import { AdyenClient, AdyenConfiguration, AdyenV2HostWindow } from '../types';
 
 export default class AdyenV2ScriptLoader {
     constructor(
         private _scriptLoader: ScriptLoader,
         private _stylesheetLoader: StylesheetLoader,
-        private _window: AdyenHostWindow = window,
+        private _window: AdyenV2HostWindow = window,
     ) {}
 
     async load(configuration: AdyenConfiguration): Promise<AdyenClient> {

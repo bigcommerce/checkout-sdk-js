@@ -1,6 +1,26 @@
 import { some } from 'lodash';
 
 import {
+    AdyenAction,
+    AdyenAdditionalAction,
+    AdyenAdditionalActionState,
+    AdyenClient,
+    AdyenComponent,
+    AdyenComponentState,
+    AdyenComponentType,
+    AdyenError,
+    AdyenPaymentMethodType,
+    AdyenPlaceholderData,
+    AdyenV2ActionType,
+    AdyenV2PaymentInitializeOptions,
+    AdyenV2PaymentMethodInitializationData,
+    AdyenV2ScriptLoader,
+    CardStateErrors,
+    isAccountState,
+    isCardState,
+    WithAdyenV2PaymentInitializeOptions,
+} from '@bigcommerce/checkout-sdk/adyen-utils';
+import {
     BillingAddress,
     getBrowserInfo,
     HostedInstrument,
@@ -23,28 +43,6 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import {
-    AdyenAction,
-    AdyenActionType,
-    AdyenAdditionalAction,
-    AdyenAdditionalActionState,
-    AdyenClient,
-    AdyenComponent,
-    AdyenComponentState,
-    AdyenComponentType,
-    AdyenError,
-    AdyenPaymentMethodInitializationData,
-    AdyenPaymentMethodType,
-    AdyenPlaceholderData,
-    CardStateErrors,
-    isAccountState,
-    isCardState,
-} from './adyenv2';
-import AdyenV2PaymentInitializeOptions, {
-    WithAdyenV2PaymentInitializeOptions,
-} from './adyenv2-initialize-options';
-import AdyenV2ScriptLoader from './adyenv2-script-loader';
 
 export default class AdyenV2PaymentStrategy implements PaymentStrategy {
     private _adyenClient?: AdyenClient;
@@ -73,7 +71,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
         const paymentMethod = this._paymentIntegrationService
             .getState()
-            .getPaymentMethodOrThrow<AdyenPaymentMethodInitializationData>(options.methodId);
+            .getPaymentMethodOrThrow<AdyenV2PaymentMethodInitializationData>(options.methodId);
         const { originKey, clientKey, environment, paymentMethodsResponse } =
             paymentMethod.initializationData || {};
         const clientSideAuthentication = {
@@ -292,8 +290,8 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
             if (onBeforeLoad) {
                 onBeforeLoad(
-                    adyenAction.type === AdyenActionType.ThreeDS2Challenge ||
-                        adyenAction.type === AdyenActionType.QRCode,
+                    adyenAction.type === AdyenV2ActionType.ThreeDS2Challenge ||
+                        adyenAction.type === AdyenV2ActionType.QRCode,
                 );
             }
 
