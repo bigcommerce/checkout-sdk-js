@@ -50,37 +50,41 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
 
         this.isAcceleratedCheckoutFeatureEnabled = !!isAcceleratedCheckoutEnabled;
 
-        if (this.isAcceleratedCheckoutFeatureEnabled) {
-            const state = this.paymentIntegrationService.getState();
-            const cart = state.getCartOrThrow();
-            const currency = state.getCartOrThrow().currency.code;
-            const isTestModeEnabled = !!isDeveloperModeApplicable;
+        try {
+            if (this.isAcceleratedCheckoutFeatureEnabled) {
+                const state = this.paymentIntegrationService.getState();
+                const cart = state.getCartOrThrow();
+                const currency = state.getCartOrThrow().currency.code;
+                const isTestModeEnabled = !!isDeveloperModeApplicable;
 
-            if (isFastlaneEnabled) {
-                const paypalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
-                    paymentMethod,
-                    currency,
-                    cart.id,
-                );
+                if (isFastlaneEnabled) {
+                    const paypalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
+                        paymentMethod,
+                        currency,
+                        cart.id,
+                    );
 
-                await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
-                    paypalFastlaneSdk,
-                    isTestModeEnabled,
-                    paypalcommercefastlane?.styles,
-                );
-            } else {
-                const paypalAxoSdk = await this.paypalCommerceSdk.getPayPalAxo(
-                    paymentMethod,
-                    currency,
-                    cart.id,
-                );
+                    await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
+                        paypalFastlaneSdk,
+                        isTestModeEnabled,
+                        paypalcommercefastlane?.styles,
+                    );
+                } else {
+                    const paypalAxoSdk = await this.paypalCommerceSdk.getPayPalAxo(
+                        paymentMethod,
+                        currency,
+                        cart.id,
+                    );
 
-                await this.paypalCommerceFastlaneUtils.initializePayPalConnect(
-                    paypalAxoSdk,
-                    isTestModeEnabled,
-                    paypalcommercefastlane?.styles,
-                );
+                    await this.paypalCommerceFastlaneUtils.initializePayPalConnect(
+                        paypalAxoSdk,
+                        isTestModeEnabled,
+                        paypalcommercefastlane?.styles,
+                    );
+                }
             }
+        } catch (_) {
+            // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
         }
 
         return Promise.resolve();
@@ -190,7 +194,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
                 isAuthenticationFlowCanceled,
                 cartId,
             );
-        } catch (error) {
+        } catch (_) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
         }
     }
