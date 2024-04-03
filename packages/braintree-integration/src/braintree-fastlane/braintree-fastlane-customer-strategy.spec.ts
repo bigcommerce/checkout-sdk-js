@@ -208,6 +208,32 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
                 braintreeFastlaneUtils.initializeBraintreeAcceleratedCheckoutOrThrow,
             ).not.toHaveBeenCalled();
         });
+
+        it('does not throw anything if there is an error with Fastlane initialization', async () => {
+            const mockPaymentMethod = {
+                ...paymentMethod,
+                initializationData: {
+                    isFastlaneEnabled: true,
+                    isAcceleratedCheckoutEnabled: true,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(mockPaymentMethod);
+
+            jest.spyOn(
+                braintreeFastlaneUtils,
+                'initializeBraintreeAcceleratedCheckoutOrThrow',
+            ).mockImplementation(() => Promise.reject());
+
+            await strategy.initialize(initializationOptions);
+
+            expect(
+                braintreeFastlaneUtils.initializeBraintreeAcceleratedCheckoutOrThrow,
+            ).toHaveBeenCalled();
+        });
     });
 
     describe('#executePaymentMethodCheckout()', () => {

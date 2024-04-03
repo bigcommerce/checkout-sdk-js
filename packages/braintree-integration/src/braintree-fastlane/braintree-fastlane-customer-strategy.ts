@@ -39,11 +39,15 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
 
         this.isFastlaneEnabled = !!paymentMethod.initializationData?.isFastlaneEnabled;
 
-        if (this.isAcceleratedCheckoutEnabled) {
-            await this.braintreeFastlaneUtils.initializeBraintreeAcceleratedCheckoutOrThrow(
-                paymentMethod.id,
-                braintreeafastlane?.styles,
-            );
+        try {
+            if (this.isAcceleratedCheckoutEnabled) {
+                await this.braintreeFastlaneUtils.initializeBraintreeAcceleratedCheckoutOrThrow(
+                    paymentMethod.id,
+                    braintreeafastlane?.styles,
+                );
+            }
+        } catch (_) {
+            // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
         }
 
         return Promise.resolve();
