@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.575.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.574.0...v1.575.0) (2024-04-03)
+
+
+### Features
+
+* **payment:** PAYPAL-3896 added try catch to BraintreeFastlaneCustomerStrategy initialize method ([#2443](https://github.com/bigcommerce/checkout-sdk-js/issues/2443)) ([f9eccde](https://github.com/bigcommerce/checkout-sdk-js/commit/f9eccdec761ee21d08fa83c86f4feec793c31cb1))
+
 ## [1.574.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.573.0...v1.574.0) (2024-04-03)
 
 
