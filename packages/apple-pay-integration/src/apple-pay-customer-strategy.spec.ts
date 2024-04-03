@@ -132,6 +132,34 @@ describe('ApplePayCustomerStrategy', () => {
             }
         });
 
+        it('does not start another apple pay session if one is in place already', async () => {
+            const cart = getCart();
+
+            cart.lineItems.physicalItems = [];
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                cart,
+            );
+
+            const customerInitializeOptions = getApplePayCustomerInitializationOptions();
+
+            if (customerInitializeOptions.applepay) {
+                const buttonContainer = document.getElementById(
+                    customerInitializeOptions.applepay.container,
+                );
+
+                await strategy.initialize(customerInitializeOptions);
+
+                const button = buttonContainer?.firstChild as HTMLElement;
+
+                button.click();
+
+                button.click();
+
+                expect(applePaySession.begin).toHaveBeenCalledTimes(1);
+            }
+        });
+
         it('throws error when applepay object is empty', async () => {
             const options = {
                 methodId: 'applepay',
