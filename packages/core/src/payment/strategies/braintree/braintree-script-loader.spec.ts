@@ -5,7 +5,6 @@ import {
     BRAINTREE_SDK_STABLE_VERSION,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 
-import { StandardError } from '../../../common/error/errors';
 import { getConfig } from '../../../config/configs.mock';
 
 import {
@@ -16,13 +15,11 @@ import {
     BraintreeModuleCreator,
     BraintreeThreeDSecure,
     BraintreeVisaCheckout,
-    GooglePayBraintreeSDK,
 } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import {
     getClientMock,
     getDataCollectorMock,
-    getGooglePayMock,
     getHostedFieldsMock,
     getModuleCreatorMock,
     getThreeDSecureMock,
@@ -205,62 +202,6 @@ describe('BraintreeScriptLoader', () => {
             const visaCheckout = await braintreeScriptLoader.loadVisaCheckout();
 
             expect(visaCheckout).toBe(visaCheckoutMock);
-        });
-    });
-
-    describe('#loadGooglePay()', () => {
-        let googlePayMock: BraintreeModuleCreator<GooglePayBraintreeSDK>;
-
-        beforeEach(() => {
-            googlePayMock = getModuleCreatorMock(getGooglePayMock());
-            scriptLoader.loadScript = jest.fn(() => {
-                if (mockWindow.braintree) {
-                    mockWindow.braintree.googlePayment = googlePayMock;
-                }
-
-                return Promise.resolve();
-            });
-        });
-
-        it('loads the GooglePay library', async () => {
-            await braintreeScriptLoader.loadGooglePayment();
-
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/google-payment.min.js`,
-            );
-        });
-
-        it('loads the GooglePay library with braintree sdk alpha version', async () => {
-            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
-
-            await braintreeScriptLoader.loadGooglePayment();
-
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/google-payment.min.js`,
-            );
-        });
-
-        it('returns the GooglePay from the window', async () => {
-            const googlePay = await braintreeScriptLoader.loadGooglePayment();
-
-            expect(googlePay).toBe(googlePayMock);
-        });
-
-        it('throws when window is not set', async () => {
-            scriptLoader.loadScript = jest.fn(() => {
-                if (mockWindow.braintree) {
-                    mockWindow.braintree.googlePayment = undefined;
-                    mockWindow.braintree = undefined;
-                }
-
-                return Promise.resolve();
-            });
-
-            try {
-                await braintreeScriptLoader.loadGooglePayment();
-            } catch (error) {
-                expect(error).toBeInstanceOf(StandardError);
-            }
         });
     });
 
