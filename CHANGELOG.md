@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.574.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.573.0...v1.574.0) (2024-04-03)
+
+
+### Features
+
+* **payment:** PAYPAL-3878 added try catch to PayPal Commecre Fastlane Customer Strategy initialization method ([#2441](https://github.com/bigcommerce/checkout-sdk-js/issues/2441)) ([b5af673](https://github.com/bigcommerce/checkout-sdk-js/commit/b5af6734d09689447a22a5c64a860bad7da8ecc1))
+
 ## [1.573.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.572.0...v1.573.0) (2024-04-03)
 
 
