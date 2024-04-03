@@ -368,6 +368,44 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
                 initializationOptions.paypalcommercefastlane.styles,
             );
         });
+
+        it('does not throw anything if there is an error with Connect initialization', async () => {
+            paymentMethod.initializationData.isDeveloperModeApplicable = true;
+            paymentMethod.initializationData.isFastlaneEnabled = false;
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethod);
+
+            jest.spyOn(paypalCommerceSdk, 'getPayPalAxo').mockImplementation(() =>
+                Promise.reject(),
+            );
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalCommerceSdk.getPayPalAxo).toHaveBeenCalled();
+            expect(paypalCommerceFastlaneUtils.initializePayPalConnect).not.toHaveBeenCalled();
+        });
+
+        it('does not throw anything if there is an error with Fastlane initialization', async () => {
+            paymentMethod.initializationData.isDeveloperModeApplicable = true;
+            paymentMethod.initializationData.isFastlaneEnabled = true;
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethod);
+
+            jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+                Promise.reject(),
+            );
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalCommerceSdk.getPayPalFastlaneSdk).toHaveBeenCalled();
+            expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).not.toHaveBeenCalled();
+        });
     });
 
     describe('#deinitialize()', () => {
