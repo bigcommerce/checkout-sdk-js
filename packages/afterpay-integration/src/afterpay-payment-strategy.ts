@@ -104,8 +104,7 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             await this._paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
             await this._paymentIntegrationService.forgetCheckout(payment.providerId);
-            // TODO
-            // await this._paymentIntegrationService.loadPaymentMethods();
+            await this._paymentIntegrationService.loadPaymentMethods();
 
             throw new OrderFinalizationNotCompletedError();
         }

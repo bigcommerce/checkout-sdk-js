@@ -303,7 +303,9 @@ describe('DefaultPaymentIntegrationService', () => {
         it('loads payment methods', async () => {
             const output = await subject.loadPaymentMethods();
 
-            expect(paymentMethodActionCreator.loadPaymentMethods).toHaveBeenCalledWith(undefined);
+            expect(paymentMethodActionCreator.loadPaymentMethods).toHaveBeenCalledWith(
+                undefined,
+            );
             expect(store.dispatch).toHaveBeenCalledWith(
                 paymentMethodActionCreator.loadPaymentMethods(undefined),
             );
