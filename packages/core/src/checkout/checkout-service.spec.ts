@@ -855,9 +855,7 @@ describe('CheckoutService', () => {
             await checkoutService.initializePayment(options);
 
             expect(paymentStrategyActionCreator.initialize).toHaveBeenCalledWith(options);
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'paymentStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -873,9 +871,7 @@ describe('CheckoutService', () => {
             await checkoutService.deinitializePayment(options);
 
             expect(paymentStrategyActionCreator.deinitialize).toHaveBeenCalledWith(options);
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'paymentStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -927,9 +923,7 @@ describe('CheckoutService', () => {
             await checkoutService.initializeCustomer(options);
 
             expect(customerStrategyActionCreator.initialize).toHaveBeenCalledWith(options);
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'customerStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -945,9 +939,7 @@ describe('CheckoutService', () => {
             await checkoutService.deinitializeCustomer(options);
 
             expect(customerStrategyActionCreator.deinitialize).toHaveBeenCalledWith(options);
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'customerStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -987,9 +979,7 @@ describe('CheckoutService', () => {
                 { email: 'foo@bar.com', password: 'password1' },
                 options,
             );
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'customerStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -1005,9 +995,7 @@ describe('CheckoutService', () => {
             await checkoutService.signOutCustomer(options);
 
             expect(customerStrategyActionCreator.signOut).toHaveBeenCalledWith(options);
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'customerStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -1031,9 +1019,7 @@ describe('CheckoutService', () => {
             expect(customerStrategyActionCreator.executePaymentMethodCheckout).toHaveBeenCalledWith(
                 options,
             );
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'customerStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -1058,9 +1044,7 @@ describe('CheckoutService', () => {
             await checkoutService.initializeShipping(options);
 
             expect(shippingStrategyActionCreator.initialize).toHaveBeenCalledWith(options);
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'shippingStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -1076,9 +1060,7 @@ describe('CheckoutService', () => {
             await checkoutService.deinitializeShipping(options);
 
             expect(shippingStrategyActionCreator.deinitialize).toHaveBeenCalledWith(options);
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'shippingStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -1101,9 +1083,7 @@ describe('CheckoutService', () => {
                 options,
             );
 
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'shippingStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -1130,9 +1110,7 @@ describe('CheckoutService', () => {
                 options,
             );
 
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'shippingStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -1164,9 +1142,7 @@ describe('CheckoutService', () => {
                 options,
             );
 
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'shippingStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -1198,9 +1174,7 @@ describe('CheckoutService', () => {
                 options,
             );
 
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'shippingStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -1226,9 +1200,7 @@ describe('CheckoutService', () => {
                 options,
             );
 
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'shippingStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -1248,9 +1220,7 @@ describe('CheckoutService', () => {
                 address,
                 options,
             );
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'shippingStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -1270,9 +1240,7 @@ describe('CheckoutService', () => {
                 shippingOptionId,
                 options,
             );
-            expect(store.dispatch).toHaveBeenCalledWith(action, {
-                queueId: 'shippingStrategy',
-            });
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
