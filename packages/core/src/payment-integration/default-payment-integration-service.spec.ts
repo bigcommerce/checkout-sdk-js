@@ -61,7 +61,10 @@ describe('DefaultPaymentIntegrationService', () => {
         ConsignmentActionCreator,
         'updateAddress' | 'selectShippingOption' | 'deleteConsignment'
     >;
-    let paymentMethodActionCreator: Pick<PaymentMethodActionCreator, 'loadPaymentMethod'| 'loadPaymentMethods'>;
+    let paymentMethodActionCreator: Pick<
+        PaymentMethodActionCreator,
+        'loadPaymentMethod' | 'loadPaymentMethods'
+    >;
     let paymentActionCreator: Pick<
         PaymentActionCreator,
         'submitPayment' | 'initializeOffsitePayment'
@@ -289,9 +292,7 @@ describe('DefaultPaymentIntegrationService', () => {
         it('loads payment methods', async () => {
             const output = await subject.loadPaymentMethods();
 
-            expect(paymentMethodActionCreator.loadPaymentMethods).toHaveBeenCalledWith(
-                undefined,
-            );
+            expect(paymentMethodActionCreator.loadPaymentMethods).toHaveBeenCalledWith(undefined);
             expect(store.dispatch).toHaveBeenCalledWith(
                 paymentMethodActionCreator.loadPaymentMethods(undefined),
             );
@@ -301,9 +302,9 @@ describe('DefaultPaymentIntegrationService', () => {
         it('loads payment method with params', async () => {
             const output = await subject.loadPaymentMethods({ params: { method: 'cc' } });
 
-            expect(paymentMethodActionCreator.loadPaymentMethods).toHaveBeenCalledWith(
-                { params: { method: 'cc' } },
-            );
+            expect(paymentMethodActionCreator.loadPaymentMethods).toHaveBeenCalledWith({
+                params: { method: 'cc' },
+            });
             expect(store.dispatch).toHaveBeenCalledWith(
                 paymentMethodActionCreator.loadPaymentMethods({
                     params: { method: 'cc' },

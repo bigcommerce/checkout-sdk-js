@@ -57,6 +57,7 @@ const initializeOffsitePayment = jest.fn();
 const loadCheckout = jest.fn();
 const loadDefaultCheckout = jest.fn();
 const loadPaymentMethod = jest.fn();
+const loadPaymentMethods = jest.fn();
 const loadShippingCountries = jest.fn(() => state);
 const loadCurrentOrder = jest.fn();
 const submitOrder = jest.fn();
@@ -88,6 +89,7 @@ const PaymentIntegrationServiceMock = jest
             loadCheckout,
             loadDefaultCheckout,
             loadPaymentMethod,
+            loadPaymentMethods,
             loadShippingCountries,
             loadCurrentOrder,
             submitOrder,
