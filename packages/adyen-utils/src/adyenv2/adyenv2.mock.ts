@@ -3,6 +3,7 @@ import {
     OrderRequestBody,
     Payment,
     PaymentInitializeOptions,
+    PaymentMethod,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -21,7 +22,7 @@ import {
     AdyenError,
     AdyenPaymentMethodType,
     ResultCode,
-} from './adyenv2';
+} from '../types';
 
 function getAdditionalActionErrorResponse(
     resultCode: ResultCode,
@@ -130,6 +131,7 @@ export function getFailingComponent(): AdyenComponent {
             throw new Error();
         }),
         unmount: jest.fn(),
+        submit: jest.fn(),
     };
 }
 
@@ -246,4 +248,24 @@ export function getUnknownError(): RequestError {
             ...getErrorPaymentResponseBody(),
         }),
     );
+}
+
+export function getAdyenV2(method = 'scheme'): PaymentMethod {
+    return {
+        id: 'adyenv2',
+        logoUrl: '',
+        method,
+        supportedCards: [],
+        config: {
+            displayName: 'Adyen',
+            merchantId: 'YOUR_MERCHANT_ID',
+            testMode: true,
+        },
+        initializationData: {
+            originKey: 'YOUR_ORIGIN_KEY',
+            clientKey: 'YOUR_CLIENT_KEY',
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+    };
 }

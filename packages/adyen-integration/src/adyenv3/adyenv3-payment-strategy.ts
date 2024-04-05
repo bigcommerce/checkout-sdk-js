@@ -1,6 +1,26 @@
 import { some } from 'lodash';
 
 import {
+    AdyenAction,
+    AdyenAdditionalAction,
+    AdyenAdditionalActionState,
+    AdyenClient,
+    AdyenComponent,
+    AdyenComponentState,
+    AdyenComponentType,
+    AdyenError,
+    AdyenPaymentMethodType,
+    AdyenPlaceholderData,
+    AdyenV3ActionType,
+    AdyenV3PaymentInitializeOptions,
+    AdyenV3PaymentMethodInitializationData,
+    AdyenV3ScriptLoader,
+    CardStateErrors,
+    isBoletoState,
+    isCardState,
+    WithAdyenV3PaymentInitializeOptions,
+} from '@bigcommerce/checkout-sdk/adyen-utils';
+import {
     BillingAddress,
     getBrowserInfo,
     InvalidArgumentError,
@@ -24,32 +44,10 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import {
-    AdyenAction,
-    AdyenActionType,
-    AdyenAdditionalAction,
-    AdyenAdditionalActionState,
-    AdyenClient,
-    AdyenComponent,
-    AdyenComponentType,
-    AdyenError,
-    AdyenPaymentMethodInitializationData,
-    AdyenPaymentMethodType,
-    AdyenPlaceholderData,
-    AdyenV3ComponentState,
-    CardStateErrors,
-    isBoletoState,
-    isCardState,
-} from './adyenv3';
-import AdyenV3PaymentInitializeOptions, {
-    WithAdyenV3PaymentInitializeOptions,
-} from './adyenv3-initialize-options';
-import AdyenV3ScriptLoader from './adyenv3-script-loader';
-
 export default class Adyenv3PaymentStrategy implements PaymentStrategy {
     private _adyenClient?: AdyenClient;
     private _cardVerificationComponent?: AdyenComponent;
-    private _componentState?: AdyenV3ComponentState;
+    private _componentState?: AdyenComponentState;
     private _paymentComponent?: AdyenComponent;
     private _paymentInitializeOptions?: AdyenV3PaymentInitializeOptions;
 
@@ -73,7 +71,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
         const paymentMethod = this._paymentIntegrationService
             .getState()
-            .getPaymentMethodOrThrow<AdyenPaymentMethodInitializationData>(options.methodId);
+            .getPaymentMethodOrThrow<AdyenV3PaymentMethodInitializationData>(options.methodId);
         const { environment, clientKey, paymentMethodsResponse } =
             paymentMethod.initializationData || {};
 
@@ -253,7 +251,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
-    private _updateComponentState(componentState: AdyenV3ComponentState) {
+    private _updateComponentState(componentState: AdyenComponentState) {
         this._componentState = componentState;
     }
 
@@ -303,9 +301,9 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
             if (onBeforeLoad) {
                 onBeforeLoad(
-                    adyenAction.type === AdyenActionType.ThreeDS2 ||
-                        adyenAction.type === AdyenActionType.QRCode ||
-                        adyenAction.type === AdyenActionType.Sdk,
+                    adyenAction.type === AdyenV3ActionType.ThreeDS2 ||
+                        adyenAction.type === AdyenV3ActionType.QRCode ||
+                        adyenAction.type === AdyenV3ActionType.Sdk,
                 );
             }
 
