@@ -17,4 +17,4 @@ Run `nx test afterpay-integration --testFile="<FILE_NAME>"` to execute unit test
 
 ## Running lint
 
-Run `nx lint afterpay-integration` to execute the lint via [ESLint](https://eslint.org/).
+Run `nx lint afterpay-integration` to execute the lint via [ESLint](https://eslint.org/)
