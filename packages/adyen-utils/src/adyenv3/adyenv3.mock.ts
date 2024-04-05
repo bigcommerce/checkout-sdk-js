@@ -3,6 +3,7 @@ import {
     OrderRequestBody,
     Payment,
     PaymentInitializeOptions,
+    PaymentMethod,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -16,13 +17,13 @@ import {
     AdyenAdditionalActionErrorResponse,
     AdyenClient,
     AdyenComponent,
+    AdyenComponentState,
     AdyenConfiguration,
     AdyenError,
     AdyenPaymentMethodType,
-    AdyenV3ComponentState,
     BoletoState,
     ResultCode,
-} from './adyenv3';
+} from '../types';
 
 function getAdditionalActionErrorResponse(
     resultCode: ResultCode,
@@ -105,7 +106,7 @@ export function getAdyenError(): AdyenError {
     };
 }
 
-export function getComponentState(isValid = true): AdyenV3ComponentState {
+export function getComponentState(isValid = true): AdyenComponentState {
     return {
         data: {
             paymentMethod: {
@@ -114,13 +115,24 @@ export function getComponentState(isValid = true): AdyenV3ComponentState {
                 encryptedExpiryYear: 'ENCRYPTED_EXPIRY_YEAR',
                 encryptedSecurityCode: 'ENCRYPTED_CVV',
                 holderName: 'John Smith',
+                type: AdyenPaymentMethodType.CreditCard,
             },
         },
         isValid,
     };
 }
 
-export function getBoletoComponentState(isValid = true): BoletoState {
+export function getAccountComponentState(): AdyenComponentState {
+    return {
+        data: {
+            paymentMethod: {
+                type: AdyenPaymentMethodType.SEPA,
+            },
+        },
+    };
+}
+
+export function getBoletoComponentState(): BoletoState {
     return {
         data: {
             paymentMethod: {
@@ -132,7 +144,6 @@ export function getBoletoComponentState(isValid = true): BoletoState {
             },
             socialSecurityNumber: '123123123',
         },
-        isValid,
     };
 }
 
@@ -142,6 +153,7 @@ export function getFailingComponent(): AdyenComponent {
             throw new Error();
         }),
         unmount: jest.fn(),
+        submit: jest.fn(),
     };
 }
 
@@ -243,4 +255,24 @@ export function getUnknownError(): RequestError {
             ...getErrorPaymentResponseBody(),
         }),
     );
+}
+
+export function getAdyenV3(method = 'scheme'): PaymentMethod {
+    return {
+        id: 'adyenv3',
+        logoUrl: '',
+        method,
+        supportedCards: [],
+        config: {
+            displayName: 'Adyen',
+            merchantId: 'YOUR_MERCHANT_ID',
+            testMode: true,
+        },
+        initializationData: {
+            originKey: 'YOUR_ORIGIN_KEY',
+            clientKey: 'YOUR_CLIENT_KEY',
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+    };
 }

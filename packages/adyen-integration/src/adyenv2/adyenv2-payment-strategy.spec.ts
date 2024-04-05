@@ -3,6 +3,17 @@ import { createScriptLoader, createStylesheetLoader } from '@bigcommerce/script-
 import { Observable, of } from 'rxjs';
 
 import {
+    AdyenAdditionalActionState,
+    AdyenComponent,
+    AdyenComponentState,
+    AdyenComponentType,
+    AdyenError,
+    AdyenPaymentMethodType,
+    adyenV2Mock,
+    AdyenV2ScriptLoader,
+    ResultCode,
+} from '@bigcommerce/checkout-sdk/adyen-utils';
+import {
     InvalidArgumentError,
     NotInitializedError,
     OrderFinalizationNotRequiredError,
@@ -20,19 +31,9 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import {
-    AdyenAdditionalActionState,
-    AdyenComponent,
-    AdyenComponentState,
-    AdyenComponentType,
-    AdyenError,
-    AdyenPaymentMethodType,
-    ResultCode,
-} from './adyenv2';
-import { getAdyenV2 } from './adyenv2-method.mock';
 import AdyenV2PaymentStrategy from './adyenv2-payment-strategy';
-import AdyenV2ScriptLoader from './adyenv2-script-loader';
-import {
+
+const {
     getAdditionalActionError,
     getAdyenClient,
     getAdyenError,
@@ -45,7 +46,8 @@ import {
     getOrderRequestBodyWithoutPayment,
     getOrderRequestBodyWithVaultedInstrument,
     getUnknownError,
-} from './adyenv2.mock';
+    getAdyenV2,
+} = adyenV2Mock;
 
 describe('AdyenV2PaymentStrategy', () => {
     let adyenV2ScriptLoader: AdyenV2ScriptLoader;

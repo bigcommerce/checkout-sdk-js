@@ -1,0 +1,23 @@
+{
+    "root": "packages/adyen-utils",
+    "sourceRoot": "packages/adyen-utils/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/adyen-utils/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/adyen-utils"],
+            "options": {
+                "jestConfig": "packages/adyen-utils/jest.config.js",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": ["scope:shared"]
+}

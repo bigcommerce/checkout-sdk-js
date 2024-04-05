@@ -2,7 +2,8 @@ import { ScriptLoader, StylesheetLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { AdyenHostWindow } from './adyenv2';
+import { AdyenV2HostWindow } from '../types';
+
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
 import { getAdyenClient, getAdyenConfiguration } from './adyenv2.mock';
 
@@ -10,10 +11,10 @@ describe('AdyenV2ScriptLoader', () => {
     let adyenV2ScriptLoader: AdyenV2ScriptLoader;
     let scriptLoader: ScriptLoader;
     let stylesheetLoader: StylesheetLoader;
-    let mockWindow: AdyenHostWindow;
+    let mockWindow: AdyenV2HostWindow;
 
     beforeEach(() => {
-        mockWindow = {} as AdyenHostWindow;
+        mockWindow = {} as AdyenV2HostWindow;
         scriptLoader = {} as ScriptLoader;
         stylesheetLoader = {} as StylesheetLoader;
         adyenV2ScriptLoader = new AdyenV2ScriptLoader(scriptLoader, stylesheetLoader, mockWindow);
