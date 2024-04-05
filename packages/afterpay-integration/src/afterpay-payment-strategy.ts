@@ -60,9 +60,6 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment.gatewayId', 'payment.methodId']);
         }
 
-        let state = this._paymentIntegrationService.getState();
-        const currencyCode = state.getCart()?.currency.code || '';
-        const countryCode = this._mapCurrencyToISO2(currencyCode);
         const { useStoreCredit } = payload;
 
         if (useStoreCredit !== undefined) {
@@ -71,7 +68,9 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
 
         await this._loadPaymentMethod(gatewayId, methodId, options);
 
-        state = this._paymentIntegrationService.getState();
+        const state = this._paymentIntegrationService.getState();
+        const currencyCode = state.getCart()?.currency.code || '';
+        const countryCode = this._mapCurrencyToISO2(currencyCode);
 
         this._redirectToAfterpay(countryCode, state.getPaymentMethod(methodId, gatewayId));
 
@@ -89,7 +88,7 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingCheckout);
         }
 
-        if (!config || !config.payment.token) {
+        if (!config?.payment.token) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
@@ -106,12 +105,12 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             await this._paymentIntegrationService.forgetCheckout(payment.providerId);
             await this._paymentIntegrationService.loadPaymentMethods();
 
-            throw new OrderFinalizationNotCompletedError();
+            throw new OrderFinalizationNotCompletedError(error.body?.errors?.[0]?.message);
         }
     }
 
     private _redirectToAfterpay(countryCode: string, paymentMethod?: PaymentMethod): void {
-        if (!this._afterpaySdk || !paymentMethod || !paymentMethod.clientToken) {
+        if (!this._afterpaySdk || !paymentMethod?.clientToken) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
