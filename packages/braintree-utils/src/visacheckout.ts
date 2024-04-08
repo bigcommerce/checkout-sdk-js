@@ -104,6 +104,7 @@ export interface VisaCheckoutInitOptions {
         description?: string;
         promoCode?: string;
         customData?: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             [key: string]: any;
         };
     };

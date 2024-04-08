@@ -22,7 +22,6 @@ import {
 import { StoreConfig } from '../../../config';
 import { PaypalHostWindow } from '../paypal';
 
-// TODO: move BraintreeSDKCreator to the braintree-utils package, take a look at the BraintreeIntegrationService
 export default class BraintreeSDKCreator {
     private _client?: Promise<BraintreeClient>;
     private _3ds?: Promise<BraintreeThreeDSecure>;
