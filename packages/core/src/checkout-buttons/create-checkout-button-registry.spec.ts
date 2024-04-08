@@ -53,4 +53,34 @@ describe('createCheckoutButtonRegistry', () => {
     it('returns registry with GooglePay on Adyenv3 Credit registered', () => {
         expect(registry.get('googlepayadyenv3')).toEqual(expect.any(GooglePayButtonStrategy));
     });
+
+    it('returns registry with GooglePay on Authorize.Net Credit registered', () => {
+        expect(registry.get('googlepayauthorizenet')).toEqual(expect.any(GooglePayButtonStrategy));
+    });
+
+    it('returns registry with GooglePay on Bank of New Zealand Credit registered', () => {
+        expect(registry.get('googlepaybnz')).toEqual(expect.any(GooglePayButtonStrategy));
+    });
+
+    it('returns registry with GooglePay on CybersourceV2 Credit registered', () => {
+        expect(registry.get('googlepaycybersourcev2')).toEqual(expect.any(GooglePayButtonStrategy));
+    });
+
+    it('returns registry with GooglePay on Orbital Credit registered', () => {
+        expect(registry.get('googlepayorbital')).toEqual(expect.any(GooglePayButtonStrategy));
+    });
+
+    it('returns registry with GooglePay on Stripe Credit registered', () => {
+        expect(registry.get('googlepaystripe')).toEqual(expect.any(GooglePayButtonStrategy));
+    });
+
+    it('returns registry with GooglePay on StripeUPE Credit registered', () => {
+        expect(registry.get('googlepaystripeupe')).toEqual(expect.any(GooglePayButtonStrategy));
+    });
+
+    it('returns registry with GooglePay on WorldpayAccess Credit registered', () => {
+        expect(registry.get('googlepayworldpayaccess')).toEqual(
+            expect.any(GooglePayButtonStrategy),
+        );
+    });
 });
