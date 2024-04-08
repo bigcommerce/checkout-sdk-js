@@ -32,7 +32,6 @@ import {
 } from './types';
 
 export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
-    private _paymentButton?: HTMLElement;
     private _methodId?: keyof WithGooglePayPaymentInitializeOptions;
     private _buyNowCart?: Cart;
     private _currencyCode?: string;
@@ -108,20 +107,14 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             );
         }
 
-        this._paymentButton =
-            this._paymentButton ??
-            this._googlePayPaymentProcessor.addPaymentButton(options.containerId, {
-                buttonColor: buttonColor ?? 'default',
-                buttonType: buttonType ?? 'plain',
-                onClick: this._handleClick(onError),
-            });
+        this._googlePayPaymentProcessor.addPaymentButton(options.containerId, {
+            buttonColor: buttonColor ?? 'default',
+            buttonType: buttonType ?? 'plain',
+            onClick: this._handleClick(onError),
+        });
     }
 
     deinitialize(): Promise<void> {
-        this._paymentButton?.remove();
-        this._paymentButton = undefined;
-        this._methodId = undefined;
-
         return Promise.resolve();
     }
 
