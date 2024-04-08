@@ -1,7 +1,5 @@
-import { createErrorAction } from '@bigcommerce/data-store';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { of } from 'rxjs';
 
 import {
     InvalidArgumentError,
@@ -283,18 +281,15 @@ describe('AfterpayPaymentStrategy', () => {
         });
 
         it('throws OrderFinalizationNotCompleted error if unable to finalize order', async () => {
-            const response = new RequestError(getResponse(getErrorPaymentResponseBody()));
-            const paymentFailedErrorAction = of(
-                createErrorAction(PaymentActionType.SubmitPaymentFailed, response),
-            );
-
             jest.spyOn(paymentIntegrationService.getState(), 'getPaymentId').mockReturnValue({
                 providerId: 'PAY_BY_INSTALLMENT',
             });
 
-            jest.spyOn(paymentIntegrationService, 'submitPayment')
-                .mockReturnValueOnce(Promise.reject())
-                .mockReturnValueOnce(paymentFailedErrorAction);
+            const errorResponse = getResponse(getErrorPaymentResponseBody());
+
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
+                throw new RequestError(errorResponse);
+            });
 
             jest.spyOn(paymentIntegrationService, 'forgetCheckout').mockReturnValue(
                 Promise.resolve(),
