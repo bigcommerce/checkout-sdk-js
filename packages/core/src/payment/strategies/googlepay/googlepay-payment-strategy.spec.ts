@@ -4,6 +4,8 @@ import { createScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loa
 import { noop } from 'lodash';
 import { of } from 'rxjs';
 
+import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
+
 import { getCartState } from '../../../cart/carts.mock';
 import {
     CheckoutActionCreator,
@@ -51,14 +53,14 @@ import { getGooglePay, getPaymentMethodsState } from '../../payment-methods.mock
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 import { AdyenV2ScriptLoader } from '../adyenv2';
-import { BraintreeScriptLoader, BraintreeSDKCreator } from '../braintree';
+import { BraintreeSDKCreator } from '../braintree';
 
 import createGooglePayPaymentProcessor from './create-googlepay-payment-processor';
 import GooglePayAdyenV2PaymentProcessor from './googlepay-adyenv2-payment-processor';
-import GooglePayStripeUPEInitializer from './googlepay-stripe-upe-initializer';
 import GooglePayCheckoutcomPaymentProcessor from './googlepay-checkoutcom-payment-processor';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 import GooglePayPaymentStrategy from './googlepay-payment-strategy';
+import GooglePayStripeUPEInitializer from './googlepay-stripe-upe-initializer';
 import { getGoogleOrderRequestBody, getGooglePaymentDataMock } from './googlepay.mock';
 
 describe('GooglePayPaymentStrategy', () => {
@@ -140,7 +142,7 @@ describe('GooglePayPaymentStrategy', () => {
         );
 
         braintreeSDKCreator = new BraintreeSDKCreator(
-            new BraintreeScriptLoader(createScriptLoader()),
+            new BraintreeScriptLoader(createScriptLoader(), window),
         );
 
         googlePayPaymentProcessor = createGooglePayPaymentProcessor(

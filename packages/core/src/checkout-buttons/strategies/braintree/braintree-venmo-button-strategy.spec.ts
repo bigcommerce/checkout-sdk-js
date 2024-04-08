@@ -2,6 +2,7 @@ import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
+import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { CartRequestSender } from '../../../cart';
@@ -17,7 +18,6 @@ import {
 } from '../../../payment';
 import { getBraintree } from '../../../payment/payment-methods.mock';
 import {
-    BraintreeScriptLoader,
     BraintreeSDKCreator,
     BraintreeVenmoCheckout,
     BraintreeVenmoCheckoutCreator,
@@ -116,7 +116,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
         paymentMethodActionCreator = new PaymentMethodActionCreator(
             new PaymentMethodRequestSender(createRequestSender()),
         );
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader());
+        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
         braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
         formPoster = createFormPoster();
         cartRequestSender = new CartRequestSender(requestSender);

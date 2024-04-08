@@ -12,6 +12,7 @@ import {
     BraintreeClientCreator,
     BraintreeDataCollectorCreator,
     BraintreeError,
+    BraintreeHostedFieldsTokenizePayload,
     BraintreeModule,
     BraintreeModuleCreator,
     BraintreeModuleCreatorConfig,
@@ -19,6 +20,11 @@ import {
     BraintreeUsBankAccountCreator,
     BraintreeWindow,
 } from './types';
+import {
+    VisaCheckoutInitOptions,
+    VisaCheckoutPaymentSuccessPayload,
+    VisaCheckoutTokenizedPayload,
+} from './visacheckout';
 
 /**
  *
@@ -48,6 +54,7 @@ export enum BraintreeModuleName {
     threeDSecure = 'threeDSecure',
     usBankAccount = 'usBankAccount',
     venmo = 'venmo',
+    visaCheckout = 'visaCheckout',
 }
 
 export type BraintreeModuleCreators =
@@ -61,7 +68,7 @@ export type BraintreeModuleCreators =
     | BraintreePaypalCheckoutCreator
     | BraintreeThreeDSecureCreator
     | BraintreeVenmoCheckoutCreator
-    // | BraintreeVisaCheckoutCreator
+    | BraintreeVisaCheckoutCreator
     | BraintreeUsBankAccountCreator
     | BraintreeLocalPaymentCreator;
 
@@ -76,7 +83,7 @@ export interface BraintreeSDK {
     [BraintreeModuleName.paypalCheckout]?: BraintreePaypalCheckoutCreator;
     [BraintreeModuleName.threeDSecure]?: BraintreeThreeDSecureCreator;
     [BraintreeModuleName.venmo]?: BraintreeVenmoCheckoutCreator;
-    // [BraintreeModuleName.visaCheckout]?: BraintreeVisaCheckoutCreator; // TODO: should be added in future migration
+    [BraintreeModuleName.visaCheckout]?: BraintreeVisaCheckoutCreator;
     [BraintreeModuleName.usBankAccount]?: BraintreeUsBankAccountCreator;
     [BraintreeModuleName.localPayment]?: BraintreeLocalPaymentCreator;
 }
@@ -204,6 +211,7 @@ export type BraintreeHostedFieldsCreator = BraintreeModuleCreator<
 >;
 
 export interface BraintreeHostedFields {
+    getState(): BraintreeHostedFieldsState;
     teardown(): Promise<void>;
     tokenize(
         options?: BraintreeHostedFieldsTokenizeOptions,
@@ -278,31 +286,6 @@ export interface BraintreeHostedFieldsTokenizeOptions {
     billingAddress?: BraintreeBillingAddressRequestData;
 }
 
-export interface BraintreeHostedFieldsTokenizePayload {
-    nonce: string;
-    details: {
-        bin: string;
-        cardType: string;
-        expirationMonth: string;
-        expirationYear: string;
-        lastFour: string;
-        lastTwo: string;
-    };
-    description: string;
-    type: string;
-    binData: {
-        commercial: string;
-        countryOfIssuance: string;
-        debit: string;
-        durbinRegulated: string;
-        healthcare: string;
-        issuingBank: string;
-        payroll: string;
-        prepaid: string;
-        productId: string;
-    };
-}
-
 export interface BraintreeBillingAddressRequestData {
     postalCode?: string;
     firstName?: string;
@@ -329,6 +312,11 @@ export interface BraintreeFormFieldState {
     isEmpty: boolean;
     isPotentiallyValid: boolean;
     isValid: boolean;
+}
+
+export interface TokenizationPayload {
+    nonce: string;
+    bin: string;
 }
 
 /**
@@ -555,13 +543,12 @@ export interface BraintreeVenmoCreatorConfig extends BraintreeModuleCreatorConfi
  * Braintree Visa Checkout
  *
  */
-// TODO: should be added in future migration
-// export type BraintreeVisaCheckoutCreator = BraintreeModuleCreator<BraintreeVisaCheckout>;
+export type BraintreeVisaCheckoutCreator = BraintreeModuleCreator<BraintreeVisaCheckout>;
 
-// export interface BraintreeVisaCheckout extends BraintreeModule {
-//     tokenize(payment: VisaCheckoutPaymentSuccessPayload): Promise<VisaCheckoutTokenizedPayload>;
-//     createInitOptions(options: Partial<VisaCheckoutInitOptions>): VisaCheckoutInitOptions;
-// }
+export interface BraintreeVisaCheckout extends BraintreeModule {
+    tokenize(payment: VisaCheckoutPaymentSuccessPayload): Promise<VisaCheckoutTokenizedPayload>;
+    createInitOptions(options: Partial<VisaCheckoutInitOptions>): VisaCheckoutInitOptions;
+}
 
 /**
  *

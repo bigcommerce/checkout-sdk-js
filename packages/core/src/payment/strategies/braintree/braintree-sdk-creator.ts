@@ -1,12 +1,4 @@
 import {
-    NotInitializedError,
-    NotInitializedErrorType,
-    UnsupportedBrowserError,
-} from '../../../common/error/errors';
-import { StoreConfig } from '../../../config';
-import { PaypalHostWindow } from '../paypal';
-
-import {
     BraintreeClient,
     BraintreeDataCollector,
     BraintreeError,
@@ -15,13 +7,22 @@ import {
     BraintreeModule,
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
+    BraintreeScriptLoader,
     BraintreeThreeDSecure,
     BraintreeVenmoCheckout,
     BraintreeVisaCheckout,
     PAYPAL_COMPONENTS,
-} from './braintree';
-import BraintreeScriptLoader from './braintree-script-loader';
+} from '@bigcommerce/checkout-sdk/braintree-utils';
 
+import {
+    NotInitializedError,
+    NotInitializedErrorType,
+    UnsupportedBrowserError,
+} from '../../../common/error/errors';
+import { StoreConfig } from '../../../config';
+import { PaypalHostWindow } from '../paypal';
+
+// TODO: move BraintreeSDKCreator to the braintree-utils package, take a look at the BraintreeIntegrationService
 export default class BraintreeSDKCreator {
     private _client?: Promise<BraintreeClient>;
     private _3ds?: Promise<BraintreeThreeDSecure>;

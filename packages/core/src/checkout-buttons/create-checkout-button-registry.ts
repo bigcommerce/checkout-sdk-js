@@ -3,6 +3,7 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { createAmazonPayV2PaymentProcessor } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
+import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 import { CartRequestSender } from '../cart';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
@@ -10,7 +11,7 @@ import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
-import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategies/braintree';
+import { BraintreeSDKCreator } from '../payment/strategies/braintree';
 import {
     createGooglePayPaymentProcessor,
     GooglePayAdyenV2Initializer,
@@ -58,7 +59,9 @@ export default function createCheckoutButtonRegistry(
         new PaymentMethodRequestSender(requestSender),
     );
 
-    const braintreeSdkCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader));
+    const braintreeSdkCreator = new BraintreeSDKCreator(
+        new BraintreeScriptLoader(scriptLoader, window),
+    );
     const cartRequestSender = new CartRequestSender(requestSender);
     const amazonPayV2RequestSender = new AmazonPayV2RequestSender(requestSender);
 

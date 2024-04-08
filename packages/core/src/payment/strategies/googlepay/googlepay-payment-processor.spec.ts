@@ -31,9 +31,9 @@ import {
     TokenizePayload,
     TotalPriceStatusType,
 } from './googlepay';
-import GooglePayStripeUPEInitializer from './googlepay-stripe-upe-initializer';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 import GooglePayScriptLoader from './googlepay-script-loader';
+import GooglePayStripeUPEInitializer from './googlepay-stripe-upe-initializer';
 import {
     getGooglePayAddressMock,
     getGooglePaymentDataMock,

@@ -6,7 +6,6 @@ export { default as BraintreeCreditCardPaymentStrategy } from './braintree-credi
 export { default as BraintreePaymentProcessor } from './braintree-payment-processor';
 export { default as BraintreeVenmoPaymentStrategy } from './braintree-venmo-payment-strategy';
 export { default as BraintreeVisaCheckoutPaymentProcessor } from './braintree-visacheckout-payment-processor';
-export { default as BraintreeScriptLoader } from './braintree-script-loader';
 export { default as BraintreeSDKCreator } from './braintree-sdk-creator';
 export { default as createBraintreePaymentProcessor } from './create-braintree-payment-processor';
 export { default as createBraintreeVisaCheckoutPaymentProcessor } from './create-braintree-visacheckout-payment-processor';

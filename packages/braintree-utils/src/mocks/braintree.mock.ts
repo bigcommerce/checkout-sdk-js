@@ -7,12 +7,14 @@ import {
     BraintreeFastlane,
     BraintreeFastlaneAuthenticationState,
     BraintreeFastlaneProfileData,
+    BraintreeHostedFields,
     BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
     BraintreeShippingAddressOverride,
     BraintreeThreeDSecure,
     BraintreeTokenizePayload,
+    BraintreeVisaCheckout,
     GooglePayBraintreePaymentDataRequestV1,
     GooglePayBraintreeSDK,
     LocalPaymentInstance,
@@ -175,6 +177,23 @@ export function getConnectMock(): BraintreeConnect {
             emailSubmitted: jest.fn(),
             orderPlaced: jest.fn(),
         },
+    };
+}
+
+export function getVisaCheckoutMock(): BraintreeVisaCheckout {
+    return {
+        createInitOptions: jest.fn(),
+        tokenize: jest.fn(),
+        teardown: jest.fn(() => Promise.resolve()),
+    };
+}
+
+export function getHostedFieldsMock(): BraintreeHostedFields {
+    return {
+        getState: jest.fn(),
+        teardown: jest.fn(() => Promise.resolve()),
+        tokenize: jest.fn(() => Promise.resolve(getTokenizePayload())),
+        on: jest.fn(),
     };
 }
 

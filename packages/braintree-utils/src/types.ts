@@ -1,5 +1,6 @@
 export * from './braintree';
 export * from './paypal';
+export * from './visacheckout';
 
 /**
  *
@@ -69,8 +70,33 @@ export interface BraintreeClientRequestPayload {
     method: string;
 }
 
+export interface BraintreeHostedFieldsTokenizePayload {
+    nonce: string;
+    details: {
+        bin: string;
+        cardType: string;
+        expirationMonth: string;
+        expirationYear: string;
+        lastFour: string;
+        lastTwo: string;
+    };
+    description: string;
+    type: string;
+    binData: {
+        commercial: string;
+        countryOfIssuance: string;
+        debit: string;
+        durbinRegulated: string;
+        healthcare: string;
+        issuingBank: string;
+        payroll: string;
+        prepaid: string;
+        productId: string;
+    };
+}
+
 export interface BraintreeClientRequestResponse {
-    creditCards: Array<{ nonce: string }>;
+    creditCards: BraintreeHostedFieldsTokenizePayload[];
 }
 
 /**

@@ -11,6 +11,7 @@ import {
     BraintreeConnectCreator,
     BraintreeDataCollectorCreator,
     BraintreeFastlaneCreator,
+    BraintreeHostedFieldsCreator,
     BraintreeHostWindow,
     BraintreeLocalPaymentCreator,
     BraintreeModuleCreators,
@@ -19,6 +20,8 @@ import {
     BraintreePaypalCreator,
     BraintreeThreeDSecureCreator,
     BraintreeUsBankAccountCreator,
+    BraintreeVenmoCheckoutCreator,
+    BraintreeVisaCheckoutCreator,
     GooglePayCreator,
 } from './types';
 
@@ -109,6 +112,27 @@ export default class BraintreeScriptLoader {
         return this.loadBraintreeModuleOrThrow<BraintreeThreeDSecureCreator>(
             BraintreeModuleName.threeDSecure,
             'three-d-secure.min.js',
+        );
+    }
+
+    loadVisaCheckout(): Promise<BraintreeVisaCheckoutCreator> {
+        return this.loadBraintreeModuleOrThrow<BraintreeVisaCheckoutCreator>(
+            BraintreeModuleName.visaCheckout,
+            'visa-checkout.min.js',
+        );
+    }
+
+    loadVenmoCheckout(): Promise<BraintreeVenmoCheckoutCreator> {
+        return this.loadBraintreeModuleOrThrow<BraintreeVenmoCheckoutCreator>(
+            BraintreeModuleName.venmo,
+            'venmo.min.js',
+        );
+    }
+
+    async loadHostedFields(): Promise<BraintreeHostedFieldsCreator> {
+        return this.loadBraintreeModuleOrThrow<BraintreeHostedFieldsCreator>(
+            BraintreeModuleName.hostedFields,
+            'hosted-fields.min.js',
         );
     }
 
