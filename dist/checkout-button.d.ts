@@ -308,7 +308,7 @@ declare class CheckoutButtonErrorSelector {
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -448,6 +448,8 @@ declare interface CustomError extends Error {
     subtype?: string;
 }
 
+declare type GooglePayButtonColor = 'default' | 'black' | 'white';
+
 declare interface GooglePayButtonInitializeOptions {
     /**
      * The color of the GooglePay button that will be inserted.
@@ -468,8 +470,51 @@ declare interface GooglePayButtonInitializeOptions {
     buyNowInitializeOptions?: GooglePayBuyNowInitializeOptions;
 }
 
+declare interface GooglePayButtonInitializeOptions_2 {
+    /**
+     * All Google Pay payment buttons exist in two styles: dark (default) and light.
+     * To provide contrast, use dark buttons on light backgrounds and light buttons on dark or colorful backgrounds.
+     */
+    buttonColor?: GooglePayButtonColor;
+    /**
+     * Variant buttons:
+     * book: The "Book with Google Pay" payment button.
+     * buy: The "Buy with Google Pay" payment button.
+     * checkout: The "Checkout with Google Pay" payment button.
+     * donate: The "Donate with Google Pay" payment button.
+     * order: The "Order with Google Pay" payment button.
+     * pay: The "Pay with Google Pay" payment button.
+     * plain: The Google Pay payment button without the additional text (default).
+     * subscribe: The "Subscribe with Google Pay" payment button.
+     *
+     * Note: "long" and "short" button types have been renamed to "buy" and "plain", but are still valid button types
+     * for backwards compatability.
+     */
+    buttonType?: GooglePayButtonType;
+}
+
+declare type GooglePayButtonType = 'book' | 'buy' | 'checkout' | 'donate' | 'order' | 'pay' | 'plain' | 'subscribe' | 'long' | 'short';
+
 declare interface GooglePayBuyNowInitializeOptions {
     getBuyNowCartRequestBody?(): BuyNowCartRequestBody;
+}
+
+/**
+ * The recognized keys to pass the initialization options for Google Pay.
+ */
+declare enum GooglePayKey {
+    ADYEN_V2 = "googlepayadyenv2",
+    ADYEN_V3 = "googlepayadyenv3",
+    AUTHORIZE_NET = "googlepayauthorizenet",
+    BNZ = "googlepaybnz",
+    BRAINTREE = "googlepaybraintree",
+    PAYPAL_COMMERCE = "googlepaypaypalcommerce",
+    CHECKOUT_COM = "googlepaycheckoutcom",
+    CYBERSOURCE_V2 = "googlepaycybersourcev2",
+    ORBITAL = "googlepayorbital",
+    STRIPE = "googlepaystripe",
+    STRIPE_UPE = "googlepaystripeupe",
+    WORLDPAY_ACCESS = "googlepayworldpayaccess"
 }
 
 declare interface LineItem {
@@ -729,6 +774,14 @@ declare interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
 }
+
+/**
+ * The options that are required to initialize the GooglePay payment method.
+ * They can be omitted unless you need to support GooglePay.
+ */
+declare type WithGooglePayButtonInitializeOptions = {
+    [k in GooglePayKey]?: GooglePayButtonInitializeOptions_2;
+};
 
 declare interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {
     paypalcommercealternativemethods?: PayPalCommerceAlternativeMethodsButtonOptions;
