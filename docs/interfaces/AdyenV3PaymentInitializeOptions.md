@@ -76,7 +76,7 @@ service.initializePayment({
 
 ### additionalActionOptions
 
-• **additionalActionOptions**: [`AdyenAdditionalActionOptions_2`](AdyenAdditionalActionOptions_2.md)
+• **additionalActionOptions**: [`AdyenAdditionalActionOptions`](AdyenAdditionalActionOptions.md)
 
 A set of options that are required to initialize additional payment actions.
 
@@ -108,7 +108,7 @@ ___
 
 ### options
 
-• `Optional` **options**: `Pick`<[`AdyenV3CreditCardComponentOptions`](AdyenV3CreditCardComponentOptions.md), ``"details"`` \| ``"enableStoreDetails"`` \| ``"hasHolderName"`` \| ``"holderNameRequired"`` \| ``"data"`` \| ``"groupTypes"`` \| ``"placeholders"`` \| ``"brands"`` \| ``"styles"`` \| ``"onError"`` \| ``"onFieldValid"`` \| ``"showBrandsUnderCardNumber"`` \| ``"onSubmit"``\>
+• `Optional` **options**: `Pick`<[`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md), ``"details"`` \| ``"enableStoreDetails"`` \| ``"hasHolderName"`` \| ``"holderNameRequired"`` \| ``"data"`` \| ``"groupTypes"`` \| ``"placeholders"`` \| ``"brands"`` \| ``"styles"`` \| ``"showBrandsUnderCardNumber"`` \| ``"onSubmit"`` \| ``"onError"`` \| ``"onFieldValid"``\>
 
 Optional. Overwriting the default options
 
@@ -128,7 +128,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `validateState` | [`AdyenV3ValidationState`](AdyenV3ValidationState.md) |
+| `validateState` | [`AdyenValidationState`](AdyenValidationState.md) |
 
 #### Returns
 

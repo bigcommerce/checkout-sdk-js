@@ -116,7 +116,7 @@ ___
 
 ### options
 
-• `Optional` **options**: [`AdyenIdealComponentOptions`](AdyenIdealComponentOptions.md) \| `Pick`<[`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md), ``"details"`` \| ``"enableStoreDetails"`` \| ``"hasHolderName"`` \| ``"holderNameRequired"`` \| ``"data"`` \| ``"groupTypes"`` \| ``"placeholders"`` \| ``"brands"`` \| ``"styles"`` \| ``"onError"`` \| ``"onFieldValid"``\>
+• `Optional` **options**: [`AdyenIdealComponentOptions`](AdyenIdealComponentOptions.md) \| `Pick`<[`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md), ``"details"`` \| ``"enableStoreDetails"`` \| ``"hasHolderName"`` \| ``"holderNameRequired"`` \| ``"data"`` \| ``"groupTypes"`` \| ``"placeholders"`` \| ``"brands"`` \| ``"styles"`` \| ``"showBrandsUnderCardNumber"`` \| ``"onSubmit"`` \| ``"onError"`` \| ``"onFieldValid"``\>
 
 Optional. Overwriting the default options
 
@@ -154,7 +154,7 @@ Use additionalActionOptions instead as this property will be removed in the futu
 
 | Name | Type |
 | :------ | :------ |
-| `validateState` | [`AdyenV2ValidationState`](AdyenV2ValidationState.md) |
+| `validateState` | [`AdyenValidationState`](AdyenValidationState.md) |
 
 #### Returns
 

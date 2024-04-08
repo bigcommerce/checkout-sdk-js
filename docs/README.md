@@ -6,8 +6,7 @@
 
 ### Enumerations
 
-- [AdyenV2CardFields](enums/AdyenV2CardFields.md)
-- [AdyenV3CardFields](enums/AdyenV3CardFields.md)
+- [AdyenCardFields](enums/AdyenCardFields.md)
 - [BraintreeFormFieldType](enums/BraintreeFormFieldType.md)
 - [ButtonColor](enums/ButtonColor.md)
 - [ButtonType](enums/ButtonType.md)
@@ -66,27 +65,18 @@
 - [Address](interfaces/Address.md)
 - [AddressRequestBody](interfaces/AddressRequestBody.md)
 - [AdyenAdditionalActionCallbacks](interfaces/AdyenAdditionalActionCallbacks.md)
-- [AdyenAdditionalActionCallbacks_2](interfaces/AdyenAdditionalActionCallbacks_2.md)
 - [AdyenAdditionalActionOptions](interfaces/AdyenAdditionalActionOptions.md)
-- [AdyenAdditionalActionOptions_2](interfaces/AdyenAdditionalActionOptions_2.md)
 - [AdyenBaseCardComponentOptions](interfaces/AdyenBaseCardComponentOptions.md)
-- [AdyenBaseCardComponentOptions_2](interfaces/AdyenBaseCardComponentOptions_2.md)
 - [AdyenComponent](interfaces/AdyenComponent.md)
 - [AdyenComponentEvents](interfaces/AdyenComponentEvents.md)
-- [AdyenComponentEvents_2](interfaces/AdyenComponentEvents_2.md)
-- [AdyenComponent_2](interfaces/AdyenComponent_2.md)
 - [AdyenCreditCardComponentOptions](interfaces/AdyenCreditCardComponentOptions.md)
 - [AdyenIdealComponentOptions](interfaces/AdyenIdealComponentOptions.md)
 - [AdyenPaymentMethodState](interfaces/AdyenPaymentMethodState.md)
-- [AdyenPaymentMethodState_2](interfaces/AdyenPaymentMethodState_2.md)
 - [AdyenPlaceholderData](interfaces/AdyenPlaceholderData.md)
-- [AdyenPlaceholderData_2](interfaces/AdyenPlaceholderData_2.md)
 - [AdyenThreeDS2Options](interfaces/AdyenThreeDS2Options.md)
 - [AdyenV2PaymentInitializeOptions](interfaces/AdyenV2PaymentInitializeOptions.md)
-- [AdyenV2ValidationState](interfaces/AdyenV2ValidationState.md)
-- [AdyenV3CreditCardComponentOptions](interfaces/AdyenV3CreditCardComponentOptions.md)
 - [AdyenV3PaymentInitializeOptions](interfaces/AdyenV3PaymentInitializeOptions.md)
-- [AdyenV3ValidationState](interfaces/AdyenV3ValidationState.md)
+- [AdyenValidationState](interfaces/AdyenValidationState.md)
 - [AmazonPayRemoteCheckout](interfaces/AmazonPayRemoteCheckout.md)
 - [AmazonPayV2CustomerInitializeOptions](interfaces/AmazonPayV2CustomerInitializeOptions.md)
 - [AmazonPayV2PaymentInitializeOptions](interfaces/AmazonPayV2PaymentInitializeOptions.md)
@@ -157,17 +147,13 @@
 - [BuyNowCartRequestBody](interfaces/BuyNowCartRequestBody.md)
 - [CardCvcElementOptions](interfaces/CardCvcElementOptions.md)
 - [CardDataPaymentMethodState](interfaces/CardDataPaymentMethodState.md)
-- [CardDataPaymentMethodState_2](interfaces/CardDataPaymentMethodState_2.md)
 - [CardElementOptions](interfaces/CardElementOptions.md)
 - [CardExpiryElementOptions](interfaces/CardExpiryElementOptions.md)
 - [CardInstrument](interfaces/CardInstrument.md)
 - [CardNumberElementOptions](interfaces/CardNumberElementOptions.md)
 - [CardPaymentMethodState](interfaces/CardPaymentMethodState.md)
-- [CardPaymentMethodState_2](interfaces/CardPaymentMethodState_2.md)
 - [CardState](interfaces/CardState.md)
 - [CardStateErrors](interfaces/CardStateErrors.md)
-- [CardStateErrors_2](interfaces/CardStateErrors_2.md)
-- [CardState_2](interfaces/CardState_2.md)
 - [CardingProtectionActionData](interfaces/CardingProtectionActionData.md)
 - [Cart](interfaces/Cart.md)
 - [CartSelector](interfaces/CartSelector.md)
@@ -214,9 +200,7 @@
 - [CreditCardInstrument](interfaces/CreditCardInstrument.md)
 - [CreditCardPaymentInitializeOptions_2](interfaces/CreditCardPaymentInitializeOptions_2.md)
 - [CreditCardPlaceHolder](interfaces/CreditCardPlaceHolder.md)
-- [CreditCardPlaceHolder_2](interfaces/CreditCardPlaceHolder_2.md)
 - [CssProperties](interfaces/CssProperties.md)
-- [CssProperties_2](interfaces/CssProperties_2.md)
 - [Currency](interfaces/Currency.md)
 - [CustomError](interfaces/CustomError.md)
 - [CustomItem](interfaces/CustomItem.md)
@@ -312,7 +296,6 @@
 - [InitializationStrategy](interfaces/InitializationStrategy.md)
 - [InlineElementStyles](interfaces/InlineElementStyles.md)
 - [InputDetail](interfaces/InputDetail.md)
-- [InputDetail_2](interfaces/InputDetail_2.md)
 - [InputStyles](interfaces/InputStyles.md)
 - [InstrumentSelector](interfaces/InstrumentSelector.md)
 - [InternalAddress](interfaces/InternalAddress.md)
@@ -321,7 +304,6 @@
 - [InternalOrderPayment](interfaces/InternalOrderPayment.md)
 - [Item](interfaces/Item.md)
 - [Item_2](interfaces/Item_2.md)
-- [Item_3](interfaces/Item_3.md)
 - [LabelStyles](interfaces/LabelStyles.md)
 - [LanguageConfig](interfaces/LanguageConfig.md)
 - [LineItem](interfaces/LineItem.md)
@@ -405,7 +387,6 @@
 - [RequestOptions](interfaces/RequestOptions.md)
 - [SearchArea](interfaces/SearchArea.md)
 - [SepaPlaceHolder](interfaces/SepaPlaceHolder.md)
-- [SepaPlaceHolder_2](interfaces/SepaPlaceHolder_2.md)
 - [SetIframeStyleCommand](interfaces/SetIframeStyleCommand.md)
 - [ShippingAddressSelector](interfaces/ShippingAddressSelector.md)
 - [ShippingCountrySelector](interfaces/ShippingCountrySelector.md)
@@ -447,9 +428,7 @@
 - [StripeUPEShippingInitializeOptions](interfaces/StripeUPEShippingInitializeOptions.md)
 - [StripeV3PaymentInitializeOptions](interfaces/StripeV3PaymentInitializeOptions.md)
 - [StyleOptions](interfaces/StyleOptions.md)
-- [StyleOptions_2](interfaces/StyleOptions_2.md)
 - [SubInputDetail](interfaces/SubInputDetail.md)
-- [SubInputDetail_2](interfaces/SubInputDetail_2.md)
 - [Subscriptions](interfaces/Subscriptions.md)
 - [SubscriptionsSelector](interfaces/SubscriptionsSelector.md)
 - [Tax](interfaces/Tax.md)
@@ -463,9 +442,7 @@
 - [VaultAccessToken](interfaces/VaultAccessToken.md)
 - [VaultedInstrument](interfaces/VaultedInstrument.md)
 - [WechatDataPaymentMethodState](interfaces/WechatDataPaymentMethodState.md)
-- [WechatDataPaymentMethodState_2](interfaces/WechatDataPaymentMethodState_2.md)
 - [WechatState](interfaces/WechatState.md)
-- [WechatState_2](interfaces/WechatState_2.md)
 - [WithAdyenV2PaymentInitializeOptions](interfaces/WithAdyenV2PaymentInitializeOptions.md)
 - [WithAdyenV3PaymentInitializeOptions](interfaces/WithAdyenV3PaymentInitializeOptions.md)
 - [WithApplePayButtonInitializeOptions](interfaces/WithApplePayButtonInitializeOptions.md)
@@ -515,7 +492,6 @@
 - [AccountInstrument](README.md#accountinstrument)
 - [AddressKey](README.md#addresskey)
 - [AdyenComponentState](README.md#adyencomponentstate)
-- [AdyenV3ComponentState](README.md#adyenv3componentstate)
 - [AmazonPayV2ButtonInitializeOptions](README.md#amazonpayv2buttoninitializeoptions)
 - [AnalyticStepType](README.md#analyticsteptype)
 - [BraintreeFormErrorData](README.md#braintreeformerrordata)
@@ -598,13 +574,7 @@ ___
 
 ### AdyenComponentState
 
-Ƭ **AdyenComponentState**: [`CardState`](interfaces/CardState.md) \| [`WechatState`](interfaces/WechatState.md)
-
-___
-
-### AdyenV3ComponentState
-
-Ƭ **AdyenV3ComponentState**: [`CardState_2`](interfaces/CardState_2.md) \| [`WechatState_2`](interfaces/WechatState_2.md) \| [`BoletoState`](interfaces/BoletoState.md)
+Ƭ **AdyenComponentState**: [`CardState`](interfaces/CardState.md) \| [`BoletoState`](interfaces/BoletoState.md) \| [`WechatState`](interfaces/WechatState.md)
 
 ___
 
@@ -883,7 +853,7 @@ ___
 
 ### PaymentInitializeOptions
 
-Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md) & [`WithBlueSnapDirectAPMPaymentInitializeOptions`](interfaces/WithBlueSnapDirectAPMPaymentInitializeOptions.md) & [`WithBoltPaymentInitializeOptions`](interfaces/WithBoltPaymentInitializeOptions.md) & [`WithBraintreeAchPaymentInitializeOptions`](interfaces/WithBraintreeAchPaymentInitializeOptions.md) & [`WithBraintreeLocalMethodsPaymentInitializeOptions`](interfaces/WithBraintreeLocalMethodsPaymentInitializeOptions.md) & [`WithBraintreeFastlanePaymentInitializeOptions`](interfaces/WithBraintreeFastlanePaymentInitializeOptions.md) & [`WithCreditCardPaymentInitializeOptions`](interfaces/WithCreditCardPaymentInitializeOptions.md) & [`WithGooglePayPaymentInitializeOptions`](README.md#withgooglepaypaymentinitializeoptions) & [`WithMolliePaymentInitializeOptions`](interfaces/WithMolliePaymentInitializeOptions.md) & [`WithPayPalCommercePaymentInitializeOptions`](interfaces/WithPayPalCommercePaymentInitializeOptions.md) & [`WithPayPalCommerceCreditPaymentInitializeOptions`](interfaces/WithPayPalCommerceCreditPaymentInitializeOptions.md) & [`WithPayPalCommerceVenmoPaymentInitializeOptions`](interfaces/WithPayPalCommerceVenmoPaymentInitializeOptions.md) & [`WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions`](interfaces/WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions.md) & [`WithPayPalCommerceCreditCardsPaymentInitializeOptions`](interfaces/WithPayPalCommerceCreditCardsPaymentInitializeOptions.md) & [`WithPayPalCommerceRatePayPaymentInitializeOptions`](interfaces/WithPayPalCommerceRatePayPaymentInitializeOptions.md) & [`WithPayPalCommerceFastlanePaymentInitializeOptions`](interfaces/WithPayPalCommerceFastlanePaymentInitializeOptions.md) & [`WithSquareV2PaymentInitializeOptions`](interfaces/WithSquareV2PaymentInitializeOptions.md) & [`WithStripeV3PaymentInitializeOptions`](interfaces/WithStripeV3PaymentInitializeOptions.md) & [`WithStripeUPEPaymentInitializeOptions`](interfaces/WithStripeUPEPaymentInitializeOptions.md)
+Ƭ **PaymentInitializeOptions**: [`BasePaymentInitializeOptions`](interfaces/BasePaymentInitializeOptions.md) & [`WithAdyenV3PaymentInitializeOptions`](interfaces/WithAdyenV3PaymentInitializeOptions.md) & [`WithAdyenV2PaymentInitializeOptions`](interfaces/WithAdyenV2PaymentInitializeOptions.md) & [`WithApplePayPaymentInitializeOptions`](interfaces/WithApplePayPaymentInitializeOptions.md) & [`WithBlueSnapDirectAPMPaymentInitializeOptions`](interfaces/WithBlueSnapDirectAPMPaymentInitializeOptions.md) & [`WithBoltPaymentInitializeOptions`](interfaces/WithBoltPaymentInitializeOptions.md) & [`WithBraintreeAchPaymentInitializeOptions`](interfaces/WithBraintreeAchPaymentInitializeOptions.md) & [`WithBraintreeLocalMethodsPaymentInitializeOptions`](interfaces/WithBraintreeLocalMethodsPaymentInitializeOptions.md) & [`WithBraintreeFastlanePaymentInitializeOptions`](interfaces/WithBraintreeFastlanePaymentInitializeOptions.md) & [`WithCreditCardPaymentInitializeOptions`](interfaces/WithCreditCardPaymentInitializeOptions.md) & [`WithGooglePayPaymentInitializeOptions`](README.md#withgooglepaypaymentinitializeoptions) & [`WithMolliePaymentInitializeOptions`](interfaces/WithMolliePaymentInitializeOptions.md) & [`WithPayPalCommercePaymentInitializeOptions`](interfaces/WithPayPalCommercePaymentInitializeOptions.md) & [`WithPayPalCommerceCreditPaymentInitializeOptions`](interfaces/WithPayPalCommerceCreditPaymentInitializeOptions.md) & [`WithPayPalCommerceVenmoPaymentInitializeOptions`](interfaces/WithPayPalCommerceVenmoPaymentInitializeOptions.md) & [`WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions`](interfaces/WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions.md) & [`WithPayPalCommerceCreditCardsPaymentInitializeOptions`](interfaces/WithPayPalCommerceCreditCardsPaymentInitializeOptions.md) & [`WithPayPalCommerceRatePayPaymentInitializeOptions`](interfaces/WithPayPalCommerceRatePayPaymentInitializeOptions.md) & [`WithPayPalCommerceFastlanePaymentInitializeOptions`](interfaces/WithPayPalCommerceFastlanePaymentInitializeOptions.md) & [`WithSquareV2PaymentInitializeOptions`](interfaces/WithSquareV2PaymentInitializeOptions.md) & [`WithStripeV3PaymentInitializeOptions`](interfaces/WithStripeV3PaymentInitializeOptions.md) & [`WithStripeUPEPaymentInitializeOptions`](interfaces/WithStripeUPEPaymentInitializeOptions.md)
 
 ___
 

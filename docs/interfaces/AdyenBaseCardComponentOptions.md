@@ -15,6 +15,7 @@
 ### Properties
 
 - [brands](AdyenBaseCardComponentOptions.md#brands)
+- [showBrandsUnderCardNumber](AdyenBaseCardComponentOptions.md#showbrandsundercardnumber)
 - [styles](AdyenBaseCardComponentOptions.md#styles)
 
 ## Properties
@@ -24,6 +25,12 @@
 • `Optional` **brands**: `string`[]
 
 Array of card brands that will be recognized by the component.
+
+___
+
+### showBrandsUnderCardNumber
+
+• `Optional` **showBrandsUnderCardNumber**: `boolean`
 
 ___
 

@@ -15,6 +15,7 @@
 - [onChange](AdyenComponentEvents.md#onchange)
 - [onError](AdyenComponentEvents.md#onerror)
 - [onFieldValid](AdyenComponentEvents.md#onfieldvalid)
+- [onSubmit](AdyenComponentEvents.md#onsubmit)
 
 ## Methods
 
@@ -49,7 +50,7 @@ Called in case of an invalid card number, invalid expiry date, or
 
 | Name | Type |
 | :------ | :------ |
-| `state` | [`AdyenV2ValidationState`](AdyenV2ValidationState.md) |
+| `state` | [`AdyenValidationState`](AdyenValidationState.md) |
 | `component` | [`AdyenComponent`](AdyenComponent.md) |
 
 #### Returns
@@ -66,7 +67,26 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `state` | [`AdyenV2ValidationState`](AdyenV2ValidationState.md) |
+| `state` | [`AdyenValidationState`](AdyenValidationState.md) |
+| `component` | [`AdyenComponent`](AdyenComponent.md) |
+
+#### Returns
+
+`void`
+
+___
+
+### onSubmit
+
+▸ `Optional` **onSubmit**(`state`, `component`): `void`
+
+Called when the shopper selects the Pay button and payment details are valid.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `state` | [`AdyenComponentState`](../README.md#adyencomponentstate) |
 | `component` | [`AdyenComponent`](AdyenComponent.md) |
 
 #### Returns

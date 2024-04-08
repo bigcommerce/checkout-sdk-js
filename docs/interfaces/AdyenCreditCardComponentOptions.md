@@ -22,6 +22,7 @@
 - [hasHolderName](AdyenCreditCardComponentOptions.md#hasholdername)
 - [holderNameRequired](AdyenCreditCardComponentOptions.md#holdernamerequired)
 - [placeholders](AdyenCreditCardComponentOptions.md#placeholders)
+- [showBrandsUnderCardNumber](AdyenCreditCardComponentOptions.md#showbrandsundercardnumber)
 - [styles](AdyenCreditCardComponentOptions.md#styles)
 
 ### Methods
@@ -29,6 +30,7 @@
 - [onChange](AdyenCreditCardComponentOptions.md#onchange)
 - [onError](AdyenCreditCardComponentOptions.md#onerror)
 - [onFieldValid](AdyenCreditCardComponentOptions.md#onfieldvalid)
+- [onSubmit](AdyenCreditCardComponentOptions.md#onsubmit)
 
 ## Properties
 
@@ -104,6 +106,16 @@ Specify the sample values you want to appear for card detail input fields.
 
 ___
 
+### showBrandsUnderCardNumber
+
+• `Optional` **showBrandsUnderCardNumber**: `boolean`
+
+#### Inherited from
+
+[AdyenBaseCardComponentOptions](AdyenBaseCardComponentOptions.md).[showBrandsUnderCardNumber](AdyenBaseCardComponentOptions.md#showbrandsundercardnumber)
+
+___
+
 ### styles
 
 • `Optional` **styles**: [`StyleOptions`](StyleOptions.md)
@@ -152,7 +164,7 @@ Called in case of an invalid card number, invalid expiry date, or
 
 | Name | Type |
 | :------ | :------ |
-| `state` | [`AdyenV2ValidationState`](AdyenV2ValidationState.md) |
+| `state` | [`AdyenValidationState`](AdyenValidationState.md) |
 | `component` | [`AdyenComponent`](AdyenComponent.md) |
 
 #### Returns
@@ -173,7 +185,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `state` | [`AdyenV2ValidationState`](AdyenV2ValidationState.md) |
+| `state` | [`AdyenValidationState`](AdyenValidationState.md) |
 | `component` | [`AdyenComponent`](AdyenComponent.md) |
 
 #### Returns
@@ -183,3 +195,26 @@ ___
 #### Inherited from
 
 [AdyenComponentEvents](AdyenComponentEvents.md).[onFieldValid](AdyenComponentEvents.md#onfieldvalid)
+
+___
+
+### onSubmit
+
+▸ `Optional` **onSubmit**(`state`, `component`): `void`
+
+Called when the shopper selects the Pay button and payment details are valid.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `state` | [`AdyenComponentState`](../README.md#adyencomponentstate) |
+| `component` | [`AdyenComponent`](AdyenComponent.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[AdyenComponentEvents](AdyenComponentEvents.md).[onSubmit](AdyenComponentEvents.md#onsubmit)

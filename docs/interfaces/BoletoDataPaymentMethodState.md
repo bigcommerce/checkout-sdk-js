@@ -14,13 +14,7 @@
 
 ### paymentMethod
 
-• **paymentMethod**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `type` | `string` |
+• **paymentMethod**: [`AdyenPaymentMethodState`](AdyenPaymentMethodState.md)
 
 ___
 

@@ -84,41 +84,7 @@ declare interface AdyenAdditionalActionCallbacks {
     onComplete?(): void;
 }
 
-declare interface AdyenAdditionalActionCallbacks_2 {
-    /**
-     * A callback that gets called before adyen component is loaded
-     */
-    onBeforeLoad?(shopperInteraction?: boolean): void;
-    /**
-     * A callback that gets called when adyen component is loaded
-     */
-    onLoad?(cancel?: () => void): void;
-    /**
-     * A callback that gets called when adyen component verification
-     * is completed
-     */
-    onComplete?(): void;
-}
-
 declare interface AdyenAdditionalActionOptions extends AdyenAdditionalActionCallbacks {
-    /**
-     * The location to insert the additional action component.
-     */
-    containerId: string;
-    /**
-     * Specify Three3DS2Challenge Widget Size
-     *
-     * Values
-     * '01' = 250px x 400px
-     * '02' = 390px x 400px
-     * '03' = 500px x 600px
-     * '04' = 600px x 400px
-     * '05' = 100% x 100%
-     */
-    widgetSize?: string;
-}
-
-declare interface AdyenAdditionalActionOptions_2 extends AdyenAdditionalActionCallbacks_2 {
     /**
      * The location to insert the additional action component.
      */
@@ -147,20 +113,13 @@ declare interface AdyenBaseCardComponentOptions {
      * for a list of supported properties.
      */
     styles?: StyleOptions;
+    showBrandsUnderCardNumber?: boolean;
 }
 
-declare interface AdyenBaseCardComponentOptions_2 {
-    /**
-     * Array of card brands that will be recognized by the component.
-     *
-     */
-    brands?: string[];
-    /**
-     * Set a style object to customize the input fields. See Styling Secured Fields
-     * for a list of supported properties.
-     */
-    styles?: StyleOptions_2;
-    showBrandsUnderCardNumber?: boolean;
+declare enum AdyenCardFields {
+    CardNumber = "encryptedCardNumber",
+    SecurityCode = "encryptedSecurityCode",
+    ExpiryDate = "encryptedExpiryDate"
 }
 
 declare interface AdyenComponent {
@@ -173,6 +132,7 @@ declare interface AdyenComponent {
     state?: CardState;
     mount(containerId: string): HTMLElement;
     unmount(): void;
+    submit(): void;
 }
 
 declare interface AdyenComponentEvents {
@@ -182,45 +142,18 @@ declare interface AdyenComponentEvents {
      */
     onChange?(state: AdyenComponentState, component: AdyenComponent): void;
     /**
-     * Called in case of an invalid card number, invalid expiry date, or
-     *  incomplete field. Called again when errors are cleared.
-     */
-    onError?(state: AdyenV2ValidationState, component: AdyenComponent): void;
-    onFieldValid?(state: AdyenV2ValidationState, component: AdyenComponent): void;
-}
-
-declare interface AdyenComponentEvents_2 {
-    /**
-     * Called when the shopper enters data in the card input fields.
-     * Here you have the option to override your main Adyen Checkout configuration.
-     */
-    onChange?(state: AdyenV3ComponentState, component: AdyenComponent_2): void;
-    /**
      * Called when the shopper selects the Pay button and payment details are valid.
      */
-    onSubmit?(state: AdyenV3ComponentState, component: AdyenComponent_2): void;
+    onSubmit?(state: AdyenComponentState, component: AdyenComponent): void;
     /**
      * Called in case of an invalid card number, invalid expiry date, or
      *  incomplete field. Called again when errors are cleared.
      */
-    onError?(state: AdyenV3ValidationState, component: AdyenComponent_2): void;
-    onFieldValid?(state: AdyenV3ValidationState, component: AdyenComponent_2): void;
+    onError?(state: AdyenValidationState, component: AdyenComponent): void;
+    onFieldValid?(state: AdyenValidationState, component: AdyenComponent): void;
 }
 
-declare type AdyenComponentState = CardState | WechatState;
-
-declare interface AdyenComponent_2 {
-    componentRef?: {
-        showValidation(): void;
-    };
-    props?: {
-        type?: string;
-    };
-    state?: CardState_2;
-    mount(containerId: string): HTMLElement;
-    unmount(): void;
-    submit(): void;
-}
+declare type AdyenComponentState = CardState | BoletoState | WechatState;
 
 declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {
     /**
@@ -268,24 +201,7 @@ declare interface AdyenPaymentMethodState {
     type: string;
 }
 
-declare interface AdyenPaymentMethodState_2 {
-    type: string;
-}
-
 declare interface AdyenPlaceholderData {
-    holderName?: string;
-    prefillCardHolderName?: boolean;
-    billingAddress?: {
-        street: string;
-        houseNumberOrName: string;
-        postalCode: string;
-        city: string;
-        stateOrProvince: string;
-        country: string;
-    };
-}
-
-declare interface AdyenPlaceholderData_2 {
     firstName?: string;
     lastName?: string;
     holderName?: string;
@@ -312,12 +228,6 @@ declare interface AdyenThreeDS2Options extends AdyenAdditionalActionCallbacks {
      * '05' = 100% x 100%
      */
     widgetSize?: string;
-}
-
-declare enum AdyenV2CardFields {
-    CardNumber = "encryptedCardNumber",
-    SecurityCode = "encryptedSecurityCode",
-    ExpiryDate = "encryptedExpiryDate"
 }
 
 /**
@@ -414,60 +324,7 @@ declare interface AdyenV2PaymentInitializeOptions {
      */
     options?: Omit_2<AdyenCreditCardComponentOptions, 'onChange'> | AdyenIdealComponentOptions;
     shouldShowNumberField?: boolean;
-    validateCardFields(validateState: AdyenV2ValidationState): void;
-}
-
-declare interface AdyenV2ValidationState {
-    valid: boolean;
-    fieldType?: AdyenV2CardFields;
-    endDigits?: string;
-    encryptedFieldName?: string;
-    i18n?: string;
-    error?: string;
-    errorKey?: string;
-}
-
-declare enum AdyenV3CardFields {
-    CardNumber = "encryptedCardNumber",
-    SecurityCode = "encryptedSecurityCode",
-    ExpiryDate = "encryptedExpiryDate"
-}
-
-declare type AdyenV3ComponentState = CardState_2 | WechatState_2 | BoletoState;
-
-declare interface AdyenV3CreditCardComponentOptions extends AdyenBaseCardComponentOptions_2, AdyenComponentEvents_2 {
-    /**
-     * Set an object containing the details array for type: scheme from
-     * the /paymentMethods response.
-     */
-    details?: InputDetail_2[];
-    /**
-     * Set to true to show the checkbox to save card details for the next payment.
-     */
-    enableStoreDetails?: boolean;
-    /**
-     * Set to true to request the name of the card holder.
-     */
-    hasHolderName?: boolean;
-    /**
-     * Set to true to require the card holder name.
-     */
-    holderNameRequired?: boolean;
-    /**
-     * Information to prefill fields.
-     */
-    data?: AdyenPlaceholderData_2;
-    /**
-     * Defaults to ['mc','visa','amex']. Configure supported card types to
-     * facilitate brand recognition used in the Secured Fields onBrand callback.
-     * See list of available card types. If a shopper enters a card type not
-     * specified in the GroupTypes configuration, the onBrand callback will not be invoked.
-     */
-    groupTypes?: string[];
-    /**
-     * Specify the sample values you want to appear for card detail input fields.
-     */
-    placeholders?: CreditCardPlaceHolder_2 | SepaPlaceHolder_2;
+    validateCardFields(validateState: AdyenValidationState): void;
 }
 
 /**
@@ -542,18 +399,18 @@ declare interface AdyenV3PaymentInitializeOptions {
     /**
      * A set of options that are required to initialize additional payment actions.
      */
-    additionalActionOptions: AdyenAdditionalActionOptions_2;
+    additionalActionOptions: AdyenAdditionalActionOptions;
     /**
      * Optional. Overwriting the default options
      */
-    options?: Omit_2<AdyenV3CreditCardComponentOptions, 'onChange'>;
+    options?: Omit_2<AdyenCreditCardComponentOptions, 'onChange'>;
     shouldShowNumberField?: boolean;
-    validateCardFields(validateState: AdyenV3ValidationState): void;
+    validateCardFields(validateState: AdyenValidationState): void;
 }
 
-declare interface AdyenV3ValidationState {
+declare interface AdyenValidationState {
     valid: boolean;
-    fieldType?: AdyenV3CardFields;
+    fieldType?: AdyenCardFields;
     endDigits?: string;
     encryptedFieldName?: string;
     i18n?: string;
@@ -1314,9 +1171,7 @@ declare interface BodyStyles {
 }
 
 declare interface BoletoDataPaymentMethodState {
-    paymentMethod: {
-        type: string;
-    };
+    paymentMethod: AdyenPaymentMethodState;
     shopperName?: {
         firstName?: string;
         lastName?: string;
@@ -2072,8 +1927,8 @@ declare interface CardDataPaymentMethodState {
     paymentMethod: CardPaymentMethodState;
 }
 
-declare interface CardDataPaymentMethodState_2 {
-    paymentMethod: CardPaymentMethodState_2;
+declare interface CardDataPaymentMethodState {
+    paymentMethod: CardPaymentMethodState;
 }
 
 declare interface CardElementOptions extends BaseElementOptions_2 {
@@ -2126,14 +1981,6 @@ declare interface CardPaymentMethodState extends AdyenPaymentMethodState {
     holderName: string;
 }
 
-declare interface CardPaymentMethodState_2 {
-    encryptedCardNumber: string;
-    encryptedExpiryMonth: string;
-    encryptedExpiryYear: string;
-    encryptedSecurityCode: string;
-    holderName: string;
-}
-
 declare interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
@@ -2146,19 +1993,6 @@ declare interface CardState {
 
 declare interface CardStateErrors {
     [key: string]: string;
-}
-
-declare interface CardStateErrors_2 {
-    [key: string]: string;
-}
-
-declare interface CardState_2 {
-    data: CardDataPaymentMethodState_2;
-    isValid?: boolean;
-    valid?: {
-        [key: string]: boolean;
-    };
-    errors?: CardStateErrors_2;
 }
 
 declare interface CardingProtectionActionData {
@@ -4723,46 +4557,7 @@ declare interface CreditCardPlaceHolder {
     encryptedSecurityCode: string;
 }
 
-declare interface CreditCardPlaceHolder_2 {
-    encryptedCardNumber?: string;
-    encryptedExpiryDate?: string;
-    encryptedSecurityCode: string;
-}
-
 declare interface CssProperties {
-    background?: string;
-    caretColor?: string;
-    color?: string;
-    display?: string;
-    font?: string;
-    fontFamily?: string;
-    fontSize?: string;
-    fontSizeAdjust?: string;
-    fontSmoothing?: string;
-    fontStretch?: string;
-    fontStyle?: string;
-    fontVariant?: string;
-    fontVariantAlternates?: string;
-    fontVariantCaps?: string;
-    fontVariantEastAsian?: string;
-    fontVariantLigatures?: string;
-    fontVariantNumeric?: string;
-    fontWeight?: string;
-    letterSpacing?: string;
-    lineHeight?: string;
-    mozOsxFontSmoothing?: string;
-    mozTransition?: string;
-    outline?: string;
-    opacity?: string | number;
-    padding?: string;
-    textAlign?: string;
-    textShadow?: string;
-    transition?: string;
-    webkitFontSmoothing?: string;
-    webkitTransition?: string;
-}
-
-declare interface CssProperties_2 {
     background?: string;
     caretColor?: string;
     color?: string;
@@ -6102,41 +5897,6 @@ declare interface InputDetail {
     value?: string;
 }
 
-declare interface InputDetail_2 {
-    /**
-     * Configuration parameters for the required input.
-     */
-    configuration?: object;
-    /**
-     * Input details can also be provided recursively.
-     */
-    details?: SubInputDetail_2[];
-    /**
-     * In case of a select, the URL from which to query the items.
-     */
-    itemSearchUrl?: string;
-    /**
-     * In case of a select, the items to choose from.
-     */
-    items?: Item_3[];
-    /**
-     * The value to provide in the result.
-     */
-    key?: string;
-    /**
-     * True if this input value is optional.
-     */
-    optional?: boolean;
-    /**
-     * The type of the required input.
-     */
-    type?: string;
-    /**
-     * The value can be pre-filled, if available.
-     */
-    value?: string;
-}
-
 declare interface InputStyles extends BlockElementStyles {
     active?: BlockElementStyles;
     error?: InputStyles;
@@ -6232,17 +5992,6 @@ declare interface Item {
 }
 
 declare interface Item_2 {
-    /**
-     * The value to provide in the result.
-     */
-    id?: string;
-    /**
-     * The display name.
-     */
-    name?: string;
-}
-
-declare interface Item_3 {
     /**
      * The value to provide in the result.
      */
@@ -7628,7 +7377,7 @@ declare class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest;
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -7991,11 +7740,6 @@ declare interface SearchArea {
 }
 
 declare interface SepaPlaceHolder {
-    ownerName?: string;
-    ibanNumber?: string;
-}
-
-declare interface SepaPlaceHolder_2 {
     ownerName?: string;
     ibanNumber?: string;
 }
@@ -8815,25 +8559,6 @@ declare interface StyleOptions {
     validated?: CssProperties;
 }
 
-declare interface StyleOptions_2 {
-    /**
-     * Base styling applied to the iframe. All styling extends from this style.
-     */
-    base?: CssProperties_2;
-    /**
-     * Styling applied when a field fails validation.
-     */
-    error?: CssProperties_2;
-    /**
-     * Styling applied to the field's placeholder values.
-     */
-    placeholder?: CssProperties_2;
-    /**
-     * Styling applied once a field passes validation.
-     */
-    validated?: CssProperties_2;
-}
-
 declare interface SubInputDetail {
     /**
      * Configuration parameters for the required input.
@@ -8843,33 +8568,6 @@ declare interface SubInputDetail {
      * In case of a select, the items to choose from.
      */
     items?: Item_2[];
-    /**
-     * The value to provide in the result.
-     */
-    key?: string;
-    /**
-     * True if this input is optional to provide.
-     */
-    optional?: boolean;
-    /**
-     * The type of the required input.
-     */
-    type?: string;
-    /**
-     * The value can be pre-filled, if available.
-     */
-    value?: string;
-}
-
-declare interface SubInputDetail_2 {
-    /**
-     * Configuration parameters for the required input.
-     */
-    configuration?: object;
-    /**
-     * In case of a select, the items to choose from.
-     */
-    items?: Item_3[];
     /**
      * The value to provide in the result.
      */
@@ -8958,16 +8656,8 @@ declare interface WechatDataPaymentMethodState {
     paymentMethod: AdyenPaymentMethodState;
 }
 
-declare interface WechatDataPaymentMethodState_2 {
-    paymentMethod: AdyenPaymentMethodState_2;
-}
-
 declare interface WechatState {
     data: WechatDataPaymentMethodState;
-}
-
-declare interface WechatState_2 {
-    data: WechatDataPaymentMethodState_2;
 }
 
 declare interface WithAdyenV2PaymentInitializeOptions {

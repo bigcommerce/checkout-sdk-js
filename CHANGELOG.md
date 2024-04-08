@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.576.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.576.0...v1.576.1) (2024-04-08)
+
+
+### Code Refactoring
+
+* **payment:** PI-1919 create shared adyen-utils package ([1dc2a2c](https://github.com/bigcommerce/checkout-sdk-js/commit/1dc2a2c99ba1f9e065385d381e0032634de43d28))
+
 ## [1.576.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.575.0...v1.576.0) (2024-04-04)
 
 

@@ -13,6 +13,7 @@
 ### Properties
 
 - [brands](AdyenIdealComponentOptions.md#brands)
+- [showBrandsUnderCardNumber](AdyenIdealComponentOptions.md#showbrandsundercardnumber)
 - [showImage](AdyenIdealComponentOptions.md#showimage)
 - [styles](AdyenIdealComponentOptions.md#styles)
 
@@ -27,6 +28,16 @@ Array of card brands that will be recognized by the component.
 #### Inherited from
 
 [AdyenBaseCardComponentOptions](AdyenBaseCardComponentOptions.md).[brands](AdyenBaseCardComponentOptions.md#brands)
+
+___
+
+### showBrandsUnderCardNumber
+
+• `Optional` **showBrandsUnderCardNumber**: `boolean`
+
+#### Inherited from
+
+[AdyenBaseCardComponentOptions](AdyenBaseCardComponentOptions.md).[showBrandsUnderCardNumber](AdyenBaseCardComponentOptions.md#showbrandsundercardnumber)
 
 ___
 

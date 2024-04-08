@@ -7,7 +7,9 @@
 ### Properties
 
 - [billingAddress](AdyenPlaceholderData.md#billingaddress)
+- [firstName](AdyenPlaceholderData.md#firstname)
 - [holderName](AdyenPlaceholderData.md#holdername)
+- [lastName](AdyenPlaceholderData.md#lastname)
 - [prefillCardHolderName](AdyenPlaceholderData.md#prefillcardholdername)
 
 ## Properties
@@ -29,9 +31,21 @@
 
 ___
 
+### firstName
+
+• `Optional` **firstName**: `string`
+
+___
+
 ### holderName
 
 • `Optional` **holderName**: `string`
+
+___
+
+### lastName
+
+• `Optional` **lastName**: `string`
 
 ___
 
