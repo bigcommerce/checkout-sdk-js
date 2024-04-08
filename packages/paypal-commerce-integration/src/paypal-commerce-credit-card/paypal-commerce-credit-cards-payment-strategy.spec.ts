@@ -80,7 +80,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         },
         style: {
             input: {
-                color: 'gray',
+                color: '#333333',
                 'font-family': 'bigFont',
                 'font-size': '14px',
                 'font-weight': '400',
@@ -92,12 +92,24 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                 'font-family': 'bigFont',
                 'font-size': '14px',
                 'font-weight': '400',
+                outline: 'none',
+                padding: '9px 13px',
             },
-            ':focus': {
-                color: 'black',
+            '.valid': {
+                color: '#333333',
                 'font-family': 'bigFont',
                 'font-size': '14px',
                 'font-weight': '400',
+                outline: 'none',
+                padding: '9px 13px',
+            },
+            ':focus': {
+                color: '#333333',
+                'font-family': 'bigFont',
+                'font-size': '14px',
+                'font-weight': '400',
+                outline: 'none',
+                padding: '9px 13px',
             },
         },
         createOrder: expect.any(Function),
@@ -359,19 +371,16 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                         fields: paypalCommerceCreditCardsOptions.form.fields,
                         styles: {
                             default: {
-                                color: 'gray',
                                 fontFamily: 'bigFont',
                                 fontSize: '14px',
                                 fontWeight: '400',
                             },
                             error: {
-                                color: 'red',
                                 fontFamily: 'bigFont',
                                 fontSize: '14px',
                                 fontWeight: '400',
                             },
                             focus: {
-                                color: 'black',
                                 fontFamily: 'bigFont',
                                 fontSize: '14px',
                                 fontWeight: '400',
