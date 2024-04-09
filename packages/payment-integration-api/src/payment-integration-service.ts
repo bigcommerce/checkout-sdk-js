@@ -1,5 +1,6 @@
 import { BillingAddressRequestBody } from './billing';
 import { BuyNowCartRequestBody, Cart } from './cart';
+import { Checkout } from './checkout';
 import { CustomerCredentials } from './customer';
 import { HostedForm, HostedFormOptions } from './hosted-form';
 import { OrderRequestBody } from './order';
@@ -37,6 +38,8 @@ export default interface PaymentIntegrationService {
         methodId: string,
         options?: RequestOptions & { useCache?: boolean },
     ): Promise<PaymentIntegrationSelectors>;
+
+    loadPaymentMethods(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 
     loadCurrentOrder(options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 
@@ -92,4 +95,6 @@ export default interface PaymentIntegrationService {
         methodId: string,
         options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors>;
+
+    validateCheckout(checkout?: Checkout, options?: RequestOptions): Promise<void>;
 }
