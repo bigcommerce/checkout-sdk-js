@@ -10,7 +10,6 @@ import {
     HostedFieldType,
     HostedFieldValidateEventData,
     HostedFormOptions,
-    HostedInputStyles,
     HostedInputValidateErrorData,
     HostedInputValidateErrorDataMap,
     HostedInstrument,
@@ -22,7 +21,6 @@ import {
     isVaultedInstrument,
     NotInitializedError,
     NotInitializedErrorType,
-    objectWithKebabCaseKeys,
     OrderFinalizationNotRequiredError,
     OrderPaymentRequestBody,
     OrderRequestBody,
@@ -585,25 +583,6 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
 
     /**
      *
-     * Styles mappers
-     *
-     */
-    private mapStyleOptions(
-        styles: HostedFieldStylesMap,
-    ): PayPalCommerceHostedFieldsRenderOptions['styles'] {
-        return {
-            input: this.mapStyles(styles.default),
-            '.invalid': this.mapStyles(styles.error),
-            ':focus': this.mapStyles(styles.focus),
-        };
-    }
-
-    private mapStyles(styles: HostedInputStyles = {}): { [key: string]: string } {
-        return omitBy(objectWithKebabCaseKeys(styles), isNil);
-    }
-
-    /**
-     *
      * Utils
      *
      */
@@ -618,27 +597,24 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
     private getInputStyles(
         styles?: HostedFieldStylesMap,
     ): PayPalCommerceHostedFieldsRenderOptions['styles'] {
-        const defaultStyles = {
-            input: {
-                'font-size': '1rem',
-                'font-family': 'Montserrat, Arial, Helvetica, sans-serif',
-                color: '#5f5f5f',
-                outline: 'none',
-                padding: '9px 13px',
-            },
+        const commonStyles = {
+            'font-size': styles?.default?.fontSize || '1rem',
+            'font-family':
+                styles?.default?.fontFamily || 'Montserrat, Arial, Helvetica, sans-serif',
+            'font-weight': styles?.default?.fontWeight || '400',
+            outline: 'none',
+            padding: '9px 13px',
         };
-        const mappedStyles = styles ? this.mapStyleOptions(styles) : null;
 
-        return mappedStyles
-            ? {
-                  ...mappedStyles,
-                  input: {
-                      ...mappedStyles.input,
-                      outline: 'none',
-                      padding: '9px 13px',
-                  },
-              }
-            : defaultStyles;
+        const defaultStyles = { ...commonStyles, color: '#333333' };
+        const errorStyles = { ...commonStyles, color: 'red' };
+
+        return {
+            input: defaultStyles,
+            '.invalid': errorStyles,
+            '.valid': defaultStyles,
+            ':focus': defaultStyles,
+        };
     }
 
     private stylizeInputContainers(
@@ -673,7 +649,6 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
      * Input events methods
      *
      */
-
     private onChangeHandler(
         formOptions: HostedFormOptions,
         event: PayPalCommerceCardFieldsState,
