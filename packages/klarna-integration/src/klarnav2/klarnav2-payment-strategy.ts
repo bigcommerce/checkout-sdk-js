@@ -1,10 +1,11 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+import { RequestSender } from '@bigcommerce/request-sender';
 import { includes } from 'lodash';
 
 import {
     Address,
     BillingAddress,
     InvalidArgumentError,
+    isRequestError,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
@@ -16,6 +17,7 @@ import {
     PaymentMethodCancelledError,
     PaymentMethodInvalidError,
     PaymentRequestOptions,
+    SDK_VERSION_HEADERS,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import KlarnaPayments, {
@@ -40,6 +42,7 @@ export default class KlarnaV2PaymentStrategy {
         private paymentIntegrationService: PaymentIntegrationService,
         private klarnav2ScriptLoader: KlarnaV2ScriptLoader,
         private klarnav2TokenUpdater: KlarnaV2TokenUpdater,
+        private requestSender: RequestSender,
     ) {}
 
     async initialize(
@@ -91,7 +94,7 @@ export default class KlarnaV2PaymentStrategy {
         const {
             payment: { ...paymentPayload },
         } = payload;
-        const { gatewayId } = paymentPayload;
+        const { gatewayId, methodId } = paymentPayload;
 
         if (!gatewayId) {
             throw new InvalidArgumentError(
@@ -99,13 +102,7 @@ export default class KlarnaV2PaymentStrategy {
             );
         }
 
-        const { authorization_token: authorizationToken } = await this.authorize(
-            paymentPayload.methodId,
-        );
-
-        await this.paymentIntegrationService.initializePayment(gatewayId, {
-            authorizationToken,
-        });
+        await this.initializeRemoteCheckout(methodId, gatewayId);
 
         await this.paymentIntegrationService.submitOrder(
             {
@@ -157,6 +154,7 @@ export default class KlarnaV2PaymentStrategy {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
+            /* eslint-disable @typescript-eslint/naming-convention */
             this.klarnaPayments.init({ client_token: paymentMethod.clientToken });
             this.klarnaPayments.load(
                 { container, payment_method_category: paymentMethod.id },
@@ -168,6 +166,7 @@ export default class KlarnaV2PaymentStrategy {
                     resolve(response);
                 },
             );
+            /* eslint-enable @typescript-eslint/naming-convention */
         });
     }
 
@@ -185,6 +184,7 @@ export default class KlarnaV2PaymentStrategy {
         }
 
         const data: KlarnaUpdateSessionParams = {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             billing_address: this.mapToKlarnaAddress(billingAddress, billingAddress.email),
         };
 
@@ -200,6 +200,7 @@ export default class KlarnaV2PaymentStrategy {
     }
 
     private mapToKlarnaAddress(address: Address, email?: string): KlarnaAddress {
+        /* eslint-disable @typescript-eslint/naming-convention */
         const klarnaAddress: KlarnaAddress = {
             street_address: address.address1,
             city: address.city,
@@ -212,6 +213,7 @@ export default class KlarnaV2PaymentStrategy {
                 : address.stateOrProvince,
             email,
         };
+        /* eslint-enable @typescript-eslint/naming-convention */
 
         if (address.address2) {
             klarnaAddress.street_address2 = address.address2;
@@ -240,6 +242,7 @@ export default class KlarnaV2PaymentStrategy {
             }
 
             this.klarnaPayments.authorize(
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 { payment_method_category: methodId },
                 updateSessionData,
                 (res) => {
@@ -255,5 +258,38 @@ export default class KlarnaV2PaymentStrategy {
                 },
             );
         });
+    }
+
+    private async initializeRemoteCheckout(
+        methodId: string,
+        gatewayId: string,
+    ): Promise<void | never> {
+        const { authorization_token: authorizationToken } = await this.authorize(methodId);
+        const requestPayload = { authorizationToken };
+        const {
+            checkoutSettings: { features },
+            storeProfile: { shopPath },
+        } = this.paymentIntegrationService.getState().getStoreConfigOrThrow();
+
+        if (!features['PI-1823.Klarna_add_store_path_to_remote_checkout_request']) {
+            await this.paymentIntegrationService.initializePayment(gatewayId, requestPayload);
+
+            return;
+        }
+
+        const url = `${shopPath}/remote-checkout/${gatewayId}/payment`;
+
+        try {
+            await this.requestSender.get(url, {
+                params: requestPayload,
+                headers: SDK_VERSION_HEADERS,
+            });
+        } catch (error) {
+            if (isRequestError(error)) {
+                throw new PaymentMethodInvalidError();
+            }
+
+            throw error;
+        }
     }
 }
