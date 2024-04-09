@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.577.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.577.1...v1.577.2) (2024-04-09)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-3736 fixed PayPalCommerce Credit Card fields style issue ([#2448](https://github.com/bigcommerce/checkout-sdk-js/issues/2448)) ([9b7adc9](https://github.com/bigcommerce/checkout-sdk-js/commit/9b7adc96fdff8f4ddd5d04231536ac7eae577ccd))
+* **payment:** PI-1823 Add shop path to the remote checkout request ([e940d07](https://github.com/bigcommerce/checkout-sdk-js/commit/e940d077fd80d9ff4682c7da7707068930ab3bf3))
+
 ### [1.577.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.577.0...v1.577.1) (2024-04-08)
 
 ## [1.577.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.576.1...v1.577.0) (2024-04-08)
