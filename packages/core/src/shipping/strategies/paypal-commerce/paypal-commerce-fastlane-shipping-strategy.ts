@@ -89,6 +89,9 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
     private _shouldRunAuthenticationFlow(): boolean {
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
+        const customer = state.customer.getCustomerOrThrow();
+        const features = state.config.getStoreConfigOrThrow().checkoutSettings.features;
+        const paypalConnectSessionId = this._paypalCommerceFastlaneUtils.getStorageSessionId();
         const paymentProviderCustomer =
             state.paymentProviderCustomer.getPaymentProviderCustomerOrThrow();
         const paypalCommercePaymentProviderCustomer = isPayPalCommerceAcceleratedCheckoutCustomer(
@@ -97,11 +100,15 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
             ? paymentProviderCustomer
             : {};
 
-        const paypalConnectSessionId = this._paypalCommerceFastlaneUtils.getStorageSessionId();
+        const shouldSkipFastlaneForStoredMembers =
+            features &&
+            features['PAYPAL-4001.paypal_commerce_fastlane_stored_member_flow_removal'] &&
+            !customer.isGuest;
 
         if (
+            shouldSkipFastlaneForStoredMembers ||
             paypalCommercePaymentProviderCustomer?.authenticationState ===
-            PayPalCommerceConnectAuthenticationState.CANCELED
+                PayPalCommerceConnectAuthenticationState.CANCELED
         ) {
             return false;
         }

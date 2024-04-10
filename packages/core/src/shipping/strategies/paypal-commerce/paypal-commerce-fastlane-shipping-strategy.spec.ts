@@ -1,9 +1,10 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 
-import { Cart, Customer } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Cart, Customer, StoreConfig } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
     getCart,
+    getConfig,
     getCustomer,
     getShippingAddress,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -51,6 +52,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
     let paypalCommerceSdk: PayPalCommerceSdk;
     let paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils;
     let store: CheckoutStore;
+    let storeConfig: StoreConfig;
     let strategy: PayPalCommerceFastlaneShippingStrategy;
 
     const methodId = 'paypalcommerceacceleratedcheckout';
@@ -94,6 +96,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         billingAddress = getBillingAddress();
         cart = getCart();
         customer = getCustomer();
+        storeConfig = getConfig().storeConfig;
         paymentMethod = getPayPalCommerceAcceleratedCheckoutPaymentMethod();
         paypalAxoSdk = getPayPalAxoSdk();
         paypalFastlaneSdk = getPayPalFastlaneSdk();
@@ -125,6 +128,8 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         );
 
         jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cart);
+        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(storeConfig);
+        jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(customer);
         jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(customer);
         jest.spyOn(store.getState().billingAddress, 'getBillingAddress').mockReturnValue(
             billingAddress,
@@ -329,6 +334,35 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             );
             expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(bcAddressMock);
             expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(bcAddressMock);
+        });
+
+        it('does not run authentication flow for store members when experiment is on', async () => {
+            const guestCustomer = {
+                ...customer,
+                isGuest: false,
+            };
+
+            const storeConfigWithAFeature = {
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-4001.paypal_commerce_fastlane_stored_member_flow_removal': true,
+                    },
+                },
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+                storeConfigWithAFeature,
+            );
+            jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(
+                guestCustomer,
+            );
+
+            expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
         });
     });
 });
