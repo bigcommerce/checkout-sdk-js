@@ -235,11 +235,11 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
             this.stylizeInputContainers(fields);
 
             if (isCreditCardFormFields(fields)) {
-                this.renderFields(fields);
+                await this.renderFields(fields);
             }
 
             if (isCreditCardVaultedFormFields(fields)) {
-                this.renderVaultedFields(fields);
+                await this.renderVaultedFields(fields);
             }
         } else {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -317,56 +317,56 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
      * Rendering Card Fields methods
      *
      */
-    private renderFields(fieldsOptions: HostedCardFieldOptionsMap) {
+    private async renderFields(fieldsOptions: HostedCardFieldOptionsMap) {
         const cardFields = this.getCardFieldsOrThrow();
 
         if (fieldsOptions.cardCode?.containerId) {
             this.cvvField = cardFields.CVVField({
                 placeholder: '',
             });
-            this.cvvField.render(`#${fieldsOptions.cardCode.containerId}`);
+            await this.cvvField.render(`#${fieldsOptions.cardCode.containerId}`);
         }
 
         if (fieldsOptions.cardExpiry?.containerId) {
             this.expiryField = cardFields.ExpiryField();
-            this.expiryField.render(`#${fieldsOptions.cardExpiry.containerId}`);
+            await this.expiryField.render(`#${fieldsOptions.cardExpiry.containerId}`);
         }
 
         if (fieldsOptions.cardName?.containerId) {
             this.nameField = cardFields.NameField({
                 placeholder: '',
             });
-            this.nameField.render(`#${fieldsOptions.cardName.containerId}`);
+            await this.nameField.render(`#${fieldsOptions.cardName.containerId}`);
         }
 
         if (fieldsOptions.cardNumber?.containerId) {
             this.numberField = cardFields.NumberField({
                 placeholder: '',
             });
-            this.numberField.render(`#${fieldsOptions.cardNumber.containerId}`);
+            await this.numberField.render(`#${fieldsOptions.cardNumber.containerId}`);
         }
     }
 
-    private renderVaultedFields(fieldsOptions: HostedStoredCardFieldOptionsMap) {
+    private async renderVaultedFields(fieldsOptions: HostedStoredCardFieldOptionsMap) {
         const cardFields = this.getCardFieldsOrThrow();
 
         if (fieldsOptions.cardCodeVerification?.containerId) {
             this.cvvField = cardFields.CVVField({
                 placeholder: '',
             });
-            this.cvvField.render(`#${fieldsOptions.cardCodeVerification.containerId}`);
+            await this.cvvField.render(`#${fieldsOptions.cardCodeVerification.containerId}`);
         }
 
         if (fieldsOptions.cardExpiryVerification?.containerId) {
             this.expiryField = cardFields.ExpiryField();
-            this.expiryField.render(`#${fieldsOptions.cardExpiryVerification.containerId}`);
+            await this.expiryField.render(`#${fieldsOptions.cardExpiryVerification.containerId}`);
         }
 
         if (fieldsOptions.cardNumberVerification?.containerId) {
             this.numberField = cardFields.NumberField({
                 placeholder: '',
             });
-            this.numberField.render(`#${fieldsOptions.cardNumberVerification.containerId}`);
+            await this.numberField.render(`#${fieldsOptions.cardNumberVerification.containerId}`);
         }
     }
 
