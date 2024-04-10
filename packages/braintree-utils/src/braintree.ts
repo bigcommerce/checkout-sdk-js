@@ -37,22 +37,6 @@ export enum BraintreeEnv {
     Production = 'production',
 }
 
-export enum BraintreeSdkFileName {
-    Client = 'client.min.js',
-    Connect = 'connect.min.js',
-    FastLine = 'fastlane.min.js',
-    PaypalCheckout = 'paypal-checkout.min.js',
-    Paypal = 'paypal.min.js',
-    LocalPayment = 'local-payment.min.js',
-    DataCollector = 'data-collector.min.js',
-    UsBankAccount = 'us-bank-account.min.js',
-    GooglePayment = 'google-payment.min.js',
-    ThreeDSecure = 'three-d-secure.min.js',
-    HostedFields = 'hosted-fields.min.js',
-    VisaCheckout = 'visa-checkout.min.js',
-    Venmo = 'venmo.min.js',
-}
-
 /**
  *
  * Common
