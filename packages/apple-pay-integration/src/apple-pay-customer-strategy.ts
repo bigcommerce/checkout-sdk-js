@@ -45,6 +45,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     private _onClick = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _shippingLabel: string = DefaultLabels.Shipping;
+    private _hasApplePaySession = false;
 
     constructor(
         private _requestSender: RequestSender,
@@ -139,6 +140,10 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     private _handleWalletButtonClick(event: Event) {
         event.preventDefault();
 
+        if (this._hasApplePaySession) {
+            return;
+        }
+
         this._onClick();
 
         const state = this._paymentIntegrationService.getState();
@@ -156,6 +161,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         this._handleApplePayEvents(applePaySession, this._paymentMethod, config);
 
         applePaySession.begin();
+        this._hasApplePaySession = true;
     }
 
     private _getBaseRequest(
@@ -247,6 +253,8 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             this._handleShippingMethodSelected(applePaySession, config, event);
 
         applePaySession.oncancel = async () => {
+            this._hasApplePaySession = false;
+
             try {
                 const url = `/remote-checkout/${paymentMethod.id}/signout`;
 
@@ -273,6 +281,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             await this._paymentIntegrationService.updateShippingAddress(shippingAddress);
         } catch (error) {
             applePaySession.abort();
+            this._hasApplePaySession = false;
 
             return this._onError(error);
         }
@@ -376,6 +385,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             await this._updateShippingOption(optionId);
         } catch (error) {
             applePaySession.abort();
+            this._hasApplePaySession = false;
 
             return this._onError(error);
         }
