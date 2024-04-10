@@ -7,6 +7,7 @@ import {
     PaypalSDK,
     PaypalStyleOptions,
 } from './paypal';
+import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
 import {
     BraintreeClient,
     BraintreeClientCreator,
@@ -36,25 +37,46 @@ export enum BraintreeEnv {
     Production = 'production',
 }
 
+export enum BraintreeSdkFileName {
+    Client = 'client.min.js',
+    Connect = 'connect.min.js',
+    FastLine = 'fastlane.min.js',
+    PaypalCheckout = 'paypal-checkout.min.js',
+    Paypal = 'paypal.min.js',
+    LocalPayment = 'local-payment.min.js',
+    DataCollector = 'data-collector.min.js',
+    UsBankAccount = 'us-bank-account.min.js',
+    GooglePayment = 'google-payment.min.js',
+    ThreeDSecure = 'three-d-secure.min.js',
+    HostedFields = 'hosted-fields.min.js',
+    VisaCheckout = 'visa-checkout.min.js',
+    Venmo = 'venmo.min.js',
+}
+
 /**
  *
  * Common
  *
  */
+export interface BraintreeIntegrityValues {
+    [BRAINTREE_SDK_STABLE_VERSION]?: string;
+    [BRAINTREE_SDK_ALPHA_VERSION]?: string;
+}
+
 export enum BraintreeModuleName {
-    client = 'client',
-    connect = 'connect',
-    dataCollector = 'dataCollector',
-    fastlane = 'fastlane',
-    googlePayment = 'googlePayment',
-    hostedFields = 'hostedFields',
-    localPayment = 'localPayment',
-    paypal = 'paypal',
-    paypalCheckout = 'paypalCheckout',
-    threeDSecure = 'threeDSecure',
-    usBankAccount = 'usBankAccount',
-    venmo = 'venmo',
-    visaCheckout = 'visaCheckout',
+    Client = 'client',
+    Connect = 'connect',
+    DataCollector = 'dataCollector',
+    Fastlane = 'fastlane',
+    GooglePayment = 'googlePayment',
+    HostedFields = 'hostedFields',
+    LocalPayment = 'localPayment',
+    Paypal = 'paypal',
+    PaypalCheckout = 'paypalCheckout',
+    ThreeDSecure = 'threeDSecure',
+    UsBankAccount = 'usBankAccount',
+    Venmo = 'venmo',
+    VisaCheckout = 'visaCheckout',
 }
 
 export type BraintreeModuleCreators =
@@ -73,19 +95,19 @@ export type BraintreeModuleCreators =
     | BraintreeLocalPaymentCreator;
 
 export interface BraintreeSDK {
-    [BraintreeModuleName.client]?: BraintreeClientCreator;
-    [BraintreeModuleName.connect]?: BraintreeConnectCreator;
-    [BraintreeModuleName.fastlane]?: BraintreeFastlaneCreator;
-    [BraintreeModuleName.dataCollector]?: BraintreeDataCollectorCreator;
-    [BraintreeModuleName.googlePayment]?: GooglePayCreator;
-    [BraintreeModuleName.hostedFields]?: BraintreeHostedFieldsCreator;
-    [BraintreeModuleName.paypal]?: BraintreePaypalCreator;
-    [BraintreeModuleName.paypalCheckout]?: BraintreePaypalCheckoutCreator;
-    [BraintreeModuleName.threeDSecure]?: BraintreeThreeDSecureCreator;
-    [BraintreeModuleName.venmo]?: BraintreeVenmoCheckoutCreator;
-    [BraintreeModuleName.visaCheckout]?: BraintreeVisaCheckoutCreator;
-    [BraintreeModuleName.usBankAccount]?: BraintreeUsBankAccountCreator;
-    [BraintreeModuleName.localPayment]?: BraintreeLocalPaymentCreator;
+    [BraintreeModuleName.Client]?: BraintreeClientCreator;
+    [BraintreeModuleName.Connect]?: BraintreeConnectCreator;
+    [BraintreeModuleName.Fastlane]?: BraintreeFastlaneCreator;
+    [BraintreeModuleName.DataCollector]?: BraintreeDataCollectorCreator;
+    [BraintreeModuleName.GooglePayment]?: GooglePayCreator;
+    [BraintreeModuleName.HostedFields]?: BraintreeHostedFieldsCreator;
+    [BraintreeModuleName.Paypal]?: BraintreePaypalCreator;
+    [BraintreeModuleName.PaypalCheckout]?: BraintreePaypalCheckoutCreator;
+    [BraintreeModuleName.ThreeDSecure]?: BraintreeThreeDSecureCreator;
+    [BraintreeModuleName.Venmo]?: BraintreeVenmoCheckoutCreator;
+    [BraintreeModuleName.VisaCheckout]?: BraintreeVisaCheckoutCreator;
+    [BraintreeModuleName.UsBankAccount]?: BraintreeUsBankAccountCreator;
+    [BraintreeModuleName.LocalPayment]?: BraintreeLocalPaymentCreator;
 }
 
 export type BraintreeLocalPaymentCreator = BraintreeModuleCreator<
