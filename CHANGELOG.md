@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.577.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.577.2...v1.577.3) (2024-04-10)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-8132 Fix issue with apple pay button clicked twice ([#2440](https://github.com/bigcommerce/checkout-sdk-js/issues/2440)) ([bb4feca](https://github.com/bigcommerce/checkout-sdk-js/commit/bb4feca1a86295bc5562ab2bdff50dbb798a17be))
+
 ### [1.577.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.577.1...v1.577.2) (2024-04-09)
 
 
