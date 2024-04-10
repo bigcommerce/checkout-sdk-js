@@ -1,5 +1,5 @@
 import { Action, createAction } from '@bigcommerce/data-store';
-import { RequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { omit } from 'lodash';
 import { noop, Observable, of } from 'rxjs';
@@ -48,32 +48,25 @@ describe('KlarnaV2PaymentStrategy', () => {
     let klarnaPayments: KlarnaPayments;
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
+    let requestSender: RequestSender;
     let scriptLoader: KlarnaV2ScriptLoader;
     let strategy: KlarnaV2PaymentStrategy;
     let paymentMethodMock: PaymentMethod;
     let klarnav2TokenUpdater: KlarnaV2TokenUpdater;
     let paymentIntegrationService: PaymentIntegrationService;
-    let requestSenderMock: RequestSender;
-
-    const createStrategy = () => {
-        return new KlarnaV2PaymentStrategy(
-            paymentIntegrationService,
-            scriptLoader,
-            klarnav2TokenUpdater,
-            requestSenderMock,
-        );
-    };
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        requestSenderMock = {
-            get: jest.fn(),
-        } as unknown as RequestSender;
+
+        requestSender = createRequestSender();
 
         scriptLoader = new KlarnaV2ScriptLoader(createScriptLoader());
-        klarnav2TokenUpdater = new KlarnaV2TokenUpdater(requestSenderMock);
-        strategy = createStrategy();
+        klarnav2TokenUpdater = new KlarnaV2TokenUpdater(requestSender);
+        strategy = new KlarnaV2PaymentStrategy(
+            paymentIntegrationService,
+            scriptLoader,
+            klarnav2TokenUpdater,
+        );
 
         initializePaymentAction = of(
             createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested),
@@ -281,7 +274,11 @@ describe('KlarnaV2PaymentStrategy', () => {
         it('loads widget in EU', async () => {
             const euBillingAddress = { data: getEUBillingAddress(), errors: {}, statuses: {} };
 
-            strategy = createStrategy();
+            strategy = new KlarnaV2PaymentStrategy(
+                paymentIntegrationService,
+                scriptLoader,
+                klarnav2TokenUpdater,
+            );
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -313,7 +310,11 @@ describe('KlarnaV2PaymentStrategy', () => {
         it('loads widget in OC', async () => {
             const ocBillingAddress = { data: getOCBillingAddress(), errors: {}, statuses: {} };
 
-            strategy = createStrategy();
+            strategy = new KlarnaV2PaymentStrategy(
+                paymentIntegrationService,
+                scriptLoader,
+                klarnav2TokenUpdater,
+            );
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -349,7 +350,11 @@ describe('KlarnaV2PaymentStrategy', () => {
                 statuses: {},
             };
 
-            strategy = createStrategy();
+            strategy = new KlarnaV2PaymentStrategy(
+                paymentIntegrationService,
+                scriptLoader,
+                klarnav2TokenUpdater,
+            );
 
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -406,42 +411,6 @@ describe('KlarnaV2PaymentStrategy', () => {
             expect(paymentIntegrationService.initializePayment).toHaveBeenCalledWith('klarna', {
                 authorizationToken: 'bar',
             });
-
-            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
-                { ...payload, payment: omit(payload.payment, 'paymentData'), useStoreCredit: true },
-                undefined,
-            );
-        });
-
-        it('submits authorization token with store path', async () => {
-            const requestSenderGetMock = jest.fn();
-
-            requestSenderMock.get = requestSenderGetMock;
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue({
-                checkoutSettings: {
-                    features: {
-                        'PI-1823.Klarna_add_store_path_to_remote_checkout_request': true,
-                    },
-                },
-                storeProfile: {
-                    shopPath: 'shopPath',
-                },
-            });
-
-            await strategy.execute(payload);
-
-            expect(paymentIntegrationService.initializePayment).not.toHaveBeenCalled();
-            expect(requestSenderGetMock).toHaveBeenCalledWith(
-                'shopPath/remote-checkout/klarna/payment',
-                expect.objectContaining({
-                    params: {
-                        authorizationToken: 'bar',
-                    },
-                }),
-            );
 
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
                 { ...payload, payment: omit(payload.payment, 'paymentData'), useStoreCredit: true },
