@@ -1,13 +1,14 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
+import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
+
 import { Address } from '../../../address';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { getConfig } from '../../../config/configs.mock';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 
 import { BraintreeVisaCheckout } from './braintree';
-import BraintreeScriptLoader from './braintree-script-loader';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import BraintreeVisaCheckoutPaymentProcessor from './braintree-visacheckout-payment-processor';
 import { getVisaCheckoutMock } from './braintree.mock';
@@ -25,7 +26,7 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
     const storeConfig = getConfig().storeConfig;
 
     beforeEach(() => {
-        const braintreeScriptLoader = new BraintreeScriptLoader(createScriptLoader());
+        const braintreeScriptLoader = new BraintreeScriptLoader(createScriptLoader(), window);
 
         braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
         braintreeSDKCreator.initialize = jest.fn();

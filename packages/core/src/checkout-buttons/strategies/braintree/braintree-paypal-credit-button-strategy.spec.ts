@@ -3,6 +3,7 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
+import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { getCart } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
@@ -29,7 +30,6 @@ import {
     BraintreeDataCollector,
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
-    BraintreeScriptLoader,
     BraintreeSDKCreator,
 } from '../../../payment/strategies/braintree';
 import {
@@ -134,7 +134,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender())),
         );
         cartRequestSender = new CartRequestSender(requestSender);
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader());
+        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
         braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
         formPoster = createFormPoster();
 

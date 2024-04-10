@@ -1,3 +1,5 @@
+import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
+
 import { NotInitializedError } from '../../../common/error/errors';
 import { getConfig } from '../../../config/configs.mock';
 
@@ -9,7 +11,6 @@ import {
     BraintreeVenmoCheckout,
     BraintreeVisaCheckout,
 } from './braintree';
-import BraintreeScriptLoader from './braintree-script-loader';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import {
     getClientMock,

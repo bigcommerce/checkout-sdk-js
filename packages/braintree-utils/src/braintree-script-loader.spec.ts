@@ -12,8 +12,10 @@ import {
     getDataCollectorMock,
     getFastlaneMock,
     getGooglePayMock,
+    getHostedFieldsMock,
     getModuleCreatorMock,
     getPaypalCheckoutMock,
+    getVisaCheckoutMock,
 } from './mocks';
 import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
 import {
@@ -21,12 +23,14 @@ import {
     BraintreeConnect,
     BraintreeDataCollector,
     BraintreeFastlane,
+    BraintreeHostedFields,
     BraintreeHostWindow,
     BraintreeLocalPaymentCreator,
     BraintreeModuleCreator,
     BraintreePaypalCheckoutCreator,
     BraintreePaypalCreator,
     BraintreeThreeDSecureCreator,
+    BraintreeVisaCheckout,
     GooglePayCreator,
 } from './types';
 
@@ -511,6 +515,93 @@ describe('BraintreeScriptLoader', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
+        });
+    });
+
+    describe('#loadVisaCheckout()', () => {
+        let visaCheckoutMock: BraintreeModuleCreator<BraintreeVisaCheckout>;
+
+        beforeEach(() => {
+            visaCheckoutMock = getModuleCreatorMock(getVisaCheckoutMock());
+            scriptLoader.loadScript = jest.fn(() => {
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.visaCheckout = visaCheckoutMock;
+                }
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads the VisaCheckout library', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            await braintreeScriptLoader.loadVisaCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/visa-checkout.min.js`,
+            );
+        });
+
+        it('loads the VisaCheckout library with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadVisaCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/visa-checkout.min.js`,
+            );
+        });
+
+        it('returns the VisaCheckout from the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+            const visaCheckout = await braintreeScriptLoader.loadVisaCheckout();
+
+            expect(visaCheckout).toBe(visaCheckoutMock);
+        });
+    });
+
+    describe('#loadHostedFields()', () => {
+        let hostedFields: BraintreeModuleCreator<BraintreeHostedFields>;
+
+        beforeEach(() => {
+            hostedFields = getModuleCreatorMock(getHostedFieldsMock());
+
+            scriptLoader.loadScript = jest.fn(() => {
+                // tslint:disable-next-line:no-non-null-assertion
+                mockWindow.braintree!.hostedFields = hostedFields;
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads hosted fields module', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            await braintreeScriptLoader.loadHostedFields();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/hosted-fields.min.js`,
+            );
+        });
+
+        it('loads hosted fields module with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadHostedFields();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/hosted-fields.min.js`,
+            );
+        });
+
+        it('returns hosted fields from window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            expect(await braintreeScriptLoader.loadHostedFields()).toBe(hostedFields);
         });
     });
 });

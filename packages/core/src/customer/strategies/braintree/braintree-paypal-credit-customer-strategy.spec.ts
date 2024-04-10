@@ -5,6 +5,7 @@ import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader'
 import { EventEmitter } from 'events';
 import { Observable, of } from 'rxjs';
 
+import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { DefaultCheckoutButtonHeight } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
@@ -30,7 +31,6 @@ import {
     BraintreeDataCollector,
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
-    BraintreeScriptLoader,
     BraintreeSDKCreator,
 } from '../../../payment/strategies/braintree';
 import {
@@ -109,7 +109,7 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
             new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
             new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender())),
         );
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader());
+        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
         braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
         formPoster = createFormPoster();
 
