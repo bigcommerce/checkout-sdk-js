@@ -10,6 +10,7 @@ import {
     getCart,
     getConfig,
     getCountries,
+    getCustomer,
     getPaymentMethod,
     getShippingAddress,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -128,21 +129,20 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
         billingAddressActionCreator = new BillingAddressActionCreatorMock();
         consignmentActionCreator = new ConsignmentActionCreatorMock();
 
-        jest.spyOn(store.getState().cart, 'getCart').mockReturnValue({
-            ...getCart(),
-        });
-        jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue({
-            ...getCart(),
-        });
+        jest.spyOn(store.getState().cart, 'getCart').mockReturnValue(getCart());
+        jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(getCart());
         jest.spyOn(store.getState().countries, 'getCountries').mockReturnValue(getCountries());
-        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(getConfig());
+        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+            getConfig().storeConfig,
+        );
+        jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(getCustomer());
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
             clientToken: 'clientToken',
             initializationData: {},
         });
-        jest.spyOn(store.getState().billingAddress, 'getBillingAddress').mockReturnValue({
-            ...getBillingAddress(),
-        });
+        jest.spyOn(store.getState().billingAddress, 'getBillingAddress').mockReturnValue(
+            getBillingAddress(),
+        );
         jest.spyOn(BrowserStorage.prototype, 'getItem').mockReturnValue(getCart().id);
         jest.spyOn(BrowserStorage.prototype, 'removeItem').mockImplementation(jest.fn());
         jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeConnect').mockReturnValue({
@@ -318,6 +318,43 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
             expect(loadPaymentMethodMock).toHaveBeenCalledWith(BRAINTREE_AXO_METHOD_ID);
         });
 
+        it('skip authentication flow for store members when experiment is on', async () => {
+            const getBraintreeFastlaneMock = jest.fn();
+            const storeConfig = getConfig().storeConfig;
+
+            const guestCustomer = {
+                ...getCustomer(),
+                isGuest: false,
+            };
+
+            const storeConfigWithAFeature = {
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-4001.braintree_fastlane_stored_member_flow_removal': true,
+                    },
+                },
+            };
+
+            jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeFastlane').mockImplementation(
+                getBraintreeFastlaneMock,
+            );
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+                storeConfigWithAFeature,
+            );
+            jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(
+                guestCustomer,
+            );
+
+            const strategy = createStrategy();
+
+            await strategy.initialize(defaultOptions);
+
+            expect(braintreeIntegrationServiceMock.getBraintreeFastlane).not.toHaveBeenCalled();
+        });
+
         it('skip authentication if clientToken does not exist', async () => {
             const getBraintreeConnectMock = jest.fn();
 
@@ -378,6 +415,7 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
                     isFastlaneEnabled: true,
                 },
             });
+
             const lookupCustomerByEmailMock = () => ({ customerContextId: undefined });
 
             const triggerAuthenticationFlowMock = jest.fn();
@@ -403,6 +441,7 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
                     isFastlaneEnabled: true,
                 },
             });
+
             const lookupCustomerByEmailMock = () => ({ customerContextId: undefined });
 
             const triggerAuthenticationFlowMock = jest.fn();
@@ -463,6 +502,7 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
                     isFastlaneEnabled: true,
                 },
             });
+
             const updatePaymentProviderCustomerMock = jest.fn();
 
             const lookupCustomerByEmailMock = () => ({ customerContextId: 'asd' });

@@ -11,6 +11,7 @@ import {
 import {
     getBillingAddress,
     getCart,
+    getConfig,
     getCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -47,9 +48,10 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
     let paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils;
     let strategy: PayPalCommerceFastlanePaymentStrategy;
 
+    const address = getBillingAddress();
     const cart = getCart();
     const customer = getCustomer();
-    const address = getBillingAddress();
+    const storeConfig = getConfig().storeConfig;
 
     const authenticationResultMock = getPayPalConnectAuthenticationResultMock();
     const customerContextId = 'id123';
@@ -119,6 +121,12 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService, 'updatePaymentProviderCustomer');
         jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(cart);
         jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(customer);
+        jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
+            customer,
+        );
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            storeConfig,
+        );
         jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
             address,
         );
@@ -386,6 +394,39 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     addresses: [],
                     instruments: [],
                 });
+
+                await strategy.initialize(initializationOptions);
+
+                expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
+            });
+
+            it('does not trigger lookup method for store members when experiment is on', async () => {
+                paymentMethod.initializationData.isFastlaneEnabled = true;
+
+                const guestCustomer = {
+                    ...getCustomer(),
+                    isGuest: false,
+                };
+
+                const storeConfigWithAFeature = {
+                    ...storeConfig,
+                    checkoutSettings: {
+                        ...storeConfig.checkoutSettings,
+                        features: {
+                            ...storeConfig.checkoutSettings.features,
+                            'PAYPAL-4001.paypal_commerce_fastlane_stored_member_flow_removal': true,
+                        },
+                    },
+                };
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getCustomerOrThrow',
+                ).mockReturnValue(guestCustomer);
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue(storeConfigWithAFeature);
 
                 await strategy.initialize(initializationOptions);
 

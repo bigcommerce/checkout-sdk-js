@@ -103,6 +103,8 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
     private _shouldRunAuthenticationFlow(): boolean {
         const state = this._store.getState();
         const cartId = state.cart.getCart()?.id;
+        const customer = state.customer.getCustomerOrThrow();
+        const features = state.config.getStoreConfigOrThrow().checkoutSettings.features;
         const paypalFastlaneSessionId = this._browserStorage.getItem('sessionId');
         const paymentProviderCustomer = state.paymentProviderCustomer.getPaymentProviderCustomer();
         const braintreePaymentProviderCustomer = isBraintreeAcceleratedCheckoutCustomer(
@@ -111,9 +113,15 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
             ? paymentProviderCustomer
             : {};
 
+        const shouldSkipFastlaneForStoredMembers =
+            features &&
+            features['PAYPAL-4001.braintree_fastlane_stored_member_flow_removal'] &&
+            !customer.isGuest;
+
         if (
+            shouldSkipFastlaneForStoredMembers ||
             braintreePaymentProviderCustomer?.authenticationState ===
-            BraintreeFastlaneAuthenticationState.CANCELED
+                BraintreeFastlaneAuthenticationState.CANCELED
         ) {
             return false;
         }

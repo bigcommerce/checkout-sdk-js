@@ -9,7 +9,11 @@ import {
     InvalidArgumentError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getConfig,
+    getCustomer,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import BraintreeFastlaneCustomerStrategy from './braintree-fastlane-customer-strategy';
@@ -22,6 +26,9 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
     let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeFastlaneCustomerStrategy;
+
+    const customer = getCustomer();
+    const storeConfig = getConfig().storeConfig;
 
     const methodId = 'braintreeacceleratedcheckout';
     const initializationOptions = { methodId };
@@ -61,6 +68,12 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethod,
+        );
+        jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
+            customer,
+        );
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            storeConfig,
         );
         jest.spyOn(
             braintreeFastlaneUtils,
@@ -310,6 +323,72 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
 
             expect(executionOptions.checkoutPaymentMethodExecuted).toHaveBeenCalled();
             expect(executionOptions.continueWithCheckoutCallback).toHaveBeenCalled();
+        });
+
+        it('does not run authentication flow for store member if experiment is on', async () => {
+            const guestCustomer = {
+                ...getCustomer(),
+                isGuest: false,
+            };
+
+            const storeConfigWithAFeature = {
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-4001.braintree_fastlane_stored_member_flow_removal': true,
+                    },
+                },
+            };
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
+                guestCustomer,
+            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithAFeature);
+
+            await strategy.initialize(initializationOptions);
+            await strategy.executePaymentMethodCheckout(executionOptions);
+
+            expect(
+                braintreeFastlaneUtils.runPayPalConnectAuthenticationFlowOrThrow,
+            ).not.toHaveBeenCalled();
+        });
+
+        it('triggers authentication flow for guest member even if it is restricted for store member', async () => {
+            const guestCustomer = {
+                ...getCustomer(),
+                isGuest: true,
+            };
+
+            const storeConfigWithAFeature = {
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-4001.braintree_fastlane_stored_member_flow_removal': true,
+                    },
+                },
+            };
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
+                guestCustomer,
+            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithAFeature);
+
+            await strategy.initialize(initializationOptions);
+            await strategy.executePaymentMethodCheckout(executionOptions);
+
+            expect(
+                braintreeFastlaneUtils.runPayPalConnectAuthenticationFlowOrThrow,
+            ).toHaveBeenCalled();
         });
     });
 

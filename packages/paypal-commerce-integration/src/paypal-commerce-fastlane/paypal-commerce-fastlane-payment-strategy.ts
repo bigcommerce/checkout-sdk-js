@@ -124,6 +124,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             );
         }
 
+        // TODO: check for feature flag and that customer is a guest
         if (this.shouldRunAuthenticationFlow()) {
             await this.runPayPalAuthenticationFlowOrThrow(methodId);
         }
@@ -182,16 +183,24 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
     private shouldRunAuthenticationFlow(): boolean {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
+        const customer = state.getCustomerOrThrow();
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
         const paymentProviderCustomer = state.getPaymentProviderCustomer();
         const paypalFastlaneCustomer = isPayPalFastlaneCustomer(paymentProviderCustomer)
             ? paymentProviderCustomer
             : {};
 
+        const shouldSkipFastlaneForStoredMembers =
+            features &&
+            features['PAYPAL-4001.paypal_commerce_fastlane_stored_member_flow_removal'] &&
+            !customer.isGuest;
+
         const paypalFastlaneSessionId = this.paypalCommerceFastlaneUtils.getStorageSessionId();
 
         if (
+            shouldSkipFastlaneForStoredMembers ||
             paypalFastlaneCustomer?.authenticationState ===
-            PayPalFastlaneAuthenticationState.CANCELED
+                PayPalFastlaneAuthenticationState.CANCELED
         ) {
             return false;
         }

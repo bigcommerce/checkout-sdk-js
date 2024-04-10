@@ -300,6 +300,8 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
     private shouldRunAuthenticationFlow(): boolean {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();
+        const customer = state.getCustomerOrThrow();
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
         const paymentProviderCustomer = state.getPaymentProviderCustomer();
         const braintreePaymentProviderCustomer = isBraintreeAcceleratedCheckoutCustomer(
             paymentProviderCustomer,
@@ -309,9 +311,15 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
 
         const paypalFastlaneSessionId = this.browserStorage.getItem('sessionId');
 
+        const shouldSkipFastlaneForStoredMembers =
+            features &&
+            features['PAYPAL-4001.braintree_fastlane_stored_member_flow_removal'] &&
+            !customer.isGuest;
+
         if (
+            shouldSkipFastlaneForStoredMembers ||
             braintreePaymentProviderCustomer?.authenticationState ===
-            BraintreeFastlaneAuthenticationState.CANCELED
+                BraintreeFastlaneAuthenticationState.CANCELED
         ) {
             return false;
         }
