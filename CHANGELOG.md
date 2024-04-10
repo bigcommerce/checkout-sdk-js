@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.579.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.578.1...v1.579.0) (2024-04-10)
+
+
+### Features
+
+* **payment:** PAYPAL-4001 added a switch to turn off Fastlane for Store Members ([#2456](https://github.com/bigcommerce/checkout-sdk-js/issues/2456)) ([261d0a6](https://github.com/bigcommerce/checkout-sdk-js/commit/261d0a6ec54f0e245068ea5295fe445c44e314b8))
+
 ### [1.578.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.578.0...v1.578.1) (2024-04-10)
 
 ## [1.578.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.577.3...v1.578.0) (2024-04-10)
