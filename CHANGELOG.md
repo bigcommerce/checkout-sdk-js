@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.582.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.581.0...v1.582.0) (2024-04-11)
+
+
+### Features
+
+* **payment:** PI-1606 add validateCheckout and loadPaymentMethods to Payment Integration Service ([1909612](https://github.com/bigcommerce/checkout-sdk-js/commit/1909612ce4c785205b4088e0c27a8c2f1381c890))
+
 ## [1.581.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.580.0...v1.581.0) (2024-04-11)
 
 
