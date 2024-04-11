@@ -71,7 +71,7 @@ export interface PayPalCommerceCardFieldsState {
 }
 
 export interface PayPalCommerceFields {
-    render(container: HTMLElement | string): void;
+    render(container: HTMLElement | string): Promise<void>;
     clear(): void;
     removeClass(className: string): Promise<void>;
     close(): Promise<void>;
