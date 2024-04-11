@@ -69,6 +69,9 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         await this._loadPaymentMethod(gatewayId, methodId, options);
 
         const state = this._paymentIntegrationService.getState();
+
+        await this._paymentIntegrationService.validateCheckout(state.getCheckout(), options);
+        
         const currencyCode = state.getCart()?.currency.code || '';
         const countryCode = this._mapCurrencyToISO2(currencyCode);
 
