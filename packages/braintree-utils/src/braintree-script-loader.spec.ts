@@ -15,6 +15,7 @@ import {
     getHostedFieldsMock,
     getModuleCreatorMock,
     getPaypalCheckoutMock,
+    getVenmoCheckoutMock,
     getVisaCheckoutMock,
 } from './mocks';
 import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
@@ -23,14 +24,15 @@ import {
     BraintreeConnect,
     BraintreeDataCollector,
     BraintreeFastlane,
-    BraintreeHostedFields,
+    BraintreeHostedFieldsCreator,
     BraintreeHostWindow,
     BraintreeLocalPaymentCreator,
     BraintreeModuleCreator,
     BraintreePaypalCheckoutCreator,
     BraintreePaypalCreator,
     BraintreeThreeDSecureCreator,
-    BraintreeVisaCheckout,
+    BraintreeVenmoCheckoutCreator,
+    BraintreeVisaCheckoutCreator,
     GooglePayCreator,
 } from './types';
 
@@ -75,6 +77,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/client.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-5q9Kkv64ho8xutoRBtnaeRE1Ux47T6+LSRpsRmKrKSq7SiZOXn0Mv2XWXVQvCFJj',
+                    },
+                },
             );
             expect(client).toBe(clientMock);
         });
@@ -88,6 +98,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/client.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-cpfxkJc2j2IgFLlXdJEhNVkCief/ezpYjc3d/QC7psgcdB7AZRZVSCWBrWHJd8kV',
+                    },
+                },
             );
             expect(client).toBe(clientMock);
         });
@@ -138,6 +156,7 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/connect.min.js`,
+                undefined,
             );
             expect(connect).toBe(connectCreatorMock);
         });
@@ -151,6 +170,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/connect.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-F/Vm+lvAqbrFfTjVSXul1yeJablUdRQXoGSpXX5ub24OKFeMuITbFiY1TTK1QlxY',
+                    },
+                },
             );
             expect(connect).toBe(connectCreatorMock);
         });
@@ -201,6 +228,7 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/fastlane.min.js`,
+                undefined,
             );
             expect(fastlane).toBe(fastlaneCreatorMock);
         });
@@ -214,6 +242,7 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/fastlane.min.js`,
+                undefined,
             );
             expect(fastlane).toBe(fastlaneCreatorMock);
         });
@@ -264,6 +293,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/paypal-checkout.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-sozUyB/9Y4TygM5npllDME7tGVRo9/4Fh1clHUiPI1F2Q922yyJsMtL5fcFtZHdT',
+                    },
+                },
             );
             expect(paypalCheckout).toBe(paypalCheckoutMock);
         });
@@ -277,6 +314,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/paypal-checkout.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-b/Bkr377Yi/i9fGXP9adBSYC+Z2//ruSfUlkIni9AjL/YFeu/ygqtgYyJdAEAsr7',
+                    },
+                },
             );
             expect(paypalCheckout).toBe(paypalCheckoutMock);
         });
@@ -328,6 +373,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/local-payment.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-P4U+tVQc9ja0VB3w4O6kTlLtIsBPGgsnFQlEdMYVYlU5BF5QP1aoIUhbmLXi0ewT',
+                    },
+                },
             );
         });
 
@@ -340,6 +393,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/local-payment.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-ARWRFedVLKaSGVUD0YTsHxkzRZ/Cc2BD994a3NqnXoCP+iRM7XeRs1ulS4E+i9ts',
+                    },
+                },
             );
         });
     });
@@ -365,6 +426,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/google-payment.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-4ePQT3gULIgtQDyvx+F4rXu9DcyWrOP1dxHCoCO8uESGC8BoDbPVAxDiugVawQjJ',
+                    },
+                },
             );
         });
 
@@ -377,6 +446,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/google-payment.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-OL0G9k2ShrnVAtkmS4Q4Fg7SHi5IxM6B8dgB8GDn1kIcl8rYoGG+FPjrLvfxJO++',
+                    },
+                },
             );
         });
     });
@@ -402,6 +479,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/paypal.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-Kw2YNA/MLpnN7vkRO3LOCNB0ZrSgT0UZiucLokB06z+0591xAAWgcf9v8AKjCwCX',
+                    },
+                },
             );
         });
 
@@ -414,6 +499,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/paypal.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-2T9Nx2wNbrtrj7SFleQU/i/trUmvBvf3Lmj/enmh9KESjit397Vaaps6EkI18MGt',
+                    },
+                },
             );
         });
     });
@@ -439,6 +532,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/three-d-secure.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-kBYpTT1+KcpIHYwnFE6XY3xQkdmazh9F4r9ufjh/cIFXAZFpP96XYNyW8PvHuiJ8',
+                    },
+                },
             );
         });
 
@@ -451,6 +552,173 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/three-d-secure.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-ashYIRvaw82mbN1eOd7B43a0La3ngECGkjMK6qbr7UNYb613xBJipfWnNHahDEj6',
+                    },
+                },
+            );
+        });
+    });
+
+    describe('#loadVisaCheckout', () => {
+        let visaCheckout: BraintreeVisaCheckoutCreator;
+
+        beforeEach(() => {
+            visaCheckout = getModuleCreatorMock(getVisaCheckoutMock());
+            scriptLoader.loadScript = jest.fn(() => {
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.visaCheckout = visaCheckout;
+                }
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads visaCheckout methods', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            await braintreeScriptLoader.loadVisaCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/visa-checkout.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-XzzKn9jU+Lvx1tJscq9e+nMRNBybQnSgSTXn1/PS0v6JxOUQlgFIBjI9ER8CODFt',
+                    },
+                },
+            );
+        });
+
+        it('loads visaCheckout methods with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadVisaCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/visa-checkout.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-YUiwmkaPgw7G/n4k2XVoNjsAtn2J+m8cA5oPhGH7y/o90302cwzLiFS23bNAw1e0',
+                    },
+                },
+            );
+        });
+    });
+
+    describe('#loadHostedFields', () => {
+        let hostedFields: BraintreeHostedFieldsCreator;
+
+        beforeEach(() => {
+            hostedFields = getModuleCreatorMock(getHostedFieldsMock());
+            scriptLoader.loadScript = jest.fn(() => {
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.hostedFields = hostedFields;
+                }
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads hostedFields methods', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            await braintreeScriptLoader.loadHostedFields();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/hosted-fields.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-7I4A3VPyzQnBGG7F2aiC9We5tN3Py+cYyPWoqiQJaXCEIVLX2goBaku2lGhZXpyK',
+                    },
+                },
+            );
+        });
+
+        it('loads hostedFields methods with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadHostedFields();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/hosted-fields.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-5l3JvGSYH74qGQJB8IlsrUAqeqrH58vkIkxJoW+LH7O99z4Np2BceIcFvZ46QGld',
+                    },
+                },
+            );
+        });
+    });
+
+    describe('#loadVenmoCheckout', () => {
+        let venmoCheckout: BraintreeVenmoCheckoutCreator;
+
+        beforeEach(() => {
+            venmoCheckout = getModuleCreatorMock(getVenmoCheckoutMock());
+            scriptLoader.loadScript = jest.fn(() => {
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.venmo = venmoCheckout;
+                }
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads venmoCheckout methods', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            await braintreeScriptLoader.loadVenmoCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/venmo.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-AfqcRXnzzimKHVeUXcJNlB6ti2rmN9UJaZrLFU21pj779Db0zIJtBMdVcwb64NEm',
+                    },
+                },
+            );
+        });
+
+        it('loads venmoCheckout methods with braintree sdk alpha version', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadVenmoCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/venmo.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-CXsbLYSCKdOjrs8CILcaOLBkdI/d7jWlym/+lnzbda8MS/X58DCHrskKp7mPaDxG',
+                    },
+                },
             );
         });
     });
@@ -475,6 +743,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/data-collector.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-MYeeYlFD7uDuhGi2ZmrRth4uLy52c+MmJhlrIeNsZCpstpX3qQJI389DB/a2137k',
+                    },
+                },
             );
             expect(dataCollector).toBe(dataCollectorMock);
         });
@@ -488,6 +764,14 @@ describe('BraintreeScriptLoader', () => {
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/data-collector.min.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-L12Sd8K1LbH+gXLvRG54pH+vdCJUnpepjTb6qG2HiD8NvJYLZS/VjJ671OCXr5Vz',
+                    },
+                },
             );
             expect(dataCollector).toBe(dataCollectorMock);
         });
@@ -515,93 +799,6 @@ describe('BraintreeScriptLoader', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
-        });
-    });
-
-    describe('#loadVisaCheckout()', () => {
-        let visaCheckoutMock: BraintreeModuleCreator<BraintreeVisaCheckout>;
-
-        beforeEach(() => {
-            visaCheckoutMock = getModuleCreatorMock(getVisaCheckoutMock());
-            scriptLoader.loadScript = jest.fn(() => {
-                if (mockWindow.braintree) {
-                    mockWindow.braintree.visaCheckout = visaCheckoutMock;
-                }
-
-                return Promise.resolve();
-            });
-        });
-
-        it('loads the VisaCheckout library', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
-
-            await braintreeScriptLoader.loadVisaCheckout();
-
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/visa-checkout.min.js`,
-            );
-        });
-
-        it('loads the VisaCheckout library with braintree sdk alpha version', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
-
-            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
-
-            await braintreeScriptLoader.loadVisaCheckout();
-
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/visa-checkout.min.js`,
-            );
-        });
-
-        it('returns the VisaCheckout from the window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
-            const visaCheckout = await braintreeScriptLoader.loadVisaCheckout();
-
-            expect(visaCheckout).toBe(visaCheckoutMock);
-        });
-    });
-
-    describe('#loadHostedFields()', () => {
-        let hostedFields: BraintreeModuleCreator<BraintreeHostedFields>;
-
-        beforeEach(() => {
-            hostedFields = getModuleCreatorMock(getHostedFieldsMock());
-
-            scriptLoader.loadScript = jest.fn(() => {
-                // tslint:disable-next-line:no-non-null-assertion
-                mockWindow.braintree!.hostedFields = hostedFields;
-
-                return Promise.resolve();
-            });
-        });
-
-        it('loads hosted fields module', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
-
-            await braintreeScriptLoader.loadHostedFields();
-
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/hosted-fields.min.js`,
-            );
-        });
-
-        it('loads hosted fields module with braintree sdk alpha version', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
-
-            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
-
-            await braintreeScriptLoader.loadHostedFields();
-
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-                `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/hosted-fields.min.js`,
-            );
-        });
-
-        it('returns hosted fields from window', async () => {
-            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
-
-            expect(await braintreeScriptLoader.loadHostedFields()).toBe(hostedFields);
         });
     });
 });

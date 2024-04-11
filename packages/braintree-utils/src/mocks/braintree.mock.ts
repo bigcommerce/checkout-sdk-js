@@ -14,6 +14,7 @@ import {
     BraintreeShippingAddressOverride,
     BraintreeThreeDSecure,
     BraintreeTokenizePayload,
+    BraintreeVenmoCheckout,
     BraintreeVisaCheckout,
     GooglePayBraintreePaymentDataRequestV1,
     GooglePayBraintreeSDK,
@@ -194,6 +195,14 @@ export function getHostedFieldsMock(): BraintreeHostedFields {
         teardown: jest.fn(() => Promise.resolve()),
         tokenize: jest.fn(() => Promise.resolve(getTokenizePayload())),
         on: jest.fn(),
+    };
+}
+
+export function getVenmoCheckoutMock(): BraintreeVenmoCheckout {
+    return {
+        teardown: jest.fn(() => Promise.resolve()),
+        tokenize: jest.fn(() => Promise.resolve()),
+        isBrowserSupported: jest.fn(),
     };
 }
 
