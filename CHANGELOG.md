@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.581.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.580.0...v1.581.0) (2024-04-11)
+
+
+### Features
+
+* **payment:** PAYPAL-3850 Update braintree scripts by passing additional integrity and crossorigin attributes to script tag ([#2455](https://github.com/bigcommerce/checkout-sdk-js/issues/2455)) ([8c744f2](https://github.com/bigcommerce/checkout-sdk-js/commit/8c744f2317fab3bc68618e05d9d4db465dee36f8))
+
 ## [1.580.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.579.0...v1.580.0) (2024-04-11)
 
 
