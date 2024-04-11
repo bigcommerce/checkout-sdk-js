@@ -64,6 +64,8 @@ export default function createPaymentIntegrationService(
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
     );
 
+    const checkoutValidator = new CheckoutValidator(new CheckoutRequestSender(requestSender));
+
     const hostedFormFactory = new HostedFormFactory(store);
 
     const orderActionCreator = new OrderActionCreator(
@@ -129,6 +131,7 @@ export default function createPaymentIntegrationService(
         store,
         storeProjectionFactory,
         checkoutActionCreator,
+        checkoutValidator,
         hostedFormFactory,
         orderActionCreator,
         billingAddressActionCreator,

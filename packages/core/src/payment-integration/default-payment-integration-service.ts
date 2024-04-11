@@ -15,7 +15,7 @@ import {
 
 import { BillingAddressActionCreator } from '../billing';
 import { CartRequestSender } from '../cart';
-import { CheckoutActionCreator, CheckoutStore } from '../checkout';
+import { Checkout, CheckoutActionCreator, CheckoutStore, CheckoutValidator } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
 import { CustomerActionCreator, CustomerCredentials } from '../customer';
 import { HostedFormFactory } from '../hosted-form';
@@ -41,6 +41,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _store: CheckoutStore,
         private _storeProjectionFactory: PaymentIntegrationStoreProjectionFactory,
         private _checkoutActionCreator: CheckoutActionCreator,
+        private _checkoutValidator: CheckoutValidator,
         private _hostedFormFactory: HostedFormFactory,
         private _orderActionCreator: OrderActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
@@ -106,6 +107,12 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         await this._store.dispatch(
             this._paymentMethodActionCreator.loadPaymentMethod(methodId, options),
         );
+
+        return this._storeProjection.getState();
+    }
+
+    async loadPaymentMethods(options?: RequestOptions): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethods(options));
 
         return this._storeProjection.getState();
     }
@@ -273,5 +280,9 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         );
 
         return this._storeProjection.getState();
+    }
+
+    async validateCheckout(checkout?: Checkout, options?: RequestOptions): Promise<void> {
+        await this._checkoutValidator.validate(checkout, options);
     }
 }

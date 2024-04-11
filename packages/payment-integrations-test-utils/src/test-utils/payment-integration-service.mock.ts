@@ -56,6 +56,7 @@ const initializeOffsitePayment = jest.fn();
 const loadCheckout = jest.fn();
 const loadDefaultCheckout = jest.fn();
 const loadPaymentMethod = jest.fn();
+const loadPaymentMethods = jest.fn();
 const loadShippingCountries = jest.fn(() => state);
 const loadCurrentOrder = jest.fn();
 const submitOrder = jest.fn();
@@ -70,6 +71,7 @@ const applyStoreCredit = jest.fn();
 const verifyCheckoutSpamProtection = jest.fn();
 const updatePaymentProviderCustomer = jest.fn();
 const initializePayment = jest.fn();
+const validateCheckout = jest.fn();
 
 const PaymentIntegrationServiceMock = jest
     .fn<PaymentIntegrationService>()
@@ -86,6 +88,7 @@ const PaymentIntegrationServiceMock = jest
             loadCheckout,
             loadDefaultCheckout,
             loadPaymentMethod,
+            loadPaymentMethods,
             loadShippingCountries,
             loadCurrentOrder,
             submitOrder,
@@ -100,6 +103,7 @@ const PaymentIntegrationServiceMock = jest
             verifyCheckoutSpamProtection,
             updatePaymentProviderCustomer,
             initializePayment,
+            validateCheckout,
         };
     });
 

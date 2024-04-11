@@ -16,7 +16,12 @@ import {
 import { BillingAddressActionCreator } from '../billing';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { CartRequestSender } from '../cart';
-import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../checkout';
+import {
+    CheckoutActionCreator,
+    CheckoutStore,
+    CheckoutValidator,
+    InternalCheckoutSelectors,
+} from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
 import { getResponse } from '../common/http-request/responses.mock';
 import { CustomerActionCreator } from '../customer';
@@ -52,6 +57,7 @@ describe('DefaultPaymentIntegrationService', () => {
         CheckoutActionCreator,
         'loadCheckout' | 'loadCurrentCheckout' | 'loadDefaultCheckout'
     >;
+    let checkoutValidator: Pick<CheckoutValidator, 'validate'>;
     let orderActionCreator: Pick<
         OrderActionCreator,
         'submitOrder' | 'finalizeOrder' | 'loadCurrentOrder'
@@ -61,7 +67,10 @@ describe('DefaultPaymentIntegrationService', () => {
         ConsignmentActionCreator,
         'updateAddress' | 'selectShippingOption' | 'deleteConsignment'
     >;
-    let paymentMethodActionCreator: Pick<PaymentMethodActionCreator, 'loadPaymentMethod'>;
+    let paymentMethodActionCreator: Pick<
+        PaymentMethodActionCreator,
+        'loadPaymentMethod' | 'loadPaymentMethods'
+    >;
     let paymentActionCreator: Pick<
         PaymentActionCreator,
         'submitPayment' | 'initializeOffsitePayment'
@@ -117,6 +126,10 @@ describe('DefaultPaymentIntegrationService', () => {
             loadDefaultCheckout: jest.fn(async () => () => createAction('LOAD_CHECKOUT')),
         };
 
+        checkoutValidator = {
+            validate: jest.fn(),
+        };
+
         orderActionCreator = {
             submitOrder: jest.fn(async () => () => createAction('SUBMIT_ORDER')),
             finalizeOrder: jest.fn(async () => () => createAction('FINALIZE_ORDER')),
@@ -135,6 +148,7 @@ describe('DefaultPaymentIntegrationService', () => {
 
         paymentMethodActionCreator = {
             loadPaymentMethod: jest.fn(async () => () => createAction('LOAD_PAYMENT_METHOD')),
+            loadPaymentMethods: jest.fn(async () => () => createAction('LOAD_PAYMENT_METHODS')),
         };
 
         paymentActionCreator = {
@@ -186,6 +200,7 @@ describe('DefaultPaymentIntegrationService', () => {
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
             checkoutActionCreator as CheckoutActionCreator,
+            checkoutValidator as CheckoutValidator,
             hostedFormFactory,
             orderActionCreator as OrderActionCreator,
             billingAddressActionCreator as BillingAddressActionCreator,
@@ -277,6 +292,32 @@ describe('DefaultPaymentIntegrationService', () => {
             );
             expect(store.dispatch).toHaveBeenCalledWith(
                 paymentMethodActionCreator.loadPaymentMethod('bluesnapdirect', {
+                    params: { method: 'cc' },
+                }),
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#loadPaymentMethods', () => {
+        it('loads payment methods', async () => {
+            const output = await subject.loadPaymentMethods();
+
+            expect(paymentMethodActionCreator.loadPaymentMethods).toHaveBeenCalledWith(undefined);
+            expect(store.dispatch).toHaveBeenCalledWith(
+                paymentMethodActionCreator.loadPaymentMethods(undefined),
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+
+        it('loads payment method with params', async () => {
+            const output = await subject.loadPaymentMethods({ params: { method: 'cc' } });
+
+            expect(paymentMethodActionCreator.loadPaymentMethods).toHaveBeenCalledWith({
+                params: { method: 'cc' },
+            });
+            expect(store.dispatch).toHaveBeenCalledWith(
+                paymentMethodActionCreator.loadPaymentMethods({
                     params: { method: 'cc' },
                 }),
             );
@@ -499,6 +540,14 @@ describe('DefaultPaymentIntegrationService', () => {
                 remoteCheckoutActionCreator.forgetCheckout('methodId'),
             );
             expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#validateCheckout', () => {
+        it('validates checkout', async () => {
+            await subject.validateCheckout(getCheckout());
+
+            expect(checkoutValidator.validate).toHaveBeenCalled();
         });
     });
 });
