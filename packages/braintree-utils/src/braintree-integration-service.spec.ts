@@ -101,9 +101,6 @@ describe('BraintreeIntegrationService', () => {
         jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockImplementation(
             () => paypalCheckoutCreatorMock,
         );
-        jest.spyOn(braintreeScriptLoader, 'loadBraintreeLocalMethods').mockImplementation(() =>
-            getModuleCreatorMock(),
-        );
 
         jest.spyOn(braintreeScriptLoader, 'load3DS').mockImplementation(
             () => threeDSecureCreatorMock,
@@ -498,16 +495,6 @@ describe('BraintreeIntegrationService', () => {
             };
 
             expect(braintreeIntegrationService.mapToLegacyShippingAddress(props)).toEqual(expects);
-        });
-    });
-
-    describe('#loadBraintreeLocalMethods()', () => {
-        it('loads local payment methods', async () => {
-            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
-
-            await braintreeIntegrationService.loadBraintreeLocalMethods(jest.fn(), '');
-
-            expect(braintreeScriptLoader.loadBraintreeLocalMethods).toHaveBeenCalled();
         });
     });
 

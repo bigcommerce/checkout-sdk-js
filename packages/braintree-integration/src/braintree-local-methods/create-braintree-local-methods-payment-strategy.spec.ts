@@ -1,18 +1,13 @@
-import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-payment-strategy';
 import createBraintreeLocalMethodsPaymentStrategy from './create-braintree-local-methods-payment-strategy';
 
-describe('createBraintreePaypalCustomerStrategy', () => {
-    let paymentIntegrationService: PaymentIntegrationService;
-
-    beforeEach(() => {
-        paymentIntegrationService = new PaymentIntegrationServiceMock();
-    });
-
+describe('createBraintreeLocalMethodsPaymentStrategy', () => {
     it('instantiates braintree local methods payment strategy', () => {
-        const strategy = createBraintreeLocalMethodsPaymentStrategy(paymentIntegrationService);
+        const strategy = createBraintreeLocalMethodsPaymentStrategy(
+            new PaymentIntegrationServiceMock(),
+        );
 
         expect(strategy).toBeInstanceOf(BraintreeLocalMethodsPaymentStrategy);
     });

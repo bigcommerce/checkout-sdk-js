@@ -352,7 +352,7 @@ describe('BraintreeScriptLoader', () => {
         });
     });
 
-    describe('#loadBraintreeLocalMethods', () => {
+    describe('#loadBraintreeLocalPayment', () => {
         let localPayment: BraintreeLocalPaymentCreator;
 
         beforeEach(() => {
@@ -369,7 +369,7 @@ describe('BraintreeScriptLoader', () => {
         it('loads local payment methods', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
 
-            await braintreeScriptLoader.loadBraintreeLocalMethods();
+            await braintreeScriptLoader.loadBraintreeLocalPayment();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_STABLE_VERSION}/js/local-payment.min.js`,
@@ -389,7 +389,7 @@ describe('BraintreeScriptLoader', () => {
 
             braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
 
-            await braintreeScriptLoader.loadBraintreeLocalMethods();
+            await braintreeScriptLoader.loadBraintreeLocalPayment();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 `//js.braintreegateway.com/web/${BRAINTREE_SDK_ALPHA_VERSION}/js/local-payment.min.js`,

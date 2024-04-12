@@ -14,6 +14,7 @@ import {
     BraintreeDataCollectorCreator,
     BraintreeError,
     BraintreeHostedFieldsTokenizePayload,
+    BraintreeLocalPaymentCreator,
     BraintreeModule,
     BraintreeModuleCreator,
     BraintreeModuleCreatorConfig,
@@ -92,15 +93,6 @@ export interface BraintreeSDK {
     [BraintreeModuleName.VisaCheckout]?: BraintreeVisaCheckoutCreator;
     [BraintreeModuleName.UsBankAccount]?: BraintreeUsBankAccountCreator;
     [BraintreeModuleName.LocalPayment]?: BraintreeLocalPaymentCreator;
-}
-
-export type BraintreeLocalPaymentCreator = BraintreeModuleCreator<
-    LocalPaymentInstance,
-    BraintreeLocalPaymentCreateConfig
->;
-
-export interface BraintreeLocalPaymentCreateConfig extends BraintreeModuleCreatorConfig {
-    merchantAccountId: string;
 }
 
 export interface BraintreeInitializationData {
@@ -949,53 +941,6 @@ export interface BraintreeFastlaneCardComponent {
     ): Promise<BraintreeFastlaneVaultedInstrument>;
     render(element: string): void;
 }
-
-/**
- *
- * Braintree Local Methods
- *
- */
-export interface LocalPaymentInstanceConfig {
-    paymentType: string;
-    amount: number;
-    fallback: {
-        url: string;
-        buttonText: string;
-    };
-    currencyCode: string;
-    shippingAddressRequired: boolean;
-    email: string;
-    givenName: string;
-    surname: string;
-    address: {
-        countryCode: string;
-    };
-    onPaymentStart(data: onPaymentStartData, start: () => Promise<void>): void;
-}
-
-export interface StartPaymentError {
-    code: string;
-}
-
-export interface onPaymentStartData {
-    paymentId: string;
-}
-
-export interface LocalPaymentsPayload {
-    nonce: string;
-}
-
-export interface LocalPaymentInstance extends BraintreeModule {
-    startPayment(
-        config: LocalPaymentInstanceConfig,
-        callback: (
-            startPaymentError: StartPaymentError,
-            payload: LocalPaymentsPayload,
-        ) => Promise<void>,
-    ): void;
-}
-
-export type GetLocalPaymentInstance = (localPaymentInstance: LocalPaymentInstance) => void;
 
 /**
  *

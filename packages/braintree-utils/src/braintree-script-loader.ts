@@ -81,7 +81,7 @@ export default class BraintreeScriptLoader {
         );
     }
 
-    async loadBraintreeLocalMethods(): Promise<BraintreeLocalPaymentCreator> {
+    async loadBraintreeLocalPayment(): Promise<BraintreeLocalPaymentCreator> {
         return this.loadBraintreeModuleOrThrow<BraintreeLocalPaymentCreator>(
             BraintreeModuleName.LocalPayment,
             'local-payment.min.js',

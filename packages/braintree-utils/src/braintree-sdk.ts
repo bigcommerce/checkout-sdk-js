@@ -9,16 +9,20 @@ import {
     BraintreeClient,
     BraintreeDataCollector,
     BraintreeDataCollectorCreatorConfig,
+    BraintreeError,
     BraintreeErrorCode,
+    BraintreeLocalPayment,
     BraintreeModule,
     BraintreeUsBankAccount,
 } from './types';
 import isBraintreeError from './utils/is-braintree-error';
+import { PaymentMethodClientUnavailableError } from '../../core/src/payment/errors';
 
 export default class BraintreeSdk {
     private client?: BraintreeClient;
     private clientToken?: string;
     private dataCollector?: BraintreeDataCollector;
+    private localPayment?: BraintreeLocalPayment;
     private usBankAccount?: BraintreeUsBankAccount;
 
     constructor(private braintreeScriptLoader: BraintreeScriptLoader) {}
@@ -91,11 +95,52 @@ export default class BraintreeSdk {
 
     /**
      *
+     * Braintree Local Payment
+     * braintree doc: https://developer.paypal.com/braintree/docs/guides/local-payment-methods/client-side-custom/javascript/v3/
+     *
+     */
+    async getBraintreeLocalPayment(merchantAccountId = ''): Promise<BraintreeLocalPayment> {
+        if (!this.localPayment) {
+            const client = await this.getClient();
+            const localPayment = await this.braintreeScriptLoader.loadBraintreeLocalPayment();
+
+            const localPaymentModuleConfig = { client, merchantAccountId };
+
+            // this.localPayment = await localPayment.create(localPaymentModuleConfig);
+
+            console.log('get instance without callback: ', await localPayment.create(localPaymentModuleConfig));
+
+            // TODO: uncomment this if prev line does not work
+            this.localPayment = await new Promise((resolve, reject) => {
+                localPayment.create(
+                    localPaymentModuleConfig,
+                    (error: BraintreeError | undefined, instance: BraintreeLocalPayment): void => {
+                        if (error) {
+                            reject(new Error(error.message));
+                        }
+
+                        resolve(instance);
+                    },
+                )
+            });
+
+            console.log('get instance with callback: ', localPayment);
+
+            if (!this.localPayment) {
+                throw new PaymentMethodClientUnavailableError();
+            }
+        }
+
+        return this.localPayment;
+    }
+
+    /**
+     *
      * Braintree UsBankAccount
      * braintree doc: https://braintree.github.io/braintree-web/current/module-braintree-web_us-bank-account.html
      *
      */
-    async getUsBankAccount() {
+    async getUsBankAccount(): Promise<BraintreeUsBankAccount> {
         if (!this.usBankAccount) {
             const client = await this.getClient();
             const usBankAccount = await this.braintreeScriptLoader.loadUsBankAccount();

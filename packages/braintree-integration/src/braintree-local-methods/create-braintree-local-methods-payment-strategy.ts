@@ -1,10 +1,4 @@
-import { getScriptLoader } from '@bigcommerce/script-loader';
-
-import {
-    BraintreeHostWindow,
-    BraintreeIntegrationService,
-    BraintreeScriptLoader,
-} from '@bigcommerce/checkout-sdk/braintree-utils';
+import { createBraintreeSdk } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     PaymentStrategyFactory,
     toResolvableModule,
@@ -16,15 +10,9 @@ import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-paym
 const createBraintreeLocalMethodsPaymentStrategy: PaymentStrategyFactory<
     BraintreeLocalMethodsPaymentStrategy
 > = (paymentIntegrationService) => {
-    const braintreeHostWindow: BraintreeHostWindow = window;
-    const braintreeIntegrationService = new BraintreeIntegrationService(
-        new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
-        braintreeHostWindow,
-    );
-
     return new BraintreeLocalMethodsPaymentStrategy(
         paymentIntegrationService,
-        braintreeIntegrationService,
+        createBraintreeSdk(),
         new LoadingIndicator({ styles: { backgroundColor: 'black' } }),
     );
 };

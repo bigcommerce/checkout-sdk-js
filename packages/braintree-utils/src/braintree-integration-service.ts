@@ -30,9 +30,7 @@ import {
     BraintreeThreeDSecure,
     BraintreeTokenizationDetails,
     BraintreeTokenizePayload,
-    GetLocalPaymentInstance,
     GooglePayBraintreeSDK,
-    LocalPaymentInstance,
     PAYPAL_COMPONENTS,
 } from './types';
 import getValidBraintreeFastlaneStyles from './utils/get-valid-braintree-fastlane-styles';
@@ -54,7 +52,6 @@ export default class BraintreeIntegrationService {
     private clientToken?: string;
     private dataCollectors: BraintreeDataCollectors = {};
     private paypalCheckout?: BraintreePaypalCheckout;
-    private braintreeLocalMethods?: LocalPaymentInstance;
     private googlePay?: Promise<GooglePayBraintreeSDK>;
     private threeDS?: Promise<BraintreeThreeDSecure>;
     private braintreePaypal?: Promise<BraintreePaypal>;
@@ -217,35 +214,6 @@ export default class BraintreeIntegrationService {
         return this.paypalCheckout;
     }
 
-    async loadBraintreeLocalMethods(
-        getLocalPaymentInstance: GetLocalPaymentInstance,
-        merchantAccountId: string,
-    ) {
-        const client = await this.getClient();
-        const braintreeLocalMethods = await this.braintreeScriptLoader.loadBraintreeLocalMethods();
-
-        if (!this.braintreeLocalMethods) {
-            this.braintreeLocalMethods = await braintreeLocalMethods.create(
-                {
-                    client,
-                    merchantAccountId,
-                },
-                (
-                    localPaymentErr: BraintreeError | undefined,
-                    localPaymentInstance: LocalPaymentInstance,
-                ) => {
-                    if (localPaymentErr) {
-                        throw new Error(localPaymentErr.message);
-                    }
-
-                    getLocalPaymentInstance(localPaymentInstance);
-                },
-            );
-        }
-
-        return this.braintreeLocalMethods;
-    }
-
     get3DS(): Promise<BraintreeThreeDSecure> {
         if (!this.threeDS) {
             this.threeDS = Promise.all([
@@ -382,20 +350,6 @@ export default class BraintreeIntegrationService {
 
         await this.teardownModule(this.paypalCheckout);
         this.paypalCheckout = undefined;
-
-        // TODO: should be added in future migrations
-
-        // await this.teardownModule(this._3ds);
-        // this._3ds = undefined;
-
-        // await this.teardownModule(this._googlePay);
-        // this._googlePay = undefined;
-
-        // await this.teardownModule(this._venmoCheckout);
-        // this._venmoCheckout = undefined;
-
-        // await this.teardownModule(this._visaCheckout);
-        // this._visaCheckout = undefined;
     }
 
     private teardownModule(module?: BraintreeModule) {

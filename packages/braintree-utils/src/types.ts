@@ -127,6 +127,54 @@ export interface BraintreeDataCollectors {
 
 /**
  *
+ * Braintree Local Payment
+ *
+ */
+export type BraintreeLocalPaymentCreator = BraintreeModuleCreator<
+    BraintreeLocalPayment,
+    BraintreeLocalPaymentCreateConfig
+>;
+
+export interface BraintreeLocalPaymentCreateConfig extends BraintreeModuleCreatorConfig {
+    merchantAccountId: string;
+}
+
+export interface BraintreeLocalPayment extends BraintreeModule {
+    startPayment(
+        config: BraintreeLocalPaymentConfig,
+        callback: (error: BraintreeError, payload: BraintreeLocalPaymentPayload) => void,
+    ): Promise<void>;
+}
+
+export interface BraintreeLocalPaymentConfig {
+    address: {
+        countryCode: string;
+        // TODO: this interface can be updated with extra shipping address
+        // to prefill users data in the paypal popup
+    };
+    amount: number;
+    currencyCode: string;
+    email: string;
+    fallback: { // TODO: do we need this fallback?
+        url: string;
+        buttonText: string;
+    };
+    givenName: string; // firstname
+    surname: string; // lastname
+    paymentType: string;
+    shippingAddressRequired: boolean;
+    onPaymentStart(
+        data: { paymentId: string },
+        start: () => Promise<void>,
+    ): void;
+}
+
+export interface BraintreeLocalPaymentPayload {
+    nonce: string;
+}
+
+/**
+ *
  * Braintree US Bank Account
  *
  */
