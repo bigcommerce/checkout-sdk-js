@@ -5,10 +5,10 @@ import { catchError } from 'rxjs/operators';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
-import { ConfigActionCreator } from '../config';
+import { ConfigActionCreator, StoreConfig } from '../config';
 import { FormFieldsActionCreator } from '../form';
 
-import { CheckoutRequestBody } from './checkout';
+import Checkout, { CheckoutRequestBody } from './checkout';
 import { CheckoutActionType, LoadCheckoutAction, UpdateCheckoutAction } from './checkout-actions';
 import CheckoutRequestSender from './checkout-request-sender';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
@@ -20,27 +20,41 @@ export default class CheckoutActionCreator {
         private _formFieldsActionCreator: FormFieldsActionCreator,
     ) {}
 
-    loadCheckout(id: string, options?: RequestOptions): Observable<LoadCheckoutAction> {
-        return concat(
-            of(createAction(CheckoutActionType.LoadCheckoutRequested)),
-            merge(
-                this._configActionCreator.loadConfig({
-                    ...options,
-                    useCache: true,
-                    params: { ...options?.params, checkoutId: id },
-                }),
-                this._formFieldsActionCreator.loadFormFields({ ...options, useCache: true }),
-                defer(() =>
-                    this._checkoutRequestSender
-                        .loadCheckout(id, options)
-                        .then(({ body }) =>
-                            createAction(CheckoutActionType.LoadCheckoutSucceeded, body),
-                        ),
+    loadCheckout(
+        id: string,
+        options?: RequestOptions,
+    ): ThunkAction<LoadCheckoutAction, InternalCheckoutSelectors> {
+        return (store) => {
+            return concat(
+                of(createAction(CheckoutActionType.LoadCheckoutRequested)),
+                merge(
+                    this._configActionCreator.loadConfig({
+                        ...options,
+                        useCache: true,
+                        params: { ...options?.params, checkoutId: id },
+                    }),
+                    this._formFieldsActionCreator.loadFormFields({ ...options, useCache: true }),
                 ),
-            ),
-        ).pipe(
-            catchError((error) => throwErrorAction(CheckoutActionType.LoadCheckoutFailed, error)),
-        );
+                defer(() => {
+                    return this._checkoutRequestSender
+                        .loadCheckout(id, options)
+                        .then(({ body }) => {
+                            return createAction(
+                                CheckoutActionType.LoadCheckoutSucceeded,
+                                this._shouldTransformCustomerAddress(
+                                    store.getState().config.getStoreConfigOrThrow(),
+                                )
+                                    ? this._transformCustomerAddresses(body)
+                                    : body,
+                            );
+                        });
+                }),
+            ).pipe(
+                catchError((error) =>
+                    throwErrorAction(CheckoutActionType.LoadCheckoutFailed, error),
+                ),
+            );
+        };
     }
 
     loadDefaultCheckout(
@@ -66,7 +80,12 @@ export default class CheckoutActionCreator {
                         options,
                     );
 
-                    return createAction(CheckoutActionType.LoadCheckoutSucceeded, body);
+                    return createAction(
+                        CheckoutActionType.LoadCheckoutSucceeded,
+                        this._shouldTransformCustomerAddress(state.config.getStoreConfigOrThrow())
+                            ? this._transformCustomerAddresses(body)
+                            : body,
+                    );
                 }),
             ).pipe(
                 catchError((error) =>
@@ -117,7 +136,28 @@ export default class CheckoutActionCreator {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
-            return this.loadCheckout(checkout.id, options);
+            return this.loadCheckout(checkout.id, options)(store);
+        };
+    }
+
+    private _shouldTransformCustomerAddress(storeConfig: StoreConfig): boolean {
+        return (
+            storeConfig.checkoutSettings.features[
+                'CHECKOUT-8183.set_shouldSaveAddress_false_for_existing_address'
+            ] ?? true
+        );
+    }
+
+    private _transformCustomerAddresses(body: Checkout): Checkout {
+        return {
+            ...body,
+            customer: {
+                ...body.customer,
+                addresses: body.customer.addresses.map((address) => ({
+                    ...address,
+                    shouldSaveAddress: false,
+                })),
+            },
         };
     }
 }

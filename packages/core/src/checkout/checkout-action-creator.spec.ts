@@ -68,7 +68,9 @@ describe('CheckoutActionCreator', () => {
     describe('#loadCheckout', () => {
         it('emits action to notify loading progress', async () => {
             const { id } = getCheckout();
-            const actions = await actionCreator.loadCheckout(id).pipe(toArray()).toPromise();
+            const actions = await from(actionCreator.loadCheckout(id)(store))
+                .pipe(toArray())
+                .toPromise();
 
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith(id, undefined);
 
@@ -95,8 +97,7 @@ describe('CheckoutActionCreator', () => {
             const { id } = getCheckout();
             const errorHandler = jest.fn((action) => of(action));
 
-            const actions = await actionCreator
-                .loadCheckout(id)
+            const actions = await from(actionCreator.loadCheckout(id)(store))
                 .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
@@ -127,8 +128,9 @@ describe('CheckoutActionCreator', () => {
             );
 
             const errorHandler = jest.fn((action) => of(action));
-            const actions = await actionCreator
-                .loadCheckout('b20deef40f9699e48671bbc3fef6ca44dc80e3c7')
+            const actions = await from(
+                actionCreator.loadCheckout('b20deef40f9699e48671bbc3fef6ca44dc80e3c7')(store),
+            )
                 .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
@@ -151,15 +153,15 @@ describe('CheckoutActionCreator', () => {
             );
         });
 
-        it('calls loadConfig in parallel', () => {
+        it('does not call loadCheckout until loadConfig resolves', () => {
             const { id } = getCheckout();
 
             jest.spyOn(configActionCreator, 'loadConfig').mockReturnValue(new Promise(() => {}));
 
-            actionCreator.loadCheckout(id).toPromise();
+            from(actionCreator.loadCheckout(id)(store)).toPromise();
 
             expect(configActionCreator.loadConfig).toHaveBeenCalled();
-            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
+            expect(checkoutRequestSender.loadCheckout).not.toHaveBeenCalled();
         });
     });
 
