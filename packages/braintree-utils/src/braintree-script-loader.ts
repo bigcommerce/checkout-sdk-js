@@ -6,7 +6,11 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BraintreeIntegrityValues } from './braintree';
-import { BRAINTREE_SDK_ALPHA_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
+import {
+    BRAINTREE_SDK_ALPHA_VERSION,
+    BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION,
+    BRAINTREE_SDK_STABLE_VERSION,
+} from './sdk-verison';
 import {
     BraintreeClientCreator,
     BraintreeConnectCreator,
@@ -40,9 +44,14 @@ export default class BraintreeScriptLoader {
         const features = storeConfig?.checkoutSettings.features;
         const shouldUseBraintreeAlphaVersion =
             features && features['PROJECT-5505.PayPal_Accelerated_Checkout_v2_for_Braintree'];
+        const shouldUseBraintreeFastlaneCompatibleVersion =
+            features && features['PROJECT-6266.braintree_fastlane'];
+        const braintreeSdkAlphaVersion = shouldUseBraintreeFastlaneCompatibleVersion
+            ? BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION
+            : BRAINTREE_SDK_ALPHA_VERSION;
 
         this.braintreeSdkVersion = shouldUseBraintreeAlphaVersion
-            ? BRAINTREE_SDK_ALPHA_VERSION
+            ? braintreeSdkAlphaVersion
             : BRAINTREE_SDK_STABLE_VERSION;
     }
 
