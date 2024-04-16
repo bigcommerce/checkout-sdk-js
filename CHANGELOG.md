@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.582.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.582.2...v1.582.3) (2024-04-16)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-8183 set shouldSaveAddress to false for existing customer addresses while loadCheckout ([0a8ad13](https://github.com/bigcommerce/checkout-sdk-js/commit/0a8ad132949593f8b09f435e789f8e51753d22a9))
+
 ### [1.582.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.582.1...v1.582.2) (2024-04-15)
 
 
