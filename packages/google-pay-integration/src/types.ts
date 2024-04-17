@@ -312,8 +312,25 @@ export interface GooglePayCheckoutComInitializationData extends GooglePayBaseIni
     checkoutcomkey: string;
 }
 
+export interface GooglePayAdyenV2InitializationData extends GooglePayBaseInitializationData {
+    originKey?: string;
+    clientKey?: string;
+    environment?: string;
+    prefillCardHolderName?: boolean;
+    paymentMethodsResponse: object;
+}
+
+export interface GooglePayAdyenV3InitializationData extends GooglePayBaseInitializationData {
+    clientKey: string;
+    environment?: string;
+    prefillCardHolderName?: boolean;
+    paymentMethodsResponse: object;
+}
+
 export type GooglePayInitializationData =
     | GooglePayBaseInitializationData
+    | GooglePayAdyenV2InitializationData
+    | GooglePayAdyenV3InitializationData
     | GooglePayAuthorizeNetInitializationData
     | GooglePayStripeInitializationData
     | GooglePayCheckoutComInitializationData

@@ -62,18 +62,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(registry).toEqual(expect.any(PaymentStrategyRegistry));
     });
 
-    it('can instantiate googlepayadyenv2', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.ADYENV2_GOOGLEPAY);
-
-        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
-    });
-
-    it('can instantiate googlepayadyenv3', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.ADYENV3_GOOGLEPAY);
-
-        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
-    });
-
     it('can instantiate amazonpay', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.AMAZONPAY);
 

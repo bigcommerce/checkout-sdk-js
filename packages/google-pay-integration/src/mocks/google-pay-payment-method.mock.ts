@@ -60,6 +60,33 @@ export function getStripe(): PaymentMethod<GooglePayInitializationData> {
     };
 }
 
+export function getAdyenV2(): PaymentMethod<GooglePayInitializationData> {
+    const generic = getGeneric();
+
+    return {
+        ...generic,
+        initializationData: {
+            ...generic.initializationData!,
+            originKey: 'YOUR_ORIGIN_KEY',
+            clientKey: 'YOUR_CLIENT_KEY',
+            paymentMethodsResponse: {},
+        },
+    };
+}
+
+export function getAdyenV3(): PaymentMethod<GooglePayInitializationData> {
+    const generic = getGeneric();
+
+    return {
+        ...generic,
+        initializationData: {
+            ...generic.initializationData!,
+            clientKey: 'YOUR_CLIENT_KEY',
+            paymentMethodsResponse: {},
+        },
+    };
+}
+
 export function getAuthorizeNet(): PaymentMethod<GooglePayInitializationData> {
     const generic = getGeneric();
 

@@ -46,8 +46,6 @@ import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import StorefrontPaymentRequestSender from './storefront-payment-request-sender';
-import { AdyenV2ScriptLoader } from './strategies/adyenv2';
-import { AdyenV3ScriptLoader } from './strategies/adyenv3';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
@@ -82,10 +80,6 @@ import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { DigitalRiverPaymentStrategy, DigitalRiverScriptLoader } from './strategies/digitalriver';
 import {
     createGooglePayPaymentProcessor,
-    GooglePayAdyenV2Initializer,
-    GooglePayAdyenV2PaymentProcessor,
-    GooglePayAdyenV3Initializer,
-    GooglePayAdyenV3PaymentProcessor,
     GooglePayAuthorizeNetInitializer,
     GooglePayBNZInitializer,
     GooglePayCheckoutcomInitializer,
@@ -188,44 +182,6 @@ export default function createPaymentStrategyRegistry(
     const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);
     const hostedFormFactory = new HostedFormFactory(store);
     const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
-
-    registry.register(
-        PaymentStrategyType.ADYENV2_GOOGLEPAY,
-        () =>
-            new GooglePayPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayAdyenV2Initializer()),
-                new GooglePayAdyenV2PaymentProcessor(
-                    store,
-                    paymentActionCreator,
-                    new AdyenV2ScriptLoader(scriptLoader, getStylesheetLoader()),
-                ),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.ADYENV3_GOOGLEPAY,
-        () =>
-            new GooglePayPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayAdyenV3Initializer()),
-                new GooglePayAdyenV3PaymentProcessor(
-                    store,
-                    paymentActionCreator,
-                    new AdyenV3ScriptLoader(scriptLoader, getStylesheetLoader()),
-                ),
-            ),
-    );
 
     registry.register(
         PaymentStrategyType.AFTERPAY,
