@@ -1,3 +1,4 @@
+import { CustomerAddress } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 /**
@@ -6,11 +7,6 @@ import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-com
  */
 export default interface PayPalCommerceFastlaneShippingInitializeOptions {
     /**
-     * The identifier of the payment method.
-     */
-    methodId: string;
-
-    /**
      * Is a stylisation options for customizing PayPal Fastlane components
      *
      * Note: the styles for all PayPal Commerce Fastlane strategies should be the same,
@@ -18,4 +14,12 @@ export default interface PayPalCommerceFastlaneShippingInitializeOptions {
      * no matter what strategy was initialised first
      */
     styles?: PayPalFastlaneStylesOption;
+
+    /**
+     *
+     * Is a callback that shows PayPal Fastlane popup with customer addresses
+     * when get triggered
+     *
+     */
+    onPayPalFastlaneAddressChange?: (showPayPalFastlaneAddressSelector: () => Promise<CustomerAddress | undefined>) => void;
 }
