@@ -171,6 +171,17 @@ describe('BraintreeScriptLoader', () => {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
         });
+
+        it('does not load module if it is already in the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadClient();
+            await braintreeScriptLoader.loadClient();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
+        });
     });
 
     describe('#loadConnect()', () => {
@@ -243,6 +254,17 @@ describe('BraintreeScriptLoader', () => {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
         });
+
+        it('does not load module if it is already in the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadConnect();
+            await braintreeScriptLoader.loadConnect();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
+        });
     });
 
     describe('#loadFastlane()', () => {
@@ -307,6 +329,17 @@ describe('BraintreeScriptLoader', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
+        });
+
+        it('does not load module if it is already in the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadFastlane();
+            await braintreeScriptLoader.loadFastlane();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -407,6 +440,17 @@ describe('BraintreeScriptLoader', () => {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
         });
+
+        it('does not load module if it is already in the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadPaypalCheckout();
+            await braintreeScriptLoader.loadPaypalCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
+        });
     });
 
     describe('#loadBraintreeLocalMethods', () => {
@@ -459,6 +503,17 @@ describe('BraintreeScriptLoader', () => {
                     },
                 },
             );
+        });
+
+        it('does not load module if it is already in the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadBraintreeLocalMethods();
+            await braintreeScriptLoader.loadBraintreeLocalMethods();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
         });
 
         it('loads local payment methods with braintree sdk fastlane compatible version', async () => {
@@ -534,6 +589,17 @@ describe('BraintreeScriptLoader', () => {
             );
         });
 
+        it('does not load module if it is already in the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadGooglePayment();
+            await braintreeScriptLoader.loadGooglePayment();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
+        });
+
         it('loads google payment methods with braintree sdk fastlane compatible version', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
 
@@ -605,6 +671,17 @@ describe('BraintreeScriptLoader', () => {
                     },
                 },
             );
+        });
+
+        it('does not load module if it is already in the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadPaypal();
+            await braintreeScriptLoader.loadPaypal();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
         });
 
         it('loads braintree paypal with braintree sdk fastlane compatible version', async () => {
@@ -680,6 +757,17 @@ describe('BraintreeScriptLoader', () => {
             );
         });
 
+        it('does not load module if it is already in the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.load3DS();
+            await braintreeScriptLoader.load3DS();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
+        });
+
         it('loads threeDSecure methods with braintree sdk fastlane compatible version', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
 
@@ -751,6 +839,17 @@ describe('BraintreeScriptLoader', () => {
                     },
                 },
             );
+        });
+
+        it('does not load module if it is already in the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadVisaCheckout();
+            await braintreeScriptLoader.loadVisaCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
         });
 
         it('loads visaCheckout methods with braintree sdk fastlane compatible version', async () => {
@@ -826,6 +925,17 @@ describe('BraintreeScriptLoader', () => {
             );
         });
 
+        it('does not load module if it is already in the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadHostedFields();
+            await braintreeScriptLoader.loadHostedFields();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
+        });
+
         it('loads hostedFields methods with braintree sdk fastlane compatible version', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
 
@@ -897,6 +1007,17 @@ describe('BraintreeScriptLoader', () => {
                     },
                 },
             );
+        });
+
+        it('does not load module if it is already in the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadVenmoCheckout();
+            await braintreeScriptLoader.loadVenmoCheckout();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
         });
 
         it('loads venmoCheckout methods with braintree sdk fastlane compatible version', async () => {
@@ -1017,6 +1138,17 @@ describe('BraintreeScriptLoader', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
+        });
+
+        it('does not load module if it is already in the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            braintreeScriptLoader.initialize(storeConfigWithFeaturesOn);
+
+            await braintreeScriptLoader.loadDataCollector();
+            await braintreeScriptLoader.loadDataCollector();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
         });
     });
 });

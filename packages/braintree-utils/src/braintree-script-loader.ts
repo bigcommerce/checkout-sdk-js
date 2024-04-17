@@ -150,6 +150,13 @@ export default class BraintreeScriptLoader {
         braintreeModuleName: BraintreeModuleName,
         fileName: string,
     ): Promise<T> {
+        let module = this.getBraintreeModule(braintreeModuleName);
+
+        if (module) {
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            return module as T;
+        }
+
         const scriptPath = `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/${fileName}`;
 
         const hash =
@@ -168,14 +175,20 @@ export default class BraintreeScriptLoader {
                 : undefined,
         );
 
-        const braintreeModule = this.braintreeHostWindow.braintree?.[braintreeModuleName];
+        module = this.getBraintreeModule(braintreeModuleName);
 
-        if (!braintreeModule) {
+        if (!module) {
             throw new PaymentMethodClientUnavailableError();
         }
 
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        return braintreeModule as T;
+        return module as T;
+    }
+
+    private getBraintreeModule(
+        braintreeModuleName: BraintreeModuleName,
+    ): BraintreeModuleCreators | undefined {
+        return this.braintreeHostWindow.braintree?.[braintreeModuleName];
     }
 
     private getIntegrityValuesByModuleName(
