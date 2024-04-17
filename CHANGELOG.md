@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.584.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.583.0...v1.584.0) (2024-04-17)
+
+
+### Features
+
+* **payment:** PAYPAL-4032 PPCP Card Fields shouldSetAsDefaultInstrument flag send ([19a108a](https://github.com/bigcommerce/checkout-sdk-js/commit/19a108abefc7617d53c9156a2695718ac995115f))
+
 ## [1.583.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.582.3...v1.583.0) (2024-04-17)
 
 
