@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.583.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.582.3...v1.583.0) (2024-04-17)
+
+
+### Features
+
+* **payment:** PAYPAL-4048 added fastlane compatible version ([#2464](https://github.com/bigcommerce/checkout-sdk-js/issues/2464)) ([6bc5c92](https://github.com/bigcommerce/checkout-sdk-js/commit/6bc5c9220d5c2668bc860fc6f5fb410d504bf7e7))
+
 ### [1.582.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.582.2...v1.582.3) (2024-04-16)
 
 
