@@ -14,7 +14,7 @@ export function getShippingAddress(): Address {
         countryCode: 'US',
         postalCode: '95555',
         phone: '555-555-5555',
-        shouldSaveAddress: true,
+        shouldSaveAddress: false,
         customFields: [],
     };
 }

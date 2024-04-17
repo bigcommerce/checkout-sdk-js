@@ -1,10 +1,4 @@
-import { getScriptLoader } from '@bigcommerce/script-loader';
-
-import {
-    BraintreeHostWindow,
-    BraintreeScriptLoader,
-    BraintreeSdk,
-} from '@bigcommerce/checkout-sdk/braintree-utils';
+import { createBraintreeSdk } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     PaymentStrategyFactory,
     toResolvableModule,
@@ -15,12 +9,7 @@ import BraintreeAchPaymentStrategy from './braintree-ach-payment-strategy';
 const createBraintreeAchPaymentStrategy: PaymentStrategyFactory<BraintreeAchPaymentStrategy> = (
     paymentIntegrationService,
 ) => {
-    const braintreeHostWindow: BraintreeHostWindow = window;
-    const braintreeSdk = new BraintreeSdk(
-        new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
-    );
-
-    return new BraintreeAchPaymentStrategy(paymentIntegrationService, braintreeSdk);
+    return new BraintreeAchPaymentStrategy(paymentIntegrationService, createBraintreeSdk());
 };
 
 export default toResolvableModule(createBraintreeAchPaymentStrategy, [{ id: 'braintreeach' }]);

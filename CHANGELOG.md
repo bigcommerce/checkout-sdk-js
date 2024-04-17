@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.584.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.583.0...v1.584.0) (2024-04-17)
+
+
+### Features
+
+* **payment:** PAYPAL-4032 PPCP Card Fields shouldSetAsDefaultInstrument flag send ([19a108a](https://github.com/bigcommerce/checkout-sdk-js/commit/19a108abefc7617d53c9156a2695718ac995115f))
+
+## [1.583.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.582.3...v1.583.0) (2024-04-17)
+
+
+### Features
+
+* **payment:** PAYPAL-4048 added fastlane compatible version ([#2464](https://github.com/bigcommerce/checkout-sdk-js/issues/2464)) ([6bc5c92](https://github.com/bigcommerce/checkout-sdk-js/commit/6bc5c9220d5c2668bc860fc6f5fb410d504bf7e7))
+
+### [1.582.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.582.2...v1.582.3) (2024-04-16)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-8183 set shouldSaveAddress to false for existing customer addresses while loadCheckout ([0a8ad13](https://github.com/bigcommerce/checkout-sdk-js/commit/0a8ad132949593f8b09f435e789f8e51753d22a9))
+
+### [1.582.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.582.1...v1.582.2) (2024-04-15)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-000 added createBraintreeSdk file ([#2461](https://github.com/bigcommerce/checkout-sdk-js/issues/2461)) ([ab55260](https://github.com/bigcommerce/checkout-sdk-js/commit/ab552608887a87c059f33add0d200a01d36e8de4))
+
+### [1.582.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.582.0...v1.582.1) (2024-04-12)
+
 ## [1.582.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.581.0...v1.582.0) (2024-04-11)
 
 
