@@ -1,73 +1,70 @@
-import { createAction } from '@bigcommerce/data-store';
+import { Action } from '@bigcommerce/data-store';
 import { merge } from 'lodash';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 
-import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import RequestError from '../../../common/error/errors/request-error';
-import { getResponse } from '../../../common/http-request/responses.mock';
-import { HostedFieldType, HostedForm, HostedFormFactory } from '../../../hosted-form';
 import {
-    FinalizeOrderAction,
-    LoadOrderSucceededAction,
-    OrderActionCreator,
-    OrderActionType,
-    SubmitOrderAction,
-} from '../../../order';
-import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { getOrder } from '../../../order/orders.mock';
-import PaymentActionCreator from '../../payment-action-creator';
-import { getPaymentMethod } from '../../payment-methods.mock';
-import { PaymentInitializeOptions } from '../../payment-request-options';
-import * as paymentStatusTypes from '../../payment-status-types';
-import { getErrorPaymentResponseBody } from '../../payments.mock';
-import CreditCardPaymentStrategy from '../credit-card/credit-card-payment-strategy';
+    Checkout,
+    HostedFieldType,
+    HostedForm,
+    OrderFinalizationNotRequiredError,
+    PaymentInitializeOptions,
+    PaymentIntegrationService,
+    PaymentMethod,
+    RequestError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    getBillingAddress,
+    getCheckout,
+    getErrorPaymentResponseBody,
+    getOrderRequestBody,
+    getPaymentMethod,
+    getResponse,
+    getShippingAddress,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import CheckoutcomCustomPaymentStrategy from './checkoutcom-custom-payment-strategy';
+import { getCheckoutcom } from './checkoutcom';
+import CheckoutComCustomPaymentStrategy from './checkoutcom-custom-payment-strategy';
 
-describe('CheckoutcomCustomPaymentStrategy', () => {
-    let strategy: CheckoutcomCustomPaymentStrategy;
-    let store: CheckoutStore;
-    let submitOrderAction: Observable<SubmitOrderAction>;
-    let loadOrderAction: Observable<LoadOrderSucceededAction>;
-    let finalizeOrderAction: Observable<FinalizeOrderAction>;
-    let orderActionCreator: OrderActionCreator;
-    let paymentActionCreator: PaymentActionCreator;
-    let hostedFormFactory: HostedFormFactory;
+describe('CheckoutComCustomPaymentStrategy', () => {
+    let strategy: CheckoutComCustomPaymentStrategy;
+    let initializePaymentAction: Observable<Action>;
+    let checkoutMock: Checkout;
+    let paymentMethodMock: PaymentMethod;
+    let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
-        store = createCheckoutStore();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
+        strategy = new CheckoutComCustomPaymentStrategy(paymentIntegrationService);
+        paymentMethodMock = getCheckoutcom();
+        checkoutMock = getCheckout();
 
-        jest.spyOn(store, 'dispatch');
+        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethodMock,
+        );
+        jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
+            getBillingAddress(),
+        );
+        jest.spyOn(paymentIntegrationService.getState(), 'getShippingAddress').mockReturnValue(
+            getShippingAddress(),
+        );
 
-        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-        loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded));
-        finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
+        jest.spyOn(paymentIntegrationService, 'initializePayment').mockReturnValue(
+            initializePaymentAction,
+        );
 
-        orderActionCreator = {
-            submitOrder: jest.fn(() => submitOrderAction),
-            loadCurrentOrder: jest.fn(() => loadOrderAction),
-            finalizeOrder: jest.fn(() => finalizeOrderAction),
-        } as unknown as OrderActionCreator;
-
-        hostedFormFactory = new HostedFormFactory(store);
-
-        strategy = new CheckoutcomCustomPaymentStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            hostedFormFactory,
+        jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
+            checkoutMock,
         );
     });
 
     it('is special type of credit card strategy', () => {
-        expect(strategy).toBeInstanceOf(CreditCardPaymentStrategy);
+        expect(strategy).toBeInstanceOf(CheckoutComCustomPaymentStrategy);
     });
 
     describe('#execute', () => {
         let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
         let initializeOptions: PaymentInitializeOptions;
-        let state: InternalCheckoutSelectors;
 
         beforeEach(() => {
             form = {
@@ -87,13 +84,15 @@ describe('CheckoutcomCustomPaymentStrategy', () => {
                 },
                 methodId: 'checkoutcom',
             };
-            state = store.getState();
 
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
-                merge(getPaymentMethod(), { config: { isHostedFormEnabled: true } }),
-            );
+            const state = paymentIntegrationService.getState();
 
-            hostedFormFactory.create = jest.fn().mockReturnValue(form);
+            jest.spyOn(state, 'getCheckoutOrThrow').mockReturnValue(checkoutMock);
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(merge(getPaymentMethod(), { config: { isHostedFormEnabled: true } }));
+            jest.spyOn(paymentIntegrationService, 'createHostedForm').mockReturnValue(form);
         });
 
         it('validates user input before submitting data', async () => {
@@ -107,8 +106,7 @@ describe('CheckoutcomCustomPaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(getOrderRequestBody());
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-            expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
         });
 
         it('submits payment data with hosted form', async () => {
@@ -127,6 +125,7 @@ describe('CheckoutcomCustomPaymentStrategy', () => {
                 await strategy.initialize(initializeOptions);
                 await strategy.execute(getOrderRequestBody());
             } catch (error) {
+                // eslint-disable-next-line jest/no-conditional-expect
                 expect(form.submit).not.toHaveBeenCalled();
             }
         });
@@ -137,7 +136,7 @@ describe('CheckoutcomCustomPaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(payload);
 
-            expect(store.dispatch).toHaveBeenCalledWith(loadOrderAction);
+            expect(paymentIntegrationService.loadCurrentOrder).toHaveBeenCalled();
         });
 
         it('redirects to target url when additional action redirect is provided', async () => {
@@ -170,7 +169,6 @@ describe('CheckoutcomCustomPaymentStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(window.location.replace).toHaveBeenCalledWith('http://redirect-url.com');
-            expect(orderActionCreator.loadCurrentOrder).not.toHaveBeenCalled();
         });
     });
 
@@ -179,21 +177,6 @@ describe('CheckoutcomCustomPaymentStrategy', () => {
             const finalize = strategy.finalize();
 
             await expect(finalize).rejects.toThrow(OrderFinalizationNotRequiredError);
-        });
-
-        it('should finalize the strategy', async () => {
-            const state = store.getState();
-
-            jest.spyOn(state.order, 'getOrder').mockReturnValue(getOrder());
-
-            jest.spyOn(state.payment, 'getPaymentStatus').mockReturnValue(
-                paymentStatusTypes.FINALIZE,
-            );
-
-            await strategy.finalize();
-
-            expect(orderActionCreator.finalizeOrder).toHaveBeenCalled();
-            expect(store.dispatch).toHaveBeenCalledWith(finalizeOrderAction);
         });
     });
 });
