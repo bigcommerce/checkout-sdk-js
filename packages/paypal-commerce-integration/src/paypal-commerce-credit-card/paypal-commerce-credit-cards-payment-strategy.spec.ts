@@ -519,6 +519,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                 paymentData: {
                     shouldSaveInstrument: false,
                     shouldSetAsDefaultInstrument: false,
+                    instrumentId: 'bc_instrument_id',
                     formattedPayload: {
                         bigpay_token: {
                             verification_nonce: 'vaultSetupToken',
