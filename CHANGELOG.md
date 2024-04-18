@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.585.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.585.0...v1.585.1) (2024-04-18)
+
+
+### Code Refactoring
+
+* **payment:** PI-650 created adyen googlepay payment strategies outside core package ([#2452](https://github.com/bigcommerce/checkout-sdk-js/issues/2452)) ([7cd82fe](https://github.com/bigcommerce/checkout-sdk-js/commit/7cd82fe4b16ac415ff1a592eee7ae811e740023d))
+
 ## [1.585.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.584.0...v1.585.0) (2024-04-17)
 
 
