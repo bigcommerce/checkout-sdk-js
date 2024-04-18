@@ -267,15 +267,25 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
     }
 
     private async _getBraintreeDeviceData() {
-        const data = await this._braintreeIntegrationService.getDataCollector();
+        const braintreePaymentMethod: PaymentMethod = this._paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow(ApplePayGatewayType.BRAINTREE);
 
-        return data.deviceData;
+        if (braintreePaymentMethod.clientToken) {
+            const data = await this._braintreeIntegrationService.getDataCollector();
+
+            return data.deviceData;
+        }
     }
 
     private async _initializeBraintreeIntegrationService() {
-        const state = await this._paymentIntegrationService.loadPaymentMethod(
-            ApplePayGatewayType.BRAINTREE,
-        );
+        try {
+            await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
+        } catch (_) {
+            return;
+        }
+
+        const state = this._paymentIntegrationService.getState();
 
         const storeConfig = state.getStoreConfigOrThrow();
 
