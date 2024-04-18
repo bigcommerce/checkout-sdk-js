@@ -10,3 +10,4 @@ export { default as AdyenV2PaymentInitializeOptions } from './adyenv2/adyenv2-in
 export { default as isAccountState } from './utils/is-account-state';
 export { default as isCardState } from './utils/is-card-state';
 export { default as isBoletoState } from './utils/is-boleto-state';
+export { default as isAdditionalActionRequiredErrorResponse } from './utils/is-additional-action-error-response';
