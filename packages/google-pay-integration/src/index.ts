@@ -1,6 +1,8 @@
 export { WithGooglePayPaymentInitializeOptions } from './google-pay-payment-initialize-options';
 export { WithGooglePayCustomerInitializeOptions } from './google-pay-customer-initialize-options';
 
+export { default as createGooglePayAdyenV2PaymentStrategy } from './factories/payment/create-google-pay-adyenv2-payment-strategy';
+export { default as createGooglePayAdyenV3PaymentStrategy } from './factories/payment/create-google-pay-adyenv3-payment-strategy';
 export { default as createGooglePayAuthorizeNetPaymentStrategy } from './factories/payment/create-google-pay-authorizenet-payment-strategy';
 export { default as createGooglePayCheckoutComPaymentStrategy } from './factories/payment/create-google-pay-checkoutcom-payment-strategy';
 export { default as createGooglePayCybersourcePaymentStrategy } from './factories/payment/create-google-pay-cybersource-payment-strategy';
