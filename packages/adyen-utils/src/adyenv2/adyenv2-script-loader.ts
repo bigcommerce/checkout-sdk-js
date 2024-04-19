@@ -17,11 +17,27 @@ export default class AdyenV2ScriptLoader {
                 `https://checkoutshopper-${
                     configuration.environment ?? ''
                 }.adyen.com/checkoutshopper/sdk/3.10.1/adyen.css`,
+                {
+                    prepend: false,
+                    attributes: {
+                        integrity:
+                            'sha384-8ofgICZZ/k5cC5N7xegqFZOA73H9RQ7H13439JfAZW8Gj3qjuKL2isaTD3GMIhDE',
+                        crossorigin: 'anonymous',
+                    },
+                },
             ),
             this._scriptLoader.loadScript(
                 `https://checkoutshopper-${
                     configuration.environment ?? ''
                 }.adyen.com/checkoutshopper/sdk/3.10.1/adyen.js`,
+                {
+                    async: true,
+                    attributes: {
+                        integrity:
+                            'sha384-wG2z9zSQo61EIvyXmiFCo+zB3y0ZB4hsrXVcANmpP8HLthjoQJQPBh7tZKJSV8jA',
+                        crossorigin: 'anonymous',
+                    },
+                },
             ),
         ]);
 

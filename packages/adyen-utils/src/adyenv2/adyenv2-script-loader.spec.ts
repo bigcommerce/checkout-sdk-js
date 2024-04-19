@@ -26,6 +26,22 @@ describe('AdyenV2ScriptLoader', () => {
         const jsUrl = 'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.js';
         const cssUrl =
             'https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.css';
+        const cssOptions = {
+            prepend: false,
+            attributes: {
+                integrity:
+                    'sha384-8ofgICZZ/k5cC5N7xegqFZOA73H9RQ7H13439JfAZW8Gj3qjuKL2isaTD3GMIhDE',
+                crossorigin: 'anonymous',
+            },
+        };
+        const jsOptions = {
+            async: true,
+            attributes: {
+                integrity:
+                    'sha384-wG2z9zSQo61EIvyXmiFCo+zB3y0ZB4hsrXVcANmpP8HLthjoQJQPBh7tZKJSV8jA',
+                crossorigin: 'anonymous',
+            },
+        };
 
         beforeEach(() => {
             scriptLoader.loadScript = jest.fn(() => {
@@ -44,8 +60,8 @@ describe('AdyenV2ScriptLoader', () => {
         it('loads the JS and CSS', async () => {
             await adyenV2ScriptLoader.load(configuration);
 
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith(jsUrl);
-            expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(cssUrl);
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(jsUrl, jsOptions);
+            expect(stylesheetLoader.loadStylesheet).toHaveBeenCalledWith(cssUrl, cssOptions);
         });
 
         it('returns the JS from the window', async () => {
