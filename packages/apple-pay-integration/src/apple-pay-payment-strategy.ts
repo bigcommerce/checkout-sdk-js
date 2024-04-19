@@ -1,5 +1,4 @@
 import { RequestSender } from '@bigcommerce/request-sender';
-import { noop } from 'lodash';
 
 import { BraintreeIntegrationService } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -300,7 +299,7 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
                 storeConfig,
             );
         } catch (_) {
-            return noop();
+            // we don't need to do anything in this block
         }
     }
 }

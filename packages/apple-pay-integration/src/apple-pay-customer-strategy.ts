@@ -575,7 +575,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
                 storeConfig,
             );
         } catch (_) {
-            return noop();
+            // we don't need to do anything in this block
         }
     }
 }
