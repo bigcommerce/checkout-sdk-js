@@ -265,7 +265,7 @@ export interface PayPalCommerceConnectCardComponentMethods {
     getPaymentToken(
         options: PayPalFastlaneGetPaymentTokenOptions,
     ): Promise<PayPalFastlaneProfileCard>; // TODO: this method does not support by PayPal Connect
-    render(element: string): void;
+    render(element: string): Promise<void>;
 }
 
 export interface PayPalCommerceConnectCardComponentOptions {
@@ -350,9 +350,9 @@ export interface PayPalFastlane {
     identity: PayPalFastlaneIdentity;
     events: PayPalFastlaneEvents;
     profile: PayPalFastlaneProfile;
-    FastlaneCardComponent(
-        options: PayPalFastlaneCardComponentOptions,
-    ): PayPalFastlaneCardComponentMethods;
+    FastlanePaymentComponent(
+        options: PayPalFastlanePaymentComponentOptions,
+    ): Promise<PayPalFastlanePaymentComponentMethods>;
 }
 
 export interface PayPalFastlaneOptions {
@@ -479,7 +479,7 @@ export interface PayPalFastlaneCardSelectorResponse {
     selectedCard: PayPalFastlaneProfileCard;
 }
 
-export interface PayPalFastlaneCardComponentMethods {
+export interface PayPalFastlanePaymentComponentMethods {
     tokenize(options: PayPalFastlaneTokenizeOptions): Promise<PayPalFastlaneTokenizeResult>; // TODO: remove with PayPal Connect implementation
     getPaymentToken(
         options: PayPalFastlaneGetPaymentTokenOptions,
@@ -487,14 +487,14 @@ export interface PayPalFastlaneCardComponentMethods {
     render(element: string): void;
 }
 
-export interface PayPalFastlaneCardComponentOptions {
-    fields?: PayPalFastlaneCardComponentFields;
+export interface PayPalFastlanePaymentComponentOptions {
+    fields?: PayPalFastlanePaymentComponentFields;
 }
 
-export interface PayPalFastlaneCardComponentFields {
-    [key: string]: PayPalFastlaneCardComponentField;
+export interface PayPalFastlanePaymentComponentFields {
+    [key: string]: PayPalFastlanePaymentComponentField;
 }
-export interface PayPalFastlaneCardComponentField {
+export interface PayPalFastlanePaymentComponentField {
     placeholder?: string;
     prefill?: string;
 }

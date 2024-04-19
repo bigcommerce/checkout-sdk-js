@@ -185,7 +185,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
         jest.spyOn(
             braintreeFastlaneUtils,
             'getBraintreeFastlaneComponentOrThrow',
-        ).mockImplementation(() => braintreeFastlaneMock.FastlaneCardComponent);
+        ).mockImplementation(() => braintreeFastlaneMock.FastlanePaymentComponent);
         jest.spyOn(braintreeFastlaneUtils, 'getDeviceSessionId').mockImplementation(
             () => deviceSessionId,
         );
@@ -193,7 +193,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
             tokenize: () => ({ nonce: 'nonce' }),
             render: jest.fn(),
         }));
-        jest.spyOn(braintreeFastlaneMock, 'FastlaneCardComponent').mockImplementation(() => ({
+        jest.spyOn(braintreeFastlaneMock, 'FastlanePaymentComponent').mockImplementation(() => ({
             tokenize: () => ({ nonce: 'nonce' }),
             render: jest.fn(),
         }));
@@ -487,9 +487,11 @@ describe('BraintreeFastlanePaymentStrategy', () => {
 
             container.id = 'pp-fastlane-container-id';
 
-            jest.spyOn(braintreeFastlaneMock, 'FastlaneCardComponent').mockImplementation(() => ({
-                render: renderMethodMock,
-            }));
+            jest.spyOn(braintreeFastlaneMock, 'FastlanePaymentComponent').mockImplementation(
+                () => ({
+                    render: renderMethodMock,
+                }),
+            );
 
             await strategy.initialize(initializationOptions);
 
@@ -700,10 +702,12 @@ describe('BraintreeFastlanePaymentStrategy', () => {
 
             const tokenizeMethodMock = jest.fn().mockReturnValue({ id: 'nonce' });
 
-            jest.spyOn(braintreeFastlaneMock, 'FastlaneCardComponent').mockImplementation(() => ({
-                getPaymentToken: tokenizeMethodMock,
-                render: jest.fn,
-            }));
+            jest.spyOn(braintreeFastlaneMock, 'FastlanePaymentComponent').mockImplementation(
+                () => ({
+                    getPaymentToken: tokenizeMethodMock,
+                    render: jest.fn,
+                }),
+            );
 
             await strategy.initialize(defaultInitializationOptions);
             await strategy.execute(executeOptions);
