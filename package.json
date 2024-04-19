@@ -62,7 +62,7 @@
     "@types/card-validator": "^4.1.0",
     "@types/iframe-resizer": "^3.5.9",
     "@types/reselect": "^2.2.0",
-    "@types/shallowequal": "^1.1.1",
+    "@types/shallowequal": "^1.1.5",
     "card-validator": "^6.2.0",
     "core-js": "^3.31.0",
     "current-script-polyfill": "^1.0.0",
