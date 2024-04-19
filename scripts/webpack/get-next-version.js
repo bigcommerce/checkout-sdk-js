@@ -6,9 +6,12 @@ const packageJson = require('../../package.json');
 
 function getNextVersion() {
     return new Promise((resolve, reject) => {
-        // If the current commit is the latest tagged commit, just return current
+        // If webpack in the watch mode or the current commit is the latest tagged commit, just return current
         // version because there is no new commit ahead of it.
-        if (execSync('git describe').toString().trim() === `v${packageJson.version}`) {
+        if (
+            process.env.WATCH ||
+            execSync('git describe').toString().trim() === `v${packageJson.version}`
+        ) {
             return resolve(packageJson.version);
         }
 
@@ -21,11 +24,14 @@ function getNextVersion() {
             // For pre-releases, append the commit hash to the version number to
             // ensure that the version number is always unique.
             if (process.env.PRERELEASE) {
-                const prereleaseType = ['alpha', 'beta'].includes(process.env.PRERELEASE) ? process.env.PRERELEASE : 'alpha';
+                const prereleaseType = ['alpha', 'beta'].includes(process.env.PRERELEASE)
+                    ? process.env.PRERELEASE
+                    : 'alpha';
 
                 return resolve(
-                    semver.inc(packageJson.version, 'prerelease', prereleaseType)
-                        .replace(/\.\d+$/, '.' + execSync('git rev-parse HEAD').toString().trim())
+                    semver
+                        .inc(packageJson.version, 'prerelease', prereleaseType)
+                        .replace(/\.\d+$/, `.${execSync('git rev-parse HEAD').toString().trim()}`),
                 );
             }
 
