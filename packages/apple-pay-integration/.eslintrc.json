@@ -1,0 +1,33 @@
+{
+    "extends": ["../../.eslintrc.json"],
+    "ignorePatterns": ["!**/*"],
+    "overrides": [
+        {
+            "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+            "rules": {
+                "@typescript-eslint/naming-convention": "off",
+                "@typescript-eslint/no-unsafe-assignment": "off",
+                "@typescript-eslint/no-misused-promises": "off",
+                "@typescript-eslint/no-unsafe-member-access": "off",
+                "@typescript-eslint/restrict-template-expressions": "off",
+                "@typescript-eslint/require-await": "off",
+                "@typescript-eslint/no-unsafe-argument": "off"
+            }
+        },
+        {
+            "files": ["*.spec.ts"],
+            "rules": {
+                "@typescript-eslint/no-unsafe-assignment": "off",
+                "@typescript-eslint/consistent-type-assertions": "off",
+                "@typescript-eslint/no-explicit-any": "off",
+                "@typescript-eslint/no-unsafe-argument": "off",
+                "@typescript-eslint/await-thenable": "off",
+                "jest/no-conditional-expect": "off",
+                "@typescript-eslint/no-floating-promises": "off",
+                "jest/valid-expect": "off",
+                "@typescript-eslint/no-unnecessary-condition": "off",
+                "@typescript-eslint/no-unsafe-call": "off"
+            }
+        }
+    ]
+}

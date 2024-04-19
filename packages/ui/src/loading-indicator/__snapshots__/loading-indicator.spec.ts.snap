@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoadingIndicator inserts loading indicator element into container 1`] = `
+<div
+  style="display: block; bottom: 0px; left: 0px; height: 100%; width: 100%; position: absolute; right: 0px; top: 0px; opacity: 1; visibility: visible;"
+>
+  <div
+    style="display: block; width: 70px; height: 70px; border-radius: 70px; border: 1px solid; border-color: #ffffff #ffffff #d9d9d9 #d9d9d9; margin: 0px auto; position: absolute; left: 0px; right: 0px; top: 50%; transform: translateY(-50%) rotate(0deg);"
+  />
+</div>
+`;

@@ -1,0 +1,9 @@
+{
+    "extends": "./checkout-sdk.json",
+    "project": {
+        "entryPointSourceFile": "../../temp/core/src/bundles/internal-mappers.d.ts"
+    },
+    "dtsRollup": {
+        "mainDtsRollupPath": "internal-mappers.d.ts"
+    }
+}

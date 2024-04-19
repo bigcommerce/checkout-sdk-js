@@ -1,0 +1,17 @@
+{
+    "scopes": [
+        "billing",
+        "cart",
+        "checkout",
+        "checkout-button",
+        "common",
+        "embedded-checkout",
+        "forms",
+        "order",
+        "payment",
+        "shipping",
+        "shopper",
+        "spam-protection",
+        "extension"
+    ]
+}

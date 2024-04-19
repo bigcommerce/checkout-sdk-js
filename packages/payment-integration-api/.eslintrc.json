@@ -1,0 +1,22 @@
+{
+    "extends": ["../../.eslintrc.json"],
+    "ignorePatterns": ["!**/*"],
+    "overrides": [
+        {
+            "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+            "rules": {
+                "@typescript-eslint/no-explicit-any": "off",
+                "@typescript-eslint/ban-types": "off",
+                "@typescript-eslint/naming-convention": "off",
+                "@typescript-eslint/no-unsafe-member-access": "off",
+                "@typescript-eslint/no-unnecessary-condition": "off",
+                "@typescript-eslint/no-unsafe-assignment": "off",
+                "jsdoc/check-tag-names": "off",
+                "@typescript-eslint/consistent-type-assertions": "off",
+                "no-proto": "off",
+                "@typescript-eslint/no-unsafe-return": "off",
+                "@typescript-eslint/no-unsafe-call": "off"
+            }
+        }
+    ]
+}

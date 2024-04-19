@@ -1,0 +1,21 @@
+{
+    "extends": ["../../.eslintrc.json"],
+    "ignorePatterns": ["!**/*"],
+    "overrides": [
+        {
+            "files": ["*.ts", "*.tsx"],
+            "rules": {
+                "@typescript-eslint/naming-convention": "off"
+            }
+        },
+        {
+            "files": ["*.spec.ts", "*.spec.tsx"],
+            "rules": {
+                "@typescript-eslint/no-non-null-assertion": "off",
+                "@typescript-eslint/consistent-type-assertions": "off",
+                "@typescript-eslint/no-unsafe-return": "off",
+                "@typescript-eslint/no-unsafe-assignment": "off"
+            }
+        }
+    ]
+}

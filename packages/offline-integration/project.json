@@ -1,0 +1,22 @@
+{
+    "root": "packages/offline-integration",
+    "sourceRoot": "packages/offline-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/offline-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/offline-integration"],
+            "options": {
+                "jestConfig": "packages/offline-integration/jest.config.js"
+            }
+        }
+    },
+    "tags": ["scope:shared"]
+}

@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`extendInterface extends interface with other matching interfaces 1`] = `
+"import { FoobarInterface } from '../__fixtures__/foobar-interface';
+import { InterfaceA } from '../__fixtures__/interface-a';
+import { InterfaceB } from '../__fixtures__/interface-b';
+export type ExtendedInterface = FoobarInterface & InterfaceA & InterfaceB;
+"
+`;
+
+exports[`extendInterface handles scenario where no matching interface is found 1`] = `
+"import { FoobarInterface } from '../__fixtures__/foobar-interface';
+export type ExtendedDummyInterface = FoobarInterface;
+"
+`;

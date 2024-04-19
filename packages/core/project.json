@@ -1,0 +1,129 @@
+{
+    "root": "packages/core",
+    "sourceRoot": "packages/core/src",
+    "projectType": "library",
+    "targets": {
+        "build": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "command": "webpack --config webpack.config.js"
+            },
+            "dependsOn": [
+                {
+                    "target": "generate",
+                    "projects": "self"
+                },
+                {
+                    "target": "build",
+                    "projects": "dependencies"
+                }
+            ]
+        },
+        "build-watch": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "command": "webpack --config webpack.config.js --config-name cjs --watch --progress"
+            },
+            "dependsOn": [
+                {
+                    "target": "generate",
+                    "projects": "self"
+                },
+                {
+                    "target": "build",
+                    "projects": "dependencies"
+                }
+            ]
+        },
+        "build-cdn": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "parallel": false,
+                "commands": [
+                    "webpack --config webpack-cdn.config.js --config-name umd",
+                    "webpack --config webpack-cdn.config.js --config-name umd-loader"
+                ]
+            },
+            "dependsOn": [
+                {
+                    "target": "generate",
+                    "projects": "self"
+                },
+                {
+                    "target": "build",
+                    "projects": "dependencies"
+                }
+            ]
+        },
+        "build-dts": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "cwd": "packages/core",
+                "parallel": false,
+                "commands": [
+                    "tsc --outDir ../../temp --declaration --emitDeclarationOnly",
+                    "api-extractor run --config api-extractor/checkout-sdk.json & api-extractor run --config api-extractor/checkout-button.json & api-extractor run --config api-extractor/embedded-checkout.json & api-extractor run --config api-extractor/internal-mappers.json",
+                    "rm -rf ../../temp"
+                ]
+            }
+        },
+        "docs": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "cwd": "packages/core",
+                "parallel": false,
+                "commands": [
+                    "mkdir -p src/generated && cp ../../dist/checkout-sdk.d.ts src/generated/checkout-sdk.d.ts",
+                    "typedoc --plugin typedoc-plugin-markdown --options typedoc.json --tsconfig tsconfig.json src/generated/checkout-sdk.d.ts"
+                ]
+            },
+            "dependsOn": [
+                {
+                    "target": "build-dts",
+                    "projects": "self"
+                }
+            ]
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "fix": true,
+            "options": {
+                "lintFilePatterns": ["packages/core/**/*.ts"]
+            },
+            "dependsOn": [
+                {
+                    "target": "generate",
+                    "projects": "self"
+                }
+            ]
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/core"],
+            "options": {
+                "jestConfig": "packages/core/jest.config.js",
+                "passWithNoTests": true,
+                "runInBand": true
+            },
+            "dependsOn": [
+                {
+                    "target": "generate",
+                    "projects": "self"
+                }
+            ]
+        },
+        "generate": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "commands": [
+                    "npx nx generate @bigcommerce/checkout-sdk/workspace-tools:auto-export --projectName=core",
+                    "npx nx generate @bigcommerce/checkout-sdk/workspace-tools:extend-interface --projectName=core",
+                    "npx nx generate @bigcommerce/checkout-sdk/workspace-tools:create-enum --projectName=core"
+                ],
+                "parallel": false
+            }
+        }
+    },
+    "tags": ["scope:core"]
+}

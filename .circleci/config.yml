@@ -1,0 +1,183 @@
+aliases:
+  - &node_executor
+      executor:
+        name: node/node
+        node-version: "18.17"
+
+version: 2.1
+
+orbs:
+  ci: bigcommerce/internal@volatile
+  node: bigcommerce/internal-node@volatile
+  security: bigcommerce/internal-security@volatile
+
+jobs:
+  test-packages:
+    <<: *node_executor
+    resource_class: medium+
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run:
+          name: "Run unit tests for packages"
+          command: npm run test:others
+
+  test-core:
+    <<: *node_executor
+    parallelism: 2
+    resource_class: medium+
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run: mkdir ~/junit
+      - run:
+          name: "Run unit tests for core package"
+          command: |
+            TEST=$(circleci tests glob "packages/core/**/*.spec.ts" | circleci tests split --split-by=timings)
+            npx nx run core:generate
+            npm test $TEST -- --runInBand
+      - run:
+          command: cp junit.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
+  test:
+    <<: *node_executor
+    resource_class: medium+
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run:
+          name: "Run unit tests"
+          command: npm run test:series -- --coverage
+    
+  lint:
+    <<: *node_executor
+    resource_class: medium+
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run:
+          name: "Run lint"
+          command: npm run lint
+
+  build:
+    <<: *node_executor
+    resource_class: medium+
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run:
+          name: "Build distribution files"
+          command: npm run build && npm run docs
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
+            - docs
+
+  npm_release:
+    <<: *node_executor
+    resource_class: medium+
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run:
+          name: "Configure Git user"
+          command: |
+            git config user.email $GIT_USER_EMAIL
+            git config user.name $GIT_USER_NAME
+      - run:
+          name: "Remove old release files"
+          command: rm -rf dist docs
+      - attach_workspace:
+          at: .
+      - run:
+          name: "Create and tag new release"
+          command: npm run release:version
+      - run:
+          name: "Push commits and tag to GitHub"
+          command: |
+            git push --follow-tags origin $CIRCLE_BRANCH
+      - run:
+          name: "Publish release to NPM"
+          command: |
+            echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > .npmrc
+            npm publish
+
+  build_cdn:
+    <<: *node_executor
+    resource_class: medium+
+    steps:
+      - ci/pre-setup
+      - node/npm-install
+      - run:
+          name: Build artifact for CDN deployment
+          command: npm run build-cdn
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - dist-cdn
+      - ci/notify-failure
+
+workflows:
+  version: 2
+
+  default:
+    jobs:
+      - test-core
+      - test-packages
+      - lint
+      - build
+      - ci/validate-commits
+
+      # Only build and push CDN artifact when commits are merged to canonical repo
+      - build_cdn:
+          context: "GCR + Artifact Bucket Access"
+          filters:
+            branches:
+              ignore: /pull\/[0-9]+/
+          requires:
+            - test-core
+            - test-packages
+            - lint
+            - build
+            - ci/validate-commits
+      - ci/build-js-artifact:
+          context: "GCR + Artifact Bucket Access"
+          dist_directory: dist-cdn
+          prepare_dist_directory:
+            - attach_workspace:
+                at: ~/repo
+          requires:
+            - build_cdn
+      - ci/notify-success:
+          context: "GCR + Artifact Bucket Access"
+          requires:
+            - ci/build-js-artifact
+      - security/scan:
+          name: "Gitleaks secrets scan"
+          filters:
+            branches:
+              ignore: /pull\/[0-9]+/
+          context: org-global
+          GITLEAKS_BLOCK: "false"
+
+      # Only release to NPM registry when commits are merged to master and new version is approved
+      - approve_npm_release:
+          type: approval
+          filters:
+            branches:
+              only: master
+          requires:
+            - test-core
+            - test-packages
+            - lint
+            - build
+            - ci/validate-commits
+      - npm_release:
+          requires:
+            - approve_npm_release

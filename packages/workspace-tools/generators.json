@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "name": "workspace-tools",
+  "version": "0.0.1",
+  "generators": {
+    "auto-export": {
+      "factory": "./src/generators/auto-export/generator",
+      "schema": "./src/generators/auto-export/schema.json",
+      "description": "auto-export generator"
+    },
+    "extend-interface": {
+      "factory": "./src/generators/extend-interface/generator",
+      "schema": "./src/generators/extend-interface/schema.json",
+      "description": "extend-interface generator"
+    },
+    "create-enum": {
+      "factory": "./src/generators/create-enum/generator",
+      "schema": "./src/generators/create-enum/schema.json",
+      "description": "create-enum generator"
+    }
+  }
+}

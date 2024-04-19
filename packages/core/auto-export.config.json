@@ -1,0 +1,19 @@
+{
+    "entries": [
+        {
+            "inputPath": "packages/*/src/index.ts",
+            "outputPath": "packages/core/src/generated/payment-strategies.ts",
+            "memberPattern": "^create.+PaymentStrategy$"
+        },
+        {
+            "inputPath": "packages/*/src/index.ts",
+            "outputPath": "packages/core/src/generated/customer-strategies.ts",
+            "memberPattern": "^create.+CustomerStrategy$"
+        },
+        {
+            "inputPath": "packages/*/src/index.ts",
+            "outputPath": "packages/core/src/generated/checkout-button-strategies.ts",
+            "memberPattern": "^create.+ButtonStrategy$"
+        }
+    ]
+}

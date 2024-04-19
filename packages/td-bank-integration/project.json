@@ -1,0 +1,23 @@
+{
+    "root": "packages/td-bank-integration",
+    "sourceRoot": "packages/td-bank-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/td-bank-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/td-bank-integration"],
+            "options": {
+                "jestConfig": "packages/td-bank-integration/jest.config.js",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": ["scope:integration"]
+}

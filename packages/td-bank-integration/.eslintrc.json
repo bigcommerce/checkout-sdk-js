@@ -1,0 +1,14 @@
+{
+    "extends": ["../../.eslintrc.json"],
+    "ignorePatterns": ["!**/*"],
+    "overrides": [
+        {
+            "files": ["*.spec.ts", "*.spec.tsx"],
+            "rules": {
+                "@typescript-eslint/no-unsafe-call": "off",
+                "@typescript-eslint/no-unsafe-assignment": "off"
+            }
+        }
+    ]
+}
+

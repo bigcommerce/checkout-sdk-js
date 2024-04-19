@@ -1,0 +1,93 @@
+## Checkout team
+
+* @bigcommerce/team-checkout
+/packages/core @bigcommerce/team-checkout
+/packages/payment-integration @bigcommerce/team-checkout
+/packages/payment-integration-test-utils @bigcommerce/team-checkout
+
+
+## Integrations team
+
+/packages/core/src/checkout-buttons/strategies/amazon-pay-v2 @bigcommerce/team-integrations
+/packages/core/src/checkout-buttons/strategies/masterpass @bigcommerce/team-integrations
+/packages/core/src/customer/strategies/amazon-pay-v2 @bigcommerce/team-integrations
+/packages/core/src/customer/strategies/chasepay @bigcommerce/team-integrations
+/packages/core/src/customer/strategies/masterpass @bigcommerce/team-integrations
+/packages/core/src/customer/strategies/square @bigcommerce/team-integrations
+/packages/core/src/customer/strategies/stripe-upe @bigcommerce/team-integrations
+/packages/core/src/shipping/strategies/amazon-pay-v2 @bigcommerce/team-integrations
+/packages/core/src/shipping/strategies/stripe-upe @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/adyenv2 @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/adyenv3 @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/affirm @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/afterpay @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/amazon-pay-v2 @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/barclays @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/bluesnapv2 @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/bnz @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/cardinal @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/cba-mpgs @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/chasepay @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/checkoutcom @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/checkoutcom-custom @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/clearpay @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/converge @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/cybersource @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/cybersourcev2 @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/digitalriver @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/humm @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/klarna @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/klarnav2 @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/masterpass @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/moneris @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/opy @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/ppsdk @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/quadpay @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/sage-pay @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/square @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/stripe-upe @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/stripev3 @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/wepay @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/worldpayaccess @bigcommerce/team-integrations
+/packages/core/src/payment/strategies/zip @bigcommerce/team-integrations
+
+/packages/adyen-integration @bigcommerce/team-integrations
+/packages/adyen-utils @bigcommerce/team-integrations
+/packages/affirm-integration @bigcommerce/team-integrations
+/packages/amazon-pay-utils @bigcommerce/team-integrations
+/packages/bluesnap-direct-integration @bigcommerce/team-integrations
+/packages/bolt-integration @bigcommerce/team-integrations
+/packages/mollie-integration @bigcommerce/team-integrations
+/packages/squarev2-integration @bigcommerce/team-integrations
+/packages/stripe-integration @bigcommerce/team-integrations
+/packages/td-bank-integration @bigcommerce/team-integrations
+/packages/klarna-integration @bigcommerce/team-integrations
+
+
+## PayPal team
+
+/packages/core/src/analytics/braintree-analytic-tracker @bigcommerce/team-paypal
+/packages/core/src/analytics/paypal-commerce-analytic-tracker @bigcommerce/team-paypal
+/packages/core/src/checkout-buttons/strategies/braintree @bigcommerce/team-paypal
+/packages/core/src/checkout-buttons/strategies/paypal @bigcommerce/team-paypal
+/packages/core/src/customer/strategies/braintree @bigcommerce/team-paypal
+/packages/core/src/shipping/strategies/braintree @bigcommerce/team-paypal
+/packages/core/src/shipping/strategies/paypal-commerce @bigcommerce/team-paypal
+/packages/core/src/payment/strategies/braintree @bigcommerce/team-paypal
+/packages/core/src/payment/strategies/paypal @bigcommerce/team-paypal
+
+/packages/braintree-integration @bigcommerce/team-paypal
+/packages/braintree-utils @bigcommerce/team-paypal
+/packages/paypal-express-integration @bigcommerce/team-paypal
+/packages/paypal-commerce-integration @bigcommerce/team-paypal
+/packages/paypal-commerce-utils @bigcommerce/team-paypal
+
+
+## Shared
+
+/packages/core/src/checkout-buttons/strategies/googlepay @bigcommerce/team-checkout @bigcommerce/team-integrations @bigcommerce/team-paypal
+/packages/core/src/customer/strategies/googlepay @bigcommerce/team-checkout @bigcommerce/team-integrations @bigcommerce/team-paypal
+/packages/core/src/payment/strategies/googlepay @bigcommerce/team-checkout @bigcommerce/team-integrations @bigcommerce/team-paypal
+
+/packages/apple-pay @bigcommerce/team-checkout @bigcommerce/team-integrations @bigcommerce/team-paypal
+/packages/google-pay-integration @bigcommerce/team-checkout @bigcommerce/team-integrations @bigcommerce/team-paypal

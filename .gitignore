@@ -1,0 +1,13 @@
+*.log
+/webpack-stats.json
+/coverage
+/node_modules
+/temp
+/dist/tsdoc-metadata.json
+/dist-server
+/dist-cdn
+/dist-tools
+/packages/**/generated
+.idea
+.vscode
+junit.xml

@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`autoExport() export matching members from files to another file 1`] = `
+"export { StrategyA } from '../__fixtures__/strategy-a';
+export { StrategyB } from '../__fixtures__/strategy-b';
+"
+`;
+
+exports[`autoExport() handles scenario where no matching member is found 1`] = `""`;

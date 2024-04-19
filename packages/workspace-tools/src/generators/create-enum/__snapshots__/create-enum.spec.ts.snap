@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createEnum() export matching members from files to another file 1`] = `
+"enum Type {
+    TYPEA = \\"typeA\\",
+    TYPEB = \\"typeB\\"
+}
+export default Type;
+"
+`;
+
+exports[`createEnum() handles scenario where no matching member is found 1`] = `
+"enum Type {
+}
+export default Type;
+"
+`;

@@ -1,0 +1,28 @@
+{
+    "entries": [
+        {
+            "inputPath": "packages/*/src/index.ts",
+            "outputPath": "packages/core/src/generated/payment-initialize-options.ts",
+            "outputMemberName": "PaymentInitializeOptions",
+            "memberPattern": "^With.+PaymentInitializeOptions$",
+            "targetPath": "packages/core/src/payment/index.ts",
+            "targetMemberName": "BasePaymentInitializeOptions"
+        },
+        {
+            "inputPath": "packages/*/src/index.ts",
+            "outputPath": "packages/core/src/generated/customer-initialize-options.ts",
+            "outputMemberName": "CustomerInitializeOptions",
+            "memberPattern": "^With.+CustomerInitializeOptions$",
+            "targetPath": "packages/core/src/customer/index.ts",
+            "targetMemberName": "BaseCustomerInitializeOptions"
+        },
+        {
+            "inputPath": "packages/*/src/index.ts",
+            "outputPath": "packages/core/src/generated/checkout-button-initialize-options.ts",
+            "outputMemberName": "CheckoutButtonInitializeOptions",
+            "memberPattern": "^With.+ButtonInitializeOptions$",
+            "targetPath": "packages/core/src/checkout-buttons/index.ts",
+            "targetMemberName": "BaseCheckoutButtonInitializeOptions"
+        }
+    ]
+}

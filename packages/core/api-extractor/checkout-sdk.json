@@ -1,0 +1,22 @@
+{
+    "compiler": {
+        "configType": "tsconfig",
+        "rootFolder": "."
+    },
+    "project": {
+        "entryPointSourceFile": "../../temp/core/src/bundles/checkout-sdk.d.ts"
+    },
+    "validationRules": {
+        "missingReleaseTags": "allow"
+    },
+    "apiReviewFile": {
+        "enabled": false
+    },
+    "apiJsonFile": {
+        "enabled": false
+    },
+    "dtsRollup": {
+        "enabled": true,
+        "mainDtsRollupPath": "checkout-sdk.d.ts"
+    }
+}

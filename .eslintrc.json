@@ -1,0 +1,59 @@
+{
+    "extends": ["@bigcommerce/eslint-config"],
+    "parser": "@typescript-eslint/parser",
+    "root": true,
+    "plugins": ["@nrwl/nx"],
+    "env": {
+        "browser": true
+    },
+    "settings": {
+        "import/resolver": {
+            "typescript": {
+                "project": "./tsconfig.*?.json"
+            }
+        }
+    },
+    "parserOptions": {
+        "project": "./tsconfig.*?.json"
+    },
+    "overrides": [
+        {
+            "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+            "rules": {
+                "prettier/prettier": [
+                    "error",
+                    {
+                        "tabWidth": 4
+                    }
+                ],
+                "@nrwl/nx/enforce-module-boundaries": [
+                    "error",
+                    {
+                        "enforceBuildableLibDependency": false,
+                        "allow": [],
+                        "depConstraints": [
+                            {
+                                "sourceTag": "scope:core",
+                                "onlyDependOnLibsWithTags": ["scope:shared"]
+                            },
+                            {
+                                "sourceTag": "scope:shared",
+                                "onlyDependOnLibsWithTags": ["scope:shared"]
+                            },
+                            {
+                                "sourceTag": "scope:integration",
+                                "onlyDependOnLibsWithTags": ["scope:shared"]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "files": ["*.spec.ts"],
+            "rules": {
+                "@typescript-eslint/no-unsafe-assignment": "warn"
+            }
+        }
+    ]
+}
