@@ -21,8 +21,8 @@ import {
     PayPalCommerceInitializationData,
     PayPalCommerceSdk,
     PayPalFastlaneAuthenticationState,
-    PayPalFastlaneCardComponentMethods,
-    PayPalFastlaneCardComponentOptions,
+    PayPalFastlanePaymentComponentMethods,
+    PayPalFastlanePaymentComponentOptions,
     PayPalFastlanePaymentFormattedPayload,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
@@ -31,7 +31,7 @@ import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 import { WithPayPalCommerceFastlanePaymentInitializeOptions } from './paypal-commerce-fastlane-payment-initialize-options';
 
 export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
-    private paypalCardComponentMethods?: PayPalFastlaneCardComponentMethods;
+    private paypalComponentMethods?: PayPalFastlanePaymentComponentMethods;
 
     // TODO: remove this line when PayPal Fastlane experiment will be rolled out to 100%
     private isFastlaneEnabled = false;
@@ -129,10 +129,10 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             await this.runPayPalAuthenticationFlowOrThrow(methodId);
         }
 
-        this.initializePayPalCardComponent();
+        await this.initializePayPalPaymentComponent();
 
         paypalInitializeOptions.onInit((container: string) =>
-            this.renderPayPalCardComponent(container),
+            this.renderPayPalPaymentComponent(container),
         );
         paypalInitializeOptions.onChange(() => this.handlePayPalStoredInstrumentChange(methodId));
     }
@@ -260,11 +260,11 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
      * PayPal Fastlane Card Component rendering method
      *
      */
-    private initializePayPalCardComponent(): void {
+    private async initializePayPalPaymentComponent(): Promise<void> {
         const state = this.paymentIntegrationService.getState();
         const phone = state.getBillingAddress()?.phone;
 
-        const cardComponentOptions: PayPalFastlaneCardComponentOptions = {
+        const cardComponentOptions: PayPalFastlanePaymentComponentOptions = {
             fields: {
                 ...(phone && {
                     phoneNumber: {
@@ -277,18 +277,18 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         if (this.isFastlaneEnabled) {
             const paypalFastlane = this.paypalCommerceFastlaneUtils.getPayPalFastlaneOrThrow();
 
-            this.paypalCardComponentMethods =
-                paypalFastlane.FastlaneCardComponent(cardComponentOptions);
+            this.paypalComponentMethods = await paypalFastlane.FastlanePaymentComponent(
+                cardComponentOptions,
+            );
         } else {
             const paypalConnect = this.paypalCommerceFastlaneUtils.getPayPalConnectOrThrow();
 
-            this.paypalCardComponentMethods =
-                paypalConnect.ConnectCardComponent(cardComponentOptions);
+            this.paypalComponentMethods = paypalConnect.ConnectCardComponent(cardComponentOptions);
         }
     }
 
-    private renderPayPalCardComponent(container?: string): void {
-        const paypalCardComponentMethods = this.getPayPalCardComponentMethodsOrThrow();
+    private renderPayPalPaymentComponent(container?: string): void {
+        const paypalComponentMethods = this.getPayPalComponentMethodsOrThrow();
 
         if (!container) {
             throw new InvalidArgumentError(
@@ -296,15 +296,15 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             );
         }
 
-        paypalCardComponentMethods.render(container);
+        paypalComponentMethods.render(container);
     }
 
-    private getPayPalCardComponentMethodsOrThrow(): PayPalFastlaneCardComponentMethods {
-        if (!this.paypalCardComponentMethods) {
+    private getPayPalComponentMethodsOrThrow(): PayPalFastlanePaymentComponentMethods {
+        if (!this.paypalComponentMethods) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this.paypalCardComponentMethods;
+        return this.paypalComponentMethods;
     }
 
     /**
@@ -359,7 +359,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
 
-        const { getPaymentToken, tokenize } = this.getPayPalCardComponentMethodsOrThrow();
+        const { getPaymentToken, tokenize } = this.getPayPalComponentMethodsOrThrow();
 
         if (this.isFastlaneEnabled) {
             const { id } = await getPaymentToken({

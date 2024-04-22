@@ -377,6 +377,7 @@ describe('BraintreeScriptLoader', () => {
 
         it('loads PayPal checkout with Fastlane compatible version', async () => {
             const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
             braintreeScriptLoader.initialize(storeConfigWithFastlaneFeatureOn);
 
             const paypalCheckout = await braintreeScriptLoader.loadPaypalCheckout();

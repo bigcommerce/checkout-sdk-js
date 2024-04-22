@@ -103,6 +103,7 @@ export default class BraintreeIntegrationService {
         styles?: BraintreeFastlaneStylesOption,
     ): Promise<BraintreeFastlane> {
         if (isTestModeEnabled) {
+            window.localStorage.setItem('axoEnv', 'sandbox');
             window.localStorage.setItem('fastlaneEnv', 'sandbox');
         }
 

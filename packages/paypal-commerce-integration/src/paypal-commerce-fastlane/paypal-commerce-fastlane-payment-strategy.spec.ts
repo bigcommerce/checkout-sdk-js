@@ -470,7 +470,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
                 await strategy.initialize(initializationOptions);
 
-                expect(paypalFastlane.FastlaneCardComponent).toHaveBeenCalledWith({
+                expect(paypalFastlane.FastlanePaymentComponent).toHaveBeenCalledWith({
                     fields: {
                         phoneNumber: {
                             prefill: address.phone,
@@ -699,9 +699,9 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
             onInitCallback(containerId);
 
-            expect(paypalFastlane.FastlaneCardComponent({}).render).toHaveBeenCalledWith(
-                containerId,
-            );
+            const paypalFastlaneComponent = await paypalFastlane.FastlanePaymentComponent({});
+
+            expect(paypalFastlaneComponent.render).toHaveBeenCalledWith(containerId);
         });
     });
 
