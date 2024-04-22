@@ -100,9 +100,10 @@ describe('KlarnaV2PaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,
         );
-        jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
-            getEUBillingAddress(),
-        );
+        jest.spyOn(
+            paymentIntegrationService.getState(),
+            'getBillingAddressOrThrow',
+        ).mockReturnValue(getEUBillingAddress());
         jest.spyOn(paymentIntegrationService.getState(), 'getShippingAddress').mockReturnValue(
             getEUShippingAddress(),
         );
@@ -225,6 +226,9 @@ describe('KlarnaV2PaymentStrategy', () => {
         });
 
         it('authorizes against klarnav2', async () => {
+            const loadCheckoutMock = jest.spyOn(paymentIntegrationService, 'loadCheckout');
+            loadCheckoutMock.mockImplementation(() => Promise.resolve());
+
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
@@ -284,9 +288,10 @@ describe('KlarnaV2PaymentStrategy', () => {
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(paymentMethodMock);
 
-            jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
-                euBillingAddress.data,
-            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getBillingAddressOrThrow',
+            ).mockReturnValue(euBillingAddress.data);
 
             jest.spyOn(paymentIntegrationService.getState(), 'getShippingAddress').mockReturnValue(
                 getAddress(),
@@ -320,9 +325,10 @@ describe('KlarnaV2PaymentStrategy', () => {
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(paymentMethodMock);
 
-            jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
-                ocBillingAddress.data,
-            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getBillingAddressOrThrow',
+            ).mockReturnValue(ocBillingAddress.data);
 
             jest.spyOn(paymentIntegrationService.getState(), 'getShippingAddress').mockReturnValue(
                 getAddress(),
@@ -361,9 +367,10 @@ describe('KlarnaV2PaymentStrategy', () => {
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(paymentMethodMock);
 
-            jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
-                euBillingAddressWithNoPhone.data,
-            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getBillingAddressOrThrow',
+            ).mockReturnValue(euBillingAddressWithNoPhone.data);
 
             jest.spyOn(paymentIntegrationService.getState(), 'getShippingAddress').mockReturnValue(
                 getAddress(),
@@ -387,9 +394,12 @@ describe('KlarnaV2PaymentStrategy', () => {
 
         // TODO: CHECKOUT-7766
         it('throws error if required data is not loaded', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
-                undefined,
-            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getBillingAddressOrThrow',
+            ).mockImplementation(() => {
+                throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
+            });
 
             await strategy.initialize({
                 methodId: paymentMethod.id,
@@ -397,12 +407,7 @@ describe('KlarnaV2PaymentStrategy', () => {
                 klarnav2: { container: '#container' },
             });
 
-            try {
-                await strategy.execute(payload);
-            } catch (error) {
-                // eslint-disable-next-line jest/no-conditional-expect
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
+            await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
         });
 
         it('submits authorization token', async () => {
@@ -422,7 +427,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             beforeEach(() => {
                 jest.spyOn(
                     paymentIntegrationService.getState(),
-                    'getBillingAddress',
+                    'getBillingAddressOrThrow',
                 ).mockReturnValue({
                     ...getEUBillingAddress(),
                     countryCode: 'zzz',
