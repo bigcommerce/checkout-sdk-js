@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.588.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.587.0...v1.588.0) (2024-04-23)
+
+
+### Features
+
+* **payment:** PAYPAL-3976 added credit card name field validation ([#2465](https://github.com/bigcommerce/checkout-sdk-js/issues/2465)) ([794fd0a](https://github.com/bigcommerce/checkout-sdk-js/commit/794fd0a8445738aa51f5c0fc9f1b9f7bf5505cbc))
+
 ## [1.587.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.586.0...v1.587.0) (2024-04-23)
 
 
