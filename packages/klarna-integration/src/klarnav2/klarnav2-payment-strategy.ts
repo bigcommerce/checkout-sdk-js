@@ -99,7 +99,7 @@ export default class KlarnaV2PaymentStrategy {
             );
         }
 
-        const { authorization_token: authorizationToken } = await this.authorize(
+        const { authorization_token: authorizationToken } = await this.authorizeOrThrow(
             paymentPayload.methodId,
         );
 
@@ -224,19 +224,20 @@ export default class KlarnaV2PaymentStrategy {
         return klarnaAddress;
     }
 
-    private authorize(methodId: string): Promise<KlarnaAuthorizationResponse> {
+    private async authorizeOrThrow(methodId: string): Promise<KlarnaAuthorizationResponse> {
+        await this.paymentIntegrationService.loadCheckout();
+
+        const state = this.paymentIntegrationService.getState();
+        const billingAddress = state.getBillingAddressOrThrow();
+        const shippingAddress = state.getShippingAddress();
+
+        const updateSessionData = this.getUpdateSessionData(billingAddress, shippingAddress);
+
         return new Promise<KlarnaAuthorizationResponse>((resolve, reject) => {
-            const billingAddress = this.paymentIntegrationService.getState().getBillingAddress();
-            const shippingAddress = this.paymentIntegrationService.getState().getShippingAddress();
-
-            if (!billingAddress) {
-                throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
-            }
-
-            const updateSessionData = this.getUpdateSessionData(billingAddress, shippingAddress);
-
             if (!this.klarnaPayments) {
-                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+                return reject(
+                    new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
+                );
             }
 
             this.klarnaPayments.authorize(
