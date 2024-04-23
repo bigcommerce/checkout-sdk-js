@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.585.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.585.3...v1.585.4) (2024-04-23)
+
+
+### Bug Fixes
+
+* **payment:** PI-1925 get actual data for Klarna authentication request ([ad6b882](https://github.com/bigcommerce/checkout-sdk-js/commit/ad6b8820612b92b9230117b70680ff431db833f0))
+
 ### [1.585.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.585.2...v1.585.3) (2024-04-22)
 
 
