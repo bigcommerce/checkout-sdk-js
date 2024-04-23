@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.586.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.585.4...v1.586.0) (2024-04-23)
+
+
+### Features
+
+* **payment:** PI-1916 Added SRI hashes for the adyen styles and scripts ([#2470](https://github.com/bigcommerce/checkout-sdk-js/issues/2470)) ([da0f96b](https://github.com/bigcommerce/checkout-sdk-js/commit/da0f96bd1ec1a2afaf1d586e830dd475928219ba))
+
 ### [1.585.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.585.3...v1.585.4) (2024-04-23)
 
 
