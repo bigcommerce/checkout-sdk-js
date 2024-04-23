@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.587.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.586.0...v1.587.0) (2024-04-23)
+
+
+### Features
+
+* **payment:** PI-1606 [Afterpay] Move Afterpay payment strategy to separate package in checkout-sdk-js ([#2446](https://github.com/bigcommerce/checkout-sdk-js/issues/2446)) ([2f9111f](https://github.com/bigcommerce/checkout-sdk-js/commit/2f9111fbba9b1d4ee65892b0d34098778648ea09))
+
 ## [1.586.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.585.4...v1.586.0) (2024-04-23)
 
 
