@@ -294,6 +294,7 @@ export interface BraintreeHostedFieldsState {
         expirationYear?: BraintreeHostedFieldsFieldData;
         cvv?: BraintreeHostedFieldsFieldData;
         postalCode?: BraintreeHostedFieldsFieldData;
+        cardholderName?: BraintreeHostedFieldsFieldData;
     };
 }
 

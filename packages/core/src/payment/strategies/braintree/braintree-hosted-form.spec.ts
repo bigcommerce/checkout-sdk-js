@@ -446,6 +446,13 @@ describe('BraintreeHostedForm', () => {
                                 type: 'required',
                             },
                         ],
+                        cardName: [
+                            {
+                                fieldType: 'cardName',
+                                message: 'Full name is required',
+                                type: 'required',
+                            },
+                        ],
                     },
                     isValid: false,
                 });

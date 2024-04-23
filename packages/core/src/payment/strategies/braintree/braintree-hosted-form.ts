@@ -323,12 +323,19 @@ export default class BraintreeHostedForm {
                 ],
             };
 
+            const cardNameValidation = {
+                [this._mapFieldType('cardholderName')]: [
+                    this._createRequiredError(this._mapFieldType('cardholderName')),
+                ],
+            };
+
             return isStoredCard
                 ? cvvValidation
                 : {
                       ...cvvValidation,
                       ...expirationDateValidation,
                       ...cardNumberValidation,
+                      ...cardNameValidation,
                   };
         }
 
@@ -423,6 +430,13 @@ export default class BraintreeHostedForm {
                     fieldType,
                     message: 'Invalid card number',
                     type: 'invalid_card_number',
+                };
+
+            case BraintreeFormFieldType.CardName:
+                return {
+                    fieldType,
+                    message: 'Invalid card name',
+                    type: 'invalid_card_name',
                 };
 
             default:
