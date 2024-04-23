@@ -46,7 +46,6 @@ import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import StorefrontPaymentRequestSender from './storefront-payment-request-sender';
-import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BNZPaymentStrategy } from './strategies/bnz';
@@ -182,21 +181,6 @@ export default function createPaymentStrategyRegistry(
     const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);
     const hostedFormFactory = new HostedFormFactory(store);
     const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
-
-    registry.register(
-        PaymentStrategyType.AFTERPAY,
-        () =>
-            new AfterpayPaymentStrategy(
-                store,
-                checkoutValidator,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                remoteCheckoutRequestSender,
-                storeCreditActionCreator,
-                new AfterpayScriptLoader(scriptLoader),
-            ),
-    );
 
     registry.register(
         PaymentStrategyType.AMAZONPAY,

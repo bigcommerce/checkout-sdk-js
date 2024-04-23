@@ -8,7 +8,6 @@ import { createSpamProtection } from '../spam-protection';
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
-import { AfterpayPaymentStrategy } from './strategies/afterpay';
 import { AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BNZPaymentStrategy } from './strategies/bnz';
@@ -66,12 +65,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.AMAZONPAY);
 
         expect(paymentStrategy).toBeInstanceOf(AmazonPayV2PaymentStrategy);
-    });
-
-    it('can instantiate afterpay', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.AFTERPAY);
-
-        expect(paymentStrategy).toBeInstanceOf(AfterpayPaymentStrategy);
     });
 
     it('can instantiate barclays', () => {

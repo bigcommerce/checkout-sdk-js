@@ -311,23 +311,6 @@ export function getKlarna(): PaymentMethod {
     };
 }
 
-export function getAfterpay(): PaymentMethod {
-    return {
-        id: 'PAY_BY_INSTALLMENT',
-        gateway: 'afterpay',
-        logoUrl: '',
-        method: 'multi-option',
-        supportedCards: [],
-        config: {
-            displayName: 'Pay over time',
-            merchantId: '33133',
-            testMode: false,
-        },
-        type: 'PAYMENT_TYPE_API',
-        clientToken: 'foo',
-    };
-}
-
 export function getAffirm(): PaymentMethod {
     return {
         id: 'affirm',
@@ -853,7 +836,6 @@ export function getPaymentMethods(): PaymentMethod[] {
     return [
         getAdyenAmex(),
         getAffirm(),
-        getAfterpay(),
         getAmazonPayV2(),
         getAuthorizenet(),
         getBlueSnapV2(),
