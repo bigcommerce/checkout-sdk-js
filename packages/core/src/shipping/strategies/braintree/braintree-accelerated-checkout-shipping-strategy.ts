@@ -31,10 +31,8 @@ import { PaymentProviderCustomerActionCreator } from '../../../payment-provider-
 import { CardInstrument } from '../../../payment/instrument';
 import { UntrustedShippingCardVerificationType } from '../../../payment/instrument/instrument';
 import ConsignmentActionCreator from '../../consignment-action-creator';
-import { ShippingRequestOptions } from '../../shipping-request-options';
+import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
-
-import BraintreeAcceleratedCheckoutShippingInitializeOptions from './braintree-accelerated-checkout-shipping-initialize-options';
 
 export default class BraintreeAcceleratedCheckoutShippingStrategy implements ShippingStrategy {
     private _browserStorage: BrowserStorage;
@@ -70,10 +68,8 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
         return Promise.resolve(this._store.getState());
     }
 
-    async initialize(
-        options: BraintreeAcceleratedCheckoutShippingInitializeOptions,
-    ): Promise<InternalCheckoutSelectors> {
-        const { methodId, styles } = options || {};
+    async initialize(options: ShippingInitializeOptions): Promise<InternalCheckoutSelectors> {
+        const { methodId, braintreefastlane } = options || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -90,7 +86,7 @@ export default class BraintreeAcceleratedCheckoutShippingStrategy implements Shi
                 this._paymentMethodActionCreator.loadPaymentMethod(methodId),
             );
 
-            await this._runAuthenticationFlowOrThrow(methodId, styles);
+            await this._runAuthenticationFlowOrThrow(methodId, braintreefastlane?.styles);
         } catch (error) {
             // Info: we should not throw any error here to avoid
             // customer stuck on shipping step due to the payment provider

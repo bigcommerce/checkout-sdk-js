@@ -237,7 +237,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
     describe('initialize', () => {
         it('throws an error if method id is not provided', async () => {
             try {
-                await strategy.initialize({ methodId: '' });
+                await strategy.initialize({});
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(InvalidArgumentError);
             }
