@@ -51,6 +51,7 @@ export default function getPayPalCommercePaymentMethod(): PaymentMethod {
             shouldRenderFields: true,
             shouldRunAcceleratedCheckout: false,
             isHostedCheckoutEnabled: false,
+            isDeveloperModeApplicable: false,
         },
         type: 'PAYMENT_TYPE_API',
     };

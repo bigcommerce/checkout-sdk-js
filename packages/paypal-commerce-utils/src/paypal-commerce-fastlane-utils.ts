@@ -226,7 +226,7 @@ export default class PayPalCommerceFastlaneUtils {
             ? this.mapPayPalToBcInstrument(methodId, paypalInstrument)
             : [];
 
-        const addresses = this.mergeShippingAndBillingAddresses(shippingAddress, billingAddress);
+        const addresses = this.filterAddresses([shippingAddress, billingAddress]);
 
         return {
             authenticationState:
@@ -277,10 +277,11 @@ export default class PayPalCommerceFastlaneUtils {
         };
     }
 
-    private mapPayPalToBcAddress(
+    mapPayPalToBcAddress(
         address: PayPalCommerceConnectAddress | PayPalFastlaneAddress,
         profileName: PayPalCommerceConnectProfileName | PayPalFastlaneProfileName,
         phone?: PayPalCommerceConnectProfilePhone | PayPalFastlaneProfilePhone,
+        customFields?: CustomerAddress['customFields'],
     ): CustomerAddress {
         const [firstName, lastName] = profileName.fullName.split(' ');
 
@@ -304,33 +305,41 @@ export default class PayPalCommerceFastlaneUtils {
             countryCode: address.countryCode || '',
             postalCode: address.postalCode,
             phone: phoneData.countryCode + phoneData.nationalNumber,
-            customFields: [],
+            customFields: customFields || [],
         };
     }
 
     /**
      *
-     * This method is responsible for filtering PP Connect addresses if they are the same
+     * This method is responsible for filtering PP Fastlane addresses if they are the same
      * and returns an array of addresses to use them for shipping and/or billing address selections
-     * so the customer will be able to use addresses from PP Connect in checkout flow
+     * so the customer will be able to use addresses from PP Fastlane in checkout flow
      *
      */
-    private mergeShippingAndBillingAddresses(
-        shippingAddress?: CustomerAddress,
-        billingAddress?: CustomerAddress,
-    ): CustomerAddress[] {
-        const isBillingEqualsShipping =
-            shippingAddress && billingAddress
-                ? isEqual(
-                      this.normalizeAddress(shippingAddress),
-                      this.normalizeAddress(billingAddress),
-                  )
-                : false;
+    filterAddresses(addresses: Array<CustomerAddress | undefined>): CustomerAddress[] {
+        return addresses.reduce(
+            (customerAddresses: CustomerAddress[], currentAddress: CustomerAddress | undefined) => {
+                if (!currentAddress) {
+                    return customerAddresses;
+                }
 
-        return [
-            ...(shippingAddress ? [shippingAddress] : []),
-            ...(billingAddress && !isBillingEqualsShipping ? [billingAddress] : []),
-        ];
+                const sameAddressInTheArray = customerAddresses.some((customerAddress) =>
+                    this.isEqualAddresses(customerAddress, currentAddress),
+                );
+
+                return sameAddressInTheArray
+                    ? customerAddresses
+                    : [...customerAddresses, currentAddress];
+            },
+            [],
+        );
+    }
+
+    private isEqualAddresses(
+        firstAddress: CustomerAddress,
+        secondAddress: CustomerAddress,
+    ): boolean {
+        return isEqual(this.normalizeAddress(firstAddress), this.normalizeAddress(secondAddress));
     }
 
     private normalizeAddress(address: CustomerAddress) {

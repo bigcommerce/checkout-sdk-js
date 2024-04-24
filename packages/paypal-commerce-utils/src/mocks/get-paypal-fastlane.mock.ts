@@ -42,6 +42,7 @@ export default function getPayPalFastlane(): PayPalFastlane {
         },
         profile: {
             showCardSelector: jest.fn(),
+            showShippingAddressSelector: jest.fn(),
         },
         FastlanePaymentComponent: jest.fn(() => paypalFastlaneComponentMethods),
     };

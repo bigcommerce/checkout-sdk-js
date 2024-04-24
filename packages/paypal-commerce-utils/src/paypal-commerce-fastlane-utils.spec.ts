@@ -24,6 +24,47 @@ describe('PayPalCommerceFastlaneUtils', () => {
     let paypalFastlaneSdk: PayPalFastlaneSdk;
     let subject: PayPalCommerceFastlaneUtils;
 
+    const methodIdMock = 'paypalcommerceacceleratedcheckout';
+    const authenticationResultMock = getPayPalFastlaneAuthenticationResultMock();
+
+    const bcAddressMock = {
+        address1: 'addressLine1',
+        address2: 'addressLine2',
+        city: 'addressCity',
+        company: 'BigCommerce',
+        country: 'United States',
+        countryCode: 'US',
+        customFields: [],
+        firstName: 'John',
+        lastName: 'Doe',
+        phone: '15551113344',
+        postalCode: '03004',
+        stateOrProvince: 'addressState',
+        stateOrProvinceCode: 'addressState',
+    };
+
+    const paypalToBcAddressMock = {
+        ...bcAddressMock,
+        id: 1,
+        country: 'US',
+        type: 'paypal-address',
+    };
+
+    const paypalToBcInstrumentMock = {
+        bigpayToken: 'nonce/token',
+        brand: 'Visa',
+        defaultInstrument: false,
+        expiryMonth: '12',
+        expiryYear: '2030',
+        iin: '',
+        last4: '1111',
+        method: 'paypalcommerceacceleratedcheckout',
+        provider: 'paypalcommerceacceleratedcheckout',
+        trustedShippingAddress: false,
+        untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
+        type: 'card',
+    };
+
     beforeEach(() => {
         browserStorage = new BrowserStorage('paypalFastlane');
         paypalAxoSdk = getPayPalAxoSdk();
@@ -242,9 +283,6 @@ describe('PayPalCommerceFastlaneUtils', () => {
     });
 
     describe('#mapPayPalFastlaneProfileToBcCustomerData', () => {
-        const methodIdMock = 'paypalcommerceacceleratedcheckout';
-        const authenticationResultMock = getPayPalFastlaneAuthenticationResultMock();
-
         it('returns default "empty" data if authenticationResult is undefined', () => {
             expect(subject.mapPayPalFastlaneProfileToBcCustomerData(methodIdMock, {})).toEqual({
                 authenticationState: PayPalCommerceConnectAuthenticationState.UNRECOGNIZED,
@@ -256,39 +294,6 @@ describe('PayPalCommerceFastlaneUtils', () => {
         });
 
         it('returns mapped PayPal Fastlane Profile to BC like data', () => {
-            const addressMock = {
-                id: 1,
-                address1: 'addressLine1',
-                address2: 'addressLine2',
-                city: 'addressCity',
-                company: 'BigCommerce',
-                countryCode: 'US',
-                country: 'US',
-                customFields: [],
-                firstName: 'John',
-                lastName: 'Doe',
-                phone: '15551113344',
-                postalCode: '03004',
-                stateOrProvince: 'addressState',
-                stateOrProvinceCode: 'addressState',
-                type: 'paypal-address',
-            };
-
-            const instrumentMock = {
-                bigpayToken: 'nonce/token',
-                brand: 'Visa',
-                defaultInstrument: false,
-                expiryMonth: '12',
-                expiryYear: '2030',
-                iin: '',
-                last4: '1111',
-                method: 'paypalcommerceacceleratedcheckout',
-                provider: 'paypalcommerceacceleratedcheckout',
-                trustedShippingAddress: false,
-                untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
-                type: 'card',
-            };
-
             expect(
                 subject.mapPayPalFastlaneProfileToBcCustomerData(
                     methodIdMock,
@@ -296,31 +301,26 @@ describe('PayPalCommerceFastlaneUtils', () => {
                 ),
             ).toEqual({
                 authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
-                addresses: [addressMock],
-                billingAddress: addressMock,
-                shippingAddress: addressMock,
-                instruments: [instrumentMock],
+                addresses: [paypalToBcAddressMock],
+                billingAddress: paypalToBcAddressMock,
+                shippingAddress: paypalToBcAddressMock,
+                instruments: [paypalToBcInstrumentMock],
             });
         });
     });
 
-    describe('#mapBcToPayPalAddress()', () => {
-        const bcAddressMock = {
-            address1: 'addressLine1',
-            address2: 'addressLine2',
-            city: 'addressCity',
-            company: 'BigCommerce',
-            country: 'United States',
-            countryCode: 'US',
-            customFields: [],
-            firstName: 'John',
-            lastName: 'Doe',
-            postalCode: '03004',
-            stateOrProvince: 'addressState',
-            stateOrProvinceCode: 'addressState',
-            phone: '',
-        };
+    describe('#mapBcToPayPalInstrument()', () => {
+        it('maps and returns PayPal Instrument mapped to BC shape', () => {
+            const result = subject.mapPayPalToBcInstrument(
+                methodIdMock,
+                authenticationResultMock.profileData.card,
+            );
 
+            expect(result).toEqual([paypalToBcInstrumentMock]);
+        });
+    });
+
+    describe('#mapBcToPayPalAddress()', () => {
         it('maps and returns PayPal Address based on provided BC address', () => {
             const result = subject.mapBcToPayPalAddress(bcAddressMock);
 
@@ -333,6 +333,40 @@ describe('PayPalCommerceFastlaneUtils', () => {
                 countryCode: 'US',
                 postalCode: '03004',
             });
+        });
+    });
+
+    describe('#mapPayPalToBcAddress()', () => {
+        it('maps and returns PayPal Address based on provided BC address', () => {
+            const result = subject.mapPayPalToBcAddress(
+                authenticationResultMock.profileData.shippingAddress.address,
+                authenticationResultMock.profileData.shippingAddress.name,
+                authenticationResultMock.profileData.shippingAddress.phoneNumber,
+                [],
+            );
+
+            expect(result).toEqual(paypalToBcAddressMock);
+        });
+    });
+
+    describe('#filterAddresses()', () => {
+        it('returns only one address if provided addresses are the same', () => {
+            const result = subject.filterAddresses([paypalToBcAddressMock, paypalToBcAddressMock]);
+
+            expect(result).toHaveLength(1);
+        });
+
+        it('returns an array of addresses if provided addresses are different', () => {
+            const result = subject.filterAddresses([
+                paypalToBcAddressMock,
+                {
+                    ...paypalToBcAddressMock,
+                    firstName: 'John',
+                    lastName: 'Son',
+                },
+            ]);
+
+            expect(result).toHaveLength(2);
         });
     });
 });
