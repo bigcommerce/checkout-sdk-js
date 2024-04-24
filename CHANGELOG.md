@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.589.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.589.0...v1.589.1) (2024-04-24)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-4070 updated shipping initialize options with braintreefastlane and paypalcommercefastlane options ([#2478](https://github.com/bigcommerce/checkout-sdk-js/issues/2478)) ([b0faf44](https://github.com/bigcommerce/checkout-sdk-js/commit/b0faf449b77394d9d11ad95251151bd98d04048d))
+
 ## [1.589.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.588.0...v1.589.0) (2024-04-24)
 
 

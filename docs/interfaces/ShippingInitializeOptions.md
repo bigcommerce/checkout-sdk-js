@@ -28,9 +28,10 @@ step of checkout.
 ### Properties
 
 - [amazonpay](ShippingInitializeOptions.md#amazonpay)
-- [braintreeacceleratedcheckout](ShippingInitializeOptions.md#braintreeacceleratedcheckout)
+- [braintreefastlane](ShippingInitializeOptions.md#braintreefastlane)
 - [methodId](ShippingInitializeOptions.md#methodid)
 - [params](ShippingInitializeOptions.md#params)
+- [paypalcommercefastlane](ShippingInitializeOptions.md#paypalcommercefastlane)
 - [stripeupe](ShippingInitializeOptions.md#stripeupe)
 - [timeout](ShippingInitializeOptions.md#timeout)
 
@@ -45,12 +46,12 @@ when using AmazonPayV2.
 
 ___
 
-### braintreeacceleratedcheckout
+### braintreefastlane
 
-• `Optional` **braintreeacceleratedcheckout**: [`BraintreeAcceleratedCheckoutShippingInitializeOptions`](BraintreeAcceleratedCheckoutShippingInitializeOptions.md)
+• `Optional` **braintreefastlane**: [`BraintreeFastlaneShippingInitializeOptions`](BraintreeFastlaneShippingInitializeOptions.md)
 
 The options that are required to initialize the shipping step of checkout
-when using Braintree Accelerated Checkout.
+when using Braintree Fastlane.
 
 ___
 
@@ -73,6 +74,15 @@ The parameters of the request, if required.
 #### Inherited from
 
 [ShippingRequestOptions](ShippingRequestOptions.md).[params](ShippingRequestOptions.md#params)
+
+___
+
+### paypalcommercefastlane
+
+• `Optional` **paypalcommercefastlane**: [`PayPalCommerceFastlaneShippingInitializeOptions`](PayPalCommerceFastlaneShippingInitializeOptions.md)
+
+The options that are required to initialize the shipping step of checkout
+when using PayPal Commerce Fastlane.
 
 ___
 

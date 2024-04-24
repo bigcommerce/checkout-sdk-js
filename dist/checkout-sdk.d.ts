@@ -1276,25 +1276,6 @@ declare interface BoltPaymentInitializeOptions {
     onPaymentSelect?(hasBoltAccount: boolean): void;
 }
 
-/**
- * A set of options that are required to initialize the shipping step of
- * checkout in order to support Braintree Accelerated Checkout.
- */
-declare interface BraintreeAcceleratedCheckoutShippingInitializeOptions {
-    /**
-     * The identifier of the payment method.
-     */
-    methodId: string;
-    /**
-     * Is a stylisation options for customizing PayPal Connect components
-     *
-     * Note: the styles for all Braintree Accelerated Checkout strategies should be the same,
-     * because they will be provided to PayPal library only for the first strategy initialization
-     * no matter what strategy was initialised first
-     */
-    styles?: BraintreeConnectStylesOption;
-}
-
 declare interface BraintreeAchInitializeOptions {
     /**
      * A callback that returns text that should be displayed to the customer in UI for proof of authorization
@@ -1431,6 +1412,21 @@ declare interface BraintreeFastlanePaymentInitializeOptions {
      * no matter what strategy was initialised first
      */
     styles?: BraintreeFastlaneStylesOption;
+}
+
+/**
+ * A set of options that are required to initialize the shipping step of
+ * checkout in order to support Braintree Fastlane.
+ */
+declare interface BraintreeFastlaneShippingInitializeOptions {
+    /**
+     * Is a stylisation options for customizing PayPal Fastlane components
+     *
+     * Note: the styles for all Braintree Fastlane strategies should be the same,
+     * because they will be provided to PayPal library only for the first strategy initialization
+     * no matter what strategy was initialised first
+     */
+    styles?: BraintreeConnectStylesOption;
 }
 
 declare type BraintreeFormErrorData = Omit<BraintreeFormFieldState, 'isFocused'>;
@@ -7134,6 +7130,21 @@ declare interface PayPalCommerceFastlanePaymentInitializeOptions {
     styles?: PayPalFastlaneStylesOption;
 }
 
+/**
+ * A set of options that are required to initialize the shipping step of
+ * checkout in order to support PayPal Commerce Fastlane.
+ */
+declare interface PayPalCommerceFastlaneShippingInitializeOptions {
+    /**
+     * Is a stylisation options for customizing PayPal Fastlane components
+     *
+     * Note: the styles for all PayPal Commerce Fastlane strategies should be the same,
+     * because they will be provided to PayPal library only for the first strategy initialization
+     * no matter what strategy was initialised first
+     */
+    styles?: PayPalFastlaneStylesOption;
+}
+
 declare interface PayPalCommerceFieldsStyleOptions {
     variables?: {
         fontFamily?: string;
@@ -7789,9 +7800,14 @@ declare interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptio
     stripeupe?: StripeUPEShippingInitializeOptions;
     /**
      * The options that are required to initialize the shipping step of checkout
-     * when using Braintree Accelerated Checkout.
+     * when using Braintree Fastlane.
      */
-    braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutShippingInitializeOptions;
+    braintreefastlane?: BraintreeFastlaneShippingInitializeOptions;
+    /**
+     * The options that are required to initialize the shipping step of checkout
+     * when using PayPal Commerce Fastlane.
+     */
+    paypalcommercefastlane?: PayPalCommerceFastlaneShippingInitializeOptions;
 }
 
 declare interface ShippingOption {
