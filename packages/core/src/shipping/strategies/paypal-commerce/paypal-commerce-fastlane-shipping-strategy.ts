@@ -14,10 +14,8 @@ import { InvalidArgumentError } from '../../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../../payment';
 import { PaymentProviderCustomerActionCreator } from '../../../payment-provider-customer';
 import ConsignmentActionCreator from '../../consignment-action-creator';
-import { ShippingRequestOptions } from '../../shipping-request-options';
+import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
-
-import PayPalCommerceFastlaneShippingInitializeOptions from './paypal-commerce-fastlane-shipping-initialization-options';
 
 export default class PayPalCommerceFastlaneShippingStrategy implements ShippingStrategy {
     private _isFastlaneEnabled = false;
@@ -52,10 +50,8 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
         return Promise.resolve(this._store.getState());
     }
 
-    async initialize(
-        options: PayPalCommerceFastlaneShippingInitializeOptions,
-    ): Promise<InternalCheckoutSelectors> {
-        const { methodId, styles } = options || {};
+    async initialize(options: ShippingInitializeOptions): Promise<InternalCheckoutSelectors> {
+        const { methodId, paypalcommercefastlane } = options || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -75,7 +71,7 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
 
                 this._isFastlaneEnabled = !!paymentMethod.initializationData.isFastlaneEnabled;
 
-                await this._initializePayPalSdk(methodId, styles);
+                await this._initializePayPalSdk(methodId, paypalcommercefastlane?.styles);
                 await this._runAuthenticationFlowOrThrow(methodId);
             } catch (error) {
                 // Info: we should not throw any error here to avoid customer stuck on

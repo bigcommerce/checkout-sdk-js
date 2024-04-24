@@ -2,6 +2,7 @@ import { RequestOptions } from '../common/http-request';
 
 import { AmazonPayV2ShippingInitializeOptions } from './strategies/amazon-pay-v2';
 import { BraintreeAcceleratedCheckoutInitializeOptions } from './strategies/braintree';
+import { PayPalCommerceFastlaneShippingInitializeOptions } from './strategies/paypal-commerce';
 import { StripeUPEShippingInitializeOptions } from './strategies/stripe-upe';
 
 /**
@@ -42,7 +43,13 @@ export interface ShippingInitializeOptions<T = {}> extends ShippingRequestOption
 
     /**
      * The options that are required to initialize the shipping step of checkout
-     * when using Braintree Accelerated Checkout.
+     * when using Braintree Fastlane.
      */
-    braintreeacceleratedcheckout?: BraintreeAcceleratedCheckoutInitializeOptions;
+    braintreefastlane?: BraintreeAcceleratedCheckoutInitializeOptions;
+
+    /**
+     * The options that are required to initialize the shipping step of checkout
+     * when using PayPal Commerce Fastlane.
+     */
+    paypalcommercefastlane?: PayPalCommerceFastlaneShippingInitializeOptions;
 }

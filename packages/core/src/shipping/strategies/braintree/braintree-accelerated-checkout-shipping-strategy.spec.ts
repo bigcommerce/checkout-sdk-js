@@ -24,7 +24,6 @@ import { PaymentProviderCustomerActionCreator } from '../../../payment-provider-
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { getFlatRateOption } from '../../internal-shipping-options.mock';
 
-import BraintreeAcceleratedCheckoutInitializeOptions from './braintree-accelerated-checkout-shipping-initialize-options';
 import BraintreeAcceleratedCheckoutShippingStrategy from './braintree-accelerated-checkout-shipping-strategy';
 
 const BRAINTREE_AXO_METHOD_ID = 'braintreeacceleratedcheckout';
@@ -222,9 +221,7 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
     describe('initialize', () => {
         it('throws an error if no method Id in options', async () => {
             const strategy = createStrategy();
-            const response = strategy.initialize(
-                {} as BraintreeAcceleratedCheckoutInitializeOptions,
-            );
+            const response = strategy.initialize({});
 
             return expect(response).rejects.toThrow(InvalidArgumentError);
         });

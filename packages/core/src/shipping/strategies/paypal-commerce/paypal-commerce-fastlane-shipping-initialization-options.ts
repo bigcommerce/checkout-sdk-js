@@ -6,11 +6,6 @@ import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-com
  */
 export default interface PayPalCommerceFastlaneShippingInitializeOptions {
     /**
-     * The identifier of the payment method.
-     */
-    methodId: string;
-
-    /**
      * Is a stylisation options for customizing PayPal Fastlane components
      *
      * Note: the styles for all PayPal Commerce Fastlane strategies should be the same,
