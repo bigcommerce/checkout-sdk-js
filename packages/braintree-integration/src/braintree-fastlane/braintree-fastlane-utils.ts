@@ -115,10 +115,10 @@ export default class BraintreeFastlaneUtils {
         return this.braintreeFastlane;
     }
 
-    getBraintreeFastlaneComponentOrThrow(): BraintreeFastlane['FastlanePaymentComponent'] {
+    getBraintreeFastlaneComponentOrThrow(): BraintreeFastlane['FastlaneCardComponent'] {
         const braintreeFastlane = this.getBraintreeFastlaneOrThrow();
 
-        return braintreeFastlane.FastlanePaymentComponent;
+        return braintreeFastlane.FastlaneCardComponent;
     }
 
     /**

@@ -219,7 +219,7 @@ export function getFastlaneMock(): BraintreeFastlane {
                     profileData: getBraintreeFastlaneProfileDataMock(),
                 }),
         },
-        FastlanePaymentComponent: jest.fn(),
+        FastlaneCardComponent: jest.fn(),
         events: {
             apmSelected: jest.fn(),
             emailSubmitted: jest.fn(),

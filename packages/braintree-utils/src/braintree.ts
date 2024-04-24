@@ -761,9 +761,9 @@ export interface BraintreeFastlaneConfig {
 export interface BraintreeFastlane {
     identity: BraintreeFastlaneIdentity;
     profile: BraintreeFastlaneProfile;
-    FastlanePaymentComponent: (
-        options: BraintreeFastlanePaymentComponentOptions,
-    ) => Promise<BraintreeFastlanePaymentComponent>;
+    FastlaneCardComponent: (
+        options: BraintreeFastlaneCardComponentOptions,
+    ) => Promise<BraintreeFastlaneCardComponent>;
     events: BraintreeFastlaneEvents;
 }
 
@@ -879,16 +879,16 @@ export interface BraintreeFastlaneVaultedInstrument {
     paymentSource: BraintreeFastlanePaymentSource;
 }
 
-export interface BraintreeFastlanePaymentComponentOptions {
+export interface BraintreeFastlaneCardComponentOptions {
     styles: BraintreeFastlaneStylesOption;
-    fields: BraintreeFastlanePaymentComponentFields;
+    fields: BraintreeFastlaneCardComponentFields;
 }
 
-export interface BraintreeFastlanePaymentComponentFields {
-    [key: string]: BraintreeFastlanePaymentComponentField;
+export interface BraintreeFastlaneCardComponentFields {
+    [key: string]: BraintreeFastlaneCardComponentField;
 }
 
-export interface BraintreeFastlanePaymentComponentField {
+export interface BraintreeFastlaneCardComponentField {
     placeholder?: string;
     prefill?: string;
 }
@@ -947,8 +947,8 @@ export interface BraintreeFastlaneOrderPlacedEventOptions
     currency_code: string;
 }
 
-export interface BraintreeFastlanePaymentComponent {
-    (options: BraintreeFastlanePaymentComponentOptions): BraintreeFastlanePaymentComponent;
+export interface BraintreeFastlaneCardComponent {
+    (options: BraintreeFastlaneCardComponentOptions): BraintreeFastlaneCardComponent;
     getPaymentToken(
         options: BraintreeFastlaneTokenizeOptions,
     ): Promise<BraintreeFastlaneVaultedInstrument>;

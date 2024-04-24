@@ -1,7 +1,7 @@
-import { PayPalFastlane, PayPalFastlanePaymentComponentMethods } from '../paypal-commerce-types';
+import { PayPalFastlane, PayPalFastlaneCardComponentMethods } from '../paypal-commerce-types';
 
 export default function getPayPalFastlane(): PayPalFastlane {
-    const paypalFastlaneComponentMethods: PayPalFastlanePaymentComponentMethods = {
+    const paypalFastlaneComponentMethods: PayPalFastlaneCardComponentMethods = {
         tokenize: jest.fn(() => ({
             nonce: 'paypal_fastlane_tokenize_nonce',
         })),
@@ -43,6 +43,6 @@ export default function getPayPalFastlane(): PayPalFastlane {
         profile: {
             showCardSelector: jest.fn(),
         },
-        FastlanePaymentComponent: jest.fn(() => paypalFastlaneComponentMethods),
+        FastlaneCardComponent: jest.fn(() => paypalFastlaneComponentMethods),
     };
 }

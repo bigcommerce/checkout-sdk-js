@@ -21,8 +21,8 @@ import {
     PayPalCommerceInitializationData,
     PayPalCommerceSdk,
     PayPalFastlaneAuthenticationState,
-    PayPalFastlanePaymentComponentMethods,
-    PayPalFastlanePaymentComponentOptions,
+    PayPalFastlaneCardComponentMethods,
+    PayPalFastlaneCardComponentOptions,
     PayPalFastlanePaymentFormattedPayload,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
@@ -31,7 +31,7 @@ import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 import { WithPayPalCommerceFastlanePaymentInitializeOptions } from './paypal-commerce-fastlane-payment-initialize-options';
 
 export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
-    private paypalComponentMethods?: PayPalFastlanePaymentComponentMethods;
+    private paypalComponentMethods?: PayPalFastlaneCardComponentMethods;
 
     // TODO: remove this line when PayPal Fastlane experiment will be rolled out to 100%
     private isFastlaneEnabled = false;
@@ -264,7 +264,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const state = this.paymentIntegrationService.getState();
         const phone = state.getBillingAddress()?.phone;
 
-        const cardComponentOptions: PayPalFastlanePaymentComponentOptions = {
+        const cardComponentOptions: PayPalFastlaneCardComponentOptions = {
             fields: {
                 ...(phone && {
                     phoneNumber: {
@@ -277,7 +277,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         if (this.isFastlaneEnabled) {
             const paypalFastlane = this.paypalCommerceFastlaneUtils.getPayPalFastlaneOrThrow();
 
-            this.paypalComponentMethods = await paypalFastlane.FastlanePaymentComponent(
+            this.paypalComponentMethods = await paypalFastlane.FastlaneCardComponent(
                 cardComponentOptions,
             );
         } else {
@@ -299,7 +299,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         paypalComponentMethods.render(container);
     }
 
-    private getPayPalComponentMethodsOrThrow(): PayPalFastlanePaymentComponentMethods {
+    private getPayPalComponentMethodsOrThrow(): PayPalFastlaneCardComponentMethods {
         if (!this.paypalComponentMethods) {
             throw new PaymentMethodClientUnavailableError();
         }
