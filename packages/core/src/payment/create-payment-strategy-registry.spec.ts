@@ -17,13 +17,8 @@ import {
 } from './strategies/braintree';
 import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
 import { ChasepayPaymentStrategy } from './strategies/chasepay';
-import {
-    CheckoutcomAPMPaymentStrategy,
-    CheckoutcomSEPAPaymentStrategy,
-} from './strategies/checkoutcom-custom';
 import { ClearpayPaymentStrategy } from './strategies/clearpay';
 import { ConvergePaymentStrategy } from './strategies/converge';
-import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redirect';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource';
 import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { DigitalRiverPaymentStrategy } from './strategies/digitalriver';
@@ -89,24 +84,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CHASE_PAY);
 
         expect(paymentStrategy).toBeInstanceOf(ChasepayPaymentStrategy);
-    });
-
-    it('can instantiate checkout.com', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.CHECKOUTCOM);
-
-        expect(paymentStrategy).toBeInstanceOf(CreditCardRedirectPaymentStrategy);
-    });
-
-    it('can instantiate checkout.com apms', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.CHECKOUTCOM_APM);
-
-        expect(paymentStrategy).toBeInstanceOf(CheckoutcomAPMPaymentStrategy);
-    });
-
-    it('can instantiate checkout.com SEPA', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.CHECKOUTCOM_SEPA);
-
-        expect(paymentStrategy).toBeInstanceOf(CheckoutcomSEPAPaymentStrategy);
     });
 
     it('can instantiate clearpay', () => {

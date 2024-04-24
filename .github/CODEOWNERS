@@ -28,7 +28,6 @@
 /packages/core/src/payment/strategies/cba-mpgs @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/chasepay @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/checkoutcom @bigcommerce/team-integrations
-/packages/core/src/payment/strategies/checkoutcom-custom @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/clearpay @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/converge @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/cybersource @bigcommerce/team-integrations
@@ -57,6 +56,7 @@
 /packages/amazon-pay-utils @bigcommerce/team-integrations
 /packages/bluesnap-direct-integration @bigcommerce/team-integrations
 /packages/bolt-integration @bigcommerce/team-integrations
+/packages/checkoutcom-custom-integration @bigcommerce/team-integrations
 /packages/mollie-integration @bigcommerce/team-integrations
 /packages/squarev2-integration @bigcommerce/team-integrations
 /packages/stripe-integration @bigcommerce/team-integrations

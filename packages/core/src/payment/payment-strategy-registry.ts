@@ -10,16 +10,6 @@ import PaymentStrategyType from './payment-strategy-type';
 import { isPPSDKPaymentMethod } from './ppsdk-payment-method';
 import { PaymentStrategy } from './strategies';
 
-const checkoutcomStrategies: {
-    [key: string]: PaymentStrategyType;
-} = {
-    card: PaymentStrategyType.CHECKOUTCOM,
-    credit_card: PaymentStrategyType.CHECKOUTCOM,
-    sepa: PaymentStrategyType.CHECKOUTCOM_SEPA,
-    ideal: PaymentStrategyType.CHECKOUTCOM_IDEAL,
-    fawry: PaymentStrategyType.CHECKOUTCOM_FAWRY,
-};
-
 export default class PaymentStrategyRegistry extends Registry<
     PaymentStrategy,
     PaymentStrategyType
@@ -78,12 +68,6 @@ export default class PaymentStrategyRegistry extends Registry<
 
         if (paymentMethod.gateway === 'klarna') {
             return PaymentStrategyType.KLARNAV2;
-        }
-
-        if (paymentMethod.gateway === PaymentStrategyType.CHECKOUTCOM) {
-            return paymentMethod.id in checkoutcomStrategies
-                ? checkoutcomStrategies[paymentMethod.id]
-                : PaymentStrategyType.CHECKOUTCOM_APM;
         }
 
         const methodId = paymentMethod.gateway || paymentMethod.id;

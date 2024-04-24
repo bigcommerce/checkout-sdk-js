@@ -65,15 +65,8 @@ import {
 } from './strategies/cardinal';
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mpgs';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
-import {
-    CheckoutcomAPMPaymentStrategy,
-    CheckoutcomFawryPaymentStrategy,
-    CheckoutcomiDealPaymentStrategy,
-    CheckoutcomSEPAPaymentStrategy,
-} from './strategies/checkoutcom-custom';
 import { ClearpayPaymentStrategy, ClearpayScriptLoader } from './strategies/clearpay';
 import { ConvergePaymentStrategy } from './strategies/converge';
-import { CreditCardRedirectPaymentStrategy } from './strategies/credit-card-redirect';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
 import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { DigitalRiverPaymentStrategy, DigitalRiverScriptLoader } from './strategies/digitalriver';
@@ -386,40 +379,6 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register(
-        PaymentStrategyType.CHECKOUTCOM,
-        () =>
-            new CreditCardRedirectPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
-                formPoster,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.CHECKOUTCOM_APM,
-        () =>
-            new CheckoutcomAPMPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.CHECKOUTCOM_FAWRY,
-        () =>
-            new CheckoutcomFawryPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
-            ),
-    );
-
-    registry.register(
         PaymentStrategyType.CHECKOUTCOM_GOOGLE_PAY,
         () =>
             new GooglePayPaymentStrategy(
@@ -434,28 +393,6 @@ export default function createPaymentStrategyRegistry(
                     new GooglePayCheckoutcomInitializer(requestSender),
                 ),
                 new GooglePayCheckoutcomPaymentProcessor(),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.CHECKOUTCOM_IDEAL,
-        () =>
-            new CheckoutcomiDealPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.CHECKOUTCOM_SEPA,
-        () =>
-            new CheckoutcomSEPAPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
             ),
     );
 

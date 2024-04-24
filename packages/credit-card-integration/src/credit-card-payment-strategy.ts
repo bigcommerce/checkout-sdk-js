@@ -20,7 +20,7 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
     protected _hostedForm?: HostedForm;
     protected _shouldRenderHostedForm?: boolean;
 
-    constructor(private _paymentIntegrationService: PaymentIntegrationService) {}
+    constructor(protected _paymentIntegrationService: PaymentIntegrationService) {}
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         return this._isHostedPaymentFormEnabled(
