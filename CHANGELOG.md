@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.589.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.588.0...v1.589.0) (2024-04-24)
+
+
+### Features
+
+* **payment:** PI-1581 Refactor the existing checkoutcom components ([3ddf9c4](https://github.com/bigcommerce/checkout-sdk-js/commit/3ddf9c46e448036634f3478175cdfb90a5817a30))
+
 ## [1.588.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.587.0...v1.588.0) (2024-04-23)
 
 
