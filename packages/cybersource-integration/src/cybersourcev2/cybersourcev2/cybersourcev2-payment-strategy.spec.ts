@@ -1,27 +1,27 @@
 import { merge } from 'lodash';
 import { of } from 'rxjs';
 
-import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { HostedFormFactory } from '../../../hosted-form';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import PaymentActionCreator from '../../payment-action-creator';
-import PaymentMethod from '../../payment-method';
-import { getCybersource } from '../../payment-methods.mock';
-import { CardinalThreeDSecureFlow } from '../cardinal';
-import { CreditCardPaymentStrategy } from '../credit-card';
+import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../../../../core/src/checkout';
+import { HostedFormFactory } from '../../../../core/src/hosted-form';
+import { OrderActionCreator, OrderRequestBody } from '../../../../core/src/order';
+import { getOrderRequestBody } from '../../../../core/src/order/internal-orders.mock';
+import PaymentActionCreator from '../../../../core/src/payment/payment-action-creator';
+import PaymentMethod from '../../../../core/src/payment/payment-method';
+import { getCybersource } from '../../../../core/src/payment/payment-methods.mock';
+import { CardinalThreeDSecureFlowV2 } from '../../../../core/src/payment/strategies/cardinal';
+import { CreditCardPaymentStrategy } from '../../../../core/src/payment/strategies/credit-card';
 
-import CyberSourcePaymentStrategy from './cybersource-payment-strategy';
+import CyberSourceV2PaymentStrategy from './cybersourcev2-payment-strategy';
 
-describe('CyberSourcePaymentStrategy', () => {
+describe('CyberSourceV2PaymentStrategy', () => {
     let hostedFormFactory: HostedFormFactory;
     let orderActionCreator: Pick<OrderActionCreator, 'submitOrder'>;
     let paymentActionCreator: Pick<PaymentActionCreator, 'submitPayment'>;
     let paymentMethod: PaymentMethod;
     let state: InternalCheckoutSelectors;
     let store: CheckoutStore;
-    let strategy: CyberSourcePaymentStrategy;
-    let threeDSecureFlow: Pick<CardinalThreeDSecureFlow, 'prepare' | 'start'>;
+    let strategy: CyberSourceV2PaymentStrategy;
+    let threeDSecureFlow: Pick<CardinalThreeDSecureFlowV2, 'prepare' | 'start'>;
 
     beforeEach(() => {
         paymentMethod = {
@@ -54,12 +54,12 @@ describe('CyberSourcePaymentStrategy', () => {
 
         jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
 
-        strategy = new CyberSourcePaymentStrategy(
+        strategy = new CyberSourceV2PaymentStrategy(
             store,
             orderActionCreator as OrderActionCreator,
             paymentActionCreator as PaymentActionCreator,
             hostedFormFactory,
-            threeDSecureFlow as CardinalThreeDSecureFlow,
+            threeDSecureFlow as CardinalThreeDSecureFlowV2,
         );
     });
 

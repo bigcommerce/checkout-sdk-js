@@ -16,6 +16,7 @@
         "checkoutcom-custom-integration": "packages/checkoutcom-custom-integration",
         "core": "packages/core",
         "credit-card-integration": "packages/credit-card-integration",
+        "cybersource-integration": "packages/cybersource-integration",
         "external-integration": "packages/external-integration",
         "google-pay-integration": "packages/google-pay-integration",
         "humm-integration": "packages/humm-integration",
