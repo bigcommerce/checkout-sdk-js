@@ -1,8 +1,10 @@
+import { CustomerAddress } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     isPayPalCommerceAcceleratedCheckoutCustomer,
-    PayPalCommerceConnectAuthenticationState,
+    isPayPalFastlaneCustomer,
     PayPalCommerceConnectStylesOption,
     PayPalCommerceFastlaneUtils,
+    PayPalCommerceInitializationData,
     PayPalCommerceSdk,
     PayPalFastlaneAuthenticationState,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
@@ -11,15 +13,13 @@ import { AddressRequestBody } from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError } from '../../../common/error/errors';
-import { PaymentMethodActionCreator } from '../../../payment';
+import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { PaymentProviderCustomerActionCreator } from '../../../payment-provider-customer';
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
 
 export default class PayPalCommerceFastlaneShippingStrategy implements ShippingStrategy {
-    private _isFastlaneEnabled = false;
-
     constructor(
         private _store: CheckoutStore,
         private _billingAddressActionCreator: BillingAddressActionCreator,
@@ -52,6 +52,7 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
 
     async initialize(options: ShippingInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId, paypalcommercefastlane } = options || {};
+        const { onPayPalFastlaneAddressChange, styles } = paypalcommercefastlane || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -59,35 +60,50 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
             );
         }
 
-        const isAuthenticatedUser = !this._shouldRunAuthenticationFlow();
+        if (this._shouldSkipFastlaneForStoredMembers()) {
+            return Promise.resolve(this._store.getState());
+        }
 
-        if (!isAuthenticatedUser) {
-            try {
-                const state = await this._store.dispatch(
-                    this._paymentMethodActionCreator.loadPaymentMethod(methodId),
-                );
-
-                const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-
-                this._isFastlaneEnabled = !!paymentMethod.initializationData.isFastlaneEnabled;
-
-                await this._initializePayPalSdk(methodId, paypalcommercefastlane?.styles);
-                await this._runAuthenticationFlowOrThrow(methodId);
-            } catch (error) {
-                // Info: we should not throw any error here to avoid customer stuck on
-                // shipping step due to the payment provider custom flow
+        try {
+            if (this._shouldAuthenticateUserWithFastlane()) {
+                await this._initializePayPalSdk(methodId, styles);
+                await this._authenticateUserWithFastlaneOtp(methodId);
             }
+
+            if (
+                typeof onPayPalFastlaneAddressChange === 'function' &&
+                (await this._shouldUsePayPalFastlaneShippingComponent(methodId))
+            ) {
+                await this._initializePayPalSdk(methodId, styles);
+                onPayPalFastlaneAddressChange(() => this._handlePayPalShippingAddressChange());
+            }
+        } catch (error) {
+            // Info: we should not throw any error here to avoid customer stuck on
+            // shipping step due to the payment provider custom flow
         }
 
         return Promise.resolve(this._store.getState());
     }
 
-    private _shouldRunAuthenticationFlow(): boolean {
+    private async _getPayPalPaymentMethodOrThrow(
+        methodId: string,
+    ): Promise<PaymentMethod<PayPalCommerceInitializationData>> {
         const state = this._store.getState();
-        const cart = state.cart.getCartOrThrow();
-        const customer = state.customer.getCustomerOrThrow();
-        const features = state.config.getStoreConfigOrThrow().checkoutSettings.features;
-        const paypalConnectSessionId = this._paypalCommerceFastlaneUtils.getStorageSessionId();
+        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+
+        if (!paymentMethod) {
+            const newState = await this._store.dispatch(
+                this._paymentMethodActionCreator.loadPaymentMethod(methodId),
+            );
+
+            return newState.paymentMethods.getPaymentMethodOrThrow(methodId);
+        }
+
+        return paymentMethod;
+    }
+
+    private _getPayPalCustomerAuthenticationState(): string | undefined {
+        const state = this._store.getState();
         const paymentProviderCustomer =
             state.paymentProviderCustomer.getPaymentProviderCustomerOrThrow();
         const paypalCommercePaymentProviderCustomer = isPayPalCommerceAcceleratedCheckoutCustomer(
@@ -96,23 +112,52 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
             ? paymentProviderCustomer
             : {};
 
-        const shouldSkipFastlaneForStoredMembers =
-            features &&
-            features['PAYPAL-4001.paypal_commerce_fastlane_stored_member_flow_removal'] &&
-            !customer.isGuest;
+        return paypalCommercePaymentProviderCustomer.authenticationState;
+    }
 
-        if (
-            shouldSkipFastlaneForStoredMembers ||
-            paypalCommercePaymentProviderCustomer?.authenticationState ===
-                PayPalCommerceConnectAuthenticationState.CANCELED
-        ) {
-            return false;
-        }
+    // TODO: remove this method when PAYPAL-4001.paypal_commerce_fastlane_stored_member_flow_removal will be rolled out to 100%
+    private _shouldSkipFastlaneForStoredMembers(): boolean {
+        const state = this._store.getState();
+        const customer = state.customer.getCustomerOrThrow();
+        const features = state.config.getStoreConfigOrThrow().checkoutSettings.features;
 
         return (
-            !paypalCommercePaymentProviderCustomer?.authenticationState &&
-            paypalConnectSessionId === cart.id
+            features &&
+            features['PAYPAL-4001.paypal_commerce_fastlane_stored_member_flow_removal'] &&
+            !customer.isGuest
         );
+    }
+
+    private _shouldAuthenticateUserWithFastlane(): boolean {
+        const state = this._store.getState();
+        const cart = state.cart.getCartOrThrow();
+        const paypalConnectSessionId = this._paypalCommerceFastlaneUtils.getStorageSessionId();
+
+        const customerAuthenticationState = this._getPayPalCustomerAuthenticationState();
+
+        return !customerAuthenticationState && paypalConnectSessionId === cart.id;
+    }
+
+    // TODO: reimplement this method when PAYPAL-3996.paypal_fastlane_shipping_update and Fastlane features will be rolled out to 100%
+    private async _shouldUsePayPalFastlaneShippingComponent(methodId: string): Promise<boolean> {
+        const state = this._store.getState();
+        const features = state.config.getStoreConfigOrThrow().checkoutSettings.features;
+        const customerAuthenticationState = this._getPayPalCustomerAuthenticationState();
+
+        // Info: to avoid loading payment method we should check for values
+        // that does not require api calls first
+        if (
+            features &&
+            features['PAYPAL-3996.paypal_fastlane_shipping_update'] &&
+            !!customerAuthenticationState &&
+            customerAuthenticationState !== PayPalFastlaneAuthenticationState.CANCELED
+        ) {
+            const paymentMethod = await this._getPayPalPaymentMethodOrThrow(methodId);
+
+            return !!paymentMethod?.initializationData?.isFastlaneEnabled;
+        }
+
+        return false;
     }
 
     private async _initializePayPalSdk(
@@ -122,9 +167,11 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
 
-        const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
+        const paymentMethod = await this._getPayPalPaymentMethodOrThrow(methodId);
+        const isTestModeEnabled = !!paymentMethod?.initializationData?.isDeveloperModeApplicable;
+        const isFastlaneEnabled = !!paymentMethod?.initializationData?.isFastlaneEnabled;
 
-        if (this._isFastlaneEnabled) {
+        if (isFastlaneEnabled) {
             const paypalFastlaneSdk = await this._paypalCommerceSdk.getPayPalFastlaneSdk(
                 paymentMethod,
                 cart.currency.code,
@@ -133,7 +180,7 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
 
             await this._paypalCommerceFastlaneUtils.initializePayPalFastlane(
                 paypalFastlaneSdk,
-                paymentMethod.initializationData.isDeveloperModeApplicable,
+                isTestModeEnabled,
                 styles,
             );
         } else {
@@ -145,72 +192,119 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
 
             await this._paypalCommerceFastlaneUtils.initializePayPalConnect(
                 paypalAxo,
-                paymentMethod.initializationData.isDeveloperModeApplicable,
+                isTestModeEnabled,
                 styles,
             );
         }
     }
 
-    private async _runAuthenticationFlowOrThrow(methodId: string): Promise<void> {
-        try {
+    private async _authenticateUserWithFastlaneOtp(methodId: string): Promise<void> {
+        const state = this._store.getState();
+        const cart = state.cart.getCartOrThrow();
+        const customerEmail = state.customer.getCustomer()?.email;
+        const billingAddressEmail = state.billingAddress.getBillingAddress()?.email;
+        const email = customerEmail || billingAddressEmail || '';
+
+        const paymentMethod = await this._getPayPalPaymentMethodOrThrow(methodId);
+        const isFastlaneEnabled = !!paymentMethod?.initializationData?.isFastlaneEnabled;
+
+        const { customerContextId } = isFastlaneEnabled
+            ? await this._paypalCommerceFastlaneUtils.lookupCustomerOrThrow(email)
+            : await this._paypalCommerceFastlaneUtils.connectLookupCustomerOrThrow(email);
+
+        const authenticationResult = isFastlaneEnabled
+            ? await this._paypalCommerceFastlaneUtils.triggerAuthenticationFlowOrThrow(
+                  customerContextId,
+              )
+            : await this._paypalCommerceFastlaneUtils.connectTriggerAuthenticationFlowOrThrow(
+                  customerContextId,
+              );
+
+        const { authenticationState, addresses, billingAddress, shippingAddress, instruments } =
+            this._paypalCommerceFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData(
+                methodId,
+                authenticationResult,
+            );
+
+        await this._store.dispatch(
+            this._paymentProviderCustomerActionCreator.updatePaymentProviderCustomer({
+                authenticationState,
+                addresses,
+                instruments,
+            }),
+        );
+
+        const isAuthenticationFlowCanceled =
+            authenticationResult.authenticationState === PayPalFastlaneAuthenticationState.CANCELED;
+
+        this._paypalCommerceFastlaneUtils.updateStorageSessionId(
+            isAuthenticationFlowCanceled,
+            cart.id,
+        );
+
+        if (billingAddress) {
+            await this._store.dispatch(
+                this._billingAddressActionCreator.updateAddress({
+                    ...billingAddress,
+                    id: String(billingAddress.id),
+                }),
+            );
+        }
+
+        if (shippingAddress && cart.lineItems.physicalItems.length > 0) {
+            await this._store.dispatch(
+                this._consignmentActionCreator.updateAddress(shippingAddress),
+            );
+        }
+    }
+
+    /**
+     *
+     * PayPal Fastlane shipping address change through Fastlane external popup
+     *
+     */
+    private async _handlePayPalShippingAddressChange(): Promise<CustomerAddress | undefined> {
+        const paypalFastlaneSdk = this._paypalCommerceFastlaneUtils.getPayPalFastlaneOrThrow();
+
+        const { selectionChanged, selectedAddress } =
+            await paypalFastlaneSdk.profile.showShippingAddressSelector();
+
+        if (selectionChanged) {
             const state = this._store.getState();
-            const cart = state.cart.getCartOrThrow();
-            const customerEmail = state.customer.getCustomer()?.email;
-            const billingAddressEmail = state.billingAddress.getBillingAddress()?.email;
-            const email = customerEmail || billingAddressEmail || '';
+            const shipping = state.shippingAddress.getShippingAddressesOrThrow();
+            const paymentProviderCustomer =
+                state.paymentProviderCustomer.getPaymentProviderCustomer();
+            const paypalFastlaneCustomer = isPayPalFastlaneCustomer(paymentProviderCustomer)
+                ? paymentProviderCustomer
+                : {};
 
-            const { customerContextId } = this._isFastlaneEnabled
-                ? await this._paypalCommerceFastlaneUtils.lookupCustomerOrThrow(email)
-                : await this._paypalCommerceFastlaneUtils.connectLookupCustomerOrThrow(email);
+            const shippingAddress = this._paypalCommerceFastlaneUtils.mapPayPalToBcAddress(
+                selectedAddress.address,
+                selectedAddress.name,
+                selectedAddress.phoneNumber,
+                shipping[0].customFields,
+            );
 
-            const authenticationResult = this._isFastlaneEnabled
-                ? await this._paypalCommerceFastlaneUtils.triggerAuthenticationFlowOrThrow(
-                      customerContextId,
-                  )
-                : await this._paypalCommerceFastlaneUtils.connectTriggerAuthenticationFlowOrThrow(
-                      customerContextId,
-                  );
-
-            const { authenticationState, addresses, billingAddress, shippingAddress, instruments } =
-                this._paypalCommerceFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData(
-                    methodId,
-                    authenticationResult,
-                );
+            const paymentProviderCustomerAddresses =
+                this._paypalCommerceFastlaneUtils.filterAddresses([
+                    shippingAddress,
+                    ...(paypalFastlaneCustomer.addresses || []),
+                ]);
 
             await this._store.dispatch(
                 this._paymentProviderCustomerActionCreator.updatePaymentProviderCustomer({
-                    authenticationState,
-                    addresses,
-                    instruments,
+                    ...paypalFastlaneCustomer,
+                    addresses: paymentProviderCustomerAddresses,
                 }),
             );
 
-            const isAuthenticationFlowCanceled =
-                authenticationResult.authenticationState ===
-                PayPalFastlaneAuthenticationState.CANCELED;
-
-            this._paypalCommerceFastlaneUtils.updateStorageSessionId(
-                isAuthenticationFlowCanceled,
-                cart.id,
+            await this._store.dispatch(
+                this._consignmentActionCreator.updateAddress(shippingAddress),
             );
 
-            if (billingAddress) {
-                await this._store.dispatch(
-                    this._billingAddressActionCreator.updateAddress({
-                        ...billingAddress,
-                        id: String(billingAddress.id),
-                    }),
-                );
-            }
-
-            if (shippingAddress && cart.lineItems.physicalItems.length > 0) {
-                await this._store.dispatch(
-                    this._consignmentActionCreator.updateAddress(shippingAddress),
-                );
-            }
-        } catch (error) {
-            // Info: Do not throw anything here to avoid blocking customer
-            // from passing checkout flow
+            return shippingAddress;
         }
+
+        return undefined;
     }
 }

@@ -472,6 +472,12 @@ export interface PayPalFastlaneStylesOption {
 
 export interface PayPalFastlaneProfile {
     showCardSelector(): Promise<PayPalFastlaneCardSelectorResponse>;
+    showShippingAddressSelector(): Promise<PayPalFastlaneShippingAddressSelectorResponse>;
+}
+
+export interface PayPalFastlaneShippingAddressSelectorResponse {
+    selectionChanged: boolean;
+    selectedAddress: PayPalFastlaneShippingAddress;
 }
 
 export interface PayPalFastlaneCardSelectorResponse {
