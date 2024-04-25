@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.591.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.590.0...v1.591.0) (2024-04-25)
+
+
+### Features
+
+* **payment:** PAYPAL-4067 added paypal fastlane shipping selector implementation to paypal commerce fastlane shipping strategy ([#2479](https://github.com/bigcommerce/checkout-sdk-js/issues/2479)) ([4316554](https://github.com/bigcommerce/checkout-sdk-js/commit/4316554ebc7d4139b15ffbc4110f584a48343c73))
+
 ## [1.590.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.589.1...v1.590.0) (2024-04-25)
 
 

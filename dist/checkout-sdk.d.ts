@@ -11,6 +11,7 @@ import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CardInstrument as CardInstrument_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
+import { CustomerAddress as CustomerAddress_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedForm as HostedFormInterface } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedFormOptions as HostedFormOptions_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedInstrument as HostedInstrument_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -7143,6 +7144,11 @@ declare interface PayPalCommerceFastlaneShippingInitializeOptions {
      * no matter what strategy was initialised first
      */
     styles?: PayPalFastlaneStylesOption;
+    /**
+     * Is a callback that shows PayPal Fastlane popup with customer addresses
+     * when get triggered
+     */
+    onPayPalFastlaneAddressChange?: (showPayPalFastlaneAddressSelector: () => Promise<CustomerAddress_2 | undefined>) => void;
 }
 
 declare interface PayPalCommerceFieldsStyleOptions {
