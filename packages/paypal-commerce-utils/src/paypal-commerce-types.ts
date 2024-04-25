@@ -350,9 +350,9 @@ export interface PayPalFastlane {
     identity: PayPalFastlaneIdentity;
     events: PayPalFastlaneEvents;
     profile: PayPalFastlaneProfile;
-    FastlanePaymentComponent(
-        options: PayPalFastlanePaymentComponentOptions,
-    ): Promise<PayPalFastlanePaymentComponentMethods>;
+    FastlaneCardComponent(
+        options: PayPalFastlaneCardComponentOptions,
+    ): Promise<PayPalFastlaneCardComponentMethods>;
 }
 
 export interface PayPalFastlaneOptions {
@@ -479,7 +479,7 @@ export interface PayPalFastlaneCardSelectorResponse {
     selectedCard: PayPalFastlaneProfileCard;
 }
 
-export interface PayPalFastlanePaymentComponentMethods {
+export interface PayPalFastlaneCardComponentMethods {
     tokenize(options: PayPalFastlaneTokenizeOptions): Promise<PayPalFastlaneTokenizeResult>; // TODO: remove with PayPal Connect implementation
     getPaymentToken(
         options: PayPalFastlaneGetPaymentTokenOptions,
@@ -487,14 +487,14 @@ export interface PayPalFastlanePaymentComponentMethods {
     render(element: string): void;
 }
 
-export interface PayPalFastlanePaymentComponentOptions {
-    fields?: PayPalFastlanePaymentComponentFields;
+export interface PayPalFastlaneCardComponentOptions {
+    fields?: PayPalFastlaneCardComponentFields;
 }
 
-export interface PayPalFastlanePaymentComponentFields {
-    [key: string]: PayPalFastlanePaymentComponentField;
+export interface PayPalFastlaneCardComponentFields {
+    [key: string]: PayPalFastlaneCardComponentField;
 }
-export interface PayPalFastlanePaymentComponentField {
+export interface PayPalFastlaneCardComponentField {
     placeholder?: string;
     prefill?: string;
 }

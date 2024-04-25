@@ -1,10 +1,10 @@
 import {
     BraintreeConnectCardComponent,
-    BraintreeFastlanePaymentComponent,
+    BraintreeFastlaneCardComponent,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 export default function isBraintreeConnectCardComponent(
-    cardComponent: BraintreeFastlanePaymentComponent | BraintreeConnectCardComponent,
+    cardComponent: BraintreeFastlaneCardComponent | BraintreeConnectCardComponent,
 ): cardComponent is BraintreeConnectCardComponent {
     return cardComponent.hasOwnProperty('tokenize') && cardComponent.hasOwnProperty('render');
 }

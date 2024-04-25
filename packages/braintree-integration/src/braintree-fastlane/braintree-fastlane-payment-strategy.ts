@@ -2,8 +2,8 @@ import {
     BraintreeConnectAddress,
     BraintreeConnectCardComponent,
     BraintreeFastlaneAuthenticationState,
-    BraintreeFastlanePaymentComponent,
-    BraintreeFastlanePaymentComponentOptions,
+    BraintreeFastlaneCardComponent,
+    BraintreeFastlaneCardComponentOptions,
     BraintreeInitializationData,
     isBraintreeAcceleratedCheckoutCustomer,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -35,9 +35,7 @@ import isBraintreeConnectCardComponent from './is-braintree-connect-card-compone
 import isBraintreeFastlaneCardComponent from './is-braintree-fastlane-card-component';
 
 export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy {
-    private braintreePaymentComponent?:
-        | BraintreeFastlanePaymentComponent
-        | BraintreeConnectCardComponent;
+    private braintreeCardComponent?: BraintreeFastlaneCardComponent | BraintreeConnectCardComponent;
     private isFastlaneEnabled?: boolean;
 
     constructor(
@@ -138,7 +136,7 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
     }
 
     async deinitialize(): Promise<void> {
-        this.braintreePaymentComponent = undefined;
+        this.braintreeCardComponent = undefined;
 
         return Promise.resolve();
     }
@@ -152,7 +150,7 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         const state = this.paymentIntegrationService.getState();
         const { phone } = state.getBillingAddressOrThrow();
 
-        const cardComponentOptions: BraintreeFastlanePaymentComponentOptions = {
+        const cardComponentOptions: BraintreeFastlaneCardComponentOptions = {
             styles: {},
             fields: {
                 ...(phone && {
@@ -167,17 +165,17 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
             const paypalPaymentComponent =
                 this.braintreeFastlaneUtils.getBraintreeFastlaneComponentOrThrow();
 
-            this.braintreePaymentComponent = await paypalPaymentComponent(cardComponentOptions);
+            this.braintreeCardComponent = await paypalPaymentComponent(cardComponentOptions);
         } else {
             const paypalPaymentComponent =
                 this.braintreeFastlaneUtils.getBraintreeConnectComponentOrThrow();
 
-            this.braintreePaymentComponent = paypalPaymentComponent(cardComponentOptions);
+            this.braintreeCardComponent = paypalPaymentComponent(cardComponentOptions);
         }
     }
 
     private renderBraintreeAXOComponent(container?: string) {
-        const braintreeCardComponent = this.getBraintreePaymentComponentOrThrow();
+        const braintreeCardComponent = this.getBraintreeCardComponentOrThrow();
 
         if (!container) {
             throw new InvalidArgumentError(
@@ -247,21 +245,21 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
 
-        const braintreePaymentComponent = this.getBraintreePaymentComponentOrThrow();
+        const braintreeCardComponent = this.getBraintreeCardComponentOrThrow();
 
         const paypalBillingAddress = this.mapToPayPalAddress(billingAddress);
         const paypalShippingAddress = shippingAddress && this.mapToPayPalAddress(shippingAddress);
 
         let token;
 
-        if (this.isFastlaneEnabled && isBraintreeFastlaneCardComponent(braintreePaymentComponent)) {
-            const { id } = await braintreePaymentComponent.getPaymentToken({
+        if (this.isFastlaneEnabled && isBraintreeFastlaneCardComponent(braintreeCardComponent)) {
+            const { id } = await braintreeCardComponent.getPaymentToken({
                 billingAddress: paypalBillingAddress,
             });
 
             token = id;
-        } else if (isBraintreeConnectCardComponent(braintreePaymentComponent)) {
-            const { nonce } = await braintreePaymentComponent.tokenize({
+        } else if (isBraintreeConnectCardComponent(braintreeCardComponent)) {
+            const { nonce } = await braintreeCardComponent.tokenize({
                 billingAddress: paypalBillingAddress,
                 ...(paypalShippingAddress && { shippingAddress: paypalShippingAddress }),
             });
@@ -329,12 +327,12 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         );
     }
 
-    private getBraintreePaymentComponentOrThrow() {
-        if (!this.braintreePaymentComponent) {
+    private getBraintreeCardComponentOrThrow() {
+        if (!this.braintreeCardComponent) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this.braintreePaymentComponent;
+        return this.braintreeCardComponent;
     }
 
     private isPayPalFastlaneInstrument(instrumentId: string): boolean {
