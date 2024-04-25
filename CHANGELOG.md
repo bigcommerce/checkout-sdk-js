@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.590.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.589.1...v1.590.0) (2024-04-25)
+
+
+### Features
+
+* **payment:** PAYPAL-4082 updated PayPalFastlaneComponent with PayPalCardComponent from paypal sdk ([#2480](https://github.com/bigcommerce/checkout-sdk-js/issues/2480)) ([810cddd](https://github.com/bigcommerce/checkout-sdk-js/commit/810cddd83be7ad97b031e083f2c24a329b645772))
+
 ### [1.589.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.589.0...v1.589.1) (2024-04-24)
 
 
