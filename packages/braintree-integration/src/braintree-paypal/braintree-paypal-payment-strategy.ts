@@ -28,6 +28,7 @@ import {
     PaymentStrategy,
     PaypalInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isPaypalCommerceProviderError } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import isBraintreeError from '../is-braintree-error';
 import mapToBraintreeShippingAddressOverride from '../map-to-braintree-shipping-address-override';
@@ -40,6 +41,7 @@ import {
 export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     private paymentMethod?: PaymentMethod;
     private braintreeHostWindow: BraintreeHostWindow = window;
+    private braintree?: BraintreePaypalPaymentInitializeOptions;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -50,6 +52,8 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         options: PaymentInitializeOptions & WithBraintreePaypalPaymentInitializeOptions,
     ) {
         const { braintree: braintreeOptions, methodId } = options;
+
+        this.braintree = braintreeOptions;
 
         if (!this.paymentMethod || !this.paymentMethod.nonce) {
             this.paymentMethod = this.paymentIntegrationService
@@ -85,6 +89,12 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = orderRequest;
 
+        const { onError } = this.braintree || {};
+        const state = this.paymentIntegrationService.getState();
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+        const shouldHandleInstrumentDeclinedError =
+            features && features['PAYPAL-3521.handling_declined_error_braintree'];
+
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
@@ -95,6 +105,18 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             await this.paymentIntegrationService.submitOrder(order, options);
             await this.paymentIntegrationService.submitPayment(paymentData);
         } catch (error) {
+            if (this.isProviderError(error) && shouldHandleInstrumentDeclinedError) {
+                await this.loadPaypal();
+
+                await new Promise((_resolve, reject) => {
+                    if (onError && typeof onError === 'function') {
+                        onError(new Error('INSTRUMENT_DECLINED'));
+                    }
+
+                    reject();
+                });
+            }
+
             this.handleError(error);
         }
     }
@@ -315,5 +337,15 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
 
         throw new PaymentMethodFailedError(error.message);
+    }
+
+    private isProviderError(error: unknown): boolean {
+        if (isPaypalCommerceProviderError(error)) {
+            const paypalProviderError = error?.errors?.filter((e: any) => e.provider_error) || [];
+
+            return paypalProviderError[0].provider_error?.code === '2046';
+        }
+
+        return false;
     }
 }

@@ -31,6 +31,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCart,
+    getConfig,
     getOrderRequestBody,
     getShippingAddress,
     PaymentIntegrationServiceMock,
@@ -52,6 +53,19 @@ describe('BraintreePaypalPaymentStrategy', () => {
     let paypalCheckoutCreatorMock: BraintreeModuleCreator<BraintreePaypalCheckout>;
     let paypalSdkMock: PaypalSDK;
     let paypalMessageElement: HTMLDivElement;
+
+    const storeConfig = getConfig().storeConfig;
+
+    const storeConfigWithFeaturesOn = {
+        ...storeConfig,
+        checkoutSettings: {
+            ...storeConfig.checkoutSettings,
+            features: {
+                ...storeConfig.checkoutSettings.features,
+                'PAYPAL-3521.handling_declined_error_braintree': true,
+            },
+        },
+    };
 
     beforeEach(() => {
         paypalMessageElement = document.createElement('div');
@@ -77,6 +91,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
             paymentIntegrationService.getState(),
             'getOutstandingBalance',
         ).mockImplementation((useStoreCredit) => (useStoreCredit ? 150 : 190));
+        jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(undefined);
 
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
         jest.spyOn(braintreeScriptLoader, 'initialize').mockReturnValue(undefined);
@@ -413,6 +428,46 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 await strategy.execute(orderRequestBody, options);
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodCancelledError);
+            }
+        });
+
+        it('throws specific error if receive INSTRUMENT_DECLINED error and experiment is on', async () => {
+            const providerError = {
+                errors: [
+                    {
+                        code: 'transaction_declined',
+                        message: 'Payment was declined. Please try again.',
+                        provider_error: {
+                            code: '2046',
+                        },
+                    },
+                ],
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithFeaturesOn);
+
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
+                throw providerError;
+            });
+
+            const braintreeOptions = {
+                ...options,
+                braintree: {
+                    onError: jest.fn(),
+                },
+            };
+
+            await strategy.initialize(braintreeOptions);
+
+            try {
+                await strategy.execute(orderRequestBody, options);
+            } catch (error) {
+                expect(braintreeOptions.braintree.onError).toHaveBeenCalledWith(
+                    new Error('INSTRUMENT_DECLINED'),
+                );
             }
         });
 

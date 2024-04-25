@@ -18,6 +18,11 @@ export interface BraintreePaypalPaymentInitializeOptions {
      * The location to insert the Pay Later Messages.
      */
     bannerContainerId?: string;
+
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: unknown): void;
 }
 
 export interface WithBraintreePaypalPaymentInitializeOptions {
