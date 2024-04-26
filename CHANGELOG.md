@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.592.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.591.0...v1.592.0) (2024-04-26)
+
+
+### Features
+
+* **payment:** PAYPAL-4069 renamed braintree accelerated checkout shipping strategy files ([#2481](https://github.com/bigcommerce/checkout-sdk-js/issues/2481)) ([d96d437](https://github.com/bigcommerce/checkout-sdk-js/commit/d96d437a92a009cf429da0b8d2554979c3964540))
+
 ## [1.591.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.590.0...v1.591.0) (2024-04-25)
 
 

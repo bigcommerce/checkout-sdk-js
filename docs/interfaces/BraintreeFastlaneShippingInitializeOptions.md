@@ -15,7 +15,7 @@ checkout in order to support Braintree Fastlane.
 
 ### styles
 
-• `Optional` **styles**: `BraintreeConnectStylesOption`
+• `Optional` **styles**: `BraintreeFastlaneStylesOption`
 
 Is a stylisation options for customizing PayPal Fastlane components
 

@@ -3,7 +3,6 @@
 /// <reference types="lodash" />
 import { AmazonPayV2ButtonConfig } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import { AmazonPayV2ButtonParameters } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
-import { BraintreeConnectStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeError as BraintreeError_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -1427,7 +1426,7 @@ declare interface BraintreeFastlaneShippingInitializeOptions {
      * because they will be provided to PayPal library only for the first strategy initialization
      * no matter what strategy was initialised first
      */
-    styles?: BraintreeConnectStylesOption;
+    styles?: BraintreeFastlaneStylesOption;
 }
 
 declare type BraintreeFormErrorData = Omit<BraintreeFormFieldState, 'isFocused'>;
