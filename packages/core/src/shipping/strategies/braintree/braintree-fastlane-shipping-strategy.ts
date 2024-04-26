@@ -34,7 +34,7 @@ import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
 
-export default class BraintreeAcceleratedCheckoutShippingStrategy implements ShippingStrategy {
+export default class BraintreeFastlaneShippingStrategy implements ShippingStrategy {
     private _browserStorage: BrowserStorage;
 
     constructor(
