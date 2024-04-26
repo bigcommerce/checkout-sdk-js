@@ -3,8 +3,6 @@ export * from './googlepay-braintree';
 
 export { default as GooglePayScriptLoader } from './googlepay-script-loader';
 export { default as GooglePayPaymentStrategy } from './googlepay-payment-strategy';
-export { default as GooglePayAdyenV2Initializer } from './googlepay-adyenv2-initializer';
-export { default as GooglePayAdyenV3Initializer } from './googlepay-adyenv3-initializer';
 export { default as GooglePayCheckoutcomPaymentProcessor } from './googlepay-checkoutcom-payment-processor';
 export { default as GooglePayBNZInitializer } from './googlepay-bnz-initializer';
 export { default as GooglePayCheckoutcomInitializer } from './googlepay-checkoutcom-initializer';
