@@ -76,31 +76,47 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
             );
         }
 
-        const state = this.paymentIntegrationService.getState();
-        const customer = state.getCustomerOrThrow();
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
-        const shouldSkipFastlaneForStoredMembers =
-            features &&
-            features['PAYPAL-4001.braintree_fastlane_stored_member_flow_removal'] &&
-            !customer.isGuest;
+        try {
+            const state = this.paymentIntegrationService.getState();
+            const customer = state.getCustomerOrThrow();
+            const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+            const shouldSkipFastlaneForStoredMembers =
+                features &&
+                features['PAYPAL-4001.braintree_fastlane_stored_member_flow_removal'] &&
+                !customer.isGuest;
 
-        if (this.isAcceleratedCheckoutEnabled && !shouldSkipFastlaneForStoredMembers) {
-            const shouldRunAuthenticationFlow = await this.shouldRunAuthenticationFlow();
+            if (this.isAcceleratedCheckoutEnabled && !shouldSkipFastlaneForStoredMembers) {
+                const shouldRunAuthenticationFlow = await this.shouldRunAuthenticationFlow();
 
-            if (
-                checkoutPaymentMethodExecuted &&
-                typeof checkoutPaymentMethodExecuted === 'function'
-            ) {
-                checkoutPaymentMethodExecuted();
+                if (
+                    checkoutPaymentMethodExecuted &&
+                    typeof checkoutPaymentMethodExecuted === 'function'
+                ) {
+                    checkoutPaymentMethodExecuted();
+                }
+
+                if (shouldRunAuthenticationFlow && !this.isFastlaneEnabled) {
+                    await this.braintreeFastlaneUtils.runPayPalConnectAuthenticationFlowOrThrow();
+                }
+
+                if (shouldRunAuthenticationFlow && this.isFastlaneEnabled) {
+                    await this.braintreeFastlaneUtils.runPayPalFastlaneAuthenticationFlowOrThrow();
+
+                    const state = this.paymentIntegrationService.getState();
+                    const consignment = state.getConsignmentsOrThrow()[0];
+
+                    const availableShippingOptions = consignment.availableShippingOptions || [];
+                    const recommendedShippingOption = availableShippingOptions.find(
+                        (option) => option.isRecommended,
+                    );
+
+                    if (recommendedShippingOption) {
+                        await this.paymentIntegrationService.selectShippingOption(recommendedShippingOption.id);
+                    }
+                }
             }
-
-            if (shouldRunAuthenticationFlow && !this.isFastlaneEnabled) {
-                await this.braintreeFastlaneUtils.runPayPalConnectAuthenticationFlowOrThrow();
-            }
-
-            if (shouldRunAuthenticationFlow && this.isFastlaneEnabled) {
-                await this.braintreeFastlaneUtils.runPayPalFastlaneAuthenticationFlowOrThrow();
-            }
+        } catch (_) {
+            // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
         }
 
         continueWithCheckoutCallback();

@@ -228,13 +228,25 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
             instruments,
         });
 
-        if (billingAddress) {
-            await this.paymentIntegrationService.updateBillingAddress(billingAddress);
-        }
-
         // Info: if not a digital item
         if (shippingAddress && cart.lineItems.physicalItems.length > 0) {
             await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
+
+            const state = this.paymentIntegrationService.getState();
+            const consignment = state.getConsignmentsOrThrow()[0];
+
+            const availableShippingOptions = consignment.availableShippingOptions || [];
+            const recommendedShippingOption = availableShippingOptions.find(
+                (option) => option.isRecommended,
+            );
+
+            if (recommendedShippingOption) {
+                await this.paymentIntegrationService.selectShippingOption(recommendedShippingOption.id);
+            }
+        }
+
+        if (billingAddress) {
+            await this.paymentIntegrationService.updateBillingAddress(billingAddress);
         }
     }
 
