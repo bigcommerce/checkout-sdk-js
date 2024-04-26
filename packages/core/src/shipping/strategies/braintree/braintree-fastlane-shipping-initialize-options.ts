@@ -1,4 +1,4 @@
-import { BraintreeConnectStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 /**
  * A set of options that are required to initialize the shipping step of
@@ -12,5 +12,5 @@ export default interface BraintreeFastlaneShippingInitializeOptions {
      * because they will be provided to PayPal library only for the first strategy initialization
      * no matter what strategy was initialised first
      */
-    styles?: BraintreeConnectStylesOption;
+    styles?: BraintreeFastlaneStylesOption;
 }

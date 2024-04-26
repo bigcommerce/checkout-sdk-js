@@ -24,7 +24,7 @@ import { PaymentProviderCustomerActionCreator } from '../../../payment-provider-
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { getFlatRateOption } from '../../internal-shipping-options.mock';
 
-import BraintreeAcceleratedCheckoutShippingStrategy from './braintree-accelerated-checkout-shipping-strategy';
+import BraintreeFastlaneShippingStrategy from './braintree-fastlane-shipping-strategy';
 
 const BRAINTREE_AXO_METHOD_ID = 'braintreeacceleratedcheckout';
 
@@ -56,7 +56,7 @@ class ConsignmentActionCreatorMock {
     selectShippingOption() {}
 }
 
-describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
+describe('BraintreeFastlaneShippingStrategy', () => {
     let store: CheckoutStore;
     let billingAddressActionCreator: BillingAddressActionCreatorMock;
     let consignmentActionCreator: ConsignmentActionCreatorMock;
@@ -109,7 +109,7 @@ describe('BraintreeAcceleratedCheckoutShippingStrategy', () => {
         untrustedShippingCardVerificationMode: 'cvv',
     };
     const createStrategy = () => {
-        return new BraintreeAcceleratedCheckoutShippingStrategy(
+        return new BraintreeFastlaneShippingStrategy(
             store,
             billingAddressActionCreator as unknown as BillingAddressActionCreator,
             consignmentActionCreator as unknown as ConsignmentActionCreator,
