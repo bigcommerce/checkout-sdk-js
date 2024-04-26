@@ -6,7 +6,7 @@ import { Registry } from '../common/registry';
 import createShippingStrategyRegistry from './create-shipping-strategy-registry';
 import { ShippingStrategy } from './strategies';
 import { AmazonPayV2ShippingStrategy } from './strategies/amazon-pay-v2';
-import { BraintreeAcceleratedCheckoutShippingStrategy } from './strategies/braintree';
+import { BraintreeFastlaneShippingStrategy } from './strategies/braintree';
 import { PayPalCommerceFastlaneShippingStrategy } from './strategies/paypal-commerce';
 
 describe('CreateShippingStrategyRegistry', () => {
@@ -28,7 +28,7 @@ describe('CreateShippingStrategyRegistry', () => {
     it('can instantiate braintree accelerated checkout', () => {
         const shippingStrategy = registry.get('braintreeacceleratedcheckout');
 
-        expect(shippingStrategy).toBeInstanceOf(BraintreeAcceleratedCheckoutShippingStrategy);
+        expect(shippingStrategy).toBeInstanceOf(BraintreeFastlaneShippingStrategy);
     });
 
     it('can instantiate paypal commerce fastlane shipping strategy', () => {
