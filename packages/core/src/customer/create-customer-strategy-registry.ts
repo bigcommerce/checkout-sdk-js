@@ -17,8 +17,6 @@ import {
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
 import {
     createGooglePayPaymentProcessor,
-    GooglePayAdyenV2Initializer,
-    GooglePayAdyenV3Initializer,
     GooglePayAuthorizeNetInitializer,
     GooglePayBNZInitializer,
     GooglePayCheckoutcomInitializer,
@@ -83,28 +81,6 @@ export default function createCustomerStrategyRegistry(
 
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
-
-    registry.register(
-        'googlepayadyenv2',
-        () =>
-            new GooglePayCustomerStrategy(
-                store,
-                remoteCheckoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayAdyenV2Initializer()),
-                formPoster,
-            ),
-    );
-
-    registry.register(
-        'googlepayadyenv3',
-        () =>
-            new GooglePayCustomerStrategy(
-                store,
-                remoteCheckoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayAdyenV3Initializer()),
-                formPoster,
-            ),
-    );
 
     registry.register(
         'amazonpay',
