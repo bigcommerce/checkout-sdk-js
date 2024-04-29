@@ -30,7 +30,7 @@ export default class GooglePayAdyenV2 extends GooglePayGateway {
     private _service: PaymentIntegrationService;
 
     constructor(service: PaymentIntegrationService, private _scriptLoader: AdyenV2ScriptLoader) {
-        super('adyenv2', service);
+        super('adyen', service);
 
         this._service = service;
     }
@@ -45,8 +45,6 @@ export default class GooglePayAdyenV2 extends GooglePayGateway {
         const paymentMethod = super.getPaymentMethod();
         const state = this._service.getState();
         const storeConfig = state.getStoreConfig();
-
-        this.setGatewayIdentifier('adyen');
 
         if (!storeConfig) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
