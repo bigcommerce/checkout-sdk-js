@@ -46,14 +46,6 @@ describe('createCheckoutButtonRegistry', () => {
         expect(registry.get('braintreevenmo')).toEqual(expect.any(BraintreeVenmoButtonStrategy));
     });
 
-    it('returns registry with GooglePay on Adyen Credit registered', () => {
-        expect(registry.get('googlepayadyenv2')).toEqual(expect.any(GooglePayButtonStrategy));
-    });
-
-    it('returns registry with GooglePay on Adyenv3 Credit registered', () => {
-        expect(registry.get('googlepayadyenv3')).toEqual(expect.any(GooglePayButtonStrategy));
-    });
-
     it('returns registry with GooglePay on Authorize.Net Credit registered', () => {
         expect(registry.get('googlepayauthorizenet')).toEqual(expect.any(GooglePayButtonStrategy));
     });

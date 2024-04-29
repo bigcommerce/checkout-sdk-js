@@ -14,8 +14,6 @@ import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payme
 import { BraintreeSDKCreator } from '../payment/strategies/braintree';
 import {
     createGooglePayPaymentProcessor,
-    GooglePayAdyenV2Initializer,
-    GooglePayAdyenV3Initializer,
     GooglePayAuthorizeNetInitializer,
     GooglePayBNZInitializer,
     GooglePayCheckoutcomInitializer,
@@ -112,30 +110,6 @@ export default function createCheckoutButtonRegistry(
                 cartRequestSender,
                 braintreeSdkCreator,
                 formPoster,
-            ),
-    );
-
-    registry.register(
-        CheckoutButtonMethodType.GOOGLEPAY_ADYENV2,
-        () =>
-            new GooglePayButtonStrategy(
-                store,
-                formPoster,
-                checkoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayAdyenV2Initializer()),
-                cartRequestSender,
-            ),
-    );
-
-    registry.register(
-        CheckoutButtonMethodType.GOOGLEPAY_ADYENV3,
-        () =>
-            new GooglePayButtonStrategy(
-                store,
-                formPoster,
-                checkoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayAdyenV3Initializer()),
-                cartRequestSender,
             ),
     );
 
