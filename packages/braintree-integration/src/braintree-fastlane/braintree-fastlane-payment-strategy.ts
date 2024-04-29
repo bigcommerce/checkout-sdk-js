@@ -24,15 +24,12 @@ import {
     PaymentMethodClientUnavailableError,
     PaymentRequestOptions,
     PaymentStrategy,
-    VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { isPayPalFastlaneCustomer } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { WithBraintreeFastlanePaymentInitializeOptions } from './braintree-fastlane-payment-initialize-options';
 import BraintreeFastlaneUtils from './braintree-fastlane-utils';
-import isBraintreeConnectCardComponent from './is-braintree-connect-card-component';
-import isBraintreeFastlaneCardComponent from './is-braintree-fastlane-card-component';
 
 export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy {
     private braintreeCardComponent?: BraintreeFastlaneCardComponent | BraintreeConnectCardComponent;
@@ -120,10 +117,9 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
 
         const { paymentData, methodId } = payment;
 
-        const paymentPayload =
-            paymentData && isVaultedInstrument(paymentData)
-                ? await this.prepareVaultedInstrumentPaymentPayload(methodId, paymentData)
-                : await this.preparePaymentPayload(methodId, paymentData);
+        const paymentPayload = this.isFastlaneEnabled
+            ? await this.prepareFastlanePaymentPayload(methodId)
+            : await this.prepareConnectPaymentPayload(methodId, paymentData);
 
         await this.paymentIntegrationService.submitOrder(order, options);
         await this.paymentIntegrationService.submitPayment(paymentPayload);
@@ -191,56 +187,42 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
      * Payment Payload preparation methods
      *
      */
-    private async prepareVaultedInstrumentPaymentPayload(
-        methodId: string,
-        paymentData: VaultedInstrument,
-    ): Promise<Payment> {
-        const deviceSessionId = await this.braintreeFastlaneUtils.getDeviceSessionId();
-
-        const { instrumentId } = paymentData;
-
-        if (this.isPayPalFastlaneInstrument(instrumentId)) {
-            return {
-                methodId,
-                paymentData: {
-                    deviceSessionId,
-                    formattedPayload: {
-                        ...(this.isFastlaneEnabled
-                            ? {
-                                  paypal_fastlane_token: {
-                                      token: instrumentId,
-                                  },
-                              }
-                            : {
-                                  paypal_connect_token: {
-                                      token: instrumentId,
-                                  },
-                              }),
-                    },
-                },
-            };
-        }
-
-        return {
-            methodId,
-            paymentData: {
-                ...paymentData,
-                instrumentId,
-                deviceSessionId,
-            },
-        };
-    }
-
-    private async preparePaymentPayload(
+    private async prepareConnectPaymentPayload(
         methodId: string,
         paymentData: OrderPaymentRequestBody['paymentData'],
     ): Promise<Payment> {
         const state = this.paymentIntegrationService.getState();
         const billingAddress = state.getBillingAddressOrThrow();
-        // Info: shipping can be unavailable for carts with digital items
         const shippingAddress = state.getShippingAddress();
 
         const deviceSessionId = await this.braintreeFastlaneUtils.getDeviceSessionId();
+
+        if (paymentData && isVaultedInstrument(paymentData)) {
+            const { instrumentId } = paymentData;
+
+            if (this.isPayPalInstrument(instrumentId)) {
+                return {
+                    methodId,
+                    paymentData: {
+                        deviceSessionId,
+                        formattedPayload: {
+                            paypal_connect_token: {
+                                token: instrumentId,
+                            },
+                        },
+                    },
+                };
+            }
+
+            return {
+                methodId,
+                paymentData: {
+                    ...paymentData,
+                    instrumentId,
+                    deviceSessionId,
+                },
+            };
+        }
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
@@ -250,22 +232,10 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         const paypalBillingAddress = this.mapToPayPalAddress(billingAddress);
         const paypalShippingAddress = shippingAddress && this.mapToPayPalAddress(shippingAddress);
 
-        let token;
-
-        if (this.isFastlaneEnabled && isBraintreeFastlaneCardComponent(braintreeCardComponent)) {
-            const { id } = await braintreeCardComponent.getPaymentToken({
-                billingAddress: paypalBillingAddress,
-            });
-
-            token = id;
-        } else if (isBraintreeConnectCardComponent(braintreeCardComponent)) {
-            const { nonce } = await braintreeCardComponent.tokenize({
-                billingAddress: paypalBillingAddress,
-                ...(paypalShippingAddress && { shippingAddress: paypalShippingAddress }),
-            });
-
-            token = nonce;
-        }
+        const { nonce } = await braintreeCardComponent.tokenize({
+            billingAddress: paypalBillingAddress,
+            ...(paypalShippingAddress && { shippingAddress: paypalShippingAddress }),
+        });
 
         return {
             methodId,
@@ -274,7 +244,44 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
                 deviceSessionId,
                 shouldSaveInstrument,
                 shouldSetAsDefaultInstrument,
-                nonce: token,
+                nonce,
+            },
+        };
+    }
+
+    private async prepareFastlanePaymentPayload(methodId: string): Promise<Payment> {
+        const state = this.paymentIntegrationService.getState();
+        const billingAddress = state.getBillingAddressOrThrow();
+
+        const paypalInstrument = this.getPayPalInstruments()[0];
+
+        const deviceSessionId = await this.braintreeFastlaneUtils.getDeviceSessionId();
+
+        if (paypalInstrument) {
+            return {
+                methodId,
+                paymentData: {
+                    deviceSessionId,
+                    formattedPayload: {
+                        paypal_fastlane_token: {
+                            token: paypalInstrument.bigpayToken,
+                        },
+                    },
+                },
+            };
+        }
+
+        const { getPaymentToken } = this.getBraintreeCardComponentOrThrow();
+
+        const { id } = await getPaymentToken({
+            billingAddress: this.mapToPayPalAddress(billingAddress),
+        });
+
+        return {
+            methodId,
+            paymentData: {
+                deviceSessionId,
+                nonce: id,
             },
         };
     }
@@ -335,7 +342,13 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         return this.braintreeCardComponent;
     }
 
-    private isPayPalFastlaneInstrument(instrumentId: string): boolean {
+    private isPayPalInstrument(instrumentId: string): boolean {
+        const paypalInstruments = this.getPayPalInstruments();
+
+        return !!paypalInstruments.find((instrument) => instrument.bigpayToken === instrumentId);
+    }
+
+    private getPayPalInstruments(): CardInstrument[] {
         const state = this.paymentIntegrationService.getState();
         const paymentProviderCustomer = state.getPaymentProviderCustomerOrThrow();
         const braintreePaymentProviderCustomer = isBraintreeAcceleratedCheckoutCustomer(
@@ -344,11 +357,7 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
             ? paymentProviderCustomer
             : {};
 
-        const paypalConnectInstruments = braintreePaymentProviderCustomer.instruments || [];
-
-        return !!paypalConnectInstruments.find(
-            (instrument) => instrument.bigpayToken === instrumentId,
-        );
+        return braintreePaymentProviderCustomer.instruments || [];
     }
 
     private async getValidPaymentMethodOrThrow(

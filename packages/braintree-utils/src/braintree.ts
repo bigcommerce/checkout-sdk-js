@@ -740,6 +740,9 @@ export interface Card {
 export interface BraintreeConnectCardComponent {
     (options: BraintreeConnectCardComponentOptions): BraintreeConnectCardComponent;
     tokenize(options: BraintreeConnectTokenizeOptions): Promise<BraintreeConnectTokenizeResult>;
+    getPaymentToken(
+        options: BraintreeFastlaneTokenizeOptions,
+    ): Promise<BraintreeFastlaneVaultedInstrument>; // FIXME: this method does not support by Connect
     render(element: string): void;
 }
 
@@ -949,6 +952,7 @@ export interface BraintreeFastlaneOrderPlacedEventOptions
 
 export interface BraintreeFastlaneCardComponent {
     (options: BraintreeFastlaneCardComponentOptions): BraintreeFastlaneCardComponent;
+    tokenize(options: BraintreeConnectTokenizeOptions): Promise<BraintreeConnectTokenizeResult>; // FIXME: this method does not support by Fastlane
     getPaymentToken(
         options: BraintreeFastlaneTokenizeOptions,
     ): Promise<BraintreeFastlaneVaultedInstrument>;

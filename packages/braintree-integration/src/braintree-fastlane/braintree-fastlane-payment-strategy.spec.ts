@@ -545,7 +545,36 @@ describe('BraintreeFastlanePaymentStrategy', () => {
         });
     });
 
-    describe('#prepareVaultedInstrumentPaymentPayload()', () => {
+    describe('#prepareConnectPaymentPayload()', () => {
+        it('collects an tokenizes data from braintree connect card component', async () => {
+            const tokenizeMethodMock = jest.fn().mockReturnValue({ nonce: 'nonce' });
+
+            jest.spyOn(braintreeConnectMock, 'ConnectCardComponent').mockImplementation(() => ({
+                tokenize: tokenizeMethodMock,
+                render: jest.fn,
+            }));
+
+            await strategy.initialize(defaultInitializationOptions);
+            await strategy.execute(executeOptions);
+
+            expect(tokenizeMethodMock).toHaveBeenCalledWith({
+                billingAddress: {
+                    streetAddress: '12345 Testing Way',
+                    locality: 'Some City',
+                    region: 'CA',
+                    postalCode: '95555',
+                    countryCodeAlpha2: 'US',
+                },
+                shippingAddress: {
+                    streetAddress: '12345 Testing Way',
+                    locality: 'Some City',
+                    region: 'CA',
+                    postalCode: '95555',
+                    countryCodeAlpha2: 'US',
+                },
+            });
+        });
+
         it('prepares payment payload with BC vaulted instrument', async () => {
             await strategy.initialize(defaultInitializationOptions);
             await strategy.execute(executeOptionsWithVaultedInstrument);
@@ -598,8 +627,54 @@ describe('BraintreeFastlanePaymentStrategy', () => {
                 },
             });
         });
+    });
 
-        it('prepares payment payload with PayPal Fastlane vaulted instrument', async () => {
+    describe('#prepareFastlanePaymentPayload()', () => {
+        it('collects an tokenizes data from braintree fastlane card component (customer without fastlane account)', async () => {
+            const mockPaymentMethod = {
+                ...paymentMethod,
+                initializationData: {
+                    isAcceleratedCheckoutEnabled: true,
+                    isFastlaneEnabled: true,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(mockPaymentMethod);
+
+            const tokenizationNonceMock = 'fastlane_token_mock';
+            const tokenizeMethodMock = jest.fn().mockReturnValue({ id: tokenizationNonceMock });
+
+            jest.spyOn(braintreeFastlaneMock, 'FastlaneCardComponent').mockImplementation(() => ({
+                getPaymentToken: tokenizeMethodMock,
+                render: jest.fn,
+            }));
+
+            await strategy.initialize(defaultInitializationOptions);
+            await strategy.execute(executeOptions);
+
+            expect(tokenizeMethodMock).toHaveBeenCalledWith({
+                billingAddress: {
+                    streetAddress: '12345 Testing Way',
+                    locality: 'Some City',
+                    region: 'CA',
+                    postalCode: '95555',
+                    countryCodeAlpha2: 'US',
+                },
+            });
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    deviceSessionId,
+                    nonce: tokenizationNonceMock,
+                },
+            });
+        });
+
+        it('places order with braintree fastlane using fastlane vaulted instrument for customers with fastlane account', async () => {
             const mockPaymentMethod = {
                 ...paymentMethod,
                 initializationData: {
@@ -649,72 +724,6 @@ describe('BraintreeFastlanePaymentStrategy', () => {
                             token: instrumentId,
                         },
                     },
-                },
-            });
-        });
-    });
-
-    describe('#preparePaymentPayload()', () => {
-        it('collects an tokenizes data from braintree connect card component', async () => {
-            const tokenizeMethodMock = jest.fn().mockReturnValue({ nonce: 'nonce' });
-
-            jest.spyOn(braintreeConnectMock, 'ConnectCardComponent').mockImplementation(() => ({
-                tokenize: tokenizeMethodMock,
-                render: jest.fn,
-            }));
-
-            await strategy.initialize(defaultInitializationOptions);
-            await strategy.execute(executeOptions);
-
-            expect(tokenizeMethodMock).toHaveBeenCalledWith({
-                billingAddress: {
-                    streetAddress: '12345 Testing Way',
-                    locality: 'Some City',
-                    region: 'CA',
-                    postalCode: '95555',
-                    countryCodeAlpha2: 'US',
-                },
-                shippingAddress: {
-                    streetAddress: '12345 Testing Way',
-                    locality: 'Some City',
-                    region: 'CA',
-                    postalCode: '95555',
-                    countryCodeAlpha2: 'US',
-                },
-            });
-        });
-
-        it('collects an tokenizes data from braintree fastlane card component', async () => {
-            const mockPaymentMethod = {
-                ...paymentMethod,
-                initializationData: {
-                    isAcceleratedCheckoutEnabled: true,
-                    isFastlaneEnabled: true,
-                },
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(mockPaymentMethod);
-
-            const tokenizeMethodMock = jest.fn().mockReturnValue({ id: 'nonce' });
-
-            jest.spyOn(braintreeFastlaneMock, 'FastlaneCardComponent').mockImplementation(() => ({
-                getPaymentToken: tokenizeMethodMock,
-                render: jest.fn,
-            }));
-
-            await strategy.initialize(defaultInitializationOptions);
-            await strategy.execute(executeOptions);
-
-            expect(tokenizeMethodMock).toHaveBeenCalledWith({
-                billingAddress: {
-                    streetAddress: '12345 Testing Way',
-                    locality: 'Some City',
-                    region: 'CA',
-                    postalCode: '95555',
-                    countryCodeAlpha2: 'US',
                 },
             });
         });
