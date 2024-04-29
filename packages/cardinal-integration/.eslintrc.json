@@ -1,0 +1,14 @@
+{
+    "extends": ["../../.eslintrc.json"],
+    "ignorePatterns": ["!**/*"],
+    "overrides": [
+        {
+            "files": ["*.ts", "*.tsx", "*.spec.ts", "*.spec.tsx"],
+            "rules": {
+                "jest/no-conditional-expect": "off",
+                "@typescript-eslint/naming-convention": "off",
+                "@typescript-eslint/no-unsafe-member-access": "off"
+            }
+        }
+    ]
+}

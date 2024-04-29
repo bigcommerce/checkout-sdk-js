@@ -56,6 +56,7 @@
 /packages/amazon-pay-utils @bigcommerce/team-integrations
 /packages/bluesnap-direct-integration @bigcommerce/team-integrations
 /packages/bolt-integration @bigcommerce/team-integrations
+/packages/cardinal-integration @bigcommerce/team-integrations
 /packages/checkoutcom-custom-integration @bigcommerce/team-integrations
 /packages/mollie-integration @bigcommerce/team-integrations
 /packages/squarev2-integration @bigcommerce/team-integrations

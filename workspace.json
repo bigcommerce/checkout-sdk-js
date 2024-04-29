@@ -12,6 +12,7 @@
         "bolt-integration": "packages/bolt-integration",
         "braintree-integration": "packages/braintree-integration",
         "braintree-utils": "packages/braintree-utils",
+        "cardinal-integration": "packages/cardinal-integration",
         "checkoutcom-custom-integration": "packages/checkoutcom-custom-integration",
         "core": "packages/core",
         "credit-card-integration": "packages/credit-card-integration",
