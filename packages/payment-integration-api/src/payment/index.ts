@@ -38,6 +38,7 @@ export {
     StripeV3FormattedPayload,
 } from './payment';
 
+export { default as isCreditCardLike } from './is-credit-card-like';
 export { default as isHostedInstrumentLike } from './is-hosted-intrument-like';
 export { default as isWithAccountCreation } from './is-with-account-creation';
 
@@ -53,7 +54,7 @@ export { PaymentInitializeOptions } from './payment-initialize-options';
 export { PaymentRequestOptions } from './payment-request-options';
 export { default as PaymentMethod } from './payment-method';
 export { default as PaymentResponse } from './payment-response';
-export { default as PaymentResponseBody } from './payment-response-body';
+export { default as PaymentResponseBody, ThreeDsResult } from './payment-response-body';
 export { default as PaymentStrategy } from './payment-strategy';
 export { default as PaymentStrategyFactory } from './payment-strategy-factory';
 export { default as PaymentStrategyResolveId } from './payment-strategy-resolve-id';
