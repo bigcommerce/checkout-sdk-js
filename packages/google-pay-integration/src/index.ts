@@ -27,3 +27,5 @@ export { default as createGooglePayPayPalCommerceCustomerStrategy } from './goog
 
 export { default as createGooglePayBraintreeButtonStrategy } from './factories/button/create-google-pay-braintree-button-strategy';
 export { default as createGooglePayPayPalCommerceButtonStrategy } from './google-pay-paypal-commerce/create-google-pay-paypal-commerce-button-strategy';
+export { default as createGooglePayAdyenV2ButtonStrategy } from './factories/button/create-google-pay-adyenv2-button-strategy';
+export { default as createGooglePayAdyenV3ButtonStrategy } from './factories/button/create-google-pay-adyenv3-button-strategy';
