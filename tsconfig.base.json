@@ -62,6 +62,7 @@
             "@bigcommerce/checkout-sdk/google-pay-integration": [
                 "packages/google-pay-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/humm": ["packages/humm-integration/src/index.ts"],
             "@bigcommerce/checkout-sdk/klarna-integration": [
                 "packages/klarna-integration/src/index.ts"
             ],

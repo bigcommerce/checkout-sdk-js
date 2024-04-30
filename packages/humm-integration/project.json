@@ -1,0 +1,22 @@
+{
+    "root": "packages/humm-integration",
+    "sourceRoot": "packages/humm-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/humm-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/humm-integration"],
+            "options": {
+                "jestConfig": "packages/humm-integration/jest.config.js"
+            }
+        }
+    },
+    "tags": ["scope:integration"]
+}
