@@ -123,14 +123,6 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     private _getGooglePayOptions(
         options: CustomerInitializeOptions,
     ): GooglePayCustomerInitializeOptions {
-        if (options.methodId === MethodType.GOOGLEPAY_ADYENV2 && options.googlepayadyenv2) {
-            return options.googlepayadyenv2;
-        }
-
-        if (options.methodId === MethodType.GOOGLEPAY_ADYENV3 && options.googlepayadyenv3) {
-            return options.googlepayadyenv3;
-        }
-
         if (
             options.methodId === MethodType.GOOGLEPAY_AUTHORIZENET &&
             options.googlepayauthorizenet
