@@ -16,7 +16,6 @@ import {
 
 import {
     CardinalClient,
-    CardinalEventMap,
     CardinalEventType,
     CardinalInitializationType,
     CardinalPaymentType,
@@ -52,14 +51,12 @@ describe('CardinalClient', () => {
     });
 
     describe('#configure', () => {
-        //let completed: () => void;
-        //let validated: (data: CardinalValidatedData, jwt: string) => void;
-        let completed: CardinalEventMap[CardinalEventType];
-        let validated: CardinalEventMap[CardinalEventType];
+        let completed: () => void;
+        let validated: (data: CardinalValidatedData, jwt: string) => void;
 
         beforeEach(() => {
             sdk.on = jest.fn(
-                (type: CardinalEventType, callback: CardinalEventMap[CardinalEventType]) => {
+                (type: CardinalEventType, callback) => {
                     if (type.toString() === CardinalEventType.SetupCompleted) {
                         completed = callback;
                     }

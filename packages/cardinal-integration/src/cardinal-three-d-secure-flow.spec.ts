@@ -57,6 +57,10 @@ describe('CardinalThreeDSecureFlow', () => {
         );
     });
 
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     describe('#prepare', () => {
         it('loads Cardinal client', async () => {
             await threeDSecureFlow.prepare(paymentMethod);

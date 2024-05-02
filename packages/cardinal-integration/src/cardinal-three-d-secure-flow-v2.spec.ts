@@ -15,6 +15,7 @@ import {
     getCheckout,
     getOrder,
     getOrderRequestBody,
+    getPaymentMethod,
     getResponse,
     getShippingAddress,
     PaymentIntegrationServiceMock,
@@ -22,7 +23,6 @@ import {
 
 import CardinalClient from './cardinal-client';
 import CardinalThreeDSecureFlowV2 from './cardinal-three-d-secure-flow-v2';
-import { getBarclays } from './cardinal.mock';
 
 describe('CardinalBarclaysThreeDSecureFlow', () => {
     let cardinalClient: Pick<
@@ -34,7 +34,7 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
-        paymentMethod = getBarclays();
+        paymentMethod = getPaymentMethod();
 
         cardinalClient = {
             configure: jest.fn(() => Promise.resolve()),
@@ -49,6 +49,10 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
             paymentIntegrationService,
             cardinalClient as CardinalClient,
         );
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     describe('#prepare', () => {

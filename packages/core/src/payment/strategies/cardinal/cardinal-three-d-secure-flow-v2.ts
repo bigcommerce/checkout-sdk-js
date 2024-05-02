@@ -32,6 +32,7 @@ export default class CardinalThreeDSecureFlowV2 {
         options?: PaymentRequestOptions,
         hostedForm?: HostedForm,
     ): Promise<InternalCheckoutSelectors> {
+        console.log(1);
         const {
             instruments: { getCardInstrument },
         } = this._store.getState();
@@ -39,12 +40,15 @@ export default class CardinalThreeDSecureFlowV2 {
         const { paymentData = {} } = payment;
 
         try {
+            console.log(2);
             return await execute(payload, options);
         } catch (error) {
+            console.log(3);
             if (
                 error instanceof RequestError &&
                 error.body.status === 'additional_action_required'
             ) {
+                console.log(4);
                 const token = error.body.additional_action_required?.data?.token;
                 const xid = error.body.three_ds_result?.payer_auth_request;
 
@@ -53,16 +57,20 @@ export default class CardinalThreeDSecureFlowV2 {
                 const bin = this._getBin(paymentData, getCardInstrument, hostedForm);
 
                 if (bin) {
+                    console.log(5);
                     await this._cardinalClient.runBinProcess(bin);
                 }
 
                 try {
+                    console.log(6);
                     return await this._submitPayment(payment, { xid }, hostedForm);
                 } catch (error) {
+                    console.log(7);
                     if (
                         error instanceof RequestError &&
                         some(error.body.errors, { code: 'three_d_secure_required' })
                     ) {
+                        console.log(8);
                         const threeDsResult = error.body.three_ds_result;
                         const token = threeDsResult?.payer_auth_request;
 
