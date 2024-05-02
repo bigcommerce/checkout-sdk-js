@@ -1,7 +1,7 @@
-import isCreditCardLike from './is-credit-card-like';
+import isCreditCardInstrument from './is-credit-card-instrument';
 
-describe('isCreditCardLike', () => {
-    it('returns true if the object looks like a credit creditcard', () => {
+describe('isCreditCardInstrument', () => {
+    it('returns true if the object looks like a credit card', () => {
         const paymentData = {
             ccExpiry: {
                 month: '10',
@@ -12,18 +12,18 @@ describe('isCreditCardLike', () => {
             ccCvv: '123',
         };
 
-        expect(paymentData && isCreditCardLike(paymentData)).toBe(true);
+        expect(paymentData && isCreditCardInstrument(paymentData)).toBe(true);
     });
 
     it('returns false if a Vaulted Instrument', () => {
         const paymentData = { instrumentId: 'my_instrument_id', cvv: 123, iin: '123123' };
 
-        expect(isCreditCardLike(paymentData)).toBe(false);
+        expect(isCreditCardInstrument(paymentData)).toBe(false);
     });
 
     it('returns false if a Tokenized Credit Card', () => {
         const paymentData = { nonce: 'my_nonce' };
 
-        expect(isCreditCardLike(paymentData)).toBe(false);
+        expect(isCreditCardInstrument(paymentData)).toBe(false);
     });
 });

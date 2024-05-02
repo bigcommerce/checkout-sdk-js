@@ -38,7 +38,7 @@ export {
     StripeV3FormattedPayload,
 } from './payment';
 
-export { default as isCreditCardLike } from './is-credit-card-like';
+export { default as isCreditCardInstrument } from './is-credit-card-instrument';
 export { default as isHostedInstrumentLike } from './is-hosted-intrument-like';
 export { default as isWithAccountCreation } from './is-with-account-creation';
 

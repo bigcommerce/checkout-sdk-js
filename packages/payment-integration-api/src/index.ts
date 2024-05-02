@@ -124,7 +124,7 @@ export {
     CreditCardInstrument,
     FormattedHostedInstrument,
     WithBankAccountInstrument,
-    isCreditCardLike,
+    isCreditCardInstrument,
     isVaultedInstrument,
     isHostedInstrumentLike,
     isWithAccountCreation,
