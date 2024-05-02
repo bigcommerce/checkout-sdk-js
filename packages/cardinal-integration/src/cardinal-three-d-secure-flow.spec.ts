@@ -15,6 +15,7 @@ import {
     getCheckout,
     getOrder,
     getOrderRequestBody,
+    getPaymentMethod,
     getResponse,
     getShippingAddress,
     PaymentIntegrationServiceMock,
@@ -22,7 +23,6 @@ import {
 
 import CardinalClient from './cardinal-client';
 import CardinalThreeDSecureFlow from './cardinal-three-d-secure-flow';
-import { getCybersource } from './cardinal.mock';
 
 describe('CardinalThreeDSecureFlow', () => {
     let cardinalClient: Pick<
@@ -35,7 +35,7 @@ describe('CardinalThreeDSecureFlow', () => {
 
     beforeEach(() => {
         paymentMethod = {
-            ...getCybersource(),
+            ...getPaymentMethod(),
             clientToken: 'foo',
         };
 
@@ -81,7 +81,7 @@ describe('CardinalThreeDSecureFlow', () => {
 
         it('reloads payment method if client token is undefined', async () => {
             paymentMethod = {
-                ...getCybersource(),
+                ...getPaymentMethod(),
                 clientToken: '',
             };
 

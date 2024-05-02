@@ -1,4 +1,4 @@
-import { PaymentMethod, ThreeDsResult } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { ThreeDsResult } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
     getCreditCardInstrument,
@@ -84,37 +84,5 @@ export function getCardinalOrderData(): CardinalOrderData {
         id: '123-abc',
         amount: 12000,
         paymentData: getCreditCardInstrument(),
-    };
-}
-
-export function getCybersource(): PaymentMethod {
-    return {
-        id: 'cybersource',
-        logoUrl: '',
-        method: 'credit-card',
-        supportedCards: [],
-        config: {
-            displayName: 'Cybersource',
-            is3dsEnabled: true,
-            testMode: true,
-        },
-        type: 'PAYMENT_TYPE_API',
-        clientToken: 'cyberToken',
-    };
-}
-
-export function getBarclays(): PaymentMethod {
-    return {
-        id: 'barclays',
-        logoUrl: '',
-        method: 'credit-card',
-        supportedCards: [],
-        config: {
-            displayName: 'Barclaycard Smartpay',
-            is3dsEnabled: true,
-            testMode: true,
-        },
-        type: 'PAYMENT_TYPE_API',
-        clientToken: 'barclaysToken',
     };
 }
