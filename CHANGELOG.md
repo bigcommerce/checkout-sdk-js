@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.595.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.594.0...v1.595.0) (2024-05-02)
+
+
+### Features
+
+* **payment:** PAYPAL-4069 removed temporary import and export ([#2486](https://github.com/bigcommerce/checkout-sdk-js/issues/2486)) ([42ece43](https://github.com/bigcommerce/checkout-sdk-js/commit/42ece43391da0dd403632474d76dcf2774db47d1))
+
 ## [1.594.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.593.2...v1.594.0) (2024-05-02)
 
 
