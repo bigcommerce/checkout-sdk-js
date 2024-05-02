@@ -55,17 +55,15 @@ describe('CardinalClient', () => {
         let validated: (data: CardinalValidatedData, jwt: string) => void;
 
         beforeEach(() => {
-            sdk.on = jest.fn(
-                (type: CardinalEventType, callback) => {
-                    if (type.toString() === CardinalEventType.SetupCompleted) {
-                        completed = callback;
-                    }
-
-                    if (type.toString() === CardinalEventType.Validated) {
-                        validated = callback;
-                    }
+            sdk.on = jest.fn((type: CardinalEventType, callback) => {
+                if (type.toString() === CardinalEventType.SetupCompleted) {
+                    completed = callback;
                 }
-            );
+
+                if (type.toString() === CardinalEventType.Validated) {
+                    validated = callback;
+                }
+            });
         });
 
         describe('#successfully', () => {
@@ -127,7 +125,7 @@ describe('CardinalClient', () => {
 
             await client.load('provider', true);
 
-            return expect(client.configure('token')).rejects.toThrow(MissingDataError);
+            await expect(client.configure('token')).rejects.toThrow(MissingDataError);
         });
     });
 

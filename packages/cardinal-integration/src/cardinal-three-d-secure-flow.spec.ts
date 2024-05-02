@@ -1,5 +1,6 @@
 import { Response } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
+
 import {
     HostedForm,
     OrderRequestBody,
@@ -53,6 +54,7 @@ describe('CardinalThreeDSecureFlow', () => {
 
         threeDSecureFlow = new CardinalThreeDSecureFlow(
             paymentIntegrationService,
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             cardinalClient as CardinalClient,
         );
     });
@@ -84,7 +86,7 @@ describe('CardinalThreeDSecureFlow', () => {
             };
 
             jest.spyOn(
-                paymentIntegrationService.getState(), 
+                paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(paymentMethod);
 
@@ -104,7 +106,7 @@ describe('CardinalThreeDSecureFlow', () => {
 
     describe('#start', () => {
         let execute: PaymentStrategy['execute'];
-        let form: Pick<HostedForm, 'getBin' | 'submit'>;
+        let form: HostedForm;
         let options: PaymentRequestOptions;
         let payload: OrderRequestBody;
 
@@ -115,6 +117,10 @@ describe('CardinalThreeDSecureFlow', () => {
             form = {
                 getBin: jest.fn(() => '411111'),
                 submit: jest.fn(),
+                attach: jest.fn(),
+                detach: jest.fn(),
+                getCardType: jest.fn(),
+                validate: jest.fn(),
             };
 
             payload = merge({}, getOrderRequestBody(), {
@@ -126,13 +132,13 @@ describe('CardinalThreeDSecureFlow', () => {
         });
 
         it('runs BIN detection process if defined', async () => {
-            await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
+            await threeDSecureFlow.start(execute, payload, options, form);
 
             expect(cardinalClient.runBinProcess).toHaveBeenCalledWith(form.getBin());
         });
 
         it('executes order submission with client token', async () => {
-            await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
+            await threeDSecureFlow.start(execute, payload, options, form);
 
             expect(execute).toHaveBeenCalledWith(
                 merge(payload, {
@@ -144,6 +150,16 @@ describe('CardinalThreeDSecureFlow', () => {
                 }),
                 options,
             );
+        });
+
+        it('throws error in case it is not a request error', async () => {
+            execute = jest.fn(() => Promise.reject(new Error()));
+
+            try {
+                await threeDSecureFlow.start(execute, payload, options, form);
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+            }
         });
 
         describe('if 3DS is required', () => {
@@ -159,7 +175,7 @@ describe('CardinalThreeDSecureFlow', () => {
             });
 
             it('handles 3DS error and prompts shopper to authenticate', async () => {
-                await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
+                await threeDSecureFlow.start(execute, payload, options, form);
 
                 expect(cardinalClient.getThreeDSecureData).toHaveBeenCalledWith(
                     response.body.three_ds_result,
@@ -178,7 +194,7 @@ describe('CardinalThreeDSecureFlow', () => {
                     'three_d_secure',
                 );
 
-                await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
+                await threeDSecureFlow.start(execute, payload, options, form);
 
                 expect(form.submit).toHaveBeenCalledWith(
                     merge(payload.payment, {

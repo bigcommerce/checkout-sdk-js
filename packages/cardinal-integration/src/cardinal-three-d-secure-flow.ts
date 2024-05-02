@@ -91,7 +91,9 @@ export default class CardinalThreeDSecureFlow {
 
         await this._paymentIntegrationService.loadPaymentMethod(method.id);
 
-        const paymentMethod = this._paymentIntegrationService.getState().getPaymentMethodOrThrow(method.id);
+        const paymentMethod = this._paymentIntegrationService
+            .getState()
+            .getPaymentMethodOrThrow(method.id);
 
         return paymentMethod.clientToken || '';
     }
@@ -102,9 +104,6 @@ export default class CardinalThreeDSecureFlow {
         const shippingAddress = state.getShippingAddress();
         const checkout = state.getCheckoutOrThrow();
         const order = state.getOrderOrThrow();
-
-        console.log(billingAddress)
-        console.log(shippingAddress)
 
         return {
             billingAddress,

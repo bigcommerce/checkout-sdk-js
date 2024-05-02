@@ -23,6 +23,5 @@ export function getBillingAddress(): BillingAddress {
     return {
         ...getAddress(),
         id: '55c96cda6f04c',
-        // email: 'test@bigcommerce.com',
     };
 }

@@ -1,7 +1,6 @@
 # cardinal-integration
 
 This package contains the integration layer for [Cardinal](https://cardinalcommerce.com/).
-This library was generated with [Nx](https://nx.dev).
 
 # Cardinal
 

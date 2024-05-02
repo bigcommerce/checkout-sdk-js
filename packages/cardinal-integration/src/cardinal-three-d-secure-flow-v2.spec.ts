@@ -47,6 +47,7 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
 
         threeDSecureFlow = new CardinalThreeDSecureFlowV2(
             paymentIntegrationService,
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             cardinalClient as CardinalClient,
         );
     });
@@ -68,7 +69,7 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
 
     describe('#start', () => {
         let execute: PaymentStrategy['execute'];
-        let form: Pick<HostedForm, 'getBin' | 'submit'>;
+        let form: HostedForm;
         let options: PaymentRequestOptions;
         let payload: OrderRequestBody;
 
@@ -79,6 +80,10 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
             form = {
                 getBin: jest.fn(() => '411111'),
                 submit: jest.fn(),
+                attach: jest.fn(),
+                detach: jest.fn(),
+                getCardType: jest.fn(),
+                validate: jest.fn(),
             };
 
             payload = merge({}, getOrderRequestBody(), {
@@ -90,7 +95,7 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
         });
 
         it('executes order submission', async () => {
-            await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
+            await threeDSecureFlow.start(execute, payload, options, form);
 
             expect(execute).toHaveBeenCalledWith(payload, options);
         });
@@ -109,19 +114,19 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
             });
 
             it('configures Cardinal client', async () => {
-                await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
+                await threeDSecureFlow.start(execute, payload, options, form);
 
                 expect(cardinalClient.configure).toHaveBeenCalledWith('JWT123');
             });
 
             it('runs BIN detection process if defined', async () => {
-                await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
+                await threeDSecureFlow.start(execute, payload, options, form);
 
                 expect(cardinalClient.runBinProcess).toHaveBeenCalledWith(form.getBin());
             });
 
             it('submits XID token using hosted form if provided', async () => {
-                await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
+                await threeDSecureFlow.start(execute, payload, options, form);
 
                 expect(form.submit).toHaveBeenCalledWith(
                     merge({}, payload.payment, {
@@ -157,13 +162,10 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
                     jest.spyOn(form, 'submit').mockRejectedValueOnce(
                         new RequestError(threeDSecureRequired),
                     );
-                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValueOnce(
-                        new RequestError(threeDSecureRequired),
-                    );
                 });
 
                 it('handles 3DS error and prompts shopper to authenticate', async () => {
-                    await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
+                    await threeDSecureFlow.start(execute, payload, options, form);
 
                     expect(cardinalClient.getThreeDSecureData).toHaveBeenCalledWith(
                         threeDSecureRequired.body.three_ds_result,
@@ -178,7 +180,7 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
                 });
 
                 it('submits 3DS token using hosted form if provided', async () => {
-                    await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
+                    await threeDSecureFlow.start(execute, payload, options, form);
 
                     expect(form.submit).toHaveBeenCalledWith(
                         merge({}, payload.payment, {
@@ -188,6 +190,10 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
                 });
 
                 it('submits 3DS token directly if hosted form is not provided', async () => {
+                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValueOnce(
+                        new RequestError(threeDSecureRequired),
+                    );
+
                     await threeDSecureFlow.start(execute, payload, options);
 
                     expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(

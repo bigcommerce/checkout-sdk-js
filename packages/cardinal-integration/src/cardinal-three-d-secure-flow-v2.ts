@@ -2,7 +2,7 @@ import { merge, some } from 'lodash';
 
 import {
     HostedForm,
-    isCreditCardLike,
+    isCreditCardInstrument,
     isVaultedInstrument,
     OrderPaymentRequestBody,
     OrderRequestBody,
@@ -33,21 +33,17 @@ export default class CardinalThreeDSecureFlowV2 {
         options?: PaymentRequestOptions,
         hostedForm?: HostedForm,
     ): Promise<void> {
-        console.log(1);
         const { getCardInstrument } = this._paymentIntegrationService.getState();
         const { payment = { methodId: '' } } = payload;
         const { paymentData = {} } = payment;
 
         try {
-            console.log(2);
             return await execute(payload, options);
         } catch (error) {
-            console.log(3);
             if (
                 error instanceof RequestError &&
                 error.body.status === 'additional_action_required'
             ) {
-                console.log(4);
                 const token = error.body.additional_action_required?.data?.token;
                 const xid = error.body.three_ds_result?.payer_auth_request;
 
@@ -56,29 +52,26 @@ export default class CardinalThreeDSecureFlowV2 {
                 const bin = this._getBin(paymentData, getCardInstrument, hostedForm);
 
                 if (bin) {
-                    console.log(5);
                     await this._cardinalClient.runBinProcess(bin);
                 }
 
                 try {
-                    console.log(6);
                     return await this._submitPayment(payment, { xid }, hostedForm);
+                    // eslint-disable-next-line @typescript-eslint/no-shadow
                 } catch (error) {
-                    console.log(7);
                     if (
                         error instanceof RequestError &&
                         some(error.body.errors, { code: 'three_d_secure_required' })
                     ) {
-                        console.log(8);
                         const threeDsResult = error.body.three_ds_result;
-                        const token = threeDsResult?.payer_auth_request;
+                        const threeDsToken = threeDsResult?.payer_auth_request;
 
                         await this._cardinalClient.getThreeDSecureData(
                             threeDsResult,
                             this._getOrderData(),
                         );
 
-                        return await this._submitPayment(payment, { token }, hostedForm);
+                        return this._submitPayment(payment, { token: threeDsToken }, hostedForm);
                     }
 
                     throw error;
@@ -125,8 +118,9 @@ export default class CardinalThreeDSecureFlowV2 {
     ): string {
         const instrument =
             isVaultedInstrument(paymentData) && getCardInstrument(paymentData.instrumentId);
-        const ccNumber = isCreditCardLike(paymentData) && paymentData.ccNumber;
-        const bin = instrument ? instrument.iin : hostedForm ? hostedForm.getBin() : ccNumber;
+        const ccNumber = isCreditCardInstrument(paymentData) && paymentData.ccNumber;
+        const hostedFormBin = hostedForm ? hostedForm.getBin() : ccNumber;
+        const bin = instrument ? instrument.iin : hostedFormBin;
 
         return bin || '';
     }
