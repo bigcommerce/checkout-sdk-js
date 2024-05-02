@@ -124,6 +124,7 @@ export {
     CreditCardInstrument,
     FormattedHostedInstrument,
     WithBankAccountInstrument,
+    isCreditCardInstrument,
     isVaultedInstrument,
     isHostedInstrumentLike,
     isWithAccountCreation,
@@ -152,6 +153,9 @@ export {
     UntrustedShippingCardVerificationType,
     AccountInstrument,
     PaymentInstrument,
+    ThreeDSecure,
+    ThreeDSecureToken,
+    ThreeDsResult,
 } from './payment';
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
