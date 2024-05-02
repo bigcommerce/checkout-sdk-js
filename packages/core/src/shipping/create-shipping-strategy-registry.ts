@@ -25,7 +25,7 @@ import ConsignmentRequestSender from './consignment-request-sender';
 import ShippingStrategyActionCreator from './shipping-strategy-action-creator';
 import { ShippingStrategy } from './strategies';
 import { AmazonPayV2ShippingStrategy } from './strategies/amazon-pay-v2';
-import { BraintreeAcceleratedCheckoutShippingStrategy } from './strategies/braintree';
+import { BraintreeFastlaneShippingStrategy } from './strategies/braintree';
 import { DefaultShippingStrategy } from './strategies/default';
 import { PayPalCommerceFastlaneShippingStrategy } from './strategies/paypal-commerce';
 import { StripeUPEShippingStrategy } from './strategies/stripe-upe';
@@ -80,7 +80,7 @@ export default function createShippingStrategyRegistry(
     registry.register(
         'braintreeacceleratedcheckout',
         () =>
-            new BraintreeAcceleratedCheckoutShippingStrategy(
+            new BraintreeFastlaneShippingStrategy(
                 store,
                 billingAddressActionCreator,
                 consignmentActionCreator,
