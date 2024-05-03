@@ -267,8 +267,24 @@ export default class BraintreeFastlaneUtils {
                 instruments,
             });
 
-            if (billingAddresses.length > 0) {
+            if (billingAddresses.length > 0 && cart.lineItems.physicalItems.length > 0) {
                 await this.paymentIntegrationService.updateBillingAddress(billingAddresses[0]);
+            }
+
+            // Prefill billing form if only digital items in cart with billing data and firstName and lastName
+            // from shippingAddresses because there are empty in billing
+            if (
+                billingAddresses.length > 0 &&
+                cart.lineItems.digitalItems.length > 0 &&
+                cart.lineItems.physicalItems.length === 0
+            ) {
+                const { firstName, lastName } = addresses[0];
+                const digitalItemBilling = {
+                    ...billingAddresses[0],
+                    firstName,
+                    lastName,
+                };
+                await this.paymentIntegrationService.updateBillingAddress(digitalItemBilling);
             }
 
             if (shippingAddresses.length > 0 && cart.lineItems.physicalItems.length > 0) {

@@ -778,6 +778,37 @@ describe('BraintreeFastlaneUtils', () => {
 
             expect(paymentIntegrationService.updateShippingAddress).not.toHaveBeenCalled();
         });
+
+        it('preselects billing with shipping firstName and lastName if the cart contains only digital items', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue({
+                ...cart,
+                lineItems: {
+                    ...cart.lineItems,
+                    physicalItems: [],
+                },
+            });
+
+            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
+            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+
+            expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith({
+                id: 1,
+                type: 'paypal-address',
+                firstName: 'John',
+                lastName: 'Doe',
+                company: '',
+                address1: 'Hello World Address',
+                address2: '',
+                city: 'Bellingham',
+                stateOrProvince: 'WA',
+                stateOrProvinceCode: 'WA',
+                country: 'United States',
+                countryCode: 'US',
+                postalCode: '98225',
+                phone: '',
+                customFields: [],
+            });
+        });
     });
 
     describe('#getDeviceSessionId', () => {
