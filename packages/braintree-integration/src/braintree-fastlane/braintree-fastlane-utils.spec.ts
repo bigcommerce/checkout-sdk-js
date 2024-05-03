@@ -775,7 +775,7 @@ describe('BraintreeFastlaneUtils', () => {
 
             await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
             await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
-
+            // comment
             expect(paymentIntegrationService.updateShippingAddress).not.toHaveBeenCalled();
         });
 
