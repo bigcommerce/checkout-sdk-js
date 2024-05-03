@@ -151,6 +151,7 @@ export interface GooglePayPaymentDataRequest extends GooglePayGatewayBaseRequest
         allowedCountryCodes?: string[];
         phoneNumberRequired?: boolean;
     };
+    shippingOptionRequired?: boolean;
     callbackIntents?: CallbackIntentsType[];
 }
 
@@ -159,6 +160,13 @@ export interface NewTransactionInfo {
         currencyCode: string;
         totalPrice: string;
         totalPriceStatus: TotalPriceStatusType;
+    };
+}
+
+export interface NewShippingOptionParameters {
+    newShippingOptionParameters?: {
+        defaultSelectedOptionId?: string;
+        shippingOptions?: any[];
     };
 }
 
@@ -171,19 +179,25 @@ export enum CallbackTriggerType {
 
 export interface IntermediatePaymentData {
     callbackTrigger: CallbackTriggerType;
+    shippingAddress: GooglePayFullBillingAddress; // TODO: need to be changed to relative shipping interface
+    shippingOptionData: { id: string };
 }
 
 export interface GooglePayPaymentOptions {
     paymentDataCallbacks?: {
         onPaymentDataChanged(
             intermediatePaymentData: IntermediatePaymentData,
-        ): Promise<NewTransactionInfo | void>;
+        ): Promise<(NewTransactionInfo & NewShippingOptionParameters) | void>;
+        // onPaymentAuthorized?(payload: any): void;
     };
 }
 
 export type GooglePayRequiredPaymentData = Pick<
     GooglePayPaymentDataRequest,
-    'emailRequired' | 'shippingAddressRequired' | 'shippingAddressParameters'
+    | 'emailRequired'
+    | 'shippingAddressRequired'
+    | 'shippingAddressParameters'
+    | 'shippingOptionRequired'
 >;
 
 interface GooglePayMinBillingAddress {

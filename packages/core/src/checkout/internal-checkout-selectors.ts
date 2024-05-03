@@ -52,6 +52,7 @@ export default interface InternalCheckoutSelectors {
     shippingAddress: ShippingAddressSelector;
     shippingCountries: ShippingCountrySelector;
     shippingStrategies: ShippingStrategySelector;
+    // shippingOptions?: PickupOptionSelector;
     signInEmail: SignInEmailSelector;
     subscriptions: SubscriptionsSelector;
     storeCredit: StoreCreditSelector;

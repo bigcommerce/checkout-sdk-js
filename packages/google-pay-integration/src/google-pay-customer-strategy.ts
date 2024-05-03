@@ -13,6 +13,7 @@ import {
     PaymentMethod,
     PaymentMethodCancelledError,
     PaymentMethodFailedError,
+    ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import GooglePayCustomerInitializeOptions, {
@@ -23,6 +24,8 @@ import isGooglePayErrorObject from './guards/is-google-pay-error-object';
 import isGooglePayKey from './guards/is-google-pay-key';
 import {
     CallbackTriggerType,
+    GooglePayCardDataResponse,
+    GooglePayFullBillingAddress,
     GooglePayInitializationData,
     GooglePayPaymentOptions,
     IntermediatePaymentData,
@@ -113,9 +116,34 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async ({
                     callbackTrigger,
+                    shippingAddress,
+                    shippingOptionData,
+                    ...payload
                 }: IntermediatePaymentData): Promise<NewTransactionInfo | void> => {
-                    if (callbackTrigger !== CallbackTriggerType.INITIALIZE) {
+                    console.log('*** onPaymentDataChanged', callbackTrigger, payload);
+
+                    console.log('*** shippingAddress', shippingAddress);
+                    console.log('*** shippingOptionData', shippingOptionData);
+
+                    if (
+                        callbackTrigger !== CallbackTriggerType.INITIALIZE &&
+                        callbackTrigger !== CallbackTriggerType.SHIPPING_ADDRESS &&
+                        callbackTrigger !== CallbackTriggerType.SHIPPING_OPTION
+                    ) {
                         return;
+                    }
+
+                    let availableShippingOptions;
+
+                    if (
+                        callbackTrigger === CallbackTriggerType.INITIALIZE ||
+                        callbackTrigger === CallbackTriggerType.SHIPPING_ADDRESS
+                    ) {
+                        availableShippingOptions = await this._handleAddressChange(shippingAddress);
+                    }
+
+                    if (callbackTrigger === CallbackTriggerType.SHIPPING_OPTION) {
+                        await this._handleShippingOptionChange(shippingOptionData.id);
                     }
 
                     await this._paymentIntegrationService.loadCheckout();
@@ -135,8 +163,14 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
                             totalPriceStatus: TotalPriceStatusType.FINAL,
                             totalPrice,
                         },
+                        ...(availableShippingOptions && {
+                            newShippingOptionParameters: availableShippingOptions,
+                        }),
                     };
                 },
+                // onPaymentAuthorized: (payload: any) => {
+                //     console.log('*** onPaymentAuthorized', payload);
+                // },
             },
         };
     }
@@ -224,5 +258,46 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             this._methodId,
             () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
         );
+    }
+
+    private async _handleAddressChange(shippingAddress: GooglePayFullBillingAddress) {
+        shippingAddress.name = shippingAddress.name ?? ''; // TODO: get name
+        shippingAddress.address1 = ''; // TODO: add address field, and fix second address line 'undefined undefined'
+
+        const mappedShippingAddress =
+            this._googlePayPaymentProcessor.mapToShippingAddressRequestBody({
+                shippingAddress,
+            } as GooglePayCardDataResponse);
+
+        if (mappedShippingAddress) {
+            await this._paymentIntegrationService.updateShippingAddress(mappedShippingAddress);
+        }
+
+        await this._paymentIntegrationService.loadCheckout();
+
+        const state = this._paymentIntegrationService.getState();
+        const consignment = state.getConsignmentsOrThrow()[0];
+        const availableShippingOptions = consignment.availableShippingOptions?.map(
+            ({ id, cost, description }: ShippingOption) => ({
+                id,
+                label: `${description} - ${cost}`,
+            }),
+        );
+        const selectedShippingOptionId = consignment.selectedShippingOption?.id;
+
+        console.log('*** consignment', consignment);
+
+        return {
+            defaultSelectedOptionId: selectedShippingOptionId,
+            shippingOptions: availableShippingOptions,
+        };
+    }
+
+    private async _handleShippingOptionChange(optionId: string) {
+        if (optionId === 'shipping_option_unselected') {
+            return;
+        }
+
+        await this._paymentIntegrationService.selectShippingOption(optionId);
     }
 }

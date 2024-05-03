@@ -111,6 +111,7 @@ export default class GooglePayGateway {
                 ?.map((country) => country.code);
 
             data.shippingAddressRequired = true;
+            data.shippingOptionRequired = true;
             data.shippingAddressParameters = {
                 phoneNumberRequired: true,
                 ...(allowedCountryCodes && { allowedCountryCodes }),

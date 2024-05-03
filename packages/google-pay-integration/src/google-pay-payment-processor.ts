@@ -218,7 +218,12 @@ export default class GooglePayPaymentProcessor {
             transactionInfo: this._gateway.getTransactionInfo(),
             merchantInfo: this._gateway.getMerchantInfo(),
             ...(await this._gateway.getRequiredData()),
-            callbackIntents: [CallbackIntentsType.OFFER],
+            callbackIntents: [
+                CallbackIntentsType.OFFER,
+                CallbackIntentsType.SHIPPING_ADDRESS,
+                CallbackIntentsType.SHIPPING_OPTION,
+                // CallbackIntentsType.PAYMENT_AUTHORIZATION,
+            ],
         };
         this._isReadyToPayRequest = {
             ...this._baseRequest,
