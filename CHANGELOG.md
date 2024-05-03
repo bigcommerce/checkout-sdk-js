@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.597.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.596.0...v1.597.0) (2024-05-03)
+
+
+### Features
+
+* **payment:** PAYPAL-4108 preselect billing with firstName and lastName for only digital items in cart ([#2498](https://github.com/bigcommerce/checkout-sdk-js/issues/2498)) ([014b9c0](https://github.com/bigcommerce/checkout-sdk-js/commit/014b9c0d32e8780ae285f9c8d253bd27fd8b4140))
+
 ## [1.596.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.595.0...v1.596.0) (2024-05-02)
 
 
