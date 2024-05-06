@@ -15,6 +15,7 @@
             "files": ["*.spec.ts", "*.spec.tsx"],
             "rules": {
                 "jest/no-conditional-expect": "off",
+                "@typescript-eslint/consistent-type-assertions": "off",
                 "@typescript-eslint/no-explicit-any": "off",
                 "@typescript-eslint/no-floating-promises": "off",
                 "@typescript-eslint/no-unsafe-call": "off"

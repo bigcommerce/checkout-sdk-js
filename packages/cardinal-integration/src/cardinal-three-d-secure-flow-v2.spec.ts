@@ -47,7 +47,6 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
 
         threeDSecureFlow = new CardinalThreeDSecureFlowV2(
             paymentIntegrationService,
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             cardinalClient as CardinalClient,
         );
     });

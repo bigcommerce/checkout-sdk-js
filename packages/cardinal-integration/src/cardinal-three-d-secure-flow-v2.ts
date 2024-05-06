@@ -57,13 +57,12 @@ export default class CardinalThreeDSecureFlowV2 {
 
                 try {
                     return await this._submitPayment(payment, { xid }, hostedForm);
-                    // eslint-disable-next-line @typescript-eslint/no-shadow
-                } catch (error) {
+                } catch (err) {
                     if (
-                        error instanceof RequestError &&
-                        some(error.body.errors, { code: 'three_d_secure_required' })
+                        err instanceof RequestError &&
+                        some(err.body.errors, { code: 'three_d_secure_required' })
                     ) {
-                        const threeDsResult = error.body.three_ds_result;
+                        const threeDsResult = err.body.three_ds_result;
                         const threeDsToken = threeDsResult?.payer_auth_request;
 
                         await this._cardinalClient.getThreeDSecureData(
@@ -74,7 +73,7 @@ export default class CardinalThreeDSecureFlowV2 {
                         return this._submitPayment(payment, { token: threeDsToken }, hostedForm);
                     }
 
-                    throw error;
+                    throw err;
                 }
             }
 
