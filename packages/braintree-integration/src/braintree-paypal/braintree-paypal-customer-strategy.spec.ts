@@ -265,6 +265,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
                     currency: 'USD',
                     isCreditEnabled: true,
                     intent: undefined,
+                    commit: false,
                 },
                 expect.any(Function),
                 expect.any(Function),
@@ -291,7 +292,6 @@ describe('BraintreePaypalCustomerStrategy', () => {
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
                 env: 'sandbox',
-                commit: false,
                 fundingSource: paypalSdkMock.FUNDING.PAYPAL,
                 style: {
                     color: PaypalButtonStyleColorOption.BLUE,
@@ -318,7 +318,6 @@ describe('BraintreePaypalCustomerStrategy', () => {
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
                 env: 'sandbox',
-                commit: false,
                 fundingSource: paypalSdkMock.FUNDING.PAYPAL,
                 style: {
                     color: PaypalButtonStyleColorOption.BLUE,
@@ -342,7 +341,6 @@ describe('BraintreePaypalCustomerStrategy', () => {
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
                 env: 'sandbox',
-                commit: false,
                 fundingSource: paypalSdkMock.FUNDING.PAYPAL,
                 style: {
                     color: PaypalButtonStyleColorOption.BLUE,

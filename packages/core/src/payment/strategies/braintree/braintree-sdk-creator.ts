@@ -221,6 +221,7 @@ export default class BraintreeSDKCreator {
             ...(config.isCreditEnabled && { 'enable-funding': 'paylater' }),
             components: PAYPAL_COMPONENTS.toString(),
             intent: config.intent,
+            commit: false,
         };
     }
 }

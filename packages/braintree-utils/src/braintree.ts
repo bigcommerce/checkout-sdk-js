@@ -527,6 +527,7 @@ export interface BraintreePaypalSdkCreatorConfig {
     currency?: string;
     intent?: string;
     isCreditEnabled?: boolean;
+    commit?: boolean;
 }
 
 /**
