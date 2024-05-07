@@ -201,6 +201,7 @@ export default class BraintreeIntegrationService {
                 ...(config.isCreditEnabled && { 'enable-funding': 'paylater' }),
                 components: PAYPAL_COMPONENTS.toString(),
                 intent: config.intent,
+                commit: config.commit ?? true,
             };
 
             if (!this.braintreeHostWindow.paypal) {

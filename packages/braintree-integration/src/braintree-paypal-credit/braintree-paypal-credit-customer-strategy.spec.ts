@@ -277,6 +277,7 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
                     currency: 'USD',
                     isCreditEnabled: true,
                     intent: undefined,
+                    commit: false,
                 },
                 expect.any(Function),
                 expect.any(Function),
@@ -303,7 +304,6 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
                 env: 'sandbox',
-                commit: false,
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
                 style: {
                     height: DefaultCheckoutButtonHeight,
@@ -319,7 +319,6 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
                 env: 'sandbox',
-                commit: false,
                 fundingSource: paypalSdkMock.FUNDING.CREDIT,
                 style: {
                     height: DefaultCheckoutButtonHeight,
@@ -347,7 +346,6 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
                 env: 'sandbox',
-                commit: false,
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
                 style: {
                     height: DefaultCheckoutButtonHeight,
@@ -361,7 +359,6 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
 
             expect(paypalSdkMock.Buttons).not.toHaveBeenCalledWith({
                 env: 'sandbox',
-                commit: false,
                 fundingSource: paypalSdkMock.FUNDING.CREDIT,
                 style: {
                     height: DefaultCheckoutButtonHeight,
@@ -385,7 +382,6 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
                 env: 'sandbox',
-                commit: false,
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
                 style: {
                     color: PaypalButtonStyleColorOption.BLUE,
@@ -414,7 +410,6 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
                 env: 'sandbox',
-                commit: false,
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
                 style: {
                     color: PaypalButtonStyleColorOption.BLUE,
@@ -430,7 +425,6 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
                 env: 'sandbox',
-                commit: false,
                 fundingSource: paypalSdkMock.FUNDING.CREDIT,
                 style: {
                     color: PaypalButtonStyleColorOption.BLUE,

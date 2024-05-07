@@ -176,7 +176,6 @@ export default class BraintreePaypalCreditCustomerStrategy implements CustomerSt
                 if (!hasRenderedSmartButton) {
                     const paypalButtonRender = paypal.Buttons({
                         env: testMode ? 'sandbox' : 'production',
-                        commit: false,
                         fundingSource,
                         style: buttonStyle,
                         createOrder: () =>

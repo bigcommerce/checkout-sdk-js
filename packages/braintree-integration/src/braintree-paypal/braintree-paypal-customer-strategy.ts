@@ -89,6 +89,7 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
             currency: currencyCode,
             intent: initializationData.intent,
             isCreditEnabled: initializationData.isCreditEnabled,
+            commit: false,
         };
 
         const paypalCheckoutSuccessCallback = (
@@ -146,7 +147,6 @@ export default class BraintreePaypalCustomerStrategy implements CustomerStrategy
         if (paypal && fundingSource) {
             const paypalButtonRender = paypal.Buttons({
                 env: this.braintreeIntegrationService.getBraintreeEnv(testMode),
-                commit: false,
                 fundingSource,
                 style: { ...buttonStyles, height: DefaultCheckoutButtonHeight },
                 createOrder: () =>

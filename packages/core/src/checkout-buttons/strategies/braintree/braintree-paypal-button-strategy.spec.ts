@@ -400,7 +400,6 @@ describe('BraintreePaypalButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
-                commit: false,
                 createOrder: expect.any(Function),
                 env: 'sandbox',
                 fundingSource: paypalSdkMock.FUNDING.PAYPAL,

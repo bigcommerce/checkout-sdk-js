@@ -378,7 +378,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
-                commit: false,
                 createOrder: expect.any(Function),
                 env: 'sandbox',
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
@@ -390,7 +389,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             });
 
             expect(paypalSdkMock.Buttons).not.toHaveBeenCalledWith({
-                commit: false,
                 createOrder: expect.any(Function),
                 env: 'sandbox',
                 fundingSource: paypalSdkMock.FUNDING.CREDIT,
@@ -413,7 +411,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
-                commit: false,
                 createOrder: expect.any(Function),
                 env: 'sandbox',
                 fundingSource: paypalSdkMock.FUNDING.PAYLATER,
@@ -427,7 +424,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
-                commit: false,
                 createOrder: expect.any(Function),
                 env: 'sandbox',
                 fundingSource: paypalSdkMock.FUNDING.CREDIT,

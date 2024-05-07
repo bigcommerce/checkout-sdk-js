@@ -166,7 +166,6 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
 
             const paypalButtonRender = paypal.Buttons({
                 env: testMode ? 'sandbox' : 'production',
-                commit: false,
                 fundingSource,
                 style: validButtonStyle,
                 createOrder: () =>
