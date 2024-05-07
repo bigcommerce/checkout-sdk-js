@@ -102,7 +102,6 @@ import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
 import { WorldpayaccessPaymetStrategy } from './strategies/worldpayaccess';
-import { ZipPaymentStrategy } from './strategies/zip';
 
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
@@ -634,20 +633,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 orderActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayWorldpayAccessInitializer()),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.ZIP,
-        () =>
-            new ZipPaymentStrategy(
-                store,
-                paymentMethodActionCreator,
-                storeCreditActionCreator,
-                remoteCheckoutActionCreator,
-                orderActionCreator,
-                storefrontPaymentRequestSender,
-                paymentActionCreator,
             ),
     );
 
