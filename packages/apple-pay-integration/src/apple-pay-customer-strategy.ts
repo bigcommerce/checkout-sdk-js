@@ -556,6 +556,8 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
 
     private async _initializeBraintreeIntegrationService() {
         try {
+            // TODO: temporary solution to initialize the braintree payment method to get a clientToken to create a braintree client instance
+            // TODO: this approach should be removed in the future
             await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
 
             const state = this._paymentIntegrationService.getState();
