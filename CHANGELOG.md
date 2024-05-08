@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.599.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.598.0...v1.599.0) (2024-05-08)
+
+
+### Features
+
+* **payment:** PI-1584 move Cardinal to separate package ([#2495](https://github.com/bigcommerce/checkout-sdk-js/issues/2495)) ([d871ee9](https://github.com/bigcommerce/checkout-sdk-js/commit/d871ee9decc1efa5339ed32361dd72d9a4f6bf4d))
+
 ## [1.598.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.597.0...v1.598.0) (2024-05-07)
 
 
