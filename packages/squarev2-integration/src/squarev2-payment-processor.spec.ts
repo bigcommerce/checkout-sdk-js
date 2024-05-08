@@ -236,6 +236,7 @@ describe('SquareV2PaymentProcessor', () => {
                     phone: '555-555-5555',
                     postalCode: '95555',
                     state: 'CA',
+                    email: 'test@bigcommerce.com',
                 },
                 currencyCode: 'USD',
                 intent: 'CHARGE',
