@@ -1,4 +1,4 @@
-import { CardinalThreeDSecureFlowV2 } from '../../../../core/src/payment/strategies/cardinal';
+import { CardinalThreeDSecureFlowV2 } from '@bigcommerce/checkout-sdk/cardinal-integration';
 import { CreditCardPaymentStrategy } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import {
     OrderRequestBody,
@@ -9,18 +9,16 @@ import {
 
 export default class CyberSourceV2PaymentStrategy extends CreditCardPaymentStrategy {
     constructor(
-        paymentIntegrationService: PaymentIntegrationService,
+        _paymentIntegrationService: PaymentIntegrationService,
         private _threeDSecureFlow: CardinalThreeDSecureFlowV2,
     ) {
-        super(paymentIntegrationService);
+        super(_paymentIntegrationService);
     }
 
     async initialize(options: PaymentInitializeOptions): Promise<void> {
         await super.initialize(options);
 
-        const {
-            getPaymentMethodOrThrow,
-        } = this._paymentIntegrationService.getState();
+        const { getPaymentMethodOrThrow } = this._paymentIntegrationService.getState();
         const paymentMethod = getPaymentMethodOrThrow(options.methodId);
 
         if (paymentMethod.config.is3dsEnabled) {
@@ -28,16 +26,12 @@ export default class CyberSourceV2PaymentStrategy extends CreditCardPaymentStrat
         }
     }
 
-    async execute(
-        payload: OrderRequestBody,
-        options?: PaymentRequestOptions,
-    ): Promise<void> {
+    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment: { methodId = '' } = {} } = payload;
-        const {
-            getPaymentMethodOrThrow,
-        } = this._paymentIntegrationService.getState();
+        const { getPaymentMethodOrThrow } = this._paymentIntegrationService.getState();
+        const paymentMethod = getPaymentMethodOrThrow(methodId);
 
-        if (getPaymentMethodOrThrow(methodId).config.is3dsEnabled) {
+        if (paymentMethod.config.is3dsEnabled) {
             return this._threeDSecureFlow.start(
                 super.execute.bind(this),
                 payload,

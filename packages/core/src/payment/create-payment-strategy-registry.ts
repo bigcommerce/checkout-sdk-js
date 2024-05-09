@@ -67,8 +67,6 @@ import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mp
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { ClearpayPaymentStrategy, ClearpayScriptLoader } from './strategies/clearpay';
 import { ConvergePaymentStrategy } from './strategies/converge';
-import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
-import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { DigitalRiverPaymentStrategy, DigitalRiverScriptLoader } from './strategies/digitalriver';
 import {
     createGooglePayPaymentProcessor,
@@ -291,39 +289,6 @@ export default function createPaymentStrategyRegistry(
                 remoteCheckoutRequestSender,
                 storeCreditActionCreator,
                 new ClearpayScriptLoader(scriptLoader),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.CYBERSOURCE,
-        () =>
-            new CyberSourcePaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
-                new CardinalThreeDSecureFlow(
-                    store,
-                    paymentActionCreator,
-                    paymentMethodActionCreator,
-                    new CardinalClient(new CardinalScriptLoader(scriptLoader)),
-                ),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.CYBERSOURCEV2,
-        () =>
-            new CyberSourceV2PaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
-                new CardinalThreeDSecureFlowV2(
-                    store,
-                    paymentActionCreator,
-                    new CardinalClient(new CardinalScriptLoader(scriptLoader)),
-                ),
             ),
     );
 
