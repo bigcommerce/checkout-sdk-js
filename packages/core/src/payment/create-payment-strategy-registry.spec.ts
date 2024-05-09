@@ -31,7 +31,6 @@ import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy } from './strategies/square';
 import { WepayPaymentStrategy } from './strategies/wepay';
-import { ZipPaymentStrategy } from './strategies/zip';
 
 describe('CreatePaymentStrategyRegistry', () => {
     let registry: PaymentStrategyRegistry;
@@ -209,12 +208,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.MASTERPASS);
 
         expect(paymentStrategy).toBeInstanceOf(MasterpassPaymentStrategy);
-    });
-
-    it('can instantiate zip', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.ZIP);
-
-        expect(paymentStrategy).toBeInstanceOf(ZipPaymentStrategy);
     });
 
     it('can instantiate ppsdk', () => {
