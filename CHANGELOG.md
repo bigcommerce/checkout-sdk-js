@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.600.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.599.0...v1.600.0) (2024-05-09)
+
+
+### Features
+
+* **payment:** PI-1586 Refactor the existing zip payment strategy in Checkout SDK ([c922d80](https://github.com/bigcommerce/checkout-sdk-js/commit/c922d804d5d8cc1fedc8a065238ac0f0d3501f46))
+
 ## [1.599.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.598.0...v1.599.0) (2024-05-08)
 
 
