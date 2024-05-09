@@ -19,8 +19,6 @@ import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
 import { ChasepayPaymentStrategy } from './strategies/chasepay';
 import { ClearpayPaymentStrategy } from './strategies/clearpay';
 import { ConvergePaymentStrategy } from './strategies/converge';
-import { CyberSourcePaymentStrategy } from './strategies/cybersource';
-import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { DigitalRiverPaymentStrategy } from './strategies/digitalriver';
 import { GooglePayPaymentStrategy } from './strategies/googlepay';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
@@ -95,18 +93,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CONVERGE);
 
         expect(paymentStrategy).toBeInstanceOf(ConvergePaymentStrategy);
-    });
-
-    it('can instantiate cybersource', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.CYBERSOURCE);
-
-        expect(paymentStrategy).toBeInstanceOf(CyberSourcePaymentStrategy);
-    });
-
-    it('can instantiate cybersourcev2', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.CYBERSOURCEV2);
-
-        expect(paymentStrategy).toBeInstanceOf(CyberSourceV2PaymentStrategy);
     });
 
     it('can instantiate bankofnewzealand', () => {
