@@ -558,6 +558,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         try {
             // TODO: temporary solution to initialize the braintree payment method to get a clientToken to create a braintree client instance
             // TODO: this approach should be removed in the future
+            // TODO: Jira ticket for tracking purpose: https://bigcommercecloud.atlassian.net/browse/PAYPAL-4122
             await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
 
             const state = this._paymentIntegrationService.getState();
