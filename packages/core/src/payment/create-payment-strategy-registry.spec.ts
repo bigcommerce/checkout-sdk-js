@@ -25,7 +25,7 @@ import { DigitalRiverPaymentStrategy } from './strategies/digitalriver';
 import { GooglePayPaymentStrategy } from './strategies/googlepay';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
 import { OpyPaymentStrategy } from './strategies/opy';
-import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy } from './strategies/paypal';
+import { PaypalExpressPaymentStrategy } from './strategies/paypal';
 import { PPSDKStrategy } from './strategies/ppsdk';
 import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
@@ -143,12 +143,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.OPY);
 
         expect(paymentStrategy).toBeInstanceOf(OpyPaymentStrategy);
-    });
-
-    it('can instantiate paypal', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.PAYPAL);
-
-        expect(paymentStrategy).toBeInstanceOf(PaypalProPaymentStrategy);
     });
 
     it('can instantiate paypalexpress', () => {

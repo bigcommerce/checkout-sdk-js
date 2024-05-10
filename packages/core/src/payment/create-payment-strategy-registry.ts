@@ -86,11 +86,7 @@ import {
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { MonerisPaymentStrategy } from './strategies/moneris';
 import { OpyPaymentStrategy, OpyScriptLoader } from './strategies/opy';
-import {
-    PaypalExpressPaymentStrategy,
-    PaypalProPaymentStrategy,
-    PaypalScriptLoader,
-} from './strategies/paypal';
+import { PaypalExpressPaymentStrategy, PaypalScriptLoader } from './strategies/paypal';
 import {
     createStepHandler,
     createSubStrategyRegistry,
@@ -473,23 +469,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 orderActionCreator,
                 createGooglePayPaymentProcessor(store, new GooglePayOrbitalInitializer()),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.PAYPAL,
-        () =>
-            new PaypalProPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
-                new CardinalThreeDSecureFlow(
-                    store,
-                    paymentActionCreator,
-                    paymentMethodActionCreator,
-                    new CardinalClient(new CardinalScriptLoader(scriptLoader)),
-                ),
             ),
     );
 
