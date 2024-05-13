@@ -39,7 +39,6 @@ enum PaymentStrategyType {
     OFFSITE = 'offsite',
     OPY = 'opy',
     ORBITAL_GOOGLE_PAY = 'googlepayorbital',
-    PAYPAL = 'paypal',
     PAYPAL_EXPRESS = 'paypalexpress',
     PAYPAL_EXPRESS_CREDIT = 'paypalexpresscredit',
     PAYPAL_COMMERCE = 'paypalcommerce',

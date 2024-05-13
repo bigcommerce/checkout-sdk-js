@@ -1,66 +1,65 @@
 import { merge } from 'lodash';
 import { of } from 'rxjs';
 
-import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { HostedFormFactory } from '../../../hosted-form';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import PaymentActionCreator from '../../payment-action-creator';
-import PaymentMethod from '../../payment-method';
-import { getCybersource } from '../../payment-methods.mock';
-import { ACKNOWLEDGE } from '../../payment-status-types';
-import { CardinalThreeDSecureFlow } from '../cardinal';
-import { CreditCardPaymentStrategy } from '../credit-card';
+import {
+    CardinalClient,
+    CardinalThreeDSecureFlow,
+} from '@bigcommerce/checkout-sdk/cardinal-integration';
+import { CreditCardPaymentStrategy } from '@bigcommerce/checkout-sdk/credit-card-integration';
+import {
+    OrderRequestBody,
+    PaymentIntegrationService,
+    PaymentMethod,
+    PaymentStatusTypes,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    getOrderRequestBody,
+    getPaymentMethod,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
 
 describe('PaypalProPaymentStrategy', () => {
-    let hostedFormFactory: HostedFormFactory;
-    let orderActionCreator: Pick<OrderActionCreator, 'submitOrder'>;
-    let paymentActionCreator: Pick<PaymentActionCreator, 'submitPayment'>;
-    let paymentMethod: PaymentMethod;
-    let state: InternalCheckoutSelectors;
-    let store: CheckoutStore;
     let strategy: PaypalProPaymentStrategy;
-    let threeDSecureFlow: Pick<CardinalThreeDSecureFlow, 'prepare' | 'start'>;
+    let paymentIntegrationService: PaymentIntegrationService;
+    let cardinalThreeDSecureFlow: CardinalThreeDSecureFlow;
+    let cardinalClient: Pick<
+        CardinalClient,
+        'configure' | 'getThreeDSecureData' | 'load' | 'runBinProcess'
+    >;
+    let paymentMethod: PaymentMethod;
 
     beforeEach(() => {
         paymentMethod = {
-            ...getCybersource(),
+            ...getPaymentMethod(),
             clientToken: 'foo',
         };
 
-        store = createCheckoutStore();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
-        orderActionCreator = {
-            submitOrder: jest.fn(() => of()),
+        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethod,
+        );
+
+        cardinalClient = {
+            configure: jest.fn(() => Promise.resolve()),
+            getThreeDSecureData: jest.fn(() => Promise.resolve()),
+            load: jest.fn(() => Promise.resolve()),
+            runBinProcess: jest.fn(() => Promise.resolve()),
         };
 
-        paymentActionCreator = {
-            submitPayment: jest.fn(() => of()),
-        };
+        cardinalThreeDSecureFlow = new CardinalThreeDSecureFlow(
+            paymentIntegrationService,
+            cardinalClient as CardinalClient,
+        );
 
-        hostedFormFactory = {} as HostedFormFactory;
-
-        threeDSecureFlow = {
-            prepare: jest.fn(() => Promise.resolve()),
-            start: jest.fn(() => Promise.resolve()),
-        };
-
-        state = store.getState();
-
-        jest.spyOn(store, 'dispatch').mockResolvedValue(state);
-
-        jest.spyOn(store, 'getState').mockReturnValue(state);
-
-        jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+        jest.spyOn(cardinalThreeDSecureFlow, 'prepare').mockReturnValue(() => Promise.resolve());
+        jest.spyOn(cardinalThreeDSecureFlow, 'start').mockReturnValue(() => Promise.resolve());
 
         strategy = new PaypalProPaymentStrategy(
-            store,
-            orderActionCreator as OrderActionCreator,
-            paymentActionCreator as PaymentActionCreator,
-            hostedFormFactory,
-            threeDSecureFlow as CardinalThreeDSecureFlow,
+            paymentIntegrationService,
+            cardinalThreeDSecureFlow,
         );
     });
 
@@ -70,7 +69,10 @@ describe('PaypalProPaymentStrategy', () => {
 
     describe('#initialize', () => {
         it('throws error if payment method is not defined', async () => {
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockImplementation(() => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockImplementation(() => {
                 throw new Error();
             });
 
@@ -86,7 +88,7 @@ describe('PaypalProPaymentStrategy', () => {
 
             await strategy.initialize({ methodId: paymentMethod.id });
 
-            expect(threeDSecureFlow.prepare).not.toHaveBeenCalled();
+            expect(cardinalThreeDSecureFlow.prepare).not.toHaveBeenCalled();
         });
 
         it('prepares 3DS flow if enabled', async () => {
@@ -94,7 +96,7 @@ describe('PaypalProPaymentStrategy', () => {
 
             await strategy.initialize({ methodId: paymentMethod.id });
 
-            expect(threeDSecureFlow.prepare).toHaveBeenCalled();
+            expect(cardinalThreeDSecureFlow.prepare).toHaveBeenCalled();
         });
     });
 
@@ -111,7 +113,10 @@ describe('PaypalProPaymentStrategy', () => {
         });
 
         it('throws error if payment method is not defined', async () => {
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockImplementation(() => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockImplementation(() => {
                 throw new Error();
             });
 
@@ -127,7 +132,7 @@ describe('PaypalProPaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(threeDSecureFlow.start).not.toHaveBeenCalled();
+            expect(cardinalThreeDSecureFlow.start).not.toHaveBeenCalled();
         });
 
         it('starts 3DS flow if enabled', async () => {
@@ -135,43 +140,47 @@ describe('PaypalProPaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(threeDSecureFlow.start).toHaveBeenCalled();
+            expect(cardinalThreeDSecureFlow.start).toHaveBeenCalled();
         });
 
         describe('if payment is acknowledged', () => {
             beforeEach(() => {
-                jest.spyOn(state.payment, 'getPaymentStatus').mockReturnValue(ACKNOWLEDGE);
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentStatus',
+                ).mockReturnValue(PaymentStatusTypes.ACKNOWLEDGE);
+
+                jest.clearAllMocks();
             });
 
             it('submits order with payment method name', async () => {
                 const submitOrderAction = of();
 
-                jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
+                jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(
+                    submitOrderAction,
+                );
 
                 await strategy.execute(payload);
 
-                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+                expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
                     {
                         ...payload,
                         payment: { methodId: payload.payment && payload.payment.methodId },
                     },
                     undefined,
                 );
-
-                expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             });
 
             it('does not submit payment separately', async () => {
                 const submitPaymentAction = of();
 
-                jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
                     submitPaymentAction,
                 );
 
                 await strategy.execute(payload);
 
-                expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
-                expect(store.dispatch).not.toHaveBeenCalledWith(submitPaymentAction);
+                expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalled();
             });
         });
     });

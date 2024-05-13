@@ -30,6 +30,7 @@
         "paypal-commerce-integration": "packages/paypal-commerce-integration",
         "paypal-commerce-utils": "packages/paypal-commerce-utils",
         "paypal-express-integration": "packages/paypal-express-integration",
+        "paypal-pro-integration": "packages/paypal-pro-integration",
         "sezzle-integration": "packages/sezzle-integration",
         "squarev2-integration": "packages/squarev2-integration",
         "storage": "packages/storage",

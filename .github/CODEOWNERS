@@ -81,6 +81,7 @@
 /packages/paypal-express-integration @bigcommerce/team-paypal
 /packages/paypal-commerce-integration @bigcommerce/team-paypal
 /packages/paypal-commerce-utils @bigcommerce/team-paypal
+/packages/paypal-pro-integration @bigcommerce/team-paypal
 
 
 ## Shared
