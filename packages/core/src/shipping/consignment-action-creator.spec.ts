@@ -957,6 +957,10 @@ describe('consignmentActionCreator', () => {
                             itemId: 'custom',
                             quantity: 1,
                         },
+                        {
+                            itemId: '667',
+                            quantity: 1,
+                        },
                     ],
                 },
                 options,
@@ -976,6 +980,10 @@ describe('consignmentActionCreator', () => {
                         lineItems: [
                             {
                                 itemId: '666',
+                                quantity: 1,
+                            },
+                            {
+                                itemId: '667',
                                 quantity: 1,
                             },
                         ],

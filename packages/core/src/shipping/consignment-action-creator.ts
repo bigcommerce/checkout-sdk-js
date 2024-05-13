@@ -427,11 +427,11 @@ export default class ConsignmentActionCreator {
             throw new MissingDataError(MissingDataErrorType.MissingCart);
         }
 
-        const { physicalItems, customItems = [] } = cart.lineItems;
+        const { physicalItems, customItems = [], digitalItems = [] } = cart.lineItems;
 
         return {
             address,
-            lineItems: [...physicalItems, ...customItems].map((item) => ({
+            lineItems: [...physicalItems, ...customItems, ...digitalItems].map((item) => ({
                 itemId: item.id,
                 quantity: item.quantity,
             })),
