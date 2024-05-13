@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.600.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.600.0...v1.600.1) (2024-05-13)
+
+
+### Code Refactoring
+
+* **payment:** PI-1558 removed googlepay buttons from checkout button registry v1 ([#2496](https://github.com/bigcommerce/checkout-sdk-js/issues/2496)) ([5331635](https://github.com/bigcommerce/checkout-sdk-js/commit/53316357b98ba93300a7cee3c3defad263fe39ef))
+
 ## [1.600.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.599.0...v1.600.0) (2024-05-09)
 
 
