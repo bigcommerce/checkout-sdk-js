@@ -158,7 +158,10 @@ export default class GooglePayGateway {
             currencyCode = getCartOrThrow().currency.code;
         }
 
+        const countryCode = this.getGooglePayInitializationData().storeCountry;
+
         return {
+            ...(countryCode && { countryCode }),
             currencyCode,
             totalPriceStatus: TotalPriceStatusType.ESTIMATED,
             totalPrice: '0',

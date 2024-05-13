@@ -141,6 +141,7 @@ describe('GooglePayPaymentProcessor', () => {
                     merchantName: 'Example Merchant',
                 },
                 transactionInfo: {
+                    countryCode: 'US',
                     currencyCode: 'USD',
                     totalPrice: '0',
                     totalPriceStatus: 'ESTIMATED',
@@ -313,6 +314,7 @@ describe('GooglePayPaymentProcessor', () => {
                     merchantName: 'Example Merchant',
                 },
                 transactionInfo: {
+                    countryCode: 'US',
                     currencyCode: 'USD',
                     totalPrice: '0',
                     totalPriceStatus: 'ESTIMATED',

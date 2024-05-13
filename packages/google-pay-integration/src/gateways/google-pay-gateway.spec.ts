@@ -102,6 +102,7 @@ describe('GooglePayGateway', () => {
     describe('#getTransactionInfo', () => {
         it('should return ESTIMATED transaction info', async () => {
             const expectedInfo = {
+                countryCode: 'US',
                 currencyCode: 'USD',
                 totalPriceStatus: 'ESTIMATED',
                 totalPrice: '0',
@@ -115,6 +116,7 @@ describe('GooglePayGateway', () => {
 
         it('should return transaction info (Buy Now Flow)', async () => {
             const expectedInfo = {
+                countryCode: 'US',
                 currencyCode: 'USD',
                 totalPriceStatus: 'ESTIMATED',
                 totalPrice: '0',
