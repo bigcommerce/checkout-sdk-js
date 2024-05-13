@@ -39,6 +39,8 @@ ___
 
 • **coupons**: [`Coupon`](Coupon.md)[]
 
+This is an array of all applied coupons.
+
 ___
 
 ### createdTime
@@ -63,11 +65,15 @@ ___
 
 • **discountAmount**: `number`
 
+This is the total amount of discount applied on line_items.
+
 ___
 
 ### discounts
 
 • **discounts**: [`Discount`](Discount.md)[]
+
+This is the total amount of discount applied on cart including coupons and line_items discounts.
 
 ___
 

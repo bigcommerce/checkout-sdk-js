@@ -2002,9 +2002,18 @@ declare interface Cart {
     email: string;
     isTaxIncluded: boolean;
     baseAmount: number;
+    /**
+     * This is the total amount of discount applied on line_items.
+     */
     discountAmount: number;
     cartAmount: number;
+    /**
+     * This is an array of all applied coupons.
+     */
     coupons: Coupon[];
+    /**
+     * This is the total amount of discount applied on cart including coupons and line_items discounts.
+     */
     discounts: Discount[];
     lineItems: LineItemMap;
     createdTime: string;
