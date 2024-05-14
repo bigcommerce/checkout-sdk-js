@@ -774,6 +774,35 @@ export interface BraintreeFastlane {
 
 export interface BraintreeFastlaneProfile {
     showCardSelector(): Promise<BraintreeFastlaneCardSelectorResponse>;
+    showShippingAddressSelector(): Promise<BraintreeFastlaneShippingAddressSelectorResponse>;
+}
+
+export interface BraintreeFastlaneShippingAddressSelectorResponse {
+    selectionChanged: boolean;
+    selectedAddress: BraintreeFastlaneShippingAddress;
+}
+
+export interface BraintreeFastlaneShippingAddress {
+    name: BraintreeFastlaneProfileName;
+    phoneNumber: BraintreeConnectPhone;
+    id?: string;
+    firstName?: string;
+    lastName?: string;
+    company?: string;
+    streetAddress: string;
+    extendedAddress?: string;
+    locality: string;
+    region: string;
+    postalCode: string;
+    countryCodeNumeric?: number;
+    countryCodeAlpha2: string;
+    countryCodeAlpha3?: string;
+}
+
+export interface BraintreeFastlaneProfileName {
+    fullName: string;
+    firstName?: string;
+    lastName?: string;
 }
 
 export interface BraintreeFastlaneCardSelectorResponse {
