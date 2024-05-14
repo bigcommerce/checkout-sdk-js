@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.601.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.600.2...v1.601.0) (2024-05-14)
+
+
+### Features
+
+* **payment:** PAYPAL-4137 prepopulate cardholder name with customer billing info on Fastlane Card Component ([#2505](https://github.com/bigcommerce/checkout-sdk-js/issues/2505)) ([1bf6e89](https://github.com/bigcommerce/checkout-sdk-js/commit/1bf6e896157eacc1f67256814f1d1f69be41c1db))
+
 ### [1.600.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.600.1...v1.600.2) (2024-05-13)
 
 ### [1.600.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.600.0...v1.600.1) (2024-05-13)
