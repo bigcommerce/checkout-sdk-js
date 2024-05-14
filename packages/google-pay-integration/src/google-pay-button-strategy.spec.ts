@@ -163,6 +163,7 @@ describe('GooglePayButtonStrategy', () => {
 
                 expect(paymentIntegrationService.loadCheckout).not.toHaveBeenCalled();
                 expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalled();
+                expect(paymentIntegrationService.updateShippingAddress).not.toHaveBeenCalled();
             });
         });
 
