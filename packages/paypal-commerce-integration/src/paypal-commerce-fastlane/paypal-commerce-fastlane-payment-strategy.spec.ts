@@ -472,6 +472,10 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
                 expect(paypalFastlane.FastlaneCardComponent).toHaveBeenCalledWith({
                     fields: {
+                        cardholderName: {
+                            enabled: true,
+                            prefill: 'Test Tester',
+                        },
                         phoneNumber: {
                             prefill: address.phone,
                         },

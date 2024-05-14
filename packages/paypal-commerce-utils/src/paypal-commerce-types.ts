@@ -498,11 +498,14 @@ export interface PayPalFastlaneCardComponentOptions {
 }
 
 export interface PayPalFastlaneCardComponentFields {
-    [key: string]: PayPalFastlaneCardComponentField;
-}
-export interface PayPalFastlaneCardComponentField {
-    placeholder?: string;
-    prefill?: string;
+    cardholderName?: {
+        enabled?: boolean;
+        prefill?: string;
+    };
+    phoneNumber?: {
+        placeholder?: string;
+        prefill?: string;
+    };
 }
 
 export interface PayPalFastlaneTokenizeResult {

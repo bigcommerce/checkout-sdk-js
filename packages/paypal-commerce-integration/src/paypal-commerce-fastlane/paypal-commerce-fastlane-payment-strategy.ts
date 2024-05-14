@@ -17,6 +17,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     isPayPalFastlaneCustomer,
+    PayPalCommerceConnectCardComponentOptions,
     PayPalCommerceFastlaneUtils,
     PayPalCommerceInitializationData,
     PayPalCommerceSdk,
@@ -262,26 +263,42 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
      */
     private async initializePayPalPaymentComponent(): Promise<void> {
         const state = this.paymentIntegrationService.getState();
-        const phone = state.getBillingAddress()?.phone;
-
-        const cardComponentOptions: PayPalFastlaneCardComponentOptions = {
-            fields: {
-                ...(phone && {
-                    phoneNumber: {
-                        prefill: phone,
-                    },
-                }),
-            },
-        };
+        const billingAddress = state.getBillingAddressOrThrow();
+        const phone = billingAddress.phone;
+        const fullName = `${billingAddress.firstName} ${billingAddress.lastName}`.trim();
 
         if (this.isFastlaneEnabled) {
             const paypalFastlane = this.paypalCommerceFastlaneUtils.getPayPalFastlaneOrThrow();
+
+            const cardComponentOptions: PayPalFastlaneCardComponentOptions = {
+                fields: {
+                    cardholderName: {
+                        prefill: fullName,
+                        enabled: true,
+                    },
+                    ...(phone && {
+                        phoneNumber: {
+                            prefill: phone,
+                        },
+                    }),
+                },
+            };
 
             this.paypalComponentMethods = await paypalFastlane.FastlaneCardComponent(
                 cardComponentOptions,
             );
         } else {
             const paypalConnect = this.paypalCommerceFastlaneUtils.getPayPalConnectOrThrow();
+
+            const cardComponentOptions: PayPalCommerceConnectCardComponentOptions = {
+                fields: {
+                    ...(phone && {
+                        phoneNumber: {
+                            prefill: phone,
+                        },
+                    }),
+                },
+            };
 
             this.paypalComponentMethods = paypalConnect.ConnectCardComponent(cardComponentOptions);
         }
