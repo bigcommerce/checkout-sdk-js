@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.603.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.602.0...v1.603.0) (2024-05-15)
+
+
+### Features
+
+* **payment:** PAYPAL-4051 Apple Pay throws an error in checkout due to attempting to load Braintree information ([#2469](https://github.com/bigcommerce/checkout-sdk-js/issues/2469)) ([7599f66](https://github.com/bigcommerce/checkout-sdk-js/commit/7599f66182c33b799f4c1509547b7b19155f4f38))
+
 ## [1.602.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.601.0...v1.602.0) (2024-05-15)
 
 
