@@ -170,7 +170,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             await this._paymentIntegrationService.updateBillingAddress(billingAddress);
         }
 
-        if (shippingAddress) {
+        if (shippingAddress && !this._buyNowCart?.lineItems.digitalItems.length) {
             await this._paymentIntegrationService.updateShippingAddress(shippingAddress);
         }
 
