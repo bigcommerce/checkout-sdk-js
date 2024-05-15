@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.604.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.603.0...v1.604.0) (2024-05-15)
+
+
+### Features
+
+* **payment:** PAYPAL-4140 updated getPaymentToken method payload with customer fullname in PPCP Fastlane Payment strategy ([#2508](https://github.com/bigcommerce/checkout-sdk-js/issues/2508)) ([2899e3c](https://github.com/bigcommerce/checkout-sdk-js/commit/2899e3ca4fdf3790da4b45582869f0eaf56ba252))
+
 ## [1.603.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.602.0...v1.603.0) (2024-05-15)
 
 
