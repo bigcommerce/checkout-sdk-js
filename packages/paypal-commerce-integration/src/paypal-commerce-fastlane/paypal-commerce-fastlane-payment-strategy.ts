@@ -373,6 +373,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         // Info: shipping can be unavailable for carts with digital items
         const shippingAddress = state.getShippingAddress();
 
+        const fullName = `${billingAddress.firstName} ${billingAddress.lastName}`.trim();
+
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
 
@@ -380,6 +382,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
         if (this.isFastlaneEnabled) {
             const { id } = await getPaymentToken({
+                name: { fullName },
                 billingAddress:
                     this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(billingAddress),
             });
@@ -401,9 +404,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         }
 
         const { nonce } = await tokenize({
-            name: {
-                fullName: `${billingAddress.firstName} ${billingAddress.lastName}`.trim(),
-            },
+            name: { fullName },
             billingAddress: this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(billingAddress),
             ...(shippingAddress && {
                 shippingAddress:

@@ -532,6 +532,7 @@ export interface PayPalFastlaneTokenizeOptions {
 }
 
 export interface PayPalFastlaneGetPaymentTokenOptions {
+    name?: PayPalFastlaneProfileName;
     billingAddress?: PayPalFastlaneAddress;
 }
 

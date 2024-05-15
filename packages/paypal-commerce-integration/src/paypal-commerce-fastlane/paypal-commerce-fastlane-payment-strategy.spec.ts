@@ -585,6 +585,22 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     cartId: cart.id,
                 });
 
+                const paypalFastlaneComponent = await paypalFastlane.FastlaneCardComponent({});
+
+                expect(paypalFastlaneComponent.getPaymentToken).toHaveBeenCalledWith({
+                    billingAddress: {
+                        addressLine1: address.address1,
+                        addressLine2: address.address2,
+                        adminArea1: address.stateOrProvinceCode,
+                        adminArea2: address.city,
+                        company: address.company,
+                        countryCode: address.countryCode,
+                        postalCode: address.postalCode,
+                    },
+                    name: {
+                        fullName: `${address.firstName} ${address.lastName}`,
+                    },
+                });
                 expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith({}, undefined);
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                     methodId,
