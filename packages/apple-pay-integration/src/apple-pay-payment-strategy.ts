@@ -267,29 +267,39 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
     }
 
     private async _getBraintreeDeviceData() {
-        const data = await this._braintreeIntegrationService.getDataCollector();
+        const braintreePaymentMethod = this._paymentIntegrationService
+            .getState()
+            .getPaymentMethod(ApplePayGatewayType.BRAINTREE);
 
-        return data.deviceData;
+        if (braintreePaymentMethod?.clientToken) {
+            const data = await this._braintreeIntegrationService.getDataCollector();
+
+            return data.deviceData;
+        }
     }
 
     private async _initializeBraintreeIntegrationService() {
-        const state = await this._paymentIntegrationService.loadPaymentMethod(
-            ApplePayGatewayType.BRAINTREE,
-        );
+        try {
+            await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
 
-        const storeConfig = state.getStoreConfigOrThrow();
+            const state = this._paymentIntegrationService.getState();
 
-        const braintreePaymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(
-            ApplePayGatewayType.BRAINTREE,
-        );
+            const storeConfig = state.getStoreConfigOrThrow();
 
-        if (!braintreePaymentMethod.clientToken || !braintreePaymentMethod.initializationData) {
-            return;
+            const braintreePaymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(
+                ApplePayGatewayType.BRAINTREE,
+            );
+
+            if (!braintreePaymentMethod.clientToken || !braintreePaymentMethod.initializationData) {
+                return;
+            }
+
+            this._braintreeIntegrationService.initialize(
+                braintreePaymentMethod.clientToken,
+                storeConfig,
+            );
+        } catch (_) {
+            // we don't need to do anything in this block
         }
-
-        this._braintreeIntegrationService.initialize(
-            braintreePaymentMethod.clientToken,
-            storeConfig,
-        );
     }
 }

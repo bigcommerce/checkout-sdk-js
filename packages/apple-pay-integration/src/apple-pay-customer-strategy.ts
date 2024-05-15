@@ -543,29 +543,42 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     }
 
     private async _getBraintreeDeviceData() {
-        const data = await this._braintreeIntegrationService.getDataCollector();
+        const braintreePaymentMethod = this._paymentIntegrationService
+            .getState()
+            .getPaymentMethod(ApplePayGatewayType.BRAINTREE);
 
-        return data.deviceData;
+        if (braintreePaymentMethod?.clientToken) {
+            const data = await this._braintreeIntegrationService.getDataCollector();
+
+            return data.deviceData;
+        }
     }
 
     private async _initializeBraintreeIntegrationService() {
-        const state = await this._paymentIntegrationService.loadPaymentMethod(
-            ApplePayGatewayType.BRAINTREE,
-        );
+        try {
+            // TODO: temporary solution to initialize the braintree payment method to get a clientToken to create a braintree client instance
+            // TODO: this approach should be removed in the future
+            // TODO: Jira ticket for tracking purpose: https://bigcommercecloud.atlassian.net/browse/PAYPAL-4122
+            await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
 
-        const storeConfig = state.getStoreConfigOrThrow();
+            const state = this._paymentIntegrationService.getState();
 
-        const braintreePaymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(
-            ApplePayGatewayType.BRAINTREE,
-        );
+            const storeConfig = state.getStoreConfigOrThrow();
 
-        if (!braintreePaymentMethod.clientToken || !braintreePaymentMethod.initializationData) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            const braintreePaymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(
+                ApplePayGatewayType.BRAINTREE,
+            );
+
+            if (!braintreePaymentMethod.clientToken || !braintreePaymentMethod.initializationData) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
+            this._braintreeIntegrationService.initialize(
+                braintreePaymentMethod.clientToken,
+                storeConfig,
+            );
+        } catch (_) {
+            // we don't need to do anything in this block
         }
-
-        this._braintreeIntegrationService.initialize(
-            braintreePaymentMethod.clientToken,
-            storeConfig,
-        );
     }
 }
