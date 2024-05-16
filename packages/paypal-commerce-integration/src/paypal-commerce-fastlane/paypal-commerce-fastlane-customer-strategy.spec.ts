@@ -7,6 +7,7 @@ import {
     getBillingAddress,
     getCart,
     getConfig,
+    getConsignment,
     getCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -36,6 +37,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
 
     const cart = getCart();
     const customer = getCustomer();
+    const consignments = [getConsignment()];
     const storeConfig = getConfig().storeConfig;
 
     const methodId = 'paypalcommerceacceleratedcheckout';
@@ -158,10 +160,12 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
         jest.spyOn(paymentIntegrationService, 'updatePaymentProviderCustomer');
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress');
         jest.spyOn(paymentIntegrationService, 'updateShippingAddress');
+        jest.spyOn(paymentIntegrationService, 'selectShippingOption');
         jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
         jest.spyOn(state, 'getCartOrThrow').mockReturnValue(cart);
         jest.spyOn(state, 'getCustomer').mockReturnValue(customer);
         jest.spyOn(state, 'getCustomerOrThrow').mockReturnValue(customer);
+        jest.spyOn(state, 'getConsignments').mockReturnValue(consignments);
         jest.spyOn(state, 'getBillingAddress').mockReturnValue(getBillingAddress());
         jest.spyOn(state, 'getStoreConfigOrThrow').mockReturnValue(storeConfig);
 
@@ -653,10 +657,40 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
             expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith(
                 bcAddressMock,
             );
+            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
+                consignments[0]?.availableShippingOptions
+                    ? consignments[0]?.availableShippingOptions[0].id
+                    : undefined,
+            );
             expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
                 false,
                 cart.id,
             );
+        });
+
+        it('does not select shipping option for paypal fastlane authentication flow', async () => {
+            paymentMethod.initializationData.isFastlaneEnabled = true;
+
+            const storeConfigWithAFeature = {
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-4142.disable_paypal_fastlane_one_click_experience': true,
+                    },
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithAFeature);
+
+            await strategy.initialize(initializationOptions);
+            await strategy.executePaymentMethodCheckout(executionOptions);
+
+            expect(paymentIntegrationService.selectShippingOption).not.toHaveBeenCalled();
         });
 
         it('calls continueWithCheckoutCallback callback in the end of execution flow', async () => {
