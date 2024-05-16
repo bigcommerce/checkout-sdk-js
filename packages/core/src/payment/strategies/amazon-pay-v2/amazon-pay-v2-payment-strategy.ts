@@ -75,6 +75,8 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
                 ),
                 methodId,
                 placement: AmazonPayV2Placement.Checkout,
+                isButtonMicroTextDisabled:
+                    paymentMethod.initializationData.isButtonMicroTextDisabled,
             });
         }
 
