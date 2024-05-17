@@ -19,6 +19,7 @@ import {
     getBillingAddress,
     getCart,
     getConfig,
+    getConsignment,
     getCountries,
     getCustomer,
     PaymentIntegrationServiceMock,
@@ -39,6 +40,7 @@ describe('BraintreeFastlaneUtils', () => {
     let subject: BraintreeFastlaneUtils;
 
     const cart = getCart();
+    const consignments = [getConsignment()];
     const countries = getCountries();
     const customer = getCustomer();
     const billingAddress = getBillingAddress();
@@ -72,11 +74,15 @@ describe('BraintreeFastlaneUtils', () => {
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress');
         jest.spyOn(paymentIntegrationService, 'updateShippingAddress');
+        jest.spyOn(paymentIntegrationService, 'selectShippingOption');
         jest.spyOn(paymentIntegrationService, 'updatePaymentProviderCustomer').mockImplementation(
             jest.fn,
         );
         jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(cart);
         jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(customer);
+        jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValue(
+            consignments,
+        );
         jest.spyOn(paymentIntegrationService.getState(), 'getCountries').mockReturnValue(countries);
         jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
             billingAddress,
@@ -723,9 +729,9 @@ describe('BraintreeFastlaneUtils', () => {
             });
         });
 
-        it('preselects shipping address with first paypal fastlane address', async () => {
+        it('preselects shipping address and shipping option with first paypal fastlane address', async () => {
             await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.runPayPalFastlaneAuthenticationFlowOrThrow(undefined, true);
 
             expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith({
                 id: 1,
@@ -744,6 +750,11 @@ describe('BraintreeFastlaneUtils', () => {
                 phone: '',
                 customFields: [],
             });
+            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
+                consignments[0]?.availableShippingOptions
+                    ? consignments[0]?.availableShippingOptions[0].id
+                    : undefined,
+            );
         });
 
         it('do not update billing and shipping address if paypal does not return any address in profile data', async () => {
@@ -777,6 +788,31 @@ describe('BraintreeFastlaneUtils', () => {
             await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
 
             expect(paymentIntegrationService.updateShippingAddress).not.toHaveBeenCalled();
+        });
+
+        it('does not select shipping option for paypal fastlane authentication flow', async () => {
+            paymentMethod.initializationData.isFastlaneEnabled = true;
+
+            const storeConfigWithAFeature = {
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-4142.disable_paypal_fastlane_one_click_experience': true,
+                    },
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithAFeature);
+
+            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
+            await subject.runPayPalFastlaneAuthenticationFlowOrThrow(undefined, true);
+
+            expect(paymentIntegrationService.selectShippingOption).not.toHaveBeenCalled();
         });
 
         it('preselects billing with shipping firstName and lastName if the cart contains only digital items', async () => {

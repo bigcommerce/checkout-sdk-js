@@ -99,7 +99,10 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
             }
 
             if (shouldRunAuthenticationFlow && this.isFastlaneEnabled) {
-                await this.braintreeFastlaneUtils.runPayPalFastlaneAuthenticationFlowOrThrow();
+                await this.braintreeFastlaneUtils.runPayPalFastlaneAuthenticationFlowOrThrow(
+                    undefined,
+                    true,
+                );
             }
         }
 

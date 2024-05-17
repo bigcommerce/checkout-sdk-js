@@ -203,7 +203,10 @@ export default class BraintreeFastlaneUtils {
         }
     }
 
-    async runPayPalFastlaneAuthenticationFlowOrThrow(email?: string): Promise<void> {
+    async runPayPalFastlaneAuthenticationFlowOrThrow(
+        email?: string,
+        shouldAutoselectShippingOption?: boolean,
+    ): Promise<void> {
         try {
             const methodId = this.getMethodIdOrThrow();
 
@@ -284,11 +287,21 @@ export default class BraintreeFastlaneUtils {
                     firstName,
                     lastName,
                 };
+
                 await this.paymentIntegrationService.updateBillingAddress(digitalItemBilling);
             }
 
             if (shippingAddresses.length > 0 && cart.lineItems.physicalItems.length > 0) {
+                const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+                const shouldDisableFastlaneOneClickExperience =
+                    features &&
+                    features['PAYPAL-4142.disable_paypal_fastlane_one_click_experience'];
+
                 await this.paymentIntegrationService.updateShippingAddress(shippingAddresses[0]);
+
+                if (!shouldDisableFastlaneOneClickExperience && shouldAutoselectShippingOption) {
+                    await this.selectShippingOption();
+                }
             }
         } catch (error) {
             // TODO: we should figure out what to do here
@@ -470,5 +483,21 @@ export default class BraintreeFastlaneUtils {
         }
 
         return this.methodId;
+    }
+
+    private async selectShippingOption(): Promise<void> {
+        const state = this.paymentIntegrationService.getState();
+        const consignments = state.getConsignments() || [];
+        const availableShippingOptions = consignments[0]?.availableShippingOptions || [];
+        const firstShippingOption = availableShippingOptions[0];
+        const recommendedShippingOption = availableShippingOptions.find(
+            (option) => option.isRecommended,
+        );
+
+        if (recommendedShippingOption || firstShippingOption) {
+            const shippingOptionId = recommendedShippingOption?.id || firstShippingOption.id;
+
+            await this.paymentIntegrationService.selectShippingOption(shippingOptionId);
+        }
     }
 }

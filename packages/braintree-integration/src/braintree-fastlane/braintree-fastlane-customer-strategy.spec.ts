@@ -288,7 +288,7 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
 
             expect(
                 braintreeFastlaneUtils.runPayPalFastlaneAuthenticationFlowOrThrow,
-            ).toHaveBeenCalled();
+            ).toHaveBeenCalledWith(undefined, true);
         });
 
         it('authenticates user with PayPal Fastlane even when Paypal Accelerated checkout enabled', async () => {
@@ -311,7 +311,7 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
 
             expect(
                 braintreeFastlaneUtils.runPayPalFastlaneAuthenticationFlowOrThrow,
-            ).toHaveBeenCalled();
+            ).toHaveBeenCalledWith(undefined, true);
             expect(
                 braintreeFastlaneUtils.runPayPalConnectAuthenticationFlowOrThrow,
             ).not.toHaveBeenCalled();
