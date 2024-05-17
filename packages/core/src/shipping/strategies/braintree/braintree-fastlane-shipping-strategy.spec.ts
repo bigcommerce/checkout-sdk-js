@@ -786,7 +786,7 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             expect(braintreeIntegrationServiceMock.getBraintreeFastlane).toHaveBeenCalled();
         });
 
-        it('updates customer', async () => {
+        it('updates provider customer data', async () => {
             const updatePaymentProviderCustomerMock = jest.fn();
             const strategy = createStrategy();
             const authenticationResultMock = getBraintreeFastlaneAuthenticationResultMock();

@@ -153,8 +153,8 @@ export function getBraintreeFastlaneProfileDataMock(): BraintreeFastlaneProfileD
             },
         },
         name: {
-            given_name: 'John',
-            surname: 'Doe',
+            firstName: 'John',
+            lastName: 'Doe',
         },
     };
 }

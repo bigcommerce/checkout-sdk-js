@@ -652,10 +652,12 @@ export interface BraintreeConnectProfileData {
     addresses: BraintreeConnectAddress[];
     cards: BraintreeConnectVaultedInstrument[];
     phones: BraintreeConnectPhone[];
-    name: {
-        given_name: string;
-        surname: string;
-    };
+    name: BraintreeConnectName;
+}
+
+export interface BraintreeConnectName {
+    given_name: string;
+    surname: string;
 }
 
 export interface BraintreeConnectAddress {
@@ -784,7 +786,7 @@ export interface BraintreeFastlaneShippingAddressSelectorResponse {
 
 export interface BraintreeFastlaneShippingAddress {
     name: BraintreeFastlaneProfileName;
-    phoneNumber: BraintreeConnectPhone;
+    phoneNumber: string;
     id?: string;
     firstName?: string;
     lastName?: string;
@@ -875,10 +877,12 @@ export interface BraintreeFastlaneProfileData {
     fastlaneCustomerId: string;
     shippingAddress: BraintreeFastlaneAddress;
     card: BraintreeFastlaneVaultedInstrument;
-    name: {
-        given_name: string;
-        surname: string;
-    };
+    name: BraintreeFastlaneName;
+}
+
+export interface BraintreeFastlaneName {
+    firstName: string;
+    lastName: string;
 }
 
 export interface BraintreeFastlaneAddress {

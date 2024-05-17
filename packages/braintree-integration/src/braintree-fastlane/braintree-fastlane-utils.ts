@@ -256,7 +256,9 @@ export default class BraintreeFastlaneUtils {
             const billingAddresses = paypalBillingAddress
                 ? this.mapPayPalToBcAddress([paypalBillingAddress], [phoneNumber])
                 : [];
-            const instruments = profileData.card ? this.mapPayPalToBcInstrument(methodId, [profileData.card]) : [];
+            const instruments = profileData.card
+                ? this.mapPayPalToBcInstrument(methodId, [profileData.card])
+                : [];
             const addresses = this.mergeShippingAndBillingAddresses(
                 shippingAddresses,
                 billingAddresses,
@@ -428,7 +430,7 @@ export default class BraintreeFastlaneUtils {
         }
 
         const { firstName, lastName } = card.paymentSource.card.billingAddress;
-        const { given_name, surname } = name || {};
+        const { firstName: given_name, lastName: surname } = name || {};
         const { shippingAddress } = profileData || {};
         const address = {
             ...card.paymentSource.card.billingAddress,

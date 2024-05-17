@@ -11,6 +11,8 @@ import {
     BraintreeFastlaneVaultedInstrument,
     BraintreeIntegrationService,
     isBraintreeAcceleratedCheckoutCustomer,
+    isBraintreeConnectName,
+    isBraintreeConnectPhone,
     isBraintreeConnectProfileData,
     isBraintreeFastlaneProfileData,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -18,6 +20,7 @@ import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { AddressRequestBody } from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
+import { BraintreeInitializationData } from '../../../payment/strategies/braintree';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
@@ -33,7 +36,6 @@ import { UntrustedShippingCardVerificationType } from '../../../payment/instrume
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
-import { BraintreeInitializationData } from '../../../payment/strategies/braintree';
 
 export default class BraintreeFastlaneShippingStrategy implements ShippingStrategy {
     private _browserStorage: BrowserStorage;
@@ -229,7 +231,9 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
                 this._mapPayPalToBcAddress([profileData.shippingAddress], countries, []) || [];
             billingAddresses =
                 this._mapPayPalToBcAddress(paypalBillingAddresses, countries, []) || [];
-            instruments = profileData.card ? this._mapPayPalToBcInstrument(methodId, [profileData.card]) : [];
+            instruments = profileData.card
+                ? this._mapPayPalToBcInstrument(methodId, [profileData.card])
+                : [];
         } else if (isBraintreeConnectProfileData(profileData)) {
             shippingAddresses =
                 this._mapPayPalToBcAddress(profileData.addresses, countries, profileData.phones) ||
@@ -289,7 +293,16 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
                 instrument: BraintreeFastlaneVaultedInstrument,
             ) => {
                 const { firstName, lastName } = instrument.paymentSource.card.billingAddress;
-                const { given_name, surname } = name || {};
+                let given_name;
+                let surname;
+                if (isBraintreeConnectName(name)) {
+                    given_name = name.given_name;
+                    surname = name.surname;
+                } else {
+                    given_name = name?.firstName;
+                    surname = name?.lastName;
+                }
+
                 const address = {
                     ...instrument.paymentSource.card.billingAddress,
                     firstName: firstName || given_name,
@@ -318,11 +331,18 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
     private _mapPayPalToBcAddress(
         addresses: BraintreeFastlaneAddress[],
         countries: Country[],
-        phones: BraintreeConnectPhone[],
+        phones: BraintreeConnectPhone[] | string[],
         customFields?: CustomerAddress['customFields'],
     ): CustomerAddress[] | undefined {
-        const phoneNumber =
-            phones && phones[0] ? phones[0].country_code + phones[0].national_number : '';
+        let phoneNumber: string;
+
+        if (phones && typeof phones[0] === 'string') {
+            phoneNumber = phones[0];
+        }
+
+        if (phones && isBraintreeConnectPhone(phones[0])) {
+            phoneNumber = phones[0].country_code + phones[0].national_number;
+        }
 
         return addresses.map((address) => ({
             id: Number(address.id) || Date.now(),
