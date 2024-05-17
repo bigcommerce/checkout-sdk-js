@@ -14,6 +14,7 @@ import {
     BraintreeFastlaneVaultedInstrument,
     BraintreeInitializationData,
     BraintreeIntegrationService,
+    isBraintreeConnectPhone,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CardInstrument,
@@ -235,6 +236,7 @@ export default class BraintreeFastlaneUtils {
             const { authenticationState, profileData } = await triggerAuthenticationFlow(
                 customerContextId,
             );
+            const phoneNumber = profileData?.shippingAddress?.phoneNumber || '';
 
             if (authenticationState === BraintreeFastlaneAuthenticationState.CANCELED) {
                 await this.paymentIntegrationService.updatePaymentProviderCustomer({
@@ -249,10 +251,10 @@ export default class BraintreeFastlaneUtils {
             }
 
             const shippingAddresses =
-                this.mapPayPalToBcAddress([profileData.shippingAddress]) || [];
+                this.mapPayPalToBcAddress([profileData.shippingAddress], [phoneNumber]) || [];
             const paypalBillingAddress = this.getPayPalFastlaneBillingAddress(profileData);
             const billingAddresses = paypalBillingAddress
-                ? this.mapPayPalToBcAddress([paypalBillingAddress])
+                ? this.mapPayPalToBcAddress([paypalBillingAddress], [phoneNumber])
                 : [];
             const instruments = this.mapPayPalToBcInstrument(methodId, [profileData.card]) || [];
             const addresses = this.mergeShippingAndBillingAddresses(
@@ -334,15 +336,22 @@ export default class BraintreeFastlaneUtils {
 
     private mapPayPalToBcAddress(
         addresses?: BraintreeFastlaneAddress[],
-        phones?: BraintreeConnectPhone[],
+        phones?: BraintreeConnectPhone[] | string[],
     ): CustomerAddress[] {
         if (!addresses) {
             return [];
         }
 
         const countries = this.paymentIntegrationService.getState().getCountries() || [];
-        const phoneNumber =
-            phones && phones[0] ? phones[0].country_code + phones[0].national_number : '';
+        let phoneNumber: string;
+
+        if (phones && typeof phones[0] === 'string') {
+            phoneNumber = phones[0];
+        }
+
+        if (phones && isBraintreeConnectPhone(phones[0])) {
+            phoneNumber = phones[0].country_code + phones[0].national_number;
+        }
 
         const getCountryNameByCountryCode = (countryCode: string) => {
             const matchedCountry = countries.find((country) => country.code === countryCode);
@@ -364,7 +373,7 @@ export default class BraintreeFastlaneUtils {
             country: getCountryNameByCountryCode(address.countryCodeAlpha2),
             countryCode: address.countryCodeAlpha2,
             postalCode: address.postalCode,
-            phone: phoneNumber,
+            phone: phoneNumber || '',
             customFields: [],
         }));
     }

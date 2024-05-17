@@ -5,3 +5,4 @@ export { default as isBraintreeError } from './is-braintree-error';
 export { default as isBraintreeFastlaneWindow } from './is-braintree-fastlane-window';
 export { default as isBraintreeFastlaneProfileData } from './is-braintree-fastlane-profile-data';
 export { default as isBraintreeConnectProfileData } from './is-braintree-connect-profile-data';
+export { default as isBraintreeConnectPhone } from './is-braintree-connect-phone';

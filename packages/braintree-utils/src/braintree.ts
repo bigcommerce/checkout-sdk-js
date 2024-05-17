@@ -671,6 +671,7 @@ export interface BraintreeConnectAddress {
     countryCodeNumeric?: number;
     countryCodeAlpha2: string;
     countryCodeAlpha3?: string;
+    phoneNumber?: string;
 }
 
 export interface BraintreeConnectCardPaymentSource {
@@ -864,6 +865,7 @@ export interface BraintreeFastlaneAddress {
     countryCodeNumeric?: number;
     countryCodeAlpha2: string;
     countryCodeAlpha3?: string;
+    phoneNumber?: string;
 }
 
 export interface BraintreeFastlaneCardPaymentSource {

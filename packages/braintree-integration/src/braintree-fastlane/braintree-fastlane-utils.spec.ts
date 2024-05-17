@@ -521,6 +521,82 @@ describe('BraintreeFastlaneUtils', () => {
             expect(braintreeFastlaneMock.identity.lookupCustomerByEmail).toHaveBeenCalled();
         });
 
+        it('updates customer provider and billing address with correct data', async () => {
+            const expectedBillingAddress = {
+                address1: 'Hello World Address',
+                address2: '',
+                city: 'Bellingham',
+                company: '',
+                country: 'United States',
+                countryCode: 'US',
+                customFields: [],
+                firstName: 'John',
+                id: 1,
+                lastName: 'Doe',
+                phone: '12345',
+                postalCode: '98225',
+                stateOrProvince: 'WA',
+                stateOrProvinceCode: 'WA',
+                type: 'paypal-address',
+            };
+
+            const updatePaymentProviderCustomerPayload = {
+                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
+                addresses: [
+                    {
+                        id: 1,
+                        type: 'paypal-address',
+                        firstName: 'John',
+                        lastName: 'Doe',
+                        company: '',
+                        address1: 'Hello World Address',
+                        address2: '',
+                        city: 'Bellingham',
+                        stateOrProvince: 'WA',
+                        stateOrProvinceCode: 'WA',
+                        country: 'United States',
+                        countryCode: 'US',
+                        postalCode: '98225',
+                        phone: '12345',
+                        customFields: [],
+                    },
+                ],
+                instruments: [
+                    {
+                        bigpayToken: 'pp-vaulted-instrument-id',
+                        brand: 'VISA',
+                        defaultInstrument: false,
+                        expiryMonth: undefined,
+                        expiryYear: '02/2037',
+                        iin: '',
+                        last4: '1111',
+                        method: 'braintreeacceleratedcheckout',
+                        provider: 'braintreeacceleratedcheckout',
+                        trustedShippingAddress: false,
+                        type: 'card',
+                        untrustedShippingCardVerificationMode: 'pan',
+                    },
+                ],
+            };
+            const profileData = getBraintreeFastlaneProfileDataMock();
+            profileData.shippingAddress.phoneNumber = '12345';
+            jest.spyOn(braintreeFastlaneMock.identity, 'triggerAuthenticationFlow').mockReturnValue(
+                {
+                    authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
+                    profileData,
+                },
+            );
+            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
+            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+
+            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
+                updatePaymentProviderCustomerPayload,
+            );
+            expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith(
+                expectedBillingAddress,
+            );
+        });
+
         it('does not authenticate user if the customer unrecognized in PP Fastlane', async () => {
             jest.spyOn(braintreeFastlaneMock.identity, 'lookupCustomerByEmail').mockReturnValue({});
 
