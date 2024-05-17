@@ -256,7 +256,7 @@ export default class BraintreeFastlaneUtils {
             const billingAddresses = paypalBillingAddress
                 ? this.mapPayPalToBcAddress([paypalBillingAddress], [phoneNumber])
                 : [];
-            const instruments = this.mapPayPalToBcInstrument(methodId, [profileData.card]) || [];
+            const instruments = profileData.card ? this.mapPayPalToBcInstrument(methodId, [profileData.card]) : [];
             const addresses = this.mergeShippingAndBillingAddresses(
                 shippingAddresses,
                 billingAddresses,

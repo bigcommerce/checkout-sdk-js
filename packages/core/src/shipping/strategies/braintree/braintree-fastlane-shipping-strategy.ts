@@ -229,7 +229,7 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
                 this._mapPayPalToBcAddress([profileData.shippingAddress], countries, []) || [];
             billingAddresses =
                 this._mapPayPalToBcAddress(paypalBillingAddresses, countries, []) || [];
-            instruments = this._mapPayPalToBcInstrument(methodId, [profileData.card]) || [];
+            instruments = profileData.card ? this._mapPayPalToBcInstrument(methodId, [profileData.card]) : [];
         } else if (isBraintreeConnectProfileData(profileData)) {
             shippingAddresses =
                 this._mapPayPalToBcAddress(profileData.addresses, countries, profileData.phones) ||
