@@ -2,7 +2,9 @@ import {
     BraintreeFastlaneAuthenticationState,
     BraintreeIntegrationService,
     getBraintreeConnectProfileDataMock,
+    getBraintreeFastlaneAuthenticationResultMock,
     getBraintreeFastlaneProfileDataMock,
+    getFastlaneMock,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -83,6 +85,7 @@ describe('BraintreeFastlaneShippingStrategy', () => {
         phone: '14085551234',
         customFields: [],
     };
+    const braintreeFastlane = getFastlaneMock();
     const mappedBillingAddress = {
         ...mappedAddress,
         id: '321',
@@ -693,6 +696,159 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             authenticationState: 'authenticationState',
             addresses: [fastlaneMappedBillingAddress, billingAddress],
             instruments: [mappedInstruments],
+        });
+    });
+
+    describe('#handleBraintreeFastlaneShippingAddressChange', () => {
+        beforeEach(() => {
+            const storeConfig = getConfig().storeConfig;
+            const guestCustomer = {
+                ...getCustomer(),
+                isGuest: false,
+            };
+            jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(
+                guestCustomer,
+            );
+
+            const storeConfigWithAFeature = {
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        ...storeConfig.checkoutSettings.features,
+                        'PAYPAL-4001.braintree_fastlane_stored_member_flow_removal': false,
+                        'PAYPAL-3996.paypal_fastlane_shipping_update': true,
+                    },
+                },
+            };
+            jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeFastlane').mockImplementation(
+                () => braintreeFastlane,
+            );
+            jest.spyOn(
+                store.getState().shippingAddress,
+                'getShippingAddressesOrThrow',
+            ).mockReturnValue([getShippingAddress()]);
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue({
+                clientToken: '123',
+                initializationData: {
+                    isFastlaneEnabled: true,
+                },
+            });
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+                storeConfigWithAFeature,
+            );
+            jest.spyOn(
+                store.getState().paymentProviderCustomer,
+                'getPaymentProviderCustomer',
+            ).mockReturnValue({
+                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
+                addresses: [],
+                instruments: [],
+            });
+        });
+
+        it('shows paypal shipping address selector', async () => {
+            const strategy = createStrategy();
+            const authenticationResultMock = getBraintreeFastlaneAuthenticationResultMock();
+            const onPayPalFastlaneAddressChange = jest.fn((showPaypalAddressSelector) => {
+                showPaypalAddressSelector();
+            });
+            jest.spyOn(braintreeFastlane.profile, 'showShippingAddressSelector').mockImplementation(
+                () => ({
+                    selectionChanged: true,
+                    selectedAddress: authenticationResultMock.profileData.shippingAddress,
+                }),
+            );
+
+            await strategy.initialize({
+                ...defaultOptions,
+                braintreefastlane: {
+                    onPayPalFastlaneAddressChange,
+                },
+            });
+
+            expect(braintreeFastlane.profile.showShippingAddressSelector).toHaveBeenCalled();
+        });
+
+        it('loads fastlane sdk', async () => {
+            const strategy = createStrategy();
+            const onPayPalFastlaneAddressChange = jest.fn((showPaypalAddressSelector) => {
+                showPaypalAddressSelector();
+            });
+
+            await strategy.initialize({
+                ...defaultOptions,
+                braintreefastlane: {
+                    onPayPalFastlaneAddressChange,
+                },
+            });
+
+            expect(braintreeIntegrationServiceMock.getBraintreeFastlane).toHaveBeenCalled();
+        });
+
+        it('updates provider customer data', async () => {
+            const updatePaymentProviderCustomerMock = jest.fn();
+            const strategy = createStrategy();
+            const authenticationResultMock = getBraintreeFastlaneAuthenticationResultMock();
+            const braintreeFastlane = getFastlaneMock();
+            const onPayPalFastlaneAddressChange = jest.fn((showPaypalAddressSelector) => {
+                showPaypalAddressSelector();
+            });
+
+            jest.spyOn(braintreeFastlane.profile, 'showShippingAddressSelector').mockImplementation(
+                () => ({
+                    selectionChanged: true,
+                    selectedAddress: authenticationResultMock.profileData.shippingAddress,
+                }),
+            );
+            jest.spyOn(
+                paymentProviderCustomerActionCreator,
+                'updatePaymentProviderCustomer',
+            ).mockImplementation(updatePaymentProviderCustomerMock);
+
+            await strategy.initialize({
+                ...defaultOptions,
+                braintreefastlane: {
+                    onPayPalFastlaneAddressChange,
+                },
+            });
+
+            expect(updatePaymentProviderCustomerMock).toHaveBeenCalled();
+        });
+
+        it('updates address', async () => {
+            const updatePaymentProviderCustomerMock = jest.fn();
+            const updateAction = jest.fn();
+            const strategy = createStrategy();
+            const authenticationResultMock = getBraintreeFastlaneAuthenticationResultMock();
+            const braintreeFastlane = getFastlaneMock();
+            const onPayPalFastlaneAddressChange = jest.fn((showPaypalAddressSelector) => {
+                showPaypalAddressSelector();
+            });
+            jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeFastlane').mockImplementation(
+                () => braintreeFastlane,
+            );
+            jest.spyOn(braintreeFastlane.profile, 'showShippingAddressSelector').mockImplementation(
+                () => ({
+                    selectionChanged: true,
+                    selectedAddress: authenticationResultMock.profileData.shippingAddress,
+                }),
+            );
+            jest.spyOn(
+                paymentProviderCustomerActionCreator,
+                'updatePaymentProviderCustomer',
+            ).mockImplementation(updatePaymentProviderCustomerMock);
+
+            jest.spyOn(consignmentActionCreator, 'updateAddress').mockImplementation(updateAction);
+
+            await strategy.initialize({
+                ...defaultOptions,
+                braintreefastlane: {
+                    onPayPalFastlaneAddressChange,
+                },
+            });
+
+            expect(consignmentActionCreator.updateAddress).toHaveBeenCalled();
         });
     });
 });
