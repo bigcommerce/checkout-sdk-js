@@ -285,6 +285,7 @@ export interface AmazonPayV2InitializeOptions {
     ledgerCurrency?: AmazonPayV2LedgerCurrency;
     publicKeyId?: string;
     region?: string;
+    isButtonMicroTextDisabled?: boolean;
 }
 
 export interface AmazonPayV2ButtonRenderingOptions {
@@ -295,4 +296,5 @@ export interface AmazonPayV2ButtonRenderingOptions {
     buttonColor?: AmazonPayV2ButtonColor;
     options?: AmazonPayV2ButtonParameters;
     placement: AmazonPayV2Placement;
+    isButtonMicroTextDisabled?: boolean;
 }

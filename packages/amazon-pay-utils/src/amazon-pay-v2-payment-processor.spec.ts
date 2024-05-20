@@ -159,6 +159,18 @@ describe('AmazonPayV2PaymentProcessor', () => {
             );
         });
 
+        it('should render the Amazon Pay button to an HTML container element without microtext', async () => {
+            await processor.initialize(amazonPayV2Mock);
+            amazonPayV2ButtonParams = getAmazonPayV2ButtonParamsMock(true);
+
+            processor.createButton(containerId, amazonPayV2ButtonParams);
+
+            expect(amazonPayV2SDKMock.Pay.renderButton).toHaveBeenCalledWith(
+                `#${containerId}`,
+                amazonPayV2ButtonParams,
+            );
+        });
+
         it('throws an error when amazonPayV2SDK is not initialized', () => {
             const createButton = () => processor.createButton(containerId, amazonPayV2ButtonParams);
 
