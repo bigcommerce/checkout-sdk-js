@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.608.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.607.0...v1.608.0) (2024-05-20)
+
+
+### Features
+
+* **payment:** PAYPAL-4068 added BT Fastlane address shipping selector ([#2493](https://github.com/bigcommerce/checkout-sdk-js/issues/2493)) ([1b1f5d0](https://github.com/bigcommerce/checkout-sdk-js/commit/1b1f5d09e0b4681a3e6a5197c5acc3a0672ffd54))
+
 ## [1.607.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.606.0...v1.607.0) (2024-05-20)
 
 

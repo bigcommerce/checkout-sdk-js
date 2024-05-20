@@ -1427,6 +1427,11 @@ declare interface BraintreeFastlaneShippingInitializeOptions {
      * no matter what strategy was initialised first
      */
     styles?: BraintreeFastlaneStylesOption;
+    /**
+     * Is a callback that shows Braintree Fastlane popup with customer addresses
+     * when get triggered
+     */
+    onPayPalFastlaneAddressChange?: (showBraintreeFastlaneAddressSelector: () => Promise<CustomerAddress_2 | undefined>) => void;
 }
 
 declare type BraintreeFormErrorData = Omit<BraintreeFormFieldState, 'isFocused'>;
