@@ -1,0 +1,23 @@
+{
+    "root": "packages/paypal-pro-integration",
+    "sourceRoot": "packages/paypal-pro-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/paypal-pro-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/paypal-pro-integration"],
+            "options": {
+                "jestConfig": "packages/paypal-pro-integration/jest.config.js",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": ["scope:integration"]
+}

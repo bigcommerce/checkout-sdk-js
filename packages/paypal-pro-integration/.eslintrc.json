@@ -1,0 +1,21 @@
+{
+    "extends": ["../../.eslintrc.json"],
+    "ignorePatterns": ["!**/*"],
+    "overrides": [
+        {
+            "files": ["*.spec.ts"],
+            "rules": {
+                "@typescript-eslint/consistent-type-assertions": "off",
+                "jest/no-conditional-expect": "off"
+            }
+        },
+        {
+            "files": ["*.ts", "*.tsx"],
+            "rules": {}
+        },
+        {
+            "files": ["*.js", "*.jsx"],
+            "rules": {}
+        }
+    ]
+}

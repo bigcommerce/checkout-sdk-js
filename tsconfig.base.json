@@ -20,17 +20,15 @@
             "@bigcommerce/checkout-sdk/adyen-integration": [
                 "packages/adyen-integration/src/index.ts"
             ],
-            "@bigcommerce/checkout-sdk/adyen-utils": [
-                "packages/adyen-utils/src/index.ts"
-            ],
+            "@bigcommerce/checkout-sdk/adyen-utils": ["packages/adyen-utils/src/index.ts"],
             "@bigcommerce/checkout-sdk/affirm-integration": [
                 "packages/affirm-integration/src/index.ts"
             ],
-            "@bigcommerce/checkout-sdk/amazon-pay-utils": [
-                "packages/amazon-pay-utils/src/index.ts"
-            ],
             "@bigcommerce/checkout-sdk/afterpay-integration": [
                 "packages/afterpay-integration/src/index.ts"
+            ],
+            "@bigcommerce/checkout-sdk/amazon-pay-utils": [
+                "packages/amazon-pay-utils/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/analytics": ["packages/analytics/src/index.ts"],
             "@bigcommerce/checkout-sdk/apple-pay-integration": [
@@ -98,6 +96,9 @@
             ],
             "@bigcommerce/checkout-sdk/paypal-express-integration": [
                 "packages/paypal-express-integration/src/index.ts"
+            ],
+            "@bigcommerce/checkout-sdk/paypal-pro-integration": [
+                "packages/paypal-pro-integration/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/sezzle-integration": [
                 "packages/sezzle-integration/src/index.ts"
