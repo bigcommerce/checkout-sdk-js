@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.606.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.605.0...v1.606.0) (2024-05-20)
+
+
+### Features
+
+* **payment:** PAYPAL-4142 added shipping option autoselect to PPCP Fastlane customer startegy ([#2512](https://github.com/bigcommerce/checkout-sdk-js/issues/2512)) ([b701314](https://github.com/bigcommerce/checkout-sdk-js/commit/b701314e403cd78e4993fe167a0f2d3ffeb4465b))
+
 ## [1.605.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.604.0...v1.605.0) (2024-05-20)
 
 
