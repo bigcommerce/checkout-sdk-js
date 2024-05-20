@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.607.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.606.0...v1.607.0) (2024-05-20)
+
+
+### Features
+
+* **payment:** PAYPAL-2624 moved paypa-pro to a separate package ([#2503](https://github.com/bigcommerce/checkout-sdk-js/issues/2503)) ([7bcce03](https://github.com/bigcommerce/checkout-sdk-js/commit/7bcce03f013e5c426a6587494fa12019461c9295))
+
 ## [1.606.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.605.0...v1.606.0) (2024-05-20)
 
 
