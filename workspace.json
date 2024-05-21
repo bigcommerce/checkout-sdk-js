@@ -18,6 +18,7 @@
         "credit-card-integration": "packages/credit-card-integration",
         "external-integration": "packages/external-integration",
         "google-pay-integration": "packages/google-pay-integration",
+        "hosted-form": "packages/hosted-form",
         "humm-integration": "packages/humm-integration",
         "klarna-integration": "packages/klarna-integration",
         "legacy-integration": "packages/legacy-integration",
