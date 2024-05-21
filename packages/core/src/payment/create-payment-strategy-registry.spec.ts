@@ -28,7 +28,6 @@ import { OpyPaymentStrategy } from './strategies/opy';
 import { PaypalExpressPaymentStrategy } from './strategies/paypal';
 import { PPSDKStrategy } from './strategies/ppsdk';
 import { QuadpayPaymentStrategy } from './strategies/quadpay';
-import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy } from './strategies/square';
 import { WepayPaymentStrategy } from './strategies/wepay';
 
@@ -160,12 +159,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.QUADPAY);
 
         expect(paymentStrategy).toBeInstanceOf(QuadpayPaymentStrategy);
-    });
-
-    it('can instantiate sagepay', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.SAGE_PAY);
-
-        expect(paymentStrategy).toBeInstanceOf(SagePayPaymentStrategy);
     });
 
     it('can instantiate square', () => {

@@ -1,37 +1,29 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { some } from 'lodash';
 
-import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { getBrowserInfo } from '../../../common/browser-info';
+import { CreditCardPaymentStrategy } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import {
+    getBrowserInfo,
+    isRequestError,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
-    RequestError,
-} from '../../../common/error/errors';
-import { HostedFormFactory } from '../../../hosted-form';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import PaymentActionCreator from '../../payment-action-creator';
-import { PaymentRequestOptions } from '../../payment-request-options';
-import * as paymentStatusTypes from '../../payment-status-types';
-import { CreditCardPaymentStrategy } from '../credit-card';
+    OrderRequestBody,
+    PaymentIntegrationService,
+    PaymentRequestOptions,
+    PaymentStatusTypes,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
     constructor(
-        store: CheckoutStore,
-        orderActionCreator: OrderActionCreator,
-        paymentActionCreator: PaymentActionCreator,
-        hostedFormFactory: HostedFormFactory,
+        private paymentIntegrationService: PaymentIntegrationService,
         private _formPoster: FormPoster,
     ) {
-        super(store, orderActionCreator, paymentActionCreator, hostedFormFactory);
+        super(paymentIntegrationService);
     }
 
-    execute(
-        payload: OrderRequestBody,
-        options?: PaymentRequestOptions,
-    ): Promise<InternalCheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment } = payload;
 
         if (!payment) {
@@ -57,7 +49,7 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
 
         return super.execute(payload, options).catch((error: Error) => {
             if (
-                !(error instanceof RequestError) ||
+                !isRequestError(error) ||
                 !some(error.body.errors, { code: 'three_d_secure_required' })
             ) {
                 return Promise.reject(error);
@@ -88,24 +80,21 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
         });
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const state = this._store.getState();
-        const order = state.order.getOrder();
+    finalize(options?: PaymentRequestOptions): Promise<void> {
+        const state = this.paymentIntegrationService.getState();
+        const order = state.getOrder();
 
-        if (order && state.payment.getPaymentStatus() === paymentStatusTypes.FINALIZE) {
-            return this._store.dispatch(
-                this._orderActionCreator.finalizeOrder(order.orderId, options),
-            );
+        if (order && state.getPaymentStatus() === PaymentStatusTypes.FINALIZE) {
+            this.paymentIntegrationService.finalizeOrder(options);
         }
 
-        return super.finalize(options);
+        return super.finalize();
     }
 
     private _isThreeDSTwoExperimentOn(): boolean {
         return (
-            this._store.getState().config.getStoreConfigOrThrow().checkoutSettings.features[
-                'INT-4994.Opayo_3DS2'
-            ] === true
+            this.paymentIntegrationService.getState().getStoreConfigOrThrow().checkoutSettings
+                .features['INT-4994.Opayo_3DS2'] === true
         );
     }
 }
