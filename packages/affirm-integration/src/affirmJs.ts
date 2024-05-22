@@ -37,8 +37,10 @@ export default function loadAffirmJS(apiKey: string, scriptURL: string) {
         c: 'jsReady',
     ) {
         const b = m[n] || {};
+        console.log(JSON.parse(JSON.stringify(b)));
         const k = document.createElement(e);
         const p = document.getElementsByTagName(e)[0];
+        // wypelnia obiekt checkout
         const l = function bar(a: Affirm | any, b: keyof Affirm, c: string) {
             return function baz() {
                 a[b]._.push([c, arguments]);
@@ -47,6 +49,8 @@ export default function loadAffirmJS(apiKey: string, scriptURL: string) {
 
         b[d] = l(b, d, 'set');
 
+        console.log(JSON.parse(JSON.stringify(b)));
+
         const f = b[d];
 
         b[a] = {};
@@ -54,13 +58,16 @@ export default function loadAffirmJS(apiKey: string, scriptURL: string) {
         f._ = [];
         b._ = [];
         b[a][h] = l(b, a, h);
+        console.log(JSON.parse(JSON.stringify(b)));
 
         b[c] = function qux() {
             b._.push([h, arguments]);
         };
 
         let a1 = 0;
+        console.log(JSON.parse(JSON.stringify(b)));
 
+        // wypelnia obiekt checkout
         for (
             const c1 = 'set add save post open empty reset on off trigger ready setProduct'.split(
                 ' ',
@@ -70,22 +77,28 @@ export default function loadAffirmJS(apiKey: string, scriptURL: string) {
         ) {
             f[c1[a1]] = l(b, d, c1[a1]);
         }
+        console.log(JSON.parse(JSON.stringify(b)));
 
         let a2 = 0;
 
         for (const c2 = ['get', 'token', 'url', 'items']; a2 < c2.length; a2++) {
             f[c2[a2]] = function foobar() {};
         }
+        console.log(JSON.parse(JSON.stringify(b)));
 
         k.async = !0;
         k.src = g[e];
+        console.log(JSON.parse(JSON.stringify(b)));
 
         if (p.parentNode) {
             p.parentNode.insertBefore(k, p);
         }
+        console.log('k', k);
+        console.log(JSON.parse(JSON.stringify(b)));
 
         delete (g as Partial<AffirmConfig>)[e];
         f(g);
+        console.log(JSON.parse(JSON.stringify(b)));
         m[n] = b;
     })(window, _AFFIRM_CONFIG, 'affirm', 'checkout', 'ui', 'script', 'ready', 'jsReady');
 }

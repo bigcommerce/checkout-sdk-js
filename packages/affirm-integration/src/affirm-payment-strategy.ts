@@ -23,6 +23,7 @@ import {
     AffirmAddress,
     AffirmDiscount,
     AffirmFailResponse,
+    AffirmHostWindow,
     AffirmItem,
     AffirmRequestData,
     AffirmSuccessResponse,
@@ -51,12 +52,20 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
+        console.log('window ===> ', window);
         this.affirm = await this.affirmScriptLoader.load(clientToken, testMode);
+        console.log('this.affirm', this.affirm, window);
+
+        // tu jest problem. this.affirm.ui.error -> brakuje tutaj on. Dlatego później się wywala
+        console.log('window ===> ', window);
+        console.log('this.affirm ===> ', this.affirm);
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const methodId = payload.payment?.methodId;
         const { useStoreCredit } = payload;
+
+        console.log('this.affirm', this.affirm, window);
 
         if (!this.affirm) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -91,18 +100,33 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
     }
 
     private initializeAffirmCheckout(): Promise<AffirmSuccessResponse> {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        this.affirm = (window as AffirmHostWindow).affirm;
         this.affirm?.checkout(this.getCheckoutInformation());
+
+        // console.log('this.affirm?.checkout ===> ', this.affirm?.checkout);
+        // console.log('this.affirm?.checkout.open ===> ', this.affirm?.checkout.open);
+
+        // console.log('this.affirm?.ui ===>', this.affirm?.ui);
+        // console.log('this.affirm?.ui.error ===>', this.affirm?.ui.error);
+        // console.log('this.affirm?.ui.error.on ===>', this.affirm?.ui.error.on);
+        console.log('this.affirm', this.affirm);
+        console.log('window', window);
 
         return new Promise((resolve, reject) => {
             this.affirm?.checkout.open({
                 onFail: (failObject: AffirmFailResponse) => {
                     if (failObject.reason === 'canceled') {
+                        console.log('onFail canceled this.affirm ', this.affirm, window);
+
                         reject(new PaymentMethodCancelledError());
                     } else {
+                        console.log('onFail else this.affirm', this.affirm, window);
                         reject(new PaymentMethodInvalidError());
                     }
                 },
                 onSuccess: (successObject) => {
+                    console.log('onSucces this.affirm', this.affirm, window);
                     resolve(successObject);
                 },
             });
