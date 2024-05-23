@@ -9,6 +9,7 @@ const {
 const libraryName = 'checkoutKit';
 
 const coreSrcPath = path.join(__dirname, 'packages/core/src');
+const hostedFormSrcPath = path.join(__dirname, 'packages/hosted-form-2/src');
 
 const libraryEntries = {
     'checkout-sdk': path.join(coreSrcPath, 'bundles', 'checkout-sdk.ts'),
@@ -17,6 +18,7 @@ const libraryEntries = {
     extension: path.join(coreSrcPath, 'bundles', 'extension.ts'),
     'hosted-form': path.join(coreSrcPath, 'bundles', 'hosted-form.ts'),
     'internal-mappers': path.join(coreSrcPath, 'bundles', 'internal-mappers.ts'),
+    'hosted-form-2': path.join(hostedFormSrcPath, 'bundles', 'hosted-form-2.ts'),
 };
 
 async function getBaseConfig() {

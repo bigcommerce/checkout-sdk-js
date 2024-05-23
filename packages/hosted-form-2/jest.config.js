@@ -1,5 +1,5 @@
 module.exports = {
-    displayName: 'hosted-form',
+    displayName: 'hosted-form-2',
     preset: '../../jest.preset.js',
     globals: {
         'ts-jest': {
@@ -8,5 +8,5 @@ module.exports = {
         },
     },
     setupFilesAfterEnv: ['../../jest-setup.js'],
-    coverageDirectory: '../../coverage/packages/hosted-form',
+    coverageDirectory: '../../coverage/packages/hosted-form-2',
 };

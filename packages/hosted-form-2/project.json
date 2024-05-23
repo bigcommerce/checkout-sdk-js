@@ -1,20 +1,20 @@
 {
-    "root": "packages/hosted-form",
-    "sourceRoot": "packages/hosted-form/src",
+    "root": "packages/hosted-form-2",
+    "sourceRoot": "packages/hosted-form-2/src",
     "projectType": "library",
     "targets": {
         "lint": {
             "executor": "@nrwl/linter:eslint",
             "outputs": ["{options.outputFile}"],
             "options": {
-                "lintFilePatterns": ["packages/hosted-form/**/*.ts"]
+                "lintFilePatterns": ["packages/hosted-form-2/**/*.ts"]
             }
         },
         "test": {
             "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/hosted-form"],
+            "outputs": ["coverage/packages/hosted-form-2"],
             "options": {
-                "jestConfig": "packages/hosted-form/jest.config.js",
+                "jestConfig": "packages/hosted-form-2/jest.config.js",
                 "passWithNoTests": true
             }
         }
