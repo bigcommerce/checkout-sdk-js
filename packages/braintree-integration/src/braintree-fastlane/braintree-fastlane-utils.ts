@@ -204,13 +204,14 @@ export default class BraintreeFastlaneUtils {
         }
     }
 
-    async runPayPalFastlaneAuthenticationFlowOrThrow(email?: string): Promise<void> {
+    async runPayPalFastlaneAuthenticationFlowOrThrow(
+        email?: string,
+        shouldSetShippingOption?: boolean,
+    ): Promise<void> {
         try {
             const methodId = this.getMethodIdOrThrow();
-
             const braintreeFastlane = this.getBraintreeFastlaneOrThrow();
             const { lookupCustomerByEmail, triggerAuthenticationFlow } = braintreeFastlane.identity;
-
             const state = this.paymentIntegrationService.getState();
             const cart = state.getCartOrThrow();
             const customer = state.getCustomer();
@@ -288,11 +289,16 @@ export default class BraintreeFastlaneUtils {
                     firstName,
                     lastName,
                 };
+
                 await this.paymentIntegrationService.updateBillingAddress(digitalItemBilling);
             }
 
             if (shippingAddresses.length > 0 && cart.lineItems.physicalItems.length > 0) {
                 await this.paymentIntegrationService.updateShippingAddress(shippingAddresses[0]);
+
+                if (shouldSetShippingOption) {
+                    await this.setShippingOption();
+                }
             }
         } catch (error) {
             // TODO: we should figure out what to do here
@@ -481,5 +487,20 @@ export default class BraintreeFastlaneUtils {
         }
 
         return this.methodId;
+    }
+
+    private async setShippingOption(): Promise<void> {
+        const state = this.paymentIntegrationService.getState();
+        const consignments = state.getConsignments() || [];
+        const availableShippingOptions = consignments[0]?.availableShippingOptions || [];
+        const recommendedShippingOption = availableShippingOptions.find(
+            (option) => option.isRecommended,
+        );
+
+        if (recommendedShippingOption || availableShippingOptions.length) {
+            const selectedOption = recommendedShippingOption || availableShippingOptions[0];
+
+            await this.paymentIntegrationService.selectShippingOption(selectedOption.id);
+        }
     }
 }

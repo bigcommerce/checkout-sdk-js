@@ -19,6 +19,7 @@ import {
     getBillingAddress,
     getCart,
     getConfig,
+    getConsignment,
     getCountries,
     getCustomer,
     PaymentIntegrationServiceMock,
@@ -44,6 +45,7 @@ describe('BraintreeFastlaneUtils', () => {
     const billingAddress = getBillingAddress();
     const paymentMethod = getBraintreeAcceleratedCheckoutPaymentMethod();
     const storeConfig = getConfig().storeConfig;
+    const consignments = [getConsignment()];
 
     const methodId = 'braintreeacceleratedcheckout';
 
@@ -75,6 +77,7 @@ describe('BraintreeFastlaneUtils', () => {
         jest.spyOn(paymentIntegrationService, 'updatePaymentProviderCustomer').mockImplementation(
             jest.fn,
         );
+        jest.spyOn(paymentIntegrationService, 'selectShippingOption');
         jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(cart);
         jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(customer);
         jest.spyOn(paymentIntegrationService.getState(), 'getCountries').mockReturnValue(countries);
@@ -83,6 +86,9 @@ describe('BraintreeFastlaneUtils', () => {
         );
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethod,
+        );
+        jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValue(
+            consignments,
         );
 
         jest.spyOn(braintreeIntegrationService, 'initialize');
@@ -579,7 +585,9 @@ describe('BraintreeFastlaneUtils', () => {
                 ],
             };
             const profileData = getBraintreeFastlaneProfileDataMock();
+
             profileData.shippingAddress.phoneNumber = '12345';
+
             jest.spyOn(braintreeFastlaneMock.identity, 'triggerAuthenticationFlow').mockReturnValue(
                 {
                     authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
@@ -595,6 +603,24 @@ describe('BraintreeFastlaneUtils', () => {
             expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith(
                 expectedBillingAddress,
             );
+        });
+
+        it('preselects shipping option with first shipping option', async () => {
+            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
+            await subject.runPayPalFastlaneAuthenticationFlowOrThrow(undefined, true);
+
+            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
+                consignments[0]?.availableShippingOptions
+                    ? consignments[0]?.availableShippingOptions[0].id
+                    : undefined,
+            );
+        });
+
+        it('doesnt preselect shipping option', async () => {
+            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
+            await subject.runPayPalFastlaneAuthenticationFlowOrThrow(undefined, false);
+
+            expect(paymentIntegrationService.selectShippingOption).not.toHaveBeenCalled();
         });
 
         it('does not authenticate user if the customer unrecognized in PP Fastlane', async () => {
