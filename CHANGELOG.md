@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.610.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.609.0...v1.610.0) (2024-05-24)
+
+
+### Features
+
+* **payment:** PAYPAL-4173 navigate to payment step when shipping and billing is defined ([#2517](https://github.com/bigcommerce/checkout-sdk-js/issues/2517)) ([9860811](https://github.com/bigcommerce/checkout-sdk-js/commit/986081113ccddf9b9e8908326a393a1d371f615f))
+
 ## [1.609.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.608.0...v1.609.0) (2024-05-20)
 
 
