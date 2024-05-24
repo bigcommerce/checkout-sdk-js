@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import { getCardInstrument } from '../../payment/instrument/instrument.mock';
+import { getCardInstrument } from '../payment/instrument.mock';
 import HostedFieldType from '../hosted-field-type';
 
 import HostedInputValidateResults from './hosted-input-validate-results';

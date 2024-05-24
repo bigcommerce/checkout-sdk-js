@@ -15,15 +15,15 @@ import {
 import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
 import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
-import HostedFormOrderData from './hosted-form-order-data';
 import {
     HostedInputEventMap,
     HostedInputEventType,
-    HostedInputStoredCardSucceededEvent,
+    // HostedInputStoredCardSucceededEvent,
     HostedInputSubmitErrorEvent,
-    // HostedInputSubmitSuccessEvent,
+    HostedInputSubmitSuccessEvent,
     // HostedInputValidateEvent,
 } from './iframe-content';
+import HostedFormOrderData from './hosted-form-order-data';
 // import {
 //     StoredCardHostedFormData,
 //     StoredCardHostedFormInstrumentFields,
