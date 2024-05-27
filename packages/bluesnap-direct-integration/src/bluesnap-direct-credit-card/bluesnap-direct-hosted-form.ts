@@ -212,11 +212,13 @@ export default class BlueSnapDirectHostedForm {
         default: input,
         error,
         focus,
+        placeholder,
     }: HostedFieldStylesMap): BlueSnapDirectStyle {
         return Object.entries({
             ...(input && { input }),
             ...(error && { '.invalid': error }),
             ...(focus && { ':focus': focus }),
+            ...(placeholder && { '::placeholder': placeholder }),
         }).reduce((result, [selector, declaration]) => {
             return {
                 ...result,
