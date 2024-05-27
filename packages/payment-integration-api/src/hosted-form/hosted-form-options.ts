@@ -55,6 +55,7 @@ export interface HostedFieldStylesMap {
     default?: HostedFieldStyles;
     error?: HostedFieldStyles;
     focus?: HostedFieldStyles;
+    placeholder?: HostedFieldStyles;
 }
 
 type HostedFieldStyles = HostedInputStyles;

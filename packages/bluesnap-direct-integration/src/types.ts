@@ -10,6 +10,7 @@ export interface BlueSnapDirectStyleDeclaration {
 export interface BlueSnapDirectStyle {
     '.invalid'?: BlueSnapDirectStyleDeclaration;
     ':focus'?: BlueSnapDirectStyleDeclaration;
+    '::placeholder'?: BlueSnapDirectStyleDeclaration;
     input?: BlueSnapDirectStyleDeclaration;
 }
 
