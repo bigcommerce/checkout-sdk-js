@@ -20,6 +20,7 @@ const createKlarnaV2PaymentStrategy: PaymentStrategyFactory<KlarnaV2PaymentStrat
         paymentIntegrationService,
         new KlarnaV2ScriptLoader(getScriptLoader()),
         new KlarnaV2TokenUpdater(requestSender),
+        requestSender,
     );
 };
 

@@ -59,6 +59,7 @@ describe('KlarnaV2PaymentStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         requestSender = createRequestSender();
+        jest.spyOn(requestSender, 'put').mockReturnValue(Promise.resolve(true));
 
         scriptLoader = new KlarnaV2ScriptLoader(createScriptLoader());
         klarnav2TokenUpdater = new KlarnaV2TokenUpdater(requestSender);
@@ -66,6 +67,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             paymentIntegrationService,
             scriptLoader,
             klarnav2TokenUpdater,
+            requestSender,
         );
 
         initializePaymentAction = of(
@@ -282,6 +284,7 @@ describe('KlarnaV2PaymentStrategy', () => {
                 paymentIntegrationService,
                 scriptLoader,
                 klarnav2TokenUpdater,
+                requestSender,
             );
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -319,6 +322,7 @@ describe('KlarnaV2PaymentStrategy', () => {
                 paymentIntegrationService,
                 scriptLoader,
                 klarnav2TokenUpdater,
+                requestSender,
             );
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -360,6 +364,7 @@ describe('KlarnaV2PaymentStrategy', () => {
                 paymentIntegrationService,
                 scriptLoader,
                 klarnav2TokenUpdater,
+                requestSender,
             );
 
             jest.spyOn(
