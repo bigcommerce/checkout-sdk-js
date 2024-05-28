@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.612.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.611.0...v1.612.0) (2024-05-28)
+
+
+### Features
+
+* **payment:** PI-2132 Call Klarna order initialization endpoint befo… …re showing Klarna pop-up window ([#2523](https://github.com/bigcommerce/checkout-sdk-js/issues/2523)) ([18eb65c](https://github.com/bigcommerce/checkout-sdk-js/commit/18eb65c4ab6dd1ccdffee04341dd5225a1f1620c))
+
+
+### Bug Fixes
+
+* **embedded-checkout:** ISSUE-2189 Changed deprecated property of allowPaymentRequest=true to allow=payment in embedded checkout to support apple pay on Safari browser ([#2190](https://github.com/bigcommerce/checkout-sdk-js/issues/2190)) ([4cd2b8e](https://github.com/bigcommerce/checkout-sdk-js/commit/4cd2b8ef8126cec9ac9a81675cbfb6c15cbb8a71))
+
 ## [1.611.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.610.0...v1.611.0) (2024-05-28)
 
 
