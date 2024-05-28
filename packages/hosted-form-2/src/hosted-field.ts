@@ -6,28 +6,27 @@ import { DetachmentObserver } from './common/dom';
 import { mapFromPaymentErrorResponse } from './common/error/errors';
 import { IframeEventListener, IframeEventPoster } from './common/iframe';
 import { parseUrl } from './common/url';
-
 import {
     InvalidHostedFormConfigError,
     InvalidHostedFormError,
-    // InvalidHostedFormValueError,
+    InvalidHostedFormValueError,
 } from './errors';
 import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
 import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
+import HostedFormOrderData from './hosted-form-order-data';
 import {
     HostedInputEventMap,
     HostedInputEventType,
-    // HostedInputStoredCardSucceededEvent,
+    HostedInputStoredCardSucceededEvent,
     HostedInputSubmitErrorEvent,
     HostedInputSubmitSuccessEvent,
-    // HostedInputValidateEvent,
+    HostedInputValidateEvent,
 } from './iframe-content';
-import HostedFormOrderData from './hosted-form-order-data';
-// import {
-//     StoredCardHostedFormData,
-//     StoredCardHostedFormInstrumentFields,
-// } from './stored-card-hosted-form-type';
+import {
+    StoredCardHostedFormData,
+    StoredCardHostedFormInstrumentFields,
+} from './stored-card-hosted-form-type';
 
 export const RETRY_INTERVAL = 60 * 1000;
 export const LAST_RETRY_KEY = 'lastRetry';
@@ -149,40 +148,40 @@ export default class HostedField {
         }
     }
 
-    // async submitStoredCardForm(
-    //     fields: StoredCardHostedFormInstrumentFields,
-    //     data: StoredCardHostedFormData,
-    // ): Promise<HostedInputStoredCardSucceededEvent> {
-    //     const promise = this._eventPoster.post<HostedInputStoredCardSucceededEvent>(
-    //         {
-    //             type: HostedFieldEventType.StoredCardRequested,
-    //             payload: { fields, data },
-    //         },
-    //         {
-    //             successType: HostedInputEventType.StoredCardSucceeded,
-    //             errorType: HostedInputEventType.StoredCardFailed,
-    //         },
-    //     );
+    async submitStoredCardForm(
+        fields: StoredCardHostedFormInstrumentFields,
+        data: StoredCardHostedFormData,
+    ): Promise<HostedInputStoredCardSucceededEvent> {
+        const promise = this._eventPoster.post<HostedInputStoredCardSucceededEvent>(
+            {
+                type: HostedFieldEventType.StoredCardRequested,
+                payload: { fields, data },
+            },
+            {
+                successType: HostedInputEventType.StoredCardSucceeded,
+                errorType: HostedInputEventType.StoredCardFailed,
+            },
+        );
 
-    //     return this._detachmentObserver.ensurePresence([this._iframe], promise);
-    // }
+        return this._detachmentObserver.ensurePresence([this._iframe], promise);
+    }
 
-    // async validateForm(): Promise<void> {
-    //     const promise = this._eventPoster.post<HostedInputValidateEvent>(
-    //         {
-    //             type: HostedFieldEventType.ValidateRequested,
-    //         },
-    //         {
-    //             successType: HostedInputEventType.Validated,
-    //         },
-    //     );
+    async validateForm(): Promise<void> {
+        const promise = this._eventPoster.post<HostedInputValidateEvent>(
+            {
+                type: HostedFieldEventType.ValidateRequested,
+            },
+            {
+                successType: HostedInputEventType.Validated,
+            },
+        );
 
-    //     const { payload } = await this._detachmentObserver.ensurePresence([this._iframe], promise);
+        const { payload } = await this._detachmentObserver.ensurePresence([this._iframe], promise);
 
-    //     if (!payload.isValid) {
-    //         throw new InvalidHostedFormValueError(payload.errors);
-    //     }
-    // }
+        if (!payload.isValid) {
+            throw new InvalidHostedFormValueError(payload.errors);
+        }
+    }
 
     private _getFontUrls(): string[] {
         const hostname = 'fonts.googleapis.com';

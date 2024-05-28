@@ -1,10 +1,11 @@
 import { creditCardType, cvv, expirationDate, number } from 'card-validator';
 import { object, ObjectShape, string, StringSchema, ValidationError } from 'yup';
 
+import { CardInstrument } from '../payment';
+
 import { HostedInputValidateErrorDataMap } from './hosted-input-validate-error-data';
 import HostedInputValidateResults from './hosted-input-validate-results';
 import HostedInputValues from './hosted-input-values';
-import { CardInstrument } from '../payment';
 
 export default class HostedInputValidator {
     private readonly _completeSchema: ObjectShape = {

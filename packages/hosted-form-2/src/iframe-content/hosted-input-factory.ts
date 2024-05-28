@@ -2,11 +2,8 @@ import { createClient as createBigpayClient } from '@bigcommerce/bigpay-client';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { appendWww, parseUrl } from '../common/url';
-import {
-    PaymentRequestSender,
-    PaymentRequestTransformer,
-} from '../payment';
 import HostedFieldType from '../hosted-field-type';
+import { CardInstrument, PaymentRequestSender, PaymentRequestTransformer } from '../payment';
 
 import CardExpiryFormatter from './card-expiry-formatter';
 import CardNumberFormatter from './card-number-formatter';
@@ -21,7 +18,6 @@ import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 import mapToAccessibilityLabel from './map-to-accessibility-label';
 import mapToAutocompleteType from './map-to-autocomplete-type';
-import { CardInstrument } from '../payment';
 
 export default class HostedInputFactory {
     constructor(private _parentOrigin: string) {}

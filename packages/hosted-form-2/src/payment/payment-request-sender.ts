@@ -1,14 +1,38 @@
-import { Response } from "@bigcommerce/request-sender";
+import { Response } from '@bigcommerce/request-sender';
+
+import PaymentRequestBody from './payment-request-body';
 
 export class PaymentRequestSender {
-    private _client: any;
+    /**
+     * @class
+     * @param {BigpayClient} client
+     */
+    constructor(private _client: any) {}
 
-    constructor(client: any) {
-        this._client = client;
+    submitPayment(payload: PaymentRequestBody): Promise<Response<any>> {
+        return new Promise((resolve, reject) => {
+            this._client.submitPayment(payload, (error: any, response: any) => {
+                if (error) {
+                    reject(this._transformResponse(error));
+                } else {
+                    resolve(this._transformResponse(response));
+                }
+            });
+        });
     }
 
-    submitPayment(payload: any): Promise<Response<any>> {
-        console.log('submitPayment', payload, this._client);
-        return Promise.resolve({} as Response<any>);
+    initializeOffsitePayment(payload: PaymentRequestBody, target?: string): Promise<void> {
+        return new Promise(() => {
+            this._client.initializeOffsitePayment(payload, null, target);
+        });
+    }
+
+    private _transformResponse(response: any): Response<any> {
+        return {
+            headers: response.headers,
+            body: response.data,
+            status: response.status,
+            statusText: response.statusText,
+        };
     }
 }

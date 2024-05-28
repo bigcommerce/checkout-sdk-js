@@ -2,7 +2,6 @@ import { pick } from 'lodash';
 
 import { DetachmentObserver, MutationObserverFactory } from './common/dom';
 import { IframeEventListener, IframeEventPoster } from './common/iframe';
-
 import HostedField from './hosted-field';
 import HostedFieldType from './hosted-field-type';
 import HostedForm from './hosted-form';
@@ -12,8 +11,6 @@ import HostedFormOptions, {
 } from './hosted-form-options';
 
 export default class HostedFormFactory {
-    constructor() {}
-
     create(host: string, options: HostedFormOptions): HostedForm {
         const fieldTypes = Object.keys(options.fields) as HostedFieldType[];
         const fields = fieldTypes.reduce<HostedField[]>((result, type) => {

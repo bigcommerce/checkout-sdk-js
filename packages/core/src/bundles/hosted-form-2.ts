@@ -1,1 +1,1 @@
-export { initializeHostedInput, notifyInitializeError, HostedFormFactory } from '@bigcommerce/checkout-sdk/hosted-form-2';
+export { initializeHostedInput, notifyInitializeError } from '@bigcommerce/checkout-sdk/hosted-form-2';

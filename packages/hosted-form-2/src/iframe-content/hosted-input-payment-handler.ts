@@ -4,9 +4,9 @@ import { snakeCase } from 'lodash';
 import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { IframeEventPoster } from '../common/iframe';
-import { PaymentRequestSender, PaymentRequestTransformer } from '../payment';
 import { InvalidHostedFormValueError } from '../errors';
 import { HostedFieldSubmitRequestEvent } from '../hosted-field-events';
+import { PaymentRequestSender, PaymentRequestTransformer } from '../payment';
 
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';

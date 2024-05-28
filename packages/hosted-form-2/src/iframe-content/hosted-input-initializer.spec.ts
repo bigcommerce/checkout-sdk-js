@@ -1,8 +1,8 @@
 import { IframeEventListener } from '../common/iframe';
-import { getCardInstrument } from '../payment/instrument.mock';
 import { InvalidHostedFormConfigError } from '../errors';
 import { HostedFieldEventMap, HostedFieldEventType } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
+import { getCardInstrument } from '../payment/instrument.mock';
 
 import HostedInput from './hosted-input';
 import HostedInputFactory from './hosted-input-factory';

@@ -1,7 +1,6 @@
 import { noop, without } from 'lodash';
 
 import { IframeEventListener } from './common/iframe';
-
 import { InvalidHostedFormConfigError } from './errors';
 import HostedField from './hosted-field';
 import HostedFormOptions from './hosted-form-options';
@@ -9,7 +8,12 @@ import {
     HostedInputEnterEvent,
     HostedInputEventMap,
     HostedInputEventType,
+    HostedInputStoredCardSucceededEvent,
 } from './iframe-content';
+import {
+    StoredCardHostedFormData,
+    StoredCardHostedFormInstrumentFields,
+} from './stored-card-hosted-form-type';
 
 type HostedFormEventCallbacks = Pick<
     HostedFormOptions,
@@ -20,6 +24,11 @@ export interface HostedFormInterface {
     attach(): Promise<void>;
     detach(): void;
     getBin(): string | undefined;
+    submitStoredCard(payload: {
+        fields: StoredCardHostedFormInstrumentFields;
+        data: StoredCardHostedFormData;
+    }): Promise<HostedInputStoredCardSucceededEvent | void>;
+    validate(): Promise<void>;
     getCardType(): string | undefined;
 }
 
@@ -89,6 +98,17 @@ export default class HostedForm implements HostedFormInterface {
         });
     }
 
+    async submitStoredCard(payload: {
+        fields: StoredCardHostedFormInstrumentFields;
+        data: StoredCardHostedFormData;
+    }): Promise<HostedInputStoredCardSucceededEvent | void> {
+        return this._getFirstField().submitStoredCardForm(payload.fields, payload.data);
+    }
+
+    async validate(): Promise<void> {
+        return this._getFirstField().validateForm();
+    }
+
     private _getFirstField(): HostedField {
         const field = this._fields[0];
 
@@ -103,7 +123,7 @@ export default class HostedForm implements HostedFormInterface {
 
     private _handleEnter: (event: HostedInputEnterEvent) => Promise<void> = async ({ payload }) => {
         try {
-            // await this.validate();
+            await this.validate();
         } catch (error) {
             // Catch form validation error because we want to trigger `onEnter`
             // irrespective of the validation result.

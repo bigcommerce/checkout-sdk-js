@@ -1,4 +1,4 @@
-import { CardInstrument, UntrustedShippingCardVerificationType } from "./instrument";
+import { CardInstrument, UntrustedShippingCardVerificationType } from './instrument';
 
 export function getCardInstrument(): CardInstrument {
     return {
