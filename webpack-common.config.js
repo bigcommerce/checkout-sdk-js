@@ -17,7 +17,7 @@ const libraryEntries = {
     extension: path.join(coreSrcPath, 'bundles', 'extension.ts'),
     'hosted-form': path.join(coreSrcPath, 'bundles', 'hosted-form.ts'),
     'internal-mappers': path.join(coreSrcPath, 'bundles', 'internal-mappers.ts'),
-    'hosted-form-2': path.join(coreSrcPath, 'bundles', 'hosted-form-2.ts'),
+    'hosted-form-v2': path.join(coreSrcPath, 'bundles', 'hosted-form-v2.ts'),
 };
 
 async function getBaseConfig() {

@@ -1,4 +1,4 @@
 export {
     initializeHostedInput,
     notifyInitializeError,
-} from '@bigcommerce/checkout-sdk/hosted-form-2';
+} from '@bigcommerce/checkout-sdk/hosted-form-v2';
