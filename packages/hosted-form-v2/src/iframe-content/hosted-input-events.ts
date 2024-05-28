@@ -24,8 +24,6 @@ export enum HostedInputEventType {
     SubmitSucceeded = 'HOSTED_INPUT:SUBMIT_SUCCEEDED',
     SubmitFailed = 'HOSTED_INPUT:SUBMIT_FAILED',
     Validated = 'HOSTED_INPUT:VALIDATED',
-    StoredCardSucceeded = 'HOSTED_INPUT:STORED_CARD_SUCCEEDED',
-    StoredCardFailed = 'HOSTED_INPUT:STORED_CARD_FAILED',
 }
 
 // Event mapping
@@ -41,8 +39,6 @@ export interface HostedInputEventMap {
     [HostedInputEventType.SubmitSucceeded]: HostedInputSubmitSuccessEvent;
     [HostedInputEventType.SubmitFailed]: HostedInputSubmitErrorEvent;
     [HostedInputEventType.Validated]: HostedInputValidateEvent;
-    [HostedInputEventType.StoredCardFailed]: HostedInputStoredCardErrorEvent;
-    [HostedInputEventType.StoredCardSucceeded]: HostedInputStoredCardSucceededEvent;
 }
 
 // Events
@@ -57,25 +53,10 @@ export type HostedInputEvent =
     | HostedInputFocusEvent
     | HostedInputSubmitSuccessEvent
     | HostedInputSubmitErrorEvent
-    | HostedInputValidateEvent
-    | HostedInputStoredCardSucceededEvent
-    | HostedInputStoredCardErrorEvent;
+    | HostedInputValidateEvent;
 
 export interface HostedInputAttachSuccessEvent {
     type: HostedInputEventType.AttachSucceeded;
-}
-
-export interface HostedInputStoredCardSucceededEvent {
-    type: HostedInputEventType.StoredCardSucceeded;
-}
-
-export interface HostedInputStoredCardErrorEvent {
-    type: HostedInputEventType.StoredCardFailed;
-    payload?: {
-        errors?: string[];
-        error?: PaymentErrorData;
-        response?: Response<PaymentErrorResponseBody>;
-    };
 }
 
 export interface HostedInputAttachErrorEvent {

@@ -9,7 +9,7 @@ import {
 } from './iframe-content';
 
 export default interface HostedFormOptions {
-    fields: HostedFieldOptionsMap;
+    fields: HostedCardFieldOptionsMap;
     styles?: HostedFieldStylesMap;
     onBlur?(data: HostedFieldBlurEventData): void;
     onCardTypeChange?(data: HostedFieldCardTypeChangeEventData): void;
@@ -40,8 +40,6 @@ export type HostedFieldEnterEventData = HostedInputEnterEvent['payload'];
 export type HostedFieldFocusEventData = HostedInputFocusEvent['payload'];
 export type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
 
-export type HostedFieldOptionsMap = HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap;
-
 export interface HostedCardFieldOptionsMap {
     [HostedFieldType.CardCode]?: HostedCardFieldOptions;
     [HostedFieldType.CardExpiry]: HostedCardFieldOptions;
@@ -49,19 +47,10 @@ export interface HostedCardFieldOptionsMap {
     [HostedFieldType.CardNumber]: HostedCardFieldOptions;
 }
 
-export interface HostedStoredCardFieldOptionsMap {
-    [HostedFieldType.CardCodeVerification]?: HostedStoredCardFieldOptions;
-    [HostedFieldType.CardNumberVerification]?: HostedStoredCardFieldOptions;
-}
-
 export interface HostedCardFieldOptions {
     accessibilityLabel?: string;
     containerId: string;
     placeholder?: string;
-}
-
-export interface HostedStoredCardFieldOptions extends HostedCardFieldOptions {
-    instrumentId: string;
 }
 
 export interface HostedFieldStylesMap {

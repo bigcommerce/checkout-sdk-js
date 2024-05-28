@@ -5,17 +5,13 @@ import { IframeEventListener, IframeEventPoster } from './common/iframe';
 import HostedField from './hosted-field';
 import HostedFieldType from './hosted-field-type';
 import HostedForm from './hosted-form';
-import HostedFormOptions, {
-    HostedCardFieldOptionsMap,
-    HostedStoredCardFieldOptionsMap,
-} from './hosted-form-options';
+import HostedFormOptions from './hosted-form-options';
 
 export default class HostedFormFactory {
     create(host: string, options: HostedFormOptions): HostedForm {
         const fieldTypes = Object.keys(options.fields) as HostedFieldType[];
         const fields = fieldTypes.reduce<HostedField[]>((result, type) => {
-            const fields = options.fields as HostedStoredCardFieldOptionsMap &
-                HostedCardFieldOptionsMap;
+            const fields = options.fields;
             const fieldOptions = fields[type];
 
             if (!fieldOptions) {

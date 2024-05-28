@@ -41,15 +41,8 @@ export default class HostedInputInitializer {
         )
             .pipe(
                 map(({ payload }) => {
-                    const {
-                        accessibilityLabel,
-                        cardInstrument,
-                        fontUrls,
-                        placeholder,
-                        styles,
-                        origin,
-                        type,
-                    } = payload;
+                    const { accessibilityLabel, fontUrls, placeholder, styles, origin, type } =
+                        payload;
 
                     if (origin) {
                         this._factory.normalizeParentOrigin(origin);
@@ -62,7 +55,6 @@ export default class HostedInputInitializer {
                         fontUrls,
                         placeholder,
                         accessibilityLabel,
-                        cardInstrument,
                     );
 
                     field.attach();

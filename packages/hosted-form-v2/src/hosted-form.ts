@@ -4,16 +4,7 @@ import { IframeEventListener } from './common/iframe';
 import { InvalidHostedFormConfigError } from './errors';
 import HostedField from './hosted-field';
 import HostedFormOptions from './hosted-form-options';
-import {
-    HostedInputEnterEvent,
-    HostedInputEventMap,
-    HostedInputEventType,
-    HostedInputStoredCardSucceededEvent,
-} from './iframe-content';
-import {
-    StoredCardHostedFormData,
-    StoredCardHostedFormInstrumentFields,
-} from './stored-card-hosted-form-type';
+import { HostedInputEnterEvent, HostedInputEventMap, HostedInputEventType } from './iframe-content';
 
 type HostedFormEventCallbacks = Pick<
     HostedFormOptions,
@@ -24,10 +15,6 @@ export interface HostedFormInterface {
     attach(): Promise<void>;
     detach(): void;
     getBin(): string | undefined;
-    submitStoredCard(payload: {
-        fields: StoredCardHostedFormInstrumentFields;
-        data: StoredCardHostedFormData;
-    }): Promise<HostedInputStoredCardSucceededEvent | void>;
     validate(): Promise<void>;
     getCardType(): string | undefined;
 }
@@ -96,13 +83,6 @@ export default class HostedForm implements HostedFormInterface {
         this._fields.forEach((field) => {
             field.detach();
         });
-    }
-
-    async submitStoredCard(payload: {
-        fields: StoredCardHostedFormInstrumentFields;
-        data: StoredCardHostedFormData;
-    }): Promise<HostedInputStoredCardSucceededEvent | void> {
-        return this._getFirstField().submitStoredCardForm(payload.fields, payload.data);
     }
 
     async validate(): Promise<void> {

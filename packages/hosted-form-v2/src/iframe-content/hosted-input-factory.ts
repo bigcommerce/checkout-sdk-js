@@ -3,7 +3,7 @@ import { createClient as createBigpayClient } from '@bigcommerce/bigpay-client';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { appendWww, parseUrl } from '../common/url';
 import HostedFieldType from '../hosted-field-type';
-import { CardInstrument, PaymentRequestSender, PaymentRequestTransformer } from '../payment';
+import { PaymentRequestSender, PaymentRequestTransformer } from '../payment';
 
 import CardExpiryFormatter from './card-expiry-formatter';
 import CardNumberFormatter from './card-number-formatter';
@@ -29,7 +29,6 @@ export default class HostedInputFactory {
         fontUrls: string[] = [],
         placeholder = '',
         accessibilityLabel: string = mapToAccessibilityLabel(type),
-        cardInstrument?: CardInstrument,
     ): HostedInput {
         const autocomplete = mapToAutocompleteType(type);
 
@@ -45,19 +44,6 @@ export default class HostedInputFactory {
             );
         }
 
-        if (type === HostedFieldType.CardNumberVerification) {
-            return this._createNumberInput(
-                type,
-                form,
-                styles,
-                fontUrls,
-                placeholder,
-                accessibilityLabel,
-                autocomplete,
-                cardInstrument,
-            );
-        }
-
         if (type === HostedFieldType.CardExpiry) {
             return this._createExpiryInput(
                 form,
@@ -66,19 +52,6 @@ export default class HostedInputFactory {
                 placeholder,
                 accessibilityLabel,
                 autocomplete,
-            );
-        }
-
-        if (type === HostedFieldType.CardCodeVerification) {
-            return this._createInput(
-                type,
-                form,
-                styles,
-                fontUrls,
-                placeholder,
-                accessibilityLabel,
-                autocomplete,
-                cardInstrument,
             );
         }
 
@@ -144,7 +117,6 @@ export default class HostedInputFactory {
         placeholder: string,
         accessibilityLabel = '',
         autocomplete = '',
-        cardInstrument?: CardInstrument,
     ): HostedCardNumberInput {
         return new HostedCardNumberInput(
             type,
@@ -157,8 +129,8 @@ export default class HostedInputFactory {
             new IframeEventListener(this._parentOrigin),
             new IframeEventPoster(this._parentOrigin, window.parent),
             new HostedInputAggregator(window.parent),
-            new HostedInputValidator(cardInstrument),
-            this._createPaymentHandler(cardInstrument),
+            new HostedInputValidator(),
+            this._createPaymentHandler(),
             new HostedAutocompleteFieldset(
                 form,
                 [HostedFieldType.CardCode, HostedFieldType.CardExpiry, HostedFieldType.CardName],
@@ -176,7 +148,6 @@ export default class HostedInputFactory {
         placeholder: string,
         accessibilityLabel = '',
         autocomplete = '',
-        cardInstrument?: CardInstrument,
     ): HostedInput {
         return new HostedInput(
             type,
@@ -189,15 +160,15 @@ export default class HostedInputFactory {
             new IframeEventListener(this._parentOrigin),
             new IframeEventPoster(this._parentOrigin, window.parent),
             new HostedInputAggregator(window.parent),
-            new HostedInputValidator(cardInstrument),
-            this._createPaymentHandler(cardInstrument),
+            new HostedInputValidator(),
+            this._createPaymentHandler(),
         );
     }
 
-    private _createPaymentHandler(cardInstrument?: CardInstrument): HostedInputPaymentHandler {
+    private _createPaymentHandler(): HostedInputPaymentHandler {
         return new HostedInputPaymentHandler(
             new HostedInputAggregator(window.parent),
-            new HostedInputValidator(cardInstrument),
+            new HostedInputValidator(),
             getHostedInputStorage(),
             new IframeEventPoster(this._parentOrigin, window.parent),
             new PaymentRequestSender(createBigpayClient()),

@@ -2,7 +2,6 @@ import { IframeEventListener } from '../common/iframe';
 import { InvalidHostedFormConfigError } from '../errors';
 import { HostedFieldEventMap, HostedFieldEventType } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
-import { getCardInstrument } from '../payment/instrument.mock';
 
 import HostedInput from './hosted-input';
 import HostedInputFactory from './hosted-input-factory';
@@ -49,7 +48,6 @@ describe('HostedInputInitializer', () => {
                 payload: {
                     type: HostedFieldType.CardNumber,
                     accessibilityLabel: 'Name',
-                    cardInstrument: getCardInstrument(),
                     fontUrls: [],
                     placeholder: 'Card name',
                     styles: { default: { color: 'rgb(0, 0, 0)' } },
@@ -66,7 +64,6 @@ describe('HostedInputInitializer', () => {
             [],
             'Card name',
             'Name',
-            getCardInstrument(),
         );
     });
 

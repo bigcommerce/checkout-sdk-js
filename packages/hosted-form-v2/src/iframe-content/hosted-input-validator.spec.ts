@@ -1,7 +1,6 @@
 import { omit } from 'lodash';
 
 import HostedFieldType from '../hosted-field-type';
-import { getCardInstrument } from '../payment/instrument.mock';
 
 import HostedInputValidateResults from './hosted-input-validate-results';
 import HostedInputValidator from './hosted-input-validator';
@@ -30,7 +29,7 @@ describe('HostedInputValidator', () => {
             },
         };
 
-        validator = new HostedInputValidator(getCardInstrument());
+        validator = new HostedInputValidator();
     });
 
     it('does not throw error if data is valid', async () => {
@@ -246,107 +245,5 @@ describe('HostedInputValidator', () => {
                 }),
             },
         );
-    });
-
-    describe('when validating against stored card verification fields', () => {
-        it('returns error if card number used for verification is missing', async () => {
-            expect(await validator.validate({ cardNumberVerification: '' })).toEqual({
-                isValid: false,
-                errors: {
-                    cardNumberVerification: expect.arrayContaining([
-                        {
-                            fieldType: 'cardNumberVerification',
-                            type: 'required',
-                            message: 'Credit card number is required',
-                        },
-                    ]),
-                },
-            });
-        });
-
-        it('returns error if card number used for verification is invalid', async () => {
-            expect(
-                await validator.validate({ cardNumberVerification: '9999 9999 9999 9999' }),
-            ).toEqual({
-                isValid: false,
-                errors: {
-                    cardNumberVerification: expect.arrayContaining([
-                        {
-                            fieldType: 'cardNumberVerification',
-                            type: 'invalid_card_number',
-                            message: 'Credit card number must be valid',
-                        },
-                    ]),
-                },
-            });
-        });
-
-        it('returns error if card number used for verification is does not match with instrument', async () => {
-            expect(
-                await validator.validate({ cardNumberVerification: '5555 5555 5555 4444' }),
-            ).toEqual({
-                isValid: false,
-                errors: {
-                    cardNumberVerification: expect.arrayContaining([
-                        {
-                            fieldType: 'cardNumberVerification',
-                            type: 'mismatched_card_number',
-                            message:
-                                'The card number entered does not match the card stored in your account',
-                        },
-                    ]),
-                },
-            });
-        });
-
-        it('does not return error if card number used for verification is valid', async () => {
-            expect(
-                await validator.validate({ cardNumberVerification: '4111 1111 1111 1111' }),
-            ).toEqual({
-                isValid: true,
-                errors: {
-                    cardNumberVerification: [],
-                },
-            });
-        });
-
-        it('returns error if card code used for verification is missing', async () => {
-            expect(await validator.validate({ cardCodeVerification: '' })).toEqual({
-                isValid: false,
-                errors: {
-                    cardCodeVerification: expect.arrayContaining([
-                        {
-                            fieldType: 'cardCodeVerification',
-                            type: 'required',
-                            message: 'CVV is required',
-                        },
-                    ]),
-                },
-            });
-        });
-
-        it('returns error if card code used for verification is invalid', async () => {
-            expect(await validator.validate({ cardCodeVerification: '1234' })).toEqual({
-                isValid: false,
-                errors: {
-                    cardCodeVerification: expect.arrayContaining([
-                        {
-                            fieldType: 'cardCodeVerification',
-                            type: 'invalid_card_code',
-                            message: 'CVV must be valid',
-                        },
-                    ]),
-                },
-            });
-        });
-
-        it('does not return error if card code used for verification is valid', async () => {
-            expect(await validator.validate({ cardCodeVerification: '123' })).toEqual({
-                isValid: true,
-                errors: {
-                    cardCodeVerification: [],
-                },
-            });
-        });
     });
 });

@@ -18,15 +18,10 @@ import HostedFormOrderData from './hosted-form-order-data';
 import {
     HostedInputEventMap,
     HostedInputEventType,
-    HostedInputStoredCardSucceededEvent,
     HostedInputSubmitErrorEvent,
     HostedInputSubmitSuccessEvent,
     HostedInputValidateEvent,
 } from './iframe-content';
-import {
-    StoredCardHostedFormData,
-    StoredCardHostedFormInstrumentFields,
-} from './stored-card-hosted-form-type';
 
 export const RETRY_INTERVAL = 60 * 1000;
 export const LAST_RETRY_KEY = 'lastRetry';
@@ -146,24 +141,6 @@ export default class HostedField {
 
             throw event;
         }
-    }
-
-    async submitStoredCardForm(
-        fields: StoredCardHostedFormInstrumentFields,
-        data: StoredCardHostedFormData,
-    ): Promise<HostedInputStoredCardSucceededEvent> {
-        const promise = this._eventPoster.post<HostedInputStoredCardSucceededEvent>(
-            {
-                type: HostedFieldEventType.StoredCardRequested,
-                payload: { fields, data },
-            },
-            {
-                successType: HostedInputEventType.StoredCardSucceeded,
-                errorType: HostedInputEventType.StoredCardFailed,
-            },
-        );
-
-        return this._detachmentObserver.ensurePresence([this._iframe], promise);
     }
 
     async validateForm(): Promise<void> {

@@ -4,4 +4,3 @@ export { default as HostedForm } from './hosted-form';
 export { default as HostedFormFactory } from './hosted-form-factory';
 export { default as HostedFormOptions } from './hosted-form-options';
 export { default as HostedFormOrderData } from './hosted-form-order-data';
-export { default as createStoredCardHostedFormService } from './create-hosted-form-stored-card-service';
