@@ -123,6 +123,7 @@ export interface BraintreeThreeDSecureOptions {
      * the current page.
      */
     removeFrame(): void;
+    challengeRequested?: boolean;
     additionalInformation?: {
         acsWindowSize?: '01' | '02' | '03' | '04' | '05';
     };
