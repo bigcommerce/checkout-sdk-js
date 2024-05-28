@@ -67,7 +67,6 @@ describe('KlarnaV2PaymentStrategy', () => {
             paymentIntegrationService,
             scriptLoader,
             klarnav2TokenUpdater,
-            requestSender,
         );
 
         initializePaymentAction = of(
@@ -284,7 +283,6 @@ describe('KlarnaV2PaymentStrategy', () => {
                 paymentIntegrationService,
                 scriptLoader,
                 klarnav2TokenUpdater,
-                requestSender,
             );
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -322,7 +320,6 @@ describe('KlarnaV2PaymentStrategy', () => {
                 paymentIntegrationService,
                 scriptLoader,
                 klarnav2TokenUpdater,
-                requestSender,
             );
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -364,7 +361,6 @@ describe('KlarnaV2PaymentStrategy', () => {
                 paymentIntegrationService,
                 scriptLoader,
                 klarnav2TokenUpdater,
-                requestSender,
             );
 
             jest.spyOn(

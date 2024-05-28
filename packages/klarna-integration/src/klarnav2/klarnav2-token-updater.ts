@@ -28,4 +28,24 @@ export default class KlarnaV2TokenUpdater {
             params,
         });
     }
+
+    async klarnaOrderInitialization(
+        cartId: string,
+        clientToken: string | undefined,
+    ): Promise<void> {
+        const url = `/api/storefront/initialization/klarna`;
+        const options = {
+            headers: {
+                Accept: ContentType.JsonV1,
+                'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                ...SDK_VERSION_HEADERS,
+            },
+            body: {
+                cartId,
+                clientToken,
+            },
+        };
+
+        await this.requestSender.put(url, options);
+    }
 }

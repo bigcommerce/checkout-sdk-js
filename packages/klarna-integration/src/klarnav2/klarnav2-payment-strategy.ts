@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { RequestSender } from '@bigcommerce/request-sender';
 import { includes } from 'lodash';
 
 import {
     Address,
     BillingAddress,
-    ContentType,
-    INTERNAL_USE_ONLY,
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
@@ -19,7 +16,6 @@ import {
     PaymentMethodCancelledError,
     PaymentMethodInvalidError,
     PaymentRequestOptions,
-    SDK_VERSION_HEADERS,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import KlarnaPayments, {
@@ -44,7 +40,6 @@ export default class KlarnaV2PaymentStrategy {
         private paymentIntegrationService: PaymentIntegrationService,
         private klarnav2ScriptLoader: KlarnaV2ScriptLoader,
         private klarnav2TokenUpdater: KlarnaV2TokenUpdater,
-        private requestSender: RequestSender,
     ) {}
 
     async initialize(
@@ -104,7 +99,11 @@ export default class KlarnaV2PaymentStrategy {
             );
         }
 
-        await this.klarnaOrderInitialization(methodId);
+        const state = this.paymentIntegrationService.getState();
+        const { id: cartId } = state.getCartOrThrow();
+        const { clientToken } = state.getPaymentMethodOrThrow(methodId);
+
+        await this.klarnav2TokenUpdater.klarnaOrderInitialization(cartId, clientToken);
 
         const { authorization_token: authorizationToken } = await this.authorizeOrThrow(methodId);
 
@@ -261,26 +260,5 @@ export default class KlarnaV2PaymentStrategy {
                 },
             );
         });
-    }
-
-    private async klarnaOrderInitialization(methodId: string): Promise<void> {
-        const state = this.paymentIntegrationService.getState();
-        const cartId = state.getCartOrThrow().id;
-        const clientToken = state.getPaymentMethodOrThrow(methodId).clientToken;
-
-        const url = `/api/storefront/initialization/klarna`;
-        const options = {
-            headers: {
-                Accept: ContentType.JsonV1,
-                'X-API-INTERNAL': INTERNAL_USE_ONLY,
-                ...SDK_VERSION_HEADERS,
-            },
-            body: {
-                cartId,
-                clientToken,
-            },
-        };
-
-        await this.requestSender.put(url, options);
     }
 }
