@@ -60,7 +60,7 @@
     "@bigcommerce/script-loader": "^2.2.2",
     "@braintree/browser-detection": "^1.16.0",
     "@types/card-validator": "^4.1.0",
-    "@types/iframe-resizer": "^3.5.9",
+    "@types/iframe-resizer": "^3.5.13",
     "@types/reselect": "^2.2.0",
     "@types/shallowequal": "^1.1.5",
     "card-validator": "^6.2.0",
