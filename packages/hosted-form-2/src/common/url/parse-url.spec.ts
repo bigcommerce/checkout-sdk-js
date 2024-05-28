@@ -1,4 +1,4 @@
-import { InvalidArgumentError } from '../error/errors';
+import { InvalidArgumentError } from '../errors';
 
 import parseUrl from './parse-url';
 

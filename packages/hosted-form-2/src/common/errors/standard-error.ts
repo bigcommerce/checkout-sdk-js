@@ -1,4 +1,4 @@
-import { setPrototypeOf } from '../../utility';
+import { setPrototypeOf } from '../utility';
 
 import CustomError from './custom-error';
 

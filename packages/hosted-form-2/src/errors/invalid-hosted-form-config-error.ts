@@ -1,4 +1,4 @@
-import { StandardError } from '../common/error/errors';
+import { StandardError } from '../common/errors';
 
 export default class InvalidHostedFormConfigError extends StandardError {
     constructor(message?: string) {

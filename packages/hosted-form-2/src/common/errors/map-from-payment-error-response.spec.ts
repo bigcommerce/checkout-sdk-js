@@ -2,7 +2,7 @@ import { Response } from '@bigcommerce/request-sender';
 
 import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { getErrorResponse } from '../../http-request/responses.mock';
+import { getErrorResponse } from '../http-request/responses.mock';
 
 import mapFromPaymentErrorResponse from './map-from-payment-error-response';
 import RequestError from './request-error';

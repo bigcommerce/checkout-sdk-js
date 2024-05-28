@@ -1,4 +1,4 @@
-import { StandardError } from '../../error/errors';
+import { StandardError } from '../../errors';
 
 export default class UnexpectedDetachmentError extends StandardError {
     constructor(message?: string) {

@@ -1,4 +1,4 @@
-import { getErrorResponse } from '../../http-request/responses.mock';
+import { getErrorResponse } from '../http-request/responses.mock';
 
 import RequestError from './request-error';
 

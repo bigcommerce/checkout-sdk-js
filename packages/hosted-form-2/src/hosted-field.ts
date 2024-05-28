@@ -3,7 +3,7 @@ import { fromEvent } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 
 import { DetachmentObserver } from './common/dom';
-import { mapFromPaymentErrorResponse } from './common/error/errors';
+import { mapFromPaymentErrorResponse } from './common/errors';
 import { IframeEventListener, IframeEventPoster } from './common/iframe';
 import { parseUrl } from './common/url';
 import {

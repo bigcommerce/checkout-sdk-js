@@ -1,6 +1,6 @@
 import { flatMap, map, values } from 'lodash';
 
-import { StandardError } from '../common/error/errors';
+import { StandardError } from '../common/errors';
 import { HostedInputValidateErrorDataMap } from '../iframe-content';
 
 export default class InvalidHostedFormValueError extends StandardError {

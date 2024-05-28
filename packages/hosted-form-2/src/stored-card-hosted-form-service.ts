@@ -1,4 +1,4 @@
-import { NotInitializedError, NotInitializedErrorType } from './common/error/errors';
+import { NotInitializedError, NotInitializedErrorType } from './common/errors';
 import HostedForm from './hosted-form';
 import HostedFormFactory from './hosted-form-factory';
 import HostedFormOptions from './hosted-form-options';
