@@ -231,5 +231,8 @@ export function getThreeDSecureOptionsMock(): BraintreeThreeDSecureOptions {
     return {
         addFrame: jest.fn(),
         removeFrame: jest.fn(),
+        additionalInformation: {
+            acsWindowSize: '01',
+        },
     };
 }

@@ -439,6 +439,9 @@ describe('BraintreePaymentProcessor', () => {
                 nonce: 'tokenization_nonce',
                 onLookupComplete: expect.any(Function),
                 collectDeviceData: true,
+                additionalInformation: {
+                    acsWindowSize: '01',
+                },
             });
         });
 

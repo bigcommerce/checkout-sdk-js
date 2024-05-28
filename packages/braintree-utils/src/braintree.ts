@@ -355,6 +355,9 @@ export interface BraintreeThreeDSecureOptions {
     challengeRequested?: boolean;
     showLoader?: boolean;
     bin?: string;
+    additionalInformation?: {
+        acsWindowSize?: '01' | '02' | '03' | '04' | '05';
+    };
     addFrame?(
         error: Error | undefined,
         iframe: HTMLIFrameElement,

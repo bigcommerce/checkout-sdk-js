@@ -416,6 +416,9 @@ export interface BraintreeThreeDSecureOptions {
     removeFrame(): void;
     onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
     collectDeviceData: boolean;
+    additionalInformation?: {
+        acsWindowSize?: '01' | '02' | '03' | '04' | '05';
+    };
 }
 
 interface BraintreeThreeDSecureVerificationData {
