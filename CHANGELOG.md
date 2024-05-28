@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.611.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.610.0...v1.611.0) (2024-05-28)
+
+
+### Features
+
+* **payment:** PAYPAL-2520 Add 3d secure iframe window size property ([#2521](https://github.com/bigcommerce/checkout-sdk-js/issues/2521)) ([f8df60c](https://github.com/bigcommerce/checkout-sdk-js/commit/f8df60cb31f7f20663d45a0268d96731907eb0ae))
+
 ## [1.610.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.609.0...v1.610.0) (2024-05-24)
 
 

@@ -29,7 +29,7 @@ through a web page via an iframe provided by the card issuer.
 
 | Name | Type |
 | :------ | :------ |
-| `acsWindowSize` | ``"01"`` \| ``"02"`` \| ``"03"`` \| ``"04"`` \| ``"05"`` |
+| `acsWindowSize?` | ``"01"`` \| ``"02"`` \| ``"03"`` \| ``"04"`` \| ``"05"`` |
 
 ## Methods
 
