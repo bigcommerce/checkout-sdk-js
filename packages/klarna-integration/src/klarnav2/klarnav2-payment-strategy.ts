@@ -91,7 +91,7 @@ export default class KlarnaV2PaymentStrategy {
         const {
             payment: { ...paymentPayload },
         } = payload;
-        const { gatewayId } = paymentPayload;
+        const { gatewayId, methodId } = paymentPayload;
 
         if (!gatewayId) {
             throw new InvalidArgumentError(
@@ -99,9 +99,13 @@ export default class KlarnaV2PaymentStrategy {
             );
         }
 
-        const { authorization_token: authorizationToken } = await this.authorizeOrThrow(
-            paymentPayload.methodId,
-        );
+        const state = this.paymentIntegrationService.getState();
+        const { id: cartId } = state.getCartOrThrow();
+        const { clientToken } = state.getPaymentMethodOrThrow(methodId);
+
+        await this.klarnav2TokenUpdater.klarnaOrderInitialization(cartId, clientToken);
+
+        const { authorization_token: authorizationToken } = await this.authorizeOrThrow(methodId);
 
         await this.paymentIntegrationService.initializePayment(gatewayId, {
             authorizationToken,
