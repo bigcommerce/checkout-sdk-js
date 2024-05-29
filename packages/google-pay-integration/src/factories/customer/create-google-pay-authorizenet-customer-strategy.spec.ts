@@ -18,9 +18,6 @@ describe('createGooglePayAuthorizeDotNetCustomerStrategy', () => {
     it('instantiates google pay authorizenet customer strategy', () => {
         const storeConfigMock = getConfig().storeConfig;
 
-        storeConfigMock.checkoutSettings.features = {
-            'INT-5659.authorizenet_use_new_googlepay_customer_strategy': true,
-        };
         jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce(
             storeConfigMock,
         );

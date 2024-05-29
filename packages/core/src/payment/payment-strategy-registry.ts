@@ -42,22 +42,6 @@ export default class PaymentStrategyRegistry extends Registry<
             switch (true) {
                 case paymentMethod.id === 'squarev2' &&
                     features['PROJECT-4113.squarev2_web_payments_sdk']:
-                case paymentMethod.id === 'googlepayauthorizenet' &&
-                    features['INT-7676.authorizenet_use_new_googlepay_payment_strategy']:
-                case paymentMethod.id === 'googlepaybnz' &&
-                    features['INT-7676.bnz_use_new_googlepay_payment_strategy']:
-                case paymentMethod.id === 'googlepaycheckoutcom' &&
-                    features['INT-7676.checkoutcom_use_new_googlepay_payment_strategy']:
-                case paymentMethod.id === 'googlepaycybersourcev2' &&
-                    features['INT-7676.cybersourcev2_use_new_googlepay_payment_strategy']:
-                case paymentMethod.id === 'googlepayorbital' &&
-                    features['INT-7676.orbital_use_new_googlepay_payment_strategy']:
-                case paymentMethod.id === 'googlepaystripe' &&
-                    features['INT-7676.stripe_use_new_googlepay_payment_strategy']:
-                case paymentMethod.id === 'googlepaystripeupe' &&
-                    features['INT-7676.stripeupe_use_new_googlepay_payment_strategy']:
-                case paymentMethod.id === 'googlepayworldpayaccess' &&
-                    features['INT-7676.worldpayaccess_use_new_googlepay_payment_strategy']:
                     throw new Error(`${paymentMethod.id} requires using registryV2`);
             }
         }

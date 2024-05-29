@@ -18,9 +18,6 @@ describe('createGooglePayWorldpayAccessCustomerStrategy', () => {
     it('instantiates google pay worldpayaccess customer strategy', () => {
         const storeConfigMock = getConfig().storeConfig;
 
-        storeConfigMock.checkoutSettings.features = {
-            'INT-5659.worldpayaccess_use_new_googlepay_customer_strategy': true,
-        };
         jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce(
             storeConfigMock,
         );

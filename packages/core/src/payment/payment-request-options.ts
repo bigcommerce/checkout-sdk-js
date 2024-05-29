@@ -10,7 +10,6 @@ import {
 } from './strategies/braintree';
 import { ChasePayInitializeOptions } from './strategies/chasepay';
 import { DigitalRiverPaymentInitializeOptions } from './strategies/digitalriver';
-import { GooglePayPaymentInitializeOptions } from './strategies/googlepay';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
 import { MonerisPaymentInitializeOptions } from './strategies/moneris';
 import { OpyPaymentInitializeOptions } from './strategies/opy';
@@ -119,74 +118,8 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
     chasepay?: ChasePayInitializeOptions;
 
     /**
-     * The options that are required to initialize the GooglePay Authorize.Net
-     * payment method. They can be omitted unless you need to support GooglePay.
-     */
-    googlepayadyenv2?: GooglePayPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the GooglePay Authorize.Net
-     * payment method. They can be omitted unless you need to support GooglePay.
-     */
-    googlepayadyenv3?: GooglePayPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the GooglePay Authorize.Net
-     * payment method. They can be omitted unless you need to support GooglePay.
-     */
-    googlepayauthorizenet?: GooglePayPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the GooglePay Authorize.Net
-     * payment method. They can be omitted unless you need to support GooglePay.
-     */
-    googlepaybnz?: GooglePayPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the GooglePay Braintree payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaybraintree?: GooglePayPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the GooglePay Checkout.com payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaycheckoutcom?: GooglePayPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the GooglePay CybersourceV2 payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaycybersourcev2?: GooglePayPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayorbital?: GooglePayPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the GooglePay Stripe payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaystripe?: GooglePayPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the GooglePay Stripe payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaystripeupe?: GooglePayPaymentInitializeOptions;
-
-    /**
      * The options that are required to initialize the Worldpay payment method.
      * They can be omitted unless you need to support Worldpay.
      */
     worldpay?: WorldpayAccessPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the GooglePay Worldpay Access payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayworldpayaccess?: GooglePayPaymentInitializeOptions;
 }

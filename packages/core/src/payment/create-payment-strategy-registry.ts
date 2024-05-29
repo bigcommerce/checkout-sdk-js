@@ -70,19 +70,6 @@ import { ConvergePaymentStrategy } from './strategies/converge';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
 import { CyberSourceV2PaymentStrategy } from './strategies/cybersourcev2';
 import { DigitalRiverPaymentStrategy, DigitalRiverScriptLoader } from './strategies/digitalriver';
-import {
-    createGooglePayPaymentProcessor,
-    GooglePayAuthorizeNetInitializer,
-    GooglePayBNZInitializer,
-    GooglePayCheckoutcomInitializer,
-    GooglePayCheckoutcomPaymentProcessor,
-    GooglePayCybersourceV2Initializer,
-    GooglePayOrbitalInitializer,
-    GooglePayPaymentStrategy,
-    GooglePayStripeInitializer,
-    GooglePayStripeUPEInitializer,
-    GooglePayWorldpayAccessInitializer,
-} from './strategies/googlepay';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { MonerisPaymentStrategy } from './strategies/moneris';
 import { OpyPaymentStrategy, OpyScriptLoader } from './strategies/opy';
@@ -178,20 +165,6 @@ export default function createPaymentStrategyRegistry(
                 orderActionCreator,
                 paymentActionCreator,
                 createAmazonPayV2PaymentProcessor(),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.AUTHORIZENET_GOOGLE_PAY,
-        () =>
-            new GooglePayPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayAuthorizeNetInitializer()),
             ),
     );
 
@@ -345,52 +318,6 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register(
-        PaymentStrategyType.CYBERSOURCEV2_GOOGLE_PAY,
-        () =>
-            new GooglePayPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayCybersourceV2Initializer()),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.BNZ_GOOGLEPAY,
-        () =>
-            new GooglePayPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayBNZInitializer()),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.CHECKOUTCOM_GOOGLE_PAY,
-        () =>
-            new GooglePayPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                createGooglePayPaymentProcessor(
-                    store,
-                    new GooglePayCheckoutcomInitializer(requestSender),
-                ),
-                new GooglePayCheckoutcomPaymentProcessor(),
-            ),
-    );
-
-    registry.register(
         PaymentStrategyType.CHASE_PAY,
         () =>
             new ChasePayPaymentStrategy(
@@ -454,20 +381,6 @@ export default function createPaymentStrategyRegistry(
                 storefrontPaymentRequestSender,
                 paymentActionCreator,
                 new OpyScriptLoader(scriptLoader),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.ORBITAL_GOOGLE_PAY,
-        () =>
-            new GooglePayPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayOrbitalInitializer()),
             ),
     );
 
@@ -551,34 +464,6 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register(
-        PaymentStrategyType.STRIPE_GOOGLE_PAY,
-        () =>
-            new GooglePayPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayStripeInitializer()),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.STRIPE_UPE_GOOGLE_PAY,
-        () =>
-            new GooglePayPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayStripeUPEInitializer()),
-            ),
-    );
-
-    registry.register(
         PaymentStrategyType.WE_PAY,
         () =>
             new WepayPaymentStrategy(
@@ -598,20 +483,6 @@ export default function createPaymentStrategyRegistry(
                 orderActionCreator,
                 paymentActionCreator,
                 hostedFormFactory,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.WORLDPAYACCESS_GOOGLE_PAY,
-        () =>
-            new GooglePayPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                paymentActionCreator,
-                orderActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayWorldpayAccessInitializer()),
             ),
     );
 

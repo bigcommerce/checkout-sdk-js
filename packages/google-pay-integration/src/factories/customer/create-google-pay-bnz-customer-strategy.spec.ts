@@ -18,9 +18,6 @@ describe('createGooglePayBnzCustomerStrategy', () => {
     it('instantiates google pay bnz customer strategy', () => {
         const storeConfigMock = getConfig().storeConfig;
 
-        storeConfigMock.checkoutSettings.features = {
-            'INT-5659.bnz_use_new_googlepay_customer_strategy': true,
-        };
         jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce(
             storeConfigMock,
         );

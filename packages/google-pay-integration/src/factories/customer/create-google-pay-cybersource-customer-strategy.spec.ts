@@ -18,9 +18,6 @@ describe('createGooglePayCybersourceCustomerStrategy', () => {
     it('instantiates google pay cybersource customer strategy', () => {
         const storeConfigMock = getConfig().storeConfig;
 
-        storeConfigMock.checkoutSettings.features = {
-            'INT-5659.cybersourcev2_use_new_googlepay_customer_strategy': true,
-        };
         jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce(
             storeConfigMock,
         );

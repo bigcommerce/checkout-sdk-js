@@ -18,9 +18,6 @@ describe('createGooglePayStripeUpeCustomerStrategy', () => {
     it('instantiates google pay stripe upe customer strategy', () => {
         const storeConfigMock = getConfig().storeConfig;
 
-        storeConfigMock.checkoutSettings.features = {
-            'INT-5659.stripeupe_use_new_googlepay_customer_strategy': true,
-        };
         jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValueOnce(
             storeConfigMock,
         );
