@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.613.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.612.1...v1.613.0) (2024-05-29)
+
+
+### Features
+
+* **payment:** PI-1578 Refactor the existing sage-pay payment strategy in Checkout SDK ([781599a](https://github.com/bigcommerce/checkout-sdk-js/commit/781599a72eebd30f72e63d4b9740a649717e2385))
+
 ### [1.612.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.612.0...v1.612.1) (2024-05-28)
 
 ## [1.612.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.611.0...v1.612.0) (2024-05-28)
