@@ -1,0 +1,23 @@
+{
+    "root": "packages/sagepay-integration",
+    "sourceRoot": "packages/sagepay-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/sagepay-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/sagepay-integration"],
+            "options": {
+                "jestConfig": "packages/sagepay-integration/jest.config.js",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": ["scope:integration"]
+}

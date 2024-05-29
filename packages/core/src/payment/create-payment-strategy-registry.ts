@@ -94,7 +94,6 @@ import {
     PPSDKStrategy,
 } from './strategies/ppsdk';
 import { QuadpayPaymentStrategy } from './strategies/quadpay';
-import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
 import { WorldpayaccessPaymetStrategy } from './strategies/worldpayaccess';
@@ -520,18 +519,6 @@ export default function createPaymentStrategyRegistry(
                 storeCreditActionCreator,
                 remoteCheckoutActionCreator,
                 storefrontPaymentRequestSender,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.SAGE_PAY,
-        () =>
-            new SagePayPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
-                formPoster,
             ),
     );
 

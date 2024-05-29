@@ -100,6 +100,9 @@
             "@bigcommerce/checkout-sdk/paypal-pro-integration": [
                 "packages/paypal-pro-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/sagepay-integration": [
+                "packages/sagepay-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/sezzle-integration": [
                 "packages/sezzle-integration/src/index.ts"
             ],
