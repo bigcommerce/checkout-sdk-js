@@ -14,3 +14,4 @@ export {
 export { createStoredCardHostedFormService } from '../hosted-form';
 export { createBodlService } from '../bodl';
 export { ExtensionCommandType } from '../extension';
+export { createHostedFormService } from './hosted-form-v2';
