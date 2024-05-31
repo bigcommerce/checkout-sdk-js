@@ -1,8 +1,10 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
+import { EventEmitter } from 'events';
 import { omit } from 'lodash';
 
 import {
     BraintreeClient,
+    BraintreeError,
     BraintreeHostWindow,
     BraintreeIntegrationService,
     BraintreeModuleCreator,
@@ -16,6 +18,8 @@ import {
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
     getPaypalMock,
+    getTokenizePayload,
+    PaypalButtonOptions,
     PaypalSDK,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -42,6 +46,7 @@ import mapToBraintreeShippingAddressOverride from '../map-to-braintree-shipping-
 import BraintreePaypalPaymentStrategy from './braintree-paypal-payment-strategy';
 
 describe('BraintreePaypalPaymentStrategy', () => {
+    let eventEmitter: EventEmitter;
     let strategy: BraintreePaypalPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
@@ -49,10 +54,10 @@ describe('BraintreePaypalPaymentStrategy', () => {
     let paymentMethodMock: PaymentMethod;
     let clientCreatorMock: BraintreeModuleCreator<BraintreeClient>;
     let braintreePaypalCreatorMock: BraintreeModuleCreator<BraintreePaypal>;
-    let paypalCheckoutMock: BraintreePaypalCheckout;
     let paypalCheckoutCreatorMock: BraintreeModuleCreator<BraintreePaypalCheckout>;
     let paypalSdkMock: PaypalSDK;
     let paypalMessageElement: HTMLDivElement;
+    let braintreePaypalCheckoutMock: BraintreePaypalCheckout;
 
     const storeConfig = getConfig().storeConfig;
 
@@ -67,7 +72,20 @@ describe('BraintreePaypalPaymentStrategy', () => {
         },
     };
 
+    const providerError = {
+        errors: [
+            {
+                code: 'transaction_declined',
+                message: 'Payment was declined. Please try again.',
+                provider_error: {
+                    code: '2046',
+                },
+            },
+        ],
+    };
+
     beforeEach(() => {
+        eventEmitter = new EventEmitter();
         paypalMessageElement = document.createElement('div');
         paypalMessageElement.id = 'banner-container-id';
         document.body.appendChild(paypalMessageElement);
@@ -78,8 +96,11 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
         clientCreatorMock = getModuleCreatorMock(getClientMock());
         braintreePaypalCreatorMock = getModuleCreatorMock(getBraintreePaypalMock());
-        paypalCheckoutMock = getPaypalCheckoutMock();
-        paypalCheckoutCreatorMock = getPayPalCheckoutCreatorMock(paypalCheckoutMock, false);
+        braintreePaypalCheckoutMock = getPaypalCheckoutMock();
+        paypalCheckoutCreatorMock = getPayPalCheckoutCreatorMock(
+            braintreePaypalCheckoutMock,
+            false,
+        );
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
@@ -106,9 +127,36 @@ describe('BraintreePaypalPaymentStrategy', () => {
             window,
         );
 
+        const getSDKPaypalCheckoutMock = (
+            braintreePaypalCheckoutPayloadMock?: BraintreePaypalCheckout,
+        ) => {
+            if (!braintreePaypalCheckoutPayloadMock) {
+                return jest.fn(
+                    (
+                        _options: unknown,
+                        _successCallback: unknown,
+                        errorCallback: (err: BraintreeError) => void,
+                    ) => {
+                        errorCallback({ type: 'UNKNOWN', code: '234' } as BraintreeError);
+                    },
+                );
+            }
+
+            return jest.fn(
+                (
+                    _options: unknown,
+                    successCallback: (braintreePaypalCheckout: BraintreePaypalCheckout) => void,
+                ) => {
+                    successCallback(braintreePaypalCheckoutPayloadMock);
+                },
+            );
+        };
+
         jest.spyOn(braintreeIntegrationService, 'initialize');
         jest.spyOn(braintreeIntegrationService, 'getPaypal');
-        jest.spyOn(braintreeIntegrationService, 'getPaypalCheckout');
+        jest.spyOn(braintreeIntegrationService, 'getPaypalCheckout').mockImplementation(
+            getSDKPaypalCheckoutMock(braintreePaypalCheckoutMock),
+        );
         jest.spyOn(braintreeIntegrationService, 'getSessionId').mockReturnValue('my_session_id');
         jest.spyOn(braintreeIntegrationService, 'teardown');
         jest.spyOn(braintreeIntegrationService, 'paypal').mockResolvedValue({
@@ -126,6 +174,26 @@ describe('BraintreePaypalPaymentStrategy', () => {
         jest.spyOn(paypalSdkMock, 'Messages').mockImplementation(() => ({
             render: jest.fn(),
         }));
+
+        jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation((options: PaypalButtonOptions) => {
+            eventEmitter.on('approve', () => {
+                if (typeof options.onApprove === 'function') {
+                    options.onApprove();
+                }
+            });
+
+            eventEmitter.on('createOrder', () => {
+                if (typeof options.createOrder === 'function') {
+                    options.createOrder();
+                }
+            });
+
+            return {
+                isEligible: jest.fn(() => true),
+                render: jest.fn(),
+                close: jest.fn(),
+            };
+        });
     });
 
     it('creates an instance of the braintree payment strategy', () => {
@@ -148,17 +216,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
             await strategy.initialize({ methodId: paymentMethodMock.id });
 
             expect(braintreeIntegrationService.getPaypal).toHaveBeenCalled();
-        });
-
-        it('paypal checkout is not initialized', async () => {
-            const options = {
-                methodId: paymentMethodMock.id,
-                braintree: { bannerContainerId: 'banner-container-id' },
-            };
-
-            await strategy.initialize(options);
-
-            expect(braintreeIntegrationService.getPaypalCheckout).not.toHaveBeenCalled();
         });
 
         it('paypal checkout is initialized successfully', async () => {
@@ -432,18 +489,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
         });
 
         it('throws specific error if receive INSTRUMENT_DECLINED error and experiment is on', async () => {
-            const providerError = {
-                errors: [
-                    {
-                        code: 'transaction_declined',
-                        message: 'Payment was declined. Please try again.',
-                        provider_error: {
-                            code: '2046',
-                        },
-                    },
-                ],
-            };
-
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getStoreConfigOrThrow',
@@ -469,6 +514,146 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     new Error('INSTRUMENT_DECLINED'),
                 );
             }
+        });
+
+        it('rendering the paypal button when a specific INSTRUMENT_DECLINED error occurs', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithFeaturesOn);
+
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
+                throw providerError;
+            });
+
+            const braintreeOptions = {
+                ...options,
+                braintree: {
+                    onError: jest.fn(),
+                    containerId: '#checkout-button-container',
+                },
+            };
+
+            await strategy.initialize(braintreeOptions);
+
+            try {
+                await strategy.execute(orderRequestBody, options);
+            } catch (error) {
+                expect(braintreeOptions.braintree.onError).toHaveBeenCalledWith(
+                    new Error('INSTRUMENT_DECLINED'),
+                );
+
+                expect(paypalSdkMock.Buttons).toHaveBeenCalled();
+            }
+        });
+
+        it('execute submitPayment with re-authorised NONCE value when a specific INSTRUMENT_DECLINED error occurs', async () => {
+            const token = getTokenizePayload().nonce;
+
+            const expected = {
+                ...orderRequestBody.payment,
+                paymentData: {
+                    formattedPayload: {
+                        vault_payment_instrument: null,
+                        set_as_default_stored_instrument: null,
+                        device_info: null,
+                        paypal_account: { token, email: null },
+                    },
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithFeaturesOn);
+
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
+                throw providerError;
+            });
+
+            const braintreeOptions = {
+                ...options,
+                braintree: {
+                    onError: jest.fn(),
+                    containerId: '#checkout-button-container',
+                },
+            };
+
+            await strategy.initialize(braintreeOptions);
+
+            try {
+                await strategy.execute(orderRequestBody, options);
+            } catch (error) {
+                expect(braintreeOptions.braintree.onError).toHaveBeenCalledWith(
+                    new Error('INSTRUMENT_DECLINED'),
+                );
+            }
+
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
+
+            eventEmitter.emit('approve');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            await strategy.execute(orderRequestBody, options);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenLastCalledWith(expected);
+        });
+
+        it('#createOrder button callback', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigWithFeaturesOn);
+
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() => {
+                throw providerError;
+            });
+
+            const braintreeOptions = {
+                ...options,
+                braintree: {
+                    onError: jest.fn(),
+                    containerId: '#checkout-button-container',
+                },
+            };
+
+            await strategy.initialize(braintreeOptions);
+
+            try {
+                await strategy.execute(orderRequestBody, options);
+            } catch (error) {
+                expect(braintreeOptions.braintree.onError).toHaveBeenCalledWith(
+                    new Error('INSTRUMENT_DECLINED'),
+                );
+            }
+
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
+
+            eventEmitter.emit('createOrder');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            await strategy.execute(orderRequestBody, options);
+
+            expect(braintreePaypalCheckoutMock.createPayment).toHaveBeenCalledWith({
+                amount: 190,
+                currency: 'USD',
+                enableShippingAddress: true,
+                flow: 'checkout',
+                offerCredit: false,
+                shippingAddressEditable: false,
+                shippingAddressOverride: {
+                    city: 'Some City',
+                    countryCode: 'US',
+                    line1: '12345 Testing Way',
+                    line2: '',
+                    phone: '555-555-5555',
+                    postalCode: '95555',
+                    recipientName: 'Test Tester',
+                    state: 'CA',
+                },
+            });
         });
 
         describe('when paying with a vaulted instrument', () => {

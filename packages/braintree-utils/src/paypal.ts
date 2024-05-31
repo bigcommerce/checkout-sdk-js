@@ -97,6 +97,8 @@ export interface PaypalButtonOptions {
     createOrder?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<unknown>;
     onApprove?(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<unknown>;
     onClick?(): void;
+    onCancel?(): void;
+    onError?(error: Error): void;
 }
 
 export interface PaypalStyleOptions {
@@ -128,6 +130,7 @@ export interface PaypalActions {
 export interface PaypalButtonRender {
     render(container: string): void;
     isEligible(): boolean;
+    close(): void;
 }
 
 export interface PaypalAuthorizeData {
