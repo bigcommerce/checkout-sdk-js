@@ -60,7 +60,6 @@ import {
 import {
     CardinalClient,
     CardinalScriptLoader,
-    CardinalThreeDSecureFlow,
     CardinalThreeDSecureFlowV2,
 } from './strategies/cardinal';
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mpgs';
