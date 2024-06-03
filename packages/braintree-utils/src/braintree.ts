@@ -927,12 +927,14 @@ export interface BraintreeFastlaneCardComponentOptions {
 }
 
 export interface BraintreeFastlaneCardComponentFields {
-    [key: string]: BraintreeFastlaneCardComponentField;
-}
-
-export interface BraintreeFastlaneCardComponentField {
-    placeholder?: string;
-    prefill?: string;
+    cardholderName?: {
+        enabled?: boolean;
+        prefill?: string;
+    };
+    phoneNumber?: {
+        placeholder?: string;
+        prefill?: string;
+    };
 }
 
 export interface BraintreeFastlaneTokenizeDetails {
