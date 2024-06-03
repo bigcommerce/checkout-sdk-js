@@ -33,10 +33,10 @@ import {
     PaypalInstrument,
     StandardError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { isPaypalCommerceProviderError } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import isBraintreeError from '../is-braintree-error';
+import isBraintreePaypalProviderError from '../is-braintree-paypal-provider-error';
 import mapToBraintreeShippingAddressOverride from '../map-to-braintree-shipping-address-override';
 
 import {
@@ -185,10 +185,10 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
             this.paymentMethod = state.getPaymentMethod(methodId);
 
-            return Promise.resolve({
+            return {
                 ...payment,
                 paymentData: this.formattedPayload(token),
-            });
+            };
         }
 
         if (isVaultedInstrument(paymentData) || isHostedVaultedInstrument(paymentData)) {
@@ -287,7 +287,10 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             await this.braintreeIntegrationService.getPaypalCheckout(
                 paypalCheckoutConfig,
                 (braintreePaypalCheckout) => {
-                    this.renderPayPalMessages(initializationData);
+                    if (initializationData?.enableCheckoutPaywallBanner) {
+                        this.renderPayPalMessages();
+                    }
+
                     this.renderPayPalButton(braintreePaypalCheckout);
                 },
                 this.handleError,
@@ -329,7 +332,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 },
                 createOrder: () => this.setupPayment(braintreePaypalCheckout, id, onPaymentError),
                 onApprove: async (authorizeData: PaypalAuthorizeData) => {
-                    this.braintreeTokenizePayload = await this.tokenizePayment(
+                    this.braintreeTokenizePayload = await this.tokenizePaymentOrThrow(
                         authorizeData,
                         braintreePaypalCheckout,
                     );
@@ -402,7 +405,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private async tokenizePayment(
+    private async tokenizePaymentOrThrow(
         authorizeData: PaypalAuthorizeData,
         braintreePaypalCheckout: BraintreePaypalCheckout,
         onError?: (error: BraintreeError | StandardError) => void,
@@ -418,11 +421,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private renderPayPalMessages(initializationData?: any) {
-        if (!initializationData?.enableCheckoutPaywallBanner) {
-            return;
-        }
-
+    private renderPayPalMessages() {
         const { bannerContainerId } = this.braintree || {};
 
         if (
@@ -486,7 +485,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     }
 
     private isProviderError(error: unknown): boolean {
-        if (isPaypalCommerceProviderError(error)) {
+        if (isBraintreePaypalProviderError(error)) {
             const paypalProviderError = error?.errors?.filter((e: any) => e.provider_error) || [];
 
             return paypalProviderError[0].provider_error?.code === '2046';

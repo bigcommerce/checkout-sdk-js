@@ -5,7 +5,7 @@ import {
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import createPayPalCommerceIntegrationService from '../create-paypal-commerce-integration-service';
-import { LOADING_INDICATOR_STYLES } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import { LOADING_INDICATOR_STYLES } from '../paypal-commerce-constants';
 
 import PayPalCommerceAlternativeMethodsPaymentStrategy from './paypal-commerce-alternative-methods-payment-strategy';
 

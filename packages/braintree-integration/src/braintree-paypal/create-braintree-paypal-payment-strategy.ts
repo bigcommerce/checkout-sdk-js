@@ -9,8 +9,9 @@ import {
     PaymentStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { LOADING_INDICATOR_STYLES } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { LoadingIndicator, Overlay } from '@bigcommerce/checkout-sdk/ui';
+
+import { LOADING_INDICATOR_STYLES } from '../braintree-paypal-constants';
 
 import BraintreePaypalPaymentStrategy from './braintree-paypal-payment-strategy';
 
