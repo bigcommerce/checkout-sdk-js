@@ -1,5 +1,3 @@
-import { createScriptLoader } from '@bigcommerce/script-loader';
-
 import { IframeEventListener } from './common/iframe';
 import HostedField from './hosted-field';
 import HostedFieldType from './hosted-field-type';

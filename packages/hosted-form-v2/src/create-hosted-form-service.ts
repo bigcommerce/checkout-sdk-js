@@ -1,4 +1,5 @@
-import { HostedFormFactory, HostedFormService } from '@bigcommerce/checkout-sdk/hosted-form-v2';
+import HostedFormFactory from './hosted-form-factory';
+import HostedFormService from './hosted-form-service';
 
 /**
  * Creates an instance of `HostedFormService`.
@@ -10,8 +11,3 @@ import { HostedFormFactory, HostedFormService } from '@bigcommerce/checkout-sdk/
 export function createHostedFormService(host: string) {
     return new HostedFormService(host, new HostedFormFactory());
 }
-
-export {
-    initializeHostedInput,
-    notifyInitializeError,
-} from '@bigcommerce/checkout-sdk/hosted-form-v2';

@@ -63,7 +63,8 @@
                 "commands": [
                     "tsc --outDir ../../temp --declaration --emitDeclarationOnly",
                     "api-extractor run --config api-extractor/checkout-sdk.json & api-extractor run --config api-extractor/checkout-button.json & api-extractor run --config api-extractor/embedded-checkout.json & api-extractor run --config api-extractor/internal-mappers.json",
-                    "rm -rf ../../temp"
+                    "rm -rf ../../temp",
+                    "nx run hosted-form-v2:build-dts"
                 ]
             }
         },

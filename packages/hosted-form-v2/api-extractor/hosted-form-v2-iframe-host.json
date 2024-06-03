@@ -1,0 +1,22 @@
+{
+    "compiler": {
+        "configType": "tsconfig",
+        "rootFolder": "."
+    },
+    "project": {
+        "entryPointSourceFile": "../../temp/hosted-form-v2/src/bundles/hosted-form-v2-iframe-host.d.ts"
+    },
+    "validationRules": {
+        "missingReleaseTags": "allow"
+    },
+    "apiReviewFile": {
+        "enabled": false
+    },
+    "apiJsonFile": {
+        "enabled": false
+    },
+    "dtsRollup": {
+        "enabled": true,
+        "mainDtsRollupPath": "hosted-form-v2-iframe-host.d.ts"
+    }
+}
