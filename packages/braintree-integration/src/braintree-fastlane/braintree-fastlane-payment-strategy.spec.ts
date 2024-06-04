@@ -499,6 +499,42 @@ describe('BraintreeFastlanePaymentStrategy', () => {
 
             expect(renderMethodMock).toHaveBeenCalledWith(container.id);
         });
+
+        it('renders braintree fastlane card component with prefilled cardholder name', async () => {
+            const mockPaymentMethod = {
+                ...paymentMethod,
+                initializationData: {
+                    isAcceleratedCheckoutEnabled: true,
+                    isFastlaneEnabled: true,
+                },
+            };
+
+            const fastlaneCardOptionsMock = {
+                fields: {
+                    cardholderName: {
+                        enabled: true,
+                        prefill: 'Test Tester',
+                    },
+                    phoneNumber: {
+                        prefill: '555-555-5555',
+                    },
+                },
+                styles: {},
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(mockPaymentMethod);
+
+            container.id = 'pp-fastlane-container-id';
+
+            await strategy.initialize(initializationOptions);
+
+            expect(braintreeFastlaneMock.FastlaneCardComponent).toHaveBeenCalledWith(
+                fastlaneCardOptionsMock,
+            );
+        });
     });
 
     describe('#execute()', () => {

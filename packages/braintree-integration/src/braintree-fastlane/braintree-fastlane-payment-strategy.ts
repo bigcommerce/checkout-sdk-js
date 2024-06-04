@@ -144,11 +144,16 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
      */
     private async initializeCardComponent() {
         const state = this.paymentIntegrationService.getState();
-        const { phone } = state.getBillingAddressOrThrow();
+        const { phone, firstName, lastName } = state.getBillingAddressOrThrow();
+        const fullName = `${firstName} ${lastName}`;
 
         const cardComponentOptions: BraintreeFastlaneCardComponentOptions = {
             styles: {},
             fields: {
+                cardholderName: {
+                    prefill: fullName,
+                    enabled: true,
+                },
                 ...(phone && {
                     phoneNumber: {
                         prefill: phone,
@@ -165,6 +170,15 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         } else {
             const paypalPaymentComponent =
                 this.braintreeFastlaneUtils.getBraintreeConnectComponentOrThrow();
+            const cardComponentOptions = {
+                fields: {
+                    ...(phone && {
+                        phoneNumber: {
+                            prefill: phone,
+                        },
+                    }),
+                },
+            };
 
             this.braintreeCardComponent = paypalPaymentComponent(cardComponentOptions);
         }
