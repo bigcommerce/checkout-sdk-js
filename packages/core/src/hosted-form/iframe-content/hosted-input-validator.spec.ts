@@ -49,6 +49,12 @@ describe('HostedInputValidator', () => {
         ).toEqual(validResults);
     });
 
+    it('does not throw error if card number is valid JCB test card number', async () => {
+        expect(await validator.validate({ ...validData, cardNumber: '3337000000000008' })).toEqual(
+            validResults,
+        );
+    });
+
     it('returns error if card number is missing', async () => {
         expect(await validator.validate({ ...validData, cardNumber: '' })).toEqual({
             isValid: false,
