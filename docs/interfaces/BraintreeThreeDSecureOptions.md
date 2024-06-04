@@ -12,6 +12,7 @@ through a web page via an iframe provided by the card issuer.
 
 ### Properties
 
+- [challengeRequested](BraintreeThreeDSecureOptions.md#challengerequested)
 - [additionalInformation](BraintreeThreeDSecureOptions.md#additionalinformation)
 
 ### Methods
@@ -20,6 +21,10 @@ through a web page via an iframe provided by the card issuer.
 - [removeFrame](BraintreeThreeDSecureOptions.md#removeframe)
 
 ## Properties
+
+### challengeRequested
+
+• `Optional` **challengeRequested**: `boolean`
 
 ### additionalInformation
 

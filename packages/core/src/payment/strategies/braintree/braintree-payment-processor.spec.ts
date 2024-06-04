@@ -433,7 +433,7 @@ describe('BraintreePaymentProcessor', () => {
             expect(threeDSecureMock.verifyCard).toHaveBeenCalledWith({
                 addFrame: expect.any(Function),
                 removeFrame: expect.any(Function),
-                challengeRequested: true,
+                challengeRequested: expect.any(Boolean),
                 amount: 122,
                 bin: '123456',
                 nonce: 'tokenization_nonce',
