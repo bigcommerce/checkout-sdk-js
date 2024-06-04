@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.616.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.615.0...v1.616.0) (2024-06-04)
+
+
+### Features
+
+* **payment:** PAYPAL-2518 Add challengeRequested property to 3D Secure ([#2526](https://github.com/bigcommerce/checkout-sdk-js/issues/2526)) ([293cc71](https://github.com/bigcommerce/checkout-sdk-js/commit/293cc7155cdc4df079021cc268fc6cf30fe416c1))
+
 ## [1.615.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.614.1...v1.615.0) (2024-06-04)
 
 

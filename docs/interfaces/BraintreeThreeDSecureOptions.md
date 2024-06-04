@@ -12,8 +12,8 @@ through a web page via an iframe provided by the card issuer.
 
 ### Properties
 
-- [challengeRequested](BraintreeThreeDSecureOptions.md#challengerequested)
 - [additionalInformation](BraintreeThreeDSecureOptions.md#additionalinformation)
+- [challengeRequested](BraintreeThreeDSecureOptions.md#challengerequested)
 
 ### Methods
 
@@ -21,10 +21,6 @@ through a web page via an iframe provided by the card issuer.
 - [removeFrame](BraintreeThreeDSecureOptions.md#removeframe)
 
 ## Properties
-
-### challengeRequested
-
-• `Optional` **challengeRequested**: `boolean`
 
 ### additionalInformation
 
@@ -35,6 +31,12 @@ through a web page via an iframe provided by the card issuer.
 | Name | Type |
 | :------ | :------ |
 | `acsWindowSize?` | ``"01"`` \| ``"02"`` \| ``"03"`` \| ``"04"`` \| ``"05"`` |
+
+___
+
+### challengeRequested
+
+• `Optional` **challengeRequested**: `boolean`
 
 ## Methods
 
