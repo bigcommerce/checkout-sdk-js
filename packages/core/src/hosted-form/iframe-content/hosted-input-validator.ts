@@ -69,6 +69,7 @@ export default class HostedInputValidator {
 
     private _configureCardValidator(): void {
         const discoverInfo = creditCardType.getTypeInfo('discover');
+        const jcbInfo = creditCardType.getTypeInfo('jcb');
         const visaInfo = creditCardType.getTypeInfo('visa');
 
         // Need to support 13 digit PAN because some gateways only provide test credit card numbers in this format.
@@ -102,6 +103,11 @@ export default class HostedInputValidator {
                 name: 'CVV',
                 size: 3,
             },
+        });
+
+        // Add support WorldPayAccess and Authorize.net test cards
+        creditCardType.updateCard('jcb', {
+            patterns: [...(jcbInfo.patterns || []), 3088, 3337, 3338],
         });
     }
 
