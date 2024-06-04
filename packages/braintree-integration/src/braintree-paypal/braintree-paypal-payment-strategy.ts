@@ -2,7 +2,11 @@ import {
     BraintreeError,
     BraintreeHostWindow,
     BraintreeIntegrationService,
+    BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
+    BraintreeTokenizePayload,
+    PaypalAuthorizeData,
+    PaypalButtonRender,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     FormattedPayload,
@@ -27,9 +31,12 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
     PaypalInstrument,
+    StandardError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import isBraintreeError from '../is-braintree-error';
+import isBraintreePaypalProviderError from '../is-braintree-paypal-provider-error';
 import mapToBraintreeShippingAddressOverride from '../map-to-braintree-shipping-address-override';
 
 import {
@@ -40,16 +47,23 @@ import {
 export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     private paymentMethod?: PaymentMethod;
     private braintreeHostWindow: BraintreeHostWindow = window;
+    private braintree?: BraintreePaypalPaymentInitializeOptions;
+    private braintreeTokenizePayload?: BraintreeTokenizePayload;
+    private paypalButtonRender?: PaypalButtonRender;
+    private loadingIndicatorContainer?: string;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeIntegrationService: BraintreeIntegrationService,
+        private loadingIndicator: LoadingIndicator,
     ) {}
 
     async initialize(
         options: PaymentInitializeOptions & WithBraintreePaypalPaymentInitializeOptions,
     ) {
         const { braintree: braintreeOptions, methodId } = options;
+
+        this.braintree = braintreeOptions;
 
         if (!this.paymentMethod || !this.paymentMethod.nonce) {
             this.paymentMethod = this.paymentIntegrationService
@@ -60,7 +74,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         if (this.paymentMethod.clientToken && braintreeOptions?.bannerContainerId) {
             await this.loadPaypal();
 
-            return this.loadPaypalCheckoutInstance(braintreeOptions);
+            return this.loadPaypalCheckoutInstance();
         }
 
         if (this.paymentMethod.clientToken) {
@@ -72,7 +86,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         this.paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
         if (braintreeOptions?.bannerContainerId) {
-            return this.loadPaypalCheckoutInstance(braintreeOptions);
+            return this.loadPaypalCheckoutInstance();
         }
 
         if (!this.paymentMethod.clientToken) {
@@ -85,6 +99,12 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     async execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = orderRequest;
 
+        const { onError } = this.braintree || {};
+        const state = this.paymentIntegrationService.getState();
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+        const shouldHandleInstrumentDeclinedError =
+            features && features['PAYPAL-3521.handling_declined_error_braintree'];
+
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
@@ -95,6 +115,22 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             await this.paymentIntegrationService.submitOrder(order, options);
             await this.paymentIntegrationService.submitPayment(paymentData);
         } catch (error) {
+            if (this.isProviderError(error) && shouldHandleInstrumentDeclinedError) {
+                await this.loadPaypal();
+
+                this.paypalButtonRender?.close();
+
+                await this.loadPaypalCheckoutInstance();
+
+                await new Promise((_resolve, reject) => {
+                    if (onError && typeof onError === 'function') {
+                        onError(new Error('INSTRUMENT_DECLINED'));
+                    }
+
+                    reject();
+                });
+            }
+
             this.handleError(error);
         }
     }
@@ -104,6 +140,10 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<void> {
+        this.braintreeTokenizePayload = undefined;
+
+        this.paypalButtonRender?.close();
+
         return this.braintreeIntegrationService.teardown();
     }
 
@@ -138,12 +178,17 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         } = this.paymentMethod;
         const { methodId, paymentData = {} } = payment;
 
-        if (nonce) {
+        const token = this.braintreeTokenizePayload?.nonce || nonce;
+
+        if (token) {
             const state = await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
             this.paymentMethod = state.getPaymentMethod(methodId);
 
-            return Promise.resolve({ ...payment, paymentData: this.formattedPayload(nonce) });
+            return {
+                ...payment,
+                paymentData: this.formattedPayload(token),
+            };
         }
 
         if (isVaultedInstrument(paymentData) || isHostedVaultedInstrument(paymentData)) {
@@ -217,9 +262,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         };
     }
 
-    private async loadPaypalCheckoutInstance(
-        braintreeOptions?: BraintreePaypalPaymentInitializeOptions,
-    ) {
+    private async loadPaypalCheckoutInstance() {
         const state = this.paymentIntegrationService.getState();
         const storeConfig = state.getStoreConfigOrThrow();
 
@@ -227,10 +270,6 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        if (!initializationData?.enableCheckoutPaywallBanner) {
-            return Promise.resolve();
         }
 
         try {
@@ -247,8 +286,12 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
             await this.braintreeIntegrationService.getPaypalCheckout(
                 paypalCheckoutConfig,
-                () => {
-                    this.renderPayPalMessages(braintreeOptions?.bannerContainerId);
+                (braintreePaypalCheckout) => {
+                    if (initializationData?.enableCheckoutPaywallBanner) {
+                        this.renderPayPalMessages();
+                    }
+
+                    this.renderPayPalButton(braintreePaypalCheckout);
                 },
                 this.handleError,
             );
@@ -257,11 +300,135 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private renderPayPalMessages(containerId = '') {
-        const isMessageContainerAvailable =
-            containerId && Boolean(document.getElementById(containerId));
+    private renderPayPalButton(braintreePaypalCheckout: BraintreePaypalCheckout) {
+        const { onPaymentError, submitForm, onRenderButton, containerId, onError } =
+            this.braintree || {};
 
-        if (this.braintreeHostWindow.paypal && isMessageContainerAvailable) {
+        if (!containerId) {
+            return;
+        }
+
+        if (!this.paymentMethod) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        this.loadingIndicatorContainer = containerId.split('#')[1];
+
+        const {
+            id,
+            config: { testMode },
+        } = this.paymentMethod;
+
+        const { paypal } = this.braintreeHostWindow;
+        const fundingSource = paypal?.FUNDING.PAYPAL;
+
+        if (paypal && fundingSource) {
+            this.paypalButtonRender = paypal.Buttons({
+                env: testMode ? 'sandbox' : 'production',
+                commit: false,
+                fundingSource,
+                onClick: () => {
+                    this.toggleLoadingIndicator(true);
+                },
+                createOrder: () => this.setupPayment(braintreePaypalCheckout, id, onPaymentError),
+                onApprove: async (authorizeData: PaypalAuthorizeData) => {
+                    this.braintreeTokenizePayload = await this.tokenizePaymentOrThrow(
+                        authorizeData,
+                        braintreePaypalCheckout,
+                    );
+
+                    if (submitForm && typeof submitForm === 'function') {
+                        submitForm();
+                    }
+                },
+                onCancel: () => {
+                    this.toggleLoadingIndicator(false);
+                },
+                onError: (error: Error) => {
+                    this.toggleLoadingIndicator(false);
+
+                    onError?.(error);
+                },
+            });
+
+            if (onRenderButton && typeof onRenderButton === 'function') {
+                onRenderButton();
+            }
+
+            if (this.paypalButtonRender.isEligible()) {
+                this.paypalButtonRender.render(`${containerId}`);
+            }
+        } else {
+            this.removeElement(containerId.split('#')[1]);
+        }
+    }
+
+    private async setupPayment(
+        braintreePaypalCheckout: BraintreePaypalCheckout,
+        method: string,
+        onPaymentError: BraintreePaypalPaymentInitializeOptions['onPaymentError'],
+    ): Promise<string> {
+        const state = this.paymentIntegrationService.getState();
+
+        try {
+            const customer = state.getCustomer();
+
+            const paymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(method);
+
+            const amount = state.getCheckoutOrThrow().outstandingBalance;
+            const currencyCode = state.getStoreConfigOrThrow().currency.code;
+
+            const shippingAddress = state.getShippingAddress();
+
+            const address = shippingAddress || customer?.addresses[0];
+
+            const shippingAddressOverride = address
+                ? mapToBraintreeShippingAddressOverride(address)
+                : undefined;
+
+            return await braintreePaypalCheckout.createPayment({
+                flow: 'checkout',
+                enableShippingAddress: true,
+                shippingAddressEditable: false,
+                shippingAddressOverride,
+                amount,
+                currency: currencyCode,
+                offerCredit: false,
+                intent: paymentMethod.initializationData.intent,
+            });
+        } catch (error) {
+            if (onPaymentError) {
+                onPaymentError(error);
+            }
+
+            throw error;
+        }
+    }
+
+    private async tokenizePaymentOrThrow(
+        authorizeData: PaypalAuthorizeData,
+        braintreePaypalCheckout: BraintreePaypalCheckout,
+        onError?: (error: BraintreeError | StandardError) => void,
+    ): Promise<BraintreeTokenizePayload> {
+        try {
+            return await braintreePaypalCheckout.tokenizePayment(authorizeData);
+        } catch (error) {
+            if (onError) {
+                onError(error);
+            }
+
+            throw error;
+        }
+    }
+
+    private renderPayPalMessages() {
+        const { bannerContainerId } = this.braintree || {};
+
+        if (
+            this.braintreeHostWindow.paypal &&
+            bannerContainerId &&
+            Boolean(document.getElementById(bannerContainerId))
+        ) {
             const state = this.paymentIntegrationService.getState();
             const checkout = state.getCheckout();
 
@@ -280,7 +447,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                         },
                     },
                 })
-                .render(`#${containerId}`);
+                .render(`#${bannerContainerId}`);
         }
     }
 
@@ -315,5 +482,36 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
 
         throw new PaymentMethodFailedError(error.message);
+    }
+
+    private isProviderError(error: unknown): boolean {
+        if (isBraintreePaypalProviderError(error)) {
+            const paypalProviderError = error?.errors?.filter((e: any) => e.provider_error) || [];
+
+            return paypalProviderError[0].provider_error?.code === '2046';
+        }
+
+        return false;
+    }
+
+    private removeElement(elementId?: string): void {
+        const element = elementId && document.getElementById(elementId);
+
+        if (element) {
+            element.remove();
+        }
+    }
+
+    /**
+     *
+     * Loading Indicator methods
+     *
+     * */
+    private toggleLoadingIndicator(isLoading: boolean): void {
+        if (isLoading && this.loadingIndicatorContainer) {
+            this.loadingIndicator.show(this.loadingIndicatorContainer);
+        } else {
+            this.loadingIndicator.hide();
+        }
     }
 }

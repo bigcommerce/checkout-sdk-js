@@ -9,7 +9,9 @@ import {
     PaymentStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { Overlay } from '@bigcommerce/checkout-sdk/ui';
+import { LoadingIndicator, Overlay } from '@bigcommerce/checkout-sdk/ui';
+
+import { LOADING_INDICATOR_STYLES } from '../braintree-paypal-constants';
 
 import BraintreePaypalPaymentStrategy from './braintree-paypal-payment-strategy';
 
@@ -28,6 +30,9 @@ const createBraintreePaypalPaymentStrategy: PaymentStrategyFactory<
     return new BraintreePaypalPaymentStrategy(
         paymentIntegrationService,
         braintreeIntegrationService,
+        new LoadingIndicator({
+            containerStyles: LOADING_INDICATOR_STYLES,
+        }),
     );
 };
 
