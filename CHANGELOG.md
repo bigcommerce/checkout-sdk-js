@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.614.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.614.0...v1.614.1) (2024-06-04)
+
+
+### Bug Fixes
+
+* **payment:** PI-2191 fixed hosted fields validation for the WorldpayAccess and Authorize.net test cards ([#2532](https://github.com/bigcommerce/checkout-sdk-js/issues/2532)) ([f5656f5](https://github.com/bigcommerce/checkout-sdk-js/commit/f5656f56671cacd6737c04ff34117b5eebe5995c))
+
 ## [1.614.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.613.0...v1.614.0) (2024-06-04)
 
 
