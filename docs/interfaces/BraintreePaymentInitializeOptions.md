@@ -81,8 +81,16 @@ service.initializePayment({
 ### Properties
 
 - [bannerContainerId](BraintreePaymentInitializeOptions.md#bannercontainerid)
+- [containerId](BraintreePaymentInitializeOptions.md#containerid)
 - [form](BraintreePaymentInitializeOptions.md#form)
 - [threeDSecure](BraintreePaymentInitializeOptions.md#threedsecure)
+
+### Methods
+
+- [onError](BraintreePaymentInitializeOptions.md#onerror)
+- [onPaymentError](BraintreePaymentInitializeOptions.md#onpaymenterror)
+- [onRenderButton](BraintreePaymentInitializeOptions.md#onrenderbutton)
+- [submitForm](BraintreePaymentInitializeOptions.md#submitform)
 
 ## Properties
 
@@ -91,6 +99,14 @@ service.initializePayment({
 • `Optional` **bannerContainerId**: `string`
 
 The location to insert the Pay Later Messages.
+
+___
+
+### containerId
+
+• `Optional` **containerId**: `string`
+
+The CSS selector of a container where the payment widget should be inserted into.
 
 ___
 
@@ -108,3 +124,65 @@ ___
 ### threeDSecure
 
 • `Optional` **threeDSecure**: [`BraintreeThreeDSecureOptions`](BraintreeThreeDSecureOptions.md)
+
+## Methods
+
+### onError
+
+▸ `Optional` **onError**(`error`): `void`
+
+A callback for displaying error popup. This callback requires error object as parameter.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `error` | `unknown` |
+
+#### Returns
+
+`void`
+
+___
+
+### onPaymentError
+
+▸ `Optional` **onPaymentError**(`error`): `void`
+
+A callback that gets called if unable to submit payment.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `error` | `BraintreeError` \| `default` | The error object describing the failure. |
+
+#### Returns
+
+`void`
+
+___
+
+### onRenderButton
+
+▸ `Optional` **onRenderButton**(): `void`
+
+A callback right before render Smart Payment Button that gets called when
+Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+
+#### Returns
+
+`void`
+
+___
+
+### submitForm
+
+▸ `Optional` **submitForm**(): `void`
+
+A callback for submitting payment form that gets called
+when buyer approved PayPal account.
+
+#### Returns
+
+`void`

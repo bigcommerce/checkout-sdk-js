@@ -3,7 +3,7 @@
 /// <reference types="lodash" />
 import { AmazonPayV2ButtonConfig } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import { AmazonPayV2ButtonParameters } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
-import { BraintreeError as BraintreeError_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreeError } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
@@ -1290,7 +1290,7 @@ declare interface BraintreeAnalyticTrackerService {
     walletButtonClick(methodId: string): void;
 }
 
-declare interface BraintreeError extends Error {
+declare interface BraintreeError_2 extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
     details?: unknown;
@@ -1621,6 +1621,10 @@ declare interface BraintreeLocalMethods {
  * ```
  */
 declare interface BraintreePaymentInitializeOptions {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    containerId?: string;
     threeDSecure?: BraintreeThreeDSecureOptions;
     /**
      * @alpha
@@ -1633,6 +1637,26 @@ declare interface BraintreePaymentInitializeOptions {
      * The location to insert the Pay Later Messages.
      */
     bannerContainerId?: string;
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback for submitting payment form that gets called
+     * when buyer approved PayPal account.
+     */
+    submitForm?(): void;
+    /**
+     * A callback that gets called if unable to submit payment.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onPaymentError?(error: BraintreeError | StandardError_2): void;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: unknown): void;
 }
 
 declare interface BraintreePaypalButtonInitializeOptions {
@@ -1654,19 +1678,19 @@ declare interface BraintreePaypalButtonInitializeOptions {
      *
      * @param error - The error object describing the failure.
      */
-    onAuthorizeError?(error: BraintreeError | StandardError): void;
+    onAuthorizeError?(error: BraintreeError_2 | StandardError): void;
     /**
      * A callback that gets called if unable to submit payment.
      *
      * @param error - The error object describing the failure.
      */
-    onPaymentError?(error: BraintreeError | StandardError): void;
+    onPaymentError?(error: BraintreeError_2 | StandardError): void;
     /**
      * A callback that gets called on any error instead of submit payment or authorization errors.
      *
      * @param error - The error object describing the failure.
      */
-    onError?(error: BraintreeError | StandardError): void;
+    onError?(error: BraintreeError_2 | StandardError): void;
     /**
      * The option that used to initialize a PayPal script with provided currency code.
      */
@@ -1694,19 +1718,19 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
      *
      * @param error - The error object describing the failure.
      */
-    onAuthorizeError?(error: BraintreeError | StandardError): void;
+    onAuthorizeError?(error: BraintreeError_2 | StandardError): void;
     /**
      * A callback that gets called if unable to submit payment.
      *
      * @param error - The error object describing the failure.
      */
-    onPaymentError?(error: BraintreeError | StandardError): void;
+    onPaymentError?(error: BraintreeError_2 | StandardError): void;
     /**
      * A callback that gets called on any error instead of submit payment or authorization errors.
      *
      * @param error - The error object describing the failure.
      */
-    onError?(error: BraintreeError | StandardError): void;
+    onError?(error: BraintreeError_2 | StandardError): void;
     /**
      * The option that used to initialize a PayPal script with provided currency code.
      */
@@ -1730,7 +1754,7 @@ declare interface BraintreePaypalCreditCustomerInitializeOptions {
      *
      * @param error - The error object describing the failure.
      */
-    onError?(error: BraintreeError | StandardError): void;
+    onError?(error: BraintreeError_2 | StandardError): void;
     /**
      * A callback that gets called when wallet button clicked
      */
@@ -1748,7 +1772,7 @@ declare interface BraintreePaypalCustomerInitializeOptions {
      *
      * @param error - The error object describing the failure.
      */
-    onError?(error: BraintreeError_2 | StandardError_2): void;
+    onError?(error: BraintreeError | StandardError_2): void;
     /**
      * A callback that gets called when wallet button clicked
      */
@@ -1801,7 +1825,7 @@ declare interface BraintreeVenmoButtonInitializeOptions {
      *
      * @param error - The error object describing the failure.
      */
-    onError?(error: BraintreeError | StandardError): void;
+    onError?(error: BraintreeError_2 | StandardError): void;
     /**
      * The option that used to initialize a PayPal script with provided currency code.
      */

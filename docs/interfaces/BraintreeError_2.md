@@ -1,20 +1,20 @@
-[@bigcommerce/checkout-sdk](../README.md) / BraintreeError
+[@bigcommerce/checkout-sdk](../README.md) / BraintreeError_2
 
-# Interface: BraintreeError
+# Interface: BraintreeError\_2
 
 ## Hierarchy
 
 - `Error`
 
-  ↳ **`BraintreeError`**
+  ↳ **`BraintreeError_2`**
 
 ## Table of contents
 
 ### Properties
 
-- [code](BraintreeError.md#code)
-- [details](BraintreeError.md#details)
-- [type](BraintreeError.md#type)
+- [code](BraintreeError_2.md#code)
+- [details](BraintreeError_2.md#details)
+- [type](BraintreeError_2.md#type)
 
 ## Properties
 

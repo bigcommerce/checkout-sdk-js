@@ -115,7 +115,7 @@
 - [BoltPaymentInitializeOptions](interfaces/BoltPaymentInitializeOptions.md)
 - [BraintreeAchInitializeOptions](interfaces/BraintreeAchInitializeOptions.md)
 - [BraintreeAnalyticTrackerService](interfaces/BraintreeAnalyticTrackerService.md)
-- [BraintreeError](interfaces/BraintreeError.md)
+- [BraintreeError_2](interfaces/BraintreeError_2.md)
 - [BraintreeFastlaneCustomerInitializeOptions](interfaces/BraintreeFastlaneCustomerInitializeOptions.md)
 - [BraintreeFastlanePaymentInitializeOptions](interfaces/BraintreeFastlanePaymentInitializeOptions.md)
 - [BraintreeFastlaneShippingInitializeOptions](interfaces/BraintreeFastlaneShippingInitializeOptions.md)

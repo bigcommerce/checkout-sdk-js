@@ -56,7 +56,7 @@ A callback that gets called on any error.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `error` | [`BraintreeError`](BraintreeError.md) \| [`StandardError`](../classes/StandardError.md) | The error object describing the failure. |
+| `error` | [`BraintreeError_2`](BraintreeError_2.md) \| [`StandardError`](../classes/StandardError.md) | The error object describing the failure. |
 
 #### Returns
 
