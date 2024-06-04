@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.615.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.614.1...v1.615.0) (2024-06-04)
+
+
+### Features
+
+* **payment:** PAYPAL-4138 prefilled cardholder name ([#2530](https://github.com/bigcommerce/checkout-sdk-js/issues/2530)) ([839f27b](https://github.com/bigcommerce/checkout-sdk-js/commit/839f27b68f88750fc20753c761fdb6dda3413ed8))
+
 ### [1.614.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.614.0...v1.614.1) (2024-06-04)
 
 
