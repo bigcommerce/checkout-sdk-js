@@ -2,6 +2,7 @@ import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { createCheckoutStore } from '../checkout';
+import { ConfigState } from '../config';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { createPaymentIntegrationService } from '../payment-integration';
 
@@ -38,7 +39,17 @@ export default function createCheckoutButtonInitializer(
     options?: CheckoutButtonInitializerOptions,
 ): CheckoutButtonInitializer {
     const { host, locale = 'en' } = options ?? {};
-    const store = createCheckoutStore();
+
+    const config: ConfigState = {
+        meta: {
+            host: options?.host,
+            locale: options?.locale,
+        },
+        errors: {},
+        statuses: {},
+    };
+
+    const store = createCheckoutStore({ config });
     const requestSender = createRequestSender({ host });
     const formPoster = createFormPoster({ host });
     const paymentIntegrationService = createPaymentIntegrationService(store);
