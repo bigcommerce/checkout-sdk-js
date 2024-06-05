@@ -137,7 +137,10 @@ describe('BraintreeFastlaneShippingStrategy', () => {
         jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
             getConfig().storeConfig,
         );
-        jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(getCustomer());
+        jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue({
+            ...getCustomer(),
+            isGuest: true,
+        });
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
             clientToken: 'clientToken',
             initializationData: {},
@@ -318,34 +321,16 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             expect(loadPaymentMethodMock).toHaveBeenCalledWith(BRAINTREE_AXO_METHOD_ID);
         });
 
-        it('skip authentication flow for store members when experiment is on', async () => {
+        it('skip authentication flow for store members', async () => {
             const getBraintreeFastlaneMock = jest.fn();
-            const storeConfig = getConfig().storeConfig;
 
-            const guestCustomer = {
-                ...getCustomer(),
-                isGuest: false,
-            };
-
-            const storeConfigWithAFeature = {
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-4001.braintree_fastlane_stored_member_flow_removal': true,
-                    },
-                },
-            };
+            const storeMember = getCustomer();
 
             jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeFastlane').mockImplementation(
                 getBraintreeFastlaneMock,
             );
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
-                storeConfigWithAFeature,
-            );
             jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(
-                guestCustomer,
+                storeMember,
             );
 
             const strategy = createStrategy();
@@ -702,13 +687,6 @@ describe('BraintreeFastlaneShippingStrategy', () => {
     describe('#handleBraintreeFastlaneShippingAddressChange', () => {
         beforeEach(() => {
             const storeConfig = getConfig().storeConfig;
-            const guestCustomer = {
-                ...getCustomer(),
-                isGuest: false,
-            };
-            jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(
-                guestCustomer,
-            );
 
             const storeConfigWithAFeature = {
                 ...storeConfig,
@@ -716,11 +694,11 @@ describe('BraintreeFastlaneShippingStrategy', () => {
                     ...storeConfig.checkoutSettings,
                     features: {
                         ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-4001.braintree_fastlane_stored_member_flow_removal': false,
                         'PAYPAL-3996.paypal_fastlane_shipping_update': true,
                     },
                 },
             };
+
             jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeFastlane').mockImplementation(
                 () => braintreeFastlane,
             );
@@ -753,6 +731,7 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             const onPayPalFastlaneAddressChange = jest.fn((showPaypalAddressSelector) => {
                 showPaypalAddressSelector();
             });
+
             jest.spyOn(braintreeFastlane.profile, 'showShippingAddressSelector').mockImplementation(
                 () => ({
                     selectionChanged: true,
@@ -825,6 +804,7 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             const onPayPalFastlaneAddressChange = jest.fn((showPaypalAddressSelector) => {
                 showPaypalAddressSelector();
             });
+
             jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeFastlane').mockImplementation(
                 () => braintreeFastlane,
             );
