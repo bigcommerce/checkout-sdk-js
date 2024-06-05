@@ -13,6 +13,7 @@ import {
     getCart,
     getConfig,
     getCustomer,
+    getGuestCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
@@ -50,7 +51,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
     const address = getBillingAddress();
     const cart = getCart();
-    const customer = getCustomer();
+    const customer = getGuestCustomer();
     const storeConfig = getConfig().storeConfig;
 
     const authenticationResultMock = getPayPalConnectAuthenticationResultMock();
@@ -400,33 +401,15 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
             });
 
-            it('does not trigger lookup method for store members when experiment is on', async () => {
+            it('does not trigger lookup method for store members', async () => {
                 paymentMethod.initializationData.isFastlaneEnabled = true;
 
-                const guestCustomer = {
-                    ...getCustomer(),
-                    isGuest: false,
-                };
-
-                const storeConfigWithAFeature = {
-                    ...storeConfig,
-                    checkoutSettings: {
-                        ...storeConfig.checkoutSettings,
-                        features: {
-                            ...storeConfig.checkoutSettings.features,
-                            'PAYPAL-4001.paypal_commerce_fastlane_stored_member_flow_removal': true,
-                        },
-                    },
-                };
+                const storeMember = getCustomer();
 
                 jest.spyOn(
                     paymentIntegrationService.getState(),
                     'getCustomerOrThrow',
-                ).mockReturnValue(guestCustomer);
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getStoreConfigOrThrow',
-                ).mockReturnValue(storeConfigWithAFeature);
+                ).mockReturnValue(storeMember);
 
                 await strategy.initialize(initializationOptions);
 

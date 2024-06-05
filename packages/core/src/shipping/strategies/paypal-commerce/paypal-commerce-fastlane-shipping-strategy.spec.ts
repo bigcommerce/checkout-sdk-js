@@ -99,7 +99,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
     beforeEach(() => {
         billingAddress = getBillingAddress();
         cart = getCart();
-        customer = getCustomer();
+        customer = { ...getCustomer(), isGuest: true };
         storeConfig = getConfig().storeConfig;
         paymentMethod = getPayPalCommerceAcceleratedCheckoutPaymentMethod();
         paypalAxoSdk = getPayPalAxoSdk();
@@ -259,26 +259,12 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             }
         });
 
-        it('does not continue with Fastlane flow if feature is disabled for store members', async () => {
+        it('does not trigger with Fastlane flow for store members', async () => {
             const guestCustomer = {
                 ...customer,
                 isGuest: false,
             };
 
-            const storeConfigWithAFeature = {
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-4001.paypal_commerce_fastlane_stored_member_flow_removal': true,
-                    },
-                },
-            };
-
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
-                storeConfigWithAFeature,
-            );
             jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(
                 guestCustomer,
             );
@@ -306,6 +292,8 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         });
 
         it('initializes paypal sdk and authenticates user with paypal connect', async () => {
+            paymentMethod.initializationData.isFastlaneEnabled = false;
+
             await strategy.initialize(initializationOptions);
 
             expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(methodId);
