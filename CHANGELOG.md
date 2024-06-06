@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.617.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.617.0...v1.617.1) (2024-06-06)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-3598 updated PPCP Fastlane strategies to trigger the flow only for Guests ([#2534](https://github.com/bigcommerce/checkout-sdk-js/issues/2534)) ([065bb3d](https://github.com/bigcommerce/checkout-sdk-js/commit/065bb3d7125162ef3c8e18da3487bc213485ea2c))
+
 ## [1.617.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.616.0...v1.617.0) (2024-06-06)
 
 
