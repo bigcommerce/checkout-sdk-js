@@ -42,7 +42,9 @@ import {
     PayPalSDK,
 } from '../paypal-commerce-types';
 
-import PayPalCommerceCreditCardsPaymentInitializeOptions from './paypal-commerce-credit-cards-payment-initialize-options';
+import PayPalCommerceCreditCardsPaymentInitializeOptions, {
+    WithPayPalCommerceCreditCardsPaymentInitializeOptions,
+} from './paypal-commerce-credit-cards-payment-initialize-options';
 import PayPalCommerceCreditCardsPaymentStrategy from './paypal-commerce-credit-cards-payment-strategy';
 
 describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
@@ -146,9 +148,11 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         form: {
             fields: creditCardFormFields,
         },
+        onCreditCardFieldsRenderingError: jest.fn(),
     };
 
-    const initializationOptions: PaymentInitializeOptions = {
+    const initializationOptions: PaymentInitializeOptions &
+        WithPayPalCommerceCreditCardsPaymentInitializeOptions = {
         methodId,
         paypalcommercecreditcards: paypalCommerceCreditCardsOptions,
     };
@@ -355,6 +359,23 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(NotInitializedError);
             }
+        });
+
+        it('calls a callback from initialization options if there was an issue with form rendering process', async () => {
+            jest.spyOn(paypalSdk, 'CardFields').mockReturnValue({
+                isEligible: jest.fn().mockReturnValue(true),
+                NumberField: jest.fn().mockReturnValue({
+                    render: jest.fn().mockImplementation(() => {
+                        throw new Error();
+                    }),
+                }),
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            expect(
+                initializationOptions.paypalcommercecreditcards?.onCreditCardFieldsRenderingError,
+            ).toHaveBeenCalled();
         });
 
         it('renders card fields if they are eligible', async () => {
