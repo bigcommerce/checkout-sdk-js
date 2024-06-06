@@ -122,13 +122,8 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
 
         const state = this.paymentIntegrationService.getState();
         const customer = state.getCustomerOrThrow();
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
-        const shouldSkipFastlaneForStoredMembers =
-            features &&
-            features['PAYPAL-4001.paypal_commerce_fastlane_stored_member_flow_removal'] &&
-            !customer.isGuest;
 
-        if (this.isAcceleratedCheckoutFeatureEnabled && !shouldSkipFastlaneForStoredMembers) {
+        if (this.isAcceleratedCheckoutFeatureEnabled && customer.isGuest) {
             const shouldRunAuthenticationFlow = await this.shouldRunAuthenticationFlow();
 
             if (

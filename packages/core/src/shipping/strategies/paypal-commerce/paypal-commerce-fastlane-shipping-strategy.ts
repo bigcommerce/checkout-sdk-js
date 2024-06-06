@@ -60,7 +60,10 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
             );
         }
 
-        if (this._shouldSkipFastlaneForStoredMembers()) {
+        const state = this._store.getState();
+        const customer = state.customer.getCustomerOrThrow();
+
+        if (!customer?.isGuest) {
             return Promise.resolve(this._store.getState());
         }
 
@@ -113,19 +116,6 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
             : {};
 
         return paypalCommercePaymentProviderCustomer.authenticationState;
-    }
-
-    // TODO: remove this method when PAYPAL-4001.paypal_commerce_fastlane_stored_member_flow_removal will be rolled out to 100%
-    private _shouldSkipFastlaneForStoredMembers(): boolean {
-        const state = this._store.getState();
-        const customer = state.customer.getCustomerOrThrow();
-        const features = state.config.getStoreConfigOrThrow().checkoutSettings.features;
-
-        return (
-            features &&
-            features['PAYPAL-4001.paypal_commerce_fastlane_stored_member_flow_removal'] &&
-            !customer.isGuest
-        );
     }
 
     private _shouldAuthenticateUserWithFastlane(): boolean {
