@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.617.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.616.0...v1.617.0) (2024-06-06)
+
+
+### Features
+
+* **payment:** PI-1596 Refactor `cybersource` and `cybersourcev2` payment strategies to use Payment Integration API ([#2529](https://github.com/bigcommerce/checkout-sdk-js/issues/2529)) ([6b9a5f4](https://github.com/bigcommerce/checkout-sdk-js/commit/6b9a5f478f8f7b4f50f52b9c731d513f26b25b75))
+
 ## [1.616.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.615.0...v1.616.0) (2024-06-04)
 
 
