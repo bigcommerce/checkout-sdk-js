@@ -2,13 +2,13 @@ import { merge, some } from 'lodash';
 
 import {
     HostedForm,
+    isRequestError,
     isVaultedInstrument,
     OrderRequestBody,
     PaymentIntegrationService,
     PaymentMethod,
     PaymentRequestOptions,
     PaymentStrategy,
-    RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import CardinalClient, { CardinalOrderData } from './cardinal-client';
@@ -55,7 +55,7 @@ export default class CardinalThreeDSecureFlow {
             );
         } catch (error) {
             if (
-                !(error instanceof RequestError) ||
+                !isRequestError(error) ||
                 !some(error.body.errors, { code: 'three_d_secure_required' })
             ) {
                 throw error;

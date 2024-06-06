@@ -1,25 +1,24 @@
 import { merge } from 'lodash';
-import { of } from 'rxjs';
 
-import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { HostedFormFactory } from '../../../hosted-form';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import PaymentActionCreator from '../../payment-action-creator';
-import PaymentMethod from '../../payment-method';
-import { getCybersource } from '../../payment-methods.mock';
-import { CardinalThreeDSecureFlowV2 } from '../cardinal';
-import { CreditCardPaymentStrategy } from '../credit-card';
+import { CardinalThreeDSecureFlowV2 } from '@bigcommerce/checkout-sdk/cardinal-integration';
+import { CreditCardPaymentStrategy } from '@bigcommerce/checkout-sdk/credit-card-integration';
+import {
+    OrderRequestBody,
+    PaymentIntegrationService,
+    PaymentMethod,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    getOrderRequestBody,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+
+import { getCybersource } from '../cybersource.mock';
 
 import CyberSourceV2PaymentStrategy from './cybersourcev2-payment-strategy';
 
 describe('CyberSourceV2PaymentStrategy', () => {
-    let hostedFormFactory: HostedFormFactory;
-    let orderActionCreator: Pick<OrderActionCreator, 'submitOrder'>;
-    let paymentActionCreator: Pick<PaymentActionCreator, 'submitPayment'>;
+    let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
-    let state: InternalCheckoutSelectors;
-    let store: CheckoutStore;
     let strategy: CyberSourceV2PaymentStrategy;
     let threeDSecureFlow: Pick<CardinalThreeDSecureFlowV2, 'prepare' | 'start'>;
 
@@ -29,36 +28,19 @@ describe('CyberSourceV2PaymentStrategy', () => {
             clientToken: 'foo',
         };
 
-        store = createCheckoutStore();
-
-        orderActionCreator = {
-            submitOrder: jest.fn(() => of()),
-        };
-
-        paymentActionCreator = {
-            submitPayment: jest.fn(() => of()),
-        };
-
-        hostedFormFactory = {} as HostedFormFactory;
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         threeDSecureFlow = {
             prepare: jest.fn(() => Promise.resolve()),
             start: jest.fn(() => Promise.resolve()),
         };
 
-        state = store.getState();
-
-        jest.spyOn(store, 'dispatch').mockResolvedValue(state);
-
-        jest.spyOn(store, 'getState').mockReturnValue(state);
-
-        jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(paymentMethod);
+        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethod,
+        );
 
         strategy = new CyberSourceV2PaymentStrategy(
-            store,
-            orderActionCreator as OrderActionCreator,
-            paymentActionCreator as PaymentActionCreator,
-            hostedFormFactory,
+            paymentIntegrationService,
             threeDSecureFlow as CardinalThreeDSecureFlowV2,
         );
     });
@@ -69,7 +51,10 @@ describe('CyberSourceV2PaymentStrategy', () => {
 
     describe('#initialize', () => {
         it('throws error if payment method is not defined', async () => {
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockImplementation(() => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockImplementation(() => {
                 throw new Error();
             });
 
@@ -110,7 +95,10 @@ describe('CyberSourceV2PaymentStrategy', () => {
         });
 
         it('throws error if payment method is not defined', async () => {
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockImplementation(() => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockImplementation(() => {
                 throw new Error();
             });
 

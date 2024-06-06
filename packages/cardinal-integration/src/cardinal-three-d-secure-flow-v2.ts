@@ -3,6 +3,7 @@ import { merge, some } from 'lodash';
 import {
     HostedForm,
     isCreditCardInstrument,
+    isRequestError,
     isVaultedInstrument,
     OrderPaymentRequestBody,
     OrderRequestBody,
@@ -11,7 +12,6 @@ import {
     PaymentMethod,
     PaymentRequestOptions,
     PaymentStrategy,
-    RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { CardinalThreeDSecureToken } from './cardinal';
@@ -40,10 +40,7 @@ export default class CardinalThreeDSecureFlowV2 {
         try {
             return await execute(payload, options);
         } catch (error) {
-            if (
-                error instanceof RequestError &&
-                error.body.status === 'additional_action_required'
-            ) {
+            if (isRequestError(error) && error.body?.status === 'additional_action_required') {
                 const token = error.body.additional_action_required?.data?.token;
                 const xid = error.body.three_ds_result?.payer_auth_request;
 
@@ -59,7 +56,7 @@ export default class CardinalThreeDSecureFlowV2 {
                     return await this._submitPayment(payment, { xid }, hostedForm);
                 } catch (err) {
                     if (
-                        err instanceof RequestError &&
+                        isRequestError(err) &&
                         some(err.body.errors, { code: 'three_d_secure_required' })
                     ) {
                         const threeDsResult = err.body.three_ds_result;
