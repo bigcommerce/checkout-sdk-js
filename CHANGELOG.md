@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.617.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.617.1...v1.617.2) (2024-06-06)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-4251 updated Braintree Fastlane strategies to run the flow only for guests ([#2535](https://github.com/bigcommerce/checkout-sdk-js/issues/2535)) ([9f28a10](https://github.com/bigcommerce/checkout-sdk-js/commit/9f28a1092f6f317bf3b163565db8f4e35b30ee2c))
+
 ### [1.617.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.617.0...v1.617.1) (2024-06-06)
 
 
