@@ -52,7 +52,9 @@ import {
     PayPalCommerceHostedFieldsRenderOptions,
 } from '../paypal-commerce-types';
 
-import { WithPayPalCommerceCreditCardsPaymentInitializeOptions } from './paypal-commerce-credit-cards-payment-initialize-options';
+import PayPalCommerceCreditCardsPaymentInitializeOptions, {
+    WithPayPalCommerceCreditCardsPaymentInitializeOptions,
+} from './paypal-commerce-credit-cards-payment-initialize-options';
 
 export default class PayPalCommerceCreditCardsPaymentStrategy implements PaymentStrategy {
     private executionPaymentData?: OrderPaymentRequestBody['paymentData'];
@@ -80,7 +82,10 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         options: PaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions,
     ): Promise<void> {
         const { methodId, paypalcommercecreditcards, paypalcommerce } = options;
-        const form = paypalcommercecreditcards?.form || paypalcommerce?.form;
+        const paypalCommerceInitializationOptions = paypalcommercecreditcards || paypalcommerce;
+
+        const { form, onCreditCardFieldsRenderingError } =
+            paypalCommerceInitializationOptions || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -104,7 +109,7 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, undefined, true, true);
 
         if (this.isCreditCardForm || this.isCreditCardVaultedForm) {
-            await this.initializeFields(form);
+            await this.initializeFields(form, onCreditCardFieldsRenderingError);
         }
 
         if (this.shouldInitializePayPalFastlane(methodId)) {
@@ -206,7 +211,10 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
      * Card fields initialize
      *
      */
-    private async initializeFields(formOptions: HostedFormOptions): Promise<void> {
+    private async initializeFields(
+        formOptions: HostedFormOptions,
+        onCreditCardFieldsRenderingError?: PayPalCommerceCreditCardsPaymentInitializeOptions['onCreditCardFieldsRenderingError'],
+    ): Promise<void> {
         const { fields, styles } = formOptions;
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
@@ -230,7 +238,11 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
 
         this.cardFields = await paypalSdk.CardFields(cardFieldsConfig);
 
-        if (this.cardFields.isEligible()) {
+        if (!this.cardFields.isEligible()) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        try {
             this.stylizeInputContainers(fields);
 
             if (isCreditCardFormFields(fields)) {
@@ -240,8 +252,10 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
             if (isCreditCardVaultedFormFields(fields)) {
                 await this.renderVaultedFields(fields);
             }
-        } else {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        } catch (error: unknown) {
+            if (typeof onCreditCardFieldsRenderingError === 'function') {
+                onCreditCardFieldsRenderingError(error);
+            }
         }
     }
 
