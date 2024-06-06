@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.618.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.617.2...v1.618.0) (2024-06-06)
+
+
+### Features
+
+* **payment:** PAYPAL-4231 added onCreditCardFieldsRenderingError callback to ppcp cc payment strategy to let handle an error on UI side ([#2536](https://github.com/bigcommerce/checkout-sdk-js/issues/2536)) ([04747be](https://github.com/bigcommerce/checkout-sdk-js/commit/04747bece0afd305040cb2957d34d9e9e464d470))
+
 ### [1.617.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.617.1...v1.617.2) (2024-06-06)
 
 

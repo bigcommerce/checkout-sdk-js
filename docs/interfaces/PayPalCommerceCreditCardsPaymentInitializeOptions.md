@@ -25,6 +25,7 @@ service.initializePayment({
                 cardCode: { containerId: 'card-code' },
             },
         },
+        onCreditCardFieldsRenderingError: (error) => handleError(error),
     },
 });
 ```
@@ -71,6 +72,7 @@ service.initializePayment({
                 console.log(isValid);
             },
         },
+        onCreditCardFieldsRenderingError: (error) => handleError(error),
     },
 });
 ```
@@ -81,6 +83,10 @@ service.initializePayment({
 
 - [form](PayPalCommerceCreditCardsPaymentInitializeOptions.md#form)
 
+### Methods
+
+- [onCreditCardFieldsRenderingError](PayPalCommerceCreditCardsPaymentInitializeOptions.md#oncreditcardfieldsrenderingerror)
+
 ## Properties
 
 ### form
@@ -88,3 +94,21 @@ service.initializePayment({
 • **form**: `default`
 
 The form is data for Credit Card Form
+
+## Methods
+
+### onCreditCardFieldsRenderingError
+
+▸ `Optional` **onCreditCardFieldsRenderingError**(`error`): `void`
+
+The callback that gets called when there is an issue with rendering credit card fields
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `error` | `unknown` |
+
+#### Returns
+
+`void`

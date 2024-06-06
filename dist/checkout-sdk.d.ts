@@ -4764,6 +4764,10 @@ declare interface DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions {
      * The form is data for Credit Card Form
      */
     form?: HostedFormOptions_2;
+    /**
+     * The callback that gets called when there is an issue with rendering credit card fields
+     */
+    onCreditCardFieldsRenderingError?: (error: unknown) => void;
 }
 
 declare class DetachmentObserver {
@@ -6893,6 +6897,7 @@ declare interface PayPalCommerceCreditButtonInitializeOptions {
  *                 cardCode: { containerId: 'card-code' },
  *             },
  *         },
+ *         onCreditCardFieldsRenderingError: (error) => handleError(error),
  *     },
  * });
  * ```
@@ -6939,6 +6944,7 @@ declare interface PayPalCommerceCreditButtonInitializeOptions {
  *                 console.log(isValid);
  *             },
  *         },
+ *         onCreditCardFieldsRenderingError: (error) => handleError(error),
  *     },
  * });
  * ```
@@ -6948,6 +6954,10 @@ declare interface PayPalCommerceCreditCardsPaymentInitializeOptions {
      * The form is data for Credit Card Form
      */
     form: HostedFormOptions_2;
+    /**
+     * The callback that gets called when there is an issue with rendering credit card fields
+     */
+    onCreditCardFieldsRenderingError?: (error: unknown) => void;
 }
 
 declare interface PayPalCommerceCreditCustomerInitializeOptions {
