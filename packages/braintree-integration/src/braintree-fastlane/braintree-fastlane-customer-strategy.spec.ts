@@ -12,6 +12,7 @@ import {
 import {
     getConfig,
     getCustomer,
+    getGuestCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
@@ -27,7 +28,7 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeFastlaneCustomerStrategy;
 
-    const customer = getCustomer();
+    const customer = getGuestCustomer();
     const storeConfig = getConfig().storeConfig;
 
     const methodId = 'braintreeacceleratedcheckout';
@@ -325,70 +326,33 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
             expect(executionOptions.continueWithCheckoutCallback).toHaveBeenCalled();
         });
 
-        it('does not run authentication flow for store member if experiment is on', async () => {
-            const guestCustomer = {
-                ...getCustomer(),
-                isGuest: false,
-            };
-
-            const storeConfigWithAFeature = {
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-4001.braintree_fastlane_stored_member_flow_removal': true,
-                    },
+        it('does not run authentication flow for store member', async () => {
+            const mockPaymentMethod = {
+                ...paymentMethod,
+                initializationData: {
+                    isFastlaneEnabled: true,
+                    isAcceleratedCheckoutEnabled: true,
+                    shouldRunAcceleratedCheckout: true,
                 },
             };
 
-            jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
-                guestCustomer,
-            );
             jest.spyOn(
                 paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigWithAFeature);
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(mockPaymentMethod);
+
+            const storeMember = getCustomer();
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
+                storeMember,
+            );
 
             await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout(executionOptions);
 
             expect(
-                braintreeFastlaneUtils.runPayPalConnectAuthenticationFlowOrThrow,
+                braintreeFastlaneUtils.runPayPalFastlaneAuthenticationFlowOrThrow(),
             ).not.toHaveBeenCalled();
-        });
-
-        it('triggers authentication flow for guest member even if it is restricted for store member', async () => {
-            const guestCustomer = {
-                ...getCustomer(),
-                isGuest: true,
-            };
-
-            const storeConfigWithAFeature = {
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-4001.braintree_fastlane_stored_member_flow_removal': true,
-                    },
-                },
-            };
-
-            jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
-                guestCustomer,
-            );
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigWithAFeature);
-
-            await strategy.initialize(initializationOptions);
-            await strategy.executePaymentMethodCheckout(executionOptions);
-
-            expect(
-                braintreeFastlaneUtils.runPayPalConnectAuthenticationFlowOrThrow,
-            ).toHaveBeenCalled();
         });
     });
 

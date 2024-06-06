@@ -20,7 +20,6 @@ import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { AddressRequestBody } from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
-import { BraintreeInitializationData } from '../../../payment/strategies/braintree';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
@@ -33,6 +32,7 @@ import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { PaymentProviderCustomerActionCreator } from '../../../payment-provider-customer';
 import { CardInstrument } from '../../../payment/instrument';
 import { UntrustedShippingCardVerificationType } from '../../../payment/instrument/instrument';
+import { BraintreeInitializationData } from '../../../payment/strategies/braintree';
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
 import ShippingStrategy from '../shipping-strategy';
@@ -81,7 +81,10 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
             );
         }
 
-        if (this._shouldSkipFastlaneForStoredMembers()) {
+        const state = this._store.getState();
+        const customer = state.customer.getCustomerOrThrow();
+
+        if (!customer.isGuest) {
             return Promise.resolve(this._store.getState());
         }
 
@@ -122,12 +125,9 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
             ? paymentProviderCustomer
             : {};
 
-        const shouldSkipFastlaneForStoredMembers = this._shouldSkipFastlaneForStoredMembers();
-
         if (
-            shouldSkipFastlaneForStoredMembers ||
             braintreePaymentProviderCustomer?.authenticationState ===
-                BraintreeFastlaneAuthenticationState.CANCELED
+            BraintreeFastlaneAuthenticationState.CANCELED
         ) {
             return false;
         }
@@ -135,19 +135,6 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
         return (
             !braintreePaymentProviderCustomer?.authenticationState &&
             paypalFastlaneSessionId === cartId
-        );
-    }
-
-    // TODO: remove this method when PAYPAL-4001.paypal_commerce_fastlane_stored_member_flow_removal will be rolled out to 100%
-    private _shouldSkipFastlaneForStoredMembers() {
-        const state = this._store.getState();
-        const customer = state.customer.getCustomerOrThrow();
-        const features = state.config.getStoreConfigOrThrow().checkoutSettings.features;
-
-        return (
-            features &&
-            features['PAYPAL-4001.braintree_fastlane_stored_member_flow_removal'] &&
-            !customer.isGuest
         );
     }
 
@@ -295,6 +282,7 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
                 const { firstName, lastName } = instrument.paymentSource.card.billingAddress;
                 let given_name;
                 let surname;
+
                 if (isBraintreeConnectName(name)) {
                     given_name = name.given_name;
                     surname = name.surname;
