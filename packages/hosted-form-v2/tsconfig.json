@@ -1,0 +1,11 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "include": [
+        "src/common/types/card-validator.d.ts",
+        "src/**/*.ts",
+    ],
+    "files": [
+        "src/common/types/card-validator.d.ts",
+        "src/common/types/webpack.d.ts"
+    ]
+}
