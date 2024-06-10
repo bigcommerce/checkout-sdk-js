@@ -72,7 +72,5 @@ export default interface PayPalCommerceFastlanePaymentInitializeOptions {
 }
 
 export interface WithPayPalCommerceFastlanePaymentInitializeOptions {
-    // TODO: remove paypalcommerceacceleratedcheckout when it will be removed on checkout js side
-    paypalcommerceacceleratedcheckout?: PayPalCommerceFastlanePaymentInitializeOptions;
     paypalcommercefastlane?: PayPalCommerceFastlanePaymentInitializeOptions;
 }

@@ -10,15 +10,6 @@ import {
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import {
-    PayPalAxoSdk,
-    PayPalCommerceConnect,
-    PayPalCommerceConnectAddress,
-    PayPalCommerceConnectAuthenticationResult,
-    PayPalCommerceConnectLookupCustomerByEmailResult,
-    PayPalCommerceConnectProfileCard,
-    PayPalCommerceConnectProfileName,
-    PayPalCommerceConnectProfilePhone,
-    PayPalCommerceConnectStylesOption,
     PayPalCommerceHostWindow,
     PayPalFastlane,
     PayPalFastlaneAddress,
@@ -40,31 +31,6 @@ export default class PayPalCommerceFastlaneUtils {
         this.window = window;
     }
 
-    // TODO: remove this method when PPCP Fastlane experiment will be rolled out to 100%
-    async initializePayPalConnect(
-        paypalAxoSdk: PayPalAxoSdk,
-        isTestModeEnabled: boolean,
-        styles?: PayPalCommerceConnectStylesOption,
-    ): Promise<PayPalCommerceConnect> {
-        if (isTestModeEnabled) {
-            window.localStorage.setItem('axoEnv', 'sandbox');
-        }
-
-        if (!this.window.paypalConnect) {
-            const defaultStyles = {
-                root: {
-                    backgroundColorPrimary: 'transparent',
-                },
-            };
-
-            this.window.paypalConnect = await paypalAxoSdk.Connect({
-                styles: styles || defaultStyles,
-            });
-        }
-
-        return this.window.paypalConnect;
-    }
-
     async initializePayPalFastlane(
         paypalFastlaneSdk: PayPalFastlaneSdk,
         isTestModeEnabled: boolean,
@@ -72,7 +38,7 @@ export default class PayPalCommerceFastlaneUtils {
     ): Promise<PayPalFastlane> {
         if (isTestModeEnabled) {
             window.localStorage.setItem('fastlaneEnv', 'sandbox');
-            window.localStorage.setItem('axoEnv', 'sandbox');
+            window.localStorage.setItem('axoEnv', 'sandbox'); // TODO: remove if this key does not use on PayPal side
         }
 
         if (!this.window.paypalFastlane) {
@@ -90,15 +56,6 @@ export default class PayPalCommerceFastlaneUtils {
         return this.window.paypalFastlane;
     }
 
-    // TODO: remove this method when PPCP Fastlane experiment will be rolled out to 100%
-    getPayPalConnectOrThrow(): PayPalCommerceConnect {
-        if (!this.window.paypalConnect) {
-            throw new PaymentMethodClientUnavailableError();
-        }
-
-        return this.window.paypalConnect;
-    }
-
     getPayPalFastlaneOrThrow(): PayPalFastlane {
         if (!this.window.paypalFastlane) {
             throw new PaymentMethodClientUnavailableError();
@@ -109,19 +66,10 @@ export default class PayPalCommerceFastlaneUtils {
 
     /**
      *
-     * Detects the customer to PayPal Connect relation and
+     * Detects the customer to PayPal Fastlane relation and
      * returns customerContextId to use it for authentication
      *
      */
-    // TODO: remove this method when PPCP Fastlane experiment will be rolled out to 100%
-    async connectLookupCustomerOrThrow(
-        email: string,
-    ): Promise<PayPalCommerceConnectLookupCustomerByEmailResult> {
-        const paypalConnect = this.getPayPalConnectOrThrow();
-
-        return paypalConnect.identity.lookupCustomerByEmail(email);
-    }
-
     async lookupCustomerOrThrow(email: string): Promise<PayPalFastlaneLookupCustomerByEmailResult> {
         const paypalFastlane = this.getPayPalFastlaneOrThrow();
 
@@ -130,23 +78,10 @@ export default class PayPalCommerceFastlaneUtils {
 
     /**
      *
-     * Triggers authentication flow (shows OTP popup) if the customer recognised as PayPal Connect user
-     * and returns PayPal Connect Profile data to use it in BC checkout
+     * Triggers authentication flow (shows OTP popup) if the customer recognised as PayPal Fastlane user
+     * and returns PayPal Fastlane Profile data to use it in BC checkout
      *
      */
-    // TODO: remove this method when PPCP Fastlane experiment will be rolled out to 100%
-    async connectTriggerAuthenticationFlowOrThrow(
-        customerContextId?: string,
-    ): Promise<PayPalCommerceConnectAuthenticationResult | PayPalFastlaneAuthenticationResult> {
-        if (!customerContextId) {
-            return {};
-        }
-
-        const paypalConnect = this.getPayPalConnectOrThrow();
-
-        return paypalConnect.identity.triggerAuthenticationFlow(customerContextId);
-    }
-
     async triggerAuthenticationFlowOrThrow(
         customerContextId?: string,
     ): Promise<PayPalFastlaneAuthenticationResult> {
@@ -163,7 +98,7 @@ export default class PayPalCommerceFastlaneUtils {
      *
      * 'updateStorageSessionId' method is used to:
      * - set session id after user was authenticated (or unrecognised) to trigger authentication after page refresh
-     * - remove sessionId from browser storage if the customer canceled PayPal Connect Authentication
+     * - remove sessionId from browser storage if the customer canceled PayPal Fastlane Authentication
      *
      * Flow info:
      * If user unrecognised then the lookup method will be working but the OTP will not be shown
@@ -189,16 +124,14 @@ export default class PayPalCommerceFastlaneUtils {
     /**
      *
      * 'mapPayPalFastlaneProfileToBcCustomerData' method is responsible for:
-     * - mapping PayPal Connect Profile data to BC data shape
+     * - mapping PayPal Fastlane Profile data to BC data shape
      * - returning mapped data to use for updating PaymentProviderCustomer state and
      * update shipping and billing addresses
      *
      */
     mapPayPalFastlaneProfileToBcCustomerData(
         methodId: string,
-        authenticationResult:
-            | PayPalCommerceConnectAuthenticationResult
-            | PayPalFastlaneAuthenticationResult,
+        authenticationResult: PayPalFastlaneAuthenticationResult,
     ): PayPalFastlaneProfileToBcCustomerDataMappingResult {
         const { authenticationState, profileData } = authenticationResult;
 
@@ -240,7 +173,7 @@ export default class PayPalCommerceFastlaneUtils {
 
     mapPayPalToBcInstrument(
         methodId: string,
-        instrument: PayPalCommerceConnectProfileCard | PayPalFastlaneProfileCard,
+        instrument: PayPalFastlaneProfileCard,
     ): CardInstrument[] {
         const { id, paymentSource } = instrument;
         const { brand, expiry, lastDigits } = paymentSource.card;
@@ -265,7 +198,7 @@ export default class PayPalCommerceFastlaneUtils {
         ];
     }
 
-    mapBcToPayPalAddress(address?: Address): PayPalCommerceConnectAddress | PayPalFastlaneAddress {
+    mapBcToPayPalAddress(address?: Address): PayPalFastlaneAddress {
         return {
             company: address?.company || '',
             addressLine1: address?.address1 || '',
@@ -278,9 +211,9 @@ export default class PayPalCommerceFastlaneUtils {
     }
 
     mapPayPalToBcAddress(
-        address: PayPalCommerceConnectAddress | PayPalFastlaneAddress,
-        profileName: PayPalCommerceConnectProfileName | PayPalFastlaneProfileName,
-        phone?: PayPalCommerceConnectProfilePhone | PayPalFastlaneProfilePhone,
+        address: PayPalFastlaneAddress,
+        profileName: PayPalFastlaneProfileName,
+        phone?: PayPalFastlaneProfilePhone,
         customFields?: CustomerAddress['customFields'],
     ): CustomerAddress {
         const [firstName, lastName] = profileName.fullName.split(' ');
@@ -311,9 +244,9 @@ export default class PayPalCommerceFastlaneUtils {
 
     /**
      *
-     * This method is responsible for filtering PP Fastlane addresses if they are the same
+     * This method is responsible for filtering PayPal Fastlane addresses if they are the same
      * and returns an array of addresses to use them for shipping and/or billing address selections
-     * so the customer will be able to use addresses from PP Fastlane in checkout flow
+     * so the customer will be able to use addresses from PayPal Fastlane in checkout flow
      *
      */
     filterAddresses(addresses: Array<CustomerAddress | undefined>): CustomerAddress[] {

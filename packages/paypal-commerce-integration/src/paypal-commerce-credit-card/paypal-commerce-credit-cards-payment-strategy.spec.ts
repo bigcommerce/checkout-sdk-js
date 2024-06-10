@@ -22,9 +22,7 @@ import {
 import {
     createPayPalCommerceFastlaneUtils,
     createPayPalCommerceSdk,
-    getPayPalAxoSdk,
     getPayPalFastlaneSdk,
-    PayPalAxoSdk,
     PayPalCommerceFastlaneUtils,
     PayPalCommerceSdk,
     PayPalFastlaneSdk,
@@ -55,7 +53,6 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
     let paymentMethod: PaymentMethod;
     let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
     let paypalCommerceSdk: PayPalCommerceSdk;
-    let paypalAxoSdk: PayPalAxoSdk;
     let paypalFastlaneSdk: PayPalFastlaneSdk;
     let paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils;
     let paypalSdk: PayPalSDK;
@@ -170,7 +167,6 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         eventEmitter = new EventEmitter();
         paymentMethod = { ...getPayPalCommercePaymentMethod(), id: methodId };
         paypalSdk = getPayPalSDKMock();
-        paypalAxoSdk = getPayPalAxoSdk();
         paypalFastlaneSdk = getPayPalFastlaneSdk();
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -219,13 +215,8 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             },
         );
 
-        jest.spyOn(paypalCommerceSdk, 'getPayPalAxo').mockImplementation(() => paypalAxoSdk);
         jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(
             () => paypalFastlaneSdk,
-        );
-
-        jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalConnect').mockImplementation(() =>
-            jest.fn(),
         );
         jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalFastlane').mockImplementation(() =>
             jest.fn(),
@@ -281,37 +272,6 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                 undefined,
                 true,
                 true,
-            );
-        });
-
-        it('loads paypal connect sdk if paypal commerce connect analytic is enabled', async () => {
-            const mockedPaymentMethod = {
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod,
-                    connectClientToken: 'connectClientToken123',
-                    isAcceleratedCheckoutEnabled: true,
-                    isPayPalCommerceAnalyticsV2Enabled: true,
-                    isDeveloperModeApplicable: false,
-                },
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(mockedPaymentMethod);
-
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalCommerceSdk.getPayPalAxo).toHaveBeenCalledWith(
-                mockedPaymentMethod,
-                cart.currency.code,
-                cart.id,
-            );
-
-            expect(paypalCommerceFastlaneUtils.initializePayPalConnect).toHaveBeenCalledWith(
-                paypalAxoSdk,
-                false,
             );
         });
 

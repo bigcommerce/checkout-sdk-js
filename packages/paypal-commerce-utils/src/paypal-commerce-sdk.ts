@@ -8,7 +8,6 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
-    PayPalAxoSdk,
     PayPalCommerceHostWindow,
     PayPalCommerceInitializationData,
     PayPalFastlaneSdk,
@@ -21,29 +20,6 @@ export default class PayPalCommerceSdk {
 
     constructor(private scriptLoader: ScriptLoader) {
         this.window = window;
-    }
-
-    // TODO: remove this method when PPCP Fastlane experiment will be rollout to 100%
-    async getPayPalAxo(
-        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
-        currencyCode: string,
-        sessionId: string,
-    ): Promise<PayPalAxoSdk> {
-        if (!this.window.paypalAxo) {
-            const paypalSdkConnectConfig = this.getPayPalSdkConnectConfiguration(
-                paymentMethod,
-                currencyCode,
-                sessionId,
-            );
-
-            await this.loadPayPalSdk(paypalSdkConnectConfig);
-
-            if (!this.window.paypalAxo) {
-                throw new PaymentMethodClientUnavailableError();
-            }
-        }
-
-        return this.window.paypalAxo;
     }
 
     async getPayPalFastlaneSdk(
@@ -113,44 +89,6 @@ export default class PayPalCommerceSdk {
      * Configurations section
      *
      */
-    // TODO: remove this method when PPCP Fastlane experiment will be rolled out to 100%
-    private getPayPalSdkConnectConfiguration(
-        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
-        currencyCode: string,
-        sessionId: string,
-    ): PayPalSdkConfig {
-        const { clientToken, initializationData } = paymentMethod;
-
-        if (!initializationData || !initializationData.clientId) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
-        const {
-            intent,
-            clientId,
-            merchantId,
-            attributionId,
-            connectClientToken, // TODO: remove when PPCP AXO A/B testing will be finished
-        } = initializationData;
-
-        return {
-            options: {
-                'client-id': clientId,
-                'merchant-id': merchantId,
-                commit: true,
-                components: ['connect'],
-                currency: currencyCode,
-                intent,
-            },
-            attributes: {
-                'data-client-metadata-id': sessionId.replace(/-/g, ''),
-                'data-namespace': 'paypalAxo',
-                'data-partner-attribution-id': attributionId,
-                'data-user-id-token': connectClientToken || clientToken,
-            },
-        };
-    }
-
     private getPayPalFastlaneSdkConfiguration(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,

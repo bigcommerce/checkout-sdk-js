@@ -4,15 +4,9 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
-import {
-    getPayPalAxoSdk,
-    getPayPalFastlaneAuthenticationResultMock,
-    getPayPalFastlaneSdk,
-} from './mocks';
+import { getPayPalFastlaneAuthenticationResultMock, getPayPalFastlaneSdk } from './mocks';
 import PayPalCommerceFastlaneUtils from './paypal-commerce-fastlane-utils';
 import {
-    PayPalAxoSdk,
-    PayPalCommerceConnectAuthenticationState,
     PayPalCommerceHostWindow,
     PayPalFastlaneAuthenticationState,
     PayPalFastlaneSdk,
@@ -20,7 +14,6 @@ import {
 
 describe('PayPalCommerceFastlaneUtils', () => {
     let browserStorage: BrowserStorage;
-    let paypalAxoSdk: PayPalAxoSdk;
     let paypalFastlaneSdk: PayPalFastlaneSdk;
     let subject: PayPalCommerceFastlaneUtils;
 
@@ -67,7 +60,6 @@ describe('PayPalCommerceFastlaneUtils', () => {
 
     beforeEach(() => {
         browserStorage = new BrowserStorage('paypalFastlane');
-        paypalAxoSdk = getPayPalAxoSdk();
         paypalFastlaneSdk = getPayPalFastlaneSdk();
 
         subject = new PayPalCommerceFastlaneUtils(browserStorage);
@@ -76,32 +68,12 @@ describe('PayPalCommerceFastlaneUtils', () => {
     });
 
     afterEach(() => {
-        (window as PayPalCommerceHostWindow).paypalConnect = undefined;
         (window as PayPalCommerceHostWindow).paypalFastlane = undefined;
 
         jest.resetAllMocks();
         jest.restoreAllMocks();
 
         localStorage.clear();
-    });
-
-    // TODO: remove this tests when PPCP Fastlane experiment will be rollout to 100%
-    describe('#initializePayPalConnect', () => {
-        it('initializes paypal connect with paypal sdk', async () => {
-            jest.spyOn(paypalAxoSdk, 'Connect');
-
-            await subject.initializePayPalConnect(paypalAxoSdk, false);
-
-            expect(paypalAxoSdk.Connect).toHaveBeenCalled();
-        });
-
-        it('sets axo to sandbox mode if test mode is enabled', async () => {
-            jest.spyOn(Storage.prototype, 'setItem').mockImplementation(jest.fn);
-
-            await subject.initializePayPalConnect(paypalAxoSdk, true);
-
-            expect(window.localStorage.setItem).toHaveBeenCalledWith('axoEnv', 'sandbox');
-        });
     });
 
     describe('#initializePayPalFastlane', () => {
@@ -123,23 +95,6 @@ describe('PayPalCommerceFastlaneUtils', () => {
         });
     });
 
-    // TODO: remove this tests when PPCP Fastlane experiment will be rollout to 100%
-    describe('#getPayPalConnectOrThrow', () => {
-        it('successfully returns paypal connect with no errors', async () => {
-            const expectedResult = await subject.initializePayPalConnect(paypalAxoSdk, false);
-
-            expect(subject.getPayPalConnectOrThrow()).toEqual(expectedResult);
-        });
-
-        it('throws an error if paypal connect did not initialize before', () => {
-            try {
-                subject.getPayPalConnectOrThrow();
-            } catch (error: unknown) {
-                expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
-            }
-        });
-    });
-
     describe('#getPayPalFastlaneOrThrow', () => {
         it('successfully returns paypal fastlane with no errors', async () => {
             const expectedResult = await subject.initializePayPalFastlane(paypalFastlaneSdk, false);
@@ -150,29 +105,6 @@ describe('PayPalCommerceFastlaneUtils', () => {
         it('throws an error if paypal fastlane did not initialize before', () => {
             try {
                 subject.getPayPalFastlaneOrThrow();
-            } catch (error: unknown) {
-                expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
-            }
-        });
-    });
-
-    // TODO: remove this tests when PPCP Fastlane experiment will be rollout to 100%
-    describe('#connectLookupCustomerOrThrow', () => {
-        const testEmail = 'john@doe.com';
-
-        it('successfully triggers lookup method with provided email', async () => {
-            const paypalConnectMock = await subject.initializePayPalConnect(paypalAxoSdk, false);
-
-            await subject.connectLookupCustomerOrThrow(testEmail);
-
-            expect(paypalConnectMock.identity.lookupCustomerByEmail).toHaveBeenCalledWith(
-                testEmail,
-            );
-        });
-
-        it('throws an error if paypal connect did not initialize before', async () => {
-            try {
-                await subject.connectLookupCustomerOrThrow(testEmail);
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
@@ -198,29 +130,6 @@ describe('PayPalCommerceFastlaneUtils', () => {
         it('throws an error if paypal fastlane did not initialize before', async () => {
             try {
                 await subject.lookupCustomerOrThrow(testEmail);
-            } catch (error: unknown) {
-                expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
-            }
-        });
-    });
-
-    // TODO: remove this tests when PPCP Fastlane experiment will be rollout to 100%
-    describe('#connectTriggerAuthenticationFlowOrThrow', () => {
-        const customerContextIdMock = 'ryanRecognised123';
-
-        it('successfully triggers authentication flow with provided customer id and styles', async () => {
-            const paypalConnectMock = await subject.initializePayPalConnect(paypalAxoSdk, false);
-
-            await subject.connectTriggerAuthenticationFlowOrThrow(customerContextIdMock);
-
-            expect(paypalConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalledWith(
-                customerContextIdMock,
-            );
-        });
-
-        it('throws an error if paypal connect did not initialize before', async () => {
-            try {
-                await subject.connectTriggerAuthenticationFlowOrThrow(customerContextIdMock);
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
@@ -285,7 +194,7 @@ describe('PayPalCommerceFastlaneUtils', () => {
     describe('#mapPayPalFastlaneProfileToBcCustomerData', () => {
         it('returns default "empty" data if authenticationResult is undefined', () => {
             expect(subject.mapPayPalFastlaneProfileToBcCustomerData(methodIdMock, {})).toEqual({
-                authenticationState: PayPalCommerceConnectAuthenticationState.UNRECOGNIZED,
+                authenticationState: PayPalFastlaneAuthenticationState.UNRECOGNIZED,
                 addresses: [],
                 billingAddress: undefined,
                 shippingAddress: undefined,
