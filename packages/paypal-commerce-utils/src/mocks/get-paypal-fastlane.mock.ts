@@ -2,9 +2,6 @@ import { PayPalFastlane, PayPalFastlaneCardComponentMethods } from '../paypal-co
 
 export default function getPayPalFastlane(): PayPalFastlane {
     const paypalFastlaneComponentMethods: PayPalFastlaneCardComponentMethods = {
-        tokenize: jest.fn(() => ({
-            nonce: 'paypal_fastlane_tokenize_nonce',
-        })),
         getPaymentToken: jest.fn(() => ({
             id: 'paypal_fastlane_instrument_id_nonce',
             paymentSource: {

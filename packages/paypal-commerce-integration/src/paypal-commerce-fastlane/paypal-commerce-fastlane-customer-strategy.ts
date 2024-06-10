@@ -9,7 +9,6 @@ import {
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    PayPalCommerceConnectAuthenticationResult,
     PayPalCommerceFastlaneUtils,
     PayPalCommerceInitializationData,
     PayPalCommerceSdk,
@@ -42,11 +41,8 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         }
 
         const paymentMethod = await this.getValidPaymentMethodOrThrow(methodId);
-        const {
-            isAcceleratedCheckoutEnabled,
-            isDeveloperModeApplicable,
-            isFastlaneEnabled, // TODO: remove this line when fastlane experiment will be rolled out to 100%
-        } = paymentMethod.initializationData || {};
+        const { isAcceleratedCheckoutEnabled, isDeveloperModeApplicable } =
+            paymentMethod.initializationData || {};
 
         this.isAcceleratedCheckoutFeatureEnabled = !!isAcceleratedCheckoutEnabled;
 
@@ -57,31 +53,17 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
                 const currency = state.getCartOrThrow().currency.code;
                 const isTestModeEnabled = !!isDeveloperModeApplicable;
 
-                if (isFastlaneEnabled) {
-                    const paypalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
-                        paymentMethod,
-                        currency,
-                        cart.id,
-                    );
+                const paypalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
+                    paymentMethod,
+                    currency,
+                    cart.id,
+                );
 
-                    await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
-                        paypalFastlaneSdk,
-                        isTestModeEnabled,
-                        paypalcommercefastlane?.styles,
-                    );
-                } else {
-                    const paypalAxoSdk = await this.paypalCommerceSdk.getPayPalAxo(
-                        paymentMethod,
-                        currency,
-                        cart.id,
-                    );
-
-                    await this.paypalCommerceFastlaneUtils.initializePayPalConnect(
-                        paypalAxoSdk,
-                        isTestModeEnabled,
-                        paypalcommercefastlane?.styles,
-                    );
-                }
+                await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
+                    paypalFastlaneSdk,
+                    isTestModeEnabled,
+                    paypalcommercefastlane?.styles,
+                );
             }
         } catch (_) {
             // Info: Do not throw anything here to avoid blocking customer from passing checkout flow
@@ -134,7 +116,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
             }
 
             if (shouldRunAuthenticationFlow) {
-                await this.runPayPalConnectAuthenticationFlowOrThrow();
+                await this.runPayPalAuthenticationFlowOrThrow();
             }
         }
 
@@ -162,31 +144,21 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         }
     }
 
-    private async runPayPalConnectAuthenticationFlowOrThrow(): Promise<void> {
+    private async runPayPalAuthenticationFlowOrThrow(): Promise<void> {
         try {
             const state = this.paymentIntegrationService.getState();
             const cartId = state.getCartOrThrow().id;
             const customer = state.getCustomer();
             const billingAddress = state.getBillingAddress();
-            const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
-                this.primaryMethodId,
-            );
-            const isFastlaneEnabled = !!paymentMethod.initializationData?.isFastlaneEnabled;
             const customerEmail = customer?.email || billingAddress?.email || '';
 
-            const { customerContextId } = isFastlaneEnabled
-                ? await this.paypalCommerceFastlaneUtils.lookupCustomerOrThrow(customerEmail)
-                : await this.paypalCommerceFastlaneUtils.connectLookupCustomerOrThrow(
-                      customerEmail,
-                  );
+            const { customerContextId } =
+                await this.paypalCommerceFastlaneUtils.lookupCustomerOrThrow(customerEmail);
 
-            const authenticationResult = isFastlaneEnabled
-                ? await this.paypalCommerceFastlaneUtils.triggerAuthenticationFlowOrThrow(
-                      customerContextId,
-                  )
-                : await this.paypalCommerceFastlaneUtils.connectTriggerAuthenticationFlowOrThrow(
-                      customerContextId,
-                  );
+            const authenticationResult =
+                await this.paypalCommerceFastlaneUtils.triggerAuthenticationFlowOrThrow(
+                    customerContextId,
+                );
 
             const isAuthenticationFlowCanceled =
                 authenticationResult.authenticationState ===
@@ -204,9 +176,7 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
 
     private async updateCustomerDataState(
         methodId: string,
-        authenticationResult:
-            | PayPalCommerceConnectAuthenticationResult
-            | PayPalFastlaneAuthenticationResult,
+        authenticationResult: PayPalFastlaneAuthenticationResult,
     ): Promise<void> {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCartOrThrow();

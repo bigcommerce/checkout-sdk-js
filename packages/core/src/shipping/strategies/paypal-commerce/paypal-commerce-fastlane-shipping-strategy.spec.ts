@@ -11,12 +11,10 @@ import {
 import {
     createPayPalCommerceFastlaneUtils,
     createPayPalCommerceSdk,
-    getPayPalAxoSdk,
     getPayPalCommerceAcceleratedCheckoutPaymentMethod,
     getPayPalFastlane,
     getPayPalFastlaneAuthenticationResultMock,
     getPayPalFastlaneSdk,
-    PayPalAxoSdk,
     PayPalCommerceFastlaneUtils,
     PayPalCommerceSdk,
     PayPalFastlaneAuthenticationState,
@@ -49,7 +47,6 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethod: PaymentMethod;
     let paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator;
-    let paypalAxoSdk: PayPalAxoSdk;
     let paypalFastlaneSdk: PayPalFastlaneSdk;
     let paypalCommerceSdk: PayPalCommerceSdk;
     let paypalCommerceFastlaneUtils: PayPalCommerceFastlaneUtils;
@@ -102,7 +99,6 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         customer = { ...getCustomer(), isGuest: true };
         storeConfig = getConfig().storeConfig;
         paymentMethod = getPayPalCommerceAcceleratedCheckoutPaymentMethod();
-        paypalAxoSdk = getPayPalAxoSdk();
         paypalFastlaneSdk = getPayPalFastlaneSdk();
 
         store = createCheckoutStore();
@@ -158,13 +154,8 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         );
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(paymentMethod);
 
-        jest.spyOn(paypalCommerceSdk, 'getPayPalAxo').mockImplementation(() => paypalAxoSdk);
         jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(
             () => paypalFastlaneSdk,
-        );
-
-        jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalConnect').mockImplementation(
-            jest.fn(),
         );
         jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalFastlane').mockImplementation(
             jest.fn(),
@@ -179,16 +170,9 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         jest.spyOn(paypalCommerceFastlaneUtils, 'lookupCustomerOrThrow').mockImplementation(() => ({
             customerContextId,
         }));
-        jest.spyOn(paypalCommerceFastlaneUtils, 'connectLookupCustomerOrThrow').mockImplementation(
-            () => ({ customerContextId }),
-        );
         jest.spyOn(
             paypalCommerceFastlaneUtils,
             'triggerAuthenticationFlowOrThrow',
-        ).mockImplementation(() => authenticationResultMock);
-        jest.spyOn(
-            paypalCommerceFastlaneUtils,
-            'connectTriggerAuthenticationFlowOrThrow',
         ).mockImplementation(() => authenticationResultMock);
         jest.spyOn(
             paypalCommerceFastlaneUtils,
@@ -273,7 +257,6 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
 
             expect(paymentMethodActionCreator.loadPaymentMethod).not.toHaveBeenCalled();
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).not.toHaveBeenCalled();
-            expect(paypalCommerceFastlaneUtils.initializePayPalConnect).not.toHaveBeenCalled();
         });
 
         it('does not load payment method if accelerated checkout feature is disabled', async () => {
@@ -289,46 +272,6 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(paymentMethodActionCreator.loadPaymentMethod).not.toHaveBeenCalled();
-        });
-
-        it('initializes paypal sdk and authenticates user with paypal connect', async () => {
-            paymentMethod.initializationData.isFastlaneEnabled = false;
-
-            await strategy.initialize(initializationOptions);
-
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(methodId);
-            expect(paypalCommerceSdk.getPayPalAxo).toHaveBeenCalledWith(
-                paymentMethod,
-                cart.currency.code,
-                cart.id,
-            );
-            expect(paypalCommerceFastlaneUtils.initializePayPalConnect).toHaveBeenCalledWith(
-                paypalAxoSdk,
-                paymentMethod.initializationData.isDeveloperModeApplicable,
-                undefined,
-            );
-            expect(paypalCommerceFastlaneUtils.connectLookupCustomerOrThrow).toHaveBeenCalledWith(
-                customer.email,
-            );
-            expect(
-                paypalCommerceFastlaneUtils.connectTriggerAuthenticationFlowOrThrow,
-            ).toHaveBeenCalledWith(customerContextId);
-            expect(
-                paypalCommerceFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData,
-            ).toHaveBeenCalledWith(methodId, authenticationResultMock);
-            expect(
-                paymentProviderCustomerActionCreator.updatePaymentProviderCustomer,
-            ).toHaveBeenCalledWith({
-                authenticationState: authenticationResultMock.authenticationState,
-                addresses: [bcAddressMock],
-                instruments: [bcInstrumentMock],
-            });
-            expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                false,
-                cart.id,
-            );
-            expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(bcAddressMock);
-            expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(bcAddressMock);
         });
 
         it('initializes paypal sdk and authenticates user with paypal fastlane', async () => {
@@ -368,7 +311,6 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                 cart.id,
             );
             expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(bcAddressMock);
-            expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(bcAddressMock);
         });
 
         it('does not authenticate user if the authentication was canceled before', async () => {
@@ -385,7 +327,6 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
 
             expect(paymentMethodActionCreator.loadPaymentMethod).not.toHaveBeenCalled();
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).not.toHaveBeenCalled();
-            expect(paypalCommerceFastlaneUtils.initializePayPalConnect).not.toHaveBeenCalled();
             expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
         });
 
@@ -427,33 +368,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).not.toHaveBeenCalled();
         });
 
-        it('does not provide PayPal Shipping selector method to onPayPalFastlaneAddressChange callback if the feature is disabled', async () => {
-            paymentMethod.initializationData.isFastlaneEnabled = false;
-
-            const onPayPalFastlaneAddressChange = jest.fn();
-
-            jest.spyOn(
-                store.getState().paymentProviderCustomer,
-                'getPaymentProviderCustomerOrThrow',
-            ).mockReturnValue({
-                authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
-                addresses: [bcAddressMock],
-                instruments: [bcInstrumentMock],
-            });
-
-            await strategy.initialize({
-                ...initializationOptions,
-                paypalcommercefastlane: {
-                    onPayPalFastlaneAddressChange,
-                },
-            });
-
-            expect(onPayPalFastlaneAddressChange).not.toHaveBeenCalled();
-        });
-
         it('initializes paypal sdk and provides PayPal Shipping selector method to onPayPalFastlaneAddressChange callback', async () => {
-            paymentMethod.initializationData.isFastlaneEnabled = true;
-
             const onPayPalFastlaneAddressChange = jest.fn();
 
             jest.spyOn(
@@ -489,8 +404,6 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         });
 
         it('updates shipping address with PayPal Shipping selector', async () => {
-            paymentMethod.initializationData.isFastlaneEnabled = true;
-
             const onPayPalFastlaneAddressChange = jest.fn((showPayPalFastlaneAddressSelector) => {
                 showPayPalFastlaneAddressSelector();
             });

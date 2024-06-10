@@ -19,13 +19,9 @@ import {
 import {
     createPayPalCommerceFastlaneUtils,
     createPayPalCommerceSdk,
-    getPayPalAxoSdk,
     getPayPalCommerceAcceleratedCheckoutPaymentMethod,
-    getPayPalConnectAuthenticationResultMock,
     getPayPalFastlaneAuthenticationResultMock,
     getPayPalFastlaneSdk,
-    PayPalAxoSdk,
-    PayPalCommerceConnect,
     PayPalCommerceFastlaneUtils,
     PayPalCommerceSdk,
     PayPalFastlane,
@@ -40,8 +36,6 @@ import PayPalCommerceFastlanePaymentStrategy from './paypal-commerce-fastlane-pa
 describe('PayPalCommerceFastlanePaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
-    let paypalAxoSdk: PayPalAxoSdk;
-    let paypalConnect: PayPalCommerceConnect;
     let paypalFastlaneSdk: PayPalFastlaneSdk;
     let paypalFastlane: PayPalFastlane;
     let paypalCommerceRequestSender: PayPalCommerceRequestSender;
@@ -54,7 +48,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
     const customer = getGuestCustomer();
     const storeConfig = getConfig().storeConfig;
 
-    const authenticationResultMock = getPayPalConnectAuthenticationResultMock();
+    const authenticationResultMock = getPayPalFastlaneAuthenticationResultMock();
     const customerContextId = 'id123';
     const paypalOrderId = 'paypalOrderId123';
 
@@ -98,8 +92,6 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
     };
 
     beforeEach(async () => {
-        paypalAxoSdk = getPayPalAxoSdk();
-        paypalConnect = await paypalAxoSdk.Connect();
         paypalFastlaneSdk = getPayPalFastlaneSdk();
         paypalFastlane = await paypalFastlaneSdk.Fastlane();
         paymentMethod = getPayPalCommerceAcceleratedCheckoutPaymentMethod();
@@ -142,7 +134,6 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             'getPaymentProviderCustomer',
         ).mockReturnValue({});
 
-        jest.spyOn(paypalCommerceSdk, 'getPayPalAxo').mockImplementation(() => paypalAxoSdk);
         jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(
             () => paypalFastlaneSdk,
         );
@@ -151,29 +142,18 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             orderId: paypalOrderId,
         });
 
-        jest.spyOn(paypalCommerceFastlaneUtils, 'getPayPalConnectOrThrow').mockReturnValue(
-            paypalConnect,
-        );
         jest.spyOn(paypalCommerceFastlaneUtils, 'getPayPalFastlaneOrThrow').mockReturnValue(
             paypalFastlane,
         );
-        jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalConnect');
         jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalFastlane');
         jest.spyOn(paypalCommerceFastlaneUtils, 'getStorageSessionId').mockReturnValue(cart.id);
         jest.spyOn(paypalCommerceFastlaneUtils, 'updateStorageSessionId');
         jest.spyOn(paypalCommerceFastlaneUtils, 'lookupCustomerOrThrow').mockReturnValue({
             customerContextId,
         });
-        jest.spyOn(paypalCommerceFastlaneUtils, 'connectLookupCustomerOrThrow').mockReturnValue({
-            customerContextId,
-        });
         jest.spyOn(paypalCommerceFastlaneUtils, 'triggerAuthenticationFlowOrThrow').mockReturnValue(
             getPayPalFastlaneAuthenticationResultMock(),
         );
-        jest.spyOn(
-            paypalCommerceFastlaneUtils,
-            'connectTriggerAuthenticationFlowOrThrow',
-        ).mockReturnValue(getPayPalFastlaneAuthenticationResultMock());
         jest.spyOn(
             paypalCommerceFastlaneUtils,
             'mapPayPalFastlaneProfileToBcCustomerData',
@@ -239,241 +219,119 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
         });
 
-        describe('initialize with paypal connect', () => {
-            it('loads paypal axo sdk', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = false;
+        it('loads paypal fastlane sdk', async () => {
+            await strategy.initialize(initializationOptions);
 
-                await strategy.initialize(initializationOptions);
+            expect(paypalCommerceSdk.getPayPalFastlaneSdk).toHaveBeenCalledWith(
+                paymentMethod,
+                cart.currency.code,
+                cart.id,
+            );
+        });
 
-                expect(paypalCommerceSdk.getPayPalAxo).toHaveBeenCalledWith(
-                    paymentMethod,
-                    cart.currency.code,
-                    cart.id,
-                );
+        it('initializes paypal fastlane in production mode', async () => {
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
+                paypalFastlaneSdk,
+                false,
+                undefined,
+            );
+        });
+
+        it('initializes paypal fastlane in test mode', async () => {
+            paymentMethod.initializationData.isDeveloperModeApplicable = true;
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethod);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
+                paypalFastlaneSdk,
+                true,
+                undefined,
+            );
+        });
+
+        it('does not trigger lookup method if the customer already authenticated with PayPal Fastlane', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentProviderCustomer',
+            ).mockReturnValue({
+                authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
+                addresses: [],
+                instruments: [],
             });
 
-            it('initializes paypal connect in production mode', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = false;
+            await strategy.initialize(initializationOptions);
 
-                await strategy.initialize(initializationOptions);
+            expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
+        });
 
-                expect(paypalCommerceFastlaneUtils.initializePayPalConnect).toHaveBeenCalledWith(
-                    paypalAxoSdk,
-                    false,
-                    undefined,
-                );
-            });
+        it('does not trigger lookup method for store members', async () => {
+            const storeMember = getCustomer();
 
-            it('initializes paypal connect in test mode', async () => {
-                paymentMethod.initializationData.isDeveloperModeApplicable = true;
-                paymentMethod.initializationData.isFastlaneEnabled = false;
+            jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
+                storeMember,
+            );
 
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getPaymentMethodOrThrow',
-                ).mockReturnValue(paymentMethod);
+            await strategy.initialize(initializationOptions);
 
-                await strategy.initialize(initializationOptions);
+            expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
+        });
 
-                expect(paypalCommerceFastlaneUtils.initializePayPalConnect).toHaveBeenCalledWith(
-                    paypalAxoSdk,
-                    true,
-                    undefined,
-                );
-            });
+        it('does not trigger lookup method if authentication flow did not trigger in the same session before page refresh', async () => {
+            jest.spyOn(paypalCommerceFastlaneUtils, 'getStorageSessionId').mockReturnValue(
+                'another_session_id_123',
+            );
 
-            it('does not trigger lookup method if the customer already authenticated with PayPal Connect', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = false;
+            await strategy.initialize(initializationOptions);
 
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getPaymentProviderCustomer',
-                ).mockReturnValue({
-                    authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
-                    addresses: [],
-                    instruments: [],
-                });
+            expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
+        });
 
-                await strategy.initialize(initializationOptions);
+        it('successfully authenticates customer with PayPal Fastlane', async () => {
+            await strategy.initialize(initializationOptions);
 
-                expect(
-                    paypalCommerceFastlaneUtils.connectLookupCustomerOrThrow,
-                ).not.toHaveBeenCalled();
-            });
+            expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).toHaveBeenCalledWith(
+                customer.email,
+            );
+            expect(
+                paypalCommerceFastlaneUtils.triggerAuthenticationFlowOrThrow,
+            ).toHaveBeenCalledWith(customerContextId);
+            expect(
+                paypalCommerceFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData,
+            ).toHaveBeenCalledWith(methodId, authenticationResultMock);
+            expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
+                false,
+                cart.id,
+            );
+        });
 
-            it('successfully authenticates customer with PayPal Connect', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = false;
+        it('initialises PayPal Fastlane card component', async () => {
+            await strategy.initialize(initializationOptions);
 
-                await strategy.initialize(initializationOptions);
-
-                expect(
-                    paypalCommerceFastlaneUtils.connectLookupCustomerOrThrow,
-                ).toHaveBeenCalledWith(customer.email);
-                expect(
-                    paypalCommerceFastlaneUtils.connectTriggerAuthenticationFlowOrThrow,
-                ).toHaveBeenCalledWith(customerContextId);
-                expect(
-                    paypalCommerceFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData,
-                ).toHaveBeenCalledWith(methodId, authenticationResultMock);
-                expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                    false,
-                    cart.id,
-                );
-            });
-
-            it('initialises PayPal Connect card component', async () => {
-                await strategy.initialize(initializationOptions);
-
-                expect(paypalConnect.ConnectCardComponent).toHaveBeenCalledWith({
-                    fields: {
-                        phoneNumber: {
-                            prefill: address.phone,
-                        },
+            expect(paypalFastlane.FastlaneCardComponent).toHaveBeenCalledWith({
+                fields: {
+                    cardholderName: {
+                        enabled: true,
+                        prefill: 'Test Tester',
                     },
-                });
-            });
-
-            it('provides callback function to be able to use them on ui', async () => {
-                await strategy.initialize(initializationOptions);
-
-                expect(initializationOptions.paypalcommercefastlane.onInit).toHaveBeenCalled();
-                expect(initializationOptions.paypalcommercefastlane.onChange).toHaveBeenCalled();
+                    phoneNumber: {
+                        prefill: address.phone,
+                    },
+                },
             });
         });
 
-        describe('initialize with paypal fastlane', () => {
-            it('loads paypal fastlane sdk', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = true;
+        it('provides callback function to be able to use them on ui', async () => {
+            await strategy.initialize(initializationOptions);
 
-                await strategy.initialize(initializationOptions);
-
-                expect(paypalCommerceSdk.getPayPalFastlaneSdk).toHaveBeenCalledWith(
-                    paymentMethod,
-                    cart.currency.code,
-                    cart.id,
-                );
-            });
-
-            it('initializes paypal fastlane in production mode', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = true;
-
-                await strategy.initialize(initializationOptions);
-
-                expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
-                    paypalFastlaneSdk,
-                    false,
-                    undefined,
-                );
-            });
-
-            it('initializes paypal fastlane in test mode', async () => {
-                paymentMethod.initializationData.isDeveloperModeApplicable = true;
-                paymentMethod.initializationData.isFastlaneEnabled = true;
-
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getPaymentMethodOrThrow',
-                ).mockReturnValue(paymentMethod);
-
-                await strategy.initialize(initializationOptions);
-
-                expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
-                    paypalFastlaneSdk,
-                    true,
-                    undefined,
-                );
-            });
-
-            it('does not trigger lookup method if the customer already authenticated with PayPal Fastlane', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = true;
-
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getPaymentProviderCustomer',
-                ).mockReturnValue({
-                    authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
-                    addresses: [],
-                    instruments: [],
-                });
-
-                await strategy.initialize(initializationOptions);
-
-                expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
-            });
-
-            it('does not trigger lookup method for store members', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = true;
-
-                const storeMember = getCustomer();
-
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getCustomerOrThrow',
-                ).mockReturnValue(storeMember);
-
-                await strategy.initialize(initializationOptions);
-
-                expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
-            });
-
-            it('does not trigger lookup method if authentication flow did not trigger in the same session before page refresh', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = true;
-
-                jest.spyOn(paypalCommerceFastlaneUtils, 'getStorageSessionId').mockReturnValue(
-                    'another_session_id_123',
-                );
-
-                await strategy.initialize(initializationOptions);
-
-                expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
-            });
-
-            it('successfully authenticates customer with PayPal Fastlane', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = true;
-
-                await strategy.initialize(initializationOptions);
-
-                expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).toHaveBeenCalledWith(
-                    customer.email,
-                );
-                expect(
-                    paypalCommerceFastlaneUtils.triggerAuthenticationFlowOrThrow,
-                ).toHaveBeenCalledWith(customerContextId);
-                expect(
-                    paypalCommerceFastlaneUtils.mapPayPalFastlaneProfileToBcCustomerData,
-                ).toHaveBeenCalledWith(methodId, authenticationResultMock);
-                expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                    false,
-                    cart.id,
-                );
-            });
-
-            it('initialises PayPal Fastlane card component', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = true;
-
-                await strategy.initialize(initializationOptions);
-
-                expect(paypalFastlane.FastlaneCardComponent).toHaveBeenCalledWith({
-                    fields: {
-                        cardholderName: {
-                            enabled: true,
-                            prefill: 'Test Tester',
-                        },
-                        phoneNumber: {
-                            prefill: address.phone,
-                        },
-                    },
-                });
-            });
-
-            it('provides callback function to be able to use them on ui', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = true;
-
-                await strategy.initialize(initializationOptions);
-
-                expect(initializationOptions.paypalcommercefastlane.onInit).toHaveBeenCalled();
-                expect(initializationOptions.paypalcommercefastlane.onChange).toHaveBeenCalled();
-            });
+            expect(initializationOptions.paypalcommercefastlane.onInit).toHaveBeenCalled();
+            expect(initializationOptions.paypalcommercefastlane.onChange).toHaveBeenCalled();
         });
     });
 
@@ -503,132 +361,68 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             }
         });
 
-        describe('execute with PayPal Connect', () => {
-            it('successfully places order with credit card flow', async () => {
-                await strategy.initialize(initializationOptions);
-                await strategy.execute(executeOptions);
+        it('successfully places order with credit card flow', async () => {
+            await strategy.initialize(initializationOptions);
+            await strategy.execute(executeOptions);
 
-                expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(methodId, {
-                    cartId: cart.id,
-                });
-
-                expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith({}, undefined);
-                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                    methodId,
-                    paymentData: {
-                        shouldSaveInstrument: false,
-                        shouldSetAsDefaultInstrument: false,
-                        formattedPayload: {
-                            paypal_connect_token: {
-                                order_id: paypalOrderId,
-                                token: 'paypal_connect_tokenize_nonce',
-                            },
-                        },
-                    },
-                });
-                expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                    true,
-                );
+            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(methodId, {
+                cartId: cart.id,
             });
 
-            it('successfully places order with vaulted instruments flow', async () => {
-                await strategy.initialize(initializationOptions);
-                await strategy.execute(executeOptionsWithVaulting);
+            const paypalFastlaneComponent = await paypalFastlane.FastlaneCardComponent({});
 
-                expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(methodId, {
-                    cartId: cart.id,
-                });
-
-                expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith({}, undefined);
-                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                    methodId,
-                    paymentData: {
-                        formattedPayload: {
-                            paypal_connect_token: {
-                                order_id: paypalOrderId,
-                                token: mockedInstrumentId,
-                            },
+            expect(paypalFastlaneComponent.getPaymentToken).toHaveBeenCalledWith({
+                billingAddress: {
+                    addressLine1: address.address1,
+                    addressLine2: address.address2,
+                    adminArea1: address.stateOrProvinceCode,
+                    adminArea2: address.city,
+                    company: address.company,
+                    countryCode: address.countryCode,
+                    postalCode: address.postalCode,
+                },
+                name: {
+                    fullName: `${address.firstName} ${address.lastName}`,
+                },
+            });
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith({}, undefined);
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    shouldSaveInstrument: false,
+                    shouldSetAsDefaultInstrument: false,
+                    formattedPayload: {
+                        paypal_fastlane_token: {
+                            order_id: paypalOrderId,
+                            token: 'paypal_fastlane_instrument_id_nonce',
                         },
                     },
-                });
-                expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                    true,
-                );
+                },
             });
+            expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(true);
         });
 
-        describe('execute with PayPal Fastlane', () => {
-            it('successfully places order with credit card flow', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = true;
+        it('successfully places order with vaulted instruments flow', async () => {
+            await strategy.initialize(initializationOptions);
+            await strategy.execute(executeOptionsWithVaulting);
 
-                await strategy.initialize(initializationOptions);
-                await strategy.execute(executeOptions);
-
-                expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(methodId, {
-                    cartId: cart.id,
-                });
-
-                const paypalFastlaneComponent = await paypalFastlane.FastlaneCardComponent({});
-
-                expect(paypalFastlaneComponent.getPaymentToken).toHaveBeenCalledWith({
-                    billingAddress: {
-                        addressLine1: address.address1,
-                        addressLine2: address.address2,
-                        adminArea1: address.stateOrProvinceCode,
-                        adminArea2: address.city,
-                        company: address.company,
-                        countryCode: address.countryCode,
-                        postalCode: address.postalCode,
-                    },
-                    name: {
-                        fullName: `${address.firstName} ${address.lastName}`,
-                    },
-                });
-                expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith({}, undefined);
-                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                    methodId,
-                    paymentData: {
-                        shouldSaveInstrument: false,
-                        shouldSetAsDefaultInstrument: false,
-                        formattedPayload: {
-                            paypal_fastlane_token: {
-                                order_id: paypalOrderId,
-                                token: 'paypal_fastlane_instrument_id_nonce',
-                            },
-                        },
-                    },
-                });
-                expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                    true,
-                );
+            expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(methodId, {
+                cartId: cart.id,
             });
 
-            it('successfully places order with vaulted instruments flow', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = true;
-
-                await strategy.initialize(initializationOptions);
-                await strategy.execute(executeOptionsWithVaulting);
-
-                expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(methodId, {
-                    cartId: cart.id,
-                });
-
-                expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith({}, undefined);
-                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                    methodId,
-                    paymentData: {
-                        formattedPayload: {
-                            paypal_fastlane_token: {
-                                order_id: paypalOrderId,
-                                token: mockedInstrumentId,
-                            },
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith({}, undefined);
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    formattedPayload: {
+                        paypal_fastlane_token: {
+                            order_id: paypalOrderId,
+                            token: mockedInstrumentId,
                         },
                     },
-                });
-                expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(
-                    true,
-                );
+                },
             });
+            expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(true);
         });
     });
 
@@ -657,32 +451,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             }
         });
 
-        it('renders paypal connect credit card component', async () => {
-            const containerId = 'containerIdMock';
-            let onInitCallback: (container?: string) => void = noop;
-
-            const onInitImplementation = (
-                renderComponentCallback: (container?: string) => void,
-            ) => {
-                onInitCallback = renderComponentCallback;
-            };
-
-            await strategy.initialize({
-                methodId,
-                paypalcommercefastlane: {
-                    onInit: jest.fn(onInitImplementation),
-                    onChange: jest.fn(),
-                },
-            });
-
-            onInitCallback(containerId);
-
-            expect(paypalConnect.ConnectCardComponent({}).render).toHaveBeenCalledWith(containerId);
-        });
-
         it('renders paypal fastlane credit card component', async () => {
-            paymentMethod.initializationData.isFastlaneEnabled = true;
-
             const containerId = 'containerIdMock';
             let onInitCallback: (container?: string) => void = noop;
 
@@ -709,226 +478,109 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
     });
 
     describe('#onChange option callback', () => {
-        describe('test onChange callback with PayPal Connect', () => {
-            it('returns selected card instrument', async () => {
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getPaymentProviderCustomer',
-                ).mockReturnValue({
-                    authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
-                    addresses: [bcAddressMock],
-                    instruments: [bcCardMock],
-                });
+        it('returns selected card instrument', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentProviderCustomer',
+            ).mockReturnValue({
+                authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
+                addresses: [bcAddressMock],
+                instruments: [bcCardMock],
+            });
 
-                jest.spyOn(paypalConnect.profile, 'showCardSelector').mockImplementation(() => ({
-                    selectionChanged: true,
-                    selectedCard: {
-                        id: 'nonce/token',
-                        paymentSource: {
-                            card: {
-                                brand: 'Visa',
-                                expiry: '2030-12',
-                                lastDigits: '1111',
-                                name: 'John Doe',
-                                billingAddress: {
-                                    firstName: 'John',
-                                    lastName: 'Doe',
-                                    company: 'BigCommerce',
-                                    streetAddress: 'addressLine1',
-                                    extendedAddress: 'addressLine2',
-                                    locality: 'addressCity',
-                                    region: 'addressState',
-                                    postalCode: '03004',
-                                    countryCodeAlpha2: 'US',
-                                },
+            jest.spyOn(paypalFastlane.profile, 'showCardSelector').mockImplementation(() => ({
+                selectionChanged: true,
+                selectedCard: {
+                    id: 'nonce/token',
+                    paymentSource: {
+                        card: {
+                            brand: 'Visa',
+                            expiry: '2030-12',
+                            lastDigits: '1111',
+                            name: 'John Doe',
+                            billingAddress: {
+                                firstName: 'John',
+                                lastName: 'Doe',
+                                company: 'BigCommerce',
+                                streetAddress: 'addressLine1',
+                                extendedAddress: 'addressLine2',
+                                locality: 'addressCity',
+                                region: 'addressState',
+                                postalCode: '03004',
+                                countryCodeAlpha2: 'US',
                             },
                         },
                     },
-                }));
+                },
+            }));
 
-                let onChangeCallback: () => Promise<CardInstrument | undefined> = () =>
-                    Promise.resolve(undefined);
-                const onChangeImplementation = (
-                    showPayPalCardSelector: () => Promise<CardInstrument | undefined>,
-                ) => {
-                    onChangeCallback = showPayPalCardSelector;
-                };
+            let onChangeCallback: () => Promise<CardInstrument | undefined> = () =>
+                Promise.resolve(undefined);
+            const onChangeImplementation = (
+                showPayPalCardSelector: () => Promise<CardInstrument | undefined>,
+            ) => {
+                onChangeCallback = showPayPalCardSelector;
+            };
 
-                await strategy.initialize({
-                    methodId,
-                    paypalcommercefastlane: {
-                        onInit: jest.fn(),
-                        onChange: jest.fn(onChangeImplementation),
-                    },
-                });
-
-                const result = await onChangeCallback();
-
-                const paypalToBcInstrument = {
-                    bigpayToken: 'nonce/token',
-                    brand: 'Visa',
-                    defaultInstrument: false,
-                    expiryMonth: '12',
-                    expiryYear: '2030',
-                    iin: '',
-                    last4: '1111',
-                    method: 'paypalcommerceacceleratedcheckout',
-                    provider: 'paypalcommerceacceleratedcheckout',
-                    trustedShippingAddress: false,
-                    type: 'card',
-                    untrustedShippingCardVerificationMode: 'pan',
-                };
-
-                expect(
-                    paymentIntegrationService.updatePaymentProviderCustomer,
-                ).toHaveBeenCalledWith({
-                    authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
-                    addresses: [bcAddressMock],
-                    instruments: [paypalToBcInstrument],
-                });
-
-                expect(result).toEqual(paypalToBcInstrument);
+            await strategy.initialize({
+                methodId,
+                paypalcommercefastlane: {
+                    onInit: jest.fn(),
+                    onChange: jest.fn(onChangeImplementation),
+                },
             });
 
-            it('returns undefined if the customer selects the same instrument or closes a popup window', async () => {
-                jest.spyOn(paypalConnect.profile, 'showCardSelector').mockImplementation(() => ({
-                    selectionChanged: false,
-                    selectedCard: {},
-                }));
+            const result = await onChangeCallback();
 
-                let onChangeCallback: () => Promise<CardInstrument | undefined> = () =>
-                    Promise.resolve(undefined);
-                const onChangeImplementation = (
-                    showPayPalCardSelector: () => Promise<CardInstrument | undefined>,
-                ) => {
-                    onChangeCallback = showPayPalCardSelector;
-                };
+            const paypalToBcInstrument = {
+                bigpayToken: 'nonce/token',
+                brand: 'Visa',
+                defaultInstrument: false,
+                expiryMonth: '12',
+                expiryYear: '2030',
+                iin: '',
+                last4: '1111',
+                method: 'paypalcommerceacceleratedcheckout',
+                provider: 'paypalcommerceacceleratedcheckout',
+                trustedShippingAddress: false,
+                type: 'card',
+                untrustedShippingCardVerificationMode: 'pan',
+            };
 
-                await strategy.initialize({
-                    methodId,
-                    paypalcommercefastlane: {
-                        onInit: jest.fn(),
-                        onChange: jest.fn(onChangeImplementation),
-                    },
-                });
-
-                const result = await onChangeCallback();
-
-                expect(result).toBeUndefined();
+            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
+                authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
+                addresses: [bcAddressMock],
+                instruments: [paypalToBcInstrument],
             });
+
+            expect(result).toEqual(paypalToBcInstrument);
         });
 
-        describe('test onChange callback with PayPal Fastlane', () => {
-            it('returns selected card instrument', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = true;
+        it('returns undefined if the customer selects the same instrument or closes a popup window', async () => {
+            jest.spyOn(paypalFastlane.profile, 'showCardSelector').mockImplementation(() => ({
+                selectionChanged: false,
+                selectedCard: {},
+            }));
 
-                jest.spyOn(
-                    paymentIntegrationService.getState(),
-                    'getPaymentProviderCustomer',
-                ).mockReturnValue({
-                    authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
-                    addresses: [bcAddressMock],
-                    instruments: [bcCardMock],
-                });
+            let onChangeCallback: () => Promise<CardInstrument | undefined> = () =>
+                Promise.resolve(undefined);
+            const onChangeImplementation = (
+                showPayPalCardSelector: () => Promise<CardInstrument | undefined>,
+            ) => {
+                onChangeCallback = showPayPalCardSelector;
+            };
 
-                jest.spyOn(paypalFastlane.profile, 'showCardSelector').mockImplementation(() => ({
-                    selectionChanged: true,
-                    selectedCard: {
-                        id: 'nonce/token',
-                        paymentSource: {
-                            card: {
-                                brand: 'Visa',
-                                expiry: '2030-12',
-                                lastDigits: '1111',
-                                name: 'John Doe',
-                                billingAddress: {
-                                    firstName: 'John',
-                                    lastName: 'Doe',
-                                    company: 'BigCommerce',
-                                    streetAddress: 'addressLine1',
-                                    extendedAddress: 'addressLine2',
-                                    locality: 'addressCity',
-                                    region: 'addressState',
-                                    postalCode: '03004',
-                                    countryCodeAlpha2: 'US',
-                                },
-                            },
-                        },
-                    },
-                }));
-
-                let onChangeCallback: () => Promise<CardInstrument | undefined> = () =>
-                    Promise.resolve(undefined);
-                const onChangeImplementation = (
-                    showPayPalCardSelector: () => Promise<CardInstrument | undefined>,
-                ) => {
-                    onChangeCallback = showPayPalCardSelector;
-                };
-
-                await strategy.initialize({
-                    methodId,
-                    paypalcommercefastlane: {
-                        onInit: jest.fn(),
-                        onChange: jest.fn(onChangeImplementation),
-                    },
-                });
-
-                const result = await onChangeCallback();
-
-                const paypalToBcInstrument = {
-                    bigpayToken: 'nonce/token',
-                    brand: 'Visa',
-                    defaultInstrument: false,
-                    expiryMonth: '12',
-                    expiryYear: '2030',
-                    iin: '',
-                    last4: '1111',
-                    method: 'paypalcommerceacceleratedcheckout',
-                    provider: 'paypalcommerceacceleratedcheckout',
-                    trustedShippingAddress: false,
-                    type: 'card',
-                    untrustedShippingCardVerificationMode: 'pan',
-                };
-
-                expect(
-                    paymentIntegrationService.updatePaymentProviderCustomer,
-                ).toHaveBeenCalledWith({
-                    authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
-                    addresses: [bcAddressMock],
-                    instruments: [paypalToBcInstrument],
-                });
-
-                expect(result).toEqual(paypalToBcInstrument);
+            await strategy.initialize({
+                methodId,
+                paypalcommercefastlane: {
+                    onInit: jest.fn(),
+                    onChange: jest.fn(onChangeImplementation),
+                },
             });
 
-            it('returns undefined if the customer selects the same instrument or closes a popup window', async () => {
-                paymentMethod.initializationData.isFastlaneEnabled = true;
+            const result = await onChangeCallback();
 
-                jest.spyOn(paypalFastlane.profile, 'showCardSelector').mockImplementation(() => ({
-                    selectionChanged: false,
-                    selectedCard: {},
-                }));
-
-                let onChangeCallback: () => Promise<CardInstrument | undefined> = () =>
-                    Promise.resolve(undefined);
-                const onChangeImplementation = (
-                    showPayPalCardSelector: () => Promise<CardInstrument | undefined>,
-                ) => {
-                    onChangeCallback = showPayPalCardSelector;
-                };
-
-                await strategy.initialize({
-                    methodId,
-                    paypalcommercefastlane: {
-                        onInit: jest.fn(),
-                        onChange: jest.fn(onChangeImplementation),
-                    },
-                });
-
-                const result = await onChangeCallback();
-
-                expect(result).toBeUndefined();
-            });
+            expect(result).toBeUndefined();
         });
     });
 });

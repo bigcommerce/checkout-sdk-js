@@ -727,29 +727,16 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
                 return;
             }
 
-            if (initializationData.isFastlaneEnabled) {
-                const payPalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
-                    paymentMethod,
-                    cart.currency.code,
-                    cart.id,
-                );
+            const payPalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
+                paymentMethod,
+                cart.currency.code,
+                cart.id,
+            );
 
-                await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
-                    payPalFastlaneSdk,
-                    !!initializationData?.isDeveloperModeApplicable,
-                );
-            } else {
-                const paypalAxoSdk = await this.paypalCommerceSdk.getPayPalAxo(
-                    paymentMethod,
-                    cart.currency.code,
-                    cart.id,
-                );
-
-                await this.paypalCommerceFastlaneUtils.initializePayPalConnect(
-                    paypalAxoSdk,
-                    !!initializationData?.isDeveloperModeApplicable,
-                );
-            }
+            await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
+                payPalFastlaneSdk,
+                !!initializationData?.isDeveloperModeApplicable,
+            );
         } catch (_: unknown) {
             // We should avoid throwing any error from this flow to do no brake default flow
             // This flow is optional
