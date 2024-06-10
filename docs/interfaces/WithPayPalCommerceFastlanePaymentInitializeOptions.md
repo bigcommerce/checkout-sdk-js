@@ -6,16 +6,9 @@
 
 ### Properties
 
-- [paypalcommerceacceleratedcheckout](WithPayPalCommerceFastlanePaymentInitializeOptions.md#paypalcommerceacceleratedcheckout)
 - [paypalcommercefastlane](WithPayPalCommerceFastlanePaymentInitializeOptions.md#paypalcommercefastlane)
 
 ## Properties
-
-### paypalcommerceacceleratedcheckout
-
-• `Optional` **paypalcommerceacceleratedcheckout**: [`PayPalCommerceFastlanePaymentInitializeOptions`](PayPalCommerceFastlanePaymentInitializeOptions.md)
-
-___
 
 ### paypalcommercefastlane
 

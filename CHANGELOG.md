@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.618.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.618.0...v1.618.1) (2024-06-10)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-4294 removed PayPal Connect implementation from PayPal Commerce strategies ([#2537](https://github.com/bigcommerce/checkout-sdk-js/issues/2537)) ([3ecb580](https://github.com/bigcommerce/checkout-sdk-js/commit/3ecb5800938f79e6e41afb0415d0012b34e6cf23))
+
 ## [1.618.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.617.2...v1.618.0) (2024-06-06)
 
 

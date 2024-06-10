@@ -8960,7 +8960,6 @@ declare interface WithPayPalCommerceFastlaneCustomerInitializeOptions {
 }
 
 declare interface WithPayPalCommerceFastlanePaymentInitializeOptions {
-    paypalcommerceacceleratedcheckout?: PayPalCommerceFastlanePaymentInitializeOptions;
     paypalcommercefastlane?: PayPalCommerceFastlanePaymentInitializeOptions;
 }
 
