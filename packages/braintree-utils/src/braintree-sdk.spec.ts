@@ -13,6 +13,7 @@ import {
     getDataCollectorMock,
     getModuleCreatorMock,
     getUsBankAccountMock,
+    getVisaCheckoutMock,
 } from './mocks';
 import {
     BraintreeClient,
@@ -20,6 +21,8 @@ import {
     BraintreeErrorCode,
     BraintreeModuleCreator,
     BraintreeUsBankAccount,
+    BraintreeVisaCheckout,
+    BraintreeVisaCheckoutCreator,
     BraintreeWindow,
 } from './types';
 
@@ -33,6 +36,8 @@ describe('BraintreeSdk', () => {
     let dataCollectorMock: BraintreeDataCollector;
     let usBankAccountCreatorMock: BraintreeModuleCreator<BraintreeUsBankAccount>;
     let usBankAccountMock: BraintreeUsBankAccount;
+    let braintreeVisaCheckoutMock: BraintreeVisaCheckout;
+    let braintreeVisaCheckoutCreatorMock: BraintreeVisaCheckoutCreator;
 
     const clientTokenMock = 'clientTokenMock';
     const storeConfig: StoreConfig = getConfig().storeConfig;
@@ -60,6 +65,11 @@ describe('BraintreeSdk', () => {
         jest.spyOn(braintreeScriptLoader, 'loadUsBankAccount').mockImplementation(
             () => usBankAccountCreatorMock,
         );
+        jest.spyOn(braintreeScriptLoader, 'loadVisaCheckout').mockImplementation(
+            () => braintreeVisaCheckoutCreatorMock,
+        );
+        braintreeVisaCheckoutMock = getVisaCheckoutMock();
+        braintreeVisaCheckoutCreatorMock = getModuleCreatorMock(braintreeVisaCheckoutMock);
     });
 
     afterEach(() => {
@@ -198,6 +208,38 @@ describe('BraintreeSdk', () => {
 
             expect(braintreeScriptLoader.loadUsBankAccount).toHaveBeenCalledTimes(1);
             expect(usBankAccountCreatorMock.create).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('#getBraintreeVisaCheckout()', () => {
+        it('throws an error if client token was not provided', async () => {
+            try {
+                await braintreeSdk.getBraintreeVisaCheckout();
+            } catch (error: unknown) {
+                expect(error).toBeInstanceOf(NotInitializedError);
+            }
+        });
+
+        it('get braintree visa checkout', async () => {
+            braintreeSdk.initialize(clientTokenMock, storeConfig);
+
+            await braintreeSdk.getBraintreeVisaCheckout();
+
+            expect(braintreeScriptLoader.loadVisaCheckout).toHaveBeenCalled();
+            expect(braintreeScriptLoader.loadClient).toHaveBeenCalled();
+            expect(braintreeVisaCheckoutCreatorMock.create).toHaveBeenCalledWith({
+                client: clientMock,
+            });
+        });
+
+        it('returns the same visa checkout module while calling method for second time', async () => {
+            braintreeSdk.initialize(clientTokenMock, storeConfig);
+
+            await braintreeSdk.getBraintreeVisaCheckout();
+            await braintreeSdk.getBraintreeVisaCheckout();
+
+            expect(braintreeScriptLoader.loadVisaCheckout).toHaveBeenCalledTimes(1);
+            expect(braintreeVisaCheckoutCreatorMock.create).toHaveBeenCalledTimes(1);
         });
     });
 

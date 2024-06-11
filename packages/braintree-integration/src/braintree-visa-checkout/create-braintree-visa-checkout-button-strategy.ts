@@ -3,8 +3,8 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
     BraintreeHostWindow,
-    BraintreeIntegrationService,
     BraintreeScriptLoader,
+    BraintreeSdk,
     VisaCheckoutHostWindow,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -19,16 +19,13 @@ const createBraintreeVisaCheckoutButtonStrategy: CheckoutButtonStrategyFactory<
     BraintreeVisaCheckoutButtonStrategy
 > = (paymentIntegrationService) => {
     const hostWindow: VisaCheckoutHostWindow & BraintreeHostWindow = window;
-    const braintreeIntegrationService = new BraintreeIntegrationService(
-        new BraintreeScriptLoader(getScriptLoader(), hostWindow),
-        hostWindow,
-    );
+    const braintreeSdk = new BraintreeSdk(new BraintreeScriptLoader(getScriptLoader(), hostWindow));
     const visaCheckoutScriptLoader = new VisaCheckoutScriptLoader(getScriptLoader(), hostWindow);
 
     return new BraintreeVisaCheckoutButtonStrategy(
         paymentIntegrationService,
         createFormPoster(),
-        braintreeIntegrationService,
+        braintreeSdk,
         visaCheckoutScriptLoader,
     );
 };

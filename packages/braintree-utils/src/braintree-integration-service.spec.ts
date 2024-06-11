@@ -19,7 +19,6 @@ import {
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
     getThreeDSecureMock,
-    getVisaCheckoutMock,
 } from './mocks';
 import { PaypalSDK } from './paypal';
 import {
@@ -31,8 +30,6 @@ import {
     BraintreeModuleCreator,
     BraintreePaypalCheckout,
     BraintreeThreeDSecure,
-    BraintreeVisaCheckout,
-    BraintreeVisaCheckoutCreator,
 } from './types';
 
 describe('BraintreeIntegrationService', () => {
@@ -51,8 +48,6 @@ describe('BraintreeIntegrationService', () => {
     let dataCollectorCreatorMock: BraintreeModuleCreator<BraintreeDataCollector>;
     let paypalCheckoutMock: BraintreePaypalCheckout;
     let paypalCheckoutCreatorMock: BraintreeModuleCreator<BraintreePaypalCheckout>;
-    let braintreeVisaCheckoutMock: BraintreeVisaCheckout;
-    let braintreeVisaCheckoutCreatorMock: BraintreeVisaCheckoutCreator;
     let loader: ScriptLoader;
 
     const clientToken = 'clientToken';
@@ -83,8 +78,6 @@ describe('BraintreeIntegrationService', () => {
         paypalCheckoutCreatorMock = getPayPalCheckoutCreatorMock(paypalCheckoutMock, false);
         threeDSecureMock = getThreeDSecureMock();
         threeDSecureCreatorMock = getModuleCreatorMock(threeDSecureMock);
-        braintreeVisaCheckoutMock = getVisaCheckoutMock();
-        braintreeVisaCheckoutCreatorMock = getModuleCreatorMock(braintreeVisaCheckoutMock);
         loader = createScriptLoader();
 
         braintreeHostWindowMock = window as BraintreeHostWindow;
@@ -110,9 +103,6 @@ describe('BraintreeIntegrationService', () => {
         );
         jest.spyOn(braintreeScriptLoader, 'loadBraintreeLocalMethods').mockImplementation(() =>
             getModuleCreatorMock(),
-        );
-        jest.spyOn(braintreeScriptLoader, 'loadVisaCheckout').mockImplementation(
-            () => braintreeVisaCheckoutCreatorMock,
         );
 
         jest.spyOn(braintreeScriptLoader, 'load3DS').mockImplementation(
@@ -369,30 +359,6 @@ describe('BraintreeIntegrationService', () => {
 
             expect(onSuccess).not.toHaveBeenCalled();
             expect(onError).toHaveBeenCalled();
-        });
-    });
-
-    describe('#getBraintreeVisaCheckout()', () => {
-        it('get braintree visa checkout', async () => {
-            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
-
-            await braintreeIntegrationService.getBraintreeVisaCheckout();
-
-            expect(braintreeScriptLoader.loadVisaCheckout).toHaveBeenCalled();
-            expect(braintreeScriptLoader.loadClient).toHaveBeenCalled();
-            expect(braintreeVisaCheckoutCreatorMock.create).toHaveBeenCalledWith({
-                client: clientMock,
-            });
-        });
-
-        it('get braintree visa checkout if it exists in window', async () => {
-            (window as BraintreeHostWindow).paypal = {} as PaypalSDK;
-
-            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
-
-            await braintreeIntegrationService.getBraintreeVisaCheckout();
-
-            expect(paypalCheckoutMock.loadPayPalSDK).not.toHaveBeenCalled();
         });
     });
 

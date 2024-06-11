@@ -4,8 +4,8 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import {
     BraintreeDataCollector,
     BraintreeHostWindow,
-    BraintreeIntegrationService,
     BraintreeScriptLoader,
+    BraintreeSdk,
     BraintreeVisaCheckout,
     getBraintree,
     getDataCollectorMock,
@@ -30,7 +30,7 @@ import VisaCheckoutScriptLoader from './visa-checkout-script-loader';
 describe('BraintreeVisaCheckoutButtonStrategy', () => {
     let strategy: BraintreeVisaCheckoutButtonStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
-    let braintreeIntegrationService: BraintreeIntegrationService;
+    let braintreeSdk: BraintreeSdk;
     let braintreeScriptLoader: BraintreeScriptLoader;
     let formPoster: FormPoster;
     let visaCheckoutScriptLoader: VisaCheckoutScriptLoader;
@@ -70,17 +70,14 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
         formPoster = createFormPoster();
 
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), mockWindow);
-        braintreeIntegrationService = new BraintreeIntegrationService(
-            braintreeScriptLoader,
-            mockWindow,
-        );
+        braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
 
         visaCheckoutScriptLoader = new VisaCheckoutScriptLoader(getScriptLoader(), mockWindow);
 
         strategy = new BraintreeVisaCheckoutButtonStrategy(
             paymentIntegrationService,
             formPoster,
-            braintreeIntegrationService,
+            braintreeSdk,
             visaCheckoutScriptLoader,
         );
 
@@ -88,11 +85,9 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
             paymentMethodMock,
         );
 
-        jest.spyOn(braintreeIntegrationService, 'initialize');
-        jest.spyOn(braintreeIntegrationService, 'getBraintreeVisaCheckout').mockReturnValue(
-            braintreeVisaCheckout,
-        );
-        jest.spyOn(braintreeIntegrationService, 'getDataCollector').mockReturnValue(dataCollector);
+        jest.spyOn(braintreeSdk, 'initialize');
+        jest.spyOn(braintreeSdk, 'getBraintreeVisaCheckout').mockReturnValue(braintreeVisaCheckout);
+        jest.spyOn(braintreeSdk, 'getDataCollectorOrThrow').mockReturnValue(dataCollector);
 
         jest.spyOn(visaCheckoutScriptLoader, 'load').mockImplementation(() => {
             mockWindow.V = visaCheckoutSDKMock;
@@ -150,7 +145,7 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
         it('initializes braintree integration service', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
+            expect(braintreeSdk.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
                 paymentIntegrationService.getState().getStoreConfig(),
             );
@@ -159,7 +154,7 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
         it('initializes braintree visa checkout', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(braintreeIntegrationService.getBraintreeVisaCheckout).toHaveBeenCalled();
+            expect(braintreeSdk.getBraintreeVisaCheckout).toHaveBeenCalled();
         });
 
         it('call the createInitOptions and init functions with the proper options', async () => {
@@ -189,7 +184,7 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
             await strategy.initialize(initializationOptions);
 
             expect(braintreeVisaCheckout.tokenize).toHaveBeenCalled();
-            expect(braintreeIntegrationService.getDataCollector).toHaveBeenCalled();
+            expect(braintreeSdk.getDataCollectorOrThrow).toHaveBeenCalled();
         });
 
         it('posts payment details to server to set checkout data when Visa Checkout payment details are tokenized', async () => {

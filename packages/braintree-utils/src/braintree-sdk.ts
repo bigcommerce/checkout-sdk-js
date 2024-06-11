@@ -12,6 +12,7 @@ import {
     BraintreeErrorCode,
     BraintreeModule,
     BraintreeUsBankAccount,
+    BraintreeVisaCheckout,
 } from './types';
 import isBraintreeError from './utils/is-braintree-error';
 
@@ -20,6 +21,7 @@ export default class BraintreeSdk {
     private clientToken?: string;
     private dataCollector?: BraintreeDataCollector;
     private usBankAccount?: BraintreeUsBankAccount;
+    private visaCheckout?: Promise<BraintreeVisaCheckout>;
 
     constructor(private braintreeScriptLoader: BraintreeScriptLoader) {}
 
@@ -104,6 +106,23 @@ export default class BraintreeSdk {
         }
 
         return this.usBankAccount;
+    }
+
+    /**
+     *
+     * Braintree Visa Checkout
+     * braintree doc: https://braintree.github.io/braintree-web/current/module-braintree-web_visa-checkout.html
+     *
+     */
+    getBraintreeVisaCheckout() {
+        if (!this.visaCheckout) {
+            this.visaCheckout = Promise.all([
+                this.getClient(),
+                this.braintreeScriptLoader.loadVisaCheckout(),
+            ]).then(([client, paypal]) => paypal.create({ client }));
+        }
+
+        return this.visaCheckout;
     }
 
     /**

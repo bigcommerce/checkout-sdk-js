@@ -1,7 +1,7 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { VisaCheckoutHostWindow, VisaCheckoutSDK } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default class VisaCheckoutScriptLoader {
     constructor(

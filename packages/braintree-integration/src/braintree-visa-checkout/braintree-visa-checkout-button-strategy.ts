@@ -2,7 +2,7 @@ import { FormPoster } from '@bigcommerce/form-poster';
 
 import {
     BraintreeDataCollector,
-    BraintreeIntegrationService,
+    BraintreeSdk,
     BraintreeVisaCheckout,
     VisaCheckoutAddress,
     VisaCheckoutPaymentSuccessPayload,
@@ -25,7 +25,7 @@ export default class BraintreeVisaCheckoutButtonStrategy implements CheckoutButt
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private formPoster: FormPoster,
-        private braintreeIntegrationService: BraintreeIntegrationService,
+        private braintreeSdk: BraintreeSdk,
         private visaCheckoutScriptLoader: VisaCheckoutScriptLoader,
     ) {}
 
@@ -56,10 +56,9 @@ export default class BraintreeVisaCheckoutButtonStrategy implements CheckoutButt
 
         const storeConfig = state.getStoreConfigOrThrow();
 
-        this.braintreeIntegrationService.initialize(clientToken, storeConfig);
+        this.braintreeSdk.initialize(clientToken, storeConfig);
 
-        const braintreeVisaCheckout =
-            await this.braintreeIntegrationService.getBraintreeVisaCheckout();
+        const braintreeVisaCheckout = await this.braintreeSdk.getBraintreeVisaCheckout();
 
         const {
             currency: { code },
@@ -99,7 +98,7 @@ export default class BraintreeVisaCheckoutButtonStrategy implements CheckoutButt
     ) {
         return Promise.all([
             braintreeVisaCheckout.tokenize(payment),
-            this.braintreeIntegrationService.getDataCollector(),
+            this.braintreeSdk.getDataCollectorOrThrow(),
         ]).then(([payload, deviceData]) => {
             const state = this.paymentIntegrationService.getState();
 
