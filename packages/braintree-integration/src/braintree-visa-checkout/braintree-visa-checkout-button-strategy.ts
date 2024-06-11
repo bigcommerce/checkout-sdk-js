@@ -202,6 +202,10 @@ export default class BraintreeVisaCheckoutButtonStrategy implements CheckoutButt
 
         const visaCheckoutButton = document.createElement('div');
 
+        visaCheckoutButton.style.display = 'flex';
+        visaCheckoutButton.style.flexDirection = 'column';
+        visaCheckoutButton.style.alignItems = 'flex-end';
+
         visaCheckoutButton.innerHTML = buttonTemplate;
 
         container.appendChild(visaCheckoutButton);
