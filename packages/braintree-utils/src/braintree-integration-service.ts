@@ -30,6 +30,7 @@ import {
     BraintreeThreeDSecure,
     BraintreeTokenizationDetails,
     BraintreeTokenizePayload,
+    BraintreeVisaCheckout,
     GetLocalPaymentInstance,
     GooglePayBraintreeSDK,
     LocalPaymentInstance,
@@ -58,6 +59,7 @@ export default class BraintreeIntegrationService {
     private googlePay?: Promise<GooglePayBraintreeSDK>;
     private threeDS?: Promise<BraintreeThreeDSecure>;
     private braintreePaypal?: Promise<BraintreePaypal>;
+    private visaCheckout?: Promise<BraintreeVisaCheckout>;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
@@ -304,6 +306,17 @@ export default class BraintreeIntegrationService {
         }
 
         return this.googlePay;
+    }
+
+    getBraintreeVisaCheckout() {
+        if (!this.visaCheckout) {
+            this.visaCheckout = Promise.all([
+                this.getClient(),
+                this.braintreeScriptLoader.loadVisaCheckout(),
+            ]).then(([client, paypal]) => paypal.create({ client }));
+        }
+
+        return this.visaCheckout;
     }
 
     getBraintreeEnv(isTestMode = false): BraintreeEnv {

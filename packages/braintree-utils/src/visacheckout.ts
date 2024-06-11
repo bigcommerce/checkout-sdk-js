@@ -45,7 +45,7 @@ export interface VisaCheckoutTokenizedPayload {
 
 export interface VisaCheckoutEventMap {
     'payment.success'(payment: VisaCheckoutPaymentSuccessPayload): void;
-    'payment.error'(payment: VisaCheckoutPaymentSuccessPayload, Error: Error): void;
+    'payment.error'(payment: VisaCheckoutPaymentSuccessPayload, Error: Error): Promise<void> | void;
 }
 
 export interface VisaCheckoutSDK {

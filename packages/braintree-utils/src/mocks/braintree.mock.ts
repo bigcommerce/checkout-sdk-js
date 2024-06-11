@@ -20,7 +20,10 @@ import {
     GooglePayBraintreeSDK,
     LocalPaymentInstance,
     TotalPriceStatusType,
+    VisaCheckoutInitOptions,
 } from '../types';
+
+import { getVisaCheckoutTokenizedPayload } from './visacheckout.mock';
 
 export function getBraintree(): PaymentMethod {
     return {
@@ -183,8 +186,8 @@ export function getConnectMock(): BraintreeConnect {
 
 export function getVisaCheckoutMock(): BraintreeVisaCheckout {
     return {
-        createInitOptions: jest.fn(),
-        tokenize: jest.fn(),
+        createInitOptions: jest.fn((options: VisaCheckoutInitOptions) => options),
+        tokenize: jest.fn(() => Promise.resolve(getVisaCheckoutTokenizedPayload())),
         teardown: jest.fn(() => Promise.resolve()),
     };
 }
