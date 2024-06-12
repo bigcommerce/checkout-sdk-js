@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.618.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.618.1...v1.618.2) (2024-06-12)
+
+
+### Bug Fixes
+
+* **payment:** PI-831 fixed mollie ApplePay redirect ([#2543](https://github.com/bigcommerce/checkout-sdk-js/issues/2543)) ([b1e43b3](https://github.com/bigcommerce/checkout-sdk-js/commit/b1e43b3523f1d87c53ce730bf862bf049f489e79))
+
 ### [1.618.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.618.0...v1.618.1) (2024-06-10)
 
 
