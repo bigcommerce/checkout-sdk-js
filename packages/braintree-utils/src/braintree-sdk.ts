@@ -15,6 +15,7 @@ import {
     BraintreeVisaCheckout,
 } from './types';
 import isBraintreeError from './utils/is-braintree-error';
+import { VisaCheckoutSDK } from './visacheckout';
 
 export default class BraintreeSdk {
     private client?: BraintreeClient;
@@ -22,6 +23,7 @@ export default class BraintreeSdk {
     private dataCollector?: BraintreeDataCollector;
     private usBankAccount?: BraintreeUsBankAccount;
     private visaCheckout?: Promise<BraintreeVisaCheckout>;
+    private visaCheckoutSDK?: VisaCheckoutSDK;
 
     constructor(private braintreeScriptLoader: BraintreeScriptLoader) {}
 
@@ -123,6 +125,20 @@ export default class BraintreeSdk {
         }
 
         return this.visaCheckout;
+    }
+
+    /**
+     *
+     * Visa Checkout SDK
+     * visa checkout doc: https://developer.visa.com/capabilities/visa_checkout/docs-how-to
+     *
+     */
+    async getVisaCheckoutSdk(testMode?: boolean) {
+        if (!this.visaCheckoutSDK) {
+            this.visaCheckoutSDK = await this.braintreeScriptLoader.loadVisaCheckoutSdk(testMode);
+        }
+
+        return this.visaCheckoutSDK;
     }
 
     /**

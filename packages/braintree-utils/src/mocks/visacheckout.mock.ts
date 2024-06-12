@@ -3,9 +3,17 @@ import { SDK_VERSION_HEADERS } from '@bigcommerce/checkout-sdk/payment-integrati
 import {
     VisaCheckoutAddress,
     VisaCheckoutPaymentSuccessPayload,
+    VisaCheckoutSDK,
     VisaCheckoutTokenizedPayload,
     VisaCheckoutUserData,
 } from '../visacheckout';
+
+export function getVisaCheckoutSDKMock(): VisaCheckoutSDK {
+    return {
+        init: jest.fn(),
+        on: jest.fn(),
+    };
+}
 
 export function getVisaCheckoutTokenizedPayload(): VisaCheckoutTokenizedPayload {
     return {

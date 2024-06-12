@@ -19,14 +19,11 @@ import {
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import VisaCheckoutScriptLoader from './visa-checkout-script-loader';
-
 export default class BraintreeVisaCheckoutButtonStrategy implements CheckoutButtonStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private formPoster: FormPoster,
         private braintreeSdk: BraintreeSdk,
-        private visaCheckoutScriptLoader: VisaCheckoutScriptLoader,
     ) {}
 
     async initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
@@ -65,7 +62,7 @@ export default class BraintreeVisaCheckoutButtonStrategy implements CheckoutButt
             cartAmount,
         } = state.getCartOrThrow();
 
-        const visaCheckoutInstance = await this.visaCheckoutScriptLoader.load(config.testMode);
+        const visaCheckoutInstance = await this.braintreeSdk.getVisaCheckoutSdk(config.testMode);
 
         const initOptions = braintreeVisaCheckout.createInitOptions({
             paymentRequest: {
@@ -81,7 +78,7 @@ export default class BraintreeVisaCheckoutButtonStrategy implements CheckoutButt
 
         this.createSignInButton(containerId);
 
-        visaCheckoutInstance.init(initOptions);
+        await visaCheckoutInstance.init(initOptions);
 
         visaCheckoutInstance.on('payment.success', async (payment) => {
             await this.paymentSuccess(braintreeVisaCheckout, payment);

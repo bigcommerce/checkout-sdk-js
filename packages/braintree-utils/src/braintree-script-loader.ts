@@ -29,6 +29,7 @@ import {
     BraintreeVisaCheckoutCreator,
     GooglePayCreator,
 } from './types';
+import { VisaCheckoutSDK } from './visacheckout';
 
 export default class BraintreeScriptLoader {
     private braintreeSdkVersion: keyof BraintreeIntegrityValues = BRAINTREE_SDK_STABLE_VERSION;
@@ -144,6 +145,37 @@ export default class BraintreeScriptLoader {
             BraintreeModuleName.HostedFields,
             'hosted-fields.min.js',
         );
+    }
+
+    async loadVisaCheckoutSdk(testMode?: boolean): Promise<VisaCheckoutSDK> {
+        if (this.braintreeHostWindow.V) {
+            return this.braintreeHostWindow.V;
+        }
+
+        const hash = testMode
+            ? 'sha384-0eu1s1GtqzXlL9DtLgmwzC5WWlEH/ADRM0n38cVQkvtT+W/gey96rcb1LwuUOPDm'
+            : 'sha384-1f1csvP3ZFxg4dILH1GaY4LHlZ0oX7Rk83rxmLlwbnIi4TM0NYzXoev1VoEiVDS6';
+
+        return this.scriptLoader
+            .loadScript(
+                `//${
+                    testMode ? 'sandbox-' : ''
+                }assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js`,
+                {
+                    async: true,
+                    attributes: {
+                        integrity: hash,
+                        crossorigin: 'anonymous',
+                    },
+                },
+            )
+            .then(() => {
+                if (!this.braintreeHostWindow.V) {
+                    throw new PaymentMethodClientUnavailableError();
+                }
+
+                return this.braintreeHostWindow.V;
+            });
     }
 
     private async loadBraintreeModuleOrThrow<T extends BraintreeModuleCreators>(

@@ -49,7 +49,7 @@ export interface VisaCheckoutEventMap {
 }
 
 export interface VisaCheckoutSDK {
-    init(options: VisaCheckoutInitOptions): void;
+    init(options: VisaCheckoutInitOptions): Promise<void> | void;
     on<VisaCheckoutEventType extends keyof VisaCheckoutEventMap>(
         eventType: VisaCheckoutEventType,
         callback: VisaCheckoutEventMap[VisaCheckoutEventType],

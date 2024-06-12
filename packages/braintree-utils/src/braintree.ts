@@ -24,6 +24,7 @@ import {
     BraintreeTokenizationDetails,
     BraintreeUsBankAccountCreator,
     BraintreeWindow,
+    VisaCheckoutSDK,
 } from './types';
 import {
     VisaCheckoutInitOptions,
@@ -1137,4 +1138,5 @@ export interface BraintreeHostWindow extends BraintreeWindow {
     paypal?: PaypalSDK;
     braintreeConnect?: BraintreeConnect;
     braintreeFastlane?: BraintreeFastlane;
+    V?: VisaCheckoutSDK;
 }

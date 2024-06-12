@@ -11,6 +11,7 @@ import {
     getDataCollectorMock,
     getDeviceDataMock,
     getVisaCheckoutMock,
+    getVisaCheckoutSDKMock,
     VisaCheckoutHostWindow,
     VisaCheckoutSDK,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -22,10 +23,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import { getVisaCheckoutSDKMock } from '../mocks/braintree-visa-checkout.mock';
-
 import BraintreeVisaCheckoutButtonStrategy from './braintree-visa-checkout-button-strategy';
-import VisaCheckoutScriptLoader from './visa-checkout-script-loader';
 
 describe('BraintreeVisaCheckoutButtonStrategy', () => {
     let strategy: BraintreeVisaCheckoutButtonStrategy;
@@ -33,7 +31,6 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
     let braintreeSdk: BraintreeSdk;
     let braintreeScriptLoader: BraintreeScriptLoader;
     let formPoster: FormPoster;
-    let visaCheckoutScriptLoader: VisaCheckoutScriptLoader;
     let paymentMethodMock: PaymentMethod;
     let braintreeVisaCheckout: BraintreeVisaCheckout;
     let mockWindow: VisaCheckoutHostWindow;
@@ -72,13 +69,10 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), mockWindow);
         braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
 
-        visaCheckoutScriptLoader = new VisaCheckoutScriptLoader(getScriptLoader(), mockWindow);
-
         strategy = new BraintreeVisaCheckoutButtonStrategy(
             paymentIntegrationService,
             formPoster,
             braintreeSdk,
-            visaCheckoutScriptLoader,
         );
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
@@ -89,7 +83,7 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
         jest.spyOn(braintreeSdk, 'getBraintreeVisaCheckout').mockReturnValue(braintreeVisaCheckout);
         jest.spyOn(braintreeSdk, 'getDataCollectorOrThrow').mockReturnValue(dataCollector);
 
-        jest.spyOn(visaCheckoutScriptLoader, 'load').mockImplementation(() => {
+        jest.spyOn(braintreeSdk, 'getVisaCheckoutSdk').mockImplementation(() => {
             mockWindow.V = visaCheckoutSDKMock;
 
             return mockWindow.V;
