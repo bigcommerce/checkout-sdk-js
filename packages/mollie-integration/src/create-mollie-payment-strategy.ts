@@ -17,4 +17,7 @@ const createMolliePaymentStrategy: PaymentStrategyFactory<MolliePaymentStrategy>
     );
 };
 
-export default toResolvableModule(createMolliePaymentStrategy, [{ gateway: 'mollie' }]);
+export default toResolvableModule(createMolliePaymentStrategy, [
+    { gateway: 'mollie' },
+    { gateway: 'mollie', id: 'applepay' },
+]);
