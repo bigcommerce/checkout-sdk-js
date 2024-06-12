@@ -10,6 +10,7 @@ import {
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getCart,
     getInstruments,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -301,6 +302,13 @@ describe('TDOnlineMartPaymentStrategy', () => {
         });
 
         describe('with Vaulted Instruments', () => {
+            beforeEach(() => {
+                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue({
+                    ...getCart(),
+                    lineItems: { digitalItems: [] },
+                });
+            });
+
             it('call submitPayment with instrument id', async () => {
                 payload = {
                     payment: {
@@ -363,6 +371,38 @@ describe('TDOnlineMartPaymentStrategy', () => {
                         paymentData: expect.objectContaining({
                             instrumentId: 'testInstrumentId-trusted-false',
                             nonce: 'testInstrumentId-trusted-false',
+                        }),
+                    }),
+                );
+            });
+
+            it('call submitPayment with verification nonce when there are both physical and digital items in the cart', async () => {
+                payload = {
+                    payment: {
+                        methodId: 'tdonlinemart',
+                        paymentData: {
+                            instrumentId: 'testInstrumentId',
+                        },
+                    },
+                };
+
+                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
+                    getCart(),
+                );
+
+                await tdOnlineMartPaymentStrategy.initialize(
+                    tdOnlineMartClientScriptInitializationOptions,
+                );
+
+                await tdOnlineMartPaymentStrategy.execute(payload);
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenNthCalledWith(
+                    1,
+                    expect.objectContaining({
+                        methodId: 'tdonlinemart',
+                        paymentData: expect.objectContaining({
+                            instrumentId: 'testInstrumentId',
+                            nonce: 'testInstrumentId',
                         }),
                     }),
                 );
