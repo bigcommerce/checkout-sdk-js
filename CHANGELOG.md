@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.618.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.618.2...v1.618.3) (2024-06-13)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-4308 removed braintree fastlane default styling ([#2544](https://github.com/bigcommerce/checkout-sdk-js/issues/2544)) ([8a67286](https://github.com/bigcommerce/checkout-sdk-js/commit/8a67286a6a74406662f944fd5352c4d8e6d4fef3))
+
 ### [1.618.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.618.1...v1.618.2) (2024-06-12)
 
 
