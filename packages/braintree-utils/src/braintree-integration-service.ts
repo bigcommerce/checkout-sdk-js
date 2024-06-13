@@ -35,7 +35,6 @@ import {
     LocalPaymentInstance,
     PAYPAL_COMPONENTS,
 } from './types';
-import getValidBraintreeFastlaneStyles from './utils/get-valid-braintree-fastlane-styles';
 import isBraintreeError from './utils/is-braintree-error';
 
 export interface PaypalConfig {
@@ -86,11 +85,17 @@ export default class BraintreeIntegrationService {
 
             const braintreeConnectCreator = await this.braintreeScriptLoader.loadConnect();
 
+            const defaultStyles = {
+                root: {
+                    backgroundColorPrimary: 'transparent',
+                },
+            };
+
             this.braintreeHostWindow.braintreeConnect = await braintreeConnectCreator.create({
                 authorization: clientToken,
                 client,
                 deviceData,
-                styles: getValidBraintreeFastlaneStyles(styles),
+                styles: styles || defaultStyles,
             });
         }
 
@@ -114,11 +119,17 @@ export default class BraintreeIntegrationService {
 
             const braintreeFastlaneCreator = await this.braintreeScriptLoader.loadFastlane();
 
+            const defaultStyles = {
+                root: {
+                    backgroundColorPrimary: 'transparent',
+                },
+            };
+
             this.braintreeHostWindow.braintreeFastlane = await braintreeFastlaneCreator.create({
                 authorization: clientToken,
                 client,
                 deviceData,
-                styles: getValidBraintreeFastlaneStyles(styles),
+                styles: styles || defaultStyles,
             });
         }
 
