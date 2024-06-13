@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.618.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.618.3...v1.618.4) (2024-06-13)
+
+
+### Bug Fixes
+
+* **payment:** PI-2161 [TDOnlineMart] fix issue with vaulted card payment when mixed products in the cart ([#2540](https://github.com/bigcommerce/checkout-sdk-js/issues/2540)) ([e4404ef](https://github.com/bigcommerce/checkout-sdk-js/commit/e4404efaebbc4bb970c7ae47840319d22ac5ec41))
+
 ### [1.618.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.618.2...v1.618.3) (2024-06-13)
 
 
