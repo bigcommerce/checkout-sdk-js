@@ -17,6 +17,7 @@ export default class HostedFormService {
     deinitialize() {
         if (this._hostedForm) {
             this._hostedForm.detach();
+            this._hostedForm = undefined;
         }
     }
 }
