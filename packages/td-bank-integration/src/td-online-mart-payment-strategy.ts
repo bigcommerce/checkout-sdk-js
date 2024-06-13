@@ -118,9 +118,11 @@ export default class TDOnlineMartPaymentStrategy implements PaymentStrategy {
             isVaultedInstrument(paymentData) &&
             paymentData.instrumentId
         ) {
-            const shouldAddVerificationToken = !this.isTrustedVaultingInstrument(
-                paymentData.instrumentId,
-            );
+            const cart = this.paymentIntegrationService.getState().getCartOrThrow();
+            const digitalItemsInCart = !!cart.lineItems.digitalItems.length;
+
+            const shouldAddVerificationToken =
+                !this.isTrustedVaultingInstrument(paymentData.instrumentId) || digitalItemsInCart;
 
             return {
                 methodId,
