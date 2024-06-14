@@ -257,10 +257,12 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         messagingContainerId: string,
     ): void {
         if (messagingContainerId && document.getElementById(messagingContainerId)) {
-            const cart = this.paymentIntegrationService.getState().getCartOrThrow();
+            const checkout = this.paymentIntegrationService.getState().getCheckoutOrThrow();
+
+            const grandTotal = checkout.outstandingBalance;
 
             const paypalMessagesOptions: MessagingOptions = {
-                amount: cart.cartAmount,
+                amount: grandTotal,
                 placement: 'cart',
                 style: {
                     layout: 'text',

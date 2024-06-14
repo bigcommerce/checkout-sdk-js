@@ -194,11 +194,11 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         const { paypal } = this._window;
 
         if (paypal && isMessageContainerAvailable) {
-            const state = this._store.getState();
-            const cart = state.cart.getCartOrThrow();
+            const { checkout } = this._store.getState();
+            const grandTotal = checkout.getCheckoutOrThrow().outstandingBalance;
 
             const paypalMessagesRender = paypal.Messages({
-                amount: cart.cartAmount,
+                amount: grandTotal,
                 placement: 'cart',
             });
 
