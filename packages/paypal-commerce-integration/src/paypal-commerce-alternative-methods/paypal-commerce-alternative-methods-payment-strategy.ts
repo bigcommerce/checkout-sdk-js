@@ -102,15 +102,21 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
+        const { methodId, gatewayId } = payment;
+
         if (!this.orderId) {
             throw new PaymentMethodInvalidError();
         }
 
-        if (!this.isNonInstantPaymentMethod(payment.methodId)) {
+        if (!this.isNonInstantPaymentMethod(methodId)) {
             await this.paymentIntegrationService.submitOrder(order, options);
         }
 
-        await this.paypalCommerceIntegrationService.submitPayment(payment.methodId, this.orderId);
+        await this.paypalCommerceIntegrationService.submitPayment(
+            methodId,
+            this.orderId,
+            gatewayId,
+        );
     }
 
     finalize(): Promise<void> {
@@ -150,7 +156,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             fundingSource: methodId,
             style: this.paypalCommerceIntegrationService.getValidButtonStyle(buttonStyle),
             onInit: (_, actions) => paypalOptions.onInitButton(actions),
-            createOrder: () => this.onCreateOrder(paypalOptions),
+            createOrder: () => this.onCreateOrder(methodId, gatewayId, paypalOptions),
             onApprove: (data) => this.handleApprove(data, submitForm),
             onCancel: () => this.toggleLoadingIndicator(false),
             onError: (error) => this.handleFailure(error, onError),
@@ -172,6 +178,8 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
     }
 
     private async onCreateOrder(
+        methodId: string,
+        gatewayId: string,
         paypalOptions: PayPalCommerceAlternativeMethodsPaymentOptions,
     ): Promise<string> {
         const { onValidate } = paypalOptions;
@@ -184,9 +192,24 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
 
         await onValidate(onValidationPassed, noop);
 
-        return this.paypalCommerceIntegrationService.createOrder(
+        const orderId = await this.paypalCommerceIntegrationService.createOrder(
             'paypalcommercealternativemethodscheckout',
         );
+
+        if (this.isNonInstantPaymentMethod(methodId)) {
+            const order = { useStoreCredit: false };
+            const options = {
+                params: {
+                    methodId,
+                    gatewayId,
+                },
+            };
+
+            await this.paymentIntegrationService.submitOrder(order, options);
+            await this.paypalCommerceIntegrationService.submitPayment(methodId, orderId, gatewayId);
+        }
+
+        return orderId;
     }
 
     private handleApprove(

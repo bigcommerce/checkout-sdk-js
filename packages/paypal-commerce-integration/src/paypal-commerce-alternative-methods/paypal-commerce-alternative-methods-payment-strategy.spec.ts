@@ -55,6 +55,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
         {
             container: defaultContainerId,
             apmFieldsContainer: defaultApmFieldsContainerId,
+            onInitButton: jest.fn(),
             onValidate: jest.fn(),
             submitForm: jest.fn(),
         };
@@ -96,7 +97,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
         jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
             paypalSdk,
         );
-        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockReturnValue(undefined);
+        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockReturnValue(paypalOrderId);
         jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockReturnValue(undefined);
         jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockReturnValue(
             PayPalOrderStatus.Approved,
@@ -311,6 +312,30 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(onValidateMock).toHaveBeenCalled();
+        });
+
+        it('patches the order for non instant payment methods', async () => {
+            const nonInstantMethodId = 'oxxo';
+
+            await strategy.initialize({
+                ...initializationOptions,
+                methodId: nonInstantMethodId,
+            });
+
+            eventEmitter.emit('createOrder');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
+                'paypalcommercealternativemethodscheckout',
+            );
+
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            expect(paypalCommerceIntegrationService.submitPayment).toHaveBeenCalledWith(
+                nonInstantMethodId,
+                paypalOrderId,
+                defaultGatewayId,
+            );
         });
     });
 
@@ -570,6 +595,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             expect(paypalCommerceIntegrationService.submitPayment).toHaveBeenCalledWith(
                 payload.payment.methodId,
                 paypalOrderId,
+                defaultGatewayId,
             );
         });
     });
