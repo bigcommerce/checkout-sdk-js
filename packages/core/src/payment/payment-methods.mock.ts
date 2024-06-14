@@ -325,23 +325,6 @@ export function getAffirm(): PaymentMethod {
     };
 }
 
-export function getClearpay(): PaymentMethod {
-    return {
-        id: 'PAY_BY_INSTALLMENT',
-        gateway: 'clearpay',
-        logoUrl: '',
-        method: 'multi-option',
-        supportedCards: [],
-        config: {
-            displayName: 'Pay over time',
-            merchantId: '33133',
-            testMode: false,
-        },
-        type: 'PAYMENT_TYPE_API',
-        clientToken: 'foo',
-    };
-}
-
 export function getHumm(): PaymentMethod {
     return {
         id: 'humm',
@@ -844,7 +827,6 @@ export function getPaymentMethods(): PaymentMethod[] {
         getBraintreePaypalCredit(),
         getBraintreeVisaCheckout(),
         getCheckoutcom(),
-        getClearpay(),
         getGooglePay(),
         getGooglePayAdyenV2(),
         getGooglePayCybersourceV2(),

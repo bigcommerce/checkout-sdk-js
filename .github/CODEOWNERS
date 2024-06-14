@@ -53,6 +53,7 @@
 /packages/bolt-integration @bigcommerce/team-integrations
 /packages/cardinal-integration @bigcommerce/team-integrations
 /packages/checkoutcom-custom-integration @bigcommerce/team-integrations
+/packages/clearpay-integration @bigcommerce/team-integrations
 /packages/cybersource-integration @bigcommerce/team-integrations
 /packages/mollie-integration @bigcommerce/team-integrations
 /packages/sagepay-integration @bigcommerce/team-integrations

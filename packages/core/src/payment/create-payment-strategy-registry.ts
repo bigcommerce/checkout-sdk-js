@@ -64,7 +64,6 @@ import {
 } from './strategies/cardinal';
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mpgs';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
-import { ClearpayPaymentStrategy, ClearpayScriptLoader } from './strategies/clearpay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { DigitalRiverPaymentStrategy, DigitalRiverScriptLoader } from './strategies/digitalriver';
 import {
@@ -273,21 +272,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 hostedFormFactory,
                 formPoster,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.CLEARPAY,
-        () =>
-            new ClearpayPaymentStrategy(
-                store,
-                checkoutValidator,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                remoteCheckoutRequestSender,
-                storeCreditActionCreator,
-                new ClearpayScriptLoader(scriptLoader),
             ),
     );
 

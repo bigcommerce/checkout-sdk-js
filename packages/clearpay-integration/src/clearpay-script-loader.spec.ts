@@ -1,9 +1,8 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 
-import { getClearpay } from '../../payment-methods.mock';
-
 import ClearpayScriptLoader from './clearpay-script-loader';
+import { getClearpay } from './clearpay.mock';
 
 describe('ClearpayScriptLoader', () => {
     const scriptLoader = createScriptLoader();
