@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.620.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.619.0...v1.620.0) (2024-06-17)
+
+
+### Features
+
+* **payment:** PAYPAL-4203 Braintree visa checkout button strategy ([#2538](https://github.com/bigcommerce/checkout-sdk-js/issues/2538)) ([fe84ca8](https://github.com/bigcommerce/checkout-sdk-js/commit/fe84ca86bc1a55b0892dc831220a5f23de526a8d))
+
+
+### Code Refactoring
+
+* **payment:** PI-1593 moved Clearpay to separate package ([#2541](https://github.com/bigcommerce/checkout-sdk-js/issues/2541)) ([9bffd58](https://github.com/bigcommerce/checkout-sdk-js/commit/9bffd58b9ff30a4687b0158f187f1ccae680e5a2))
+
 ## [1.619.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.618.5...v1.619.0) (2024-06-17)
 
 
