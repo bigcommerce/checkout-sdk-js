@@ -29,3 +29,8 @@ export { default as createBraintreeFastlaneCustomerStrategy } from './braintree-
 export { default as createBraintreeFastlanePaymentStrategy } from './braintree-fastlane/create-braintree-fastlane-payment-strategy';
 export { WithBraintreeFastlaneCustomerInitializeOptions } from './braintree-fastlane/braintree-fastlane-customer-initialize-options';
 export { WithBraintreeFastlanePaymentInitializeOptions } from './braintree-fastlane/braintree-fastlane-payment-initialize-options';
+
+/**
+ * Braintree Visa Checkout strategies
+ */
+export { default as createBraintreeVisaCheckoutButtonStrategy } from './braintree-visa-checkout/create-braintree-visa-checkout-button-strategy';

@@ -45,11 +45,11 @@ export interface VisaCheckoutTokenizedPayload {
 
 export interface VisaCheckoutEventMap {
     'payment.success'(payment: VisaCheckoutPaymentSuccessPayload): void;
-    'payment.error'(payment: VisaCheckoutPaymentSuccessPayload, Error: Error): void;
+    'payment.error'(payment: VisaCheckoutPaymentSuccessPayload, Error: Error): Promise<void> | void;
 }
 
 export interface VisaCheckoutSDK {
-    init(options: VisaCheckoutInitOptions): void;
+    init(options: VisaCheckoutInitOptions): Promise<void> | void;
     on<VisaCheckoutEventType extends keyof VisaCheckoutEventMap>(
         eventType: VisaCheckoutEventType,
         callback: VisaCheckoutEventMap[VisaCheckoutEventType],

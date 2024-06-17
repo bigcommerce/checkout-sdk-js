@@ -12,14 +12,18 @@ import {
     BraintreeErrorCode,
     BraintreeModule,
     BraintreeUsBankAccount,
+    BraintreeVisaCheckout,
 } from './types';
 import isBraintreeError from './utils/is-braintree-error';
+import { VisaCheckoutSDK } from './visacheckout';
 
 export default class BraintreeSdk {
     private client?: BraintreeClient;
     private clientToken?: string;
     private dataCollector?: BraintreeDataCollector;
     private usBankAccount?: BraintreeUsBankAccount;
+    private visaCheckout?: Promise<BraintreeVisaCheckout>;
+    private visaCheckoutSDK?: VisaCheckoutSDK;
 
     constructor(private braintreeScriptLoader: BraintreeScriptLoader) {}
 
@@ -104,6 +108,37 @@ export default class BraintreeSdk {
         }
 
         return this.usBankAccount;
+    }
+
+    /**
+     *
+     * Braintree Visa Checkout
+     * braintree doc: https://braintree.github.io/braintree-web/current/module-braintree-web_visa-checkout.html
+     *
+     */
+    getBraintreeVisaCheckout() {
+        if (!this.visaCheckout) {
+            this.visaCheckout = Promise.all([
+                this.getClient(),
+                this.braintreeScriptLoader.loadVisaCheckout(),
+            ]).then(([client, paypal]) => paypal.create({ client }));
+        }
+
+        return this.visaCheckout;
+    }
+
+    /**
+     *
+     * Visa Checkout SDK
+     * visa checkout doc: https://developer.visa.com/capabilities/visa_checkout/docs-how-to
+     *
+     */
+    async getVisaCheckoutSdk(testMode?: boolean) {
+        if (!this.visaCheckoutSDK) {
+            this.visaCheckoutSDK = await this.braintreeScriptLoader.loadVisaCheckoutSdk(testMode);
+        }
+
+        return this.visaCheckoutSDK;
     }
 
     /**

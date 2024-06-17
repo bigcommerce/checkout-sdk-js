@@ -17,6 +17,7 @@ import {
     getPaypalCheckoutMock,
     getVenmoCheckoutMock,
     getVisaCheckoutMock,
+    getVisaCheckoutSDKMock,
 } from './mocks';
 import {
     BRAINTREE_SDK_ALPHA_VERSION,
@@ -39,6 +40,7 @@ import {
     BraintreeVisaCheckoutCreator,
     GooglePayCreator,
 } from './types';
+import { VisaCheckoutSDK } from './visacheckout';
 
 describe('BraintreeScriptLoader', () => {
     let scriptLoader: ScriptLoader;
@@ -1148,6 +1150,64 @@ describe('BraintreeScriptLoader', () => {
 
             await braintreeScriptLoader.loadDataCollector();
             await braintreeScriptLoader.loadDataCollector();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('#loadVisaCheckoutSdk', () => {
+        let visaCheckoutSdk: VisaCheckoutSDK;
+
+        beforeEach(() => {
+            visaCheckoutSdk = getVisaCheckoutSDKMock();
+            scriptLoader.loadScript = jest.fn(() => {
+                mockWindow.V = visaCheckoutSdk;
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads loadVisaCheckoutSdk methods', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            await braintreeScriptLoader.loadVisaCheckoutSdk();
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-1f1csvP3ZFxg4dILH1GaY4LHlZ0oX7Rk83rxmLlwbnIi4TM0NYzXoev1VoEiVDS6',
+                    },
+                },
+            );
+        });
+
+        it('loads loadVisaCheckoutSdk in sandbox mode', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            await braintreeScriptLoader.loadVisaCheckoutSdk(true);
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                `//sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js`,
+                {
+                    async: true,
+                    attributes: {
+                        crossorigin: 'anonymous',
+                        integrity:
+                            'sha384-0eu1s1GtqzXlL9DtLgmwzC5WWlEH/ADRM0n38cVQkvtT+W/gey96rcb1LwuUOPDm',
+                    },
+                },
+            );
+        });
+
+        it('does not load module if it is already in the window', async () => {
+            const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
+
+            await braintreeScriptLoader.loadVisaCheckoutSdk();
+            await braintreeScriptLoader.loadVisaCheckoutSdk();
 
             expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
         });
