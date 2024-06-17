@@ -17,7 +17,6 @@ import {
 } from './strategies/braintree';
 import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
 import { ChasepayPaymentStrategy } from './strategies/chasepay';
-import { ClearpayPaymentStrategy } from './strategies/clearpay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { DigitalRiverPaymentStrategy } from './strategies/digitalriver';
 import { GooglePayPaymentStrategy } from './strategies/googlepay';
@@ -79,12 +78,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CHASE_PAY);
 
         expect(paymentStrategy).toBeInstanceOf(ChasepayPaymentStrategy);
-    });
-
-    it('can instantiate clearpay', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.CLEARPAY);
-
-        expect(paymentStrategy).toBeInstanceOf(ClearpayPaymentStrategy);
     });
 
     it('can instantiate converge', () => {

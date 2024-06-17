@@ -9,7 +9,13 @@ export { default as getConsignment } from './consignment.mock';
 export { default as getCountries } from './countries.mock';
 export { default as getOrderRequestBody } from './internal-orders.mock';
 export { getOrder } from './orders.mock';
-export { getResponse } from './responses.mock';
+export {
+    getResponse,
+    getPaymentResponse,
+    getErrorResponse,
+    getErrorResponseBody,
+    getTimeoutResponse,
+} from './responses.mock';
 export { default as getShippingOption } from './shipping-option.mock';
 export {
     getPayment,

@@ -1,7 +1,9 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethodClientUnavailableError } from '../../errors';
-import PaymentMethod from '../../payment-method';
+import {
+    PaymentMethod,
+    PaymentMethodClientUnavailableError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import ClearpaySdk from './clearpay-sdk';
 import ClearpayWindow from './clearpay-window';

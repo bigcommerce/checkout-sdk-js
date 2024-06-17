@@ -132,7 +132,9 @@ export {
     InitializeOffsitePaymentConfig,
     NonceInstrument,
     Payment,
+    PaymentResponse,
     PaymentActionType,
+    PaymentMethodActionType,
     SubmitPaymentAction,
     PaymentInitializeOptions,
     PaymentMethod,
@@ -157,6 +159,8 @@ export {
     ThreeDSecureToken,
     ThreeDsResult,
 } from './payment';
+export { StoreCreditActionType } from './store-credit';
+
 export { default as PaymentIntegrationSelectors } from './payment-integration-selectors';
 export { default as PaymentIntegrationService } from './payment-integration-service';
 export {
