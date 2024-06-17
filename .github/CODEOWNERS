@@ -4,6 +4,7 @@
 /packages/core @bigcommerce/team-checkout
 /packages/payment-integration @bigcommerce/team-checkout
 /packages/payment-integration-test-utils @bigcommerce/team-checkout
+/packages/hosted-form-v2 @bigcommerce/team-checkout
 
 
 ## Integrations team

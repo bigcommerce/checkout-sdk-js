@@ -1,0 +1,35 @@
+{
+    "root": "packages/hosted-form-v2",
+    "sourceRoot": "packages/hosted-form-v2/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/hosted-form-v2/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/hosted-form-v2"],
+            "options": {
+                "jestConfig": "packages/hosted-form-v2/jest.config.js",
+                "passWithNoTests": true
+            }
+        },
+        "build-dts": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "cwd": "packages/hosted-form-v2",
+                "parallel": false,
+                "commands": [
+                    "tsc --outDir ../../temp --declaration --emitDeclarationOnly",
+                    "api-extractor run --config api-extractor/hosted-form-v2-iframe-content.json & api-extractor run --config api-extractor/hosted-form-v2-iframe-host.json",
+                    "rm -rf ../../temp"
+                ]
+            }
+        }
+    },
+    "tags": ["scope:shared"]
+}
