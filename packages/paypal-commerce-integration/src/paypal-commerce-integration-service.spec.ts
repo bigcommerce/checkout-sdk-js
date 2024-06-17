@@ -53,6 +53,7 @@ describe('PayPalCommerceIntegrationService', () => {
     let paypalSdk: PayPalSDK;
 
     const defaultMethodId = 'paypalcommerce';
+    const defaultGatewayId = 'paypalcommercealternativemethods';
     const mockedOrderId = 'order123';
 
     beforeEach(() => {
@@ -339,6 +340,30 @@ describe('PayPalCommerceIntegrationService', () => {
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId: defaultMethodId,
                 paymentData: paymentDataMock,
+            });
+        });
+
+        it('successfully submits payment with provided gateway', async () => {
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
+
+            const paymentDataMock = {
+                formattedPayload: {
+                    vault_payment_instrument: null,
+                    set_as_default_stored_instrument: null,
+                    device_info: null,
+                    method_id: defaultMethodId,
+                    paypal_account: {
+                        order_id: mockedOrderId,
+                    },
+                },
+            };
+
+            await subject.submitPayment(defaultMethodId, mockedOrderId, defaultGatewayId);
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId: defaultMethodId,
+                paymentData: paymentDataMock,
+                gatewayId: defaultGatewayId,
             });
         });
     });

@@ -182,7 +182,7 @@ export default class PayPalCommerceIntegrationService {
         });
     }
 
-    async submitPayment(methodId: string, orderId: string): Promise<void> {
+    async submitPayment(methodId: string, orderId: string, gatewayId?: string): Promise<void> {
         const paymentData = {
             formattedPayload: {
                 vault_payment_instrument: null,
@@ -195,7 +195,11 @@ export default class PayPalCommerceIntegrationService {
             },
         };
 
-        await this.paymentIntegrationService.submitPayment({ methodId, paymentData });
+        await this.paymentIntegrationService.submitPayment({
+            methodId,
+            paymentData,
+            ...(gatewayId ? { gatewayId } : {}),
+        });
     }
 
     /**
