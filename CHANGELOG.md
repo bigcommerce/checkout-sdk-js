@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.619.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.618.5...v1.619.0) (2024-06-17)
+
+
+### Features
+
+* **payment:** PAYPAL-3273 added patch method on paypal order creation for non instant payment methods PPCP ([#2542](https://github.com/bigcommerce/checkout-sdk-js/issues/2542)) ([a7ca27f](https://github.com/bigcommerce/checkout-sdk-js/commit/a7ca27fb1f7ad26f04724ff13b64a90eb8b977f4))
+
 ### [1.618.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.618.4...v1.618.5) (2024-06-17)
 
 ### [1.618.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.618.3...v1.618.4) (2024-06-13)
