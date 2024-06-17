@@ -1,0 +1,345 @@
+import { PaymentErrorData } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Response } from '@bigcommerce/request-sender';
+
+declare interface HostedFieldAttachEvent {
+    type: HostedFieldEventType.AttachRequested;
+    payload: {
+        accessibilityLabel?: string;
+        fontUrls?: string[];
+        placeholder?: string;
+        styles?: HostedFieldStylesMap;
+        origin?: string;
+        type: HostedFieldType;
+    };
+}
+
+declare interface HostedFieldEventMap {
+    [HostedFieldEventType.AttachRequested]: HostedFieldAttachEvent;
+    [HostedFieldEventType.SubmitRequested]: HostedFieldSubmitRequestEvent;
+    [HostedFieldEventType.ValidateRequested]: HostedFieldValidateRequestEvent;
+}
+
+declare enum HostedFieldEventType {
+    AttachRequested = "HOSTED_FIELD:ATTACH_REQUESTED",
+    SubmitRequested = "HOSTED_FIELD:SUBMITTED_REQUESTED",
+    ValidateRequested = "HOSTED_FIELD:VALIDATE_REQUESTED"
+}
+
+declare type HostedFieldStyles = HostedInputStyles;
+
+declare interface HostedFieldStylesMap {
+    default?: HostedFieldStyles;
+    error?: HostedFieldStyles;
+    focus?: HostedFieldStyles;
+}
+
+declare interface HostedFieldSubmitRequestEvent {
+    type: HostedFieldEventType.SubmitRequested;
+    payload: {
+        data: HostedFormOrderData;
+        fields: HostedFieldType[];
+    };
+}
+
+declare enum HostedFieldType {
+    CardCode = "cardCode",
+    CardExpiry = "cardExpiry",
+    CardName = "cardName",
+    CardNumber = "cardNumber"
+}
+
+declare interface HostedFieldValidateRequestEvent {
+    type: HostedFieldEventType.ValidateRequested;
+}
+
+declare interface HostedFormErrorData {
+    isEmpty: boolean;
+    isPotentiallyValid: boolean;
+    isValid: boolean;
+}
+
+declare type HostedFormErrorDataKeys = 'number' | 'expirationDate' | 'expirationMonth' | 'expirationYear' | 'cvv' | 'postalCode';
+
+declare type HostedFormErrorsData = Partial<Record<HostedFormErrorDataKeys, HostedFormErrorData>>;
+
+declare interface HostedFormOrderData {
+    authToken: string;
+}
+
+declare class HostedInput {
+    protected _type: HostedFieldType;
+    protected _form: HTMLFormElement;
+    protected _placeholder: string;
+    protected _accessibilityLabel: string;
+    protected _autocomplete: string;
+    protected _styles: HostedInputStylesMap;
+    protected _fontUrls: string[];
+    protected _eventListener: IframeEventListener<HostedFieldEventMap>;
+    protected _eventPoster: IframeEventPoster<HostedInputEvent>;
+    protected _inputAggregator: HostedInputAggregator;
+    protected _inputValidator: HostedInputValidator;
+    protected _paymentHandler: HostedInputPaymentHandler;
+    protected _input: HTMLInputElement;
+    protected _previousValue?: string;
+    private _fontLinks?;
+    private _isTouched;
+    getType(): HostedFieldType;
+    getValue(): string;
+    setValue(value: string): void;
+    isTouched(): boolean;
+    attach(): void;
+    detach(): void;
+    protected _formatValue(value: string): void;
+    protected _notifyChange(_value: string): void;
+    private _configureInput;
+    private _applyStyles;
+    private _loadFonts;
+    private _unloadFonts;
+    private _validateForm;
+    private _processChange;
+    private _handleInput;
+    private _handleBlur;
+    private _handleFocus;
+    private _handleValidate;
+    private _handleSubmit;
+    private _forceFocusToInput;
+}
+
+declare class HostedInputAggregator {
+    private _parentWindow;
+    constructor(_parentWindow: Window);
+    getInputs(filter?: (field: HostedInput) => boolean): HostedInput[];
+    getInputValues(filter?: (field: HostedInput) => boolean): HostedInputValues;
+}
+
+declare interface HostedInputAttachErrorEvent {
+    type: HostedInputEventType.AttachFailed;
+    payload: {
+        error: HostedInputInitializeErrorData;
+    };
+}
+
+declare interface HostedInputAttachSuccessEvent {
+    type: HostedInputEventType.AttachSucceeded;
+}
+
+declare interface HostedInputBinChangeEvent {
+    type: HostedInputEventType.BinChanged;
+    payload: {
+        bin?: string;
+    };
+}
+
+declare interface HostedInputBlurEvent {
+    type: HostedInputEventType.Blurred;
+    payload: {
+        fieldType: HostedFieldType;
+        errors?: HostedFormErrorsData;
+    };
+}
+
+declare interface HostedInputCardTypeChangeEvent {
+    type: HostedInputEventType.CardTypeChanged;
+    payload: {
+        cardType?: string;
+    };
+}
+
+declare interface HostedInputChangeEvent {
+    type: HostedInputEventType.Changed;
+    payload: {
+        fieldType: HostedFieldType;
+    };
+}
+
+declare interface HostedInputEnterEvent {
+    type: HostedInputEventType.Entered;
+    payload: {
+        fieldType: HostedFieldType;
+    };
+}
+
+declare type HostedInputEvent = HostedInputAttachSuccessEvent | HostedInputAttachErrorEvent | HostedInputBinChangeEvent | HostedInputBlurEvent | HostedInputChangeEvent | HostedInputCardTypeChangeEvent | HostedInputEnterEvent | HostedInputFocusEvent | HostedInputSubmitSuccessEvent | HostedInputSubmitErrorEvent | HostedInputValidateEvent;
+
+declare enum HostedInputEventType {
+    AttachSucceeded = "HOSTED_INPUT:ATTACH_SUCCEEDED",
+    AttachFailed = "HOSTED_INPUT:ATTACH_FAILED",
+    BinChanged = "HOSTED_INPUT:BIN_CHANGED",
+    Blurred = "HOSTED_INPUT:BLURRED",
+    Changed = "HOSTED_INPUT:CHANGED",
+    CardTypeChanged = "HOSTED_INPUT:CARD_TYPE_CHANGED",
+    Entered = "HOSTED_INPUT:ENTERED",
+    Focused = "HOSTED_INPUT:FOCUSED",
+    SubmitSucceeded = "HOSTED_INPUT:SUBMIT_SUCCEEDED",
+    SubmitFailed = "HOSTED_INPUT:SUBMIT_FAILED",
+    Validated = "HOSTED_INPUT:VALIDATED"
+}
+
+declare interface HostedInputFocusEvent {
+    type: HostedInputEventType.Focused;
+    payload: {
+        fieldType: HostedFieldType;
+    };
+}
+
+declare interface HostedInputInitializeErrorData {
+    message: string;
+    redirectUrl: string;
+}
+
+declare interface HostedInputOptions {
+    containerId: string;
+    nonce?: string;
+    origin: string;
+    parentOrigin: string;
+}
+
+declare class HostedInputPaymentHandler {
+    private _inputAggregator;
+    private _inputValidator;
+    private _inputStorage;
+    private _eventPoster;
+    private _paymentRequestSender;
+    private _paymentRequestTransformer;
+    constructor(_inputAggregator: HostedInputAggregator, _inputValidator: HostedInputValidator, _inputStorage: HostedInputStorage, _eventPoster: IframeEventPoster<HostedInputEvent>, _paymentRequestSender: PaymentRequestSender, _paymentRequestTransformer: PaymentRequestTransformer);
+    handle: (event: HostedFieldSubmitRequestEvent) => Promise<void>;
+    private _isPaymentErrorResponse;
+}
+
+declare class HostedInputStorage {
+    private _nonce?;
+    setNonce(nonce: string): void;
+    getNonce(): string | undefined;
+}
+
+declare type HostedInputStyles = Partial<Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>>;
+
+declare interface HostedInputStylesMap {
+    default?: HostedInputStyles;
+    error?: HostedInputStyles;
+    focus?: HostedInputStyles;
+}
+
+declare interface HostedInputSubmitErrorEvent {
+    type: HostedInputEventType.SubmitFailed;
+    payload: {
+        error: PaymentErrorData;
+        response?: Response<PaymentErrorResponseBody>;
+    };
+}
+
+declare interface HostedInputSubmitSuccessEvent {
+    type: HostedInputEventType.SubmitSucceeded;
+    payload: {
+        response: Response<unknown>;
+    };
+}
+
+declare interface HostedInputValidateErrorData {
+    fieldType: string;
+    message: string;
+    type: string;
+}
+
+declare interface HostedInputValidateErrorDataMap {
+    [HostedFieldType.CardCode]?: HostedInputValidateErrorData[];
+    [HostedFieldType.CardExpiry]?: HostedInputValidateErrorData[];
+    [HostedFieldType.CardName]?: HostedInputValidateErrorData[];
+    [HostedFieldType.CardNumber]?: HostedInputValidateErrorData[];
+}
+
+declare interface HostedInputValidateEvent {
+    type: HostedInputEventType.Validated;
+    payload: HostedInputValidateResults;
+}
+
+declare interface HostedInputValidateResults {
+    errors: HostedInputValidateErrorDataMap;
+    isValid: boolean;
+}
+
+declare class HostedInputValidator {
+    private readonly _completeSchema;
+    constructor();
+    validate(values: HostedInputValues): Promise<HostedInputValidateResults>;
+    private _configureCardValidator;
+    private _getCardCodeSchema;
+    private _getCardExpirySchema;
+    private _getCardNameSchema;
+    private _getCardNumberSchema;
+}
+
+declare interface HostedInputValues {
+    [HostedFieldType.CardCode]?: string;
+    [HostedFieldType.CardExpiry]?: string;
+    [HostedFieldType.CardName]?: string;
+    [HostedFieldType.CardNumber]?: string;
+}
+
+declare interface IframeEvent<TType = string, TPayload = any> {
+    type: TType;
+    payload?: TPayload;
+}
+
+declare class IframeEventListener<TEventMap extends IframeEventMap<keyof TEventMap>, TContext = undefined> {
+    private _isListening;
+    private _listeners;
+    private _sourceOrigins;
+    constructor(sourceOrigin: string);
+    listen(): void;
+    stopListen(): void;
+    addListener<TType extends keyof TEventMap>(type: TType, listener: (event: TEventMap[TType], context?: TContext) => void): void;
+    removeListener<TType extends keyof TEventMap>(type: TType, listener: (event: TEventMap[TType], context?: TContext) => void): void;
+    trigger<TType extends keyof TEventMap>(event: TEventMap[TType], context?: TContext): void;
+    private _handleMessage;
+}
+
+declare type IframeEventMap<TType extends string | number | symbol = string> = {
+    [key in TType]: IframeEvent<TType>;
+};
+
+declare interface IframeEventPostOptions<TSuccessEvent extends IframeEvent, TErrorEvent extends IframeEvent> {
+    errorType?: TErrorEvent['type'];
+    successType?: TSuccessEvent['type'];
+}
+
+declare class IframeEventPoster<TEvent, TContext = undefined> {
+    private _targetWindow?;
+    private _context?;
+    private _targetOrigin;
+    constructor(targetOrigin: string, _targetWindow?: Window | undefined, _context?: TContext | undefined);
+    post(event: TEvent): void;
+    post<TSuccessEvent extends IframeEvent = IframeEvent, TErrorEvent extends IframeEvent = IframeEvent>(event: TEvent, options: IframeEventPostOptions<TSuccessEvent, TErrorEvent>): Promise<TSuccessEvent>;
+    setTarget(window: Window): void;
+    setContext(context: TContext): void;
+}
+
+declare interface PaymentRequestBody {
+    authToken: string;
+}
+
+declare class PaymentRequestSender {
+    private _client;
+    /**
+     * @class
+     * @param {BigpayClient} client
+     */
+    constructor(_client: any);
+    submitPayment(payload: PaymentRequestBody): Promise<Response<any>>;
+    initializeOffsitePayment(payload: PaymentRequestBody, target?: string): Promise<void>;
+    private _transformResponse;
+}
+
+declare class PaymentRequestTransformer {
+    transform(): {};
+    transformWithHostedFormData(values: HostedInputValues, data: HostedFormOrderData, nonce: string): {
+        authToken: string;
+        values: HostedInputValues;
+        nonce: string;
+    };
+}
+
+export declare function initializeHostedInput(options: HostedInputOptions): Promise<HostedInput>;
+
+export declare function notifyInitializeError(error: HostedInputInitializeErrorData): void;
