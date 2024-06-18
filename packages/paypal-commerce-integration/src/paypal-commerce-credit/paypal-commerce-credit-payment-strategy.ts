@@ -249,10 +249,12 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
      *
      * */
     private renderMessages(paypalMessages: PayPalMessagesSdk, bannerContainerId: string): void {
-        const cart = this.paymentIntegrationService.getState().getCartOrThrow();
+        const checkout = this.paymentIntegrationService.getState().getCheckoutOrThrow();
+
+        const grandTotal = checkout.outstandingBalance;
 
         const paypalMessagesOptions: MessagingOptions = {
-            amount: cart.cartAmount,
+            amount: grandTotal,
             placement: 'payment',
             style: {
                 layout: 'text',
