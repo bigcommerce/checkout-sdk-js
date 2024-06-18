@@ -41,6 +41,10 @@ export default interface StripeUPEPaymentInitializeOptions {
     initStripeElementUpdateTrigger?(
         updateTriggerFn: (payload: StripeElementUpdateOptions) => void,
     ): void;
+
+    toggleSelectedMethod?(id: string): void;
+
+    collapseListener?(collapseElement: () => void): void;
 }
 
 export interface WithStripeUPEPaymentInitializeOptions {

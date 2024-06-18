@@ -53,6 +53,8 @@ export interface StripeElement {
      * https://docs.stripe.com/js/elements_object/update_payment_element
      */
     update(options?: StripeElementsCreateOptions): void;
+
+    collapse(): void;
 }
 
 export interface StripeEvent {

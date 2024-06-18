@@ -336,7 +336,14 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         _gatewayId: string,
         methodId: string,
     ) {
-        const { containerId, style, render, initStripeElementUpdateTrigger } = stripeupe;
+        const {
+            containerId,
+            style,
+            render,
+            initStripeElementUpdateTrigger,
+            toggleSelectedMethod,
+            collapseListener,
+        } = stripeupe;
         // const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
         //     params: { method: methodId },
         // });
@@ -410,25 +417,29 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         const { outstandingBalance } = state.getCheckoutOrThrow();
         const { currency } = state.getCartOrThrow();
-        const amount = outstandingBalance * 100;
+        const amount = Math.round(outstandingBalance * 100);
 
-        console.log({ outstandingBalance });
+        console.log({ amount });
 
-        this._stripeElements = await this.scriptLoader.getElements(this._stripeUPEClient, {
-            // clientSecret: paymentMethod.clientToken,
-            locale: formatLocale(shopperLanguage),
-            appearance,
-
-            mode: 'payment',
-            amount,
-            currency: currency.code.toLowerCase(),
-            paymentMethodTypes: ['card', 'alipay', 'klarna'],
-            fonts: [
-                {
-                    cssSrc: 'https://fonts.googleapis.com/css?family=Montserrat:700,500,400%7CKarla:400&display=swap',
-                },
-            ],
-        });
+        try {
+            this._stripeElements = await this.scriptLoader.getElements(this._stripeUPEClient, {
+                // clientSecret: paymentMethod.clientToken,
+                locale: formatLocale(shopperLanguage),
+                appearance,
+                mode: 'payment',
+                amount,
+                currency: currency.code.toLowerCase(),
+                paymentMethodTypes: ['card', 'alipay', 'klarna', 'us_bank_account', 'wechat_pay'], // TODO: ask Stripe why only CC fields renders without this option
+                fonts: [
+                    {
+                        cssSrc: 'https://fonts.googleapis.com/css?family=Montserrat:700,500,400%7CKarla:400&display=swap',
+                    },
+                ],
+            });
+        } catch (error) {
+            console.log('*** error', error);
+            throw error;
+        }
 
         const { getBillingAddress, getShippingAddress } = state;
         const { postalCode } = getShippingAddress() || getBillingAddress() || {};
@@ -479,11 +490,19 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             initStripeElementUpdateTrigger?.(this._updateStripeElement.bind(this));
         }
 
-        stripeElement.on('change', (e) => {
-            console.log('*** change event', e);
+        collapseListener?.(this.collapseStripeElement.bind(this));
+
+        stripeElement.on('change', () => {
+            toggleSelectedMethod?.('stripeupe-card');
         });
 
         this.addDemoStyle();
+    }
+
+    private collapseStripeElement() {
+        const stripeElement = this._stripeElements?.getElement(StripeElementType.PAYMENT);
+
+        stripeElement?.collapse();
     }
 
     private addDemoStyle() {
