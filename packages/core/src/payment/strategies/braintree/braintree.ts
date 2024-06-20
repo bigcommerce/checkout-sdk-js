@@ -1,10 +1,4 @@
 import { Omit } from '../../../common/types';
-import {
-    GooglePayBraintreeDataRequest,
-    GooglePayBraintreePaymentDataRequestV1,
-    GooglePaymentData,
-    TokenizePayload,
-} from '../googlepay';
 import { PaypalAuthorizeData, PaypalButtonOptions, PaypalButtonRender, PaypalSDK } from '../paypal';
 
 import {
@@ -222,13 +216,6 @@ export interface BraintreeGooglePayThreeDSecureOptions {
     bin: string;
     showLoader?: boolean;
     onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
-}
-
-export interface GooglePayBraintreeSDK extends BraintreeModule {
-    createPaymentDataRequest(
-        request?: GooglePayBraintreeDataRequest,
-    ): GooglePayBraintreePaymentDataRequestV1;
-    parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload>;
 }
 
 /**

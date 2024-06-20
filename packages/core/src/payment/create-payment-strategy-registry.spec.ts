@@ -19,7 +19,6 @@ import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
 import { ChasepayPaymentStrategy } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { DigitalRiverPaymentStrategy } from './strategies/digitalriver';
-import { GooglePayPaymentStrategy } from './strategies/googlepay';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
 import { OpyPaymentStrategy } from './strategies/opy';
 import { PaypalExpressPaymentStrategy } from './strategies/paypal';
@@ -92,28 +91,10 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(paymentStrategy).toBeInstanceOf(BNZPaymentStrategy);
     });
 
-    it('can instantiate googlepaybnz', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.BNZ_GOOGLEPAY);
-
-        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
-    });
-
     it('can instantiate digitalRiver', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.DIGITALRIVER);
 
         expect(paymentStrategy).toBeInstanceOf(DigitalRiverPaymentStrategy);
-    });
-
-    it('can instantiate googlepaycybersourcev2', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.CYBERSOURCEV2_GOOGLE_PAY);
-
-        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
-    });
-
-    it('can instantiate googlepayorbital', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.ORBITAL_GOOGLE_PAY);
-
-        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
     });
 
     it('can instantiate openpay', () => {
@@ -146,24 +127,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(paymentStrategy).toBeInstanceOf(SquarePaymentStrategy);
     });
 
-    it('can instantiate googlepaycybersourcev2', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.CYBERSOURCEV2_GOOGLE_PAY);
-
-        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
-    });
-
-    it('can instantiate googlepaystripe', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.STRIPE_GOOGLE_PAY);
-
-        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
-    });
-
-    it('can instantiate googlepaystripeupe', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.STRIPE_UPE_GOOGLE_PAY);
-
-        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
-    });
-
     it('can instantiate wepay', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.WE_PAY);
 
@@ -186,11 +149,5 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CBA_MPGS);
 
         expect(paymentStrategy).toBeInstanceOf(CBAMPGSPaymentStrategy);
-    });
-
-    it('can instantiate googlepayworldpayaccess', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.WORLDPAYACCESS_GOOGLE_PAY);
-
-        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
     });
 });

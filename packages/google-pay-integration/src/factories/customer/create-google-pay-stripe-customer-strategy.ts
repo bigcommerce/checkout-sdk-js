@@ -14,13 +14,6 @@ import createGooglePayScriptLoader from '../create-google-pay-script-loader';
 const createGooglePayStripeCustomerStrategy: CustomerStrategyFactory<GooglePayCustomerStrategy> = (
     paymentIntegrationService,
 ) => {
-    const useRegistryV1 = !paymentIntegrationService.getState().getStoreConfig()?.checkoutSettings
-        .features['INT-5659.stripe_use_new_googlepay_customer_strategy'];
-
-    if (useRegistryV1) {
-        throw new Error('googlepaystripe requires using registryV1');
-    }
-
     return new GooglePayCustomerStrategy(
         paymentIntegrationService,
         new GooglePayPaymentProcessor(

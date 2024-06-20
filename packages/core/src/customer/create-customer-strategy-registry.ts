@@ -15,17 +15,6 @@ import {
     VisaCheckoutScriptLoader,
 } from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
-import {
-    createGooglePayPaymentProcessor,
-    GooglePayAuthorizeNetInitializer,
-    GooglePayBNZInitializer,
-    GooglePayCheckoutcomInitializer,
-    GooglePayCybersourceV2Initializer,
-    GooglePayOrbitalInitializer,
-    GooglePayStripeInitializer,
-    GooglePayStripeUPEInitializer,
-    GooglePayWorldpayAccessInitializer,
-} from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import {
@@ -43,7 +32,6 @@ import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
 import { BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
 import { ChasePayCustomerStrategy } from './strategies/chasepay';
 import { DefaultCustomerStrategy } from './strategies/default';
-import { GooglePayCustomerStrategy } from './strategies/googlepay';
 import { MasterpassCustomerStrategy } from './strategies/masterpass';
 import { SquareCustomerStrategy } from './strategies/square';
 
@@ -139,97 +127,6 @@ export default function createCustomerStrategyRegistry(
                 remoteCheckoutActionCreator,
                 new MasterpassScriptLoader(scriptLoader),
                 locale,
-            ),
-    );
-
-    registry.register(
-        'googlepayauthorizenet',
-        () =>
-            new GooglePayCustomerStrategy(
-                store,
-                remoteCheckoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayAuthorizeNetInitializer()),
-                formPoster,
-            ),
-    );
-
-    registry.register(
-        'googlepaybnz',
-        () =>
-            new GooglePayCustomerStrategy(
-                store,
-                remoteCheckoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayBNZInitializer()),
-                formPoster,
-            ),
-    );
-
-    registry.register(
-        'googlepaycheckoutcom',
-        () =>
-            new GooglePayCustomerStrategy(
-                store,
-                remoteCheckoutActionCreator,
-                createGooglePayPaymentProcessor(
-                    store,
-                    new GooglePayCheckoutcomInitializer(requestSender),
-                ),
-                formPoster,
-            ),
-    );
-
-    registry.register(
-        'googlepaycybersourcev2',
-        () =>
-            new GooglePayCustomerStrategy(
-                store,
-                remoteCheckoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayCybersourceV2Initializer()),
-                formPoster,
-            ),
-    );
-
-    registry.register(
-        'googlepayorbital',
-        () =>
-            new GooglePayCustomerStrategy(
-                store,
-                remoteCheckoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayOrbitalInitializer()),
-                formPoster,
-            ),
-    );
-
-    registry.register(
-        'googlepaystripe',
-        () =>
-            new GooglePayCustomerStrategy(
-                store,
-                remoteCheckoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayStripeInitializer()),
-                formPoster,
-            ),
-    );
-
-    registry.register(
-        'googlepaystripeupe',
-        () =>
-            new GooglePayCustomerStrategy(
-                store,
-                remoteCheckoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayStripeUPEInitializer()),
-                formPoster,
-            ),
-    );
-
-    registry.register(
-        'googlepayworldpayaccess',
-        () =>
-            new GooglePayCustomerStrategy(
-                store,
-                remoteCheckoutActionCreator,
-                createGooglePayPaymentProcessor(store, new GooglePayWorldpayAccessInitializer()),
-                formPoster,
             ),
     );
 
