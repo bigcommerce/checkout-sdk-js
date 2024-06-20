@@ -12,8 +12,6 @@ import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 import BraintreeScriptLoader from './braintree-script-loader';
 import {
     BraintreeClient,
-    BraintreeConnect,
-    BraintreeConnectStylesOption,
     BraintreeDataCollector,
     BraintreeDataCollectorCreatorConfig,
     BraintreeDataCollectors,
@@ -67,39 +65,6 @@ export default class BraintreeIntegrationService {
     initialize(clientToken: string, storeConfig?: StoreConfig) {
         this.clientToken = clientToken;
         this.braintreeScriptLoader.initialize(storeConfig);
-    }
-
-    async getBraintreeConnect(
-        cardId?: string,
-        isTestModeEnabled?: boolean,
-        styles?: BraintreeConnectStylesOption,
-    ): Promise<BraintreeConnect> {
-        if (isTestModeEnabled) {
-            window.localStorage.setItem('axoEnv', 'sandbox');
-        }
-
-        if (!this.braintreeHostWindow.braintreeConnect) {
-            const clientToken = this.getClientTokenOrThrow();
-            const client = await this.getClient();
-            const deviceData = await this.getSessionId(cardId);
-
-            const braintreeConnectCreator = await this.braintreeScriptLoader.loadConnect();
-
-            const defaultStyles = {
-                root: {
-                    backgroundColorPrimary: 'transparent',
-                },
-            };
-
-            this.braintreeHostWindow.braintreeConnect = await braintreeConnectCreator.create({
-                authorization: clientToken,
-                client,
-                deviceData,
-                styles: styles || defaultStyles,
-            });
-        }
-
-        return this.braintreeHostWindow.braintreeConnect;
     }
 
     async getBraintreeFastlane(

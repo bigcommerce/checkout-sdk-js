@@ -7,13 +7,11 @@ import {
 
 import { BraintreeIntegrityValues } from './braintree';
 import {
-    BRAINTREE_SDK_ALPHA_VERSION,
     BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION,
     BRAINTREE_SDK_STABLE_VERSION,
 } from './sdk-verison';
 import {
     BraintreeClientCreator,
-    BraintreeConnectCreator,
     BraintreeDataCollectorCreator,
     BraintreeFastlaneCreator,
     BraintreeHostedFieldsCreator,
@@ -39,20 +37,15 @@ export default class BraintreeScriptLoader {
         private braintreeHostWindow: BraintreeHostWindow,
     ) {}
 
-    // TODO: this method is needed only for braintree Fastlane, so can be removed after Beta state
+    // TODO: this method is needed only for braintree Fastlane, so can be removed after GA
     // TODO: this method should be moved to BraintreeSdk class in the future
     initialize(storeConfig?: StoreConfig) {
         const features = storeConfig?.checkoutSettings.features;
         const shouldUseBraintreeAlphaVersion =
             features && features['PROJECT-5505.PayPal_Accelerated_Checkout_v2_for_Braintree'];
-        const shouldUseBraintreeFastlaneCompatibleVersion =
-            features && features['PROJECT-6266.braintree_fastlane'];
-        const braintreeSdkAlphaVersion = shouldUseBraintreeFastlaneCompatibleVersion
-            ? BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION
-            : BRAINTREE_SDK_ALPHA_VERSION;
 
         this.braintreeSdkVersion = shouldUseBraintreeAlphaVersion
-            ? braintreeSdkAlphaVersion
+            ? BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION
             : BRAINTREE_SDK_STABLE_VERSION;
     }
 
@@ -60,13 +53,6 @@ export default class BraintreeScriptLoader {
         return this.loadBraintreeModuleOrThrow<BraintreeClientCreator>(
             BraintreeModuleName.Client,
             'client.min.js',
-        );
-    }
-
-    async loadConnect(): Promise<BraintreeConnectCreator> {
-        return this.loadBraintreeModuleOrThrow<BraintreeConnectCreator>(
-            BraintreeModuleName.Connect,
-            'connect.min.js',
         );
     }
 
@@ -231,24 +217,14 @@ export default class BraintreeScriptLoader {
                 return {
                     [BRAINTREE_SDK_STABLE_VERSION]:
                         'sha384-5q9Kkv64ho8xutoRBtnaeRE1Ux47T6+LSRpsRmKrKSq7SiZOXn0Mv2XWXVQvCFJj',
-                    [BRAINTREE_SDK_ALPHA_VERSION]:
-                        'sha384-cpfxkJc2j2IgFLlXdJEhNVkCief/ezpYjc3d/QC7psgcdB7AZRZVSCWBrWHJd8kV',
                     [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]:
                         'sha384-WFefLU7p2TWWSJ17dsTC2uZF0qylvIUEXI7ZaQiWiMPGHtvQlpjc53WirI93FZtv',
-                };
-
-            case BraintreeModuleName.Connect:
-                return {
-                    [BRAINTREE_SDK_ALPHA_VERSION]:
-                        'sha384-F/Vm+lvAqbrFfTjVSXul1yeJablUdRQXoGSpXX5ub24OKFeMuITbFiY1TTK1QlxY',
                 };
 
             case BraintreeModuleName.PaypalCheckout:
                 return {
                     [BRAINTREE_SDK_STABLE_VERSION]:
                         'sha384-sozUyB/9Y4TygM5npllDME7tGVRo9/4Fh1clHUiPI1F2Q922yyJsMtL5fcFtZHdT',
-                    [BRAINTREE_SDK_ALPHA_VERSION]:
-                        'sha384-b/Bkr377Yi/i9fGXP9adBSYC+Z2//ruSfUlkIni9AjL/YFeu/ygqtgYyJdAEAsr7',
                     [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]:
                         'sha384-M5Uymuf5O0lh9Dyu+4soyJzefD1uUsL3m3fakhOuIH6C/FXGvii+XHGSGwQwxeJJ',
                 };
@@ -257,8 +233,6 @@ export default class BraintreeScriptLoader {
                 return {
                     [BRAINTREE_SDK_STABLE_VERSION]:
                         'sha384-Kw2YNA/MLpnN7vkRO3LOCNB0ZrSgT0UZiucLokB06z+0591xAAWgcf9v8AKjCwCX',
-                    [BRAINTREE_SDK_ALPHA_VERSION]:
-                        'sha384-2T9Nx2wNbrtrj7SFleQU/i/trUmvBvf3Lmj/enmh9KESjit397Vaaps6EkI18MGt',
                     [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]:
                         'sha384-R9O45bWivOlvh5zNaZeRaL0Vie0i6RgNpcD+anBxCVV0Lasox0rsayskrWpOcckT',
                 };
@@ -267,8 +241,6 @@ export default class BraintreeScriptLoader {
                 return {
                     [BRAINTREE_SDK_STABLE_VERSION]:
                         'sha384-P4U+tVQc9ja0VB3w4O6kTlLtIsBPGgsnFQlEdMYVYlU5BF5QP1aoIUhbmLXi0ewT',
-                    [BRAINTREE_SDK_ALPHA_VERSION]:
-                        'sha384-ARWRFedVLKaSGVUD0YTsHxkzRZ/Cc2BD994a3NqnXoCP+iRM7XeRs1ulS4E+i9ts',
                     [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]:
                         'sha384-76tfvCYa9NzY9D66qhNk0cwnecFNOIUw/G+uNE4AhOZ/+Nhej6Po/8zvoOElmE/1',
                 };
@@ -277,8 +249,6 @@ export default class BraintreeScriptLoader {
                 return {
                     [BRAINTREE_SDK_STABLE_VERSION]:
                         'sha384-MYeeYlFD7uDuhGi2ZmrRth4uLy52c+MmJhlrIeNsZCpstpX3qQJI389DB/a2137k',
-                    [BRAINTREE_SDK_ALPHA_VERSION]:
-                        'sha384-L12Sd8K1LbH+gXLvRG54pH+vdCJUnpepjTb6qG2HiD8NvJYLZS/VjJ671OCXr5Vz',
                     [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]:
                         'sha384-zpZXyctWw5HY7JwKnhbSRzkOnIkNv8hYoEEyMKkJnpoIT2BijSjiXkNxtSI6lig9',
                 };
@@ -287,8 +257,6 @@ export default class BraintreeScriptLoader {
                 return {
                     [BRAINTREE_SDK_STABLE_VERSION]:
                         'sha384-fyOBNpf/tlxbtQsgTICLilgs48q2M8n7gHcsGlmDK945m3pGZzmOdoTKSihFxwEe',
-                    [BRAINTREE_SDK_ALPHA_VERSION]:
-                        'sha384-mBAnHTYdpowjxBu8uRyjsdzDxTLpoZohyMvINZYEV3OyonbtFIjB9/k1k4A2vWrC',
                     [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]:
                         'sha384-WwIPgRv2U5MDKNnHUhlvuwa4xOFjK0U6RfIk07n6QF5N9WX3q2qW1pdIfnEX0P8b',
                 };
@@ -297,8 +265,6 @@ export default class BraintreeScriptLoader {
                 return {
                     [BRAINTREE_SDK_STABLE_VERSION]:
                         'sha384-4ePQT3gULIgtQDyvx+F4rXu9DcyWrOP1dxHCoCO8uESGC8BoDbPVAxDiugVawQjJ',
-                    [BRAINTREE_SDK_ALPHA_VERSION]:
-                        'sha384-OL0G9k2ShrnVAtkmS4Q4Fg7SHi5IxM6B8dgB8GDn1kIcl8rYoGG+FPjrLvfxJO++',
                     [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]:
                         'sha384-p0G7HnR6D/f81mKyLqCkr9fEwbDWCwwK8lVZmaudReYXt7bGD3mVO0y9HFsZQhfQ',
                 };
@@ -307,8 +273,6 @@ export default class BraintreeScriptLoader {
                 return {
                     [BRAINTREE_SDK_STABLE_VERSION]:
                         'sha384-kBYpTT1+KcpIHYwnFE6XY3xQkdmazh9F4r9ufjh/cIFXAZFpP96XYNyW8PvHuiJ8',
-                    [BRAINTREE_SDK_ALPHA_VERSION]:
-                        'sha384-ashYIRvaw82mbN1eOd7B43a0La3ngECGkjMK6qbr7UNYb613xBJipfWnNHahDEj6',
                     [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]:
                         'sha384-cs4wDHFa3sU5X2n8S/9qte1uPxRPy7Kp/KL14lYurOXbXxMZma0660Gfo0a6AUS1',
                 };
@@ -317,8 +281,6 @@ export default class BraintreeScriptLoader {
                 return {
                     [BRAINTREE_SDK_STABLE_VERSION]:
                         'sha384-XzzKn9jU+Lvx1tJscq9e+nMRNBybQnSgSTXn1/PS0v6JxOUQlgFIBjI9ER8CODFt',
-                    [BRAINTREE_SDK_ALPHA_VERSION]:
-                        'sha384-YUiwmkaPgw7G/n4k2XVoNjsAtn2J+m8cA5oPhGH7y/o90302cwzLiFS23bNAw1e0',
                     [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]:
                         'sha384-iMFvsiulnHPuXwzbm5r/DPdATPCPn6J4aVNyTheAvM3e5FLA1j/wZTCAYxM081cP',
                 };
@@ -327,8 +289,6 @@ export default class BraintreeScriptLoader {
                 return {
                     [BRAINTREE_SDK_STABLE_VERSION]:
                         'sha384-AfqcRXnzzimKHVeUXcJNlB6ti2rmN9UJaZrLFU21pj779Db0zIJtBMdVcwb64NEm',
-                    [BRAINTREE_SDK_ALPHA_VERSION]:
-                        'sha384-CXsbLYSCKdOjrs8CILcaOLBkdI/d7jWlym/+lnzbda8MS/X58DCHrskKp7mPaDxG',
                     [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]:
                         'sha384-prmYZ8RvB+/Nuld/7DbA6VfQ+vgDVSwR2Bos6s2FPhoOWf4fYW+YnYA0j9G4bS5/',
                 };
@@ -337,14 +297,11 @@ export default class BraintreeScriptLoader {
                 return {
                     [BRAINTREE_SDK_STABLE_VERSION]:
                         'sha384-7I4A3VPyzQnBGG7F2aiC9We5tN3Py+cYyPWoqiQJaXCEIVLX2goBaku2lGhZXpyK',
-                    [BRAINTREE_SDK_ALPHA_VERSION]:
-                        'sha384-5l3JvGSYH74qGQJB8IlsrUAqeqrH58vkIkxJoW+LH7O99z4Np2BceIcFvZ46QGld',
                     [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]:
                         'sha384-0gdeYixIb/qimY4JRVwaybygpjWS7O4NtcwQPEJwFhx0nGBKE+NxbkQXOiTXY5QY',
                 };
 
             case BraintreeModuleName.Fastlane:
-                // Info: fastlane.min.js does not have Access-Control-Allow-Origin: * or not found
                 return {
                     [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]:
                         'sha384-Ca2r1xkeRMuYnf7qxF1rf9RrxNNYv/yqkVNZJ8f3CX6vwiagJNl7L65/3zWyu2hH',

@@ -1,4 +1,4 @@
-import { BraintreeFastlaneWindow } from '../braintree';
+import { BraintreeFastlaneWindow } from '../types';
 
 import isBraintreeFastlaneWindow from './is-braintree-fastlane-window';
 

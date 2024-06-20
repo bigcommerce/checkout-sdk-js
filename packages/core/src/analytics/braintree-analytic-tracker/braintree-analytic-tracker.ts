@@ -4,7 +4,6 @@ import {
     BraintreeFastlaneEmailEnteredEventOptions,
     BraintreeFastlaneEventCommonOptions,
     BraintreeFastlaneOrderPlacedEventOptions,
-    isBraintreeConnectWindow,
     isBraintreeFastlaneWindow,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -52,20 +51,14 @@ export default class BraintreeAnalyticTracker implements BraintreeAnalyticTracke
             state.data.getPaymentMethod('braintree') ||
             state.data.getPaymentMethod('braintreeacceleratedcheckout');
         const isAnalyticEnabled = paymentMethod?.initializationData.isBraintreeAnalyticsV2Enabled;
-        const isFastlaneEnabled = paymentMethod?.initializationData.isFastlaneEnabled;
 
-        const isAvailableAnalyticEventsMethods = isFastlaneEnabled
-            ? isBraintreeFastlaneWindow(window) && window.braintreeFastlane.events
-            : isBraintreeConnectWindow(window) && window.braintreeConnect.events;
+        const isAvailableAnalyticEventsMethods =
+            isBraintreeFastlaneWindow(window) && window.braintreeFastlane.events;
 
         return isAnalyticEnabled && isAvailableAnalyticEventsMethods;
     }
 
     private _getBraintreeEventsOrThrow(): BraintreeFastlane['events'] {
-        if (isBraintreeConnectWindow(window)) {
-            return window.braintreeConnect.events;
-        }
-
         if (isBraintreeFastlaneWindow(window)) {
             return window.braintreeFastlane.events;
         }

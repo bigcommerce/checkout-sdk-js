@@ -11,7 +11,6 @@ import BraintreeScriptLoader from './braintree-script-loader';
 import {
     getBraintreeAddress,
     getClientMock,
-    getConnectMock,
     getDataCollectorMock,
     getDeviceDataMock,
     getFastlaneMock,
@@ -23,7 +22,6 @@ import {
 import { PaypalSDK } from './paypal';
 import {
     BraintreeClient,
-    BraintreeConnect,
     BraintreeDataCollector,
     BraintreeFastlane,
     BraintreeHostWindow,
@@ -33,9 +31,7 @@ import {
 } from './types';
 
 describe('BraintreeIntegrationService', () => {
-    let braintreeConnectMock: BraintreeConnect;
     let braintreeFastlaneMock: BraintreeFastlane;
-    let braintreeConnectCreatorMock: BraintreeModuleCreator<BraintreeConnect>;
     let braintreeFastlaneCreatorMock: BraintreeModuleCreator<BraintreeFastlane>;
     let braintreeHostWindowMock: BraintreeHostWindow;
     let braintreeIntegrationService: BraintreeIntegrationService;
@@ -66,9 +62,7 @@ describe('BraintreeIntegrationService', () => {
     };
 
     beforeEach(() => {
-        braintreeConnectMock = getConnectMock();
         braintreeFastlaneMock = getFastlaneMock();
-        braintreeConnectCreatorMock = getModuleCreatorMock(braintreeConnectMock);
         braintreeFastlaneCreatorMock = getModuleCreatorMock(braintreeFastlaneMock);
         clientMock = getClientMock();
         clientCreatorMock = getModuleCreatorMock(clientMock);
@@ -89,9 +83,6 @@ describe('BraintreeIntegrationService', () => {
 
         jest.spyOn(braintreeScriptLoader, 'initialize');
         jest.spyOn(braintreeScriptLoader, 'loadClient').mockImplementation(() => clientCreatorMock);
-        jest.spyOn(braintreeScriptLoader, 'loadConnect').mockImplementation(
-            () => braintreeConnectCreatorMock,
-        );
         jest.spyOn(braintreeScriptLoader, 'loadFastlane').mockImplementation(
             () => braintreeFastlaneCreatorMock,
         );
@@ -157,61 +148,6 @@ describe('BraintreeIntegrationService', () => {
         });
     });
 
-    describe('#getBraintreeConnect()', () => {
-        it('throws an error if client token is not provided', async () => {
-            braintreeIntegrationService.initialize('', storeConfigWithFeaturesOn);
-
-            try {
-                await braintreeIntegrationService.getBraintreeConnect();
-            } catch (error) {
-                expect(error).toBeInstanceOf(NotInitializedError);
-            }
-        });
-
-        it('loads braintree connect and creates an instance of connect object', async () => {
-            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
-
-            const result = await braintreeIntegrationService.getBraintreeConnect();
-
-            expect(braintreeScriptLoader.loadClient).toHaveBeenCalled();
-            expect(braintreeScriptLoader.loadDataCollector).toHaveBeenCalled();
-            expect(braintreeScriptLoader.loadConnect).toHaveBeenCalled();
-
-            expect(braintreeConnectCreatorMock.create).toHaveBeenCalledWith({
-                authorization: clientToken,
-                client: clientMock,
-                deviceData: getDeviceDataMock(),
-                styles: {
-                    root: {
-                        backgroundColorPrimary: 'transparent',
-                    },
-                },
-            });
-
-            expect(result).toEqual(braintreeConnectMock);
-        });
-
-        it('sets axo to sandbox mode if test mode is enabled', async () => {
-            jest.spyOn(Storage.prototype, 'setItem').mockImplementation(jest.fn);
-
-            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
-
-            await braintreeIntegrationService.getBraintreeConnect('asd123', true);
-
-            expect(window.localStorage.setItem).toHaveBeenCalledWith('axoEnv', 'sandbox');
-        });
-
-        it('does not switch axo to sandbox mode if test mode is disabled', async () => {
-            jest.spyOn(Storage.prototype, 'setItem').mockImplementation(jest.fn);
-
-            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
-
-            await braintreeIntegrationService.getBraintreeConnect('asd123', false);
-
-            expect(window.localStorage.setItem).not.toHaveBeenCalled();
-        });
-    });
-
     describe('#getBraintreeFastlane()', () => {
         it('throws an error if client token is not provided', async () => {
             braintreeIntegrationService.initialize('', storeConfigWithFeaturesOn);
@@ -246,7 +182,7 @@ describe('BraintreeIntegrationService', () => {
             expect(result).toEqual(braintreeFastlaneMock);
         });
 
-        it('sets axo to sandbox mode if test mode is enabled', async () => {
+        it('sets fastlane to sandbox mode if test mode is enabled', async () => {
             jest.spyOn(Storage.prototype, 'setItem').mockImplementation(jest.fn);
 
             braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
@@ -256,7 +192,7 @@ describe('BraintreeIntegrationService', () => {
             expect(window.localStorage.setItem).toHaveBeenCalledWith('fastlaneEnv', 'sandbox');
         });
 
-        it('does not switch axo to sandbox mode if test mode is disabled', async () => {
+        it('does not switch fastlane to sandbox mode if test mode is disabled', async () => {
             jest.spyOn(Storage.prototype, 'setItem').mockImplementation(jest.fn);
 
             braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
