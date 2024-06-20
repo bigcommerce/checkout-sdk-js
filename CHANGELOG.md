@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.621.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.621.0...v1.621.1) (2024-06-20)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2169 removed all code related to the GooglePay from the core package ([#2527](https://github.com/bigcommerce/checkout-sdk-js/issues/2527)) ([ec32de8](https://github.com/bigcommerce/checkout-sdk-js/commit/ec32de80000b58fe37b4d69e1bf265af4beadc52))
+
 ## [1.621.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.620.0...v1.621.0) (2024-06-18)
 
 

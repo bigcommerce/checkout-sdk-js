@@ -677,61 +677,6 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
      */
     currencyCode?: string;
     /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support adyenv2 GooglePay.
-     */
-    googlepayadyenv2?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support adyenv2 GooglePay.
-     */
-    googlepayadyenv3?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate BNZ GooglePay. They can be
-     * omitted unless you need to support BNZ GooglePay.
-     */
-    googlepaybnz?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Braintree GooglePay. They can be
-     * omitted unless you need to support Braintree GooglePay.
-     */
-    googlepaybraintree?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Checkout.com GooglePay. They can be
-     * omitted unless you need to support Checkout.com GooglePay.
-     */
-    googlepaycheckoutcom?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate CybersourceV2 GooglePay. They can be
-     * omitted unless you need to support CybersourceV2 GooglePay.
-     */
-    googlepaycybersourcev2?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Orbital GooglePay. They can be
-     * omitted unless you need to support Orbital GooglePay.
-     */
-    googlepayorbital?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Stripe GooglePay. They can be
-     * omitted unless you need to support Stripe GooglePay.
-     */
-    googlepaystripe?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Stripe GooglePay. They can be
-     * omitted unless you need to support Stripe GooglePay.
-     */
-    googlepaystripeupe?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Authorize.Net GooglePay.
-     * They can be omitted unless you need to support Authorize.Net GooglePay.
-     */
-    googlepayauthorizenet?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Worldpay GooglePay. They can be
-     * omitted unless you need to support Worldpay GooglePay.
-     */
-    googlepayworldpayaccess?: GooglePayButtonInitializeOptions;
-    /**
      * The options that are required to facilitate PayPal. They can be omitted
      * unless you need to support Paypal.
      */
@@ -774,61 +719,6 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * They can be omitted unless you need to support Masterpass.
      */
     masterpass?: MasterpassCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayadyenv2?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayadyenv3?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayauthorizenet?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaybnz?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaybraintree?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaycheckoutcom?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaycybersourcev2?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayorbital?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaystripe?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaystripeupe?: GooglePayCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayworldpayaccess?: GooglePayCustomerInitializeOptions;
 }
 
 declare interface BaseElementOptions {
@@ -940,65 +830,10 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      */
     chasepay?: ChasePayInitializeOptions;
     /**
-     * The options that are required to initialize the GooglePay Authorize.Net
-     * payment method. They can be omitted unless you need to support GooglePay.
-     */
-    googlepayadyenv2?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Authorize.Net
-     * payment method. They can be omitted unless you need to support GooglePay.
-     */
-    googlepayadyenv3?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Authorize.Net
-     * payment method. They can be omitted unless you need to support GooglePay.
-     */
-    googlepayauthorizenet?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Authorize.Net
-     * payment method. They can be omitted unless you need to support GooglePay.
-     */
-    googlepaybnz?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Braintree payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaybraintree?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Checkout.com payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaycheckoutcom?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay CybersourceV2 payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaycybersourcev2?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayorbital?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Stripe payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaystripe?: GooglePayPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Stripe payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepaystripeupe?: GooglePayPaymentInitializeOptions;
-    /**
      * The options that are required to initialize the Worldpay payment method.
      * They can be omitted unless you need to support Worldpay.
      */
     worldpay?: WorldpayAccessPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay Worldpay Access payment method.
-     * They can be omitted unless you need to support GooglePay.
-     */
-    googlepayworldpayaccess?: GooglePayPaymentInitializeOptions;
 }
 
 declare interface BillingAddress extends Address {
@@ -1913,12 +1748,6 @@ declare interface BrowserInfo {
     time_zone_offset: string;
 }
 
-declare enum ButtonColor {
-    Default = "default",
-    Black = "black",
-    White = "white"
-}
-
 declare interface ButtonResponse {
     /**
      * https://docs.digitalriver.com/digital-river-api/payment-integrations-1/drop-in/drop-in-integration-guide#customizing-the-text-of-the-drop-in-button
@@ -1933,11 +1762,6 @@ declare interface ButtonStyles extends BlockElementStyles {
     focus?: BlockElementStyles;
     hover?: BlockElementStyles;
     disabled?: BlockElementStyles;
-}
-
-declare enum ButtonType {
-    Long = "long",
-    Short = "short"
 }
 
 /**
@@ -5211,26 +5035,6 @@ declare type GooglePayButtonColor = 'default' | 'black' | 'white';
 
 declare interface GooglePayButtonInitializeOptions {
     /**
-     * The color of the GooglePay button that will be inserted.
-     *  black (default): a black button suitable for use on white or light backgrounds.
-     *  white: a white button suitable for use on colorful backgrounds.
-     */
-    buttonColor?: ButtonColor;
-    /**
-     * The size of the GooglePay button that will be inserted.
-     *  long: "Buy with Google Pay" button (default). A translated button label may appear
-     *         if a language specified in the viewer's browser matches an available language.
-     *  short: Google Pay payment button without the "Buy with" text.
-     */
-    buttonType?: ButtonType;
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: GooglePayBuyNowInitializeOptions;
-}
-
-declare interface GooglePayButtonInitializeOptions_2 {
-    /**
      * All Google Pay payment buttons exist in two styles: dark (default) and light.
      * To provide contrast, use dark buttons on light backgrounds and light buttons on dark or colorful backgrounds.
      */
@@ -5254,37 +5058,7 @@ declare interface GooglePayButtonInitializeOptions_2 {
 
 declare type GooglePayButtonType = 'book' | 'buy' | 'checkout' | 'donate' | 'order' | 'pay' | 'plain' | 'subscribe' | 'long' | 'short';
 
-declare interface GooglePayBuyNowInitializeOptions {
-    getBuyNowCartRequestBody?(): BuyNowCartRequestBody;
-}
-
 declare interface GooglePayCustomerInitializeOptions {
-    /**
-     * This container is used to set an event listener, provide an element ID if you want
-     * users to be able to launch the GooglePay wallet modal by clicking on a button.
-     * It should be an HTML element.
-     */
-    container: string;
-    /**
-     * The color of the GooglePay button that will be inserted.
-     *  black (default): a black button suitable for use on white or light backgrounds.
-     *  white: a white button suitable for use on colorful backgrounds.
-     */
-    buttonColor?: ButtonColor;
-    /**
-     * The size of the GooglePay button that will be inserted.
-     *  long: "Buy with Google Pay" button (default). A translated button label may appear
-     *         if a language specified in the viewer's browser matches an available language.
-     *  short: Google Pay payment button without the "Buy with" text.
-     */
-    buttonType?: ButtonType;
-    /**
-     * Callback that gets called on google pay button click
-     */
-    onClick?(): void;
-}
-
-declare interface GooglePayCustomerInitializeOptions_2 {
     /**
      * This container is used to set an event listener, provide an element ID if you want users to be able to launch
      * the GooglePay wallet modal by clicking on a button. It should be an HTML element.
@@ -5381,65 +5155,6 @@ declare enum GooglePayKey {
  * ```
  */
 declare interface GooglePayPaymentInitializeOptions {
-    /**
-     * This walletButton is used to set an event listener, provide an element ID if you want
-     * users to be able to launch the GooglePay wallet modal by clicking on a button.
-     * It should be an HTML element.
-     */
-    walletButton?: string;
-    /**
-     * A callback that gets called when GooglePay fails to initialize or
-     * selects a payment option.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onError?(error: Error): void;
-    /**
-     * A callback that gets called when the customer selects a payment option.
-     */
-    onPaymentSelect?(): void;
-}
-
-/**
- * A set of options that are required to initialize the GooglePay payment method
- *
- * If the customer chooses to pay with GooglePay, they will be asked to
- * enter their payment details via a modal. You can hook into events emitted by
- * the modal by providing the callbacks listed below.
- *
- * ```html
- * <!-- This is where the GooglePay button will be inserted -->
- * <div id="wallet-button"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     // Using GooglePay provided by Braintree as an example
- *     methodId: 'googlepaybraintree',
- *     googlepaybraintree: {
- *         walletButton: 'wallet-button'
- *     },
- * });
- * ```
- *
- * Additional event callbacks can be registered.
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'googlepaybraintree',
- *     googlepaybraintree: {
- *         walletButton: 'wallet-button',
- *         onError(error) {
- *             console.log(error);
- *         },
- *         onPaymentSelect() {
- *             console.log('Selected');
- *         },
- *     },
- * });
- * ```
- */
-declare interface GooglePayPaymentInitializeOptions_2 {
     /**
      * This walletButton is used to set an event listener, provide an element ID if you want
      * users to be able to launch the GooglePay wallet modal by clicking on a button.
@@ -8880,7 +8595,7 @@ declare interface WithDocumentInstrument {
  * They can be omitted unless you need to support GooglePay.
  */
 declare type WithGooglePayButtonInitializeOptions = {
-    [k in GooglePayKey]?: GooglePayButtonInitializeOptions_2;
+    [k in GooglePayKey]?: GooglePayButtonInitializeOptions;
 };
 
 /**
@@ -8888,7 +8603,7 @@ declare type WithGooglePayButtonInitializeOptions = {
  * They can be omitted unless you need to support GooglePay.
  */
 declare type WithGooglePayCustomerInitializeOptions = {
-    [k in GooglePayKey]?: GooglePayCustomerInitializeOptions_2;
+    [k in GooglePayKey]?: GooglePayCustomerInitializeOptions;
 };
 
 /**
@@ -8896,7 +8611,7 @@ declare type WithGooglePayCustomerInitializeOptions = {
  * They can be omitted unless you need to support GooglePay.
  */
 declare type WithGooglePayPaymentInitializeOptions = {
-    [k in GooglePayKey]?: GooglePayPaymentInitializeOptions_2;
+    [k in GooglePayKey]?: GooglePayPaymentInitializeOptions;
 };
 
 declare interface WithIdealInstrument {

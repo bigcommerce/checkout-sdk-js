@@ -91,61 +91,6 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
      */
     currencyCode?: string;
     /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support adyenv2 GooglePay.
-     */
-    googlepayadyenv2?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to initialize the GooglePay payment method.
-     * They can be omitted unless you need to support adyenv2 GooglePay.
-     */
-    googlepayadyenv3?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate BNZ GooglePay. They can be
-     * omitted unless you need to support BNZ GooglePay.
-     */
-    googlepaybnz?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Braintree GooglePay. They can be
-     * omitted unless you need to support Braintree GooglePay.
-     */
-    googlepaybraintree?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Checkout.com GooglePay. They can be
-     * omitted unless you need to support Checkout.com GooglePay.
-     */
-    googlepaycheckoutcom?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate CybersourceV2 GooglePay. They can be
-     * omitted unless you need to support CybersourceV2 GooglePay.
-     */
-    googlepaycybersourcev2?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Orbital GooglePay. They can be
-     * omitted unless you need to support Orbital GooglePay.
-     */
-    googlepayorbital?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Stripe GooglePay. They can be
-     * omitted unless you need to support Stripe GooglePay.
-     */
-    googlepaystripe?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Stripe GooglePay. They can be
-     * omitted unless you need to support Stripe GooglePay.
-     */
-    googlepaystripeupe?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Authorize.Net GooglePay.
-     * They can be omitted unless you need to support Authorize.Net GooglePay.
-     */
-    googlepayauthorizenet?: GooglePayButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Worldpay GooglePay. They can be
-     * omitted unless you need to support Worldpay GooglePay.
-     */
-    googlepayworldpayaccess?: GooglePayButtonInitializeOptions;
-    /**
      * The options that are required to facilitate PayPal. They can be omitted
      * unless you need to support Paypal.
      */
@@ -281,17 +226,6 @@ declare interface BraintreeVenmoButtonInitializeOptions {
      * A set of styling options for the checkout button.
      */
     style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
-}
-
-declare enum ButtonColor {
-    Default = "default",
-    Black = "black",
-    White = "white"
-}
-
-declare enum ButtonType {
-    Long = "long",
-    Short = "short"
 }
 
 /**
@@ -452,26 +386,6 @@ declare type GooglePayButtonColor = 'default' | 'black' | 'white';
 
 declare interface GooglePayButtonInitializeOptions {
     /**
-     * The color of the GooglePay button that will be inserted.
-     *  black (default): a black button suitable for use on white or light backgrounds.
-     *  white: a white button suitable for use on colorful backgrounds.
-     */
-    buttonColor?: ButtonColor;
-    /**
-     * The size of the GooglePay button that will be inserted.
-     *  long: "Buy with Google Pay" button (default). A translated button label may appear
-     *         if a language specified in the viewer's browser matches an available language.
-     *  short: Google Pay payment button without the "Buy with" text.
-     */
-    buttonType?: ButtonType;
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: GooglePayBuyNowInitializeOptions;
-}
-
-declare interface GooglePayButtonInitializeOptions_2 {
-    /**
      * All Google Pay payment buttons exist in two styles: dark (default) and light.
      * To provide contrast, use dark buttons on light backgrounds and light buttons on dark or colorful backgrounds.
      */
@@ -494,10 +408,6 @@ declare interface GooglePayButtonInitializeOptions_2 {
 }
 
 declare type GooglePayButtonType = 'book' | 'buy' | 'checkout' | 'donate' | 'order' | 'pay' | 'plain' | 'subscribe' | 'long' | 'short';
-
-declare interface GooglePayBuyNowInitializeOptions {
-    getBuyNowCartRequestBody?(): BuyNowCartRequestBody;
-}
 
 /**
  * The recognized keys to pass the initialization options for Google Pay.
@@ -780,7 +690,7 @@ declare interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
  * They can be omitted unless you need to support GooglePay.
  */
 declare type WithGooglePayButtonInitializeOptions = {
-    [k in GooglePayKey]?: GooglePayButtonInitializeOptions_2;
+    [k in GooglePayKey]?: GooglePayButtonInitializeOptions;
 };
 
 declare interface WithPayPalCommerceAlternativeMethodsButtonInitializeOptions {

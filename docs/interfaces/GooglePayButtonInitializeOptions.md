@@ -8,33 +8,31 @@
 
 - [buttonColor](GooglePayButtonInitializeOptions.md#buttoncolor)
 - [buttonType](GooglePayButtonInitializeOptions.md#buttontype)
-- [buyNowInitializeOptions](GooglePayButtonInitializeOptions.md#buynowinitializeoptions)
 
 ## Properties
 
 ### buttonColor
 
-• `Optional` **buttonColor**: [`Default`](../enums/ButtonColor.md#default) \| [`Black`](../enums/ButtonColor.md#black) \| [`White`](../enums/ButtonColor.md#white)
+• `Optional` **buttonColor**: ``"default"`` \| ``"black"`` \| ``"white"``
 
-The color of the GooglePay button that will be inserted.
- black (default): a black button suitable for use on white or light backgrounds.
- white: a white button suitable for use on colorful backgrounds.
+All Google Pay payment buttons exist in two styles: dark (default) and light.
+To provide contrast, use dark buttons on light backgrounds and light buttons on dark or colorful backgrounds.
 
 ___
 
 ### buttonType
 
-• `Optional` **buttonType**: [`Long`](../enums/ButtonType.md#long) \| [`Short`](../enums/ButtonType.md#short)
+• `Optional` **buttonType**: ``"book"`` \| ``"buy"`` \| ``"checkout"`` \| ``"donate"`` \| ``"order"`` \| ``"pay"`` \| ``"plain"`` \| ``"subscribe"`` \| ``"long"`` \| ``"short"``
 
-The size of the GooglePay button that will be inserted.
- long: "Buy with Google Pay" button (default). A translated button label may appear
-        if a language specified in the viewer's browser matches an available language.
- short: Google Pay payment button without the "Buy with" text.
+Variant buttons:
+book: The "Book with Google Pay" payment button.
+buy: The "Buy with Google Pay" payment button.
+checkout: The "Checkout with Google Pay" payment button.
+donate: The "Donate with Google Pay" payment button.
+order: The "Order with Google Pay" payment button.
+pay: The "Pay with Google Pay" payment button.
+plain: The Google Pay payment button without the additional text (default).
+subscribe: The "Subscribe with Google Pay" payment button.
 
-___
-
-### buyNowInitializeOptions
-
-• `Optional` **buyNowInitializeOptions**: [`GooglePayBuyNowInitializeOptions`](GooglePayBuyNowInitializeOptions.md)
-
-The options that are required to initialize Buy Now functionality.
+Note: "long" and "short" button types have been renamed to "buy" and "plain", but are still valid button types
+for backwards compatability.

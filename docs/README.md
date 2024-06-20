@@ -8,8 +8,6 @@
 
 - [AdyenCardFields](enums/AdyenCardFields.md)
 - [BraintreeFormFieldType](enums/BraintreeFormFieldType.md)
-- [ButtonColor](enums/ButtonColor.md)
-- [ButtonType](enums/ButtonType.md)
 - [CheckoutButtonMethodType](enums/CheckoutButtonMethodType.md)
 - [CheckoutIncludes](enums/CheckoutIncludes.md)
 - [EmbeddedCheckoutEventType](enums/EmbeddedCheckoutEventType.md)
@@ -249,12 +247,8 @@
 - [GiftCertificateOrderPayment](interfaces/GiftCertificateOrderPayment.md)
 - [GiftCertificateSelector](interfaces/GiftCertificateSelector.md)
 - [GooglePayButtonInitializeOptions](interfaces/GooglePayButtonInitializeOptions.md)
-- [GooglePayButtonInitializeOptions_2](interfaces/GooglePayButtonInitializeOptions_2.md)
-- [GooglePayBuyNowInitializeOptions](interfaces/GooglePayBuyNowInitializeOptions.md)
 - [GooglePayCustomerInitializeOptions](interfaces/GooglePayCustomerInitializeOptions.md)
-- [GooglePayCustomerInitializeOptions_2](interfaces/GooglePayCustomerInitializeOptions_2.md)
 - [GooglePayPaymentInitializeOptions](interfaces/GooglePayPaymentInitializeOptions.md)
-- [GooglePayPaymentInitializeOptions_2](interfaces/GooglePayPaymentInitializeOptions_2.md)
 - [GoogleRecaptchaWindow](interfaces/GoogleRecaptchaWindow.md)
 - [HostedCardFieldOptions](interfaces/HostedCardFieldOptions.md)
 - [HostedCardFieldOptionsMap](interfaces/HostedCardFieldOptionsMap.md)
@@ -892,7 +886,7 @@ ___
 
 ### WithGooglePayButtonInitializeOptions
 
-Ƭ **WithGooglePayButtonInitializeOptions**: { [k in GooglePayKey]?: GooglePayButtonInitializeOptions\_2 }
+Ƭ **WithGooglePayButtonInitializeOptions**: { [k in GooglePayKey]?: GooglePayButtonInitializeOptions }
 
 The options that are required to initialize the GooglePay payment method.
 They can be omitted unless you need to support GooglePay.
@@ -901,7 +895,7 @@ ___
 
 ### WithGooglePayCustomerInitializeOptions
 
-Ƭ **WithGooglePayCustomerInitializeOptions**: { [k in GooglePayKey]?: GooglePayCustomerInitializeOptions\_2 }
+Ƭ **WithGooglePayCustomerInitializeOptions**: { [k in GooglePayKey]?: GooglePayCustomerInitializeOptions }
 
 The options that are required to initialize the GooglePay payment method.
 They can be omitted unless you need to support GooglePay.
@@ -910,7 +904,7 @@ ___
 
 ### WithGooglePayPaymentInitializeOptions
 
-Ƭ **WithGooglePayPaymentInitializeOptions**: { [k in GooglePayKey]?: GooglePayPaymentInitializeOptions\_2 }
+Ƭ **WithGooglePayPaymentInitializeOptions**: { [k in GooglePayKey]?: GooglePayPaymentInitializeOptions }
 
 The options that are required to initialize the GooglePay payment method.
 They can be omitted unless you need to support GooglePay.
