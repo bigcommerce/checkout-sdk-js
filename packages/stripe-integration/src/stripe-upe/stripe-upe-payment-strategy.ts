@@ -401,15 +401,17 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         fontSize: '15px',
                         fontWeight: '700',
                         padding: '13px 20px 13px',
-                        paddingBottom: '13px',
+                        // paddingBottom: '13px',
                         borderBottom: '1px solid #e6e6e6',
                     },
                     '.TabLabel, .AccordionItem': {
                         fontSize: '15px',
                         fontWeight: '700',
+                        color: '#5f5f5f',
                     },
-                    '.TabLabel--selected': {
+                    '.TabLabel--selected, .AccordionItem--selected': {
                         fontWeight: '700',
+                        color: '#5f5f5f',
                     },
                 },
             };
@@ -417,6 +419,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         const { outstandingBalance } = state.getCheckoutOrThrow();
         const { currency } = state.getCartOrThrow();
+        const currencyCode = currency.code.toLowerCase();
         const amount = Math.round(outstandingBalance * 100);
 
         console.log({ amount });
@@ -428,8 +431,8 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 appearance,
                 mode: 'payment',
                 amount,
-                currency: currency.code.toLowerCase(),
-                paymentMethodTypes: ['card', 'alipay', 'klarna', 'us_bank_account', 'wechat_pay'], // TODO: ask Stripe why only CC fields renders without this option
+                currency: currencyCode,
+                paymentMethodTypes: ['card', 'alipay', 'klarna', 'us_bank_account', 'wechat_pay'], // TODO: ask Stripe team why does only CC fields render without this option
                 fonts: [
                     {
                         cssSrc: 'https://fonts.googleapis.com/css?family=Montserrat:700,500,400%7CKarla:400&display=swap',
