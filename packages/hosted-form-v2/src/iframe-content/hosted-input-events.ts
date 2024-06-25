@@ -1,13 +1,8 @@
 import { Response } from '@bigcommerce/request-sender';
-
-import {
-    PaymentErrorData,
-    PaymentErrorResponseBody,
-} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentErrorData, PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import HostedFieldType from '../hosted-field-type';
 import { HostedFormErrorsData } from '../hosted-form-options';
-
 import HostedInputInitializeErrorData from './hosted-input-initialize-error-data';
 import HostedInputValidateResults from './hosted-input-validate-results';
 
@@ -21,8 +16,8 @@ export enum HostedInputEventType {
     CardTypeChanged = 'HOSTED_INPUT:CARD_TYPE_CHANGED',
     Entered = 'HOSTED_INPUT:ENTERED',
     Focused = 'HOSTED_INPUT:FOCUSED',
-    SubmitSucceeded = 'HOSTED_INPUT:SUBMIT_SUCCEEDED',
-    SubmitFailed = 'HOSTED_INPUT:SUBMIT_FAILED',
+    SubmitManualOrderSucceeded = 'HOSTED_INPUT:SUBMIT_MANUAL_ORDER_SUCCEEDED',
+    SubmitManualOrderFailed = 'HOSTED_INPUT:SUBMIT_MANUAL_ORDER_FAILED',
     Validated = 'HOSTED_INPUT:VALIDATED',
 }
 
@@ -36,8 +31,8 @@ export interface HostedInputEventMap {
     [HostedInputEventType.CardTypeChanged]: HostedInputCardTypeChangeEvent;
     [HostedInputEventType.Entered]: HostedInputEnterEvent;
     [HostedInputEventType.Focused]: HostedInputFocusEvent;
-    [HostedInputEventType.SubmitSucceeded]: HostedInputSubmitSuccessEvent;
-    [HostedInputEventType.SubmitFailed]: HostedInputSubmitErrorEvent;
+    [HostedInputEventType.SubmitManualOrderSucceeded]: HostedInputSubmitManualOrderSuccessEvent;
+    [HostedInputEventType.SubmitManualOrderFailed]: HostedInputSubmitManualOrderErrorEvent;
     [HostedInputEventType.Validated]: HostedInputValidateEvent;
 }
 
@@ -51,8 +46,8 @@ export type HostedInputEvent =
     | HostedInputCardTypeChangeEvent
     | HostedInputEnterEvent
     | HostedInputFocusEvent
-    | HostedInputSubmitSuccessEvent
-    | HostedInputSubmitErrorEvent
+    | HostedInputSubmitManualOrderSuccessEvent
+    | HostedInputSubmitManualOrderErrorEvent
     | HostedInputValidateEvent;
 
 export interface HostedInputAttachSuccessEvent {
@@ -108,19 +103,15 @@ export interface HostedInputEnterEvent {
         fieldType: HostedFieldType;
     };
 }
-
-export interface HostedInputSubmitSuccessEvent {
-    type: HostedInputEventType.SubmitSucceeded;
-    payload: {
-        response: Response<unknown>;
-    };
+export interface HostedInputSubmitManualOrderSuccessEvent {
+    type: HostedInputEventType.SubmitManualOrderSucceeded;
 }
 
-export interface HostedInputSubmitErrorEvent {
-    type: HostedInputEventType.SubmitFailed;
+export interface HostedInputSubmitManualOrderErrorEvent {
+    type: HostedInputEventType.SubmitManualOrderFailed;
     payload: {
         error: PaymentErrorData;
-        response?: Response<PaymentErrorResponseBody>;
+        response?: Response<PaymentErrorResponseBody>; 
     };
 }
 

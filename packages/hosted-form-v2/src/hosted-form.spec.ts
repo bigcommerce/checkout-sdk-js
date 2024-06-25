@@ -18,7 +18,7 @@ describe('HostedForm', () => {
         attach: jest.fn(),
         detach: jest.fn(),
         getType: jest.fn(),
-        submitForm: jest.fn(),
+        submitManualOrderForm: jest.fn(),
         validateForm: jest.fn(),
     };
 
