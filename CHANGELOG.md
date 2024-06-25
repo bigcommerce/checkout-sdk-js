@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.622.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.621.1...v1.622.0) (2024-06-25)
+
+
+### Features
+
+* **checkout:** PAYPAL-4200 provided initial state config for store creation on createCheckoutButtonInitializer ([#2533](https://github.com/bigcommerce/checkout-sdk-js/issues/2533)) ([67ce659](https://github.com/bigcommerce/checkout-sdk-js/commit/67ce6596a3e03e1cd32443b381ee87771646c114))
+
 ### [1.621.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.621.0...v1.621.1) (2024-06-20)
 
 
