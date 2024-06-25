@@ -1197,6 +1197,7 @@ declare interface BraintreeFastlaneCustomerInitializeOptions {
  *     methodId: 'braintreeacceleratedcheckout',
  *     braintreefastlane: {
  *         onInit: (renderPayPalComponentMethod) => renderPayPalComponentMethod('#container-id'),
+ *         onChange: (showPayPalCardSelector) => showPayPalCardSelector(),
  *         styles: {
  *              root: {
  *                  backgroundColorPrimary: 'transparent',
@@ -1231,7 +1232,7 @@ declare interface BraintreeFastlaneCustomerInitializeOptions {
 declare interface BraintreeFastlanePaymentInitializeOptions {
     /**
      * Is a callback that takes the CSS selector of a container
-     * where the PayPal Connect form should be inserted into.
+     * where the Braintree Fastlane form should be inserted into.
      */
     onInit?: (renderPayPalComponentMethod: (container: string) => void) => void;
     /**
@@ -1240,9 +1241,9 @@ declare interface BraintreeFastlanePaymentInitializeOptions {
      */
     onChange?: (showPayPalCardSelector: () => Promise<CardInstrument_2 | undefined>) => void;
     /**
-     * Is a stylisation options for customizing PayPal Connect components
+     * Is a stylisation options for customizing Braintree Fastlane components
      *
-     * Note: the styles for all Braintree Accelerated Checkout strategies should be the same,
+     * Note: the styles for all Braintree Fastlane strategies should be the same,
      * because they will be provided to PayPal library only for the first strategy initialization
      * no matter what strategy was initialised first
      */
