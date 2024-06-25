@@ -4,14 +4,14 @@ import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import {
     HostedFieldEventMap,
     HostedFieldEventType,
-    HostedFieldSubmitRequestEvent,
+    HostedFieldSubmitManualOrderRequestEvent,
 } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
 
 import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
-import HostedInputPaymentHandler from './hosted-input-payment-handler';
+import HostedInputManualOrderPaymentHandler from './hosted-input-manual-order-payment-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 import HostedInputValues from './hosted-input-values';
@@ -28,7 +28,7 @@ describe('HostedInput', () => {
     let input: HostedInput;
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
-    let paymentHandler: Pick<HostedInputPaymentHandler, 'handle'>;
+    let manualOrderPaymentHandler: Pick<HostedInputManualOrderPaymentHandler, 'handle'>;
     let styles: HostedInputStylesMap;
     let values: HostedInputValues;
 
@@ -64,7 +64,7 @@ describe('HostedInput', () => {
 
         fontUrls = ['https://fonts.googleapis.com/css?family=Open+Sans&display=swap'];
 
-        paymentHandler = { handle: jest.fn() };
+        manualOrderPaymentHandler = { handle: jest.fn() };
 
         inputAggregator = {
             getInputValues: jest.fn(() => values),
@@ -98,7 +98,7 @@ describe('HostedInput', () => {
             eventPoster as IframeEventPoster<HostedInputEvent>,
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
-            paymentHandler as HostedInputPaymentHandler,
+            manualOrderPaymentHandler as HostedInputManualOrderPaymentHandler,
         );
     });
 
@@ -148,7 +148,7 @@ describe('HostedInput', () => {
             eventPoster as IframeEventPoster<HostedInputEvent>,
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
-            paymentHandler as HostedInputPaymentHandler,
+            manualOrderPaymentHandler as HostedInputManualOrderPaymentHandler,
         );
 
         cardNumberInput.attach();
@@ -269,14 +269,14 @@ describe('HostedInput', () => {
         expect(inputValidator.validate).toHaveBeenCalledWith(values);
     });
 
-    it('submits form when requested by parent frame', () => {
-        const event = {} as HostedFieldSubmitRequestEvent;
+    it('submits manual order form when requested by parent frame', () => {
+        const event = {} as HostedFieldSubmitManualOrderRequestEvent;
 
         input.attach();
 
-        eventEmitter.emit(HostedFieldEventType.SubmitRequested, event);
+        eventEmitter.emit(HostedFieldEventType.SubmitManualOrderRequested, event);
 
-        expect(paymentHandler.handle).toHaveBeenCalledWith(event);
+        expect(manualOrderPaymentHandler.handle).toHaveBeenCalledWith(event);
     });
 
     it('emits event when enter key is pressed', () => {

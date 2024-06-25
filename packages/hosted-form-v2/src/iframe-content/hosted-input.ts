@@ -11,7 +11,7 @@ import HostedFieldType from '../hosted-field-type';
 
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
-import HostedInputPaymentHandler from './hosted-input-payment-handler';
+import HostedInputManualOrderPaymentHandler from './hosted-input-manual-order-payment-handler';
 import HostedInputStyles, { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 import HostedInputWindow from './hosted-input-window';
@@ -37,7 +37,7 @@ export default class HostedInput {
         protected _eventPoster: IframeEventPoster<HostedInputEvent>,
         protected _inputAggregator: HostedInputAggregator,
         protected _inputValidator: HostedInputValidator,
-        protected _paymentHandler: HostedInputPaymentHandler,
+        protected _manualOrderPaymentHandler: HostedInputManualOrderPaymentHandler,
     ) {
         this._input = document.createElement('input');
 
@@ -48,9 +48,10 @@ export default class HostedInput {
             HostedFieldEventType.ValidateRequested,
             this._handleValidate,
         );
+
         this._eventListener.addListener(
-            HostedFieldEventType.SubmitRequested,
-            this._paymentHandler.handle,
+            HostedFieldEventType.SubmitManualOrderRequested,
+            this._manualOrderPaymentHandler.handle,
         );
 
         this._configureInput();
