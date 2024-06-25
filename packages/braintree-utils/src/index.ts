@@ -6,4 +6,7 @@ export { default as BraintreeIntegrationService } from './braintree-integration-
 export { default as BraintreeScriptLoader } from './braintree-script-loader';
 export { default as BraintreeSdk } from './braintree-sdk';
 export { default as createBraintreeSdk } from './create-braintree-sdk';
-export { BRAINTREE_SDK_STABLE_VERSION, BRAINTREE_SDK_ALPHA_VERSION } from './sdk-verison';
+export {
+    BRAINTREE_SDK_STABLE_VERSION,
+    BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION,
+} from './sdk-verison';

@@ -1,14 +1,11 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-    BraintreeConnect,
     BraintreeFastlane,
     BraintreeFastlaneAuthenticationState,
     BraintreeIntegrationService,
     BraintreeScriptLoader,
-    getBraintreeConnectProfileDataMock,
     getBraintreeFastlaneProfileDataMock,
-    getConnectMock,
     getFastlaneMock,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -31,7 +28,6 @@ import { getBraintreeAcceleratedCheckoutPaymentMethod } from '../mocks/braintree
 import BraintreeFastlaneUtils from './braintree-fastlane-utils';
 
 describe('BraintreeFastlaneUtils', () => {
-    let braintreeConnectMock: BraintreeConnect;
     let braintreeFastlaneMock: BraintreeFastlane;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
@@ -50,7 +46,6 @@ describe('BraintreeFastlaneUtils', () => {
     const methodId = 'braintreeacceleratedcheckout';
 
     beforeEach(() => {
-        braintreeConnectMock = getConnectMock();
         braintreeFastlaneMock = getFastlaneMock();
         jest.spyOn(Date, 'now').mockImplementation(() => 1);
 
@@ -93,24 +88,12 @@ describe('BraintreeFastlaneUtils', () => {
 
         jest.spyOn(braintreeIntegrationService, 'initialize');
         jest.spyOn(braintreeIntegrationService, 'getSessionId').mockImplementation(jest.fn);
-        jest.spyOn(braintreeIntegrationService, 'getBraintreeConnect').mockImplementation(
-            () => braintreeConnectMock,
-        );
         jest.spyOn(braintreeIntegrationService, 'getBraintreeFastlane').mockImplementation(
             () => braintreeFastlaneMock,
         );
 
-        jest.spyOn(braintreeConnectMock.identity, 'lookupCustomerByEmail').mockReturnValue({
-            customerContextId: 'customerContextId',
-        });
-
         jest.spyOn(braintreeFastlaneMock.identity, 'lookupCustomerByEmail').mockReturnValue({
             customerContextId: 'customerContextId',
-        });
-
-        jest.spyOn(braintreeConnectMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
-            authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
-            profileData: getBraintreeConnectProfileDataMock(),
         });
 
         jest.spyOn(braintreeFastlaneMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
@@ -121,54 +104,6 @@ describe('BraintreeFastlaneUtils', () => {
 
     afterEach(() => {
         jest.clearAllMocks();
-    });
-
-    describe('#initializeBraintreeFastlaneOrThrow() with connect', () => {
-        it('throws an error if clientToken is not defined', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...paymentMethod,
-                clientToken: undefined,
-            });
-
-            try {
-                await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
-        it('throws an error if initializationData is not defined', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...paymentMethod,
-                initializationData: undefined,
-            });
-
-            try {
-                await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
-        it('initializes braintree integration service and loads braintree connect', async () => {
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-
-            expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
-                paymentMethod.clientToken,
-                storeConfig,
-            );
-            expect(braintreeIntegrationService.getBraintreeConnect).toHaveBeenCalledWith(
-                cart.id,
-                false,
-                undefined,
-            );
-        });
     });
 
     describe('#initializeBraintreeFastlaneOrThrow()', () => {
@@ -182,23 +117,7 @@ describe('BraintreeFastlaneUtils', () => {
             });
 
             try {
-                await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
-        it('throws an error if initializationData is not defined', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...paymentMethod,
-                initializationData: undefined,
-            });
-
-            try {
-                await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
+                await subject.initializeBraintreeFastlaneOrThrow(methodId);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -215,7 +134,7 @@ describe('BraintreeFastlaneUtils', () => {
                     isFastlaneEnabled: true,
                 },
             });
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
 
             expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethod.clientToken,
@@ -229,276 +148,7 @@ describe('BraintreeFastlaneUtils', () => {
         });
     });
 
-    describe('#runPayPalConnectAuthenticationFlowOrThrow()', () => {
-        it('does not authenticate user if braintree connect is not loaded', async () => {
-            await subject.runPayPalConnectAuthenticationFlowOrThrow();
-
-            expect(paymentIntegrationService.updatePaymentProviderCustomer).not.toHaveBeenCalled();
-        });
-
-        it('checks if there is PP Connect account with customer email', async () => {
-            jest.spyOn(braintreeConnectMock.identity, 'lookupCustomerByEmail').mockReturnValue({});
-
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            await subject.runPayPalConnectAuthenticationFlowOrThrow();
-
-            expect(braintreeConnectMock.identity.lookupCustomerByEmail).toHaveBeenCalled();
-        });
-
-        it('does not authenticate user if the customer unrecognized in PP Connect', async () => {
-            jest.spyOn(braintreeConnectMock.identity, 'lookupCustomerByEmail').mockReturnValue({});
-
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            await subject.runPayPalConnectAuthenticationFlowOrThrow();
-
-            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
-            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
-                authenticationState: BraintreeFastlaneAuthenticationState.UNRECOGNIZED,
-                addresses: [],
-                instruments: [],
-            });
-        });
-
-        it('triggers PP Connect authentication flow if customer is detected as PP Connect user', async () => {
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            await subject.runPayPalConnectAuthenticationFlowOrThrow();
-
-            expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
-            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalled();
-        });
-
-        it('successfully authenticate customer with PP Connect', async () => {
-            const updatePaymentProviderCustomerPayload = {
-                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
-                addresses: [
-                    {
-                        id: 1,
-                        type: 'paypal-address',
-                        firstName: 'John',
-                        lastName: 'Doe',
-                        company: '',
-                        address1: 'Hello World Address',
-                        address2: '',
-                        city: 'Bellingham',
-                        stateOrProvince: 'WA',
-                        stateOrProvinceCode: 'WA',
-                        country: 'United States',
-                        countryCode: 'US',
-                        postalCode: '98225',
-                        phone: '14085551234',
-                        customFields: [],
-                    },
-                ],
-                instruments: [
-                    {
-                        bigpayToken: 'pp-vaulted-instrument-id',
-                        brand: 'VISA',
-                        defaultInstrument: false,
-                        expiryMonth: undefined,
-                        expiryYear: '02/2037',
-                        iin: '',
-                        last4: '1111',
-                        method: 'braintreeacceleratedcheckout',
-                        provider: 'braintreeacceleratedcheckout',
-                        trustedShippingAddress: false,
-                        type: 'card',
-                        untrustedShippingCardVerificationMode: 'pan',
-                    },
-                ],
-            };
-
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            await subject.runPayPalConnectAuthenticationFlowOrThrow();
-
-            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
-            expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
-            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
-                updatePaymentProviderCustomerPayload,
-            );
-        });
-
-        it('successfully authenticate customer with PP Connect and different shipping and billing addresses', async () => {
-            const defaultProfileData = getBraintreeConnectProfileDataMock();
-            const profileData = getBraintreeConnectProfileDataMock();
-
-            profileData.cards[0].paymentSource.card.billingAddress = {
-                ...defaultProfileData.cards[0].paymentSource.card.billingAddress,
-                firstName: 'Mr.',
-                lastName: 'Smith',
-            };
-
-            jest.spyOn(braintreeConnectMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
-                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
-                profileData,
-            });
-
-            const updatePaymentProviderCustomerPayload = {
-                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
-                addresses: [
-                    {
-                        id: 1,
-                        type: 'paypal-address',
-                        firstName: 'John',
-                        lastName: 'Doe',
-                        company: '',
-                        address1: 'Hello World Address',
-                        address2: '',
-                        city: 'Bellingham',
-                        stateOrProvince: 'WA',
-                        stateOrProvinceCode: 'WA',
-                        country: 'United States',
-                        countryCode: 'US',
-                        postalCode: '98225',
-                        phone: '14085551234',
-                        customFields: [],
-                    },
-                    {
-                        id: 1,
-                        type: 'paypal-address',
-                        firstName: 'Mr.',
-                        lastName: 'Smith',
-                        company: '',
-                        address1: 'Hello World Address',
-                        address2: '',
-                        city: 'Bellingham',
-                        stateOrProvince: 'WA',
-                        stateOrProvinceCode: 'WA',
-                        country: 'United States',
-                        countryCode: 'US',
-                        postalCode: '98225',
-                        phone: '14085551234',
-                        customFields: [],
-                    },
-                ],
-                instruments: [
-                    {
-                        bigpayToken: 'pp-vaulted-instrument-id',
-                        brand: 'VISA',
-                        defaultInstrument: false,
-                        expiryMonth: undefined,
-                        expiryYear: '02/2037',
-                        iin: '',
-                        last4: '1111',
-                        method: 'braintreeacceleratedcheckout',
-                        provider: 'braintreeacceleratedcheckout',
-                        trustedShippingAddress: false,
-                        type: 'card',
-                        untrustedShippingCardVerificationMode: 'pan',
-                    },
-                ],
-            };
-
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            await subject.runPayPalConnectAuthenticationFlowOrThrow();
-
-            expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
-            expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
-            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
-                updatePaymentProviderCustomerPayload,
-            );
-        });
-
-        it('does not authenticate customer if the authentication was canceled or failed', async () => {
-            jest.spyOn(braintreeConnectMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
-                authenticationState: BraintreeFastlaneAuthenticationState.CANCELED,
-                profileData: {},
-            });
-
-            const updatePaymentProviderCustomerPayload = {
-                authenticationState: BraintreeFastlaneAuthenticationState.CANCELED,
-                addresses: [],
-                instruments: [],
-            };
-
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            await subject.runPayPalConnectAuthenticationFlowOrThrow();
-
-            expect(browserStorage.removeItem).toHaveBeenCalledWith('sessionId');
-            expect(braintreeConnectMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
-            expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
-                updatePaymentProviderCustomerPayload,
-            );
-        });
-
-        it('preselects billing address with first paypal connect billing address', async () => {
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            await subject.runPayPalConnectAuthenticationFlowOrThrow();
-
-            expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith({
-                id: 1,
-                type: 'paypal-address',
-                firstName: 'John',
-                lastName: 'Doe',
-                company: '',
-                address1: 'Hello World Address',
-                address2: '',
-                city: 'Bellingham',
-                stateOrProvince: 'WA',
-                stateOrProvinceCode: 'WA',
-                country: 'United States',
-                countryCode: 'US',
-                postalCode: '98225',
-                phone: '14085551234',
-                customFields: [],
-            });
-        });
-
-        it('preselects shipping address with first paypal connect address', async () => {
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            await subject.runPayPalConnectAuthenticationFlowOrThrow();
-
-            expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith({
-                id: 1,
-                type: 'paypal-address',
-                firstName: 'John',
-                lastName: 'Doe',
-                company: '',
-                address1: 'Hello World Address',
-                address2: '',
-                city: 'Bellingham',
-                stateOrProvince: 'WA',
-                stateOrProvinceCode: 'WA',
-                country: 'United States',
-                countryCode: 'US',
-                postalCode: '98225',
-                phone: '14085551234',
-                customFields: [],
-            });
-        });
-
-        it('do not update billing and shipping address if paypal does not return any address in profile data', async () => {
-            jest.spyOn(braintreeConnectMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
-                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
-                profileData: {
-                    addresses: [],
-                    instruments: [],
-                },
-            });
-
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            await subject.runPayPalConnectAuthenticationFlowOrThrow();
-
-            expect(paymentIntegrationService.updateBillingAddress).not.toHaveBeenCalled();
-            expect(paymentIntegrationService.updateShippingAddress).not.toHaveBeenCalled();
-        });
-
-        it('does not update shipping address if the cart contains only digital items', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue({
-                ...cart,
-                lineItems: {
-                    ...cart.lineItems,
-                    physicalItems: [],
-                },
-            });
-
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            await subject.runPayPalConnectAuthenticationFlowOrThrow();
-
-            expect(paymentIntegrationService.updateShippingAddress).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('#runPayPalFastlaneAuthenticationFlowOrThrow()', () => {
+    describe('#runPayPalAuthenticationFlowOrThrow()', () => {
         beforeEach(() => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -513,16 +163,16 @@ describe('BraintreeFastlaneUtils', () => {
         });
 
         it('does not authenticate user if braintree fastlane is not loaded', async () => {
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.runPayPalAuthenticationFlowOrThrow();
 
             expect(paymentIntegrationService.updatePaymentProviderCustomer).not.toHaveBeenCalled();
         });
 
         it('checks if there is PP Fastlane account with customer email', async () => {
-            jest.spyOn(braintreeConnectMock.identity, 'lookupCustomerByEmail').mockReturnValue({});
+            jest.spyOn(braintreeFastlaneMock.identity, 'lookupCustomerByEmail').mockReturnValue({});
 
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow();
 
             expect(braintreeFastlaneMock.identity.lookupCustomerByEmail).toHaveBeenCalled();
         });
@@ -594,8 +244,8 @@ describe('BraintreeFastlaneUtils', () => {
                     profileData,
                 },
             );
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow();
 
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith(
                 updatePaymentProviderCustomerPayload,
@@ -606,8 +256,8 @@ describe('BraintreeFastlaneUtils', () => {
         });
 
         it('preselects shipping option with first shipping option', async () => {
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow(undefined, true);
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow(undefined, true);
 
             expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
                 consignments[0]?.availableShippingOptions
@@ -617,8 +267,8 @@ describe('BraintreeFastlaneUtils', () => {
         });
 
         it('doesnt preselect shipping option', async () => {
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow(undefined, false);
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow(undefined, false);
 
             expect(paymentIntegrationService.selectShippingOption).not.toHaveBeenCalled();
         });
@@ -626,8 +276,8 @@ describe('BraintreeFastlaneUtils', () => {
         it('does not authenticate user if the customer unrecognized in PP Fastlane', async () => {
             jest.spyOn(braintreeFastlaneMock.identity, 'lookupCustomerByEmail').mockReturnValue({});
 
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow();
 
             expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalledWith({
@@ -638,8 +288,8 @@ describe('BraintreeFastlaneUtils', () => {
         });
 
         it('triggers PP Fastlane authentication flow if customer is detected as PP Fastlane user', async () => {
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow();
 
             expect(braintreeFastlaneMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
             expect(paymentIntegrationService.updatePaymentProviderCustomer).toHaveBeenCalled();
@@ -663,7 +313,7 @@ describe('BraintreeFastlaneUtils', () => {
                         country: 'United States',
                         countryCode: 'US',
                         postalCode: '98225',
-                        phone: '',
+                        phone: '14085551234',
                         customFields: [],
                     },
                 ],
@@ -685,8 +335,8 @@ describe('BraintreeFastlaneUtils', () => {
                 ],
             };
 
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow();
 
             expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
             expect(braintreeFastlaneMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
@@ -729,7 +379,7 @@ describe('BraintreeFastlaneUtils', () => {
                         country: 'United States',
                         countryCode: 'US',
                         postalCode: '98225',
-                        phone: '',
+                        phone: '14085551234',
                         customFields: [],
                     },
                     {
@@ -746,7 +396,7 @@ describe('BraintreeFastlaneUtils', () => {
                         country: 'United States',
                         countryCode: 'US',
                         postalCode: '98225',
-                        phone: '',
+                        phone: '14085551234',
                         customFields: [],
                     },
                 ],
@@ -768,8 +418,8 @@ describe('BraintreeFastlaneUtils', () => {
                 ],
             };
 
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow();
 
             expect(browserStorage.setItem).toHaveBeenCalledWith('sessionId', cart.id);
             expect(braintreeFastlaneMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
@@ -792,8 +442,8 @@ describe('BraintreeFastlaneUtils', () => {
                 instruments: [],
             };
 
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow();
 
             expect(browserStorage.removeItem).toHaveBeenCalledWith('sessionId');
             expect(braintreeFastlaneMock.identity.triggerAuthenticationFlow).toHaveBeenCalled();
@@ -803,8 +453,8 @@ describe('BraintreeFastlaneUtils', () => {
         });
 
         it('preselects billing address with first paypal fastlane billing address', async () => {
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow();
 
             expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith({
                 id: 1,
@@ -820,14 +470,14 @@ describe('BraintreeFastlaneUtils', () => {
                 country: 'United States',
                 countryCode: 'US',
                 postalCode: '98225',
-                phone: '',
+                phone: '14085551234',
                 customFields: [],
             });
         });
 
         it('preselects shipping address with first paypal fastlane address', async () => {
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId, undefined);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow();
 
             expect(paymentIntegrationService.updateShippingAddress).toHaveBeenCalledWith({
                 id: 1,
@@ -843,7 +493,7 @@ describe('BraintreeFastlaneUtils', () => {
                 country: 'United States',
                 countryCode: 'US',
                 postalCode: '98225',
-                phone: '',
+                phone: '14085551234',
                 customFields: [],
             });
         });
@@ -859,8 +509,8 @@ describe('BraintreeFastlaneUtils', () => {
                 },
             );
 
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.initializeBraintreeFastlaneOrThrow(methodId);
+            await subject.runPayPalAuthenticationFlowOrThrow();
 
             expect(paymentIntegrationService.updateBillingAddress).not.toHaveBeenCalled();
             expect(paymentIntegrationService.updateShippingAddress).not.toHaveBeenCalled();
@@ -875,8 +525,8 @@ describe('BraintreeFastlaneUtils', () => {
                 },
             });
 
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.initializeBraintreeFastlaneOrThrow(methodId);
+            await subject.runPayPalAuthenticationFlowOrThrow();
 
             expect(paymentIntegrationService.updateShippingAddress).not.toHaveBeenCalled();
         });
@@ -890,8 +540,8 @@ describe('BraintreeFastlaneUtils', () => {
                 },
             });
 
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
-            await subject.runPayPalFastlaneAuthenticationFlowOrThrow();
+            await subject.initializeBraintreeFastlaneOrThrow(methodId);
+            await subject.runPayPalAuthenticationFlowOrThrow();
 
             expect(paymentIntegrationService.updateBillingAddress).toHaveBeenCalledWith({
                 id: 1,
@@ -907,7 +557,7 @@ describe('BraintreeFastlaneUtils', () => {
                 country: 'United States',
                 countryCode: 'US',
                 postalCode: '98225',
-                phone: '',
+                phone: '14085551234',
                 customFields: [],
             });
         });
@@ -915,14 +565,14 @@ describe('BraintreeFastlaneUtils', () => {
 
     describe('#getDeviceSessionId', () => {
         it('returns device session id', async () => {
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
+            await subject.initializeBraintreeFastlaneOrThrow(methodId);
             await subject.getDeviceSessionId();
 
             expect(braintreeIntegrationService.getSessionId).toHaveBeenCalled();
         });
 
         it('returns device session id for fastlane', async () => {
-            await subject.initializeBraintreeAcceleratedCheckoutOrThrow(methodId);
+            await subject.initializeBraintreeFastlaneOrThrow(methodId);
             await subject.getDeviceSessionId();
 
             expect(braintreeIntegrationService.getSessionId).toHaveBeenCalled();

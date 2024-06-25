@@ -15,7 +15,6 @@ import BraintreeFastlaneUtils from './braintree-fastlane-utils';
 
 export default class BraintreeFastlaneCustomerStrategy implements CustomerStrategy {
     private isAcceleratedCheckoutEnabled = false;
-    private isFastlaneEnabled = false;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -37,11 +36,9 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
         this.isAcceleratedCheckoutEnabled =
             !!paymentMethod.initializationData?.isAcceleratedCheckoutEnabled;
 
-        this.isFastlaneEnabled = !!paymentMethod.initializationData?.isFastlaneEnabled;
-
         try {
             if (this.isAcceleratedCheckoutEnabled) {
-                await this.braintreeFastlaneUtils.initializeBraintreeAcceleratedCheckoutOrThrow(
+                await this.braintreeFastlaneUtils.initializeBraintreeFastlaneOrThrow(
                     paymentMethod.id,
                     braintreeafastlane?.styles,
                 );
@@ -89,12 +86,8 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
                 checkoutPaymentMethodExecuted();
             }
 
-            if (shouldRunAuthenticationFlow && !this.isFastlaneEnabled) {
-                await this.braintreeFastlaneUtils.runPayPalConnectAuthenticationFlowOrThrow();
-            }
-
-            if (shouldRunAuthenticationFlow && this.isFastlaneEnabled) {
-                await this.braintreeFastlaneUtils.runPayPalFastlaneAuthenticationFlowOrThrow(
+            if (shouldRunAuthenticationFlow) {
+                await this.braintreeFastlaneUtils.runPayPalAuthenticationFlowOrThrow(
                     undefined,
                     true,
                 );

@@ -67,8 +67,8 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             this._deviceSessionId = await this._braintreePaymentProcessor.getSessionId();
 
             // TODO: remove this part when BT AXO A/B testing will be finished
-            if (this._shouldInitializeBraintreeConnect()) {
-                await this._initializeBraintreeConnectOrThrow(methodId);
+            if (this._shouldInitializeBraintreeFastlane()) {
+                await this._initializeBraintreeFastlaneOrThrow(methodId);
             }
         } catch (error) {
             this._handleError(error);
@@ -271,7 +271,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     }
 
     // TODO: remove this part when BT AXO A/B testing will be finished
-    private _shouldInitializeBraintreeConnect() {
+    private _shouldInitializeBraintreeFastlane() {
         const state = this._store.getState();
         const paymentProviderCustomer = state.paymentProviderCustomer.getPaymentProviderCustomer();
         const braintreePaymentProviderCustomer = isBraintreeAcceleratedCheckoutCustomer(
@@ -288,7 +288,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     }
 
     // TODO: remove this part when BT AXO A/B testing will be finished
-    private async _initializeBraintreeConnectOrThrow(methodId: string): Promise<void> {
+    private async _initializeBraintreeFastlaneOrThrow(methodId: string): Promise<void> {
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
         const storeConfig = state.config.getStoreConfigOrThrow();
@@ -301,6 +301,6 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
 
         this._braintreeIntegrationService.initialize(clientToken, storeConfig);
 
-        await this._braintreeIntegrationService.getBraintreeConnect(cart.id, config.testMode);
+        await this._braintreeIntegrationService.getBraintreeFastlane(cart.id, config.testMode);
     }
 }

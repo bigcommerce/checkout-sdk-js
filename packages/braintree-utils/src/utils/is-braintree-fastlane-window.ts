@@ -1,4 +1,4 @@
-import { BraintreeFastlaneWindow } from '../braintree';
+import { BraintreeFastlaneWindow } from '../types';
 
 export default function isBraintreeFastlaneWindow(
     window: Window,

@@ -1,6 +1,5 @@
 import {
     BraintreeClient,
-    BraintreeConnect,
     BraintreeDataCollector,
     BraintreeFastlane,
     BraintreeModule,
@@ -19,7 +18,6 @@ export function getModuleCreatorMock<T>(
     module?:
         | BraintreeModule
         | BraintreeClient
-        | BraintreeConnect
         | BraintreePaypal
         | BraintreeFastlane
         | BraintreeUsBankAccount,

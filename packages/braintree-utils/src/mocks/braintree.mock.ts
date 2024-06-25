@@ -2,8 +2,6 @@
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
-    BraintreeConnect,
-    BraintreeConnectProfileData,
     BraintreeFastlane,
     BraintreeFastlaneAuthenticationState,
     BraintreeFastlaneProfileData,
@@ -54,65 +52,6 @@ export function getBraintree(): PaymentMethod {
     };
 }
 
-export function getBraintreeConnectProfileDataMock(): BraintreeConnectProfileData {
-    return {
-        connectCustomerAuthAssertionToken: 'some_token',
-        connectCustomerId: 'asdasd',
-        addresses: [
-            {
-                id: '123123',
-                company: undefined,
-                extendedAddress: undefined,
-                firstName: 'John',
-                lastName: 'Doe',
-                streetAddress: 'Hello World Address',
-                locality: 'Bellingham',
-                region: 'WA',
-                postalCode: '98225',
-                countryCodeNumeric: 0,
-                countryCodeAlpha2: 'US',
-                countryCodeAlpha3: '',
-            },
-        ],
-        cards: [
-            {
-                id: 'pp-vaulted-instrument-id',
-                paymentSource: {
-                    card: {
-                        brand: 'VISA',
-                        expiry: '02/2037',
-                        lastDigits: '1111',
-                        billingAddress: {
-                            id: '321',
-                            company: undefined,
-                            extendedAddress: undefined,
-                            firstName: undefined,
-                            lastName: undefined,
-                            streetAddress: 'Hello World Address',
-                            locality: 'Bellingham',
-                            region: 'WA',
-                            postalCode: '98225',
-                            countryCodeNumeric: 0,
-                            countryCodeAlpha2: 'US',
-                            countryCodeAlpha3: '',
-                        },
-                    },
-                },
-            },
-        ],
-        name: {
-            given_name: 'John',
-            surname: 'Doe',
-        },
-        phones: [
-            {
-                country_code: '1',
-                national_number: '4085551234',
-            },
-        ],
-    };
-}
-
 export function getBraintreeFastlaneProfileDataMock(): BraintreeFastlaneProfileData {
     return {
         fastlaneCustomerAuthAssertionToken: 'some_token',
@@ -127,6 +66,7 @@ export function getBraintreeFastlaneProfileDataMock(): BraintreeFastlaneProfileD
             locality: 'Bellingham',
             region: 'WA',
             postalCode: '98225',
+            phoneNumber: '14085551234',
             countryCodeNumeric: 0,
             countryCodeAlpha2: 'US',
             countryCodeAlpha3: '',
@@ -158,28 +98,6 @@ export function getBraintreeFastlaneProfileDataMock(): BraintreeFastlaneProfileD
         name: {
             firstName: 'John',
             lastName: 'Doe',
-        },
-    };
-}
-
-export function getConnectMock(): BraintreeConnect {
-    return {
-        profile: {
-            showCardSelector: jest.fn(),
-        },
-        identity: {
-            lookupCustomerByEmail: () => Promise.resolve({ customerContextId: 'customerId' }),
-            triggerAuthenticationFlow: () =>
-                Promise.resolve({
-                    authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
-                    profileData: getBraintreeConnectProfileDataMock(),
-                }),
-        },
-        ConnectCardComponent: jest.fn(),
-        events: {
-            apmSelected: jest.fn(),
-            emailSubmitted: jest.fn(),
-            orderPlaced: jest.fn(),
         },
     };
 }

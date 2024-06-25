@@ -118,7 +118,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         );
 
         jest.spyOn(braintreeIntegrationServiceMock, 'initialize').mockImplementation(jest.fn());
-        jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeConnect').mockImplementation(
+        jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeFastlane').mockImplementation(
             jest.fn(),
         );
 
@@ -224,7 +224,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             expect(braintreePaymentProcessorMock.getSessionId).toHaveBeenCalled();
         });
 
-        it('initializes braintree connect sdk', async () => {
+        it('initializes braintree fastlane sdk', async () => {
             const state = store.getState();
             const cart = getCart();
             const storeConfig = getConfig().storeConfig;
@@ -253,7 +253,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             await braintreeCreditCardPaymentStrategy.initialize(options);
 
             expect(braintreeIntegrationServiceMock.initialize).toHaveBeenCalled();
-            expect(braintreeIntegrationServiceMock.getBraintreeConnect).toHaveBeenCalled();
+            expect(braintreeIntegrationServiceMock.getBraintreeFastlane).toHaveBeenCalled();
         });
     });
 
