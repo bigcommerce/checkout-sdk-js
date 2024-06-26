@@ -1,9 +1,7 @@
-import {
-    bindDecorator as bind,
-    CurrencyFormatter,
-} from '@bigcommerce/checkout-sdk/payment-integration-api';
-
+import { bindDecorator as bind } from '../common/utility';
 import { StoreConfig } from '../config';
+
+import CurrencyFormatter from './currency-formatter';
 
 /**
  * Responsible for formatting and converting currencies.

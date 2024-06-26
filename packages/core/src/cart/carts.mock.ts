@@ -1,6 +1,7 @@
+import { getCurrency } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+
 import { Cart, CartState } from '../cart';
 import { getCoupon, getShippingCoupon } from '../coupon/coupons.mock';
-import { getCurrency } from '../currency/currencies.mock';
 import { getDiscount } from '../discount/discounts.mock';
 
 import { getDigitalItem, getGiftCertificateItem, getPhysicalItem } from './line-items.mock';

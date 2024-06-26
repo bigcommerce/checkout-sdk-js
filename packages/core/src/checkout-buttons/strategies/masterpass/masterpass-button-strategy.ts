@@ -1,3 +1,5 @@
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import {
     InvalidArgumentError,
@@ -6,7 +8,6 @@ import {
     NotInitializedError,
     NotInitializedErrorType,
 } from '../../../common/error/errors';
-import { bindDecorator as bind } from '../../../common/utility';
 import {
     formatLocale,
     getCallbackUrl,

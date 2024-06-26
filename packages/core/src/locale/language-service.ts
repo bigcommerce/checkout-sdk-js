@@ -1,8 +1,9 @@
 import { isObject, union } from 'lodash';
 import MessageFormat from 'messageformat';
 
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { Logger } from '../common/log';
-import { bindDecorator as bind } from '../common/utility';
 
 import LanguageConfig, { Locales, Translations } from './language-config';
 

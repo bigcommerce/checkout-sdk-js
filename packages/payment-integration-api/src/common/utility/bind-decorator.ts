@@ -14,6 +14,7 @@ function bindDecorator(target: any, key?: any, descriptor?: any): any {
         return bindClassDecorator(target);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return bindMethodDecorator(target, key, descriptor);
 }
 
@@ -36,6 +37,7 @@ export function bindClassDecorator<T extends Constructor<object>>(target: T): T 
         Object.defineProperty(
             decoratedTarget.prototype,
             key,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             bindMethodDecorator(target.prototype, key, descriptor),
         );
     });

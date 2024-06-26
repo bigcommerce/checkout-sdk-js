@@ -1,6 +1,7 @@
+import { Currency } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { LineItemMap } from '../cart';
 import { Coupon } from '../coupon';
-import { Currency } from '../currency';
 import { OrderBillingAddress } from '../order-billing-address/order-billing-address-state';
 import { Tax } from '../tax';
 

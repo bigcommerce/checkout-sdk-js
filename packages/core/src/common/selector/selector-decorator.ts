@@ -1,6 +1,8 @@
 import { memoize } from '@bigcommerce/memoize';
 
-import { bindDecorator, CacheKeyResolver, isEqual, isPrivate } from '../utility';
+import { bindDecorator } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import { CacheKeyResolver, isEqual, isPrivate } from '../utility';
 
 /**
  * Decorates a class by patching all of its methods to cache their return values

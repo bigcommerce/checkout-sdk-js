@@ -1,6 +1,7 @@
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CustomError, isCustomError } from '../../common/error/errors';
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
-import { bindDecorator as bind } from '../../common/utility';
 import EmbeddedCheckoutError from '../embedded-checkout-error';
 import {
     EmbeddedCheckoutCompleteEvent,

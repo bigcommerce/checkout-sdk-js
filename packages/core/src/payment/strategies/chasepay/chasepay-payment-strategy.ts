@@ -2,6 +2,8 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
@@ -11,7 +13,6 @@ import {
     NotInitializedErrorType,
 } from '../../../common/error/errors';
 import { SDK_VERSION_HEADERS } from '../../../common/http-request';
-import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentMethodCancelledError } from '../../errors';

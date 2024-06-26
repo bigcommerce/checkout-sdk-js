@@ -1,4 +1,5 @@
-import { default as bind } from './bind-decorator';
+// eslint-disable-next-line max-classes-per-file
+import bind from './bind-decorator';
 
 describe('bindDecorator()', () => {
     @bind

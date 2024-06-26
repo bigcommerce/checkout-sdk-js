@@ -1,10 +1,11 @@
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
 } from '../../../common/error/errors';
-import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import PaymentActionCreator from '../../payment-action-creator';

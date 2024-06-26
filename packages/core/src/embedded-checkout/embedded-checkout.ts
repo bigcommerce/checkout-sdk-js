@@ -1,11 +1,11 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import { IFrameComponent, IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { BrowserStorage } from '../common/storage';
 import { parseUrl } from '../common/url';
-import { bindDecorator as bind } from '../common/utility';
 
 import EmbeddedCheckoutError from './embedded-checkout-error';
 import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';

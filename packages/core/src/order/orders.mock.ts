@@ -1,7 +1,8 @@
+import { getCurrency } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { getGiftCertificateItem } from '../cart/line-items.mock';
 import { getCoupon, getShippingCoupon } from '../coupon/coupons.mock';
-import { getCurrency } from '../currency/currencies.mock';
 
 import { getAwaitingOrder, getSubmitOrderResponseHeaders } from './internal-orders.mock';
 import { getPhysicalItem } from './line-items.mock';
