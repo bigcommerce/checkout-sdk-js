@@ -170,6 +170,7 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
     private async preparePaymentPayload(methodId: string): Promise<Payment> {
         const state = this.paymentIntegrationService.getState();
         const billingAddress = state.getBillingAddressOrThrow();
+        const fullName = `${billingAddress.firstName} ${billingAddress.lastName}`;
 
         const paypalInstrument = this.getPayPalInstruments()[0];
 
@@ -192,6 +193,7 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         const { getPaymentToken } = this.getBraintreeCardComponentOrThrow();
 
         const { id } = await getPaymentToken({
+            name: { fullName },
             billingAddress: this.mapToPayPalAddress(billingAddress),
         });
 
