@@ -5,7 +5,11 @@ import { switchMap, take } from 'rxjs/operators';
 import { DetachmentObserver } from './common/dom';
 import { IframeEventListener, IframeEventPoster } from './common/iframe';
 import { parseUrl } from './common/url';
-import { InvalidHostedFormConfigError, InvalidHostedFormValueError } from './errors';
+import {
+    InvalidHostedFormConfigError,
+    InvalidHostedFormError,
+    InvalidHostedFormValueError,
+} from './errors';
 import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
 import HostedFieldType from './hosted-field-type';
 import HostedFormManualOrderData from './hosted-form-manual-order-data';
@@ -13,7 +17,7 @@ import { HostedFieldStylesMap } from './hosted-form-options';
 import {
     HostedInputEventMap,
     HostedInputEventType,
-    // HostedInputSubmitManualOrderErrorEvent,
+    HostedInputSubmitManualOrderErrorEvent,
     HostedInputSubmitManualOrderSuccessEvent,
     HostedInputValidateEvent,
 } from './iframe-content';
@@ -108,7 +112,7 @@ export default class HostedField {
     async submitManualOrderForm(
         data: HostedFormManualOrderData,
     ): Promise<HostedInputSubmitManualOrderSuccessEvent> {
-        try{
+        try {
             const promise = this._eventPoster.post<HostedInputSubmitManualOrderSuccessEvent>(
                 {
                     type: HostedFieldEventType.SubmitManualOrderRequested,
@@ -120,11 +124,11 @@ export default class HostedField {
                 },
             );
 
-            return this._detachmentObserver.ensurePresence([this._iframe], promise);
+            return await this._detachmentObserver.ensurePresence([this._iframe], promise);
         } catch (event) {
-            // if (this._isSubmitManualOrderErrorEvent(event)) {
-            //     throw new InvalidHostedFormValueError(event.payload.error.message);
-            // }
+            if (this._isSubmitManualOrderErrorEvent(event)) {
+                throw new InvalidHostedFormError(event.payload.error.message);
+            }
 
             throw new Error(event.payload.error.message);
         }
@@ -167,8 +171,9 @@ export default class HostedField {
             .map((link) => link.href);
     }
 
-    // private _isSubmitManualOrderErrorEvent(event: any): event is HostedInputSubmitManualOrderErrorEvent {
-    //     return event.type === HostedInputEventType.SubmitManualOrderFailed;
-    // }
-
+    private _isSubmitManualOrderErrorEvent(
+        event: any,
+    ): event is HostedInputSubmitManualOrderErrorEvent {
+        return event.type === HostedInputEventType.SubmitManualOrderFailed;
+    }
 }

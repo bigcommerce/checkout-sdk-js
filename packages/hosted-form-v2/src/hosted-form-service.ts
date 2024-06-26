@@ -1,6 +1,7 @@
 import { NotInitializedError, NotInitializedErrorType } from './common/errors';
 import HostedForm from './hosted-form';
 import HostedFormFactory from './hosted-form-factory';
+import HostedFormManualOrderData from './hosted-form-manual-order-data';
 import HostedFormOptions from './hosted-form-options';
 
 export default class HostedFormService {
@@ -22,7 +23,7 @@ export default class HostedFormService {
         }
     }
 
-    async submitManualOrderPayment(data: any): Promise<void> {
+    async submitManualOrderPayment(data: HostedFormManualOrderData): Promise<void> {
         const form = this._hostedForm;
 
         if (!form) {

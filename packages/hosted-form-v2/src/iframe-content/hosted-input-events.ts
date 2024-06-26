@@ -1,8 +1,9 @@
 import { Response } from '@bigcommerce/request-sender';
-import { PaymentErrorData, PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { PaymentErrorData, PaymentErrorResponseBody } from '../errors';
 import HostedFieldType from '../hosted-field-type';
 import { HostedFormErrorsData } from '../hosted-form-options';
+
 import HostedInputInitializeErrorData from './hosted-input-initialize-error-data';
 import HostedInputValidateResults from './hosted-input-validate-results';
 
@@ -111,7 +112,7 @@ export interface HostedInputSubmitManualOrderErrorEvent {
     type: HostedInputEventType.SubmitManualOrderFailed;
     payload: {
         error: PaymentErrorData;
-        response?: Response<PaymentErrorResponseBody>; 
+        response?: Response<PaymentErrorResponseBody>;
     };
 }
 
