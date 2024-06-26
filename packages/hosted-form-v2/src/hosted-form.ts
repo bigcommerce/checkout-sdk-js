@@ -91,7 +91,6 @@ export default class HostedForm implements HostedFormInterface {
         });
     }
 
-    // TODO: CHECKOUT-8275 need to add the submit method implementation when implementing submitPayment
     async submitManualOrderPayment(payload: {
         data: HostedFormManualOrderData;
     }): Promise<HostedInputSubmitManualOrderSuccessEvent | void> {

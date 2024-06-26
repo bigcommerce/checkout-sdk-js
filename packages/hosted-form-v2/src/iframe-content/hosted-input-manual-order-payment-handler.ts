@@ -1,4 +1,6 @@
+import { Response } from '@bigcommerce/request-sender';
 import { snakeCase } from 'lodash';
+
 import { IframeEventPoster } from '../common/iframe';
 import { InvalidHostedFormValueError, PaymentErrorResponseBody } from '../errors';
 import { HostedFieldSubmitManualOrderRequestEvent } from '../hosted-field-events';
@@ -8,7 +10,6 @@ import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
 import HostedInputStorage from './hosted-input-storage';
 import HostedInputValidator from './hosted-input-validator';
-import { Response } from '@bigcommerce/request-sender';
 
 export default class HostedInputManualOrderPaymentHandler {
     constructor(
@@ -57,8 +58,7 @@ export default class HostedInputManualOrderPaymentHandler {
                 type: HostedInputEventType.SubmitManualOrderFailed,
                 payload: this._isPaymentErrorResponse(error)
                     ? { error: error.body.errors[0], response: error }
-                    : { error: { code: snakeCase(error.name), message: error.message } 
-                },
+                    : { error: { code: snakeCase(error.name), message: error.message } },
             });
         }
     };

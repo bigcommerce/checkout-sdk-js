@@ -35,7 +35,7 @@ export class ManualOrderPaymentRequestSender {
                         month: Number(expiryMonth.trim()),
                         year: Number(`20${expiryYear.trim()}`),
                     },
-                    verification_value: instrumentFormData.cardCode ?? '',
+                    verification_value: instrumentFormData.cardCode ?? undefined,
                 },
                 payment_method_id: providerId,
                 form_nonce: nonce || undefined,
