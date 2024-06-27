@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.623.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.622.1...v1.623.0) (2024-06-27)
+
+
+### Features
+
+* **payment:** PAYPAL-4141 added fulll name to getPaymentToken config ([#2550](https://github.com/bigcommerce/checkout-sdk-js/issues/2550)) ([cf497b2](https://github.com/bigcommerce/checkout-sdk-js/commit/cf497b2d854e877c86d1295ea76cc6a32cc9735a))
+
 ### [1.622.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.622.0...v1.622.1) (2024-06-25)
 
 
