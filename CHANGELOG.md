@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.623.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.623.1...v1.623.2) (2024-06-27)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-385 Fix linter issue ([cad4fac](https://github.com/bigcommerce/checkout-sdk-js/commit/cad4fac3fc93f9b10510163b9fc6d70723773c24))
+
 ### [1.623.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.623.0...v1.623.1) (2024-06-27)
 
 

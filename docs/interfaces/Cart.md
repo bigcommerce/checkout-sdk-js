@@ -51,7 +51,7 @@ ___
 
 ### currency
 
-• **currency**: `default`
+• **currency**: [`Currency`](Currency.md)
 
 ___
 
