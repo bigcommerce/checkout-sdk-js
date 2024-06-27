@@ -41,6 +41,7 @@
         "stripe-integration": "packages/stripe-integration",
         "td-bank-integration": "packages/td-bank-integration",
         "ui": "packages/ui",
+        "utility": "packages/utility",
         "workspace-tools": "packages/workspace-tools",
         "zip-integration": "packages/zip-integration"
     }

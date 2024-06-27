@@ -1,7 +1,7 @@
 import { Action, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs';
 
-import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
 
 import { AddressRequestBody } from '../address';
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../billing';

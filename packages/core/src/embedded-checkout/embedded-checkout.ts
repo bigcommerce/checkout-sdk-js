@@ -1,7 +1,7 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
 
 import { IFrameComponent, IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { BrowserStorage } from '../common/storage';

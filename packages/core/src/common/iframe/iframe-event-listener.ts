@@ -1,4 +1,4 @@
-import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
 
 import { appendWww, parseUrl } from '../url';
 

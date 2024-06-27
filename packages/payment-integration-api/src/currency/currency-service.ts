@@ -1,4 +1,5 @@
-import { bindDecorator as bind } from '../common/utility';
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
+
 import { StoreConfig } from '../config';
 
 import CurrencyFormatter from './currency-formatter';

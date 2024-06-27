@@ -23,7 +23,7 @@ export { BrowserInfo, getBrowserInfo } from './common/browser-info';
 export { CancellablePromise } from './common/cancellable-promise';
 export { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from './common/http-request';
 export { Omit, PartialDeep } from './common/types';
-export { objectWithKebabCaseKeys, AmountTransformer, bindDecorator } from './common/utility';
+export { objectWithKebabCaseKeys, AmountTransformer } from './common/utility';
 export { Config, StoreConfig, CheckoutSettings, StoreProfile } from './config';
 export { Coupon } from './coupon';
 export { Currency, CurrencyFormatter, CurrencyConfig } from './currency';

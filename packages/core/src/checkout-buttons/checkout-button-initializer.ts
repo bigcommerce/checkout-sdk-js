@@ -1,4 +1,4 @@
-import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../checkout';
 import { isElementId, setUniqueElementId } from '../common/dom';

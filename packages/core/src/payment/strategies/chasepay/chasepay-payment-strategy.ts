@@ -2,7 +2,7 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
-import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
 
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {

@@ -1,6 +1,6 @@
 import { memoize } from '@bigcommerce/memoize';
 
-import { bindDecorator } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { bindDecorator } from '@bigcommerce/checkout-sdk/utility';
 
 import { CacheKeyResolver, isEqual, isPrivate } from '../utility';
 
