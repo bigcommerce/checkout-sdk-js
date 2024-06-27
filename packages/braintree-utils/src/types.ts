@@ -305,6 +305,22 @@ export interface BraintreeFastlaneStylesOption {
     branding?: string; // 'light' | 'dark'
 }
 
+export interface FastlaneStylesSettings {
+    fastlaneRootSettingsBackgroundColor?: string;
+    fastlaneRootSettingsErrorColor?: string;
+    fastlaneRootSettingsFontFamily?: string;
+    fastlaneInputSettingsBorderRadius?: string;
+    fastlaneInputSettingsBorderColor?: string;
+    fastlaneInputSettingsFocusBorderColor?: string;
+    fastlaneToggleSettingsColorPrimary?: string;
+    fastlaneToggleSettingsColorSecondary?: string;
+    fastlaneTextBodySettingsColor?: string;
+    fastlaneTextBodySettingsFontSize?: string;
+    fastlaneTextCaptionSettingsFontSize?: string;
+    fastlaneTextCaptionSettingsColor?: string;
+    fastlaneBrandingSettings?: string;
+}
+
 export enum BraintreeFastlaneAuthenticationState {
     SUCCEEDED = 'succeeded',
     FAILED = 'failed',

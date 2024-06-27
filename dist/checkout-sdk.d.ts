@@ -10,7 +10,7 @@ import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CardInstrument as CardInstrument_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/credit-card-integration';
-import { Currency } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Currency as Currency_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CustomerAddress as CustomerAddress_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedForm as HostedFormInterface } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedFormOptions as HostedFormOptions_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -4454,6 +4454,13 @@ declare interface CssProperties {
     webkitTransition?: string;
 }
 
+declare interface Currency {
+    name: string;
+    code: string;
+    symbol: string;
+    decimalPlaces: number;
+}
+
 /**
  * Responsible for formatting and converting currencies.
  */
@@ -6218,7 +6225,7 @@ declare interface Order {
     cartId: string;
     coupons: Coupon[];
     consignments: OrderConsignment;
-    currency: Currency;
+    currency: Currency_2;
     customerCanBeCreated: boolean;
     customerId: number;
     customerMessage: string;

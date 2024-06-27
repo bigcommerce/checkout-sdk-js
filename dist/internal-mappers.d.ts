@@ -1,5 +1,5 @@
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { Currency } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Currency as Currency_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 declare interface Address extends AddressRequestBody {
     country: string;
@@ -148,6 +148,13 @@ declare interface Coupon {
     code: string;
     couponType: string;
     discountedAmount: number;
+}
+
+declare interface Currency {
+    name: string;
+    code: string;
+    symbol: string;
+    decimalPlaces: number;
 }
 
 declare interface CustomItem {
@@ -592,7 +599,7 @@ declare interface Order {
     cartId: string;
     coupons: Coupon[];
     consignments: OrderConsignment;
-    currency: Currency;
+    currency: Currency_2;
     customerCanBeCreated: boolean;
     customerId: number;
     customerMessage: string;
