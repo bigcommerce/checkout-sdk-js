@@ -1,5 +1,6 @@
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
+
 import { appendWww, parseUrl } from '../url';
-import { bindDecorator as bind } from '../utility';
 
 import { IframeEventMap } from './iframe-event';
 import isIframeEvent from './is-iframe-event';

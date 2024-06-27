@@ -1,4 +1,4 @@
-import { bindDecorator as bind } from '../../common/utility';
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
 
 import EmbeddedCheckoutMessenger from './embedded-checkout-messenger';
 

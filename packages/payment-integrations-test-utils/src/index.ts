@@ -28,4 +28,5 @@ export {
     getShippingAddress,
     getShippingAddressWithCustomFields,
     getInstruments,
+    getCurrency,
 } from './test-utils';

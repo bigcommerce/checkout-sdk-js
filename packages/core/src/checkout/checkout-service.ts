@@ -1,12 +1,13 @@
 import { Action, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs';
 
+import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
+
 import { AddressRequestBody } from '../address';
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../billing';
 import { DataStoreProjection } from '../common/data-store';
 import { ErrorActionCreator, ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
-import { bindDecorator as bind } from '../common/utility';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import {

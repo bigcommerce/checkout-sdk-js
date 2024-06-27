@@ -59,6 +59,7 @@ export function bindMethodDecorator<T extends Method>(
 
     return {
         get() {
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             const boundMethod = method.bind(this) as T;
 
             Object.defineProperty(this, key, {

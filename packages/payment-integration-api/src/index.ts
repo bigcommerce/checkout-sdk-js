@@ -26,7 +26,7 @@ export { Omit, PartialDeep } from './common/types';
 export { objectWithKebabCaseKeys, AmountTransformer } from './common/utility';
 export { Config, StoreConfig, CheckoutSettings, StoreProfile } from './config';
 export { Coupon } from './coupon';
-export { Currency } from './currency';
+export { Currency, CurrencyFormatter, CurrencyConfig } from './currency';
 export {
     CheckoutPaymentMethodExecutedOptions,
     CustomerCredentials,

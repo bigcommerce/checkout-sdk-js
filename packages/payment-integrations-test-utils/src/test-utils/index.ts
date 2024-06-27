@@ -28,3 +28,4 @@ export {
 
 export { getShippingAddress, getShippingAddressWithCustomFields } from './shipping-addresses.mock';
 export { getAddress } from './address.mock';
+export { getCurrency } from './currency.mock';

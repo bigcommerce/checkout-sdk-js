@@ -1,4 +1,4 @@
-import { InvalidArgumentError } from '../common/error/errors';
+import { InvalidArgumentError } from '../errors';
 
 import { CurrencyConfig } from './currency';
 
