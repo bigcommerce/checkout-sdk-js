@@ -1,4 +1,5 @@
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Currency } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 declare interface Address extends AddressRequestBody {
     country: string;
@@ -147,13 +148,6 @@ declare interface Coupon {
     code: string;
     couponType: string;
     discountedAmount: number;
-}
-
-declare interface Currency {
-    name: string;
-    code: string;
-    symbol: string;
-    decimalPlaces: number;
 }
 
 declare interface CustomItem {

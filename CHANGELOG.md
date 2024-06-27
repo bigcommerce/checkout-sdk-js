@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.623.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.623.0...v1.623.1) (2024-06-27)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-385 add currencyService to payment integration service ([c5e456b](https://github.com/bigcommerce/checkout-sdk-js/commit/c5e456be38b0d743954e5b073385e912918d11fa))
+* **payment:** STRIPE-385 add currencyService to payment integration service ([7454d8b](https://github.com/bigcommerce/checkout-sdk-js/commit/7454d8b678631b01a90ec8ba27336fb06b6d41c3))
+
 ## [1.623.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.622.1...v1.623.0) (2024-06-27)
 
 

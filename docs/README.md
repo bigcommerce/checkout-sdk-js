@@ -199,7 +199,6 @@
 - [CreditCardPaymentInitializeOptions_2](interfaces/CreditCardPaymentInitializeOptions_2.md)
 - [CreditCardPlaceHolder](interfaces/CreditCardPlaceHolder.md)
 - [CssProperties](interfaces/CssProperties.md)
-- [Currency](interfaces/Currency.md)
 - [CustomError](interfaces/CustomError.md)
 - [CustomItem](interfaces/CustomItem.md)
 - [Customer](interfaces/Customer.md)
