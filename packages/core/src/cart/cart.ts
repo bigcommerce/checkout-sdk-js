@@ -1,6 +1,7 @@
-import { CartSource, Currency } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { Coupon } from '../coupon';
+import { Currency } from '../currency';
 import { Discount } from '../discount';
 
 import LineItemMap from './line-item-map';
