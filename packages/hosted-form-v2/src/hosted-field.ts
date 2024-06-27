@@ -40,8 +40,7 @@ export default class HostedField {
     ) {
         this._iframe = document.createElement('iframe');
 
-        // this._iframe.src = `/checkout/payment/hosted-field?version=${LIBRARY_VERSION}`;
-        this._iframe.src = `http://127.0.0.1:3000/iframe.html`;
+        this._iframe.src = `/checkout/payment/hosted-field?version=${LIBRARY_VERSION}`;
         this._iframe.style.border = 'none';
         this._iframe.style.height = '100%';
         this._iframe.style.overflow = 'hidden';
@@ -127,10 +126,14 @@ export default class HostedField {
             return await this._detachmentObserver.ensurePresence([this._iframe], promise);
         } catch (event) {
             if (this._isSubmitManualOrderErrorEvent(event)) {
-                throw new InvalidHostedFormError(event.payload.error.message);
+                if (event.payload.error.code === 'hosted_form_error') {
+                    throw new InvalidHostedFormError(event.payload.error.message);
+                }
+
+                throw new Error(event.payload.error.message);
             }
 
-            throw new Error(event.payload.error.message);
+            throw event;
         }
     }
 
