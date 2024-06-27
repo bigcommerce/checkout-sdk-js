@@ -380,6 +380,9 @@ export interface BraintreeFastlaneCardComponentFields {
 }
 
 export interface BraintreeFastlaneTokenizeOptions {
+    name?: {
+        fullName: string;
+    };
     billingAddress?: BraintreeFastlaneAddress;
     shippingAddress?: BraintreeFastlaneAddress;
 }

@@ -466,6 +466,9 @@ describe('BraintreeFastlanePaymentStrategy', () => {
                     postalCode: '95555',
                     countryCodeAlpha2: 'US',
                 },
+                name: {
+                    fullName: 'Test Tester',
+                },
             });
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
