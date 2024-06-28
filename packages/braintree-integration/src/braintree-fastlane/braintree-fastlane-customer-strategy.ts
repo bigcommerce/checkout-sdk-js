@@ -1,4 +1,7 @@
-import { BraintreeInitializationData } from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
+    BraintreeInitializationData,
+    getFastlaneStyles,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CustomerCredentials,
     CustomerInitializeOptions,
@@ -23,7 +26,7 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
 
     async initialize({
         methodId,
-        braintreeafastlane,
+        braintreefastlane,
     }: CustomerInitializeOptions & WithBraintreeFastlaneCustomerInitializeOptions): Promise<void> {
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -38,9 +41,14 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
 
         try {
             if (this.isAcceleratedCheckoutEnabled) {
+                const fastlaneStyles = getFastlaneStyles(
+                    paymentMethod.initializationData?.fastlaneStyles,
+                    braintreefastlane?.styles,
+                );
+
                 await this.braintreeFastlaneUtils.initializeBraintreeFastlaneOrThrow(
-                    paymentMethod.id,
-                    braintreeafastlane?.styles,
+                    methodId,
+                    fastlaneStyles,
                 );
             }
         } catch (_) {

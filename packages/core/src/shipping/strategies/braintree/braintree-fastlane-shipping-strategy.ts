@@ -7,6 +7,7 @@ import {
     BraintreeFastlaneStylesOption,
     BraintreeFastlaneVaultedInstrument,
     BraintreeIntegrationService,
+    getFastlaneStyles,
     isBraintreeAcceleratedCheckoutCustomer,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
@@ -91,7 +92,12 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
                     );
                 }
 
-                await this._runAuthenticationFlowOrThrow(methodId, braintreefastlane?.styles);
+                const fastlaneStyles = getFastlaneStyles(
+                    paymentMethod?.initializationData?.fastlaneStyles,
+                    braintreefastlane?.styles,
+                );
+
+                await this._runAuthenticationFlowOrThrow(methodId, fastlaneStyles);
             }
 
             if (

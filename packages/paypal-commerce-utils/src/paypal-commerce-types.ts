@@ -21,9 +21,6 @@ export interface PayPalCommerceInitializationData {
     clientToken?: string;
     connectClientToken?: string; // TODO: remove when PPCP Fastlane A/B test will be finished
     enabledAlternativePaymentMethods: FundingType;
-    fastlaneStyles?: {
-        [key: string]: string;
-    };
     isDeveloperModeApplicable?: boolean;
     intent?: PayPalCommerceIntent;
     isAcceleratedCheckoutEnabled?: boolean; // PayPal Fastlane related
