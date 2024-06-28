@@ -12,6 +12,7 @@ export { default as createGooglePayStripePaymentStrategy } from './factories/pay
 export { default as createGooglePayWorldpayAccessPaymentStrategy } from './factories/payment/create-google-pay-worldpayaccess-payment-strategy';
 export { default as createGooglePayBraintreePaymentStrategy } from './factories/payment/create-google-pay-braintree-payment-strategy';
 export { default as createGooglePayPPCPPaymentStrategy } from './google-pay-paypal-commerce/create-google-pay-paypal-commerce-payment-strategy';
+export { default as createGooglePayTdOnlineMartPaymentStrategy } from './factories/payment/create-google-pay-tdonlinemart-payment-strategy';
 
 export { default as createGooglePayAdyenV2CustomerStrategy } from './factories/customer/create-google-pay-adyenv2-customer-strategy';
 export { default as createGooglePayAdyenV3CustomerStrategy } from './factories/customer/create-google-pay-adyenv3-customer-strategy';
