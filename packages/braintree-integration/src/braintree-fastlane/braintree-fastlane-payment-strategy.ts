@@ -3,6 +3,7 @@ import {
     BraintreeFastlaneAuthenticationState,
     BraintreeFastlaneCardComponent,
     BraintreeFastlaneCardComponentOptions,
+    getValidBraintreeFastlaneStyles,
     isBraintreeAcceleratedCheckoutCustomer,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -79,9 +80,13 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
             await this.paymentIntegrationService.loadPaymentMethod(methodId);
         }
 
+        const fastlaneStyles = paymentMethod.initializationData?.fastlaneStyles;
+
+        const styles = getValidBraintreeFastlaneStyles(fastlaneStyles);
+
         await this.braintreeFastlaneUtils.initializeBraintreeFastlaneOrThrow(
             methodId,
-            braintreefastlane.styles,
+            styles || braintreefastlane.styles,
         );
 
         if (this.shouldRunAuthenticationFlow()) {
