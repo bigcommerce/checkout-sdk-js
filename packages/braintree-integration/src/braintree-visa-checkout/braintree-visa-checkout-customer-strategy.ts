@@ -241,6 +241,8 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         visaCheckoutButton.style.display = 'flex';
         visaCheckoutButton.style.flexDirection = 'column';
         visaCheckoutButton.style.visibility = 'hidden';
+        visaCheckoutButton.style.width = 'max-content';
+
         visaCheckoutButton.className = buttonClass;
         visaCheckoutButton.innerHTML = buttonTemplate;
 
