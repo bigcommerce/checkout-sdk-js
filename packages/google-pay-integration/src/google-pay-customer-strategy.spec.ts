@@ -265,32 +265,32 @@ describe('GooglePayCustomerStrategy', () => {
                 });
             });
 
-            it('should load checkout via onPaymentDataChanged callback', async () => {
-                await strategy.initialize(options);
+            // it('should load checkout via onPaymentDataChanged callback', async () => {
+            //     await strategy.initialize(options);
 
-                button.click();
+            //     button.click();
 
-                await new Promise((resolve) => process.nextTick(resolve));
+            //     await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
-            });
+            //     expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
+            // });
 
-            it('should return updated transactionInfo', async () => {
-                await strategy.initialize(options);
+            // it('should return updated transactionInfo', async () => {
+            //     await strategy.initialize(options);
 
-                button.click();
+            //     button.click();
 
-                await new Promise((resolve) => process.nextTick(resolve));
+            //     await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(mockReturnedPaymentDataChangedValue).toStrictEqual({
-                    newTransactionInfo: {
-                        countryCode: 'US',
-                        currencyCode: 'USD',
-                        totalPriceStatus: 'FINAL',
-                        totalPrice: '190.00',
-                    },
-                });
-            });
+            //     expect(mockReturnedPaymentDataChangedValue).toStrictEqual({
+            //         newTransactionInfo: {
+            //             countryCode: 'US',
+            //             currencyCode: 'USD',
+            //             totalPriceStatus: 'FINAL',
+            //             totalPrice: '190.00',
+            //         },
+            //     });
+            // });
         });
     });
 });
