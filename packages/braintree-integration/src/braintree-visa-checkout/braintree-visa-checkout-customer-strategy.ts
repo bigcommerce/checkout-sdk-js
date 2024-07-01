@@ -1,4 +1,5 @@
 import { FormPoster } from '@bigcommerce/form-poster';
+import { noop } from 'lodash';
 
 import {
     BraintreeDataCollector,
@@ -26,6 +27,7 @@ import { WithBraintreeVisaCheckoutCustomerInitializeOptions } from './braintree-
 
 export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerStrategy {
     private buttonClassName = 'visa-checkout-wrapper';
+    private onError = noop;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -38,7 +40,13 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
     ): Promise<void> {
         const { braintreevisacheckout: visaCheckoutOptions, methodId } = options;
 
-        if (!visaCheckoutOptions || !methodId) {
+        if (!methodId) {
+            throw new InvalidArgumentError(
+                'Unable to proceed because "methodId" argument is not provided.',
+            );
+        }
+
+        if (!visaCheckoutOptions) {
             throw new InvalidArgumentError(
                 'Unable to proceed because "options.braintreevisacheckout" argument is not provided.',
             );
@@ -48,19 +56,11 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
 
         const state = this.paymentIntegrationService.getState();
 
-        const checkout = state.getCheckout();
+        const checkout = state.getCheckoutOrThrow();
 
         const { clientToken, config } = state.getPaymentMethodOrThrow(methodId);
 
         const storeConfig = state.getStoreConfigOrThrow();
-
-        if (!checkout) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
-        }
-
-        if (!storeConfig) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-        }
 
         if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -73,6 +73,8 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         const visaCheckoutInstance = await this.braintreeSdk.getVisaCheckoutSdk(config.testMode);
 
         const { container, onError } = visaCheckoutOptions;
+
+        this.onError = onError || noop;
 
         const initOptions = braintreeVisaCheckout.createInitOptions({
             paymentRequest: {
@@ -94,12 +96,12 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         visaCheckoutInstance.on(
             'payment.success',
             (paymentSuccessPayload: VisaCheckoutPaymentSuccessPayload) =>
-                this.paymentSuccess(braintreeVisaCheckout, paymentSuccessPayload)
+                this.tokenizePayment(braintreeVisaCheckout, paymentSuccessPayload)
                     .then(() => this.paymentIntegrationService.loadCheckout())
-                    .catch((error) => onError?.(error)),
+                    .catch((error) => this.handleError(error)),
         );
 
-        visaCheckoutInstance.on('payment.error', (_, error) => onError?.(error));
+        visaCheckoutInstance.on('payment.error', (_, error) => this.handleError(error));
 
         signInButton.style.visibility = 'visible';
     }
@@ -126,7 +128,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         return Promise.resolve();
     }
 
-    private async paymentSuccess(
+    private async tokenizePayment(
         braintreeVisaCheckout: BraintreeVisaCheckout,
         payment: VisaCheckoutPaymentSuccessPayload,
     ) {
@@ -140,8 +142,8 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
             const billing = state.getBillingAddress();
 
             const {
-                shippingAddress = this.toVisaCheckoutAddress(shipping),
-                billingAddress = this.toVisaCheckoutAddress(billing),
+                shippingAddress = this.mapToVisaCheckoutAddress(shipping),
+                billingAddress = this.mapToVisaCheckoutAddress(billing),
             } = payload;
 
             return this.postForm(
@@ -178,7 +180,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         });
     }
 
-    private toVisaCheckoutAddress(address?: Address): VisaCheckoutAddress {
+    private mapToVisaCheckoutAddress(address?: Address): VisaCheckoutAddress {
         if (!address) {
             return {};
         }
@@ -215,13 +217,10 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         const container = document.querySelector(`#${containerId}`);
 
         if (!container) {
-            throw new Error('Need a container to place the button');
+            throw new Error('Unable to proceed because the provided container ID is not valid.');
         }
 
-        return (
-            (container.querySelector(`.${buttonClass}`) as HTMLElement) ||
-            this.insertVisaCheckoutButton(container, buttonClass)
-        );
+        return this.insertVisaCheckoutButton(container, buttonClass);
     }
 
     private insertVisaCheckoutButton(container: Element, buttonClass: string): HTMLElement {
@@ -249,5 +248,13 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         container.appendChild(visaCheckoutButton);
 
         return visaCheckoutButton;
+    }
+
+    private handleError(error: Error) {
+        if (typeof this.onError === 'function') {
+            this.onError(error);
+        } else {
+            throw error;
+        }
     }
 }

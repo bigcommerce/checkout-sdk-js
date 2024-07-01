@@ -17,6 +17,7 @@ import {
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CustomerInitializeOptions,
+    InvalidArgumentError,
     MissingDataError,
     PaymentIntegrationService,
     PaymentMethod,
@@ -119,7 +120,9 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
                 });
             } catch (error) {
                 expect(error).toBeInstanceOf(Error);
-                expect(error.message).toBe('Need a container to place the button');
+                expect(error.message).toBe(
+                    'Unable to proceed because the provided container ID is not valid.',
+                );
             }
         });
 
@@ -130,6 +133,18 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
                 await strategy.initialize(initializationOptions);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('throws error if methodId is missing', async () => {
+            try {
+                await strategy.initialize({
+                    braintreevisacheckout: {
+                        ...initializationOptions.braintreevisacheckout,
+                    },
+                });
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
             }
         });
 
