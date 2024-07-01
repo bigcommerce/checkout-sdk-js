@@ -19,6 +19,7 @@ export interface PayPalCommerceInitializationData {
     buyerCountry?: string;
     clientId: string;
     clientToken?: string;
+    fastlaneStyles?: FastlaneStylesSettings;
     connectClientToken?: string; // TODO: remove when PPCP Fastlane A/B test will be finished
     enabledAlternativePaymentMethods: FundingType;
     isDeveloperModeApplicable?: boolean;
@@ -327,4 +328,20 @@ export interface PayPalFastlanePaymentFormattedPayload {
         order_id?: string;
         token: string;
     };
+}
+
+export interface FastlaneStylesSettings {
+    fastlaneRootSettingsBackgroundColor?: string;
+    fastlaneRootSettingsErrorColor?: string;
+    fastlaneRootSettingsFontFamily?: string;
+    fastlaneInputSettingsBorderRadius?: string;
+    fastlaneInputSettingsBorderColor?: string;
+    fastlaneInputSettingsFocusBorderColor?: string;
+    fastlaneToggleSettingsColorPrimary?: string;
+    fastlaneToggleSettingsColorSecondary?: string;
+    fastlaneTextBodySettingsColor?: string;
+    fastlaneTextBodySettingsFontSize?: string;
+    fastlaneTextCaptionSettingsFontSize?: string;
+    fastlaneTextCaptionSettingsColor?: string;
+    fastlaneBrandingSettings?: string;
 }

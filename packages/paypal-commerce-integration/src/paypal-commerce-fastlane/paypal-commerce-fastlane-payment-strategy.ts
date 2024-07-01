@@ -16,6 +16,7 @@ import {
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getFastlaneStyles,
     isPayPalFastlaneCustomer,
     PayPalCommerceFastlaneUtils,
     PayPalCommerceInitializationData,
@@ -92,10 +93,15 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             cart.id,
         );
 
+        const fastlaneStyles = getFastlaneStyles(
+            paymentMethod?.initializationData?.fastlaneStyles,
+            paypalcommercefastlane?.styles,
+        );
+
         await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
             paypalFastlaneSdk,
             !!isDeveloperModeApplicable,
-            paypalcommercefastlane.styles,
+            fastlaneStyles,
         );
 
         if (this.shouldRunAuthenticationFlow()) {
