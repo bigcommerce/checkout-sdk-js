@@ -326,11 +326,7 @@ export default class GooglePayGateway {
     }
 
     private _isGooglePayShippingOptionsAvailable(): boolean {
-        return localStorage.getItem('googlePayShippingOptions') === 'true';
-        const state = this._paymentIntegrationService.getState();
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
-
-        return features['PI-721.google_pay_shipping_options'];
+        return !!this.getGooglePayInitializationData().isShippingOptionsEnabled;
     }
 
     private _isShippingAddressRequired(): boolean {
