@@ -189,43 +189,47 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                     shippingAddress,
                     shippingOptionData,
                 }: IntermediatePaymentData): Promise<NewTransactionInfo | void> => {
-                    const {
-                        availableTriggers,
-                        addressChangeTriggers,
-                        shippingOptionsChangeTriggers,
-                    } = this._googlePayPaymentProcessor.getCallbackTriggers();
+                    try {
+                        const {
+                            availableTriggers,
+                            addressChangeTriggers,
+                            shippingOptionsChangeTriggers,
+                        } = this._googlePayPaymentProcessor.getCallbackTriggers();
 
-                    if (!availableTriggers.includes(callbackTrigger)) {
-                        return;
-                    }
+                        if (!availableTriggers.includes(callbackTrigger)) {
+                            return;
+                        }
 
-                    if (this._buyNowInitializeOptions) {
-                        await this._createBuyNowCartOrThrow(this._buyNowInitializeOptions);
-                    }
+                        if (this._buyNowInitializeOptions) {
+                            await this._createBuyNowCartOrThrow(this._buyNowInitializeOptions);
+                        }
 
-                    let availableShippingOptions: ShippingOptionParameters | undefined;
+                        let availableShippingOptions: ShippingOptionParameters | undefined;
 
-                    if (addressChangeTriggers.includes(callbackTrigger)) {
-                        availableShippingOptions =
-                            await this._googlePayPaymentProcessor.handleShippingAddressChange(
-                                shippingAddress,
-                                this._buyNowCart?.id,
+                        if (addressChangeTriggers.includes(callbackTrigger)) {
+                            availableShippingOptions =
+                                await this._googlePayPaymentProcessor.handleShippingAddressChange(
+                                    shippingAddress,
+                                    this._buyNowCart?.id,
+                                );
+                        }
+
+                        console.log('*** availableShippingOptions', availableShippingOptions);
+
+                        if (shippingOptionsChangeTriggers.includes(callbackTrigger)) {
+                            await this._googlePayPaymentProcessor.handleShippingOptionChange(
+                                shippingOptionData.id,
                             );
+                        }
+
+                        if (this._buyNowInitializeOptions) {
+                            return await this._getBuyNowTransactionInfo(availableShippingOptions);
+                        }
+
+                        return await this._getTransactionInfo(availableShippingOptions);
+                    } catch (error) {
+                        console.log('*** onPaymentDataChanged error', error);
                     }
-
-                    console.log('*** availableShippingOptions', availableShippingOptions);
-
-                    if (shippingOptionsChangeTriggers.includes(callbackTrigger)) {
-                        await this._googlePayPaymentProcessor.handleShippingOptionChange(
-                            shippingOptionData.id,
-                        );
-                    }
-
-                    if (this._buyNowInitializeOptions) {
-                        return this._getBuyNowTransactionInfo(availableShippingOptions);
-                    }
-
-                    return this._getTransactionInfo(availableShippingOptions);
                 },
             },
         };

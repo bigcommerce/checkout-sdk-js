@@ -276,25 +276,22 @@ export default class GooglePayGateway {
             await this._paymentIntegrationService.updateShippingAddress(mappedShippingAddress);
         }
 
-        await this._paymentIntegrationService.loadCheckout(checkoutId);
+        console.log('*** checkoutId', checkoutId);
+
+        // await this._paymentIntegrationService.loadCheckout(checkoutId);
 
         const state = this._paymentIntegrationService.getState();
         const consignment = state.getConsignmentsOrThrow()[0];
         const storeConfig = state.getStoreConfigOrThrow();
+
+        this._currencyService = createCurrencyService(storeConfig);
+
         const availableShippingOptions = consignment.availableShippingOptions?.map(
             this._getGooglePayShippingOption.bind(this),
         );
         const selectedShippingOptionId = consignment.selectedShippingOption?.id;
 
         console.log('*** getConsignmentsOrThrow', consignment);
-
-        // TODO: for test
-        const checkout = state.getCheckoutOrThrow();
-
-        console.log('*** getCheckoutOrThrow', checkout.consignments[0]);
-
-        this._currencyService = createCurrencyService(storeConfig);
-        // TODO: end for test
 
         return {
             defaultSelectedOptionId: selectedShippingOptionId,
