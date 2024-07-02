@@ -8547,7 +8547,7 @@ declare interface WithBraintreeAchPaymentInitializeOptions {
 }
 
 declare interface WithBraintreeFastlaneCustomerInitializeOptions {
-    braintreeafastlane?: BraintreeFastlaneCustomerInitializeOptions;
+    braintreefastlane?: BraintreeFastlaneCustomerInitializeOptions;
 }
 
 declare interface WithBraintreeFastlanePaymentInitializeOptions {

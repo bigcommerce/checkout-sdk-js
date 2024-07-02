@@ -6,10 +6,10 @@
 
 ### Properties
 
-- [braintreeafastlane](WithBraintreeFastlaneCustomerInitializeOptions.md#braintreeafastlane)
+- [braintreefastlane](WithBraintreeFastlaneCustomerInitializeOptions.md#braintreefastlane)
 
 ## Properties
 
-### braintreeafastlane
+### braintreefastlane
 
-• `Optional` **braintreeafastlane**: [`BraintreeFastlaneCustomerInitializeOptions`](BraintreeFastlaneCustomerInitializeOptions.md)
+• `Optional` **braintreefastlane**: [`BraintreeFastlaneCustomerInitializeOptions`](BraintreeFastlaneCustomerInitializeOptions.md)
