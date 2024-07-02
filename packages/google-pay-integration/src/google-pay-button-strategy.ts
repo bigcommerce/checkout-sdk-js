@@ -216,6 +216,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
                         console.log(
                             '*** callbackTrigger - availableShippingOptions',
+                            callbackTrigger,
                             availableShippingOptions,
                         );
 
