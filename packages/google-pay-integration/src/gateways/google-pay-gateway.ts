@@ -280,7 +280,7 @@ export default class GooglePayGateway {
 
         const state = this._paymentIntegrationService.getState();
         const consignment = state.getConsignmentsOrThrow()[0];
-        const storeConfig = this._paymentIntegrationService.getState().getStoreConfigOrThrow();
+        const storeConfig = state.getStoreConfigOrThrow();
 
         this._currencyService = createCurrencyService(storeConfig);
 
