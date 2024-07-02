@@ -258,6 +258,8 @@ describe('GooglePayCustomerStrategy', () => {
                     },
                 );
 
+                console.log(mockReturnedPaymentDataChangedValue);
+
                 jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
                     eventEmitter.emit('onPaymentDataChanged');
 
