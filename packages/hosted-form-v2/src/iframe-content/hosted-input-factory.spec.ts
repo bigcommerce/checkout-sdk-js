@@ -9,7 +9,10 @@ describe('HostedInputFactory', () => {
     let factory: HostedInputFactory;
 
     beforeEach(() => {
-        factory = new HostedInputFactory('https://store.foobar.com');
+        factory = new HostedInputFactory(
+            'https://store.foobar.com',
+            'https://bigpay.service.bcdev',
+        );
     });
 
     it('creates card number field', () => {

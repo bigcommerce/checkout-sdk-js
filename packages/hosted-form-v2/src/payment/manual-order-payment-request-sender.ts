@@ -5,14 +5,14 @@ import HostedFormManualOrderData from '../hosted-form-manual-order-data';
 import { HostedInputValues } from '../iframe-content';
 
 export class ManualOrderPaymentRequestSender {
-    constructor(private _requestSender: RequestSender) {}
+    constructor(private _requestSender: RequestSender, private _paymentOrigin: string) {}
 
     async submitPayment(
         requestInitializationData: HostedFormManualOrderData,
         instrumentFormData: HostedInputValues,
         nonce?: string,
     ): Promise<void> {
-        const { providerId, paymentsUrl, paymentSessionToken } = requestInitializationData;
+        const { paymentMethodId, paymentSessionToken } = requestInitializationData;
 
         const [expiryMonth, expiryYear] = instrumentFormData.cardExpiry
             ? instrumentFormData.cardExpiry.split('/')
@@ -37,11 +37,11 @@ export class ManualOrderPaymentRequestSender {
                     },
                     verification_value: instrumentFormData.cardCode ?? undefined,
                 },
-                payment_method_id: providerId,
+                payment_method_id: paymentMethodId,
                 form_nonce: nonce || undefined,
             },
         };
 
-        await this._requestSender.post<void>(paymentsUrl, options);
+        await this._requestSender.post<void>(`${this._paymentOrigin}/payments`, options);
     }
 }
