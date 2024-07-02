@@ -184,6 +184,7 @@ describe('GooglePayGateway', () => {
             const expectedRequiredData = {
                 emailRequired: true,
                 shippingAddressRequired: true,
+                shippingOptionRequired: false,
                 shippingAddressParameters: {
                     phoneNumberRequired: true,
                     allowedCountryCodes: ['AU', 'US', 'JP'],

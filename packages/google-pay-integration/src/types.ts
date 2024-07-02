@@ -151,6 +151,7 @@ export interface GooglePayPaymentDataRequest extends GooglePayGatewayBaseRequest
         allowedCountryCodes?: string[];
         phoneNumberRequired?: boolean;
     };
+    shippingOptionRequired?: boolean;
     callbackIntents?: CallbackIntentsType[];
 }
 
@@ -162,6 +163,20 @@ export interface NewTransactionInfo {
     };
 }
 
+export interface ShippingOptionParameters {
+    defaultSelectedOptionId?: string;
+    shippingOptions?: GoogleShippingOption[];
+}
+
+export interface NewShippingOptionParameters {
+    newShippingOptionParameters?: ShippingOptionParameters;
+}
+
+export interface GoogleShippingOption {
+    id: string;
+    label?: string;
+}
+
 export enum CallbackTriggerType {
     INITIALIZE = 'INITIALIZE',
     SHIPPING_OPTION = 'SHIPPING_OPTION',
@@ -171,19 +186,24 @@ export enum CallbackTriggerType {
 
 export interface IntermediatePaymentData {
     callbackTrigger: CallbackTriggerType;
+    shippingAddress: GooglePayFullBillingAddress;
+    shippingOptionData: GoogleShippingOption;
 }
 
 export interface GooglePayPaymentOptions {
     paymentDataCallbacks?: {
         onPaymentDataChanged(
             intermediatePaymentData: IntermediatePaymentData,
-        ): Promise<NewTransactionInfo | void>;
+        ): Promise<(NewTransactionInfo & NewShippingOptionParameters) | void>;
     };
 }
 
 export type GooglePayRequiredPaymentData = Pick<
     GooglePayPaymentDataRequest,
-    'emailRequired' | 'shippingAddressRequired' | 'shippingAddressParameters'
+    | 'emailRequired'
+    | 'shippingAddressRequired'
+    | 'shippingAddressParameters'
+    | 'shippingOptionRequired'
 >;
 
 interface GooglePayMinBillingAddress {
@@ -273,6 +293,7 @@ interface GooglePayBaseInitializationData {
     googleMerchantId: string;
     googleMerchantName: string;
     isThreeDSecureEnabled: boolean;
+    isShippingOptionsEnabled?: boolean;
     nonce?: string;
     platformToken: string;
     storeCountry?: string;

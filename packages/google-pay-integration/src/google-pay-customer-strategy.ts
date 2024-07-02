@@ -22,11 +22,11 @@ import GooglePayPaymentProcessor from './google-pay-payment-processor';
 import isGooglePayErrorObject from './guards/is-google-pay-error-object';
 import isGooglePayKey from './guards/is-google-pay-key';
 import {
-    CallbackTriggerType,
     GooglePayInitializationData,
     GooglePayPaymentOptions,
     IntermediatePaymentData,
     NewTransactionInfo,
+    ShippingOptionParameters,
     TotalPriceStatusType,
 } from './types';
 
@@ -113,9 +113,32 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async ({
                     callbackTrigger,
+                    shippingAddress,
+                    shippingOptionData,
                 }: IntermediatePaymentData): Promise<NewTransactionInfo | void> => {
-                    if (callbackTrigger !== CallbackTriggerType.INITIALIZE) {
+                    const {
+                        availableTriggers,
+                        addressChangeTriggers,
+                        shippingOptionsChangeTriggers,
+                    } = this._googlePayPaymentProcessor.getCallbackTriggers();
+
+                    if (!availableTriggers.includes(callbackTrigger)) {
                         return;
+                    }
+
+                    let availableShippingOptions: ShippingOptionParameters | undefined;
+
+                    if (addressChangeTriggers.includes(callbackTrigger)) {
+                        availableShippingOptions =
+                            await this._googlePayPaymentProcessor.handleShippingAddressChange(
+                                shippingAddress,
+                            );
+                    }
+
+                    if (shippingOptionsChangeTriggers.includes(callbackTrigger)) {
+                        await this._googlePayPaymentProcessor.handleShippingOptionChange(
+                            shippingOptionData.id,
+                        );
                     }
 
                     await this._paymentIntegrationService.loadCheckout();
@@ -135,6 +158,9 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
                             totalPriceStatus: TotalPriceStatusType.FINAL,
                             totalPrice,
                         },
+                        ...(availableShippingOptions && {
+                            newShippingOptionParameters: availableShippingOptions,
+                        }),
                     };
                 },
             },
