@@ -20,7 +20,7 @@ import mapToAccessibilityLabel from './map-to-accessibility-label';
 import mapToAutocompleteType from './map-to-autocomplete-type';
 
 export default class HostedInputFactory {
-    constructor(private _parentOrigin: string) {}
+    constructor(private _parentOrigin: string, private _paymentOrigin: string) {}
 
     create(
         form: HTMLFormElement,
@@ -171,7 +171,7 @@ export default class HostedInputFactory {
             new HostedInputValidator(),
             getHostedInputStorage(),
             new IframeEventPoster(this._parentOrigin, window.parent),
-            new ManualOrderPaymentRequestSender(createRequestSender()),
+            new ManualOrderPaymentRequestSender(createRequestSender(), this._paymentOrigin),
         );
     }
 }

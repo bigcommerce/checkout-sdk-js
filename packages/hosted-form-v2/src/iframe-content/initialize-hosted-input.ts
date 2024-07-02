@@ -8,9 +8,9 @@ import HostedInputInitializer from './hosted-input-initializer';
 import HostedInputOptions from './hosted-input-options';
 
 export default function initializeHostedInput(options: HostedInputOptions): Promise<HostedInput> {
-    const { containerId, nonce, parentOrigin } = options;
+    const { containerId, nonce, parentOrigin, paymentOrigin } = options;
     const initializer = new HostedInputInitializer(
-        new HostedInputFactory(parentOrigin),
+        new HostedInputFactory(parentOrigin, paymentOrigin),
         getHostedInputStorage(),
         new IframeEventListener<HostedFieldEventMap>(parentOrigin),
     );
