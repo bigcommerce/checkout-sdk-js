@@ -192,7 +192,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                     try {
                         const {
                             availableTriggers,
-                            addressChangeTriggers,
+                            // addressChangeTriggers,
                             shippingOptionsChangeTriggers,
                         } = this._googlePayPaymentProcessor.getCallbackTriggers();
 
@@ -206,7 +206,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
                         let availableShippingOptions: ShippingOptionParameters | undefined;
 
-                        if (addressChangeTriggers.includes(callbackTrigger)) {
+                        if (availableTriggers.includes(callbackTrigger)) {
                             availableShippingOptions =
                                 await this._googlePayPaymentProcessor.handleShippingAddressChange(
                                     shippingAddress,
@@ -214,7 +214,10 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                                 );
                         }
 
-                        console.log('*** availableShippingOptions', availableShippingOptions);
+                        console.log(
+                            '*** callbackTrigger - availableShippingOptions',
+                            availableShippingOptions,
+                        );
 
                         if (shippingOptionsChangeTriggers.includes(callbackTrigger)) {
                             await this._googlePayPaymentProcessor.handleShippingOptionChange(
