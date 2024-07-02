@@ -1,5 +1,6 @@
 import { CustomerAddress } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getFastlaneStyles,
     isPayPalCommerceAcceleratedCheckoutCustomer,
     isPayPalFastlaneCustomer,
     PayPalCommerceFastlaneUtils,
@@ -152,6 +153,11 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
         const paymentMethod = await this._getPayPalPaymentMethodOrThrow(methodId);
         const isTestModeEnabled = !!paymentMethod?.initializationData?.isDeveloperModeApplicable;
 
+        const fastlaneStyles = getFastlaneStyles(
+            paymentMethod?.initializationData?.fastlaneStyles,
+            styles,
+        );
+
         const paypalFastlaneSdk = await this._paypalCommerceSdk.getPayPalFastlaneSdk(
             paymentMethod,
             cart.currency.code,
@@ -161,7 +167,7 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
         await this._paypalCommerceFastlaneUtils.initializePayPalFastlane(
             paypalFastlaneSdk,
             isTestModeEnabled,
-            styles,
+            fastlaneStyles,
         );
     }
 

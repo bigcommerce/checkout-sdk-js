@@ -9,6 +9,7 @@ import {
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getFastlaneStyles,
     PayPalCommerceFastlaneUtils,
     PayPalCommerceInitializationData,
     PayPalCommerceSdk,
@@ -59,10 +60,15 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
                     cart.id,
                 );
 
+                const fastlaneStyles = getFastlaneStyles(
+                    paymentMethod?.initializationData?.fastlaneStyles,
+                    paypalcommercefastlane?.styles,
+                );
+
                 await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
                     paypalFastlaneSdk,
                     isTestModeEnabled,
-                    paypalcommercefastlane?.styles,
+                    fastlaneStyles,
                 );
             }
         } catch (_) {

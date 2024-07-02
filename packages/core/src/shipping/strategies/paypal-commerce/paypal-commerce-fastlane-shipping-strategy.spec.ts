@@ -259,6 +259,54 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).not.toHaveBeenCalled();
         });
 
+        it('gets paypal fastlane with correct styles', async () => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue({
+                clientToken: '123',
+                initializationData: {
+                    isFastlaneEnabled: true,
+                    isAcceleratedCheckoutEnabled: true,
+                    fastlaneStyles: {
+                        fastlaneRootSettingsBackgroundColor: 'orange',
+                        fastlaneTextCaptionSettingsColor: 'blue',
+                    },
+                },
+            });
+
+            const initOptions = {
+                methodId: 'paypalcommerceacceleratedcheckout',
+                paypalcommercefastlane: {
+                    styles: {
+                        root: {
+                            backgroundColorPrimary: 'red',
+                        },
+                        input: {
+                            borderRadius: '10px',
+                        },
+                    },
+                },
+            };
+
+            await strategy.initialize(initOptions);
+
+            expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
+                paypalFastlaneSdk,
+                false,
+                {
+                    root: {
+                        backgroundColorPrimary: 'orange',
+                    },
+                    input: {
+                        borderRadius: '10px',
+                    },
+                    text: {
+                        caption: {
+                            color: 'blue',
+                        },
+                    },
+                },
+            );
+        });
+
         it('does not load payment method if accelerated checkout feature is disabled', async () => {
             jest.spyOn(
                 store.getState().paymentProviderCustomer,
