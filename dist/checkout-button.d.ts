@@ -424,7 +424,8 @@ declare enum GooglePayKey {
     ORBITAL = "googlepayorbital",
     STRIPE = "googlepaystripe",
     STRIPE_UPE = "googlepaystripeupe",
-    WORLDPAY_ACCESS = "googlepayworldpayaccess"
+    WORLDPAY_ACCESS = "googlepayworldpayaccess",
+    TD_ONLINE_MART = "googlepaytdonlinemart"
 }
 
 declare interface LineItem {

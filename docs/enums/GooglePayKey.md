@@ -19,6 +19,7 @@ The recognized keys to pass the initialization options for Google Pay.
 - [PAYPAL_COMMERCE](GooglePayKey.md#paypal_commerce)
 - [STRIPE](GooglePayKey.md#stripe)
 - [STRIPE_UPE](GooglePayKey.md#stripe_upe)
+- [TD_ONLINE_MART](GooglePayKey.md#td_online_mart)
 - [WORLDPAY_ACCESS](GooglePayKey.md#worldpay_access)
 
 ## Enumeration Members
@@ -86,6 +87,12 @@ ___
 ### STRIPE\_UPE
 
 • **STRIPE\_UPE**
+
+___
+
+### TD\_ONLINE\_MART
+
+• **TD\_ONLINE\_MART**
 
 ___
 
