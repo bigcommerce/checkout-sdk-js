@@ -281,13 +281,20 @@ export default class GooglePayGateway {
         const state = this._paymentIntegrationService.getState();
         const consignment = state.getConsignmentsOrThrow()[0];
         const storeConfig = state.getStoreConfigOrThrow();
-
-        this._currencyService = createCurrencyService(storeConfig);
-
         const availableShippingOptions = consignment.availableShippingOptions?.map(
             this._getGooglePayShippingOption.bind(this),
         );
         const selectedShippingOptionId = consignment.selectedShippingOption?.id;
+
+        console.log('*** getConsignmentsOrThrow', consignment);
+
+        // TODO: for test
+        const checkout = state.getCheckoutOrThrow();
+
+        console.log('*** getCheckoutOrThrow', checkout.consignments[0]);
+
+        this._currencyService = createCurrencyService(storeConfig);
+        // TODO: end for test
 
         return {
             defaultSelectedOptionId: selectedShippingOptionId,
@@ -296,11 +303,17 @@ export default class GooglePayGateway {
     }
 
     async handleShippingOptionChange(optionId: string) {
+        console.log('*** handleShippingOptionChange', optionId);
+
         if (optionId === 'shipping_option_unselected') {
             return;
         }
 
-        await this._paymentIntegrationService.selectShippingOption(optionId);
+        try {
+            return await this._paymentIntegrationService.selectShippingOption(optionId);
+        } catch (error) {
+            console.log('*** error handleShippingOptionChange', error);
+        }
     }
 
     protected getGooglePayInitializationData(): GooglePayInitializationData {

@@ -213,6 +213,8 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                             );
                     }
 
+                    console.log('*** availableShippingOptions', availableShippingOptions);
+
                     if (shippingOptionsChangeTriggers.includes(callbackTrigger)) {
                         await this._googlePayPaymentProcessor.handleShippingOptionChange(
                             shippingOptionData.id,
