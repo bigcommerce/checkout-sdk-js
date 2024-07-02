@@ -75,6 +75,7 @@ export enum GooglePayKey {
     STRIPE = 'googlepaystripe',
     STRIPE_UPE = 'googlepaystripeupe',
     WORLDPAY_ACCESS = 'googlepayworldpayaccess',
+    TD_ONLINE_MART = 'googlepaytdonlinemart',
 }
 
 /**
