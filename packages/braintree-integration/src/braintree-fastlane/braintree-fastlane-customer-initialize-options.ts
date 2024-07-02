@@ -51,5 +51,5 @@ export default interface BraintreeFastlaneCustomerInitializeOptions {
 }
 
 export interface WithBraintreeFastlaneCustomerInitializeOptions {
-    braintreeafastlane?: BraintreeFastlaneCustomerInitializeOptions;
+    braintreefastlane?: BraintreeFastlaneCustomerInitializeOptions;
 }

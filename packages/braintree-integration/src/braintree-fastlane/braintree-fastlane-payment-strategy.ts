@@ -3,6 +3,8 @@ import {
     BraintreeFastlaneAuthenticationState,
     BraintreeFastlaneCardComponent,
     BraintreeFastlaneCardComponentOptions,
+    BraintreeInitializationData,
+    getFastlaneStyles,
     isBraintreeAcceleratedCheckoutCustomer,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -19,10 +21,6 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import {
-    isPayPalFastlaneCustomer,
-    PayPalCommerceInitializationData,
-} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import { WithBraintreeFastlanePaymentInitializeOptions } from './braintree-fastlane-payment-initialize-options';
@@ -72,16 +70,20 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         }
 
         const state = this.paymentIntegrationService.getState();
-        const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
 
         if (!paymentMethod.initializationData?.clientToken) {
             await this.paymentIntegrationService.loadPaymentMethod(methodId);
         }
 
+        const fastlaneStyles = getFastlaneStyles(
+            paymentMethod.initializationData?.fastlaneStyles,
+            braintreefastlane.styles,
+        );
+
         await this.braintreeFastlaneUtils.initializeBraintreeFastlaneOrThrow(
             methodId,
-            braintreefastlane.styles,
+            fastlaneStyles,
         );
 
         if (this.shouldRunAuthenticationFlow()) {
@@ -288,7 +290,9 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         if (selectionChanged) {
             const state = this.paymentIntegrationService.getState();
             const paymentProviderCustomer = state.getPaymentProviderCustomer();
-            const braintreeFastlaneCustomer = isPayPalFastlaneCustomer(paymentProviderCustomer)
+            const braintreeFastlaneCustomer = isBraintreeAcceleratedCheckoutCustomer(
+                paymentProviderCustomer,
+            )
                 ? paymentProviderCustomer
                 : {};
 

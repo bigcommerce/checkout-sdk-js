@@ -265,6 +265,58 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             expect(braintreeIntegrationServiceMock.getBraintreeFastlane).toHaveBeenCalled();
         });
 
+        it('gets braintree fastlane with correct styles', async () => {
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue({
+                clientToken: '123',
+                initializationData: {
+                    isFastlaneEnabled: true,
+                    isAcceleratedCheckoutEnabled: true,
+                    fastlaneStyles: {
+                        fastlaneRootSettingsBackgroundColor: 'orange',
+                        fastlaneTextCaptionSettingsColor: 'blue',
+                    },
+                },
+            });
+
+            const initOptions = {
+                methodId: BRAINTREE_AXO_METHOD_ID,
+                braintreefastlane: {
+                    styles: {
+                        root: {
+                            backgroundColorPrimary: 'red',
+                        },
+                        input: {
+                            borderRadius: '10px',
+                        },
+                    },
+                },
+            };
+
+            const strategy = createStrategy();
+
+            await strategy.initialize(initOptions);
+
+            braintreeIntegrationServiceMock.initialize();
+
+            expect(braintreeIntegrationServiceMock.getBraintreeFastlane).toHaveBeenCalledWith(
+                'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                undefined,
+                {
+                    root: {
+                        backgroundColorPrimary: 'orange',
+                    },
+                    input: {
+                        borderRadius: '10px',
+                    },
+                    text: {
+                        caption: {
+                            color: 'blue',
+                        },
+                    },
+                },
+            );
+        });
+
         it('should not run authentication flow if PayPal session id is different', async () => {
             const loadPaymentMethodMock = jest.fn();
 

@@ -23,6 +23,7 @@ import {
     BraintreeTokenizationDetails,
     BraintreeUsBankAccountCreator,
     BraintreeWindow,
+    FastlaneStylesSettings,
     VisaCheckoutSDK,
 } from './types';
 import {
@@ -105,10 +106,12 @@ export interface BraintreeLocalPaymentCreateConfig extends BraintreeModuleCreato
 }
 
 export interface BraintreeInitializationData {
+    clientToken: string;
     intent?: 'authorize' | 'order' | 'sale';
     isCreditEnabled?: boolean;
     isAcceleratedCheckoutEnabled?: boolean;
     isFastlaneEnabled?: boolean;
+    fastlaneStyles?: FastlaneStylesSettings;
     isBraintreeAnalyticsV2Enabled?: boolean;
     shouldRunAcceleratedCheckout?: boolean; // TODO: only for BT AXO A/B testing purposes, hence should be removed after testing
     paymentButtonStyles?: Record<string, PaypalStyleOptions>;

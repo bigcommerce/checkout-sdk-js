@@ -120,6 +120,58 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
             );
         });
 
+        it('initializes braintree fastlane with correct styles', async () => {
+            const newInitializationOptions = {
+                methodId,
+                braintreefastlane: {
+                    onChange: jest.fn(),
+                    styles: {
+                        root: {
+                            backgroundColorPrimary: 'green',
+                            errorColor: 'orange',
+                        },
+                        input: {
+                            borderRadius: '5px',
+                        },
+                    },
+                },
+            };
+
+            const mockPaymentMethod = {
+                ...paymentMethod,
+                initializationData: {
+                    isAcceleratedCheckoutEnabled: true,
+                    shouldRunAcceleratedCheckout: true,
+                    isFastlaneEnabled: true,
+                    fastlaneStyles: {
+                        fastlaneRootSettingsBackgroundColor: 'red',
+                        fastlaneBrandingSettings: 'branding',
+                    },
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(mockPaymentMethod);
+
+            await strategy.initialize(newInitializationOptions);
+
+            expect(braintreeFastlaneUtils.initializeBraintreeFastlaneOrThrow).toHaveBeenCalledWith(
+                methodId,
+                {
+                    root: {
+                        backgroundColorPrimary: 'red',
+                        errorColor: 'orange',
+                    },
+                    input: {
+                        borderRadius: '5px',
+                    },
+                    branding: 'branding',
+                },
+            );
+        });
+
         it('loads another payment method if the primary load throws an error', async () => {
             jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockImplementationOnce(
                 () => {
