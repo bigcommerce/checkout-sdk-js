@@ -1,9 +1,9 @@
-import { createClient as createBigpayClient } from '@bigcommerce/bigpay-client';
+import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { appendWww, parseUrl } from '../common/url';
 import HostedFieldType from '../hosted-field-type';
-import { PaymentRequestSender, PaymentRequestTransformer } from '../payment';
+import { ManualOrderPaymentRequestSender } from '../payment';
 
 import CardExpiryFormatter from './card-expiry-formatter';
 import CardNumberFormatter from './card-number-formatter';
@@ -13,14 +13,14 @@ import HostedCardExpiryInput from './hosted-card-expiry-input';
 import HostedCardNumberInput from './hosted-card-number-input';
 import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';
-import HostedInputPaymentHandler from './hosted-input-payment-handler';
+import HostedInputManualOrderPaymentHandler from './hosted-input-manual-order-payment-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 import mapToAccessibilityLabel from './map-to-accessibility-label';
 import mapToAutocompleteType from './map-to-autocomplete-type';
 
 export default class HostedInputFactory {
-    constructor(private _parentOrigin: string) {}
+    constructor(private _parentOrigin: string, private _paymentOrigin: string) {}
 
     create(
         form: HTMLFormElement,
@@ -104,7 +104,7 @@ export default class HostedInputFactory {
             new IframeEventPoster(this._parentOrigin, window.parent),
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(),
-            this._createPaymentHandler(),
+            this._createManualOrderPaymentHandler(),
             new CardExpiryFormatter(),
         );
     }
@@ -130,7 +130,7 @@ export default class HostedInputFactory {
             new IframeEventPoster(this._parentOrigin, window.parent),
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(),
-            this._createPaymentHandler(),
+            this._createManualOrderPaymentHandler(),
             new HostedAutocompleteFieldset(
                 form,
                 [HostedFieldType.CardCode, HostedFieldType.CardExpiry, HostedFieldType.CardName],
@@ -161,18 +161,17 @@ export default class HostedInputFactory {
             new IframeEventPoster(this._parentOrigin, window.parent),
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(),
-            this._createPaymentHandler(),
+            this._createManualOrderPaymentHandler(),
         );
     }
 
-    private _createPaymentHandler(): HostedInputPaymentHandler {
-        return new HostedInputPaymentHandler(
+    private _createManualOrderPaymentHandler(): HostedInputManualOrderPaymentHandler {
+        return new HostedInputManualOrderPaymentHandler(
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(),
             getHostedInputStorage(),
             new IframeEventPoster(this._parentOrigin, window.parent),
-            new PaymentRequestSender(createBigpayClient()),
-            new PaymentRequestTransformer(),
+            new ManualOrderPaymentRequestSender(createRequestSender(), this._paymentOrigin),
         );
     }
 }

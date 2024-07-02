@@ -1,3 +1,1 @@
-export { PaymentRequestSender } from './payment-request-sender';
-export { PaymentRequestTransformer } from './payment-request-transformer';
-export { default as PaymentResponse } from './payment-response';
+export { ManualOrderPaymentRequestSender } from './manual-order-payment-request-sender';

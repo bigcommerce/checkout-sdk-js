@@ -1,31 +1,29 @@
 import { Response } from '@bigcommerce/request-sender';
 import { snakeCase } from 'lodash';
 
-import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { IframeEventPoster } from '../common/iframe';
-import { InvalidHostedFormValueError } from '../errors';
-import { HostedFieldSubmitRequestEvent } from '../hosted-field-events';
-import { PaymentRequestSender, PaymentRequestTransformer } from '../payment';
+import { InvalidHostedFormValueError, PaymentErrorResponseBody } from '../errors';
+import { HostedFieldSubmitManualOrderRequestEvent } from '../hosted-field-events';
+import { ManualOrderPaymentRequestSender } from '../payment';
 
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
 import HostedInputStorage from './hosted-input-storage';
 import HostedInputValidator from './hosted-input-validator';
 
-export default class HostedInputPaymentHandler {
+export default class HostedInputManualOrderPaymentHandler {
     constructor(
         private _inputAggregator: HostedInputAggregator,
         private _inputValidator: HostedInputValidator,
         private _inputStorage: HostedInputStorage,
         private _eventPoster: IframeEventPoster<HostedInputEvent>,
-        private _paymentRequestSender: PaymentRequestSender,
-        private _paymentRequestTransformer: PaymentRequestTransformer,
+        private _manualOrderPaymentRequestSender: ManualOrderPaymentRequestSender,
     ) {}
 
-    handle: (event: HostedFieldSubmitRequestEvent) => Promise<void> = async ({
-        payload: { data },
-    }) => {
+    handle: (event: HostedFieldSubmitManualOrderRequestEvent) => Promise<void> = async (event) => {
+        const {
+            payload: { data },
+        } = event;
         const values = this._inputAggregator.getInputValues();
         const results = await this._inputValidator.validate(values);
 
@@ -38,7 +36,7 @@ export default class HostedInputPaymentHandler {
             const error = new InvalidHostedFormValueError(results.errors);
 
             return this._eventPoster.post({
-                type: HostedInputEventType.SubmitFailed,
+                type: HostedInputEventType.SubmitManualOrderFailed,
                 payload: {
                     error: { code: snakeCase(error.name), message: error.message },
                 },
@@ -46,21 +44,18 @@ export default class HostedInputPaymentHandler {
         }
 
         try {
-            const response = await this._paymentRequestSender.submitPayment(
-                this._paymentRequestTransformer.transformWithHostedFormData(
-                    values,
-                    data,
-                    this._inputStorage.getNonce() || '',
-                ),
+            await this._manualOrderPaymentRequestSender.submitPayment(
+                data,
+                values,
+                this._inputStorage.getNonce(),
             );
 
             this._eventPoster.post({
-                type: HostedInputEventType.SubmitSucceeded,
-                payload: { response },
+                type: HostedInputEventType.SubmitManualOrderSucceeded,
             });
         } catch (error) {
             this._eventPoster.post({
-                type: HostedInputEventType.SubmitFailed,
+                type: HostedInputEventType.SubmitManualOrderFailed,
                 payload: this._isPaymentErrorResponse(error)
                     ? { error: error.body.errors[0], response: error }
                     : { error: { code: snakeCase(error.name), message: error.message } },
