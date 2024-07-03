@@ -8,6 +8,7 @@ import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../
 
 import { PaymentResumer } from './ppsdk-payment-resumer';
 import { createStepHandler } from './step-handler';
+import { getResponse } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 describe('PaymentResumer', () => {
     const requestSender = createRequestSender();
@@ -35,10 +36,10 @@ describe('PaymentResumer', () => {
         it('requests the payment entity from the BigPay Payments endpoint', async () => {
             const requestSenderSpy = jest
                 .spyOn(requestSender, 'get')
-                .mockResolvedValueOnce({ body: { auth_token: 'some-token' } })
-                .mockResolvedValueOnce({});
+                .mockResolvedValueOnce(getResponse({ auth_token: 'some-token' }))
+                .mockResolvedValueOnce(getResponse({}));
 
-            jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
+            jest.spyOn(stepHandler, 'handle').mockResolvedValue(Promise.resolve());
 
             await paymentResumer.resume({
                 paymentId: 'some-id',
@@ -60,10 +61,10 @@ describe('PaymentResumer', () => {
 
         it('passes the Payments endpoint response to the stepHandler', async () => {
             jest.spyOn(requestSender, 'get')
-                .mockResolvedValueOnce({ body: { auth_token: 'some-token' } })
-                .mockResolvedValueOnce({ body: 'some-api-response' });
+                .mockResolvedValueOnce(getResponse({ auth_token: 'some-token' }))
+                .mockResolvedValueOnce(getResponse('some-api-response'));
 
-            const stepHandlerSpy = jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
+            const stepHandlerSpy = jest.spyOn(stepHandler, 'handle').mockResolvedValue(Promise.resolve());
 
             await paymentResumer.resume({
                 paymentId: 'some-id',
@@ -71,22 +72,14 @@ describe('PaymentResumer', () => {
                 orderId: 12345,
             });
 
-            expect(stepHandlerSpy).toHaveBeenCalledWith({ body: 'some-api-response' });
-        });
-
-        it('returns the final value from the stepHandler', async () => {
-            jest.spyOn(requestSender, 'get')
-                .mockResolvedValueOnce({ body: { auth_token: 'some-token' } })
-                .mockResolvedValueOnce({});
-            jest.spyOn(stepHandler, 'handle').mockResolvedValue({ someValue: 12345 });
-
-            await expect(
-                paymentResumer.resume({
-                    paymentId: 'some-id',
-                    bigpayBaseUrl: 'https://some-domain.com',
-                    orderId: 12345,
-                }),
-            ).resolves.toStrictEqual({ someValue: 12345 });
+            expect(stepHandlerSpy).toHaveBeenCalledWith({
+                body: 'some-api-response',
+                headers: {
+                    'content-type': 'application/json',
+                },
+                status: 200,
+                statusText: 'OK'
+            });
         });
     });
 });

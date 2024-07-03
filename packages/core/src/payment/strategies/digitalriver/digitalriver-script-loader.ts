@@ -11,7 +11,7 @@ export default class DigitalRiverScriptLoader {
         private _window: DigitalRiverWindow = window,
     ) {}
 
-    async load(publicKey: string, locale: string): Promise<DigitalRiverJS> {
+    async load(publicKey: string, locale: string): Promise<DigitalRiverJS | undefined> {
         await Promise.all([
             this._stylesheetLoader.loadStylesheet(
                 `https://js.digitalriverws.com/v1/css/DigitalRiver.css`,

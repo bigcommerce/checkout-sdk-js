@@ -42,7 +42,7 @@ describe('InstrumentRequestSender', () => {
             deleteShopperInstrument: jest.fn((_, callback) => callback()),
         };
 
-        jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve());
+        jest.spyOn(requestSender, 'get').mockResolvedValue(getResponse({}));
         requestContext = instrumentRequestContext();
         instrumentRequestSender = new InstrumentRequestSender(client, requestSender);
         shippingAddress = getShippingAddress();

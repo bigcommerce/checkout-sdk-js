@@ -26,6 +26,7 @@ describe('PPSDKStrategy', () => {
     const requestSender = createRequestSender();
     let subStrategyRegistry: SubStrategyRegistry;
     const paymentResumer = new PaymentResumer(requestSender, stepHandler);
+    const orderMock = getOrder();
     const completedOrder = getOrder();
     const incompleteOrder = { ...completedOrder, isComplete: false };
     let store: ReturnType<typeof createCheckoutStore>;
@@ -48,7 +49,7 @@ describe('PPSDKStrategy', () => {
             hostedFormFactory,
         );
         submitSpy = jest.spyOn(orderActionCreator, 'submitOrder');
-        jest.spyOn(store, 'dispatch').mockResolvedValue(undefined);
+        jest.spyOn(store, 'dispatch').mockResolvedValue(store.getState());
     });
 
     afterEach(() => {
@@ -78,7 +79,11 @@ describe('PPSDKStrategy', () => {
                     new BrowserStorage('ppsdk'),
                 );
 
-                const mockSubStrategy = { execute: jest.fn(), initialize: jest.fn() };
+                const mockSubStrategy = {
+                    execute: jest.fn(),
+                    initialize: jest.fn(),
+                    deinitialize: jest.fn(),
+                };
 
                 jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(mockSubStrategy);
 
@@ -112,7 +117,11 @@ describe('PPSDKStrategy', () => {
                     new BrowserStorage('ppsdk'),
                 );
 
-                const mockSubStrategy = { initialize: jest.fn(), deinitialize: jest.fn() };
+                const mockSubStrategy = {
+                    execute: jest.fn(),
+                    initialize: jest.fn(),
+                    deinitialize: jest.fn(),
+                };
 
                 jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(mockSubStrategy);
 
@@ -135,7 +144,11 @@ describe('PPSDKStrategy', () => {
                             new BrowserStorage('ppsdk'),
                         );
 
-                        const mockSubStrategy = { execute: jest.fn(), initialize: jest.fn() };
+                        const mockSubStrategy = {
+                            execute: jest.fn(),
+                            initialize: jest.fn(),
+                            deinitialize: jest.fn(),
+                        };
 
                         jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(
                             mockSubStrategy,
@@ -166,7 +179,11 @@ describe('PPSDKStrategy', () => {
                             new BrowserStorage('ppsdk'),
                         );
 
-                        const mockSubStrategy = { execute: jest.fn(), initialize: jest.fn() };
+                        const mockSubStrategy = {
+                            execute: jest.fn(),
+                            initialize: jest.fn(),
+                            deinitialize: jest.fn(),
+                        };
 
                         jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(
                             mockSubStrategy,
@@ -199,9 +216,7 @@ describe('PPSDKStrategy', () => {
                         jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({
                             token: 'some-token',
                         });
-                        jest.spyOn(store.getState().order, 'getOrder').mockReturnValue({
-                            orderId: 'some-order-id',
-                        });
+                        jest.spyOn(store.getState().order, 'getOrder').mockReturnValue(orderMock);
 
                         const resumerSpy = jest
                             .spyOn(paymentResumer, 'resume')
@@ -231,9 +246,7 @@ describe('PPSDKStrategy', () => {
                             jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({
                                 token: 'some-token',
                             });
-                            jest.spyOn(store.getState().order, 'getOrder').mockReturnValue({
-                                orderId: 'some-order-id',
-                            });
+                            jest.spyOn(store.getState().order, 'getOrder').mockReturnValue(orderMock);
                             jest.spyOn(paymentResumer, 'resume').mockRejectedValue(new Error());
 
                             const strategy = new PPSDKStrategy(

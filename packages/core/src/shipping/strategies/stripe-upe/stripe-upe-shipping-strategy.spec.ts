@@ -426,7 +426,7 @@ describe('StripeUPEShippingStrategy', () => {
     it('updates shipping address', async () => {
         const address = getShippingAddress();
         const options = {};
-        const action = of(createAction(ConsignmentActionType.CreateConsignmentsRequested));
+        const action = () => of(createAction(ConsignmentActionType.CreateConsignmentsRequested));
 
         jest.spyOn(consignmentActionCreator, 'updateAddress').mockReturnValue(action);
 

@@ -47,6 +47,8 @@ import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import MonerisPaymentStrategy from './moneris-payment-strategy';
 import { getHostedFormInitializeOptions, getOrderRequestBodyVaultedCC } from './moneris.mock';
+import { HostedInputEventType, HostedInputSubmitSuccessEvent } from '../../../hosted-form/iframe-content';
+import { getResponse } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 describe('MonerisPaymentStrategy', () => {
     const containerId = 'moneris_iframe_container';
@@ -127,9 +129,9 @@ describe('MonerisPaymentStrategy', () => {
         jest.spyOn(document, 'createElement');
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
+        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(() => submitOrderAction);
 
-        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(() => submitPaymentAction);
 
         jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow').mockReturnValue(checkoutMock);
 
@@ -138,7 +140,7 @@ describe('MonerisPaymentStrategy', () => {
         );
 
         jest.spyOn(storeCreditActionCreator, 'applyStoreCredit').mockReturnValue(
-            applyStoreCreditAction,
+            () => applyStoreCreditAction,
         );
 
         jest.spyOn(window, 'removeEventListener');
@@ -476,10 +478,17 @@ describe('MonerisPaymentStrategy', () => {
         let loadOrderAction: Observable<LoadOrderSucceededAction>;
         let state: InternalCheckoutSelectors;
 
+        const submitMock: HostedInputSubmitSuccessEvent = {
+            type: HostedInputEventType.SubmitSucceeded,
+            payload: {
+                response: getResponse({}),
+            },
+        };
+
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
-                submit: jest.fn(() => Promise.resolve()),
+                submit: jest.fn(() => Promise.resolve(submitMock)),
                 validate: jest.fn(() => Promise.resolve()),
                 detach: jest.fn(),
             };
@@ -491,8 +500,9 @@ describe('MonerisPaymentStrategy', () => {
                 merge(getMoneris(), { config: { isHostedFormEnabled: true } }),
             );
 
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
+            jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(() => loadOrderAction);
 
+            // @ts-ignore // FIXME: it might be better to create new HostedForm mock with all properties to remove this ts-ignore
             jest.spyOn(formFactory, 'create').mockReturnValue(form);
         });
 

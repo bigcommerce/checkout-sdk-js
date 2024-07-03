@@ -2,7 +2,7 @@ import { PayPalFastlane, PayPalFastlaneCardComponentMethods } from '../paypal-co
 
 export default function getPayPalFastlane(): PayPalFastlane {
     const paypalFastlaneComponentMethods: PayPalFastlaneCardComponentMethods = {
-        getPaymentToken: jest.fn(() => ({
+        getPaymentToken: jest.fn(() => Promise.resolve({
             id: 'paypal_fastlane_instrument_id_nonce',
             paymentSource: {
                 card: {
@@ -11,15 +11,13 @@ export default function getPayPalFastlane(): PayPalFastlane {
                     lastDigits: '1111',
                     name: 'John Doe',
                     billingAddress: {
-                        firstName: 'John',
-                        lastName: 'Doe',
                         company: 'BigCommerce',
-                        streetAddress: 'addressLine1',
-                        extendedAddress: 'addressLine2',
-                        locality: 'addressCity',
-                        region: 'addressState',
+                        addressLine1: 'addressLine1',
+                        addressLine2: 'addressLine2',
+                        adminArea1: 'addressCity',
+                        adminArea2: 'addressState',
                         postalCode: '03004',
-                        countryCodeAlpha2: 'US',
+                        countryCode: 'US',
                     },
                 },
             },
@@ -41,6 +39,6 @@ export default function getPayPalFastlane(): PayPalFastlane {
             showCardSelector: jest.fn(),
             showShippingAddressSelector: jest.fn(),
         },
-        FastlaneCardComponent: jest.fn(() => paypalFastlaneComponentMethods),
+        FastlaneCardComponent: jest.fn(() => Promise.resolve(paypalFastlaneComponentMethods)),
     };
 }

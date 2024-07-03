@@ -155,7 +155,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(paymentMethod);
 
         jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(
-            () => paypalFastlaneSdk,
+            () => Promise.resolve(paypalFastlaneSdk),
         );
         jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalFastlane').mockImplementation(
             jest.fn(),
@@ -313,9 +313,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                 'getPaymentProviderCustomerOrThrow',
             ).mockReturnValue({});
 
-            jest.spyOn(paypalCommerceFastlaneUtils, 'getStorageSessionId').mockReturnValue(
-                undefined,
-            );
+            jest.spyOn(paypalCommerceFastlaneUtils, 'getStorageSessionId').mockReturnValue('');
 
             await strategy.initialize(initializationOptions);
 

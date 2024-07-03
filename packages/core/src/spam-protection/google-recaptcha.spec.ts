@@ -43,7 +43,11 @@ describe('GoogleRecaptcha', () => {
         beforeEach(() => {
             googleRecaptchaMock = getGoogleRecaptchaMock();
             googleRecaptchaMock.getResponse = jest.fn(() => 'google-recaptcha-token');
-            googleRecaptchaMock.render = jest.fn((_containerId, { callback }) => callback());
+            googleRecaptchaMock.render = jest.fn(
+                (_containerId, parameters) => {
+                    return parameters?.callback?.('response') || 0;
+                },
+            );
 
             jest.spyOn(googleRecaptchaScriptLoader, 'load').mockResolvedValue(googleRecaptchaMock);
         });
@@ -77,14 +81,17 @@ describe('GoogleRecaptcha', () => {
 
         beforeEach(() => {
             jest.spyOn(mutationObserverFactory, 'create').mockReturnValue({
-                disconect: jest.fn(),
+                disconnect: jest.fn(),
                 observe: jest.fn(),
-                takeRecords: jest.fn(),
+                takeRecords: jest.fn()
             });
 
             googleRecaptchaMock = getGoogleRecaptchaMock();
-
-            googleRecaptchaMock.render = jest.fn((_containerId, { callback }) => callback());
+            googleRecaptchaMock.render = jest.fn(
+                (_containerId, parameters) => {
+                    return parameters?.callback?.('response') || 0;
+                },
+            );
 
             recaptchaChallengeContainer = new DOMParser().parseFromString(
                 '<div style="visibility: hidden"><div><iframe src="https://google.com/recaptcha/api2/bframe?query=1"></div></div>',

@@ -1,5 +1,4 @@
 import { merge } from 'lodash';
-import { of } from 'rxjs';
 
 import { CheckoutStore, createCheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { HostedFormFactory } from '../../../hosted-form';
@@ -30,11 +29,11 @@ describe('BarclaysPaymentStrategy', () => {
         store = createCheckoutStore();
 
         orderActionCreator = {
-            submitOrder: jest.fn(() => of()),
+            submitOrder: jest.fn(),
         };
 
         paymentActionCreator = {
-            submitPayment: jest.fn(() => of()),
+            submitPayment: jest.fn(),
         };
 
         hostedFormFactory = {} as HostedFormFactory;

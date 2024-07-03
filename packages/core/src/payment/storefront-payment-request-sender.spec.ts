@@ -1,4 +1,5 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { getResponse } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../common/http-request';
 
@@ -12,7 +13,7 @@ describe('StorefrontPaymentRequestSender', () => {
         requestSender = createRequestSender();
         storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
 
-        jest.spyOn(requestSender, 'post').mockResolvedValue(undefined);
+        jest.spyOn(requestSender, 'post').mockResolvedValue(getResponse({}));
     });
 
     describe('#saveExternalId', () => {

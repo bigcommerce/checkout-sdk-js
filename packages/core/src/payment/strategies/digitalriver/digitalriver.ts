@@ -100,7 +100,7 @@ export interface DigitalRiverDropInConfiguration {
     /**
      * The function called when the shopper has authorized payment and a payment source has been successfully created.
      */
-    onSuccess?(data: OnSuccessResponse): void;
+    onSuccess?(data: OnSuccessResponse | void): void;
 
     /**
      * The function called when the shopper cancels the payment process before authorizing payment.

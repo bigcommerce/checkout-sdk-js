@@ -38,7 +38,11 @@ describe('ExtensionIframe', () => {
             });
         });
 
-        jest.spyOn(window, 'addEventListener').mockImplementation((type, listener) => {
+        jest.spyOn(window, 'addEventListener').mockImplementation((type, eventListener) => {
+            const listener = typeof eventListener === 'function'
+                ? eventListener
+                : () => eventListener;
+
             return eventEmitter.addListener(type, listener);
         });
     });

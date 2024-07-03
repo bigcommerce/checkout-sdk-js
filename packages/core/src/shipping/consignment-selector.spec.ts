@@ -11,6 +11,7 @@ import ConsignmentSelector, {
 import ConsignmentState from './consignment-state';
 import { getConsignment, getConsignmentsState } from './consignments.mock';
 import { getShippingAddress } from './shipping-addresses.mock';
+import { getCart } from '../cart/carts.mock';
 
 describe('ConsignmentSelector', () => {
     const emptyState: ConsignmentState = {
@@ -312,8 +313,10 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns empty array if all items are assigned', () => {
+            const cart = state.cart.data || getCart();
+
             jest.spyOn(cartSelector, 'getCart').mockReturnValue({
-                ...state.cart,
+                ...cart,
                 lineItems: {
                     physicalItems: [
                         {
@@ -322,6 +325,8 @@ describe('ConsignmentSelector', () => {
                             id: '12e11c8f-7dce-4da3-9413-b649533f8bad',
                         },
                     ],
+                    digitalItems: [],
+                    giftCertificates: [],
                 },
             });
 
@@ -331,9 +336,15 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns empty array if there are no phyisical items', () => {
+            const cart = state.cart.data || getCart();
+
             jest.spyOn(cartSelector, 'getCart').mockReturnValue({
-                ...state.cart,
-                lineItems: { physicalItems: null },
+                ...cart,
+                lineItems: {
+                    physicalItems: [],
+                    digitalItems: [],
+                    giftCertificates: [],
+                },
             });
 
             selector = createConsignmentSelector(state.consignments, cartSelector);
@@ -342,7 +353,7 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns empty array if there is no cart', () => {
-            jest.spyOn(cartSelector, 'getCart').mockReturnValue(null);
+            jest.spyOn(cartSelector, 'getCart').mockReturnValue(undefined);
 
             selector = createConsignmentSelector(state.consignments, cartSelector);
 

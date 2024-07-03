@@ -1,8 +1,8 @@
-import { Action, createAction } from '@bigcommerce/data-store';
+import { createAction, ThunkAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
-import { noop } from 'lodash';
 import { Observable, of } from 'rxjs';
+import { getResponse } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { getCartState } from '../../../cart/carts.mock';
 import {
@@ -11,6 +11,7 @@ import {
     CheckoutStore,
     CheckoutValidator,
     createCheckoutStore,
+    InternalCheckoutSelectors,
 } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
@@ -19,7 +20,7 @@ import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { getFormFieldsState } from '../../../form/form.mock';
-import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestBody, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import {
@@ -32,11 +33,6 @@ import {
 } from '../../../payment';
 import { createPaymentIntegrationService } from '../../../payment-integration';
 import { getChasePay, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import {
-    ChasePayEventType,
-    ChasePayScriptLoader,
-    JPMC,
-} from '../../../payment/strategies/chasepay';
 import { getChasePayScriptMock } from '../../../payment/strategies/chasepay/chasepay.mock';
 import {
     createSpamProtection,
@@ -44,7 +40,7 @@ import {
     SpamProtectionActionCreator,
     SpamProtectionRequestSender,
 } from '../../../spam-protection';
-import { PaymentActionType } from '../../payment-actions';
+import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
@@ -55,6 +51,12 @@ import { WepayRiskClient } from '../wepay';
 
 import ChasePayInitializeOptions from './chasepay-initialize-options';
 import ChasePayPaymentStrategy from './chasepay-payment-strategy';
+import {
+    ChasePayEventType,
+    ChasePayScriptLoader,
+    ChasePaySuccessPayload,
+    JPMC,
+} from './index';
 
 describe('ChasePayPaymentStrategy', () => {
     const testRiskToken = 'test-risk-token';
@@ -160,9 +162,7 @@ describe('ChasePayPaymentStrategy', () => {
 
         jest.spyOn(paymentStrategyActionCreator, 'widgetInteraction');
         jest.spyOn(requestSender, 'post');
-        JPMC.ChasePay.showLoadingAnimation = jest
-            .fn(() => jest.fn(noop))
-            .mockReturnValue(Promise.resolve(store.getState()));
+        JPMC.ChasePay.showLoadingAnimation = jest.fn();
 
         strategy = new ChasePayPaymentStrategy(
             store,
@@ -185,7 +185,7 @@ describe('ChasePayPaymentStrategy', () => {
 
         jest.spyOn(walletButton, 'addEventListener');
         jest.spyOn(walletButton, 'removeEventListener');
-        jest.spyOn(requestSender, 'post').mockReturnValue(checkoutActionCreator);
+        jest.spyOn(requestSender, 'post').mockResolvedValue(getResponse(checkoutActionCreator));
         jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout');
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod');
         jest.spyOn(document, 'getElementById');
@@ -245,12 +245,14 @@ describe('ChasePayPaymentStrategy', () => {
         });
 
         it('expect the chasepay complete checkout to call request sender', async () => {
-            const payload = {
+            const payload: ChasePaySuccessPayload = {
                 sessionToken: '1111111111',
             };
 
-            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve());
+            jest.spyOn(requestSender, 'post').mockResolvedValue(getResponse({}));
 
+            // FIXME: find a way how to handle callback argument which can be string and ChasePaySuccessPayload
+            // @ts-ignore
             JPMC.ChasePay.on = jest.fn((_, callback) => callback(payload));
 
             await strategy.initialize(initializeOptions);
@@ -386,13 +388,13 @@ describe('ChasePayPaymentStrategy', () => {
     describe('#execute()', () => {
         let initializeOptions: PaymentInitializeOptions;
         let orderRequestBody: OrderRequestBody;
-        let submitOrderAction: Observable<Action>;
-        let submitPaymentAction: Observable<Action>;
+        let submitOrderAction: ThunkAction<SubmitOrderAction, InternalCheckoutSelectors>;
+        let submitPaymentAction: ThunkAction<SubmitPaymentAction, InternalCheckoutSelectors>;
 
         beforeEach(async () => {
             orderRequestBody = getOrderRequestBody();
-            submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-            submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
+            submitOrderAction = () => of(createAction(OrderActionType.SubmitOrderRequested));
+            submitPaymentAction = () => of(createAction(PaymentActionType.SubmitPaymentRequested));
             initializeOptions = {
                 methodId: 'chasepay',
                 chasepay: { logoContainer: 'login', walletButton: 'mockButton' },
@@ -501,14 +503,14 @@ describe('ChasePayPaymentStrategy', () => {
 
     describe('#deinitialize()', () => {
         let initializeOptions: PaymentInitializeOptions;
-        let submitOrderAction: Observable<Action>;
+        let submitOrderAction: ThunkAction<SubmitOrderAction, InternalCheckoutSelectors>;
 
         beforeEach(async () => {
             initializeOptions = {
                 methodId: 'chasepay',
                 chasepay: { logoContainer: 'login', walletButton: 'mockButton' },
             };
-            submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+            submitOrderAction = () => of(createAction(OrderActionType.SubmitOrderRequested));
             orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
 
             await strategy.initialize(initializeOptions);

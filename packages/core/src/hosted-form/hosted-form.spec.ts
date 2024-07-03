@@ -1,5 +1,7 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
+import { getResponse } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse, getErrorResponseBody } from '../common/http-request/responses.mock';
 import { IframeEventListener } from '../common/iframe';
@@ -112,10 +114,10 @@ describe('HostedForm', () => {
         expect(fields[3].attach).toHaveBeenCalled();
     });
 
-    it('detaches all fields from document', async () => {
+    it('detaches all fields from document', () => {
         fields.forEach((field) => jest.spyOn(field, 'detach').mockReturnValue(undefined));
 
-        await form.detach();
+        form.detach();
 
         expect(fields[0].detach).toHaveBeenCalled();
         expect(fields[1].detach).toHaveBeenCalled();
@@ -131,11 +133,12 @@ describe('HostedForm', () => {
             methodId: 'authorizenet',
             paymentData: { shouldSaveInstrument: true },
         };
-        const response = {
-            status: 'ok',
-        };
+        const response = getResponse({});
 
-        jest.spyOn(field, 'submitForm').mockResolvedValue({ payload: { response } });
+        jest.spyOn(field, 'submitForm').mockResolvedValue({
+            type: HostedInputEventType.SubmitSucceeded,
+            payload: { response },
+        });
 
         jest.spyOn(payloadTransformer, 'transform').mockReturnValue(data);
 
@@ -152,7 +155,9 @@ describe('HostedForm', () => {
         // tslint:disable-next-line:no-non-null-assertion
         const field = fields.find((field) => field.getType() === HostedFieldType.CardNumber)!;
 
-        jest.spyOn(field, 'submitStoredCardForm').mockResolvedValue({});
+        jest.spyOn(field, 'submitStoredCardForm').mockResolvedValue({
+            type: HostedInputEventType.StoredCardSucceeded,
+        });
 
         await form.submitStoredCard({
             fields: StoredCardHostedFormInstrumentFieldsMock,
@@ -169,17 +174,21 @@ describe('HostedForm', () => {
         // tslint:disable-next-line:no-non-null-assertion
         const field = fields.find((field) => field.getType() === HostedFieldType.CardNumber)!;
         const data = getHostedFormOrderData();
-        const response = {
-            status: 'ok',
-        };
+        const response = getResponse({});
         const payload = {
             methodId: 'authorizenet',
             paymentData: { shouldSaveInstrument: true },
         };
 
         jest.spyOn(field, 'submitForm')
-            .mockResolvedValueOnce({ payload: { response: errorResponse } })
-            .mockResolvedValue({ payload: { response } });
+            .mockResolvedValueOnce({
+                type: HostedInputEventType.SubmitSucceeded,
+                payload: { response: errorResponse },
+            })
+            .mockResolvedValue({
+                type: HostedInputEventType.SubmitSucceeded,
+                payload: { response },
+            });
 
         jest.spyOn(payloadTransformer, 'transform').mockReturnValue(data);
 
@@ -198,21 +207,17 @@ describe('HostedForm', () => {
         };
 
         jest.spyOn(field, 'submitForm').mockRejectedValue(errorResponse);
-
         jest.spyOn(payloadTransformer, 'transform').mockReturnValue(data);
-
-        const errorHandler = jest
-            .spyOn(paymentHumanVerificationHandler, 'handle')
-            .mockReturnValue(Promise.resolve(additionalActionMock));
+        jest.spyOn(paymentHumanVerificationHandler, 'handle').mockReturnValue(
+            Promise.resolve(additionalActionMock),
+        );
 
         try {
             await form.submit(payload);
-        } catch {
-            errorHandler();
+        } catch (_error) {
+            expect(paymentHumanVerificationHandler.handle).toHaveBeenCalledWith(errorResponse);
         }
 
-        expect(errorHandler).toHaveBeenCalled();
-        expect(paymentHumanVerificationHandler.handle).toHaveBeenCalledWith(errorResponse);
     });
 
     it('notifies when card type changes', () => {

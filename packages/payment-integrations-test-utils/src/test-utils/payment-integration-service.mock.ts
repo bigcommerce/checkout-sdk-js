@@ -1,5 +1,3 @@
-import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { getAddress } from './address.mock';
 import getBillingAddress from './billing-address.mock';
 import getCart from './carts.mock';
@@ -75,39 +73,35 @@ const updatePaymentProviderCustomer = jest.fn();
 const initializePayment = jest.fn();
 const validateCheckout = jest.fn();
 
-const PaymentIntegrationServiceMock = jest
-    .fn<PaymentIntegrationService>()
-    .mockImplementation(() => {
-        return {
-            createBuyNowCart,
-            createHostedForm,
-            deleteConsignment,
-            subscribe,
-            forgetCheckout,
-            getConsignments,
-            getPaymentProviderCustomerOrThrow,
-            getState,
-            initializeOffsitePayment,
-            loadCheckout,
-            loadDefaultCheckout,
-            loadPaymentMethod,
-            loadPaymentMethods,
-            loadShippingCountries,
-            loadCurrentOrder,
-            submitOrder,
-            submitPayment,
-            finalizeOrder,
-            updateBillingAddress,
-            updateShippingAddress,
-            signInCustomer,
-            signOutCustomer,
-            selectShippingOption,
-            applyStoreCredit,
-            verifyCheckoutSpamProtection,
-            updatePaymentProviderCustomer,
-            initializePayment,
-            validateCheckout,
-        };
-    });
+const PaymentIntegrationServiceMock = jest.fn().mockImplementation(() => ({
+    createBuyNowCart,
+    createHostedForm,
+    deleteConsignment,
+    subscribe,
+    forgetCheckout,
+    getConsignments,
+    getPaymentProviderCustomerOrThrow,
+    getState,
+    initializeOffsitePayment,
+    loadCheckout,
+    loadDefaultCheckout,
+    loadPaymentMethod,
+    loadPaymentMethods,
+    loadShippingCountries,
+    loadCurrentOrder,
+    submitOrder,
+    submitPayment,
+    finalizeOrder,
+    updateBillingAddress,
+    updateShippingAddress,
+    signInCustomer,
+    signOutCustomer,
+    selectShippingOption,
+    applyStoreCredit,
+    verifyCheckoutSpamProtection,
+    updatePaymentProviderCustomer,
+    initializePayment,
+    validateCheckout,
+}));
 
 export default PaymentIntegrationServiceMock;

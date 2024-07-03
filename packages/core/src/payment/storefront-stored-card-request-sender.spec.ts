@@ -1,4 +1,5 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { getResponse } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import {
     StoredCardHostedFormDataMock,
@@ -16,7 +17,7 @@ describe('StorefrontStoredCardRequestSender', () => {
         requestSender = createRequestSender();
         storefrontStoredCardRequestSender = new StorefrontStoredCardRequestSender(requestSender);
 
-        jest.spyOn(requestSender, 'post').mockResolvedValue(undefined);
+        jest.spyOn(requestSender, 'post').mockResolvedValue(getResponse({}));
     });
 
     describe('#submitPaymentMethod', () => {

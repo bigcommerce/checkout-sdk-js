@@ -117,7 +117,11 @@ describe('ExtensionActionCreator', () => {
             const mockElement = document.createElement('div');
 
             jest.spyOn(document, 'getElementById').mockReturnValue(mockElement);
-            jest.spyOn(window, 'addEventListener').mockImplementation((type, listener) => {
+            jest.spyOn(window, 'addEventListener').mockImplementation((type, eventListener) => {
+                const listener = typeof eventListener === 'function'
+                    ? eventListener
+                    : () => eventListener;
+
                 return eventEmitter.addListener(type, listener);
             });
 

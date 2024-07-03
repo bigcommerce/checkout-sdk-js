@@ -1,4 +1,5 @@
 import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
+import { getResponse } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 
@@ -12,7 +13,7 @@ describe('SubscriptionsRequestSender', () => {
     beforeEach(() => {
         requestSender = createRequestSender();
 
-        jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve());
+        jest.spyOn(requestSender, 'post').mockResolvedValue(getResponse({}));
 
         subscriptionsRequestSender = new SubscriptionsRequestSender(requestSender);
     });

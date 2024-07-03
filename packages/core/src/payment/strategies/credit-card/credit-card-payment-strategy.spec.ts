@@ -142,7 +142,7 @@ describe('CreditCardPaymentStrategy', () => {
                 merge(getPaymentMethod(), { config: { isHostedFormEnabled: true } }),
             );
 
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
+            jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(() => loadOrderAction);
 
             jest.spyOn(formFactory, 'create').mockReturnValue(form);
         });

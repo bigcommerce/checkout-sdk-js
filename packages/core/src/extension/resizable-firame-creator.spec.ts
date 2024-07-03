@@ -25,11 +25,19 @@ describe('ResizableIframeCreator', () => {
         initCallback = jest.fn();
         failedCallback = jest.fn();
 
-        jest.spyOn(window, 'addEventListener').mockImplementation((type, listener) => {
+        jest.spyOn(window, 'addEventListener').mockImplementation((type, eventListener) => {
+            const listener = typeof eventListener === 'function'
+                ? eventListener
+                : () => eventListener;
+
             return eventEmitter.addListener(type, listener);
         });
 
-        jest.spyOn(window, 'removeEventListener').mockImplementation((type, listener) => {
+        jest.spyOn(window, 'removeEventListener').mockImplementation((type, eventListener) => {
+            const listener = typeof eventListener === 'function'
+                ? eventListener
+                : () => eventListener;
+
             return eventEmitter.removeListener(type, listener);
         });
 

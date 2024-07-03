@@ -68,6 +68,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
     let strategy: BraintreePaypalCreditButtonStrategy;
 
     const defaultButtonContainerId = 'braintree-paypal-button-mock-id';
+    const paymentClientToken = 'clientToken';
 
     const braintreePaypalCreditOptions: BraintreePaypalCreditButtonInitializeOptions = {
         style: {
@@ -151,7 +152,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
 
         paymentMethodMock = {
             ...getBraintree(),
-            clientToken: 'myToken',
+            clientToken: paymentClientToken,
         };
 
         paypalButtonElement = document.createElement('div');

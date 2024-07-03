@@ -11,8 +11,12 @@ describe('IframeEventPoster', () => {
         eventEmitter = new EventEmitter();
         origin = 'https://mybigcommerce.com';
 
-        jest.spyOn(window, 'addEventListener').mockImplementation((type, listener) => {
-            eventEmitter.addListener(type, listener);
+        jest.spyOn(window, 'addEventListener').mockImplementation((type, eventListener) => {
+            const listener = typeof eventListener === 'function'
+                ? eventListener
+                : () => eventListener;
+
+            return eventEmitter.addListener(type, listener);
         });
     });
 

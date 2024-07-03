@@ -3,6 +3,7 @@ import { Response } from '@bigcommerce/request-sender';
 import {
     PaymentErrorData,
     PaymentErrorResponseBody,
+    RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import HostedFieldType from '../hosted-field-type';
@@ -131,7 +132,7 @@ export interface HostedInputEnterEvent {
 export interface HostedInputSubmitSuccessEvent {
     type: HostedInputEventType.SubmitSucceeded;
     payload: {
-        response: Response<unknown>;
+        response: Response<unknown> | RequestError;
     };
 }
 

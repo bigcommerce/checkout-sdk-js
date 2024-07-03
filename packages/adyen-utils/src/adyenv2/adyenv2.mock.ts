@@ -79,13 +79,14 @@ export function getAdyenClient(): AdyenClient {
             return {
                 mount: jest.fn(),
                 unmount: jest.fn(),
+                submit: jest.fn(),
             };
         }),
-
         createFromAction: jest.fn(() => {
             return {
                 mount: jest.fn(),
                 unmount: jest.fn(),
+                submit: jest.fn(),
             };
         }),
     };

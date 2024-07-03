@@ -1,3 +1,5 @@
+// import 'ts-jest';
+
 // TODO: separate mock in this file to different files by group
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -5,7 +7,7 @@ import {
     BraintreeFastlane,
     BraintreeFastlaneAuthenticationState,
     BraintreeFastlaneProfileData,
-    BraintreeHostedFields,
+    BraintreeHostedFields, BraintreeHostedFieldsTokenizePayload,
     BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
@@ -114,7 +116,7 @@ export function getHostedFieldsMock(): BraintreeHostedFields {
     return {
         getState: jest.fn(),
         teardown: jest.fn(() => Promise.resolve()),
-        tokenize: jest.fn(() => Promise.resolve(getTokenizePayload())),
+        tokenize: jest.fn(() => Promise.resolve(getBraintreeHostedFieldsTokenizePayload())),
         on: jest.fn(),
     };
 }
@@ -212,8 +214,8 @@ export function getBraintreeFastlaneAuthenticationResultMock() {
 export function getBraintreeLocalPaymentMock(): LocalPaymentInstance {
     return {
         startPayment: jest.fn(
-            (_options: unknown, onPaymentStart: (payload: { paymentId: string }) => void) => {
-                onPaymentStart({ paymentId: '123456' });
+            (_options: unknown, callback: (payload: { paymentId: string }) => void) => {
+                callback({ paymentId: '123456' });
             },
         ),
         teardown: jest.fn(() => Promise.resolve()),
@@ -223,7 +225,7 @@ export function getBraintreeLocalPaymentMock(): LocalPaymentInstance {
 export function getPaypalCheckoutMock(): BraintreePaypalCheckout {
     return {
         loadPayPalSDK: jest.fn((_config, callback: () => void) => callback()),
-        createPayment: jest.fn(() => Promise.resolve()),
+        createPayment: jest.fn(() => Promise.resolve('')),
         teardown: jest.fn(),
         tokenizePayment: jest.fn(() => Promise.resolve(getTokenizePayload())),
     };
@@ -253,6 +255,33 @@ export function getPayPalCheckoutCreatorMock(
                       ) => void,
                   ) => callback(undefined, braintreePaypalCheckoutMock),
               ),
+    };
+}
+
+export function getBraintreeHostedFieldsTokenizePayload() : BraintreeHostedFieldsTokenizePayload {
+    return {
+        nonce: 'NONCE',
+        details: {
+            bin: '411111',
+            cardType: 'visa',
+            expirationMonth: '12',
+            expirationYear: '33',
+            lastFour: '1111',
+            lastTwo: '11',
+        },
+        description: 'here should be some description',
+        type: 'type',
+        binData: {
+            commercial: 'commercial',
+            countryOfIssuance: 'countryOfIssuance',
+            debit: 'debit',
+            durbinRegulated: 'durbinRegulated',
+            healthcare: 'healthcare',
+            issuingBank: 'issuingBank',
+            payroll: 'payroll',
+            prepaid: 'prepaid',
+            productId: 'productId',
+        },
     };
 }
 
@@ -299,6 +328,7 @@ export function getBraintreePaypalMock(): BraintreePaypal {
         focusWindow: jest.fn(),
         tokenize: jest.fn(() => Promise.resolve(getBraintreePaypalTokenizePayloadMock())),
         Buttons: jest.fn(() => ({
+            close: jest.fn(),
             render: jest.fn(),
             isEligible: jest.fn(() => true),
         })),

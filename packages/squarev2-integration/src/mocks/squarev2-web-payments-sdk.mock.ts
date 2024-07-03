@@ -1,33 +1,27 @@
 import {
-    Card,
     CardFieldNamesValues,
     CardInputEvent,
     CardInputEventTypes,
     CardInputEventTypesValues,
-    Payments,
     SqEvent,
 } from '../types';
 
 export function getSquareV2MockFunctions() {
-    const attach = jest.fn<Card['attach']>().mockResolvedValue(undefined);
-    const configure = jest.fn<Card['configure']>().mockResolvedValue(undefined);
-    const tokenize = jest
-        .fn<Card['tokenize']>()
-        .mockResolvedValue({ status: 'OK', token: 'cnon:xxx' });
-    const destroy = jest.fn<Card['destroy']>().mockResolvedValue(true);
+    const attach = jest.fn().mockResolvedValue(undefined);
+    const configure = jest.fn().mockResolvedValue(undefined);
+    const tokenize = jest.fn().mockResolvedValue({ status: 'OK', token: 'cnon:xxx' });
+    const destroy = jest.fn().mockResolvedValue(true);
     const listeners: Partial<{
         [key in CardInputEventTypes]: (event: SqEvent<CardInputEvent>) => void;
     }> = {};
-    const addEventListener = jest
-        .fn<Card['addEventListener']>()
-        .mockImplementation(
-            (
-                eventType: CardInputEventTypes,
-                callback: (event: SqEvent<CardInputEvent>) => void,
-            ) => {
-                listeners[eventType] = callback;
-            },
-        );
+    const addEventListener = jest.fn().mockImplementation(
+        (
+            eventType: CardInputEventTypes,
+            callback: (event: SqEvent<CardInputEvent>) => void,
+        ) => {
+            listeners[eventType] = callback;
+        },
+    );
     const simulateEvent = (
         type: CardInputEventTypesValues,
         field: CardFieldNamesValues,
@@ -46,8 +40,8 @@ export function getSquareV2MockFunctions() {
             callback(fakeEvent as SqEvent<CardInputEvent>);
         }
     };
-    const removeEventListener = jest.fn<Card['removeEventListener']>();
-    const card = jest.fn<Card>().mockReturnValue({
+    const removeEventListener = jest.fn();
+    const card = jest.fn().mockReturnValue({
         attach,
         configure,
         tokenize,
@@ -55,8 +49,8 @@ export function getSquareV2MockFunctions() {
         addEventListener,
         removeEventListener,
     });
-    const verifyBuyer = jest.fn<Payments['verifyBuyer']>().mockReturnValue({ token: 'verf:yyy' });
-    const payments = jest.fn<Payments>().mockReturnValue({ card, verifyBuyer });
+    const verifyBuyer = jest.fn().mockReturnValue({ token: 'verf:yyy' });
+    const payments = jest.fn().mockReturnValue({ card, verifyBuyer });
 
     return {
         attach,

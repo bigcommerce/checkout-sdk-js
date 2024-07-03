@@ -26,6 +26,7 @@ describe('SquareV2PaymentProcessor', () => {
         squareV2MockFunctions = getSquareV2MockFunctions();
         squareWebPaymentsSdkMock = { payments: squareV2MockFunctions.payments };
 
+        // @ts-ignore to avoid mocking square errors as they don't use in BC integration
         jest.spyOn(squareV2ScriptLoader, 'load').mockResolvedValue(squareWebPaymentsSdkMock);
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();

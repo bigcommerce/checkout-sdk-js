@@ -1,8 +1,5 @@
-import { Response } from '@bigcommerce/request-sender';
-
-import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { getErrorResponse } from '../common/http-request/responses.mock';
+import { RequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { getErrorResponse } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import {
     CheckoutStoreErrorSelectorFactory,
@@ -14,14 +11,16 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 describe('CheckoutStoreErrorSelector', () => {
     let createCheckoutStoreErrorSelector: CheckoutStoreErrorSelectorFactory;
-    let errorResponse: Response<ErrorResponseBody>;
+    let error: Error;
+    let requestError: RequestError;
     let selectors: InternalCheckoutSelectors;
 
     beforeEach(() => {
         createCheckoutStoreErrorSelector = createCheckoutStoreErrorSelectorFactory();
         selectors = createInternalCheckoutSelectors(getCheckoutStoreStateWithOrder());
 
-        errorResponse = getErrorResponse();
+        error = new Error();
+        requestError = new RequestError(getErrorResponse());
     });
 
     describe('#getError()', () => {
@@ -33,13 +32,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
         it('returns the first error that it encounters', () => {
             jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue(undefined);
-            jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue(
-                errorResponse,
-            );
+            jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getError()).toEqual(errorResponse);
+            expect(errors.getError()).toEqual(error);
 
             expect(selectors.checkout.getLoadError).toHaveBeenCalled();
             expect(selectors.paymentStrategies.getExecuteError).toHaveBeenCalled();
@@ -48,11 +45,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadCheckoutError()', () => {
         it('returns error if there is an error when loading checkout', () => {
-            jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadCheckoutError()).toEqual(errorResponse);
+            expect(errors.getLoadCheckoutError()).toEqual(error);
             expect(selectors.checkout.getLoadError).toHaveBeenCalled();
         });
 
@@ -68,11 +65,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getCreateCustomerAccountError()', () => {
         it('returns error if there is an error when loading checkout', () => {
-            jest.spyOn(selectors.customer, 'getCreateAccountError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.customer, 'getCreateAccountError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getCreateCustomerAccountError()).toEqual(errorResponse);
+            expect(errors.getCreateCustomerAccountError()).toEqual(error);
             expect(selectors.customer.getCreateAccountError).toHaveBeenCalled();
         });
 
@@ -88,11 +85,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getSignInEmailError()', () => {
         it('returns error if theres one', () => {
-            jest.spyOn(selectors.signInEmail, 'getSendError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.signInEmail, 'getSendError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getSignInEmailError()).toEqual(errorResponse);
+            expect(errors.getSignInEmailError()).toEqual(error);
             expect(selectors.signInEmail.getSendError).toHaveBeenCalled();
         });
 
@@ -108,11 +105,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getUpdateCheckoutError()', () => {
         it('returns error if there is an error when loading checkout', () => {
-            jest.spyOn(selectors.checkout, 'getUpdateError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.checkout, 'getUpdateError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getUpdateCheckoutError()).toEqual(errorResponse);
+            expect(errors.getUpdateCheckoutError()).toEqual(error);
             expect(selectors.checkout.getUpdateError).toHaveBeenCalled();
         });
 
@@ -129,12 +126,12 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getSubmitOrderError()', () => {
         it('returns error if there is an error when submitting order', () => {
             jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue(
-                errorResponse,
+                error,
             );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getSubmitOrderError()).toEqual(errorResponse);
+            expect(errors.getSubmitOrderError()).toEqual(error);
             expect(selectors.paymentStrategies.getExecuteError).toHaveBeenCalled();
         });
 
@@ -151,12 +148,12 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getFinalizeOrderError()', () => {
         it('returns error if there is an error when finalizing order', () => {
             jest.spyOn(selectors.paymentStrategies, 'getFinalizeError').mockReturnValue(
-                errorResponse,
+                error,
             );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getFinalizeOrderError()).toEqual(errorResponse);
+            expect(errors.getFinalizeOrderError()).toEqual(error);
             expect(selectors.paymentStrategies.getFinalizeError).toHaveBeenCalled();
         });
 
@@ -172,11 +169,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadOrderError()', () => {
         it('returns error if there is an error when loading order', () => {
-            jest.spyOn(selectors.order, 'getLoadError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.order, 'getLoadError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadOrderError()).toEqual(errorResponse);
+            expect(errors.getLoadOrderError()).toEqual(error);
             expect(selectors.order.getLoadError).toHaveBeenCalled();
         });
 
@@ -192,11 +189,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadCartError()', () => {
         it('returns error if there is an error when loading cart', () => {
-            jest.spyOn(selectors.cart, 'getLoadError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.cart, 'getLoadError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadCartError()).toEqual(errorResponse);
+            expect(errors.getLoadCartError()).toEqual(error);
             expect(selectors.cart.getLoadError).toHaveBeenCalled();
         });
 
@@ -212,11 +209,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadBillingCountriesError()', () => {
         it('returns error if there is an error when loading billing countries', () => {
-            jest.spyOn(selectors.countries, 'getLoadError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.countries, 'getLoadError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadBillingCountriesError()).toEqual(errorResponse);
+            expect(errors.getLoadBillingCountriesError()).toEqual(error);
             expect(selectors.countries.getLoadError).toHaveBeenCalled();
         });
 
@@ -232,11 +229,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadShippingCountriesError()', () => {
         it('returns error if there is an error when loading shipping countries', () => {
-            jest.spyOn(selectors.shippingCountries, 'getLoadError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.shippingCountries, 'getLoadError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadShippingCountriesError()).toEqual(errorResponse);
+            expect(errors.getLoadShippingCountriesError()).toEqual(error);
             expect(selectors.shippingCountries.getLoadError).toHaveBeenCalled();
         });
 
@@ -252,11 +249,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadPaymentMethodsError()', () => {
         it('returns error if there is an error when loading payment methods', () => {
-            jest.spyOn(selectors.paymentMethods, 'getLoadError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.paymentMethods, 'getLoadError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadPaymentMethodsError()).toEqual(errorResponse);
+            expect(errors.getLoadPaymentMethodsError()).toEqual(error);
             expect(selectors.paymentMethods.getLoadError).toHaveBeenCalled();
         });
 
@@ -273,12 +270,12 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getLoadPaymentMethodError()', () => {
         it('returns error if there is an error when loading payment method', () => {
             jest.spyOn(selectors.paymentMethods, 'getLoadMethodError').mockReturnValue(
-                errorResponse,
+                error,
             );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadPaymentMethodError('braintree')).toEqual(errorResponse);
+            expect(errors.getLoadPaymentMethodError('braintree')).toEqual(error);
             expect(selectors.paymentMethods.getLoadMethodError).toHaveBeenCalledWith('braintree');
         });
 
@@ -295,12 +292,12 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getInitializePaymentError()', () => {
         it('returns error if unable to initialize payment', () => {
             jest.spyOn(selectors.paymentStrategies, 'getInitializeError').mockReturnValue(
-                errorResponse,
+                error,
             );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getInitializePaymentError('braintree')).toEqual(errorResponse);
+            expect(errors.getInitializePaymentError('braintree')).toEqual(error);
             expect(selectors.paymentStrategies.getInitializeError).toHaveBeenCalledWith(
                 'braintree',
             );
@@ -323,12 +320,12 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getSignInError()', () => {
         it('returns error if there is an error when signing in', () => {
             jest.spyOn(selectors.customerStrategies, 'getSignInError').mockReturnValue(
-                errorResponse,
+                error,
             );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getSignInError()).toEqual(errorResponse);
+            expect(errors.getSignInError()).toEqual(error);
             expect(selectors.customerStrategies.getSignInError).toHaveBeenCalled();
         });
 
@@ -345,12 +342,12 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getSignOutError()', () => {
         it('returns error if there is an error when signing out', () => {
             jest.spyOn(selectors.customerStrategies, 'getSignOutError').mockReturnValue(
-                errorResponse,
+                error,
             );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getSignOutError()).toEqual(errorResponse);
+            expect(errors.getSignOutError()).toEqual(error);
             expect(selectors.customerStrategies.getSignOutError).toHaveBeenCalled();
         });
 
@@ -367,12 +364,12 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getInitializeCustomerError()', () => {
         it('returns error if unable to initialize customer', () => {
             jest.spyOn(selectors.customerStrategies, 'getInitializeError').mockReturnValue(
-                errorResponse,
+                error,
             );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getInitializeCustomerError()).toEqual(errorResponse);
+            expect(errors.getInitializeCustomerError()).toEqual(error);
             expect(selectors.customerStrategies.getInitializeError).toHaveBeenCalled();
         });
 
@@ -391,12 +388,12 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getLoadShippingOptionsError()', () => {
         it('returns error if there is an error when loading the shipping options', () => {
             jest.spyOn(selectors.consignments, 'getLoadShippingOptionsError').mockReturnValue(
-                errorResponse,
+                error,
             );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadShippingOptionsError()).toEqual(errorResponse);
+            expect(errors.getLoadShippingOptionsError()).toEqual(error);
             expect(selectors.consignments.getLoadShippingOptionsError).toHaveBeenCalled();
         });
 
@@ -415,12 +412,12 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getSelectShippingOptionError()', () => {
         it('returns error if there is an error when selecting the shipping options', () => {
             jest.spyOn(selectors.shippingStrategies, 'getSelectOptionError').mockReturnValue(
-                errorResponse,
+                error,
             );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getSelectShippingOptionError()).toEqual(errorResponse);
+            expect(errors.getSelectShippingOptionError()).toEqual(error);
             expect(selectors.shippingStrategies.getSelectOptionError).toHaveBeenCalled();
         });
 
@@ -438,11 +435,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getUpdateBillingAddressError()', () => {
         it('returns error if there is an error when updating the billing address', () => {
-            jest.spyOn(selectors.billingAddress, 'getUpdateError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.billingAddress, 'getUpdateError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getUpdateBillingAddressError()).toEqual(errorResponse);
+            expect(errors.getUpdateBillingAddressError()).toEqual(error);
             expect(selectors.billingAddress.getUpdateError).toHaveBeenCalled();
         });
 
@@ -458,11 +455,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getUpdateSubscriptionsError()', () => {
         it('returns error if there is an error when updating subscriptions', () => {
-            jest.spyOn(selectors.subscriptions, 'getUpdateError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.subscriptions, 'getUpdateError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getUpdateSubscriptionsError()).toEqual(errorResponse);
+            expect(errors.getUpdateSubscriptionsError()).toEqual(error);
             expect(selectors.subscriptions.getUpdateError).toHaveBeenCalled();
         });
 
@@ -479,12 +476,12 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getContinueAsGuestError()', () => {
         it('returns error if there is an error', () => {
             jest.spyOn(selectors.billingAddress, 'getContinueAsGuestError').mockReturnValue(
-                errorResponse,
+                error,
             );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getContinueAsGuestError()).toEqual(errorResponse);
+            expect(errors.getContinueAsGuestError()).toEqual(error);
             expect(selectors.billingAddress.getContinueAsGuestError).toHaveBeenCalled();
         });
 
@@ -502,11 +499,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getUpdateConsignmentError()', () => {
         it('returns error if there is an error when updating consignments', () => {
-            jest.spyOn(selectors.consignments, 'getUpdateError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.consignments, 'getUpdateError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getUpdateConsignmentError('foo')).toEqual(errorResponse);
+            expect(errors.getUpdateConsignmentError('foo')).toEqual(error);
             expect(selectors.consignments.getUpdateError).toHaveBeenCalledWith('foo');
         });
 
@@ -522,11 +519,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getDeleteConsignmentError()', () => {
         it('returns error if there is an error when deleting consignments', () => {
-            jest.spyOn(selectors.consignments, 'getDeleteError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.consignments, 'getDeleteError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getDeleteConsignmentError('foo')).toEqual(errorResponse);
+            expect(errors.getDeleteConsignmentError('foo')).toEqual(error);
             expect(selectors.consignments.getDeleteError).toHaveBeenCalledWith('foo');
         });
 
@@ -542,11 +539,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getCreateConsignmentsError()', () => {
         it('returns error if there is an error when creating consignments', () => {
-            jest.spyOn(selectors.consignments, 'getCreateError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.consignments, 'getCreateError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getCreateConsignmentsError()).toEqual(errorResponse);
+            expect(errors.getCreateConsignmentsError()).toEqual(error);
             expect(selectors.consignments.getCreateError).toHaveBeenCalledWith();
         });
 
@@ -563,12 +560,12 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getUpdateShippingAddressError()', () => {
         it('returns error if there is an error when updating the shipping address', () => {
             jest.spyOn(selectors.shippingStrategies, 'getUpdateAddressError').mockReturnValue(
-                errorResponse,
+                error,
             );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getUpdateShippingAddressError()).toEqual(errorResponse);
+            expect(errors.getUpdateShippingAddressError()).toEqual(error);
             expect(selectors.shippingStrategies.getUpdateAddressError).toHaveBeenCalled();
         });
 
@@ -587,12 +584,12 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getInitializePaymentError()', () => {
         it('returns error if unable to initialize shipping', () => {
             jest.spyOn(selectors.shippingStrategies, 'getInitializeError').mockReturnValue(
-                errorResponse,
+                error,
             );
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getInitializeShippingError('foobar')).toEqual(errorResponse);
+            expect(errors.getInitializeShippingError('foobar')).toEqual(error);
             expect(selectors.shippingStrategies.getInitializeError).toHaveBeenCalledWith('foobar');
         });
 
@@ -610,11 +607,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getApplyCouponError()', () => {
         it('returns error if there is an error when updating the a coupon', () => {
-            jest.spyOn(selectors.coupons, 'getApplyError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.coupons, 'getApplyError').mockReturnValue(requestError);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getApplyCouponError()).toEqual(errorResponse);
+            expect(errors.getApplyCouponError()).toEqual(requestError);
             expect(selectors.coupons.getApplyError).toHaveBeenCalled();
         });
 
@@ -630,11 +627,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getRemoveCouponError()', () => {
         it('returns error if there is an error when updating the a coupon', () => {
-            jest.spyOn(selectors.coupons, 'getRemoveError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.coupons, 'getRemoveError').mockReturnValue(requestError);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getRemoveCouponError()).toEqual(errorResponse);
+            expect(errors.getRemoveCouponError()).toEqual(requestError);
             expect(selectors.coupons.getRemoveError).toHaveBeenCalled();
         });
 
@@ -650,11 +647,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getApplyGiftCertificateError()', () => {
         it('returns error if there is an error when applying gift certificate', () => {
-            jest.spyOn(selectors.giftCertificates, 'getApplyError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.giftCertificates, 'getApplyError').mockReturnValue(requestError);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getApplyGiftCertificateError()).toEqual(errorResponse);
+            expect(errors.getApplyGiftCertificateError()).toEqual(requestError);
             expect(selectors.giftCertificates.getApplyError).toHaveBeenCalled();
         });
 
@@ -670,11 +667,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getRemoveGiftCertificateError()', () => {
         it('returns error if there is an error when removing gift certificate', () => {
-            jest.spyOn(selectors.giftCertificates, 'getRemoveError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.giftCertificates, 'getRemoveError').mockReturnValue(requestError);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getRemoveGiftCertificateError()).toEqual(errorResponse);
+            expect(errors.getRemoveGiftCertificateError()).toEqual(requestError);
             expect(selectors.giftCertificates.getRemoveError).toHaveBeenCalled();
         });
 
@@ -690,11 +687,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadInstrumentsError()', () => {
         it('returns error if there is an error when loading instruments', () => {
-            jest.spyOn(selectors.instruments, 'getLoadError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.instruments, 'getLoadError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadInstrumentsError()).toEqual(errorResponse);
+            expect(errors.getLoadInstrumentsError()).toEqual(error);
             expect(selectors.instruments.getLoadError).toHaveBeenCalled();
         });
 
@@ -710,11 +707,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getDeleteInstrumentError()', () => {
         it('returns error if there is an error when deleting instruments', () => {
-            jest.spyOn(selectors.instruments, 'getDeleteError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.instruments, 'getDeleteError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getDeleteInstrumentError('123')).toEqual(errorResponse);
+            expect(errors.getDeleteInstrumentError('123')).toEqual(error);
             expect(selectors.instruments.getDeleteError).toHaveBeenCalledWith('123');
         });
 
@@ -730,11 +727,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadConfigError()', () => {
         it('returns error if there is an error when loading config', () => {
-            jest.spyOn(selectors.config, 'getLoadError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.config, 'getLoadError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadConfigError()).toEqual(errorResponse);
+            expect(errors.getLoadConfigError()).toEqual(error);
             expect(selectors.config.getLoadError).toHaveBeenCalled();
         });
 
@@ -750,11 +747,11 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadExtensionsError()', () => {
         it('returns error if there is an error when loading extensions', () => {
-            jest.spyOn(selectors.extensions, 'getLoadError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.extensions, 'getLoadError').mockReturnValue(error);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
 
-            expect(errors.getLoadExtensionsError()).toEqual(errorResponse);
+            expect(errors.getLoadExtensionsError()).toEqual(error);
             expect(selectors.extensions.getLoadError).toHaveBeenCalled();
         });
 

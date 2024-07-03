@@ -34,7 +34,7 @@ describe('ExtensionMessenger', () => {
     });
 
     describe('#listen() and #stopListen()', () => {
-        let listener: IframeEventListener<ExtensionCommandMap>;
+        let listener: IframeEventListener<ExtensionCommandMap, ExtensionCommandContext>;
 
         beforeEach(() => {
             listener = new IframeEventListener(extension.url);
@@ -73,7 +73,9 @@ describe('ExtensionMessenger', () => {
                 eventEmitter.addListener(
                     type,
                     ({ context }: { context: ExtensionCommandContext }) => {
-                        listener({ type }, context);
+                        if (type === ExtensionCommandType.ReloadCheckout) {
+                            listener({ type }, context);
+                        }
                     },
                 );
             });
@@ -101,7 +103,9 @@ describe('ExtensionMessenger', () => {
                 eventEmitter.addListener(
                     type,
                     ({ context }: { context: ExtensionCommandContext }) => {
-                        listener({ type }, context);
+                        if (type === ExtensionCommandType.ReloadCheckout) {
+                            listener({ type }, context);
+                        }
                     },
                 );
             });
@@ -130,7 +134,9 @@ describe('ExtensionMessenger', () => {
                 eventEmitter.addListener(
                     type,
                     ({ context }: { context: ExtensionCommandContext }) => {
-                        listener({ type }, context);
+                        if (type === ExtensionCommandType.ReloadCheckout) {
+                            listener({ type }, context);
+                        }
                     },
                 );
             });
