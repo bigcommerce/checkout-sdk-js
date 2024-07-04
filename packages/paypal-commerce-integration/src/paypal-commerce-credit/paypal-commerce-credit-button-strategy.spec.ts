@@ -96,6 +96,13 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
 
     const paypalShippingAddressPayloadMock = {
         city: 'New York',
+        countryCode: 'US',
+        postalCode: '07564',
+        state: 'New York',
+    };
+
+    const paypalShippingCallbackAddressMock = {
+        city: 'New York',
         country_code: 'US',
         postal_code: '07564',
         state: 'New York',
@@ -183,6 +190,13 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
         jest.spyOn(payPalMessagesSdk, 'Messages').mockImplementation(() => ({
             render: paypalCommerceSdkRenderMock,
         }));
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
+            checkoutSettings: {
+                features: {
+                    'PAYPAL-4387.paypal_shipping_callbacks': true,
+                },
+            },
+        });
 
         jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
             (options: PayPalCommerceButtonsOptions) => {
@@ -257,6 +271,16 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                         options.onShippingOptionsChange({
                             orderId: paypalOrderId,
                             selectedShippingOption: paypalSelectedShippingOptionPayloadMock,
+                        });
+                    }
+                });
+
+                eventEmitter.on('onShippingChange', () => {
+                    if (options.onShippingChange) {
+                        options.onShippingChange({
+                            orderID: paypalOrderId,
+                            shipping_address: paypalShippingCallbackAddressMock,
+                            selected_shipping_option: paypalSelectedShippingOptionPayloadMock,
                         });
                     }
                 });
@@ -458,6 +482,39 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                 createOrder: expect.any(Function),
                 onShippingAddressChange: expect.any(Function),
                 onShippingOptionsChange: expect.any(Function),
+                onApprove: expect.any(Function),
+            });
+        });
+
+        it('initializes PayPal button to render (with shipping options feature enabled and shipping experiment is off)', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
+                checkoutSettings: {
+                    features: {
+                        'PAYPAL-4387.paypal_shipping_callbacks': false,
+                    },
+                },
+            });
+
+            const paymentMethodWithShippingOptionsFeature = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isHostedCheckoutEnabled: true,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                fundingSource: paypalSdk.FUNDING.PAYLATER,
+                style: paypalCommerceCreditOptions.style,
+                createOrder: expect.any(Function),
+                onShippingChange: expect.any(Function),
                 onApprove: expect.any(Function),
             });
         });
@@ -720,8 +777,8 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                 address1: '',
                 address2: '',
                 city: paypalShippingAddressPayloadMock.city,
-                countryCode: paypalShippingAddressPayloadMock.country_code,
-                postalCode: paypalShippingAddressPayloadMock.postal_code,
+                countryCode: paypalShippingAddressPayloadMock.countryCode,
+                postalCode: paypalShippingAddressPayloadMock.postalCode,
                 stateOrProvince: '',
                 stateOrProvinceCode: paypalShippingAddressPayloadMock.state,
                 customFields: [],
