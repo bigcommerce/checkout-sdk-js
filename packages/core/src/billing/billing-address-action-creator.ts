@@ -66,6 +66,7 @@ export default class BillingAddressActionCreator {
                         const { body } = await this._createOrUpdateBillingAddress(
                             checkout.id,
                             billingAddressRequestBody,
+                            undefined,
                             options,
                         );
 
@@ -101,6 +102,8 @@ export default class BillingAddressActionCreator {
 
                 const billingAddress = state.billingAddress.getBillingAddress();
 
+                const billingAddressId = billingAddress ? billingAddress.id : undefined;
+
                 // If email is not present in the address provided by the client, then
                 // fall back to the stored email as it could have been set separately
                 // using a convenience method. We can't rely on billingAddress having
@@ -118,7 +121,12 @@ export default class BillingAddressActionCreator {
                     billingAddressRequestBody.id = billingAddress.id;
                 }
 
-                this._createOrUpdateBillingAddress(checkout.id, billingAddressRequestBody, options)
+                this._createOrUpdateBillingAddress(
+                    checkout.id,
+                    billingAddressRequestBody,
+                    billingAddressId,
+                    options,
+                )
                     .then(({ body }) => {
                         observer.next(
                             createAction(
@@ -163,9 +171,10 @@ export default class BillingAddressActionCreator {
     private _createOrUpdateBillingAddress(
         checkoutId: string,
         address: Partial<BillingAddressUpdateRequestBody>,
+        billingAddressId?: string,
         options?: RequestOptions,
     ): Promise<Response<Checkout>> {
-        if (!address.id) {
+        if (!billingAddressId) {
             return this._requestSender.createAddress(checkoutId, address, options);
         }
 
