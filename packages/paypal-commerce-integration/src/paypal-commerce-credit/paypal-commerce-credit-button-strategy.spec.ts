@@ -243,12 +243,20 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                     }
                 });
 
-                eventEmitter.on('onShippingChange', () => {
-                    if (options.onShippingChange) {
-                        options.onShippingChange({
-                            orderID: paypalOrderId,
-                            shipping_address: paypalShippingAddressPayloadMock,
-                            selected_shipping_option: paypalSelectedShippingOptionPayloadMock,
+                eventEmitter.on('onShippingAddressChange', () => {
+                    if (options.onShippingAddressChange) {
+                        options.onShippingAddressChange({
+                            orderId: paypalOrderId,
+                            shippingAddress: paypalShippingAddressPayloadMock,
+                        });
+                    }
+                });
+
+                eventEmitter.on('onShippingOptionsChange', () => {
+                    if (options.onShippingOptionsChange) {
+                        options.onShippingOptionsChange({
+                            orderId: paypalOrderId,
+                            selectedShippingOption: paypalSelectedShippingOptionPayloadMock,
                         });
                     }
                 });
@@ -448,7 +456,8 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                 fundingSource: paypalSdk.FUNDING.PAYLATER,
                 style: paypalCommerceCreditOptions.style,
                 createOrder: expect.any(Function),
-                onShippingChange: expect.any(Function),
+                onShippingAddressChange: expect.any(Function),
+                onShippingOptionsChange: expect.any(Function),
                 onApprove: expect.any(Function),
             });
         });
@@ -685,7 +694,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
         });
     });
 
-    describe('#onShippingChange button callback', () => {
+    describe('#onShippingAddressChange button callback', () => {
         beforeEach(() => {
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
@@ -722,7 +731,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            eventEmitter.emit('onShippingChange');
+            eventEmitter.emit('onShippingAddressChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
@@ -733,7 +742,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
         it('selects shipping option after address update', async () => {
             await strategy.initialize(initializationOptions);
 
-            eventEmitter.emit('onShippingChange');
+            eventEmitter.emit('onShippingAddressChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
@@ -754,7 +763,47 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            eventEmitter.emit('onShippingChange');
+            eventEmitter.emit('onShippingAddressChange');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceIntegrationService.updateOrder).toHaveBeenCalled();
+        });
+    });
+
+    describe('#onShippingOptionsChange button callback', () => {
+        beforeEach(() => {
+            const paymentMethodWithShippingOptionsFeature = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isHostedCheckoutEnabled: true,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+        });
+
+        it('selects shipping option', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onShippingOptionsChange');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceIntegrationService.getShippingOptionOrThrow).toHaveBeenCalled();
+            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
+                getShippingOption().id,
+            );
+        });
+
+        it('updates PayPal order', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onShippingOptionsChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
