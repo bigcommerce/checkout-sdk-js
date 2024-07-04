@@ -139,8 +139,8 @@ describe('PayPalCommerceCustomerStrategy', () => {
                             orderId: approveDataOrderId,
                             shippingAddress: {
                                 city: 'New York',
-                                country_code: 'US',
-                                postal_code: '07564',
+                                countryCode: 'US',
+                                postalCode: '07564',
                                 state: 'New York',
                             },
                         });

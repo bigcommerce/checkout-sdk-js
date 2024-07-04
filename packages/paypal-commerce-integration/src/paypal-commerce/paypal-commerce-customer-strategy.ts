@@ -196,8 +196,8 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
     ): Promise<void> {
         const address = this.paypalCommerceIntegrationService.getAddress({
             city: data.shippingAddress.city,
-            countryCode: data.shippingAddress.country_code,
-            postalCode: data.shippingAddress.postal_code,
+            countryCode: data.shippingAddress.countryCode,
+            postalCode: data.shippingAddress.postalCode,
             stateOrProvinceCode: data.shippingAddress.state,
         });
 

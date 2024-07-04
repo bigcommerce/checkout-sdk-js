@@ -395,8 +395,8 @@ export interface InitCallbackActions {
 
 export interface PayPalAddress {
     city: string;
-    country_code: string;
-    postal_code: string;
+    countryCode: string;
+    postalCode: string;
     state: string;
 }
 

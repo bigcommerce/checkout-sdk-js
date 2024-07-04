@@ -83,8 +83,8 @@ describe('PayPalCommerceButtonStrategy', () => {
 
     const paypalShippingAddressPayloadMock = {
         city: 'New York',
-        country_code: 'US',
-        postal_code: '07564',
+        countryCode: 'US',
+        postalCode: '07564',
         state: 'New York',
     };
 
@@ -670,8 +670,8 @@ describe('PayPalCommerceButtonStrategy', () => {
                 address1: '',
                 address2: '',
                 city: paypalShippingAddressPayloadMock.city,
-                countryCode: paypalShippingAddressPayloadMock.country_code,
-                postalCode: paypalShippingAddressPayloadMock.postal_code,
+                countryCode: paypalShippingAddressPayloadMock.countryCode,
+                postalCode: paypalShippingAddressPayloadMock.postalCode,
                 stateOrProvince: '',
                 stateOrProvinceCode: paypalShippingAddressPayloadMock.state,
                 customFields: [],
