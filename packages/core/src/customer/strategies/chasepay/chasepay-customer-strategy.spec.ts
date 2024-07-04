@@ -279,6 +279,9 @@ describe('ChasePayCustomerStrategy', () => {
 
             jest.spyOn(store.getState().payment, 'getPaymentId').mockReturnValue(paymentId);
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(remoteCheckoutActionCreator, 'signOut').mockReturnValue('data');
 
             await strategy.initialize({ methodId: 'chasepay', chasepay: { container: 'login' } });

@@ -114,6 +114,9 @@ export function getHostedFieldsMock(): BraintreeHostedFields {
     return {
         getState: jest.fn(),
         teardown: jest.fn(() => Promise.resolve()),
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         tokenize: jest.fn(() => Promise.resolve(getTokenizePayload())),
         on: jest.fn(),
     };
@@ -122,6 +125,8 @@ export function getHostedFieldsMock(): BraintreeHostedFields {
 export function getVenmoCheckoutMock(): BraintreeVenmoCheckout {
     return {
         teardown: jest.fn(() => Promise.resolve()),
+        // TODO: remove this rule and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         tokenize: jest.fn(() => Promise.resolve()),
         isBrowserSupported: jest.fn(),
     };
@@ -211,6 +216,9 @@ export function getBraintreeFastlaneAuthenticationResultMock() {
 
 export function getBraintreeLocalPaymentMock(): LocalPaymentInstance {
     return {
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         startPayment: jest.fn(
             (_options: unknown, onPaymentStart: (payload: { paymentId: string }) => void) => {
                 onPaymentStart({ paymentId: '123456' });
@@ -222,7 +230,13 @@ export function getBraintreeLocalPaymentMock(): LocalPaymentInstance {
 
 export function getPaypalCheckoutMock(): BraintreePaypalCheckout {
     return {
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         loadPayPalSDK: jest.fn((_config, callback: () => void) => callback()),
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         createPayment: jest.fn(() => Promise.resolve()),
         teardown: jest.fn(),
         tokenizePayment: jest.fn(() => Promise.resolve(getTokenizePayload())),
@@ -234,6 +248,9 @@ export function getPayPalCheckoutCreatorMock(
     shouldThrowError: boolean,
 ): BraintreePaypalCheckoutCreator {
     return {
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         create: shouldThrowError
             ? jest.fn(
                   (
@@ -298,6 +315,9 @@ export function getBraintreePaypalMock(): BraintreePaypal {
         closeWindow: jest.fn(),
         focusWindow: jest.fn(),
         tokenize: jest.fn(() => Promise.resolve(getBraintreePaypalTokenizePayloadMock())),
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         Buttons: jest.fn(() => ({
             render: jest.fn(),
             isEligible: jest.fn(() => true),

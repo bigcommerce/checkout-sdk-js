@@ -159,6 +159,9 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
         jest.spyOn(orderActionCreator, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
         jest.spyOn(formPoster, 'postForm').mockImplementation((_url, _data, callback = () => {}) =>
@@ -169,6 +172,9 @@ describe('AmazonPayV2PaymentStrategy', () => {
             () => widgetInteractionAction,
         );
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
         strategy = new AmazonPayV2PaymentStrategy(
@@ -444,6 +450,9 @@ describe('AmazonPayV2PaymentStrategy', () => {
             );
 
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 paymentFailedErrorAction,
             );
 
@@ -498,6 +507,9 @@ describe('AmazonPayV2PaymentStrategy', () => {
             );
 
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 paymentFailedErrorAction,
             );
 
@@ -551,6 +563,9 @@ describe('AmazonPayV2PaymentStrategy', () => {
                 );
 
                 jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     paymentFailedErrorAction,
                 );
 

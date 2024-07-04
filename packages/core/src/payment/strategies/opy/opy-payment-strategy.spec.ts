@@ -92,16 +92,25 @@ describe('OpyPaymentStrategy', () => {
         opyScriptLoader = new OpyScriptLoader(createScriptLoader());
 
         jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             of(createAction(OrderActionType.SubmitOrderRequested)),
         );
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockResolvedValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             store.getState(),
         );
 
         jest.spyOn(storefrontPaymentRequestSender, 'saveExternalId').mockResolvedValue(undefined);
 
         jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             of(createAction(PaymentActionType.SubmitPaymentRequested)),
         );
 
@@ -197,6 +206,9 @@ describe('OpyPaymentStrategy', () => {
             });
 
             it('containerId is invalid', async () => {
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 jest.spyOn(document, 'getElementById').mockReturnValueOnce(undefined);
 
                 await expect(strategy.initialize(options)).resolves.toEqual(store.getState());
@@ -272,6 +284,9 @@ describe('OpyPaymentStrategy', () => {
             );
 
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 paymentFailedErrorAction,
             );
 
@@ -361,6 +376,9 @@ describe('OpyPaymentStrategy', () => {
                 );
 
                 jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     paymentFailedErrorAction,
                 );
 
@@ -378,6 +396,9 @@ describe('OpyPaymentStrategy', () => {
                 );
 
                 jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     paymentFailedErrorAction,
                 );
 

@@ -933,6 +933,9 @@ describe('consignmentActionCreator', () => {
                 lineItems: {
                     ...getCart().lineItems,
                     customItems: [
+                        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
                         {
                             id: 'custom',
                             quantity: 1,

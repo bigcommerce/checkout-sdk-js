@@ -84,8 +84,14 @@ describe('CreditCardRedirectPaymentStrategy', () => {
 
         jest.spyOn(orderActionCreator, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
         strategy = new CreditCardRedirectPaymentStrategy(
@@ -142,6 +148,9 @@ describe('CreditCardRedirectPaymentStrategy', () => {
         );
 
         jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)),
         );
 
@@ -160,6 +169,9 @@ describe('CreditCardRedirectPaymentStrategy', () => {
         const response = new RequestError(getResponse(getErrorPaymentResponseBody()));
 
         jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             of(createErrorAction(PaymentActionType.SubmitPaymentFailed, response)),
         );
 
@@ -183,6 +195,9 @@ describe('CreditCardRedirectPaymentStrategy', () => {
     it('does not finalize order if order is not created', async () => {
         const state = store.getState();
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(state.order, 'getOrder').mockReturnValue(null);
 
         await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
@@ -205,6 +220,9 @@ describe('CreditCardRedirectPaymentStrategy', () => {
     it('throws error if order is missing', async () => {
         const state = store.getState();
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(state.order, 'getOrder').mockReturnValue(null);
 
         await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
@@ -219,6 +237,9 @@ describe('CreditCardRedirectPaymentStrategy', () => {
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 submit: jest.fn(() => Promise.resolve()),
                 validate: jest.fn(() => Promise.resolve()),
             };
@@ -241,8 +262,14 @@ describe('CreditCardRedirectPaymentStrategy', () => {
                 merge(getPaymentMethod(), { config: { isHostedFormEnabled: true } }),
             );
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(formFactory, 'create').mockReturnValue(form);
         });
 

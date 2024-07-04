@@ -11,6 +11,9 @@ describe('SignInEmailRequestSender', () => {
     beforeEach(() => {
         requestSender = createRequestSender();
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve());
 
         signInEmailRequestSender = new SignInEmailRequestSender(requestSender);

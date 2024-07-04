@@ -34,6 +34,9 @@ describe('CheckoutStoreErrorSelector', () => {
         it('returns the first error that it encounters', () => {
             jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue(undefined);
             jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 errorResponse,
             );
 
@@ -48,6 +51,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadCheckoutError()', () => {
         it('returns error if there is an error when loading checkout', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -68,6 +74,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getCreateCustomerAccountError()', () => {
         it('returns error if there is an error when loading checkout', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.customer, 'getCreateAccountError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -88,6 +97,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getSignInEmailError()', () => {
         it('returns error if theres one', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.signInEmail, 'getSendError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -108,6 +120,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getUpdateCheckoutError()', () => {
         it('returns error if there is an error when loading checkout', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.checkout, 'getUpdateError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -129,6 +144,9 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getSubmitOrderError()', () => {
         it('returns error if there is an error when submitting order', () => {
             jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 errorResponse,
             );
 
@@ -151,6 +169,9 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getFinalizeOrderError()', () => {
         it('returns error if there is an error when finalizing order', () => {
             jest.spyOn(selectors.paymentStrategies, 'getFinalizeError').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 errorResponse,
             );
 
@@ -172,6 +193,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadOrderError()', () => {
         it('returns error if there is an error when loading order', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.order, 'getLoadError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -192,6 +216,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadCartError()', () => {
         it('returns error if there is an error when loading cart', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.cart, 'getLoadError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -212,6 +239,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadBillingCountriesError()', () => {
         it('returns error if there is an error when loading billing countries', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.countries, 'getLoadError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -232,6 +262,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadShippingCountriesError()', () => {
         it('returns error if there is an error when loading shipping countries', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.shippingCountries, 'getLoadError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -252,6 +285,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadPaymentMethodsError()', () => {
         it('returns error if there is an error when loading payment methods', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.paymentMethods, 'getLoadError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -273,6 +309,9 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getLoadPaymentMethodError()', () => {
         it('returns error if there is an error when loading payment method', () => {
             jest.spyOn(selectors.paymentMethods, 'getLoadMethodError').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 errorResponse,
             );
 
@@ -295,6 +334,9 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getInitializePaymentError()', () => {
         it('returns error if unable to initialize payment', () => {
             jest.spyOn(selectors.paymentStrategies, 'getInitializeError').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 errorResponse,
             );
 
@@ -323,6 +365,9 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getSignInError()', () => {
         it('returns error if there is an error when signing in', () => {
             jest.spyOn(selectors.customerStrategies, 'getSignInError').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 errorResponse,
             );
 
@@ -345,6 +390,9 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getSignOutError()', () => {
         it('returns error if there is an error when signing out', () => {
             jest.spyOn(selectors.customerStrategies, 'getSignOutError').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 errorResponse,
             );
 
@@ -367,6 +415,9 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getInitializeCustomerError()', () => {
         it('returns error if unable to initialize customer', () => {
             jest.spyOn(selectors.customerStrategies, 'getInitializeError').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 errorResponse,
             );
 
@@ -391,6 +442,9 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getLoadShippingOptionsError()', () => {
         it('returns error if there is an error when loading the shipping options', () => {
             jest.spyOn(selectors.consignments, 'getLoadShippingOptionsError').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 errorResponse,
             );
 
@@ -415,6 +469,9 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getSelectShippingOptionError()', () => {
         it('returns error if there is an error when selecting the shipping options', () => {
             jest.spyOn(selectors.shippingStrategies, 'getSelectOptionError').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 errorResponse,
             );
 
@@ -438,6 +495,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getUpdateBillingAddressError()', () => {
         it('returns error if there is an error when updating the billing address', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.billingAddress, 'getUpdateError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -458,6 +518,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getUpdateSubscriptionsError()', () => {
         it('returns error if there is an error when updating subscriptions', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.subscriptions, 'getUpdateError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -479,6 +542,9 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getContinueAsGuestError()', () => {
         it('returns error if there is an error', () => {
             jest.spyOn(selectors.billingAddress, 'getContinueAsGuestError').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 errorResponse,
             );
 
@@ -502,6 +568,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getUpdateConsignmentError()', () => {
         it('returns error if there is an error when updating consignments', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.consignments, 'getUpdateError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -522,6 +591,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getDeleteConsignmentError()', () => {
         it('returns error if there is an error when deleting consignments', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.consignments, 'getDeleteError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -542,6 +614,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getCreateConsignmentsError()', () => {
         it('returns error if there is an error when creating consignments', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.consignments, 'getCreateError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -563,6 +638,9 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getUpdateShippingAddressError()', () => {
         it('returns error if there is an error when updating the shipping address', () => {
             jest.spyOn(selectors.shippingStrategies, 'getUpdateAddressError').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 errorResponse,
             );
 
@@ -587,6 +665,9 @@ describe('CheckoutStoreErrorSelector', () => {
     describe('#getInitializePaymentError()', () => {
         it('returns error if unable to initialize shipping', () => {
             jest.spyOn(selectors.shippingStrategies, 'getInitializeError').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 errorResponse,
             );
 
@@ -610,6 +691,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getApplyCouponError()', () => {
         it('returns error if there is an error when updating the a coupon', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.coupons, 'getApplyError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -630,6 +714,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getRemoveCouponError()', () => {
         it('returns error if there is an error when updating the a coupon', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.coupons, 'getRemoveError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -650,6 +737,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getApplyGiftCertificateError()', () => {
         it('returns error if there is an error when applying gift certificate', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.giftCertificates, 'getApplyError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -670,6 +760,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getRemoveGiftCertificateError()', () => {
         it('returns error if there is an error when removing gift certificate', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.giftCertificates, 'getRemoveError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -690,6 +783,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadInstrumentsError()', () => {
         it('returns error if there is an error when loading instruments', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.instruments, 'getLoadError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -710,6 +806,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getDeleteInstrumentError()', () => {
         it('returns error if there is an error when deleting instruments', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.instruments, 'getDeleteError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -730,6 +829,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadConfigError()', () => {
         it('returns error if there is an error when loading config', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.config, 'getLoadError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);
@@ -750,6 +852,9 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadExtensionsError()', () => {
         it('returns error if there is an error when loading extensions', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(selectors.extensions, 'getLoadError').mockReturnValue(errorResponse);
 
             const errors = createCheckoutStoreErrorSelector(selectors);

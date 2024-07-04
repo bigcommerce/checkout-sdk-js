@@ -33,9 +33,21 @@ describe('ConsignmentRequestSender', () => {
     const include = [shippingInclude, baseInclude].join(',');
 
     beforeEach(() => {
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve({ body: getCheckout() }));
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(requestSender, 'put').mockReturnValue(Promise.resolve({ body: getCheckout() }));
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(requestSender, 'delete').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             Promise.resolve({ body: getCheckout() }),
         );
 

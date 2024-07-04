@@ -30,10 +30,16 @@ describe('BarclaysPaymentStrategy', () => {
         store = createCheckoutStore();
 
         orderActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             submitOrder: jest.fn(() => of()),
         };
 
         paymentActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             submitPayment: jest.fn(() => of()),
         };
 
@@ -125,6 +131,9 @@ describe('BarclaysPaymentStrategy', () => {
             let parentExecute: jest.SpyInstance<CreditCardPaymentStrategy['execute']>;
 
             beforeEach(() => {
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 parentExecute = jest.spyOn(CreditCardPaymentStrategy.prototype, 'execute');
             });
 

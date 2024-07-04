@@ -71,8 +71,14 @@ describe('CreditCardPaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
     });
 
@@ -120,6 +126,9 @@ describe('CreditCardPaymentStrategy', () => {
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 submit: jest.fn(() => Promise.resolve()),
                 validate: jest.fn(() => Promise.resolve()),
             };
@@ -142,8 +151,14 @@ describe('CreditCardPaymentStrategy', () => {
                 merge(getPaymentMethod(), { config: { isHostedFormEnabled: true } }),
             );
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(formFactory, 'create').mockReturnValue(form);
         });
 
@@ -209,6 +224,9 @@ describe('CreditCardPaymentStrategy', () => {
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 submit: jest.fn(() => Promise.resolve()),
                 validate: jest.fn(() => Promise.resolve()),
             };
@@ -227,8 +245,14 @@ describe('CreditCardPaymentStrategy', () => {
                 merge(getPaymentMethod(), { config: { isHostedFormEnabled: true } }),
             );
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(formFactory, 'create').mockReturnValue(form);
         });
 

@@ -162,6 +162,9 @@ describe('ChasePayPaymentStrategy', () => {
         jest.spyOn(requestSender, 'post');
         JPMC.ChasePay.showLoadingAnimation = jest
             .fn(() => jest.fn(noop))
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             .mockReturnValue(Promise.resolve(store.getState()));
 
         strategy = new ChasePayPaymentStrategy(
@@ -185,6 +188,9 @@ describe('ChasePayPaymentStrategy', () => {
 
         jest.spyOn(walletButton, 'addEventListener');
         jest.spyOn(walletButton, 'removeEventListener');
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(requestSender, 'post').mockReturnValue(checkoutActionCreator);
         jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout');
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod');
@@ -249,8 +255,14 @@ describe('ChasePayPaymentStrategy', () => {
                 sessionToken: '1111111111',
             };
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve());
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             JPMC.ChasePay.on = jest.fn((_, callback) => callback(payload));
 
             await strategy.initialize(initializeOptions);
@@ -407,7 +419,13 @@ describe('ChasePayPaymentStrategy', () => {
                 transactionId: 'MTExMTExMTEx',
             };
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
             await strategy.initialize(initializeOptions);
         });
@@ -509,6 +527,9 @@ describe('ChasePayPaymentStrategy', () => {
                 chasepay: { logoContainer: 'login', walletButton: 'mockButton' },
             };
             submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
 
             await strategy.initialize(initializeOptions);

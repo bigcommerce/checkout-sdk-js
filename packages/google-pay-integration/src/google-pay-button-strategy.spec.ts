@@ -144,6 +144,8 @@ describe('GooglePayButtonStrategy', () => {
                 jest.spyOn(processor, 'initialize').mockImplementation(
                     (_, googlePayClientOptions) => {
                         eventEmitter.on('onPaymentDataChanged', () => {
+                            // TODO: remove this rule and update test with related type (PAYPAL-4383)
+                            // eslint-disable-next-line @typescript-eslint/no-floating-promises
                             googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged({
                                 callbackTrigger: CallbackTriggerType.INITIALIZE,
                             });
@@ -181,6 +183,8 @@ describe('GooglePayButtonStrategy', () => {
                 jest.spyOn(processor, 'initialize').mockImplementation(
                     (_, googlePayClientOptions) => {
                         eventEmitter.on('onPaymentDataChanged', () => {
+                            // TODO: remove this rule and update test with related type (PAYPAL-4383)
+                            // eslint-disable-next-line @typescript-eslint/no-floating-promises
                             googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged({
                                 callbackTrigger: CallbackTriggerType.INITIALIZE,
                             });

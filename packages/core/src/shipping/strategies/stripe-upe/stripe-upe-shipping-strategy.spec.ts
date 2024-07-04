@@ -104,8 +104,14 @@ describe('StripeUPEShippingStrategy', () => {
             paymentMethodMock,
         );
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             loadPaymentMethodAction,
         );
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         paymentMethodActionCreator.loadPaymentMethod = jest.fn(() => loadPaymentMethodAction);
         stripeUPEJsMock = getShippingStripeUPEJsMock();
         jest.spyOn(stripeScriptLoader, 'getStripeClient').mockResolvedValue(stripeUPEJsMock);
@@ -124,6 +130,9 @@ describe('StripeUPEShippingStrategy', () => {
         beforeEach(() => {
             shippingInitialization = getStripeUPEShippingInitializeOptionsMock();
             jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 getGuestCustomer,
             );
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
@@ -385,6 +394,9 @@ describe('StripeUPEShippingStrategy', () => {
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 on: jest.fn((_, callback) => callback(missingShippingEvent)),
             };
 
@@ -404,6 +416,9 @@ describe('StripeUPEShippingStrategy', () => {
         beforeEach(() => {
             shippingInitialization = getStripeUPEShippingInitializeOptionsMock();
             jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 getGuestCustomer,
             );
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
@@ -428,6 +443,9 @@ describe('StripeUPEShippingStrategy', () => {
         const options = {};
         const action = of(createAction(ConsignmentActionType.CreateConsignmentsRequested));
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(consignmentActionCreator, 'updateAddress').mockReturnValue(action);
 
         jest.spyOn(store, 'dispatch');
@@ -444,6 +462,9 @@ describe('StripeUPEShippingStrategy', () => {
         const options = {};
         const action = of(createAction(ConsignmentActionType.UpdateConsignmentRequested));
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(consignmentActionCreator, 'selectShippingOption').mockReturnValue(action);
 
         jest.spyOn(store, 'dispatch');

@@ -2,6 +2,9 @@ import { PayPalFastlane, PayPalFastlaneCardComponentMethods } from '../paypal-co
 
 export default function getPayPalFastlane(): PayPalFastlane {
     const paypalFastlaneComponentMethods: PayPalFastlaneCardComponentMethods = {
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         getPaymentToken: jest.fn(() => ({
             id: 'paypal_fastlane_instrument_id_nonce',
             paymentSource: {
@@ -41,6 +44,9 @@ export default function getPayPalFastlane(): PayPalFastlane {
             showCardSelector: jest.fn(),
             showShippingAddressSelector: jest.fn(),
         },
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         FastlaneCardComponent: jest.fn(() => paypalFastlaneComponentMethods),
     };
 }

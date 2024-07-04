@@ -33,6 +33,9 @@ describe('BraintreeHostedForm', () => {
             on: jest.fn((eventName, callback) => {
                 cardFieldsEventEmitter.on(eventName, callback);
             }),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             tokenize: jest.fn(() => Promise.resolve({ nonce: 'foobar_nonce' })),
             teardown: jest.fn(),
         };

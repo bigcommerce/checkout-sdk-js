@@ -17,8 +17,14 @@ describe('NoneSubStrategy', () => {
 
     describe('#execute', () => {
         it('posts the Payment Method ID to the BigPay Payments endpoint', async () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             const requestSenderSpy = jest.spyOn(requestSender, 'post').mockResolvedValue({});
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
 
             await noneSubStrategy.execute({
@@ -38,8 +44,14 @@ describe('NoneSubStrategy', () => {
         });
 
         it('passes the Payments endpoint response to the stepHandler', async () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(requestSender, 'post').mockResolvedValue({ body: 'some-api-response' });
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             const stepHandlerSpy = jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
 
             await noneSubStrategy.execute({
@@ -52,7 +64,13 @@ describe('NoneSubStrategy', () => {
         });
 
         it('returns the final value from the stepHandler', async () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(requestSender, 'post').mockResolvedValue({});
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(stepHandler, 'handle').mockResolvedValue({ someValue: 12345 });
 
             await expect(

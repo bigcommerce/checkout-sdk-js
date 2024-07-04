@@ -44,16 +44,25 @@ describe('CardinalThreeDSecureFlow', () => {
 
         cardinalClient = {
             configure: jest.fn(() => Promise.resolve()),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             getThreeDSecureData: jest.fn(() => Promise.resolve()),
             load: jest.fn(() => Promise.resolve()),
             runBinProcess: jest.fn(() => Promise.resolve()),
         };
 
         paymentActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             submitPayment: jest.fn(() => of()),
         };
 
         paymentMethodActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             loadPaymentMethod: jest.fn(() => of()),
         };
 
@@ -190,6 +199,9 @@ describe('CardinalThreeDSecureFlow', () => {
 
             it('submits 3DS token using hosted form if provided', async () => {
                 jest.spyOn(cardinalClient, 'getThreeDSecureData').mockResolvedValue(
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     'three_d_secure',
                 );
 
@@ -204,6 +216,9 @@ describe('CardinalThreeDSecureFlow', () => {
 
             it('submits 3DS token directly if hosted form is not provided', async () => {
                 jest.spyOn(cardinalClient, 'getThreeDSecureData').mockResolvedValue(
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     'three_d_secure',
                 );
 

@@ -75,6 +75,9 @@ export function getAdditionalActionError(resultCode: ResultCode): RequestError {
 
 export function getAdyenClient(): AdyenClient {
     return {
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         create: jest.fn(() => {
             return {
                 mount: jest.fn(),
@@ -82,6 +85,9 @@ export function getAdyenClient(): AdyenClient {
             };
         }),
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         createFromAction: jest.fn(() => {
             return {
                 mount: jest.fn(),

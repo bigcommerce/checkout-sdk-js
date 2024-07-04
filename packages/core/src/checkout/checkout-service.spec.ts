@@ -167,6 +167,9 @@ describe('CheckoutService', () => {
         instrumentRequestSender = new InstrumentRequestSender(paymentClient, requestSender);
 
         jest.spyOn(instrumentRequestSender, 'getVaultAccessToken').mockResolvedValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             getResponse(getVaultAccessTokenResponseBody()),
         );
         jest.spyOn(instrumentRequestSender, 'loadInstruments').mockResolvedValue(
@@ -187,6 +190,9 @@ describe('CheckoutService', () => {
         subscriptionsActionCreator = new SubscriptionsActionCreator(subscriptionsRequestSender);
 
         jest.spyOn(subscriptionsRequestSender, 'updateSubscriptions').mockResolvedValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             getResponse({}),
         );
 
@@ -237,6 +243,9 @@ describe('CheckoutService', () => {
         paymentStrategyRegistryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
         customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(paymentStrategyRegistry, 'getByMethod').mockReturnValue(paymentStrategy);
 
         extensionRequestSender = new ExtensionRequestSender(requestSender);
@@ -308,6 +317,9 @@ describe('CheckoutService', () => {
         customerRequestSender = new CustomerRequestSender(requestSender);
 
         jest.spyOn(customerRequestSender, 'createAccount').mockResolvedValue(getResponse({}));
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(customerRequestSender, 'createAddress').mockResolvedValue(getResponse({}));
 
         paymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
@@ -717,9 +729,15 @@ describe('CheckoutService', () => {
             noPaymentDataRequiredPaymentStrategy =
                 createNoPaymentStrategy(paymentIntegrationService);
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             paymentStrategyRegistry.get = jest.fn(() => noPaymentDataRequiredPaymentStrategy);
 
             jest.spyOn(spamProtectionActionCreator, 'execute').mockReturnValue(() =>
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 from([
                     createAction(SpamProtectionActionType.ExecuteRequested),
                     createAction(SpamProtectionActionType.ExecuteSucceeded),
@@ -848,6 +866,9 @@ describe('CheckoutService', () => {
             const options = { methodId: getPaymentMethod().id };
             const action = of(createAction('INITIALIZE_PAYMENT'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(paymentStrategyActionCreator, 'initialize').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -866,6 +887,9 @@ describe('CheckoutService', () => {
             const options = { methodId: getPaymentMethod().id };
             const action = of(createAction('DEINITIALIZE_PAYMENT'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(paymentStrategyActionCreator, 'deinitialize').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -920,6 +944,9 @@ describe('CheckoutService', () => {
             const options = { methodId: getPaymentMethod().id };
             const action = of(createAction('INITIALIZE_CUSTOMER'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(customerStrategyActionCreator, 'initialize').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -938,6 +965,9 @@ describe('CheckoutService', () => {
             const options = { methodId: getPaymentMethod().id };
             const action = of(createAction('DEINITIALIZE_CUSTOMER'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(customerStrategyActionCreator, 'deinitialize').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -955,6 +985,9 @@ describe('CheckoutService', () => {
         it('dispatches action to continue as guest', async () => {
             const action = of(createAction('SIGN_IN_GUEST'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(billingAddressActionCreator, 'continueAsGuest').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -974,6 +1007,9 @@ describe('CheckoutService', () => {
             const options = { methodId: getPaymentMethod().id };
             const action = of(createAction('SIGN_IN_CUSTOMER'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(customerStrategyActionCreator, 'signIn').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -998,6 +1034,9 @@ describe('CheckoutService', () => {
             const options = { methodId: getPaymentMethod().id };
             const action = of(createAction('SIGN_OUT_CUSTOMER'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(customerStrategyActionCreator, 'signOut').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -1022,6 +1061,9 @@ describe('CheckoutService', () => {
             jest.spyOn(
                 customerStrategyActionCreator,
                 'executePaymentMethodCheckout',
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
             ).mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -1051,6 +1093,9 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             const action = of(createAction('INITIALIZE_SHIPPING'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(shippingStrategyActionCreator, 'initialize').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -1069,6 +1114,9 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             const action = of(createAction('DEINITIALIZE_SHIPPING'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(shippingStrategyActionCreator, 'deinitialize').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -1087,6 +1135,9 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             const action = of(createAction('UPDATE_CONSIGNMENT'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(consignmentActionCreator, 'updateShippingOption').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -1113,6 +1164,9 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             const action = of(createAction('UPDATE_CONSIGNMENT'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(consignmentActionCreator, 'updateConsignment').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -1142,6 +1196,9 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             const action = of(createAction('bar'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(consignmentActionCreator, 'assignItemsByAddress').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -1176,6 +1233,9 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             const action = of(createAction('bar'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(consignmentActionCreator, 'unassignItemsByAddress').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -1215,6 +1275,9 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             const action = of(createAction('CREATE_CONSIGNMENTS'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(consignmentActionCreator, 'createConsignments').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -1238,6 +1301,9 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             const action = of(createAction('UPDATE_SHIPPING_ADDRESS'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(shippingStrategyActionCreator, 'updateAddress').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -1260,6 +1326,9 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             const action = of(createAction('SELECT_SHIPPING_OPTION'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(shippingStrategyActionCreator, 'selectOption').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -1379,6 +1448,9 @@ describe('CheckoutService', () => {
         it('loads instruments', async () => {
             const action = of(createAction('LOAD_INSTRUMENTS'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(instrumentActionCreator, 'loadInstruments').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -1395,12 +1467,18 @@ describe('CheckoutService', () => {
             const instrumentId = '456';
             const deleteAction = of(createAction('DELETE_INSTRUMENT'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(instrumentActionCreator, 'deleteInstrument').mockReturnValue(deleteAction);
 
             jest.spyOn(store, 'dispatch');
 
             const loadAction = of(createAction('LOAD_INSTRUMENTS'));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(instrumentActionCreator, 'loadInstruments').mockReturnValue(loadAction);
 
             await checkoutService.deleteInstrument(instrumentId);
@@ -1431,6 +1509,9 @@ describe('CheckoutService', () => {
 
             const action = of(createAction(SpamProtectionActionType.InitializeSucceeded));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(spamProtectionActionCreator, 'initialize').mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
@@ -1446,11 +1527,17 @@ describe('CheckoutService', () => {
     describe('#executeSpamCheck()', () => {
         beforeEach(() => {
             jest.spyOn(spamProtectionActionCreator, 'initialize').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 of(createAction(SpamProtectionActionType.InitializeSucceeded)),
             );
 
             jest.spyOn(spamProtectionActionCreator, 'verifyCheckoutSpamProtection').mockReturnValue(
                 () =>
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     from([
                         createAction(SpamProtectionActionType.VerifyCheckoutRequested),
                         createAction(SpamProtectionActionType.ExecuteRequested),
@@ -1505,6 +1592,9 @@ describe('CheckoutService', () => {
     describe('#renderExtension()', () => {
         it('render extensions', async () => {
             jest.spyOn(extensionActionCreator, 'renderExtension').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 of(createAction(ExtensionActionType.RenderExtensionSucceeded)),
             );
 

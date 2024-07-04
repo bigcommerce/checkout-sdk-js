@@ -142,6 +142,9 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
             ),
         );
         paymentMethodActionCreator = {} as PaymentMethodActionCreator;
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         paymentMethodActionCreator.loadPaymentMethod = jest.fn(() => loadPaymentMethodAction);
 
         (window as PaypalHostWindow).paypal = paypalSdkMock;
@@ -167,12 +170,24 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
         jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
             getConfig().storeConfig,
         );
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(paymentMethodMock.clientToken);
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(braintreeSDKCreator, 'getDataCollector').mockReturnValue(dataCollector);
         jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             braintreePaypalCheckoutCreatorMock,
         );
         jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout').mockImplementation(() => {});
 
         jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation((options: PaypalButtonOptions) => {
@@ -321,6 +336,9 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
             braintreePaypalCheckoutCreatorMock = getPayPalCheckoutCreatorMock(undefined, true);
 
             jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 braintreePaypalCheckoutCreatorMock,
             );
 
@@ -380,6 +398,9 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
         });
 
         it('renders braintree credit button if paylater is not eligible', async () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(paypalSdkMock, 'Buttons').mockImplementationOnce(() => {
                 return {
                     isEligible: jest.fn(() => false),

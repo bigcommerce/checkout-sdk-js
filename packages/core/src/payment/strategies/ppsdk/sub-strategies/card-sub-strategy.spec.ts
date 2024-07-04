@@ -56,6 +56,9 @@ describe('CardSubStrategy', () => {
 
         form = {
             attach: jest.fn(() => Promise.resolve()),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             submit: jest.fn(() =>
                 Promise.resolve({ payload: { response: { body: { type: 'success' } } } }),
             ),
@@ -75,8 +78,14 @@ describe('CardSubStrategy', () => {
         };
         loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(formFactory, 'create').mockReturnValue(form);
 
         jest.spyOn(store, 'dispatch');

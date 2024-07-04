@@ -12,6 +12,9 @@ describe('IframeEventPoster', () => {
         origin = 'https://mybigcommerce.com';
 
         jest.spyOn(window, 'addEventListener').mockImplementation((type, listener) => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             eventEmitter.addListener(type, listener);
         });
     });
@@ -92,6 +95,9 @@ describe('IframeEventPoster', () => {
         const poster = new IframeEventPoster<IframeEvent>(origin, targetWindow);
 
         jest.spyOn(targetWindow, 'postMessage').mockImplementation((message) => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             if (message.type === 'FOOBAR_REQUEST') {
                 eventEmitter.emit('message', {
                     origin,
@@ -113,6 +119,9 @@ describe('IframeEventPoster', () => {
         const poster = new IframeEventPoster<IframeEvent>(origin, targetWindow);
 
         jest.spyOn(targetWindow, 'postMessage').mockImplementation((message) => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             if (message.type === 'FOOBAR_REQUEST') {
                 eventEmitter.emit('message', {
                     origin,

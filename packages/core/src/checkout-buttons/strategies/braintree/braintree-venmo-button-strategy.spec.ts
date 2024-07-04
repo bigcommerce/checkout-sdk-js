@@ -141,8 +141,14 @@ describe('BraintreeVenmoButtonStrategy', () => {
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,
         );
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(paymentMethodMock.clientToken);
         jest.spyOn(braintreeSDKCreator, 'getDataCollector').mockReturnValue({
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             deviceData: { device: 'something' },
         });
         jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
@@ -234,9 +240,15 @@ describe('BraintreeVenmoButtonStrategy', () => {
             braintreeVenmoCheckoutCreatorMock = { create: jest.fn() };
 
             jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 paymentMethodMock.clientToken,
             );
             jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 braintreeVenmoCheckoutCreatorMock,
             );
 
@@ -255,10 +267,16 @@ describe('BraintreeVenmoButtonStrategy', () => {
             };
 
             braintreeVenmoCheckoutCreatorMock = {
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 create: jest.fn((_config, callback) => callback(new Error('test'), undefined)),
             };
 
             jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 braintreeVenmoCheckoutCreatorMock,
             );
 
@@ -284,12 +302,21 @@ describe('BraintreeVenmoButtonStrategy', () => {
             };
 
             braintreeVenmoCheckoutCreatorMock = {
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 create: jest.fn((_config, callback) =>
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     callback(undefined, braintreeVenmoCheckoutMock),
                 ),
             };
 
             jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 braintreeVenmoCheckoutCreatorMock,
             );
 
@@ -315,12 +342,21 @@ describe('BraintreeVenmoButtonStrategy', () => {
             };
 
             braintreeVenmoCheckoutCreatorMock = {
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 create: jest.fn((_config, callback) =>
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     callback(undefined, braintreeVenmoCheckoutMock),
                 ),
             };
 
             jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 braintreeVenmoCheckoutCreatorMock,
             );
 
@@ -342,15 +378,27 @@ describe('BraintreeVenmoButtonStrategy', () => {
             };
 
             braintreeVenmoCheckoutCreatorMock = {
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 create: jest.fn((_config, callback) =>
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     callback(undefined, braintreeVenmoCheckoutMock),
                 ),
             };
 
             jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 braintreeVenmoCheckoutCreatorMock,
             );
             jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 body: buyNowCartMock,
             });
 
@@ -373,12 +421,21 @@ describe('BraintreeVenmoButtonStrategy', () => {
             };
 
             braintreeVenmoCheckoutCreatorMock = {
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 create: jest.fn((_config, callback) =>
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     callback(undefined, braintreeVenmoCheckoutMock),
                 ),
             };
 
             jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 braintreeVenmoCheckoutCreatorMock,
             );
 
@@ -413,16 +470,28 @@ describe('BraintreeVenmoButtonStrategy', () => {
             braintreeVenmoCheckoutMock = {
                 isBrowserSupported: jest.fn().mockReturnValue(true),
                 teardown: jest.fn(),
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 tokenize: jest.fn((callback) => callback(undefined, tokenizationPayload)),
             };
 
             braintreeVenmoCheckoutCreatorMock = {
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 create: jest.fn((_config, callback) =>
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     callback(undefined, braintreeVenmoCheckoutMock),
                 ),
             };
 
             jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 braintreeVenmoCheckoutCreatorMock,
             );
 
@@ -469,19 +538,34 @@ describe('BraintreeVenmoButtonStrategy', () => {
             braintreeVenmoCheckoutMock = {
                 isBrowserSupported: jest.fn().mockReturnValue(true),
                 teardown: jest.fn(),
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 tokenize: jest.fn((callback) => callback(undefined, tokenizationPayload)),
             };
 
             braintreeVenmoCheckoutCreatorMock = {
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 create: jest.fn((_config, callback) =>
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     callback(undefined, braintreeVenmoCheckoutMock),
                 ),
             };
 
             jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 braintreeVenmoCheckoutCreatorMock,
             );
             jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 body: buyNowCartMock,
             });
 
@@ -528,16 +612,28 @@ describe('BraintreeVenmoButtonStrategy', () => {
             braintreeVenmoCheckoutMock = {
                 isBrowserSupported: jest.fn().mockReturnValue(true),
                 teardown: jest.fn(),
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 tokenize: jest.fn((callback) => callback(undefined, tokenizationPayload)),
             };
 
             braintreeVenmoCheckoutCreatorMock = {
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 create: jest.fn((_config, callback) =>
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     callback(undefined, braintreeVenmoCheckoutMock),
                 ),
             };
 
             jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 braintreeVenmoCheckoutCreatorMock,
             );
 

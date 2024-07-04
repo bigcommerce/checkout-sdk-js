@@ -510,6 +510,10 @@ describe('TDOnlineMartPaymentStrategy', () => {
                     Promise.resolve(resolveFn()),
                 );
 
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 jest.spyOn(formPoster, 'postForm').mockImplementation(postFormMock);
                 jest.spyOn(
                     TdOnlineMartAdditionalAction,

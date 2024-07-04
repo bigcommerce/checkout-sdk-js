@@ -86,6 +86,8 @@ describe('HummPaymentStrategy', () => {
                 Promise.resolve(resolveFn()),
             );
 
+            // TODO: remove rule and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             jest.spyOn(formPoster, 'postForm').mockImplementation(postFormMock);
 
             const data = JSON.stringify({ data: 'data' });

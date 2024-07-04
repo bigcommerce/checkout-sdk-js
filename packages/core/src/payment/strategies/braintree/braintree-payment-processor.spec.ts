@@ -166,6 +166,9 @@ describe('BraintreePaymentProcessor', () => {
             );
 
             jest.spyOn(braintreePaymentProcessor, 'tokenizeCard').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 Promise.resolve({ nonce: 'my_nonce' }),
             );
             jest.spyOn(braintreePaymentProcessor, 'challenge3DSVerification').mockReturnValue(
@@ -342,6 +345,9 @@ describe('BraintreePaymentProcessor', () => {
             jest.spyOn(braintreePaymentProcessor, 'challenge3DSVerification').mockResolvedValue({
                 nonce: 'three_ds_nonce',
             });
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(braintreeHostedForm, 'tokenize').mockResolvedValue({
                 nonce: 'tokenized_nonce',
             });
