@@ -1,17 +1,18 @@
 import { merge, some } from 'lodash';
 
-import { InternalCheckoutSelectors } from '../../../checkout';
+import { CreditCardPaymentStrategy } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import {
+    isRequestError,
     NotInitializedError,
     NotInitializedErrorType,
-    RequestError,
-} from '../../../common/error/errors';
-import { OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
-import { PaymentArgumentInvalidError } from '../../errors';
-import { PaymentInitializeOptions } from '../../payment-request-options';
-import { CreditCardPaymentStrategy } from '../credit-card';
+    OrderPaymentRequestBody,
+    OrderRequestBody,
+    PaymentArgumentInvalidError,
+    PaymentInitializeOptions,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    WithWorldpayAccessPaymentInitializeOptions,
     WorldpayAccess3DSOptions,
     WorldpayAccessAdditionalAction,
     WorldpayAccessPaymentInitializeOptions,
@@ -21,12 +22,14 @@ const IFRAME_NAME = 'worldpay_hosted_payment_page';
 const IFRAME_HIDDEN_NAME = 'worldpay_hosted_hidden_payment_page';
 const PAYMENT_CANNOT_CONTINUE = 'Payment cannot continue';
 
-let submit: (paymentPayload: OrderPaymentRequestBody) => Promise<InternalCheckoutSelectors>;
+let submit: (paymentPayload: OrderPaymentRequestBody) => Promise<void>;
 
-export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrategy {
+export default class WorldpayAccessPaymentStrategy extends CreditCardPaymentStrategy {
     private _initializeOptions?: WorldpayAccessPaymentInitializeOptions;
 
-    async initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(
+        options?: PaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions,
+    ): Promise<void> {
         this._initializeOptions = options && options.worldpay;
 
         if (!this._initializeOptions) {
@@ -39,7 +42,7 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
     async execute(
         orderRequest: OrderRequestBody,
         options?: PaymentInitializeOptions,
-    ): Promise<InternalCheckoutSelectors> {
+    ): Promise<void> {
         const { payment } = orderRequest;
 
         submit = this._submitAdditionalAction();
@@ -51,16 +54,16 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
         try {
             return await super.execute(orderRequest, options);
         } catch (error) {
-            return await this._processAdditionalAction(error, payment);
+            return this._processAdditionalAction(error, payment);
         }
     }
 
     private async _processAdditionalAction(
         error: unknown,
         payment: OrderPaymentRequestBody,
-    ): Promise<InternalCheckoutSelectors> {
+    ): Promise<void> {
         if (
-            !(error instanceof RequestError) ||
+            !isRequestError(error) ||
             !some(error.body.errors, { code: 'additional_action_required' })
         ) {
             return Promise.reject(error);
@@ -73,6 +76,7 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
                 }
 
                 window.removeEventListener('message', messageEvent);
+                // eslint-disable-next-line @typescript-eslint/no-use-before-define
                 iframeHidden.remove();
 
                 const data = JSON.parse(event.data);
@@ -82,12 +86,12 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
 
                 try {
                     resolve(await submit(paymentPayload));
-                } catch (error) {
+                } catch (submitError) {
                     if (
-                        !(error instanceof RequestError) ||
-                        !some(error.body.errors, { code: 'three_d_secure_required' })
+                        !isRequestError(submitError) ||
+                        !some(submitError.body.errors, { code: 'three_d_secure_required' })
                     ) {
-                        return reject(error);
+                        return reject(submitError);
                     }
 
                     if (!this._initializeOptions) {
@@ -97,11 +101,12 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
                     }
 
                     const { onLoad } = this._initializeOptions;
-                    const frame = this._createIframe(error.body.three_ds_result);
+
+                    const frame = this._createIframe(submitError.body.three_ds_result);
 
                     try {
                         onLoad(frame, () => reject(new Error('Payment was cancelled')));
-                    } catch (e) {
+                    } catch (onLoadError) {
                         reject(new Error(PAYMENT_CANNOT_CONTINUE));
                     }
                 }
@@ -122,10 +127,6 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
 
     private _createHiddenIframe(body: WorldpayAccessAdditionalAction): HTMLIFrameElement {
         const iframe = document.createElement('iframe');
-
-        if (!iframe) {
-            throw new Error();
-        }
 
         document.body.appendChild(iframe);
 
@@ -223,7 +224,7 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
 
     private _submitAdditionalAction() {
         if (this._shouldRenderHostedForm) {
-            if (!this._hostedForm || !this._hostedForm.submit) {
+            if (!this._hostedForm) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
@@ -231,13 +232,11 @@ export default class WorldpayaccessPaymetStrategy extends CreditCardPaymentStrat
 
             return async (paymentPayload: OrderPaymentRequestBody) => {
                 await hostedForm.submit(paymentPayload);
-
-                return this._store.getState();
             };
         }
 
         return async (paymentPayload: OrderPaymentRequestBody) => {
-            return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+            await this._paymentIntegrationService.submitPayment(paymentPayload);
         };
     }
 

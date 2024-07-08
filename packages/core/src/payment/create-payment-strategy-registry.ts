@@ -79,7 +79,6 @@ import {
 import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
-import { WorldpayaccessPaymetStrategy } from './strategies/worldpayaccess';
 
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
@@ -407,17 +406,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 hostedFormFactory,
                 new WepayRiskClient(scriptLoader),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.WORLDPAYACCESS,
-        () =>
-            new WorldpayaccessPaymetStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
             ),
     );
 

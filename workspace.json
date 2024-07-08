@@ -43,6 +43,7 @@
         "ui": "packages/ui",
         "utility": "packages/utility",
         "workspace-tools": "packages/workspace-tools",
+        "worldpayaccess-integration": "packages/worldpayaccess-integration",
         "zip-integration": "packages/zip-integration"
     }
 }

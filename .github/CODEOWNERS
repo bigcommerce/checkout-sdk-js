@@ -44,7 +44,6 @@
 /packages/core/src/payment/strategies/stripe-upe @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/stripev3 @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/wepay @bigcommerce/team-integrations
-/packages/core/src/payment/strategies/worldpayaccess @bigcommerce/team-integrations
 /packages/adyen-integration @bigcommerce/team-integrations
 /packages/adyen-utils @bigcommerce/team-integrations
 /packages/affirm-integration @bigcommerce/team-integrations
@@ -64,6 +63,7 @@
 /packages/klarna-integration @bigcommerce/team-integrations
 /packages/humm-integration @bigcommerce/team-integrations
 /packages/zip-integration @bigcommerce/team-integrations
+/packages/worldpayaccess-integration @bigcommerce/team-integrations
 
 ## PayPal team
 
