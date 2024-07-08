@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.628.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.627.1...v1.628.0) (2024-07-08)
+
+
+### Features
+
+* **payment:** PAYPAL-4284 reverted PPCP onShippingAddressChange and onShippingOptionChange callbacks ([#2561](https://github.com/bigcommerce/checkout-sdk-js/issues/2561)) ([d337f12](https://github.com/bigcommerce/checkout-sdk-js/commit/d337f12343ed5c32971339eea1e3feea11756de8))
+
 ### [1.627.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.627.0...v1.627.1) (2024-07-02)
 
 ## [1.627.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.626.0...v1.627.0) (2024-07-02)
