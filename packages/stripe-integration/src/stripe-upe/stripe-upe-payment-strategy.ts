@@ -66,6 +66,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     private _isMounted = false;
     private _unsubscribe?: () => void;
     private _isStripeElementUpdateEnabled?: boolean;
+    private _selectedMethodId = '';
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -145,7 +146,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const { paymentData, methodId, gatewayId } = payment;
+        const { paymentData, /* methodId, */ gatewayId } = payment;
+        const methodId = this._selectedMethodId;
+
+        console.log('set method id', methodId);
+
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
         const state = this.paymentIntegrationService.getState();
@@ -183,11 +188,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
             const { instrumentId } = paymentData;
 
-            await this._executeWithVaulted(
-                payment.methodId,
-                instrumentId,
-                shouldSetAsDefaultInstrument,
-            );
+            await this._executeWithVaulted(methodId, instrumentId, shouldSetAsDefaultInstrument);
 
             return;
         }
@@ -195,7 +196,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         if (includes(APM_REDIRECT, methodId)) {
             await this.paymentIntegrationService.submitOrder(order, options);
 
-            await this._executeWithAPM(payment.methodId);
+            await this._executeWithAPM(methodId);
 
             return;
         }
@@ -203,7 +204,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         await this.paymentIntegrationService.submitOrder(order, options);
 
         await this._executeWithoutRedirect(
-            payment.methodId,
+            methodId,
             shouldSaveInstrument,
             shouldSetAsDefaultInstrument,
         );
@@ -332,7 +333,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
     private async _loadStripeElement(
         stripeupe: StripeUPEPaymentInitializeOptions,
-        _gatewayId: string,
+        gatewayId: string,
         methodId: string,
     ) {
         const {
@@ -343,10 +344,15 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             toggleSelectedMethod,
             collapseListener,
         } = stripeupe;
-        // const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
-        //     params: { method: methodId },
-        // });
-        const state = this.paymentIntegrationService.getState();
+
+        console.log({
+            gatewayId,
+            methodId,
+        });
+
+        const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+            params: { method: methodId },
+        });
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
         const { checkoutSettings } = state.getStoreConfigOrThrow();
 
@@ -358,9 +364,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             initializationData: { stripePublishableKey, stripeConnectedAccount, shopperLanguage },
         } = paymentMethod;
 
-        // if (!paymentMethod.clientToken) {
-        //     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        // }
+        if (!paymentMethod.clientToken) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
 
         this._stripeUPEClient = await this._loadStripeJs(
             stripePublishableKey,
@@ -416,28 +422,34 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             };
         }
 
-        const { outstandingBalance } = state.getCheckoutOrThrow();
-        const { currency } = state.getCartOrThrow();
-        const currencyCode = currency.code.toLowerCase();
-        const amount = Math.round(outstandingBalance * 100);
+        // const { outstandingBalance } = state.getCheckoutOrThrow();
+        // const { currency } = state.getCartOrThrow();
+        // const currencyCode = currency.code.toLowerCase();
+        // const amount = Math.round(outstandingBalance * 100);
 
-        console.log({ amount });
+        // console.log({ amount });
 
         try {
             this._stripeElements = await this.scriptLoader.getElements(this._stripeUPEClient, {
-                // clientSecret: paymentMethod.clientToken,
+                clientSecret: paymentMethod.clientToken,
                 locale: formatLocale(shopperLanguage),
                 appearance,
-                mode: 'payment',
-                amount,
-                currency: currencyCode,
-                paymentMethodTypes: ['card', 'alipay', 'klarna', 'us_bank_account', 'wechat_pay'], // TODO: ask Stripe team why does only CC fields render without this option
+                // mode: 'payment',
+                // amount,
+                // currency: currencyCode,
+                // paymentMethodTypes: ['card', 'alipay', 'klarna', 'us_bank_account', 'wechat_pay'], // TODO: ask Stripe team why does only CC fields render without this option
                 fonts: [
                     {
                         cssSrc: 'https://fonts.googleapis.com/css?family=Montserrat:700,500,400%7CKarla:400&display=swap',
                     },
                 ],
             });
+
+            const retrivedPI = await this._stripeUPEClient.retrievePaymentIntent(
+                paymentMethod.clientToken,
+            );
+
+            console.log('*** retrivedPI', retrivedPI);
         } catch (error) {
             console.log('*** error', error);
             throw error;
@@ -486,7 +498,10 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         collapseListener?.(this.collapseStripeElement.bind(this));
 
-        stripeElement.on('change', () => {
+        stripeElement.on('change', (event: any) => {
+            console.log('*** change', event);
+            this._selectedMethodId = event.value.type;
+            console.log('set selected method id', this._selectedMethodId);
             toggleSelectedMethod?.('stripeupe-card');
         });
 
