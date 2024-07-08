@@ -36,7 +36,7 @@ export default class BillingAddressActionCreator {
             const isBillingFixExperimentEnabled =
                 state.config.getConfig()?.storeConfig.checkoutSettings.features[
                     'CHECKOUT-8392.fix_billing_creation_in_checkout'
-                ] ?? false;
+                ] ?? true;
 
             if (!checkout) {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
@@ -101,7 +101,7 @@ export default class BillingAddressActionCreator {
                 const isBillingFixExperimentEnabled =
                     state.config.getConfig()?.storeConfig.checkoutSettings.features[
                         'CHECKOUT-8392.fix_billing_creation_in_checkout'
-                    ] ?? false;
+                    ] ?? true;
 
                 if (!checkout) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckout);
