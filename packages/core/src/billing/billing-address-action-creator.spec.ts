@@ -9,6 +9,7 @@ import { Checkout, CheckoutStore, CheckoutStoreState, createCheckoutStore } from
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MissingDataError, StandardError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { getConfigState } from '../config/configs.mock';
 import {
     SubscriptionsActionCreator,
     SubscriptionsActionType,
@@ -391,6 +392,36 @@ describe('BillingAddressActionCreator', () => {
             beforeEach(() => {
                 store = createCheckoutStore(omit(state, 'billingAddress'));
                 address = omit(address, 'id') as BillingAddressRequestBody;
+            });
+
+            it('emits actions if able to update billing address when experiment is enabled', async () => {
+                const configState = getConfigState();
+
+                if (configState.data && configState.data.storeConfig.checkoutSettings.features) {
+                    configState.data.storeConfig.checkoutSettings.features = {
+                        'CHECKOUT-8392.fix_billing_creation_in_checkout': true,
+                    };
+                }
+
+                const stateWithExperiment = {
+                    ...state,
+                    config: configState,
+                };
+
+                store = createCheckoutStore(omit(stateWithExperiment, 'billingAddress'));
+                actions = await from(billingAddressActionCreator.updateAddress(address)(store))
+                    .pipe(toArray())
+                    .toPromise();
+
+                expect(billingAddressRequestSender.createAddress).toHaveBeenCalled();
+
+                expect(actions).toEqual([
+                    { type: BillingAddressActionType.UpdateBillingAddressRequested },
+                    {
+                        type: BillingAddressActionType.UpdateBillingAddressSucceeded,
+                        payload: response.body,
+                    },
+                ]);
             });
 
             it('emits actions if able to update billing address', async () => {
