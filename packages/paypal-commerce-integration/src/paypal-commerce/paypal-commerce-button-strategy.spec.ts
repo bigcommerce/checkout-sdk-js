@@ -83,6 +83,13 @@ describe('PayPalCommerceButtonStrategy', () => {
 
     const paypalShippingAddressPayloadMock = {
         city: 'New York',
+        countryCode: 'US',
+        postalCode: '07564',
+        state: 'New York',
+    };
+
+    const paypalShippingCallbackAddressMock = {
+        city: 'New York',
         country_code: 'US',
         postal_code: '07564',
         state: 'New York',
@@ -155,6 +162,13 @@ describe('PayPalCommerceButtonStrategy', () => {
         jest.spyOn(paypalCommerceIntegrationService, 'getShippingOptionOrThrow').mockReturnValue(
             getShippingOption(),
         );
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
+            checkoutSettings: {
+                features: {
+                    'PAYPAL-4387.paypal_shipping_callbacks': true,
+                },
+            },
+        });
 
         jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
             (options: PayPalCommerceButtonsOptions) => {
@@ -215,11 +229,29 @@ describe('PayPalCommerceButtonStrategy', () => {
                     }
                 });
 
+                eventEmitter.on('onShippingAddressChange', () => {
+                    if (options.onShippingAddressChange) {
+                        options.onShippingAddressChange({
+                            orderId: paypalOrderId,
+                            shippingAddress: paypalShippingAddressPayloadMock,
+                        });
+                    }
+                });
+
+                eventEmitter.on('onShippingOptionsChange', () => {
+                    if (options.onShippingOptionsChange) {
+                        options.onShippingOptionsChange({
+                            orderId: paypalOrderId,
+                            selectedShippingOption: paypalSelectedShippingOptionPayloadMock,
+                        });
+                    }
+                });
+
                 eventEmitter.on('onShippingChange', () => {
                     if (options.onShippingChange) {
                         options.onShippingChange({
                             orderID: paypalOrderId,
-                            shipping_address: paypalShippingAddressPayloadMock,
+                            shipping_address: paypalShippingCallbackAddressMock,
                             selected_shipping_option: paypalSelectedShippingOptionPayloadMock,
                         });
                     }
@@ -379,6 +411,40 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
 
         it('initializes PayPal button to render (with shipping options feature enabled)', async () => {
+            const paymentMethodWithShippingOptionsFeature = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isHostedCheckoutEnabled: true,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                fundingSource: paypalSdk.FUNDING.PAYPAL,
+                style: paypalCommerceOptions.style,
+                createOrder: expect.any(Function),
+                onShippingAddressChange: expect.any(Function),
+                onShippingOptionsChange: expect.any(Function),
+                onApprove: expect.any(Function),
+            });
+        });
+
+        it('initializes PayPal button to render (with shipping options feature enabled and shipping callback experiment is off)', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
+                checkoutSettings: {
+                    features: {
+                        'PAYPAL-4387.paypal_shipping_callbacks': false,
+                    },
+                },
+            });
+
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
                 initializationData: {
@@ -635,7 +701,7 @@ describe('PayPalCommerceButtonStrategy', () => {
         });
     });
 
-    describe('#onShippingChange button callback', () => {
+    describe('#onShippingAddressChange button callback', () => {
         beforeEach(() => {
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
@@ -661,8 +727,8 @@ describe('PayPalCommerceButtonStrategy', () => {
                 address1: '',
                 address2: '',
                 city: paypalShippingAddressPayloadMock.city,
-                countryCode: paypalShippingAddressPayloadMock.country_code,
-                postalCode: paypalShippingAddressPayloadMock.postal_code,
+                countryCode: paypalShippingAddressPayloadMock.countryCode,
+                postalCode: paypalShippingAddressPayloadMock.postalCode,
                 stateOrProvince: '',
                 stateOrProvinceCode: paypalShippingAddressPayloadMock.state,
                 customFields: [],
@@ -672,7 +738,7 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            eventEmitter.emit('onShippingChange');
+            eventEmitter.emit('onShippingAddressChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
@@ -683,7 +749,7 @@ describe('PayPalCommerceButtonStrategy', () => {
         it('selects shipping option after address update', async () => {
             await strategy.initialize(initializationOptions);
 
-            eventEmitter.emit('onShippingChange');
+            eventEmitter.emit('onShippingAddressChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
@@ -704,7 +770,47 @@ describe('PayPalCommerceButtonStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            eventEmitter.emit('onShippingChange');
+            eventEmitter.emit('onShippingAddressChange');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceIntegrationService.updateOrder).toHaveBeenCalled();
+        });
+    });
+
+    describe('#onShippingOptionsChange button callback', () => {
+        beforeEach(() => {
+            const paymentMethodWithShippingOptionsFeature = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isHostedCheckoutEnabled: true,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+        });
+
+        it('selects shipping option', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onShippingOptionsChange');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceIntegrationService.getShippingOptionOrThrow).toHaveBeenCalled();
+            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
+                getShippingOption().id,
+            );
+        });
+
+        it('updates PayPal order', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onShippingOptionsChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 

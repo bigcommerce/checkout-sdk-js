@@ -14,7 +14,9 @@ import {
     PayPalBuyNowInitializeOptions,
     PayPalCommerceButtonsOptions,
     PayPalCommerceInitializationData,
+    ShippingAddressChangeCallbackPayload,
     ShippingChangeCallbackPayload,
+    ShippingOptionChangeCallbackPayload,
 } from '../paypal-commerce-types';
 
 import PayPalCommerceButtonInitializeOptions, {
@@ -113,8 +115,25 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             onCancel: () => this.paymentIntegrationService.loadDefaultCheckout(),
         };
 
+        const isPaypalShippingCallbacksExperimentIsOn =
+            state.getStoreConfig()?.checkoutSettings.features[
+                'PAYPAL-4387.paypal_shipping_callbacks'
+            ];
+
+        const onShippingChangeCallbacks = isPaypalShippingCallbacksExperimentIsOn
+            ? {
+                  onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
+                      this.onShippingAddressChange(data),
+                  onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
+                      this.onShippingOptionsChange(data),
+              }
+            : {
+                  onShippingChange: (data: ShippingChangeCallbackPayload) =>
+                      this.onShippingChange(data),
+              };
+
         const hostedCheckoutCallbacks = {
-            onShippingChange: (data: ShippingChangeCallbackPayload) => this.onShippingChange(data),
+            ...onShippingChangeCallbacks,
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
                 this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
         };
@@ -188,6 +207,46 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             }
 
             return true; // FIXME: Do we really need to return true here?
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    private async onShippingAddressChange(
+        data: ShippingAddressChangeCallbackPayload,
+    ): Promise<void> {
+        const address = this.paypalCommerceIntegrationService.getAddress({
+            city: data.shippingAddress.city,
+            countryCode: data.shippingAddress.countryCode,
+            postalCode: data.shippingAddress.postalCode,
+            stateOrProvinceCode: data.shippingAddress.state,
+        });
+
+        try {
+            // Info: we use the same address to fill billing and shipping addresses to have valid quota on BE for order updating process
+            // on this stage we don't have access to valid customer's address accept shipping data
+            await this.paymentIntegrationService.updateBillingAddress(address);
+            await this.paymentIntegrationService.updateShippingAddress(address);
+
+            const shippingOption = this.paypalCommerceIntegrationService.getShippingOptionOrThrow();
+
+            await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
+            await this.paypalCommerceIntegrationService.updateOrder();
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    private async onShippingOptionsChange(
+        data: ShippingOptionChangeCallbackPayload,
+    ): Promise<void> {
+        const shippingOption = this.paypalCommerceIntegrationService.getShippingOptionOrThrow(
+            data.selectedShippingOption.id,
+        );
+
+        try {
+            await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
+            await this.paypalCommerceIntegrationService.updateOrder();
         } catch (error) {
             throw new Error(error);
         }

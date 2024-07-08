@@ -59,24 +59,6 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
         paypalcommercecredit: paypalCommerceCreditOptions,
     };
 
-    const paypalShippingAddressPayloadMock = {
-        city: 'New York',
-        country_code: 'US',
-        postal_code: '07564',
-        state: 'New York',
-    };
-
-    const paypalSelectedShippingOptionPayloadMock = {
-        amount: {
-            currency_code: 'USD',
-            value: '100',
-        },
-        id: '1',
-        label: 'Free shipping',
-        selected: true,
-        type: 'type_shipping',
-    };
-
     beforeEach(() => {
         eventEmitter = new EventEmitter();
 
@@ -121,6 +103,13 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
         jest.spyOn(paypalCommerceIntegrationService, 'getShippingOptionOrThrow').mockReturnValue(
             getShippingOption(),
         );
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
+            checkoutSettings: {
+                features: {
+                    'PAYPAL-4387.paypal_shipping_callbacks': true,
+                },
+            },
+        });
 
         jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
             (options: PayPalCommerceButtonsOptions) => {
@@ -155,12 +144,58 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                     }
                 });
 
+                eventEmitter.on('onShippingAddressChange', () => {
+                    if (options.onShippingAddressChange) {
+                        options.onShippingAddressChange({
+                            orderId: approveDataOrderId,
+                            shippingAddress: {
+                                city: 'New York',
+                                countryCode: 'US',
+                                postalCode: '07564',
+                                state: 'New York',
+                            },
+                        });
+                    }
+                });
+
+                eventEmitter.on('onShippingOptionsChange', () => {
+                    if (options.onShippingOptionsChange) {
+                        options.onShippingOptionsChange({
+                            orderId: approveDataOrderId,
+                            selectedShippingOption: {
+                                amount: {
+                                    currency_code: 'USD',
+                                    value: '100',
+                                },
+                                id: '1',
+                                label: 'Free shipping',
+                                selected: true,
+                                type: 'type_shipping',
+                            },
+                        });
+                    }
+                });
+
                 eventEmitter.on('onShippingChange', () => {
                     if (options.onShippingChange) {
                         options.onShippingChange({
                             orderID: paypalOrderId,
-                            shipping_address: paypalShippingAddressPayloadMock,
-                            selected_shipping_option: paypalSelectedShippingOptionPayloadMock,
+                            shipping_address: {
+                                city: 'New York',
+                                country_code: 'US',
+                                postal_code: '07564',
+                                state: 'New York',
+                            },
+                            selected_shipping_option: {
+                                amount: {
+                                    currency_code: 'USD',
+                                    value: '100',
+                                },
+                                id: '1',
+                                label: 'Free shipping',
+                                selected: true,
+                                type: 'type_shipping',
+                            },
                         });
                     }
                 });
@@ -277,6 +312,42 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
         });
 
         it('initializes paypal buttons with config related to hosted checkout feature', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isHostedCheckoutEnabled: true,
+                },
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
+                fundingSource: paypalSdk.FUNDING.PAYLATER,
+                style: {
+                    height: DefaultCheckoutButtonHeight,
+                    color: StyleButtonColor.silver,
+                    label: 'checkout',
+                },
+                createOrder: expect.any(Function),
+                onShippingAddressChange: expect.any(Function),
+                onShippingOptionsChange: expect.any(Function),
+                onApprove: expect.any(Function),
+                onClick: expect.any(Function),
+            });
+        });
+
+        it('initializes paypal buttons with config related to hosted checkout feature and shipping callbacks experiment is off', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
+                checkoutSettings: {
+                    features: {
+                        'PAYPAL-4387.paypal_shipping_callbacks': false,
+                    },
+                },
+            });
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -530,7 +601,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
         });
     });
 
-    describe('#onShippingChange button callback', () => {
+    describe('#onShippingAddressChange button callback', () => {
         beforeEach(() => {
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
@@ -567,7 +638,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            eventEmitter.emit('onShippingChange');
+            eventEmitter.emit('onShippingAddressChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
@@ -578,7 +649,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
         it('selects shipping option after address update', async () => {
             await strategy.initialize(initializationOptions);
 
-            eventEmitter.emit('onShippingChange');
+            eventEmitter.emit('onShippingAddressChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
@@ -599,7 +670,47 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            eventEmitter.emit('onShippingChange');
+            eventEmitter.emit('onShippingAddressChange');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceIntegrationService.updateOrder).toHaveBeenCalled();
+        });
+    });
+
+    describe('#onShippingOptionsChange button callback', () => {
+        beforeEach(() => {
+            const paymentMethodWithShippingOptionsFeature = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isHostedCheckoutEnabled: true,
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithShippingOptionsFeature);
+        });
+
+        it('selects shipping option', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onShippingOptionsChange');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paypalCommerceIntegrationService.getShippingOptionOrThrow).toHaveBeenCalled();
+            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalledWith(
+                getShippingOption().id,
+            );
+        });
+
+        it('updates PayPal order', async () => {
+            await strategy.initialize(initializationOptions);
+
+            eventEmitter.emit('onShippingOptionsChange');
 
             await new Promise((resolve) => process.nextTick(resolve));
 
