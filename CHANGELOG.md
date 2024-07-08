@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.629.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.628.0...v1.629.0) (2024-07-08)
+
+
+### Features
+
+* **payment:** PI-2284 Add Google Pay on TD Online Mart - checkout customer step ([#2557](https://github.com/bigcommerce/checkout-sdk-js/issues/2557)) ([1fab402](https://github.com/bigcommerce/checkout-sdk-js/commit/1fab402ded4c3b2544083b49b01a0b6572746227))
+
 ## [1.628.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.627.1...v1.628.0) (2024-07-08)
 
 
