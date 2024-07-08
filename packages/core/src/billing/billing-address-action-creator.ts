@@ -1,5 +1,6 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Response } from '@bigcommerce/request-sender';
+import { isEmpty } from 'lodash';
 import { concat, defer, empty, merge, Observable, Observer, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -33,6 +34,10 @@ export default class BillingAddressActionCreator {
         return (store) => {
             const state = store.getState();
             const checkout = state.checkout.getCheckout();
+            const isBillingFixExperimentEnabled =
+                state.config.getConfig()?.storeConfig.checkoutSettings.features[
+                    'CHECKOUT-8392.fix_billing_creation_in_checkout'
+                ] ?? true;
 
             if (!checkout) {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
@@ -59,6 +64,8 @@ export default class BillingAddressActionCreator {
                 };
             }
 
+            const hasBillingAddress = !isEmpty(billingAddress);
+
             return merge(
                 concat(
                     of(createAction(BillingAddressActionType.ContinueAsGuestRequested)),
@@ -66,6 +73,8 @@ export default class BillingAddressActionCreator {
                         const { body } = await this._createOrUpdateBillingAddress(
                             checkout.id,
                             billingAddressRequestBody,
+                            isBillingFixExperimentEnabled,
+                            hasBillingAddress,
                             options,
                         );
 
@@ -92,6 +101,10 @@ export default class BillingAddressActionCreator {
             Observable.create((observer: Observer<UpdateBillingAddressAction>) => {
                 const state = store.getState();
                 const checkout = state.checkout.getCheckout();
+                const isBillingFixExperimentEnabled =
+                    state.config.getConfig()?.storeConfig.checkoutSettings.features[
+                        'CHECKOUT-8392.fix_billing_creation_in_checkout'
+                    ] ?? true;
 
                 if (!checkout) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckout);
@@ -100,6 +113,8 @@ export default class BillingAddressActionCreator {
                 observer.next(createAction(BillingAddressActionType.UpdateBillingAddressRequested));
 
                 const billingAddress = state.billingAddress.getBillingAddress();
+
+                const hasBillingAddress = !isEmpty(billingAddress);
 
                 // If email is not present in the address provided by the client, then
                 // fall back to the stored email as it could have been set separately
@@ -118,7 +133,13 @@ export default class BillingAddressActionCreator {
                     billingAddressRequestBody.id = billingAddress.id;
                 }
 
-                this._createOrUpdateBillingAddress(checkout.id, billingAddressRequestBody, options)
+                this._createOrUpdateBillingAddress(
+                    checkout.id,
+                    billingAddressRequestBody,
+                    isBillingFixExperimentEnabled,
+                    hasBillingAddress,
+                    options,
+                )
                     .then(({ body }) => {
                         observer.next(
                             createAction(
@@ -163,8 +184,18 @@ export default class BillingAddressActionCreator {
     private _createOrUpdateBillingAddress(
         checkoutId: string,
         address: Partial<BillingAddressUpdateRequestBody>,
+        isBillingFixExperimentEnabled: boolean,
+        hasBillingAddress: boolean,
         options?: RequestOptions,
     ): Promise<Response<Checkout>> {
+        if (isBillingFixExperimentEnabled) {
+            if (!hasBillingAddress) {
+                return this._requestSender.createAddress(checkoutId, address, options);
+            }
+
+            return this._requestSender.updateAddress(checkoutId, address, options);
+        }
+
         if (!address.id) {
             return this._requestSender.createAddress(checkoutId, address, options);
         }
