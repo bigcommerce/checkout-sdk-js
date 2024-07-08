@@ -1,5 +1,6 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Response } from '@bigcommerce/request-sender';
+import { isEmpty } from 'lodash';
 import { concat, defer, empty, merge, Observable, Observer, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -63,6 +64,8 @@ export default class BillingAddressActionCreator {
                 };
             }
 
+            const hasBillingAddress = !isEmpty(billingAddress);
+
             return merge(
                 concat(
                     of(createAction(BillingAddressActionType.ContinueAsGuestRequested)),
@@ -71,7 +74,7 @@ export default class BillingAddressActionCreator {
                             checkout.id,
                             billingAddressRequestBody,
                             isBillingFixExperimentEnabled,
-                            undefined,
+                            hasBillingAddress,
                             options,
                         );
 
@@ -111,7 +114,7 @@ export default class BillingAddressActionCreator {
 
                 const billingAddress = state.billingAddress.getBillingAddress();
 
-                const billingAddressId = billingAddress ? billingAddress.id : undefined;
+                const hasBillingAddress = !isEmpty(billingAddress);
 
                 // If email is not present in the address provided by the client, then
                 // fall back to the stored email as it could have been set separately
@@ -134,7 +137,7 @@ export default class BillingAddressActionCreator {
                     checkout.id,
                     billingAddressRequestBody,
                     isBillingFixExperimentEnabled,
-                    billingAddressId,
+                    hasBillingAddress,
                     options,
                 )
                     .then(({ body }) => {
@@ -182,11 +185,11 @@ export default class BillingAddressActionCreator {
         checkoutId: string,
         address: Partial<BillingAddressUpdateRequestBody>,
         isBillingFixExperimentEnabled: boolean,
-        billingAddressId?: string,
+        hasBillingAddress: boolean,
         options?: RequestOptions,
     ): Promise<Response<Checkout>> {
         if (isBillingFixExperimentEnabled) {
-            if (!billingAddressId) {
+            if (!hasBillingAddress) {
                 return this._requestSender.createAddress(checkoutId, address, options);
             }
 
