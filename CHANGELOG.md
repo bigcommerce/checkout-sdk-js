@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.630.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.630.0...v1.630.1) (2024-07-09)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-4379 fixed the issue with Braintree Fastlane initialization process ([#2568](https://github.com/bigcommerce/checkout-sdk-js/issues/2568)) ([e79a549](https://github.com/bigcommerce/checkout-sdk-js/commit/e79a549e154591ef3dfd106a24a17c14cca5ba01))
+
 ## [1.630.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.629.1...v1.630.0) (2024-07-09)
 
 
