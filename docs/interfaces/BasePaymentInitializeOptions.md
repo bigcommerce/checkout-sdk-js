@@ -31,7 +31,6 @@ current checkout flow.
 - [paypalexpress](BasePaymentInitializeOptions.md#paypalexpress)
 - [square](BasePaymentInitializeOptions.md#square)
 - [timeout](BasePaymentInitializeOptions.md#timeout)
-- [worldpay](BasePaymentInitializeOptions.md#worldpay)
 
 ## Properties
 
@@ -195,12 +194,3 @@ cancelled.
 #### Inherited from
 
 [PaymentRequestOptions](PaymentRequestOptions.md).[timeout](PaymentRequestOptions.md#timeout)
-
-___
-
-### worldpay
-
-• `Optional` **worldpay**: [`WorldpayAccessPaymentInitializeOptions`](WorldpayAccessPaymentInitializeOptions.md)
-
-The options that are required to initialize the Worldpay payment method.
-They can be omitted unless you need to support Worldpay.

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.630.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.630.1...v1.630.2) (2024-07-09)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2349 moved Worldpay Access payment strategy to separate package ([#2565](https://github.com/bigcommerce/checkout-sdk-js/issues/2565)) ([efa8e1e](https://github.com/bigcommerce/checkout-sdk-js/commit/efa8e1ea0a7e9ce5a869ae1e27240ab5e54b26a4))
+
 ### [1.630.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.630.0...v1.630.1) (2024-07-09)
 
 
