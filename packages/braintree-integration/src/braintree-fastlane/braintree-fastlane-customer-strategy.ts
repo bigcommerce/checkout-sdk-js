@@ -47,7 +47,7 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
                 );
 
                 await this.braintreeFastlaneUtils.initializeBraintreeFastlaneOrThrow(
-                    methodId,
+                    paymentMethod.id,
                     fastlaneStyles,
                 );
             }
