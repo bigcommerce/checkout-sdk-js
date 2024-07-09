@@ -1,0 +1,22 @@
+{
+    "root": "packages/worldpayaccess-integration",
+    "sourceRoot": "packages/worldpayaccess-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/worldpayaccess-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/worldpayaccess-integration"],
+            "options": {
+                "jestConfig": "packages/worldpayaccess-integration/jest.config.js"
+            }
+        }
+    },
+    "tags": ["scope:integration"]
+}

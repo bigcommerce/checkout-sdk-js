@@ -124,6 +124,9 @@
             "@bigcommerce/checkout-sdk/ui": ["packages/ui/src/index.ts"],
             "@bigcommerce/checkout-sdk/utility": ["packages/utility/src/index.ts"],
             "@bigcommerce/checkout-sdk/workspace-tools": ["packages/workspace-tools/src/index.ts"],
+            "@bigcommerce/checkout-sdk/worldpayaccess-integration": [
+                "packages/worldpayaccess-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/zip-integration": ["packages/zip-integration/src/index.ts"]
         }
     }

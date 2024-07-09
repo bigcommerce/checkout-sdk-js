@@ -1,52 +1,35 @@
-import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { Action, createAction, createErrorAction } from '@bigcommerce/data-store';
-import { createRequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader } from '@bigcommerce/script-loader';
+import { Action, createAction } from '@bigcommerce/data-store';
 import { merge, omit } from 'lodash';
 import { Observable, of } from 'rxjs';
 
 import {
-    CheckoutRequestSender,
-    CheckoutStore,
-    CheckoutValidator,
-    createCheckoutStore,
-    InternalCheckoutSelectors,
-} from '../../../checkout';
-import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { NotInitializedError, RequestError } from '../../../common/error/errors';
-import { getResponse } from '../../../common/http-request/responses.mock';
-import { HostedFieldType, HostedForm, HostedFormFactory } from '../../../hosted-form';
-import {
+    HostedFieldType,
+    HostedForm,
     LoadOrderSucceededAction,
-    OrderActionCreator,
+    NotInitializedError,
     OrderActionType,
-    OrderRequestSender,
-} from '../../../order';
-import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { getOrder } from '../../../order/orders.mock';
-import { createSpamProtection, PaymentHumanVerificationHandler } from '../../../spam-protection';
-import { PaymentArgumentInvalidError } from '../../errors';
-import PaymentActionCreator from '../../payment-action-creator';
-import { PaymentActionType } from '../../payment-actions';
-import { getPaymentMethod } from '../../payment-methods.mock';
-import { PaymentInitializeOptions } from '../../payment-request-options';
-import PaymentRequestSender from '../../payment-request-sender';
-import PaymentRequestTransformer from '../../payment-request-transformer';
-import { getErrorPaymentResponseBody } from '../../payments.mock';
+    OrderFinalizationNotRequiredError,
+    PaymentArgumentInvalidError,
+    PaymentInitializeOptions,
+    PaymentIntegrationService,
+    RequestError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    getErrorPaymentResponseBody,
+    getOrder,
+    getOrderRequestBody,
+    getPaymentMethod,
+    getResponse,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import WorldpayaccessPaymetStrategy from './worldpayaccess-payment-strategy';
+import WorldpayAccessPaymetStrategy from './worldpayaccess-payment-strategy';
 
-describe('WorldpayaccessPaymetStrategy', () => {
-    let formFactory: HostedFormFactory;
-    let orderActionCreator: OrderActionCreator;
-    let paymentActionCreator: PaymentActionCreator;
-    let store: CheckoutStore;
-    let strategy: WorldpayaccessPaymetStrategy;
+describe('WorldpayAccessPaymetStrategy', () => {
+    let paymentIntegrationService: PaymentIntegrationService;
+    let strategy: WorldpayAccessPaymetStrategy;
     let submitOrderAction: Observable<Action>;
-    let submitPaymentAction: Observable<Action>;
     let initializeOptions: PaymentInitializeOptions;
-    let state: InternalCheckoutSelectors;
 
     const payload = getOrderRequestBody();
     const PAYMENT_CANNOT_CONTINUE = 'Payment cannot continue';
@@ -70,48 +53,28 @@ describe('WorldpayaccessPaymetStrategy', () => {
     );
 
     beforeEach(() => {
-        store = createCheckoutStore(getCheckoutStoreState());
-        state = store.getState();
-
-        paymentActionCreator = new PaymentActionCreator(
-            new PaymentRequestSender(createPaymentClient()),
-            orderActionCreator,
-            new PaymentRequestTransformer(),
-            new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
-        );
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
-        orderActionCreator = new OrderActionCreator(
-            new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
-        );
+        strategy = new WorldpayAccessPaymetStrategy(paymentIntegrationService);
 
-        formFactory = new HostedFormFactory(store);
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        strategy = new WorldpayaccessPaymetStrategy(
-            store,
-            orderActionCreator,
-            paymentActionCreator,
-            formFactory,
-        );
-
-        jest.spyOn(store, 'dispatch');
-
-        jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
-
-        jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
-
-        jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             merge(getPaymentMethod(), { config: { isHostedFormEnabled: true } }),
         );
 
-        HTMLFormElement.prototype.submit = () =>
+        HTMLFormElement.prototype.submit = () => {
             window.parent.postMessage(
                 '{"MessageType":"profile.completed","SessionId":"token","Status":true}',
                 '*',
             );
+        };
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     it('throws error when initialize with worldpay data is required', async () => {
@@ -131,24 +94,16 @@ describe('WorldpayaccessPaymetStrategy', () => {
     it('submits order without payment data', async () => {
         await strategy.execute(payload);
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
+        expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
             omit(payload, 'payment'),
             undefined,
         );
-        expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
     it('submits payment separately', async () => {
         await strategy.execute(payload);
 
-        expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(payload.payment);
-        expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
-    });
-
-    it('returns checkout state', async () => {
-        const output = await strategy.execute(payload);
-
-        expect(output).toEqual(store.getState());
+        expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(payload.payment);
     });
 
     it('throws error to inform that order finalization is not required', async () => {
@@ -188,31 +143,24 @@ describe('WorldpayaccessPaymetStrategy', () => {
 
             loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
 
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
-
-            jest.spyOn(formFactory, 'create').mockReturnValue(form);
-        });
-
-        it('throws error when HostedForm.submit is missing', async () => {
-            const form: Pick<HostedForm, 'attach' | 'validate'> = {
-                attach: jest.fn(() => Promise.resolve()),
-                validate: jest.fn(() => Promise.resolve()),
-            };
-
-            jest.spyOn(formFactory, 'create').mockReturnValue(form);
-
-            await strategy.initialize(initializeOptions);
-
-            await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
+            jest.spyOn(paymentIntegrationService, 'loadCurrentOrder').mockReturnValue(
+                loadOrderAction,
+            );
+            jest.spyOn(paymentIntegrationService, 'createHostedForm').mockReturnValue(form);
         });
 
         it('creates hosted form', async () => {
             await strategy.initialize(initializeOptions);
 
-            expect(formFactory.create).toHaveBeenCalledWith(
+            expect(paymentIntegrationService.createHostedForm).toHaveBeenCalledWith(
                 'https://bigpay.integration.zone',
-                // tslint:disable-next-line:no-non-null-assertion
-                initializeOptions.creditCard!.form,
+                {
+                    fields: {
+                        [HostedFieldType.CardExpiry]: { containerId: 'card-expiry' },
+                        [HostedFieldType.CardName]: { containerId: 'card-name' },
+                        [HostedFieldType.CardNumber]: { containerId: 'card-number' },
+                    },
+                },
             );
         });
 
@@ -247,28 +195,11 @@ describe('WorldpayaccessPaymetStrategy', () => {
             }
         });
 
-        it('loads current order after payment submission', async () => {
-            await strategy.initialize(initializeOptions);
-            await strategy.execute(payload);
-
-            expect(store.dispatch).toHaveBeenCalledWith(loadOrderAction);
-        });
-
         it('submit with collection data required hosted', async () => {
-            jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
-            );
-
             await strategy.initialize(initializeOptions);
             await strategy.execute(payload);
 
-            expect(orderActionCreator.loadCurrentOrder).toHaveBeenCalled();
-            expect(form.submit).toHaveBeenCalledTimes(2);
+            expect(form.submit).toHaveBeenCalledTimes(1);
         });
 
         describe('when hosted fields are not present for rendering', () => {
@@ -291,15 +222,17 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 };
                 loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
 
-                jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
-
-                jest.spyOn(formFactory, 'create').mockReturnValue(form);
+                jest.spyOn(paymentIntegrationService, 'loadCurrentOrder').mockReturnValue(
+                    loadOrderAction,
+                );
+                jest.spyOn(paymentIntegrationService, 'createHostedForm').mockReturnValue(form);
             });
 
             it('does not create hosted form', async () => {
                 await strategy.initialize(initializeOptions);
+                jest.clearAllMocks();
 
-                expect(formFactory.create).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.createHostedForm).not.toHaveBeenCalled();
             });
 
             it('does not submit with hosted form', async () => {
@@ -337,7 +270,10 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 },
             };
 
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(
                 merge(getPaymentMethod(), { config: { isHostedFormEnabled: false } }),
             );
         });
@@ -350,27 +286,19 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 }),
             );
 
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(
-                    of(
-                        createErrorAction(
-                            PaymentActionType.SubmitPaymentFailed,
-                            errorResponseAdditionalAction,
-                        ),
-                    ),
-                )
-                .mockReturnValueOnce(
-                    of(
-                        createErrorAction(
-                            PaymentActionType.SubmitPaymentFailed,
-                            threeDSecureRequiredErrorResponse,
-                        ),
-                    ),
-                );
+            jest.spyOn(paymentIntegrationService, 'submitPayment')
+                .mockImplementationOnce(() => {
+                    throw errorResponseAdditionalAction;
+                })
+                .mockImplementationOnce(() => {
+                    throw threeDSecureRequiredErrorResponse;
+                });
 
             await strategy.initialize(initializeOptions);
 
-            await expect(strategy.execute(payload)).rejects.toThrow(RequestError);
+            const promise = strategy.execute(payload);
+
+            await expect(promise).rejects.toThrow(RequestError);
         });
 
         it('throws error when initializeOptions is missing', async () => {
@@ -386,23 +314,9 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 }),
             );
 
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(
-                    of(
-                        createErrorAction(
-                            PaymentActionType.SubmitPaymentFailed,
-                            errorResponseAdditionalAction,
-                        ),
-                    ),
-                )
-                .mockReturnValueOnce(
-                    of(
-                        createErrorAction(
-                            PaymentActionType.SubmitPaymentFailed,
-                            threeDSecureRequiredErrorResponse,
-                        ),
-                    ),
-                );
+            jest.spyOn(paymentIntegrationService, 'submitPayment')
+                .mockImplementationOnce(() => Promise.reject(errorResponseAdditionalAction))
+                .mockImplementationOnce(() => Promise.reject(threeDSecureRequiredErrorResponse));
 
             await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
         });
@@ -418,23 +332,9 @@ describe('WorldpayaccessPaymetStrategy', () => {
                     onLoad,
                 },
             };
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(
-                    of(
-                        createErrorAction(
-                            PaymentActionType.SubmitPaymentFailed,
-                            errorResponseAdditionalAction,
-                        ),
-                    ),
-                )
-                .mockReturnValueOnce(
-                    of(
-                        createErrorAction(
-                            PaymentActionType.SubmitPaymentFailed,
-                            threeDSecureRequiredErrorResponse,
-                        ),
-                    ),
-                );
+            jest.spyOn(paymentIntegrationService, 'submitPayment')
+                .mockImplementationOnce(() => Promise.reject(errorResponseAdditionalAction))
+                .mockImplementationOnce(() => Promise.reject(threeDSecureRequiredErrorResponse));
 
             const form = document.createElement('form');
 
@@ -454,6 +354,7 @@ describe('WorldpayaccessPaymetStrategy', () => {
 
             merchant.name = 'MD';
             merchant.type = 'hidden';
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             merchant.value = `merchantSessionId=${threeDSecureRequiredErrorResponse.body.three_ds_result.merchant_data}`;
             form.appendChild(merchant);
 
@@ -486,23 +387,9 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 },
             };
 
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(
-                    of(
-                        createErrorAction(
-                            PaymentActionType.SubmitPaymentFailed,
-                            errorResponseAdditionalAction,
-                        ),
-                    ),
-                )
-                .mockReturnValueOnce(
-                    of(
-                        createErrorAction(
-                            PaymentActionType.SubmitPaymentFailed,
-                            threeDSecureRequiredErrorResponse,
-                        ),
-                    ),
-                );
+            jest.spyOn(paymentIntegrationService, 'submitPayment')
+                .mockImplementationOnce(() => Promise.reject(errorResponseAdditionalAction))
+                .mockImplementationOnce(() => Promise.reject(threeDSecureRequiredErrorResponse));
 
             await strategy.initialize(initializeOptions);
 
@@ -521,23 +408,9 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 },
             };
 
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(
-                    of(
-                        createErrorAction(
-                            PaymentActionType.SubmitPaymentFailed,
-                            errorResponseAdditionalAction,
-                        ),
-                    ),
-                )
-                .mockReturnValueOnce(
-                    of(
-                        createErrorAction(
-                            PaymentActionType.SubmitPaymentFailed,
-                            threeDSecureRequiredErrorResponse,
-                        ),
-                    ),
-                );
+            jest.spyOn(paymentIntegrationService, 'submitPayment')
+                .mockImplementationOnce(() => Promise.reject(errorResponseAdditionalAction))
+                .mockImplementationOnce(() => Promise.reject(threeDSecureRequiredErrorResponse));
 
             await strategy.initialize(initializeOptions);
 
@@ -554,25 +427,23 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 },
             };
 
-            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(
                 merge(getPaymentMethod(), { config: { isHostedFormEnabled: false } }),
             );
         });
 
         it('submit with collection data required', async () => {
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(() =>
+                Promise.reject(errorResponseAdditionalAction),
             );
 
             await strategy.initialize(initializeOptions);
             await strategy.execute(payload);
 
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
                 expect.objectContaining({
                     paymentData: expect.objectContaining({
                         threeDSecure: expect.objectContaining({ token: 'token' }),
@@ -585,13 +456,8 @@ describe('WorldpayaccessPaymetStrategy', () => {
             HTMLFormElement.prototype.submit = () =>
                 window.parent.postMessage('invalid string', '*');
 
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(() =>
+                Promise.reject(errorResponseAdditionalAction),
             );
 
             await strategy.initialize(initializeOptions);
@@ -603,13 +469,8 @@ describe('WorldpayaccessPaymetStrategy', () => {
             HTMLFormElement.prototype.submit = () =>
                 window.parent.postMessage('{"MessageType":"profile.completed","Status":true}', '*');
 
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(() =>
+                Promise.reject(errorResponseAdditionalAction),
             );
 
             await strategy.initialize(initializeOptions);
@@ -620,13 +481,8 @@ describe('WorldpayaccessPaymetStrategy', () => {
         it("stop event execution when the event message isn't string", async () => {
             HTMLFormElement.prototype.submit = () => window.parent.postMessage({}, '*');
 
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(() =>
+                Promise.reject(errorResponseAdditionalAction),
             );
 
             await strategy.initialize(initializeOptions);
@@ -641,13 +497,8 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 return undefined;
             });
 
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(() =>
+                Promise.reject(errorResponseAdditionalAction),
             );
 
             await strategy.initialize(initializeOptions);
@@ -664,13 +515,8 @@ describe('WorldpayaccessPaymetStrategy', () => {
                 return undefined;
             });
 
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
-                of(
-                    createErrorAction(
-                        PaymentActionType.SubmitPaymentFailed,
-                        errorResponseAdditionalAction,
-                    ),
-                ),
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(() =>
+                Promise.reject(errorResponseAdditionalAction),
             );
 
             await strategy.initialize(initializeOptions);

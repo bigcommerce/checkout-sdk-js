@@ -15,7 +15,6 @@ import { MonerisPaymentInitializeOptions } from './strategies/moneris';
 import { OpyPaymentInitializeOptions } from './strategies/opy';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 import { SquarePaymentInitializeOptions } from './strategies/square';
-import { WorldpayAccessPaymentInitializeOptions } from './strategies/worldpayaccess';
 
 export { PaymentInitializeOptions } from '../generated/payment-initialize-options';
 
@@ -116,10 +115,4 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Chasepay.
      */
     chasepay?: ChasePayInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Worldpay payment method.
-     * They can be omitted unless you need to support Worldpay.
-     */
-    worldpay?: WorldpayAccessPaymentInitializeOptions;
 }
