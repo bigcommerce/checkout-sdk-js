@@ -17,7 +17,6 @@ import {
 } from './strategies/braintree';
 import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
 import { ChasepayPaymentStrategy } from './strategies/chasepay';
-import { ConvergePaymentStrategy } from './strategies/converge';
 import { DigitalRiverPaymentStrategy } from './strategies/digitalriver';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
 import { OpyPaymentStrategy } from './strategies/opy';
@@ -77,12 +76,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CHASE_PAY);
 
         expect(paymentStrategy).toBeInstanceOf(ChasepayPaymentStrategy);
-    });
-
-    it('can instantiate converge', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.CONVERGE);
-
-        expect(paymentStrategy).toBeInstanceOf(ConvergePaymentStrategy);
     });
 
     it('can instantiate bankofnewzealand', () => {

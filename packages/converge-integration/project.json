@@ -1,0 +1,22 @@
+{
+    "root": "packages/converge-integration",
+    "sourceRoot": "packages/converge-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/converge-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/converge-integration"],
+            "options": {
+                "jestConfig": "packages/converge-integration/jest.config.js"
+            }
+        }
+    },
+    "tags": ["scope:integration"]
+}
