@@ -50,6 +50,7 @@ export interface HostedCardFieldOptionsMap {
 export interface HostedCardFieldOptions {
     accessibilityLabel?: string;
     containerId: string;
+    orderId: number;
     placeholder?: string;
 }
 
