@@ -64,7 +64,6 @@ import {
 } from './strategies/cardinal';
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mpgs';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
-import { ConvergePaymentStrategy } from './strategies/converge';
 import { DigitalRiverPaymentStrategy, DigitalRiverScriptLoader } from './strategies/digitalriver';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { MonerisPaymentStrategy } from './strategies/moneris';
@@ -232,18 +231,6 @@ export default function createPaymentStrategyRegistry(
                 paymentMethodActionCreator,
                 new CBAMPGSScriptLoader(scriptLoader),
                 locale,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.CONVERGE,
-        () =>
-            new ConvergePaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                hostedFormFactory,
-                formPoster,
             ),
     );
 
