@@ -174,13 +174,22 @@ describe('SquarePaymentStrategy', () => {
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
         jest.spyOn(store, 'dispatch');
         jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(storeConfig);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(scriptLoader, 'load').mockReturnValue(formFactory);
 
         (scriptLoader.load as jest.Mock).mockClear();
@@ -410,6 +419,9 @@ describe('SquarePaymentStrategy', () => {
 
                     await strategy.execute(payloadVaulted, initOptions);
                     jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(
+                        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
                         getSquarePaymentInitializeOptions(),
                     );
 
@@ -483,6 +495,9 @@ describe('SquarePaymentStrategy', () => {
             });
 
             it('rejects the promise', () => {
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 formFactory.mockImplementationOnce(() => undefined);
 
                 return expect(strategy.execute(payload)).rejects.toBeInstanceOf(

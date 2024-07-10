@@ -39,12 +39,18 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
 
         cardinalClient = {
             configure: jest.fn(() => Promise.resolve()),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             getThreeDSecureData: jest.fn(() => Promise.resolve()),
             load: jest.fn(() => Promise.resolve()),
             runBinProcess: jest.fn(() => Promise.resolve()),
         };
 
         paymentActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             submitPayment: jest.fn(() => of()),
         };
 
@@ -162,6 +168,9 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
                         new RequestError(threeDSecureRequired),
                     );
                     jest.spyOn(paymentActionCreator, 'submitPayment').mockRejectedValueOnce(
+                        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
                         new RequestError(threeDSecureRequired),
                     );
                 });

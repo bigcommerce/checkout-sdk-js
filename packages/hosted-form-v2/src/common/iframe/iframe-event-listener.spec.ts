@@ -29,10 +29,16 @@ describe('IframeEventListener', () => {
         handleComplete = jest.fn();
 
         jest.spyOn(window, 'addEventListener').mockImplementation((type, listener) => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             return eventEmitter.addListener(type, listener);
         });
 
         jest.spyOn(window, 'removeEventListener').mockImplementation((type, listener) => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             return eventEmitter.removeListener(type, listener);
         });
 

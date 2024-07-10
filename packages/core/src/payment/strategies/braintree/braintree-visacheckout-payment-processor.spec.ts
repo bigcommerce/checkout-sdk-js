@@ -104,6 +104,9 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
         beforeEach(() => {
             visaCheckoutMock = getVisaCheckoutMock();
             braintreeSDKCreator.getVisaCheckout = jest.fn(() => Promise.resolve(visaCheckoutMock));
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             braintreeSDKCreator.getDataCollector = jest.fn(() =>
                 Promise.resolve({
                     deviceData: 'my_device_session_id',
@@ -114,6 +117,9 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
             paymentInformation = getPaymentSuccessPayload();
             requestBody = getVisaCheckoutRequestBody();
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             requestSender.post = jest.fn(() => Promise.resolve());
             braintreeVisaCheckoutPaymentProcessor = new BraintreeVisaCheckoutPaymentProcessor(
                 braintreeSDKCreator,
@@ -164,6 +170,9 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
         it('uses current billing address if not provided by visa checkout', async () => {
             const { billingAddress, ...tokenizedPayload } = getTokenizedPayload();
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             visaCheckoutMock.tokenize = jest.fn(() => Promise.resolve(tokenizedPayload));
 
             await braintreeVisaCheckoutPaymentProcessor.handleSuccess(

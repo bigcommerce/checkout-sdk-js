@@ -163,6 +163,9 @@ describe('PaymentActionCreator', () => {
                 .mockReturnValue(Promise.resolve(additionalActionMock));
 
             await from(paymentActionCreator.submitPayment(getPayment())(store))
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 
@@ -183,6 +186,9 @@ describe('PaymentActionCreator', () => {
                 .mockReturnValue(Promise.resolve(additionalActionMock));
 
             await from(paymentActionCreator.submitPayment(getPayment())(store))
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 .pipe(catchError(errorHandler), toArray())
                 .toPromise();
 

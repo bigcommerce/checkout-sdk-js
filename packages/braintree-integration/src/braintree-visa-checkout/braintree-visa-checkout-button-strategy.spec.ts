@@ -171,7 +171,12 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
         });
 
         it('visa Checkout tokenization', async () => {
+            // TODO: remove rule and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             visaCheckoutSDKMock.on = jest.fn((type, callback) => {
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 return type === 'payment.success' ? callback('data') : undefined;
             });
 
@@ -195,7 +200,12 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
                 postal_code: '2008',
             });
 
+            // TODO: remove rule and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             visaCheckoutSDKMock.on = jest.fn((type, callback) => {
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 return type === 'payment.success' ? callback('data') : undefined;
             });
 

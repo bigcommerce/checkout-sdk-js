@@ -59,8 +59,17 @@ describe('OrderActionCreator', () => {
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(orderRequestSender, 'loadOrder').mockReturnValue({});
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(orderRequestSender, 'submitOrder').mockReturnValue({});
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(orderRequestSender, 'finalizeOrder').mockReturnValue({});
 
         jest.spyOn(checkoutValidator, 'validate').mockReturnValue(Promise.resolve());
@@ -241,6 +250,9 @@ describe('OrderActionCreator', () => {
             );
 
             jest.spyOn(orderRequestSender, 'submitOrder').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 Promise.resolve(submitResponse),
             );
         });

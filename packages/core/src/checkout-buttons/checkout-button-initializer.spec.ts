@@ -34,10 +34,16 @@ describe('CheckoutButtonInitializer', () => {
         jest.spyOn(store, 'subscribe');
 
         jest.spyOn(buttonActionCreator, 'initialize').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             of(createAction(CheckoutButtonActionType.InitializeButtonRequested)),
         );
 
         jest.spyOn(buttonActionCreator, 'deinitialize').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             of(createAction(CheckoutButtonActionType.DeinitializeButtonRequested)),
         );
 

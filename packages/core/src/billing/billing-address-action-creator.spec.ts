@@ -60,6 +60,9 @@ describe('BillingAddressActionCreator', () => {
         jest.spyOn(billingAddressRequestSender, 'createAddress').mockImplementation(() =>
             Promise.resolve(response),
         );
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(subscriptionsRequestSender, 'updateSubscriptions').mockImplementation(() =>
             Promise.resolve(response),
         );

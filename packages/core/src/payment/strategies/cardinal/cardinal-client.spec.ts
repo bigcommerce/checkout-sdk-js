@@ -55,10 +55,16 @@ describe('CardinalClient', () => {
         beforeEach(() => {
             sdk.on = jest.fn((type, callback) => {
                 if (type.toString() === CardinalEventType.SetupCompleted) {
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     completed = callback;
                 }
 
                 if (type.toString() === CardinalEventType.Validated) {
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     validated = callback;
                 }
             });
@@ -131,6 +137,9 @@ describe('CardinalClient', () => {
         beforeEach(async () => {
             sdk.on = jest.fn((type, callback) => {
                 if (type.toString() === CardinalEventType.SetupCompleted) {
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     setupCall = callback;
                 }
             });
@@ -182,8 +191,14 @@ describe('CardinalClient', () => {
         beforeEach(async () => {
             sdk.on = jest.fn((type, callback) => {
                 if (type.toString() === CardinalEventType.SetupCompleted) {
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     setupCall = callback;
                 } else {
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     validatedCall = callback;
                 }
             });

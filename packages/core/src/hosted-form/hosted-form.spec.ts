@@ -135,6 +135,9 @@ describe('HostedForm', () => {
             status: 'ok',
         };
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(field, 'submitForm').mockResolvedValue({ payload: { response } });
 
         jest.spyOn(payloadTransformer, 'transform').mockReturnValue(data);
@@ -152,6 +155,9 @@ describe('HostedForm', () => {
         // tslint:disable-next-line:no-non-null-assertion
         const field = fields.find((field) => field.getType() === HostedFieldType.CardNumber)!;
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(field, 'submitStoredCardForm').mockResolvedValue({});
 
         await form.submitStoredCard({
@@ -178,7 +184,13 @@ describe('HostedForm', () => {
         };
 
         jest.spyOn(field, 'submitForm')
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             .mockResolvedValueOnce({ payload: { response: errorResponse } })
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             .mockResolvedValue({ payload: { response } });
 
         jest.spyOn(payloadTransformer, 'transform').mockReturnValue(data);
@@ -208,6 +220,9 @@ describe('HostedForm', () => {
         try {
             await form.submit(payload);
         } catch {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             errorHandler();
         }
 

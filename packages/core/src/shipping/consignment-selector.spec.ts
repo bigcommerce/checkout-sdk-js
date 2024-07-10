@@ -314,6 +314,9 @@ describe('ConsignmentSelector', () => {
         it('returns empty array if all items are assigned', () => {
             jest.spyOn(cartSelector, 'getCart').mockReturnValue({
                 ...state.cart,
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 lineItems: {
                     physicalItems: [
                         {
@@ -333,6 +336,9 @@ describe('ConsignmentSelector', () => {
         it('returns empty array if there are no phyisical items', () => {
             jest.spyOn(cartSelector, 'getCart').mockReturnValue({
                 ...state.cart,
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 lineItems: { physicalItems: null },
             });
 
@@ -342,6 +348,9 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns empty array if there is no cart', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(cartSelector, 'getCart').mockReturnValue(null);
 
             selector = createConsignmentSelector(state.consignments, cartSelector);

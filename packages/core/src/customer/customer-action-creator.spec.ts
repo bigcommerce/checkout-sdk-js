@@ -69,6 +69,9 @@ describe('CustomerActionCreator', () => {
 
         customerRequestSender = new CustomerRequestSender(requestSender);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(customerRequestSender, 'createAccount').mockReturnValue(Promise.resolve({}));
         jest.spyOn(customerRequestSender, 'createAddress').mockReturnValue(
             Promise.resolve(customerResponse),

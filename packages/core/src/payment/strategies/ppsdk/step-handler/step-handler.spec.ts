@@ -35,6 +35,9 @@ describe('StepHandler', () => {
             it('passes the body to the continueHandler', async () => {
                 const continueHandlerSpy = jest
                     .spyOn(continueHandler, 'handle')
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     .mockImplementation(jest.fn);
 
                 const body = {

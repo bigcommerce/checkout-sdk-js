@@ -13,6 +13,9 @@ import ResizableIframeCreator from './resizable-iframe-creator';
 jest.mock('./embedded-checkout', () => {
     return jest.fn(() => {
         const instance: Partial<EmbeddedCheckout> = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             attach: jest.fn(() => Promise.resolve(instance)),
         };
 

@@ -48,6 +48,9 @@ describe('PPSDKStrategy', () => {
             hostedFormFactory,
         );
         submitSpy = jest.spyOn(orderActionCreator, 'submitOrder');
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(store, 'dispatch').mockResolvedValue(undefined);
     });
 
@@ -80,6 +83,9 @@ describe('PPSDKStrategy', () => {
 
                 const mockSubStrategy = { execute: jest.fn(), initialize: jest.fn() };
 
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(mockSubStrategy);
 
                 await strategy.initialize({ methodId: 'cabbagepay' });
@@ -114,6 +120,9 @@ describe('PPSDKStrategy', () => {
 
                 const mockSubStrategy = { initialize: jest.fn(), deinitialize: jest.fn() };
 
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(mockSubStrategy);
 
                 await strategy.initialize({ methodId: 'cabbagepay' });
@@ -138,6 +147,9 @@ describe('PPSDKStrategy', () => {
                         const mockSubStrategy = { execute: jest.fn(), initialize: jest.fn() };
 
                         jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(
+                            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
                             mockSubStrategy,
                         );
                         jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({
@@ -169,6 +181,9 @@ describe('PPSDKStrategy', () => {
                         const mockSubStrategy = { execute: jest.fn(), initialize: jest.fn() };
 
                         jest.spyOn(subStrategyRegistry, 'getByMethod').mockReturnValue(
+                            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
                             mockSubStrategy,
                         );
                         jest.spyOn(store.getState().order, 'getOrderMeta').mockReturnValue({
@@ -200,6 +215,9 @@ describe('PPSDKStrategy', () => {
                             token: 'some-token',
                         });
                         jest.spyOn(store.getState().order, 'getOrder').mockReturnValue({
+                            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
                             orderId: 'some-order-id',
                         });
 
@@ -232,6 +250,9 @@ describe('PPSDKStrategy', () => {
                                 token: 'some-token',
                             });
                             jest.spyOn(store.getState().order, 'getOrder').mockReturnValue({
+                                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore
                                 orderId: 'some-order-id',
                             });
                             jest.spyOn(paymentResumer, 'resume').mockRejectedValue(new Error());

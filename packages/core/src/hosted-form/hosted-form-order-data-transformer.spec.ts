@@ -13,6 +13,9 @@ describe('HostedFormOrderDataTransformer', () => {
 
         jest.spyOn(store.getState().payment, 'getPaymentToken').mockReturnValue('auth-token');
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(store.getState().instruments, 'getInstrumentsMeta').mockReturnValue({
             vaultAccessToken: 'vault-token',
         });

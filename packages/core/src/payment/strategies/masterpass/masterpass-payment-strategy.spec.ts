@@ -94,6 +94,9 @@ describe('MasterpassPaymentStrategy', () => {
         scriptLoader = new MasterpassScriptLoader(createScriptLoader());
         masterpassScript = getMasterpassScriptMock();
         jest.spyOn(scriptLoader, 'load').mockReturnValue(Promise.resolve(masterpassScript));
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(masterpassScript, 'checkout').mockReturnValue(true);
 
         // Strategy
@@ -362,9 +365,15 @@ describe('MasterpassPaymentStrategy', () => {
             };
 
             submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
 
             submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
         });
 
@@ -439,6 +448,9 @@ describe('MasterpassPaymentStrategy', () => {
 
             const submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
         });
 

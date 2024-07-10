@@ -81,6 +81,9 @@ describe('AmazonPayV2ShippingStrategy', () => {
 
         jest.spyOn(amazonPayV2PaymentProcessor, 'deinitialize').mockReturnValue(Promise.resolve());
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(amazonPayV2PaymentProcessor, 'createButton').mockReturnValue(container);
 
         jest.spyOn(amazonPayV2PaymentProcessor, 'bindButton').mockImplementation(noop);
@@ -90,6 +93,9 @@ describe('AmazonPayV2ShippingStrategy', () => {
         );
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockResolvedValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             store.getState(),
         );
 
@@ -268,6 +274,9 @@ describe('AmazonPayV2ShippingStrategy', () => {
         const options = {};
         const action = of(createAction(ConsignmentActionType.UpdateConsignmentRequested));
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(consignmentActionCreator, 'selectShippingOption').mockReturnValue(action);
 
         jest.spyOn(store, 'dispatch');
@@ -288,6 +297,9 @@ describe('AmazonPayV2ShippingStrategy', () => {
         const address = getShippingAddressWithCustomFields();
         const action = of(createAction(ConsignmentActionType.UpdateConsignmentRequested));
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(consignmentActionCreator, 'updateAddress').mockReturnValue(action);
 
         jest.spyOn(store, 'dispatch');

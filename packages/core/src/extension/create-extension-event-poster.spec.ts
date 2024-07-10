@@ -15,6 +15,9 @@ describe('createExtensionEventPoster', () => {
     it('should return an instance of IframeEventPoster if the iframe and contentWindow exist', () => {
         const iframe = { contentWindow: {} };
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(document, 'querySelector').mockReturnValue({
             querySelector: jest.fn(() => iframe),
         });

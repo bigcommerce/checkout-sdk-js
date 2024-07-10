@@ -127,8 +127,14 @@ describe('MonerisPaymentStrategy', () => {
         jest.spyOn(document, 'createElement');
         jest.spyOn(store, 'dispatch');
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
         jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow').mockReturnValue(checkoutMock);
@@ -138,6 +144,9 @@ describe('MonerisPaymentStrategy', () => {
         );
 
         jest.spyOn(storeCreditActionCreator, 'applyStoreCredit').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             applyStoreCreditAction,
         );
 
@@ -479,6 +488,9 @@ describe('MonerisPaymentStrategy', () => {
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 submit: jest.fn(() => Promise.resolve()),
                 validate: jest.fn(() => Promise.resolve()),
                 detach: jest.fn(),
@@ -491,8 +503,14 @@ describe('MonerisPaymentStrategy', () => {
                 merge(getMoneris(), { config: { isHostedFormEnabled: true } }),
             );
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(orderActionCreator, 'loadCurrentOrder').mockReturnValue(loadOrderAction);
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(formFactory, 'create').mockReturnValue(form);
         });
 

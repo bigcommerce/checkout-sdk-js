@@ -117,12 +117,24 @@ describe('DefaultPaymentIntegrationService', () => {
         };
 
         storeProjectionFactory = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             create: jest.fn(() => storeProjection),
         };
 
         checkoutActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             loadCheckout: jest.fn(async () => () => createAction('LOAD_CHECKOUT')),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             loadCurrentCheckout: jest.fn(async () => () => createAction('LOAD_CHECKOUT')),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             loadDefaultCheckout: jest.fn(async () => () => createAction('LOAD_CHECKOUT')),
         };
 
@@ -131,66 +143,123 @@ describe('DefaultPaymentIntegrationService', () => {
         };
 
         orderActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             submitOrder: jest.fn(async () => () => createAction('SUBMIT_ORDER')),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             finalizeOrder: jest.fn(async () => () => createAction('FINALIZE_ORDER')),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             loadCurrentOrder: jest.fn(async () => () => createAction('LOAD_CURRENT_ORDER')),
         };
 
         billingAddressActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             updateAddress: jest.fn(async () => () => createAction('UPDATE_BILLING_ADDRESS')),
         };
 
         consignmentActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             updateAddress: jest.fn(async () => () => createAction('UPDATE_CONSIGNMENT_ADDRESS')),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             selectShippingOption: jest.fn(async () => () => createAction('UPDATE_SHIPPING_OPTION')),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             deleteConsignment: jest.fn(async () => () => createAction('DELETE_CONSIGNMENT')),
         };
 
         paymentMethodActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             loadPaymentMethod: jest.fn(async () => () => createAction('LOAD_PAYMENT_METHOD')),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             loadPaymentMethods: jest.fn(async () => () => createAction('LOAD_PAYMENT_METHODS')),
         };
 
         paymentActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             submitPayment: jest.fn(async () => () => createAction('LOAD_PAYMENT_METHOD')),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             initializeOffsitePayment: jest.fn(
                 async () => () => createAction('INITIALIZE_OFFSITE_PAYMENT_REQUESTED'),
             ),
         };
 
         customerActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             signInCustomer: jest.fn(async () => () => createAction('SIGN_IN_CUSTOMER')),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             signOutCustomer: jest.fn(async () => () => createAction('SIGN_OUT_CUSTOMER')),
         };
 
         storeCreditActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             applyStoreCredit: jest.fn(
                 async () => () => createAction('APPLY_STORE_CREDIT_REQUESTED'),
             ),
         };
 
         spamProtectionActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             verifyCheckoutSpamProtection: jest.fn(
                 async () => () => createAction('SPAM_PROTECTION_CHECKOUT_VERIFY_REQUESTED'),
             ),
         };
 
         paymentProviderCustomerActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             updatePaymentProviderCustomer: jest.fn(
                 async () => () => createAction('UPDATE_PAYMENT_PROVIDER_CUSTOMER'),
             ),
         };
 
         shippingCountryActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             loadCountries: jest.fn(
                 async () => () => createAction('LOAD_SHIPPING_COUNTRIES_REQUESTED'),
             ),
         };
 
         remoteCheckoutActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             forgetCheckout: jest.fn(
                 async () => () => createAction('INITIALIZE_REMOTE_PAYMENT_REQUESTED'),
             ),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             initializePayment: jest.fn(
                 async () => () => createAction('INITIALIZE_REMOTE_PAYMENT_REQUESTED'),
             ),
@@ -454,6 +523,9 @@ describe('DefaultPaymentIntegrationService', () => {
             const buyNowCart = getBuyNowCart();
             const buyNowCartRequestBody = getBuyNowCartRequestBody();
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(requestSender, 'post').mockReturnValue(getResponse(buyNowCart));
             jest.spyOn(cartRequestSender, 'createBuyNowCart');
 

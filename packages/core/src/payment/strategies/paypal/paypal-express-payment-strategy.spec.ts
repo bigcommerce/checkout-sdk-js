@@ -109,6 +109,9 @@ describe('PaypalExpressPaymentStrategy', () => {
 
         jest.spyOn(orderActionCreator, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
         strategy = new PaypalExpressPaymentStrategy(

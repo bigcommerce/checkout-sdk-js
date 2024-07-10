@@ -66,6 +66,9 @@ describe('DefaultCustomerStrategy', () => {
         const options = {};
         const action = of(createAction(CustomerActionType.SignInCustomerRequested, getQuote()));
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(customerActionCreator, 'signInCustomer').mockReturnValue(action);
 
         jest.spyOn(store, 'dispatch');
@@ -82,6 +85,9 @@ describe('DefaultCustomerStrategy', () => {
         const options = {};
         const action = of(createAction(CustomerActionType.SignOutCustomerRequested, getQuote()));
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(customerActionCreator, 'signOutCustomer').mockReturnValue(action);
 
         jest.spyOn(store, 'dispatch');

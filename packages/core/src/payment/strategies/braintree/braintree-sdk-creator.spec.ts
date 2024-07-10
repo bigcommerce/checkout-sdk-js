@@ -328,7 +328,13 @@ describe('Braintree SDK Creator', () => {
             const hostedFieldsMock = getHostedFieldsMock();
             const hostedFieldsCreatorMock = getModuleCreatorMock(hostedFieldsMock);
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             braintreeScriptLoader.loadClient = jest.fn(() => Promise.resolve(clientCreatorMock));
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             braintreeScriptLoader.loadHostedFields = jest.fn(() =>
                 Promise.resolve(hostedFieldsCreatorMock),
             );
@@ -343,6 +349,9 @@ describe('Braintree SDK Creator', () => {
         it('throws if unable to create hosted fields instance', async () => {
             const error = new Error();
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             braintreeScriptLoader.loadClient = jest.fn(() => Promise.resolve(clientCreatorMock));
             braintreeScriptLoader.loadHostedFields = jest.fn(() => Promise.reject(error));
 

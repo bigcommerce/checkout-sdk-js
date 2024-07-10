@@ -29,6 +29,9 @@ describe('DefaultShippingStrategy', () => {
         const options = {};
         const action = of(createAction(ConsignmentActionType.CreateConsignmentsRequested));
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(consignmentActionCreator, 'updateAddress').mockReturnValue(action);
 
         jest.spyOn(store, 'dispatch');
@@ -46,6 +49,9 @@ describe('DefaultShippingStrategy', () => {
         const options = {};
         const action = of(createAction(ConsignmentActionType.UpdateConsignmentRequested));
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(consignmentActionCreator, 'selectShippingOption').mockReturnValue(action);
 
         jest.spyOn(store, 'dispatch');

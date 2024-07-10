@@ -121,9 +121,15 @@ describe('CBAMPGSPaymentStrategy', () => {
 
         jest.spyOn(orderActionCreator, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockResolvedValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             store.getState(),
         );
 
@@ -194,6 +200,9 @@ describe('CBAMPGSPaymentStrategy', () => {
         });
 
         it('should fail to initialize strategy if the script loader fails to load the script', () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(cbaMPGSScriptLoader, 'load').mockResolvedValue(undefined);
 
             expect(strategy.initialize({ methodId: paymentMethod.id })).rejects.toThrow(
@@ -245,6 +254,9 @@ describe('CBAMPGSPaymentStrategy', () => {
             );
 
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)),
             );
         });
@@ -252,6 +264,9 @@ describe('CBAMPGSPaymentStrategy', () => {
         it('should execute the base strategy if 3ds is disabled', async () => {
             paymentMethod.config.is3dsEnabled = false;
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
             await strategy.initialize({ methodId: paymentMethod.id });
@@ -314,6 +329,9 @@ describe('CBAMPGSPaymentStrategy', () => {
             );
 
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)),
             );
 
@@ -342,6 +360,9 @@ describe('CBAMPGSPaymentStrategy', () => {
             );
 
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)),
             );
 
@@ -458,6 +479,9 @@ describe('CBAMPGSPaymentStrategy', () => {
         it('does not finalize order if order is not created', async () => {
             const state = store.getState();
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(state.order, 'getOrder').mockReturnValue(null);
 
             await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
@@ -480,6 +504,9 @@ describe('CBAMPGSPaymentStrategy', () => {
         it('throws error if order is missing', async () => {
             const state = store.getState();
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(state.order, 'getOrder').mockReturnValue(null);
 
             await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);

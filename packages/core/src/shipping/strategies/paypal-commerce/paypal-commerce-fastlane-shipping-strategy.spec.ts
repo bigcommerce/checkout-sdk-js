@@ -128,6 +128,9 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         );
 
         jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(cart);
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(storeConfig);
         jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue(customer);
         jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(customer);
@@ -152,9 +155,15 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         jest.spyOn(consignmentActionCreator, 'selectShippingOption').mockImplementation(() =>
             jest.fn(),
         );
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(paymentMethod);
 
         jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             () => paypalFastlaneSdk,
         );
         jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalFastlane').mockImplementation(
@@ -167,16 +176,26 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         jest.spyOn(paypalCommerceFastlaneUtils, 'updateStorageSessionId').mockImplementation(() =>
             jest.fn(),
         );
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(paypalCommerceFastlaneUtils, 'lookupCustomerOrThrow').mockImplementation(() => ({
             customerContextId,
         }));
+
         jest.spyOn(
             paypalCommerceFastlaneUtils,
             'triggerAuthenticationFlowOrThrow',
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
         ).mockImplementation(() => authenticationResultMock);
         jest.spyOn(
             paypalCommerceFastlaneUtils,
             'mapPayPalFastlaneProfileToBcCustomerData',
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
         ).mockImplementation(() => ({
             authenticationState: authenticationResultMock.authenticationState,
             addresses: [bcAddressMock],
@@ -185,8 +204,14 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             instruments: [bcInstrumentMock],
         }));
         jest.spyOn(paypalCommerceFastlaneUtils, 'mapPayPalToBcAddress').mockImplementation(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             () => bcAddressMock,
         );
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(paypalCommerceFastlaneUtils, 'filterAddresses').mockImplementation(() => [
             bcAddressMock,
         ]);
@@ -194,6 +219,9 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         jest.spyOn(
             paymentProviderCustomerActionCreator,
             'updatePaymentProviderCustomer',
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
         ).mockImplementation(() => jest.fn());
     });
 
@@ -228,6 +256,9 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
 
     describe('deinitialize', () => {
         it('deinitialize shipping strategy', async () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(store, 'getState').mockReturnValue('storeState');
 
             expect(await strategy.deinitialize()).toBe('storeState');
@@ -260,6 +291,9 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
         });
 
         it('gets paypal fastlane with correct styles', async () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue({
                 clientToken: '123',
                 initializationData: {
@@ -314,6 +348,9 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             ).mockReturnValue({});
 
             jest.spyOn(paypalCommerceFastlaneUtils, 'getStorageSessionId').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 undefined,
             );
 
@@ -384,7 +421,13 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                 'getPaymentProviderCustomerOrThrow',
             ).mockReturnValue({
                 authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 addresses: [bcAddressMock],
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 instruments: [bcInstrumentMock],
             });
 
@@ -401,7 +444,13 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                 'getPaymentProviderCustomerOrThrow',
             ).mockReturnValue({
                 authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 addresses: [bcAddressMock],
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 instruments: [bcInstrumentMock],
             });
 
@@ -424,10 +473,19 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                 'getPaymentProviderCustomerOrThrow',
             ).mockReturnValue({
                 authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 addresses: [bcAddressMock],
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 instruments: [bcInstrumentMock],
             });
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
                 ...storeConfig,
                 checkoutSettings: {
@@ -461,10 +519,19 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                 'getPaymentProviderCustomerOrThrow',
             ).mockReturnValue({
                 authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 addresses: [bcAddressMock],
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 instruments: [bcInstrumentMock],
             });
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
                 ...storeConfig,
                 checkoutSettings: {
@@ -477,6 +544,9 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             });
 
             jest.spyOn(paypalFastlane.profile, 'showShippingAddressSelector').mockImplementation(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 () => ({
                     selectionChanged: true,
                     selectedAddress: authenticationResultMock.profileData.shippingAddress,

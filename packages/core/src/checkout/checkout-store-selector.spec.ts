@@ -135,6 +135,9 @@ describe('CheckoutStoreSelector', () => {
         it('returns geo-ip dummy billing address when only email is defined in billing address', () => {
             internalSelectors = createInternalCheckoutSelectors(state);
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(internalSelectors.billingAddress, 'getBillingAddress').mockReturnValue({
                 email: 'foo@bar.com',
                 id: '2',
@@ -179,6 +182,9 @@ describe('CheckoutStoreSelector', () => {
         it('returns address if address is partially defined but geo IP is not defined', () => {
             internalSelectors = createInternalCheckoutSelectors(state);
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(internalSelectors.billingAddress, 'getBillingAddress').mockReturnValue({
                 email: 'foo@bar.com',
             });

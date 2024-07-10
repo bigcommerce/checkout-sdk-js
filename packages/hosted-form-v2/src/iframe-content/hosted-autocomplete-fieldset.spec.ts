@@ -67,7 +67,13 @@ describe('HostedAutocompleteFieldset', () => {
         };
 
         jest.spyOn(inputAggregator, 'getInputs').mockReturnValue([
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             hostedExpiryInput,
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             hostedNameInput,
         ]);
 

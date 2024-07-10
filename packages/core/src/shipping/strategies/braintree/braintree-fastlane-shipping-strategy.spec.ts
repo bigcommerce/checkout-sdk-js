@@ -120,6 +120,9 @@ describe('BraintreeFastlaneShippingStrategy', () => {
         paymentMethodActionCreator = new PaymentMethodActionCreatorMock();
         paymentProviderCustomerActionCreator = new PaymentProviderCustomerActionCreatorMock();
         braintreeIntegrationServiceMock = new BraintreeIntegrationServiceMock();
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(store, 'dispatch').mockImplementation((args) => args);
         billingAddressActionCreator = new BillingAddressActionCreatorMock();
         consignmentActionCreator = new ConsignmentActionCreatorMock();
@@ -128,12 +131,18 @@ describe('BraintreeFastlaneShippingStrategy', () => {
         jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(getCart());
         jest.spyOn(store.getState().countries, 'getCountries').mockReturnValue(getCountries());
         jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             getConfig().storeConfig,
         );
         jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue({
             ...getCustomer(),
             isGuest: true,
         });
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
             clientToken: 'clientToken',
         });
@@ -142,6 +151,9 @@ describe('BraintreeFastlaneShippingStrategy', () => {
         );
         jest.spyOn(BrowserStorage.prototype, 'getItem').mockReturnValue(getCart().id);
         jest.spyOn(BrowserStorage.prototype, 'removeItem').mockImplementation(jest.fn());
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeFastlane').mockReturnValue({
             identity: {
                 lookupCustomerByEmail: () => ({ customerContextId: 'customerContextId' }),
@@ -200,6 +212,9 @@ describe('BraintreeFastlaneShippingStrategy', () => {
 
     describe('deinitialize', () => {
         it('deinitialize shilling strategy', async () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(store, 'getState').mockReturnValue('storeState');
 
             const strategy = createStrategy();
@@ -266,6 +281,9 @@ describe('BraintreeFastlaneShippingStrategy', () => {
         });
 
         it('gets braintree fastlane with correct styles', async () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue({
                 clientToken: '123',
                 initializationData: {
@@ -370,6 +388,9 @@ describe('BraintreeFastlaneShippingStrategy', () => {
         });
 
         it('skip authentication if clientToken does not exist', async () => {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
                 clientToken: '',
             });
@@ -392,6 +413,9 @@ describe('BraintreeFastlaneShippingStrategy', () => {
 
             const triggerAuthenticationFlowMock = jest.fn();
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeFastlane').mockReturnValue({
                 identity: {
                     lookupCustomerByEmail: lookupCustomerByEmailMock,
@@ -528,6 +552,9 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             paymentProviderCustomerActionCreator,
             'updatePaymentProviderCustomer',
         ).mockImplementation(updatePaymentProviderCustomerMock);
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeFastlane').mockReturnValue({
             identity: {
                 lookupCustomerByEmail: () => ({ customerContextId: 'customerContextId' }),
@@ -572,6 +599,9 @@ describe('BraintreeFastlaneShippingStrategy', () => {
                 store.getState().shippingAddress,
                 'getShippingAddressesOrThrow',
             ).mockReturnValue([getShippingAddress()]);
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue({
                 clientToken: '123',
                 initializationData: {
@@ -579,6 +609,9 @@ describe('BraintreeFastlaneShippingStrategy', () => {
                 },
             });
             jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 storeConfigWithAFeature,
             );
             jest.spyOn(
@@ -599,6 +632,9 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             });
 
             jest.spyOn(braintreeFastlane.profile, 'showShippingAddressSelector').mockImplementation(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 () => ({
                     selectionChanged: true,
                     selectedAddress: authenticationResultMock.profileData.shippingAddress,
@@ -641,6 +677,9 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             });
 
             jest.spyOn(braintreeFastlane.profile, 'showShippingAddressSelector').mockImplementation(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 () => ({
                     selectionChanged: true,
                     selectedAddress: authenticationResultMock.profileData.shippingAddress,
@@ -675,6 +714,9 @@ describe('BraintreeFastlaneShippingStrategy', () => {
                 () => braintreeFastlane,
             );
             jest.spyOn(braintreeFastlane.profile, 'showShippingAddressSelector').mockImplementation(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 () => ({
                     selectionChanged: true,
                     selectedAddress: authenticationResultMock.profileData.shippingAddress,

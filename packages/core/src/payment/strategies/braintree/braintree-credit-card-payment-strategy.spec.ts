@@ -68,11 +68,17 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         braintreePaymentProcessorMock.initialize = jest.fn();
         braintreePaymentProcessorMock.deinitialize = jest.fn(() => Promise.resolve());
         braintreePaymentProcessorMock.initializeHostedForm = jest.fn();
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         braintreePaymentProcessorMock.isInitializedHostedForm = jest.fn(() =>
             Promise.resolve(true),
         );
         braintreePaymentProcessorMock.deinitializeHostedForm = jest.fn(() => Promise.resolve());
         braintreePaymentProcessorMock.validateHostedForm = jest.fn();
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         braintreePaymentProcessorMock.tokenizeCard = jest.fn(() =>
             Promise.resolve({ nonce: 'my_tokenized_card' }),
         );
@@ -136,11 +142,20 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             loadPaymentMethodAction,
         );
 
@@ -332,6 +347,9 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             it('throws error if unable to submit payment due to missing data', async () => {
                 submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
                 braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(
@@ -612,6 +630,9 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
                 jest.spyOn(paymentActionCreator, 'submitPayment')
                     .mockReturnValueOnce(
+                        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
                         of(
                             createErrorAction(
                                 PaymentActionType.SubmitPaymentFailed,
@@ -619,6 +640,9 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                             ),
                         ),
                     )
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     .mockReturnValueOnce(submitPaymentAction);
 
                 const payload = {
@@ -633,6 +657,9 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                 jest.spyOn(
                     store.getState().instruments,
                     'getCardInstrumentOrThrow',
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                 ).mockImplementation(jest.fn(() => getTokenizeResponseBody()));
 
                 await braintreeCreditCardPaymentStrategy.initialize({

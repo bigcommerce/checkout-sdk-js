@@ -25,6 +25,9 @@ describe('RemoteCheckoutRequestSender', () => {
         const params = { referenceId: '511ed7ed-221c-418c-8286-f5102e49220b' };
         const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
 
         const output = await remoteCheckoutRequestSender.initializeBilling(
@@ -45,6 +48,9 @@ describe('RemoteCheckoutRequestSender', () => {
         const params = { referenceId: '511ed7ed-221c-418c-8286-f5102e49220b' };
         const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
 
         const output = await remoteCheckoutRequestSender.initializeShipping(
@@ -65,6 +71,9 @@ describe('RemoteCheckoutRequestSender', () => {
         const params = { referenceId: '511ed7ed-221c-418c-8286-f5102e49220b' };
         const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
 
         const output = await remoteCheckoutRequestSender.initializePayment(
@@ -84,6 +93,9 @@ describe('RemoteCheckoutRequestSender', () => {
         const response = getResponse({});
         const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
 
         const output = await remoteCheckoutRequestSender.signOut('amazon', options);
@@ -96,6 +108,9 @@ describe('RemoteCheckoutRequestSender', () => {
         const response = getResponse(getRemoteTokenResponseBody());
         const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
 
         const output = await remoteCheckoutRequestSender.generateToken(options);
@@ -108,6 +123,9 @@ describe('RemoteCheckoutRequestSender', () => {
         const response = getResponse({});
         const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(requestSender, 'post').mockReturnValue(response);
 
         const output = await remoteCheckoutRequestSender.trackAuthorizationEvent(options);
@@ -123,6 +141,9 @@ describe('RemoteCheckoutRequestSender', () => {
         const response = getResponse({});
         const options = { timeout: createTimeout(), headers: SDK_VERSION_HEADERS };
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(requestSender, 'post').mockReturnValue(response);
 
         const output = await remoteCheckoutRequestSender.forgetCheckout(options);

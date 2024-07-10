@@ -52,6 +52,9 @@ describe('CheckoutButtonStrategyActionCreator', () => {
             registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () => strategy);
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(() =>
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             from([
                 createAction(PaymentMethodActionType.LoadPaymentMethodRequested),
                 createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, {

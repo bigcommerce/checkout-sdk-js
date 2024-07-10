@@ -34,6 +34,9 @@ describe('HostedInputStoredCardHandler', () => {
 
     beforeEach(() => {
         inputAggregator = { getInputValues: jest.fn() };
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         inputValidator = { validate: jest.fn(() => []) };
         eventPoster = { post: jest.fn() };
         requestSender = { submitPaymentInstrument: jest.fn() };
@@ -67,9 +70,15 @@ describe('HostedInputStoredCardHandler', () => {
 
         jest.spyOn(inputAggregator, 'getInputValues').mockReturnValue(values);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(inputValidator, 'validate').mockReturnValue(validationResults);
 
         jest.spyOn(requestSender, 'submitPaymentInstrument').mockResolvedValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             getResponse(getPaymentResponseBody()),
         );
     });
@@ -96,6 +105,9 @@ describe('HostedInputStoredCardHandler', () => {
             },
         };
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(inputValidator, 'validate').mockResolvedValue(results);
 
         jest.spyOn(eventPoster, 'post');

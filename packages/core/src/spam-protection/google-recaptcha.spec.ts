@@ -43,6 +43,9 @@ describe('GoogleRecaptcha', () => {
         beforeEach(() => {
             googleRecaptchaMock = getGoogleRecaptchaMock();
             googleRecaptchaMock.getResponse = jest.fn(() => 'google-recaptcha-token');
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             googleRecaptchaMock.render = jest.fn((_containerId, { callback }) => callback());
 
             jest.spyOn(googleRecaptchaScriptLoader, 'load').mockResolvedValue(googleRecaptchaMock);
@@ -77,6 +80,9 @@ describe('GoogleRecaptcha', () => {
 
         beforeEach(() => {
             jest.spyOn(mutationObserverFactory, 'create').mockReturnValue({
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 disconect: jest.fn(),
                 observe: jest.fn(),
                 takeRecords: jest.fn(),
@@ -84,6 +90,9 @@ describe('GoogleRecaptcha', () => {
 
             googleRecaptchaMock = getGoogleRecaptchaMock();
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             googleRecaptchaMock.render = jest.fn((_containerId, { callback }) => callback());
 
             recaptchaChallengeContainer = new DOMParser().parseFromString(

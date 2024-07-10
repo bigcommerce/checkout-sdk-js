@@ -35,9 +35,18 @@ describe('PaymentResumer', () => {
         it('requests the payment entity from the BigPay Payments endpoint', async () => {
             const requestSenderSpy = jest
                 .spyOn(requestSender, 'get')
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 .mockResolvedValueOnce({ body: { auth_token: 'some-token' } })
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 .mockResolvedValueOnce({});
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
 
             await paymentResumer.resume({
@@ -60,9 +69,18 @@ describe('PaymentResumer', () => {
 
         it('passes the Payments endpoint response to the stepHandler', async () => {
             jest.spyOn(requestSender, 'get')
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 .mockResolvedValueOnce({ body: { auth_token: 'some-token' } })
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 .mockResolvedValueOnce({ body: 'some-api-response' });
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             const stepHandlerSpy = jest.spyOn(stepHandler, 'handle').mockResolvedValue({});
 
             await paymentResumer.resume({
@@ -76,8 +94,17 @@ describe('PaymentResumer', () => {
 
         it('returns the final value from the stepHandler', async () => {
             jest.spyOn(requestSender, 'get')
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 .mockResolvedValueOnce({ body: { auth_token: 'some-token' } })
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 .mockResolvedValueOnce({});
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(stepHandler, 'handle').mockResolvedValue({ someValue: 12345 });
 
             await expect(

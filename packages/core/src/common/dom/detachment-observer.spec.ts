@@ -20,6 +20,9 @@ describe('DetachmentObserver', () => {
         };
 
         mutationObserverFactory = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             create: jest.fn((callback) => {
                 mutationEventEmitter.on('remove', callback);
 

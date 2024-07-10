@@ -137,6 +137,9 @@ describe('DigitalRiverPaymentStrategy', () => {
             }),
         );
         paymentMethodActionCreator = {} as PaymentMethodActionCreator;
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         paymentMethodActionCreator.loadPaymentMethod = jest.fn(() => loadPaymentMethodAction);
         updateAddressAction = of(
             createAction(BillingAddressActionType.UpdateBillingAddressRequested),
@@ -146,11 +149,20 @@ describe('DigitalRiverPaymentStrategy', () => {
 
         jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow').mockReturnValue(checkoutMock);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(submitPaymentAction);
 
         jest.spyOn(storeCreditActionCreator, 'applyStoreCredit').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             applyStoreCreditAction,
         );
 
@@ -159,6 +171,9 @@ describe('DigitalRiverPaymentStrategy', () => {
         );
 
         jest.spyOn(billingAddressActionCreator, 'updateAddress').mockReturnValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             updateAddressAction,
         );
 
@@ -290,6 +305,9 @@ describe('DigitalRiverPaymentStrategy', () => {
 
         it('loads DigitalRiver when widget was updated', async () => {
             jest.spyOn(store.getState().paymentStrategies, 'isInitialized').mockReturnValue(true);
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(document, 'getElementById').mockReturnValue('mock');
             jest.spyOn(document, 'getElementById').mockReturnValue(container);
 
@@ -402,6 +420,9 @@ describe('DigitalRiverPaymentStrategy', () => {
         it('calls onSuccess callback from DigitalRiver', async () => {
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
                 (configuration) => {
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     onSuccessCallback = configuration.onSuccess;
 
                     return digitalRiverComponent;
@@ -423,6 +444,9 @@ describe('DigitalRiverPaymentStrategy', () => {
         it('calls onReady callback from DigitalRiver', async () => {
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
                 ({ onReady }) => {
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     onReady({
                         paymentMethodTypes: ['creditCard', 'paypal'],
                     });
@@ -439,6 +463,9 @@ describe('DigitalRiverPaymentStrategy', () => {
         it('calls onError callback from DigitalRiver', async () => {
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
                 ({ onError }) => {
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     onErrorCallback = onError;
 
                     return digitalRiverComponent;
@@ -461,6 +488,9 @@ describe('DigitalRiverPaymentStrategy', () => {
 
         it('throws an error when load response is empty or not provided', () => {
             jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 Promise.resolve(undefined),
             );
 
@@ -517,6 +547,9 @@ describe('DigitalRiverPaymentStrategy', () => {
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
                 ({ onSuccess }) => {
                     try {
+                        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
                         onSuccessCallback = onSuccess;
                     } catch (error) {
                         expect(error).toEqual(expectedError);
@@ -549,6 +582,9 @@ describe('DigitalRiverPaymentStrategy', () => {
                 digitalRiverComponent,
             );
             submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(submitOrderAction);
             options = getInitializeOptionsMock();
             payload = merge({}, getOrderRequestBody(), {
@@ -568,6 +604,9 @@ describe('DigitalRiverPaymentStrategy', () => {
         it('creates the order and submit payment with credit card', async () => {
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
                 (configuration) => {
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     onSuccessCallback = configuration.onSuccess;
 
                     return digitalRiverComponent;
@@ -636,6 +675,9 @@ describe('DigitalRiverPaymentStrategy', () => {
 
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
                 (configuration) => {
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     onSuccessCallback = configuration.onSuccess;
 
                     return digitalRiverComponent;
@@ -686,6 +728,9 @@ describe('DigitalRiverPaymentStrategy', () => {
         it('executes the strategy successfully and applies the store credit', async () => {
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
                 ({ onSuccess }) => {
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     onSuccessCallback = onSuccess;
 
                     return digitalRiverComponent;
@@ -748,6 +793,9 @@ describe('DigitalRiverPaymentStrategy', () => {
         describe('using vaulted cards', () => {
             it('calls authenticateSource method when paying with vaulted instrument and 3DS is required', async () => {
                 jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     of(
                         createErrorAction(
                             PaymentActionType.SubmitPaymentFailed,
@@ -756,9 +804,15 @@ describe('DigitalRiverPaymentStrategy', () => {
                     ),
                 );
                 jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     submitPaymentAction,
                 );
                 jest.spyOn(digitalRiverLoadResponse, 'authenticateSource').mockReturnValue(
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     Promise.resolve({ status: 'complete' }),
                 );
 
@@ -771,6 +825,9 @@ describe('DigitalRiverPaymentStrategy', () => {
 
             it('calls authenticateSource method, authentication fails and execute method fails', async () => {
                 jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     of(
                         createErrorAction(
                             PaymentActionType.SubmitPaymentFailed,
@@ -812,6 +869,9 @@ describe('DigitalRiverPaymentStrategy', () => {
                 };
 
                 jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValueOnce(
+                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     submitPaymentAction,
                 );
 
@@ -850,6 +910,9 @@ describe('DigitalRiverPaymentStrategy', () => {
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(
                 digitalRiverComponent,
             );
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(document, 'getElementById').mockReturnValue('');
             options = getInitializeOptionsMock();
         });

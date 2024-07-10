@@ -56,7 +56,13 @@ export function getVisaCheckoutMock(): BraintreeVisaCheckout {
 
 export function getPaypalCheckoutMock(): BraintreePaypalCheckout {
     return {
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         loadPayPalSDK: jest.fn((_config, callback) => callback()),
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         createPayment: jest.fn(() => Promise.resolve()),
         teardown: jest.fn(),
         tokenizePayment: jest.fn(() => Promise.resolve(getTokenizePayload())),
@@ -68,9 +74,18 @@ export function getPayPalCheckoutCreatorMock(
     shouldThrowError: boolean,
 ): BraintreePaypalCheckoutCreator {
     return {
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         create: shouldThrowError
-            ? jest.fn((_config, callback) => callback(new Error('test'), undefined))
-            : jest.fn((_config, callback) => callback(undefined, braintreePaypalCheckoutMock)),
+            ? // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              jest.fn((_config, callback) => callback(new Error('test'), undefined))
+            : // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              jest.fn((_config, callback) => callback(undefined, braintreePaypalCheckoutMock)),
     };
 }
 
@@ -86,6 +101,9 @@ export function getHostedFieldsMock(): BraintreeHostedFields {
     return {
         getState: jest.fn(),
         teardown: jest.fn(() => Promise.resolve()),
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         tokenize: jest.fn(() => Promise.resolve(getTokenizePayload())),
         on: jest.fn(),
     };
@@ -95,6 +113,9 @@ export function getModuleCreatorMock<T>(
     module: BraintreeModule | BraintreeClient,
 ): BraintreeModuleCreator<T> {
     return {
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         create: jest.fn(() => Promise.resolve(module)),
     };
 }
@@ -103,6 +124,9 @@ export function getModuleCreatorNewMock<T>(
     module: BraintreeDataCollector,
 ): BraintreeModuleCreator<T> {
     return {
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         create: jest.fn(() => Promise.resolve({ ...module })),
     };
 }

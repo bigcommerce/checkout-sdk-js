@@ -30,6 +30,9 @@ describe('StoredCardHostedFormService', () => {
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 submit: jest.fn(() => Promise.resolve()),
                 validate: jest.fn(() => Promise.resolve()),
                 submitStoredCard: jest.fn(() => Promise.resolve()),
@@ -51,6 +54,9 @@ describe('StoredCardHostedFormService', () => {
                 },
             };
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(formFactory, 'create').mockReturnValue(form);
         });
 
@@ -113,6 +119,9 @@ describe('StoredCardHostedFormService', () => {
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 submit: jest.fn(() => Promise.resolve()),
                 validate: jest.fn(() => Promise.resolve()),
                 submitStoredCard: jest.fn(() => Promise.resolve()),
@@ -121,6 +130,9 @@ describe('StoredCardHostedFormService', () => {
                 fields: {},
             };
 
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             jest.spyOn(formFactory, 'create').mockReturnValue(form);
         });
 

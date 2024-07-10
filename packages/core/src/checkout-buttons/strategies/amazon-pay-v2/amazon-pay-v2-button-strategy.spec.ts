@@ -64,6 +64,9 @@ describe('AmazonPayV2ButtonStrategy', () => {
         );
 
         jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout').mockResolvedValue(
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             store.getState(),
         );
 
@@ -71,13 +74,22 @@ describe('AmazonPayV2ButtonStrategy', () => {
 
         jest.spyOn(paymentProcessor, 'initialize').mockResolvedValue(undefined);
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(paymentProcessor, 'renderAmazonPayButton').mockResolvedValue('foo');
 
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         jest.spyOn(amazonPayV2RequestSender, 'createCheckoutConfig').mockResolvedValue({
             body: getCheckoutRequestConfig(),
         });
 
         jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             body: buyNowCartMock,
         });
 
