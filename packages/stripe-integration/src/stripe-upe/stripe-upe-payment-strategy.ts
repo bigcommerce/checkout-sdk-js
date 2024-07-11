@@ -117,7 +117,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         stripeupe.onError?.(error);
                     } else if (!this._isMounted) {
                         await this._stripeElements?.fetchUpdates();
-                        this._mountElement(payment, stripeupe.containerId);
+                        this._mountElement(payment, stripeupe?.containerId);
                     }
                 }
             },
@@ -377,15 +377,24 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             !!checkoutSettings.features['PI-1679.trigger_update_stripe_payment_element'] &&
             typeof initStripeElementUpdateTrigger === 'function';
 
+        const { paymentIntent } = await this._stripeUPEClient.retrievePaymentIntent(
+            paymentMethod.clientToken,
+        );
+
+        console.log('*** paymentIntent', paymentIntent);
+
         let appearance: StripeUPEAppearanceOptions | undefined;
 
         if (style) {
             const styles = style;
 
+            console.log(styles.fieldBackground);
+
             appearance = {
                 variables: {
                     colorPrimary: styles.fieldInnerShadow,
-                    colorBackground: styles.fieldBackground,
+                    // colorBackground: styles.fieldBackground,
+                    colorBackground: '#fcfcfc',
                     colorText: styles.labelText,
                     colorDanger: styles.fieldErrorText,
                     colorTextSecondary: styles.labelText,
@@ -403,12 +412,13 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         borderRadius: '0',
                         // borderLeftWidth: '0',
                         // borderRightWidth: '0',
+                        borderWidth: '0',
                         boxShadow: 'none',
                         fontSize: '15px',
                         fontWeight: '700',
                         padding: '13px 20px 13px',
                         // paddingBottom: '13px',
-                        borderBottom: '1px solid #e6e6e6',
+                        // borderBottom: '1px solid #e6e6e6',
                     },
                     '.TabLabel, .AccordionItem': {
                         fontSize: '15px',
@@ -445,12 +455,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     },
                 ],
             });
-
-            const retrivedPI = await this._stripeUPEClient.retrievePaymentIntent(
-                paymentMethod.clientToken,
-            );
-
-            console.log('*** retrivedPI', retrivedPI);
         } catch (error) {
             console.log('*** error', error);
             throw error;
@@ -484,6 +488,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     defaultCollapsed: false,
                     radios: true,
                     spacedAccordionItems: false,
+                    visibleAccordionItemsCount: 0,
                 },
             });
 
@@ -513,29 +518,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             console.log('set selected method id', this._selectedMethodId);
             toggleSelectedMethod?.('stripeupe-card');
         });
-
-        this.addDemoStyle();
     }
 
     private collapseStripeElement() {
         const stripeElement = this._stripeElements?.getElement(StripeElementType.PAYMENT);
 
         stripeElement?.collapse();
-    }
-
-    private addDemoStyle() {
-        const style = document.createElement('style');
-
-        style.innerHTML = `
-            .form-checklist-item:first-of-type .form-checklist-body {
-                margin: 0 !important;
-            }
-            .form-checklist-item:first-of-type .payment-widget,
-            .form-checklist-item:first-of-type .paymentMethod--hosted {
-                padding: 0 !important;
-            }
-        `;
-        document.body.appendChild(style);
     }
 
     // TODO: complexity of _processAdditionalAction method

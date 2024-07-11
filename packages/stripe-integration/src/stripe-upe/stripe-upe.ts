@@ -216,6 +216,7 @@ export interface StripeElementsCreateOptions {
     display?: { name: DisplayName };
     terms?: TermOptions;
     layout?: any;
+    paymentMethodOrder?: string[];
 }
 
 interface validationElement {

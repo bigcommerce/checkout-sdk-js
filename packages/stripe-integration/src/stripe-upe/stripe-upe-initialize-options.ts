@@ -34,6 +34,7 @@ export default interface StripeUPEPaymentInitializeOptions {
     style?: {
         [key: string]: string;
     };
+
     onError?(error?: Error): void;
 
     render(): void;
