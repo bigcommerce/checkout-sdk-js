@@ -39,3 +39,4 @@ export { default as createGooglePayCybersourceButtonStrategy } from './factories
 export { default as createGooglePayOrbitalButtonStrategy } from './factories/button/create-google-pay-orbital-button-strategy';
 export { default as createGooglePayStripeButtonStrategy } from './factories/button/create-google-pay-stripe-button-strategy';
 export { default as createGooglePayWorldpayAccessButtonStrategy } from './factories/button/create-google-pay-worldpayaccess-button-strategy';
+export { default as createGooglePayTdOnlineMartButtonStrategy } from './factories/button/create-google-pay-tdonlinemart-button-strategy';
