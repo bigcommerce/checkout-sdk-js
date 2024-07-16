@@ -30,6 +30,7 @@ export default class HostedFormService {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        await form.validate().then(() => form.submitManualOrderPayment({ data }));
+        await form.validate();
+        await form.submitManualOrderPayment({ data });
     }
 }

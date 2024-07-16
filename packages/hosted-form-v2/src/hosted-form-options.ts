@@ -10,6 +10,7 @@ import {
 
 export default interface HostedFormOptions {
     fields: HostedCardFieldOptionsMap;
+    orderId: number;
     styles?: HostedFieldStylesMap;
     onBlur?(data: HostedFieldBlurEventData): void;
     onCardTypeChange?(data: HostedFieldCardTypeChangeEventData): void;
@@ -50,7 +51,6 @@ export interface HostedCardFieldOptionsMap {
 export interface HostedCardFieldOptions {
     accessibilityLabel?: string;
     containerId: string;
-    orderId: number;
     placeholder?: string;
 }
 

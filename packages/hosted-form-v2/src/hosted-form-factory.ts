@@ -23,7 +23,7 @@ export default class HostedFormFactory {
                 new HostedField(
                     type,
                     fieldOptions.containerId,
-                    fieldOptions.orderId,
+                    options.orderId,
                     fieldOptions.placeholder || '',
                     fieldOptions.accessibilityLabel || '',
                     options.styles || {},

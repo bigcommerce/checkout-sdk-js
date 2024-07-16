@@ -12,11 +12,12 @@ describe('HostedFormFactory', () => {
     it('creates hosted form', () => {
         const result = factory.create('https://store.foobar.com', {
             fields: {
-                [HostedFieldType.CardCode]: { containerId: 'card-code', orderId: 1 },
-                [HostedFieldType.CardExpiry]: { containerId: 'card-expiry', orderId: 1 },
-                [HostedFieldType.CardName]: { containerId: 'card-name', orderId: 1 },
-                [HostedFieldType.CardNumber]: { containerId: 'card-number', orderId: 1 },
+                [HostedFieldType.CardCode]: { containerId: 'card-code' },
+                [HostedFieldType.CardExpiry]: { containerId: 'card-expiry' },
+                [HostedFieldType.CardName]: { containerId: 'card-name' },
+                [HostedFieldType.CardNumber]: { containerId: 'card-number' },
             },
+            orderId: 1,
         });
 
         expect(result).toBeInstanceOf(HostedForm);

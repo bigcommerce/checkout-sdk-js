@@ -27,7 +27,7 @@ export class ManualOrderPaymentRequestSender {
             body: {
                 instrument: {
                     type: 'card',
-                    name: instrumentFormData.cardName || '',
+                    name: instrumentFormData.cardName ?? '',
                     number: instrumentFormData.cardNumber
                         ? instrumentFormData.cardNumber.replace(/ /g, '')
                         : '',
@@ -38,7 +38,7 @@ export class ManualOrderPaymentRequestSender {
                     verification_value: instrumentFormData.cardCode ?? undefined,
                 },
                 payment_method_id: paymentMethodId,
-                form_nonce: nonce || undefined,
+                form_nonce: nonce ?? undefined,
             },
         };
 
