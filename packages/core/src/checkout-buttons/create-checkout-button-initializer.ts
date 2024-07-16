@@ -38,12 +38,17 @@ import createCheckoutButtonRegistryV2 from './create-checkout-button-registry-v2
 export default function createCheckoutButtonInitializer(
     options?: CheckoutButtonInitializerOptions,
 ): CheckoutButtonInitializer {
-    const { host, locale = 'en' } = options ?? {};
+    const {
+        host,
+        locale = 'en',
+        storefrontJwtToken,
+    } = options ?? {};
 
     const config: ConfigState = {
         meta: {
-            host: options?.host,
-            locale: options?.locale,
+            host,
+            locale,
+            storefrontJwtToken,
         },
         errors: {},
         statuses: {},
