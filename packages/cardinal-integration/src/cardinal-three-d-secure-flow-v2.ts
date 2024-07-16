@@ -7,6 +7,7 @@ import {
     isVaultedInstrument,
     OrderPaymentRequestBody,
     OrderRequestBody,
+    Payment,
     PaymentIntegrationSelectors,
     PaymentIntegrationService,
     PaymentMethod,
@@ -32,6 +33,7 @@ export default class CardinalThreeDSecureFlowV2 {
         payload: OrderRequestBody,
         options?: PaymentRequestOptions,
         hostedForm?: HostedForm,
+        paymentBody?: Payment,
     ): Promise<void> {
         const { getCardInstrument } = this._paymentIntegrationService.getState();
         const { payment = { methodId: '' } } = payload;
@@ -53,7 +55,11 @@ export default class CardinalThreeDSecureFlowV2 {
                 }
 
                 try {
-                    return await this._submitPayment(payment, { xid }, hostedForm);
+                    if (paymentBody) {
+                        await this._paymentIntegrationService.submitPayment(paymentBody);
+                    } else {
+                        return await this._submitPayment(payment, { xid }, hostedForm);
+                    }
                 } catch (err) {
                     if (
                         isRequestError(err) &&
@@ -112,12 +118,14 @@ export default class CardinalThreeDSecureFlowV2 {
         getCardInstrument: PaymentIntegrationSelectors['getCardInstrument'],
         hostedForm?: HostedForm,
     ): string {
+        console.log({ paymentData });
+
         const instrument =
             isVaultedInstrument(paymentData) && getCardInstrument(paymentData.instrumentId);
         const ccNumber = isCreditCardInstrument(paymentData) && paymentData.ccNumber;
         const hostedFormBin = hostedForm ? hostedForm.getBin() : ccNumber;
         const bin = instrument ? instrument.iin : hostedFormBin;
 
-        return bin || '';
+        return bin || '520000';
     }
 }
