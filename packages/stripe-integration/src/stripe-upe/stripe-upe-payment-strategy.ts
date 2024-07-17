@@ -489,6 +489,8 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     radios: true,
                     spacedAccordionItems: false,
                     visibleAccordionItemsCount: 0,
+                    // type: 'tabs',
+                    // defaultCollapsed: true,
                 },
             });
 
