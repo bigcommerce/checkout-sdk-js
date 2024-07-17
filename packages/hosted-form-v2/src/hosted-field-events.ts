@@ -1,22 +1,22 @@
 import HostedFieldType from './hosted-field-type';
+import HostedFormManualOrderData from './hosted-form-manual-order-data';
 import { HostedFieldStylesMap } from './hosted-form-options';
-import HostedFormOrderData from './hosted-form-order-data';
 
 export enum HostedFieldEventType {
     AttachRequested = 'HOSTED_FIELD:ATTACH_REQUESTED',
-    SubmitRequested = 'HOSTED_FIELD:SUBMITTED_REQUESTED',
+    SubmitManualOrderRequested = 'HOSTED_FIELD:SUBMIT_MANUAL_ORDER_REQUESTED',
     ValidateRequested = 'HOSTED_FIELD:VALIDATE_REQUESTED',
 }
 
 export interface HostedFieldEventMap {
     [HostedFieldEventType.AttachRequested]: HostedFieldAttachEvent;
-    [HostedFieldEventType.SubmitRequested]: HostedFieldSubmitRequestEvent;
+    [HostedFieldEventType.SubmitManualOrderRequested]: HostedFieldSubmitManualOrderRequestEvent;
     [HostedFieldEventType.ValidateRequested]: HostedFieldValidateRequestEvent;
 }
 
 export type HostedFieldEvent =
     | HostedFieldAttachEvent
-    | HostedFieldSubmitRequestEvent
+    | HostedFieldSubmitManualOrderRequestEvent
     | HostedFieldValidateRequestEvent;
 
 export interface HostedFieldAttachEvent {
@@ -31,11 +31,10 @@ export interface HostedFieldAttachEvent {
     };
 }
 
-export interface HostedFieldSubmitRequestEvent {
-    type: HostedFieldEventType.SubmitRequested;
+export interface HostedFieldSubmitManualOrderRequestEvent {
+    type: HostedFieldEventType.SubmitManualOrderRequested;
     payload: {
-        data: HostedFormOrderData;
-        fields: HostedFieldType[];
+        data: HostedFormManualOrderData;
     };
 }
 

@@ -8,7 +8,7 @@ import HostedCardNumberInput from './hosted-card-number-input';
 import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
-import HostedInputPaymentHandler from './hosted-input-payment-handler';
+import HostedInputManualOrderPaymentHandler from './hosted-input-manual-order-payment-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 
@@ -24,7 +24,7 @@ describe('HostedCardNumberInput', () => {
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
     let numberFormatter: Pick<CardNumberFormatter, 'format' | 'unformat'>;
-    let paymentHandler: Pick<HostedInputPaymentHandler, 'handle'>;
+    let manualOrderPaymentHandler: Pick<HostedInputManualOrderPaymentHandler, 'handle'>;
     let styles: HostedInputStylesMap;
 
     beforeEach(() => {
@@ -55,7 +55,7 @@ describe('HostedCardNumberInput', () => {
             ),
         };
         numberFormatter = { format: jest.fn(), unformat: (value) => value.replace(/ /g, '') };
-        paymentHandler = { handle: jest.fn() };
+        manualOrderPaymentHandler = { handle: jest.fn() };
         styles = { default: { color: 'rgb(255, 255, 255)' } };
 
         input = new HostedCardNumberInput(
@@ -70,7 +70,7 @@ describe('HostedCardNumberInput', () => {
             eventPoster as IframeEventPoster<HostedInputEvent>,
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
-            paymentHandler as HostedInputPaymentHandler,
+            manualOrderPaymentHandler as HostedInputManualOrderPaymentHandler,
             autocompleteFieldset,
             numberFormatter as CardNumberFormatter,
         );

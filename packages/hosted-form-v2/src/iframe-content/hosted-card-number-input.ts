@@ -10,7 +10,7 @@ import HostedAutocompleteFieldset from './hosted-autocomplete-fieldset';
 import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
-import HostedInputPaymentHandler from './hosted-input-payment-handler';
+import HostedInputManualOrderPaymentHandler from './hosted-input-manual-order-payment-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 
@@ -30,7 +30,7 @@ export default class HostedCardNumberInput extends HostedInput {
         eventPoster: IframeEventPoster<HostedInputEvent>,
         inputAggregator: HostedInputAggregator,
         inputValidator: HostedInputValidator,
-        paymentHandler: HostedInputPaymentHandler,
+        manualOrderPaymentHandler: HostedInputManualOrderPaymentHandler,
         private _autocompleteFieldset: HostedAutocompleteFieldset,
         private _formatter: CardNumberFormatter,
     ) {
@@ -46,7 +46,7 @@ export default class HostedCardNumberInput extends HostedInput {
             eventPoster,
             inputAggregator,
             inputValidator,
-            paymentHandler,
+            manualOrderPaymentHandler,
         );
     }
 

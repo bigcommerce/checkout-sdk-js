@@ -17,6 +17,7 @@ describe('HostedFormFactory', () => {
                 [HostedFieldType.CardName]: { containerId: 'card-name' },
                 [HostedFieldType.CardNumber]: { containerId: 'card-number' },
             },
+            orderId: 1,
         });
 
         expect(result).toBeInstanceOf(HostedForm);

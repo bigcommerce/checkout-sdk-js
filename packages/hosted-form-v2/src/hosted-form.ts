@@ -3,8 +3,14 @@ import { noop, without } from 'lodash';
 import { IframeEventListener } from './common/iframe';
 import { InvalidHostedFormConfigError } from './errors';
 import HostedField from './hosted-field';
+import HostedFormManualOrderData from './hosted-form-manual-order-data';
 import HostedFormOptions from './hosted-form-options';
-import { HostedInputEnterEvent, HostedInputEventMap, HostedInputEventType } from './iframe-content';
+import {
+    HostedInputEnterEvent,
+    HostedInputEventMap,
+    HostedInputEventType,
+    HostedInputSubmitManualOrderSuccessEvent,
+} from './iframe-content';
 
 type HostedFormEventCallbacks = Pick<
     HostedFormOptions,
@@ -85,9 +91,11 @@ export default class HostedForm implements HostedFormInterface {
         });
     }
 
-    // TODO: CHECKOUT-8275 need to add the submit method implementation when implementing submitPayment
-    // async submitManualOrderPayment(): Promise<void> {
-    // }
+    async submitManualOrderPayment(payload: {
+        data: HostedFormManualOrderData;
+    }): Promise<HostedInputSubmitManualOrderSuccessEvent | void> {
+        return this._getFirstField().submitManualOrderForm(payload.data);
+    }
 
     async validate(): Promise<void> {
         return this._getFirstField().validateForm();

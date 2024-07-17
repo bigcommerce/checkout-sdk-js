@@ -3,4 +3,5 @@ export default interface HostedInputOptions {
     nonce?: string;
     origin: string;
     parentOrigin: string;
+    paymentOrigin: string;
 }
