@@ -178,6 +178,10 @@ export default class HostedField {
     private _isSubmitManualOrderErrorEvent(
         event: any,
     ): event is HostedInputSubmitManualOrderErrorEvent {
+        if (!(event instanceof Object) || event === null || !('type' in event)) {
+            return false;
+        }
+
         return event.type === HostedInputEventType.SubmitManualOrderFailed;
     }
 }
