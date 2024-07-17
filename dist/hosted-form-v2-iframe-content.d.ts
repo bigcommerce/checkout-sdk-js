@@ -1,5 +1,4 @@
-import { PaymentErrorData } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { RequestSender } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
 
 declare interface HostedFieldAttachEvent {
@@ -16,13 +15,13 @@ declare interface HostedFieldAttachEvent {
 
 declare interface HostedFieldEventMap {
     [HostedFieldEventType.AttachRequested]: HostedFieldAttachEvent;
-    [HostedFieldEventType.SubmitRequested]: HostedFieldSubmitRequestEvent;
+    [HostedFieldEventType.SubmitManualOrderRequested]: HostedFieldSubmitManualOrderRequestEvent;
     [HostedFieldEventType.ValidateRequested]: HostedFieldValidateRequestEvent;
 }
 
 declare enum HostedFieldEventType {
     AttachRequested = "HOSTED_FIELD:ATTACH_REQUESTED",
-    SubmitRequested = "HOSTED_FIELD:SUBMITTED_REQUESTED",
+    SubmitManualOrderRequested = "HOSTED_FIELD:SUBMIT_MANUAL_ORDER_REQUESTED",
     ValidateRequested = "HOSTED_FIELD:VALIDATE_REQUESTED"
 }
 
@@ -34,11 +33,10 @@ declare interface HostedFieldStylesMap {
     focus?: HostedFieldStyles;
 }
 
-declare interface HostedFieldSubmitRequestEvent {
-    type: HostedFieldEventType.SubmitRequested;
+declare interface HostedFieldSubmitManualOrderRequestEvent {
+    type: HostedFieldEventType.SubmitManualOrderRequested;
     payload: {
-        data: HostedFormOrderData;
-        fields: HostedFieldType[];
+        data: HostedFormManualOrderData;
     };
 }
 
@@ -63,8 +61,9 @@ declare type HostedFormErrorDataKeys = 'number' | 'expirationDate' | 'expiration
 
 declare type HostedFormErrorsData = Partial<Record<HostedFormErrorDataKeys, HostedFormErrorData>>;
 
-declare interface HostedFormOrderData {
-    authToken: string;
+declare interface HostedFormManualOrderData {
+    paymentMethodId: string;
+    paymentSessionToken: string;
 }
 
 declare class HostedInput {
@@ -79,7 +78,7 @@ declare class HostedInput {
     protected _eventPoster: IframeEventPoster<HostedInputEvent>;
     protected _inputAggregator: HostedInputAggregator;
     protected _inputValidator: HostedInputValidator;
-    protected _paymentHandler: HostedInputPaymentHandler;
+    protected _manualOrderPaymentHandler: HostedInputManualOrderPaymentHandler;
     protected _input: HTMLInputElement;
     protected _previousValue?: string;
     private _fontLinks?;
@@ -160,7 +159,7 @@ declare interface HostedInputEnterEvent {
     };
 }
 
-declare type HostedInputEvent = HostedInputAttachSuccessEvent | HostedInputAttachErrorEvent | HostedInputBinChangeEvent | HostedInputBlurEvent | HostedInputChangeEvent | HostedInputCardTypeChangeEvent | HostedInputEnterEvent | HostedInputFocusEvent | HostedInputSubmitSuccessEvent | HostedInputSubmitErrorEvent | HostedInputValidateEvent;
+declare type HostedInputEvent = HostedInputAttachSuccessEvent | HostedInputAttachErrorEvent | HostedInputBinChangeEvent | HostedInputBlurEvent | HostedInputChangeEvent | HostedInputCardTypeChangeEvent | HostedInputEnterEvent | HostedInputFocusEvent | HostedInputSubmitManualOrderSuccessEvent | HostedInputSubmitManualOrderErrorEvent | HostedInputValidateEvent;
 
 declare enum HostedInputEventType {
     AttachSucceeded = "HOSTED_INPUT:ATTACH_SUCCEEDED",
@@ -171,8 +170,8 @@ declare enum HostedInputEventType {
     CardTypeChanged = "HOSTED_INPUT:CARD_TYPE_CHANGED",
     Entered = "HOSTED_INPUT:ENTERED",
     Focused = "HOSTED_INPUT:FOCUSED",
-    SubmitSucceeded = "HOSTED_INPUT:SUBMIT_SUCCEEDED",
-    SubmitFailed = "HOSTED_INPUT:SUBMIT_FAILED",
+    SubmitManualOrderSucceeded = "HOSTED_INPUT:SUBMIT_MANUAL_ORDER_SUCCEEDED",
+    SubmitManualOrderFailed = "HOSTED_INPUT:SUBMIT_MANUAL_ORDER_FAILED",
     Validated = "HOSTED_INPUT:VALIDATED"
 }
 
@@ -188,23 +187,23 @@ declare interface HostedInputInitializeErrorData {
     redirectUrl: string;
 }
 
+declare class HostedInputManualOrderPaymentHandler {
+    private _inputAggregator;
+    private _inputValidator;
+    private _inputStorage;
+    private _eventPoster;
+    private _manualOrderPaymentRequestSender;
+    constructor(_inputAggregator: HostedInputAggregator, _inputValidator: HostedInputValidator, _inputStorage: HostedInputStorage, _eventPoster: IframeEventPoster<HostedInputEvent>, _manualOrderPaymentRequestSender: ManualOrderPaymentRequestSender);
+    handle: (event: HostedFieldSubmitManualOrderRequestEvent) => Promise<void>;
+    private _isPaymentErrorResponse;
+}
+
 declare interface HostedInputOptions {
     containerId: string;
     nonce?: string;
     origin: string;
     parentOrigin: string;
-}
-
-declare class HostedInputPaymentHandler {
-    private _inputAggregator;
-    private _inputValidator;
-    private _inputStorage;
-    private _eventPoster;
-    private _paymentRequestSender;
-    private _paymentRequestTransformer;
-    constructor(_inputAggregator: HostedInputAggregator, _inputValidator: HostedInputValidator, _inputStorage: HostedInputStorage, _eventPoster: IframeEventPoster<HostedInputEvent>, _paymentRequestSender: PaymentRequestSender, _paymentRequestTransformer: PaymentRequestTransformer);
-    handle: (event: HostedFieldSubmitRequestEvent) => Promise<void>;
-    private _isPaymentErrorResponse;
+    paymentOrigin: string;
 }
 
 declare class HostedInputStorage {
@@ -221,19 +220,16 @@ declare interface HostedInputStylesMap {
     focus?: HostedInputStyles;
 }
 
-declare interface HostedInputSubmitErrorEvent {
-    type: HostedInputEventType.SubmitFailed;
+declare interface HostedInputSubmitManualOrderErrorEvent {
+    type: HostedInputEventType.SubmitManualOrderFailed;
     payload: {
         error: PaymentErrorData;
         response?: Response<PaymentErrorResponseBody>;
     };
 }
 
-declare interface HostedInputSubmitSuccessEvent {
-    type: HostedInputEventType.SubmitSucceeded;
-    payload: {
-        response: Response<unknown>;
-    };
+declare interface HostedInputSubmitManualOrderSuccessEvent {
+    type: HostedInputEventType.SubmitManualOrderSucceeded;
 }
 
 declare interface HostedInputValidateErrorData {
@@ -315,29 +311,21 @@ declare class IframeEventPoster<TEvent, TContext = undefined> {
     setContext(context: TContext): void;
 }
 
-declare interface PaymentRequestBody {
-    authToken: string;
+declare class ManualOrderPaymentRequestSender {
+    private _requestSender;
+    private _paymentOrigin;
+    constructor(_requestSender: RequestSender, _paymentOrigin: string);
+    submitPayment(requestInitializationData: HostedFormManualOrderData, instrumentFormData: HostedInputValues, nonce?: string): Promise<void>;
 }
 
-declare class PaymentRequestSender {
-    private _client;
-    /**
-     * @class
-     * @param {BigpayClient} client
-     */
-    constructor(_client: any);
-    submitPayment(payload: PaymentRequestBody): Promise<Response<any>>;
-    initializeOffsitePayment(payload: PaymentRequestBody, target?: string): Promise<void>;
-    private _transformResponse;
+declare interface PaymentErrorData {
+    code: string;
+    message?: string;
 }
 
-declare class PaymentRequestTransformer {
-    transform(): {};
-    transformWithHostedFormData(values: HostedInputValues, data: HostedFormOrderData, nonce: string): {
-        authToken: string;
-        values: HostedInputValues;
-        nonce: string;
-    };
+declare interface PaymentErrorResponseBody {
+    status: string;
+    errors: PaymentErrorData[];
 }
 
 export declare function initializeHostedInput(options: HostedInputOptions): Promise<HostedInput>;
