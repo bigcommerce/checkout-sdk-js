@@ -1,6 +1,7 @@
+/* eslint-disable jest/no-test-return-statement */
 import { ScriptLoader, StylesheetLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethodClientUnavailableError } from '../../errors';
+import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { DigitalRiverWindow } from './digitalriver';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';

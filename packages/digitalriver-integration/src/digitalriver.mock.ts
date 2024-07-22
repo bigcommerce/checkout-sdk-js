@@ -1,9 +1,14 @@
-import { RequestError } from '../../../common/error/errors';
-import { getResponse } from '../../../common/http-request/responses.mock';
-import { OrderRequestBody } from '../../../order';
-import PaymentMethod from '../../payment-method';
-import { PaymentInitializeOptions } from '../../payment-request-options';
-import { getErrorPaymentResponseBody, getVaultedInstrument } from '../../payments.mock';
+import {
+    OrderRequestBody,
+    PaymentInitializeOptions,
+    PaymentMethod,
+    RequestError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    getErrorPaymentResponseBody,
+    getResponse,
+    getVaultedInstrument,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import DigitalRiverJS, {
     DigitalRiverAdditionalProviderData,

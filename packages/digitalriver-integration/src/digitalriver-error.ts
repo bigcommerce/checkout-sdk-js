@@ -1,4 +1,4 @@
-import { StandardError } from '../../../common/error/errors';
+import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 const defaultMessage =
     'There was an error while processing your payment. Please try again or contact us.';
