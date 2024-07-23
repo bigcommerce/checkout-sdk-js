@@ -237,6 +237,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     isAcceleratedCheckoutEnabled: true,
                     shouldRunAcceleratedCheckout: true,
                     isFastlaneEnabled: true,
+                    isFastlaneStylingEnabled: true,
                     fastlaneStyles: {
                         fastlaneRootSettingsBackgroundColor: 'red',
                         fastlaneBrandingSettings: 'branding',
@@ -289,7 +290,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
                 paypalFastlaneSdk,
                 false,
-                undefined,
+                {},
             );
         });
 
@@ -306,7 +307,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
                 paypalFastlaneSdk,
                 true,
-                undefined,
+                {},
             );
         });
 

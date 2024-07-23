@@ -42,8 +42,11 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         }
 
         const paymentMethod = await this.getValidPaymentMethodOrThrow(methodId);
-        const { isAcceleratedCheckoutEnabled, isDeveloperModeApplicable } =
-            paymentMethod.initializationData || {};
+        const {
+            isAcceleratedCheckoutEnabled,
+            isFastlaneStylingEnabled,
+            isDeveloperModeApplicable,
+        } = paymentMethod.initializationData || {};
 
         this.isAcceleratedCheckoutFeatureEnabled = !!isAcceleratedCheckoutEnabled;
 
@@ -60,8 +63,12 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
                     cart.id,
                 );
 
+                const paypalFastlaneStyles = isFastlaneStylingEnabled
+                    ? paymentMethod?.initializationData?.fastlaneStyles
+                    : {};
+
                 const fastlaneStyles = getFastlaneStyles(
-                    paymentMethod?.initializationData?.fastlaneStyles,
+                    paypalFastlaneStyles,
                     paypalcommercefastlane?.styles,
                 );
 

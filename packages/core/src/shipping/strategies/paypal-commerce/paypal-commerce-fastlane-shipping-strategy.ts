@@ -151,10 +151,12 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
         const cart = state.cart.getCartOrThrow();
 
         const paymentMethod = await this._getPayPalPaymentMethodOrThrow(methodId);
-        const isTestModeEnabled = !!paymentMethod?.initializationData?.isDeveloperModeApplicable;
+        const { isDeveloperModeApplicable, isFastlaneStylingEnabled } =
+            paymentMethod?.initializationData || {};
+        const isTestModeEnabled = !!isDeveloperModeApplicable;
 
         const fastlaneStyles = getFastlaneStyles(
-            paymentMethod?.initializationData?.fastlaneStyles,
+            isFastlaneStylingEnabled ? paymentMethod?.initializationData?.fastlaneStyles : {},
             styles,
         );
 

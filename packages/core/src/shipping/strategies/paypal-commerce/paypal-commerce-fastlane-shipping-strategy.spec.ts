@@ -298,6 +298,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                 clientToken: '123',
                 initializationData: {
                     isFastlaneEnabled: true,
+                    isFastlaneStylingEnabled: true,
                     isAcceleratedCheckoutEnabled: true,
                     fastlaneStyles: {
                         fastlaneRootSettingsBackgroundColor: 'orange',
@@ -373,7 +374,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
                 paypalFastlaneSdk,
                 paymentMethod.initializationData.isDeveloperModeApplicable,
-                undefined,
+                {},
             );
             expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).toHaveBeenCalledWith(
                 customer.email,
