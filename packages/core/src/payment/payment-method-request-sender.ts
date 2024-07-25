@@ -9,6 +9,12 @@ import {
 
 import PaymentMethod from './payment-method';
 
+export interface PaymentRequestOptions extends RequestOptions {
+    headers?: {
+        Authorization?: string;
+    };
+}
+
 export default class PaymentMethodRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
@@ -30,7 +36,7 @@ export default class PaymentMethodRequestSender {
 
     loadPaymentMethod(
         methodId: string,
-        { timeout, params }: RequestOptions = {},
+        { timeout, params, headers = {} }: PaymentRequestOptions = {},
     ): Promise<Response<PaymentMethod>> {
         const url = `/api/storefront/payments/${methodId}`;
 
@@ -40,6 +46,7 @@ export default class PaymentMethodRequestSender {
                 Accept: ContentType.JsonV1,
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 ...SDK_VERSION_HEADERS,
+                ...headers,
             },
             params,
         });

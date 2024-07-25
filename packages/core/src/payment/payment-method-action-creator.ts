@@ -128,7 +128,9 @@ export default class PaymentMethodActionCreator {
             Observable.create((observer: Observer<LoadPaymentMethodAction>) => {
                 const state = store.getState();
                 const cartId = state.cart.getCart()?.id;
+                const storefrontJwtToken = state.config.getStorefrontJwtToken();
                 const params = cartId ? { ...options?.params, cartId } : { ...options?.params };
+                const headers = storefrontJwtToken ? { Authorization: `Bearer ${storefrontJwtToken}` } : {};
 
                 observer.next(
                     createAction(PaymentMethodActionType.LoadPaymentMethodRequested, undefined, {
@@ -137,7 +139,7 @@ export default class PaymentMethodActionCreator {
                 );
 
                 this._requestSender
-                    .loadPaymentMethod(methodId, { ...options, params })
+                    .loadPaymentMethod(methodId, { ...options, headers, params })
                     .then((response) => {
                         observer.next(
                             createAction(
