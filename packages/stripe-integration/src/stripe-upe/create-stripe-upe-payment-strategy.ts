@@ -17,4 +17,7 @@ const createStripeUPEPaymentStrategy: PaymentStrategyFactory<StripeUPEPaymentStr
     );
 };
 
-export default toResolvableModule(createStripeUPEPaymentStrategy, [{ gateway: 'stripeupe' }]);
+export default toResolvableModule(createStripeUPEPaymentStrategy, [
+    { gateway: 'stripeupe' },
+    { gateway: 'stripeupe', id: 'klarna' },
+]);
