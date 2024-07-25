@@ -329,6 +329,31 @@ export interface AdyenConfiguration {
         klarna_paynow: {
             useKlarnaWidget: boolean;
         };
+        card?: {
+            installmentOptions?: {
+                card?: {
+                    values: number[];
+                    plans?: string[];
+                };
+                visa?: {
+                    values: number[];
+                    plans?: string[];
+                };
+                mc?: {
+                    values: number[];
+                    plans?: string[];
+                };
+                diners?: {
+                    values: number[];
+                    plans?: string[];
+                };
+                jcb?: {
+                    values: number[];
+                    plans?: string[];
+                };
+                showInstallmentAmounts?: boolean;
+            };
+        };
     };
 
     showPayButton?: boolean;
@@ -652,6 +677,7 @@ export interface CardState {
 
 interface CardDataPaymentMethodState {
     paymentMethod: CardPaymentMethodState;
+    installments?: { value: number; plan?: 'string' };
 }
 
 export interface CardStateErrors {
@@ -1012,6 +1038,28 @@ export interface AdyenV3PaymentMethodInitializationData {
     environment?: string;
     paymentMethodsResponse?: PaymentMethodsResponse;
     prefillCardHolderName?: boolean;
+    installmentOptions?: null | {
+        card?: {
+            values: number[];
+            plans?: string[];
+        };
+        visa?: {
+            values: number[];
+            plans?: string[];
+        };
+        mc?: {
+            values: number[];
+            plans?: string[];
+        };
+        diners?: {
+            values: number[];
+            plans?: string[];
+        };
+        jcb?: {
+            values: number[];
+            plans?: string[];
+        };
+    };
 }
 
 export interface AdyenV2PaymentMethodInitializationData {

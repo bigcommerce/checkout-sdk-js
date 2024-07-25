@@ -377,6 +377,61 @@ describe('AdyenV3PaymentStrategy', () => {
                 );
             });
 
+            it('calls submitPayment, with Card Installments', async () => {
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
+                    submitPaymentAction,
+                );
+                jest.spyOn(adyenCheckout, 'create').mockImplementation(
+                    jest.fn((_method, options) => {
+                        const { onChange } = options;
+
+                        const handleOnChange = onChange;
+                        const componentState = getComponentState();
+
+                        paymentComponent = {
+                            mount: jest.fn(() => {
+                                handleOnChange({
+                                    ...componentState,
+                                    data: {
+                                        ...componentState.data,
+                                        installments: {
+                                            value: 10,
+                                        },
+                                    },
+                                });
+                            }),
+                            unmount: jest.fn(),
+                            submit: jest.fn(),
+                        };
+
+                        return paymentComponent;
+                    }),
+                );
+                await strategy.initialize(options);
+                await strategy.execute({
+                    payment: {
+                        methodId: 'scheme',
+                        paymentData: {
+                            ...getCreditCardInstrument(),
+                            shouldSaveInstrument: true,
+                        },
+                    },
+                });
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        paymentData: expect.objectContaining({
+                            formattedPayload: expect.objectContaining({
+                                installments: {
+                                    value: 10,
+                                    plan: 'regular',
+                                },
+                            }),
+                        }),
+                    }),
+                );
+            });
+
             it('calls submitPayment, passing both a vault and set as default flag, when paying with an instrument that should be vaulted and defaulted', async () => {
                 jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
                     submitPaymentAction,

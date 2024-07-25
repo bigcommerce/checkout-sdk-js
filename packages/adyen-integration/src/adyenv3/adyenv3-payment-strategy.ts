@@ -72,7 +72,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         const paymentMethod = this._paymentIntegrationService
             .getState()
             .getPaymentMethodOrThrow<AdyenV3PaymentMethodInitializationData>(options.methodId);
-        const { environment, clientKey, paymentMethodsResponse } =
+        const { environment, clientKey, paymentMethodsResponse, installmentOptions } =
             paymentMethod.initializationData || {};
 
         this._adyenClient = await this._scriptLoader.load({
@@ -86,6 +86,16 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 klarna_paynow: {
                     useKlarnaWidget: true,
                 },
+                ...(installmentOptions
+                    ? {
+                          card: {
+                              installmentOptions: {
+                                  showInstallmentAmounts: true,
+                                  ...installmentOptions,
+                              },
+                          },
+                      }
+                    : {}),
             },
             environment,
             locale: this._paymentIntegrationService.getState().getLocale(),
@@ -216,6 +226,14 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                         credit_card_token: {
                             token: paymentToken,
                         },
+                        ...(isCardState(componentState) && componentState.data.installments
+                            ? {
+                                  installments: {
+                                      value: componentState.data.installments.value,
+                                      plan: componentState.data.installments.plan || 'regular',
+                                  },
+                              }
+                            : {}),
                         browser_info: getBrowserInfo(),
                         vault_payment_instrument: shouldSaveInstrument || null,
                         set_as_default_stored_instrument: shouldSetAsDefaultInstrument || null,
