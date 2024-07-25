@@ -595,13 +595,13 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         const billingAddress = this.paymentIntegrationService.getState().getBillingAddress();
         const address = this._mapStripeAddress(billingAddress);
 
-        const email = billingAddress?.email;
+        const { firstName, lastName, email } = billingAddress || {};
 
         if (!this._stripeElements) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        if (!email || !address || !address.city || !address.country) {
+        if (!email || !address || !address.city || !address.country || !firstName || !lastName) {
             throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
         }
 
@@ -613,6 +613,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     billing_details: {
                         email,
                         address,
+                        name: `${firstName} ${lastName}`,
                     },
                 },
                 ...(returnUrl && { return_url: returnUrl }),
