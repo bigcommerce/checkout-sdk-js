@@ -287,8 +287,9 @@ describe('BraintreeFastlaneShippingStrategy', () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue({
                 clientToken: '123',
                 initializationData: {
-                    isFastlaneEnabled: true,
                     isAcceleratedCheckoutEnabled: true,
+                    isFastlaneEnabled: true,
+                    isFastlaneStylingEnabled: true,
                     fastlaneStyles: {
                         fastlaneRootSettingsBackgroundColor: 'orange',
                         fastlaneTextCaptionSettingsColor: 'blue',

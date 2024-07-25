@@ -36,13 +36,19 @@ export default class BraintreeFastlaneCustomerStrategy implements CustomerStrate
 
         const paymentMethod = await this.getValidPaymentMethodOrThrow(methodId);
 
-        this.isAcceleratedCheckoutEnabled =
-            !!paymentMethod.initializationData?.isAcceleratedCheckoutEnabled;
+        const { isAcceleratedCheckoutEnabled, isFastlaneStylingEnabled } =
+            paymentMethod.initializationData || {};
+
+        const paypalFastlaneStylesSettings = isFastlaneStylingEnabled
+            ? paymentMethod.initializationData?.fastlaneStyles
+            : undefined;
+
+        this.isAcceleratedCheckoutEnabled = !!isAcceleratedCheckoutEnabled;
 
         try {
             if (this.isAcceleratedCheckoutEnabled) {
                 const fastlaneStyles = getFastlaneStyles(
-                    paymentMethod.initializationData?.fastlaneStyles,
+                    paypalFastlaneStylesSettings,
                     braintreefastlane?.styles,
                 );
 

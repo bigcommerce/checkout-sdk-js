@@ -71,13 +71,18 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
+        const { clientToken, isFastlaneStylingEnabled } = paymentMethod.initializationData || {};
 
-        if (!paymentMethod.initializationData?.clientToken) {
+        const paypalFastlaneStyleSettings = isFastlaneStylingEnabled
+            ? paymentMethod.initializationData?.fastlaneStyles
+            : undefined;
+
+        if (!clientToken) {
             await this.paymentIntegrationService.loadPaymentMethod(methodId);
         }
 
         const fastlaneStyles = getFastlaneStyles(
-            paymentMethod.initializationData?.fastlaneStyles,
+            paypalFastlaneStyleSettings,
             braintreefastlane.styles,
         );
 

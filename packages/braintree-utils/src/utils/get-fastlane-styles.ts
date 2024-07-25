@@ -8,7 +8,7 @@ function isInvalidStyleOption(styleOption: unknown) {
 export default function getFastlaneStyles(
     styleSettings?: FastlaneStylesSettings,
     uiStyles?: BraintreeFastlaneStylesOption,
-) {
+): BraintreeFastlaneStylesOption | undefined {
     if (!uiStyles && !styleSettings) {
         return undefined;
     }

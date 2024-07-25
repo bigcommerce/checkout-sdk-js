@@ -389,6 +389,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
                     isAcceleratedCheckoutEnabled: true,
                     shouldRunAcceleratedCheckout: true,
                     isFastlaneEnabled: true,
+                    isFastlaneStylingEnabled: true,
                     fastlaneStyles: {
                         fastlaneRootSettingsBackgroundColor: 'red',
                         fastlaneBrandingSettings: 'branding',

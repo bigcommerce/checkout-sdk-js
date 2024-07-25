@@ -507,4 +507,5 @@ export interface BraintreeInitializationData {
     isCreditEnabled?: boolean;
     isAcceleratedCheckoutEnabled?: boolean;
     isFastlaneEnabled?: boolean; // TODO: remove this line when fastlane experiment will be rolled out to 100%
+    isFastlaneStylingEnabled?: boolean;
 }

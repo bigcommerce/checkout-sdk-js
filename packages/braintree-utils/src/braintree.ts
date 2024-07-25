@@ -110,6 +110,7 @@ export interface BraintreeInitializationData {
     intent?: 'authorize' | 'order' | 'sale';
     isCreditEnabled?: boolean;
     isAcceleratedCheckoutEnabled?: boolean;
+    isFastlaneStylingEnabled?: boolean;
     isFastlaneEnabled?: boolean;
     fastlaneStyles?: FastlaneStylesSettings;
     isBraintreeAnalyticsV2Enabled?: boolean;

@@ -85,15 +85,21 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
         try {
             if (this._shouldRunAuthenticationFlow()) {
                 const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+                const { clientToken, isFastlaneStylingEnabled } =
+                    paymentMethod?.initializationData || {};
 
-                if (!paymentMethod?.initializationData?.clientToken) {
+                if (!clientToken) {
                     await this._store.dispatch(
                         this._paymentMethodActionCreator.loadPaymentMethod(methodId),
                     );
                 }
 
+                const paypalFastlaneStylesSettings = isFastlaneStylingEnabled
+                    ? paymentMethod?.initializationData?.fastlaneStyles
+                    : undefined;
+
                 const fastlaneStyles = getFastlaneStyles(
-                    paymentMethod?.initializationData?.fastlaneStyles,
+                    paypalFastlaneStylesSettings,
                     braintreefastlane?.styles,
                 );
 
