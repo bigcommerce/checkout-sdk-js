@@ -85,7 +85,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const cart = state.getCartOrThrow();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
-        const { isDeveloperModeApplicable } = paymentMethod.initializationData || {};
+        const { isDeveloperModeApplicable, isFastlaneStylingEnabled } =
+            paymentMethod.initializationData || {};
 
         const paypalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
             paymentMethod,
@@ -93,8 +94,12 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             cart.id,
         );
 
+        const paypalFastlaneStyling = isFastlaneStylingEnabled
+            ? paymentMethod?.initializationData?.fastlaneStyles
+            : {};
+
         const fastlaneStyles = getFastlaneStyles(
-            paymentMethod?.initializationData?.fastlaneStyles,
+            paypalFastlaneStyling,
             paypalcommercefastlane?.styles,
         );
 
