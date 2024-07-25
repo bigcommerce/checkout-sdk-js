@@ -1,11 +1,3 @@
-import { Action, createAction } from '@bigcommerce/data-store';
-import {
-    createScriptLoader,
-    createStylesheetLoader,
-    ScriptLoader,
-} from '@bigcommerce/script-loader';
-import { merge } from 'lodash';
-import { Observable, of } from 'rxjs';
 
 import {
     Checkout,
@@ -48,6 +40,10 @@ import {
     getOrderRequestBodyWithVaultedInstrument,
 } from './digitalriver.mock';
 import DigitalRiverError from './digitalriver-error';
+import { Action, createAction } from '@bigcommerce/data-store';
+import { ScriptLoader, createScriptLoader, createStylesheetLoader } from '@bigcommerce/script-loader';
+import { Observable, of } from 'rxjs';
+import { merge } from 'lodash';
 
 describe('DigitalRiverPaymentStrategy', () => {
     let payload: OrderRequestBody;
@@ -236,8 +232,8 @@ describe('DigitalRiverPaymentStrategy', () => {
                 },
             });
 
-            strategy._digitalRiverCheckoutData = getClientMock();
-            strategy._loadSuccessResponse = {
+            strategy.digitalRiverCheckoutData = getClientMock();
+            strategy.loadSuccessResponse = {
                 source: {
                     id: '1',
                     reusable: false,
@@ -310,8 +306,8 @@ describe('DigitalRiverPaymentStrategy', () => {
                 },
             });
 
-            strategy._digitalRiverCheckoutData = getClientMock();
-            strategy._loadSuccessResponse = {
+            strategy.digitalRiverCheckoutData = getClientMock();
+            strategy.loadSuccessResponse = {
                 source: {
                     id: '1',
                     reusable: false,
@@ -753,7 +749,7 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when data on onSuccess event is not provided', async () => {
-            strategy._digitalRiverCheckoutData = getClientMock();
+            strategy.digitalRiverCheckoutData = getClientMock();
 
             const payloadWithEmptyOnSuccess = merge({}, getOrderRequestBody(), {
                 payment: paymentMethodMock,
@@ -788,8 +784,8 @@ describe('DigitalRiverPaymentStrategy', () => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
-            strategy._digitalRiverCheckoutData = getClientMock();
-            strategy._loadSuccessResponse = {
+            strategy.digitalRiverCheckoutData = getClientMock();
+            strategy.loadSuccessResponse = {
                 source: {
                     id: '1',
                     reusable: false,
@@ -890,7 +886,7 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when DigitalRiver checkout data is not provided', () => {
-            strategy._digitalRiverCheckoutData = undefined;
+            strategy.digitalRiverCheckoutData = undefined;
 
             const promise = strategy.execute(payload, undefined);
 
@@ -917,8 +913,8 @@ describe('DigitalRiverPaymentStrategy', () => {
                 jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(
                     submitOrderAction,
                 );
-                strategy._digitalRiverCheckoutData = getClientMock();
-                strategy._loadSuccessResponse = {
+                strategy.digitalRiverCheckoutData = getClientMock();
+                strategy.loadSuccessResponse = {
                     source: {
                         id: '1',
                         reusable: false,
@@ -978,7 +974,7 @@ describe('DigitalRiverPaymentStrategy', () => {
             });
 
             it('calls authenticateSource method when paying with vaulted instrument and 3DS is required', async () => {
-                strategy._digitalRiverCheckoutData = getClientMock();
+                strategy.digitalRiverCheckoutData = getClientMock();
 
                 const error = getAdditionalActionError();
 

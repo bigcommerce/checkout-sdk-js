@@ -1,4 +1,3 @@
-/* eslint-disable jest/no-test-return-statement */
 import { ScriptLoader, StylesheetLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';

@@ -15,4 +15,5 @@ const createDigitalRiverPaymentStrategy: PaymentStrategyFactory<DigitalRiverPaym
         paymentIntegrationService,
         new DigitalRiverScriptLoader(getScriptLoader(), getStylesheetLoader()),
     );
+
 export default toResolvableModule(createDigitalRiverPaymentStrategy, [{ id: 'digitalriver' }]);
