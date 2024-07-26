@@ -1,18 +1,35 @@
 import {
     InvalidArgumentError,
+    MissingDataError,
     NotInitializedError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getConsignment,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import getCardDataResponse from '../mocks/google-pay-card-data-response.mock';
 import { getAuthorizeNet, getGeneric } from '../mocks/google-pay-payment-method.mock';
+import { CallbackIntentsType, CallbackTriggerType, GooglePayFullBillingAddress } from '../types';
 
 import GooglePayGateway from './google-pay-gateway';
 
 describe('GooglePayGateway', () => {
     let gateway: GooglePayGateway;
     let paymentIntegrationService: PaymentIntegrationService;
+
+    const getGenericInitialDataWithShippingOptions = (isExperimentEnabled = true) => {
+        const genericData = getGeneric();
+
+        return {
+            ...genericData,
+            initializationData: {
+                ...genericData.initializationData!,
+                isShippingOptionsEnabled: isExperimentEnabled,
+            },
+        };
+    };
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -184,6 +201,7 @@ describe('GooglePayGateway', () => {
             const expectedRequiredData = {
                 emailRequired: true,
                 shippingAddressRequired: true,
+                shippingOptionRequired: false,
                 shippingAddressParameters: {
                     phoneNumberRequired: true,
                     allowedCountryCodes: ['AU', 'US', 'JP'],
@@ -198,6 +216,413 @@ describe('GooglePayGateway', () => {
             await gateway.initialize(getGeneric);
 
             await expect(gateway.getRequiredData()).resolves.toStrictEqual(expectedRequiredData);
+        });
+
+        it('should require shipping options', async () => {
+            const expectedRequiredData = {
+                emailRequired: true,
+                shippingAddressRequired: true,
+                shippingOptionRequired: true,
+                shippingAddressParameters: {
+                    phoneNumberRequired: true,
+                    allowedCountryCodes: ['AU', 'US', 'JP'],
+                },
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getShippingAddress',
+            ).mockReturnValueOnce(undefined);
+
+            await gateway.initialize(getGenericInitialDataWithShippingOptions);
+
+            await expect(gateway.getRequiredData()).resolves.toStrictEqual(expectedRequiredData);
+        });
+
+        it('should require shipping options (Buy Now Flow)', async () => {
+            const expectedRequiredData = {
+                emailRequired: true,
+                shippingAddressRequired: true,
+                shippingOptionRequired: true,
+                shippingAddressParameters: {
+                    phoneNumberRequired: true,
+                },
+            };
+
+            await gateway.initialize(getGenericInitialDataWithShippingOptions, true, 'USD');
+
+            await expect(gateway.getRequiredData()).resolves.toStrictEqual(expectedRequiredData);
+        });
+    });
+
+    describe('#getCallbackIntents', () => {
+        it('should return only offer callback intent for disabled shipping options experiment', async () => {
+            const expectedCallbackIntents = [CallbackIntentsType.OFFER];
+
+            await gateway.initialize(getGeneric);
+
+            expect(gateway.getCallbackIntents()).toStrictEqual(expectedCallbackIntents);
+        });
+
+        it('should return shipping callback intents', async () => {
+            const expectedCallbackIntents = [
+                CallbackIntentsType.OFFER,
+                CallbackIntentsType.SHIPPING_ADDRESS,
+                CallbackIntentsType.SHIPPING_OPTION,
+            ];
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getShippingAddress',
+            ).mockReturnValueOnce(undefined);
+
+            await gateway.initialize(getGenericInitialDataWithShippingOptions);
+
+            expect(gateway.getCallbackIntents()).toStrictEqual(expectedCallbackIntents);
+        });
+
+        it('should return shipping callback intents (Buy Now Flow)', async () => {
+            const expectedCallbackIntents = [
+                CallbackIntentsType.OFFER,
+                CallbackIntentsType.SHIPPING_ADDRESS,
+                CallbackIntentsType.SHIPPING_OPTION,
+            ];
+
+            await gateway.initialize(getGenericInitialDataWithShippingOptions, true, 'USD');
+
+            expect(gateway.getCallbackIntents()).toStrictEqual(expectedCallbackIntents);
+        });
+    });
+
+    describe('#getCallbackTriggers', () => {
+        it('should return only initialize trigger when shipping experiment disabled', async () => {
+            const expectedCallbackTriggers = {
+                availableTriggers: [CallbackTriggerType.INITIALIZE],
+                initializationTrigger: [CallbackTriggerType.INITIALIZE],
+                addressChangeTriggers: [],
+                shippingOptionsChangeTriggers: [],
+            };
+
+            await gateway.initialize(getGeneric);
+
+            expect(gateway.getCallbackTriggers()).toStrictEqual(expectedCallbackTriggers);
+        });
+
+        it('should return initialize triggers', async () => {
+            const expectedCallbackTriggers = {
+                availableTriggers: [
+                    CallbackTriggerType.INITIALIZE,
+                    CallbackTriggerType.SHIPPING_ADDRESS,
+                    CallbackTriggerType.SHIPPING_OPTION,
+                ],
+                initializationTrigger: [CallbackTriggerType.INITIALIZE],
+                addressChangeTriggers: [
+                    CallbackTriggerType.INITIALIZE,
+                    CallbackTriggerType.SHIPPING_ADDRESS,
+                ],
+                shippingOptionsChangeTriggers: [CallbackTriggerType.SHIPPING_OPTION],
+            };
+
+            await gateway.initialize(getGenericInitialDataWithShippingOptions);
+
+            expect(gateway.getCallbackTriggers()).toStrictEqual(expectedCallbackTriggers);
+        });
+    });
+
+    describe('#getNonce', () => {
+        it('should throw an error if initializationData not exists', async () => {
+            const initializeData = () => {
+                const generic = getGeneric();
+
+                return {
+                    ...generic,
+                    initializationData: undefined,
+                };
+            };
+            let error: MissingDataError | undefined;
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValueOnce(initializeData());
+
+            await gateway.initialize(initializeData);
+
+            try {
+                await gateway.getNonce('methodId');
+            } catch (err) {
+                error = err;
+            } finally {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('should throw an error if nonce not exists', async () => {
+            const initializeData = () => {
+                const generic = getGeneric();
+
+                return {
+                    ...generic,
+                    initializationData: {
+                        ...generic.initializationData!,
+                        nonce: undefined,
+                    },
+                };
+            };
+            let error: MissingDataError | undefined;
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValueOnce(initializeData());
+
+            await gateway.initialize(initializeData);
+
+            try {
+                await gateway.getNonce('methodId');
+            } catch (err) {
+                error = err;
+            } finally {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('should return nonce', async () => {
+            const initializeData = () => {
+                const generic = getGeneric();
+
+                return {
+                    ...generic,
+                    initializationData: {
+                        ...generic.initializationData!,
+                        nonce: 'gpay-nonce',
+                    },
+                };
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValueOnce(initializeData());
+
+            await gateway.initialize(initializeData);
+
+            expect(await gateway.getNonce('methodId')).toBe('gpay-nonce');
+        });
+    });
+
+    describe('#extraPaymentData', () => {
+        it('should return extra payment data as undefined', async () => {
+            await gateway.initialize(getGeneric);
+
+            await expect(gateway.extraPaymentData()).resolves.toBeUndefined();
+        });
+    });
+
+    describe('#handleShippingAddressChange', () => {
+        const defaultGPayShippingAddress: GooglePayFullBillingAddress = {
+            address1: '',
+            address2: '',
+            address3: '',
+            administrativeArea: 'US',
+            locality: 'TX',
+            sortingCode: '78726',
+            name: '',
+            postalCode: '',
+            countryCode: '',
+        };
+
+        it('should not update shipping address if it does not provided', async () => {
+            const updateShippingAddressMock = jest.spyOn(
+                paymentIntegrationService,
+                'updateShippingAddress',
+            );
+
+            await gateway.initialize(getGeneric);
+
+            await gateway.handleShippingAddressChange();
+
+            expect(updateShippingAddressMock).not.toHaveBeenCalled();
+        });
+
+        it('should update shipping address', async () => {
+            const mappedAddressMock = {
+                firstName: '',
+                lastName: '',
+                company: 'Bigcommerce',
+                address1: '',
+                address2: '',
+                city: 'TX',
+                stateOrProvince: 'US',
+                stateOrProvinceCode: 'US',
+                countryCode: '',
+                postalCode: '',
+                phone: '555-555-5555',
+                customFields: [],
+            };
+
+            const updateShippingAddressMock = jest.spyOn(
+                paymentIntegrationService,
+                'updateShippingAddress',
+            );
+
+            await gateway.initialize(getGeneric);
+
+            await gateway.handleShippingAddressChange(defaultGPayShippingAddress);
+
+            expect(updateShippingAddressMock).toHaveBeenCalledWith(mappedAddressMock);
+        });
+
+        it('should return empty data if consignments does not exists', async () => {
+            await gateway.initialize(getGeneric);
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValueOnce(
+                undefined,
+            );
+
+            await expect(
+                gateway.handleShippingAddressChange(defaultGPayShippingAddress),
+            ).resolves.toStrictEqual({
+                defaultSelectedOptionId: undefined,
+                shippingOptions: [],
+            });
+        });
+
+        it('should return empty data if consignments empty', async () => {
+            await gateway.initialize(getGeneric);
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValueOnce(
+                [],
+            );
+
+            await expect(
+                gateway.handleShippingAddressChange(defaultGPayShippingAddress),
+            ).resolves.toStrictEqual({
+                defaultSelectedOptionId: undefined,
+                shippingOptions: [],
+            });
+        });
+
+        it('should return empty data if no available shipping methods', async () => {
+            const consiment = {
+                ...getConsignment(),
+                selectedShippingOption: undefined,
+                availableShippingOptions: undefined,
+            };
+
+            await gateway.initialize(getGeneric);
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValueOnce(
+                [consiment],
+            );
+
+            await expect(
+                gateway.handleShippingAddressChange(defaultGPayShippingAddress),
+            ).resolves.toStrictEqual({
+                defaultSelectedOptionId: undefined,
+                shippingOptions: [],
+            });
+        });
+
+        it('should return empty available shipping methods with no preselected option', async () => {
+            const consignment = {
+                ...getConsignment(),
+                selectedShippingOption: undefined,
+            };
+            const expectedSippingOptions = [
+                {
+                    id: consignment.availableShippingOptions![0].id,
+                    label: consignment.availableShippingOptions![0].description,
+                    description: '$0.00',
+                },
+            ];
+            const selectShippingOptionMock = jest.spyOn(
+                paymentIntegrationService,
+                'selectShippingOption',
+            );
+
+            await gateway.initialize(getGeneric);
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValueOnce(
+                [consignment],
+            );
+
+            await expect(
+                gateway.handleShippingAddressChange(defaultGPayShippingAddress),
+            ).resolves.toStrictEqual({
+                defaultSelectedOptionId: consignment.availableShippingOptions![0].id,
+                shippingOptions: expectedSippingOptions,
+            });
+            expect(selectShippingOptionMock).toHaveBeenCalledWith(
+                consignment.availableShippingOptions![0].id,
+            );
+        });
+
+        it('should return empty available shipping methods with preselected option', async () => {
+            const consignment = getConsignment();
+            const expectedSippingOptions = [
+                {
+                    id: consignment.availableShippingOptions![0].id,
+                    label: consignment.availableShippingOptions![0].description,
+                    description: '$0.00',
+                },
+            ];
+            const selectShippingOptionMock = jest.spyOn(
+                paymentIntegrationService,
+                'selectShippingOption',
+            );
+
+            await gateway.initialize(getGeneric);
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValueOnce(
+                [consignment],
+            );
+
+            await expect(
+                gateway.handleShippingAddressChange(defaultGPayShippingAddress),
+            ).resolves.toStrictEqual({
+                defaultSelectedOptionId: consignment.selectedShippingOption?.id,
+                shippingOptions: expectedSippingOptions,
+            });
+            expect(selectShippingOptionMock).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('#handleShippingOptionChange', () => {
+        it('should update shipping option', async () => {
+            const selectShippingOptionMock = jest.spyOn(
+                paymentIntegrationService,
+                'selectShippingOption',
+            );
+
+            await gateway.initialize(getGeneric);
+
+            await gateway.handleShippingOptionChange('optionId');
+
+            expect(selectShippingOptionMock).toHaveBeenCalledWith('optionId');
+        });
+
+        it('should not update shipping option if it does not selected', async () => {
+            const selectShippingOptionMock = jest.spyOn(
+                paymentIntegrationService,
+                'selectShippingOption',
+            );
+
+            await gateway.initialize(getGeneric);
+
+            await gateway.handleShippingOptionChange('shipping_option_unselected');
+
+            expect(selectShippingOptionMock).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('#getTotalPrice', () => {
+        it('should return total price', async () => {
+            const expectedPrice = '190.00';
+
+            await gateway.initialize(getGeneric);
+
+            expect(gateway.getTotalPrice()).toBe(expectedPrice);
         });
     });
 

@@ -11,7 +11,10 @@ import {
     PaymentIntegrationService,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getConsignment,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import GooglePayGateway from './gateways/google-pay-gateway';
 import { WithGooglePayButtonInitializeOptions } from './google-pay-button-initialize-option';
@@ -20,7 +23,12 @@ import GooglePayPaymentProcessor from './google-pay-payment-processor';
 import GooglePayScriptLoader from './google-pay-script-loader';
 import getCardDataResponse from './mocks/google-pay-card-data-response.mock';
 import { getGeneric } from './mocks/google-pay-payment-method.mock';
-import { CallbackTriggerType, GooglePayInitializationData } from './types';
+import {
+    CallbackTriggerType,
+    GooglePayFullBillingAddress,
+    GooglePayInitializationData,
+    NewTransactionInfo,
+} from './types';
 
 describe('GooglePayButtonStrategy', () => {
     const CONTAINER_ID = 'my_awesome_google_pay_button_container';
@@ -34,12 +42,36 @@ describe('GooglePayButtonStrategy', () => {
     let eventEmitter: EventEmitter;
     let scriptLoader: GooglePayScriptLoader;
     let formPoster: FormPoster;
+    let mockReturnedPaymentDataChangedValue: NewTransactionInfo;
 
     let buyNowCartRequestBody: BuyNowCartRequestBody;
     let buyNowRequiredOptions: {
         buyNowInitializeOptions: {
             getBuyNowCartRequestBody: () => BuyNowCartRequestBody;
         };
+    };
+    const defaultGPayShippingAddress: GooglePayFullBillingAddress = {
+        address1: '',
+        address2: '',
+        address3: '',
+        administrativeArea: 'US',
+        locality: 'TX',
+        sortingCode: '78726',
+        name: '',
+        postalCode: '',
+        countryCode: '',
+    };
+    const consignment = getConsignment();
+    const expectedSippingOptions = [
+        {
+            id: consignment.availableShippingOptions![0].id,
+            label: consignment.availableShippingOptions![0].description,
+            description: '$0.00',
+        },
+    ];
+    const availableGPayShippingOptions = {
+        defaultSelectedOptionId: consignment.selectedShippingOption?.id,
+        shippingOptions: expectedSippingOptions,
     };
 
     beforeEach(() => {
@@ -112,6 +144,20 @@ describe('GooglePayButtonStrategy', () => {
         });
         jest.spyOn(processor, 'signOut').mockResolvedValue(undefined);
 
+        jest.spyOn(processor, 'getCallbackTriggers').mockReturnValue({
+            availableTriggers: [
+                CallbackTriggerType.INITIALIZE,
+                CallbackTriggerType.SHIPPING_ADDRESS,
+                CallbackTriggerType.SHIPPING_OPTION,
+            ],
+            initializationTrigger: [CallbackTriggerType.INITIALIZE],
+            addressChangeTriggers: [
+                CallbackTriggerType.INITIALIZE,
+                CallbackTriggerType.SHIPPING_ADDRESS,
+            ],
+            shippingOptionsChangeTriggers: [CallbackTriggerType.SHIPPING_OPTION],
+        });
+
         buttonStrategy = new GooglePayButtonStrategy(paymentIntegrationService, processor);
     });
 
@@ -167,6 +213,101 @@ describe('GooglePayButtonStrategy', () => {
                 expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalled();
                 expect(paymentIntegrationService.updateShippingAddress).not.toHaveBeenCalled();
             });
+
+            it('should update transactional data with available shipping options', async () => {
+                const handleShippingOptionChangeMock = jest.spyOn(
+                    processor,
+                    'handleShippingOptionChange',
+                );
+
+                jest.spyOn(processor, 'handleShippingAddressChange').mockResolvedValue(
+                    Promise.resolve(availableGPayShippingOptions),
+                );
+
+                jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockResolvedValue({});
+
+                jest.spyOn(processor, 'initialize').mockImplementation(
+                    (_, googlePayClientOptions) => {
+                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                        eventEmitter.on('onPaymentDataChanged', async () => {
+                            mockReturnedPaymentDataChangedValue =
+                                await googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged(
+                                    {
+                                        callbackTrigger: CallbackTriggerType.INITIALIZE,
+                                        shippingAddress: defaultGPayShippingAddress,
+                                        shippingOptionData: {
+                                            id: consignment.selectedShippingOption?.id,
+                                        },
+                                    },
+                                );
+                        });
+                    },
+                );
+
+                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
+                    eventEmitter.emit('onPaymentDataChanged');
+
+                    return getCardDataResponse();
+                });
+
+                await buttonStrategy.initialize(withBuyNowOptions);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalled();
+                expect(handleShippingOptionChangeMock).not.toHaveBeenCalled();
+                expect(mockReturnedPaymentDataChangedValue).toStrictEqual({
+                    newTransactionInfo: {
+                        countryCode: 'US',
+                        currencyCode: 'USD',
+                        totalPriceStatus: 'FINAL',
+                        totalPrice: '190.00',
+                    },
+                    newShippingOptionParameters: availableGPayShippingOptions,
+                });
+            });
+
+            it('should not create buy now cart on address change event', async () => {
+                jest.spyOn(processor, 'handleShippingAddressChange').mockResolvedValue(
+                    Promise.resolve(availableGPayShippingOptions),
+                );
+
+                jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockResolvedValue({});
+
+                jest.spyOn(processor, 'initialize').mockImplementation(
+                    (_, googlePayClientOptions) => {
+                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                        eventEmitter.on('onPaymentDataChanged', async () => {
+                            mockReturnedPaymentDataChangedValue =
+                                await googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged(
+                                    {
+                                        callbackTrigger: CallbackTriggerType.SHIPPING_ADDRESS,
+                                        shippingAddress: defaultGPayShippingAddress,
+                                        shippingOptionData: {
+                                            id: consignment.selectedShippingOption?.id,
+                                        },
+                                    },
+                                );
+                        });
+                    },
+                );
+
+                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
+                    eventEmitter.emit('onPaymentDataChanged');
+
+                    return getCardDataResponse();
+                });
+
+                await buttonStrategy.initialize(withBuyNowOptions);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.createBuyNowCart).not.toHaveBeenCalled();
+            });
         });
 
         describe('initialization of strategy without buy now required options', () => {
@@ -185,7 +326,7 @@ describe('GooglePayButtonStrategy', () => {
                         eventEmitter.on('onPaymentDataChanged', () => {
                             // TODO: remove this rule and update test with related type (PAYPAL-4383)
                             // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                            googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged({
+                            void googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged({
                                 callbackTrigger: CallbackTriggerType.INITIALIZE,
                             });
                         });
@@ -202,8 +343,158 @@ describe('GooglePayButtonStrategy', () => {
 
                 button.click();
 
+                await new Promise((resolve) => process.nextTick(resolve));
+
                 expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
                 expect(paymentIntegrationService.createBuyNowCart).not.toHaveBeenCalled();
+            });
+
+            it('should skip initialization for unsupported GPay trigger', async () => {
+                jest.spyOn(processor, 'getCallbackTriggers').mockReturnValue({
+                    availableTriggers: [],
+                    initializationTrigger: [],
+                    addressChangeTriggers: [],
+                    shippingOptionsChangeTriggers: [],
+                });
+
+                jest.spyOn(processor, 'initialize').mockImplementation(
+                    (_, googlePayClientOptions) => {
+                        eventEmitter.on('onPaymentDataChanged', () => {
+                            void googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged({
+                                callbackTrigger: CallbackTriggerType.INITIALIZE,
+                            });
+                        });
+                    },
+                );
+
+                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
+                    eventEmitter.emit('onPaymentDataChanged');
+
+                    return getCardDataResponse();
+                });
+
+                await buttonStrategy.initialize(options);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(paymentIntegrationService.loadCheckout).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.createBuyNowCart).not.toHaveBeenCalled();
+            });
+
+            it('should update available shipping address', async () => {
+                const handleShippingOptionChangeMock = jest.spyOn(
+                    processor,
+                    'handleShippingOptionChange',
+                );
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...getGeneric(),
+                    initializationData: undefined,
+                });
+
+                jest.spyOn(processor, 'handleShippingAddressChange').mockResolvedValue(
+                    Promise.resolve(availableGPayShippingOptions),
+                );
+
+                jest.spyOn(processor, 'initialize').mockImplementation(
+                    (_, googlePayClientOptions) => {
+                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                        eventEmitter.on('onPaymentDataChanged', async () => {
+                            mockReturnedPaymentDataChangedValue =
+                                await googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged(
+                                    {
+                                        callbackTrigger: CallbackTriggerType.SHIPPING_ADDRESS,
+                                        shippingAddress: defaultGPayShippingAddress,
+                                        shippingOptionData: {
+                                            id: consignment.selectedShippingOption?.id,
+                                        },
+                                    },
+                                );
+                        });
+                    },
+                );
+
+                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
+                    eventEmitter.emit('onPaymentDataChanged');
+
+                    return getCardDataResponse();
+                });
+
+                await buttonStrategy.initialize(options);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(mockReturnedPaymentDataChangedValue).toStrictEqual({
+                    newTransactionInfo: {
+                        currencyCode: 'USD',
+                        totalPriceStatus: 'FINAL',
+                        totalPrice: '190.00',
+                    },
+                    newShippingOptionParameters: availableGPayShippingOptions,
+                });
+                expect(handleShippingOptionChangeMock).not.toHaveBeenCalled();
+            });
+
+            it('should update shipping option', async () => {
+                const handleShippingOptionChangeMock = jest.spyOn(
+                    processor,
+                    'handleShippingOptionChange',
+                );
+
+                const handleShippingAddressChange = jest.spyOn(
+                    processor,
+                    'handleShippingAddressChange',
+                );
+
+                jest.spyOn(processor, 'initialize').mockImplementation(
+                    (_, googlePayClientOptions) => {
+                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                        eventEmitter.on('onPaymentDataChanged', async () => {
+                            mockReturnedPaymentDataChangedValue =
+                                await googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged(
+                                    {
+                                        callbackTrigger: CallbackTriggerType.SHIPPING_OPTION,
+                                        shippingAddress: defaultGPayShippingAddress,
+                                        shippingOptionData: {
+                                            id: consignment.selectedShippingOption?.id,
+                                        },
+                                    },
+                                );
+                        });
+                    },
+                );
+
+                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
+                    eventEmitter.emit('onPaymentDataChanged');
+
+                    return getCardDataResponse();
+                });
+
+                await buttonStrategy.initialize(options);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(mockReturnedPaymentDataChangedValue).toStrictEqual({
+                    newTransactionInfo: {
+                        countryCode: 'US',
+                        currencyCode: 'USD',
+                        totalPriceStatus: 'FINAL',
+                        totalPrice: '190.00',
+                    },
+                });
+                expect(handleShippingOptionChangeMock).toHaveBeenCalledWith(
+                    consignment.selectedShippingOption?.id,
+                );
+                expect(handleShippingAddressChange).not.toHaveBeenCalled();
             });
 
             it('should initialize processor', async () => {
@@ -253,6 +544,15 @@ describe('GooglePayButtonStrategy', () => {
                 const initialize = buttonStrategy.initialize();
 
                 await expect(initialize).rejects.toThrow(TypeError);
+            });
+
+            test('containerId is missing', async () => {
+                const initialize = buttonStrategy.initialize({
+                    ...options,
+                    containerId: '',
+                });
+
+                await expect(initialize).rejects.toThrow(InvalidArgumentError);
             });
 
             test('methodId is empty', async () => {

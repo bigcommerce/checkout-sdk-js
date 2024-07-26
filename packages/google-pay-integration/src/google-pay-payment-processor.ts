@@ -17,17 +17,18 @@ import GooglePayGateway from './gateways/google-pay-gateway';
 import GooglePayScriptLoader from './google-pay-script-loader';
 import isGooglePayAdditionalActionProcessable from './guards/is-google-pay-additional-action-processable';
 import {
-    CallbackIntentsType,
     GooglePayBaseCardPaymentMethod,
     GooglePayButtonOptions,
     GooglePayCardDataResponse,
     GooglePayCardPaymentMethod,
+    GooglePayFullBillingAddress,
     GooglePayGatewayBaseRequest,
     GooglePayInitializationData,
     GooglePayIsReadyToPayRequest,
     GooglePaymentsClient,
     GooglePayPaymentDataRequest,
     GooglePayPaymentOptions,
+    ShippingOptionParameters,
 } from './types';
 
 export default class GooglePayPaymentProcessor {
@@ -136,6 +137,24 @@ export default class GooglePayPaymentProcessor {
         await this._requestSender.get(`/remote-checkout/${providerId}/signout`);
     }
 
+    getCallbackTriggers() {
+        return this._gateway.getCallbackTriggers();
+    }
+
+    async handleShippingAddressChange(
+        shippingAddress: GooglePayFullBillingAddress,
+    ): Promise<ShippingOptionParameters> {
+        return this._gateway.handleShippingAddressChange(shippingAddress);
+    }
+
+    async handleShippingOptionChange(optionId: string): Promise<void> {
+        await this._gateway.handleShippingOptionChange(optionId);
+    }
+
+    getTotalPrice(): string {
+        return this._gateway.getTotalPrice();
+    }
+
     async _setExternalCheckout(
         provider: string,
         response: GooglePayCardDataResponse,
@@ -218,7 +237,7 @@ export default class GooglePayPaymentProcessor {
             transactionInfo: this._gateway.getTransactionInfo(),
             merchantInfo: this._gateway.getMerchantInfo(),
             ...(await this._gateway.getRequiredData()),
-            callbackIntents: [CallbackIntentsType.OFFER],
+            callbackIntents: this._gateway.getCallbackIntents(),
         };
         this._isReadyToPayRequest = {
             ...this._baseRequest,
