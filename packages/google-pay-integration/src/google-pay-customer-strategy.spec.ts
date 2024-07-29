@@ -10,7 +10,10 @@ import {
     PaymentIntegrationService,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getConsignment,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import GooglePayGateway from './gateways/google-pay-gateway';
 import { WithGooglePayCustomerInitializeOptions } from './google-pay-customer-initialize-options';
@@ -22,6 +25,7 @@ import { getGeneric } from './mocks/google-pay-payment-method.mock';
 import {
     CallbackTriggerType,
     GooglePayButtonOptions,
+    GooglePayFullBillingAddress,
     GooglePayInitializationData,
     NewTransactionInfo,
 } from './types';
@@ -242,6 +246,29 @@ describe('GooglePayCustomerStrategy', () => {
 
         describe('#getGooglePayClientOptions', () => {
             let mockReturnedPaymentDataChangedValue: NewTransactionInfo;
+            const defaultGPayShippingAddress: GooglePayFullBillingAddress = {
+                address1: '',
+                address2: '',
+                address3: '',
+                administrativeArea: 'US',
+                locality: 'TX',
+                sortingCode: '78726',
+                name: '',
+                postalCode: '',
+                countryCode: '',
+            };
+            const consignment = getConsignment();
+            const expectedSippingOptions = [
+                {
+                    id: consignment.availableShippingOptions![0].id,
+                    label: consignment.availableShippingOptions![0].description,
+                    description: '$0.00',
+                },
+            ];
+            const availableGPayShippingOptions = {
+                defaultSelectedOptionId: consignment.selectedShippingOption?.id,
+                shippingOptions: expectedSippingOptions,
+            };
 
             beforeEach(() => {
                 jest.spyOn(processor, 'initialize').mockImplementation(
@@ -252,6 +279,10 @@ describe('GooglePayCustomerStrategy', () => {
                                 await googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged(
                                     {
                                         callbackTrigger: CallbackTriggerType.INITIALIZE,
+                                        shippingAddress: defaultGPayShippingAddress,
+                                        shippingOptionData: {
+                                            id: consignment.selectedShippingOption?.id,
+                                        },
                                     },
                                 );
                         });
@@ -262,6 +293,20 @@ describe('GooglePayCustomerStrategy', () => {
                     eventEmitter.emit('onPaymentDataChanged');
 
                     return getCardDataResponse();
+                });
+
+                jest.spyOn(processor, 'getCallbackTriggers').mockReturnValue({
+                    availableTriggers: [
+                        CallbackTriggerType.INITIALIZE,
+                        CallbackTriggerType.SHIPPING_ADDRESS,
+                        CallbackTriggerType.SHIPPING_OPTION,
+                    ],
+                    initializationTrigger: [CallbackTriggerType.INITIALIZE],
+                    addressChangeTriggers: [
+                        CallbackTriggerType.INITIALIZE,
+                        CallbackTriggerType.SHIPPING_ADDRESS,
+                    ],
+                    shippingOptionsChangeTriggers: [CallbackTriggerType.SHIPPING_OPTION],
                 });
             });
 
@@ -275,7 +320,13 @@ describe('GooglePayCustomerStrategy', () => {
                 expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
             });
 
-            it('should return updated transactionInfo', async () => {
+            it('should return updated transactionInfo without shipping data', async () => {
+                jest.spyOn(processor, 'getCallbackTriggers').mockReturnValue({
+                    availableTriggers: [CallbackTriggerType.INITIALIZE],
+                    addressChangeTriggers: [],
+                    shippingOptionsChangeTriggers: [],
+                });
+
                 await strategy.initialize(options);
 
                 button.click();
@@ -290,6 +341,96 @@ describe('GooglePayCustomerStrategy', () => {
                         totalPrice: '190.00',
                     },
                 });
+            });
+
+            it('should not return updated transactionInfo if callback not supported', async () => {
+                jest.spyOn(processor, 'getCallbackTriggers').mockReturnValue({
+                    availableTriggers: [],
+                    addressChangeTriggers: [],
+                    shippingOptionsChangeTriggers: [],
+                });
+
+                await strategy.initialize(options);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(mockReturnedPaymentDataChangedValue).toBeUndefined();
+            });
+
+            it('should return updated transactionInfo with available shipping options', async () => {
+                jest.spyOn(processor, 'handleShippingAddressChange').mockResolvedValue(
+                    availableGPayShippingOptions,
+                );
+
+                const handleShippingOptionChangeMock = jest.spyOn(
+                    processor,
+                    'handleShippingOptionChange',
+                );
+
+                await strategy.initialize(options);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(mockReturnedPaymentDataChangedValue).toStrictEqual({
+                    newTransactionInfo: {
+                        countryCode: 'US',
+                        currencyCode: 'USD',
+                        totalPriceStatus: 'FINAL',
+                        totalPrice: '190.00',
+                    },
+                    newShippingOptionParameters: availableGPayShippingOptions,
+                });
+                expect(handleShippingOptionChangeMock).not.toHaveBeenCalled();
+            });
+
+            it('should update selected shipping option', async () => {
+                jest.spyOn(processor, 'initialize').mockImplementation(
+                    (_, googlePayClientOptions) => {
+                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                        eventEmitter.on('onPaymentDataChanged', async () => {
+                            mockReturnedPaymentDataChangedValue =
+                                await googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged(
+                                    {
+                                        callbackTrigger: CallbackTriggerType.SHIPPING_OPTION,
+                                        shippingAddress: defaultGPayShippingAddress,
+                                        shippingOptionData: {
+                                            id: consignment.selectedShippingOption?.id,
+                                        },
+                                    },
+                                );
+                        });
+                    },
+                );
+                jest.spyOn(processor, 'handleShippingAddressChange').mockResolvedValue(
+                    Promise.resolve(availableGPayShippingOptions),
+                );
+
+                const handleShippingOptionChangeMock = jest.spyOn(
+                    processor,
+                    'handleShippingOptionChange',
+                );
+
+                await strategy.initialize(options);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(mockReturnedPaymentDataChangedValue).toStrictEqual({
+                    newTransactionInfo: {
+                        countryCode: 'US',
+                        currencyCode: 'USD',
+                        totalPriceStatus: 'FINAL',
+                        totalPrice: '190.00',
+                    },
+                });
+                expect(handleShippingOptionChangeMock).toHaveBeenCalledWith(
+                    consignment.selectedShippingOption?.id,
+                );
             });
         });
     });

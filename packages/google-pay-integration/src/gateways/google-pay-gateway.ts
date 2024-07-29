@@ -1,6 +1,10 @@
+import { round } from 'lodash';
+
 import {
     AddressRequestBody,
     BillingAddressRequestBody,
+    createCurrencyService,
+    CurrencyService,
     guard,
     InvalidArgumentError,
     MissingDataError,
@@ -9,10 +13,13 @@ import {
     NotInitializedErrorType,
     PaymentIntegrationService,
     PaymentMethod,
+    ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import isGooglePayCardNetworkKey from '../guards/is-google-pay-card-network-key';
 import {
+    CallbackIntentsType,
+    CallbackTriggerType,
     ExtraPaymentData,
     GooglePayCardDataResponse,
     GooglePayCardNetwork,
@@ -24,6 +31,7 @@ import {
     GooglePayRequiredPaymentData,
     GooglePaySetExternalCheckoutData,
     GooglePayTransactionInfo,
+    ShippingOptionParameters,
     TotalPriceStatusType,
 } from '../types';
 import itemsRequireShipping from '../utils/items-require-shipping';
@@ -32,6 +40,7 @@ export default class GooglePayGateway {
     private _getPaymentMethodFn?: () => PaymentMethod<GooglePayInitializationData>;
     private _isBuyNowFlow = false;
     private _currencyCode?: string;
+    private _currencyService?: CurrencyService;
 
     constructor(
         private _gatewayIdentifier: string,
@@ -93,6 +102,7 @@ export default class GooglePayGateway {
 
     async getRequiredData(): Promise<GooglePayRequiredPaymentData> {
         const data: GooglePayRequiredPaymentData = { emailRequired: true };
+        const isGooglePayShippingOptionsAvailable = this._isGooglePayShippingOptionsAvailable();
 
         if (this._isBuyNowFlow) {
             return {
@@ -101,6 +111,7 @@ export default class GooglePayGateway {
                 shippingAddressParameters: {
                     phoneNumberRequired: true,
                 },
+                ...(isGooglePayShippingOptionsAvailable ? { shippingOptionRequired: true } : {}),
             };
         }
 
@@ -115,9 +126,50 @@ export default class GooglePayGateway {
                 phoneNumberRequired: true,
                 ...(allowedCountryCodes && { allowedCountryCodes }),
             };
+            data.shippingOptionRequired = !!isGooglePayShippingOptionsAvailable;
         }
 
         return data;
+    }
+
+    getCallbackIntents(): CallbackIntentsType[] {
+        if (
+            this._isGooglePayShippingOptionsAvailable() &&
+            (this._isBuyNowFlow || this._isShippingAddressRequired())
+        ) {
+            return [
+                CallbackIntentsType.OFFER,
+                CallbackIntentsType.SHIPPING_ADDRESS,
+                CallbackIntentsType.SHIPPING_OPTION,
+            ];
+        }
+
+        return [CallbackIntentsType.OFFER];
+    }
+
+    getCallbackTriggers(): { [key: string]: CallbackTriggerType[] } {
+        const isGooglePayShippingOptionsAvailable = this._isGooglePayShippingOptionsAvailable();
+        const availableTriggers = isGooglePayShippingOptionsAvailable
+            ? [
+                  CallbackTriggerType.INITIALIZE,
+                  CallbackTriggerType.SHIPPING_ADDRESS,
+                  CallbackTriggerType.SHIPPING_OPTION,
+              ]
+            : [CallbackTriggerType.INITIALIZE];
+        const initializationTrigger = [CallbackTriggerType.INITIALIZE];
+        const addressChangeTriggers = isGooglePayShippingOptionsAvailable
+            ? [CallbackTriggerType.INITIALIZE, CallbackTriggerType.SHIPPING_ADDRESS]
+            : [];
+        const shippingOptionsChangeTriggers = isGooglePayShippingOptionsAvailable
+            ? [CallbackTriggerType.SHIPPING_OPTION]
+            : [];
+
+        return {
+            availableTriggers,
+            initializationTrigger,
+            addressChangeTriggers,
+            shippingOptionsChangeTriggers,
+        };
     }
 
     getNonce(methodId: string) {
@@ -213,6 +265,73 @@ export default class GooglePayGateway {
         return Promise.resolve();
     }
 
+    async handleShippingAddressChange(
+        shippingAddress?: GooglePayFullBillingAddress,
+    ): Promise<ShippingOptionParameters> {
+        if (shippingAddress) {
+            shippingAddress.name = shippingAddress.name || '';
+            shippingAddress.address1 = shippingAddress.address1 || '';
+        }
+
+        const mappedShippingAddress = this.mapToShippingAddressRequestBody({
+            shippingAddress,
+        } as GooglePayCardDataResponse);
+
+        if (mappedShippingAddress) {
+            await this._paymentIntegrationService.updateShippingAddress(mappedShippingAddress);
+        }
+
+        const state = this._paymentIntegrationService.getState();
+        const consignments = state.getConsignments();
+
+        if (!consignments?.[0]) {
+            return {
+                defaultSelectedOptionId: undefined,
+                shippingOptions: [],
+            };
+        }
+
+        const consignment = consignments[0];
+        const storeConfig = state.getStoreConfigOrThrow();
+
+        if (!this._currencyService) {
+            this._currencyService = createCurrencyService(storeConfig);
+        }
+
+        const availableShippingOptions = (consignment.availableShippingOptions || []).map(
+            this._getGooglePayShippingOption.bind(this),
+        );
+        const selectedShippingOptionId =
+            consignment.selectedShippingOption?.id || availableShippingOptions[0]?.id;
+
+        if (!consignment.selectedShippingOption?.id && availableShippingOptions[0]) {
+            await this.handleShippingOptionChange(availableShippingOptions[0].id);
+        }
+
+        return {
+            defaultSelectedOptionId: selectedShippingOptionId,
+            shippingOptions: availableShippingOptions,
+        };
+    }
+
+    async handleShippingOptionChange(optionId: string) {
+        if (optionId === 'shipping_option_unselected') {
+            return;
+        }
+
+        return this._paymentIntegrationService.selectShippingOption(optionId);
+    }
+
+    getTotalPrice(): string {
+        const { getCheckoutOrThrow, getCartOrThrow } = this._paymentIntegrationService.getState();
+        const { decimalPlaces } = getCartOrThrow().currency;
+        const totalPrice = round(getCheckoutOrThrow().outstandingBalance, decimalPlaces).toFixed(
+            decimalPlaces,
+        );
+
+        return totalPrice;
+    }
+
     protected getGooglePayInitializationData(): GooglePayInitializationData {
         return guard(
             this.getPaymentMethod().initializationData,
@@ -233,6 +352,10 @@ export default class GooglePayGateway {
 
     protected setGatewayIdentifier(gateway?: string) {
         this._gatewayIdentifier = gateway || this.getGatewayIdentifier();
+    }
+
+    private _isGooglePayShippingOptionsAvailable(): boolean {
+        return !!this.getGooglePayInitializationData().isShippingOptionsEnabled;
     }
 
     private _isShippingAddressRequired(): boolean {
@@ -300,5 +423,15 @@ export default class GooglePayGateway {
                     'Unable to initialize payment because "options.currencyCode" argument is not provided.',
                 ),
         );
+    }
+
+    private _getGooglePayShippingOption({ id, cost, description }: ShippingOption) {
+        const formattedCost = this._currencyService?.toCustomerCurrency(cost);
+
+        return {
+            id,
+            label: description,
+            description: formattedCost || cost,
+        };
     }
 }

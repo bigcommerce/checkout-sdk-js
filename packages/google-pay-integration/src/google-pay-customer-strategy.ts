@@ -1,5 +1,3 @@
-import { round } from 'lodash';
-
 import {
     CustomerInitializeOptions,
     CustomerStrategy,
@@ -22,7 +20,6 @@ import GooglePayPaymentProcessor from './google-pay-payment-processor';
 import isGooglePayErrorObject from './guards/is-google-pay-error-object';
 import isGooglePayKey from './guards/is-google-pay-key';
 import {
-    CallbackTriggerType,
     GooglePayInitializationData,
     GooglePayPaymentOptions,
     IntermediatePaymentData,
@@ -113,20 +110,37 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             paymentDataCallbacks: {
                 onPaymentDataChanged: async ({
                     callbackTrigger,
+                    shippingAddress,
+                    shippingOptionData,
                 }: IntermediatePaymentData): Promise<NewTransactionInfo | void> => {
-                    if (callbackTrigger !== CallbackTriggerType.INITIALIZE) {
+                    const {
+                        availableTriggers,
+                        addressChangeTriggers,
+                        shippingOptionsChangeTriggers,
+                    } = this._googlePayPaymentProcessor.getCallbackTriggers();
+
+                    if (!availableTriggers.includes(callbackTrigger)) {
                         return;
+                    }
+
+                    const availableShippingOptions = addressChangeTriggers.includes(callbackTrigger)
+                        ? await this._googlePayPaymentProcessor.handleShippingAddressChange(
+                              shippingAddress,
+                          )
+                        : undefined;
+
+                    if (shippingOptionsChangeTriggers.includes(callbackTrigger)) {
+                        await this._googlePayPaymentProcessor.handleShippingOptionChange(
+                            shippingOptionData.id,
+                        );
                     }
 
                     await this._paymentIntegrationService.loadCheckout();
 
-                    const { getCheckoutOrThrow, getCartOrThrow } =
-                        this._paymentIntegrationService.getState();
-                    const { code: currencyCode, decimalPlaces } = getCartOrThrow().currency;
-                    const totalPrice = round(
-                        getCheckoutOrThrow().outstandingBalance,
-                        decimalPlaces,
-                    ).toFixed(decimalPlaces);
+                    const totalPrice = this._googlePayPaymentProcessor.getTotalPrice();
+                    const { code: currencyCode } = this._paymentIntegrationService
+                        .getState()
+                        .getCartOrThrow().currency;
 
                     return {
                         newTransactionInfo: {
@@ -135,6 +149,9 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
                             totalPriceStatus: TotalPriceStatusType.FINAL,
                             totalPrice,
                         },
+                        ...(availableShippingOptions && {
+                            newShippingOptionParameters: availableShippingOptions,
+                        }),
                     };
                 },
             },

@@ -9,4 +9,5 @@ module.exports = {
     },
     setupFilesAfterEnv: ['../../jest-setup.js'],
     coverageDirectory: '../../coverage/packages/google-pay-integration',
+    coveragePathIgnorePatterns: ['<rootDir>/src/index.ts'],
 };
