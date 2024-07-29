@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.635.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.634.0...v1.635.0) (2024-07-29)
+
+
+### Features
+
+* **payment:** STRIPE-378 GooglePay shipping options ([dfb88ff](https://github.com/bigcommerce/checkout-sdk-js/commit/dfb88ffd09d7a57daedcf00b486a4c7faa664029))
+
 ## [1.634.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.633.1...v1.634.0) (2024-07-29)
 
 
