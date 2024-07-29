@@ -1,5 +1,6 @@
-import { BraintreeFastlaneStylesOption, FastlaneStylesSettings } from '../index';
 import { omitBy } from 'lodash';
+
+import { BraintreeFastlaneStylesOption, FastlaneStylesSettings } from '../index';
 
 function isInvalidStyleOption(styleOption: unknown) {
     return typeof styleOption !== 'string';
