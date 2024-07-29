@@ -483,7 +483,6 @@ describe('AmazonPayV2PaymentStrategy', () => {
             );
 
             const { publicKeyId, createCheckoutSessionConfig } =
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
                 getAmazonPayV2Ph4ButtonParamsMock() as AmazonPayV2NewButtonParams;
             const expectedConfig = {
                 publicKeyId,
