@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.634.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.633.1...v1.634.0) (2024-07-29)
+
+
+### Features
+
+* **checkout:** PI-2290 Adyen Credit Card installments implementation ([#2572](https://github.com/bigcommerce/checkout-sdk-js/issues/2572)) ([5cc2c06](https://github.com/bigcommerce/checkout-sdk-js/commit/5cc2c06c3ba1dd9fda9bd8d88f5711a5f2e26dc4))
+
 ### [1.633.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.633.0...v1.633.1) (2024-07-29)
 
 

@@ -1779,6 +1779,10 @@ declare interface CardDataPaymentMethodState {
 
 declare interface CardDataPaymentMethodState {
     paymentMethod: CardPaymentMethodState;
+    installments?: {
+        value: number;
+        plan?: 'string';
+    };
 }
 
 declare interface CardElementOptions extends BaseElementOptions_2 {

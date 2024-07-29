@@ -6,9 +6,23 @@
 
 ### Properties
 
+- [installments](CardDataPaymentMethodState.md#installments)
 - [paymentMethod](CardDataPaymentMethodState.md#paymentmethod)
 
 ## Properties
+
+### installments
+
+• `Optional` **installments**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `plan?` | ``"string"`` |
+| `value` | `number` |
+
+___
 
 ### paymentMethod
 
