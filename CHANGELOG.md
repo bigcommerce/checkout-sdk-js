@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.633.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.633.0...v1.633.1) (2024-07-29)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-329 added name to Stripe billing_details object ([f2c271c](https://github.com/bigcommerce/checkout-sdk-js/commit/f2c271c0af902b63eb9bf540a73299bcd6102c47))
+
 ## [1.633.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.632.0...v1.633.0) (2024-07-25)
 
 
