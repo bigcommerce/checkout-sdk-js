@@ -1,4 +1,5 @@
 import { some } from 'lodash';
+
 import {
     InvalidArgumentError,
     isHostedInstrumentLike,
@@ -57,9 +58,14 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
         const paymentMethod = this.paymentIntegrationService
             .getState()
             .getPaymentMethodOrThrow<DigitalRiverInitializationData>(options.methodId);
-        const { publicKey, paymentLanguage: locale } =
-            paymentMethod.initializationData as DigitalRiverInitializationData;
+        const { publicKey, paymentLanguage: locale } = paymentMethod.initializationData || {};
         const { containerId } = this.getDigitalRiverInitializeOptions();
+
+        if (!publicKey || !locale) {
+            throw new InvalidArgumentError(
+                'Unable to initialize payment because "publicKey" or "locale" argument is not provided.',
+            );
+        }
 
         this.digitalRiverJS = await this.digitalRiverScriptLoader.load(publicKey, locale);
 
