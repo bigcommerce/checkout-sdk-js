@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.637.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.636.0...v1.637.0) (2024-07-31)
+
+
+### Features
+
+* **checkout:** PI-1560 add additional arguments check ([f7e4124](https://github.com/bigcommerce/checkout-sdk-js/commit/f7e4124fd4db696b6ce3b6c723735b2e21509ce7))
+* **checkout:** PI-1560 add additional information to README file ([109f71c](https://github.com/bigcommerce/checkout-sdk-js/commit/109f71c6cf409fbeadcf6de7ea07aee5bd672127))
+* **checkout:** PI-1560 Refactor Digital River paymnt strategy in checkout-sdk ([a2a511a](https://github.com/bigcommerce/checkout-sdk-js/commit/a2a511a15a236f0c9a883cc7e1ad83be1ca51f8a))
+* **checkout:** PI-1560 remove underscores ([1cfeb82](https://github.com/bigcommerce/checkout-sdk-js/commit/1cfeb8271fb0cf9c407e7de7604c107a51b9d8cb))
+
 ## [1.636.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.635.0...v1.636.0) (2024-07-29)
 
 
