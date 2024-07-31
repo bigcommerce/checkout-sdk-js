@@ -151,7 +151,7 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            'sha384-e30b612e9d17ad8dc16187e4f65677de67d6d5fb5f2eba8686ecdb74e6f970014a99103376b9274b70f0360360832513',
+                            'sha384-3yDEuTgH/1oa552vNZ1Z9Z0UnaOsDuHatxP1RmgpdD8/ecN3YMcikbI1DM6QQVHv',
                     },
                 },
             );
@@ -345,7 +345,7 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            'sha384-4feb9009e54d48afe671481c47de64051fdc20c62f7f9135d425406f9fed313fd40b8f6f003f038f2dff7cfa28f93e4b',
+                            'sha384-kjA0K5UAS3wbxKm4CoMez5lxIYvzCQ+t/xtk0QiVIBIAhbXbV2YlWfr8uHJSY+tV',
                     },
                 },
             );
@@ -466,7 +466,7 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            'sha384-2ee2de9739d61c20a49e2cfb11ffb1a8f999d74405b2439b8ebb920f038e68443cf181c3657ed065890a1fb380d4617c',
+                            'sha384-/qKkzoquZWHgtiDkGqoBqyTMvVJd58HFDo+6iH/wLfKPE6M4aUIr9XG/eReN0a0H',
                     },
                 },
             );
@@ -550,7 +550,7 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            'sha384-97207c3ec2daabc8d814024faca936c467b518750da983274c8f144ab6b92a00d4be85f19640acd53393c35ba1d859e3',
+                            'sha384-VdxBDsfslfvtDeGPAsXn88I9d2JmBCpdwrFaFO3+TiMA8j4/a4HU+BcviiXAptNV',
                     },
                 },
             );
@@ -634,7 +634,7 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            'sha384-7eda4fc304d5bb39a79fdb8924273e66c6b777f6ab077f4a477963316c55cce27edc85de41535005456dec4f12eeec0b',
+                            'sha384-HQ2o1BVFyVrkOzwU5aiPfSIa3ZhtHabNmBVf44kuw/+spM1L/6p7NbZXq4U5y4db',
                     },
                 },
             );
@@ -718,7 +718,7 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            'sha384-77a644a565128cbdbbed48bc224f14cde3cd711cef0b02f7ffff3e0e670887abe69de5894e808dac5d03c28d2c4900df',
+                            'sha384-nMqWo4zVYzGRrIh05fZ2bDOygNZVPHGlltJXuXoNw5WTPh8mUG9uCp7aBqtmm/e/',
                     },
                 },
             );
@@ -802,7 +802,7 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            'sha384-318cba171a3dca9da78d9a9e3b7a2816023768f400906ae4a252e582ac3e90a14f2cf04abe76ac7286dedb4e2ec318e4',
+                            'sha384-WMsHC0Xqz6BN+fUfCghOBd9U0ZkrXDafAq1IZapnh1Z4iWtY86zJlG08lCaB4xF6',
                     },
                 },
             );
@@ -886,7 +886,7 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            'sha384-677e0351d88744239fa176fee6d8d1bf435d47773e9997f9852f21db277965f57426f83a00dc3020be45a972a27177ac',
+                            'sha384-a87dK5DmKr/rtH//0rV44/rzz9Kl6AvNp5mMy8IYonT/f0ik5bUtX8bl/qeGOaSx',
                     },
                 },
             );
@@ -970,7 +970,7 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            'sha384-a4bee2af2b0ccd99f240840d815654ad3de5f8086bf01e4e72fc647709dce5d9832e5f4b2a9eba3225e2e0a745840cf8',
+                            'sha384-d76HNGG5/6M30cuphYSP4hiRYVyFckvx/GV6Lc4u52JUxnJKPNAaGVXntJKHxVWX',
                     },
                 },
             );
@@ -1044,7 +1044,7 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            'sha384-2082333372fd66d9fc3dbba97ea863a821c0950de440588b4f8b7477d8fd0ce5a276c6e4c5a59b6607eb3ebeb11c8e0e',
+                            'sha384-LHGVkS5dEY+LZmubY35YxkuLcNa5Ltw4vZOfCeRmVsCGQMjsvqdxZo4fBXNwf8fI',
                     },
                 },
             );
