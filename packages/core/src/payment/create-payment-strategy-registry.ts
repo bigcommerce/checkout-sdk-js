@@ -1,10 +1,6 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
-import {
-    createScriptLoader,
-    getScriptLoader,
-    getStylesheetLoader,
-} from '@bigcommerce/script-loader';
+import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
 
 import { createAmazonPayV2PaymentProcessor } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import {
@@ -12,7 +8,6 @@ import {
     BraintreeScriptLoader,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 
-import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import {
     CheckoutActionCreator,
     CheckoutRequestSender,
@@ -34,7 +29,6 @@ import {
     SpamProtectionRequestSender,
 } from '../spam-protection';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
-import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subscription';
 
 import createPaymentStrategyRegistryV2 from './create-payment-strategy-registry-v2';
 import PaymentActionCreator from './payment-action-creator';
@@ -65,7 +59,6 @@ import {
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mpgs';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
-import { DigitalRiverPaymentStrategy, DigitalRiverScriptLoader } from './strategies/digitalriver';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { MonerisPaymentStrategy } from './strategies/moneris';
 import { OpyPaymentStrategy, OpyScriptLoader } from './strategies/opy';
@@ -93,10 +86,6 @@ export default function createPaymentStrategyRegistry(
     const scriptLoader = getScriptLoader();
     const paymentRequestTransformer = new PaymentRequestTransformer();
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
-    const billingAddressActionCreator = new BillingAddressActionCreator(
-        new BillingAddressRequestSender(requestSender),
-        new SubscriptionsActionCreator(new SubscriptionsRequestSender(requestSender)),
-    );
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const registryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
@@ -276,20 +265,6 @@ export default function createPaymentStrategyRegistry(
                 requestSender,
                 new ChasePayScriptLoader(scriptLoader),
                 new WepayRiskClient(scriptLoader),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.DIGITALRIVER,
-        () =>
-            new DigitalRiverPaymentStrategy(
-                store,
-                paymentMethodActionCreator,
-                orderActionCreator,
-                paymentActionCreator,
-                storeCreditActionCreator,
-                new DigitalRiverScriptLoader(scriptLoader, getStylesheetLoader()),
-                billingAddressActionCreator,
             ),
     );
 

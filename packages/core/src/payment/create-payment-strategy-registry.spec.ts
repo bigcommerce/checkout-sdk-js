@@ -18,7 +18,6 @@ import {
 import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
 import { ChasepayPaymentStrategy } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
-import { DigitalRiverPaymentStrategy } from './strategies/digitalriver';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
 import { OpyPaymentStrategy } from './strategies/opy';
 import { PaypalExpressPaymentStrategy } from './strategies/paypal';
@@ -89,12 +88,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.BNZ);
 
         expect(paymentStrategy).toBeInstanceOf(BNZPaymentStrategy);
-    });
-
-    it('can instantiate digitalRiver', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.DIGITALRIVER);
-
-        expect(paymentStrategy).toBeInstanceOf(DigitalRiverPaymentStrategy);
     });
 
     it('can instantiate openpay', () => {
