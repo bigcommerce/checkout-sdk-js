@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.638.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.637.0...v1.638.0) (2024-08-01)
+
+
+### Features
+
+* **payment:** PAYPAL-000 updated hash parameters ([00363ff](https://github.com/bigcommerce/checkout-sdk-js/commit/00363ff964a9e5691b25f7e14d321726abf49b30))
+
 ## [1.637.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.636.0...v1.637.0) (2024-07-31)
 
 
