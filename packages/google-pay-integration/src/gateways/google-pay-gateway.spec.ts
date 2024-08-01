@@ -473,7 +473,7 @@ describe('GooglePayGateway', () => {
             expect(updateShippingAddressMock).toHaveBeenCalledWith(mappedAddressMock);
         });
 
-        it('should return empty data if consignments does not exists', async () => {
+        it('should return undefined if consignments does not exists', async () => {
             await gateway.initialize(getGeneric);
 
             jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValueOnce(
@@ -482,10 +482,7 @@ describe('GooglePayGateway', () => {
 
             await expect(
                 gateway.handleShippingAddressChange(defaultGPayShippingAddress),
-            ).resolves.toStrictEqual({
-                defaultSelectedOptionId: undefined,
-                shippingOptions: [],
-            });
+            ).resolves.toBeUndefined();
         });
 
         it('should return empty data if consignments empty', async () => {
@@ -497,13 +494,10 @@ describe('GooglePayGateway', () => {
 
             await expect(
                 gateway.handleShippingAddressChange(defaultGPayShippingAddress),
-            ).resolves.toStrictEqual({
-                defaultSelectedOptionId: undefined,
-                shippingOptions: [],
-            });
+            ).resolves.toBeUndefined();
         });
 
-        it('should return empty data if no available shipping methods', async () => {
+        it('should return undefined if no available shipping methods', async () => {
             const consiment = {
                 ...getConsignment(),
                 selectedShippingOption: undefined,
@@ -518,10 +512,7 @@ describe('GooglePayGateway', () => {
 
             await expect(
                 gateway.handleShippingAddressChange(defaultGPayShippingAddress),
-            ).resolves.toStrictEqual({
-                defaultSelectedOptionId: undefined,
-                shippingOptions: [],
-            });
+            ).resolves.toBeUndefined();
         });
 
         it('should return empty available shipping methods with no preselected option', async () => {
