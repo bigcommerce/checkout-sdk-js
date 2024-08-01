@@ -143,7 +143,7 @@ export default class GooglePayPaymentProcessor {
 
     async handleShippingAddressChange(
         shippingAddress: GooglePayFullBillingAddress,
-    ): Promise<ShippingOptionParameters> {
+    ): Promise<ShippingOptionParameters | undefined> {
         return this._gateway.handleShippingAddressChange(shippingAddress);
     }
 

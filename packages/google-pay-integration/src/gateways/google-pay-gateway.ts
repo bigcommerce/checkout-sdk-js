@@ -267,7 +267,7 @@ export default class GooglePayGateway {
 
     async handleShippingAddressChange(
         shippingAddress?: GooglePayFullBillingAddress,
-    ): Promise<ShippingOptionParameters> {
+    ): Promise<ShippingOptionParameters | undefined> {
         if (shippingAddress) {
             shippingAddress.name = shippingAddress.name || '';
             shippingAddress.address1 = shippingAddress.address1 || '';
@@ -285,10 +285,8 @@ export default class GooglePayGateway {
         const consignments = state.getConsignments();
 
         if (!consignments?.[0]) {
-            return {
-                defaultSelectedOptionId: undefined,
-                shippingOptions: [],
-            };
+            // Info: we can not return an empty data because shippingOptions should contain at least one element, it caused a developer exception
+            return;
         }
 
         const consignment = consignments[0];
@@ -301,17 +299,20 @@ export default class GooglePayGateway {
         const availableShippingOptions = (consignment.availableShippingOptions || []).map(
             this._getGooglePayShippingOption.bind(this),
         );
-        const selectedShippingOptionId =
-            consignment.selectedShippingOption?.id || availableShippingOptions[0]?.id;
 
-        if (!consignment.selectedShippingOption?.id && availableShippingOptions[0]) {
-            await this.handleShippingOptionChange(availableShippingOptions[0].id);
+        if (availableShippingOptions.length) {
+            const selectedShippingOptionId =
+                consignment.selectedShippingOption?.id || availableShippingOptions[0]?.id;
+
+            if (!consignment.selectedShippingOption?.id && availableShippingOptions[0]) {
+                await this.handleShippingOptionChange(availableShippingOptions[0].id);
+            }
+
+            return {
+                defaultSelectedOptionId: selectedShippingOptionId,
+                shippingOptions: availableShippingOptions,
+            };
         }
-
-        return {
-            defaultSelectedOptionId: selectedShippingOptionId,
-            shippingOptions: availableShippingOptions,
-        };
     }
 
     async handleShippingOptionChange(optionId: string) {
