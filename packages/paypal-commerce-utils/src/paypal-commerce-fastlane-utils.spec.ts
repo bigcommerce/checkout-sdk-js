@@ -243,6 +243,35 @@ describe('PayPalCommerceFastlaneUtils', () => {
                 postalCode: '03004',
             });
         });
+
+        it('set adminArea1 with stateOrProvince value if stateOrProvinceCode is empty', () => {
+            const addressMock = {
+                address1: 'addressLine1',
+                address2: 'addressLine2',
+                city: 'addressCity',
+                company: 'BigCommerce',
+                country: 'United States',
+                countryCode: 'US',
+                customFields: [],
+                firstName: 'John',
+                lastName: 'Doe',
+                phone: '15551113344',
+                postalCode: '03004',
+                stateOrProvince: 'addressState1',
+                stateOrProvinceCode: '',
+            };
+            const result = subject.mapBcToPayPalAddress(addressMock);
+
+            expect(result).toEqual({
+                addressLine1: 'addressLine1',
+                addressLine2: 'addressLine2',
+                adminArea1: 'addressState1',
+                adminArea2: 'addressCity',
+                company: 'BigCommerce',
+                countryCode: 'US',
+                postalCode: '03004',
+            });
+        });
     });
 
     describe('#mapPayPalToBcAddress()', () => {
