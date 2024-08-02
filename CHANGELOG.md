@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.641.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.640.0...v1.641.0) (2024-08-02)
+
+
+### Features
+
+* **payment:** PAYPAL-4498 fixed region for fastlane for Thailand ([#2583](https://github.com/bigcommerce/checkout-sdk-js/issues/2583)) ([ab5964e](https://github.com/bigcommerce/checkout-sdk-js/commit/ab5964e113cefe18d99b40f3f46a5edf757f7c4b))
+
 ## [1.640.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.639.0...v1.640.0) (2024-08-02)
 
 
