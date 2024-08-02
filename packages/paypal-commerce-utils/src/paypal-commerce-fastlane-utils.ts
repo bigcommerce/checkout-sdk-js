@@ -203,7 +203,7 @@ export default class PayPalCommerceFastlaneUtils {
             company: address?.company || '',
             addressLine1: address?.address1 || '',
             addressLine2: address?.address2 || '',
-            adminArea1: address?.stateOrProvinceCode || '',
+            adminArea1: address?.stateOrProvinceCode || address?.stateOrProvince || '',
             adminArea2: address?.city || '',
             postalCode: address?.postalCode || '',
             countryCode: address?.countryCode || '',
