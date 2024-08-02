@@ -72,12 +72,12 @@ export default class GooglePayGateway {
         const {
             company = '',
             phone = '',
-            email = response.email,
+            email,
         } = this._paymentIntegrationService.getState().getBillingAddress() || {};
 
         return {
             ...this._mapToAddressRequestBody(billingAddress, company, phone),
-            email,
+            email: email || response.email,
         };
     }
 
