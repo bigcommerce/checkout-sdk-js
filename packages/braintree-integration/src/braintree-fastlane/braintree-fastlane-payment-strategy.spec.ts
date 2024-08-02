@@ -538,6 +538,62 @@ describe('BraintreeFastlanePaymentStrategy', () => {
             });
         });
 
+        it('set region field with stateOrProvince value if stateOrProvinceCode is empty', async () => {
+            const tokenizationNonceMock = 'fastlane_token_mock';
+            const billingAddressMock = {
+                id: '55c96cda6f04c',
+                firstName: 'Test',
+                lastName: 'Tester',
+                email: 'test@bigcommerce.com',
+                company: 'Bigcommerce',
+                address1: '12345 Testing Way',
+                address2: '',
+                city: 'Bangkok',
+                stateOrProvince: 'Bangkok',
+                stateOrProvinceCode: '',
+                country: 'Thailand',
+                countryCode: 'TH',
+                postalCode: '10100',
+                shouldSaveAddress: true,
+                phone: '555-555-5555',
+                customFields: [],
+            };
+
+            const tokenizeMethodMock = jest.fn().mockReturnValue({ id: tokenizationNonceMock });
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getBillingAddressOrThrow',
+            ).mockReturnValue(billingAddressMock);
+            jest.spyOn(braintreeFastlaneMock, 'FastlaneCardComponent').mockImplementation(() => ({
+                getPaymentToken: tokenizeMethodMock,
+                render: jest.fn,
+            }));
+
+            await strategy.initialize(defaultInitializationOptions);
+            await strategy.execute(executeOptions);
+
+            expect(tokenizeMethodMock).toHaveBeenCalledWith({
+                billingAddress: {
+                    streetAddress: '12345 Testing Way',
+                    locality: 'Bangkok',
+                    region: 'Bangkok',
+                    postalCode: '10100',
+                    countryCodeAlpha2: 'TH',
+                },
+                name: {
+                    fullName: 'Test Tester',
+                },
+            });
+
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
+                methodId,
+                paymentData: {
+                    deviceSessionId,
+                    nonce: tokenizationNonceMock,
+                },
+            });
+        });
+
         it('places order with braintree fastlane using fastlane vaulted instrument for customers with fastlane account', async () => {
             const mockPaymentMethod = {
                 ...paymentMethod,

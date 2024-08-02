@@ -222,7 +222,7 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         return {
             streetAddress: address?.address1 || '',
             locality: address?.city || '',
-            region: address?.stateOrProvinceCode || '',
+            region: address?.stateOrProvinceCode || address?.stateOrProvince || '',
             postalCode: address?.postalCode || '',
             countryCodeAlpha2: address?.countryCode || '',
         };
