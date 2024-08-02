@@ -98,6 +98,24 @@ describe('CheckoutStoreSelector', () => {
     });
 
     describe('#getBillingAddress()', () => {
+        const emptyBillingAddress = {
+            email: '',
+            id: '',
+            address1: '',
+            customFields: [],
+            address2: '',
+            city: '',
+            company: '',
+            country: '',
+            firstName: '',
+            lastName: '',
+            phone: '',
+            postalCode: '',
+            stateOrProvince: '',
+            stateOrProvinceCode: '',
+            countryCode: '',
+        };
+
         it('returns billing address', () => {
             expect(selector.getBillingAddress()).toEqual(
                 internalSelectors.billingAddress.getBillingAddress(),
@@ -114,20 +132,7 @@ describe('CheckoutStoreSelector', () => {
             selector = createCheckoutStoreSelector(internalSelectors);
 
             expect(selector.getBillingAddress()).toEqual({
-                id: '',
-                address1: '',
-                address2: '',
-                city: '',
-                company: '',
-                country: '',
-                customFields: [],
-                email: '',
-                firstName: '',
-                lastName: '',
-                phone: '',
-                postalCode: '',
-                stateOrProvince: '',
-                stateOrProvinceCode: '',
+                ...emptyBillingAddress,
                 countryCode: 'AU',
             });
         });
@@ -135,33 +140,18 @@ describe('CheckoutStoreSelector', () => {
         it('returns geo-ip dummy billing address when only email is defined in billing address', () => {
             internalSelectors = createInternalCheckoutSelectors(state);
 
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             jest.spyOn(internalSelectors.billingAddress, 'getBillingAddress').mockReturnValue({
+                ...emptyBillingAddress,
                 email: 'foo@bar.com',
                 id: '2',
-                address1: '',
-                customFields: [],
             });
 
             selector = createCheckoutStoreSelector(internalSelectors);
 
             expect(selector.getBillingAddress()).toEqual({
+                ...emptyBillingAddress,
                 id: '2',
-                address1: '',
-                address2: '',
-                city: '',
-                company: '',
-                country: '',
-                customFields: [],
                 email: 'foo@bar.com',
-                firstName: '',
-                lastName: '',
-                phone: '',
-                postalCode: '',
-                stateOrProvince: '',
-                stateOrProvinceCode: '',
                 countryCode: 'AU',
             });
         });
@@ -182,17 +172,18 @@ describe('CheckoutStoreSelector', () => {
         it('returns address if address is partially defined but geo IP is not defined', () => {
             internalSelectors = createInternalCheckoutSelectors(state);
 
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             jest.spyOn(internalSelectors.billingAddress, 'getBillingAddress').mockReturnValue({
+                ...emptyBillingAddress,
                 email: 'foo@bar.com',
             });
             jest.spyOn(internalSelectors.config, 'getContextConfig').mockReturnValue(undefined);
 
             selector = createCheckoutStoreSelector(internalSelectors);
 
-            expect(selector.getBillingAddress()).toEqual({ email: 'foo@bar.com' });
+            expect(selector.getBillingAddress()).toEqual({
+                ...emptyBillingAddress,
+                email: 'foo@bar.com',
+            });
         });
     });
 
