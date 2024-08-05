@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.642.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.642.0...v1.642.1) (2024-08-05)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-4526 removed ts-ignore and updated tests in core/src/common/iframe folder due to jest update tech debt ([#2587](https://github.com/bigcommerce/checkout-sdk-js/issues/2587)) ([73e6d49](https://github.com/bigcommerce/checkout-sdk-js/commit/73e6d49030d6d32b101b1421d6380fea6542eded))
+
 ## [1.642.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.641.1...v1.642.0) (2024-08-05)
 
 
