@@ -22,15 +22,8 @@ describe('Gift Certificate Request Sender', () => {
     beforeEach(() => {
         requestSender = createRequestSender();
 
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.resolve());
-
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve());
+        jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.resolve(getResponse({})));
+        jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(getResponse({})));
 
         giftCertificateRequestSender = new GiftCertificateRequestSender(requestSender);
     });
