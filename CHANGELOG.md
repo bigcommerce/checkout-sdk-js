@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.642.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.642.1...v1.642.2) (2024-08-05)
+
+
+### Code Refactoring
+
+* **checkout:** PAYPAL-4527 removed almost all ts-ignore from core/src/checkout folder ([#2588](https://github.com/bigcommerce/checkout-sdk-js/issues/2588)) ([3be430f](https://github.com/bigcommerce/checkout-sdk-js/commit/3be430fecd9eef995399d8fd633ff685a737819d))
+* **payment:** PAYPAL-4531 removed ts-ignore and updated tests in core/src/billing folder ([#2589](https://github.com/bigcommerce/checkout-sdk-js/issues/2589)) ([5d38f3f](https://github.com/bigcommerce/checkout-sdk-js/commit/5d38f3facb33a40de0ce51e58b7cfa13541ed12e))
+* **payment:** PAYPAL-4531 removed ts-ignore and updated tests in core/src/coupon folder ([#2590](https://github.com/bigcommerce/checkout-sdk-js/issues/2590)) ([046caf5](https://github.com/bigcommerce/checkout-sdk-js/commit/046caf51703433cbf09dd5aa288d7b025ca2912c))
+
 ### [1.642.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.642.0...v1.642.1) (2024-08-05)
 
 
