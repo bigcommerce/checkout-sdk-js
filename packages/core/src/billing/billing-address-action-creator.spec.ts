@@ -11,6 +11,7 @@ import { MissingDataError, StandardError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { getConfigState } from '../config/configs.mock';
 import {
+    Subscriptions,
     SubscriptionsActionCreator,
     SubscriptionsActionType,
     SubscriptionsRequestSender,
@@ -37,6 +38,7 @@ describe('BillingAddressActionCreator', () => {
     let subscriptionsActionCreator: SubscriptionsActionCreator;
     let errorResponse: Response<Error>;
     let response: Response<Checkout>;
+    let subscriptionsResponse: Response<Subscriptions>;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
     let actions:
@@ -48,6 +50,11 @@ describe('BillingAddressActionCreator', () => {
 
     beforeEach(() => {
         response = getResponse(getCheckout());
+        subscriptionsResponse = getResponse({
+            email: 'foo@bar.com',
+            acceptsMarketingNewsletter: false,
+            acceptsAbandonedCartEmails: false,
+        });
         errorResponse = getErrorResponse();
         state = getCheckoutStoreState();
         billingAddressRequestSender = new BillingAddressRequestSender(createRequestSender());
@@ -60,11 +67,9 @@ describe('BillingAddressActionCreator', () => {
         jest.spyOn(billingAddressRequestSender, 'createAddress').mockImplementation(() =>
             Promise.resolve(response),
         );
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+
         jest.spyOn(subscriptionsRequestSender, 'updateSubscriptions').mockImplementation(() =>
-            Promise.resolve(response),
+            Promise.resolve(subscriptionsResponse),
         );
 
         billingAddressActionCreator = new BillingAddressActionCreator(
@@ -143,7 +148,7 @@ describe('BillingAddressActionCreator', () => {
                 });
                 expect(actions).toContainEqual({
                     type: SubscriptionsActionType.UpdateSubscriptionsSucceeded,
-                    payload: response.body,
+                    payload: subscriptionsResponse.body,
                 });
             });
 
