@@ -1,5 +1,6 @@
 import { round } from 'lodash';
 
+import { CardinalThreeDSecureFlowV2 } from '@bigcommerce/checkout-sdk/cardinal-integration';
 import {
     guard,
     InvalidArgumentError,
@@ -38,6 +39,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     constructor(
         protected _paymentIntegrationService: PaymentIntegrationService,
         protected _googlePayPaymentProcessor: GooglePayPaymentProcessor,
+        private _threeDSecureFlow?: CardinalThreeDSecureFlowV2,
     ) {}
 
     async initialize(
@@ -71,9 +73,56 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         );
 
         this._addPaymentButton(walletButton, callbacks);
+
+        if (this._threeDSecureFlow /* && paymentMethod.config.is3dsEnabled */) {
+            await this._threeDSecureFlow.prepare(paymentMethod);
+        }
     }
 
-    async execute({ payment }: OrderRequestBody): Promise<void> {
+    async execute(payload: OrderRequestBody): Promise<void> {
+        // const paymentMethod = this._paymentIntegrationService
+        //     .getState()
+        //     .getPaymentMethodOrThrow<GooglePayInitializationData>(this._getMethodId());
+        if (!payload.payment?.methodId) {
+            throw new PaymentArgumentInvalidError(['payment']);
+        }
+
+        const nonce = await this._googlePayPaymentProcessor.getNonce(payload.payment.methodId);
+        const extraData = await this._googlePayPaymentProcessor.extraPaymentData();
+
+        if (this._threeDSecureFlow /* && paymentMethod.config.is3dsEnabled */) {
+            return this._threeDSecureFlow.start(
+                this._executeInner.bind(this),
+                payload,
+                undefined,
+                undefined,
+                {
+                    ...payload.payment,
+                    paymentData: { nonce, ...extraData },
+                },
+            );
+        }
+
+        return this._executeInner(payload);
+    }
+
+    finalize(): Promise<void> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
+    }
+
+    deinitialize(): Promise<void> {
+        if (this._clickListener) {
+            this._paymentButton?.removeEventListener('click', this._clickListener);
+        }
+
+        this._paymentButton = undefined;
+        this._clickListener = undefined;
+        this._methodId = undefined;
+
+        return Promise.resolve();
+    }
+
+    protected async _executeInner({ payment }: OrderRequestBody): Promise<void> {
         if (!payment?.methodId) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
@@ -91,22 +140,6 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         } catch (error) {
             await this._googlePayPaymentProcessor.processAdditionalAction(error);
         }
-    }
-
-    finalize(): Promise<void> {
-        return Promise.reject(new OrderFinalizationNotRequiredError());
-    }
-
-    deinitialize(): Promise<void> {
-        if (this._clickListener) {
-            this._paymentButton?.removeEventListener('click', this._clickListener);
-        }
-
-        this._paymentButton = undefined;
-        this._clickListener = undefined;
-        this._methodId = undefined;
-
-        return Promise.resolve();
     }
 
     protected _addPaymentButton(
