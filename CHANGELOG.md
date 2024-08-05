@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.641.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.641.0...v1.641.1) (2024-08-05)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-4525 removed ts-ignore and updated adyen mocks to fix the issue with ts-jest ([#2585](https://github.com/bigcommerce/checkout-sdk-js/issues/2585)) ([9248f26](https://github.com/bigcommerce/checkout-sdk-js/commit/9248f2612940eabe8e713d0ed75cb759a5a74d50))
+
 ## [1.641.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.640.0...v1.641.0) (2024-08-02)
 
 
