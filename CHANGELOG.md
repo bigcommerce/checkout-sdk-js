@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.642.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.641.1...v1.642.0) (2024-08-05)
+
+
+### Features
+
+* **payment:** PAYPAL-4524 fix of email passing ([d0207df](https://github.com/bigcommerce/checkout-sdk-js/commit/d0207df122043fb2735c159539a23b7a2012cf02))
+
 ### [1.641.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.641.0...v1.641.1) (2024-08-05)
 
 
