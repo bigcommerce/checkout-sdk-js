@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 
 import IframeEvent from './iframe-event';
 import IframeEventPoster from './iframe-event-poster';
+import isIframeEvent from './is-iframe-event';
 
 describe('IframeEventPoster', () => {
     let eventEmitter: EventEmitter;
@@ -11,11 +12,11 @@ describe('IframeEventPoster', () => {
         eventEmitter = new EventEmitter();
         origin = 'https://mybigcommerce.com';
 
-        jest.spyOn(window, 'addEventListener').mockImplementation((type, listener) => {
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            eventEmitter.addListener(type, listener);
+        jest.spyOn(window, 'addEventListener').mockImplementation((type, eventListener) => {
+            const listener =
+                typeof eventListener === 'function' ? eventListener : () => eventListener;
+
+            return eventEmitter.addListener(type, listener);
         });
     });
 
@@ -95,10 +96,7 @@ describe('IframeEventPoster', () => {
         const poster = new IframeEventPoster<IframeEvent>(origin, targetWindow);
 
         jest.spyOn(targetWindow, 'postMessage').mockImplementation((message) => {
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            if (message.type === 'FOOBAR_REQUEST') {
+            if (isIframeEvent(message, 'FOOBAR_REQUEST')) {
                 eventEmitter.emit('message', {
                     origin,
                     data: { type: 'FOOBAR_SUCCESS', payload: '123' },
@@ -119,10 +117,7 @@ describe('IframeEventPoster', () => {
         const poster = new IframeEventPoster<IframeEvent>(origin, targetWindow);
 
         jest.spyOn(targetWindow, 'postMessage').mockImplementation((message) => {
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            if (message.type === 'FOOBAR_REQUEST') {
+            if (isIframeEvent(message, 'FOOBAR_REQUEST')) {
                 eventEmitter.emit('message', {
                     origin,
                     data: { type: 'FOOBAR_ERROR', payload: 'Unexpected error' },
