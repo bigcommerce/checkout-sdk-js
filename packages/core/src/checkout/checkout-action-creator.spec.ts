@@ -156,10 +156,9 @@ describe('CheckoutActionCreator', () => {
         it('does not call loadCheckout until loadConfig resolves', () => {
             const { id } = getCheckout();
 
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            jest.spyOn(configActionCreator, 'loadConfig').mockReturnValue(new Promise(() => {}));
+            jest.spyOn(configActionCreator, 'loadConfig').mockReturnValue(
+                of(createAction(ConfigActionType.LoadConfigSucceeded)),
+            );
 
             from(actionCreator.loadCheckout(id)(store)).toPromise();
 
@@ -215,10 +214,9 @@ describe('CheckoutActionCreator', () => {
         });
 
         it('does not call loadCheckout until loadConfig resolves', () => {
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            jest.spyOn(configActionCreator, 'loadConfig').mockReturnValue(new Promise(() => {}));
+            jest.spyOn(configActionCreator, 'loadConfig').mockReturnValue(
+                of(createAction(ConfigActionType.LoadConfigSucceeded)),
+            );
 
             from(actionCreator.loadDefaultCheckout()(store)).toPromise();
 
