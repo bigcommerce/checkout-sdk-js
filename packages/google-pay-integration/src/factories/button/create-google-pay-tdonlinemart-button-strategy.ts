@@ -18,7 +18,7 @@ const createGooglePayTdOnlineMartButtonStrategy: CheckoutButtonStrategyFactory<
         paymentIntegrationService,
         new GooglePayPaymentProcessor(
             createGooglePayScriptLoader(),
-            new GooglePayTdOnlineMartGateway(paymentIntegrationService),
+            new GooglePayTdOnlineMartGateway(paymentIntegrationService, createFormPoster()),
             createRequestSender(),
             createFormPoster(),
         ),
