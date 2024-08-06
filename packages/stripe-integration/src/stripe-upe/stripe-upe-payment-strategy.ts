@@ -66,6 +66,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     private _isMounted = false;
     private _unsubscribe?: () => void;
     private _isStripeElementUpdateEnabled?: boolean;
+    private _selectedMethodId = '';
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -115,7 +116,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         stripeupe.onError?.(error);
                     } else if (!this._isMounted) {
                         await this._stripeElements?.fetchUpdates();
-                        this._mountElement(payment, stripeupe.containerId);
+                        this._mountElement(payment, stripeupe?.containerId);
                     }
                 }
             },
@@ -145,7 +146,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const { paymentData, methodId, gatewayId } = payment;
+        const { paymentData, /* methodId, */ gatewayId } = payment;
+        const methodId = this._selectedMethodId;
+
+        console.log('set method id', methodId);
+
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
         const state = this.paymentIntegrationService.getState();
@@ -183,11 +188,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
             const { instrumentId } = paymentData;
 
-            await this._executeWithVaulted(
-                payment.methodId,
-                instrumentId,
-                shouldSetAsDefaultInstrument,
-            );
+            await this._executeWithVaulted(methodId, instrumentId, shouldSetAsDefaultInstrument);
 
             return;
         }
@@ -195,7 +196,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         if (includes(APM_REDIRECT, methodId)) {
             await this.paymentIntegrationService.submitOrder(order, options);
 
-            await this._executeWithAPM(payment.methodId);
+            await this._executeWithAPM(methodId);
 
             return;
         }
@@ -203,7 +204,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         await this.paymentIntegrationService.submitOrder(order, options);
 
         await this._executeWithoutRedirect(
-            payment.methodId,
+            methodId,
             shouldSaveInstrument,
             shouldSetAsDefaultInstrument,
         );
@@ -335,7 +336,20 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         gatewayId: string,
         methodId: string,
     ) {
-        const { containerId, style, render, initStripeElementUpdateTrigger } = stripeupe;
+        const {
+            containerId,
+            style,
+            render,
+            initStripeElementUpdateTrigger,
+            toggleSelectedMethod,
+            collapseListener,
+        } = stripeupe;
+
+        console.log({
+            gatewayId,
+            methodId,
+        });
+
         const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
             params: { method: methodId },
         });
@@ -362,20 +376,30 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             !!checkoutSettings.features['PI-1679.trigger_update_stripe_payment_element'] &&
             typeof initStripeElementUpdateTrigger === 'function';
 
+        const { paymentIntent } = await this._stripeUPEClient.retrievePaymentIntent(
+            paymentMethod.clientToken,
+        );
+
+        console.log('*** paymentIntent', paymentIntent);
+
         let appearance: StripeUPEAppearanceOptions | undefined;
 
         if (style) {
             const styles = style;
 
+            console.log(styles.fieldBackground);
+
             appearance = {
                 variables: {
                     colorPrimary: styles.fieldInnerShadow,
-                    colorBackground: styles.fieldBackground,
+                    // colorBackground: styles.fieldBackground,
+                    colorBackground: '#fcfcfc',
                     colorText: styles.labelText,
                     colorDanger: styles.fieldErrorText,
                     colorTextSecondary: styles.labelText,
                     colorTextPlaceholder: styles.fieldPlaceholderText,
                     colorIcon: styles.fieldPlaceholderText,
+                    fontFamily: 'Montserrat, Arial, Helvetica',
                 },
                 rules: {
                     '.Input': {
@@ -383,15 +407,57 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         color: styles.fieldText,
                         boxShadow: styles.fieldInnerShadow,
                     },
+                    '.AccordionItem': {
+                        borderRadius: '0',
+                        // borderLeftWidth: '0',
+                        // borderRightWidth: '0',
+                        borderWidth: '0',
+                        boxShadow: 'none',
+                        fontSize: '15px',
+                        fontWeight: '700',
+                        padding: '13px 20px 13px',
+                        // paddingBottom: '13px',
+                        // borderBottom: '1px solid #e6e6e6',
+                    },
+                    '.TabLabel, .AccordionItem': {
+                        fontSize: '15px',
+                        fontWeight: '700',
+                        color: '#5f5f5f',
+                    },
+                    '.TabLabel--selected, .AccordionItem--selected': {
+                        fontWeight: '700',
+                        color: '#5f5f5f',
+                    },
                 },
             };
         }
 
-        this._stripeElements = await this.scriptLoader.getElements(this._stripeUPEClient, {
-            clientSecret: paymentMethod.clientToken,
-            locale: formatLocale(shopperLanguage),
-            appearance,
-        });
+        // const { outstandingBalance } = state.getCheckoutOrThrow();
+        // const { currency } = state.getCartOrThrow();
+        // const currencyCode = currency.code.toLowerCase();
+        // const amount = Math.round(outstandingBalance * 100);
+
+        // console.log({ amount });
+
+        try {
+            this._stripeElements = await this.scriptLoader.getElements(this._stripeUPEClient, {
+                clientSecret: paymentMethod.clientToken,
+                locale: formatLocale(shopperLanguage),
+                appearance,
+                // mode: 'payment',
+                // amount,
+                // currency: currencyCode,
+                // paymentMethodTypes: ['card', 'alipay', 'klarna', 'us_bank_account', 'wechat_pay'], // TODO: ask Stripe team why does only CC fields render without this option
+                fonts: [
+                    {
+                        cssSrc: 'https://fonts.googleapis.com/css?family=Montserrat:700,500,400%7CKarla:400&display=swap',
+                    },
+                ],
+            });
+        } catch (error) {
+            console.log('*** error', error);
+            throw error;
+        }
 
         const { getBillingAddress, getShippingAddress } = state;
         const { postalCode } = getShippingAddress() || getBillingAddress() || {};
@@ -416,6 +482,15 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     googlePay: StripeStringConstants.NEVER,
                 },
                 ...this._getStripeElementTerms(),
+                layout: {
+                    type: 'accordion',
+                    defaultCollapsed: false,
+                    radios: true,
+                    spacedAccordionItems: false,
+                    visibleAccordionItemsCount: 0,
+                    // type: 'tabs',
+                    // defaultCollapsed: true,
+                },
             });
 
         this._mountElement(stripeElement, containerId);
@@ -427,6 +502,21 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         if (this._isStripeElementUpdateEnabled) {
             initStripeElementUpdateTrigger?.(this._updateStripeElement.bind(this));
         }
+
+        collapseListener?.(this.collapseStripeElement.bind(this));
+
+        stripeElement.on('change', (event: any) => {
+            console.log('*** change', event);
+            this._selectedMethodId = event.value.type;
+            console.log('set selected method id', this._selectedMethodId);
+            toggleSelectedMethod?.('stripeupe-card');
+        });
+    }
+
+    private collapseStripeElement() {
+        const stripeElement = this._stripeElements?.getElement(StripeElementType.PAYMENT);
+
+        stripeElement?.collapse();
     }
 
     // TODO: complexity of _processAdditionalAction method
