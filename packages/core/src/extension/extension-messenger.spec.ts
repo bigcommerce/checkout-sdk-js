@@ -7,11 +7,7 @@ import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { ExtensionNotFoundError } from './errors';
 import { UnsupportedExtensionCommandError } from './errors/unsupported-extension-command-error';
 import { Extension } from './extension';
-import {
-    ExtensionCommandContext,
-    ExtensionCommandMap,
-    ExtensionCommandType,
-} from './extension-commands';
+import { ExtensionCommandMap, ExtensionCommandType } from './extension-commands';
 import { ExtensionEvent } from './extension-events';
 import { ExtensionMessenger } from './extension-messenger';
 import { getExtensionEvent, getExtensions } from './extension.mock';
@@ -70,15 +66,11 @@ describe('ExtensionMessenger', () => {
             const eventEmitter = new EventEmitter();
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
-                eventEmitter.addListener(
-                    type,
-                    ({ context }: { context: ExtensionCommandContext }) => {
-                        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
+                eventEmitter.addListener(type, ({ context }) => {
+                    if (type === ExtensionCommandType.ReloadCheckout) {
                         listener({ type }, context);
-                    },
-                );
+                    }
+                });
             });
 
             extensionMessenger.listen(
@@ -101,15 +93,11 @@ describe('ExtensionMessenger', () => {
             const eventEmitter = new EventEmitter();
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
-                eventEmitter.addListener(
-                    type,
-                    ({ context }: { context: ExtensionCommandContext }) => {
-                        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
+                eventEmitter.addListener(type, ({ context }) => {
+                    if (type === ExtensionCommandType.ReloadCheckout) {
                         listener({ type }, context);
-                    },
-                );
+                    }
+                });
             });
 
             extensionMessenger.listen(
@@ -133,15 +121,11 @@ describe('ExtensionMessenger', () => {
             const eventEmitter = new EventEmitter();
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
-                eventEmitter.addListener(
-                    type,
-                    ({ context }: { context: ExtensionCommandContext }) => {
-                        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
+                eventEmitter.addListener(type, ({ context }) => {
+                    if (type === ExtensionCommandType.ReloadCheckout) {
                         listener({ type }, context);
-                    },
-                );
+                    }
+                });
             });
 
             jest.spyOn(listener, 'removeListener').mockImplementation((type) => {
