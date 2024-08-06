@@ -18,7 +18,6 @@ function isTdOnlineMartThreeDSErrorBody(
         })
     );
 }
-/* eslint-enable @typescript-eslint/consistent-type-assertions */
 
 export function isTdOnlineMartAdditionalAction(
     error: unknown,

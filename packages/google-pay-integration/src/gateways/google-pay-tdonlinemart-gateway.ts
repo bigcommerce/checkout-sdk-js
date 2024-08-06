@@ -16,7 +16,7 @@ export default class GooglePayTdOnlineMartGateway extends GooglePayGateway {
         super('worldlinena', service);
     }
 
-    async extraPaymentData(): Promise<undefined | ExtraPaymentData> {
+    async extraPaymentData(): Promise<ExtraPaymentData> {
         return Promise.resolve({ browser_info: getBrowserInfo() });
     }
 
