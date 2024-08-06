@@ -18,7 +18,7 @@ const createGooglePayTdOnlineMartCustomerStrategy: CustomerStrategyFactory<
         paymentIntegrationService,
         new GooglePayPaymentProcessor(
             createGooglePayScriptLoader(),
-            new GooglePayTdOnlineMartGateway(paymentIntegrationService),
+            new GooglePayTdOnlineMartGateway(paymentIntegrationService, createFormPoster()),
             createRequestSender(),
             createFormPoster(),
         ),

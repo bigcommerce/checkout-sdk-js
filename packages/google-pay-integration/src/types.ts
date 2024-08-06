@@ -1,4 +1,8 @@
-import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    BrowserInfo,
+    BuyNowCartRequestBody,
+    RequestError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { FundingType } from './google-pay-paypal-commerce/types';
 
@@ -411,6 +415,7 @@ export interface GooglePayBuyNowInitializeOptions {
 
 export interface ExtraPaymentData {
     deviceSessionId?: string;
+    browser_info?: BrowserInfo;
 }
 
 export type GooglePayButtonColor = 'default' | 'black' | 'white';
@@ -425,3 +430,14 @@ export type GooglePayButtonType =
     | 'subscribe'
     | 'long'
     | 'short';
+
+export interface TdOnlineMartThreeDSErrorBody {
+    errors?: Array<{ code: string }>;
+    three_ds_result?: {
+        acs_url: string;
+        payer_auth_request: string;
+        merchant_data: string;
+    };
+}
+
+export type TdOnlineMartAdditionalAction = RequestError<TdOnlineMartThreeDSErrorBody>;
