@@ -564,6 +564,7 @@ export interface PayPalCommerceMessagesStyleOptions {
  */
 export enum NonInstantAlternativePaymentMethods {
     OXXO = 'oxxo',
+    TRUSTLY = 'trustly'
 }
 
 export interface PayPalOrderData {
