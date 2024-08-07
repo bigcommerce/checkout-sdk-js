@@ -9,11 +9,7 @@ const itemsRequireShipping = (cart?: Cart, config?: StoreConfig) => {
         return true;
     }
 
-    if (
-        config &&
-        config.checkoutSettings.features['CHECKOUT-4936.enable_custom_item_shipping'] &&
-        cart.lineItems.customItems
-    ) {
+    if (config && cart.lineItems.customItems) {
         return cart.lineItems.customItems.length > 0;
     }
 
