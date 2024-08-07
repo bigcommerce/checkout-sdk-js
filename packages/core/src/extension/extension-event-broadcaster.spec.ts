@@ -42,17 +42,17 @@ describe('ExtensionEventBroadcaster', () => {
 
         eventEmitter = new EventEmitter();
 
-        jest.spyOn(window, 'addEventListener').mockImplementation((type, listener) => {
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+        jest.spyOn(window, 'addEventListener').mockImplementation((type, eventListener) => {
+            const listener =
+                typeof eventListener === 'function' ? eventListener : () => eventListener;
+
             return eventEmitter.addListener(type, listener);
         });
 
-        jest.spyOn(window, 'removeEventListener').mockImplementation((type, listener) => {
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+        jest.spyOn(window, 'removeEventListener').mockImplementation((type, eventListener) => {
+            const listener =
+                typeof eventListener === 'function' ? eventListener : () => eventListener;
+
             return eventEmitter.removeListener(type, listener);
         });
     });
