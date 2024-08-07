@@ -65,10 +65,16 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             .getState()
             .getPaymentMethodOrThrow<GooglePayInitializationData>(this._getMethodId());
 
-        await this._googlePayPaymentProcessor.initialize(
-            () => paymentMethod,
-            this._getGooglePayClientOptions(paymentMethod.initializationData?.storeCountry),
-        );
+        const condition = Math.random() >= 0.5;
+
+        if (condition) {
+            await this._googlePayPaymentProcessor.initialize(() => paymentMethod);
+        } else {
+            await this._googlePayPaymentProcessor.initialize(
+                () => paymentMethod,
+                this._getGooglePayClientOptions(paymentMethod.initializationData?.storeCountry),
+            );
+        }
 
         this._addPaymentButton(walletButton, callbacks);
     }

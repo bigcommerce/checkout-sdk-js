@@ -231,14 +231,28 @@ export default class GooglePayPaymentProcessor {
                 parameters: this._gateway.getPaymentGatewayParameters(),
             },
         };
-        this._paymentDataRequest = {
-            ...this._baseRequest,
-            allowedPaymentMethods: [this._cardPaymentMethod],
-            transactionInfo: this._gateway.getTransactionInfo(),
-            merchantInfo: this._gateway.getMerchantInfo(),
-            ...(await this._gateway.getRequiredData()),
-            callbackIntents: this._gateway.getCallbackIntents(),
-        };
+
+        const condition = Math.random() >= 0.5;
+
+        if (condition) {
+            this._paymentDataRequest = {
+                ...this._baseRequest,
+                allowedPaymentMethods: [this._cardPaymentMethod],
+                transactionInfo: this._gateway.getTransactionInfo(),
+                merchantInfo: this._gateway.getMerchantInfo(),
+                ...(await this._gateway.getRequiredData()),
+            };
+        } else {
+            this._paymentDataRequest = {
+                ...this._baseRequest,
+                allowedPaymentMethods: [this._cardPaymentMethod],
+                transactionInfo: this._gateway.getTransactionInfo(),
+                merchantInfo: this._gateway.getMerchantInfo(),
+                ...(await this._gateway.getRequiredData()),
+                callbackIntents: this._gateway.getCallbackIntents(),
+            };
+        }
+
         this._isReadyToPayRequest = {
             ...this._baseRequest,
             allowedPaymentMethods: [this._baseCardPaymentMethod],
