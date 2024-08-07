@@ -6,8 +6,12 @@ import { CountryResponseBody } from '../geography';
 export default class ShippingCountryRequestSender {
     constructor(private _requestSender: RequestSender, private _config: { locale?: string }) {}
 
-    loadCountries({ timeout }: RequestOptions = {}): Promise<Response<CountryResponseBody>> {
-        const url = '/internalapi/v1/shipping/countries';
+    loadCountries(
+        channelId: number,
+        { timeout }: RequestOptions = {},
+    ): Promise<Response<CountryResponseBody>> {
+        const url = `/internalapi/v1/shipping/countries?channel_id=${channelId}`;
+
         const headers = {
             'Accept-Language': this._config.locale,
             ...SDK_VERSION_HEADERS,
