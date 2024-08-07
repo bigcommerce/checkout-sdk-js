@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.643.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.643.1...v1.643.2) (2024-08-07)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-4533 removed ts-ignore tech debt after jest update in core/src/extension folder ([#2592](https://github.com/bigcommerce/checkout-sdk-js/issues/2592)) ([498cda8](https://github.com/bigcommerce/checkout-sdk-js/commit/498cda8fe38e8e2ec61910ec7b30c24087f5bae2))
+
 ### [1.643.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.643.0...v1.643.1) (2024-08-07)
 
 ## [1.643.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.642.2...v1.643.0) (2024-08-06)
