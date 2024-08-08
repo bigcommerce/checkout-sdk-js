@@ -24,6 +24,7 @@ export enum PaypalButtonStyleColorOption {
     BLUE = 'blue',
     SIlVER = 'silver',
     BLACK = 'black',
+    WHITE = 'white',
 }
 
 export enum PaypalButtonStyleLabelOption {
