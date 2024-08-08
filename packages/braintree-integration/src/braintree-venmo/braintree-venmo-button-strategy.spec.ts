@@ -1,51 +1,49 @@
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
-import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
-import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
-import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
-import { CartRequestSender } from '../../../cart';
-import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
-import { getCart } from '../../../cart/carts.mock';
-import { CheckoutStore, createCheckoutStore } from '../../../checkout';
-import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import {
-    PaymentMethod,
-    PaymentMethodActionCreator,
-    PaymentMethodRequestSender,
-} from '../../../payment';
-import { getBraintree } from '../../../payment/payment-methods.mock';
-import {
-    BraintreeSDKCreator,
+    BraintreeHostWindow,
+    BraintreeIntegrationService,
+    BraintreeScriptLoader,
     BraintreeVenmoCheckout,
     BraintreeVenmoCheckoutCreator,
-} from '../../../payment/strategies/braintree';
-import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
-import CheckoutButtonMethodType from '../checkout-button-method-type';
+    getBraintree,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
+    BuyNowCartRequestBody,
+    Cart,
+    CartSource,
+    CheckoutButtonInitializeOptions,
+    InvalidArgumentError,
+    MissingDataError,
+    PaymentIntegrationService,
+    PaymentMethod,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import {
+    getCart,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import BraintreeVenmoButtonStrategy from './braintree-venmo-button-strategy';
 
 describe('BraintreeVenmoButtonStrategy', () => {
-    let cartRequestSender: CartRequestSender;
-    let braintreeSDKCreator: BraintreeSDKCreator;
     let braintreeScriptLoader: BraintreeScriptLoader;
+    let braintreeIntegrationService: BraintreeIntegrationService;
+    let paymentIntegrationService: PaymentIntegrationService;
     let braintreeVenmoCheckoutMock: BraintreeVenmoCheckout;
     let braintreeVenmoCheckoutCreatorMock: BraintreeVenmoCheckoutCreator;
     let formPoster: FormPoster;
-    let requestSender: RequestSender;
-    let paymentMethodActionCreator: PaymentMethodActionCreator;
+    let mockWindow: BraintreeHostWindow;
     let paymentMethodMock: PaymentMethod;
     let venmoButtonElement: HTMLDivElement;
-    let store: CheckoutStore;
     let strategy: BraintreeVenmoButtonStrategy;
 
     const defaultContainerId = 'braintree-venmo-button-mock-id';
 
-    const buyNowCartMock = {
+    const buyNowCartMock: Cart = {
         ...getCart(),
-        id: 999,
+        id: '999',
         source: CartSource.BuyNow,
     };
 
@@ -64,7 +62,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
     };
 
     const getBraintreeVenmoButtonOptionsMock = () => ({
-        methodId: CheckoutButtonMethodType.BRAINTREE_VENMO,
+        methodId: 'braintreevenmo',
         containerId: defaultContainerId,
         braintreevenmo: {
             onError: jest.fn(),
@@ -72,7 +70,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
     });
 
     const getBuyNowBraintreeVenmoButtonOptionsMock = () => ({
-        methodId: CheckoutButtonMethodType.BRAINTREE_VENMO,
+        methodId: 'braintreevenmo',
         containerId: defaultContainerId,
         braintreevenmo: {
             onError: jest.fn(),
@@ -111,22 +109,19 @@ describe('BraintreeVenmoButtonStrategy', () => {
     };
 
     beforeEach(() => {
-        store = createCheckoutStore(getCheckoutStoreState());
-        requestSender = createRequestSender();
-        paymentMethodActionCreator = new PaymentMethodActionCreator(
-            new PaymentMethodRequestSender(createRequestSender()),
-        );
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
-        braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
         formPoster = createFormPoster();
-        cartRequestSender = new CartRequestSender(requestSender);
+        mockWindow = {} as BraintreeHostWindow;
+        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
+        braintreeIntegrationService = new BraintreeIntegrationService(
+            braintreeScriptLoader,
+            mockWindow,
+        );
 
         strategy = new BraintreeVenmoButtonStrategy(
-            store,
-            paymentMethodActionCreator,
-            cartRequestSender,
-            braintreeSDKCreator,
+            paymentIntegrationService,
             formPoster,
+            braintreeIntegrationService,
         );
 
         paymentMethodMock = {
@@ -137,20 +132,22 @@ describe('BraintreeVenmoButtonStrategy', () => {
             },
         };
 
-        jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
+        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,
         );
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(paymentMethodMock.clientToken);
-        jest.spyOn(braintreeSDKCreator, 'getDataCollector').mockReturnValue({
+        jest.spyOn(braintreeIntegrationService, 'getClient').mockReturnValue(
+            Promise.resolve({ request: jest.fn() }),
+        );
+        jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
+            Promise.resolve(buyNowCartMock),
+        );
+        jest.spyOn(braintreeIntegrationService, 'getDataCollector').mockReturnValue({
             // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             deviceData: { device: 'something' },
         });
+
         jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
 
         venmoButtonElement = document.createElement('div');
@@ -197,7 +194,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
         it('throws an error if containerId is not provided', async () => {
             const options = {
-                methodId: CheckoutButtonMethodType.BRAINTREE_VENMO,
+                methodId: 'braintreevenmo',
             } as CheckoutButtonInitializeOptions;
 
             try {
@@ -210,36 +207,36 @@ describe('BraintreeVenmoButtonStrategy', () => {
         it('initializes braintree sdk creator', async () => {
             const options = getBraintreeVenmoButtonOptionsMock();
 
-            braintreeSDKCreator.initialize = jest.fn();
-            braintreeSDKCreator.getVenmoCheckout = jest.fn();
+            braintreeIntegrationService.initialize = jest.fn();
+            braintreeIntegrationService.getVenmoCheckout = jest.fn();
 
             await strategy.initialize(options);
 
-            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
+            expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                store.getState().config.getStoreConfigOrThrow(),
+                paymentIntegrationService.getState().getStoreConfig(),
             );
         });
 
         it('initializes the braintree venmo checkout', async () => {
             const options = getBraintreeVenmoButtonOptionsMock();
 
-            braintreeSDKCreator.initialize = jest.fn();
-            braintreeSDKCreator.getVenmoCheckout = jest.fn();
+            braintreeIntegrationService.initialize = jest.fn();
+            braintreeIntegrationService.getVenmoCheckout = jest.fn();
 
             await strategy.initialize(options);
 
-            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
+            expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                store.getState().config.getStoreConfigOrThrow(),
+                paymentIntegrationService.getState().getStoreConfig(),
             );
-            expect(braintreeSDKCreator.getVenmoCheckout).toHaveBeenCalled();
+            expect(braintreeIntegrationService.getVenmoCheckout).toHaveBeenCalled();
         });
 
         it('calls braintree venmo checkout create method', async () => {
             braintreeVenmoCheckoutCreatorMock = { create: jest.fn() };
 
-            jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(
+            jest.spyOn(braintreeIntegrationService, 'getClient').mockReturnValue(
                 // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
@@ -395,12 +392,6 @@ describe('BraintreeVenmoButtonStrategy', () => {
                 // @ts-ignore
                 braintreeVenmoCheckoutCreatorMock,
             );
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                body: buyNowCartMock,
-            });
 
             const venmoButton = document.getElementById(options.containerId);
 
@@ -409,7 +400,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
             if (venmoButton) {
                 venmoButton.click();
 
-                expect(cartRequestSender.createBuyNowCart).toHaveBeenCalled();
+                expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalled();
             }
         });
 
@@ -562,7 +553,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
                 // @ts-ignore
                 braintreeVenmoCheckoutCreatorMock,
             );
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
+            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue({
                 // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
@@ -591,7 +582,6 @@ describe('BraintreeVenmoButtonStrategy', () => {
                     provider: 'braintreevenmo',
                     billing_address: JSON.stringify(expectedAddress),
                     shipping_address: JSON.stringify(expectedAddress),
-                    cart_id: buyNowCartMock.id,
                 });
             }
         });
@@ -670,14 +660,14 @@ describe('BraintreeVenmoButtonStrategy', () => {
         it('teardowns braintree sdk creator on strategy deinitialize', async () => {
             const options = getBraintreeVenmoButtonOptionsMock();
 
-            braintreeSDKCreator.initialize = jest.fn();
-            braintreeSDKCreator.getVenmoCheckout = jest.fn();
-            braintreeSDKCreator.teardown = jest.fn();
+            braintreeIntegrationService.initialize = jest.fn();
+            braintreeIntegrationService.getVenmoCheckout = jest.fn();
+            braintreeIntegrationService.teardown = jest.fn();
 
             await strategy.initialize(options);
             await strategy.deinitialize();
 
-            expect(braintreeSDKCreator.teardown).toHaveBeenCalled();
+            expect(braintreeIntegrationService.teardown).toHaveBeenCalled();
         });
     });
 });

@@ -10,7 +10,6 @@ import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import {
     BraintreePaypalButtonStrategy,
     BraintreePaypalCreditButtonStrategy,
-    BraintreeVenmoButtonStrategy,
 } from './strategies/braintree';
 
 describe('createCheckoutButtonRegistry', () => {
@@ -39,9 +38,5 @@ describe('createCheckoutButtonRegistry', () => {
         expect(registry.get('braintreepaypalcredit')).toEqual(
             expect.any(BraintreePaypalCreditButtonStrategy),
         );
-    });
-
-    it('returns registry with Braintree Venmo registered', () => {
-        expect(registry.get('braintreevenmo')).toEqual(expect.any(BraintreeVenmoButtonStrategy));
     });
 });

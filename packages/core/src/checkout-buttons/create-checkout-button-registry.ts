@@ -10,7 +10,6 @@ import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
-import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { BraintreeSDKCreator } from '../payment/strategies/braintree';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
@@ -21,7 +20,6 @@ import AmazonPayV2RequestSender from './strategies/amazon-pay-v2/amazon-pay-v2-r
 import {
     BraintreePaypalButtonStrategy,
     BraintreePaypalCreditButtonStrategy,
-    BraintreeVenmoButtonStrategy,
 } from './strategies/braintree';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
@@ -40,9 +38,6 @@ export default function createCheckoutButtonRegistry(
         checkoutRequestSender,
         new ConfigActionCreator(new ConfigRequestSender(requestSender)),
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
-    );
-    const paymentMethodActionCreator = new PaymentMethodActionCreator(
-        new PaymentMethodRequestSender(requestSender),
     );
 
     const braintreeSdkCreator = new BraintreeSDKCreator(
@@ -86,18 +81,6 @@ export default function createCheckoutButtonRegistry(
                 braintreeSdkCreator,
                 formPoster,
                 window,
-            ),
-    );
-
-    registry.register(
-        CheckoutButtonMethodType.BRAINTREE_VENMO,
-        () =>
-            new BraintreeVenmoButtonStrategy(
-                store,
-                paymentMethodActionCreator,
-                cartRequestSender,
-                braintreeSdkCreator,
-                formPoster,
             ),
     );
 
