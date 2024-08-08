@@ -55,8 +55,8 @@ export default class StripeUPEScriptLoader {
 
             Object.assign(this.stripeWindow, { bcStripeElements: stripeElements });
         } else {
-            await stripeElements.fetchUpdates();
             stripeElements.update(options);
+            await stripeElements.fetchUpdates();
         }
 
         return stripeElements;
