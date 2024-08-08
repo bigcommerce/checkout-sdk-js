@@ -472,3 +472,17 @@ export interface BraintreeError extends Error {
     code: string | BraintreeErrorCode.KountNotEnabled;
     details?: unknown;
 }
+
+export interface BraintreeDetails {
+    username?: string;
+    email?: string;
+    payerId?: string;
+    firstName?: string;
+    lastName?: string;
+    countryCode?: string;
+    phone?: string;
+    shippingAddress?: BraintreeShippingAddress;
+    billingAddress?: BraintreeAddress;
+}
+
+

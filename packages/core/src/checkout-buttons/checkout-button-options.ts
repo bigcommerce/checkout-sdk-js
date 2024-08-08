@@ -5,7 +5,6 @@ import { AmazonPayV2ButtonInitializeOptions } from './strategies/amazon-pay-v2';
 import {
     BraintreePaypalButtonInitializeOptions,
     BraintreePaypalCreditButtonInitializeOptions,
-    BraintreeVenmoButtonInitializeOptions,
 } from './strategies/braintree';
 import { PaypalButtonInitializeOptions } from './strategies/paypal';
 
@@ -41,12 +40,6 @@ export interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptio
      * omitted unless you need to support Braintree Credit.
      */
     braintreepaypalcredit?: BraintreePaypalCreditButtonInitializeOptions;
-
-    /**
-     * The options that are required to facilitate Braintree Venmo. They can be
-     * omitted unless you need to support Braintree Venmo.
-     */
-    braintreevenmo?: BraintreeVenmoButtonInitializeOptions;
 
     /**
      * The ID of a container which the checkout button should be inserted.

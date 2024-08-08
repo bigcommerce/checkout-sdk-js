@@ -2,9 +2,14 @@ import { supportsPopups } from '@braintree/browser-detection';
 
 import {
     Address,
+    BuyNowCartCreationError,
+    Cart,
     LegacyAddress,
+    MissingDataError,
+    MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
+    PaymentIntegrationService,
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Overlay } from '@bigcommerce/checkout-sdk/ui';
@@ -28,12 +33,17 @@ import {
     BraintreeThreeDSecure,
     BraintreeTokenizationDetails,
     BraintreeTokenizePayload,
+    BraintreeVenmoCheckout,
     GetLocalPaymentInstance,
     GooglePayBraintreeSDK,
     LocalPaymentInstance,
     PAYPAL_COMPONENTS,
 } from './types';
 import isBraintreeError from './utils/is-braintree-error';
+import { UnsupportedBrowserError } from './index';
+import {
+    BuyNowInitializeOptions
+} from '../../braintree-integration/src/braintree-venmo/braintree-venmo-initialize-options';
 
 export interface PaypalConfig {
     amount: number;
@@ -55,11 +65,13 @@ export default class BraintreeIntegrationService {
     private googlePay?: Promise<GooglePayBraintreeSDK>;
     private threeDS?: Promise<BraintreeThreeDSecure>;
     private braintreePaypal?: Promise<BraintreePaypal>;
+    private braintreeVenmo?: Promise<BraintreeVenmoCheckout>;
 
     constructor(
         private braintreeScriptLoader: BraintreeScriptLoader,
         private braintreeHostWindow: BraintreeHostWindow,
         private overlay?: Overlay,
+        private paymentIntegrationService?: PaymentIntegrationService,
     ) {}
 
     initialize(clientToken: string, storeConfig?: StoreConfig) {
@@ -111,6 +123,28 @@ export default class BraintreeIntegrationService {
         }
 
         return this.client;
+    }
+
+    async createBuyNowCart(buyNowInitializeOptions?: BuyNowInitializeOptions): Promise<Cart | undefined> {
+        if ( buyNowInitializeOptions && typeof buyNowInitializeOptions?.getBuyNowCartRequestBody === 'function') {
+            const cartRequestBody = buyNowInitializeOptions.getBuyNowCartRequestBody();
+
+            if (!cartRequestBody) {
+                throw new MissingDataError(MissingDataErrorType.MissingCart);
+            }
+
+            try {
+                const buyNowCart = this.paymentIntegrationService && await this.paymentIntegrationService.createBuyNowCart(
+                    cartRequestBody,
+                );
+
+                return buyNowCart;
+            } catch (error) {
+                throw new BuyNowCartCreationError();
+            }
+        }
+
+        return undefined;
     }
 
     getPaypal(): Promise<BraintreePaypal> {
@@ -269,6 +303,42 @@ export default class BraintreeIntegrationService {
         }
 
         return cached;
+    }
+
+    async getVenmoCheckout(
+        onSuccess: (braintreeVenmoCheckout: BraintreeVenmoCheckout) => void,
+        onError: (error: BraintreeError | UnsupportedBrowserError) => void,
+    ): Promise<BraintreeVenmoCheckout> {
+        if (!this.braintreeVenmo) {
+            const client = await this.getClient();
+
+            const venmoCheckout = await this.braintreeScriptLoader.loadVenmoCheckout();
+
+            const venmoCheckoutConfig = {
+                client,
+                allowDesktop: true,
+                paymentMethodUsage: 'multi_use',
+            };
+
+            const venmoCheckoutCallback = (
+                error: BraintreeError,
+                braintreeVenmoCheckout: BraintreeVenmoCheckout,
+            ): void => {
+                if (error) {
+                    return onError(error);
+                }
+
+                if (!braintreeVenmoCheckout.isBrowserSupported()) {
+                    return onError(new UnsupportedBrowserError());
+                }
+
+                onSuccess(braintreeVenmoCheckout);
+            };
+
+            this.braintreeVenmo = venmoCheckout.create(venmoCheckoutConfig, venmoCheckoutCallback);
+        }
+
+        return this.braintreeVenmo;
     }
 
     getGooglePaymentComponent(): Promise<GooglePayBraintreeSDK> {
