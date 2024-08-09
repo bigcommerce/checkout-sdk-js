@@ -8,7 +8,7 @@ import getConfig from './config.mock';
 import getConsignment from './consignment.mock';
 import getCountries from './countries.mock';
 import { getCustomer } from './customer.mock';
-import { getOrder } from './orders.mock';
+import { getOrder, getOrderMeta } from './orders.mock';
 import getPaymentId from './payment-id.mock';
 import { getCardInstrument, getInstruments } from './payments.mock';
 
@@ -20,6 +20,7 @@ const state = {
     getCartOrThrow: jest.fn(() => getCart()),
     getCardInstrumentOrThrow: jest.fn(() => getCardInstrument()),
     getInstruments: jest.fn(() => getInstruments()),
+    getInstrumentsMeta: jest.fn(),
     getCheckout: jest.fn(() => getCheckout()),
     getCheckoutOrThrow: jest.fn(() => getCheckout()),
     getConsignments: jest.fn(() => [getConsignment()]),
@@ -32,17 +33,21 @@ const state = {
     getLocale: jest.fn(),
     getOrder: jest.fn(() => getOrder()),
     getOrderOrThrow: jest.fn(() => getOrder()),
+    getOrderMeta: jest.fn(() => getOrderMeta()),
     getShippingAddress: jest.fn(() => getAddress()),
     getShippingAddressOrThrow: jest.fn(() => getAddress()),
     getShippingCountries: jest.fn(() => getCountries()),
+    getConfig: jest.fn(() => getConfig().storeConfig),
     getStoreConfig: jest.fn(() => getConfig().storeConfig),
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
     getPaymentId: jest.fn(() => getPaymentId()),
     getPaymentMethod: jest.fn(),
     getPaymentMethodOrThrow: jest.fn(),
+    getPaymentMethodsMeta: jest.fn(),
     getPaymentProviderCustomer: jest.fn(),
     getPaymentProviderCustomerOrThrow: jest.fn(),
     getPaymentStatus: jest.fn(),
+    getPaymentToken: jest.fn(),
     isPaymentMethodInitialized: jest.fn(),
     getOutstandingBalance: jest.fn(),
 };

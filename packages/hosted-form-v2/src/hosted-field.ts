@@ -2,7 +2,10 @@ import { values } from 'lodash';
 import { fromEvent } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 
+import { HostedInputSubmitSuccessEvent } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { DetachmentObserver } from './common/dom';
+import { mapFromPaymentErrorResponse } from './common/errors';
 import { IframeEventListener, IframeEventPoster } from './common/iframe';
 import { parseUrl } from './common/url';
 import {
@@ -14,6 +17,8 @@ import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
 import HostedFieldType from './hosted-field-type';
 import HostedFormManualOrderData from './hosted-form-manual-order-data';
 import { HostedFieldStylesMap } from './hosted-form-options';
+import HostedFormOrderData from './hosted-form-order-data';
+import { HostedInputSubmitErrorEvent } from './hosted-input-events';
 import {
     HostedInputEventMap,
     HostedInputEventType,
@@ -109,6 +114,40 @@ export default class HostedField {
         this._eventListener.stopListen();
     }
 
+    async submitForm(
+        fields: HostedFieldType[],
+        data: HostedFormOrderData,
+    ): Promise<HostedInputSubmitSuccessEvent> {
+        try {
+            const promise = this._eventPoster.post<HostedInputSubmitSuccessEvent>(
+                {
+                    type: HostedFieldEventType.SubmitRequested,
+                    payload: { fields, data },
+                },
+                {
+                    successType: HostedInputEventType.SubmitSucceeded,
+                    errorType: HostedInputEventType.SubmitFailed,
+                },
+            );
+
+            return await this._detachmentObserver.ensurePresence([this._iframe], promise);
+        } catch (event) {
+            if (this._isSubmitErrorEvent(event)) {
+                if (event.payload.error.code === 'hosted_form_error') {
+                    throw new InvalidHostedFormError(event.payload.error.message);
+                }
+
+                if (event.payload.response) {
+                    throw mapFromPaymentErrorResponse(event.payload.response);
+                }
+
+                throw new Error(event.payload.error.message);
+            }
+
+            throw event;
+        }
+    }
+
     async submitManualOrderForm(
         data: HostedFormManualOrderData,
     ): Promise<HostedInputSubmitManualOrderSuccessEvent> {
@@ -183,5 +222,9 @@ export default class HostedField {
         }
 
         return event.type === HostedInputEventType.SubmitManualOrderFailed;
+    }
+
+    private _isSubmitErrorEvent(event: any): event is HostedInputSubmitErrorEvent {
+        return event.type === HostedInputEventType.SubmitFailed;
     }
 }

@@ -1,12 +1,17 @@
+import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+
 import HostedFieldType from './hosted-field-type';
 import HostedForm from './hosted-form';
 import HostedFormFactory from './hosted-form-factory';
 
 describe('HostedFormFactory', () => {
     let factory: HostedFormFactory;
+    let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
-        factory = new HostedFormFactory();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
+        factory = new HostedFormFactory(paymentIntegrationService);
     });
 
     it('creates hosted form', () => {

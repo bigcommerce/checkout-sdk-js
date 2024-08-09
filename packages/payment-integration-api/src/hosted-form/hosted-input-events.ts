@@ -14,6 +14,8 @@ export enum HostedInputEventType {
     Validated = 'HOSTED_INPUT:VALIDATED',
     StoredCardSucceeded = 'HOSTED_INPUT:STORED_CARD_SUCCEEDED',
     StoredCardFailed = 'HOSTED_INPUT:STORED_CARD_FAILED',
+    SubmitManualOrderSucceeded = 'HOSTED_INPUT:SUBMIT_MANUAL_ORDER_SUCCEEDED',
+    SubmitManualOrderFailed = 'HOSTED_INPUT:SUBMIT_MANUAL_ORDER_FAILED',
 }
 
 export interface HostedInputSubmitSuccessEvent {
