@@ -2,13 +2,16 @@ import { BillingAddress } from './billing';
 import { Cart } from './cart';
 import { Checkout } from './checkout';
 import { StoreConfig } from './config';
-import { ContextConfig } from './config/config';
+import Config, { ContextConfig } from './config/config';
 import { Customer } from './customer';
 import { Country } from './geography';
 import { Order } from './order';
+import { OrderMetaState } from './order/order-state';
+import { InstrumentMeta } from './payment';
 import { PaymentProviderCustomer } from './payment-provider-customer';
 import PaymentInstrument, { CardInstrument } from './payment/instrument';
 import PaymentMethod from './payment/payment-method';
+import PaymentMethodMeta from './payment/payment-method-meta';
 import { Consignment, ShippingAddress } from './shipping';
 
 export default interface PaymentIntegrationSelectors {
@@ -77,4 +80,12 @@ export default interface PaymentIntegrationSelectors {
 
     isPaymentDataRequired(useStoreCredit?: boolean): boolean;
     isPaymentMethodInitialized(query: { methodId: string; gatewayId?: string }): boolean;
+
+    getConfig(): Config | undefined;
+
+    getInstrumentsMeta(): InstrumentMeta | undefined;
+
+    getOrderMeta(): OrderMetaState | undefined;
+
+    getPaymentMethodsMeta(): PaymentMethodMeta | undefined;
 }

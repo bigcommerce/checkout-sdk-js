@@ -101,6 +101,13 @@ describe('createPaymentIntegrationSelectors', () => {
             expect(() => subject.getStoreConfigOrThrow()).toThrow();
         });
 
+        it('returns config copy', () => {
+            const output = subject.getConfig();
+
+            expect(output).toEqual(internalSelectors.config.getConfig());
+            expect(output).not.toBe(internalSelectors.config.getConfig());
+        });
+
         it('returns copy of consignments', () => {
             const output = subject.getConsignments();
 
@@ -197,6 +204,20 @@ describe('createPaymentIntegrationSelectors', () => {
             );
 
             expect(() => subject.getOrderOrThrow()).toThrow();
+        });
+
+        it('returns copy of order meta', () => {
+            const output = subject.getOrderMeta();
+
+            expect(output).toEqual(internalSelectors.order.getOrderMeta());
+            expect(output).not.toBe(internalSelectors.order.getOrderMeta());
+        });
+
+        it('returns copy of order meta', () => {
+            const output = subject.getInstrumentsMeta();
+
+            expect(output).toEqual(internalSelectors.instruments.getInstrumentsMeta());
+            expect(output).not.toBe(internalSelectors.instruments.getInstrumentsMeta());
         });
 
         it('returns payment token', () => {
@@ -304,6 +325,13 @@ describe('createPaymentIntegrationSelectors', () => {
             );
 
             expect(() => subject.getPaymentMethodOrThrow('braintree')).toThrow();
+        });
+
+        it('returns copy of payment method meta', () => {
+            const output = subject.getPaymentMethodsMeta();
+
+            expect(output).toEqual(internalSelectors.paymentMethods.getPaymentMethodsMeta());
+            expect(output).not.toBe(internalSelectors.paymentMethods.getPaymentMethodsMeta());
         });
 
         it('returns copy of shipping address', () => {

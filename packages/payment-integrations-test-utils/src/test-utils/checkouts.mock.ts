@@ -4,6 +4,7 @@ import { getBillingAddress } from './address.mock';
 import getCart, { getBuyNowCart } from './carts.mock';
 import getConsignment from './consignment.mock';
 import { getCustomer } from './customer.mock';
+import { getGiftCertificate } from './gift-certificates.mock';
 
 export default function getCheckout(): Checkout {
     return {
@@ -53,5 +54,12 @@ export function getCheckoutWithBuyNowCart() {
     return {
         ...getCheckout(),
         cart: getBuyNowCart(),
+    };
+}
+
+export function getCheckoutWithGiftCertificates(): Checkout {
+    return {
+        ...getCheckout(),
+        giftCertificates: [getGiftCertificate(), { ...getGiftCertificate(), code: 'gc2' }],
     };
 }
