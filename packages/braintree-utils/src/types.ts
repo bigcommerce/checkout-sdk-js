@@ -48,6 +48,18 @@ export interface BraintreeClient {
     request(payload: BraintreeClientRequestPayload): Promise<BraintreeClientRequestResponse>;
 }
 
+export interface BraintreeDetails {
+    username?: string;
+    email?: string;
+    payerId?: string;
+    firstName?: string;
+    lastName?: string;
+    countryCode?: string;
+    phone?: string;
+    shippingAddress?: BraintreeShippingAddress;
+    billingAddress?: BraintreeAddress;
+}
+
 export interface BraintreeClientRequestPayload {
     data: {
         creditCard: {
