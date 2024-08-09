@@ -3,12 +3,14 @@ import {
     GiftCertificateOrderPayment,
     Order,
     OrderConsignment,
+    OrderMetaState,
     OrderShippingConsignment,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { getBillingAddress } from './address.mock';
 import { getCoupon, getShippingCoupon } from './coupons.mock';
 import { getCurrency } from './currency.mock';
+import { getAwaitingOrder, getSubmitOrderResponseHeaders } from './internal-orders.mock';
 import { getGiftCertificateItem, getPhysicalItem } from './line-items.mock';
 
 export function getGiftCertificateOrderPayment(): GiftCertificateOrderPayment {
@@ -124,5 +126,17 @@ export function getOrder(): Order {
         ],
         taxTotal: 3,
         channelId: 1,
+    };
+}
+
+export function getOrderMeta(): OrderMetaState {
+    const { token } = getSubmitOrderResponseHeaders();
+    const { token: orderToken, callbackUrl, payment } = getAwaitingOrder();
+
+    return {
+        token,
+        orderToken,
+        callbackUrl,
+        payment,
     };
 }

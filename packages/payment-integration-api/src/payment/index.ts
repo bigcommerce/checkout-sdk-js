@@ -7,6 +7,8 @@ export {
     PayPalInstrument,
 } from './instrument';
 
+export { InstrumentMeta } from './instrument-state';
+
 export {
     default as Payment,
     IdealPayload,
@@ -60,3 +62,4 @@ export { default as PaymentStrategy } from './payment-strategy';
 export { default as PaymentStrategyFactory } from './payment-strategy-factory';
 export { default as PaymentStrategyResolveId } from './payment-strategy-resolve-id';
 export { default as PaymentStatusTypes } from './payment-status-types';
+export { default as PaymentMethodMeta } from './payment-method-meta';

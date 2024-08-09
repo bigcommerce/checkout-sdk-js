@@ -30,6 +30,14 @@ export function getPaymentMethod(): PaymentMethod {
     };
 }
 
+export function getPaymentMethodsMeta() {
+    return {
+        geoCountryCode: 'AU',
+        deviceSessionId: 'a37230e9a8e4ea2d7765e2f3e19f7b1d',
+        sessionHash: 'cfbbbac580a920b395571fe086db1e06',
+    };
+}
+
 export function getCreditCardInstrument(): CreditCardInstrument {
     return {
         ccExpiry: {

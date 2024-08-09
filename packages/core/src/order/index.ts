@@ -25,3 +25,4 @@ export {
 export { default as OrderState } from './order-state';
 
 export { default as mapToInternalOrder } from './map-to-internal-order';
+export { getAwaitingOrder } from './internal-orders.mock';
