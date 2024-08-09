@@ -94,6 +94,10 @@ export default function createPaymentIntegrationService(
         new PaymentHumanVerificationHandler(createSpamProtection(createScriptLoader())),
     );
 
+    const paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(
+        createSpamProtection(createScriptLoader()),
+    );
+
     const customerActionCreator = new CustomerActionCreator(
         new CustomerRequestSender(requestSender),
         checkoutActionCreator,
@@ -138,6 +142,7 @@ export default function createPaymentIntegrationService(
         consignmentActionCreator,
         paymentMethodActionCreator,
         paymentActionCreator,
+        paymentHumanVerificationHandler,
         customerActionCreator,
         cartRequestSender,
         storeCreditActionCreator,

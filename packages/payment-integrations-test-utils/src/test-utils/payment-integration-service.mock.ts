@@ -74,6 +74,7 @@ const verifyCheckoutSpamProtection = jest.fn();
 const updatePaymentProviderCustomer = jest.fn();
 const initializePayment = jest.fn();
 const validateCheckout = jest.fn();
+const handle = jest.fn();
 
 const PaymentIntegrationServiceMock = jest
     // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
@@ -110,6 +111,7 @@ const PaymentIntegrationServiceMock = jest
             updatePaymentProviderCustomer,
             initializePayment,
             validateCheckout,
+            handle,
         };
     });
 
