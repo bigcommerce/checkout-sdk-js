@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.643.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.643.3...v1.643.4) (2024-08-12)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-384 added Klarna id to the Stripe gateway ([782c503](https://github.com/bigcommerce/checkout-sdk-js/commit/782c503dd3207cc4b16288515f2fd2ca5adc6e9b))
+
 ### [1.643.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.643.2...v1.643.3) (2024-08-08)
 
 
