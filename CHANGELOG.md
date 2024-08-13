@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.644.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.643.4...v1.644.0) (2024-08-13)
+
+
+### Features
+
+* **payment:** PI-2493 Add paymentHumanVerificationHandler method to Payment Integration Service ([#2596](https://github.com/bigcommerce/checkout-sdk-js/issues/2596)) ([78fe180](https://github.com/bigcommerce/checkout-sdk-js/commit/78fe180801e09f23b2b73ac486c09c97be79a1e1))
+
 ### [1.643.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.643.3...v1.643.4) (2024-08-12)
 
 
