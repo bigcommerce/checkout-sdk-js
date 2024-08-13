@@ -20,6 +20,7 @@ import { DataStoreProjection } from '../common/data-store';
 import { CustomerActionCreator, CustomerCredentials } from '../customer';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
+import { PaymentAdditionalAction } from '../payment';
 import {
     PaymentProviderCustomer,
     PaymentProviderCustomerActionCreator,
@@ -29,7 +30,7 @@ import PaymentMethodActionCreator from '../payment/payment-method-action-creator
 import { RemoteCheckoutActionCreator } from '../remote-checkout';
 import { InitializePaymentOptions } from '../remote-checkout/remote-checkout-request-sender';
 import { ConsignmentActionCreator, ShippingCountryActionCreator } from '../shipping';
-import { SpamProtectionActionCreator } from '../spam-protection';
+import { PaymentHumanVerificationHandler, SpamProtectionActionCreator } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
 
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
@@ -48,6 +49,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
+        private _paymentHumanVerificationHandler: PaymentHumanVerificationHandler,
         private _customerActionCreator: CustomerActionCreator,
         private _cartRequestSender: CartRequestSender,
         private _storeCreditActionCreator: StoreCreditActionCreator,
@@ -284,5 +286,16 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
 
     async validateCheckout(checkout?: Checkout, options?: RequestOptions): Promise<void> {
         await this._checkoutValidator.validate(checkout, options);
+    }
+
+    async handlePaymentHumanVerification(
+        errorOrId: Error | string,
+        key?: string,
+    ): Promise<PaymentAdditionalAction> {
+        if (typeof errorOrId === 'string') {
+            return this._paymentHumanVerificationHandler.handle(errorOrId, key ?? '');
+        }
+
+        return this._paymentHumanVerificationHandler.handle(errorOrId);
     }
 }

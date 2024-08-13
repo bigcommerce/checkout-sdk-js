@@ -4,7 +4,7 @@ import { Checkout } from './checkout';
 import { CustomerCredentials } from './customer';
 import { HostedForm, HostedFormOptions } from './hosted-form';
 import { OrderRequestBody } from './order';
-import { InitializeOffsitePaymentConfig, Payment } from './payment';
+import { InitializeOffsitePaymentConfig, Payment, PaymentAdditionalAction } from './payment';
 import PaymentIntegrationSelectors from './payment-integration-selectors';
 import { PaymentProviderCustomer } from './payment-provider-customer';
 import { InitializePaymentOptions } from './payment/payment-initialize-options';
@@ -97,4 +97,9 @@ export default interface PaymentIntegrationService {
     ): Promise<PaymentIntegrationSelectors>;
 
     validateCheckout(checkout?: Checkout, options?: RequestOptions): Promise<void>;
+
+    handlePaymentHumanVerification(
+        errorOrId: Error | string,
+        key?: string,
+    ): Promise<PaymentAdditionalAction>;
 }

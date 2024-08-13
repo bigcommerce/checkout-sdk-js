@@ -35,7 +35,7 @@ import { getPayment } from '../payment/payments.mock';
 import { RemoteCheckoutActionCreator } from '../remote-checkout';
 import { ConsignmentActionCreator, ShippingCountryActionCreator } from '../shipping';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
-import { SpamProtectionActionCreator } from '../spam-protection';
+import { PaymentHumanVerificationHandler, SpamProtectionActionCreator } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
 
 import DefaultPaymentIntegrationService from './default-payment-integration-service';
@@ -75,6 +75,7 @@ describe('DefaultPaymentIntegrationService', () => {
         PaymentActionCreator,
         'submitPayment' | 'initializeOffsitePayment'
     >;
+    let paymentHumanVerificationHandler: Pick<PaymentHumanVerificationHandler, 'handle'>;
     let spamProtectionActionCreator: Pick<
         SpamProtectionActionCreator,
         'verifyCheckoutSpamProtection'
@@ -241,6 +242,10 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
+        paymentHumanVerificationHandler = {
+            handle: jest.fn(),
+        };
+
         shippingCountryActionCreator = {
             // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -276,6 +281,7 @@ describe('DefaultPaymentIntegrationService', () => {
             consignmentActionCreator as ConsignmentActionCreator,
             paymentMethodActionCreator as PaymentMethodActionCreator,
             paymentActionCreator as PaymentActionCreator,
+            paymentHumanVerificationHandler as PaymentHumanVerificationHandler,
             customerActionCreator as CustomerActionCreator,
             cartRequestSender,
             storeCreditActionCreator as StoreCreditActionCreator,
@@ -620,6 +626,14 @@ describe('DefaultPaymentIntegrationService', () => {
             await subject.validateCheckout(getCheckout());
 
             expect(checkoutValidator.validate).toHaveBeenCalled();
+        });
+    });
+
+    describe('#handle', () => {
+        it('handle payment human verification', async () => {
+            await subject.handlePaymentHumanVerification('methodId', 'key');
+
+            expect(paymentHumanVerificationHandler.handle).toHaveBeenCalled();
         });
     });
 });
