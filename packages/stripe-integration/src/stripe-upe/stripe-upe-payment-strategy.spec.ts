@@ -30,6 +30,7 @@ import {
     StripeElementsOptions,
     StripeElementType,
     StripeElementUpdateOptions,
+    StripeEventType,
     StripePaymentMethodType,
     StripeStringConstants,
     StripeUPEClient,
@@ -123,6 +124,47 @@ describe('StripeUPEPaymentStrategy', () => {
             fieldBackground: testColor,
             fieldInnerShadow: testColor,
             fieldBorder: testColor,
+        };
+
+        const getPaymentElementActionsMock = (
+            isElementCreated = true,
+            onCallbackPayload = {} as StripeEventType,
+        ) => {
+            const updateMock = jest.fn();
+            const stripePaymentElementMock = {
+                mount: jest.fn(),
+                unmount: jest.fn(),
+                on: (_: string, callback: (event: StripeEventType) => void) =>
+                    callback(onCallbackPayload),
+                update: updateMock,
+            };
+            const createElementMock = jest.fn(() => stripePaymentElementMock);
+            const getElementMock = jest.fn(() =>
+                isElementCreated ? stripePaymentElementMock : null,
+            );
+            const stripeElementsMock = {
+                create: createElementMock,
+                getElement: getElementMock,
+                update: jest.fn(),
+                fetchUpdates: jest.fn(),
+            };
+
+            stripeUPEJsMock = {
+                ...getStripeUPEJsMock(),
+                elements: jest.fn(() => stripeElementsMock),
+            };
+
+            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockReturnValue(
+                Promise.resolve(stripeUPEJsMock),
+            );
+            jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
+                Promise.resolve(stripeElementsMock),
+            );
+
+            return {
+                updateMock,
+                createElementMock,
+            };
         };
 
         beforeEach(() => {
@@ -281,6 +323,82 @@ describe('StripeUPEPaymentStrategy', () => {
             });
         });
 
+        describe('Stripe element events', () => {
+            it('Should not update Stripe Link auth state if Link already has been authenticated', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentProviderCustomerOrThrow',
+                ).mockReturnValue({ stripeLinkAuthenticationState: true });
+
+                const updatePaymentProviderCustomerMock = jest.spyOn(
+                    paymentIntegrationService,
+                    'updatePaymentProviderCustomer',
+                );
+                const callbackPayload = {
+                    value: {
+                        type: StripePaymentMethodType.Link,
+                    },
+                } as StripeEventType;
+
+                getPaymentElementActionsMock(true, callbackPayload);
+
+                await strategy.initialize(options);
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(updatePaymentProviderCustomerMock).not.toHaveBeenCalled();
+            });
+
+            it('Should not update Stripe Link auth state if not Link element was rendered', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentProviderCustomerOrThrow',
+                ).mockReturnValue({});
+
+                const updatePaymentProviderCustomerMock = jest.spyOn(
+                    paymentIntegrationService,
+                    'updatePaymentProviderCustomer',
+                );
+                const callbackPayload = {
+                    value: {
+                        type: StripePaymentMethodType.CreditCard,
+                    },
+                } as StripeEventType;
+
+                getPaymentElementActionsMock(true, callbackPayload);
+
+                await strategy.initialize(options);
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(updatePaymentProviderCustomerMock).not.toHaveBeenCalled();
+            });
+
+            it('Should update Stripe Link auth state if Link element was rendered', async () => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentProviderCustomerOrThrow',
+                ).mockReturnValue({});
+
+                const updatePaymentProviderCustomerMock = jest.spyOn(
+                    paymentIntegrationService,
+                    'updatePaymentProviderCustomer',
+                );
+                const callbackPayload = {
+                    value: {
+                        type: StripePaymentMethodType.Link,
+                    },
+                } as StripeEventType;
+
+                getPaymentElementActionsMock(true, callbackPayload);
+
+                await strategy.initialize(options);
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(updatePaymentProviderCustomerMock).toHaveBeenCalledWith({
+                    stripeLinkAuthenticationState: true,
+                });
+            });
+        });
+
         describe('Update stripe payment element', () => {
             let updateTriggerFn: (payload: StripeElementUpdateOptions) => void = jest.fn();
 
@@ -297,43 +415,6 @@ describe('StripeUPEPaymentStrategy', () => {
                     paymentIntegrationService.getState(),
                     'getStoreConfigOrThrow',
                 ).mockReturnValue(storeConfig);
-            };
-
-            const getPaymentElementActionsMock = (isElementCreated = true) => {
-                const updateMock = jest.fn();
-                const stripePaymentElementMock = {
-                    mount: jest.fn(),
-                    unmount: jest.fn(),
-                    on: jest.fn((_, callback) => callback()),
-                    update: updateMock,
-                };
-                const createElementMock = jest.fn(() => stripePaymentElementMock);
-                const getElementMock = jest.fn(() =>
-                    isElementCreated ? stripePaymentElementMock : null,
-                );
-                const stripeElementsMock = {
-                    create: createElementMock,
-                    getElement: getElementMock,
-                    update: jest.fn(),
-                    fetchUpdates: jest.fn(),
-                };
-
-                stripeUPEJsMock = {
-                    ...getStripeUPEJsMock(),
-                    elements: jest.fn(() => stripeElementsMock),
-                };
-
-                jest.spyOn(stripeScriptLoader, 'getStripeClient').mockReturnValue(
-                    Promise.resolve(stripeUPEJsMock),
-                );
-                jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
-                    Promise.resolve(stripeElementsMock),
-                );
-
-                return {
-                    updateMock,
-                    createElementMock,
-                };
             };
 
             beforeEach(() => {
