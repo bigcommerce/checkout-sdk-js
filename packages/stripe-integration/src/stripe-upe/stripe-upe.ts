@@ -88,12 +88,6 @@ export interface StripeShippingEvent extends StripeEvent {
     };
 }
 
-export interface StripePaymentEvent extends StripeEvent {
-    value: {
-        type: StripePaymentMethodType;
-    };
-}
-
 interface Address {
     city: string;
     country: string;
@@ -103,7 +97,7 @@ interface Address {
     state: string;
 }
 
-export type StripeEventType = StripeShippingEvent | StripeCustomerEvent | StripePaymentEvent;
+export type StripeEventType = StripeShippingEvent | StripeCustomerEvent;
 
 /**
  * Object definition for part of the data sent to confirm the PaymentIntent.
@@ -398,7 +392,6 @@ export interface StripeHostWindow extends Window {
 
 export enum StripePaymentMethodType {
     CreditCard = 'card',
-    Link = 'link',
     SOFORT = 'sofort',
     EPS = 'eps',
     GRABPAY = 'grabpay',
