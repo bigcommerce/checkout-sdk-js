@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.644.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.644.1...v1.644.2) (2024-08-14)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-4167 removed PAYPAL-4142.disable_paypal_fastlane_one_click_experience experiment usage from ppcp fastlane customer strategy ([#2607](https://github.com/bigcommerce/checkout-sdk-js/issues/2607)) ([bc5836b](https://github.com/bigcommerce/checkout-sdk-js/commit/bc5836bbe245d7f279e467fc71c665c39728c296))
+
 ### [1.644.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.644.0...v1.644.1) (2024-08-14)
 
 
