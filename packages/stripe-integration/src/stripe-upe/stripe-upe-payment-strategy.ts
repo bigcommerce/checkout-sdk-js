@@ -38,7 +38,6 @@ import {
     StripeElementType,
     StripeElementUpdateOptions,
     StripeError,
-    StripeEventType,
     StripePaymentMethodType,
     StripeStringConstants,
     StripeUPEAppearanceOptions,
@@ -425,14 +424,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             render();
         });
 
-        stripeElement.on('change', (event: StripeEventType) => {
-            if (!event.value || !('type' in event.value)) {
-                return;
-            }
-
-            this._updateStripeLinkStateByElementType(event.value.type);
-        });
-
         if (this._isStripeElementUpdateEnabled) {
             initStripeElementUpdateTrigger?.(this._updateStripeElement.bind(this));
         }
@@ -695,21 +686,5 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                 card,
             },
         };
-    }
-
-    private _updateStripeLinkStateByElementType(paymentElementType: StripePaymentMethodType): void {
-        const state = this.paymentIntegrationService.getState();
-        const paymentProviderCustomer = state.getPaymentProviderCustomerOrThrow();
-        const isStripeLinkElementType = paymentElementType === StripePaymentMethodType.Link;
-
-        // INFO: Trigger additional update only if Stripe Link Authentication was skipped on the customer step, but the Link payment element was rendered.
-        if (
-            !isStripeAcceleratedCheckoutCustomer(paymentProviderCustomer) &&
-            isStripeLinkElementType
-        ) {
-            this.paymentIntegrationService.updatePaymentProviderCustomer({
-                stripeLinkAuthenticationState: isStripeLinkElementType,
-            });
-        }
     }
 }
