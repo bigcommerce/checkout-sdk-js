@@ -134,12 +134,6 @@ export interface PayPalCommerceButtonsOptions {
     onCancel?(): void;
 }
 
-export interface ShippingChangeCallbackPayload {
-    orderID: string;
-    shipping_address: PaypalAddressCallbackData;
-    selected_shipping_option: PayPalSelectedShippingOption;
-}
-
 export interface PayPalButtonClickCallbackPayload {
     fundingSource: string;
 }
@@ -156,24 +150,6 @@ export interface PayPalButtonInitCallbackPayload {
 export interface PayPalButtonInitCallbackActions {
     disable(): void;
     enable(): void;
-}
-
-export interface PaypalAddressCallbackData {
-    city: string;
-    country_code: string;
-    postal_code: string;
-    state: string;
-}
-
-export interface PayPalSelectedShippingOption {
-    amount: {
-        currency_code: string;
-        value: string;
-    };
-    id: string;
-    label: string;
-    selected: boolean;
-    type: string;
 }
 
 export interface PayPalButtonApproveCallbackPayload {
