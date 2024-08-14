@@ -211,24 +211,14 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         }
 
         if (shippingAddress && cart.lineItems.physicalItems.length > 0) {
-            await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-        }
-
-        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
-        const shouldDisableFastlaneOneClickExperience =
-            features && features['PAYPAL-4142.disable_paypal_fastlane_one_click_experience'];
-
-        if (
-            shippingAddress &&
-            cart.lineItems.physicalItems.length > 0 &&
-            !shouldDisableFastlaneOneClickExperience
-        ) {
             const consignments = state.getConsignments() || [];
             const availableShippingOptions = consignments[0]?.availableShippingOptions || [];
             const firstShippingOption = availableShippingOptions[0];
             const recommendedShippingOption = availableShippingOptions.find(
                 (option) => option.isRecommended,
             );
+
+            await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
 
             if (recommendedShippingOption || firstShippingOption) {
                 const shippingOptionId = recommendedShippingOption?.id || firstShippingOption.id;

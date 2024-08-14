@@ -540,31 +540,6 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
             );
         });
 
-        it('does not select shipping option for paypal fastlane authentication flow', async () => {
-            paymentMethod.initializationData.isFastlaneEnabled = true;
-
-            const storeConfigWithAFeature = {
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-4142.disable_paypal_fastlane_one_click_experience': true,
-                    },
-                },
-            };
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getStoreConfigOrThrow',
-            ).mockReturnValue(storeConfigWithAFeature);
-
-            await strategy.initialize(initializationOptions);
-            await strategy.executePaymentMethodCheckout(executionOptions);
-
-            expect(paymentIntegrationService.selectShippingOption).not.toHaveBeenCalled();
-        });
-
         it('calls continueWithCheckoutCallback callback in the end of execution flow', async () => {
             await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout(executionOptions);
