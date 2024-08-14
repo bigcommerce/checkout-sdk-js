@@ -14,6 +14,10 @@ import {
     getBillingAddress,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    createPayPalCommerceSdk,
+    PayPalCommerceSdk,
+} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import {
@@ -43,6 +47,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
     let paypalCommerceIntegrationService: PayPalCommerceIntegrationService;
     let paypalSdk: PayPalSDK;
     let strategy: PayPalCommerceAlternativeMethodsPaymentStrategy;
+    let paypalCommerceSdk: PayPalCommerceSdk;
 
     const paypalOrderId = 'paypal123';
 
@@ -78,10 +83,12 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
         loadingIndicator = new LoadingIndicator();
         paypalCommerceIntegrationService = getPayPalCommerceIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+        paypalCommerceSdk = createPayPalCommerceSdk();
 
         strategy = new PayPalCommerceAlternativeMethodsPaymentStrategy(
             paymentIntegrationService,
             paypalCommerceIntegrationService,
+            paypalCommerceSdk,
             loadingIndicator,
         );
 
@@ -93,10 +100,7 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
             'getBillingAddressOrThrow',
         ).mockReturnValue(billingAddress);
 
-        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(paypalSdk);
-        jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
-            paypalSdk,
-        );
+        jest.spyOn(paypalCommerceSdk, 'getPayPalApmsSdk').mockReturnValue(paypalSdk);
         jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockReturnValue(paypalOrderId);
         jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockReturnValue(undefined);
         jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockReturnValue(
@@ -223,15 +227,13 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceIntegrationService.loadPayPalSdk).not.toHaveBeenCalled();
+            expect(paypalCommerceSdk.getPayPalApmsSdk).not.toHaveBeenCalled();
         });
 
         it('loads paypal sdk', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalCommerceIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
-                defaultMethodId,
-            );
+            expect(paypalCommerceSdk.getPayPalApmsSdk).toHaveBeenCalledWith(paymentMethod, 'USD');
         });
     });
 

@@ -6,6 +6,7 @@ import { CardInstrument, CustomerAddress } from '@bigcommerce/checkout-sdk/payme
  *
  */
 export type FundingType = string[];
+export type EnableFundingType = FundingType | string;
 
 /**
  *
@@ -48,6 +49,7 @@ export interface PayPalCommerceHostWindow extends Window {
     paypalFastlane?: PayPalFastlane;
     paypalFastlaneSdk?: PayPalFastlaneSdk;
     paypalMessages?: PayPalMessagesSdk;
+    paypalApms?: PayPalApmSdk;
 }
 
 /**
@@ -60,6 +62,8 @@ export interface PayPalSdkConfig {
         'client-id'?: string;
         'merchant-id'?: string;
         'buyer-country'?: string;
+        'enable-funding'?: EnableFundingType;
+        'disable-funding'?: FundingType;
         currency?: string;
         commit?: boolean;
         intent?: PayPalCommerceIntent;
@@ -70,6 +74,7 @@ export interface PayPalSdkConfig {
         'data-partner-attribution-id'?: string;
         'data-user-id-token'?: string;
         'data-namespace'?: string;
+        'data-client-token'?: string;
     };
 }
 
@@ -78,7 +83,7 @@ export enum PayPalCommerceIntent {
     CAPTURE = 'capture',
 }
 
-export type PayPalSdkComponents = Array<'fastlane' | 'messages'>;
+export type PayPalSdkComponents = Array<'fastlane' | 'messages' | 'buttons' | 'payment-fields'>;
 
 /**
  *
@@ -91,6 +96,191 @@ export interface PayPalFastlaneSdk {
 
 export interface PayPalMessagesSdk {
     Messages(options: MessagingOptions): MessagingRender;
+}
+
+export interface PayPalApmSdk {
+    Buttons(options: PayPalCommerceButtonsOptions): PayPalCommerceButtons;
+    PaymentFields(options: PayPalCommercePaymentFieldsOptions): PayPalCommercePaymentFields;
+}
+
+/**
+ *
+ * PayPal Commerce Buttons
+ *
+ */
+export interface PayPalCommerceButtons {
+    render(id: string): void;
+    close(): void;
+    isEligible(): boolean;
+}
+
+export interface PayPalCommerceButtonsOptions {
+    style?: PayPalButtonStyleOptions;
+    fundingSource: string;
+    createOrder(): Promise<string>;
+    onApprove(
+        data: PayPalButtonApproveCallbackPayload,
+        actions: PayPalButtonApproveCallbackActions,
+    ): Promise<boolean | void> | void;
+    onInit?(
+        data: PayPalButtonInitCallbackPayload,
+        actions: PayPalButtonInitCallbackActions,
+    ): Promise<void>;
+    onClick?(
+        data: PayPalButtonClickCallbackPayload,
+        actions: PayPalButtonClickCallbackActions,
+    ): Promise<void> | void;
+    onError?(error: Error): void;
+    onCancel?(): void;
+}
+
+export interface ShippingChangeCallbackPayload {
+    orderID: string;
+    shipping_address: PaypalAddressCallbackData;
+    selected_shipping_option: PayPalSelectedShippingOption;
+}
+
+export interface PayPalButtonClickCallbackPayload {
+    fundingSource: string;
+}
+
+export interface PayPalButtonClickCallbackActions {
+    reject(): void;
+    resolve(): void;
+}
+
+export interface PayPalButtonInitCallbackPayload {
+    correlationID: string;
+}
+
+export interface PayPalButtonInitCallbackActions {
+    disable(): void;
+    enable(): void;
+}
+
+export interface PaypalAddressCallbackData {
+    city: string;
+    country_code: string;
+    postal_code: string;
+    state: string;
+}
+
+export interface PayPalSelectedShippingOption {
+    amount: {
+        currency_code: string;
+        value: string;
+    };
+    id: string;
+    label: string;
+    selected: boolean;
+    type: string;
+}
+
+export interface PayPalButtonApproveCallbackPayload {
+    orderID?: string;
+}
+
+export interface PayPalButtonApproveCallbackActions {
+    order: {
+        get: () => Promise<PayPalOrderDetails>;
+    };
+}
+
+export interface PayPalOrderDetails {
+    payer: {
+        name: {
+            given_name: string;
+            surname: string;
+        };
+        email_address: string;
+        address: PayPalOrderAddress;
+    };
+    purchase_units: Array<{
+        shipping: {
+            address: PayPalOrderAddress;
+        };
+    }>;
+}
+
+export interface PayPalOrderAddress {
+    address_line_1: string;
+    admin_area_2: string;
+    admin_area_1?: string;
+    postal_code: string;
+    country_code: string;
+}
+
+export enum StyleButtonLabel {
+    paypal = 'paypal',
+    checkout = 'checkout',
+    buynow = 'buynow',
+    pay = 'pay',
+    installment = 'installment',
+}
+
+export enum StyleButtonColor {
+    gold = 'gold',
+    blue = 'blue',
+    silver = 'silver',
+    black = 'black',
+    white = 'white',
+}
+
+export enum StyleButtonShape {
+    pill = 'pill',
+    rect = 'rect',
+}
+
+export interface PayPalButtonStyleOptions {
+    color?: StyleButtonColor;
+    shape?: StyleButtonShape;
+    height?: number;
+    label?: StyleButtonLabel;
+}
+
+/**
+ *
+ * PayPal Commerce Payment fields
+ *
+ */
+export interface PayPalCommercePaymentFields {
+    render(id: string): void;
+}
+
+export interface PayPalCommercePaymentFieldsOptions {
+    style?: PayPalCommerceFieldsStyleOptions;
+    fundingSource: string;
+    fields: {
+        name?: {
+            value?: string;
+        };
+        email?: {
+            value?: string;
+        };
+    };
+}
+
+export interface PayPalCommerceFieldsStyleOptions {
+    variables?: {
+        fontFamily?: string;
+        fontSizeBase?: string;
+        fontSizeSm?: string;
+        fontSizeM?: string;
+        fontSizeLg?: string;
+        textColor?: string;
+        colorTextPlaceholder?: string;
+        colorBackground?: string;
+        colorInfo?: string;
+        colorDanger?: string;
+        borderRadius?: string;
+        borderColor?: string;
+        borderWidth?: string;
+        borderFocusColor?: string;
+        spacingUnit?: string;
+    };
+    rules?: {
+        [key: string]: any;
+    };
 }
 
 /**
