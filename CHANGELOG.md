@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.645.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.644.4...v1.645.0) (2024-08-15)
+
+
+### Features
+
+* **payment:** PAYPAL-4550 added force reload of paypal client to avoid initializaing with wrong intent value ([#2606](https://github.com/bigcommerce/checkout-sdk-js/issues/2606)) ([b48b119](https://github.com/bigcommerce/checkout-sdk-js/commit/b48b1199091460b8cf4221de7da60c71f549ed9c))
+
 ### [1.644.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.644.3...v1.644.4) (2024-08-14)
 
 
