@@ -7,10 +7,12 @@ import {
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
+    PaymentMethodClientUnavailableError,
     PaymentMethodInvalidError,
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PayPalApmSdk, PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
@@ -30,10 +32,12 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
     private loadingIndicatorContainer?: string;
     private orderId?: string;
     private paypalButton?: PayPalCommerceButtons;
+    private paypalApms?: PayPalApmSdk;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private paypalCommerceSdk: PayPalCommerceSdk,
         private loadingIndicator: LoadingIndicator,
     ) {}
 
@@ -84,7 +88,10 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             return;
         }
 
-        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
+        this.paypalApms = await this.paypalCommerceSdk.getPayPalApmsSdk(
+            paymentMethod,
+            state.getCartOrThrow().currency.code,
+        );
 
         this.loadingIndicatorContainer = paypalOptions.container.split('#')[1];
 
@@ -141,7 +148,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         gatewayId: string,
         paypalOptions: PayPalCommerceAlternativeMethodsPaymentOptions,
     ): void {
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const paypalAmpsSdk = this.getPaypalAmpsSdkOrThrow();
 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(
@@ -164,7 +171,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
                 paypalOptions.onValidate(actions.resolve, actions.reject),
         };
 
-        this.paypalButton = paypalSdk.Buttons(buttonOptions);
+        this.paypalButton = paypalAmpsSdk.Buttons(buttonOptions);
 
         if (!this.paypalButton.isEligible()) {
             return;
@@ -241,7 +248,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         methodId: string,
         paypalOptions: PayPalCommerceAlternativeMethodsPaymentOptions,
     ): void {
-        const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
+        const paypalAmpsSdk = this.getPaypalAmpsSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
         const { firstName, lastName, email } = state.getBillingAddressOrThrow();
 
@@ -272,7 +279,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             },
         };
 
-        const paypalPaymentFields = paypalSdk.PaymentFields(fieldsOptions);
+        const paypalPaymentFields = paypalAmpsSdk.PaymentFields(fieldsOptions);
 
         paypalPaymentFields.render(apmFieldsContainer);
     }
@@ -297,5 +304,13 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
      * */
     private isNonInstantPaymentMethod(methodId: string): boolean {
         return methodId.toUpperCase() in NonInstantAlternativePaymentMethods;
+    }
+
+    private getPaypalAmpsSdkOrThrow() {
+        if (!this.paypalApms) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this.paypalApms;
     }
 }

@@ -44,6 +44,23 @@ export default class PayPalCommerceSdk {
         return this.window.paypalFastlaneSdk;
     }
 
+    async getPayPalApmsSdk(
+        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
+        currencyCode: string,
+    ) {
+        if (!this.window.paypalApms) {
+            const config = this.getPayPalApmSdkConfiguration(paymentMethod, currencyCode);
+
+            await this.loadPayPalSdk(config);
+
+            if (!this.window.paypalApms) {
+                throw new PaymentMethodClientUnavailableError();
+            }
+        }
+
+        return this.window.paypalApms;
+    }
+
     async getPayPalMessages(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
@@ -122,6 +139,51 @@ export default class PayPalCommerceSdk {
                 'data-namespace': 'paypalFastlaneSdk',
                 'data-partner-attribution-id': attributionId,
                 'data-user-id-token': connectClientToken || clientToken,
+            },
+        };
+    }
+
+    private getPayPalApmSdkConfiguration(
+        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
+        currencyCode: string,
+    ): PayPalSdkConfig {
+        const { initializationData } = paymentMethod;
+
+        if (!initializationData || !initializationData.clientId) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const {
+            intent,
+            clientId,
+            merchantId,
+            buyerCountry,
+            attributionId,
+            isDeveloperModeApplicable,
+            availableAlternativePaymentMethods = [],
+            enabledAlternativePaymentMethods = [],
+        } = initializationData;
+
+        const enableAPMsFunding = enabledAlternativePaymentMethods;
+        const disableAPMsFunding = availableAlternativePaymentMethods.filter(
+            (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
+        );
+
+        return {
+            options: {
+                'client-id': clientId,
+                'merchant-id': merchantId,
+                'enable-funding': enableAPMsFunding.length > 0 ? enableAPMsFunding : undefined,
+                'disable-funding': disableAPMsFunding.length > 0 ? disableAPMsFunding : undefined,
+                commit: true,
+                components: ['buttons', 'payment-fields'],
+                currency: currencyCode,
+                intent,
+                ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
+            },
+            attributes: {
+                'data-partner-attribution-id': attributionId,
+                'data-namespace': 'paypalApms',
             },
         };
     }
