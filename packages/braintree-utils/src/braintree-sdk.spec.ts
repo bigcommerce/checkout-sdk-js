@@ -13,6 +13,7 @@ import {
     getDataCollectorMock,
     getModuleCreatorMock,
     getUsBankAccountMock,
+    getVenmoCheckoutMock,
     getVisaCheckoutMock,
     getVisaCheckoutSDKMock,
 } from './mocks';
@@ -22,6 +23,7 @@ import {
     BraintreeErrorCode,
     BraintreeModuleCreator,
     BraintreeUsBankAccount,
+    BraintreeVenmoCheckout,
     BraintreeVisaCheckout,
     BraintreeVisaCheckoutCreator,
     BraintreeWindow,
@@ -215,6 +217,65 @@ describe('BraintreeSdk', () => {
 
             expect(braintreeScriptLoader.loadUsBankAccount).toHaveBeenCalledTimes(1);
             expect(usBankAccountCreatorMock.create).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('#getVenmoCheckout()', () => {
+        let braintreeVenmoCheckoutMock: BraintreeVenmoCheckout;
+        let braintreeVenmoCheckoutCreatorMock: BraintreeModuleCreator<BraintreeVenmoCheckout>;
+
+        beforeEach(() => {
+            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeVenmoCheckoutMock = getVenmoCheckoutMock();
+            braintreeVenmoCheckoutCreatorMock = getModuleCreatorMock(braintreeVenmoCheckoutMock);
+            braintreeScriptLoader.loadVenmoCheckout = jest
+                .fn()
+                .mockReturnValue(Promise.resolve(braintreeVenmoCheckoutCreatorMock));
+        });
+
+        it('returns a promise that resolves to the BraintreeVenmoCheckout', async () => {
+            const braintreeVenmoCreateMock = {
+                create: jest.fn().mockReturnValue({
+                    isBrowserSupported: jest.fn().mockReturnValue(true),
+                    teardown: expect.any(Function),
+                    tokenize: expect.any(Function),
+                }),
+            };
+
+            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                braintreeVenmoCreateMock,
+            );
+
+            await braintreeSdk.getVenmoCheckoutOrThrow();
+
+            expect(braintreeVenmoCreateMock.create).toHaveBeenCalled();
+        });
+
+        it('always returns the same instance of the BraintreeVenmoCheckout client', async () => {
+            const braintreeVenmoCreateMock = {
+                create: jest.fn().mockReturnValue({
+                    isBrowserSupported: jest.fn().mockReturnValue(true),
+                    teardown: expect.any(Function),
+                    tokenize: expect.any(Function),
+                }),
+            };
+
+            jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
+                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                braintreeVenmoCreateMock,
+            );
+
+            const braintreeVenmoCheckout1 = await braintreeSdk.getVenmoCheckoutOrThrow();
+            const braintreeVenmoCheckout2 = await braintreeSdk.getVenmoCheckoutOrThrow();
+
+            expect(braintreeVenmoCheckout1).toBe(braintreeVenmoCheckout2);
+            expect(braintreeScriptLoader.loadVenmoCheckout).toHaveBeenCalledTimes(1);
+            expect(braintreeVenmoCreateMock.create).toHaveBeenCalledTimes(1);
         });
     });
 
