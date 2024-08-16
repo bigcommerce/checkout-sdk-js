@@ -234,7 +234,7 @@ describe('BraintreeScriptLoader', () => {
                     attributes: {
                         crossorigin: 'anonymous',
                         integrity:
-                            'sha384-962443bfd43a6491be8da73601554c48701edf02e0b021b430d7b2e58065a7af36f7755e063f433096c87a5545ef44dc',
+                            'sha384-MunHz5V8FY0J9AOHGkmEjphvIKAI4WokwrT6w/NP9mwfBHhcq3LmDi7q1tIe1Aqk',
                     },
                 },
             );

@@ -337,7 +337,7 @@ export default class BraintreeScriptLoader {
                     [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]:
                         'sha384-Ca2r1xkeRMuYnf7qxF1rf9RrxNNYv/yqkVNZJ8f3CX6vwiagJNl7L65/3zWyu2hH',
                     [BRAINTREE_SDK_LATEST_STABLE_VERSION]:
-                        'sha384-962443bfd43a6491be8da73601554c48701edf02e0b021b430d7b2e58065a7af36f7755e063f433096c87a5545ef44dc',
+                        'sha384-MunHz5V8FY0J9AOHGkmEjphvIKAI4WokwrT6w/NP9mwfBHhcq3LmDi7q1tIe1Aqk',
                 };
 
             default:
