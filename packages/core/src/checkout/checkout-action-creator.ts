@@ -29,11 +29,14 @@ export default class CheckoutActionCreator {
                 of(createAction(CheckoutActionType.LoadCheckoutRequested)),
                 merge(
                     this._configActionCreator.loadConfig({
-                        ...options,
                         useCache: true,
-                        params: { ...options?.params, checkoutId: id },
+                        timeout: options?.timeout,
+                        params: { checkoutId: id },
                     }),
-                    this._formFieldsActionCreator.loadFormFields({ ...options, useCache: true }),
+                    this._formFieldsActionCreator.loadFormFields({
+                        useCache: true,
+                        timeout: options?.timeout,
+                    }),
                 ),
                 defer(() => {
                     return this._checkoutRequestSender
@@ -64,8 +67,14 @@ export default class CheckoutActionCreator {
             concat(
                 of(createAction(CheckoutActionType.LoadCheckoutRequested)),
                 merge(
-                    this._configActionCreator.loadConfig(),
-                    this._formFieldsActionCreator.loadFormFields({ ...options, useCache: true }),
+                    this._configActionCreator.loadConfig({
+                        useCache: true,
+                        timeout: options?.timeout,
+                    }),
+                    this._formFieldsActionCreator.loadFormFields({
+                        useCache: true,
+                        timeout: options?.timeout,
+                    }),
                 ),
                 defer(async () => {
                     const state = store.getState();
