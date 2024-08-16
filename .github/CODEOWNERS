@@ -91,5 +91,5 @@
 /packages/core/src/customer/strategies/googlepay @bigcommerce/team-checkout @bigcommerce/team-integrations @bigcommerce/team-paypal
 /packages/core/src/payment/strategies/googlepay @bigcommerce/team-checkout @bigcommerce/team-integrations @bigcommerce/team-paypal
 
-/packages/apple-pay @bigcommerce/team-checkout @bigcommerce/team-integrations @bigcommerce/team-paypal
+/packages/apple-pay-integration @bigcommerce/team-checkout @bigcommerce/team-integrations @bigcommerce/team-paypal
 /packages/google-pay-integration @bigcommerce/team-checkout @bigcommerce/team-integrations @bigcommerce/team-paypal
