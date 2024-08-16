@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.645.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.645.0...v1.645.1) (2024-08-16)
+
+
+### Bug Fixes
+
+* **common:** PAYPAL-000 fixed apple pay package name in codeowners file ([#2613](https://github.com/bigcommerce/checkout-sdk-js/issues/2613)) ([6d35f6d](https://github.com/bigcommerce/checkout-sdk-js/commit/6d35f6d5fefd915bcecf305250a059e38c4f6fa9))
+
 ## [1.645.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.644.4...v1.645.0) (2024-08-15)
 
 
