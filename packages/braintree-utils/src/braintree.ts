@@ -546,7 +546,7 @@ export type BraintreeVenmoCheckoutCreator = BraintreeModuleCreator<
 >;
 
 export interface BraintreeVenmoCheckout extends BraintreeModule {
-    tokenize(callback: (error: BraintreeError, payload: BraintreeTokenizePayload) => unknown): void;
+    tokenize(callback: (error: BraintreeError, payload: BraintreeTokenizePayload) => void): void;
     isBrowserSupported(): boolean;
 }
 

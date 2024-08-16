@@ -192,7 +192,6 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         venmoButton.setAttribute('aria-label', 'Venmo');
         Object.assign(venmoButton.style, getVenmoButtonStyle(buttonStyles || {}));
 
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         venmoButton.addEventListener('click', async () => {
             venmoButton.setAttribute('disabled', 'true');
 
@@ -207,7 +206,7 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
                         venmoButton.removeAttribute('disabled');
 
                         if (error) {
-                            return this.onError(error);
+                            this.onError(error);
                         }
 
                         await this.handlePostForm(payload, buyBowCart?.id);
