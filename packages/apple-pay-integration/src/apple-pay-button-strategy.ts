@@ -1,7 +1,7 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 import { noop } from 'lodash';
 
-import { BraintreeIntegrationService } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { BraintreeSdk } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     AddressRequestBody,
     BuyNowCartCreationError,
@@ -51,7 +51,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         private _requestSender: RequestSender,
         private _paymentIntegrationService: PaymentIntegrationService,
         private _sessionFactory: ApplePaySessionFactory,
-        private _braintreeIntegrationService: BraintreeIntegrationService,
+        private _braintreeSdk: BraintreeSdk,
     ) {}
 
     async initialize(
@@ -91,7 +91,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         }
 
         if (this._paymentMethod.initializationData?.gateway === ApplePayGatewayType.BRAINTREE) {
-            await this._initializeBraintreeIntegrationService();
+            await this._initializeBraintreeSdk();
         }
 
         this._applePayButton = this._createButton(containerId, buttonClassName);
@@ -616,30 +616,32 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         };
     }
 
-    private async _getBraintreeDeviceData() {
-        const data = await this._braintreeIntegrationService.getDataCollector();
+    private async _getBraintreeDeviceData(): Promise<string | undefined> {
+        try {
+            const { deviceData } = await this._braintreeSdk.getDataCollectorOrThrow();
 
-        return data.deviceData;
+            return deviceData;
+        } catch (_) {
+            // Don't throw an error to avoid breaking checkout flow
+        }
     }
 
-    private async _initializeBraintreeIntegrationService() {
-        const state = await this._paymentIntegrationService.loadPaymentMethod(
-            ApplePayGatewayType.BRAINTREE,
-        );
+    private async _initializeBraintreeSdk(): Promise<void> {
+        // TODO: This is a temporary solution when we load braintree to get client token (should be fixed after PAYPAL-4122)
+        await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
 
+        const state = this._paymentIntegrationService.getState();
         const storeConfig = state.getStoreConfig();
+        const braintreePaymentMethod = state.getPaymentMethod(ApplePayGatewayType.BRAINTREE);
 
-        const braintreePaymentMethod: PaymentMethod = state.getPaymentMethodOrThrow(
-            ApplePayGatewayType.BRAINTREE,
-        );
-
-        if (!braintreePaymentMethod.clientToken || !braintreePaymentMethod.initializationData) {
+        if (
+            !braintreePaymentMethod ||
+            !braintreePaymentMethod.clientToken ||
+            !braintreePaymentMethod.initializationData
+        ) {
             return;
         }
 
-        this._braintreeIntegrationService.initialize(
-            braintreePaymentMethod.clientToken,
-            storeConfig,
-        );
+        this._braintreeSdk.initialize(braintreePaymentMethod.clientToken, storeConfig);
     }
 }
