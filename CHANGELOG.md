@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.646.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.646.1...v1.646.2) (2024-08-21)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-8300 Fix config and form field cache by ensuring input parameters are correctly compared ([a568119](https://github.com/bigcommerce/checkout-sdk-js/commit/a568119142a529ec94360e17279b42a807a2f414))
+
 ### [1.646.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.646.0...v1.646.1) (2024-08-19)
 
 
