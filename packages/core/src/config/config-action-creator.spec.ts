@@ -58,8 +58,14 @@ describe('ConfigActionCreator', () => {
 
         it('dispatches actions using cached responses if available', async () => {
             const actions = await merge(
-                configActionCreator.loadConfig({ useCache: true }),
-                configActionCreator.loadConfig({ useCache: true }),
+                configActionCreator.loadConfig({
+                    useCache: true,
+                    params: { checkoutId: '6554a0a0-527f-4d51-9197-58ab22eb1dab' },
+                }),
+                configActionCreator.loadConfig({
+                    useCache: true,
+                    params: { checkoutId: '6554a0a0-527f-4d51-9197-58ab22eb1dab' },
+                }),
             )
                 .pipe(toArray())
                 .toPromise();
