@@ -26,14 +26,14 @@ describe('cacheAction()', () => {
             Promise.resolve(createAction('GET_MESSAGE', `Hello ${name}`)),
         );
         const subscriber = jest.fn();
-        const createCachedAction = cacheAction((name, _) =>
+        const createCachedAction = cacheAction((name) =>
             defer(() => getMessage(name) as Promise<Action>),
         );
 
-        createCachedAction('Foo', { params: { abc: 'abc' } }).subscribe(subscriber);
-        createCachedAction('Foo', { params: { abc: 'abc' } }).subscribe(subscriber);
-        createCachedAction('Bar', { params: { abc: 'efg' } }).subscribe(subscriber);
-        createCachedAction('Bar', { params: { abc: 'efg' } }).subscribe(subscriber);
+        createCachedAction('Foo').subscribe(subscriber);
+        createCachedAction('Foo').subscribe(subscriber);
+        createCachedAction('Bar').subscribe(subscriber);
+        createCachedAction('Bar').subscribe(subscriber);
 
         await new Promise((resolve) => process.nextTick(resolve));
 
