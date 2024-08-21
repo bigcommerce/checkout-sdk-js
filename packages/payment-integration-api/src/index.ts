@@ -123,6 +123,7 @@ export {
     WithEcpInstrument,
     WithSepaInstrument,
     WithIdealInstrument,
+    WithPayByBankInstrument,
     BlueSnapDirectEcpPayload,
     BlueSnapDirectSepaPayload,
     IdealPayload,
