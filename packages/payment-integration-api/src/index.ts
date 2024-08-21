@@ -186,3 +186,4 @@ export { default as ResolvableModule } from './resolvable-module';
 export { default as isResolvableModule } from './is-resolvable-module';
 export { default as toResolvableModule } from './to-resolvable-module';
 export { RemoteCheckoutActionType } from './remote-checkout';
+export { default as UnsupportedBrowserError } from './unsupported-browser-error';

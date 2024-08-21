@@ -2,6 +2,7 @@ import {
     NotInitializedError,
     NotInitializedErrorType,
     StoreConfig,
+    UnsupportedBrowserError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import BraintreeScriptLoader from './braintree-script-loader';
@@ -12,6 +13,7 @@ import {
     BraintreeErrorCode,
     BraintreeModule,
     BraintreeUsBankAccount,
+    BraintreeVenmoCheckout,
     BraintreeVisaCheckout,
 } from './types';
 import isBraintreeError from './utils/is-braintree-error';
@@ -24,6 +26,7 @@ export default class BraintreeSdk {
     private usBankAccount?: BraintreeUsBankAccount;
     private visaCheckout?: Promise<BraintreeVisaCheckout>;
     private visaCheckoutSDK?: VisaCheckoutSDK;
+    private braintreeVenmo?: BraintreeVenmoCheckout;
 
     constructor(private braintreeScriptLoader: BraintreeScriptLoader) {}
 
@@ -139,6 +142,35 @@ export default class BraintreeSdk {
         }
 
         return this.visaCheckoutSDK;
+    }
+
+    /**
+     *
+     * Braintree Venmo Checkout
+     * braintree venmo checkout doc: https://braintree.github.io/braintree-web/current/module-braintree-web_venmo.html
+     *
+     */
+    async getVenmoCheckoutOrThrow() {
+        if (!this.braintreeVenmo) {
+            const client = await this.getClient();
+            const venmoCheckout = await this.braintreeScriptLoader.loadVenmoCheckout();
+
+            const venmoCheckoutConfig = {
+                client,
+                allowDesktop: true,
+                paymentMethodUsage: 'multi_use',
+            };
+
+            const braintreeVenmoCheckout = await venmoCheckout.create(venmoCheckoutConfig);
+
+            if (braintreeVenmoCheckout.isBrowserSupported()) {
+                this.braintreeVenmo = braintreeVenmoCheckout;
+            } else {
+                throw new UnsupportedBrowserError();
+            }
+        }
+
+        return this.braintreeVenmo;
     }
 
     /**
