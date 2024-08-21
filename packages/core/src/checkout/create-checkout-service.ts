@@ -193,7 +193,6 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new PickupOptionActionCreator(new PickupOptionRequestSender(requestSender)),
         new ShippingCountryActionCreator(
             new ShippingCountryRequestSender(requestSender, { locale }),
-            store,
         ),
         new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, requestSender)),
         new SignInEmailActionCreator(new SignInEmailRequestSender(requestSender)),
