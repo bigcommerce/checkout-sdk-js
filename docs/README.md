@@ -135,7 +135,6 @@
 - [BraintreeStoredCardFieldOptions](interfaces/BraintreeStoredCardFieldOptions.md)
 - [BraintreeStoredCardFieldsMap](interfaces/BraintreeStoredCardFieldsMap.md)
 - [BraintreeThreeDSecureOptions](interfaces/BraintreeThreeDSecureOptions.md)
-- [BraintreeVenmoButtonInitializeOptions](interfaces/BraintreeVenmoButtonInitializeOptions.md)
 - [BraintreeVerifyPayload](interfaces/BraintreeVerifyPayload.md)
 - [BraintreeVisaCheckoutCustomerInitializeOptions](interfaces/BraintreeVisaCheckoutCustomerInitializeOptions.md)
 - [BraintreeVisaCheckoutPaymentInitializeOptions](interfaces/BraintreeVisaCheckoutPaymentInitializeOptions.md)

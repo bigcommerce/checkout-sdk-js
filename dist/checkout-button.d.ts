@@ -78,11 +78,6 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
      */
     braintreepaypalcredit?: BraintreePaypalCreditButtonInitializeOptions;
     /**
-     * The options that are required to facilitate Braintree Venmo. They can be
-     * omitted unless you need to support Braintree Venmo.
-     */
-    braintreevenmo?: BraintreeVenmoButtonInitializeOptions;
-    /**
      * The ID of a container which the checkout button should be inserted.
      */
     containerId: string;
@@ -203,29 +198,6 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
     buyNowInitializeOptions?: {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
-}
-
-declare interface BraintreeVenmoButtonInitializeOptions {
-    /**
-     * A callback that gets called on any error.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onError?(error: BraintreeError | StandardError): void;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
-    /**
-     * A set of styling options for the checkout button.
-     */
-    style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
 }
 
 /**

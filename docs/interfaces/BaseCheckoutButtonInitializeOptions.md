@@ -19,7 +19,6 @@
 - [amazonpay](BaseCheckoutButtonInitializeOptions.md#amazonpay)
 - [braintreepaypal](BaseCheckoutButtonInitializeOptions.md#braintreepaypal)
 - [braintreepaypalcredit](BaseCheckoutButtonInitializeOptions.md#braintreepaypalcredit)
-- [braintreevenmo](BaseCheckoutButtonInitializeOptions.md#braintreevenmo)
 - [containerId](BaseCheckoutButtonInitializeOptions.md#containerid)
 - [currencyCode](BaseCheckoutButtonInitializeOptions.md#currencycode)
 - [methodId](BaseCheckoutButtonInitializeOptions.md#methodid)
@@ -53,15 +52,6 @@ ___
 
 The options that are required to facilitate Braintree Credit. They can be
 omitted unless you need to support Braintree Credit.
-
-___
-
-### braintreevenmo
-
-• `Optional` **braintreevenmo**: [`BraintreeVenmoButtonInitializeOptions`](BraintreeVenmoButtonInitializeOptions.md)
-
-The options that are required to facilitate Braintree Venmo. They can be
-omitted unless you need to support Braintree Venmo.
 
 ___
 
