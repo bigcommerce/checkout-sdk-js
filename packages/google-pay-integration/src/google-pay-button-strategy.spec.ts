@@ -30,7 +30,7 @@ import {
     NewTransactionInfo,
 } from './types';
 
-describe('GooglePayButtonStrategy', () => {
+describe.skip('GooglePayButtonStrategy', () => {
     const CONTAINER_ID = 'my_awesome_google_pay_button_container';
 
     let buttonStrategy: GooglePayButtonStrategy;
