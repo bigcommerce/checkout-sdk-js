@@ -1089,9 +1089,9 @@ console.log(state.data.getPickupOptions(consignmentId, searchArea));
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `query` | [`PickupOptionRequestBody`](../interfaces/PickupOptionRequestBody.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `query` | [`PickupOptionRequestBody`](../interfaces/PickupOptionRequestBody.md) | Options for loading the available shipping countries. |
 
 #### Returns
 

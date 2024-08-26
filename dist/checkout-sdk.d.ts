@@ -2573,7 +2573,7 @@ declare class CheckoutService {
      * ```
      *
      * @alpha
-     * @param options - Options for loading the available shipping countries.
+     * @param query - Options for loading the available shipping countries.
      * @returns A promise that resolves to the current state.
      */
     loadPickupOptions(query: PickupOptionRequestBody): Promise<CheckoutSelectors>;
