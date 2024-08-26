@@ -1,5 +1,6 @@
 import { Action, ThunkAction } from '@bigcommerce/data-store';
 import { memoize } from '@bigcommerce/memoize';
+import { isEqual } from 'lodash';
 import { from, Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 
@@ -12,13 +13,13 @@ export default function cacheAction<TFunction extends CreateActionFn>(fn: TFunct
         }
 
         if (typeof action === 'function') {
-            return memoize((store) => from(action(store)).pipe(shareReplay()));
+            return memoize((store) => from(action(store)).pipe(shareReplay()), { isEqual });
         }
 
         return action;
     }
 
-    return memoize(decoratedFn as TFunction);
+    return memoize(decoratedFn as TFunction, { isEqual });
 }
 
 type CreateActionFn = (...args: any[]) => Observable<Action> | ThunkAction<Action> | Action;
