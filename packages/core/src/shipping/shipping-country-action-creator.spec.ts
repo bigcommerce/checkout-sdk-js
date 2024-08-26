@@ -4,6 +4,9 @@ import { catchError, toArray } from 'rxjs/operators';
 
 import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { CheckoutStore } from '../checkout';
+import { getCheckoutStoreState } from '../checkout/checkouts.mock';
+import createCheckoutStore from '../checkout/create-checkout-store';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { getCountries } from '../geography/countries.mock';
 
@@ -16,8 +19,10 @@ describe('ShippingCountryActionCreator', () => {
     let shippingCountryActionCreator: ShippingCountryActionCreator;
     let errorResponse: Response<ErrorResponseBody>;
     let response: Response<any>;
+    let store: CheckoutStore;
 
     beforeEach(() => {
+        store = createCheckoutStore(getCheckoutStoreState());
         response = getResponse({ data: getCountries() });
         errorResponse = getErrorResponse();
 
@@ -25,7 +30,7 @@ describe('ShippingCountryActionCreator', () => {
 
         jest.spyOn(requestSender, 'loadCountries').mockReturnValue(Promise.resolve(response));
 
-        shippingCountryActionCreator = new ShippingCountryActionCreator(requestSender);
+        shippingCountryActionCreator = new ShippingCountryActionCreator(requestSender, store);
     });
 
     describe('#loadCountries()', () => {

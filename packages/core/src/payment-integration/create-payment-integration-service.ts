@@ -124,6 +124,7 @@ export default function createPaymentIntegrationService(
 
     const shippingCountryActionCreator = new ShippingCountryActionCreator(
         new ShippingCountryRequestSender(requestSender, { locale: getLocale() }),
+        store,
     );
 
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
