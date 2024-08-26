@@ -2,8 +2,6 @@ import { values } from 'lodash';
 import { fromEvent } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 
-import { HostedInputSubmitSuccessEvent } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { DetachmentObserver } from './common/dom';
 import { mapFromPaymentErrorResponse } from './common/errors';
 import { IframeEventListener, IframeEventPoster } from './common/iframe';
@@ -18,12 +16,13 @@ import HostedFieldType from './hosted-field-type';
 import HostedFormManualOrderData from './hosted-form-manual-order-data';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
-import { HostedInputSubmitErrorEvent } from './hosted-input-events';
 import {
     HostedInputEventMap,
     HostedInputEventType,
+    HostedInputSubmitErrorEvent,
     HostedInputSubmitManualOrderErrorEvent,
     HostedInputSubmitManualOrderSuccessEvent,
+    HostedInputSubmitSuccessEvent,
     HostedInputValidateEvent,
 } from './iframe-content';
 

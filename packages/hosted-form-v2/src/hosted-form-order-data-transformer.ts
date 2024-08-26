@@ -34,8 +34,9 @@ export default class HostedFormOrderDataTransformer {
         ) as HostedCreditCardInstrument;
         const paymentMethod = state.getPaymentMethod(payload.methodId, payload.gatewayId);
         const paymentMethodMeta = state.getPaymentMethodsMeta();
+        const isVaulted = payment && isVaultedInstrument(payment);
         const authToken =
-            instrumentMeta && payment && isVaultedInstrument(payment)
+            isVaulted && instrumentMeta
                 ? `${state.getPaymentToken()}, ${instrumentMeta.vaultAccessToken}`
                 : state.getPaymentToken();
 

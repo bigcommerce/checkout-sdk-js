@@ -57,6 +57,7 @@ const createHostedForm = jest.fn();
 const forgetCheckout = jest.fn();
 const getConsignments = jest.fn();
 const getState = jest.fn(() => state);
+const handlePaymentHumanVerification = jest.fn();
 const getPaymentProviderCustomerOrThrow = jest.fn();
 const deleteConsignment = jest.fn();
 const initializeOffsitePayment = jest.fn();
@@ -96,6 +97,7 @@ const PaymentIntegrationServiceMock = jest
             getConsignments,
             getPaymentProviderCustomerOrThrow,
             getState,
+            handlePaymentHumanVerification,
             initializeOffsitePayment,
             loadCheckout,
             loadDefaultCheckout,

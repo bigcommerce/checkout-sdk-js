@@ -124,3 +124,18 @@ export interface HostedInputValidateEvent {
     type: HostedInputEventType.Validated;
     payload: HostedInputValidateResults;
 }
+
+export interface HostedInputSubmitSuccessEvent {
+    type: HostedInputEventType.SubmitSucceeded;
+    payload: {
+        response: Response<unknown>;
+    };
+}
+
+export interface HostedInputSubmitErrorEvent {
+    type: HostedInputEventType.SubmitFailed;
+    payload: {
+        error: PaymentErrorData;
+        response?: Response<PaymentErrorResponseBody>;
+    };
+}

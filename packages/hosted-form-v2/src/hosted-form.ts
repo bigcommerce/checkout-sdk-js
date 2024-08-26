@@ -108,28 +108,28 @@ export default class HostedForm implements HostedFormInterface {
     async submit(
         payload: OrderPaymentRequestBody,
         paymentIntegrationService: PaymentIntegrationService,
+        payloadTransformer: HostedFormOrderDataTransformer,
         additionalActionData?: PaymentAdditionalAction,
     ): Promise<HostedInputSubmitSuccessEvent> {
-        const payloadTransformer = new HostedFormOrderDataTransformer(paymentIntegrationService);
-
         try {
-            // eslint-disable-next-line @typescript-eslint/return-await
-            return await this._getFirstField().submitForm(
+            const response = await this._getFirstField().submitForm(
                 this._fields.map((field) => field.getType()),
                 payloadTransformer.transform(payload, additionalActionData),
             );
+
+            return response;
         } catch (error) {
-            //
             let additionalAction: PaymentAdditionalAction;
 
             if (error instanceof Error || typeof error === 'string') {
-                additionalAction = await paymentIntegrationService.handlePaymentHumanVerification(error);
+                additionalAction = await paymentIntegrationService.handlePaymentHumanVerification(
+                    error,
+                );
             } else {
                 // Handle cases where error is not an instance of Error or string
                 throw new Error('Unexpected error type');
             }
 
-            // eslint-disable-next-line @typescript-eslint/return-await
             return await this._getFirstField().submitForm(
                 this._fields.map((field) => field.getType()),
                 payloadTransformer.transform(payload, additionalAction),

@@ -25,7 +25,7 @@ describe('HostedForm', () => {
     let eventListener: IframeEventListener<HostedInputEventMap>;
     let fields: HostedField[];
     let form: HostedForm;
-    let payloadTransformer: Pick<HostedFormOrderDataTransformer, 'transform'>;
+    let payloadTransformer: HostedFormOrderDataTransformer;
     let errorResponse: RequestError;
     let paymentIntegrationService: PaymentIntegrationService;
 
@@ -40,7 +40,7 @@ describe('HostedForm', () => {
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-
+        payloadTransformer = new HostedFormOrderDataTransformer(paymentIntegrationService);
         callbacks = {
             onBlur: jest.fn(),
             onEnter: jest.fn(),
@@ -62,15 +62,7 @@ describe('HostedForm', () => {
         jest.spyOn(fields[3], 'getType').mockReturnValue(HostedFieldType.CardNumber);
 
         eventListener = new IframeEventListener('https://store.foobar.com');
-        payloadTransformer = { transform: jest.fn() };
-
-        form = new HostedForm(
-            fields,
-            eventListener,
-            payloadTransformer as HostedFormOrderDataTransformer,
-            callbacks,
-            paymentIntegrationService,
-        );
+        form = new HostedForm(fields, eventListener, callbacks);
 
         errorResponse = {
             ...getErrorResponse(),
@@ -131,7 +123,7 @@ describe('HostedForm', () => {
 
         jest.spyOn(payloadTransformer, 'transform').mockReturnValue(data);
 
-        await form.submit(payload);
+        await form.submit(payload, paymentIntegrationService, payloadTransformer);
 
         expect(payloadTransformer.transform).toHaveBeenCalledWith(payload, undefined);
         expect(field.submitForm).toHaveBeenCalledWith(
@@ -164,7 +156,7 @@ describe('HostedForm', () => {
 
         jest.spyOn(payloadTransformer, 'transform').mockReturnValue(data);
 
-        await form.submit(payload);
+        await form.submit(payload, paymentIntegrationService, payloadTransformer);
 
         expect(field.submitForm).toHaveBeenCalledTimes(2);
     });

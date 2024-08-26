@@ -8,7 +8,6 @@ export enum HostedFieldEventType {
     SubmitRequested = 'HOSTED_FIELD:SUBMITTED_REQUESTED',
     SubmitManualOrderRequested = 'HOSTED_FIELD:SUBMIT_MANUAL_ORDER_REQUESTED',
     ValidateRequested = 'HOSTED_FIELD:VALIDATE_REQUESTED',
-    StoredCardRequested = 'HOSTED_FIELD:STORED_CARD_REQUESTED',
 }
 
 export interface HostedFieldEventMap {
