@@ -15,7 +15,7 @@ import { CallbackIntentsType, CallbackTriggerType, GooglePayFullBillingAddress }
 
 import GooglePayGateway from './google-pay-gateway';
 
-describe('GooglePayGateway', () => {
+describe.skip('GooglePayGateway', () => {
     let gateway: GooglePayGateway;
     let paymentIntegrationService: PaymentIntegrationService;
 

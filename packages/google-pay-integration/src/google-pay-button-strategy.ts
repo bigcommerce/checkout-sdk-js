@@ -130,6 +130,13 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             event.preventDefault();
 
             try {
+                if (this._buyNowInitializeOptions) {
+                    await this._createBuyNowCartOrThrow(this._buyNowInitializeOptions);
+                } else {
+                    await this._paymentIntegrationService.loadDefaultCheckout();
+                }
+
+                await this._googlePayPaymentProcessor.initializeWidget();
                 await this._interactWithPaymentSheet();
             } catch (error) {
                 let err: unknown = error;
@@ -189,20 +196,12 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                 }: IntermediatePaymentData): Promise<NewTransactionInfo | void> => {
                     const {
                         availableTriggers,
-                        initializationTrigger,
                         addressChangeTriggers,
                         shippingOptionsChangeTriggers,
                     } = this._googlePayPaymentProcessor.getCallbackTriggers();
 
                     if (!availableTriggers.includes(callbackTrigger)) {
                         return;
-                    }
-
-                    if (
-                        initializationTrigger.includes(callbackTrigger) &&
-                        this._buyNowInitializeOptions
-                    ) {
-                        await this._createBuyNowCartOrThrow(this._buyNowInitializeOptions);
                     }
 
                     const availableShippingOptions = addressChangeTriggers.includes(callbackTrigger)
