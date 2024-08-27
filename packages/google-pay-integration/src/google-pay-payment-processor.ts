@@ -60,12 +60,12 @@ export default class GooglePayPaymentProcessor {
         await this._gateway.initialize(getPaymentMethod, isBuyNowFlow, currencyCode);
 
         this._buildButtonPayloads();
+
+        await this._determineReadinessToPay();
     }
 
     async initializeWidget() {
         await this._buildWidgetPayloads();
-
-        await this._determineReadinessToPay();
 
         this._prefetchGooglePaymentData();
     }
