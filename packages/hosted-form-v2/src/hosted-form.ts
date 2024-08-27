@@ -1,7 +1,6 @@
 import { noop, without } from 'lodash';
 
 import {
-    HostedInputSubmitSuccessEvent,
     OrderPaymentRequestBody,
     PaymentAdditionalAction,
     PaymentIntegrationService,
@@ -18,6 +17,7 @@ import {
     HostedInputEventMap,
     HostedInputEventType,
     HostedInputSubmitManualOrderSuccessEvent,
+    HostedInputSubmitSuccessEvent,
 } from './iframe-content';
 
 type HostedFormEventCallbacks = Pick<
@@ -130,10 +130,12 @@ export default class HostedForm implements HostedFormInterface {
                 throw new Error('Unexpected error type');
             }
 
-            return await this._getFirstField().submitForm(
+            const response = await this._getFirstField().submitForm(
                 this._fields.map((field) => field.getType()),
                 payloadTransformer.transform(payload, additionalAction),
             );
+
+            return response;
         }
     }
 
