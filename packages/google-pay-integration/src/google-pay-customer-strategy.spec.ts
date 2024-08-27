@@ -59,6 +59,7 @@ describe('GooglePayCustomerStrategy', () => {
             createFormPoster(),
         );
         jest.spyOn(processor, 'initialize').mockResolvedValue(undefined);
+        jest.spyOn(processor, 'initializeWidget').mockResolvedValue(undefined);
         jest.spyOn(processor, 'addPaymentButton').mockReturnValue(button);
         jest.spyOn(processor, 'signOut').mockResolvedValue(undefined);
 
@@ -76,8 +77,10 @@ describe('GooglePayCustomerStrategy', () => {
     describe('#initialize', () => {
         it('should initialize the strategy', async () => {
             const initialize = strategy.initialize(options);
+            const initializeWidgetMock = jest.spyOn(processor, 'initializeWidget');
 
             await expect(initialize).resolves.toBeUndefined();
+            expect(initializeWidgetMock).not.toHaveBeenCalled();
         });
 
         it('should call loadPaymentMethod', async () => {
@@ -235,6 +238,8 @@ describe('GooglePayCustomerStrategy', () => {
         });
 
         it('triggers onClick callback on wallet button click', async () => {
+            const initializeWidgetMock = jest.spyOn(processor, 'initializeWidget');
+
             await strategy.initialize(options);
 
             button.click();
@@ -242,6 +247,7 @@ describe('GooglePayCustomerStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(options.googlepayworldpayaccess?.onClick).toHaveBeenCalled();
+            expect(initializeWidgetMock).toHaveBeenCalledTimes(1);
         });
 
         describe('#getGooglePayClientOptions', () => {

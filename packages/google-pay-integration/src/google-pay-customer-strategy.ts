@@ -187,6 +187,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
 
             // TODO: Dispatch Widget Actions
             try {
+                await this._googlePayPaymentProcessor.initializeWidget();
                 await this._interactWithPaymentSheet();
             } catch (error) {
                 let err: unknown = error;

@@ -102,41 +102,27 @@ export default class GooglePayGateway {
 
     async getRequiredData(): Promise<GooglePayRequiredPaymentData> {
         const data: GooglePayRequiredPaymentData = { emailRequired: true };
-        const isGooglePayShippingOptionsAvailable = this._isGooglePayShippingOptionsAvailable();
 
-        if (this._isBuyNowFlow) {
-            return {
-                ...data,
-                shippingAddressRequired: true,
-                shippingAddressParameters: {
-                    phoneNumberRequired: true,
-                },
-                ...(isGooglePayShippingOptionsAvailable ? { shippingOptionRequired: true } : {}),
-            };
+        if (!this._isShippingAddressRequired()) {
+            return data;
         }
 
-        if (this._isShippingAddressRequired()) {
-            const state = await this._paymentIntegrationService.loadShippingCountries();
-            const allowedCountryCodes = state
-                .getShippingCountries()
-                ?.map((country) => country.code);
+        const state = await this._paymentIntegrationService.loadShippingCountries();
+        const allowedCountryCodes = state.getShippingCountries()?.map((country) => country.code);
 
-            data.shippingAddressRequired = true;
-            data.shippingAddressParameters = {
+        return {
+            ...data,
+            shippingAddressRequired: true,
+            shippingAddressParameters: {
                 phoneNumberRequired: true,
                 ...(allowedCountryCodes && { allowedCountryCodes }),
-            };
-            data.shippingOptionRequired = !!isGooglePayShippingOptionsAvailable;
-        }
-
-        return data;
+            },
+            shippingOptionRequired: this._isGooglePayShippingOptionsAvailable(),
+        };
     }
 
     getCallbackIntents(): CallbackIntentsType[] {
-        if (
-            this._isGooglePayShippingOptionsAvailable() &&
-            (this._isBuyNowFlow || this._isShippingAddressRequired())
-        ) {
+        if (this._isGooglePayShippingOptionsAvailable() && this._isShippingAddressRequired()) {
             return [
                 CallbackIntentsType.OFFER,
                 CallbackIntentsType.SHIPPING_ADDRESS,
