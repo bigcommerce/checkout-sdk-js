@@ -21,6 +21,7 @@ declare interface HostedFieldEventMap {
 
 declare enum HostedFieldEventType {
     AttachRequested = "HOSTED_FIELD:ATTACH_REQUESTED",
+    SubmitRequested = "HOSTED_FIELD:SUBMITTED_REQUESTED",
     SubmitManualOrderRequested = "HOSTED_FIELD:SUBMIT_MANUAL_ORDER_REQUESTED",
     ValidateRequested = "HOSTED_FIELD:VALIDATE_REQUESTED"
 }
@@ -170,9 +171,13 @@ declare enum HostedInputEventType {
     CardTypeChanged = "HOSTED_INPUT:CARD_TYPE_CHANGED",
     Entered = "HOSTED_INPUT:ENTERED",
     Focused = "HOSTED_INPUT:FOCUSED",
+    SubmitSucceeded = "HOSTED_INPUT:SUBMIT_SUCCEEDED",
+    SubmitFailed = "HOSTED_INPUT:SUBMIT_FAILED",
     SubmitManualOrderSucceeded = "HOSTED_INPUT:SUBMIT_MANUAL_ORDER_SUCCEEDED",
     SubmitManualOrderFailed = "HOSTED_INPUT:SUBMIT_MANUAL_ORDER_FAILED",
-    Validated = "HOSTED_INPUT:VALIDATED"
+    Validated = "HOSTED_INPUT:VALIDATED",
+    StoredCardSucceeded = "HOSTED_INPUT:STORED_CARD_SUCCEEDED",
+    StoredCardFailed = "HOSTED_INPUT:STORED_CARD_FAILED"
 }
 
 declare interface HostedInputFocusEvent {

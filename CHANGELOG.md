@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.649.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.648.0...v1.649.0) (2024-08-28)
+
+
+### Features
+
+* **payment:** PI-2467 Add "submit" method to the hosted-form-v2 package ([#2598](https://github.com/bigcommerce/checkout-sdk-js/issues/2598)) ([8bad2f4](https://github.com/bigcommerce/checkout-sdk-js/commit/8bad2f4145d81f691d8ef109a269deab0010c722))
+
 ## [1.648.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.647.2...v1.648.0) (2024-08-28)
 
 

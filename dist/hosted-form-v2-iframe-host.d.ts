@@ -1,3 +1,15 @@
+import { Checkout } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Config } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { HostedCreditCardInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { HostedVaultedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Order } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { OrderMeta } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { OrderPaymentRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentAdditionalAction } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentInstrumentMeta } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentMethodMeta } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Response } from '@bigcommerce/request-sender';
 
 declare class DetachmentObserver {
@@ -34,10 +46,12 @@ declare class HostedField {
     getType(): HostedFieldType;
     attach(): Promise<void>;
     detach(): void;
+    submitForm(fields: HostedFieldType[], data: HostedFormOrderData): Promise<HostedInputSubmitSuccessEvent>;
     submitManualOrderForm(data: HostedFormManualOrderData): Promise<HostedInputSubmitManualOrderSuccessEvent>;
     validateForm(): Promise<void>;
     private _getFontUrls;
     private _isSubmitManualOrderErrorEvent;
+    private _isSubmitErrorEvent;
 }
 
 declare interface HostedFieldAttachEvent {
@@ -58,10 +72,11 @@ declare type HostedFieldCardTypeChangeEventData = HostedInputCardTypeChangeEvent
 
 declare type HostedFieldEnterEventData = HostedInputEnterEvent['payload'];
 
-declare type HostedFieldEvent = HostedFieldAttachEvent | HostedFieldSubmitManualOrderRequestEvent | HostedFieldValidateRequestEvent;
+declare type HostedFieldEvent = HostedFieldAttachEvent | HostedFieldSubmitRequestEvent | HostedFieldSubmitManualOrderRequestEvent | HostedFieldValidateRequestEvent;
 
 declare enum HostedFieldEventType {
     AttachRequested = "HOSTED_FIELD:ATTACH_REQUESTED",
+    SubmitRequested = "HOSTED_FIELD:SUBMITTED_REQUESTED",
     SubmitManualOrderRequested = "HOSTED_FIELD:SUBMIT_MANUAL_ORDER_REQUESTED",
     ValidateRequested = "HOSTED_FIELD:VALIDATE_REQUESTED"
 }
@@ -80,6 +95,14 @@ declare interface HostedFieldSubmitManualOrderRequestEvent {
     type: HostedFieldEventType.SubmitManualOrderRequested;
     payload: {
         data: HostedFormManualOrderData;
+    };
+}
+
+declare interface HostedFieldSubmitRequestEvent {
+    type: HostedFieldEventType.SubmitRequested;
+    payload: {
+        data: HostedFormOrderData;
+        fields: HostedFieldType[];
     };
 }
 
@@ -110,6 +133,7 @@ declare class HostedForm implements HostedFormInterface {
     submitManualOrderPayment(payload: {
         data: HostedFormManualOrderData;
     }): Promise<HostedInputSubmitManualOrderSuccessEvent | void>;
+    submit(payload: OrderPaymentRequestBody, paymentIntegrationService: PaymentIntegrationService, payloadTransformer: HostedFormOrderDataTransformer, additionalActionData?: PaymentAdditionalAction): Promise<HostedInputSubmitSuccessEvent>;
     validate(): Promise<void>;
     private _getFirstField;
     private _handleEnter;
@@ -153,6 +177,24 @@ declare interface HostedFormOptions {
     onEnter?(data: HostedFieldEnterEventData): void;
     onFocus?(data: HostedFieldFocusEventData): void;
     onValidate?(data: HostedFieldValidateEventData): void;
+}
+
+declare interface HostedFormOrderData {
+    additionalAction?: PaymentAdditionalAction;
+    authToken: string;
+    checkout?: Checkout;
+    config?: Config;
+    order?: Order;
+    orderMeta?: OrderMeta;
+    payment?: (HostedCreditCardInstrument | HostedVaultedInstrument) & PaymentInstrumentMeta;
+    paymentMethod?: PaymentMethod;
+    paymentMethodMeta?: PaymentMethodMeta;
+}
+
+declare class HostedFormOrderDataTransformer {
+    private paymentIntegrationService;
+    constructor(paymentIntegrationService: PaymentIntegrationService);
+    transform(payload: OrderPaymentRequestBody, additionalAction?: PaymentAdditionalAction): HostedFormOrderData;
 }
 
 declare class HostedFormService {
@@ -235,9 +277,13 @@ declare enum HostedInputEventType {
     CardTypeChanged = "HOSTED_INPUT:CARD_TYPE_CHANGED",
     Entered = "HOSTED_INPUT:ENTERED",
     Focused = "HOSTED_INPUT:FOCUSED",
+    SubmitSucceeded = "HOSTED_INPUT:SUBMIT_SUCCEEDED",
+    SubmitFailed = "HOSTED_INPUT:SUBMIT_FAILED",
     SubmitManualOrderSucceeded = "HOSTED_INPUT:SUBMIT_MANUAL_ORDER_SUCCEEDED",
     SubmitManualOrderFailed = "HOSTED_INPUT:SUBMIT_MANUAL_ORDER_FAILED",
-    Validated = "HOSTED_INPUT:VALIDATED"
+    Validated = "HOSTED_INPUT:VALIDATED",
+    StoredCardSucceeded = "HOSTED_INPUT:STORED_CARD_SUCCEEDED",
+    StoredCardFailed = "HOSTED_INPUT:STORED_CARD_FAILED"
 }
 
 declare interface HostedInputFocusEvent {
@@ -264,6 +310,13 @@ declare interface HostedInputSubmitManualOrderErrorEvent {
 
 declare interface HostedInputSubmitManualOrderSuccessEvent {
     type: HostedInputEventType.SubmitManualOrderSucceeded;
+}
+
+declare interface HostedInputSubmitSuccessEvent {
+    type: HostedInputEventType.SubmitSucceeded;
+    payload: {
+        response: Response<unknown>;
+    };
 }
 
 declare interface HostedInputValidateErrorData {
