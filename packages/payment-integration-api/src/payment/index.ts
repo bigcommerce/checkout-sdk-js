@@ -18,6 +18,7 @@ export {
     FormattedHostedInstrument,
     WithBankAccountInstrument,
     WithIdealInstrument,
+    WithPayByBankInstrument,
     WithCheckoutcomFawryInstrument,
     WithCheckoutcomSEPAInstrument,
     HostedCreditCardInstrument,

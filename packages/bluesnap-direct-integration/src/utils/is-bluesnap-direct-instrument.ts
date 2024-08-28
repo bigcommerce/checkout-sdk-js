@@ -1,6 +1,7 @@
 import {
     WithEcpInstrument,
     WithIdealInstrument,
+    WithPayByBankInstrument,
     WithSepaInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -27,5 +28,18 @@ export function isSepaInstrument(paymentData: unknown): paymentData is WithSepaI
             'firstName' in paymentData &&
             'lastName' in paymentData &&
             'shopperPermission' in paymentData,
+    );
+}
+
+export function isPayByBankInstrument(
+    paymentData: unknown,
+): paymentData is WithPayByBankInstrument {
+    return Boolean(
+        typeof paymentData === 'object' &&
+            paymentData !== null &&
+            'iban' in paymentData &&
+            !('firstName' in paymentData) &&
+            !('lastName' in paymentData) &&
+            !('shopperPermission' in paymentData),
     );
 }

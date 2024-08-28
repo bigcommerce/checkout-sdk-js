@@ -12,6 +12,7 @@ import { BlueSnapDirectRedirectResponse } from '../types';
 import {
     isEcpInstrument,
     isIdealInstrument,
+    isPayByBankInstrument,
     isSepaInstrument,
 } from '../utils/is-bluesnap-direct-instrument';
 import isBlueSnapDirectRedirectResponseProviderData from '../utils/is-bluesnap-direct-provider-data';
@@ -123,6 +124,19 @@ export default class BlueSnapDirectAPMPaymentStrategy implements PaymentStrategy
                     formattedPayload: {
                         ideal: {
                             bic: payment.paymentData.bic,
+                        },
+                    },
+                },
+            };
+        }
+
+        if (isPayByBankInstrument(payment.paymentData)) {
+            return {
+                ...payment,
+                paymentData: {
+                    formattedPayload: {
+                        pay_by_bank: {
+                            iban: payment.paymentData.iban,
                         },
                     },
                 },

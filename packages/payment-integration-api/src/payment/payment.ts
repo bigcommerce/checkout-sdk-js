@@ -107,6 +107,9 @@ export interface IdealPayload {
     ideal: WithIdealInstrument;
 }
 
+export interface WithPayByBankInstrument {
+    iban: string;
+}
 export interface WithCheckoutcomSEPAInstrument {
     iban: string;
     bic: string;

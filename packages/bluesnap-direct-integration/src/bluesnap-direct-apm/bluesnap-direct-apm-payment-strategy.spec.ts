@@ -258,6 +258,47 @@ describe('BlueSnapDirectAPMPaymentStrategy', () => {
 
             expect(window.location.replace).toHaveBeenCalledWith(redirect_url);
         });
+
+        it('redirects to bluesnapdirect if additional action is required for Pay by Bank', async () => {
+            const payload = {
+                payment: {
+                    gatewayId: 'bluesnapdirect',
+                    methodId: 'pay_by_bank',
+                    paymentData: {
+                        iban: 'DE12345678901234567890',
+                    },
+                },
+            };
+
+            Object.defineProperty(window, 'location', {
+                value: {
+                    replace: jest.fn(),
+                },
+            });
+            await strategy.initialize();
+
+            const redirect_url = 'https://sandbox.bluesnap.com/buynow/checkout?enc=test';
+            const error = new RequestError(
+                getResponse({
+                    additional_action_required: {
+                        data: {
+                            redirect_url,
+                        },
+                        type: 'offsite_redirect',
+                    },
+                    status: 'additional_action_required',
+                }),
+            );
+
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
+                Promise.reject(error),
+            );
+
+            void strategy.execute(payload);
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(window.location.replace).toHaveBeenCalledWith(redirect_url);
+        });
     });
 
     describe('#initialize()', () => {
