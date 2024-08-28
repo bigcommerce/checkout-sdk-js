@@ -1,4 +1,5 @@
 import { LegacyAddress } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { BraintreeTokenizationDetails } from './types';
 
 export default function mapToLegacyBillingAddress(

@@ -7,11 +7,7 @@ import {
     PaypalSDK,
     PaypalStyleOptions,
 } from './paypal';
-import {
-    BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION,
-    BRAINTREE_SDK_LATEST_STABLE_VERSION,
-    BRAINTREE_SDK_STABLE_VERSION,
-} from './sdk-verison';
+import { BRAINTREE_SDK_LATEST_STABLE_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
 import {
     BraintreeClientCreator,
     BraintreeDataCollectorCreator,
@@ -49,7 +45,6 @@ export enum BraintreeEnv {
  *
  */
 export interface BraintreeIntegrityValues {
-    [BRAINTREE_SDK_FASTLANE_COMPATIBLE_VERSION]?: string;
     [BRAINTREE_SDK_LATEST_STABLE_VERSION]?: string;
     [BRAINTREE_SDK_STABLE_VERSION]?: string;
 }
