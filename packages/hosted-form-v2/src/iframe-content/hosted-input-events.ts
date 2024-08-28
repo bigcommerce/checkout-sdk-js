@@ -17,9 +17,13 @@ export enum HostedInputEventType {
     CardTypeChanged = 'HOSTED_INPUT:CARD_TYPE_CHANGED',
     Entered = 'HOSTED_INPUT:ENTERED',
     Focused = 'HOSTED_INPUT:FOCUSED',
+    SubmitSucceeded = 'HOSTED_INPUT:SUBMIT_SUCCEEDED',
+    SubmitFailed = 'HOSTED_INPUT:SUBMIT_FAILED',
     SubmitManualOrderSucceeded = 'HOSTED_INPUT:SUBMIT_MANUAL_ORDER_SUCCEEDED',
     SubmitManualOrderFailed = 'HOSTED_INPUT:SUBMIT_MANUAL_ORDER_FAILED',
     Validated = 'HOSTED_INPUT:VALIDATED',
+    StoredCardSucceeded = 'HOSTED_INPUT:STORED_CARD_SUCCEEDED',
+    StoredCardFailed = 'HOSTED_INPUT:STORED_CARD_FAILED',
 }
 
 // Event mapping
@@ -119,4 +123,19 @@ export interface HostedInputSubmitManualOrderErrorEvent {
 export interface HostedInputValidateEvent {
     type: HostedInputEventType.Validated;
     payload: HostedInputValidateResults;
+}
+
+export interface HostedInputSubmitSuccessEvent {
+    type: HostedInputEventType.SubmitSucceeded;
+    payload: {
+        response: Response<unknown>;
+    };
+}
+
+export interface HostedInputSubmitErrorEvent {
+    type: HostedInputEventType.SubmitFailed;
+    payload: {
+        error: PaymentErrorData;
+        response?: Response<PaymentErrorResponseBody>;
+    };
 }

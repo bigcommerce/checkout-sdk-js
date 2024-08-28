@@ -1,8 +1,20 @@
+import {
+    PaymentIntegrationService,
+    RequestError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    getErrorResponse,
+    getErrorResponseBody,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+
 import { IframeEventListener } from './common/iframe';
 import HostedField from './hosted-field';
 import HostedFieldType from './hosted-field-type';
 import HostedForm from './hosted-form';
 import HostedFormOptions from './hosted-form-options';
+import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
+import { getHostedFormOrderData } from './hosted-form-order-data.mock';
 import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
 
 describe('HostedForm', () => {
@@ -13,16 +25,22 @@ describe('HostedForm', () => {
     let eventListener: IframeEventListener<HostedInputEventMap>;
     let fields: HostedField[];
     let form: HostedForm;
+    let payloadTransformer: HostedFormOrderDataTransformer;
+    let errorResponse: RequestError;
+    let paymentIntegrationService: PaymentIntegrationService;
 
     const fieldPrototype: Partial<HostedField> = {
         attach: jest.fn(),
         detach: jest.fn(),
         getType: jest.fn(),
+        submitForm: jest.fn(),
         submitManualOrderForm: jest.fn(),
         validateForm: jest.fn(),
     };
 
     beforeEach(() => {
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
+        payloadTransformer = new HostedFormOrderDataTransformer(paymentIntegrationService);
         callbacks = {
             onBlur: jest.fn(),
             onEnter: jest.fn(),
@@ -44,9 +62,25 @@ describe('HostedForm', () => {
         jest.spyOn(fields[3], 'getType').mockReturnValue(HostedFieldType.CardNumber);
 
         eventListener = new IframeEventListener('https://store.foobar.com');
-        // payloadTransformer = { transform: jest.fn() };
-
         form = new HostedForm(fields, eventListener, callbacks);
+
+        errorResponse = {
+            ...getErrorResponse(),
+            body: {
+                ...getErrorResponseBody(),
+                status: 'additional_action_required',
+                additional_action_required: {
+                    type: 'recaptcha_v2_verification',
+                    data: {
+                        key: 'recaptchakey123',
+                    },
+                },
+            },
+            errors: [],
+            name: '',
+            type: '',
+            message: '',
+        };
     });
 
     it('attaches all fields to document', async () => {
@@ -69,6 +103,62 @@ describe('HostedForm', () => {
         expect(fields[1].detach).toHaveBeenCalled();
         expect(fields[2].detach).toHaveBeenCalled();
         expect(fields[3].detach).toHaveBeenCalled();
+    });
+
+    it('submits payment by passing order data to number field', async () => {
+        const field = fields.find((field) => field.getType() === HostedFieldType.CardNumber)!;
+        const data = getHostedFormOrderData();
+        const payload = {
+            methodId: 'authorizenet',
+            paymentData: { shouldSaveInstrument: true },
+        };
+        const response = {
+            status: 'ok',
+        };
+
+        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        jest.spyOn(field, 'submitForm').mockResolvedValue({ payload: { response } });
+
+        jest.spyOn(payloadTransformer, 'transform').mockReturnValue(data);
+
+        await form.submit(payload, paymentIntegrationService, payloadTransformer);
+
+        expect(payloadTransformer.transform).toHaveBeenCalledWith(payload, undefined);
+        expect(field.submitForm).toHaveBeenCalledWith(
+            fields.map((field) => field.getType()),
+            data,
+        );
+    });
+
+    it('submits payment again after human verification performed', async () => {
+        // tslint:disable-next-line:no-non-null-assertion
+        const field = fields.find((field) => field.getType() === HostedFieldType.CardNumber)!;
+        const data = getHostedFormOrderData();
+        const response = {
+            status: 'ok',
+        };
+        const payload = {
+            methodId: 'authorizenet',
+            paymentData: { shouldSaveInstrument: true },
+        };
+
+        jest.spyOn(field, 'submitForm')
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            .mockResolvedValueOnce({ payload: { response: errorResponse } })
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            .mockResolvedValue({ payload: { response } });
+
+        jest.spyOn(payloadTransformer, 'transform').mockReturnValue(data);
+
+        await form.submit(payload, paymentIntegrationService, payloadTransformer);
+
+        expect(field.submitForm).toHaveBeenCalledTimes(2);
     });
 
     it('notifies when card type changes', () => {

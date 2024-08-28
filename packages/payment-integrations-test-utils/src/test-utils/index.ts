@@ -3,12 +3,19 @@ export { default as getBuyNowCartRequestBody } from './buy-now-cart-request-body
 export { default as getBillingAddress } from './billing-address.mock';
 export { default as getCart, getBuyNowCart } from './carts.mock';
 export { getCustomer, getGuestCustomer } from './customer.mock';
-export { default as getCheckout, getCheckoutWithBuyNowCart } from './checkouts.mock';
+export {
+    default as getCheckout,
+    getCheckoutWithBuyNowCart,
+    getCheckoutWithGiftCertificates,
+} from './checkouts.mock';
 export { default as getConfig } from './config.mock';
 export { default as getConsignment } from './consignment.mock';
 export { default as getCountries } from './countries.mock';
-export { default as getOrderRequestBody } from './internal-orders.mock';
-export { getOrder } from './orders.mock';
+export {
+    default as getOrderRequestBody,
+    getSubmitOrderResponseHeaders,
+} from './internal-orders.mock';
+export { getOrder, getOrderMeta } from './orders.mock';
 export {
     getResponse,
     getPaymentResponse,
@@ -20,6 +27,7 @@ export { default as getShippingOption } from './shipping-option.mock';
 export {
     getPayment,
     getPaymentMethod,
+    getPaymentMethodsMeta,
     getCreditCardInstrument,
     getVaultedInstrument,
     getErrorPaymentResponseBody,
@@ -29,3 +37,4 @@ export {
 export { getShippingAddress, getShippingAddressWithCustomFields } from './shipping-addresses.mock';
 export { getAddress } from './address.mock';
 export { getCurrency } from './currency.mock';
+export { getGiftCertificate, getGiftCertificatesState } from './gift-certificates.mock';

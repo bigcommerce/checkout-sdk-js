@@ -1,15 +1,23 @@
 import { noop, without } from 'lodash';
 
+import {
+    OrderPaymentRequestBody,
+    PaymentAdditionalAction,
+    PaymentIntegrationService,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { IframeEventListener } from './common/iframe';
 import { InvalidHostedFormConfigError } from './errors';
 import HostedField from './hosted-field';
 import HostedFormManualOrderData from './hosted-form-manual-order-data';
 import HostedFormOptions from './hosted-form-options';
+import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 import {
     HostedInputEnterEvent,
     HostedInputEventMap,
     HostedInputEventType,
     HostedInputSubmitManualOrderSuccessEvent,
+    HostedInputSubmitSuccessEvent,
 } from './iframe-content';
 
 type HostedFormEventCallbacks = Pick<
@@ -95,6 +103,40 @@ export default class HostedForm implements HostedFormInterface {
         data: HostedFormManualOrderData;
     }): Promise<HostedInputSubmitManualOrderSuccessEvent | void> {
         return this._getFirstField().submitManualOrderForm(payload.data);
+    }
+
+    async submit(
+        payload: OrderPaymentRequestBody,
+        paymentIntegrationService: PaymentIntegrationService,
+        payloadTransformer: HostedFormOrderDataTransformer,
+        additionalActionData?: PaymentAdditionalAction,
+    ): Promise<HostedInputSubmitSuccessEvent> {
+        try {
+            const response = await this._getFirstField().submitForm(
+                this._fields.map((field) => field.getType()),
+                payloadTransformer.transform(payload, additionalActionData),
+            );
+
+            return response;
+        } catch (error) {
+            let additionalAction: PaymentAdditionalAction;
+
+            if (error instanceof Error || typeof error === 'string') {
+                additionalAction = await paymentIntegrationService.handlePaymentHumanVerification(
+                    error,
+                );
+            } else {
+                // Handle cases where error is not an instance of Error or string
+                throw new Error('Unexpected error type');
+            }
+
+            const response = await this._getFirstField().submitForm(
+                this._fields.map((field) => field.getType()),
+                payloadTransformer.transform(payload, additionalAction),
+            );
+
+            return response;
+        }
     }
 
     async validate(): Promise<void> {

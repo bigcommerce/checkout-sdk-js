@@ -118,6 +118,10 @@ export {
     LoadOrderSucceededAction,
     OrderActionType,
     SubmitOrderAction,
+    OrderMeta,
+    OrderMetaState,
+    InternalOrder,
+    InternalIncompleteOrder,
 } from './order';
 export {
     WithEcpInstrument,
@@ -136,6 +140,7 @@ export {
     isHostedInstrumentLike,
     isWithAccountCreation,
     HostedInstrument,
+    HostedCreditCardInstrument,
     InitializeOffsitePaymentConfig,
     NonceInstrument,
     Payment,
@@ -143,13 +148,16 @@ export {
     PaymentActionType,
     PaymentMethodActionType,
     SubmitPaymentAction,
+    PaymentAdditionalAction,
     PaymentInitializeOptions,
     PaymentMethod,
+    PaymentMethodMeta,
     PaymentRequestOptions,
     PaymentResponseBody,
     PaymentStatusTypes,
     PaymentStrategy,
     PaymentInstrumentPayload,
+    PaymentInstrumentMeta,
     PaymentStrategyFactory,
     PaymentStrategyResolveId,
     VaultedInstrument,
@@ -158,6 +166,7 @@ export {
     StripeV3FormattedPayload,
     PaypalInstrument,
     FormattedPayload,
+    HostedVaultedInstrument,
     isHostedVaultedInstrument,
     UntrustedShippingCardVerificationType,
     AccountInstrument,
@@ -165,6 +174,7 @@ export {
     ThreeDSecure,
     ThreeDSecureToken,
     ThreeDsResult,
+    InstrumentMeta,
 } from './payment';
 export { StoreCreditActionType } from './store-credit';
 
