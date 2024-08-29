@@ -57,7 +57,6 @@ import {
     CardinalThreeDSecureFlowV2,
 } from './strategies/cardinal';
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mpgs';
-import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { MonerisPaymentStrategy } from './strategies/moneris';
@@ -249,22 +248,6 @@ export default function createPaymentStrategyRegistry(
                     paymentActionCreator,
                     new CardinalClient(new CardinalScriptLoader(scriptLoader)),
                 ),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.CHASE_PAY,
-        () =>
-            new ChasePayPaymentStrategy(
-                store,
-                checkoutActionCreator,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                requestSender,
-                new ChasePayScriptLoader(scriptLoader),
-                new WepayRiskClient(scriptLoader),
             ),
     );
 

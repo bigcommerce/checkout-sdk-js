@@ -382,23 +382,6 @@ export function getSquare(): PaymentMethod {
     };
 }
 
-export function getChasePay(): PaymentMethod {
-    return {
-        id: 'chasepay',
-        logoUrl: '',
-        method: 'chasepay',
-        supportedCards: [],
-        config: {
-            displayName: 'Chase Pay',
-            testMode: false,
-        },
-        type: 'PAYMENT_TYPE_API',
-        initializationData: {
-            digitalSessionId: 'digitalSessionId',
-        },
-    };
-}
-
 export function getMasterpass(): PaymentMethod {
     return {
         id: 'masterpass',

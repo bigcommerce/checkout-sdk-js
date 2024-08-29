@@ -16,7 +16,6 @@ import {
     BraintreeVisaCheckoutPaymentStrategy,
 } from './strategies/braintree';
 import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
-import { ChasepayPaymentStrategy } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
 import { OpyPaymentStrategy } from './strategies/opy';
@@ -70,12 +69,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE_VISA_CHECKOUT);
 
         expect(paymentStrategy).toBeInstanceOf(BraintreeVisaCheckoutPaymentStrategy);
-    });
-
-    it('can instantiate chasepay', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.CHASE_PAY);
-
-        expect(paymentStrategy).toBeInstanceOf(ChasepayPaymentStrategy);
     });
 
     it('can instantiate converge', () => {
