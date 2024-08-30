@@ -157,7 +157,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 throw error;
             }
 
-            return new Promise((_resolve, reject) => reject());
+            return Promise.reject();
         }
     }
 
