@@ -133,24 +133,32 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const state = this.paymentIntegrationService.getState();
         const cartId = state.getCartOrThrow().id;
 
-        const { id } = await this.getPaymentTokenOrThrow();
+        try {
+            const { id } = await this.getPayPalFastlanePaymentToken();
 
-        const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
-            cartId,
-        });
+            const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
+                cartId,
+            });
 
-        const paymentPayload =
-            paymentData && isVaultedInstrument(paymentData)
-                ? this.prepareVaultedInstrumentPaymentPayload(methodId, orderId, paymentData)
-                : this.preparePaymentPayload(methodId, orderId, paymentData, id);
+            const paymentPayload =
+                paymentData && isVaultedInstrument(paymentData)
+                    ? this.prepareVaultedInstrumentPaymentPayload(methodId, orderId, paymentData)
+                    : this.preparePaymentPayload(methodId, orderId, paymentData, id);
 
-        await this.paymentIntegrationService.submitOrder(order, options);
-        await this.paymentIntegrationService.submitPayment<PayPalFastlanePaymentFormattedPayload>(
-            paymentPayload,
-        );
+            await this.paymentIntegrationService.submitOrder(order, options);
+            await this.paymentIntegrationService.submitPayment<PayPalFastlanePaymentFormattedPayload>(
+                paymentPayload,
+            );
 
-        // TODO: we should probably update this method with removeStorageSessionId for better reading experience
-        this.paypalCommerceFastlaneUtils.updateStorageSessionId(true);
+            // TODO: we should probably update this method with removeStorageSessionId for better reading experience
+            this.paypalCommerceFastlaneUtils.updateStorageSessionId(true);
+        } catch (error) {
+            if (error.name !== 'FastlaneError') {
+                throw error;
+            }
+
+            return new Promise((_resolve, reject) => reject());
+        }
     }
 
     finalize(): Promise<void> {
@@ -336,7 +344,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
      * Getting PayPal Fastlane Payment Token
      *
      */
-    private async getPaymentTokenOrThrow() {
+    private async getPayPalFastlanePaymentToken() {
         const state = this.paymentIntegrationService.getState();
         const billingAddress = state.getBillingAddressOrThrow();
 
@@ -344,15 +352,10 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
         const { getPaymentToken } = this.getPayPalComponentMethodsOrThrow();
 
-        try {
-            return await getPaymentToken({
-                name: { fullName },
-                billingAddress:
-                    this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(billingAddress),
-            });
-        } catch (error) {
-            throw new Error(error);
-        }
+        return getPaymentToken({
+            name: { fullName },
+            billingAddress: this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(billingAddress),
+        });
     }
 
     /**
