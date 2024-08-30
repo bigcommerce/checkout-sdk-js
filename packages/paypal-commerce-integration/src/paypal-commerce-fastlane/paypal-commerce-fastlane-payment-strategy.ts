@@ -133,6 +133,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const state = this.paymentIntegrationService.getState();
         const cartId = state.getCartOrThrow().id;
 
+        const { id } = await this.getPaymentTokenOrThrow();
+
         const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
             cartId,
         });
@@ -140,7 +142,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const paymentPayload =
             paymentData && isVaultedInstrument(paymentData)
                 ? this.prepareVaultedInstrumentPaymentPayload(methodId, orderId, paymentData)
-                : await this.preparePaymentPayload(methodId, orderId, paymentData);
+                : this.preparePaymentPayload(methodId, orderId, paymentData, id);
 
         await this.paymentIntegrationService.submitOrder(order, options);
         await this.paymentIntegrationService.submitPayment<PayPalFastlanePaymentFormattedPayload>(
@@ -304,25 +306,14 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         };
     }
 
-    private async preparePaymentPayload(
+    private preparePaymentPayload(
         methodId: string,
         paypalOrderId: string,
         paymentData: OrderPaymentRequestBody['paymentData'],
-    ): Promise<Payment<PayPalFastlanePaymentFormattedPayload>> {
-        const state = this.paymentIntegrationService.getState();
-        const billingAddress = state.getBillingAddressOrThrow();
-
-        const fullName = `${billingAddress.firstName} ${billingAddress.lastName}`.trim();
-
+        id: string,
+    ): Payment<PayPalFastlanePaymentFormattedPayload> {
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
-
-        const { getPaymentToken } = this.getPayPalComponentMethodsOrThrow();
-
-        const { id } = await getPaymentToken({
-            name: { fullName },
-            billingAddress: this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(billingAddress),
-        });
 
         return {
             methodId,
@@ -338,6 +329,30 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 },
             },
         };
+    }
+
+    /**
+     *
+     * Getting PayPal Fastlane Payment Token
+     *
+     */
+    private async getPaymentTokenOrThrow() {
+        const state = this.paymentIntegrationService.getState();
+        const billingAddress = state.getBillingAddressOrThrow();
+
+        const fullName = `${billingAddress.firstName} ${billingAddress.lastName}`.trim();
+
+        const { getPaymentToken } = this.getPayPalComponentMethodsOrThrow();
+
+        try {
+            return await getPaymentToken({
+                name: { fullName },
+                billingAddress:
+                    this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(billingAddress),
+            });
+        } catch (error) {
+            throw new Error(error);
+        }
     }
 
     /**
