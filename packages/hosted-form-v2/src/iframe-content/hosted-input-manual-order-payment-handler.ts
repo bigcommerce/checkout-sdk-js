@@ -1,5 +1,5 @@
 import { Response } from '@bigcommerce/request-sender';
-import { snakeCase } from 'lodash';
+import { get, isString, snakeCase } from 'lodash';
 
 import { IframeEventPoster } from '../common/iframe';
 import { InvalidHostedFormValueError, PaymentErrorResponseBody } from '../errors';
@@ -44,15 +44,40 @@ export default class HostedInputManualOrderPaymentHandler {
         }
 
         try {
-            await this._manualOrderPaymentRequestSender.submitPayment(
+            const response = await this._manualOrderPaymentRequestSender.submitPayment(
                 data,
                 values,
                 this._inputStorage.getNonce(),
             );
 
-            this._eventPoster.post({
-                type: HostedInputEventType.SubmitManualOrderSucceeded,
-            });
+            const isFailure =
+                get(response.body, 'type') === 'failure' && isString(get(response.body, 'code'));
+            const isSuccess = get(response.body, 'type') === 'success';
+            const isError = get(response.body, 'type') === 'error';
+
+            if (isFailure) {
+                this._eventPoster.post({
+                    type: HostedInputEventType.SubmitManualOrderFailed,
+                    payload: {
+                        error: { code: get(response.body, 'code') },
+                    },
+                });
+            }
+
+            if (isError) {
+                this._eventPoster.post({
+                    type: HostedInputEventType.SubmitManualOrderFailed,
+                    payload: {
+                        error: { code: get(response.body, 'type') },
+                    },
+                });
+            }
+
+            if (isSuccess) {
+                this._eventPoster.post({
+                    type: HostedInputEventType.SubmitManualOrderSucceeded,
+                });
+            }
         } catch (error) {
             this._eventPoster.post({
                 type: HostedInputEventType.SubmitManualOrderFailed,

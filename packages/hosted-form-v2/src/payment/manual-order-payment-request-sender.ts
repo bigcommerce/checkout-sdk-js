@@ -1,4 +1,4 @@
-import { RequestSender } from '@bigcommerce/request-sender';
+import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import ContentType from '../common/http-request/content-type';
 import HostedFormManualOrderData from '../hosted-form-manual-order-data';
@@ -11,7 +11,7 @@ export class ManualOrderPaymentRequestSender {
         requestInitializationData: HostedFormManualOrderData,
         instrumentFormData: HostedInputValues,
         nonce?: string,
-    ): Promise<void> {
+    ): Promise<Response<unknown>> {
         const { paymentMethodId, paymentSessionToken } = requestInitializationData;
 
         const [expiryMonth, expiryYear] = instrumentFormData.cardExpiry
@@ -42,6 +42,6 @@ export class ManualOrderPaymentRequestSender {
             },
         };
 
-        await this._requestSender.post<void>(`${this._paymentOrigin}/payments`, options);
+        return this._requestSender.post<unknown>(`${this._paymentOrigin}/payments`, options);
     }
 }

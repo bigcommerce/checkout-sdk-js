@@ -169,7 +169,11 @@ export default class HostedField {
                     throw new InvalidHostedFormError(event.payload.error.message);
                 }
 
-                throw new Error(event.payload.error.message);
+                if (event.payload.error.message) {
+                    throw new Error(event.payload.error.message);
+                }
+
+                throw new Error(event.payload.error.code);
             }
 
             throw event;
