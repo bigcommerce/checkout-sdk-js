@@ -275,62 +275,6 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
             );
         });
 
-        it('loads primary payment method if the secondary payment method load throws an error', async () => {
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockImplementationOnce(
-                () => {
-                    throw new Error();
-                },
-            );
-
-            await strategy.initialize({
-                ...initializationOptions,
-                methodId: secondaryMethodId,
-            });
-
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
-                secondaryMethodId,
-            );
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
-        });
-
-        it('loads secondary payment method if the primary payment method load throws an error', async () => {
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockImplementationOnce(
-                () => {
-                    throw new Error();
-                },
-            );
-
-            await strategy.initialize(initializationOptions);
-
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
-                secondaryMethodId,
-            );
-        });
-
-        it('does not load secondary payment method if primary payment method was loaded successfully', async () => {
-            await strategy.initialize(initializationOptions);
-
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);
-            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalledWith(
-                secondaryMethodId,
-            );
-        });
-
-        it('do nothing if accelerated checkout feature is disabled', async () => {
-            paymentMethod.initializationData.isAcceleratedCheckoutEnabled = false;
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethod);
-
-            const result = await strategy.initialize(initializationOptions);
-
-            expect(paypalCommerceSdk.getPayPalFastlaneSdk).not.toHaveBeenCalled();
-            expect(result).toBeUndefined();
-        });
-
         it('loads paypal sdk and initialises paypal fastlane in production mode', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -439,20 +383,6 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
             }
         });
 
-        it('does not run authentication flow if accelerated feature is disabled', async () => {
-            paymentMethod.initializationData.isAcceleratedCheckoutEnabled = false;
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethod);
-
-            await strategy.executePaymentMethodCheckout(executionOptions);
-
-            expect(paymentIntegrationService.loadPaymentMethod).not.toHaveBeenCalled();
-            expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
-        });
-
         it('does not run authentication flow for store member', async () => {
             const storeMember = getCustomer();
 
@@ -488,20 +418,6 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
             });
 
             expect(executionOptions.checkoutPaymentMethodExecuted).not.toHaveBeenCalled();
-        });
-
-        it('does not call paypal fastlane lookup method if it should not been called for customer due to A/B testing', async () => {
-            paymentMethod.initializationData.shouldRunAcceleratedCheckout = false;
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethod);
-
-            await strategy.initialize(initializationOptions);
-            await strategy.executePaymentMethodCheckout(executionOptions);
-
-            expect(paypalCommerceFastlaneUtils.lookupCustomerOrThrow).not.toHaveBeenCalled();
         });
 
         it('runs paypal fastlane authentication flow and updates customers data in checkout state', async () => {
