@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.650.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.650.0...v1.650.1) (2024-08-30)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-4619 removed A/B testing implementation from PPCP Fastlane customer strategy ([#2629](https://github.com/bigcommerce/checkout-sdk-js/issues/2629)) ([67fa070](https://github.com/bigcommerce/checkout-sdk-js/commit/67fa070c4cb6b8f822ab601bac13e1c2adb1c81f))
+
 ## [1.650.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.649.0...v1.650.0) (2024-08-28)
 
 
