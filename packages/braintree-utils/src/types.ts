@@ -282,11 +282,17 @@ export interface BraintreeFastlaneStylesOption {
         backgroundColorPrimary?: string;
         errorColor?: string;
         fontFamily?: string;
+        fontSizeBase?: string;
+        padding?: string;
+        textColorBase?: string;
     };
     input?: {
         borderRadius?: string;
         borderColor?: string;
         focusBorderColor?: string;
+        backgroundColor?: string;
+        borderWidth?: string;
+        textColorBase?: string;
     };
     toggle?: {
         colorPrimary?: string;
@@ -393,6 +399,12 @@ export interface FastlaneStylesSettings {
     fastlaneTextCaptionSettingsFontSize?: string;
     fastlaneTextCaptionSettingsColor?: string;
     fastlaneBrandingSettings?: string;
+    fastlaneRootSettingsFontSize?: string;
+    fastlaneRootSettingsPadding?: string;
+    fastlaneInputSettingsBackgroundColor?: string;
+    fastlaneInputSettingsBorderWidth?: string;
+    fastlaneRootSettingsTextColorBase?: string;
+    fastlaneInputSettingsTextColorBase?: string;
 }
 
 export interface BraintreeFastlaneTokenizeOptions {
