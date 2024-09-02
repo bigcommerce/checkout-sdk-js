@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.650.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.650.1...v1.650.2) (2024-09-02)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-426 fix GPay shipping for buy now flow ([820d483](https://github.com/bigcommerce/checkout-sdk-js/commit/820d4836d128f90eab1a68338d775df6888b3783))
+
 ### [1.650.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.650.0...v1.650.1) (2024-08-30)
 
 
