@@ -54,6 +54,7 @@ describe('GooglePayPaymentStrategy', () => {
             createFormPoster(),
         );
         jest.spyOn(processor, 'initialize').mockResolvedValue(undefined);
+        jest.spyOn(processor, 'initializeWidget').mockResolvedValue(undefined);
         jest.spyOn(processor, 'processAdditionalAction').mockResolvedValue(undefined);
 
         strategy = new GooglePayPaymentStrategy(paymentIntegrationService, processor);
@@ -87,8 +88,10 @@ describe('GooglePayPaymentStrategy', () => {
     describe('#initialize', () => {
         it('should initialize the strategy', async () => {
             const initialize = strategy.initialize(options);
+            const initializeWidgetMock = jest.spyOn(processor, 'initializeWidget');
 
             await expect(initialize).resolves.toBeUndefined();
+            expect(initializeWidgetMock).not.toHaveBeenCalled();
         });
 
         it('should initialize processor', async () => {
@@ -304,6 +307,8 @@ describe('GooglePayPaymentStrategy', () => {
             });
 
             it('should load checkout via onPaymentDataChanged callback', async () => {
+                const initializeWidgetMock = jest.spyOn(processor, 'initializeWidget');
+
                 await strategy.initialize(options);
 
                 button.click();
@@ -311,6 +316,7 @@ describe('GooglePayPaymentStrategy', () => {
                 await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
+                expect(initializeWidgetMock).toHaveBeenCalledTimes(1);
             });
 
             it('should return updated transactionInfo', async () => {

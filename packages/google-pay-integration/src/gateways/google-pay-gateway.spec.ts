@@ -181,22 +181,6 @@ describe('GooglePayGateway', () => {
             await expect(gateway.getRequiredData()).resolves.toStrictEqual(expectedRequiredData);
         });
 
-        it('should only require data (Buy Now Flow)', async () => {
-            const expectedRequiredData = {
-                emailRequired: true,
-                shippingAddressRequired: true,
-                shippingAddressParameters: {
-                    phoneNumberRequired: true,
-                },
-            };
-
-            await gateway.initialize(getGeneric, true, 'USD');
-
-            await expect(gateway.getRequiredData()).resolves.toStrictEqual(expectedRequiredData);
-        });
-
-        // TODO: etc...
-
         it('should require email and shipping address', async () => {
             const expectedRequiredData = {
                 emailRequired: true,
@@ -238,21 +222,6 @@ describe('GooglePayGateway', () => {
 
             await expect(gateway.getRequiredData()).resolves.toStrictEqual(expectedRequiredData);
         });
-
-        it('should require shipping options (Buy Now Flow)', async () => {
-            const expectedRequiredData = {
-                emailRequired: true,
-                shippingAddressRequired: true,
-                shippingOptionRequired: true,
-                shippingAddressParameters: {
-                    phoneNumberRequired: true,
-                },
-            };
-
-            await gateway.initialize(getGenericInitialDataWithShippingOptions, true, 'USD');
-
-            await expect(gateway.getRequiredData()).resolves.toStrictEqual(expectedRequiredData);
-        });
     });
 
     describe('#getCallbackIntents', () => {
@@ -260,6 +229,14 @@ describe('GooglePayGateway', () => {
             const expectedCallbackIntents = [CallbackIntentsType.OFFER];
 
             await gateway.initialize(getGeneric);
+
+            expect(gateway.getCallbackIntents()).toStrictEqual(expectedCallbackIntents);
+        });
+
+        it('should return only offer callback intent when shipping not required', async () => {
+            const expectedCallbackIntents = [CallbackIntentsType.OFFER];
+
+            await gateway.initialize(getGenericInitialDataWithShippingOptions);
 
             expect(gateway.getCallbackIntents()).toStrictEqual(expectedCallbackIntents);
         });
@@ -277,18 +254,6 @@ describe('GooglePayGateway', () => {
             ).mockReturnValueOnce(undefined);
 
             await gateway.initialize(getGenericInitialDataWithShippingOptions);
-
-            expect(gateway.getCallbackIntents()).toStrictEqual(expectedCallbackIntents);
-        });
-
-        it('should return shipping callback intents (Buy Now Flow)', async () => {
-            const expectedCallbackIntents = [
-                CallbackIntentsType.OFFER,
-                CallbackIntentsType.SHIPPING_ADDRESS,
-                CallbackIntentsType.SHIPPING_OPTION,
-            ];
-
-            await gateway.initialize(getGenericInitialDataWithShippingOptions, true, 'USD');
 
             expect(gateway.getCallbackIntents()).toStrictEqual(expectedCallbackIntents);
         });

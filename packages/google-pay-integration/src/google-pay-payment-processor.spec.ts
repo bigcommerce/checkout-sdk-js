@@ -84,6 +84,14 @@ describe('GooglePayPaymentProcessor', () => {
             await processor.initialize(getGeneric);
 
             expect(gateway.getCardParameters).toHaveBeenCalled();
+        });
+    });
+
+    describe('#initializeWidget', () => {
+        it('should build payloads', async () => {
+            await processor.initialize(getGeneric);
+            await processor.initializeWidget();
+
             expect(gateway.getPaymentGatewayParameters).toHaveBeenCalled();
             expect(gateway.getTransactionInfo).toHaveBeenCalled();
             expect(gateway.getMerchantInfo).toHaveBeenCalled();
@@ -108,6 +116,7 @@ describe('GooglePayPaymentProcessor', () => {
             };
 
             await processor.initialize(getGeneric);
+            await processor.initializeWidget();
 
             expect(paymentsClient.isReadyToPay).toHaveBeenCalledWith(expectedRequest);
         });
@@ -150,6 +159,7 @@ describe('GooglePayPaymentProcessor', () => {
             };
 
             await processor.initialize(getGeneric);
+            await processor.initializeWidget();
 
             expect(paymentsClient.prefetchPaymentData).toHaveBeenCalledWith(expectedRequest);
         });
@@ -169,12 +179,14 @@ describe('GooglePayPaymentProcessor', () => {
             ).mockReturnValueOnce(undefined);
 
             await processor.initialize(getGeneric);
+            await processor.initializeWidget();
 
             expect(paymentsClient.prefetchPaymentData).toHaveBeenCalledWith(expectedRequest);
         });
 
         it('should update the transaction info', async () => {
             await processor.initialize(getGeneric);
+            await processor.initializeWidget();
 
             expect(gateway.getTransactionInfo).toHaveBeenCalledTimes(2);
         });
@@ -183,9 +195,11 @@ describe('GooglePayPaymentProcessor', () => {
             test('google pay is not supported', async () => {
                 jest.spyOn(paymentsClient, 'isReadyToPay').mockResolvedValue({ result: false });
 
-                const initialize = processor.initialize(getGeneric);
+                await processor.initialize(getGeneric);
 
-                await expect(initialize).rejects.toThrow(
+                const initializeWidget = processor.initializeWidget();
+
+                await expect(initializeWidget).rejects.toThrow(
                     'Google Pay is not supported by the current device and browser, please try another payment method.',
                 );
             });
@@ -195,9 +209,11 @@ describe('GooglePayPaymentProcessor', () => {
                     new Error('Developer error!'),
                 );
 
-                const initialize = processor.initialize(getGeneric);
+                await processor.initialize(getGeneric);
 
-                await expect(initialize).rejects.toThrow(PaymentMethodFailedError);
+                const initializeWidget = processor.initializeWidget();
+
+                await expect(initializeWidget).rejects.toThrow(PaymentMethodFailedError);
             });
         });
     });
@@ -281,6 +297,7 @@ describe('GooglePayPaymentProcessor', () => {
     describe('#showPaymentSheet', () => {
         it('should show the payment sheet', async () => {
             await processor.initialize(getGeneric);
+            await processor.initializeWidget();
 
             await expect(processor.showPaymentSheet()).resolves.toBe(clientMocks.cardDataResponse);
         });
@@ -323,6 +340,7 @@ describe('GooglePayPaymentProcessor', () => {
             };
 
             await processor.initialize(getGeneric);
+            await processor.initializeWidget();
             await processor.showPaymentSheet();
 
             expect(paymentsClient.loadPaymentData).toHaveBeenCalledWith(expectedRequest);
@@ -343,6 +361,7 @@ describe('GooglePayPaymentProcessor', () => {
             ).mockReturnValueOnce(undefined);
 
             await processor.initialize(getGeneric);
+            await processor.initializeWidget();
             await processor.showPaymentSheet();
 
             expect(paymentsClient.loadPaymentData).toHaveBeenCalledWith(expectedRequest);

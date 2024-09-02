@@ -137,6 +137,7 @@ describe('GooglePayButtonStrategy', () => {
         );
 
         jest.spyOn(processor, 'initialize').mockResolvedValue(undefined);
+        jest.spyOn(processor, 'initializeWidget').mockResolvedValue(undefined);
         jest.spyOn(processor, 'addPaymentButton').mockImplementation((_, { onClick }) => {
             button.onclick = onClick;
 
@@ -306,7 +307,7 @@ describe('GooglePayButtonStrategy', () => {
 
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(paymentIntegrationService.createBuyNowCart).not.toHaveBeenCalled();
+                expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalledTimes(1);
             });
         });
 
@@ -314,10 +315,12 @@ describe('GooglePayButtonStrategy', () => {
             it('should initialize the strategy', async () => {
                 const paymentDataCallbacks = () =>
                     (processor.initialize as jest.Mock).mock.calls[0][1];
+                const initializeWidgetMock = jest.spyOn(processor, 'initializeWidget');
 
                 expect(await buttonStrategy.initialize(options)).toBeUndefined();
                 expect(paymentIntegrationService.loadDefaultCheckout).toHaveBeenCalled();
                 expect(paymentDataCallbacks()).toBeDefined();
+                expect(initializeWidgetMock).not.toHaveBeenCalled();
             });
 
             it('should load checkout via onPaymentDataChanged callback on clicking the google pay button', async () => {
@@ -339,6 +342,8 @@ describe('GooglePayButtonStrategy', () => {
                     return getCardDataResponse();
                 });
 
+                const initializeWidgetMock = jest.spyOn(processor, 'initializeWidget');
+
                 await buttonStrategy.initialize(options);
 
                 button.click();
@@ -347,6 +352,7 @@ describe('GooglePayButtonStrategy', () => {
 
                 expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
                 expect(paymentIntegrationService.createBuyNowCart).not.toHaveBeenCalled();
+                expect(initializeWidgetMock).toHaveBeenCalledTimes(1);
             });
 
             it('should skip initialization for unsupported GPay trigger', async () => {

@@ -59,7 +59,11 @@ export default class GooglePayPaymentProcessor {
 
         await this._gateway.initialize(getPaymentMethod, isBuyNowFlow, currencyCode);
 
-        await this._buildPayloads();
+        this._buildButtonPayloads();
+    }
+
+    async initializeWidget() {
+        await this._buildWidgetPayloads();
 
         await this._determineReadinessToPay();
 
@@ -219,13 +223,18 @@ export default class GooglePayPaymentProcessor {
         }
     }
 
-    private async _buildPayloads(): Promise<void> {
+    private _buildButtonPayloads() {
         this._baseCardPaymentMethod = {
             type: 'CARD',
             parameters: this._gateway.getCardParameters(),
         };
+    }
+
+    private async _buildWidgetPayloads(): Promise<void> {
+        const baseCardPaymentMethod = this._getBaseCardPaymentMethod();
+
         this._cardPaymentMethod = {
-            ...this._baseCardPaymentMethod,
+            ...baseCardPaymentMethod,
             tokenizationSpecification: {
                 type: 'PAYMENT_GATEWAY',
                 parameters: this._gateway.getPaymentGatewayParameters(),
@@ -241,7 +250,7 @@ export default class GooglePayPaymentProcessor {
         };
         this._isReadyToPayRequest = {
             ...this._baseRequest,
-            allowedPaymentMethods: [this._baseCardPaymentMethod],
+            allowedPaymentMethods: [baseCardPaymentMethod],
         };
     }
 
