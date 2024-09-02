@@ -706,11 +706,6 @@ declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
     /**
-     * The options that are required to initialize the Chasepay payment method.
-     * They can be omitted unless you need to support Chasepay.
-     */
-    chasepay?: ChasePayCustomerInitializeOptions;
-    /**
      * The options that are required to initialize the Masterpass payment method.
      * They can be omitted unless you need to support Masterpass.
      */
@@ -820,11 +815,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Square.
      */
     square?: SquarePaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the Chasepay payment method.
-     * They can be omitted unless you need to support Chasepay.
-     */
-    chasepay?: ChasePayInitializeOptions;
 }
 
 declare interface BillingAddress extends Address {
@@ -1878,73 +1868,6 @@ declare interface CartSelector {
     getCartOrThrow(): Cart;
     getLoadError(): Error | undefined;
     isLoading(): boolean;
-}
-
-declare interface ChasePayCustomerInitializeOptions {
-    container: string;
-}
-
-/**
- * A set of options that are required to initialize the Chase Pay payment method.
- *
- * ```html
- * <!-- This is where the Chase Pay button will be inserted -->
- * <div id="wallet-button"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'chasepay',
- *     chasepay: {
- *         walletButton: 'wallet-button',
- *     },
- * });
- * ```
- *
- * Additional options can be passed in to customize the fields and register
- * event callbacks.
- *
- * ```html
- * <!-- This is where the Chase Pay logo will be inserted -->
- * <div id="logo"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'chasepay',
- *     chasepay: {
- *         walletButton: 'wallet-button',
- *         logoContainer: 'logo',
- *         onPaymentSelect() {
- *             console.log('Selected');
- *         },
- *         onCancel() {
- *             console.log('Cancelled');
- *         },
- *     },
- * });
- * ```
- */
-declare interface ChasePayInitializeOptions {
-    /**
-     * This container is used to host the chasepay branding logo.
-     * It should be an HTML element.
-     */
-    logoContainer?: string;
-    /**
-     * This walletButton is used to set an event listener, provide an element ID if you want
-     * users to be able to launch the ChasePay wallet modal by clicking on a button.
-     * It should be an HTML element.
-     */
-    walletButton?: string;
-    /**
-     * A callback that gets called when the customer selects a payment option.
-     */
-    onPaymentSelect?(): void;
-    /**
-     * A callback that gets called when the customer cancels their payment selection.
-     */
-    onCancel?(): void;
 }
 
 declare interface CheckableInputStyles extends InputStyles {
@@ -5939,7 +5862,7 @@ declare interface MasterpassCustomerInitializeOptions {
 declare interface MasterpassPaymentInitializeOptions {
     /**
      * This walletButton is used to set an event listener, provide an element ID if you want
-     * users to be able to launch the ChasePay wallet modal by clicking on a button.
+     * users to be able to launch the Masterpass wallet modal by clicking on a button.
      * It should be an HTML element.
      */
     walletButton?: string;

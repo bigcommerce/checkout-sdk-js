@@ -19,7 +19,6 @@ current checkout flow.
 - [bluesnapv2](BasePaymentInitializeOptions.md#bluesnapv2)
 - [braintree](BasePaymentInitializeOptions.md#braintree)
 - [braintreevisacheckout](BasePaymentInitializeOptions.md#braintreevisacheckout)
-- [chasepay](BasePaymentInitializeOptions.md#chasepay)
 - [creditCard](BasePaymentInitializeOptions.md#creditcard)
 - [digitalriver](BasePaymentInitializeOptions.md#digitalriver)
 - [gatewayId](BasePaymentInitializeOptions.md#gatewayid)
@@ -68,15 +67,6 @@ ___
 The options that are required to initialize the Visa Checkout payment
 method provided by Braintree. They can be omitted unless you need to
 support Visa Checkout.
-
-___
-
-### chasepay
-
-• `Optional` **chasepay**: [`ChasePayInitializeOptions`](ChasePayInitializeOptions.md)
-
-The options that are required to initialize the Chasepay payment method.
-They can be omitted unless you need to support Chasepay.
 
 ___
 

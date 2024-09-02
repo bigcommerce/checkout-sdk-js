@@ -27,7 +27,6 @@ information in order to initialize the customer step of checkout.
 - [amazonpay](BaseCustomerInitializeOptions.md#amazonpay)
 - [braintreepaypalcredit](BaseCustomerInitializeOptions.md#braintreepaypalcredit)
 - [braintreevisacheckout](BaseCustomerInitializeOptions.md#braintreevisacheckout)
-- [chasepay](BaseCustomerInitializeOptions.md#chasepay)
 - [masterpass](BaseCustomerInitializeOptions.md#masterpass)
 - [methodId](BaseCustomerInitializeOptions.md#methodid)
 - [params](BaseCustomerInitializeOptions.md#params)
@@ -59,15 +58,6 @@ ___
 
 The options that are required to initialize the customer step of checkout
 when using Visa Checkout provided by Braintree.
-
-___
-
-### chasepay
-
-• `Optional` **chasepay**: [`ChasePayCustomerInitializeOptions`](ChasePayCustomerInitializeOptions.md)
-
-The options that are required to initialize the Chasepay payment method.
-They can be omitted unless you need to support Chasepay.
 
 ___
 

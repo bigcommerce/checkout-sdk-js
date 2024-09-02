@@ -154,8 +154,6 @@
 - [CardingProtectionActionData](interfaces/CardingProtectionActionData.md)
 - [Cart](interfaces/Cart.md)
 - [CartSelector](interfaces/CartSelector.md)
-- [ChasePayCustomerInitializeOptions](interfaces/ChasePayCustomerInitializeOptions.md)
-- [ChasePayInitializeOptions](interfaces/ChasePayInitializeOptions.md)
 - [CheckableInputStyles](interfaces/CheckableInputStyles.md)
 - [ChecklistStyles](interfaces/ChecklistStyles.md)
 - [Checkout](interfaces/Checkout.md)

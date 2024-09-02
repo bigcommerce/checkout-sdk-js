@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.650.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.650.2...v1.650.3) (2024-09-02)
+
+
+### Code Refactoring
+
+* **checkout:** PI-1585 removed ChasePay related code ([#2630](https://github.com/bigcommerce/checkout-sdk-js/issues/2630)) ([c8ded7e](https://github.com/bigcommerce/checkout-sdk-js/commit/c8ded7ed19cbb74f048964fd8fec7bcfa915ea88))
+
 ### [1.650.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.650.1...v1.650.2) (2024-09-02)
 
 
