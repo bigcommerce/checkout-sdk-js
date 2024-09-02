@@ -8,7 +8,6 @@ import {
     BraintreePaymentInitializeOptions,
     BraintreeVisaCheckoutPaymentInitializeOptions,
 } from './strategies/braintree';
-import { ChasePayInitializeOptions } from './strategies/chasepay';
 import { DigitalRiverPaymentInitializeOptions } from './strategies/digitalriver';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
 import { MonerisPaymentInitializeOptions } from './strategies/moneris';
@@ -109,10 +108,4 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Square.
      */
     square?: SquarePaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Chasepay payment method.
-     * They can be omitted unless you need to support Chasepay.
-     */
-    chasepay?: ChasePayInitializeOptions;
 }

@@ -14,7 +14,6 @@ import {
     createBraintreeVisaCheckoutPaymentProcessor,
     VisaCheckoutScriptLoader,
 } from '../payment/strategies/braintree';
-import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import {
@@ -30,7 +29,6 @@ import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategy } from './strategies';
 import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
 import { BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
-import { ChasePayCustomerStrategy } from './strategies/chasepay';
 import { DefaultCustomerStrategy } from './strategies/default';
 import { MasterpassCustomerStrategy } from './strategies/masterpass';
 import { SquareCustomerStrategy } from './strategies/square';
@@ -92,19 +90,6 @@ export default function createCustomerStrategyRegistry(
                 remoteCheckoutActionCreator,
                 createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
                 new VisaCheckoutScriptLoader(scriptLoader),
-                formPoster,
-            ),
-    );
-
-    registry.register(
-        'chasepay',
-        () =>
-            new ChasePayCustomerStrategy(
-                store,
-                paymentMethodActionCreator,
-                remoteCheckoutActionCreator,
-                new ChasePayScriptLoader(scriptLoader),
-                requestSender,
                 formPoster,
             ),
     );

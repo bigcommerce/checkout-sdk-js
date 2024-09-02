@@ -5,7 +5,6 @@ import {
     BraintreePaypalCreditCustomerInitializeOptions,
     BraintreeVisaCheckoutCustomerInitializeOptions,
 } from './strategies/braintree';
-import { ChasePayCustomerInitializeOptions } from './strategies/chasepay';
 import { MasterpassCustomerInitializeOptions } from './strategies/masterpass';
 
 export { CustomerInitializeOptions } from '../generated/customer-initialize-options';
@@ -51,12 +50,6 @@ export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
      * when using Visa Checkout provided by Braintree.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Chasepay payment method.
-     * They can be omitted unless you need to support Chasepay.
-     */
-    chasepay?: ChasePayCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the Masterpass payment method.
