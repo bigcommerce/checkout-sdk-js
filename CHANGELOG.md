@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.651.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.650.3...v1.651.0) (2024-09-03)
+
+
+### Features
+
+* **checkout:** CHECKOUT-8587 Throw error when payment endpoint returns error/failure ([#2631](https://github.com/bigcommerce/checkout-sdk-js/issues/2631)) ([a1d2df7](https://github.com/bigcommerce/checkout-sdk-js/commit/a1d2df7f85f8d6692b8545f36ef628e24d464ac0))
+
 ### [1.650.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.650.2...v1.650.3) (2024-09-02)
 
 

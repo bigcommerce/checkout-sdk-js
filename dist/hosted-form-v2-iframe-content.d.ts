@@ -320,7 +320,7 @@ declare class ManualOrderPaymentRequestSender {
     private _requestSender;
     private _paymentOrigin;
     constructor(_requestSender: RequestSender, _paymentOrigin: string);
-    submitPayment(requestInitializationData: HostedFormManualOrderData, instrumentFormData: HostedInputValues, nonce?: string): Promise<void>;
+    submitPayment(requestInitializationData: HostedFormManualOrderData, instrumentFormData: HostedInputValues, nonce?: string): Promise<Response<unknown>>;
 }
 
 declare interface PaymentErrorData {
