@@ -102,4 +102,6 @@ export default interface PaymentIntegrationService {
         errorOrId: Error | string,
         key?: string,
     ): Promise<PaymentAdditionalAction>;
+
+    widgetInteraction(method: () => Promise<unknown>): Promise<PaymentIntegrationSelectors>;
 }

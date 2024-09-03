@@ -31,6 +31,7 @@ import { getOrder } from '../order/orders.mock';
 import { PaymentProviderCustomerActionCreator } from '../payment-provider-customer';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
+import PaymentStrategyWidgetActionCreator from '../payment/payment-strategy-widget-action-creator';
 import { getPayment } from '../payment/payments.mock';
 import { RemoteCheckoutActionCreator } from '../remote-checkout';
 import { ConsignmentActionCreator, ShippingCountryActionCreator } from '../shipping';
@@ -89,6 +90,7 @@ describe('DefaultPaymentIntegrationService', () => {
         RemoteCheckoutActionCreator,
         'initializePayment' | 'forgetCheckout'
     >;
+    let paymentStrategyWidgetActionCreator: PaymentStrategyWidgetActionCreator;
 
     beforeEach(() => {
         requestSender = createRequestSender();
@@ -270,6 +272,10 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
+        paymentStrategyWidgetActionCreator = {
+            widgetInteraction: jest.fn(),
+        };
+
         subject = new DefaultPaymentIntegrationService(
             store as CheckoutStore,
             storeProjectionFactory as PaymentIntegrationStoreProjectionFactory,
@@ -289,6 +295,7 @@ describe('DefaultPaymentIntegrationService', () => {
             paymentProviderCustomerActionCreator,
             shippingCountryActionCreator as ShippingCountryActionCreator,
             remoteCheckoutActionCreator as RemoteCheckoutActionCreator,
+            paymentStrategyWidgetActionCreator,
         );
     });
 
@@ -634,6 +641,20 @@ describe('DefaultPaymentIntegrationService', () => {
             await subject.handlePaymentHumanVerification('methodId', 'key');
 
             expect(paymentHumanVerificationHandler.handle).toHaveBeenCalled();
+        });
+    });
+
+    describe('#widgetInteraction', () => {
+        it('should dispatch widgetInteraction action', async () => {
+            const callbackFn = jest.fn();
+            const output = await subject.widgetInteraction(callbackFn);
+
+            expect(paymentStrategyWidgetActionCreator.widgetInteraction).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(
+                paymentStrategyWidgetActionCreator.widgetInteraction(callbackFn),
+                { queueId: 'widgetInteraction' },
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
         });
     });
 });

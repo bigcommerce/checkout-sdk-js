@@ -27,6 +27,7 @@ import {
 } from '../payment-provider-customer';
 import PaymentActionCreator from '../payment/payment-action-creator';
 import PaymentMethodActionCreator from '../payment/payment-method-action-creator';
+import PaymentStrategyWidgetActionCreator from '../payment/payment-strategy-widget-action-creator';
 import { RemoteCheckoutActionCreator } from '../remote-checkout';
 import { InitializePaymentOptions } from '../remote-checkout/remote-checkout-request-sender';
 import { ConsignmentActionCreator, ShippingCountryActionCreator } from '../shipping';
@@ -57,6 +58,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
+        private _paymentStrategyWidgetActionCreator: PaymentStrategyWidgetActionCreator,
     ) {
         this._storeProjection = this._storeProjectionFactory.create(this._store);
     }
@@ -297,5 +299,16 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         }
 
         return this._paymentHumanVerificationHandler.handle(errorOrId);
+    }
+
+    async widgetInteraction(
+        callback: () => Promise<unknown>,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._paymentStrategyWidgetActionCreator.widgetInteraction(callback),
+            { queueId: 'widgetInteraction' },
+        );
+
+        return this._storeProjection.getState();
     }
 }

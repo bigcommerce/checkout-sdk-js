@@ -30,15 +30,20 @@ import {
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyRegistryV2 from './payment-strategy-registry-v2';
 import PaymentStrategyType from './payment-strategy-type';
+import PaymentStrategyWidgetActionCreator from './payment-strategy-widget-action-creator';
 import { PaymentStrategy } from './strategies';
 
 export default class PaymentStrategyActionCreator {
+    private _paymentStrategyWidgetActionCreator: PaymentStrategyWidgetActionCreator;
+
     constructor(
         private _strategyRegistry: PaymentStrategyRegistry,
         private _strategyRegistryV2: PaymentStrategyRegistryV2,
         private _orderActionCreator: OrderActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
-    ) {}
+    ) {
+        this._paymentStrategyWidgetActionCreator = new PaymentStrategyWidgetActionCreator();
+    }
 
     execute(
         payload: OrderRequestBody,
@@ -240,28 +245,10 @@ export default class PaymentStrategyActionCreator {
     }
 
     widgetInteraction(
-        method: () => Promise<any>,
+        method: () => Promise<unknown>,
         options?: PaymentRequestOptions,
     ): Observable<PaymentStrategyWidgetAction> {
-        const methodId = options && options.methodId;
-        const meta = { methodId };
-
-        return concat(
-            of(createAction(PaymentStrategyActionType.WidgetInteractionStarted, undefined, meta)),
-            defer(() =>
-                method().then(() =>
-                    createAction(
-                        PaymentStrategyActionType.WidgetInteractionFinished,
-                        undefined,
-                        meta,
-                    ),
-                ),
-            ),
-        ).pipe(
-            catchError((error) =>
-                throwErrorAction(PaymentStrategyActionType.WidgetInteractionFailed, error, meta),
-            ),
-        );
+        return this._paymentStrategyWidgetActionCreator.widgetInteraction(method, options);
     }
 
     private _getStrategy(method: PaymentMethod): PaymentStrategy | PaymentStrategyV2 {
