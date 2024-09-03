@@ -52,9 +52,10 @@ export default class GooglePayPaymentProcessor {
         isBuyNowFlow?: boolean,
         currencyCode?: string,
     ): Promise<void> {
+        console.log(googlePayPaymentOptions);
         this._paymentsClient = await this._scriptLoader.getGooglePaymentsClient(
             getPaymentMethod().config.testMode,
-            googlePayPaymentOptions,
+            // googlePayPaymentOptions,
         );
 
         await this._gateway.initialize(getPaymentMethod, isBuyNowFlow, currencyCode);
@@ -246,7 +247,7 @@ export default class GooglePayPaymentProcessor {
             transactionInfo: this._gateway.getTransactionInfo(),
             merchantInfo: this._gateway.getMerchantInfo(),
             ...(await this._gateway.getRequiredData()),
-            callbackIntents: this._gateway.getCallbackIntents(),
+            // callbackIntents: this._gateway.getCallbackIntents(),
         };
         this._isReadyToPayRequest = {
             ...this._baseRequest,
