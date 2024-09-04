@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.653.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.652.1...v1.653.0) (2024-09-04)
+
+
+### Features
+
+* **payment:** PI-2551 make widgetInteraction action available for integration packages ([76766ed](https://github.com/bigcommerce/checkout-sdk-js/commit/76766edae50db927e3eb54a11ff18a6229cc5836))
+
 ### [1.652.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.652.0...v1.652.1) (2024-09-04)
 
 
