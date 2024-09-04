@@ -5,6 +5,7 @@
         "adyen-utils": "packages/adyen-utils",
         "affirm-integration": "packages/affirm-integration",
         "afterpay-integration": "packages/afterpay-integration",
+        "amazon-pay-integration": "packages/amazon-pay-integration",
         "amazon-pay-utils": "packages/amazon-pay-utils",
         "analytics": "packages/analytics",
         "apple-pay-integration": "packages/apple-pay-integration",

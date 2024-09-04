@@ -30,6 +30,9 @@
             "@bigcommerce/checkout-sdk/afterpay-integration": [
                 "packages/afterpay-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/amazon-pay-integration": [
+                "packages/amazon-pay-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/amazon-pay-utils": [
                 "packages/amazon-pay-utils/src/index.ts"
             ],
