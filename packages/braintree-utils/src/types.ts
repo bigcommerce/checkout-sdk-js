@@ -128,7 +128,147 @@ export interface BraintreeDataCollectors {
 
 /**
  *
- * Braintree US Bank Account
+ * Braintree Google Payment
+ *
+ */
+type BraintreeGooglePaymentAddressFormat = 'FULL' | 'MIN';
+
+export enum TotalPriceStatusType {
+    ESTIMATED = 'ESTIMATED',
+    FINAL = 'FINAL',
+    NOT_CURRENTLY_KNOWN = 'NOT_CURRENTLY_KNOWN',
+}
+
+export interface BraintreeGooglePaymentDataRequestOptions {
+    merchantInfo: {
+        authJwt?: string;
+        merchantId?: string;
+        merchantName?: string;
+    };
+    transactionInfo: {
+        currencyCode: string;
+        totalPriceStatus: TotalPriceStatusType;
+        totalPrice: string;
+    };
+    cardRequirements: {
+        billingAddressRequired: boolean;
+        billingAddressFormat: BraintreeGooglePaymentAddressFormat;
+    };
+    emailRequired?: boolean;
+    phoneNumberRequired?: boolean;
+    shippingAddressRequired?: boolean;
+}
+
+export interface BraintreeGooglePaymentDataRequest {
+    allowedPaymentMethods: string[];
+    apiVersion: number;
+    cardRequirements: {
+        allowedCardNetworks: string[];
+        billingAddressFormat: string;
+        billingAddressRequired: boolean;
+    };
+    environment: string;
+    i: {
+        googleTransactionId: string;
+        startTimeMs: number;
+    };
+    merchantInfo: {
+        merchantId: string;
+        merchantName: string;
+        authJwt?: string;
+    };
+    paymentMethodTokenizationParameters: {
+        parameters: {
+            'braintree:apiVersion': string;
+            'braintree:authorizationFingerprint': string;
+            'braintree:merchantId': string;
+            'braintree:metadata': string;
+            'braintree:sdkVersion': string;
+            gateway: string;
+        };
+        tokenizationType: string;
+    };
+    shippingAddressRequired: boolean;
+    phoneNumberRequired: boolean;
+    transactionInfo: {
+        currencyCode: string;
+        totalPrice: string;
+        totalPriceStatus: TotalPriceStatusType;
+    };
+}
+
+export type BraintreeGooglePaymentCreator = BraintreeModuleCreator<BraintreeGooglePayment>;
+
+export interface BraintreeGooglePayment extends BraintreeModule {
+    createPaymentDataRequest(
+        options?: BraintreeGooglePaymentDataRequestOptions,
+    ): BraintreeGooglePaymentDataRequest;
+}
+
+export interface BraintreeGooglePayThreeDSecure {
+    verifyCard(options: BraintreeGooglePayThreeDSecureOptions): Promise<BraintreeVerifyPayload>;
+}
+
+export interface BraintreeGooglePayThreeDSecureOptions {
+    nonce: string;
+    amount: number;
+    bin: string;
+    showLoader?: boolean;
+    onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
+}
+
+/**
+ *
+ * Braintree 3D Secure
+ *
+ */
+export type BraintreeThreeDSecureCreator = BraintreeModuleCreator<
+    BraintreeThreeDSecure,
+    BraintreeThreeDSecureCreatorConfig
+>;
+
+export interface BraintreeThreeDSecure extends BraintreeModule {
+    verifyCard(options: BraintreeThreeDSecureOptions): Promise<BraintreeVerifyPayload>;
+    cancelVerifyCard(): Promise<BraintreeVerifyPayload>;
+}
+
+export interface BraintreeThreeDSecureCreatorConfig extends BraintreeModuleCreatorConfig {
+    version?: number;
+}
+
+export interface BraintreeThreeDSecureOptions {
+    nonce: string;
+    amount: number;
+    challengeRequested?: boolean;
+    showLoader?: boolean;
+    bin?: string;
+    additionalInformation?: {
+        acsWindowSize?: '01' | '02' | '03' | '04' | '05';
+    };
+    addFrame?(
+        error: Error | undefined,
+        iframe: HTMLIFrameElement,
+        cancel: () => Promise<BraintreeVerifyPayload> | undefined,
+    ): void;
+    removeFrame?(): void;
+    onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
+}
+
+export interface BraintreeThreeDSecureVerificationData {
+    lookup: {
+        threeDSecureVersion: string;
+    };
+    paymentMethod: BraintreeVerifyPayload;
+    requiresUserAuthentication: boolean;
+    threeDSecureInfo: {
+        liabilityShiftPossible: boolean;
+        liabilityShifted: boolean;
+    };
+}
+
+/**
+ *
+ * Braintree US Bank Account (ACH)
  *
  */
 export type BraintreeUsBankAccountCreator = BraintreeModuleCreator<BraintreeUsBankAccount>;
@@ -448,6 +588,23 @@ export interface BraintreeFastlaneCardComponent {
         options: BraintreeFastlaneTokenizeOptions,
     ): Promise<BraintreeFastlaneVaultedInstrument>;
     render(element: string): void;
+}
+
+/**
+ *
+ * Braintree Payload Verification
+ *
+ */
+export interface BraintreeVerifyPayload {
+    nonce: string;
+    details: {
+        cardType: string;
+        lastFour: string;
+        lastTwo: string;
+    };
+    description: string;
+    liabilityShiftPossible: boolean;
+    liabilityShifted: boolean;
 }
 
 /**

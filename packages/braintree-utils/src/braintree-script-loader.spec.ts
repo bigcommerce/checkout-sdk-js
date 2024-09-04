@@ -10,10 +10,11 @@ import {
     getClientMock,
     getDataCollectorMock,
     getFastlaneMock,
-    getGooglePayMock,
+    getGooglePaymentMock,
     getHostedFieldsMock,
     getModuleCreatorMock,
     getPaypalCheckoutMock,
+    getThreeDSecureMock,
     getVenmoCheckoutMock,
     getVisaCheckoutMock,
     getVisaCheckoutSDKMock,
@@ -23,6 +24,7 @@ import {
     BraintreeClientCreator,
     BraintreeDataCollector,
     BraintreeFastlane,
+    BraintreeGooglePaymentCreator,
     BraintreeHostedFieldsCreator,
     BraintreeHostWindow,
     BraintreeLocalPaymentCreator,
@@ -32,7 +34,6 @@ import {
     BraintreeThreeDSecureCreator,
     BraintreeVenmoCheckoutCreator,
     BraintreeVisaCheckoutCreator,
-    GooglePayCreator,
 } from './types';
 import { VisaCheckoutSDK } from './visacheckout';
 
@@ -404,10 +405,10 @@ describe('BraintreeScriptLoader', () => {
     });
 
     describe('#loadGooglePayment', () => {
-        let googlePayment: GooglePayCreator;
+        let googlePayment: BraintreeGooglePaymentCreator;
 
         beforeEach(() => {
-            googlePayment = getModuleCreatorMock(getGooglePayMock());
+            googlePayment = getModuleCreatorMock(getGooglePaymentMock());
             scriptLoader.loadScript = jest.fn(() => {
                 if (mockWindow.braintree) {
                     mockWindow.braintree.googlePayment = googlePayment;
@@ -535,7 +536,7 @@ describe('BraintreeScriptLoader', () => {
         let threeDSecure: BraintreeThreeDSecureCreator;
 
         beforeEach(() => {
-            threeDSecure = getModuleCreatorMock(getGooglePayMock());
+            threeDSecure = getModuleCreatorMock(getThreeDSecureMock());
             scriptLoader.loadScript = jest.fn(() => {
                 if (mockWindow.braintree) {
                     mockWindow.braintree.threeDSecure = threeDSecure;

@@ -11,7 +11,9 @@ import BraintreeSdk from './braintree-sdk';
 import {
     getClientMock,
     getDataCollectorMock,
+    getGooglePaymentMock,
     getModuleCreatorMock,
+    getThreeDSecureMock,
     getUsBankAccountMock,
     getVenmoCheckoutMock,
     getVisaCheckoutMock,
@@ -21,7 +23,11 @@ import {
     BraintreeClient,
     BraintreeDataCollector,
     BraintreeErrorCode,
+    BraintreeGooglePayment,
+    BraintreeGooglePaymentCreator,
     BraintreeModuleCreator,
+    BraintreeThreeDSecure,
+    BraintreeThreeDSecureCreator,
     BraintreeUsBankAccount,
     BraintreeVenmoCheckout,
     BraintreeVisaCheckout,
@@ -42,6 +48,10 @@ describe('BraintreeSdk', () => {
     let usBankAccountMock: BraintreeUsBankAccount;
     let braintreeVisaCheckoutMock: BraintreeVisaCheckout;
     let braintreeVisaCheckoutCreatorMock: BraintreeVisaCheckoutCreator;
+    let threeDSMock: BraintreeThreeDSecure;
+    let threeDSCreatorMock: BraintreeThreeDSecureCreator;
+    let braintreeGooglePayment: BraintreeGooglePayment;
+    let braintreeGooglePaymentCreator: BraintreeGooglePaymentCreator;
     let visaCheckoutSdkMock: VisaCheckoutSDK;
 
     const clientTokenMock = 'clientTokenMock';
@@ -57,25 +67,37 @@ describe('BraintreeSdk', () => {
         clientCreatorMock = getModuleCreatorMock(clientMock);
         dataCollectorMock = getDataCollectorMock();
         dataCollectorCreatorMock = getModuleCreatorMock(dataCollectorMock);
+        threeDSMock = getThreeDSecureMock();
+        threeDSCreatorMock = getModuleCreatorMock(threeDSMock);
         usBankAccountMock = getUsBankAccountMock();
         usBankAccountCreatorMock = getModuleCreatorMock(usBankAccountMock);
         visaCheckoutSdkMock = getVisaCheckoutSDKMock();
+        braintreeGooglePayment = getGooglePaymentMock();
+        braintreeGooglePaymentCreator = getModuleCreatorMock(braintreeGooglePayment);
 
         braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
 
         jest.spyOn(braintreeScriptLoader, 'initialize').mockImplementation(jest.fn);
-        jest.spyOn(braintreeScriptLoader, 'loadClient').mockImplementation(() => clientCreatorMock);
-        jest.spyOn(braintreeScriptLoader, 'loadDataCollector').mockImplementation(
-            () => dataCollectorCreatorMock,
+        jest.spyOn(braintreeScriptLoader, 'loadClient').mockImplementation(() =>
+            Promise.resolve(clientCreatorMock),
         );
-        jest.spyOn(braintreeScriptLoader, 'loadUsBankAccount').mockImplementation(
-            () => usBankAccountCreatorMock,
+        jest.spyOn(braintreeScriptLoader, 'loadDataCollector').mockImplementation(() =>
+            Promise.resolve(dataCollectorCreatorMock),
         );
-        jest.spyOn(braintreeScriptLoader, 'loadVisaCheckout').mockImplementation(
-            () => braintreeVisaCheckoutCreatorMock,
+        jest.spyOn(braintreeScriptLoader, 'loadUsBankAccount').mockImplementation(() =>
+            Promise.resolve(usBankAccountCreatorMock),
         );
-        jest.spyOn(braintreeScriptLoader, 'loadVisaCheckoutSdk').mockImplementation(
-            () => visaCheckoutSdkMock,
+        jest.spyOn(braintreeScriptLoader, 'loadVisaCheckout').mockImplementation(() =>
+            Promise.resolve(braintreeVisaCheckoutCreatorMock),
+        );
+        jest.spyOn(braintreeScriptLoader, 'loadVisaCheckoutSdk').mockImplementation(() =>
+            Promise.resolve(visaCheckoutSdkMock),
+        );
+        jest.spyOn(braintreeScriptLoader, 'load3DS').mockImplementation(() =>
+            Promise.resolve(threeDSCreatorMock),
+        );
+        jest.spyOn(braintreeScriptLoader, 'loadGooglePayment').mockImplementation(() =>
+            Promise.resolve(braintreeGooglePaymentCreator),
         );
         braintreeVisaCheckoutMock = getVisaCheckoutMock();
         braintreeVisaCheckoutCreatorMock = getModuleCreatorMock(braintreeVisaCheckoutMock);
@@ -189,6 +211,69 @@ describe('BraintreeSdk', () => {
         });
     });
 
+    describe('#getBraintreeThreeDS()', () => {
+        it('throws an error if client token is not defined', async () => {
+            try {
+                await braintreeSdk.getBraintreeThreeDS();
+            } catch (error: unknown) {
+                expect(error).toBeInstanceOf(NotInitializedError);
+            }
+        });
+
+        it('creates Braintree 3D Secure module', async () => {
+            braintreeSdk.initialize(clientTokenMock, storeConfig);
+
+            await braintreeSdk.getBraintreeThreeDS();
+
+            expect(braintreeScriptLoader.load3DS).toHaveBeenCalled();
+            expect(threeDSCreatorMock.create).toHaveBeenCalledWith({
+                client: clientMock,
+                version: 2,
+            });
+        });
+
+        it('returns the same Braintree 3D Secure module while calling method for second time', async () => {
+            braintreeSdk.initialize(clientTokenMock, storeConfig);
+
+            await braintreeSdk.getBraintreeThreeDS();
+            await braintreeSdk.getBraintreeThreeDS();
+
+            expect(braintreeScriptLoader.load3DS).toHaveBeenCalledTimes(1);
+            expect(threeDSCreatorMock.create).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('#getBraintreeGooglePayment()', () => {
+        it('throws an error if client token is not defined', async () => {
+            try {
+                await braintreeSdk.getBraintreeGooglePayment();
+            } catch (error: unknown) {
+                expect(error).toBeInstanceOf(NotInitializedError);
+            }
+        });
+
+        it('creates Braintree Google Payment module', async () => {
+            braintreeSdk.initialize(clientTokenMock, storeConfig);
+
+            await braintreeSdk.getBraintreeGooglePayment();
+
+            expect(braintreeScriptLoader.loadGooglePayment).toHaveBeenCalled();
+            expect(braintreeGooglePaymentCreator.create).toHaveBeenCalledWith({
+                client: clientMock,
+            });
+        });
+
+        it('returns the same Braintree Google Payment module while calling method for second time', async () => {
+            braintreeSdk.initialize(clientTokenMock, storeConfig);
+
+            await braintreeSdk.getBraintreeGooglePayment();
+            await braintreeSdk.getBraintreeGooglePayment();
+
+            expect(braintreeScriptLoader.loadGooglePayment).toHaveBeenCalledTimes(1);
+            expect(braintreeGooglePaymentCreator.create).toHaveBeenCalledTimes(1);
+        });
+    });
+
     describe('#getUsBankAccount()', () => {
         it('throws an error if client token was not provided', async () => {
             try {
@@ -243,10 +328,7 @@ describe('BraintreeSdk', () => {
             };
 
             jest.spyOn(braintreeScriptLoader, 'loadVenmoCheckout').mockReturnValue(
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                braintreeVenmoCreateMock,
+                Promise.resolve(braintreeVenmoCreateMock),
             );
 
             await braintreeSdk.getVenmoCheckoutOrThrow();

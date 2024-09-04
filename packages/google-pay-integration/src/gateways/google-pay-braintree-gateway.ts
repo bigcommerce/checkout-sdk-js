@@ -1,6 +1,6 @@
 import {
     BraintreeGooglePayThreeDSecure,
-    BraintreeIntegrationService,
+    BraintreeSdk,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     CancellablePromise,
@@ -26,10 +26,7 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
     private _paymentGatewayParameters?: GooglePayBraintreeGatewayParameters;
     private _service: PaymentIntegrationService;
 
-    constructor(
-        service: PaymentIntegrationService,
-        private _braintreeService: BraintreeIntegrationService,
-    ) {
+    constructor(service: PaymentIntegrationService, private _braintreeSdk: BraintreeSdk) {
         super('braintree', service);
 
         this._service = service;
@@ -48,15 +45,13 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this._braintreeService.initialize(
-            paymentMethod.clientToken,
-            this._service.getState().getStoreConfig(),
-        );
+        const storeConfig = this._service.getState().getStoreConfig();
 
-        const googleBraintreePaymentInstance =
-            await this._braintreeService.getGooglePaymentComponent();
+        this._braintreeSdk.initialize(paymentMethod.clientToken, storeConfig);
 
-        const request = googleBraintreePaymentInstance.createPaymentDataRequest({
+        const braintreeGooglePaymentInstance = await this._braintreeSdk.getBraintreeGooglePayment();
+
+        const request = braintreeGooglePaymentInstance.createPaymentDataRequest({
             merchantInfo: super.getMerchantInfo(),
             transactionInfo: super.getTransactionInfo(),
             cardRequirements: {
@@ -86,7 +81,7 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
         } = initializationData;
 
         if (isThreeDSecureEnabled) {
-            const threeDSecure = await this._braintreeService.get3DS();
+            const threeDSecure = await this._braintreeSdk.getBraintreeThreeDS();
 
             const { orderAmount } = this._service.getState().getOrderOrThrow();
 
@@ -142,10 +137,10 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
         return this._paymentGatewayParameters;
     }
 
-    private async _getBraintreeDeviceData() {
-        const data = await this._braintreeService.getDataCollector();
+    private async _getBraintreeDeviceData(): Promise<string | undefined> {
+        const { deviceData } = await this._braintreeSdk.getDataCollectorOrThrow();
 
-        return data.deviceData;
+        return deviceData;
     }
 
     private _braintreePresent3DSChallenge(

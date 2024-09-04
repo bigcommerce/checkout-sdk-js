@@ -11,6 +11,7 @@ import {
     BraintreeClientCreator,
     BraintreeDataCollectorCreator,
     BraintreeFastlaneCreator,
+    BraintreeGooglePaymentCreator,
     BraintreeHostedFieldsCreator,
     BraintreeHostWindow,
     BraintreeLocalPaymentCreator,
@@ -22,7 +23,6 @@ import {
     BraintreeUsBankAccountCreator,
     BraintreeVenmoCheckoutCreator,
     BraintreeVisaCheckoutCreator,
-    GooglePayCreator,
 } from './types';
 import { VisaCheckoutSDK } from './visacheckout';
 
@@ -34,7 +34,6 @@ export default class BraintreeScriptLoader {
         private braintreeHostWindow: BraintreeHostWindow,
     ) {}
 
-    // TODO: this method should be moved to BraintreeSdk class in the future
     initialize(storeConfig?: StoreConfig) {
         const features = storeConfig?.checkoutSettings.features;
         const shouldUseStableBraintreeSdkVersion =
@@ -94,8 +93,8 @@ export default class BraintreeScriptLoader {
         );
     }
 
-    async loadGooglePayment(): Promise<GooglePayCreator> {
-        return this.loadBraintreeModuleOrThrow<GooglePayCreator>(
+    async loadGooglePayment(): Promise<BraintreeGooglePaymentCreator> {
+        return this.loadBraintreeModuleOrThrow<BraintreeGooglePaymentCreator>(
             BraintreeModuleName.GooglePayment,
             'google-payment.min.js',
         );

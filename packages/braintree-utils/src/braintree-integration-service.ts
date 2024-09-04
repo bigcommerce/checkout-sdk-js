@@ -25,11 +25,9 @@ import {
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeShippingAddressOverride,
-    BraintreeThreeDSecure,
     BraintreeTokenizationDetails,
     BraintreeTokenizePayload,
     GetLocalPaymentInstance,
-    GooglePayBraintreeSDK,
     LocalPaymentInstance,
     PAYPAL_COMPONENTS,
 } from './types';
@@ -52,8 +50,6 @@ export default class BraintreeIntegrationService {
     private dataCollectors: BraintreeDataCollectors = {};
     private paypalCheckout?: BraintreePaypalCheckout;
     private braintreeLocalMethods?: LocalPaymentInstance;
-    private googlePay?: Promise<GooglePayBraintreeSDK>;
-    private threeDS?: Promise<BraintreeThreeDSecure>;
     private braintreePaypal?: Promise<BraintreePaypal>;
 
     constructor(
@@ -224,17 +220,6 @@ export default class BraintreeIntegrationService {
         return this.braintreeLocalMethods;
     }
 
-    get3DS(): Promise<BraintreeThreeDSecure> {
-        if (!this.threeDS) {
-            this.threeDS = Promise.all([
-                this.getClient(),
-                this.braintreeScriptLoader.load3DS(),
-            ]).then(([client, threeDSecure]) => threeDSecure.create({ client, version: 2 }));
-        }
-
-        return this.threeDS;
-    }
-
     async getDataCollector(
         options?: Partial<BraintreeDataCollectorCreatorConfig>,
     ): Promise<BraintreeDataCollector> {
@@ -269,17 +254,6 @@ export default class BraintreeIntegrationService {
         }
 
         return cached;
-    }
-
-    getGooglePaymentComponent(): Promise<GooglePayBraintreeSDK> {
-        if (!this.googlePay) {
-            this.googlePay = Promise.all([
-                this.getClient(),
-                this.braintreeScriptLoader.loadGooglePayment(),
-            ]).then(([client, googlePay]) => googlePay.create({ client }));
-        }
-
-        return this.googlePay;
     }
 
     getBraintreeEnv(isTestMode = false): BraintreeEnv {
@@ -360,14 +334,6 @@ export default class BraintreeIntegrationService {
 
         await this.teardownModule(this.paypalCheckout);
         this.paypalCheckout = undefined;
-
-        // TODO: should be added in future migrations
-
-        // await this.teardownModule(this._3ds);
-        // this._3ds = undefined;
-
-        // await this.teardownModule(this._googlePay);
-        // this._googlePay = undefined;
 
         // await this.teardownModule(this._venmoCheckout);
         // this._venmoCheckout = undefined;

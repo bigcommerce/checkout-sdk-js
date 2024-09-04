@@ -13,10 +13,12 @@ import {
     BraintreeDataCollectorCreator,
     BraintreeError,
     BraintreeFastlaneCreator,
+    BraintreeGooglePaymentCreator,
     BraintreeHostedFieldsTokenizePayload,
     BraintreeModule,
     BraintreeModuleCreator,
     BraintreeModuleCreatorConfig,
+    BraintreeThreeDSecureCreator,
     BraintreeTokenizationDetails,
     BraintreeUsBankAccountCreator,
     BraintreeWindow,
@@ -68,7 +70,7 @@ export type BraintreeModuleCreators =
     | BraintreeClientCreator
     | BraintreeFastlaneCreator
     | BraintreeDataCollectorCreator
-    | GooglePayCreator
+    | BraintreeGooglePaymentCreator
     | BraintreeHostedFieldsCreator
     | BraintreePaypalCreator
     | BraintreePaypalCheckoutCreator
@@ -78,11 +80,12 @@ export type BraintreeModuleCreators =
     | BraintreeUsBankAccountCreator
     | BraintreeLocalPaymentCreator;
 
+// TODO: rename to BraintreeSdkModules
 export interface BraintreeSDK {
     [BraintreeModuleName.Client]?: BraintreeClientCreator;
     [BraintreeModuleName.Fastlane]?: BraintreeFastlaneCreator;
     [BraintreeModuleName.DataCollector]?: BraintreeDataCollectorCreator;
-    [BraintreeModuleName.GooglePayment]?: GooglePayCreator;
+    [BraintreeModuleName.GooglePayment]?: BraintreeGooglePaymentCreator;
     [BraintreeModuleName.HostedFields]?: BraintreeHostedFieldsCreator;
     [BraintreeModuleName.Paypal]?: BraintreePaypalCreator;
     [BraintreeModuleName.PaypalCheckout]?: BraintreePaypalCheckoutCreator;
@@ -165,18 +168,6 @@ export interface BraintreeTokenizePayload {
     };
 }
 
-export interface BraintreeVerifyPayload {
-    nonce: string;
-    details: {
-        cardType: string;
-        lastFour: string;
-        lastTwo: string;
-    };
-    description: string;
-    liabilityShiftPossible: boolean;
-    liabilityShifted: boolean;
-}
-
 export type BraintreeFormErrorData = Omit<BraintreeFormFieldState, 'isFocused'>;
 
 export type BraintreeFormErrorDataKeys =
@@ -190,23 +181,6 @@ export type BraintreeFormErrorDataKeys =
 export type BraintreeFormErrorsData = Partial<
     Record<BraintreeFormErrorDataKeys, BraintreeFormErrorData>
 >;
-
-/**
- *
- * Braintree Google Pay
- *
- */
-export interface BraintreeGooglePayThreeDSecure {
-    verifyCard(options: BraintreeGooglePayThreeDSecureOptions): Promise<BraintreeVerifyPayload>;
-}
-
-export interface BraintreeGooglePayThreeDSecureOptions {
-    nonce: string;
-    amount: number;
-    bin: string;
-    showLoader?: boolean;
-    onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
-}
 
 /**
  *
@@ -325,55 +299,6 @@ export interface BraintreeFormFieldState {
 export interface TokenizationPayload {
     nonce: string;
     bin: string;
-}
-
-/**
- *
- * Braintree 3D Secure
- *
- */
-export type BraintreeThreeDSecureCreator = BraintreeModuleCreator<
-    BraintreeThreeDSecure,
-    BraintreeThreeDSecureCreatorConfig
->;
-
-export interface BraintreeThreeDSecure extends BraintreeModule {
-    verifyCard(options: BraintreeThreeDSecureOptions): Promise<BraintreeVerifyPayload>;
-    cancelVerifyCard(): Promise<BraintreeVerifyPayload>;
-}
-
-export interface BraintreeThreeDSecureCreatorConfig extends BraintreeModuleCreatorConfig {
-    version?: number;
-}
-
-export interface BraintreeThreeDSecureOptions {
-    nonce: string;
-    amount: number;
-    challengeRequested?: boolean;
-    showLoader?: boolean;
-    bin?: string;
-    additionalInformation?: {
-        acsWindowSize?: '01' | '02' | '03' | '04' | '05';
-    };
-    addFrame?(
-        error: Error | undefined,
-        iframe: HTMLIFrameElement,
-        cancel: () => Promise<BraintreeVerifyPayload> | undefined,
-    ): void;
-    removeFrame?(): void;
-    onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
-}
-
-interface BraintreeThreeDSecureVerificationData {
-    lookup: {
-        threeDSecureVersion: string;
-    };
-    paymentMethod: BraintreeVerifyPayload;
-    requiresUserAuthentication: boolean;
-    threeDSecureInfo: {
-        liabilityShiftPossible: boolean;
-        liabilityShifted: boolean;
-    };
 }
 
 /**
@@ -608,86 +533,6 @@ export interface LocalPaymentInstance extends BraintreeModule {
 }
 
 export type GetLocalPaymentInstance = (localPaymentInstance: LocalPaymentInstance) => void;
-
-/**
- *
- * Braintree GooglePay
- *
- */
-
-type AddressFormat = 'FULL' | 'MIN';
-
-export enum TotalPriceStatusType {
-    ESTIMATED = 'ESTIMATED',
-    FINAL = 'FINAL',
-    NOT_CURRENTLY_KNOWN = 'NOT_CURRENTLY_KNOWN',
-}
-
-export interface GooglePayBraintreeDataRequest {
-    merchantInfo: {
-        authJwt?: string;
-        merchantId?: string;
-        merchantName?: string;
-    };
-    transactionInfo: {
-        currencyCode: string;
-        totalPriceStatus: TotalPriceStatusType;
-        totalPrice: string;
-    };
-    cardRequirements: {
-        billingAddressRequired: boolean;
-        billingAddressFormat: AddressFormat;
-    };
-    emailRequired?: boolean;
-    phoneNumberRequired?: boolean;
-    shippingAddressRequired?: boolean;
-}
-
-export interface GooglePayBraintreePaymentDataRequestV1 {
-    allowedPaymentMethods: string[];
-    apiVersion: number;
-    cardRequirements: {
-        allowedCardNetworks: string[];
-        billingAddressFormat: string;
-        billingAddressRequired: boolean;
-    };
-    environment: string;
-    i: {
-        googleTransactionId: string;
-        startTimeMs: number;
-    };
-    merchantInfo: {
-        merchantId: string;
-        merchantName: string;
-        authJwt?: string;
-    };
-    paymentMethodTokenizationParameters: {
-        parameters: {
-            'braintree:apiVersion': string;
-            'braintree:authorizationFingerprint': string;
-            'braintree:merchantId': string;
-            'braintree:metadata': string;
-            'braintree:sdkVersion': string;
-            gateway: string;
-        };
-        tokenizationType: string;
-    };
-    shippingAddressRequired: boolean;
-    phoneNumberRequired: boolean;
-    transactionInfo: {
-        currencyCode: string;
-        totalPrice: string;
-        totalPriceStatus: TotalPriceStatusType;
-    };
-}
-
-export type GooglePayCreator = BraintreeModuleCreator<GooglePayBraintreeSDK>;
-
-export interface GooglePayBraintreeSDK extends BraintreeModule {
-    createPaymentDataRequest(
-        request?: GooglePayBraintreeDataRequest,
-    ): GooglePayBraintreePaymentDataRequestV1;
-}
 
 /**
  *
