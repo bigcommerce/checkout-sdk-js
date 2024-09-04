@@ -11,7 +11,9 @@ import {
     BraintreeDataCollector,
     BraintreeDataCollectorCreatorConfig,
     BraintreeErrorCode,
+    BraintreeGooglePayment,
     BraintreeModule,
+    BraintreeThreeDSecure,
     BraintreeUsBankAccount,
     BraintreeVenmoCheckout,
     BraintreeVisaCheckout,
@@ -20,13 +22,15 @@ import isBraintreeError from './utils/is-braintree-error';
 import { VisaCheckoutSDK } from './visacheckout';
 
 export default class BraintreeSdk {
+    private braintreeVenmo?: BraintreeVenmoCheckout;
     private client?: BraintreeClient;
     private clientToken?: string;
     private dataCollector?: BraintreeDataCollector;
-    private usBankAccount?: BraintreeUsBankAccount;
+    private googlePayment?: BraintreeGooglePayment;
+    private threeDS?: BraintreeThreeDSecure;
     private visaCheckout?: Promise<BraintreeVisaCheckout>;
     private visaCheckoutSDK?: VisaCheckoutSDK;
-    private braintreeVenmo?: BraintreeVenmoCheckout;
+    private usBankAccount?: BraintreeUsBankAccount;
 
     constructor(private braintreeScriptLoader: BraintreeScriptLoader) {}
 
@@ -98,6 +102,44 @@ export default class BraintreeSdk {
 
     /**
      *
+     * Braintree Google Payment
+     * braintree doc: https://braintree.github.io/braintree-web/current/module-braintree-web_google-payment.html
+     *
+     */
+    async getBraintreeGooglePayment(): Promise<BraintreeGooglePayment> {
+        if (!this.googlePayment) {
+            const [client, braintreeGooglePayment] = await Promise.all([
+                this.getClient(),
+                this.braintreeScriptLoader.loadGooglePayment(),
+            ]);
+
+            this.googlePayment = await braintreeGooglePayment.create({ client });
+        }
+
+        return this.googlePayment;
+    }
+
+    /**
+     *
+     * Braintree 3DS
+     * braintree doc: https://braintree.github.io/braintree-web/current/module-braintree-web_three-d-secure.html
+     *
+     */
+    async getBraintreeThreeDS(): Promise<BraintreeThreeDSecure> {
+        if (!this.threeDS) {
+            const [client, threeDSecure] = await Promise.all([
+                this.getClient(),
+                this.braintreeScriptLoader.load3DS(),
+            ]);
+
+            this.threeDS = await threeDSecure.create({ client, version: 2 });
+        }
+
+        return this.threeDS;
+    }
+
+    /**
+     *
      * Braintree UsBankAccount
      * braintree doc: https://braintree.github.io/braintree-web/current/module-braintree-web_us-bank-account.html
      *
@@ -132,7 +174,7 @@ export default class BraintreeSdk {
 
     /**
      *
-     * Visa Checkout SDK
+     * Braintree Visa Checkout SDK
      * visa checkout doc: https://developer.visa.com/capabilities/visa_checkout/docs-how-to
      *
      */

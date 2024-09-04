@@ -2,11 +2,15 @@ import {
     BraintreeClient,
     BraintreeDataCollector,
     BraintreeFastlane,
+    BraintreeGooglePayment,
     BraintreeModule,
     BraintreeModuleCreator,
     BraintreePaypal,
+    BraintreeThreeDSecure,
     BraintreeUsBankAccount,
 } from '../types';
+
+import { getBraintreePaymentDataRequest } from './braintree.mock';
 
 /**
  *
@@ -20,7 +24,9 @@ export function getModuleCreatorMock<T>(
         | BraintreeClient
         | BraintreePaypal
         | BraintreeFastlane
-        | BraintreeUsBankAccount,
+        | BraintreeUsBankAccount
+        | BraintreeThreeDSecure
+        | BraintreeGooglePayment,
 ): BraintreeModuleCreator<T> {
     return {
         // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
@@ -56,6 +62,31 @@ export function getDataCollectorMock(): BraintreeDataCollector {
 // TODO: it is not necessary to have a function for static return value, so we can update it with constant variable in the future
 export function getDeviceDataMock(): string {
     return '{"device_session_id": "my_device_session_id", "fraud_merchant_id": "we_dont_use_this_field"}';
+}
+
+/**
+ *
+ * Braintree 3D Secure
+ *
+ */
+export function getThreeDSecureMock(): BraintreeThreeDSecure {
+    return {
+        verifyCard: jest.fn(),
+        cancelVerifyCard: jest.fn(),
+        teardown: jest.fn(() => Promise.resolve()),
+    };
+}
+
+/**
+ *
+ * Braintree Google Payment
+ *
+ */
+export function getGooglePaymentMock(): BraintreeGooglePayment {
+    return {
+        createPaymentDataRequest: jest.fn(() => getBraintreePaymentDataRequest()),
+        teardown: jest.fn(),
+    };
 }
 
 /**

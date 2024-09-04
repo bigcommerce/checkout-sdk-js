@@ -5,17 +5,15 @@ import {
     BraintreeFastlane,
     BraintreeFastlaneAuthenticationState,
     BraintreeFastlaneProfileData,
+    BraintreeGooglePaymentDataRequest,
     BraintreeHostedFields,
     BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
     BraintreeShippingAddressOverride,
-    BraintreeThreeDSecure,
     BraintreeTokenizePayload,
     BraintreeVenmoCheckout,
     BraintreeVisaCheckout,
-    GooglePayBraintreePaymentDataRequestV1,
-    GooglePayBraintreeSDK,
     LocalPaymentInstance,
     TotalPriceStatusType,
     VisaCheckoutInitOptions,
@@ -303,13 +301,6 @@ export function getTokenizePayload(): BraintreeTokenizePayload {
     };
 }
 
-export function getGooglePayMock(): GooglePayBraintreeSDK {
-    return {
-        createPaymentDataRequest: jest.fn(() => getBraintreePaymentDataRequest()),
-        teardown: jest.fn(),
-    };
-}
-
 export function getBraintreePaypalMock(): BraintreePaypal {
     return {
         closeWindow: jest.fn(),
@@ -353,15 +344,7 @@ export function getBraintreePaypal(): PaymentMethod {
     };
 }
 
-export function getThreeDSecureMock(): BraintreeThreeDSecure {
-    return {
-        verifyCard: jest.fn(),
-        cancelVerifyCard: jest.fn(),
-        teardown: jest.fn(() => Promise.resolve()),
-    };
-}
-
-export function getBraintreePaymentDataRequest(): GooglePayBraintreePaymentDataRequestV1 {
+export function getBraintreePaymentDataRequest(): BraintreeGooglePaymentDataRequest {
     return {
         allowedPaymentMethods: [],
         apiVersion: 1,

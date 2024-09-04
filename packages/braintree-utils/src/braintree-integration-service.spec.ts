@@ -403,16 +403,6 @@ describe('BraintreeIntegrationService', () => {
         });
     });
 
-    describe('#get3DS()', () => {
-        it('loads 3DS payment methods', async () => {
-            braintreeIntegrationService.initialize(clientToken, storeConfigWithFeaturesOn);
-
-            await braintreeIntegrationService.get3DS();
-
-            expect(braintreeScriptLoader.load3DS).toHaveBeenCalled();
-        });
-    });
-
     describe('mapToLegacyBillingAddress()', () => {
         const detailsMock = {
             username: 'johndoe',
