@@ -1,6 +1,6 @@
 import {
     BraintreeInitializationData,
-    BraintreeIntegrationService, BraintreeLocalPaymentMethodRedirectAction,
+    BraintreeIntegrationService,
     LocalPaymentInstance,
     LocalPaymentsPayload,
     NonInstantLocalPaymentMethods,
@@ -19,6 +19,7 @@ import {
     PaymentMethodInvalidError,
     PaymentRequestOptions,
     PaymentStrategy,
+    isRequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
@@ -136,18 +137,19 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 },
             };
 
-            await this.paymentIntegrationService.submitOrder();
-
             try {
+                await this.paymentIntegrationService.submitOrder();
                 await this.paymentIntegrationService.submitPayment({
                     methodId,
                     paymentData,
                 });
             } catch (error) {
-                if (this.isBraintreeTrustlyRedirectError(error)) {
+                if (isRequestError(error)) {
                     let redirectUrl = error.body.additional_action_required.data.redirect_url;
 
-                    return new Promise(() => window.location.replace(redirectUrl));
+                    if (redirectUrl) {
+                        return new Promise(() => window.location.replace(redirectUrl));
+                    }
                 }
 
                 this.toggleLoadingIndicator(false);
@@ -267,22 +269,5 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
      * */
     private isNonInstantPaymentMethod(methodId: string): boolean {
         return methodId.toUpperCase() in NonInstantLocalPaymentMethods;
-    }
-
-    private isBraintreeTrustlyRedirectError(error: unknown) {
-        if (typeof error !== 'object' || error === null) {
-            return false;
-        }
-
-        const { body }: Partial<BraintreeLocalPaymentMethodRedirectAction> = error;
-
-        if (!body) {
-            return false;
-        }
-
-        return (
-            body.status === 'additional_action_required' &&
-            !!body.additional_action_required?.data.redirect_url
-        );
     }
 }
