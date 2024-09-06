@@ -152,7 +152,6 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
         styles?: BraintreeFastlaneStylesOption,
     ): Promise<void> {
         const state = this._store.getState();
-        const storeConfig = state.config.getStoreConfigOrThrow();
         const cart = state.cart.getCartOrThrow();
         const countries = state.countries.getCountries() || [];
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
@@ -162,7 +161,7 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this._braintreeIntegrationService.initialize(clientToken, storeConfig);
+        this._braintreeIntegrationService.initialize(clientToken);
 
         const braintreeFastlane = await this._braintreeIntegrationService.getBraintreeFastlane(
             cart?.id,

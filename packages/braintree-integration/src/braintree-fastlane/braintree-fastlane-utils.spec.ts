@@ -15,7 +15,6 @@ import {
 import {
     getBillingAddress,
     getCart,
-    getConfig,
     getConsignment,
     getCountries,
     getCustomer,
@@ -40,7 +39,6 @@ describe('BraintreeFastlaneUtils', () => {
     const customer = getCustomer();
     const billingAddress = getBillingAddress();
     const paymentMethod = getBraintreeAcceleratedCheckoutPaymentMethod();
-    const storeConfig = getConfig().storeConfig;
     const consignments = [getConsignment()];
 
     const methodId = 'braintreeacceleratedcheckout';
@@ -138,7 +136,6 @@ describe('BraintreeFastlaneUtils', () => {
 
             expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethod.clientToken,
-                storeConfig,
             );
             expect(braintreeIntegrationService.getBraintreeFastlane).toHaveBeenCalledWith(
                 cart.id,

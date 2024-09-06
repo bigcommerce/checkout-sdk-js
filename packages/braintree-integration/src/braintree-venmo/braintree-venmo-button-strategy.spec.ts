@@ -202,10 +202,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
             await strategy.initialize(options);
 
-            expect(braintreeSdk.initialize).toHaveBeenCalledWith(
-                paymentMethodMock.clientToken,
-                paymentIntegrationService.getState().getStoreConfig(),
-            );
+            expect(braintreeSdk.initialize).toHaveBeenCalledWith(paymentMethodMock.clientToken);
         });
 
         it('initializes the braintree venmo checkout', async () => {
@@ -213,10 +210,7 @@ describe('BraintreeVenmoButtonStrategy', () => {
 
             await strategy.initialize(options);
 
-            expect(braintreeSdk.initialize).toHaveBeenCalledWith(
-                paymentMethodMock.clientToken,
-                paymentIntegrationService.getState().getStoreConfig(),
-            );
+            expect(braintreeSdk.initialize).toHaveBeenCalledWith(paymentMethodMock.clientToken);
             expect(braintreeSdk.getVenmoCheckoutOrThrow).toHaveBeenCalled();
         });
 

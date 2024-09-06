@@ -16,10 +16,7 @@ import {
     PaymentIntegrationService,
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import {
-    getConfig,
-    PaymentIntegrationServiceMock,
-} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { getBraintreeAchPaymentMethod } from './braintree-ach-payment-method.mock';
 import BraintreeAchPaymentStrategy from './braintree-ach-payment-strategy';
@@ -33,7 +30,6 @@ describe('BraintreeAchPaymentStrategy', () => {
     let strategy: BraintreeAchPaymentStrategy;
 
     const methodId = 'braintreeach';
-    const storeConfigMock = getConfig().storeConfig;
     const paymentMethodMock = getBraintreeAchPaymentMethod();
 
     const braintreeAchInitializationOptions = {
@@ -117,10 +113,7 @@ describe('BraintreeAchPaymentStrategy', () => {
         it('successfully initializes braintree sdk and braintree us bank account', async () => {
             await strategy.initialize({ methodId });
 
-            expect(braintreeSdk.initialize).toHaveBeenCalledWith(
-                paymentMethodMock.clientToken,
-                storeConfigMock,
-            );
+            expect(braintreeSdk.initialize).toHaveBeenCalledWith(paymentMethodMock.clientToken);
             expect(braintreeSdk.getUsBankAccount).toHaveBeenCalled();
         });
 

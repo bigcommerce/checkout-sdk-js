@@ -1,10 +1,6 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import {
-    NotInitializedError,
-    StoreConfig,
-} from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { getConfig } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { NotInitializedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import BraintreeScriptLoader from './braintree-script-loader';
 import BraintreeSdk from './braintree-sdk';
@@ -55,7 +51,6 @@ describe('BraintreeSdk', () => {
     let visaCheckoutSdkMock: VisaCheckoutSDK;
 
     const clientTokenMock = 'clientTokenMock';
-    const storeConfig: StoreConfig = getConfig().storeConfig;
 
     beforeEach(() => {
         braintreeWindowMock = window as BraintreeWindow;
@@ -77,7 +72,6 @@ describe('BraintreeSdk', () => {
 
         braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
 
-        jest.spyOn(braintreeScriptLoader, 'initialize').mockImplementation(jest.fn);
         jest.spyOn(braintreeScriptLoader, 'loadClient').mockImplementation(() =>
             Promise.resolve(clientCreatorMock),
         );
@@ -108,14 +102,6 @@ describe('BraintreeSdk', () => {
         jest.restoreAllMocks();
     });
 
-    describe('#initialize()', () => {
-        it('initializes braintree script loader', () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
-
-            expect(braintreeScriptLoader.initialize).toHaveBeenCalledWith(storeConfig);
-        });
-    });
-
     describe('#getClientToken()', () => {
         it('throws an error if client token was not provided', async () => {
             try {
@@ -126,7 +112,7 @@ describe('BraintreeSdk', () => {
         });
 
         it('creates braintree client module', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getClient();
 
@@ -137,7 +123,7 @@ describe('BraintreeSdk', () => {
         });
 
         it('returns the same client module while calling method for second time', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getClient();
             await braintreeSdk.getClient();
@@ -159,7 +145,7 @@ describe('BraintreeSdk', () => {
         it('creates data collector with provided options', async () => {
             const riskCorrelationId = 'sessionId';
 
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getDataCollectorOrThrow({ riskCorrelationId });
 
@@ -172,7 +158,7 @@ describe('BraintreeSdk', () => {
         });
 
         it('returns the same data collector on second method call', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getDataCollectorOrThrow();
             await braintreeSdk.getDataCollectorOrThrow();
@@ -186,7 +172,7 @@ describe('BraintreeSdk', () => {
                 return Promise.reject({ code: BraintreeErrorCode.KountNotEnabled });
             });
 
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             const result = await braintreeSdk.getDataCollectorOrThrow();
 
@@ -201,7 +187,7 @@ describe('BraintreeSdk', () => {
                 throw new Error();
             });
 
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             try {
                 await braintreeSdk.getDataCollectorOrThrow();
@@ -221,7 +207,7 @@ describe('BraintreeSdk', () => {
         });
 
         it('creates Braintree 3D Secure module', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getBraintreeThreeDS();
 
@@ -233,7 +219,7 @@ describe('BraintreeSdk', () => {
         });
 
         it('returns the same Braintree 3D Secure module while calling method for second time', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getBraintreeThreeDS();
             await braintreeSdk.getBraintreeThreeDS();
@@ -253,7 +239,7 @@ describe('BraintreeSdk', () => {
         });
 
         it('creates Braintree Google Payment module', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getBraintreeGooglePayment();
 
@@ -264,7 +250,7 @@ describe('BraintreeSdk', () => {
         });
 
         it('returns the same Braintree Google Payment module while calling method for second time', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getBraintreeGooglePayment();
             await braintreeSdk.getBraintreeGooglePayment();
@@ -284,7 +270,7 @@ describe('BraintreeSdk', () => {
         });
 
         it('creates braintree us bank account module', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getUsBankAccount();
 
@@ -295,7 +281,7 @@ describe('BraintreeSdk', () => {
         });
 
         it('returns the same us bank account module while calling method for second time', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getUsBankAccount();
             await braintreeSdk.getUsBankAccount();
@@ -310,7 +296,7 @@ describe('BraintreeSdk', () => {
         let braintreeVenmoCheckoutCreatorMock: BraintreeModuleCreator<BraintreeVenmoCheckout>;
 
         beforeEach(() => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
             braintreeVenmoCheckoutMock = getVenmoCheckoutMock();
             braintreeVenmoCheckoutCreatorMock = getModuleCreatorMock(braintreeVenmoCheckoutMock);
             braintreeScriptLoader.loadVenmoCheckout = jest
@@ -371,7 +357,7 @@ describe('BraintreeSdk', () => {
         });
 
         it('get braintree visa checkout', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getBraintreeVisaCheckout();
 
@@ -383,7 +369,7 @@ describe('BraintreeSdk', () => {
         });
 
         it('returns the same visa checkout module while calling method for second time', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getBraintreeVisaCheckout();
             await braintreeSdk.getBraintreeVisaCheckout();
@@ -395,7 +381,7 @@ describe('BraintreeSdk', () => {
 
     describe('#getVisaCheckoutSdk()', () => {
         it('get visa checkout sdk', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getVisaCheckoutSdk();
 
@@ -403,7 +389,7 @@ describe('BraintreeSdk', () => {
         });
 
         it('returns the same visa checkout sdk module while calling method for second time', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             await braintreeSdk.getVisaCheckoutSdk();
             await braintreeSdk.getVisaCheckoutSdk();
@@ -414,7 +400,7 @@ describe('BraintreeSdk', () => {
 
     describe('#deinitialize()', () => {
         it('teardowns data collector on deinitialize', async () => {
-            braintreeSdk.initialize(clientTokenMock, storeConfig);
+            braintreeSdk.initialize(clientTokenMock);
 
             const dataCollector = await braintreeSdk.getDataCollectorOrThrow();
 

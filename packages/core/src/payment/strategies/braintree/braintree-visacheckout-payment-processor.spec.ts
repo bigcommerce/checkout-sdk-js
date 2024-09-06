@@ -5,7 +5,6 @@ import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils
 
 import { Address } from '../../../address';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { getConfig } from '../../../config/configs.mock';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 
 import { BraintreeVisaCheckout } from './braintree';
@@ -22,8 +21,6 @@ import {
 describe('BraintreeVisaCheckoutPaymentProcessor', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;
     let requestSender: RequestSender;
-
-    const storeConfig = getConfig().storeConfig;
 
     beforeEach(() => {
         const braintreeScriptLoader = new BraintreeScriptLoader(createScriptLoader(), window);
@@ -60,9 +57,9 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
 
         it('initializes the sdk creator with the client token', () => {
             braintreeSDKCreator.initialize = jest.fn();
-            visaCheckoutPaymentProcessor.initialize('clientToken', storeConfig, {});
+            visaCheckoutPaymentProcessor.initialize('clientToken', {});
 
-            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith('clientToken', storeConfig);
+            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith('clientToken');
         });
 
         it('maps the init options to the ones required by the braintree visacheckout module', async () => {
@@ -71,7 +68,7 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
                 requestSender,
             );
 
-            await visaCheckoutPaymentProcessor.initialize('clientToken', storeConfig, {
+            await visaCheckoutPaymentProcessor.initialize('clientToken', {
                 locale: 'es_ES',
                 collectShipping: true,
                 subtotal: 15,

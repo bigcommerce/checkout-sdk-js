@@ -557,7 +557,6 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
 
         const state = this._paymentIntegrationService.getState();
-        const storeConfig = state.getStoreConfigOrThrow();
         const braintreePaymentMethod = state.getPaymentMethod(ApplePayGatewayType.BRAINTREE);
 
         if (
@@ -568,6 +567,6 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             return;
         }
 
-        this._braintreeSdk.initialize(braintreePaymentMethod.clientToken, storeConfig);
+        this._braintreeSdk.initialize(braintreePaymentMethod.clientToken);
     }
 }

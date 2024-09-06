@@ -44,8 +44,6 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             this._paymentMethodActionCreator.loadPaymentMethod(methodId),
         );
 
-        const storeConfig = state.config.getStoreConfigOrThrow();
-
         this._paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
         const { clientToken } = this._paymentMethod;
@@ -55,7 +53,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         }
 
         try {
-            this._braintreePaymentProcessor.initialize(clientToken, storeConfig, braintree);
+            this._braintreePaymentProcessor.initialize(clientToken, braintree);
 
             if (this._isHostedPaymentFormEnabled(methodId, gatewayId) && braintree?.form) {
                 await this._braintreePaymentProcessor.initializeHostedForm(braintree.form);
@@ -291,7 +289,6 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     private async _initializeBraintreeFastlaneOrThrow(methodId: string): Promise<void> {
         const state = this._store.getState();
         const cart = state.cart.getCartOrThrow();
-        const storeConfig = state.config.getStoreConfigOrThrow();
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
         const { clientToken, config } = paymentMethod;
 
@@ -299,7 +296,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this._braintreeIntegrationService.initialize(clientToken, storeConfig);
+        this._braintreeIntegrationService.initialize(clientToken);
 
         await this._braintreeIntegrationService.getBraintreeFastlane(cart.id, config.testMode);
     }

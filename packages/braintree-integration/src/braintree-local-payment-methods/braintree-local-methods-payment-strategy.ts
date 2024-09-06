@@ -68,7 +68,6 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         await this.paymentIntegrationService.loadPaymentMethod(gatewayId);
 
         const state = this.paymentIntegrationService.getState();
-        const storeConfig = state.getStoreConfigOrThrow();
         const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(gatewayId);
         const { clientToken, config, initializationData } = paymentMethod;
 
@@ -77,7 +76,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         }
 
         try {
-            this.braintreeIntegrationService.initialize(clientToken, storeConfig);
+            this.braintreeIntegrationService.initialize(clientToken);
             await this.braintreeIntegrationService.loadBraintreeLocalMethods(
                 this.getLocalPaymentInstance.bind(this),
                 config.merchantId || '',

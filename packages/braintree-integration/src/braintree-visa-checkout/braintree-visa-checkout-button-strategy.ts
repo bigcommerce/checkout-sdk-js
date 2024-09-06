@@ -51,9 +51,7 @@ export default class BraintreeVisaCheckoutButtonStrategy implements CheckoutButt
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const storeConfig = state.getStoreConfigOrThrow();
-
-        this.braintreeSdk.initialize(clientToken, storeConfig);
+        this.braintreeSdk.initialize(clientToken);
 
         const braintreeVisaCheckout = await this.braintreeSdk.getBraintreeVisaCheckout();
 

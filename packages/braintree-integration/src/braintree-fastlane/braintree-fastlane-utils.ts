@@ -49,7 +49,6 @@ export default class BraintreeFastlaneUtils {
     ) {
         const state = this.paymentIntegrationService.getState();
         const cart = state.getCart();
-        const storeConfig = state.getStoreConfigOrThrow();
         const { clientToken, config } =
             state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
 
@@ -59,7 +58,7 @@ export default class BraintreeFastlaneUtils {
 
         this.methodId = methodId;
 
-        this.braintreeIntegrationService.initialize(clientToken, storeConfig);
+        this.braintreeIntegrationService.initialize(clientToken);
 
         this.braintreeFastlane = await this.braintreeIntegrationService.getBraintreeFastlane(
             cart?.id,

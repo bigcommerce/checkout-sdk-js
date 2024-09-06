@@ -631,7 +631,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
 
         const state = this._paymentIntegrationService.getState();
-        const storeConfig = state.getStoreConfig();
         const braintreePaymentMethod = state.getPaymentMethod(ApplePayGatewayType.BRAINTREE);
 
         if (
@@ -642,6 +641,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             return;
         }
 
-        this._braintreeSdk.initialize(braintreePaymentMethod.clientToken, storeConfig);
+        this._braintreeSdk.initialize(braintreePaymentMethod.clientToken);
     }
 }

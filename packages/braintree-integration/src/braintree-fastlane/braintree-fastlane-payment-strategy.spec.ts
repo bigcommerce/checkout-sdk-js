@@ -560,6 +560,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
             };
 
             const tokenizeMethodMock = jest.fn().mockReturnValue({ id: tokenizationNonceMock });
+
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getBillingAddressOrThrow',

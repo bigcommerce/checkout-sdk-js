@@ -5,7 +5,6 @@ import {
     LegacyAddress,
     NotInitializedError,
     NotInitializedErrorType,
-    StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Overlay } from '@bigcommerce/checkout-sdk/ui';
 
@@ -58,9 +57,8 @@ export default class BraintreeIntegrationService {
         private overlay?: Overlay,
     ) {}
 
-    initialize(clientToken: string, storeConfig?: StoreConfig) {
+    initialize(clientToken: string) {
         this.clientToken = clientToken;
-        this.braintreeScriptLoader.initialize(storeConfig);
     }
 
     async getBraintreeFastlane(

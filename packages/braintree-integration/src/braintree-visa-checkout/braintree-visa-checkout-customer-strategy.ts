@@ -66,7 +66,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this.braintreeSdk.initialize(clientToken, storeConfig);
+        this.braintreeSdk.initialize(clientToken);
 
         const braintreeVisaCheckout = await this.braintreeSdk.getBraintreeVisaCheckout();
 

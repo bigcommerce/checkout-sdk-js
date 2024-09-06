@@ -45,9 +45,7 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const storeConfig = this._service.getState().getStoreConfig();
-
-        this._braintreeSdk.initialize(paymentMethod.clientToken, storeConfig);
+        this._braintreeSdk.initialize(paymentMethod.clientToken);
 
         const braintreeGooglePaymentInstance = await this._braintreeSdk.getBraintreeGooglePayment();
 

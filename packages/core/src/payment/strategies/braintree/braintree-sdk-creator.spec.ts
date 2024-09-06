@@ -1,7 +1,6 @@
 import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 import { NotInitializedError } from '../../../common/error/errors';
-import { getConfig } from '../../../config/configs.mock';
 
 import {
     BraintreeClient,
@@ -29,14 +28,10 @@ describe('Braintree SDK Creator', () => {
     let clientMock: BraintreeClient;
     let clientCreatorMock: BraintreeModuleCreator<BraintreeClient>;
 
-    const storeConfig = getConfig().storeConfig;
-
     beforeEach(() => {
         clientMock = getClientMock();
         clientCreatorMock = getModuleCreatorMock(clientMock);
         braintreeScriptLoader = {} as BraintreeScriptLoader;
-
-        braintreeScriptLoader.initialize = jest.fn();
     });
 
     describe('#constructor()', () => {
@@ -57,7 +52,7 @@ describe('Braintree SDK Creator', () => {
         it('uses the right arguments to create the client', async () => {
             const braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
 
-            braintreeSDKCreator.initialize('clientToken', storeConfig);
+            braintreeSDKCreator.initialize('clientToken');
             await braintreeSDKCreator.getClient();
 
             expect(clientCreatorMock.create).toHaveBeenCalledWith({ authorization: 'clientToken' });
@@ -66,7 +61,7 @@ describe('Braintree SDK Creator', () => {
         it('returns a copy of the client', async () => {
             const braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
 
-            braintreeSDKCreator.initialize('clientToken', storeConfig);
+            braintreeSDKCreator.initialize('clientToken');
 
             const client = await braintreeSDKCreator.getClient();
 
@@ -76,7 +71,7 @@ describe('Braintree SDK Creator', () => {
         it('always returns the same instance of the client', async () => {
             const braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
 
-            braintreeSDKCreator.initialize('clientToken', storeConfig);
+            braintreeSDKCreator.initialize('clientToken');
 
             const client1 = await braintreeSDKCreator.getClient();
             const client2 = await braintreeSDKCreator.getClient();
@@ -339,7 +334,7 @@ describe('Braintree SDK Creator', () => {
                 Promise.resolve(hostedFieldsCreatorMock),
             );
 
-            braintreeSDKCreator.initialize('client_token', storeConfig);
+            braintreeSDKCreator.initialize('client_token');
 
             expect(await braintreeSDKCreator.createHostedFields({ fields: {} })).toEqual(
                 hostedFieldsMock,
@@ -355,7 +350,7 @@ describe('Braintree SDK Creator', () => {
             braintreeScriptLoader.loadClient = jest.fn(() => Promise.resolve(clientCreatorMock));
             braintreeScriptLoader.loadHostedFields = jest.fn(() => Promise.reject(error));
 
-            braintreeSDKCreator.initialize('client_token', storeConfig);
+            braintreeSDKCreator.initialize('client_token');
 
             try {
                 await braintreeSDKCreator.createHostedFields({ fields: {} });
@@ -395,7 +390,7 @@ describe('Braintree SDK Creator', () => {
                 .mockReturnValue(Promise.resolve(getModuleCreatorMock(braintreeVenmoCheckout)));
 
             braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
-            braintreeSDKCreator.initialize('clientToken', storeConfig);
+            braintreeSDKCreator.initialize('clientToken');
         });
 
         it('calls teardown in all the dependencies', async () => {

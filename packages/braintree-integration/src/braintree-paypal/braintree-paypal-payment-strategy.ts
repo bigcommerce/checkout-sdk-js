@@ -263,9 +263,6 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     }
 
     private async loadPaypalCheckoutInstance() {
-        const state = this.paymentIntegrationService.getState();
-        const storeConfig = state.getStoreConfigOrThrow();
-
         const { clientToken, initializationData } = this.paymentMethod || {};
 
         if (!clientToken) {
@@ -273,7 +270,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
 
         try {
-            this.braintreeIntegrationService.initialize(clientToken, storeConfig);
+            this.braintreeIntegrationService.initialize(clientToken);
 
             const currencyCode = this.paymentIntegrationService.getState().getCartOrThrow()
                 .currency.code;
@@ -452,9 +449,6 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     }
 
     private async loadPaypal() {
-        const state = this.paymentIntegrationService.getState();
-        const storeConfig = state.getStoreConfigOrThrow();
-
         const { clientToken, initializationData } = this.paymentMethod || {};
 
         if (!clientToken || !initializationData) {
@@ -462,7 +456,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
 
         try {
-            this.braintreeIntegrationService.initialize(clientToken, storeConfig);
+            this.braintreeIntegrationService.initialize(clientToken);
 
             await this.braintreeIntegrationService.getPaypal();
         } catch (error) {

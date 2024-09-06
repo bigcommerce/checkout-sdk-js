@@ -44,6 +44,7 @@ import {
 import mapToBraintreeShippingAddressOverride from '../map-to-braintree-shipping-address-override';
 
 import BraintreePaypalPaymentStrategy from './braintree-paypal-payment-strategy';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 describe('BraintreePaypalPaymentStrategy', () => {
     let eventEmitter: EventEmitter;
@@ -115,7 +116,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(undefined);
 
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
-        jest.spyOn(braintreeScriptLoader, 'initialize').mockReturnValue(undefined);
         jest.spyOn(braintreeScriptLoader, 'loadClient').mockReturnValue(clientCreatorMock);
         jest.spyOn(braintreeScriptLoader, 'loadPaypal').mockReturnValue(braintreePaypalCreatorMock);
         jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockReturnValue(
@@ -208,7 +208,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                paymentIntegrationService.getState().getStoreConfig(),
             );
         });
 
@@ -458,6 +457,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
             strategy = new BraintreePaypalPaymentStrategy(
                 paymentIntegrationService,
                 braintreeIntegrationService,
+                new LoadingIndicator(),
             );
             braintreeIntegrationService.paypal = () =>
                 Promise.reject({ name: 'BraintreeError', message: 'my_message' });
@@ -713,6 +713,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 strategy = new BraintreePaypalPaymentStrategy(
                     paymentIntegrationService,
                     braintreeIntegrationService,
+                    new LoadingIndicator(),
                 );
 
                 jest.spyOn(state, 'getPaymentMethodOrThrow').mockImplementation(() => ({
