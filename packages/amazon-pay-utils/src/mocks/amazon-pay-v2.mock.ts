@@ -95,7 +95,7 @@ export function getAmazonPayV2ButtonParamsMock(
     };
 }
 
-export function getAmazonPayV2(region = 'us'): PaymentMethod<AmazonPayV2InitializeOptions> {
+export function getAmazonPayV2(region?: string): PaymentMethod<AmazonPayV2InitializeOptions> {
     return {
         config: {
             displayName: 'AMAZON PAY',
@@ -123,5 +123,20 @@ export function getAmazonPayV2(region = 'us'): PaymentMethod<AmazonPayV2Initiali
         method: 'credit-card',
         supportedCards: ['VISA', 'AMEX', 'MC'],
         type: 'PAYMENT_TYPE_API',
+    };
+}
+
+export function getAmazonPayV2PaymentProcessorMock() {
+    return {
+        initialize: jest.fn(() => Promise.resolve()),
+        deinitialize: jest.fn(() => Promise.resolve()),
+        bindButton: jest.fn(),
+        createButton: jest.fn(),
+        prepareCheckout: jest.fn(),
+        prepareCheckoutWithCreationRequestConfig: jest.fn(),
+        signout: jest.fn(() => Promise.resolve()),
+        renderAmazonPayButton: jest.fn(),
+        updateBuyNowFlowFlag: jest.fn(),
+        isPh4Enabled: jest.fn(() => true),
     };
 }

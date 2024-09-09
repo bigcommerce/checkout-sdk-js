@@ -4,11 +4,16 @@
     "overrides": [
         {
             "files": ["*.ts"],
-            "rules": {}
+            "rules": {
+                "@typescript-eslint/naming-convention": "off"
+            }
         },
         {
             "files": ["*.spec.ts"],
-            "rules": {}
+            "rules": {
+                "@typescript-eslint/consistent-type-assertions": "off",
+                "@typescript-eslint/no-unsafe-member-access": "off"
+            }
         }
     ]
 }

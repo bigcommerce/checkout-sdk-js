@@ -65,7 +65,7 @@ describe('AmazonPayV2ShippingStrategy', () => {
             new PaymentMethodRequestSender(requestSender);
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
-        paymentMethodMock = getAmazonPayV2();
+        paymentMethodMock = getAmazonPayV2('us');
 
         container = document.createElement('div');
         container.setAttribute('id', 'container');
@@ -178,6 +178,7 @@ describe('AmazonPayV2ShippingStrategy', () => {
         });
 
         it('does not binds edit address button if no paymentToken is present on initializationData', async () => {
+            paymentMethodMock = getAmazonPayV2();
             await strategy.initialize(initializeOptions);
 
             expect(amazonPayV2PaymentProcessor.bindButton).not.toHaveBeenCalled();
