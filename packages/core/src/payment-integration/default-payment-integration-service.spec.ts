@@ -88,7 +88,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let shippingCountryActionCreator: Pick<ShippingCountryActionCreator, 'loadCountries'>;
     let remoteCheckoutActionCreator: Pick<
         RemoteCheckoutActionCreator,
-        'initializePayment' | 'forgetCheckout'
+        'initializePayment' | 'forgetCheckout' | 'signOut'
     >;
     let paymentStrategyWidgetActionCreator: PaymentStrategyWidgetActionCreator;
 
@@ -270,6 +270,10 @@ describe('DefaultPaymentIntegrationService', () => {
             initializePayment: jest.fn(
                 async () => () => createAction('INITIALIZE_REMOTE_PAYMENT_REQUESTED'),
             ),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            signOut: jest.fn(async () => () => createAction('SIGN_OUT_REMOTE_CUSTOMER_REQUESTED')),
         };
 
         paymentStrategyWidgetActionCreator = {
@@ -623,6 +627,18 @@ describe('DefaultPaymentIntegrationService', () => {
             expect(remoteCheckoutActionCreator.forgetCheckout).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(
                 remoteCheckoutActionCreator.forgetCheckout('methodId'),
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#remoteCheckoutSignOut', () => {
+        it('remote checkout sign out', async () => {
+            const output = await subject.remoteCheckoutSignOut('methodId');
+
+            expect(remoteCheckoutActionCreator.signOut).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(
+                remoteCheckoutActionCreator.signOut('methodId'),
             );
             expect(output).toEqual(paymentIntegrationSelectors);
         });
