@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.655.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.654.0...v1.655.0) (2024-09-10)
+
+
+### Features
+
+* **payment:** PI-2592 Make remoteCheckoutActionCreator.signOut available for integration packages ([476d0b3](https://github.com/bigcommerce/checkout-sdk-js/commit/476d0b3ad09d22e3e0b65d1e746f8ac1fd561db5))
+
 ## [1.654.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.653.0...v1.654.0) (2024-09-10)
 
 
