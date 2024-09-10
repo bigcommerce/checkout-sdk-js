@@ -96,6 +96,11 @@ export default interface PaymentIntegrationService {
         options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors>;
 
+    remoteCheckoutSignOut(
+        methodId: string,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors>;
+
     validateCheckout(checkout?: Checkout, options?: RequestOptions): Promise<void>;
 
     handlePaymentHumanVerification(
