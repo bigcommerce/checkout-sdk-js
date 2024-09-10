@@ -5,6 +5,7 @@ import {
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
+    PaymentIntegrationSelectors,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -369,14 +370,24 @@ describe('AmazonPayV2PaymentProcessor', () => {
                 checkout: { getCheckout: jest.fn(() => getCheckout()) },
                 config: { getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig) },
                 paymentMethods: { getPaymentMethodOrThrow: jest.fn(() => getAmazonPayV2()) },
-            };
+            } as InternalCheckoutSelectors;
         };
+
+        const getPaymentIntegrationSelectorsMock = () =>
+            ({
+                getCart: jest.fn(() => getCart()),
+                getCheckout: jest.fn(() => getCheckout()),
+                getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
+                getPaymentMethodOrThrow: jest.fn(() => getAmazonPayV2()),
+            } as PaymentIntegrationSelectors);
+
         const renderAmazonPayButton = (
             containerId = CONTAINER_ID,
             decoupleCheckoutInitiation = false,
+            checkoutStateMock?: InternalCheckoutSelectors | PaymentIntegrationSelectors,
         ) =>
             processor.renderAmazonPayButton({
-                checkoutState,
+                checkoutState: checkoutStateMock || checkoutState,
                 containerId,
                 decoupleCheckoutInitiation,
                 methodId: 'amazonpay',
@@ -404,7 +415,20 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
             await processor.initialize(amazonPayV2Mock);
 
-            const amazonPayButton = renderAmazonPayButton();
+            const amazonPayButton = renderAmazonPayButton(CONTAINER_ID, false);
+
+            expect(amazonPayButton).toBe(parentContainer);
+        });
+
+        it('should return the buttonParentContainer with Payment integration service', async () => {
+            const parentContainer = document.createElement('div');
+            const checkoutStateMock = getPaymentIntegrationSelectorsMock();
+
+            jest.spyOn(document, 'createElement').mockReturnValueOnce(parentContainer);
+
+            await processor.initialize(amazonPayV2Mock);
+
+            const amazonPayButton = renderAmazonPayButton(CONTAINER_ID, false, checkoutStateMock);
 
             expect(amazonPayButton).toBe(parentContainer);
         });

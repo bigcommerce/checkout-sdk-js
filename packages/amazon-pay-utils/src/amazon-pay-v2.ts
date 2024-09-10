@@ -1,6 +1,7 @@
 import {
     Cart,
     Checkout,
+    PaymentIntegrationSelectors,
     PaymentMethod,
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -272,7 +273,7 @@ export interface InternalCheckoutSelectors {
         getStoreConfigOrThrow: () => StoreConfig;
     };
     paymentMethods: {
-        getPaymentMethodOrThrow: (methodId: string) => PaymentMethod<AmazonPayV2InitializeOptions>;
+        getPaymentMethodOrThrow: <T>(methodId: string) => PaymentMethod<T>;
     };
 }
 
@@ -286,10 +287,11 @@ export interface AmazonPayV2InitializeOptions {
     publicKeyId?: string;
     region?: string;
     isButtonMicroTextDisabled?: boolean;
+    paymentToken?: string;
 }
 
 export interface AmazonPayV2ButtonRenderingOptions {
-    checkoutState: InternalCheckoutSelectors;
+    checkoutState: InternalCheckoutSelectors | PaymentIntegrationSelectors;
     containerId: string;
     decoupleCheckoutInitiation?: boolean;
     methodId: string;
@@ -298,3 +300,14 @@ export interface AmazonPayV2ButtonRenderingOptions {
     placement: AmazonPayV2Placement;
     isButtonMicroTextDisabled?: boolean;
 }
+
+/* eslint-disable @typescript-eslint/naming-convention */
+export interface AmazonPayAdditionalActionErrorBody {
+    status: string;
+    additional_action_required: {
+        data: {
+            redirect_url: string;
+        };
+    };
+}
+/* eslint-enable @typescript-eslint/naming-convention */

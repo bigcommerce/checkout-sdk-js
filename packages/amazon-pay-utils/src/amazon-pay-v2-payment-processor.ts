@@ -7,6 +7,7 @@ import {
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
+    PaymentIntegrationSelectors,
     PaymentMethod,
     StoreProfile,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -30,6 +31,7 @@ import {
     RequestConfig,
 } from './amazon-pay-v2';
 import AmazonPayV2ScriptLoader from './amazon-pay-v2-script-loader';
+import { isInternalCheckoutSelectors } from './isInternalCheckoutSelectors';
 
 export default class AmazonPayV2PaymentProcessor {
     private amazonPayV2SDK?: AmazonPayV2SDK;
@@ -199,21 +201,18 @@ export default class AmazonPayV2PaymentProcessor {
     }
 
     private getAmazonPayV2ButtonOptions(
-        {
-            cart: { getCart },
-            checkout: { getCheckout },
-            config: { getStoreConfigOrThrow },
-            paymentMethods: { getPaymentMethodOrThrow },
-        }: InternalCheckoutSelectors,
+        checkoutState: InternalCheckoutSelectors | PaymentIntegrationSelectors,
         methodId: string,
         placement: AmazonPayV2Placement,
         decoupleCheckoutInitiation = false,
         buttonColor = AmazonPayV2ButtonColor.Gold,
     ): AmazonPayV2ButtonParameters {
+        const { getCart, getCheckout, getStoreConfigOrThrow, getPaymentMethodOrThrow } =
+            this.getCheckoutState(checkoutState);
         const {
             config: { merchantId, testMode },
             initializationData,
-        } = getPaymentMethodOrThrow(methodId);
+        } = getPaymentMethodOrThrow<AmazonPayV2InitializeOptions>(methodId);
 
         if (!initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -322,5 +321,25 @@ export default class AmazonPayV2PaymentProcessor {
             value,
             () => new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized),
         );
+    }
+
+    // INFO: need this mapping while we have strategies in core and in integration package at the same time
+    private getCheckoutState(
+        checkoutState: InternalCheckoutSelectors | PaymentIntegrationSelectors,
+    ): Pick<
+        PaymentIntegrationSelectors,
+        'getCart' | 'getCheckout' | 'getStoreConfigOrThrow' | 'getPaymentMethodOrThrow'
+    > {
+        if (isInternalCheckoutSelectors(checkoutState)) {
+            return {
+                getCart: checkoutState.cart.getCart,
+                getCheckout: checkoutState.checkout.getCheckout,
+                getStoreConfigOrThrow: checkoutState.config.getStoreConfigOrThrow,
+                getPaymentMethodOrThrow: <T>(methodId: string) =>
+                    checkoutState.paymentMethods.getPaymentMethodOrThrow<T>(methodId),
+            };
+        }
+
+        return checkoutState;
     }
 }

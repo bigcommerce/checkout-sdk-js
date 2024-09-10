@@ -32,8 +32,29 @@ describe('AmazonPayV2ScriptLoader', () => {
             });
         });
 
+        it('loads the USA SDK if no initialization data is passed on Payment Method', async () => {
+            const paymentMethodMock = {
+                ...getPaymentMethodMock(),
+                initializationData: undefined,
+            };
+
+            await amazonPayV2ScriptLoader.load(paymentMethodMock);
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                'https://static-na.payments-amazon.com/checkout.js',
+            );
+        });
+
+        it('loads the USA SDK if no region is passed on Payment Method', async () => {
+            await amazonPayV2ScriptLoader.load(getPaymentMethodMock('us'));
+
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+                'https://static-na.payments-amazon.com/checkout.js',
+            );
+        });
+
         it('loads the USA SDK if US region is passed on Payment Method', async () => {
-            await amazonPayV2ScriptLoader.load(getPaymentMethodMock());
+            await amazonPayV2ScriptLoader.load(getPaymentMethodMock('us'));
 
             expect(scriptLoader.loadScript).toHaveBeenCalledWith(
                 'https://static-na.payments-amazon.com/checkout.js',
