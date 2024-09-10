@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.654.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.653.0...v1.654.0) (2024-09-10)
+
+
+### Features
+
+* **payment:** PI-1617 Move AmazonPay payments strategy ([4e43119](https://github.com/bigcommerce/checkout-sdk-js/commit/4e43119d8edf399a4795966271efad1eb7ff0d0e))
+
 ## [1.653.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.652.1...v1.653.0) (2024-09-04)
 
 
