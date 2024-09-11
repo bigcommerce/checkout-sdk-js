@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.655.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.655.0...v1.655.1) (2024-09-11)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-4662 removed 3.104.0 BraintreeSdk version ([#2638](https://github.com/bigcommerce/checkout-sdk-js/issues/2638)) ([85e4aa1](https://github.com/bigcommerce/checkout-sdk-js/commit/85e4aa164981c10c661741c0fba097a36241ec8d))
+
 ## [1.655.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.654.0...v1.655.0) (2024-09-10)
 
 
