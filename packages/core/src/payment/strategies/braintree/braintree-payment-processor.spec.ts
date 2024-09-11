@@ -2,7 +2,6 @@ import { noop } from 'lodash';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { NotInitializedError } from '../../../common/error/errors';
-import { getConfig } from '../../../config/configs.mock';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import { NonceInstrument } from '../../payment';
 
@@ -30,7 +29,6 @@ describe('BraintreePaymentProcessor', () => {
     let braintreeHostedForm: BraintreeHostedForm;
 
     const clientToken = 'clientToken';
-    const storeConfig = getConfig().storeConfig;
 
     beforeEach(() => {
         braintreeSDKCreator = {} as BraintreeSDKCreator;
@@ -55,9 +53,9 @@ describe('BraintreePaymentProcessor', () => {
                 braintreeHostedForm,
             );
 
-            braintreePaymentProcessor.initialize(clientToken, storeConfig);
+            braintreePaymentProcessor.initialize(clientToken);
 
-            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(clientToken, storeConfig);
+            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(clientToken);
         });
     });
 
@@ -385,7 +383,7 @@ describe('BraintreePaymentProcessor', () => {
                 braintreeHostedForm,
             );
 
-            braintreePaymentProcessor.initialize(clientToken, storeConfig, {
+            braintreePaymentProcessor.initialize(clientToken, {
                 threeDSecure: {
                     ...getThreeDSecureOptionsMock(),
                     addFrame: (_error, _iframe, cancel) => {
@@ -396,7 +394,7 @@ describe('BraintreePaymentProcessor', () => {
         });
 
         it('throws if no 3DS modal handler was supplied on initialization', () => {
-            braintreePaymentProcessor.initialize('clientToken', storeConfig);
+            braintreePaymentProcessor.initialize('clientToken');
 
             return expect(
                 braintreePaymentProcessor.challenge3DSVerification(

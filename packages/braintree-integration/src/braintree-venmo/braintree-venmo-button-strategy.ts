@@ -1,5 +1,6 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { noop } from 'lodash';
+
 import {
     BraintreeError,
     BraintreeSdk,
@@ -10,6 +11,7 @@ import {
     PaypalButtonStyleColorOption,
     PaypalStyleOptions,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
+
 import {
     BuyNowCartCreationError,
     BuyNowCartRequestBody,
@@ -87,9 +89,6 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         }
 
         const state = this.paymentIntegrationService.getState();
-        // Info: does not use getStoreConfigOrThrow, because storeConfig is not available if
-        // cart is empty, so it causes issues on Product Details Page
-        const storeConfig = state.getStoreConfig();
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
         const { clientToken, initializationData }: PaymentMethod = paymentMethod;
         const { paymentButtonStyles } = initializationData;
@@ -107,7 +106,7 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
         }
 
         this.onError = braintreevenmo?.onError || this.handleError;
-        this.braintreeSdk.initialize(clientToken, storeConfig);
+        this.braintreeSdk.initialize(clientToken);
 
         try {
             const braintreeVenmoCheckout = await this.braintreeSdk.getVenmoCheckoutOrThrow();

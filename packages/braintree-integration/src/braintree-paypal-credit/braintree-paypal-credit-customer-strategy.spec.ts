@@ -26,10 +26,7 @@ import {
     PaymentIntegrationService,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import {
-    getConfig,
-    PaymentIntegrationServiceMock,
-} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { getPaypalSDKMock } from '../mocks/paypal.mock';
 
@@ -243,7 +240,6 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
 
             expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                paymentIntegrationService.getState().getStoreConfig(),
             );
         });
 
@@ -255,7 +251,6 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
 
             expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                paymentIntegrationService.getState().getStoreConfig(),
             );
             expect(braintreeIntegrationService.getPaypalCheckout).toHaveBeenCalled();
         });
@@ -459,7 +454,6 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
 
             jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValueOnce({
                 getPaymentMethodOrThrow: jest.fn().mockReturnValue(paymentMethodMock),
-                getStoreConfigOrThrow: jest.fn().mockReturnValue(getConfig().storeConfig),
                 getCartOrThrow: jest.fn().mockReturnValue({ currency: { code: 'AUD' } }),
             });
             await strategy.initialize(initializationOptions);

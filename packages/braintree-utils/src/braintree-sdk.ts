@@ -1,7 +1,6 @@
 import {
     NotInitializedError,
     NotInitializedErrorType,
-    StoreConfig,
     UnsupportedBrowserError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -34,8 +33,7 @@ export default class BraintreeSdk {
 
     constructor(private braintreeScriptLoader: BraintreeScriptLoader) {}
 
-    initialize(clientToken: string, storeConfig?: StoreConfig): void {
-        this.setBraintreeSdkVersion(storeConfig);
+    initialize(clientToken: string): void {
         this.setClientToken(clientToken);
     }
 
@@ -220,12 +218,6 @@ export default class BraintreeSdk {
      * Private methods
      *
      */
-    // TODO: update this method with code from this.braintreeScriptLoader.initialize and remove this.braintreeScriptLoader.initialize at all,
-    // therefore we can provide braintreeSdkVersion to different braintree script loader method to keep script loader without any side effect
-    private setBraintreeSdkVersion(storeConfig?: StoreConfig): void {
-        this.braintreeScriptLoader.initialize(storeConfig);
-    }
-
     private setClientToken(clientToken: string): void {
         this.clientToken = clientToken;
     }

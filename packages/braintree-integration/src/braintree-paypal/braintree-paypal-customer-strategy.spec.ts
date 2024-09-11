@@ -243,7 +243,6 @@ describe('BraintreePaypalCustomerStrategy', () => {
 
             expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                paymentIntegrationService.getState().getStoreConfig(),
             );
             expect(braintreeIntegrationService.getPaypalCheckout).toHaveBeenCalled();
         });

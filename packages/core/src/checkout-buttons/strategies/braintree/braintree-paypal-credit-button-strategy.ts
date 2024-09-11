@@ -90,9 +90,6 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
             currencyCode = state.cart.getCartOrThrow().currency.code;
         }
 
-        // Info: does not use getStoreConfigOrThrow, because storeConfig is not available if
-        // cart is empty, so it causes issues on Product Details Page
-        const storeConfig = state.config.getStoreConfig();
         const { clientToken, initializationData } = paymentMethod;
 
         if (!clientToken || !initializationData) {
@@ -116,7 +113,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         const paypalCheckoutErrorCallback = (error: BraintreeError) =>
             this._handleError(error, containerId, braintreepaypalcredit.onError);
 
-        this._braintreeSDKCreator.initialize(clientToken, storeConfig);
+        this._braintreeSDKCreator.initialize(clientToken);
         await this._braintreeSDKCreator.getPaypalCheckout(
             paypalCheckoutOptions,
             paypalCheckoutCallback,

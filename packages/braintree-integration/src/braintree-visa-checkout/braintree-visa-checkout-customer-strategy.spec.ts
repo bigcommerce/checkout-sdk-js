@@ -169,10 +169,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         it('initializes braintree integration service', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(braintreeSdk.initialize).toHaveBeenCalledWith(
-                paymentMethodMock.clientToken,
-                paymentIntegrationService.getState().getStoreConfig(),
-            );
+            expect(braintreeSdk.initialize).toHaveBeenCalledWith(paymentMethodMock.clientToken);
         });
 
         it('initializes braintree visa checkout', async () => {

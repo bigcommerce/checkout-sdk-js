@@ -4,7 +4,6 @@ import { CancellablePromise } from '@bigcommerce/checkout-sdk/payment-integratio
 
 import { Address } from '../../../address';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { StoreConfig } from '../../../config';
 import { OrderPaymentRequestBody } from '../../../order';
 import {
     PaymentArgumentInvalidError,
@@ -41,12 +40,8 @@ export default class BraintreePaymentProcessor {
         private _braintreeHostedForm: BraintreeHostedForm,
     ) {}
 
-    initialize(
-        clientToken: string,
-        storeConfig: StoreConfig,
-        options?: BraintreePaymentInitializeOptions,
-    ): void {
-        this._braintreeSDKCreator.initialize(clientToken, storeConfig);
+    initialize(clientToken: string, options?: BraintreePaymentInitializeOptions): void {
+        this._braintreeSDKCreator.initialize(clientToken);
         this._threeDSecureOptions = options?.threeDSecure;
     }
 

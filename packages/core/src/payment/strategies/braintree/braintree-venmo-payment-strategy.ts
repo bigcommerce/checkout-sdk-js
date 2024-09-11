@@ -2,7 +2,6 @@ import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-inte
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import { StoreConfig } from '../../../config';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
@@ -36,9 +35,8 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
         );
 
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
-        const storeConfig = state.config.getStoreConfigOrThrow();
 
-        await this._initializeBraintreeVenmo(paymentMethod, storeConfig);
+        await this._initializeBraintreeVenmo(paymentMethod);
 
         return this._store.getState();
     }
@@ -88,10 +86,7 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
         throw new PaymentMethodFailedError(error.message);
     }
 
-    private async _initializeBraintreeVenmo(
-        paymentMethod: PaymentMethod,
-        storeConfig: StoreConfig,
-    ): Promise<void> {
+    private async _initializeBraintreeVenmo(paymentMethod: PaymentMethod): Promise<void> {
         const { clientToken } = paymentMethod;
 
         if (!clientToken) {
@@ -99,7 +94,7 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
         }
 
         try {
-            this._braintreePaymentProcessor.initialize(clientToken, storeConfig);
+            this._braintreePaymentProcessor.initialize(clientToken);
             this._braintreeVenmoCheckout = await this._braintreePaymentProcessor.getVenmoCheckout();
         } catch (error) {
             this._handleError(error);

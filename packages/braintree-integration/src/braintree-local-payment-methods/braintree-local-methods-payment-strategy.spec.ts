@@ -163,7 +163,6 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
 
             expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                paymentIntegrationService.getState().getStoreConfig(),
             );
         });
 

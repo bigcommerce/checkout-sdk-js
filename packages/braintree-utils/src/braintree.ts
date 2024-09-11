@@ -7,7 +7,6 @@ import {
     PaypalSDK,
     PaypalStyleOptions,
 } from './paypal';
-import { BRAINTREE_SDK_LATEST_STABLE_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
 import {
     BraintreeClientCreator,
     BraintreeDataCollectorCreator,
@@ -46,11 +45,6 @@ export enum BraintreeEnv {
  * Common
  *
  */
-export interface BraintreeIntegrityValues {
-    [BRAINTREE_SDK_LATEST_STABLE_VERSION]?: string;
-    [BRAINTREE_SDK_STABLE_VERSION]?: string;
-}
-
 export enum BraintreeModuleName {
     Client = 'client',
     DataCollector = 'dataCollector',

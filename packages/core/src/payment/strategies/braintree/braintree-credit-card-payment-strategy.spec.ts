@@ -201,7 +201,6 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
             expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                store.getState().config.getStoreConfigOrThrow(),
                 options.braintree,
             );
             expect(braintreePaymentProcessorMock.initializeHostedForm).not.toHaveBeenCalled();
@@ -229,7 +228,6 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
             expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                store.getState().config.getStoreConfigOrThrow(),
                 options.braintree,
             );
             expect(braintreePaymentProcessorMock.initializeHostedForm).toHaveBeenCalledWith(

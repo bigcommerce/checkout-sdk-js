@@ -309,7 +309,6 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
 
             expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                store.getState().config.getStoreConfigOrThrow(),
             );
         });
 
@@ -321,7 +320,6 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
 
             expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
                 paymentMethodMock.clientToken,
-                store.getState().config.getStoreConfigOrThrow(),
             );
             expect(braintreeSDKCreator.getPaypalCheckout).toHaveBeenCalled();
         });

@@ -79,7 +79,6 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
                     this._visaCheckoutScriptLoader.load(config?.testMode),
                     this._braintreeVisaCheckoutPaymentProcessor.initialize(
                         clientToken,
-                        storeConfig,
                         initOptions,
                     ),
                 ]).then(([visaCheckout, visaInitOptions]) => {

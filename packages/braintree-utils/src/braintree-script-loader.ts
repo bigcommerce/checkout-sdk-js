@@ -1,12 +1,9 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import {
-    PaymentMethodClientUnavailableError,
-    StoreConfig,
-} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { BraintreeIntegrityValues } from './braintree';
-import { BRAINTREE_SDK_LATEST_STABLE_VERSION, BRAINTREE_SDK_STABLE_VERSION } from './sdk-verison';
+import { BRAINTREE_SDK_SCRIPTS_INTEGRITY } from './braintree-sdk-scripts-integrity';
+import { BRAINTREE_SDK_STABLE_VERSION } from './braintree-sdk-verison';
 import {
     BraintreeClientCreator,
     BraintreeDataCollectorCreator,
@@ -27,22 +24,12 @@ import {
 import { VisaCheckoutSDK } from './visacheckout';
 
 export default class BraintreeScriptLoader {
-    private braintreeSdkVersion: keyof BraintreeIntegrityValues = BRAINTREE_SDK_STABLE_VERSION;
+    private braintreeSdkVersion = BRAINTREE_SDK_STABLE_VERSION;
 
     constructor(
         private scriptLoader: ScriptLoader,
         private braintreeHostWindow: BraintreeHostWindow,
     ) {}
-
-    initialize(storeConfig?: StoreConfig) {
-        const features = storeConfig?.checkoutSettings.features;
-        const shouldUseStableBraintreeSdkVersion =
-            features && features['PAYPAL-4489.braintree_sdk_version_update'];
-
-        this.braintreeSdkVersion = shouldUseStableBraintreeSdkVersion
-            ? BRAINTREE_SDK_STABLE_VERSION
-            : BRAINTREE_SDK_LATEST_STABLE_VERSION;
-    }
 
     async loadClient(): Promise<BraintreeClientCreator> {
         return this.loadBraintreeModuleOrThrow<BraintreeClientCreator>(
@@ -172,16 +159,15 @@ export default class BraintreeScriptLoader {
 
         const scriptPath = `//js.braintreegateway.com/web/${this.braintreeSdkVersion}/js/${fileName}`;
 
-        const hash =
-            this.getIntegrityValuesByModuleName(braintreeModuleName)[this.braintreeSdkVersion];
+        const integrity = this.getIntegrityValuesByModuleName(braintreeModuleName);
 
         await this.scriptLoader.loadScript(
             scriptPath,
-            hash
+            integrity
                 ? {
                       async: true,
                       attributes: {
-                          integrity: hash,
+                          integrity,
                           crossorigin: 'anonymous',
                       },
                   }
@@ -204,108 +190,13 @@ export default class BraintreeScriptLoader {
         return this.braintreeHostWindow.braintree?.[braintreeModuleName];
     }
 
-    private getIntegrityValuesByModuleName(
-        moduleName: BraintreeModuleName,
-    ): BraintreeIntegrityValues {
-        switch (moduleName) {
-            case BraintreeModuleName.Client:
-                return {
-                    [BRAINTREE_SDK_STABLE_VERSION]:
-                        'sha384-3yDEuTgH/1oa552vNZ1Z9Z0UnaOsDuHatxP1RmgpdD8/ecN3YMcikbI1DM6QQVHv',
-                    [BRAINTREE_SDK_LATEST_STABLE_VERSION]:
-                        'sha384-26BXDNnJI23JYRyFBj4xe4sVNrUSSiSSu11kxVXNM/vEPONm4LuL00w6ZaTgQewt',
-                };
+    private getIntegrityValuesByModuleName(moduleName: BraintreeModuleName): string {
+        const integrity = BRAINTREE_SDK_SCRIPTS_INTEGRITY[moduleName];
 
-            case BraintreeModuleName.PaypalCheckout:
-                return {
-                    [BRAINTREE_SDK_STABLE_VERSION]:
-                        'sha384-kjA0K5UAS3wbxKm4CoMez5lxIYvzCQ+t/xtk0QiVIBIAhbXbV2YlWfr8uHJSY+tV',
-                    [BRAINTREE_SDK_LATEST_STABLE_VERSION]:
-                        'sha384-B+vzbZwnQtzWBthpkT4TXKUibO65tyeK7eCxSvpblgprTep2+IAXB2Cxxjrn710O',
-                };
-
-            case BraintreeModuleName.Paypal:
-                return {
-                    [BRAINTREE_SDK_STABLE_VERSION]:
-                        'sha384-HQ2o1BVFyVrkOzwU5aiPfSIa3ZhtHabNmBVf44kuw/+spM1L/6p7NbZXq4U5y4db',
-                    [BRAINTREE_SDK_LATEST_STABLE_VERSION]:
-                        'sha384-uyAGL1/3+XJAHnGoNy4eCoXdzJ4f7Ilzp+6w9PNnEjs6DCCz9WMyJjMN1gzc78U+',
-                };
-
-            case BraintreeModuleName.LocalPayment:
-                return {
-                    [BRAINTREE_SDK_STABLE_VERSION]:
-                        'sha384-/qKkzoquZWHgtiDkGqoBqyTMvVJd58HFDo+6iH/wLfKPE6M4aUIr9XG/eReN0a0H',
-                    [BRAINTREE_SDK_LATEST_STABLE_VERSION]:
-                        'sha384-LIvOEMkIVEwVuYBdVOQc1AC5YbGGlwyfUheS0ACK218D2STuVYQlZ4FyEPowAEfT',
-                };
-
-            case BraintreeModuleName.DataCollector:
-                return {
-                    [BRAINTREE_SDK_STABLE_VERSION]:
-                        'sha384-LHGVkS5dEY+LZmubY35YxkuLcNa5Ltw4vZOfCeRmVsCGQMjsvqdxZo4fBXNwf8fI',
-                    [BRAINTREE_SDK_LATEST_STABLE_VERSION]:
-                        'sha384-1bo9JDz+Kscthc085cCKWur8CLwUoBpoNyxsDi7932mCl0zFq3A5mv+FQLw9GHpV',
-                };
-
-            case BraintreeModuleName.UsBankAccount:
-                return {
-                    [BRAINTREE_SDK_STABLE_VERSION]:
-                        'sha384-F0KhPrZch56ryHzj0pyATKh49EtjJcnx7uaJRajLCcwVum/v1fP1kgGKG1P+MV/R',
-                    [BRAINTREE_SDK_LATEST_STABLE_VERSION]:
-                        'sha384-xmHBVaU+w74V+OebD3AaPONFxHUGMf+QRs8G/JxVPXNNP7MDa2jL0ICWHIe2tTfJ',
-                };
-
-            case BraintreeModuleName.GooglePayment:
-                return {
-                    [BRAINTREE_SDK_STABLE_VERSION]:
-                        'sha384-VdxBDsfslfvtDeGPAsXn88I9d2JmBCpdwrFaFO3+TiMA8j4/a4HU+BcviiXAptNV',
-                    [BRAINTREE_SDK_LATEST_STABLE_VERSION]:
-                        'sha384-WKDJl8mqoP82qZpMGH6AbZxnvXnSW8ILV4M64CyMLiugGMwu7LyP89wjCkHqsiBe',
-                };
-
-            case BraintreeModuleName.ThreeDSecure:
-                return {
-                    [BRAINTREE_SDK_STABLE_VERSION]:
-                        'sha384-nMqWo4zVYzGRrIh05fZ2bDOygNZVPHGlltJXuXoNw5WTPh8mUG9uCp7aBqtmm/e/',
-                    [BRAINTREE_SDK_LATEST_STABLE_VERSION]:
-                        'sha384-VQUlpGHzsGvs5XeiGFip7EXRsvoHWEXDVmgCacfbyieZI9mdBOqq3NSoyo28OCOB',
-                };
-
-            case BraintreeModuleName.VisaCheckout:
-                return {
-                    [BRAINTREE_SDK_STABLE_VERSION]:
-                        'sha384-WMsHC0Xqz6BN+fUfCghOBd9U0ZkrXDafAq1IZapnh1Z4iWtY86zJlG08lCaB4xF6',
-                    [BRAINTREE_SDK_LATEST_STABLE_VERSION]:
-                        'sha384-yx7mADfzTN0T43Q6rlH49LIg1EJ0iUZgBp/EczX9LXsUGkySgxrD+nWHQRBkyfoT',
-                };
-
-            case BraintreeModuleName.Venmo:
-                return {
-                    [BRAINTREE_SDK_STABLE_VERSION]:
-                        'sha384-d76HNGG5/6M30cuphYSP4hiRYVyFckvx/GV6Lc4u52JUxnJKPNAaGVXntJKHxVWX',
-                    [BRAINTREE_SDK_LATEST_STABLE_VERSION]:
-                        'sha384-QX4rPjoj1ZDhuG0aSyKs56lEKDqTMTcjYxUHY1SzO5VZDsqIE2NTkqot7KNSCyov',
-                };
-
-            case BraintreeModuleName.HostedFields:
-                return {
-                    [BRAINTREE_SDK_STABLE_VERSION]:
-                        'sha384-a87dK5DmKr/rtH//0rV44/rzz9Kl6AvNp5mMy8IYonT/f0ik5bUtX8bl/qeGOaSx',
-                    [BRAINTREE_SDK_LATEST_STABLE_VERSION]:
-                        'sha384-VvYBACfSu0Cr/J32uKmxG7AXcNOJE1AzIIL3kbikyS7YKp5fz5Is+NzNP/lyauNy',
-                };
-
-            case BraintreeModuleName.Fastlane:
-                return {
-                    [BRAINTREE_SDK_STABLE_VERSION]:
-                        'sha384-MunHz5V8FY0J9AOHGkmEjphvIKAI4WokwrT6w/NP9mwfBHhcq3LmDi7q1tIe1Aqk',
-                    [BRAINTREE_SDK_LATEST_STABLE_VERSION]:
-                        'sha384-9oGsZMRZwpGtDEDYa/dFt76dECqj1xAni9gIKgc3KfMIiRnR73nEeeUDLiBzxhFa',
-                };
-
-            default:
-                throw new Error('Unexpected fileName value');
+        if (!integrity) {
+            throw new Error('Unexpected fileName value');
         }
+
+        return integrity;
     }
 }

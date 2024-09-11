@@ -19,7 +19,6 @@ import {
     NotInitializedErrorType,
     UnsupportedBrowserError,
 } from '../../../common/error/errors';
-import { StoreConfig } from '../../../config';
 import { PaypalHostWindow } from '../paypal';
 
 export default class BraintreeSDKCreator {
@@ -39,9 +38,8 @@ export default class BraintreeSDKCreator {
         this._window = window;
     }
 
-    initialize(clientToken: string, storeConfig?: StoreConfig) {
+    initialize(clientToken: string) {
         this._clientToken = clientToken;
-        this._braintreeScriptLoader.initialize(storeConfig);
     }
 
     getClient(): Promise<BraintreeClient> {

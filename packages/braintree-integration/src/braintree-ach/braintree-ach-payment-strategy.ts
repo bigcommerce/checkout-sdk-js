@@ -55,7 +55,6 @@ export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
         await this.paymentIntegrationService.loadPaymentMethod(methodId);
 
         const state = this.paymentIntegrationService.getState();
-        const storeConfig = state.getStoreConfigOrThrow();
         const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
         const { clientToken, initializationData } = paymentMethod;
 
@@ -63,7 +62,7 @@ export default class BraintreeAchPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this.braintreeSdk.initialize(clientToken, storeConfig);
+        this.braintreeSdk.initialize(clientToken);
 
         try {
             this.usBankAccount = await this.braintreeSdk.getUsBankAccount();
