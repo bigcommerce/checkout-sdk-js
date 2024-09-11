@@ -206,7 +206,9 @@ export default class GooglePayGateway {
         };
     }
 
-    getPaymentGatewayParameters(): GooglePayGatewayParameters {
+    getPaymentGatewayParameters():
+        | Promise<GooglePayGatewayParameters>
+        | GooglePayGatewayParameters {
         const gatewayMerchantId = this.getGooglePayInitializationData().gatewayMerchantId;
 
         if (!gatewayMerchantId) {
