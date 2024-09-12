@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.655.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.655.1...v1.655.2) (2024-09-12)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-4649 fixed the issue with Braintree Google Pay button for Buy Now flow ([#2641](https://github.com/bigcommerce/checkout-sdk-js/issues/2641)) ([646ee26](https://github.com/bigcommerce/checkout-sdk-js/commit/646ee26740d3fc11932edf7d971ae4e7524e6276))
+
 ### [1.655.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.655.0...v1.655.1) (2024-09-11)
 
 
