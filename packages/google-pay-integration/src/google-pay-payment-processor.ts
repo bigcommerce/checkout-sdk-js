@@ -237,7 +237,7 @@ export default class GooglePayPaymentProcessor {
             ...baseCardPaymentMethod,
             tokenizationSpecification: {
                 type: 'PAYMENT_GATEWAY',
-                parameters: this._gateway.getPaymentGatewayParameters(),
+                parameters: await this._gateway.getPaymentGatewayParameters(),
             },
         };
         this._paymentDataRequest = {

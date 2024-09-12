@@ -1,4 +1,5 @@
 import {
+    BraintreeGooglePayment,
     BraintreeGooglePayThreeDSecure,
     BraintreeSdk,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -13,7 +14,6 @@ import {
 
 import assertIsGooglePayBraintreeTokenObject from '../guards/is-google-pay-braintree-token-object';
 import {
-    GooglePayBraintreeGatewayParameters,
     GooglePayCardDataResponse,
     GooglePayGatewayParameters,
     GooglePayInitializationData,
@@ -23,7 +23,7 @@ import {
 import GooglePayGateway from './google-pay-gateway';
 
 export default class GooglePayBraintreeGateway extends GooglePayGateway {
-    private _paymentGatewayParameters?: GooglePayBraintreeGatewayParameters;
+    private _braintreeGooglePayment?: BraintreeGooglePayment;
     private _service: PaymentIntegrationService;
 
     constructor(service: PaymentIntegrationService, private _braintreeSdk: BraintreeSdk) {
@@ -46,20 +46,7 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
         }
 
         this._braintreeSdk.initialize(paymentMethod.clientToken);
-
-        const braintreeGooglePaymentInstance = await this._braintreeSdk.getBraintreeGooglePayment();
-
-        const request = braintreeGooglePaymentInstance.createPaymentDataRequest({
-            merchantInfo: super.getMerchantInfo(),
-            transactionInfo: super.getTransactionInfo(),
-            cardRequirements: {
-                billingAddressRequired: true,
-                billingAddressFormat: 'FULL',
-            },
-            ...(await super.getRequiredData()),
-        });
-
-        this._paymentGatewayParameters = request.paymentMethodTokenizationParameters.parameters;
+        this._braintreeGooglePayment = await this._braintreeSdk.getBraintreeGooglePayment();
 
         return Promise.resolve();
     }
@@ -127,12 +114,28 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
         return super.getCardParameters();
     }
 
-    getPaymentGatewayParameters(): GooglePayGatewayParameters {
-        if (!this._paymentGatewayParameters) {
+    async getPaymentGatewayParameters(): Promise<GooglePayGatewayParameters> {
+        const braintreeGooglePayment = this.getBraintreeGooglePayment();
+
+        const request = braintreeGooglePayment.createPaymentDataRequest({
+            merchantInfo: super.getMerchantInfo(),
+            transactionInfo: super.getTransactionInfo(),
+            cardRequirements: {
+                billingAddressRequired: true,
+                billingAddressFormat: 'FULL',
+            },
+            ...(await super.getRequiredData()),
+        });
+
+        return request.paymentMethodTokenizationParameters.parameters;
+    }
+
+    private getBraintreeGooglePayment(): BraintreeGooglePayment {
+        if (!this._braintreeGooglePayment) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        return this._paymentGatewayParameters;
+        return this._braintreeGooglePayment;
     }
 
     private async _getBraintreeDeviceData(): Promise<string | undefined> {
