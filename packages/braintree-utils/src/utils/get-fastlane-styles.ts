@@ -28,6 +28,11 @@ function mergeFastlaneStyles(
                 uiStyles?.root?.backgroundColorPrimary,
             errorColor: styleSettings?.fastlaneRootSettingsErrorColor || uiStyles?.root?.errorColor,
             fontFamily: styleSettings?.fastlaneRootSettingsFontFamily || uiStyles?.root?.fontFamily,
+            fontSizeBase:
+                styleSettings?.fastlaneRootSettingsFontSize || uiStyles?.root?.fontSizeBase,
+            padding: styleSettings?.fastlaneRootSettingsPadding || uiStyles?.root?.padding,
+            primaryColor:
+                styleSettings?.fastlaneRootSettingsPrimaryColor || uiStyles?.root?.primaryColor,
         },
         input: {
             borderRadius:
@@ -35,8 +40,15 @@ function mergeFastlaneStyles(
             borderColor:
                 styleSettings?.fastlaneInputSettingsBorderColor || uiStyles?.input?.borderColor,
             focusBorderColor:
-                styleSettings?.fastlaneInputSettingsFocusBorderColor ||
+                styleSettings?.fastlaneInputSettingsFocusBorderBase ||
                 uiStyles?.input?.focusBorderColor,
+            backgroundColor:
+                styleSettings?.fastlaneInputSettingsBackgroundColor ||
+                uiStyles?.input?.backgroundColor,
+            borderWidth:
+                styleSettings?.fastlaneInputSettingsBorderWidth || uiStyles?.input?.borderWidth,
+            textColorBase:
+                styleSettings?.fastlaneInputSettingsTextColorBase || uiStyles?.input?.textColorBase,
         },
         toggle: {
             colorPrimary:
