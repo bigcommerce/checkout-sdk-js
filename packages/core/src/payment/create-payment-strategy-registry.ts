@@ -2,7 +2,6 @@ import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
 
-import { createAmazonPayV2PaymentProcessor } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import {
     BraintreeIntegrationService,
     BraintreeScriptLoader,
@@ -40,7 +39,6 @@ import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import StorefrontPaymentRequestSender from './storefront-payment-request-sender';
-import { AmazonPayV2PaymentStrategy } from './strategies/amazon-pay-v2';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BNZPaymentStrategy } from './strategies/bnz';
 import {
@@ -137,18 +135,6 @@ export default function createPaymentStrategyRegistry(
     const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);
     const hostedFormFactory = new HostedFormFactory(store);
     const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
-
-    registry.register(
-        PaymentStrategyType.AMAZONPAY,
-        () =>
-            new AmazonPayV2PaymentStrategy(
-                store,
-                paymentStrategyActionCreator,
-                orderActionCreator,
-                paymentActionCreator,
-                createAmazonPayV2PaymentProcessor(),
-            ),
-    );
 
     registry.register(
         PaymentStrategyType.BARCLAYS,

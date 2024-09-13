@@ -189,16 +189,16 @@ describe('PaymentStrategyActionCreator', () => {
             store = createCheckoutStore(
                 merge({}, state, {
                     paymentStrategies: {
-                        data: { amazonpay: { isInitialized: true } },
+                        data: { braintree: { isInitialized: true } },
                     },
                 }),
             );
 
-            const strategy = registry.get(PaymentStrategyType.AMAZONPAY);
+            const strategy = registry.get(PaymentStrategyType.BRAINTREE);
 
             jest.spyOn(strategy, 'initialize').mockReturnValue(Promise.resolve(store.getState()));
 
-            const actions = await from(actionCreator.initialize({ methodId: 'amazonpay' })(store))
+            const actions = await from(actionCreator.initialize({ methodId: 'braintree' })(store))
                 .pipe(toArray())
                 .toPromise();
 
@@ -324,11 +324,11 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('does not deinitialize if strategy is not initialized', async () => {
-            const strategy = registry.get(PaymentStrategyType.AMAZONPAY);
+            const strategy = registry.get(PaymentStrategyType.BRAINTREE);
 
             jest.spyOn(strategy, 'deinitialize').mockReturnValue(Promise.resolve(store.getState()));
 
-            await from(actionCreator.deinitialize({ methodId: 'amazonpay' })(store)).toPromise();
+            await from(actionCreator.deinitialize({ methodId: 'braintree' })(store)).toPromise();
 
             expect(strategy.deinitialize).not.toHaveBeenCalled();
         });
