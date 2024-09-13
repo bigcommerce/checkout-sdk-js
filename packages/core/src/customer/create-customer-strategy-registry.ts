@@ -2,8 +2,6 @@ import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
-import { createAmazonPayV2PaymentProcessor } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
-
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
@@ -27,7 +25,6 @@ import CustomerActionCreator from './customer-action-creator';
 import CustomerRequestSender from './customer-request-sender';
 import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategy } from './strategies';
-import { AmazonPayV2CustomerStrategy } from './strategies/amazon-pay-v2';
 import { BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
 import { DefaultCustomerStrategy } from './strategies/default';
 import { MasterpassCustomerStrategy } from './strategies/masterpass';
@@ -67,17 +64,6 @@ export default function createCustomerStrategyRegistry(
 
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
-
-    registry.register(
-        'amazonpay',
-        () =>
-            new AmazonPayV2CustomerStrategy(
-                store,
-                paymentMethodActionCreator,
-                remoteCheckoutActionCreator,
-                createAmazonPayV2PaymentProcessor(),
-            ),
-    );
 
     registry.register(
         'braintreevisacheckout',

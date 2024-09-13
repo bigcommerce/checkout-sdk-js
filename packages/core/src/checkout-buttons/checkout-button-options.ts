@@ -1,7 +1,6 @@
 import { RequestOptions } from '../common/http-request';
 
 import { CheckoutButtonMethodType } from './strategies';
-import { AmazonPayV2ButtonInitializeOptions } from './strategies/amazon-pay-v2';
 import {
     BraintreePaypalButtonInitializeOptions,
     BraintreePaypalCreditButtonInitializeOptions,
@@ -22,12 +21,6 @@ export interface CheckoutButtonOptions extends RequestOptions {
 
 export interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     [key: string]: unknown;
-
-    /**
-     * The options that are required to facilitate AmazonPayV2. They can be
-     * omitted unless you need to support AmazonPayV2.
-     */
-    amazonpay?: AmazonPayV2ButtonInitializeOptions;
 
     /**
      * The options that are required to facilitate Braintree PayPal. They can be
