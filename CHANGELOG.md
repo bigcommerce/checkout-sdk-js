@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.656.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.656.0...v1.656.1) (2024-09-13)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-4594 fixed mappig of fastlane styles that comes from backend ([#2645](https://github.com/bigcommerce/checkout-sdk-js/issues/2645)) ([4d487dc](https://github.com/bigcommerce/checkout-sdk-js/commit/4d487dc36d43219d794a17139d05c9126c07b078))
+
 ## [1.656.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.655.3...v1.656.0) (2024-09-13)
 
 
