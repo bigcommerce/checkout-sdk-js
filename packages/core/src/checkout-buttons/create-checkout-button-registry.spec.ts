@@ -6,7 +6,7 @@ import { Registry } from '../common/registry';
 
 import createCheckoutButtonRegistry from './create-checkout-button-registry';
 import { CheckoutButtonStrategy } from './strategies';
-import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
+// import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
 import {
     BraintreePaypalButtonStrategy,
     BraintreePaypalCreditButtonStrategy,
@@ -26,9 +26,9 @@ describe('createCheckoutButtonRegistry', () => {
         );
     });
 
-    it('returns registry with AmazonPayV2 registered', () => {
-        expect(registry.get('amazonpay')).toEqual(expect.any(AmazonPayV2ButtonStrategy));
-    });
+    // it('returns registry with AmazonPayV2 registered', () => {
+    //     expect(registry.get('amazonpay')).toEqual(expect.any(AmazonPayV2ButtonStrategy));
+    // });
 
     it('returns registry with Braintree PayPal registered', () => {
         expect(registry.get('braintreepaypal')).toEqual(expect.any(BraintreePaypalButtonStrategy));

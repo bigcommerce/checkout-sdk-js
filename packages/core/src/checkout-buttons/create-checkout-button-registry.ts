@@ -2,7 +2,7 @@ import { FormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
-import { createAmazonPayV2PaymentProcessor } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
+// import { createAmazonPayV2PaymentProcessor } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 import { CartRequestSender } from '../cart';
@@ -15,8 +15,8 @@ import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
 
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
-import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
-import AmazonPayV2RequestSender from './strategies/amazon-pay-v2/amazon-pay-v2-request-sender';
+// import { AmazonPayV2ButtonStrategy } from './strategies/amazon-pay-v2';
+// import AmazonPayV2RequestSender from './strategies/amazon-pay-v2/amazon-pay-v2-request-sender';
 import {
     BraintreePaypalButtonStrategy,
     BraintreePaypalCreditButtonStrategy,
@@ -44,19 +44,19 @@ export default function createCheckoutButtonRegistry(
         new BraintreeScriptLoader(scriptLoader, window),
     );
     const cartRequestSender = new CartRequestSender(requestSender);
-    const amazonPayV2RequestSender = new AmazonPayV2RequestSender(requestSender);
+    // const amazonPayV2RequestSender = new AmazonPayV2RequestSender(requestSender);
 
-    registry.register(
-        CheckoutButtonMethodType.AMAZON_PAY_V2,
-        () =>
-            new AmazonPayV2ButtonStrategy(
-                store,
-                checkoutActionCreator,
-                createAmazonPayV2PaymentProcessor(),
-                cartRequestSender,
-                amazonPayV2RequestSender,
-            ),
-    );
+    // registry.register(
+    //     CheckoutButtonMethodType.AMAZON_PAY_V2,
+    //     () =>
+    //         new AmazonPayV2ButtonStrategy(
+    //             store,
+    //             checkoutActionCreator,
+    //             createAmazonPayV2PaymentProcessor(),
+    //             cartRequestSender,
+    //             amazonPayV2RequestSender,
+    //         ),
+    // );
 
     registry.register(
         CheckoutButtonMethodType.BRAINTREE_PAYPAL,
