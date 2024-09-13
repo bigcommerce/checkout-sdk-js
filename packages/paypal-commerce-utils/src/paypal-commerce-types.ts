@@ -385,11 +385,17 @@ export interface PayPalFastlaneStylesOption {
         backgroundColorPrimary?: string;
         errorColor?: string;
         fontFamily?: string;
+        fontSizeBase?: string;
+        padding?: string;
+        primaryColor?: string;
     };
     input?: {
         borderRadius?: string;
         borderColor?: string;
         focusBorderColor?: string;
+        backgroundColor?: string;
+        borderWidth?: string;
+        textColorBase?: string;
     };
     toggle?: {
         colorPrimary?: string;
@@ -501,9 +507,15 @@ export interface FastlaneStylesSettings {
     fastlaneRootSettingsBackgroundColor?: string;
     fastlaneRootSettingsErrorColor?: string;
     fastlaneRootSettingsFontFamily?: string;
+    fastlaneRootSettingsPadding?: string;
+    fastlaneRootSettingsPrimaryColor?: string;
+    fastlaneRootSettingsFontSize?: string;
+    fastlaneInputSettingsBackgroundColor?: string;
     fastlaneInputSettingsBorderRadius?: string;
+    fastlaneInputSettingsBorderWidth?: string;
+    fastlaneInputSettingsTextColorBase?: string;
     fastlaneInputSettingsBorderColor?: string;
-    fastlaneInputSettingsFocusBorderColor?: string;
+    fastlaneInputSettingsFocusBorderBase?: string;
     fastlaneToggleSettingsColorPrimary?: string;
     fastlaneToggleSettingsColorSecondary?: string;
     fastlaneTextBodySettingsColor?: string;
