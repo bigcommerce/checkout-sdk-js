@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.657.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.657.0...v1.657.1) (2024-09-16)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-4610 Avoiding redundant order creation requests ([#2632](https://github.com/bigcommerce/checkout-sdk-js/issues/2632)) ([1336b4c](https://github.com/bigcommerce/checkout-sdk-js/commit/1336b4c4ad89c666a4171d82c8c72b9607ec735d))
+
 ## [1.657.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.656.1...v1.657.0) (2024-09-13)
 
 
