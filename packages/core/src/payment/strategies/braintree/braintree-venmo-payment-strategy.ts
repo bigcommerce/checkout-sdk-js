@@ -60,7 +60,11 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
                 this._paymentActionCreator.submitPayment(paymentData),
             );
         } catch (error) {
-            this._handleError(error);
+            if (error instanceof Error) {
+                this._handleError(error);
+            }
+
+            throw error;
         }
     }
 
@@ -97,7 +101,11 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
             this._braintreePaymentProcessor.initialize(clientToken);
             this._braintreeVenmoCheckout = await this._braintreePaymentProcessor.getVenmoCheckout();
         } catch (error) {
-            this._handleError(error);
+            if (error instanceof Error) {
+                this._handleError(error);
+            }
+
+            throw error;
         }
     }
 

@@ -1,3 +1,4 @@
+import { Action } from '@bigcommerce/data-store';
 import { createRequestSender, Response } from '@bigcommerce/request-sender';
 import { merge, omit } from 'lodash';
 import { from, of } from 'rxjs';
@@ -328,7 +329,9 @@ describe('OrderActionCreator', () => {
                     orderActionCreator.submitOrder(getOrderRequestBody())(store),
                 ).toPromise();
             } catch (error) {
-                expect(error.payload).toBeInstanceOf(SpamProtectionNotCompletedError);
+                expect((error as { payload: any }).payload).toBeInstanceOf(
+                    SpamProtectionNotCompletedError,
+                );
             }
         });
 
@@ -367,7 +370,7 @@ describe('OrderActionCreator', () => {
                 ).toPromise();
             } catch (action) {
                 expect(orderRequestSender.submitOrder).not.toHaveBeenCalled();
-                expect(action.payload).toBe('foo');
+                expect((action as Action).payload).toBe('foo');
             }
         });
 

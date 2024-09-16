@@ -298,7 +298,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(mockWindow.top.location.href).toBe('/checkout');
+                expect(mockWindow.top?.location.href).toBe('/checkout');
             });
         });
 
@@ -352,7 +352,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(mockWindow.top.location.href).toEqual(order.payment.redirectUrl);
+                expect(mockWindow.top?.location.href).toEqual(order.payment.redirectUrl);
             });
 
             it('does not redirect shopper if payment is already acknowledged', async () => {
@@ -382,7 +382,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(mockWindow.top.location.href).toBe('/checkout');
+                expect(mockWindow.top?.location.href).toBe('/checkout');
             });
 
             it('does not redirect shopper if payment is already finalized', async () => {
@@ -412,7 +412,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(mockWindow.top.location.href).toBe('/checkout');
+                expect(mockWindow.top?.location.href).toBe('/checkout');
             });
         });
 
@@ -437,7 +437,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(mockWindow.top.location.href).toEqual(order.payment.redirectUrl);
+                expect(mockWindow.top?.location.href).toEqual(order.payment.redirectUrl);
             });
         });
     });

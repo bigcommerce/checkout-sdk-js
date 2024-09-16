@@ -203,7 +203,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
             await this.processAdditionalAction(
-                this.handleEmptyPaymentIntentError(error, stripeError),
+                this.handleEmptyPaymentIntentError(error as Error, stripeError),
                 methodId,
                 shouldSaveInstrument,
                 shouldSetAsDefaultInstrument,
@@ -714,7 +714,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             try {
                 return await this.paymentIntegrationService.submitPayment(paymentPayload);
             } catch (error) {
-                throw this.handleEmptyPaymentIntentError(error, result?.error);
+                throw this.handleEmptyPaymentIntentError(error as Error, result?.error);
             }
         }
 

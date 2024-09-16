@@ -144,7 +144,12 @@ export default class HostedForm implements HostedFormInterface {
         } catch (error) {
             // Catch form validation error because we want to trigger `onEnter`
             // irrespective of the validation result.
-            if (error.name !== 'InvalidHostedFormValueError') {
+            if (
+                typeof error === 'object' &&
+                error &&
+                'name' in error &&
+                (error as { name: string }).name !== 'InvalidHostedFormValueError'
+            ) {
                 throw error;
             }
         }

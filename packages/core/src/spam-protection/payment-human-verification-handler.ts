@@ -13,7 +13,7 @@ import GoogleRecaptcha from './google-recaptcha';
 export default class PaymentHumanVerificationHandler {
     constructor(private _googleRecaptcha: GoogleRecaptcha) {}
 
-    handle(error: Error): Promise<PaymentAdditionalAction>;
+    handle(error: any): Promise<PaymentAdditionalAction>;
     handle(id: string, key: string): Promise<PaymentAdditionalAction>;
     async handle(errorOrId: Error | string, key?: string): Promise<PaymentAdditionalAction> {
         if (typeof errorOrId === 'string') {

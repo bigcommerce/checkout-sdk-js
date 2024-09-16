@@ -26,6 +26,9 @@ import {
     PaymentMethod,
     UnsupportedBrowserError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import isBraintreeError from '../is-braintree-error';
+
 import { WithBraintreeVenmoInitializeOptions } from './braintree-venmo-initialize-options';
 
 const getVenmoButtonStyle = (styles: PaypalStyleOptions): Record<string, string> => {
@@ -118,7 +121,9 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
                 styles,
             );
         } catch (error) {
-            this.handleInitializationVenmoError(error, containerId);
+            if (isBraintreeError(error) || error instanceof UnsupportedBrowserError) {
+                this.handleInitializationVenmoError(error, containerId);
+            }
         }
     }
 

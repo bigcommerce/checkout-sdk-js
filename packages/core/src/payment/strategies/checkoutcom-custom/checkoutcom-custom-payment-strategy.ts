@@ -46,7 +46,11 @@ export default class CheckoutcomCustomPaymentStrategy extends CreditCardPaymentS
             await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
             await form.submit(payment);
         } catch (error) {
-            return this._processResponse(error);
+            if (error instanceof RequestError) {
+                return this._processResponse(error);
+            }
+
+            throw error;
         }
 
         return this._store.dispatch(this._orderActionCreator.loadCurrentOrder());

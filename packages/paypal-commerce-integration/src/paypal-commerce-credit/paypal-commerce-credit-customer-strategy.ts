@@ -234,7 +234,11 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.paypalCommerceIntegrationService.updateOrder();
         } catch (error) {
-            throw new Error(error);
+            if (typeof error === 'string') {
+                throw new Error(error);
+            }
+
+            throw error;
         }
     }
 
@@ -249,7 +253,11 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.paypalCommerceIntegrationService.updateOrder();
         } catch (error) {
-            throw new Error(error);
+            if (typeof error === 'string') {
+                throw new Error(error);
+            }
+
+            throw error;
         }
     }
 
@@ -272,11 +280,15 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.paypalCommerceIntegrationService.updateOrder();
         } catch (error) {
-            throw new Error(error);
+            if (typeof error === 'string') {
+                throw new Error(error);
+            }
+
+            throw error;
         }
     }
 
-    private handleError(error: Error) {
+    private handleError(error: unknown) {
         if (typeof this.onError === 'function') {
             this.onError(error);
         } else {

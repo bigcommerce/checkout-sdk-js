@@ -1,5 +1,5 @@
 import { BraintreeError } from './braintree';
 
-export default function isBraintreeError(error: BraintreeError | Error): error is BraintreeError {
-    return error.name === 'BraintreeError';
+export default function isBraintreeError(error: unknown): error is BraintreeError {
+    return (error as BraintreeError).name === 'BraintreeError';
 }

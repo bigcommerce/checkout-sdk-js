@@ -120,7 +120,7 @@ export default class BraintreeHostedForm {
                 bin: tokenizationPayload.details?.bin,
             };
         } catch (error) {
-            const errors = this._mapTokenizeError(error);
+            const errors = this._mapTokenizeError(error as BraintreeHostedFormError);
 
             if (errors) {
                 this._formOptions?.onValidate?.({
@@ -153,7 +153,7 @@ export default class BraintreeHostedForm {
                 bin: tokenizationPayload.details?.bin,
             };
         } catch (error) {
-            const errors = this._mapTokenizeError(error, true);
+            const errors = this._mapTokenizeError(error as BraintreeHostedFormError, true);
 
             if (errors) {
                 this._formOptions?.onValidate?.({

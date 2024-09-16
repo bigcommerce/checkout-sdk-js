@@ -21,7 +21,8 @@ export default class SignInEmailRequestSender {
         return this._requestSender.post(url, {
             body: {
                 email,
-                redirect_url: redirectUrl || parseUrl(window.top.location.href).pathname,
+                redirect_url:
+                    redirectUrl || parseUrl(window.top ? window.top.location.href : '').pathname,
             },
             headers,
             timeout,

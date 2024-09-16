@@ -107,7 +107,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         error = err;
                     }
 
-                    if (error) {
+                    if (error && error instanceof Error) {
                         if (this._isMounted) {
                             payment.unmount();
                             this._isMounted = false;
@@ -248,7 +248,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         try {
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            return this._processAdditionalAction(error, methodId);
+            if (error instanceof Error) {
+                return this._processAdditionalAction(error, methodId);
+            }
+
+            throw error;
         }
     }
 
@@ -269,12 +273,16 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         try {
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            return this._processAdditionalAction(
-                error,
-                methodId,
-                shouldSaveInstrument,
-                shouldSetAsDefaultInstrument,
-            );
+            if (error instanceof Error) {
+                return this._processAdditionalAction(
+                    error,
+                    methodId,
+                    shouldSaveInstrument,
+                    shouldSetAsDefaultInstrument,
+                );
+            }
+
+            throw error;
         }
     }
 
@@ -323,11 +331,15 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            return this._processVaultedAdditionalAction(
-                error,
-                methodId,
-                shouldSetAsDefaultInstrument,
-            );
+            if (error instanceof Error) {
+                return this._processVaultedAdditionalAction(
+                    error,
+                    methodId,
+                    shouldSetAsDefaultInstrument,
+                );
+            }
+
+            throw error;
         }
     }
 

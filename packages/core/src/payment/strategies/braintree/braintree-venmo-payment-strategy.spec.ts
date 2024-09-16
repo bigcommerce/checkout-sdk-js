@@ -2,15 +2,13 @@ import { Action, createAction } from '@bigcommerce/data-store';
 import { omit } from 'lodash';
 import { Observable, of } from 'rxjs';
 
-import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
-
 import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
+import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -143,7 +141,7 @@ describe('BraintreeVenmoPaymentStrategy', () => {
             try {
                 await braintreeVenmoPaymentStrategy.initialize(options);
             } catch (error) {
-                expect(error.message).toBe('my_message');
+                expect((error as Error).message).toBe('my_message');
             }
         });
     });
@@ -245,7 +243,11 @@ describe('BraintreeVenmoPaymentStrategy', () => {
 
             await expect(
                 braintreeVenmoPaymentStrategy.execute(orderRequestBody, options),
-            ).rejects.toEqual(expect.any(PaymentMethodCancelledError));
+            ).rejects.toEqual({
+                code: 'PAYPAL_POPUP_CLOSED',
+                message: 'my_message',
+                name: 'BraintreeError',
+            });
             expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
         });
 
@@ -273,7 +275,7 @@ describe('BraintreeVenmoPaymentStrategy', () => {
 
             await expect(
                 braintreeVenmoPaymentStrategy.execute(orderRequestBody, options),
-            ).rejects.toEqual(expect.any(PaymentMethodFailedError));
+            ).rejects.toEqual({ message: 'my_message', name: 'BraintreeError' });
             expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
         });
 
