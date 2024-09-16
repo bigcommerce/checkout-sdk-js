@@ -192,7 +192,7 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                 },
             };
 
-            this.paymentIntegrationService.submitPayment(paymentPayload);
+            await this.paymentIntegrationService.submitPayment(paymentPayload);
         }
     }
 
