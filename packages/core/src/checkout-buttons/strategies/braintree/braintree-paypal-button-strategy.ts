@@ -18,7 +18,6 @@ import {
     BraintreeTokenizePayload,
     mapToBraintreeShippingAddressOverride,
 } from '../../../payment/strategies/braintree';
-import isBraintreeError from '../../../payment/strategies/braintree/is-braintree-error';
 import { PaypalAuthorizeData, PaypalHostWindow } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
@@ -250,8 +249,8 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                 intent: paymentMethod.initializationData?.intent,
             });
         } catch (error) {
-            if (onPaymentError && (isBraintreeError(error) || error instanceof StandardError)) {
-                onPaymentError(error);
+            if (onPaymentError) {
+                onPaymentError(error as BraintreeError | StandardError);
             }
 
             throw error;
@@ -306,8 +305,8 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
 
             return tokenizePayload;
         } catch (error) {
-            if (onError && (isBraintreeError(error) || error instanceof StandardError)) {
-                onError(error);
+            if (onError) {
+                onError(error as BraintreeError | StandardError);
             }
 
             throw error;

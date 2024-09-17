@@ -30,7 +30,6 @@ import { BraintreePaypalCreditButtonInitializeOptions } from './braintree-paypal
 import getValidButtonStyle from './get-valid-button-style';
 import mapToLegacyBillingAddress from './map-to-legacy-billing-address';
 import mapToLegacyShippingAddress from './map-to-legacy-shipping-address';
-import isBraintreeError from '../../../payment/strategies/braintree/is-braintree-error';
 
 type BuyNowInitializeOptions = Pick<
     BraintreePaypalCreditButtonInitializeOptions,
@@ -229,8 +228,8 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
                 intent: paymentMethod.initializationData?.intent,
             });
         } catch (error) {
-            if (onPaymentError && (isBraintreeError(error) || error instanceof StandardError)) {
-                onPaymentError(error);
+            if (onPaymentError) {
+                onPaymentError(error as BraintreeError | StandardError);
             }
 
             throw error;
@@ -285,8 +284,8 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
 
             return tokenizePayload;
         } catch (error) {
-            if (onError && (isBraintreeError(error) || error instanceof StandardError)) {
-                onError(error);
+            if (onError) {
+                onError(error as BraintreeError | StandardError);
             }
 
             throw error;
