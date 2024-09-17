@@ -29,7 +29,7 @@ import {
 import { WithBraintreeVenmoInitializeOptions } from './braintree-venmo-initialize-options';
 
 const getVenmoButtonStyle = (styles: PaypalStyleOptions): Record<string, string> => {
-    const { color } = styles;
+    const { color, height } = styles;
 
     const colorParser = (c: string) => {
         if (c === PaypalButtonStyleColorOption.WHITE) {
@@ -52,7 +52,7 @@ const getVenmoButtonStyle = (styles: PaypalStyleOptions): Record<string, string>
         borderRadius: '4px',
         cursor: 'pointer',
         transition: '0.2s ease',
-        minHeight: `${DefaultCheckoutButtonHeight}px`,
+        minHeight: `${height || DefaultCheckoutButtonHeight}px`,
         minWidth: '150px',
         height: '100%',
         width: '100%',
