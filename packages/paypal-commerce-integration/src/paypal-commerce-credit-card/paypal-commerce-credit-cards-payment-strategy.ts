@@ -44,6 +44,7 @@ import {
 
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
+    LiabilityShiftEnum,
     PayPalCommerceCardFields,
     PayPalCommerceCardFieldsConfig,
     PayPalCommerceCardFieldsOnApproveData,
@@ -120,7 +121,6 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = payload;
         const { methodId, paymentData } = payment || {};
-
         if (!payment || !methodId) {
             throw new PaymentArgumentInvalidError(['payment']);
         }
@@ -222,8 +222,17 @@ export default class PayPalCommerceCreditCardsPaymentStrategy implements Payment
 
         const cardFieldsConfig: PayPalCommerceCardFieldsConfig = {
             style: this.getInputStyles(styles),
-            onApprove: ({ orderID, vaultSetupToken }: PayPalCommerceCardFieldsOnApproveData) =>
-                this.handleApprove({ orderID, vaultSetupToken }),
+            onApprove: ({
+                liabilityShift,
+                orderID,
+                vaultSetupToken,
+            }: PayPalCommerceCardFieldsOnApproveData) => {
+                if (liabilityShift !== LiabilityShiftEnum.Possible) {
+                    throw new Error();
+                }
+
+                return this.handleApprove({ orderID, vaultSetupToken });
+            },
             onError: () => {
                 throw new PaymentMethodFailedError();
             },

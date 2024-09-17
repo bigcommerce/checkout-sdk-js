@@ -35,6 +35,7 @@ import {
 } from '../mocks';
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
+    LiabilityShiftEnum,
     PayPalCommerceCardFieldsConfig,
     PayPalCommerceHostWindow,
     PayPalSDK,
@@ -207,7 +208,10 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             (options: PayPalCommerceCardFieldsConfig) => {
                 eventEmitter.on('onApprove', () => {
                     if (options.onApprove) {
-                        options.onApprove({ orderID: hostedFormOrderId });
+                        options.onApprove({
+                            orderID: hostedFormOrderId,
+                            liabilityShift: LiabilityShiftEnum.Possible,
+                        });
                     }
                 });
 
@@ -463,6 +467,30 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             });
         });
 
+        it('does not submit order and payment if 3ds failed', async () => {
+            jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
+                (options: PayPalCommerceCardFieldsConfig) => {
+                    eventEmitter.on('onApprove', () => {
+                        if (options.onApprove) {
+                            options.onApprove({
+                                orderID: hostedFormOrderId,
+                                liabilityShift: LiabilityShiftEnum.No,
+                            });
+                        }
+                    });
+
+                    return cardFieldsInstanceMock;
+                },
+            );
+            await strategy.initialize(initializationOptions);
+            try {
+                eventEmitter.emit('onApprove');
+                await new Promise((resolve) => process.nextTick(resolve));
+            } catch (error) {
+                expect(error).toBeDefined();
+            }
+        });
+
         it('submits payment with vaulted(stored) instrument', async () => {
             jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
                 (options: PayPalCommerceCardFieldsConfig) => {
@@ -471,6 +499,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                             options.onApprove({
                                 orderID: 'orderId',
                                 vaultSetupToken: 'vaultSetupToken',
+                                liabilityShift: LiabilityShiftEnum.Possible,
                             });
                         }
                     });
