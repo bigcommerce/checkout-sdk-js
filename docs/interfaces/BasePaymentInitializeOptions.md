@@ -15,7 +15,6 @@ current checkout flow.
 
 ### Properties
 
-- [amazonpay](BasePaymentInitializeOptions.md#amazonpay)
 - [bluesnapv2](BasePaymentInitializeOptions.md#bluesnapv2)
 - [braintree](BasePaymentInitializeOptions.md#braintree)
 - [braintreevisacheckout](BasePaymentInitializeOptions.md#braintreevisacheckout)
@@ -32,15 +31,6 @@ current checkout flow.
 - [timeout](BasePaymentInitializeOptions.md#timeout)
 
 ## Properties
-
-### amazonpay
-
-• `Optional` **amazonpay**: [`AmazonPayV2PaymentInitializeOptions`](AmazonPayV2PaymentInitializeOptions.md)
-
-The options that are required to initialize the AmazonPayV2 payment
-method. They can be omitted unless you need to support AmazonPayV2.
-
-___
 
 ### bluesnapv2
 

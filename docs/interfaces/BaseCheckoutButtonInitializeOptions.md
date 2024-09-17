@@ -16,7 +16,6 @@
 
 ### Properties
 
-- [amazonpay](BaseCheckoutButtonInitializeOptions.md#amazonpay)
 - [braintreepaypal](BaseCheckoutButtonInitializeOptions.md#braintreepaypal)
 - [braintreepaypalcredit](BaseCheckoutButtonInitializeOptions.md#braintreepaypalcredit)
 - [containerId](BaseCheckoutButtonInitializeOptions.md#containerid)
@@ -27,15 +26,6 @@
 - [timeout](BaseCheckoutButtonInitializeOptions.md#timeout)
 
 ## Properties
-
-### amazonpay
-
-• `Optional` **amazonpay**: `AmazonPayV2ButtonParams` \| `AmazonPayV2NewButtonParams` \| [`WithBuyNowFeature`](WithBuyNowFeature.md)
-
-The options that are required to facilitate AmazonPayV2. They can be
-omitted unless you need to support AmazonPayV2.
-
-___
 
 ### braintreepaypal
 

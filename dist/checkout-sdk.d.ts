@@ -650,11 +650,6 @@ declare interface BaseAccountInstrument extends BaseInstrument {
 declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     [key: string]: unknown;
     /**
-     * The options that are required to facilitate AmazonPayV2. They can be
-     * omitted unless you need to support AmazonPayV2.
-     */
-    amazonpay?: AmazonPayV2ButtonInitializeOptions;
-    /**
      * The options that are required to facilitate Braintree PayPal. They can be
      * omitted unless you need to support Braintree PayPal.
      */
@@ -690,11 +685,6 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
  */
 declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
     [key: string]: unknown;
-    /**
-     * The options that are required to initialize the customer step of checkout
-     * when using AmazonPayV2.
-     */
-    amazonpay?: AmazonPayV2CustomerInitializeOptions;
     /**
      * The options that are required to facilitate Braintree Credit. They can be
      * omitted unless you need to support Braintree Credit.
@@ -764,11 +754,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * consumption.
      */
     creditCard?: CreditCardPaymentInitializeOptions;
-    /**
-     * The options that are required to initialize the AmazonPayV2 payment
-     * method. They can be omitted unless you need to support AmazonPayV2.
-     */
-    amazonpay?: AmazonPayV2PaymentInitializeOptions;
     /**
      * The options that are required to initialize the BlueSnapV2 payment method.
      * They can be omitted unless you need to support BlueSnapV2.
@@ -1934,7 +1919,7 @@ declare interface CheckoutButtonErrorsState {
     deinitializeError?: Error;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -4431,7 +4416,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithBraintreeFastlaneCustomerInitializeOptions & WithGooglePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions & WithStripeUPECustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithAmazonPayV2CustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithBraintreeFastlaneCustomerInitializeOptions & WithGooglePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions & WithStripeUPECustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -7083,7 +7068,7 @@ declare class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest;
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -8387,6 +8372,18 @@ declare interface WithAdyenV3PaymentInitializeOptions {
     adyenv3?: AdyenV3PaymentInitializeOptions;
 }
 
+declare interface WithAmazonPayV2ButtonInitializeOptions {
+    amazonpay?: AmazonPayV2ButtonInitializeOptions;
+}
+
+declare interface WithAmazonPayV2CustomerInitializeOptions {
+    amazonpay?: AmazonPayV2CustomerInitializeOptions;
+}
+
+declare interface WithAmazonPayV2PaymentInitializeOptions {
+    amazonpay?: AmazonPayV2PaymentInitializeOptions;
+}
+
 declare interface WithApplePayButtonInitializeOptions {
     applepay?: ApplePayButtonInitializeOptions;
 }
@@ -8468,7 +8465,7 @@ declare interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
      * The options that are required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
     };
 }
 

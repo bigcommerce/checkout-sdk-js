@@ -46,7 +46,7 @@ The options that are required to initialize Buy Now functionality.
 
 | Name | Type |
 | :------ | :------ |
-| `getBuyNowCartRequestBody?` | () => `void` \| [`BuyNowCartRequestBody`](BuyNowCartRequestBody.md) |
+| `getBuyNowCartRequestBody?` | () => `void` \| `default` |
 
 ___
 

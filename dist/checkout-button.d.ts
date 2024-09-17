@@ -63,11 +63,6 @@ declare interface ApplePayButtonInitializeOptions {
 declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     [key: string]: unknown;
     /**
-     * The options that are required to facilitate AmazonPayV2. They can be
-     * omitted unless you need to support AmazonPayV2.
-     */
-    amazonpay?: AmazonPayV2ButtonInitializeOptions;
-    /**
      * The options that are required to facilitate Braintree PayPal. They can be
      * omitted unless you need to support Braintree PayPal.
      */
@@ -214,7 +209,7 @@ declare class CheckoutButtonErrorSelector {
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -637,6 +632,10 @@ declare enum StyleButtonSize {
     Large = "large"
 }
 
+declare interface WithAmazonPayV2ButtonInitializeOptions {
+    amazonpay?: AmazonPayV2ButtonInitializeOptions;
+}
+
 declare interface WithApplePayButtonInitializeOptions {
     applepay?: ApplePayButtonInitializeOptions;
 }
@@ -654,7 +653,7 @@ declare interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
      * The options that are required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
     };
 }
 

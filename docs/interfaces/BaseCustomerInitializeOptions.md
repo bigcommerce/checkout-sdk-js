@@ -24,7 +24,6 @@ information in order to initialize the customer step of checkout.
 
 ### Properties
 
-- [amazonpay](BaseCustomerInitializeOptions.md#amazonpay)
 - [braintreepaypalcredit](BaseCustomerInitializeOptions.md#braintreepaypalcredit)
 - [braintreevisacheckout](BaseCustomerInitializeOptions.md#braintreevisacheckout)
 - [masterpass](BaseCustomerInitializeOptions.md#masterpass)
@@ -33,15 +32,6 @@ information in order to initialize the customer step of checkout.
 - [timeout](BaseCustomerInitializeOptions.md#timeout)
 
 ## Properties
-
-### amazonpay
-
-• `Optional` **amazonpay**: [`AmazonPayV2CustomerInitializeOptions`](AmazonPayV2CustomerInitializeOptions.md)
-
-The options that are required to initialize the customer step of checkout
-when using AmazonPayV2.
-
-___
 
 ### braintreepaypalcredit
 
