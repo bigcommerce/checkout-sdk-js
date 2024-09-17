@@ -2,7 +2,6 @@ import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/cr
 
 import { RequestOptions } from '../common/http-request';
 
-import { AmazonPayV2PaymentInitializeOptions } from './strategies/amazon-pay-v2';
 import { BlueSnapV2PaymentInitializeOptions } from './strategies/bluesnapv2';
 import {
     BraintreePaymentInitializeOptions,
@@ -47,12 +46,6 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * consumption.
      */
     creditCard?: CreditCardPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the AmazonPayV2 payment
-     * method. They can be omitted unless you need to support AmazonPayV2.
-     */
-    amazonpay?: AmazonPayV2PaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the BlueSnapV2 payment method.

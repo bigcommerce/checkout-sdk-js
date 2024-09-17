@@ -1,6 +1,5 @@
 import { RequestOptions } from '../common/http-request';
 
-import { AmazonPayV2CustomerInitializeOptions } from './strategies/amazon-pay-v2';
 import {
     BraintreePaypalCreditCustomerInitializeOptions,
     BraintreeVisaCheckoutCustomerInitializeOptions,
@@ -32,12 +31,6 @@ export interface CustomerRequestOptions extends RequestOptions {
  */
 export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
     [key: string]: unknown;
-
-    /**
-     * The options that are required to initialize the customer step of checkout
-     * when using AmazonPayV2.
-     */
-    amazonpay?: AmazonPayV2CustomerInitializeOptions;
 
     /**
      * The options that are required to facilitate Braintree Credit. They can be
