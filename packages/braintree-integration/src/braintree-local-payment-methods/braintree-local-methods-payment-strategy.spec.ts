@@ -5,18 +5,22 @@ import {
     BraintreeScriptLoader,
     getBraintreeLocalPaymentMock,
     LocalPaymentInstance,
+    NonInstantLocalPaymentMethods,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     InvalidArgumentError,
     MissingDataError,
     OrderFinalizationNotRequiredError,
+    OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentMethod,
+    RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCheckout,
+    getResponse,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
@@ -194,6 +198,96 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
 
         it('throws PaymentArgumentInvalidError if payment is not provided', async () => {
             await expect(strategy.execute({})).rejects.toThrow(PaymentArgumentInvalidError);
+        });
+
+        describe('when non-instant payment method', () => {
+            let payload: OrderRequestBody;
+
+            beforeEach(() => {
+                payload = {
+                    payment: {
+                        gatewayId: 'braintreelocalmethods',
+                        methodId: NonInstantLocalPaymentMethods.TRUSTLY,
+                        paymentData: {
+                            phoneNumber: '380112223344',
+                        },
+                    },
+                };
+
+                Object.defineProperty(window, 'location', {
+                    value: {
+                        replace: jest.fn(),
+                    },
+                });
+            });
+
+            it('should not use startPayment method', async () => {
+                await strategy.execute(payload);
+
+                expect(localPaymentInstanceMock.startPayment).not.toHaveBeenCalled();
+            });
+
+            it('throws an error if phone number was not passed as required parameter', async () => {
+                try {
+                    await strategy.execute({
+                        ...payload,
+                        payment: {
+                            ...payload.payment,
+                            paymentData: {},
+                        },
+                    });
+                } catch (error) {
+                    expect(error).toBeInstanceOf(PaymentArgumentInvalidError);
+                }
+            });
+
+            it('submits order payload with payment data', async () => {
+                await strategy.execute(payload);
+
+                expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            });
+
+            it('submits payment payload with payment data', async () => {
+                await strategy.execute(payload);
+
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        methodId: 'trustly',
+                        paymentData: expect.objectContaining({
+                            formattedPayload: expect.objectContaining({
+                                device_info: 'token',
+                                set_as_default_stored_instrument: null,
+                                trustly_account: expect.objectContaining({
+                                    phone: '380112223344',
+                                }),
+                            }),
+                        }),
+                    }),
+                );
+            });
+
+            it('when submit payment returns additional action required specific error', async () => {
+                const error = new RequestError(
+                    getResponse({
+                        additional_action_required: {
+                            type: 'offsite_redirect',
+                            data: {
+                                redirect_url: 'redirect_url',
+                            },
+                        },
+                    }),
+                );
+
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
+                    Promise.reject(error),
+                );
+
+                try {
+                    await strategy.execute(payload);
+                } catch (e) {
+                    expect(window.location.replace).toHaveBeenCalledWith('redirect_url');
+                }
+            });
         });
     });
 

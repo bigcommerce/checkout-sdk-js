@@ -1,8 +1,10 @@
 import {
     BraintreeInitializationData,
     BraintreeIntegrationService,
+    BraintreeLocalPaymentMethodRedirectAction,
     LocalPaymentInstance,
     LocalPaymentsPayload,
+    NonInstantLocalPaymentMethods,
     onPaymentStartData,
     StartPaymentError,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -20,6 +22,8 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+
+import isPhoneNumberInstrumentLike from '../is-phone-number-instrument-like';
 
 import {
     BraintreeLocalMethods,
@@ -113,6 +117,50 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         }
 
         this.toggleLoadingIndicator(true);
+
+        if (this.isNonInstantPaymentMethod(payment.methodId)) {
+            const { methodId } = payment;
+
+            if (!isPhoneNumberInstrumentLike(payment.paymentData)) {
+                this.toggleLoadingIndicator(false);
+
+                throw new PaymentArgumentInvalidError(['payment.paymentData']);
+            }
+
+            const { phoneNumber } = payment.paymentData;
+
+            const paymentData = {
+                formattedPayload: {
+                    vault_payment_instrument: null,
+                    set_as_default_stored_instrument: null,
+                    device_info: sessionId || null,
+                    [`${payment.methodId}_account`]: {
+                        phone: phoneNumber,
+                    },
+                },
+            };
+
+            await this.paymentIntegrationService.submitOrder();
+
+            try {
+                await this.paymentIntegrationService.submitPayment({
+                    methodId,
+                    paymentData,
+                });
+            } catch (error) {
+                if (this.isBraintreeTrustlyRedirectError(error)) {
+                    const redirectUrl = error.body.additional_action_required.data.redirect_url;
+
+                    window.location.replace(redirectUrl);
+                }
+
+                this.toggleLoadingIndicator(false);
+
+                return Promise.reject(error);
+            }
+
+            return;
+        }
 
         if (!this.localPaymentInstance) {
             throw new PaymentMethodInvalidError();
@@ -214,5 +262,28 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         if (onError && typeof onError === 'function') {
             onError(error);
         }
+    }
+
+    /**
+     *
+     * Utils
+     *
+     * */
+    private isNonInstantPaymentMethod(methodId: string): boolean {
+        return methodId.toUpperCase() in NonInstantLocalPaymentMethods;
+    }
+
+    private isBraintreeTrustlyRedirectError(error: unknown) {
+        if (typeof error !== 'object' || error === null) {
+            return false;
+        }
+
+        const { body }: Partial<BraintreeLocalPaymentMethodRedirectAction> = error;
+
+        if (!body) {
+            return false;
+        }
+
+        return !!body.additional_action_required?.data.redirect_url;
     }
 }
