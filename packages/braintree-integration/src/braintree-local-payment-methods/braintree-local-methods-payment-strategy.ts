@@ -13,6 +13,7 @@ import {
     MissingDataError,
     MissingDataErrorType,
     OrderFinalizationNotRequiredError,
+    OrderPaymentRequestBody,
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
@@ -103,14 +104,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = payload;
-        const state = this.paymentIntegrationService.getState();
-        const cart = state.getCartOrThrow();
         const sessionId = await this.braintreeIntegrationService.getSessionId();
-        const billing = state.getBillingAddressOrThrow();
-        const { firstName, lastName, countryCode } = billing;
-        const { currency, email, lineItems } = cart;
-        const isShippingRequired = lineItems.physicalItems.length > 0;
-        const grandTotal = state.getCheckoutOrThrow().outstandingBalance;
 
         if (!payment) {
             throw new PaymentArgumentInvalidError(['payment']);
@@ -118,58 +112,78 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
 
         this.toggleLoadingIndicator(true);
 
-        if (this.isNonInstantPaymentMethod(payment.methodId)) {
-            const { methodId } = payment;
+        return this.isNonInstantPaymentMethod(payment.methodId)
+            ? this.executeWithNotInstantLPM(payment, sessionId)
+            : this.executeWithInstantLPM(payment.methodId, order, options, sessionId);
+    }
 
-            if (!isPhoneNumberInstrumentLike(payment.paymentData)) {
-                this.toggleLoadingIndicator(false);
+    private async executeWithNotInstantLPM(
+        payment: OrderPaymentRequestBody,
+        sessionId?: string,
+    ): Promise<void> {
+        if (!isPhoneNumberInstrumentLike(payment.paymentData)) {
+            this.toggleLoadingIndicator(false);
 
-                throw new PaymentArgumentInvalidError(['payment.paymentData']);
-            }
-
-            const { phoneNumber } = payment.paymentData;
-
-            const paymentData = {
-                formattedPayload: {
-                    vault_payment_instrument: null,
-                    set_as_default_stored_instrument: null,
-                    device_info: sessionId || null,
-                    [`${payment.methodId}_account`]: {
-                        phone: phoneNumber,
-                    },
-                },
-            };
-
-            await this.paymentIntegrationService.submitOrder();
-
-            try {
-                await this.paymentIntegrationService.submitPayment({
-                    methodId,
-                    paymentData,
-                });
-            } catch (error) {
-                if (this.isBraintreeTrustlyRedirectError(error)) {
-                    const redirectUrl = error.body.additional_action_required.data.redirect_url;
-
-                    window.location.replace(redirectUrl);
-                }
-
-                this.toggleLoadingIndicator(false);
-
-                return Promise.reject(error);
-            }
-
-            return;
+            throw new PaymentArgumentInvalidError(['payment.paymentData']);
         }
 
+        const { methodId } = payment;
+
+        const { phoneNumber } = payment.paymentData;
+
+        const paymentData = {
+            formattedPayload: {
+                vault_payment_instrument: null,
+                set_as_default_stored_instrument: null,
+                device_info: sessionId || null,
+                [`${methodId}_account`]: {
+                    phone: phoneNumber,
+                },
+            },
+        };
+
+        await this.paymentIntegrationService.submitOrder();
+
+        try {
+            await this.paymentIntegrationService.submitPayment({
+                methodId,
+                paymentData,
+            });
+        } catch (error) {
+            if (this.isBraintreeRedirectError(error)) {
+                const redirectUrl = error.body.additional_action_required.data.redirect_url;
+
+                window.location.replace(redirectUrl);
+            }
+
+            this.toggleLoadingIndicator(false);
+
+            return Promise.reject(error);
+        }
+    }
+
+    private async executeWithInstantLPM(
+        methodId: string,
+        order: Omit<OrderRequestBody, 'payment'>,
+        options?: PaymentRequestOptions,
+        sessionId?: string,
+    ): Promise<void> {
         if (!this.localPaymentInstance) {
             throw new PaymentMethodInvalidError();
         }
 
+        const state = this.paymentIntegrationService.getState();
+        const cart = state.getCartOrThrow();
+        const billing = state.getBillingAddressOrThrow();
+        const { firstName, lastName, countryCode } = billing;
+        const { currency, email, lineItems } = cart;
+        const isShippingRequired = lineItems.physicalItems.length > 0;
+        const grandTotal = state.getCheckoutOrThrow().outstandingBalance;
+
         return new Promise((resolve, reject) => {
             this.localPaymentInstance?.startPayment(
                 {
-                    paymentType: payment.methodId,
+                    paymentType: methodId,
                     amount: grandTotal,
                     fallback: {
                         url: 'url-placeholder',
@@ -208,8 +222,8 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                         const paymentData = {
                             formattedPayload: {
                                 device_info: sessionId || null,
-                                method: payment.methodId,
-                                [`${payment.methodId}_account`]: {
+                                method: methodId,
+                                [`${methodId}_account`]: {
                                     email: cart.email,
                                     token: payloadData.nonce,
                                     order_id: this.orderId,
@@ -222,7 +236,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                         try {
                             await this.paymentIntegrationService.submitOrder(order, options);
                             await this.paymentIntegrationService.submitPayment({
-                                methodId: payment.methodId,
+                                methodId,
                                 paymentData,
                             });
                             resolve();
@@ -273,7 +287,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         return methodId.toUpperCase() in NonInstantLocalPaymentMethods;
     }
 
-    private isBraintreeTrustlyRedirectError(error: unknown) {
+    private isBraintreeRedirectError(error: unknown) {
         if (typeof error !== 'object' || error === null) {
             return false;
         }
