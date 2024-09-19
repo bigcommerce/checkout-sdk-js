@@ -34,6 +34,7 @@ export default interface StripeUPEPaymentInitializeOptions {
     style?: {
         [key: string]: string;
     };
+
     onError?(error?: Error): void;
 
     render(): void;
@@ -41,6 +42,10 @@ export default interface StripeUPEPaymentInitializeOptions {
     initStripeElementUpdateTrigger?(
         updateTriggerFn: (payload: StripeElementUpdateOptions) => void,
     ): void;
+
+    toggleSelectedMethod?(id: string): void;
+
+    accordionCollapseListener?(collapseElement: () => void): void;
 }
 
 export interface WithStripeUPEPaymentInitializeOptions {
