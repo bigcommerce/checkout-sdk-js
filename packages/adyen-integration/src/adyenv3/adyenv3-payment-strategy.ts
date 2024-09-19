@@ -294,11 +294,20 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
     private _handleAction(additionalAction: AdyenAdditionalAction): Promise<Payment> {
         return new Promise((resolve, reject) => {
             const { additionalActionOptions } = this._getPaymentInitializeOptions();
-            const { onBeforeLoad, containerId, onLoad, onComplete, widgetSize } =
+            const { onBeforeLoad, containerId, onLoad, onComplete, widgetSize, onActionHandled } =
                 additionalActionOptions;
             const adyenAction: AdyenAction = JSON.parse(additionalAction.action);
 
             const additionalActionComponent = this._getAdyenClient().createFromAction(adyenAction, {
+                onActionHandled: (additionalActionState) => {
+                    if (
+                        onActionHandled &&
+                        typeof onActionHandled === 'function' &&
+                        additionalActionState.componentType !== '3DS2Fingerprint'
+                    ) {
+                        onActionHandled();
+                    }
+                },
                 onAdditionalDetails: (additionalActionState: AdyenAdditionalActionState) => {
                     const paymentPayload = {
                         methodId: adyenAction.paymentMethodType,
@@ -307,7 +316,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                         },
                     };
 
-                    if (onComplete) {
+                    if (onComplete && typeof onComplete === 'function') {
                         onComplete();
                     }
 
@@ -317,7 +326,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                 onError: (error: AdyenError) => reject(error),
             });
 
-            if (onBeforeLoad) {
+            if (onBeforeLoad && typeof onBeforeLoad === 'function') {
                 onBeforeLoad(
                     adyenAction.type === AdyenV3ActionType.ThreeDS2 ||
                         adyenAction.type === AdyenV3ActionType.QRCode ||
@@ -327,7 +336,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
             this._mountElement(additionalActionComponent, containerId);
 
-            if (onLoad) {
+            if (onLoad && typeof onLoad === 'function') {
                 onLoad(() => {
                     reject(new PaymentMethodCancelledError());
                     additionalActionComponent.unmount();
