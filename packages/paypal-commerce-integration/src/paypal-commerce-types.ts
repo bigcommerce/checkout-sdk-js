@@ -46,6 +46,14 @@ export interface PayPalCommerceCardFieldsConfig {
 export interface PayPalCommerceCardFieldsOnApproveData {
     vaultSetupToken?: string;
     orderID: string;
+    liabilityShift?: LiabilityShiftEnum;
+}
+
+export enum LiabilityShiftEnum {
+    Possible = 'POSSIBLE',
+    No = 'NO',
+    Unknown = 'UNKNOWN',
+    Yes = 'YES',
 }
 
 interface PayPalCommerceCardFieldsFieldData {

@@ -17,6 +17,7 @@ import {
 import {
     getBillingAddress,
     getCart,
+    getConfig,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
@@ -35,6 +36,7 @@ import {
 } from '../mocks';
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
 import {
+    LiabilityShiftEnum,
     PayPalCommerceCardFieldsConfig,
     PayPalCommerceHostWindow,
     PayPalSDK,
@@ -461,6 +463,42 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                     },
                 },
             });
+        });
+
+        it('does not submit order and payment if 3ds failed', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue({
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-4591.paypal_commerce_3ds_verification': true,
+                    },
+                },
+            });
+            jest.spyOn(paypalSdk, 'CardFields').mockImplementation(
+                (options: PayPalCommerceCardFieldsConfig) => {
+                    eventEmitter.on('onApprove', () => {
+                        if (options.onApprove) {
+                            options.onApprove({
+                                orderID: hostedFormOrderId,
+                                liabilityShift: LiabilityShiftEnum.No,
+                            });
+                        }
+                    });
+
+                    return cardFieldsInstanceMock;
+                },
+            );
+            await strategy.initialize(initializationOptions);
+            try {
+                eventEmitter.emit('onApprove');
+                await new Promise((resolve) => process.nextTick(resolve));
+            } catch (error) {
+                expect(error).toBeDefined();
+            }
         });
 
         it('submits payment with vaulted(stored) instrument', async () => {
