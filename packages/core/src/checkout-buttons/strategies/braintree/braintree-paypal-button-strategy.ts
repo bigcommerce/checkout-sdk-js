@@ -153,8 +153,8 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         methodId: string,
         testMode: boolean,
     ): void {
-        const { style, shouldProcessPayment, onAuthorizeError } = braintreepaypal;
-
+        const { style, shouldProcessPayment, onAuthorizeError, onEligibilityFailure } =
+            braintreepaypal;
         const { paypal } = this._window;
         const fundingSource = paypal?.FUNDING.PAYPAL;
 
@@ -179,6 +179,8 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
 
             if (paypalButtonRender.isEligible()) {
                 paypalButtonRender.render(`#${containerId}`);
+            } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
+                onEligibilityFailure();
             }
         } else {
             this._removeElement(containerId);
