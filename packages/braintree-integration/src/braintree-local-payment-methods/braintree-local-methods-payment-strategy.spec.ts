@@ -256,6 +256,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                         paymentData: expect.objectContaining({
                             formattedPayload: expect.objectContaining({
                                 device_info: 'token',
+                                method_id: 'trustly',
                                 set_as_default_stored_instrument: null,
                                 trustly_account: expect.objectContaining({
                                     phone: '380112223344',
@@ -284,7 +285,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
 
                 try {
                     await strategy.execute(payload);
-                } catch (e) {
+                } catch (_) {
                     expect(window.location.replace).toHaveBeenCalledWith('redirect_url');
                 }
             });

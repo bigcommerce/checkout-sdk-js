@@ -135,6 +135,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
             formattedPayload: {
                 vault_payment_instrument: null,
                 set_as_default_stored_instrument: null,
+                method_id: methodId,
                 device_info: sessionId || null,
                 [`${methodId}_account`]: {
                     phone: phoneNumber,
@@ -153,7 +154,13 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
             if (this.isBraintreeRedirectError(error)) {
                 const redirectUrl = error.body.additional_action_required.data.redirect_url;
 
-                window.location.replace(redirectUrl);
+                return new Promise((_, reject) => {
+                    window.location.replace(redirectUrl);
+
+                    this.toggleLoadingIndicator(false);
+
+                    reject();
+                });
             }
 
             this.toggleLoadingIndicator(false);
