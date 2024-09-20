@@ -67,6 +67,7 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
         style: {
             height: 45,
         },
+        onEligibilityFailure: jest.fn(),
     };
 
     const initializationOptions: CheckoutButtonInitializeOptions = {
@@ -100,18 +101,19 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
             paymentMethod,
         );
 
-        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(
+            Promise.resolve(paypalSdk),
+        );
         jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
             paypalSdk,
         );
         jest.spyOn(paypalCommerceIntegrationService, 'createBuyNowCartOrThrow').mockReturnValue(
-            buyNowCart,
+            Promise.resolve(buyNowCart),
         );
-        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockReturnValue(undefined);
+        jest.spyOn(paypalCommerceIntegrationService, 'createOrder');
         jest.spyOn(paypalCommerceIntegrationService, 'tokenizePayment').mockImplementation(
             jest.fn(),
         );
-        jest.spyOn(paypalCommerceIntegrationService, 'removeElement').mockImplementation(jest.fn());
 
         jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
             (options: PayPalCommerceButtonsOptions) => {
@@ -175,6 +177,7 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
                 return {
                     isEligible: jest.fn(() => true),
                     render: jest.fn(),
+                    close: jest.fn(),
                 };
             },
         );
@@ -357,6 +360,7 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
                 isEligible: jest.fn(() => true),
                 render: paypalCommerceSdkRenderMock,
+                close: jest.fn(),
             }));
 
             await strategy.initialize(initializationOptions);
@@ -364,32 +368,19 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
             expect(paypalCommerceSdkRenderMock).toHaveBeenCalled();
         });
 
-        it('does not render PayPal Venmo button if it is not eligible', async () => {
+        it('calls onEligibilityFailure when PayPal Venmo button if it is not eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
                 isEligible: jest.fn(() => false),
                 render: paypalCommerceSdkRenderMock,
+                close: jest.fn(),
             }));
 
             await strategy.initialize(initializationOptions);
 
+            expect(paypalCommerceVenmoOptions.onEligibilityFailure).toHaveBeenCalled();
             expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalled();
-        });
-
-        it('removes Venmo PayPal button container if the button has not rendered', async () => {
-            const paypalCommerceSdkRenderMock = jest.fn();
-
-            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
-                isEligible: jest.fn(() => false),
-                render: paypalCommerceSdkRenderMock,
-            }));
-
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalCommerceIntegrationService.removeElement).toHaveBeenCalledWith(
-                defaultButtonContainerId,
-            );
         });
     });
 
@@ -409,8 +400,10 @@ describe('PayPalCommerceVenmoButtonStrategy', () => {
 
     describe('#handleClick', () => {
         beforeEach(() => {
-            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(buyNowCart);
-            jest.spyOn(paymentIntegrationService, 'loadCheckout').mockReturnValue(true);
+            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
+                Promise.resolve(buyNowCart),
+            );
+            jest.spyOn(paymentIntegrationService, 'loadCheckout');
         });
 
         it('creates buy now cart on button click', async () => {
