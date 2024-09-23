@@ -2,13 +2,15 @@ import { Action, createAction } from '@bigcommerce/data-store';
 import { omit } from 'lodash';
 import { Observable, of } from 'rxjs';
 
+import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { PaymentArgumentInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -243,11 +245,7 @@ describe('BraintreeVenmoPaymentStrategy', () => {
 
             await expect(
                 braintreeVenmoPaymentStrategy.execute(orderRequestBody, options),
-            ).rejects.toEqual({
-                code: 'PAYPAL_POPUP_CLOSED',
-                message: 'my_message',
-                name: 'BraintreeError',
-            });
+            ).rejects.toEqual(expect.any(PaymentMethodCancelledError));
             expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
         });
 
@@ -275,7 +273,7 @@ describe('BraintreeVenmoPaymentStrategy', () => {
 
             await expect(
                 braintreeVenmoPaymentStrategy.execute(orderRequestBody, options),
-            ).rejects.toEqual({ message: 'my_message', name: 'BraintreeError' });
+            ).rejects.toEqual(expect.any(PaymentMethodFailedError));
             expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
         });
 
