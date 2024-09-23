@@ -16,6 +16,7 @@
 
 ### Methods
 
+- [onActionHandled](AdyenThreeDS2Options.md#onactionhandled)
 - [onBeforeLoad](AdyenThreeDS2Options.md#onbeforeload)
 - [onComplete](AdyenThreeDS2Options.md#oncomplete)
 - [onLoad](AdyenThreeDS2Options.md#onload)
@@ -36,6 +37,22 @@ Values
 '05' = 100% x 100%
 
 ## Methods
+
+### onActionHandled
+
+▸ `Optional` **onActionHandled**(): `void`
+
+A callback that gets called when an action, for example a QR code or 3D Secure 2 authentication screen, is shown to the shopper
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[AdyenAdditionalActionCallbacks](AdyenAdditionalActionCallbacks.md).[onActionHandled](AdyenAdditionalActionCallbacks.md#onactionhandled)
+
+___
 
 ### onBeforeLoad
 

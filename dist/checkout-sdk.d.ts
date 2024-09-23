@@ -84,6 +84,10 @@ declare interface AdyenAdditionalActionCallbacks {
      * is completed
      */
     onComplete?(): void;
+    /**
+     * A callback that gets called when an action, for example a QR code or 3D Secure 2 authentication screen, is shown to the shopper
+     */
+    onActionHandled?(): void;
 }
 
 declare interface AdyenAdditionalActionOptions extends AdyenAdditionalActionCallbacks {
@@ -374,6 +378,9 @@ declare interface AdyenV2PaymentInitializeOptions {
  *             },
  *             onComplete() {
  *                 console.log('Completed');
+ *             },
+ *             onActionHandled() {
+ *                 console.log('ActionHandled');
  *             },
  *         },
  *         options: {

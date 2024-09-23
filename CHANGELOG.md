@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.660.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.660.0...v1.660.1) (2024-09-23)
+
+
+### Bug Fixes
+
+* **checkout:** PI-2633 removed modal window that appears during the frictionless 3ds flow for Adyen ([#2655](https://github.com/bigcommerce/checkout-sdk-js/issues/2655)) ([364fa14](https://github.com/bigcommerce/checkout-sdk-js/commit/364fa1493ba16bf0650626bfc8df9eb455890ceb))
+
 ## [1.660.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.659.1...v1.660.0) (2024-09-23)
 
 

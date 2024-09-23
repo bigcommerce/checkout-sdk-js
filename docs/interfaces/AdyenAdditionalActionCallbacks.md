@@ -14,11 +14,24 @@
 
 ### Methods
 
+- [onActionHandled](AdyenAdditionalActionCallbacks.md#onactionhandled)
 - [onBeforeLoad](AdyenAdditionalActionCallbacks.md#onbeforeload)
 - [onComplete](AdyenAdditionalActionCallbacks.md#oncomplete)
 - [onLoad](AdyenAdditionalActionCallbacks.md#onload)
 
 ## Methods
+
+### onActionHandled
+
+▸ `Optional` **onActionHandled**(): `void`
+
+A callback that gets called when an action, for example a QR code or 3D Secure 2 authentication screen, is shown to the shopper
+
+#### Returns
+
+`void`
+
+___
 
 ### onBeforeLoad
 
