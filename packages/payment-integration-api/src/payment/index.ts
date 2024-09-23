@@ -39,6 +39,7 @@ export {
     FormattedPayload,
     StripeUPEIntent,
     StripeV3FormattedPayload,
+    WithPhoneNumberInstrument,
 } from './payment';
 
 export { default as isCreditCardInstrument } from './is-credit-card-instrument';

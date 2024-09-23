@@ -5,6 +5,7 @@ import {
     WithAccountCreation,
     WithBankAccountInstrument,
     WithEcpInstrument,
+    WithPhoneNumberInstrument,
     WithSepaInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -56,7 +57,8 @@ export type PaymentInstrument =
     | VaultedInstrument
     | (VaultedInstrument & WithHostedFormNonce)
     | WithAccountCreation
-    | WithBankAccountInstrument;
+    | WithBankAccountInstrument
+    | WithPhoneNumberInstrument;
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;

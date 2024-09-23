@@ -641,3 +641,24 @@ export interface BraintreeError extends Error {
     code: string | BraintreeErrorCode.KountNotEnabled;
     details?: unknown;
 }
+
+/**
+ *
+ * Braintree non-instant payment methods
+ *
+ */
+
+export enum NonInstantLocalPaymentMethods {
+    TRUSTLY = 'trustly',
+}
+
+export interface BraintreeLocalPaymentMethodRedirectAction {
+    body: {
+        additional_action_required: {
+            type: 'offsite_redirect';
+            data: {
+                redirect_url: string;
+            };
+        };
+    };
+}

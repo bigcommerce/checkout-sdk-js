@@ -162,6 +162,7 @@ export {
     PaymentStrategyResolveId,
     VaultedInstrument,
     WithAccountCreation,
+    WithPhoneNumberInstrument,
     StripeUPEIntent,
     StripeV3FormattedPayload,
     PaypalInstrument,

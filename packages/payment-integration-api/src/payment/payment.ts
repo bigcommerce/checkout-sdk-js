@@ -49,7 +49,8 @@ export type PaymentInstrumentPayload<T = unknown> =
     | VaultedInstrument
     | (VaultedInstrument & WithHostedFormNonce)
     | WithAccountCreation
-    | WithBankAccountInstrument;
+    | WithBankAccountInstrument
+    | WithPhoneNumberInstrument;
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
@@ -57,6 +58,10 @@ export interface PaymentInstrumentMeta {
 
 export interface WithAccountCreation {
     shouldCreateAccount?: boolean;
+}
+
+export interface WithPhoneNumberInstrument {
+    phoneNumber: string;
 }
 
 export interface CreditCardInstrument {
