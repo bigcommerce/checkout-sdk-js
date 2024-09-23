@@ -29,6 +29,7 @@ import {
 import isBraintreeError from '../is-braintree-error';
 
 import { WithBraintreeVenmoInitializeOptions } from './braintree-venmo-initialize-options';
+import {isUnsupportedBrowserError} from '../isUnsupportedBrowserError';
 
 const getVenmoButtonStyle = (styles: PaypalStyleOptions): Record<string, string> => {
     const { color, height } = styles;
@@ -120,7 +121,7 @@ export default class BraintreeVenmoButtonStrategy implements CheckoutButtonStrat
                 styles,
             );
         } catch (error) {
-            if (isBraintreeError(error) || error instanceof UnsupportedBrowserError) {
+            if (isBraintreeError(error) || isUnsupportedBrowserError(error)) {
                 this.handleInitializationVenmoError(error, containerId);
             }
         }
