@@ -1,3 +1,5 @@
+import { isRequestError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { InternalCheckoutSelectors } from '../../../checkout';
 import {
     NotInitializedError,
@@ -46,7 +48,7 @@ export default class CheckoutcomCustomPaymentStrategy extends CreditCardPaymentS
             await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
             await form.submit(payment);
         } catch (error) {
-            if (error instanceof RequestError) {
+            if (isRequestError(error)) {
                 return this._processResponse(error);
             }
 
