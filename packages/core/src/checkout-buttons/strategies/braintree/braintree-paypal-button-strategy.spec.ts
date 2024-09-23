@@ -76,6 +76,7 @@ describe('BraintreePaypalButtonStrategy', () => {
         onAuthorizeError: jest.fn(),
         onPaymentError: jest.fn(),
         onError: jest.fn(),
+        onEligibilityFailure: jest.fn(),
     };
 
     const initializationOptions: CheckoutButtonInitializeOptions = {
@@ -425,6 +426,33 @@ describe('BraintreePaypalButtonStrategy', () => {
                     height: 45,
                 },
             });
+        });
+
+        it('does not render PayPal checkout button and calls onEligibilityFailure callback', async () => {
+            const renderMock = jest.fn();
+
+            jest.spyOn(paypalSdkMock, 'Buttons').mockImplementationOnce(() => {
+                return {
+                    isEligible: jest.fn(() => false),
+                    render: renderMock,
+                };
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
+                createOrder: expect.any(Function),
+                env: 'sandbox',
+                fundingSource: paypalSdkMock.FUNDING.PAYPAL,
+                onApprove: expect.any(Function),
+                style: {
+                    shape: 'rect',
+                    height: 45,
+                },
+            });
+
+            expect(braintreePaypalOptions.onEligibilityFailure).toHaveBeenCalled();
+            expect(renderMock).not.toHaveBeenCalled();
         });
 
         it('renders PayPal checkout button in production environment if payment method is in test mode', async () => {
