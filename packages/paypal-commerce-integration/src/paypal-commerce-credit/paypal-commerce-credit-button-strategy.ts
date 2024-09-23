@@ -183,7 +183,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
                 if (paypalButton.isEligible()) {
                     paypalButton.render(`#${containerId}`);
                     hasRenderedSmartButton = true;
-                }  else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
+                } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
                     onEligibilityFailure();
                 }
             }

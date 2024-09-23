@@ -22,7 +22,6 @@ export default interface PayPalCommerceVenmoButtonInitializeOptions {
      *
      */
     onEligibilityFailure?(): void;
-
 }
 
 export interface WithPayPalCommerceVenmoButtonInitializeOptions {
