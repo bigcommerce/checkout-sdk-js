@@ -1,9 +1,8 @@
 import { FormPoster } from '@bigcommerce/form-poster';
-import { some } from 'lodash';
 
 import { CreditCardPaymentStrategy } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import {
-    isRequestError,
+    isThreeDSecureRequiredError,
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
@@ -50,7 +49,7 @@ export default class CheckoutComCreditCardPaymentStrategy extends CreditCardPaym
         try {
             await this.paymentIntegrationService.submitPayment({ ...payment, paymentData });
         } catch (error) {
-            if (this._isThreeDSecureRequiredError(error)) {
+            if (isThreeDSecureRequiredError(error)) {
                 return this._handleThreeDSecure(error);
             }
 
@@ -78,7 +77,7 @@ export default class CheckoutComCreditCardPaymentStrategy extends CreditCardPaym
             await this.paymentIntegrationService.submitOrder(order, options);
             await form.submit(payment);
         } catch (error) {
-            if (this._isThreeDSecureRequiredError(error)) {
+            if (isThreeDSecureRequiredError(error)) {
                 return this._handleThreeDSecure(error);
             }
 
@@ -98,12 +97,6 @@ export default class CheckoutComCreditCardPaymentStrategy extends CreditCardPaym
                 TermUrl: callback_url || null,
                 MD: merchant_data || null,
             }),
-        );
-    }
-
-    private _isThreeDSecureRequiredError(error: unknown): error is RequestError {
-        return (
-            isRequestError(error) && some(error.body.errors, { code: 'three_d_secure_required' })
         );
     }
 }

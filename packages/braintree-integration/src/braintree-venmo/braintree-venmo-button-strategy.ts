@@ -27,9 +27,9 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import isBraintreeError from '../is-braintree-error';
+import { isUnsupportedBrowserError } from '../isUnsupportedBrowserError';
 
 import { WithBraintreeVenmoInitializeOptions } from './braintree-venmo-initialize-options';
-import {isUnsupportedBrowserError} from '../isUnsupportedBrowserError';
 
 const getVenmoButtonStyle = (styles: PaypalStyleOptions): Record<string, string> => {
     const { color, height } = styles;
