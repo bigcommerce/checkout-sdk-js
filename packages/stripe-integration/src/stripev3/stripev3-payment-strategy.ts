@@ -202,14 +202,12 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
 
             await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            if (error instanceof Error || isRequestError(error)) {
-                await this.processAdditionalAction(
-                    this.handleEmptyPaymentIntentError(error, stripeError),
-                    methodId,
-                    shouldSaveInstrument,
-                    shouldSetAsDefaultInstrument,
-                );
-            }
+            await this.processAdditionalAction(
+                this.handleEmptyPaymentIntentError(error, stripeError),
+                methodId,
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
+            );
         }
     }
 
@@ -401,7 +399,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         return this.stripeV3Client;
     }
 
-    private handleEmptyPaymentIntentError(error: Error, stripeError: StripeError | undefined) {
+    private handleEmptyPaymentIntentError(error: unknown, stripeError: StripeError | undefined) {
         if (!isRequestError(error)) {
             return error;
         }
@@ -643,7 +641,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     }
 
     private async processAdditionalAction(
-        error: Error,
+        error: unknown,
         methodId: string,
         shouldSaveInstrument = false,
         shouldSetAsDefaultInstrument = false,
@@ -716,9 +714,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             try {
                 return await this.paymentIntegrationService.submitPayment(paymentPayload);
             } catch (error) {
-                if (error instanceof Error || isRequestError(error)) {
-                    throw this.handleEmptyPaymentIntentError(error, result?.error);
-                }
+                throw this.handleEmptyPaymentIntentError(error, result?.error);
             }
         }
 
