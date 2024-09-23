@@ -42,7 +42,7 @@ export default class HostedInputValidator {
 
             return results;
         } catch (error) {
-            if (this._isValidationErrorType(error) && error.name !== 'ValidationError') {
+            if (this._isValidationErrorType(error)) {
                 throw error;
             }
 
@@ -201,6 +201,6 @@ export default class HostedInputValidator {
     }
 
     private _isValidationErrorType(error: any): error is { name: string } {
-        return 'name' in error;
+        return 'name' in error && error.name !== 'ValidationError';
     }
 }
