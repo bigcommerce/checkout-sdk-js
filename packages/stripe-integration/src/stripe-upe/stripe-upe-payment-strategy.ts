@@ -331,15 +331,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            if (error instanceof Error) {
-                return this._processVaultedAdditionalAction(
-                    error,
-                    methodId,
-                    shouldSetAsDefaultInstrument,
-                );
-            }
-
-            throw error;
+            return this._processVaultedAdditionalAction(
+                error,
+                methodId,
+                shouldSetAsDefaultInstrument,
+            );
         }
     }
 
@@ -542,7 +538,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     }
 
     private async _processVaultedAdditionalAction(
-        error: Error,
+        error: unknown,
         methodId?: string,
         shouldSetAsDefaultInstrument = false,
     ): Promise<PaymentIntegrationSelectors | never> {
