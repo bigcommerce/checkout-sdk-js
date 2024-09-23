@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.660.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.659.1...v1.660.0) (2024-09-23)
+
+
+### Features
+
+* **payment:** PAYPAL-4611 Update Braintree LPMs strategy by adding functionality for Trustly ([#2653](https://github.com/bigcommerce/checkout-sdk-js/issues/2653)) ([98077e2](https://github.com/bigcommerce/checkout-sdk-js/commit/98077e27b9248360f685061da19ba851d19e31a7))
+
 ### [1.659.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.659.0...v1.659.1) (2024-09-19)
 
 ## [1.659.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.658.1...v1.659.0) (2024-09-18)
