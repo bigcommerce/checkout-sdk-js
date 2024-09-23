@@ -15,6 +15,14 @@ export default interface PayPalCommerceVenmoButtonInitializeOptions {
      * The options that required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
+
 }
 
 export interface WithPayPalCommerceVenmoButtonInitializeOptions {

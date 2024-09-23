@@ -70,6 +70,7 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
         style: {
             height: 45,
         },
+        onEligibilityFailure: jest.fn(),
     };
 
     const initializationOptions: CheckoutButtonInitializeOptions = {
@@ -104,14 +105,16 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
             paymentMethod,
         );
 
-        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(
+            Promise.resolve(paypalSdk),
+        );
         jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
             paypalSdk,
         );
         jest.spyOn(paypalCommerceIntegrationService, 'createBuyNowCartOrThrow').mockReturnValue(
-            buyNowCart,
+            Promise.resolve(buyNowCart),
         );
-        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockReturnValue(undefined);
+        jest.spyOn(paypalCommerceIntegrationService, 'createOrder');
         jest.spyOn(paypalCommerceIntegrationService, 'tokenizePayment').mockImplementation(
             jest.fn(),
         );
@@ -179,6 +182,7 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
                 return {
                     isEligible: jest.fn(() => true),
                     render: jest.fn(),
+                    close: jest.fn(),
                 };
             },
         );
@@ -372,6 +376,7 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
                 isEligible: jest.fn(() => true),
                 render: paypalCommerceSdkRenderMock,
+                close: jest.fn(),
             }));
 
             await strategy.initialize(initializationOptions);
@@ -379,32 +384,19 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
             expect(paypalCommerceSdkRenderMock).toHaveBeenCalled();
         });
 
-        it('does not render PayPal APM button if it is not eligible', async () => {
+        it('calls onEligibilityFailure callback when PayPal APM button is not eligible', async () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
                 isEligible: jest.fn(() => false),
                 render: paypalCommerceSdkRenderMock,
+                close: jest.fn(),
             }));
 
             await strategy.initialize(initializationOptions);
 
+            expect(paypalCommerceAlternativeMethodsOptions.onEligibilityFailure).toHaveBeenCalled();
             expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalled();
-        });
-
-        it('removes PayPal APM button container if the button has not rendered', async () => {
-            const paypalCommerceSdkRenderMock = jest.fn();
-
-            jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
-                isEligible: jest.fn(() => false),
-                render: paypalCommerceSdkRenderMock,
-            }));
-
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalCommerceIntegrationService.removeElement).toHaveBeenCalledWith(
-                defaultButtonContainerId,
-            );
         });
     });
 
@@ -424,8 +416,10 @@ describe('PayPalCommerceAlternativeMethodsButtonStrategy', () => {
 
     describe('#handleClick', () => {
         beforeEach(() => {
-            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(buyNowCart);
-            jest.spyOn(paymentIntegrationService, 'loadCheckout').mockReturnValue(true);
+            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
+                Promise.resolve(buyNowCart),
+            );
+            jest.spyOn(paymentIntegrationService, 'loadCheckout');
         });
 
         it('creates buy now cart on button click', async () => {

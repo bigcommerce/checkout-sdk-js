@@ -96,7 +96,8 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
         methodId: string,
         paypalcommerce: PayPalCommerceButtonInitializeOptions,
     ): void {
-        const { buyNowInitializeOptions, style, onComplete } = paypalcommerce;
+
+        const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = paypalcommerce;
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -150,8 +151,8 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
         if (paypalButton.isEligible()) {
             paypalButton.render(`#${containerId}`);
-        } else {
-            this.paypalCommerceIntegrationService.removeElement(containerId);
+        } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
+            onEligibilityFailure();
         }
     }
 

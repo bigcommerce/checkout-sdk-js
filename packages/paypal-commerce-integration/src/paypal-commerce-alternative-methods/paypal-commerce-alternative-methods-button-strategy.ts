@@ -103,7 +103,8 @@ export default class PayPalCommerceAlternativeMethodsButtonStrategy
         methodId: string,
         paypalcommercealternativemethods: PayPalCommerceAlternativeMethodsButtonOptions,
     ): void {
-        const { apm, buyNowInitializeOptions, style } = paypalcommercealternativemethods;
+        const { apm, buyNowInitializeOptions, style, onEligibilityFailure } =
+            paypalcommercealternativemethods;
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const isAvailableFundingSource = Object.values(paypalSdk.FUNDING).includes(apm);
@@ -139,8 +140,8 @@ export default class PayPalCommerceAlternativeMethodsButtonStrategy
 
         if (paypalButtonRender.isEligible()) {
             paypalButtonRender.render(`#${containerId}`);
-        } else {
-            this.paypalCommerceIntegrationService.removeElement(containerId);
+        } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
+            onEligibilityFailure();
         }
     }
 
