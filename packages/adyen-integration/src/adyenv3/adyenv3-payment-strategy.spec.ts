@@ -3,6 +3,7 @@ import { createScriptLoader, createStylesheetLoader } from '@bigcommerce/script-
 import { Observable, of } from 'rxjs';
 
 import {
+    ActionHandledReturnObject,
     AdyenAdditionalActionState,
     AdyenComponent,
     AdyenComponentState,
@@ -673,8 +674,44 @@ describe('AdyenV3PaymentStrategy', () => {
             });
 
             describe('submitPayment fails with identifyShopperError', () => {
+                const onActionHandled = jest.fn();
+                let handleOnAdditionalDetails: (
+                    additionalActionState: AdyenAdditionalActionState,
+                ) => unknown;
+
+                let handleOnActionHandled: (rtnObj: ActionHandledReturnObject) => unknown;
+
                 beforeEach(async () => {
-                    await strategy.initialize(options);
+                    await strategy.initialize(getInitializeOptions(false, onActionHandled));
+
+                    additionalActionComponent = {
+                        mount: jest.fn(() => {
+                            handleOnActionHandled({
+                                componentType: '3DS2Fingerprint',
+                                actionDescription: 'actionDescription',
+                            });
+                            handleOnAdditionalDetails({
+                                data: {
+                                    resultCode: ResultCode.IdentifyShopper,
+                                    action: 'adyenAction',
+                                },
+                                isValid: true,
+                            });
+                        }),
+                        unmount: jest.fn(),
+                        submit: jest.fn(),
+                    };
+
+                    jest.spyOn(adyenCheckout, 'createFromAction').mockImplementation(
+                        jest.fn((_type, options) => {
+                            const { onAdditionalDetails, onActionHandled } = options;
+
+                            handleOnActionHandled = onActionHandled;
+                            handleOnAdditionalDetails = onAdditionalDetails;
+
+                            return additionalActionComponent;
+                        }),
+                    );
                 });
 
                 it('calls submitPayment when additional action completes', async () => {
@@ -687,6 +724,19 @@ describe('AdyenV3PaymentStrategy', () => {
                     expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
                     expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
                     expect(adyenCheckout.createFromAction).toHaveBeenCalledTimes(1);
+                });
+
+                it("doesn't trigger onActionHandled for the 3DS2Fingerprint componentType", async () => {
+                    jest.spyOn(paymentIntegrationService, 'submitPayment')
+                        .mockReturnValueOnce(Promise.reject(identifyShopperError))
+                        .mockReturnValueOnce(submitPaymentAction);
+
+                    await strategy.execute(getOrderRequestBody());
+
+                    expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                    expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
+                    expect(adyenCheckout.createFromAction).toHaveBeenCalledTimes(1);
+                    expect(onActionHandled).not.toHaveBeenCalled();
                 });
 
                 it('returns UNKNOWN_ERROR when submitPayment fails', async () => {
@@ -716,6 +766,35 @@ describe('AdyenV3PaymentStrategy', () => {
                         expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(3);
                         expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
                         expect(adyenCheckout.createFromAction).toHaveBeenCalledTimes(2);
+                    });
+
+                    it('triggers onActionHandled for the non-3DS2Fingerprint componentType', async () => {
+                        additionalActionComponent = {
+                            ...additionalActionComponent,
+                            mount: jest.fn(() => {
+                                handleOnActionHandled({
+                                    componentType: '3DS2Challenge',
+                                    actionDescription: 'actionDescription',
+                                });
+                                handleOnAdditionalDetails({
+                                    data: {
+                                        resultCode: ResultCode.ChallengeShopper,
+                                        action: 'adyenAction',
+                                    },
+                                    isValid: true,
+                                });
+                            }),
+                        };
+                        jest.spyOn(paymentIntegrationService, 'submitPayment')
+                            .mockReturnValueOnce(Promise.reject(identifyShopperError))
+                            .mockReturnValueOnce(submitPaymentAction);
+
+                        await strategy.execute(getOrderRequestBody());
+
+                        expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
+                        expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
+                        expect(adyenCheckout.createFromAction).toHaveBeenCalledTimes(1);
+                        expect(onActionHandled).toHaveBeenCalled();
                     });
 
                     it('returns UNKNOWN_ERROR when submitPayment fails', async () => {

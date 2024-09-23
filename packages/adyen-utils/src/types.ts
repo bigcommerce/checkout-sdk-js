@@ -190,6 +190,11 @@ export interface AdyenAdditionalActionCallbacks {
      * is completed
      */
     onComplete?(): void;
+
+    /**
+     * A callback that gets called when an action, for example a QR code or 3D Secure 2 authentication screen, is shown to the shopper
+     */
+    onActionHandled?(): void;
 }
 
 export interface AdyenAdditionalActionErrorResponse {
@@ -995,16 +1000,24 @@ export interface SubInputDetail {
 export interface AdyenV3ThreeDS2ChallengeComponentOptions {
     challengeWindowSize?: string;
     onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
+    onActionHandled?(rtnObj: ActionHandledReturnObject): void;
     onError(error: AdyenError): void;
 }
 
 export interface AdyenV2ThreeDS2ChallengeComponentOptions {
     size?: string;
     onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
+    onActionHandled?(rtnObj: ActionHandledReturnObject): void;
     onError(error: AdyenError): void;
 }
 
+export interface ActionHandledReturnObject {
+    componentType: string;
+    actionDescription: string;
+}
+
 export interface ThreeDS2DeviceFingerprintComponentOptions {
+    onActionHandled?(rtnObj: ActionHandledReturnObject): void;
     onAdditionalDetails?(state: AdyenAdditionalActionState, component?: AdyenComponent): void;
     onError(error: AdyenError): void;
 }

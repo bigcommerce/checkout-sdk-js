@@ -52,6 +52,9 @@ import {
  *             onComplete() {
  *                 console.log('Completed');
  *             },
+ *             onActionHandled() {
+ *                 console.log('ActionHandled');
+ *             },
  *         },
  *         options: {
  *             scheme: {

@@ -31,7 +31,7 @@ function getAdditionalActionErrorResponse(
     return {
         provider_data: {
             resultCode,
-            action: '{"paymentData":"ADYEN_PAYMENT_DATA","paymentMethodType":"scheme","token":"TOKEN","type":"threeDS2Fingerprint"}',
+            action: '{"paymentData":"ADYEN_PAYMENT_DATA","paymentMethodType":"scheme","token":"TOKEN","type":"threeDS2"}',
         },
         errors: [
             {
@@ -159,7 +159,10 @@ export function getFailingComponent(): AdyenComponent {
     };
 }
 
-export function getInitializeOptions(hasVaultedInstruments = false): PaymentInitializeOptions {
+export function getInitializeOptions(
+    hasVaultedInstruments = false,
+    onActionHandled = jest.fn(),
+): PaymentInitializeOptions {
     return {
         methodId: 'adyenv3',
         adyenv3: {
@@ -173,6 +176,7 @@ export function getInitializeOptions(hasVaultedInstruments = false): PaymentInit
             },
             additionalActionOptions: {
                 containerId: 'adyen-scheme-additional-action-component-field',
+                onActionHandled,
                 onBeforeLoad: jest.fn(),
                 onComplete: jest.fn(),
                 onLoad: jest.fn(),
