@@ -98,14 +98,14 @@ export default class HostedInputManualOrderPaymentHandler {
         );
     }
 
-    private _isErrorResponse(error: unknown): error is { name: string; message: string } {
+    private _isErrorResponse(error: unknown): error is { name?: string; message?: string } {
         return (
             typeof error === 'object' &&
             error !== null &&
-            'name' in error &&
-            typeof (error as { name: unknown }).name === 'string' &&
-            'message' in error &&
-            typeof (error as { message: unknown }).message === 'string'
+            (('name' in error && typeof (error as { name: unknown }).name === 'string') ||
+                !('name' in error)) &&
+            (('message' in error && typeof (error as { message: unknown }).message === 'string') ||
+                !('message' in error))
         );
     }
 }
