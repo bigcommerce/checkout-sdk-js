@@ -248,11 +248,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         try {
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            if (error instanceof Error) {
-                return this._processAdditionalAction(error, methodId);
-            }
-
-            throw error;
+            return this._processAdditionalAction(error, methodId);
         }
     }
 
@@ -273,16 +269,12 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         try {
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            if (error instanceof Error) {
-                return this._processAdditionalAction(
-                    error,
-                    methodId,
-                    shouldSaveInstrument,
-                    shouldSetAsDefaultInstrument,
-                );
-            }
-
-            throw error;
+            return this._processAdditionalAction(
+                error,
+                methodId,
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
+            );
         }
     }
 
@@ -449,7 +441,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     // TODO: complexity of _processAdditionalAction method
     // eslint-disable-next-line complexity
     private async _processAdditionalAction(
-        error: Error,
+        error: unknown,
         methodId: string,
         shouldSaveInstrument = false,
         shouldSetAsDefaultInstrument = false,
