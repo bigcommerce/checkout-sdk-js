@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.661.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.660.1...v1.661.0) (2024-09-24)
+
+
+### Features
+
+* **payment:** PAYPAL-4591 added 3ds check ([#2658](https://github.com/bigcommerce/checkout-sdk-js/issues/2658)) ([c72706a](https://github.com/bigcommerce/checkout-sdk-js/commit/c72706ad912608877d4d7b478a5b8071a6b55b46))
+
 ### [1.660.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.660.0...v1.660.1) (2024-09-23)
 
 
