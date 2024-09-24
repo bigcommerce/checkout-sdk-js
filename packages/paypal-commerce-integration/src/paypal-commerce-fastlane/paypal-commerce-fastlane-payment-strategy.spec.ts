@@ -479,23 +479,6 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             });
             expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(true);
         });
-
-        it('do not create an order if there is an error  while receiving a payment order', async () => {
-            await strategy.initialize(initializationOptions);
-
-            const paypalFastlaneComponent = await paypalFastlane.FastlaneCardComponent({});
-
-            jest.spyOn(paypalFastlaneComponent, 'getPaymentToken').mockRejectedValue(
-                new Error('input data error'),
-            );
-
-            try {
-                await strategy.execute(executeOptions);
-            } catch (error) {
-                expect(error).toBeInstanceOf(Error);
-                expect(paypalCommerceRequestSender.createOrder).not.toHaveBeenCalled();
-            }
-        });
     });
 
     describe('#onInit option callback', () => {

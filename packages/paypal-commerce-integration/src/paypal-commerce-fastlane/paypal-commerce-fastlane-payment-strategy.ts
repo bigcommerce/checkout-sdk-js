@@ -133,32 +133,22 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const state = this.paymentIntegrationService.getState();
         const cartId = state.getCartOrThrow().id;
 
-        try {
-            const { id } = await this.getPayPalFastlanePaymentToken();
+        const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
+            cartId,
+        });
 
-            const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
-                cartId,
-            });
+        const paymentPayload =
+            paymentData && isVaultedInstrument(paymentData)
+                ? this.prepareVaultedInstrumentPaymentPayload(methodId, orderId, paymentData)
+                : await this.preparePaymentPayload(methodId, orderId, paymentData);
 
-            const paymentPayload =
-                paymentData && isVaultedInstrument(paymentData)
-                    ? this.prepareVaultedInstrumentPaymentPayload(methodId, orderId, paymentData)
-                    : this.preparePaymentPayload(methodId, orderId, paymentData, id);
+        await this.paymentIntegrationService.submitOrder(order, options);
+        await this.paymentIntegrationService.submitPayment<PayPalFastlanePaymentFormattedPayload>(
+            paymentPayload,
+        );
 
-            await this.paymentIntegrationService.submitOrder(order, options);
-            await this.paymentIntegrationService.submitPayment<PayPalFastlanePaymentFormattedPayload>(
-                paymentPayload,
-            );
-
-            // TODO: we should probably update this method with removeStorageSessionId for better reading experience
-            this.paypalCommerceFastlaneUtils.updateStorageSessionId(true);
-        } catch (error) {
-            if (error.name !== 'FastlaneError') {
-                throw error;
-            }
-
-            return Promise.reject();
-        }
+        // TODO: we should probably update this method with removeStorageSessionId for better reading experience
+        this.paypalCommerceFastlaneUtils.updateStorageSessionId(true);
     }
 
     finalize(): Promise<void> {
@@ -314,14 +304,25 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         };
     }
 
-    private preparePaymentPayload(
+    private async preparePaymentPayload(
         methodId: string,
         paypalOrderId: string,
         paymentData: OrderPaymentRequestBody['paymentData'],
-        id: string,
-    ): Payment<PayPalFastlanePaymentFormattedPayload> {
+    ): Promise<Payment<PayPalFastlanePaymentFormattedPayload>> {
+        const state = this.paymentIntegrationService.getState();
+        const billingAddress = state.getBillingAddressOrThrow();
+
+        const fullName = `${billingAddress.firstName} ${billingAddress.lastName}`.trim();
+
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
+
+        const { getPaymentToken } = this.getPayPalComponentMethodsOrThrow();
+
+        const { id } = await getPaymentToken({
+            name: { fullName },
+            billingAddress: this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(billingAddress),
+        });
 
         return {
             methodId,
@@ -337,25 +338,6 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 },
             },
         };
-    }
-
-    /**
-     *
-     * Getting PayPal Fastlane Payment Token
-     *
-     */
-    private async getPayPalFastlanePaymentToken() {
-        const state = this.paymentIntegrationService.getState();
-        const billingAddress = state.getBillingAddressOrThrow();
-
-        const fullName = `${billingAddress.firstName} ${billingAddress.lastName}`.trim();
-
-        const { getPaymentToken } = this.getPayPalComponentMethodsOrThrow();
-
-        return getPaymentToken({
-            name: { fullName },
-            billingAddress: this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(billingAddress),
-        });
     }
 
     /**
