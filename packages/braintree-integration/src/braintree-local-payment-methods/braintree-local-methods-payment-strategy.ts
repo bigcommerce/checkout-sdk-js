@@ -31,6 +31,16 @@ import {
     WithBraintreeLocalMethodsPaymentInitializeOptions,
 } from './braintree-local-methods-options';
 
+interface BraintreeRedirectError {
+    body: {
+        additional_action_required: {
+            data: {
+                redirect_url: string;
+            };
+        };
+    };
+}
+
 export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStrategy {
     private orderId?: string;
     private localPaymentInstance?: LocalPaymentInstance;
@@ -294,7 +304,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         return methodId.toUpperCase() in NonInstantLocalPaymentMethods;
     }
 
-    private isBraintreeRedirectError(error: unknown) {
+    private isBraintreeRedirectError(error: unknown): error is BraintreeRedirectError {
         if (typeof error !== 'object' || error === null) {
             return false;
         }
