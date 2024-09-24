@@ -2,6 +2,7 @@ import {
     BraintreeInitializationData,
     BraintreeIntegrationService,
     BraintreeLocalPaymentMethodRedirectAction,
+    BraintreeRedirectError,
     LocalPaymentInstance,
     LocalPaymentsPayload,
     NonInstantLocalPaymentMethods,
@@ -30,16 +31,6 @@ import {
     BraintreeLocalMethods,
     WithBraintreeLocalMethodsPaymentInitializeOptions,
 } from './braintree-local-methods-options';
-
-interface BraintreeRedirectError {
-    body: {
-        additional_action_required: {
-            data: {
-                redirect_url: string;
-            };
-        };
-    };
-}
 
 export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStrategy {
     private orderId?: string;
