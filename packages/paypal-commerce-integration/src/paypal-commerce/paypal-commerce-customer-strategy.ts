@@ -242,11 +242,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.paypalCommerceIntegrationService.updateOrder();
         } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
+            this.handleError(error);
         }
     }
 
@@ -269,11 +265,7 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.paypalCommerceIntegrationService.updateOrder();
         } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
+            this.handleError(error);
         }
     }
 
