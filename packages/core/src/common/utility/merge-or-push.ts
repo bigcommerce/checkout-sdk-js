@@ -12,11 +12,10 @@ export default function mergeOrPush<T>(array: T[], item?: T, predicate?: ValueKe
         return array;
     }
 
-    const defaultPredicate = pick(item, 'id');
-    const index = findIndex(
-        array,
-        typeof predicate === 'object' ? pickBy(predicate) : predicate || defaultPredicate,
-    );
+    const defaultPredicate = pick<T>(item, 'id');
+    const derivedPredicate: any =
+        typeof predicate === 'object' ? pickBy<T>(predicate) : predicate || defaultPredicate;
+    const index = findIndex(array, derivedPredicate);
     const newArray = [...array];
 
     if (index === -1) {

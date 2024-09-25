@@ -1,6 +1,6 @@
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    isPayPalCommerceFastlaneWindow,
+    PayPalCommerceHostWindow,
     PayPalFastlaneApmSelectedEventOptions,
     PayPalFastlaneEmailEnteredEventOptions,
     PayPalFastlaneEventCommonOptions,
@@ -51,15 +51,19 @@ export default class PayPalCommerceAnalyticTracker implements PayPalCommerceAnal
         const initializationData = paymentMethod?.initializationData || {};
         const isAnalyticEnabled = initializationData.isPayPalCommerceAnalyticsV2Enabled;
 
-        const isAvailableAnalyticEventsMethods =
-            isPayPalCommerceFastlaneWindow(window) && window.paypalFastlane?.events;
+        const paypalHostWindow = window as PayPalCommerceHostWindow;
+        const isAvailableAnalyticEventsMethods = paypalHostWindow.paypalFastlane
+            ? !!paypalHostWindow.paypalFastlane.events
+            : false;
 
         return isAnalyticEnabled && isAvailableAnalyticEventsMethods;
     }
 
     private _getPayPalEventsOrThrow(): PayPalFastlaneEvents {
-        if (isPayPalCommerceFastlaneWindow(window) && window.paypalFastlane) {
-            return window.paypalFastlane.events;
+        const paypalHostWindow = window as PayPalCommerceHostWindow;
+
+        if (paypalHostWindow.paypalFastlane && paypalHostWindow.paypalFastlane.events) {
+            return paypalHostWindow.paypalFastlane.events;
         }
 
         throw new PaymentMethodClientUnavailableError();

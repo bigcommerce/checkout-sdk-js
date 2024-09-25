@@ -4,6 +4,10 @@ import { appendWww, parseUrl } from '../common/url';
 import { EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import { NotEmbeddableError, NotEmbeddableErrorType } from './errors';
 
+export interface ExtendedHTMLIFrameElement extends HTMLIFrameElement {
+    allowPaymentRequest?: boolean;
+}
+
 export default class ResizableIframeCreator {
     constructor(private _options?: { timeout: number }) {}
 
@@ -18,7 +22,7 @@ export default class ResizableIframeCreator {
             );
         }
 
-        const iframe = document.createElement('iframe');
+        const iframe: ExtendedHTMLIFrameElement = document.createElement('iframe');
 
         iframe.src = src;
         iframe.style.border = 'none';

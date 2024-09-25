@@ -1,3 +1,4 @@
+import { Action } from '@bigcommerce/data-store';
 import { createRequestSender, Response } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
 import { from, of } from 'rxjs';
@@ -178,7 +179,7 @@ describe('InstrumentActionCreator', () => {
                     .pipe(toArray())
                     .toPromise();
             } catch (e) {
-                expect(e.type).toBe('missing_data');
+                expect((e as Action).type).toBe('missing_data');
             }
         });
     });
@@ -280,7 +281,7 @@ describe('InstrumentActionCreator', () => {
                     .pipe(toArray())
                     .toPromise();
             } catch (e) {
-                expect(e.type).toBe('missing_data');
+                expect((e as Action).type).toBe('missing_data');
             }
         });
     });

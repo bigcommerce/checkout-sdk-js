@@ -4,7 +4,7 @@ import { IFrameComponent, IFrameObject, IFrameOptions, iframeResizer } from '../
 
 import { EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import { NotEmbeddableError } from './errors';
-import ResizableIframeCreator from './resizable-iframe-creator';
+import ResizableIframeCreator, { ExtendedHTMLIFrameElement } from './resizable-iframe-creator';
 
 jest.mock('../common/iframe', () => ({
     iframeResizer: jest.fn((_: IFrameOptions, element: HTMLIFrameElement) => {
@@ -115,7 +115,7 @@ describe('ResizableIframeCreator', () => {
             });
         });
 
-        const frame = await iframeCreator.createFrame(url, 'checkout');
+        const frame: ExtendedHTMLIFrameElement = await iframeCreator.createFrame(url, 'checkout');
 
         expect(frame.allowPaymentRequest).toBe(true);
     });
@@ -166,7 +166,7 @@ describe('ResizableIframeCreator', () => {
             await iframeCreator.createFrame(url, 'checkout');
         } catch (error) {
             expect(error).toBeInstanceOf(NotEmbeddableError);
-            expect(error.message).toEqual(event.payload.message);
+            expect((error as NotEmbeddableError).message).toEqual(event.payload.message);
         }
     });
 

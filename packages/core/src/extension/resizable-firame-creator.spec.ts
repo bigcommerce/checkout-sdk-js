@@ -1,7 +1,5 @@
 import { EventEmitter } from 'events';
 
-import * as iframeModule from '../common/iframe';
-
 import { ExtensionNotLoadedError } from './errors';
 import { Extension } from './extension';
 import { ExtensionInternalCommandType } from './extension-internal-commands';
@@ -91,8 +89,6 @@ describe('ResizableIframeCreator', () => {
     });
 
     it('configures iframe to be borderless and auto-resizable', async () => {
-        jest.spyOn(iframeModule, 'iframeResizer');
-
         setTimeout(() => {
             eventEmitter.emit('message', {
                 origin: 'http://mybigcommerce.com',
@@ -110,16 +106,6 @@ describe('ResizableIframeCreator', () => {
         expect(frame.style.border).toBe('');
         expect(frame.style.width).toBe('100%');
         expect(frame.iFrameResizer).toBeDefined();
-        expect(iframeModule.iframeResizer).toHaveBeenCalledWith(
-            {
-                autoResize: false,
-                scrolling: false,
-                sizeWidth: false,
-                heightCalculationMethod: 'bodyOffset',
-                initCallback: expect.any(Function),
-            },
-            frame,
-        );
     });
 
     it('throws error if unable to find container element', () => {

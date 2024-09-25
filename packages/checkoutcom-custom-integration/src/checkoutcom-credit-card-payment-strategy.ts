@@ -1,9 +1,8 @@
 import { FormPoster } from '@bigcommerce/form-poster';
-import { some } from 'lodash';
 
 import { CreditCardPaymentStrategy } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import {
-    isRequestError,
+    isThreeDSecureRequiredError,
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
@@ -12,6 +11,7 @@ import {
     PaymentIntegrationService,
     PaymentRequestOptions,
     PaymentStatusTypes,
+    RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default class CheckoutComCreditCardPaymentStrategy extends CreditCardPaymentStrategy {
@@ -49,20 +49,11 @@ export default class CheckoutComCreditCardPaymentStrategy extends CreditCardPaym
         try {
             await this.paymentIntegrationService.submitPayment({ ...payment, paymentData });
         } catch (error) {
-            if (
-                !isRequestError(error) ||
-                !some(error.body.errors, { code: 'three_d_secure_required' })
-            ) {
-                return Promise.reject(error);
+            if (isThreeDSecureRequiredError(error)) {
+                return this._handleThreeDSecure(error);
             }
 
-            return new Promise(() =>
-                this.formPoster.postForm(error.body.three_ds_result.acs_url, {
-                    PaReq: error.body.three_ds_result.payer_auth_request || null,
-                    TermUrl: error.body.three_ds_result.callback_url || null,
-                    MD: error.body.three_ds_result.merchant_data || null,
-                }),
-            );
+            return Promise.reject(error);
         }
     }
 
@@ -86,22 +77,26 @@ export default class CheckoutComCreditCardPaymentStrategy extends CreditCardPaym
             await this.paymentIntegrationService.submitOrder(order, options);
             await form.submit(payment);
         } catch (error) {
-            if (
-                !isRequestError(error) ||
-                !some(error.body.errors, { code: 'three_d_secure_required' })
-            ) {
-                return Promise.reject(error);
+            if (isThreeDSecureRequiredError(error)) {
+                return this._handleThreeDSecure(error);
             }
 
-            return new Promise(() =>
-                this.formPoster.postForm(error.body.three_ds_result.acs_url, {
-                    PaReq: error.body.three_ds_result.payer_auth_request || null,
-                    TermUrl: error.body.three_ds_result.callback_url || null,
-                    MD: error.body.three_ds_result.merchant_data || null,
-                }),
-            );
+            return Promise.reject(error);
         }
 
         this.paymentIntegrationService.loadCurrentOrder();
+    }
+
+    private _handleThreeDSecure(error: RequestError): Promise<void> {
+        const { acs_url, payer_auth_request, callback_url, merchant_data } =
+            error.body.three_ds_result;
+
+        return new Promise<void>(() =>
+            this.formPoster.postForm(acs_url, {
+                PaReq: payer_auth_request || null,
+                TermUrl: callback_url || null,
+                MD: merchant_data || null,
+            }),
+        );
     }
 }

@@ -2,6 +2,7 @@ import { noop } from 'lodash';
 
 import {
     InvalidArgumentError,
+    isRequestError,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
@@ -102,7 +103,7 @@ export default class ClearpayPaymentStrategy implements PaymentStrategy {
             await this._paymentIntegrationService.forgetCheckout(payment.providerId);
             await this._paymentIntegrationService.loadPaymentMethods();
 
-            if (error instanceof RequestError) {
+            if (isRequestError(error)) {
                 throw new OrderFinalizationNotCompletedError(error.body?.errors?.[0]?.message);
             }
         }

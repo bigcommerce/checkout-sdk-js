@@ -399,7 +399,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         return this.stripeV3Client;
     }
 
-    private handleEmptyPaymentIntentError(error: Error, stripeError: StripeError | undefined) {
+    private handleEmptyPaymentIntentError(error: unknown, stripeError: StripeError | undefined) {
         if (!isRequestError(error)) {
             return error;
         }
@@ -641,7 +641,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
     }
 
     private async processAdditionalAction(
-        error: Error,
+        error: unknown,
         methodId: string,
         shouldSaveInstrument = false,
         shouldSetAsDefaultInstrument = false,

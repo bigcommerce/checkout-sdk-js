@@ -3,6 +3,7 @@ import { some } from 'lodash';
 import {
     InvalidArgumentError,
     isHostedInstrumentLike,
+    isRequestError,
     isVaultedInstrument,
     MissingDataError,
     MissingDataErrorType,
@@ -160,7 +161,9 @@ export default class DigitalRiverPaymentStrategy implements PaymentStrategy {
                     throw error;
                 }
 
-                const confirm = await this.authenticateSource(error.body.provider_data);
+                const confirm =
+                    isRequestError(error) &&
+                    (await this.authenticateSource(error.body.provider_data));
 
                 await this.submitVaultedInstrument(
                     methodId,
