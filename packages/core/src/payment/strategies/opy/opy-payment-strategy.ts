@@ -1,3 +1,5 @@
+import { StorefrontPaymentRequestSender } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     MissingDataError,
@@ -11,7 +13,6 @@ import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
-import StorefrontPaymentRequestSender from '../../storefront-payment-request-sender';
 import PaymentStrategy from '../payment-strategy';
 
 import { ActionTypes, isOpyPaymentMethod } from './opy';

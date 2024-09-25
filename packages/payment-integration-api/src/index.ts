@@ -176,6 +176,7 @@ export {
     ThreeDSecureToken,
     ThreeDsResult,
     InstrumentMeta,
+    StorefrontPaymentRequestSender,
 } from './payment';
 export { StoreCreditActionType } from './store-credit';
 

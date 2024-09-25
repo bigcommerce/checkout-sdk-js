@@ -4,6 +4,8 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { omit } from 'lodash';
 import { of } from 'rxjs';
 
+import { StorefrontPaymentRequestSender } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { getCartState } from '../../../cart/carts.mock';
 import {
     CheckoutRequestSender,
@@ -36,7 +38,6 @@ import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
-import StorefrontPaymentRequestSender from '../../storefront-payment-request-sender';
 
 import { ActionTypes, OpyPaymentMethod } from './opy';
 import { OpyWidget } from './opy-library';

@@ -20,7 +20,6 @@ import { MasterpassPaymentStrategy } from './strategies/masterpass';
 import { OpyPaymentStrategy } from './strategies/opy';
 import { PaypalExpressPaymentStrategy } from './strategies/paypal';
 import { PPSDKStrategy } from './strategies/ppsdk';
-import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SquarePaymentStrategy } from './strategies/square';
 import { WepayPaymentStrategy } from './strategies/wepay';
 
@@ -92,12 +91,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.PAYPAL_EXPRESS_CREDIT);
 
         expect(paymentStrategy).toBeInstanceOf(PaypalExpressPaymentStrategy);
-    });
-
-    it('can instantiate quadpay', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.QUADPAY);
-
-        expect(paymentStrategy).toBeInstanceOf(QuadpayPaymentStrategy);
     });
 
     it('can instantiate square', () => {
