@@ -12,4 +12,4 @@
 
 ### amazonpay
 
-• `Optional` **amazonpay**: `AmazonPayV2ButtonParams` \| `AmazonPayV2NewButtonParams` \| [`WithBuyNowFeature`](WithBuyNowFeature.md)
+• `Optional` **amazonpay**: [`AmazonPayV2ButtonInitializeOptions`](../README.md#amazonpayv2buttoninitializeoptions)

@@ -47,7 +47,7 @@ ___
 
 ### iconStyle
 
-• `Optional` **iconStyle**: [`Solid`](../enums/IconStyle.md#solid) \| [`Default`](../enums/IconStyle.md#default)
+• `Optional` **iconStyle**: [`IconStyle`](../enums/IconStyle.md)
 
 Appearance of the icon in the Element.
 

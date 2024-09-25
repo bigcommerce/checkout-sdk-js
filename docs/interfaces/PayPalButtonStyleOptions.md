@@ -15,7 +15,7 @@
 
 ### color
 
-• `Optional` **color**: [`gold`](../enums/StyleButtonColor.md#gold) \| [`blue`](../enums/StyleButtonColor.md#blue) \| [`silver`](../enums/StyleButtonColor.md#silver) \| [`black`](../enums/StyleButtonColor.md#black) \| [`white`](../enums/StyleButtonColor.md#white)
+• `Optional` **color**: [`StyleButtonColor`](../enums/StyleButtonColor.md)
 
 ___
 
@@ -27,10 +27,10 @@ ___
 
 ### label
 
-• `Optional` **label**: [`paypal`](../enums/StyleButtonLabel.md#paypal) \| [`checkout`](../enums/StyleButtonLabel.md#checkout) \| [`buynow`](../enums/StyleButtonLabel.md#buynow) \| [`pay`](../enums/StyleButtonLabel.md#pay) \| [`installment`](../enums/StyleButtonLabel.md#installment)
+• `Optional` **label**: [`StyleButtonLabel`](../enums/StyleButtonLabel.md)
 
 ___
 
 ### shape
 
-• `Optional` **shape**: [`pill`](../enums/StyleButtonShape_2.md#pill) \| [`rect`](../enums/StyleButtonShape_2.md#rect)
+• `Optional` **shape**: [`StyleButtonShape_2`](../enums/StyleButtonShape_2.md)

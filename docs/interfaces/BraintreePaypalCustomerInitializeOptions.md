@@ -52,7 +52,7 @@ A callback that gets called on any error instead of submit payment or authorizat
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `error` | `BraintreeError` \| `default` | The error object describing the failure. |
+| `error` | `default` \| `BraintreeError` | The error object describing the failure. |
 
 #### Returns
 

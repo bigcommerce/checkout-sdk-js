@@ -13,7 +13,7 @@
 
 ### errors
 
-• `Optional` **errors**: `Partial`<`Record`<[`BraintreeFormErrorDataKeys`](../README.md#braintreeformerrordatakeys), `Pick`<[`BraintreeFormFieldState`](BraintreeFormFieldState.md), ``"isEmpty"`` \| ``"isPotentiallyValid"`` \| ``"isValid"``\>\>\>
+• `Optional` **errors**: `Partial`<`Record`<[`BraintreeFormErrorDataKeys`](../README.md#braintreeformerrordatakeys), [`BraintreeFormErrorData`](../README.md#braintreeformerrordata)\>\>
 
 ___
 

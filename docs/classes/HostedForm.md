@@ -35,7 +35,7 @@
 | `_fields` | [`HostedField`](HostedField.md)[] |
 | `_eventListener` | [`IframeEventListener`](IframeEventListener.md)<[`HostedInputEventMap`](../interfaces/HostedInputEventMap.md), `undefined`\> |
 | `_payloadTransformer` | [`HostedFormOrderDataTransformer`](HostedFormOrderDataTransformer.md) |
-| `_eventCallbacks` | `Pick`<[`HostedFormOptions`](../interfaces/HostedFormOptions.md), ``"onBlur"`` \| ``"onCardTypeChange"`` \| ``"onFocus"`` \| ``"onEnter"`` \| ``"onValidate"``\> |
+| `_eventCallbacks` | [`HostedFormEventCallbacks`](../README.md#hostedformeventcallbacks) |
 | `_paymentHumanVerificationHandler` | [`PaymentHumanVerificationHandler`](PaymentHumanVerificationHandler.md) |
 
 ## Methods

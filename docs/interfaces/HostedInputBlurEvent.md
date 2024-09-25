@@ -19,7 +19,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `errors?` | `Partial`<`Record`<[`BraintreeFormErrorDataKeys`](../README.md#braintreeformerrordatakeys), [`HostedFormErrorData`](HostedFormErrorData.md)\>\> |
+| `errors?` | `Partial`<`Record`<[`HostedFormErrorDataKeys`](../README.md#hostedformerrordatakeys), [`HostedFormErrorData`](HostedFormErrorData.md)\>\> |
 | `fieldType` | [`HostedFieldType`](../enums/HostedFieldType.md) |
 
 ___

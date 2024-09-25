@@ -19,7 +19,7 @@
 
 ### buttonColor
 
-• `Optional` **buttonColor**: ``"default"`` \| ``"black"`` \| ``"white"``
+• `Optional` **buttonColor**: [`GooglePayButtonColor`](../README.md#googlepaybuttoncolor)
 
 All Google Pay payment buttons exist in two styles: dark (default) and light.
 To provide contrast, use dark buttons on light backgrounds and light buttons on dark or colorful backgrounds.
@@ -28,7 +28,7 @@ ___
 
 ### buttonType
 
-• `Optional` **buttonType**: ``"book"`` \| ``"buy"`` \| ``"checkout"`` \| ``"donate"`` \| ``"order"`` \| ``"pay"`` \| ``"plain"`` \| ``"subscribe"`` \| ``"long"`` \| ``"short"``
+• `Optional` **buttonType**: [`GooglePayButtonType`](../README.md#googlepaybuttontype)
 
 Variant buttons:
 book: The "Book with Google Pay" payment button.

@@ -19,7 +19,7 @@
 
 ### color
 
-• `Optional` **color**: [`GOLD`](../enums/PaypalButtonStyleColorOption.md#gold) \| [`BLUE`](../enums/PaypalButtonStyleColorOption.md#blue) \| [`SIlVER`](../enums/PaypalButtonStyleColorOption.md#silver) \| [`BLACK`](../enums/PaypalButtonStyleColorOption.md#black) \| [`WHITE`](../enums/PaypalButtonStyleColorOption.md#white)
+• `Optional` **color**: [`PaypalButtonStyleColorOption`](../enums/PaypalButtonStyleColorOption.md)
 
 ___
 
@@ -37,25 +37,25 @@ ___
 
 ### label
 
-• `Optional` **label**: [`CHECKOUT`](../enums/PaypalButtonStyleLabelOption.md#checkout) \| [`PAY`](../enums/PaypalButtonStyleLabelOption.md#pay) \| [`BUYNOW`](../enums/PaypalButtonStyleLabelOption.md#buynow) \| [`PAYPAL`](../enums/PaypalButtonStyleLabelOption.md#paypal) \| [`CREDIT`](../enums/PaypalButtonStyleLabelOption.md#credit)
+• `Optional` **label**: [`PaypalButtonStyleLabelOption`](../enums/PaypalButtonStyleLabelOption.md)
 
 ___
 
 ### layout
 
-• `Optional` **layout**: [`HORIZONTAL`](../enums/PaypalButtonStyleLayoutOption.md#horizontal) \| [`VERTICAL`](../enums/PaypalButtonStyleLayoutOption.md#vertical)
+• `Optional` **layout**: [`PaypalButtonStyleLayoutOption`](../enums/PaypalButtonStyleLayoutOption.md)
 
 ___
 
 ### shape
 
-• `Optional` **shape**: [`PILL`](../enums/PaypalButtonStyleShapeOption.md#pill) \| [`RECT`](../enums/PaypalButtonStyleShapeOption.md#rect)
+• `Optional` **shape**: [`PaypalButtonStyleShapeOption`](../enums/PaypalButtonStyleShapeOption.md)
 
 ___
 
 ### size
 
-• `Optional` **size**: [`SMALL`](../enums/PaypalButtonStyleSizeOption.md#small) \| [`MEDIUM`](../enums/PaypalButtonStyleSizeOption.md#medium) \| [`LARGE`](../enums/PaypalButtonStyleSizeOption.md#large) \| [`RESPONSIVE`](../enums/PaypalButtonStyleSizeOption.md#responsive)
+• `Optional` **size**: [`PaypalButtonStyleSizeOption`](../enums/PaypalButtonStyleSizeOption.md)
 
 ___
 

@@ -655,7 +655,7 @@ Manages the command handler for an extension.
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends `ExtensionCommandType` |
+| `T` | extends keyof [`ExtensionCommandMap`](../interfaces/ExtensionCommandMap.md) |
 
 #### Parameters
 
