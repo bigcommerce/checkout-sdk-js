@@ -80,7 +80,7 @@ ___
 
 ### type
 
-• **type**: ``"account"`` \| ``"bank"``
+• **type**: ``"bank"`` \| ``"account"``
 
 #### Inherited from
 

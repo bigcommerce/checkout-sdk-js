@@ -79,7 +79,7 @@ ___
 
 ### type
 
-• **type**: ``"account"`` \| ``"bank"``
+• **type**: ``"bank"`` \| ``"account"``
 
 #### Overrides
 

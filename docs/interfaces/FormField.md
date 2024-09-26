@@ -39,7 +39,7 @@ ___
 
 ### fieldType
 
-• `Optional` **fieldType**: [`FormFieldFieldType`](../README.md#formfieldfieldtype)
+• `Optional` **fieldType**: ``"checkbox"`` \| ``"date"`` \| ``"text"`` \| ``"dropdown"`` \| ``"password"`` \| ``"radio"`` \| ``"multiline"``
 
 ___
 
@@ -117,4 +117,4 @@ ___
 
 ### type
 
-• `Optional` **type**: [`FormFieldType`](../README.md#formfieldtype)
+• `Optional` **type**: ``"string"`` \| ``"date"`` \| ``"array"`` \| ``"integer"``

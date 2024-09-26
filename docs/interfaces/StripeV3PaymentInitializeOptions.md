@@ -73,4 +73,4 @@ ___
 
 ### options
 
-• `Optional` **options**: [`IndividualCardElementOptions`](IndividualCardElementOptions.md) \| [`StripeElementOptions`](../README.md#stripeelementoptions)
+• `Optional` **options**: [`CardCvcElementOptions`](CardCvcElementOptions.md) \| [`CardElementOptions`](CardElementOptions.md) \| [`CardExpiryElementOptions`](CardExpiryElementOptions.md) \| [`CardNumberElementOptions`](CardNumberElementOptions.md) \| [`IbanElementOptions`](IbanElementOptions.md) \| [`IdealElementOptions`](IdealElementOptions.md) \| [`IndividualCardElementOptions`](IndividualCardElementOptions.md) \| [`ZipCodeElementOptions`](ZipCodeElementOptions.md)

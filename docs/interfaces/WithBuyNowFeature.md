@@ -26,7 +26,7 @@
 
 ### buttonColor
 
-• `Optional` **buttonColor**: `AmazonPayV2ButtonColor`
+• `Optional` **buttonColor**: `Gold` \| `LightGray` \| `DarkGray`
 
 Color of the Amazon Pay button.
 
@@ -52,7 +52,7 @@ ___
 
 ### checkoutLanguage
 
-• `Optional` **checkoutLanguage**: `AmazonPayV2CheckoutLanguage`
+• `Optional` **checkoutLanguage**: `en_US` \| `en_GB` \| `de_DE` \| `fr_FR` \| `it_IT` \| `es_ES` \| `ja_JP`
 
 Language used to render the button and text on Amazon Pay hosted pages.
 
@@ -112,7 +112,7 @@ ___
 
 ### productType
 
-• `Optional` **productType**: `AmazonPayV2PayOptions`
+• `Optional` **productType**: `PayAndShip` \| `PayOnly`
 
 Product type selected for checkout. Default is 'PayAndShip'.
 

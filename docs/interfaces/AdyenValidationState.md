@@ -42,7 +42,7 @@ ___
 
 ### fieldType
 
-• `Optional` **fieldType**: [`AdyenCardFields`](../enums/AdyenCardFields.md)
+• `Optional` **fieldType**: [`CardNumber`](../enums/AdyenCardFields.md#cardnumber) \| [`SecurityCode`](../enums/AdyenCardFields.md#securitycode) \| [`ExpiryDate`](../enums/AdyenCardFields.md#expirydate)
 
 ___
 

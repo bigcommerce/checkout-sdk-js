@@ -248,7 +248,7 @@ e.g: when trying to sign in using an invalid email link.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `type?` | [`FlashMessageType`](../README.md#flashmessagetype) | The type of flash messages to be returned. Optional |
+| `type?` | ``"error"`` \| ``"info"`` \| ``"warning"`` \| ``"success"`` | The type of flash messages to be returned. Optional |
 
 #### Returns
 
@@ -354,7 +354,7 @@ ___
 
 ### getPaymentProviderCustomer
 
-▸ **getPaymentProviderCustomer**(): `undefined` \| `PaymentProviderCustomer`
+▸ **getPaymentProviderCustomer**(): `undefined` \| `PayPalConnectCustomer` \| `StripeAcceleratedCheckoutCustomer`
 
 Gets payment provider customers data.
 
@@ -362,7 +362,7 @@ Gets payment provider customers data.
 
 #### Returns
 
-`undefined` \| `PaymentProviderCustomer`
+`undefined` \| `PayPalConnectCustomer` \| `StripeAcceleratedCheckoutCustomer`
 
 The object with payment provider customer data
 

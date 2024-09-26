@@ -56,7 +56,7 @@ ___
 
 ### payment
 
-• `Optional` **payment**: [`HostedCreditCardInstrument`](../README.md#hostedcreditcardinstrument) & [`PaymentInstrumentMeta`](PaymentInstrumentMeta.md) & [`HostedVaultedInstrument`](../README.md#hostedvaultedinstrument) & [`PaymentInstrumentMeta`](PaymentInstrumentMeta.md)
+• `Optional` **payment**: `Pick`<[`CreditCardInstrument`](CreditCardInstrument.md), ``"ccCustomerCode"`` \| ``"shouldSaveInstrument"`` \| ``"shouldSetAsDefaultInstrument"`` \| ``"extraData"`` \| ``"threeDSecure"`` \| ``"browser_info"``\> & [`PaymentInstrumentMeta`](PaymentInstrumentMeta.md) \| `Pick`<[`VaultedInstrument`](VaultedInstrument.md), ``"instrumentId"``\> & [`PaymentInstrumentMeta`](PaymentInstrumentMeta.md)
 
 ___
 

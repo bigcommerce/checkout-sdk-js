@@ -155,7 +155,7 @@ A callback that gets called if unable to submit payment.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `error` | `default` \| `BraintreeError` | The error object describing the failure. |
+| `error` | `BraintreeError` \| `default` | The error object describing the failure. |
 
 #### Returns
 

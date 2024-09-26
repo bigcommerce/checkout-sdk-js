@@ -111,7 +111,7 @@ ___
 
 ### options
 
-• `Optional` **options**: `Omit`<[`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md), ``"onChange"``\>
+• `Optional` **options**: `Pick`<[`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md), ``"details"`` \| ``"enableStoreDetails"`` \| ``"hasHolderName"`` \| ``"holderNameRequired"`` \| ``"data"`` \| ``"groupTypes"`` \| ``"placeholders"`` \| ``"brands"`` \| ``"styles"`` \| ``"showBrandsUnderCardNumber"`` \| ``"onSubmit"`` \| ``"onError"`` \| ``"onFieldValid"``\>
 
 Optional. Overwriting the default options
 
