@@ -342,8 +342,8 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             style,
             render,
             initStripeElementUpdateTrigger,
-            toggleSelectedMethod,
-            accordionCollapseListener,
+            paymentMethodSelect,
+            handleClosePaymentMethod,
         } = stripeupe;
 
         const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
@@ -505,13 +505,13 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             initStripeElementUpdateTrigger?.(this._updateStripeElement.bind(this));
         }
 
-        accordionCollapseListener?.(this.collapseStripeElement.bind(this));
+        handleClosePaymentMethod?.(this.collapseStripeElement.bind(this));
 
         stripeElement.on('change', (event: any) => {
             console.log('*** change', event);
             this._selectedMethodId = event.value.type;
             console.log('set selected method id', this._selectedMethodId);
-            toggleSelectedMethod?.('stripeupe-card');
+            paymentMethodSelect?.('stripeupe-card');
         });
     }
 
