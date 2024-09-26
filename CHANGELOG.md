@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.661.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.661.2...v1.661.3) (2024-09-26)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-8653 Move tslib back to production dep ([#2664](https://github.com/bigcommerce/checkout-sdk-js/issues/2664)) ([238125c](https://github.com/bigcommerce/checkout-sdk-js/commit/238125c6b3b2c7d5298836d96c16caecd63d2b70))
+
 ### [1.661.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.661.1...v1.661.2) (2024-09-25)
 
 ### [1.661.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.661.0...v1.661.1) (2024-09-24)
