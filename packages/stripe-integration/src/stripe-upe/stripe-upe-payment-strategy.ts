@@ -107,7 +107,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                         error = err;
                     }
 
-                    if (error && error instanceof Error) {
+                    if (error) {
                         if (this._isMounted) {
                             payment.unmount();
                             this._isMounted = false;
@@ -441,7 +441,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     // TODO: complexity of _processAdditionalAction method
     // eslint-disable-next-line complexity
     private async _processAdditionalAction(
-        error: unknown,
+        error: Error,
         methodId: string,
         shouldSaveInstrument = false,
         shouldSetAsDefaultInstrument = false,
@@ -530,7 +530,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     }
 
     private async _processVaultedAdditionalAction(
-        error: unknown,
+        error: Error,
         methodId?: string,
         shouldSetAsDefaultInstrument = false,
     ): Promise<PaymentIntegrationSelectors | never> {

@@ -75,17 +75,12 @@ export default class HostedInputManualOrderPaymentHandler {
                 });
             }
         } catch (error) {
-            if (this._isPaymentErrorResponse(error)) {
-                this._eventPoster.post({
-                    type: HostedInputEventType.SubmitManualOrderFailed,
-                    payload: { error: error.body.errors[0], response: error },
-                });
-            } else if (this._isErrorResponse(error)) {
-                this._eventPoster.post({
-                    type: HostedInputEventType.SubmitManualOrderFailed,
-                    payload: { error: { code: snakeCase(error.name), message: error.message } },
-                });
-            }
+            this._eventPoster.post({
+                type: HostedInputEventType.SubmitManualOrderFailed,
+                payload: this._isPaymentErrorResponse(error)
+                    ? { error: error.body.errors[0], response: error }
+                    : { error: { code: snakeCase(error.name), message: error.message } },
+            });
         }
     };
 
@@ -95,17 +90,6 @@ export default class HostedInputManualOrderPaymentHandler {
         return (
             typeof (errors[0] && errors[0].code) === 'string' &&
             typeof (errors[0] && errors[0].message) === 'string'
-        );
-    }
-
-    private _isErrorResponse(error: unknown): error is { name?: string; message?: string } {
-        return (
-            typeof error === 'object' &&
-            error !== null &&
-            (('name' in error && typeof (error as { name: unknown }).name === 'string') ||
-                !('name' in error)) &&
-            (('message' in error && typeof (error as { message: unknown }).message === 'string') ||
-                !('message' in error))
         );
     }
 }

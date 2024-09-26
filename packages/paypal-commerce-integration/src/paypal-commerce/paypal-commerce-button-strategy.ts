@@ -208,11 +208,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
 
             return true; // FIXME: Do we really need to return true here?
         } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
+            throw new Error(error);
         }
     }
 
@@ -237,11 +233,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.paypalCommerceIntegrationService.updateOrder();
         } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
+            throw new Error(error);
         }
     }
 
@@ -256,11 +248,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.paypalCommerceIntegrationService.updateOrder();
         } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
+            throw new Error(error);
         }
     }
 
@@ -283,11 +271,7 @@ export default class PayPalCommerceButtonStrategy implements CheckoutButtonStrat
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.paypalCommerceIntegrationService.updateOrder();
         } catch (error) {
-            if (typeof error === 'string') {
-                throw new Error(error);
-            }
-
-            throw error;
+            throw new Error(error);
         }
     }
 }

@@ -138,7 +138,7 @@ export default class PaypalButtonStrategy implements CheckoutButtonStrategy {
 
             return paymentRequest.id;
         } catch (error) {
-            if (onError && error instanceof StandardError) {
+            if (onError) {
                 onError(error);
             }
 

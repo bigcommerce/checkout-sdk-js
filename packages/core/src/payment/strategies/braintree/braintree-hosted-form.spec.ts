@@ -229,7 +229,6 @@ describe('BraintreeHostedForm', () => {
             await subject.initialize(formOptions);
 
             jest.spyOn(cardFields, 'tokenize').mockRejectedValue({
-                name: 'BraintreeError',
                 code: 'HOSTED_FIELDS_FIELDS_EMPTY',
             });
 
@@ -262,7 +261,6 @@ describe('BraintreeHostedForm', () => {
             await subject.initialize(formOptions);
 
             jest.spyOn(cardFields, 'tokenize').mockRejectedValue({
-                name: 'BraintreeError',
                 code: 'HOSTED_FIELDS_FIELDS_EMPTY',
             });
 
@@ -422,7 +420,6 @@ describe('BraintreeHostedForm', () => {
 
         it('notifies when tokenizing with invalid form data', async () => {
             jest.spyOn(cardFields, 'tokenize').mockRejectedValue({
-                name: 'BraintreeError',
                 code: 'HOSTED_FIELDS_FIELDS_EMPTY',
             });
 

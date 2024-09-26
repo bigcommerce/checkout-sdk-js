@@ -2,7 +2,6 @@ import {
     BraintreeInitializationData,
     BraintreeIntegrationService,
     BraintreeLocalPaymentMethodRedirectAction,
-    BraintreeRedirectError,
     LocalPaymentInstance,
     LocalPaymentsPayload,
     NonInstantLocalPaymentMethods,
@@ -295,7 +294,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         return methodId.toUpperCase() in NonInstantLocalPaymentMethods;
     }
 
-    private isBraintreeRedirectError(error: unknown): error is BraintreeRedirectError {
+    private isBraintreeRedirectError(error: unknown) {
         if (typeof error !== 'object' || error === null) {
             return false;
         }

@@ -69,7 +69,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
                 await this._initializeBraintreeFastlaneOrThrow(methodId);
             }
         } catch (error) {
-            return this._handleError(error);
+            this._handleError(error);
         }
 
         return this._store.getState();
@@ -126,8 +126,8 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
         return this._store.getState();
     }
 
-    private _handleError(error: unknown): never {
-        if (error instanceof Error && error.name === 'BraintreeError') {
+    private _handleError(error: Error): never {
+        if (error.name === 'BraintreeError') {
             throw new PaymentMethodFailedError(error.message);
         }
 
@@ -202,7 +202,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
     }
 
     private async _processAdditionalAction(
-        error: unknown,
+        error: Error,
         payment: OrderPaymentRequestBody,
         orderAmount: number,
     ): Promise<InternalCheckoutSelectors> {
