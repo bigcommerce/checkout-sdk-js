@@ -343,7 +343,7 @@ describe('CreditCardRedirectPaymentStrategy', () => {
             jest.spyOn(form, 'submit').mockRejectedValue(error);
 
             await strategy.initialize(initializeOptions);
-            await strategy.execute(getOrderRequestBody());
+            strategy.execute(getOrderRequestBody());
 
             await new Promise((resolve) => process.nextTick(resolve));
 
@@ -352,7 +352,7 @@ describe('CreditCardRedirectPaymentStrategy', () => {
                 TermUrl: 'https://callback/url',
                 MD: 'merchant_data',
             });
-            expect(orderActionCreator.loadCurrentOrder).toHaveBeenCalled();
+            expect(orderActionCreator.loadCurrentOrder).not.toHaveBeenCalled();
         });
     });
 });

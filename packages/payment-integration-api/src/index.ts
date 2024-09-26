@@ -75,7 +75,6 @@ export {
     TimeoutError,
     isRequestError,
     isCustomError,
-    isThreeDSecureRequiredError,
 } from './errors';
 export { Country, Region } from './geography';
 export {

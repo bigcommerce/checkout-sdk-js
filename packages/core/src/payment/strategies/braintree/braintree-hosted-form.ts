@@ -26,7 +26,6 @@ import {
 } from './braintree-payment-options';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import { isBraintreeFormFieldsMap } from './is-braintree-form-fields-map';
-import { isBraintreeHostedFormError } from './is-braintree-hosted-form-error';
 
 enum BraintreeHostedFormType {
     CreditCard,
@@ -121,17 +120,15 @@ export default class BraintreeHostedForm {
                 bin: tokenizationPayload.details?.bin,
             };
         } catch (error) {
-            if (isBraintreeHostedFormError(error)) {
-                const errors = this._mapTokenizeError(error);
+            const errors = this._mapTokenizeError(error);
 
-                if (errors) {
-                    this._formOptions?.onValidate?.({
-                        isValid: false,
-                        errors,
-                    });
+            if (errors) {
+                this._formOptions?.onValidate?.({
+                    isValid: false,
+                    errors,
+                });
 
-                    throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
-                }
+                throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
             }
 
             throw error;
@@ -156,17 +153,15 @@ export default class BraintreeHostedForm {
                 bin: tokenizationPayload.details?.bin,
             };
         } catch (error) {
-            if (isBraintreeHostedFormError(error)) {
-                const errors = this._mapTokenizeError(error, true);
+            const errors = this._mapTokenizeError(error, true);
 
-                if (errors) {
-                    this._formOptions?.onValidate?.({
-                        isValid: false,
-                        errors,
-                    });
+            if (errors) {
+                this._formOptions?.onValidate?.({
+                    isValid: false,
+                    errors,
+                });
 
-                    throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
-                }
+                throw new PaymentInvalidFormError(errors as PaymentInvalidFormErrorDetails);
             }
 
             throw error;

@@ -106,7 +106,6 @@ async function createImportDeclaration(
             ts.factory.createNamedImports(
                 memberNames.map((memberName) =>
                     ts.factory.createImportSpecifier(
-                        false,
                         undefined,
                         ts.factory.createIdentifier(memberName),
                     ),

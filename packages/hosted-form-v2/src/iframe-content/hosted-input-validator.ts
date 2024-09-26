@@ -38,7 +38,7 @@ export default class HostedInputValidator {
 
             return results;
         } catch (error) {
-            if (this._isValidationErrorType(error)) {
+            if (error.name !== 'ValidationError') {
                 throw error;
             }
 
@@ -137,9 +137,5 @@ export default class HostedInputValidator {
                 name: 'invalid_card_number',
                 test: (value) => number(value).isValid,
             });
-    }
-
-    private _isValidationErrorType(error: any): error is { name: string } {
-        return 'name' in error && error.name !== 'ValidationError';
     }
 }

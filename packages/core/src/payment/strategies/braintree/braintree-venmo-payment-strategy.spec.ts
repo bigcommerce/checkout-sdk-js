@@ -143,7 +143,7 @@ describe('BraintreeVenmoPaymentStrategy', () => {
             try {
                 await braintreeVenmoPaymentStrategy.initialize(options);
             } catch (error) {
-                expect((error as Error).message).toBe('my_message');
+                expect(error.message).toBe('my_message');
             }
         });
     });

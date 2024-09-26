@@ -1,5 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { Action, createAction } from '@bigcommerce/data-store';
+import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
@@ -264,7 +264,7 @@ describe('PaymentStrategyActionCreator', () => {
             try {
                 await from(actionCreator.initialize({ methodId: 'unknown' })(store)).toPromise();
             } catch (action) {
-                expect((action as Action).payload).toBeInstanceOf(MissingDataError);
+                expect(action.payload).toBeInstanceOf(MissingDataError);
             }
         });
     });
@@ -389,7 +389,7 @@ describe('PaymentStrategyActionCreator', () => {
             try {
                 await from(actionCreator.deinitialize({ methodId: 'unknown' })(store)).toPromise();
             } catch (action) {
-                expect((action as Action).payload).toBeInstanceOf(MissingDataError);
+                expect(action.payload).toBeInstanceOf(MissingDataError);
             }
         });
     });
@@ -519,7 +519,7 @@ describe('PaymentStrategyActionCreator', () => {
             try {
                 await from(actionCreator.execute(getOrderRequestBody())(store)).toPromise();
             } catch (action) {
-                expect((action as Action).payload).toBeInstanceOf(MissingDataError);
+                expect(action.payload).toBeInstanceOf(MissingDataError);
             }
         });
 
@@ -673,9 +673,7 @@ describe('PaymentStrategyActionCreator', () => {
             try {
                 await from(actionCreator.finalize()(store)).toPromise();
             } catch (action) {
-                expect((action as Action).payload).toBeInstanceOf(
-                    OrderFinalizationNotRequiredErrorV2,
-                );
+                expect(action.payload).toBeInstanceOf(OrderFinalizationNotRequiredErrorV2);
             }
         });
 
@@ -706,9 +704,7 @@ describe('PaymentStrategyActionCreator', () => {
             try {
                 await from(actionCreator.finalize()(store)).toPromise();
             } catch (action) {
-                expect((action as Action).payload).toBeInstanceOf(
-                    OrderFinalizationNotRequiredError,
-                );
+                expect(action.payload).toBeInstanceOf(OrderFinalizationNotRequiredError);
             }
         });
     });

@@ -637,8 +637,8 @@ describe('StripeV3PaymentStrategy', () => {
                         }),
                     );
 
-                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue(
-                        errorResponse,
+                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
+                        Promise.reject(Promise.reject(errorResponse)),
                     );
 
                     await strategy.initialize(options);

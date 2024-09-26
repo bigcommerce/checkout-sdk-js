@@ -1,7 +1,5 @@
 import Logger from './logger';
 
-type keys = 'log' | 'info' | 'warn' | 'error' | 'debug';
-
 export default class ConsoleLogger implements Logger {
     constructor(private _console?: Console) {}
 
@@ -25,7 +23,7 @@ export default class ConsoleLogger implements Logger {
         this._logToConsole('debug', ...messages);
     }
 
-    private _logToConsole(type: keys, ...messages: any[]): void {
+    private _logToConsole(type: keyof Console, ...messages: any[]): void {
         if (!this._console || !this._console[type]) {
             return;
         }

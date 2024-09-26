@@ -662,13 +662,3 @@ export interface BraintreeLocalPaymentMethodRedirectAction {
         };
     };
 }
-
-export interface BraintreeRedirectError {
-    body: {
-        additional_action_required: {
-            data: {
-                redirect_url: string;
-            };
-        };
-    };
-}
