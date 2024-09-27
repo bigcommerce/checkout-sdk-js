@@ -94,10 +94,6 @@ interface AdyenPaymentMethodState {
     type: string;
 }
 
-interface CardDataPaymentMethodState {
-    paymentMethod: CardPaymentMethodState;
-}
-
 interface WechatDataPaymentMethodState {
     paymentMethod: AdyenPaymentMethodState;
 }
@@ -251,12 +247,12 @@ export interface AdyenComponentEvents {
      * Called when the shopper enters data in the card input fields.
      * Here you have the option to override your main Adyen Checkout configuration.
      */
-    onChange?(state: AdyenComponentState, component: AdyenComponent): void;
+    onChange?(state: AdyenComponentEventState, component: AdyenComponent): void;
 
     /**
      * Called when the shopper selects the Pay button and payment details are valid.
      */
-    onSubmit?(state: AdyenComponentState, component: AdyenComponent): void;
+    onSubmit?(state: AdyenComponentEventState, component: AdyenComponent): void;
 
     /**
      * Called in case of an invalid card number, invalid expiry date, or
@@ -286,7 +282,7 @@ export interface AdyenComponent {
     props?: {
         type?: string;
     };
-    state?: CardState;
+    state?: AdyenComponentState;
     mount(containerId: string): HTMLElement;
     unmount(): void;
     submit(): void;
@@ -388,9 +384,9 @@ export interface AdyenConfiguration {
      * to override this function, you can also define an onChange event on the Component
      * level.
      */
-    onChange?(state: CardState, component?: AdyenComponent): void;
+    onChange?(state: AdyenComponentEventState, component?: AdyenComponent): void;
 
-    onAdditionalDetails?(state: CardState, component?: AdyenComponent): void;
+    onAdditionalDetails?(state: AdyenComponentEventState, component?: AdyenComponent): void;
 }
 
 export interface AdyenPlaceholderData {
@@ -480,14 +476,16 @@ export interface AdyenV2HostWindow extends Window {
     AdyenCheckout?: new (configuration: AdyenConfiguration) => AdyenClient;
 }
 
-export interface AdyenIdealComponentOptions extends AdyenBaseCardComponentOptions {
+export interface AdyenIdealComponentOptions
+    extends AdyenBaseCardComponentOptions,
+        AdyenComponentEvents {
     /**
      * Optional. Set to **false** to remove the bank logos from the iDEAL form.
      */
     showImage?: boolean;
 }
 
-export interface AdyenBoletoComponentOptions {
+export interface AdyenBoletoComponentOptions extends AdyenComponentEvents {
     personalDetailsRequired?: boolean;
     billingAddressRequired?: boolean;
     showEmailAddress?: boolean;
@@ -675,7 +673,31 @@ export interface Card {
 export interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
+    valid?: { [key: string]: boolean };
+    errors?: CardStateErrors;
+}
+
+interface IdealStateData {
+    issuer: string;
+}
+
+interface SepaStateData {
+    ownerName: string;
+    ibanNumber: string;
+}
+
+interface CardStateData {
+    encryptedCardNumber: string;
+    encryptedExpiryMonth: string;
+    encryptedExpiryYear: string;
+    encryptedSecurityCode: string;
+    holderName: string;
+}
+
+export interface AdyenComponentState {
+    data?: CardStateData | IdealStateData | SepaStateData;
     issuer?: string;
+    isValid?: boolean;
     valid?: { [key: string]: boolean };
     errors?: CardStateErrors;
 }
@@ -1038,7 +1060,7 @@ export enum AdyenCardFields {
     ExpiryDate = 'encryptedExpiryDate',
 }
 
-export type AdyenComponentState = CardState | BoletoState | WechatState;
+export type AdyenComponentEventState = CardState | BoletoState | WechatState;
 
 export type AdyenComponentOptions =
     | AdyenCreditCardComponentOptions

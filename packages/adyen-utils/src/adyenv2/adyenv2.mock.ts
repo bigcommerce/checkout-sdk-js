@@ -13,11 +13,12 @@ import {
     getVaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import { WithAdyenV2PaymentInitializeOptions } from '../adyenv2/adyenv2-initialize-options';
 import {
     AdyenAdditionalActionErrorResponse,
     AdyenClient,
     AdyenComponent,
-    AdyenComponentState,
+    AdyenComponentEventState,
     AdyenConfiguration,
     AdyenError,
     AdyenPaymentMethodType,
@@ -112,7 +113,7 @@ export function getAdyenError(): AdyenError {
     };
 }
 
-export function getComponentState(isValid = true): AdyenComponentState {
+export function getComponentCCEventState(isValid = true): AdyenComponentEventState {
     return {
         data: {
             paymentMethod: {
@@ -137,7 +138,9 @@ export function getFailingComponent(): AdyenComponent {
     };
 }
 
-export function getInitializeOptions(hasVaultedInstruments = false): PaymentInitializeOptions {
+export function getInitializeOptions(
+    hasVaultedInstruments = false,
+): PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions {
     return {
         methodId: 'adyenv2',
         adyenv2: {
@@ -167,7 +170,8 @@ export function getInitializeOptions(hasVaultedInstruments = false): PaymentInit
     };
 }
 
-export function getInitializeOptionsWithNoCallbacks(): PaymentInitializeOptions {
+export function getInitializeOptionsWithNoCallbacks(): PaymentInitializeOptions &
+    WithAdyenV2PaymentInitializeOptions {
     return {
         methodId: 'adyenv2',
         adyenv2: {
@@ -190,7 +194,8 @@ export function getInitializeOptionsWithNoCallbacks(): PaymentInitializeOptions 
     };
 }
 
-export function getInitializeOptionsWithUndefinedWidgetSize(): PaymentInitializeOptions {
+export function getInitializeOptionsWithUndefinedWidgetSize(): PaymentInitializeOptions &
+    WithAdyenV2PaymentInitializeOptions {
     return {
         methodId: 'adyenv2',
         adyenv2: {

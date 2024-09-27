@@ -6,7 +6,7 @@ import {
     AdyenAdditionalActionState,
     AdyenClient,
     AdyenComponent,
-    AdyenComponentState,
+    AdyenComponentEventState,
     AdyenComponentType,
     AdyenError,
     AdyenPaymentMethodType,
@@ -47,7 +47,7 @@ import {
 export default class AdyenV2PaymentStrategy implements PaymentStrategy {
     private _adyenClient?: AdyenClient;
     private _cardVerificationComponent?: AdyenComponent;
-    private _componentState?: AdyenComponentState;
+    private _componentState?: AdyenComponentEventState;
     private _paymentComponent?: AdyenComponent;
     private _paymentInitializeOptions?: AdyenV2PaymentInitializeOptions;
 
@@ -486,7 +486,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private _updateComponentState(componentState: AdyenComponentState) {
+    private _updateComponentState(componentState: AdyenComponentEventState) {
         this._componentState = componentState;
     }
 
@@ -512,6 +512,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
             (!cardComponent.state.isValid && !cardComponent.state.issuer) ||
             // prevent empty sepa fields from being sent
             (cardComponent.props?.type === 'sepadirectdebit' &&
+                cardComponent.state.data &&
                 Object.values(cardComponent.state.data).some(isEmptyString))
         ) {
             throw new PaymentInvalidFormError(this._mapCardErrors(cardComponent.state.errors));

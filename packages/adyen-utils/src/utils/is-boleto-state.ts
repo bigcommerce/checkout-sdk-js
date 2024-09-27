@@ -1,6 +1,6 @@
-import { AdyenComponentState, BoletoState } from '../types';
+import { AdyenComponentEventState, BoletoState } from '../types';
 
-export default function isBoletoState(param: AdyenComponentState): param is BoletoState {
+export default function isBoletoState(param: AdyenComponentEventState): param is BoletoState {
     return (
         (typeof param === 'object' && typeof (param as BoletoState).data.socialSecurityNumber) ===
             'string' &&

@@ -6,7 +6,7 @@ import {
     AdyenAdditionalActionState,
     AdyenClient,
     AdyenComponent,
-    AdyenComponentState,
+    AdyenComponentEventState,
     AdyenComponentType,
     AdyenError,
     AdyenPaymentMethodType,
@@ -47,7 +47,7 @@ import {
 export default class Adyenv3PaymentStrategy implements PaymentStrategy {
     private _adyenClient?: AdyenClient;
     private _cardVerificationComponent?: AdyenComponent;
-    private _componentState?: AdyenComponentState;
+    private _componentState?: AdyenComponentEventState;
     private _paymentComponent?: AdyenComponent;
     private _paymentInitializeOptions?: AdyenV3PaymentInitializeOptions;
 
@@ -269,7 +269,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
-    private _updateComponentState(componentState: AdyenComponentState) {
+    private _updateComponentState(componentState: AdyenComponentEventState) {
         this._componentState = componentState;
     }
 
