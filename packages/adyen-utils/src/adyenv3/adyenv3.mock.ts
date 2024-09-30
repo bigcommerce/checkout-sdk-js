@@ -13,11 +13,12 @@ import {
     getVaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import { WithAdyenV3PaymentInitializeOptions } from '../adyenv3/adyenv3-initialize-options';
 import {
     AdyenAdditionalActionErrorResponse,
     AdyenClient,
     AdyenComponent,
-    AdyenComponentState,
+    AdyenComponentEventState,
     AdyenConfiguration,
     AdyenError,
     AdyenPaymentMethodType,
@@ -108,7 +109,7 @@ export function getAdyenError(): AdyenError {
     };
 }
 
-export function getComponentState(isValid = true): AdyenComponentState {
+export function getComponentCCEventState(isValid = true): AdyenComponentEventState {
     return {
         data: {
             paymentMethod: {
@@ -119,12 +120,15 @@ export function getComponentState(isValid = true): AdyenComponentState {
                 holderName: 'John Smith',
                 type: AdyenPaymentMethodType.CreditCard,
             },
+            installments: {
+                value: 10,
+            },
         },
         isValid,
     };
 }
 
-export function getAccountComponentState(): AdyenComponentState {
+export function getAccountComponentState(): AdyenComponentEventState {
     return {
         data: {
             paymentMethod: {
@@ -162,7 +166,7 @@ export function getFailingComponent(): AdyenComponent {
 export function getInitializeOptions(
     hasVaultedInstruments = false,
     onActionHandled = jest.fn(),
-): PaymentInitializeOptions {
+): PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions {
     return {
         methodId: 'adyenv3',
         adyenv3: {
@@ -187,7 +191,8 @@ export function getInitializeOptions(
     };
 }
 
-export function getInitializeOptionsWithNoCallbacks(): PaymentInitializeOptions {
+export function getInitializeOptionsWithNoCallbacks(): PaymentInitializeOptions &
+    WithAdyenV3PaymentInitializeOptions {
     return {
         methodId: 'adyenv3',
         adyenv3: {
@@ -207,7 +212,8 @@ export function getInitializeOptionsWithNoCallbacks(): PaymentInitializeOptions 
     };
 }
 
-export function getInitializeOptionsWithUndefinedWidgetSize(): PaymentInitializeOptions {
+export function getInitializeOptionsWithUndefinedWidgetSize(): PaymentInitializeOptions &
+    WithAdyenV3PaymentInitializeOptions {
     return {
         methodId: 'adyenv3',
         adyenv3: {

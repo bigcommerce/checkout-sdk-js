@@ -1,31 +1,28 @@
-import { createAction } from '@bigcommerce/data-store';
 import { createScriptLoader, createStylesheetLoader } from '@bigcommerce/script-loader';
-import { Observable, of } from 'rxjs';
 
 import {
     ActionHandledReturnObject,
     AdyenAdditionalActionState,
     AdyenComponent,
-    AdyenComponentState,
+    AdyenComponentEventState,
     AdyenComponentType,
     AdyenError,
     AdyenPaymentMethodType,
     adyenV3Mock,
     AdyenV3ScriptLoader,
     ResultCode,
+    WithAdyenV3PaymentInitializeOptions,
 } from '@bigcommerce/checkout-sdk/adyen-utils';
 import {
     InvalidArgumentError,
     NotInitializedError,
     OrderFinalizationNotRequiredError,
-    PaymentActionType,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentInvalidFormError,
     PaymentMethodCancelledError,
     RequestError,
-    SubmitPaymentAction,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCreditCardInstrument,
@@ -39,7 +36,7 @@ const {
     getAdyenClient,
     getAdyenError,
     getBoletoComponentState,
-    getComponentState,
+    getComponentCCEventState,
     getFailingComponent,
     getInitializeOptions,
     getInitializeOptionsWithNoCallbacks,
@@ -54,14 +51,11 @@ const {
 describe('AdyenV3PaymentStrategy', () => {
     let adyenV3ScriptLoader: AdyenV3ScriptLoader;
     let paymentIntegrationService: PaymentIntegrationService;
-    let submitPaymentAction: Observable<SubmitPaymentAction>;
     let strategy: AdyenV3PaymentStrategy;
 
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
         const stylesheetLoader = createStylesheetLoader();
-
-        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         adyenV3ScriptLoader = new AdyenV3ScriptLoader(scriptLoader, stylesheetLoader);
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -74,20 +68,24 @@ describe('AdyenV3PaymentStrategy', () => {
     });
 
     describe('#Initializes & Executes', () => {
-        let options: PaymentInitializeOptions;
+        let options: PaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions;
         const adyenCheckout = getAdyenClient();
         let paymentComponent: AdyenComponent;
         let cardVerificationComponent: AdyenComponent;
 
         beforeEach(() => {
-            let handleOnChange: (componentState: AdyenComponentState) => unknown;
-            let handleOnError: (componentState: AdyenComponentState) => unknown;
+            let handleOnChange: (
+                componentState: AdyenComponentEventState,
+                component: AdyenComponent,
+            ) => unknown;
 
             options = getInitializeOptions();
 
             paymentComponent = {
                 mount: jest.fn(() => {
-                    handleOnChange(getComponentState());
+                    handleOnChange(getComponentCCEventState(), paymentComponent);
+
+                    return document.createElement('div');
                 }),
                 unmount: jest.fn(),
                 submit: jest.fn(),
@@ -95,8 +93,9 @@ describe('AdyenV3PaymentStrategy', () => {
 
             cardVerificationComponent = {
                 mount: jest.fn(() => {
-                    handleOnChange(getComponentState());
-                    handleOnError(getComponentState(false));
+                    handleOnChange(getComponentCCEventState(), cardVerificationComponent);
+
+                    return document.createElement('div');
                 }),
                 unmount: jest.fn(),
                 submit: jest.fn(),
@@ -111,10 +110,11 @@ describe('AdyenV3PaymentStrategy', () => {
 
             jest.spyOn(adyenCheckout, 'create').mockImplementation(
                 jest.fn((_method, options) => {
-                    const { onChange, onError } = options;
+                    if (options && options.onChange) {
+                        const { onChange } = options;
 
-                    handleOnChange = onChange;
-                    handleOnError = onError;
+                        handleOnChange = onChange;
+                    }
 
                     return _method === AdyenComponentType.SecuredFields
                         ? cardVerificationComponent
@@ -188,6 +188,8 @@ describe('AdyenV3PaymentStrategy', () => {
                             },
                             isValid: true,
                         });
+
+                        return document.createElement('div');
                     }),
                     unmount: jest.fn(),
                     submit: jest.fn(),
@@ -195,9 +197,11 @@ describe('AdyenV3PaymentStrategy', () => {
 
                 jest.spyOn(adyenCheckout, 'createFromAction').mockImplementation(
                     jest.fn((_type, options) => {
-                        const { onAdditionalDetails } = options;
+                        if (options && options.onAdditionalDetails) {
+                            const { onAdditionalDetails } = options;
 
-                        handleOnAdditionalDetails = onAdditionalDetails;
+                            handleOnAdditionalDetails = onAdditionalDetails;
+                        }
 
                         return additionalActionComponent;
                     }),
@@ -214,6 +218,7 @@ describe('AdyenV3PaymentStrategy', () => {
                 const adyenInvalidPaymentComponent = {
                     mount: jest.fn(),
                     unmount: jest.fn(),
+                    submit: jest.fn(),
                     componentRef: {
                         showValidation: jest.fn(),
                     },
@@ -240,8 +245,8 @@ describe('AdyenV3PaymentStrategy', () => {
             });
 
             it('calls submitPayment when paying with vaulted instrument', async () => {
-                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
-                    submitPaymentAction,
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(
+                    jest.fn(),
                 );
 
                 await strategy.initialize(options);
@@ -276,8 +281,8 @@ describe('AdyenV3PaymentStrategy', () => {
             });
 
             it('calls submitPayment, passing a set as default flag, when paying with a vaulted instrument that should be defaulted', async () => {
-                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
-                    submitPaymentAction,
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(
+                    jest.fn(),
                 );
 
                 await strategy.initialize(options);
@@ -301,8 +306,8 @@ describe('AdyenV3PaymentStrategy', () => {
             });
 
             it('calls submitPayment, passing a vault flag, when paying with an instrument that should be vaulted', async () => {
-                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
-                    submitPaymentAction,
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(
+                    jest.fn(),
                 );
 
                 await strategy.initialize(options);
@@ -329,22 +334,26 @@ describe('AdyenV3PaymentStrategy', () => {
             });
 
             it('calls submitPayment, passing Boleto data to paymentData', async () => {
-                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
-                    submitPaymentAction,
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(
+                    jest.fn(),
                 );
                 jest.spyOn(adyenCheckout, 'create').mockImplementation(
                     jest.fn((_method, options) => {
-                        const { onChange } = options;
+                        if (options && options.onChange) {
+                            const { onChange } = options;
 
-                        const handleOnChange = onChange;
+                            const handleOnChange = onChange;
 
-                        paymentComponent = {
-                            mount: jest.fn(() => {
-                                handleOnChange(getBoletoComponentState());
-                            }),
-                            unmount: jest.fn(),
-                            submit: jest.fn(),
-                        };
+                            paymentComponent = {
+                                mount: jest.fn(() => {
+                                    handleOnChange(getBoletoComponentState(), paymentComponent);
+
+                                    return document.createElement('div');
+                                }),
+                                unmount: jest.fn(),
+                                submit: jest.fn(),
+                            };
+                        }
 
                         return paymentComponent;
                     }),
@@ -379,31 +388,27 @@ describe('AdyenV3PaymentStrategy', () => {
             });
 
             it('calls submitPayment, with Card Installments', async () => {
-                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
-                    submitPaymentAction,
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(
+                    jest.fn(),
                 );
                 jest.spyOn(adyenCheckout, 'create').mockImplementation(
                     jest.fn((_method, options) => {
-                        const { onChange } = options;
+                        if (options && options.onChange) {
+                            const { onChange } = options;
+                            const handleOnChange = onChange;
 
-                        const handleOnChange = onChange;
-                        const componentState = getComponentState();
+                            const componentState = getComponentCCEventState();
 
-                        paymentComponent = {
-                            mount: jest.fn(() => {
-                                handleOnChange({
-                                    ...componentState,
-                                    data: {
-                                        ...componentState.data,
-                                        installments: {
-                                            value: 10,
-                                        },
-                                    },
-                                });
-                            }),
-                            unmount: jest.fn(),
-                            submit: jest.fn(),
-                        };
+                            paymentComponent = {
+                                mount: jest.fn(() => {
+                                    handleOnChange(componentState, paymentComponent);
+
+                                    return document.createElement('div');
+                                }),
+                                unmount: jest.fn(),
+                                submit: jest.fn(),
+                            };
+                        }
 
                         return paymentComponent;
                     }),
@@ -434,8 +439,8 @@ describe('AdyenV3PaymentStrategy', () => {
             });
 
             it('calls submitPayment, passing both a vault and set as default flag, when paying with an instrument that should be vaulted and defaulted', async () => {
-                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
-                    submitPaymentAction,
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(
+                    jest.fn(),
                 );
 
                 await strategy.initialize(options);
@@ -469,6 +474,8 @@ describe('AdyenV3PaymentStrategy', () => {
                 const additionalActionComponentWithError: AdyenComponent = {
                     mount: jest.fn(() => {
                         handleOnError(adyenError);
+
+                        return document.createElement('div');
                     }),
                     unmount: jest.fn(),
                     submit: jest.fn(),
@@ -476,9 +483,11 @@ describe('AdyenV3PaymentStrategy', () => {
 
                 jest.spyOn(adyenCheckout, 'createFromAction').mockImplementation(
                     jest.fn((_type, options) => {
-                        const { onError } = options;
+                        if (options) {
+                            const { onError } = options;
 
-                        handleOnError = onError;
+                            handleOnError = onError;
+                        }
 
                         return additionalActionComponentWithError;
                     }),
@@ -501,7 +510,7 @@ describe('AdyenV3PaymentStrategy', () => {
             it('returns 3DS2 ChallengeShopper flow with default widget size', async () => {
                 jest.spyOn(paymentIntegrationService, 'submitPayment')
                     .mockReturnValueOnce(Promise.reject(challengeShopperError))
-                    .mockReturnValueOnce(submitPaymentAction);
+                    .mockImplementationOnce(jest.fn());
 
                 options = getInitializeOptionsWithUndefinedWidgetSize();
 
@@ -519,8 +528,8 @@ describe('AdyenV3PaymentStrategy', () => {
                     'getPaymentMethodOrThrow',
                 ).mockReturnValue(getAdyenV3(AdyenPaymentMethodType.GiroPay));
 
-                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
-                    submitPaymentAction,
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(
+                    jest.fn(),
                 );
 
                 options = getInitializeOptions(true);
@@ -548,7 +557,7 @@ describe('AdyenV3PaymentStrategy', () => {
             it('returns 3DS2 ChallengeShopper flow with no callbacks', async () => {
                 jest.spyOn(paymentIntegrationService, 'submitPayment')
                     .mockReturnValueOnce(Promise.reject(challengeShopperError))
-                    .mockReturnValueOnce(submitPaymentAction);
+                    .mockImplementationOnce(jest.fn());
 
                 options = getInitializeOptionsWithNoCallbacks();
                 await strategy.initialize(options);
@@ -697,6 +706,8 @@ describe('AdyenV3PaymentStrategy', () => {
                                 },
                                 isValid: true,
                             });
+
+                            return document.createElement('div');
                         }),
                         unmount: jest.fn(),
                         submit: jest.fn(),
@@ -704,10 +715,12 @@ describe('AdyenV3PaymentStrategy', () => {
 
                     jest.spyOn(adyenCheckout, 'createFromAction').mockImplementation(
                         jest.fn((_type, options) => {
-                            const { onAdditionalDetails, onActionHandled } = options;
+                            if (options && options.onAdditionalDetails && options.onActionHandled) {
+                                const { onAdditionalDetails, onActionHandled } = options;
 
-                            handleOnActionHandled = onActionHandled;
-                            handleOnAdditionalDetails = onAdditionalDetails;
+                                handleOnActionHandled = onActionHandled;
+                                handleOnAdditionalDetails = onAdditionalDetails;
+                            }
 
                             return additionalActionComponent;
                         }),
@@ -717,7 +730,7 @@ describe('AdyenV3PaymentStrategy', () => {
                 it('calls submitPayment when additional action completes', async () => {
                     jest.spyOn(paymentIntegrationService, 'submitPayment')
                         .mockReturnValueOnce(Promise.reject(identifyShopperError))
-                        .mockReturnValueOnce(submitPaymentAction);
+                        .mockImplementationOnce(jest.fn());
 
                     await strategy.execute(getOrderRequestBody());
 
@@ -729,7 +742,7 @@ describe('AdyenV3PaymentStrategy', () => {
                 it("doesn't trigger onActionHandled for the 3DS2Fingerprint componentType", async () => {
                     jest.spyOn(paymentIntegrationService, 'submitPayment')
                         .mockReturnValueOnce(Promise.reject(identifyShopperError))
-                        .mockReturnValueOnce(submitPaymentAction);
+                        .mockImplementationOnce(jest.fn());
 
                     await strategy.execute(getOrderRequestBody());
 
@@ -743,7 +756,7 @@ describe('AdyenV3PaymentStrategy', () => {
                     jest.spyOn(paymentIntegrationService, 'submitPayment')
                         .mockReturnValueOnce(Promise.reject(identifyShopperError))
                         .mockReturnValueOnce(Promise.reject(getUnknownError()))
-                        .mockReturnValue(submitPaymentAction);
+                        .mockImplementation(jest.fn());
 
                     await expect(strategy.execute(getOrderRequestBody())).rejects.toThrow(
                         RequestError,
@@ -759,7 +772,7 @@ describe('AdyenV3PaymentStrategy', () => {
                         jest.spyOn(paymentIntegrationService, 'submitPayment')
                             .mockReturnValueOnce(Promise.reject(identifyShopperError))
                             .mockReturnValueOnce(Promise.reject(challengeShopperError))
-                            .mockReturnValue(submitPaymentAction);
+                            .mockImplementation(jest.fn());
 
                         await strategy.execute(getOrderRequestBody());
 
@@ -783,11 +796,13 @@ describe('AdyenV3PaymentStrategy', () => {
                                     },
                                     isValid: true,
                                 });
+
+                                return document.createElement('div');
                             }),
                         };
                         jest.spyOn(paymentIntegrationService, 'submitPayment')
                             .mockReturnValueOnce(Promise.reject(identifyShopperError))
-                            .mockReturnValueOnce(submitPaymentAction);
+                            .mockImplementationOnce(jest.fn());
 
                         await strategy.execute(getOrderRequestBody());
 
@@ -824,8 +839,8 @@ describe('AdyenV3PaymentStrategy', () => {
                 });
 
                 it('calls submitPayment when additional action completes', async () => {
-                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
-                        submitPaymentAction,
+                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementationOnce(
+                        jest.fn(),
                     );
 
                     await strategy.execute(getOrderRequestBody());
@@ -838,7 +853,7 @@ describe('AdyenV3PaymentStrategy', () => {
                 it('returns UNKNOWN_ERROR when submitPayment fails', async () => {
                     jest.spyOn(paymentIntegrationService, 'submitPayment')
                         .mockReturnValueOnce(Promise.reject(getUnknownError()))
-                        .mockReturnValueOnce(submitPaymentAction);
+                        .mockImplementationOnce(jest.fn());
 
                     await expect(strategy.execute(getOrderRequestBody())).rejects.toThrow(
                         RequestError,
@@ -881,13 +896,13 @@ describe('AdyenV3PaymentStrategy', () => {
 
             expect(adyenComponent.unmount).toHaveBeenCalled();
 
-            return expect(promise).resolves.toBe();
+            return expect(promise).resolves.toBeUndefined();
         });
 
         it('does not unmount when adyen component is not available', () => {
             const promise = strategy.deinitialize();
 
-            return expect(promise).resolves.toBe();
+            return expect(promise).resolves.toBeUndefined();
         });
     });
 });
