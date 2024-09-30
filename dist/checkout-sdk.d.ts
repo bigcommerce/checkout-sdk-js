@@ -135,22 +135,24 @@ declare interface AdyenComponent {
     props?: {
         type?: string;
     };
-    state?: CardState;
+    state?: AdyenComponentState;
     mount(containerId: string): HTMLElement;
     unmount(): void;
     submit(): void;
 }
+
+declare type AdyenComponentEventState = CardState | BoletoState | WechatState;
 
 declare interface AdyenComponentEvents {
     /**
      * Called when the shopper enters data in the card input fields.
      * Here you have the option to override your main Adyen Checkout configuration.
      */
-    onChange?(state: AdyenComponentState, component: AdyenComponent): void;
+    onChange?(state: AdyenComponentEventState, component: AdyenComponent): void;
     /**
      * Called when the shopper selects the Pay button and payment details are valid.
      */
-    onSubmit?(state: AdyenComponentState, component: AdyenComponent): void;
+    onSubmit?(state: AdyenComponentEventState, component: AdyenComponent): void;
     /**
      * Called in case of an invalid card number, invalid expiry date, or
      *  incomplete field. Called again when errors are cleared.
@@ -159,7 +161,15 @@ declare interface AdyenComponentEvents {
     onFieldValid?(state: AdyenValidationState, component: AdyenComponent): void;
 }
 
-declare type AdyenComponentState = CardState | BoletoState | WechatState;
+declare interface AdyenComponentState {
+    data?: CardStateData | IdealStateData | SepaStateData;
+    issuer?: string;
+    isValid?: boolean;
+    valid?: {
+        [key: string]: boolean;
+    };
+    errors?: CardStateErrors;
+}
 
 declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {
     /**
@@ -196,7 +206,7 @@ declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponent
     placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
 }
 
-declare interface AdyenIdealComponentOptions extends AdyenBaseCardComponentOptions {
+declare interface AdyenIdealComponentOptions extends AdyenBaseCardComponentOptions, AdyenComponentEvents {
     /**
      * Optional. Set to **false** to remove the bank logos from the iDEAL form.
      */
@@ -1730,10 +1740,6 @@ declare interface CardCvcElementOptions extends BaseIndividualElementOptions {
 
 declare interface CardDataPaymentMethodState {
     paymentMethod: CardPaymentMethodState;
-}
-
-declare interface CardDataPaymentMethodState {
-    paymentMethod: CardPaymentMethodState;
     installments?: {
         value: number;
         plan?: 'string';
@@ -1793,11 +1799,18 @@ declare interface CardPaymentMethodState extends AdyenPaymentMethodState {
 declare interface CardState {
     data: CardDataPaymentMethodState;
     isValid?: boolean;
-    issuer?: string;
     valid?: {
         [key: string]: boolean;
     };
     errors?: CardStateErrors;
+}
+
+declare interface CardStateData {
+    encryptedCardNumber: string;
+    encryptedExpiryMonth: string;
+    encryptedExpiryYear: string;
+    encryptedSecurityCode: string;
+    holderName: string;
 }
 
 declare interface CardStateErrors {
@@ -5468,6 +5481,10 @@ declare interface IdealElementOptions extends BaseElementOptions_2 {
     hideIcon?: boolean;
 }
 
+declare interface IdealStateData {
+    issuer: string;
+}
+
 declare interface IframeEvent<TType = string, TPayload = any> {
     type: TType;
     payload?: TPayload;
@@ -7441,6 +7458,11 @@ declare interface SearchArea {
 declare interface SepaPlaceHolder {
     ownerName?: string;
     ibanNumber?: string;
+}
+
+declare interface SepaStateData {
+    ownerName: string;
+    ibanNumber: string;
 }
 
 declare interface SetIframeStyleCommand {

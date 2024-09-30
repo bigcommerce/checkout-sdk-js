@@ -44,7 +44,7 @@ ___
 
 ### state
 
-• `Optional` **state**: [`CardState`](CardState.md)
+• `Optional` **state**: [`AdyenComponentState`](AdyenComponentState.md)
 
 ## Methods
 

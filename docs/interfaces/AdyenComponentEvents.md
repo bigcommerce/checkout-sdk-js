@@ -8,6 +8,8 @@
 
   ↳ [`AdyenCreditCardComponentOptions`](AdyenCreditCardComponentOptions.md)
 
+  ↳ [`AdyenIdealComponentOptions`](AdyenIdealComponentOptions.md)
+
 ## Table of contents
 
 ### Methods
@@ -30,7 +32,7 @@ Here you have the option to override your main Adyen Checkout configuration.
 
 | Name | Type |
 | :------ | :------ |
-| `state` | [`AdyenComponentState`](../README.md#adyencomponentstate) |
+| `state` | [`AdyenComponentEventState`](../README.md#adyencomponenteventstate) |
 | `component` | [`AdyenComponent`](AdyenComponent.md) |
 
 #### Returns
@@ -86,7 +88,7 @@ Called when the shopper selects the Pay button and payment details are valid.
 
 | Name | Type |
 | :------ | :------ |
-| `state` | [`AdyenComponentState`](../README.md#adyencomponentstate) |
+| `state` | [`AdyenComponentEventState`](../README.md#adyencomponenteventstate) |
 | `component` | [`AdyenComponent`](AdyenComponent.md) |
 
 #### Returns

@@ -67,6 +67,7 @@
 - [AdyenBaseCardComponentOptions](interfaces/AdyenBaseCardComponentOptions.md)
 - [AdyenComponent](interfaces/AdyenComponent.md)
 - [AdyenComponentEvents](interfaces/AdyenComponentEvents.md)
+- [AdyenComponentState](interfaces/AdyenComponentState.md)
 - [AdyenCreditCardComponentOptions](interfaces/AdyenCreditCardComponentOptions.md)
 - [AdyenIdealComponentOptions](interfaces/AdyenIdealComponentOptions.md)
 - [AdyenPaymentMethodState](interfaces/AdyenPaymentMethodState.md)
@@ -150,6 +151,7 @@
 - [CardNumberElementOptions](interfaces/CardNumberElementOptions.md)
 - [CardPaymentMethodState](interfaces/CardPaymentMethodState.md)
 - [CardState](interfaces/CardState.md)
+- [CardStateData](interfaces/CardStateData.md)
 - [CardStateErrors](interfaces/CardStateErrors.md)
 - [CardingProtectionActionData](interfaces/CardingProtectionActionData.md)
 - [Cart](interfaces/Cart.md)
@@ -280,6 +282,7 @@
 - [HostedStoredCardFieldOptionsMap](interfaces/HostedStoredCardFieldOptionsMap.md)
 - [IbanElementOptions](interfaces/IbanElementOptions.md)
 - [IdealElementOptions](interfaces/IdealElementOptions.md)
+- [IdealStateData](interfaces/IdealStateData.md)
 - [IframeEvent](interfaces/IframeEvent.md)
 - [IframeEventPostOptions](interfaces/IframeEventPostOptions.md)
 - [IndividualCardElementOptions](interfaces/IndividualCardElementOptions.md)
@@ -380,6 +383,7 @@
 - [RequestOptions](interfaces/RequestOptions.md)
 - [SearchArea](interfaces/SearchArea.md)
 - [SepaPlaceHolder](interfaces/SepaPlaceHolder.md)
+- [SepaStateData](interfaces/SepaStateData.md)
 - [SetIframeStyleCommand](interfaces/SetIframeStyleCommand.md)
 - [ShippingAddressSelector](interfaces/ShippingAddressSelector.md)
 - [ShippingCountrySelector](interfaces/ShippingCountrySelector.md)
@@ -488,7 +492,7 @@
 
 - [AccountInstrument](README.md#accountinstrument)
 - [AddressKey](README.md#addresskey)
-- [AdyenComponentState](README.md#adyencomponentstate)
+- [AdyenComponentEventState](README.md#adyencomponenteventstate)
 - [AmazonPayV2ButtonInitializeOptions](README.md#amazonpayv2buttoninitializeoptions)
 - [AnalyticStepType](README.md#analyticsteptype)
 - [BraintreeFormErrorData](README.md#braintreeformerrordata)
@@ -570,9 +574,9 @@ ___
 
 ___
 
-### AdyenComponentState
+### AdyenComponentEventState
 
-Ƭ **AdyenComponentState**: [`CardState`](interfaces/CardState.md) \| [`BoletoState`](interfaces/BoletoState.md) \| [`WechatState`](interfaces/WechatState.md)
+Ƭ **AdyenComponentEventState**: [`CardState`](interfaces/CardState.md) \| [`BoletoState`](interfaces/BoletoState.md) \| [`WechatState`](interfaces/WechatState.md)
 
 ___
 

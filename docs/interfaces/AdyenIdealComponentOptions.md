@@ -6,6 +6,8 @@
 
 - [`AdyenBaseCardComponentOptions`](AdyenBaseCardComponentOptions.md)
 
+- [`AdyenComponentEvents`](AdyenComponentEvents.md)
+
   ↳ **`AdyenIdealComponentOptions`**
 
 ## Table of contents
@@ -16,6 +18,13 @@
 - [showBrandsUnderCardNumber](AdyenIdealComponentOptions.md#showbrandsundercardnumber)
 - [showImage](AdyenIdealComponentOptions.md#showimage)
 - [styles](AdyenIdealComponentOptions.md#styles)
+
+### Methods
+
+- [onChange](AdyenIdealComponentOptions.md#onchange)
+- [onError](AdyenIdealComponentOptions.md#onerror)
+- [onFieldValid](AdyenIdealComponentOptions.md#onfieldvalid)
+- [onSubmit](AdyenIdealComponentOptions.md#onsubmit)
 
 ## Properties
 
@@ -59,3 +68,95 @@ for a list of supported properties.
 #### Inherited from
 
 [AdyenBaseCardComponentOptions](AdyenBaseCardComponentOptions.md).[styles](AdyenBaseCardComponentOptions.md#styles)
+
+## Methods
+
+### onChange
+
+▸ `Optional` **onChange**(`state`, `component`): `void`
+
+Called when the shopper enters data in the card input fields.
+Here you have the option to override your main Adyen Checkout configuration.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `state` | [`AdyenComponentEventState`](../README.md#adyencomponenteventstate) |
+| `component` | [`AdyenComponent`](AdyenComponent.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[AdyenComponentEvents](AdyenComponentEvents.md).[onChange](AdyenComponentEvents.md#onchange)
+
+___
+
+### onError
+
+▸ `Optional` **onError**(`state`, `component`): `void`
+
+Called in case of an invalid card number, invalid expiry date, or
+ incomplete field. Called again when errors are cleared.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `state` | [`AdyenValidationState`](AdyenValidationState.md) |
+| `component` | [`AdyenComponent`](AdyenComponent.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[AdyenComponentEvents](AdyenComponentEvents.md).[onError](AdyenComponentEvents.md#onerror)
+
+___
+
+### onFieldValid
+
+▸ `Optional` **onFieldValid**(`state`, `component`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `state` | [`AdyenValidationState`](AdyenValidationState.md) |
+| `component` | [`AdyenComponent`](AdyenComponent.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[AdyenComponentEvents](AdyenComponentEvents.md).[onFieldValid](AdyenComponentEvents.md#onfieldvalid)
+
+___
+
+### onSubmit
+
+▸ `Optional` **onSubmit**(`state`, `component`): `void`
+
+Called when the shopper selects the Pay button and payment details are valid.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `state` | [`AdyenComponentEventState`](../README.md#adyencomponenteventstate) |
+| `component` | [`AdyenComponent`](AdyenComponent.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[AdyenComponentEvents](AdyenComponentEvents.md).[onSubmit](AdyenComponentEvents.md#onsubmit)
