@@ -13,10 +13,10 @@
 
 ### shape
 
-• `Optional` **shape**: [`Pill`](../enums/StyleButtonShape.md#pill) \| [`Rect`](../enums/StyleButtonShape.md#rect)
+• `Optional` **shape**: [`StyleButtonShape`](../enums/StyleButtonShape.md)
 
 ___
 
 ### size
 
-• `Optional` **size**: [`Small`](../enums/StyleButtonSize.md#small) \| [`Medium`](../enums/StyleButtonSize.md#medium) \| [`Large`](../enums/StyleButtonSize.md#large)
+• `Optional` **size**: [`StyleButtonSize`](../enums/StyleButtonSize.md)

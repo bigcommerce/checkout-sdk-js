@@ -7084,7 +7084,7 @@ declare interface PaymentAdditionalAction {
 declare class PaymentHumanVerificationHandler {
     private _googleRecaptcha;
     constructor(_googleRecaptcha: GoogleRecaptcha);
-    handle(error: Error): Promise<PaymentAdditionalAction>;
+    handle(error: any): Promise<PaymentAdditionalAction>;
     handle(id: string, key: string): Promise<PaymentAdditionalAction>;
     private handleWithPaymentHumanVerificationRequestError;
     private handleWithRecaptchaSitekey;

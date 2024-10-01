@@ -34,7 +34,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `error` | `Error` |
+| `error` | `any` |
 
 #### Returns
 

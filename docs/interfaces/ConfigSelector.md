@@ -58,7 +58,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `type?` | ``"error"`` \| ``"info"`` \| ``"warning"`` \| ``"success"`` |
+| `type?` | [`FlashMessageType`](../README.md#flashmessagetype) |
 
 #### Returns
 

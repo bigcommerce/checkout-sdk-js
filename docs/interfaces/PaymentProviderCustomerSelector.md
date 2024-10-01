@@ -13,11 +13,11 @@
 
 ### getPaymentProviderCustomer
 
-▸ **getPaymentProviderCustomer**(): `undefined` \| `PayPalConnectCustomer` \| `StripeAcceleratedCheckoutCustomer`
+▸ **getPaymentProviderCustomer**(): `undefined` \| `PaymentProviderCustomer`
 
 #### Returns
 
-`undefined` \| `PayPalConnectCustomer` \| `StripeAcceleratedCheckoutCustomer`
+`undefined` \| `PaymentProviderCustomer`
 
 ___
 

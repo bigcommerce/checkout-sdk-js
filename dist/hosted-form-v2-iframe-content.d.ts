@@ -201,6 +201,7 @@ declare class HostedInputManualOrderPaymentHandler {
     constructor(_inputAggregator: HostedInputAggregator, _inputValidator: HostedInputValidator, _inputStorage: HostedInputStorage, _eventPoster: IframeEventPoster<HostedInputEvent>, _manualOrderPaymentRequestSender: ManualOrderPaymentRequestSender);
     handle: (event: HostedFieldSubmitManualOrderRequestEvent) => Promise<void>;
     private _isPaymentErrorResponse;
+    private _isErrorResponse;
 }
 
 declare interface HostedInputOptions {
@@ -269,6 +270,7 @@ declare class HostedInputValidator {
     private _getCardExpirySchema;
     private _getCardNameSchema;
     private _getCardNumberSchema;
+    private _isValidationErrorType;
 }
 
 declare interface HostedInputValues {
