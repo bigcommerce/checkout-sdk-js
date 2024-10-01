@@ -1,5 +1,6 @@
 import {
     InvalidArgumentError,
+    isRequestError,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
@@ -108,8 +109,10 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             await this._paymentIntegrationService.forgetCheckout(payment.providerId);
             await this._paymentIntegrationService.loadPaymentMethods();
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
-            throw new OrderFinalizationNotCompletedError(error.body?.errors?.[0]?.message);
+            if (isRequestError(error)) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
+                throw new OrderFinalizationNotCompletedError(error.body?.errors?.[0]?.message);
+            }
         }
     }
 

@@ -239,7 +239,11 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
                 await this._paymentIntegrationService.loadCheckout(this._buyNowCart.id);
             } catch (error) {
-                throw new BuyNowCartCreationError(error);
+                if (typeof error === 'string') {
+                    throw new BuyNowCartCreationError(error);
+                }
+
+                throw error;
             }
         }
     }

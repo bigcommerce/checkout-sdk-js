@@ -74,7 +74,7 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
         return this._store.getState();
     }
 
-    private _handleError(error: BraintreeError | Error): never {
+    private _handleError(error: unknown): never {
         if (!isBraintreeError(error)) {
             throw error;
         }

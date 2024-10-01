@@ -1,3 +1,4 @@
+.DS_Store
 *.log
 /webpack-stats.json
 /coverage

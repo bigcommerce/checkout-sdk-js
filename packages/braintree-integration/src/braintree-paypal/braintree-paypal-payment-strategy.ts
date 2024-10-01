@@ -394,7 +394,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 intent: paymentMethod.initializationData.intent,
             });
         } catch (error) {
-            if (onPaymentError) {
+            if (onPaymentError && (isBraintreeError(error) || error instanceof StandardError)) {
                 onPaymentError(error);
             }
 
@@ -410,7 +410,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         try {
             return await braintreePaypalCheckout.tokenizePayment(authorizeData);
         } catch (error) {
-            if (onError) {
+            if (onError && (isBraintreeError(error) || error instanceof StandardError)) {
                 onError(error);
             }
 
@@ -466,7 +466,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
-    private handleError(error: BraintreeError | Error): never {
+    private handleError(error: BraintreeError | Error | unknown): never {
         if (!isBraintreeError(error)) {
             throw error;
         }
