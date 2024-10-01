@@ -479,6 +479,41 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             });
             expect(paypalCommerceFastlaneUtils.updateStorageSessionId).toHaveBeenCalledWith(true);
         });
+
+        it('do not create an order if there is an error  while receiving a payment order', async () => {
+            await strategy.initialize(initializationOptions);
+
+            const paypalFastlaneComponent = await paypalFastlane.FastlaneCardComponent({});
+
+            jest.spyOn(paypalFastlaneComponent, 'getPaymentToken').mockRejectedValue(
+                new Error('input data error'),
+            );
+
+            try {
+                await strategy.execute(executeOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+                expect(paypalCommerceRequestSender.createOrder).not.toHaveBeenCalled();
+            }
+        });
+
+        it('do not call getPaymentToken when paying with a vaulted instrument', async () => {
+            await strategy.initialize(initializationOptions);
+
+            const paypalFastlaneComponent = await paypalFastlane.FastlaneCardComponent({});
+
+            await strategy.execute({
+                ...executeOptions,
+                payment: {
+                    ...executeOptions.payment,
+                    paymentData: {
+                        instrumentId: '123',
+                    },
+                },
+            });
+
+            expect(paypalFastlaneComponent.getPaymentToken).not.toHaveBeenCalled();
+        });
     });
 
     describe('#onInit option callback', () => {
