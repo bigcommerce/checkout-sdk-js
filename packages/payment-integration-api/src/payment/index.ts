@@ -65,3 +65,4 @@ export { default as PaymentStrategyFactory } from './payment-strategy-factory';
 export { default as PaymentStrategyResolveId } from './payment-strategy-resolve-id';
 export { default as PaymentStatusTypes } from './payment-status-types';
 export { default as PaymentMethodMeta } from './payment-method-meta';
+export { default as StorefrontPaymentRequestSender } from './storefront-payment-request-sender';

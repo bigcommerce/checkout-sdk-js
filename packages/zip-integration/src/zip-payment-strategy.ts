@@ -1,8 +1,4 @@
-import { RequestSender } from '@bigcommerce/request-sender';
-
 import {
-    ContentType,
-    INTERNAL_USE_ONLY,
     isRequestError,
     MissingDataError,
     MissingDataErrorType,
@@ -12,13 +8,13 @@ import {
     PaymentIntegrationService,
     PaymentRequestOptions,
     PaymentStrategy,
-    SDK_VERSION_HEADERS,
+    StorefrontPaymentRequestSender,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 export default class ZipPaymentStrategy implements PaymentStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private requestSender: RequestSender,
+        private storefrontPaymentRequestSender: StorefrontPaymentRequestSender,
     ) {}
 
     initialize(): Promise<void> {
@@ -87,24 +83,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
         return Promise.resolve();
     }
 
-    async saveExternalId(methodId: string, token: string): Promise<void> {
-        const url = `/api/storefront/payment/${methodId}/save-external-id`;
-        const options = {
-            headers: {
-                Accept: ContentType.JsonV1,
-                'X-API-INTERNAL': INTERNAL_USE_ONLY,
-                ...SDK_VERSION_HEADERS,
-            },
-            body: {
-                externalId: token,
-                provider: methodId,
-            },
-        };
-
-        await this.requestSender.post<void>(url, options);
-    }
-
     private _prepareForReferredRegistration(methodId: string, externalId: string): Promise<void> {
-        return this.saveExternalId(methodId, externalId);
+        return this.storefrontPaymentRequestSender.saveExternalId(methodId, externalId);
     }
 }

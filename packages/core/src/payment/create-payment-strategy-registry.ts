@@ -6,6 +6,7 @@ import {
     BraintreeIntegrationService,
     BraintreeScriptLoader,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { StorefrontPaymentRequestSender } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
     CheckoutActionCreator,
@@ -19,7 +20,6 @@ import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { createPaymentIntegrationService } from '../payment-integration';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import {
     createSpamProtection,
     GoogleRecaptcha,
@@ -38,7 +38,6 @@ import PaymentRequestTransformer from './payment-request-transformer';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
-import StorefrontPaymentRequestSender from './storefront-payment-request-sender';
 import { BarclaysPaymentStrategy } from './strategies/barclays';
 import { BNZPaymentStrategy } from './strategies/bnz';
 import {
@@ -66,7 +65,6 @@ import {
     PaymentResumer,
     PPSDKStrategy,
 } from './strategies/ppsdk';
-import { QuadpayPaymentStrategy } from './strategies/quadpay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
 
@@ -111,7 +109,6 @@ export default function createPaymentStrategyRegistry(
     const paymentMethodActionCreator = new PaymentMethodActionCreator(
         new PaymentMethodRequestSender(requestSender),
     );
-    const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
     const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
     const formFieldsActionCreator = new FormFieldsActionCreator(
         new FormFieldsRequestSender(requestSender),
@@ -120,10 +117,6 @@ export default function createPaymentStrategyRegistry(
         checkoutRequestSender,
         configActionCreator,
         formFieldsActionCreator,
-    );
-    const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-        remoteCheckoutRequestSender,
-        checkoutActionCreator,
     );
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(
         registry,
@@ -309,20 +302,6 @@ export default function createPaymentStrategyRegistry(
                 ),
                 new PaymentResumer(requestSender, stepHandler),
                 new BrowserStorage('PPSDK'),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.QUADPAY,
-        () =>
-            new QuadpayPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                storeCreditActionCreator,
-                remoteCheckoutActionCreator,
-                storefrontPaymentRequestSender,
             ),
     );
 

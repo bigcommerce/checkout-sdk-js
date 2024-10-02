@@ -1,20 +1,16 @@
-import { Action, createAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
-import { Observable, of } from 'rxjs';
 
 import {
     MissingDataError,
-    OrderActionType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
-    PaymentActionType,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentMethod,
-    RemoteCheckoutActionType,
     RequestError,
+    StorefrontPaymentRequestSender,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCheckout,
@@ -48,45 +44,35 @@ describe('ZipPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethodMock: PaymentMethod;
     let requestSender: RequestSender;
-    let submitOrderAction: OrderActionType;
-    let submitPaymentAction: PaymentActionType;
     let strategy: ZipPaymentStrategy;
-    let initializePaymentAction: Observable<Action>;
+    let storefrontPaymentRequestSender: StorefrontPaymentRequestSender;
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         requestSender = createRequestSender();
         paymentMethodMock = { ...getZip() };
-        submitOrderAction = OrderActionType.SubmitOrderRequested;
-        submitPaymentAction = PaymentActionType.SubmitPaymentRequested;
-        initializePaymentAction = of(
-            createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested),
-        );
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
             paymentIntegrationService.getState(),
         );
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,
         );
-        jest.spyOn(paymentIntegrationService, 'applyStoreCredit').mockReturnValue(
-            of(createAction('APPLY_STORE_CREDIT_REQUESTED')),
-        );
+        jest.spyOn(paymentIntegrationService, 'applyStoreCredit').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'initializePayment').mockResolvedValue(
-            initializePaymentAction,
-        );
+        jest.spyOn(paymentIntegrationService, 'initializePayment').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(
-            of(createAction(submitOrderAction)),
-        );
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
-            of(createAction(submitPaymentAction)),
-        );
-        jest.spyOn(requestSender, 'post').mockResolvedValue(undefined);
+        jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
 
-        strategy = new ZipPaymentStrategy(paymentIntegrationService, requestSender);
-        jest.spyOn(strategy, 'saveExternalId').mockResolvedValue(undefined);
+        storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
+        jest.spyOn(storefrontPaymentRequestSender, 'saveExternalId').mockResolvedValue(undefined);
+
+        strategy = new ZipPaymentStrategy(
+            paymentIntegrationService,
+            storefrontPaymentRequestSender,
+        );
     });
 
     describe('#initialize()', () => {
@@ -127,7 +113,10 @@ describe('ZipPaymentStrategy', () => {
                 useStoreCredit: false,
             });
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(order, options);
-            expect(strategy.saveExternalId).toHaveBeenCalledWith('zip', 'checkout_id');
+            expect(storefrontPaymentRequestSender.saveExternalId).toHaveBeenCalledWith(
+                'zip',
+                'checkout_id',
+            );
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId: 'zip',
                 paymentData: { nonce: 'checkout_id' },

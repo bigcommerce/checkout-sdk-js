@@ -2,6 +2,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 
 import {
     PaymentStrategyFactory,
+    StorefrontPaymentRequestSender,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -12,8 +13,9 @@ const createZipPaymentStrategy: PaymentStrategyFactory<ZipPaymentStrategy> = (
 ) => {
     const { getHost } = paymentIntegrationService.getState();
     const requestSender = createRequestSender({ host: getHost() });
+    const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
 
-    return new ZipPaymentStrategy(paymentIntegrationService, requestSender);
+    return new ZipPaymentStrategy(paymentIntegrationService, storefrontPaymentRequestSender);
 };
 
-export default toResolvableModule(createZipPaymentStrategy, [{ id: 'zip' }]);
+export default toResolvableModule(createZipPaymentStrategy, [{ id: 'zip' }, { id: 'quadpay' }]);
