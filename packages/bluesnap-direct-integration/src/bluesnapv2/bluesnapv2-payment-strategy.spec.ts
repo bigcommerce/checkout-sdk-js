@@ -1,19 +1,13 @@
-import { Action, createAction } from '@bigcommerce/data-store';
 import { merge } from 'lodash';
-import { Observable, of } from 'rxjs';
 
 import {
-    FinalizeOrderAction,
     NotInitializedError,
-    OrderActionType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
-    PaymentActionType,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentStatusTypes,
-    SubmitOrderAction,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getOrder,
@@ -28,26 +22,15 @@ describe('BlueSnapV2PaymentStrategy', () => {
     let strategy: BlueSnapV2PaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
 
-    let finalizeOrderAction: Observable<FinalizeOrderAction>;
-    let initializeOffsitePaymentAction: Observable<Action>;
     let initializeOptions: PaymentInitializeOptions;
     let options: PaymentInitializeOptions & WithBlueSnapV2PaymentInitializeOptions;
     let payload: OrderRequestBody;
     let orderRequestBody: OrderRequestBody;
-    let submitOrderAction: Observable<SubmitOrderAction>;
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
-        const state = paymentIntegrationService.getState();
-
         orderRequestBody = getOrderRequestBody();
-
-        finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
-        initializeOffsitePaymentAction = of(
-            createAction(PaymentActionType.InitializeOffsitePaymentRequested),
-        );
-        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
         initializeOptions = {
             methodId: 'method',
@@ -62,11 +45,11 @@ describe('BlueSnapV2PaymentStrategy', () => {
             },
         });
 
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(state);
-        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
-        jest.spyOn(paymentIntegrationService, 'initializeOffsitePayment').mockReturnValue(
-            initializeOffsitePaymentAction,
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockImplementation(jest.fn());
+        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockImplementation(jest.fn());
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
+        jest.spyOn(paymentIntegrationService, 'initializeOffsitePayment').mockImplementation(
+            jest.fn(),
         );
 
         options = {
@@ -111,6 +94,7 @@ describe('BlueSnapV2PaymentStrategy', () => {
         const status = PaymentStatusTypes.ACKNOWLEDGE;
 
         jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
+            ...paymentIntegrationService.getState(),
             getOrder: () => order,
             getPaymentStatus: () => status,
         });
@@ -118,7 +102,9 @@ describe('BlueSnapV2PaymentStrategy', () => {
         await strategy.initialize(options);
         await strategy.execute(orderRequestBody, options);
 
-        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockResolvedValue(undefined);
+        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockResolvedValue(
+            paymentIntegrationService.getState(),
+        );
 
         await strategy.finalize(options);
 
@@ -129,6 +115,7 @@ describe('BlueSnapV2PaymentStrategy', () => {
         const order = getOrder();
 
         jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
+            ...paymentIntegrationService.getState(),
             getOrder: () => order,
             getPaymentStatus: () => PaymentStatusTypes.FINALIZE,
         });
@@ -140,7 +127,8 @@ describe('BlueSnapV2PaymentStrategy', () => {
 
     it('does not finalize order if order is not created', async () => {
         jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
-            getOrder: () => null,
+            ...paymentIntegrationService.getState(),
+            getOrder: () => undefined,
             getPaymentStatus: () => 'INCOMPLETE',
         });
 
@@ -152,7 +140,8 @@ describe('BlueSnapV2PaymentStrategy', () => {
     it('does not finalize order if order is not finalized or acknowledged', async () => {
         const order = getOrder();
 
-        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReturnValue({
+        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockResolvedValue({
+            ...paymentIntegrationService.finalizeOrder(),
             getOrder: () => order,
             getPaymentStatus: () => 'INITIALIZE',
         });
@@ -161,12 +150,10 @@ describe('BlueSnapV2PaymentStrategy', () => {
     });
 
     it('throws error if unable to finalize due to missing data', async () => {
-        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReturnValue(
-            Promise.resolve({
-                status: PaymentStatusTypes.INITIALIZE,
-            }),
-        );
-        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReturnValue(null);
+        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockResolvedValue({
+            ...paymentIntegrationService.finalizeOrder(),
+            getOrder: () => undefined,
+        });
 
         await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
     });

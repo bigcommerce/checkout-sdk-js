@@ -5,17 +5,15 @@ import {
     InvalidArgumentError,
     MissingDataError,
     NotInitializedError,
-    OrderActionType,
     OrderFinalizationNotCompletedError,
     OrderRequestBody,
-    PaymentActionType,
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
     PaymentMethod,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    getCheckout,
+    getCart,
     getErrorPaymentResponseBody,
     getOrderRequestBody,
     getResponse,
@@ -31,8 +29,6 @@ describe('AfterpayPaymentStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let scriptLoader: AfterpayScriptLoader;
-    let submitOrderAction: OrderActionType;
-    let submitPaymentAction: PaymentActionType;
     let strategy: AfterpayPaymentStrategy;
 
     const afterpaySdk = {
@@ -54,9 +50,6 @@ describe('AfterpayPaymentStrategy', () => {
             },
         });
 
-        submitOrderAction = OrderActionType.SubmitOrderRequested;
-        submitPaymentAction = PaymentActionType.SubmitPaymentRequested;
-
         payload = merge({}, getOrderRequestBody(), {
             payment: {
                 methodId: paymentMethod.id,
@@ -64,9 +57,9 @@ describe('AfterpayPaymentStrategy', () => {
             },
         });
 
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
 
         jest.spyOn(scriptLoader, 'load').mockReturnValue(Promise.resolve(afterpaySdk));
 
@@ -104,7 +97,8 @@ describe('AfterpayPaymentStrategy', () => {
 
         it('loads script when initializing strategy with NZD', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getCart').mockReturnValue({
-                currency: { code: 'NZD' },
+                ...getCart(),
+                currency: { code: 'NZD', name: 'NZD', symbol: 'NZD', decimalPlaces: 1 },
             });
 
             await strategy.initialize({
@@ -131,7 +125,8 @@ describe('AfterpayPaymentStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             jest.spyOn(paymentIntegrationService.getState(), 'getCart').mockReturnValue({
-                currency: { code: 'USD' },
+                ...getCart(),
+                currency: { ...getCart().currency, code: 'USD' },
             });
         });
 
@@ -214,17 +209,13 @@ describe('AfterpayPaymentStrategy', () => {
 
         beforeEach(() => {
             jest.spyOn(paymentIntegrationService.getState(), 'getContextConfig').mockReturnValue({
-                payment: { token: nonce },
-            });
-
-            jest.spyOn(paymentIntegrationService.getState(), 'getCheckout').mockReturnValue({
-                ...getCheckout(),
-                payments: [
-                    {
-                        providerId: paymentMethod.id,
-                        gatewayId: paymentMethod.gateway,
-                    },
-                ],
+                checkoutId: '6a6071cc-82ba-45aa-adb0-ebec42d6ff6f',
+                flashMessages: [],
+                geoCountryCode: 'AU',
+                payment: {
+                    formId: 'dc030783-6129-4ee3-8e06-6f4270df1527',
+                    token: nonce,
+                },
             });
         });
 
@@ -242,10 +233,8 @@ describe('AfterpayPaymentStrategy', () => {
                 gatewayId: paymentMethod.gateway,
             });
 
-            jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
-            jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
-                submitPaymentAction,
-            );
+            jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
 
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith(
                 {},
@@ -272,7 +261,12 @@ describe('AfterpayPaymentStrategy', () => {
 
         it('throws error if unable to finalize order due to missing context config data', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getContextConfig').mockReturnValue({
-                payment: { token: undefined },
+                checkoutId: '6a6071cc-82ba-45aa-adb0-ebec42d6ff6f',
+                flashMessages: [],
+                geoCountryCode: 'AU',
+                payment: {
+                    formId: 'dc030783-6129-4ee3-8e06-6f4270df1527',
+                },
             });
 
             await expect(
@@ -291,11 +285,11 @@ describe('AfterpayPaymentStrategy', () => {
                 throw new RequestError(errorResponse);
             });
 
-            jest.spyOn(paymentIntegrationService, 'forgetCheckout').mockReturnValue(
-                Promise.resolve(),
+            jest.spyOn(paymentIntegrationService, 'forgetCheckout').mockResolvedValue(
+                paymentIntegrationService.getState(),
             );
 
-            jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
+            jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
             await strategy.initialize({
                 methodId: paymentMethod.id,

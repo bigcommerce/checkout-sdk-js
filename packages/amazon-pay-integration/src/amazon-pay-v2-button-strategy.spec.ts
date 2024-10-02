@@ -19,9 +19,9 @@ import {
 
 import AmazonPayV2ButtonStrategy from './amazon-pay-v2-button-strategy';
 import AmazonPayV2RequestSender from './amazon-pay-v2-request-sender';
+import AmazonPayV2ConfigCreationError from './errors/amazon-pay-v2-config-creation-error';
 import { getAmazonPayV2CheckoutButtonOptions, Mode } from './mock/amazon-pay-v2-button.mock';
 import { getAmazonPayV2RequestSenderMock } from './mock/amazon-pay-v2-config-request-sender.mock';
-import AmazonPayV2ConfigCreationError from './errors/amazon-pay-v2-config-creation-error';
 
 describe('AmazonPayV2ButtonStrategy', () => {
     let checkoutButtonOptions: CheckoutButtonInitializeOptions;
@@ -55,7 +55,7 @@ describe('AmazonPayV2ButtonStrategy', () => {
         jest.spyOn(
             amazonPayV2PaymentProcessor,
             'prepareCheckoutWithCreationRequestConfig',
-        ).mockImplementation((callback) => {
+        ).mockImplementation((callback: () => Promise<unknown>) => {
             void callback();
         });
 
@@ -167,7 +167,7 @@ describe('AmazonPayV2ButtonStrategy', () => {
                 jest.spyOn(
                     amazonPayV2PaymentProcessor,
                     'prepareCheckoutWithCreationRequestConfig',
-                ).mockImplementation((callback) => {
+                ).mockImplementation((callback: () => Promise<unknown>) => {
                     callbackResult = callback();
                 });
                 jest.spyOn(amazonPayV2RequestSender, 'createCheckoutConfig').mockRejectedValue(
@@ -177,7 +177,7 @@ describe('AmazonPayV2ButtonStrategy', () => {
                 try {
                     await strategy.initialize(checkoutButtonOptions);
                     await new Promise((resolve) => process.nextTick(resolve));
-                } catch (err) {
+                } catch (err: unknown) {
                     callbackResult = err;
                 } finally {
                     await expect(callbackResult).rejects.toThrow(AmazonPayV2ConfigCreationError);

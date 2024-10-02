@@ -26,7 +26,9 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import AmazonPayV2PaymentInitializeOptions from './amazon-pay-v2-payment-initialize-options';
+import AmazonPayV2PaymentInitializeOptions, {
+    WithAmazonPayV2PaymentInitializeOptions,
+} from './amazon-pay-v2-payment-initialize-options';
 import AmazonPayV2PaymentStrategy from './amazon-pay-v2-payment-strategy';
 
 describe('AmazonPayV2PaymentStrategy', () => {
@@ -89,7 +91,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
     describe('#initialize', () => {
         let amazonpayv2InitializeOptions: AmazonPayV2PaymentInitializeOptions;
-        let initializeOptions: PaymentInitializeOptions;
+        let initializeOptions: PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions;
         const paymentToken = 'abc123';
         const changeMethodId = 'editButtonId';
 
@@ -132,7 +134,10 @@ describe('AmazonPayV2PaymentStrategy', () => {
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(paymentMethodMock);
-            delete initializeOptions.amazonpay?.editButtonId;
+
+            if (initializeOptions.amazonpay) {
+                delete initializeOptions.amazonpay.editButtonId;
+            }
 
             await strategy.initialize(initializeOptions);
 

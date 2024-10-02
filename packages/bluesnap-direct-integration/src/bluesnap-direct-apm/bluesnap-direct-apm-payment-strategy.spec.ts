@@ -66,13 +66,14 @@ describe('BlueSnapDirectAPMPaymentStrategy', () => {
         it('should submit the ECP payment', async () => {
             await strategy.initialize();
 
+            const accountType = 'CONSUMER_CHECKING' as const;
             const payload = {
                 payment: {
                     gatewayId: 'bluesnapdirect',
                     methodId: 'ecp',
                     paymentData: {
                         accountNumber: '223344556',
-                        accountType: 'CONSUMER_CHECKING',
+                        accountType,
                         shopperPermission: true,
                         routingNumber: '998877665',
                     },
