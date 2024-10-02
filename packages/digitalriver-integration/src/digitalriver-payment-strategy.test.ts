@@ -1,3 +1,11 @@
+import { Action, createAction } from '@bigcommerce/data-store';
+import {
+    createScriptLoader,
+    createStylesheetLoader,
+    ScriptLoader,
+} from '@bigcommerce/script-loader';
+import { merge } from 'lodash';
+import { Observable, of } from 'rxjs';
 
 import {
     Checkout,
@@ -29,6 +37,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { AuthenticationSourceStatus, OnSuccessResponse } from './digitalriver';
+import DigitalRiverError from './digitalriver-error';
 import DigitalRiverPaymentStrategy from './digitalriver-payment-strategy';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
 import {
@@ -39,11 +48,6 @@ import {
     getInitializeOptionsMock,
     getOrderRequestBodyWithVaultedInstrument,
 } from './digitalriver.mock';
-import DigitalRiverError from './digitalriver-error';
-import { Action, createAction } from '@bigcommerce/data-store';
-import { ScriptLoader, createScriptLoader, createStylesheetLoader } from '@bigcommerce/script-loader';
-import { Observable, of } from 'rxjs';
-import { merge } from 'lodash';
 
 describe('DigitalRiverPaymentStrategy', () => {
     let payload: OrderRequestBody;
@@ -57,7 +61,7 @@ describe('DigitalRiverPaymentStrategy', () => {
     let submitOrderAction: Observable<SubmitOrderAction>;
     let submitPaymentAction: Observable<SubmitPaymentAction>;
     let applyStoreCreditAction: Observable<Action>;
-    let updateAddressAction: string | any;
+    let updateAddressAction: string | unknown;
 
     beforeEach(() => {
         scriptLoader = createScriptLoader();
@@ -195,7 +199,8 @@ describe('DigitalRiverPaymentStrategy', () => {
                     mount: jest.fn(),
                 }),
                 authenticateSource: jest.fn(),
-            } as any);
+                createElement: jest.fn(),
+            });
 
             await strategy.initialize(options);
 
@@ -644,6 +649,7 @@ describe('DigitalRiverPaymentStrategy', () => {
 
         it('calls onError callback from DigitalRiver', async () => {
             const onErrorCallback = jest.fn();
+
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
                 ({ onError }) => {
                     // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
@@ -654,7 +660,7 @@ describe('DigitalRiverPaymentStrategy', () => {
                     return digitalRiverComponent;
                 },
             );
-    
+
             await strategy.initialize(options);
             onErrorCallback({
                 errors: [
@@ -673,13 +679,14 @@ describe('DigitalRiverPaymentStrategy', () => {
                 // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                Promise.resolve(new Error),
+                Promise.resolve(new Error()),
             );
+
             const promise = strategy.initialize(options);
 
             expect(promise).rejects.toThrow(DigitalRiverError);
         });
- 
+
         it('throws an error when DigitalRiver options is not provided', () => {
             const error = new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
 
