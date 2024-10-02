@@ -130,15 +130,12 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
         const { paymentData, methodId } = payment;
 
-        const state = this.paymentIntegrationService.getState();
-        const cartId = state.getCartOrThrow().id;
-
         const isVaultedFlow = paymentData && isVaultedInstrument(paymentData);
 
         try {
             const paymentPayload = isVaultedFlow
-                ? await this.prepareVaultedInstrumentPaymentPayload(methodId, cartId, paymentData)
-                : await this.preparePaymentPayload(methodId, cartId, paymentData);
+                ? await this.prepareVaultedInstrumentPaymentPayload(methodId, paymentData)
+                : await this.preparePaymentPayload(methodId, paymentData);
 
             await this.paymentIntegrationService.submitOrder(order, options);
             await this.paymentIntegrationService.submitPayment<PayPalFastlanePaymentFormattedPayload>(
@@ -291,10 +288,11 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
      */
     private async prepareVaultedInstrumentPaymentPayload(
         methodId: string,
-        cartId: string,
         paymentData: VaultedInstrument,
     ): Promise<Payment<PayPalFastlanePaymentFormattedPayload>> {
         const { instrumentId } = paymentData;
+        const state = this.paymentIntegrationService.getState();
+        const cartId = state.getCartOrThrow().id;
 
         const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
             cartId,
@@ -315,10 +313,10 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
     private async preparePaymentPayload(
         methodId: string,
-        cartId: string,
         paymentData: OrderPaymentRequestBody['paymentData'],
     ): Promise<Payment<PayPalFastlanePaymentFormattedPayload>> {
         const state = this.paymentIntegrationService.getState();
+        const cartId = state.getCartOrThrow().id;
         const billingAddress = state.getBillingAddressOrThrow();
 
         const fullName = `${billingAddress.firstName} ${billingAddress.lastName}`.trim();
