@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.661.10](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.661.9...v1.661.10) (2024-10-02)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2676 fixed types in the Afterpay, AmazonPay, Bluesnap integration packages specs ([#2676](https://github.com/bigcommerce/checkout-sdk-js/issues/2676)) ([f58a932](https://github.com/bigcommerce/checkout-sdk-js/commit/f58a932502ff81c1d53fbc9d9470f809f5ea72ee))
+
 ### [1.661.9](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.661.8...v1.661.9) (2024-10-02)
 
 
