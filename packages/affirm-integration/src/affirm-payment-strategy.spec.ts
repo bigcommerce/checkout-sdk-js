@@ -3,10 +3,8 @@ import { merge } from 'lodash';
 import {
     MissingDataError,
     NotInitializedError,
-    OrderActionType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
-    PaymentActionType,
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
     PaymentMethod,
@@ -28,8 +26,6 @@ describe('AffirmPaymentStrategy', () => {
     let affirm: Affirm;
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
-    let submitOrderAction: OrderActionType;
-    let submitPaymentAction: PaymentActionType;
     let strategy: AffirmPaymentStrategy;
     let affirmScriptLoader: AffirmScriptLoader;
     let paymentIntegrationService: PaymentIntegrationService;
@@ -43,18 +39,15 @@ describe('AffirmPaymentStrategy', () => {
         affirmScriptLoader = new AffirmScriptLoader();
         strategy = new AffirmPaymentStrategy(paymentIntegrationService, affirmScriptLoader);
 
-        submitOrderAction = OrderActionType.SubmitOrderRequested;
-        submitPaymentAction = PaymentActionType.SubmitPaymentRequested;
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
-
-        jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethod,
         );
 
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
             paymentIntegrationService.getState(),
         );
 
@@ -83,7 +76,7 @@ describe('AffirmPaymentStrategy', () => {
                 'getPaymentMethodOrThrow',
             ).mockReturnValue({
                 ...paymentMethod,
-                clientToken: null,
+                clientToken: undefined,
             });
 
             await expect(strategy.initialize({ methodId: paymentMethod.id })).rejects.toThrow(
@@ -299,13 +292,6 @@ describe('AffirmPaymentStrategy', () => {
         });
 
         it('throw NotInitializedError if Affirm script is not initialized', async () => {
-            jest.spyOn(affirmScriptLoader, 'load').mockReturnValue(undefined);
-
-            await strategy.initialize({
-                methodId: paymentMethod.id,
-                gatewayId: paymentMethod.gateway,
-            });
-
             await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
         });
 
