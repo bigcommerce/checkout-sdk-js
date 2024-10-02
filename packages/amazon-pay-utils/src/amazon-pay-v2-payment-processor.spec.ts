@@ -12,6 +12,7 @@ import {
     getCart,
     getCheckout,
     getConfig,
+    PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import {
@@ -224,8 +225,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
                 const amazonPayV2Button: AmazonPayV2Button = (
                     amazonPayV2SDKMock.Pay.renderButton as jest.Mock
                 ).mock.results[0].value;
-                // TODO: remove rule and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                // eslint-disable-next-line  @typescript-eslint/no-unsafe-member-access
                 const customActions = (amazonPayV2Button.onClick as jest.Mock).mock.calls[0][0];
 
                 customActions();
@@ -244,8 +244,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
                 const amazonPayV2Button: AmazonPayV2Button = (
                     amazonPayV2SDKMock.Pay.renderButton as jest.Mock
                 ).mock.results[0].value;
-                // TODO: remove rule and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                // eslint-disable-next-line  @typescript-eslint/no-unsafe-member-access
                 const customActions = (amazonPayV2Button.onClick as jest.Mock).mock.calls[0][0];
 
                 customActions();
@@ -325,8 +324,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
                 const amazonPayV2Button: AmazonPayV2Button = (
                     amazonPayV2SDKMock.Pay.renderButton as jest.Mock
                 ).mock.results[0].value;
-                // TODO: remove rule and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                // eslint-disable-next-line  @typescript-eslint/no-unsafe-member-access
                 const customActions = (amazonPayV2Button.onClick as jest.Mock).mock.calls[0][0];
 
                 await customActions();
@@ -349,8 +347,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
                 const amazonPayV2Button: AmazonPayV2Button = (
                     amazonPayV2SDKMock.Pay.renderButton as jest.Mock
                 ).mock.results[0].value;
-                // TODO: remove rule and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                // eslint-disable-next-line  @typescript-eslint/no-unsafe-member-access
                 const customActions = (amazonPayV2Button.onClick as jest.Mock).mock.calls[0][0];
 
                 await customActions();
@@ -372,9 +369,11 @@ describe('AmazonPayV2PaymentProcessor', () => {
                 paymentMethods: { getPaymentMethodOrThrow: jest.fn(() => getAmazonPayV2()) },
             } as InternalCheckoutSelectors;
         };
-
+        // eslint-disable-next-line  @typescript-eslint/no-unsafe-member-access
+        const stateMock = new PaymentIntegrationServiceMock().getState();
         const getPaymentIntegrationSelectorsMock = () =>
             ({
+                ...stateMock,
                 getCart: jest.fn(() => getCart()),
                 getCheckout: jest.fn(() => getCheckout()),
                 getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
@@ -651,8 +650,6 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
             test('if merchantId is undefined', async () => {
                 jest.spyOn(checkoutState.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
-                    // TODO: remove rule and update test with related type (PAYPAL-4383)
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     getPaymentMethodMockUndefinedMerchant(),
                 );
 
@@ -664,8 +661,6 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
             test('if ledgerCurrency is undefined', async () => {
                 jest.spyOn(checkoutState.paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
-                    // TODO: remove rule and update test with related type (PAYPAL-4383)
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     getPaymentMethodMockUndefinedLedgerCurrency(),
                 );
 

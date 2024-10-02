@@ -101,7 +101,6 @@ describe('AffirmPaymentStrategy', () => {
     describe('#execute()', () => {
         beforeEach(() => {
             jest.spyOn(affirm.checkout, 'open').mockImplementation(({ onSuccess }) => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 onSuccess({
                     checkout_token: '1234',
                     created: '1234',
@@ -261,7 +260,6 @@ describe('AffirmPaymentStrategy', () => {
 
         it('returns cancel error on affirm if users cancel flow', async () => {
             jest.spyOn(affirm.checkout, 'open').mockImplementation(({ onFail }) => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 onFail({
                     reason: 'canceled',
                 });
@@ -277,7 +275,6 @@ describe('AffirmPaymentStrategy', () => {
 
         it('returns invalid error on affirm if payment method was invalid', async () => {
             jest.spyOn(affirm.checkout, 'open').mockImplementation(({ onFail }) => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 onFail({
                     reason: 'not canceled',
                 });

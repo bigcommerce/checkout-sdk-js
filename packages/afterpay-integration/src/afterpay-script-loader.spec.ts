@@ -12,7 +12,7 @@ describe('AfterpayScriptLoader', () => {
     beforeEach(() => {
         jest.spyOn(isAfterpayWindow, 'default').mockReturnValue(true);
 
-        jest.spyOn(scriptLoader, 'loadScript').mockReturnValue(Promise.resolve(new Event('load')));
+        jest.spyOn(scriptLoader, 'loadScript').mockReturnValue(Promise.resolve());
     });
 
     afterEach(() => {

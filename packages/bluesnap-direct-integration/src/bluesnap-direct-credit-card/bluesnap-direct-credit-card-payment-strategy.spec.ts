@@ -45,7 +45,7 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
             paymentIntegrationService.getState(),
         );
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
@@ -61,12 +61,23 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
         blueSnapDirectSdkMock = sdkMocks.sdk;
 
         jest.spyOn(scriptLoader, 'load').mockResolvedValue(blueSnapDirectSdkMock);
-        jest.spyOn(hostedForm, 'initialize').mockResolvedValue(undefined);
+        jest.spyOn(hostedForm, 'initialize').mockImplementation(jest.fn());
         jest.spyOn(hostedForm, 'attach').mockResolvedValue(undefined);
         jest.spyOn(hostedForm, 'validate').mockReturnValue(hostedForm);
-        jest.spyOn(hostedForm, 'submit').mockResolvedValue({ cardHolderName: 'John Doe' });
-        jest.spyOn(hostedForm, 'detach').mockResolvedValue(undefined);
-        jest.spyOn(bluesnapdirect3ds, 'initialize').mockResolvedValue(undefined);
+        jest.spyOn(hostedForm, 'submit').mockResolvedValue({
+            cardCategory: 'cat',
+            exp: '20/2030',
+            cardHolderName: 'John Doe',
+            binCategory: 'string',
+            cardSubType: 'string',
+            ccBin: 'string',
+            ccType: 'string',
+            isRegulatedCard: 'string',
+            issuingCountry: 'string',
+            last4Digits: 'string',
+        });
+        jest.spyOn(hostedForm, 'detach').mockImplementation(jest.fn());
+        jest.spyOn(bluesnapdirect3ds, 'initialize').mockImplementation(jest.fn());
         jest.spyOn(bluesnapdirect3ds, 'initialize3ds').mockResolvedValue('3dsId');
 
         strategy = new BlueSnapDirectCreditCardPaymentStrategy(
@@ -405,6 +416,7 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
                     paymentIntegrationService.getState(),
                     'getCardInstrumentOrThrow',
                 ).mockReturnValue({
+                    ...paymentIntegrationService.getState().getCardInstrumentOrThrow('card'),
                     last4: previouslyUsedCardDataMock.last4Digits,
                     brand: previouslyUsedCardDataMock.ccType,
                 });
@@ -448,6 +460,7 @@ describe('BlueSnapDirectCreditCardPaymentStrategy', () => {
                     paymentIntegrationService.getState(),
                     'getCardInstrumentOrThrow',
                 ).mockReturnValue({
+                    ...paymentIntegrationService.getState().getCardInstrumentOrThrow('card'),
                     last4: previouslyUsedCardDataMock.last4Digits,
                     brand: previouslyUsedCardDataMock.ccType,
                 });
