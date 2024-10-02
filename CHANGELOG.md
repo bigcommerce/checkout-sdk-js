@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.661.8](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.661.7...v1.661.8) (2024-10-02)
+
+
+### Code Refactoring
+
+* **checkout:** PI-000 renamed all *.tsx files to *.ts ([#2675](https://github.com/bigcommerce/checkout-sdk-js/issues/2675)) ([8510e5e](https://github.com/bigcommerce/checkout-sdk-js/commit/8510e5e104e3f809e1c48ed9b03f30bf242b4221))
+
 ### [1.661.7](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.661.6...v1.661.7) (2024-10-02)
 
 
