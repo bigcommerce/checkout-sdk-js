@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.661.7](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.661.6...v1.661.7) (2024-10-02)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2674 fixed types in the Affirm integration package specs ([#2671](https://github.com/bigcommerce/checkout-sdk-js/issues/2671)) ([895df12](https://github.com/bigcommerce/checkout-sdk-js/commit/895df122c88fa63c771572856fee4561e1736886))
+
 ### [1.661.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.661.5...v1.661.6) (2024-10-01)
 
 ### [1.661.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.661.4...v1.661.5) (2024-09-30)
