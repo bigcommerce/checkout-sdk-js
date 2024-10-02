@@ -232,7 +232,6 @@ export default class PayPalCommerceSdk {
             if (
                 value === undefined ||
                 value === null ||
-                value === '' ||
                 (Array.isArray(value) && value.length === 0)
             ) {
                 return;

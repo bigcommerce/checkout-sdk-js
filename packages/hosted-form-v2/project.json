@@ -25,8 +25,7 @@
                 "parallel": false,
                 "commands": [
                     "tsc --outDir ../../temp --declaration --emitDeclarationOnly",
-                    "api-extractor run --config api-extractor/hosted-form-v2-iframe-content.json & api-extractor run --config api-extractor/hosted-form-v2-iframe-host.json",
-                    "rm -rf ../../temp"
+                    "api-extractor run --config api-extractor/hosted-form-v2-iframe-content.json & api-extractor run --config api-extractor/hosted-form-v2-iframe-host.json"
                 ]
             }
         }
