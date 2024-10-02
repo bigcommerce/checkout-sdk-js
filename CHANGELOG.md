@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.661.9](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.661.8...v1.661.9) (2024-10-02)
+
+
+### Code Refactoring
+
+* **checkout:** PI-1588 resolve Quadpay payment method with Zip payment integration package ([#2662](https://github.com/bigcommerce/checkout-sdk-js/issues/2662)) ([cde1566](https://github.com/bigcommerce/checkout-sdk-js/commit/cde156638692d1dd90dda1cc83d784a176f0596c))
+
 ### [1.661.8](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.661.7...v1.661.8) (2024-10-02)
 
 
