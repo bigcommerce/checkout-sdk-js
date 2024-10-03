@@ -381,10 +381,52 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         let appearance: StripeUPEAppearanceOptions | undefined;
 
         if (true) {
-        // if (style) {
+            // if (style) {
             const styles = style || {};
+            const rules = {
+                '.Input': {
+                    borderColor: styles.fieldBorder,
+                    color: styles.fieldText,
+                    boxShadow: styles.fieldInnerShadow,
+                },
+                '.AccordionItem': {
+                    borderRadius: 0,
+                    borderWidth: 0,
+                    borderBottomWidth: '1px',
+                    boxShadow: 'none',
+                    fontSize: '15px',
+                    fontWeight: '700',
+                    padding: '13px 20px 13px 18px',
+                },
+                '.TabLabel, .AccordionItem': {
+                    fontSize: '15px',
+                    fontWeight: '700',
+                    color: '#5f5f5f',
+                },
+                '.TabLabel--selected, .AccordionItem--selected': {
+                    fontWeight: '700',
+                    color: '#5f5f5f',
+                },
+                '.RadioIcon': {
+                    // 26px / 0.88 = 29.54
+                    width: '29.54px',
+                },
+                '.RadioIconOuter': {
+                    // 1px / 26px * 0.88 = 0.034
+                    strokeWidth: '3.4',
+                    stroke: '#ddd',
+                },
+                '.RadioIconOuter--checked': {
+                    stroke: '#4496f6',
+                },
+                '.RadioIconInner': {
+                    // 17.16px / 26px * 0.88 = 0.58 / 2 = 29
+                    r: '29',
+                    fill: '#4496f6',
+                },
+            };
 
-            console.log(styles.fieldBackground);
+            console.log('*** rules', rules);
 
             appearance = {
                 variables: {
@@ -398,31 +440,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
                     colorIcon: styles.fieldPlaceholderText,
                     fontFamily: 'Montserrat, Arial, Helvetica',
                 },
-                rules: {
-                    '.Input': {
-                        borderColor: styles.fieldBorder,
-                        color: styles.fieldText,
-                        boxShadow: styles.fieldInnerShadow,
-                    },
-                    '.AccordionItem': {
-                        borderRadius: 0,
-                        borderWidth: 0,
-                        borderBottomWidth: '1px',
-                        boxShadow: 'none',
-                        fontSize: '15px',
-                        fontWeight: '700',
-                        padding: '13px 20px 13px',
-                    },
-                    '.TabLabel, .AccordionItem': {
-                        fontSize: '15px',
-                        fontWeight: '700',
-                        color: '#5f5f5f',
-                    },
-                    '.TabLabel--selected, .AccordionItem--selected': {
-                        fontWeight: '700',
-                        color: '#5f5f5f',
-                    },
-                },
+                rules,
             };
         }
 
