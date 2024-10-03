@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.662.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.662.0...v1.662.1) (2024-10-03)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2680 fixed types in the Bolt, Cardinal integration packages specs ([#2678](https://github.com/bigcommerce/checkout-sdk-js/issues/2678)) ([91a9465](https://github.com/bigcommerce/checkout-sdk-js/commit/91a946564f3270fa2ae9fab5ea2db379416d834d))
+
 ## [1.662.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.661.10...v1.662.0) (2024-10-03)
 
 
