@@ -1,6 +1,4 @@
-import { Action } from '@bigcommerce/data-store';
 import { merge } from 'lodash';
-import { Observable } from 'rxjs';
 
 import {
     Checkout,
@@ -28,7 +26,6 @@ import CheckoutComCustomPaymentStrategy from './checkoutcom-custom-payment-strat
 
 describe('CheckoutComCustomPaymentStrategy', () => {
     let strategy: CheckoutComCustomPaymentStrategy;
-    let initializePaymentAction: Observable<Action>;
     let checkoutMock: Checkout;
     let paymentMethodMock: PaymentMethod;
     let paymentIntegrationService: PaymentIntegrationService;
@@ -49,8 +46,8 @@ describe('CheckoutComCustomPaymentStrategy', () => {
             getShippingAddress(),
         );
 
-        jest.spyOn(paymentIntegrationService, 'initializePayment').mockReturnValue(
-            initializePaymentAction,
+        jest.spyOn(paymentIntegrationService, 'initializePayment').mockResolvedValue(
+            paymentIntegrationService.getState(),
         );
 
         jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
@@ -63,14 +60,17 @@ describe('CheckoutComCustomPaymentStrategy', () => {
     });
 
     describe('#execute', () => {
-        let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
+        let form: HostedForm;
         let initializeOptions: PaymentInitializeOptions;
 
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
                 submit: jest.fn(),
-                validate: jest.fn(),
+                validate: jest.fn(() => Promise.resolve()),
+                detach: jest.fn(),
+                getBin: jest.fn(),
+                getCardType: jest.fn(),
             };
             initializeOptions = {
                 creditCard: {
@@ -125,7 +125,6 @@ describe('CheckoutComCustomPaymentStrategy', () => {
                 await strategy.initialize(initializeOptions);
                 await strategy.execute(getOrderRequestBody());
             } catch (error) {
-                // eslint-disable-next-line jest/no-conditional-expect
                 expect(form.submit).not.toHaveBeenCalled();
             }
         });

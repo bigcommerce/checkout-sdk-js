@@ -1,7 +1,5 @@
-import { createAction } from '@bigcommerce/data-store';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, noop } from 'lodash';
-import { of } from 'rxjs';
 
 import {
     InvalidArgumentError,
@@ -11,7 +9,6 @@ import {
     OrderRequestBody,
     PaymentIntegrationService,
     PaymentMethod,
-    PaymentMethodActionType,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
@@ -215,10 +212,15 @@ describe('ClearpayPaymentStrategy', () => {
 
         it('submits the order and the payment', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getContextConfig').mockReturnValue({
-                payment: { token: nonce },
+                checkoutId: '6a6071cc-82ba-45aa-adb0-ebec42d6ff6f',
+                flashMessages: [],
+                geoCountryCode: 'AU',
+                payment: {
+                    formId: 'dc030783-6129-4ee3-8e06-6f4270df1527',
+                    token: nonce,
+                },
             });
             jest.spyOn(paymentIntegrationService.getState(), 'getPaymentId').mockReturnValue({
-                methodId: paymentMethod.id,
                 providerId: paymentMethod.id,
             });
 
@@ -263,15 +265,9 @@ describe('ClearpayPaymentStrategy', () => {
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
                 Promise.reject(response),
             );
-            jest.spyOn(paymentIntegrationService, 'forgetCheckout').mockReturnValue(
-                Promise.resolve(),
-            );
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethods').mockReturnValue(
-                of(
-                    createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, [
-                        getClearpay(),
-                    ]),
-                ),
+            jest.spyOn(paymentIntegrationService, 'forgetCheckout').mockImplementation(jest.fn());
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethods').mockImplementation(
+                jest.fn(),
             );
 
             await strategy.initialize({
