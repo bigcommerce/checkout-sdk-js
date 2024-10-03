@@ -480,9 +480,9 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
     private isProviderError(error: unknown): boolean {
         if (isBraintreePaypalProviderError(error)) {
-            const paypalProviderError = error?.errors?.filter((e: any) => e.provider_error) || [];
+            const paypalProviderError = error?.errors?.filter((e) => e.provider_error) || [];
 
-            return paypalProviderError[0].provider_error?.code === '2046';
+            return paypalProviderError[0]?.provider_error?.code === '2046';
         }
 
         return false;

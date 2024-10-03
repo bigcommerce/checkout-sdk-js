@@ -361,9 +361,9 @@ export default class PayPalCommercePaymentStrategy implements PaymentStrategy {
 
     private isProviderError(error: unknown): boolean {
         if (isPaypalCommerceProviderError(error)) {
-            const paypalProviderError = error?.errors?.filter((e: any) => e.provider_error) || [];
+            const paypalProviderError = error?.errors?.filter((e) => e.provider_error) || [];
 
-            return paypalProviderError[0].provider_error?.code === 'INSTRUMENT_DECLINED';
+            return paypalProviderError[0]?.provider_error?.code === 'INSTRUMENT_DECLINED';
         }
 
         return false;
