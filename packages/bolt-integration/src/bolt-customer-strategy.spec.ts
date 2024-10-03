@@ -9,6 +9,7 @@ import {
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getBillingAddress,
     getCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -146,7 +147,7 @@ describe('BoltCustomerStrategy', () => {
 
             const options = { methodId: 'bolt' };
 
-            jest.spyOn(boltCheckout, 'hasBoltAccount').mockReturnValue(true);
+            jest.spyOn(boltCheckout, 'hasBoltAccount').mockResolvedValue(true);
 
             await strategy.initialize({ methodId: 'bolt' });
             await strategy.executePaymentMethodCheckout(options);
@@ -159,10 +160,18 @@ describe('BoltCustomerStrategy', () => {
             const mockCallback = jest.fn();
             const options = { methodId: 'bolt', continueWithCheckoutCallback: mockCallback };
 
-            jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
-                {},
-            );
-            jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue({});
+            const customer = getCustomer();
+            const billingAddress = getBillingAddress();
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue({
+                ...billingAddress,
+                email: undefined,
+            });
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue({
+                ...customer,
+                email: '',
+            });
 
             await strategy.executePaymentMethodCheckout(options);
 
@@ -187,7 +196,7 @@ describe('BoltCustomerStrategy', () => {
             const mockCallback = jest.fn();
             const options = { methodId: 'bolt', continueWithCheckoutCallback: mockCallback };
 
-            jest.spyOn(boltCheckout, 'hasBoltAccount').mockReturnValue(false);
+            jest.spyOn(boltCheckout, 'hasBoltAccount').mockResolvedValue(false);
 
             await strategy.initialize({ methodId: 'bolt' });
             await strategy.executePaymentMethodCheckout(options);
@@ -202,7 +211,7 @@ describe('BoltCustomerStrategy', () => {
             const mockCallback = jest.fn();
             const options = { methodId: 'bolt', continueWithCheckoutCallback: mockCallback };
 
-            jest.spyOn(boltCheckout, 'hasBoltAccount').mockReturnValue(true);
+            jest.spyOn(boltCheckout, 'hasBoltAccount').mockResolvedValue(true);
 
             await strategy.initialize({ methodId: 'bolt' });
             await strategy.executePaymentMethodCheckout(options);
@@ -222,8 +231,12 @@ describe('BoltCustomerStrategy', () => {
                 },
             };
 
-            jest.spyOn(boltCheckout, 'hasBoltAccount').mockReturnValue(true);
-            jest.spyOn(boltCheckout, 'openCheckout').mockImplementation(() => callbacks.close());
+            jest.spyOn(boltCheckout, 'hasBoltAccount').mockResolvedValue(true);
+            jest.spyOn(boltCheckout, 'openCheckout').mockImplementation(() => {
+                callbacks.close();
+
+                return Promise.resolve();
+            });
 
             await strategy.initialize({ methodId: 'bolt' });
             await strategy.executePaymentMethodCheckout(options);
@@ -239,7 +252,7 @@ describe('BoltCustomerStrategy', () => {
             const mockCallback = jest.fn();
             const options = { methodId: 'bolt', continueWithCheckoutCallback: mockCallback };
 
-            jest.spyOn(boltCheckout, 'hasBoltAccount').mockReturnValue(true);
+            jest.spyOn(boltCheckout, 'hasBoltAccount').mockResolvedValue(true);
             jest.spyOn(boltCheckout, 'openCheckout').mockImplementation(() => {
                 throw new PaymentMethodFailedError('Error on Bolt side');
             });

@@ -38,7 +38,7 @@ describe('CardinalBarclaysThreeDSecureFlow', () => {
 
         cardinalClient = {
             configure: jest.fn(() => Promise.resolve()),
-            getThreeDSecureData: jest.fn(() => Promise.resolve()),
+            getThreeDSecureData: jest.fn(),
             load: jest.fn(() => Promise.resolve()),
             runBinProcess: jest.fn(() => Promise.resolve()),
         };
