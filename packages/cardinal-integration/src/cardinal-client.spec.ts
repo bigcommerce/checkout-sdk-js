@@ -24,15 +24,38 @@ import {
     CardinalSignatureVerification,
     CardinalTriggerEvents,
     CardinalValidatedAction,
-    CardinalValidatedData,
+    setupCompleteFn,
+    validatedFn,
 } from './index';
+
+const isSetupCompletedType = (
+    type: CardinalEventType,
+    callback: setupCompleteFn | validatedFn,
+): callback is setupCompleteFn => {
+    if (typeof callback === 'function' && type.toString() === CardinalEventType.SetupCompleted) {
+        return true;
+    }
+
+    return false;
+};
+
+const isValidatedType = (
+    type: CardinalEventType,
+    callback: setupCompleteFn | validatedFn,
+): callback is validatedFn => {
+    if (typeof callback === 'function' && type.toString() === CardinalEventType.Validated) {
+        return true;
+    }
+
+    return false;
+};
 
 describe('CardinalClient', () => {
     let client: CardinalClient;
     let cardinalScriptLoader: CardinalScriptLoader;
     let sdk: CardinalSDK;
-    let setupCall: () => void;
-    let validatedCall: (data: CardinalValidatedData, jwt: string) => void;
+    let setupCall: setupCompleteFn;
+    let validatedCall: validatedFn;
 
     beforeEach(() => {
         cardinalScriptLoader = new CardinalScriptLoader(createScriptLoader());
@@ -51,16 +74,16 @@ describe('CardinalClient', () => {
     });
 
     describe('#configure', () => {
-        let completed: () => void;
-        let validated: (data: CardinalValidatedData, jwt: string) => void;
+        let completed: setupCompleteFn;
+        let validated: validatedFn;
 
         beforeEach(() => {
             sdk.on = jest.fn((type: CardinalEventType, callback) => {
-                if (type.toString() === CardinalEventType.SetupCompleted) {
+                if (isSetupCompletedType(type, callback)) {
                     completed = callback;
                 }
 
-                if (type.toString() === CardinalEventType.Validated) {
+                if (isValidatedType(type, callback)) {
                     validated = callback;
                 }
             });
@@ -69,7 +92,7 @@ describe('CardinalClient', () => {
         describe('#successfully', () => {
             beforeEach(async () => {
                 jest.spyOn(sdk, 'setup').mockImplementation(() => {
-                    completed();
+                    completed({ sessionId: '12', modules: [{ loaded: true, module: '123' }] });
                 });
 
                 await client.load('provider', true);
@@ -132,13 +155,13 @@ describe('CardinalClient', () => {
     describe('#runBinProcess', () => {
         beforeEach(async () => {
             sdk.on = jest.fn((type, callback) => {
-                if (type.toString() === CardinalEventType.SetupCompleted) {
+                if (isSetupCompletedType(type, callback)) {
                     setupCall = callback;
                 }
             });
 
             jest.spyOn(sdk, 'setup').mockImplementation(() => {
-                setupCall();
+                setupCall({ sessionId: '12', modules: [{ loaded: true, module: '123' }] });
             });
 
             await client.load('provider', true);
@@ -183,7 +206,7 @@ describe('CardinalClient', () => {
     describe('#getThreeDSecureData', () => {
         beforeEach(async () => {
             sdk.on = jest.fn((type, callback) => {
-                if (type.toString() === CardinalEventType.SetupCompleted) {
+                if (isSetupCompletedType(type, callback)) {
                     setupCall = callback;
                 } else {
                     validatedCall = callback;
@@ -191,7 +214,7 @@ describe('CardinalClient', () => {
             });
 
             jest.spyOn(sdk, 'setup').mockImplementation(() => {
-                setupCall();
+                setupCall({ sessionId: '12', modules: [{ loaded: true, module: '123' }] });
             });
 
             await client.load('provider', true);
@@ -309,9 +332,12 @@ describe('CardinalClient', () => {
                 );
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodFailedError);
-                expect(error.message).toBe(
-                    'User failed authentication or an error was encountered while processing the transaction.',
-                );
+
+                if (error instanceof PaymentMethodFailedError) {
+                    expect(error.message).toBe(
+                        'User failed authentication or an error was encountered while processing the transaction.',
+                    );
+                }
             }
         });
 
@@ -380,9 +406,12 @@ describe('CardinalClient', () => {
                 );
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodFailedError);
-                expect(error.message).toBe(
-                    'An error was encountered while processing the transaction.',
-                );
+
+                if (error instanceof PaymentMethodFailedError) {
+                    expect(error.message).toBe(
+                        'An error was encountered while processing the transaction.',
+                    );
+                }
             }
         });
     });

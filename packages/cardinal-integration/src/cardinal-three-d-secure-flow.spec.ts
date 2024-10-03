@@ -41,7 +41,7 @@ describe('CardinalThreeDSecureFlow', () => {
 
         cardinalClient = {
             configure: jest.fn(() => Promise.resolve()),
-            getThreeDSecureData: jest.fn(() => Promise.resolve()),
+            getThreeDSecureData: jest.fn(),
             load: jest.fn(() => Promise.resolve()),
             runBinProcess: jest.fn(() => Promise.resolve()),
         };
@@ -189,9 +189,9 @@ describe('CardinalThreeDSecureFlow', () => {
             });
 
             it('submits 3DS token using hosted form if provided', async () => {
-                jest.spyOn(cardinalClient, 'getThreeDSecureData').mockResolvedValue(
-                    'three_d_secure',
-                );
+                jest.spyOn(cardinalClient, 'getThreeDSecureData').mockResolvedValue({
+                    token: 'token',
+                });
 
                 await threeDSecureFlow.start(execute, payload, options, form);
 
@@ -203,9 +203,9 @@ describe('CardinalThreeDSecureFlow', () => {
             });
 
             it('submits 3DS token directly if hosted form is not provided', async () => {
-                jest.spyOn(cardinalClient, 'getThreeDSecureData').mockResolvedValue(
-                    'three_d_secure',
-                );
+                jest.spyOn(cardinalClient, 'getThreeDSecureData').mockResolvedValue({
+                    token: 'token',
+                });
 
                 await threeDSecureFlow.start(execute, payload, options);
 

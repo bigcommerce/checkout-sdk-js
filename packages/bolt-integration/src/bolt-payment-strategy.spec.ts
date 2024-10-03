@@ -100,7 +100,7 @@ describe('BoltPaymentStrategy', () => {
             paymentMethodMock,
         );
         jest.spyOn(boltEmbedded, 'create').mockReturnValue(boltEmbeddedField);
-        jest.spyOn(boltEmbeddedField, 'tokenize').mockReturnValue(
+        jest.spyOn(boltEmbeddedField, 'tokenize').mockResolvedValue(
             boltEmbeddedFieldTokenizeResponse,
         );
         jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
@@ -146,6 +146,7 @@ describe('BoltPaymentStrategy', () => {
 
         it('fails to initialize the bolt strategy and load bolt embedded script if method id is not provided', async () => {
             const initializationOptions = {
+                methodId: '',
                 bolt: {
                     containerId: undefined,
                     useBigCommerceCheckout: true,
@@ -166,7 +167,8 @@ describe('BoltPaymentStrategy', () => {
                 methodId: 'bolt',
                 bolt: {
                     ...boltEmbeddedScriptInitializationOptions.bolt,
-                    onPaymentSelect: null,
+                    useBigCommerceCheckout: true,
+                    onPaymentSelect: undefined,
                 },
             };
 
@@ -260,7 +262,7 @@ describe('BoltPaymentStrategy', () => {
                 },
             };
 
-            paymentMethodMock.initializationData.publishableKey = null;
+            paymentMethodMock.initializationData!.publishableKey = '';
 
             await strategy.initialize(initializationOptions);
 
@@ -268,7 +270,7 @@ describe('BoltPaymentStrategy', () => {
         });
 
         it('fails to initialize the bolt strategy if publishableKey is not provided when using Bigcommerce Checkout', async () => {
-            paymentMethodMock.initializationData.publishableKey = null;
+            paymentMethodMock.initializationData!.publishableKey = '';
 
             await expect(
                 strategy.initialize(boltClientScriptInitializationOptions),
@@ -383,7 +385,7 @@ describe('BoltPaymentStrategy', () => {
         });
 
         it('fails to execute the bolt strategy if the client script is not loaded when using bolt client', async () => {
-            jest.spyOn(boltScriptLoader, 'loadBoltClient').mockResolvedValue(undefined);
+            jest.spyOn(boltScriptLoader, 'loadBoltClient').mockImplementation(jest.fn());
             await strategy.initialize(boltClientScriptInitializationOptions);
 
             await expect(strategy.execute(payload)).rejects.toThrow(NotInitializedError);
@@ -491,10 +493,11 @@ describe('BoltPaymentStrategy', () => {
 
         it('fails to execute the strategy with bolt embedded if provider will receive invalid data', async () => {
             const invalidData = {
-                token: undefined,
+                token: '',
                 last4: 'last4',
                 bin: 'bin',
-                expiration: 1122,
+                expiration: '1122',
+                token_type: '',
             };
 
             const boltEmbeddedPayload = {

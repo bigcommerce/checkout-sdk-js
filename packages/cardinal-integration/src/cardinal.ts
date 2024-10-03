@@ -31,9 +31,12 @@ export enum CardinalEventType {
     Validated = 'payments.validated',
 }
 
+export type setupCompleteFn = (setupCompleteData: CardinalSetupCompletedData) => void;
+export type validatedFn = (data: CardinalValidatedData, jwt?: string) => void;
+
 export interface CardinalEventMap {
-    [CardinalEventType.SetupCompleted](setupCompleteData: CardinalSetupCompletedData): void;
-    [CardinalEventType.Validated](data: CardinalValidatedData, jwt?: string): void;
+    [CardinalEventType.SetupCompleted]: setupCompleteFn;
+    [CardinalEventType.Validated]: validatedFn;
 }
 
 export type CardinalConfiguration = Partial<{
