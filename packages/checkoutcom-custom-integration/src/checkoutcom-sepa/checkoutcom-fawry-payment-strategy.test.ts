@@ -1,16 +1,7 @@
-import { createAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { merge, noop } from 'lodash';
-import { Observable, of } from 'rxjs';
 
-import {
-    FinalizeOrderAction,
-    OrderActionType,
-    PaymentActionType,
-    PaymentIntegrationService,
-    SubmitOrderAction,
-    SubmitPaymentAction,
-} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getOrderRequestBody,
     getPaymentMethod,
@@ -20,19 +11,13 @@ import {
 import CheckoutComFawryPaymentStrategy from './checkoutcom-fawry-payment-strategy';
 
 describe('CheckoutcomFawryPaymentStrategy', () => {
-    let finalizeOrderAction: Observable<FinalizeOrderAction>;
     let formPoster: FormPoster;
     let strategy: CheckoutComFawryPaymentStrategy;
-    let submitOrderAction: Observable<SubmitOrderAction>;
-    let submitPaymentAction: Observable<SubmitPaymentAction>;
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         formPoster = createFormPoster();
-        finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
-        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             getPaymentMethod(),
@@ -42,11 +27,11 @@ describe('CheckoutcomFawryPaymentStrategy', () => {
             callback(),
         );
 
-        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
+        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
 
         strategy = new CheckoutComFawryPaymentStrategy(paymentIntegrationService);
     });

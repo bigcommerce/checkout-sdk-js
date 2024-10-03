@@ -1,25 +1,18 @@
-import { createAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { merge, noop, omit } from 'lodash';
-import { Observable, of } from 'rxjs';
 
 import {
-    FinalizeOrderAction,
     HostedFieldType,
     HostedForm,
-    LoadOrderSucceededAction,
-    OrderActionType,
     OrderFinalizationNotRequiredError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentMethod,
     PaymentStatusTypes,
     RequestError,
-    SubmitOrderAction,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getErrorPaymentResponseBody,
-    getOrder,
     getOrderRequestBody,
     getPaymentMethod,
     getResponse,
@@ -31,10 +24,8 @@ import { getCheckoutcom } from '../checkoutcom';
 import CheckoutComAPMPaymentStrategy from './checkoutcom-apm-payment-strategy';
 
 describe('CheckoutcomAPMPaymentStrategy', () => {
-    let finalizeOrderAction: Observable<FinalizeOrderAction>;
     let formPoster: FormPoster;
     let strategy: CheckoutComAPMPaymentStrategy;
-    let submitOrderAction: Observable<SubmitOrderAction>;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethodMock: PaymentMethod;
 
@@ -42,8 +33,6 @@ describe('CheckoutcomAPMPaymentStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         paymentMethodMock = getCheckoutcom();
         formPoster = createFormPoster();
-        finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
-        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
@@ -52,9 +41,9 @@ describe('CheckoutcomAPMPaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,
         );
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(state);
-        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(state);
+        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockImplementation(jest.fn());
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
         jest.spyOn(formPoster, 'postForm').mockImplementation((_url, _data, callback = noop) =>
             callback(),
@@ -185,15 +174,17 @@ describe('CheckoutcomAPMPaymentStrategy', () => {
     });
 
     describe('when hosted form is enabled', () => {
-        let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
+        let form: HostedForm;
         let initializeOptions: PaymentInitializeOptions;
-        let loadOrderAction: Observable<LoadOrderSucceededAction>;
 
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
-                submit: jest.fn(() => Promise.resolve()),
+                submit: jest.fn(),
                 validate: jest.fn(() => Promise.resolve()),
+                detach: jest.fn(),
+                getBin: jest.fn(),
+                getCardType: jest.fn(),
             };
 
             initializeOptions = {
@@ -211,10 +202,6 @@ describe('CheckoutcomAPMPaymentStrategy', () => {
 
             paymentMethodMock.config.isHostedFormEnabled = true;
 
-            loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
-            finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
-            submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-
             paymentIntegrationService = new PaymentIntegrationServiceMock();
 
             const state = paymentIntegrationService.getState();
@@ -227,20 +214,16 @@ describe('CheckoutcomAPMPaymentStrategy', () => {
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(paymentMethodMock);
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(state);
-            jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReturnValue(
-                finalizeOrderAction,
-            );
-            jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(state);
+            jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockImplementation(jest.fn());
+            jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
             jest.spyOn(formPoster, 'postForm').mockImplementation((_url, _data, callback = noop) =>
                 callback(),
             );
 
             strategy = new CheckoutComAPMPaymentStrategy(paymentIntegrationService);
-            jest.spyOn(paymentIntegrationService, 'loadCurrentOrder').mockReturnValue(
-                loadOrderAction,
-            );
+            jest.spyOn(paymentIntegrationService, 'loadCurrentOrder').mockImplementation(jest.fn());
             jest.spyOn(paymentIntegrationService, 'createHostedForm').mockReturnValue(form);
         });
 
@@ -285,7 +268,6 @@ describe('CheckoutcomAPMPaymentStrategy', () => {
                 await strategy.initialize(initializeOptions);
                 await strategy.execute(getOrderRequestBody());
             } catch (error) {
-                // eslint-disable-next-line jest/no-conditional-expect
                 expect(form.submit).not.toHaveBeenCalled();
             }
         });
@@ -335,7 +317,8 @@ describe('CheckoutcomAPMPaymentStrategy', () => {
 
         it('does not finalize order if order is not created', async () => {
             jest.spyOn(paymentIntegrationService, 'getState').mockReturnValue({
-                getOrder: () => null,
+                ...paymentIntegrationService.getState(),
+                getOrder: () => undefined,
                 getPaymentStatus: () => PaymentStatusTypes.INITIALIZE,
             });
 
