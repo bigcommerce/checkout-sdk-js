@@ -20,6 +20,7 @@ import {
     getCheckout,
     getConfig,
     getConsignment,
+    getResponse,
     getShippingOption,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -57,9 +58,8 @@ describe('ApplePayButtonStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeSdk = new BraintreeSdk(new BraintreeScriptLoader(getScriptLoader(), window));
 
-        jest.spyOn(requestSender, 'post').mockReturnValue(true);
-
-        jest.spyOn(requestSender, 'get').mockReturnValue(true);
+        jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(getResponse({})));
+        jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(getResponse({})));
 
         jest.spyOn(applePayFactory, 'create').mockReturnValue(applePaySession);
 
@@ -86,7 +86,7 @@ describe('ApplePayButtonStrategy', () => {
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(getApplePay());
 
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
                 paymentIntegrationService.getState(),
             );
         });
@@ -254,7 +254,9 @@ describe('ApplePayButtonStrategy', () => {
         });
 
         it('throws error if call to update address fails', async () => {
-            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockRejectedValue(false);
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockReturnValue(
+                Promise.reject(paymentIntegrationService.getState()),
+            );
 
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
 
@@ -307,7 +309,9 @@ describe('ApplePayButtonStrategy', () => {
         });
 
         it('gets shipping contact selected successfully with a selected shipping option', async () => {
-            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockResolvedValue(true);
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockReturnValue(
+                Promise.resolve(paymentIntegrationService.getState()),
+            );
 
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             const newCheckout = {
@@ -372,7 +376,7 @@ describe('ApplePayButtonStrategy', () => {
 
         it('creates buyNowCart on PDP page on button click for digital product', async () => {
             jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
-                Promise.resolve({ body: { ...getBuyNowCart() } }),
+                Promise.resolve(getBuyNowCart()),
             );
 
             const CheckoutButtonInitializeOptions =
@@ -395,7 +399,7 @@ describe('ApplePayButtonStrategy', () => {
 
         it('creates buyNowCart on PDP page on button click for physical product', async () => {
             jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
-                Promise.resolve({ body: { ...getBuyNowCart() } }),
+                Promise.resolve(getBuyNowCart()),
             );
 
             const CheckoutButtonInitializeOptions =
@@ -461,7 +465,9 @@ describe('ApplePayButtonStrategy', () => {
         });
 
         it('gets shipping options sorted correctly with recommended option first', async () => {
-            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockResolvedValue(true);
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockReturnValue(
+                Promise.resolve(paymentIntegrationService.getState()),
+            );
 
             const CheckoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
             const newCheckout = {
@@ -583,6 +589,7 @@ describe('ApplePayButtonStrategy', () => {
 
                 if (button) {
                     button.click();
+
                     await applePaySession.onpaymentauthorized(authEvent);
 
                     expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
@@ -675,9 +682,10 @@ describe('ApplePayButtonStrategy', () => {
                         transactionIdentifier: {},
                     },
                 },
-            };
+            } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
 
             await strategy.initialize(initializeOptions);
+
             await new Promise((resolve) => process.nextTick(resolve));
 
             const button = container.firstChild as HTMLElement;
@@ -710,7 +718,7 @@ describe('ApplePayButtonStrategy', () => {
                         transactionIdentifier: {},
                     },
                 },
-            };
+            } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
 
             await strategy.initialize(initializeOptions);
             await new Promise((resolve) => process.nextTick(resolve));

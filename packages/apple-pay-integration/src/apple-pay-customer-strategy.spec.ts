@@ -20,6 +20,7 @@ import {
     getCart,
     getCheckout,
     getConsignment,
+    getResponse,
     getShippingOption,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -54,9 +55,9 @@ describe('ApplePayCustomerStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeSdk = new BraintreeSdk(new BraintreeScriptLoader(getScriptLoader(), window));
 
-        jest.spyOn(requestSender, 'post').mockReturnValue(true);
+        jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(getResponse({})));
 
-        jest.spyOn(requestSender, 'get').mockReturnValue(true);
+        jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(getResponse({})));
 
         jest.spyOn(applePayFactory, 'create').mockReturnValue(applePaySession);
 
@@ -390,7 +391,7 @@ describe('ApplePayCustomerStrategy', () => {
         });
 
         it('gets shipping options sorted correctly with recommended option first', async () => {
-            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockResolvedValue(true);
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress');
 
             const CheckoutButtonInitializeOptions = getApplePayCustomerInitializationOptions();
             const newCheckout = {
@@ -461,7 +462,9 @@ describe('ApplePayCustomerStrategy', () => {
         });
 
         it('throws error if call to update address fails', async () => {
-            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockRejectedValue(false);
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockReturnValue(
+                Promise.reject(paymentIntegrationService.getState()),
+            );
 
             const customerInitializeOptions = getApplePayCustomerInitializationOptions();
 
@@ -550,7 +553,9 @@ describe('ApplePayCustomerStrategy', () => {
         });
 
         it('submits payment when shopper authorises', async () => {
-            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockResolvedValue(true);
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockReturnValue(
+                Promise.resolve(paymentIntegrationService.getState()),
+            );
 
             const authEvent = {
                 payment: {
@@ -587,7 +592,9 @@ describe('ApplePayCustomerStrategy', () => {
         });
 
         it('returns an error if autorize payment fails', async () => {
-            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockResolvedValue(true);
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockReturnValue(
+                Promise.resolve(paymentIntegrationService.getState()),
+            );
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue(false);
 
             const authEvent = {
@@ -664,7 +671,7 @@ describe('ApplePayCustomerStrategy', () => {
                             transactionIdentifier: {},
                         },
                     },
-                };
+                } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
 
                 await strategy.initialize(initializeOptions);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -699,7 +706,7 @@ describe('ApplePayCustomerStrategy', () => {
                             transactionIdentifier: {},
                         },
                     },
-                };
+                } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
 
                 await strategy.initialize(initializeOptions);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -827,7 +834,7 @@ describe('ApplePayCustomerStrategy', () => {
         });
 
         it('submits payment when shopper authorises without phone number', async () => {
-            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockResolvedValue(true);
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress');
 
             const authEvent = {
                 payment: {
