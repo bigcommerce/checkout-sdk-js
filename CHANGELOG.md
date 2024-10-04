@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.662.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.662.3...v1.662.4) (2024-10-04)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2690 fixed types in the Klarna  integration package specs ([#2681](https://github.com/bigcommerce/checkout-sdk-js/issues/2681)) ([1e8b4f4](https://github.com/bigcommerce/checkout-sdk-js/commit/1e8b4f421031f6778c78e5c0c5d92aa7e3500330))
+
 ### [1.662.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.662.2...v1.662.3) (2024-10-04)
 
 
