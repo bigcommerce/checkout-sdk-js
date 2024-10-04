@@ -12,7 +12,6 @@ describe('createKlarnaPaymentStrategy', () => {
     });
 
     it('instantiates klarna payment strategy', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const strategy = createKlarnaPaymentStrategy(paymentIntegrationService);
 
         expect(strategy).toBeInstanceOf(KlarnaPaymentStrategy);

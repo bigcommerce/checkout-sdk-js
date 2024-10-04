@@ -7,14 +7,12 @@ import {
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
-    OrderActionType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
     PaymentIntegrationService,
     PaymentMethod,
     PaymentMethodCancelledError,
     PaymentMethodInvalidError,
-    RemoteCheckoutActionType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getOrderRequestBody,
@@ -36,13 +34,10 @@ import {
 } from './klarna.mock';
 
 describe('KlarnaPaymentStrategy', () => {
-    let initializePaymentAction: RemoteCheckoutActionType;
     let klarnaCredit: KlarnaCredit;
-    let loadPaymentMethodAction: Promise<PaymentMethod>;
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
     let scriptLoader: KlarnaScriptLoader;
-    let submitOrderAction: OrderActionType;
     let strategy: KlarnaPaymentStrategy;
     let paymentMethodMock: PaymentMethod;
     let paymentIntegrationService: PaymentIntegrationService;
@@ -55,11 +50,10 @@ describe('KlarnaPaymentStrategy', () => {
 
         klarnaCredit = {
             authorize: jest.fn((_, callback) =>
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/naming-convention, @typescript-eslint/no-unsafe-call
-                callback({ approved: true, authorization_token: 'bar' }),
+                callback({ approved: true, authorization_token: 'bar', show_form: false }),
             ),
             init: jest.fn(noop),
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/naming-convention, @typescript-eslint/no-unsafe-call
+
             load: jest.fn((_, callback) => callback({ show_form: true })),
         };
 
@@ -73,19 +67,10 @@ describe('KlarnaPaymentStrategy', () => {
             useStoreCredit: true,
         });
 
-        loadPaymentMethodAction = Promise.resolve(paymentMethodMock);
-        initializePaymentAction = RemoteCheckoutActionType.InitializeRemotePaymentRequested;
-        submitOrderAction = OrderActionType.SubmitOrderRequested;
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
-
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
-            loadPaymentMethodAction,
-        );
-
-        jest.spyOn(paymentIntegrationService, 'initializePayment').mockReturnValue(
-            initializePaymentAction,
-        );
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockImplementation(jest.fn());
+        jest.spyOn(paymentIntegrationService, 'initializePayment').mockImplementation(jest.fn());
 
         jest.spyOn(scriptLoader, 'load').mockImplementation(() => Promise.resolve(klarnaCredit));
 
@@ -127,7 +112,6 @@ describe('KlarnaPaymentStrategy', () => {
         });
 
         it('loads widget', () => {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             expect(klarnaCredit.init).toHaveBeenCalledWith({ client_token: 'foo' });
             expect(klarnaCredit.load).toHaveBeenCalledWith(
                 { container: '#container' },
@@ -137,7 +121,6 @@ describe('KlarnaPaymentStrategy', () => {
         });
 
         it('triggers callback with response', () => {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             expect(onLoad).toHaveBeenCalledWith({ show_form: true });
         });
 
@@ -148,7 +131,6 @@ describe('KlarnaPaymentStrategy', () => {
                     klarna: undefined,
                 });
             } catch (error) {
-                // eslint-disable-next-line jest/no-conditional-expect
                 expect(error).toBeInstanceOf(InvalidArgumentError);
             }
         });
@@ -193,7 +175,6 @@ describe('KlarnaPaymentStrategy', () => {
             try {
                 await strategy.execute(payload);
             } catch (error) {
-                // eslint-disable-next-line jest/no-conditional-expect
                 expect(error).toBeInstanceOf(InvalidArgumentError);
             }
         });
@@ -300,7 +281,6 @@ describe('KlarnaPaymentStrategy', () => {
             try {
                 await strategy.execute(payload);
             } catch (error) {
-                // eslint-disable-next-line jest/no-conditional-expect
                 expect(error).toBeInstanceOf(MissingDataError);
             }
         });
@@ -308,8 +288,7 @@ describe('KlarnaPaymentStrategy', () => {
         describe('when klarna authorization is not approved', () => {
             beforeEach(() => {
                 klarnaCredit.authorize = jest.fn((_, callback) =>
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/naming-convention, @typescript-eslint/no-unsafe-call
-                    callback({ approved: false, show_form: true }),
+                    callback({ approved: false, show_form: true, authorization_token: '' }),
                 );
             });
 
@@ -336,8 +315,9 @@ describe('KlarnaPaymentStrategy', () => {
 
         describe('when klarna authorization fails', () => {
             beforeEach(() => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-                klarnaCredit.authorize = jest.fn((_, callback) => callback({ approved: false }));
+                klarnaCredit.authorize = jest.fn((_, callback) =>
+                    callback({ approved: false, show_form: false, authorization_token: '' }),
+                );
             });
 
             afterEach(() => {
@@ -396,7 +376,6 @@ describe('KlarnaPaymentStrategy', () => {
             try {
                 await strategy.finalize();
             } catch (error) {
-                // eslint-disable-next-line jest/no-conditional-expect
                 expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
             }
         });

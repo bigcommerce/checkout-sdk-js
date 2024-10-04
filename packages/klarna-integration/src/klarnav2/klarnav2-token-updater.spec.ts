@@ -12,8 +12,8 @@ describe('KlarnaV2TokenUpdater', () => {
     const klarnaV2TokenUpdater = new KlarnaV2TokenUpdater(requestSender);
 
     beforeEach(() => {
-        jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(true));
-        jest.spyOn(requestSender, 'put').mockReturnValue(Promise.resolve(true));
+        jest.spyOn(requestSender, 'get').mockImplementation(jest.fn());
+        jest.spyOn(requestSender, 'put').mockImplementation(jest.fn());
     });
 
     afterEach(() => {
@@ -25,7 +25,6 @@ describe('KlarnaV2TokenUpdater', () => {
 
         expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/payments/klarna', {
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 Accept: 'application/vnd.bc.v1+json',
                 'X-API-INTERNAL':
                     'This API endpoint is for internal use only and may change in the future',
@@ -47,7 +46,6 @@ describe('KlarnaV2TokenUpdater', () => {
 
         expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/payments/klarna', {
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 Accept: 'application/vnd.bc.v1+json',
                 'X-API-INTERNAL':
                     'This API endpoint is for internal use only and may change in the future',
@@ -63,7 +61,6 @@ describe('KlarnaV2TokenUpdater', () => {
 
         expect(requestSender.put).toHaveBeenCalledWith('/api/storefront/initialization/klarna', {
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 Accept: 'application/vnd.bc.v1+json',
                 'X-API-INTERNAL':
                     'This API endpoint is for internal use only and may change in the future',
@@ -88,7 +85,6 @@ describe('KlarnaV2TokenUpdater', () => {
 
         expect(requestSender.put).toHaveBeenCalledWith('/api/storefront/initialization/klarna', {
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 Accept: 'application/vnd.bc.v1+json',
                 'X-API-INTERNAL':
                     'This API endpoint is for internal use only and may change in the future',
