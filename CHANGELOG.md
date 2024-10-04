@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.662.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.662.1...v1.662.2) (2024-10-04)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2683 fixed types in the Checkoutcom, Clearpay, Cybersource integration packages specs ([#2679](https://github.com/bigcommerce/checkout-sdk-js/issues/2679)) ([5dafc16](https://github.com/bigcommerce/checkout-sdk-js/commit/5dafc1674b1a1cca517cd1c8b14f7c779ae9712c))
+* **payment:** PI-2678 fixed Typescript errors in apple-pay-integration package ([#2677](https://github.com/bigcommerce/checkout-sdk-js/issues/2677)) ([45401f4](https://github.com/bigcommerce/checkout-sdk-js/commit/45401f46cdbc63ebf2fb7fb1dba2fc41ae4741b0))
+
 ### [1.662.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.662.0...v1.662.1) (2024-10-03)
 
 
