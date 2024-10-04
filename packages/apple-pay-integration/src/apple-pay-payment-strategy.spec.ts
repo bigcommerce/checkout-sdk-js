@@ -19,6 +19,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getOrderRequestBody,
+    getResponse,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
@@ -51,7 +52,7 @@ describe('ApplePayPaymentStrategy', () => {
         applePayFactory = new ApplePaySessionFactory();
         paymentMethod = getApplePay();
 
-        jest.spyOn(requestSender, 'post').mockReturnValue(true);
+        jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(getResponse({})));
 
         jest.spyOn(applePayFactory, 'create').mockReturnValue(applePaySession);
 
@@ -65,7 +66,7 @@ describe('ApplePayPaymentStrategy', () => {
 
     describe('#initialize()', () => {
         beforeEach(() => {
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
                 paymentIntegrationService.getState(),
             );
 
@@ -112,7 +113,7 @@ describe('ApplePayPaymentStrategy', () => {
 
     describe('#execute()', () => {
         beforeEach(() => {
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
                 paymentIntegrationService.getState(),
             );
 
@@ -239,7 +240,7 @@ describe('ApplePayPaymentStrategy', () => {
                         transactionIdentifier: {},
                     },
                 },
-            };
+            } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
 
             await strategy.initialize({ methodId: 'applepay' });
             await new Promise((resolve) => process.nextTick(resolve));
@@ -292,7 +293,7 @@ describe('ApplePayPaymentStrategy', () => {
                         transactionIdentifier: {},
                     },
                 },
-            };
+            } as ApplePayJS.ApplePayPaymentAuthorizedEvent;
 
             await strategy.initialize({ methodId: 'applepay' });
             await new Promise((resolve) => process.nextTick(resolve));
