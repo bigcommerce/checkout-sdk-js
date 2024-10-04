@@ -82,8 +82,10 @@ export default class HostedInput {
         this._eventPoster.setTarget(window.parent);
         this._eventListener.listen();
 
-        // fixes the issue on Firefox/Safari where the input doesn't focus properly
-        window.addEventListener('focus', this._forceFocusToInput);
+        if (this._input.id !== 'hidden') {
+            // fixes the issue on Firefox/Safari where the input doesn't focus properly
+            window.addEventListener('focus', this._forceFocusToInput);
+        }
 
         // Assign itself to the global so it can be accessed by its sibling frames
         (window as unknown as HostedInputWindow).hostedInput = this;
@@ -146,6 +148,10 @@ export default class HostedInput {
             case 'card-name':
                 this._input.type = 'text';
                 this._input.inputMode = 'text';
+                break;
+
+            case 'hidden':
+                this._input.type = 'hidden';
                 break;
         }
     }
