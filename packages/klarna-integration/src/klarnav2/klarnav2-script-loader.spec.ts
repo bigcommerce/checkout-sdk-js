@@ -12,7 +12,6 @@ describe('KlarnaV2ScriptLoader', () => {
 
     beforeEach(() => {
         scriptLoader = new ScriptLoader();
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/naming-convention
         mockWindow = { Klarna: {} } as KlarnaV2Window;
         klarnav2ScriptLoader = new KlarnaV2ScriptLoader(scriptLoader, mockWindow);
     });
@@ -31,6 +30,8 @@ describe('KlarnaV2ScriptLoader', () => {
                         load: jest.fn(),
                     };
                 }
+
+                return Promise.resolve();
             });
         });
 
@@ -49,12 +50,13 @@ describe('KlarnaV2ScriptLoader', () => {
         it('throw error when custom checkout does not exist on window', async () => {
             scriptLoader.loadScript = jest.fn(() => {
                 mockWindow.Klarna = undefined;
+
+                return Promise.resolve();
             });
 
             try {
                 await klarnav2ScriptLoader.load();
             } catch (error) {
-                // eslint-disable-next-line jest/no-conditional-expect
                 expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
             }
         });

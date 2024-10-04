@@ -1,8 +1,7 @@
-import { Action, createAction } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { omit } from 'lodash';
-import { noop, Observable, of } from 'rxjs';
+import { noop } from 'rxjs';
 
 import {
     Checkout,
@@ -17,7 +16,6 @@ import {
     PaymentMethod,
     PaymentMethodCancelledError,
     PaymentMethodInvalidError,
-    RemoteCheckoutActionType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getAddress,
@@ -43,7 +41,6 @@ import {
 } from './klarnav2.mock';
 
 describe('KlarnaV2PaymentStrategy', () => {
-    let initializePaymentAction: Observable<Action>;
     let checkoutMock: Checkout;
     let klarnaPayments: KlarnaPayments;
     let payload: OrderRequestBody;
@@ -59,7 +56,7 @@ describe('KlarnaV2PaymentStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         requestSender = createRequestSender();
-        jest.spyOn(requestSender, 'put').mockReturnValue(Promise.resolve(true));
+        jest.spyOn(requestSender, 'put').mockImplementation(jest.fn());
 
         scriptLoader = new KlarnaV2ScriptLoader(createScriptLoader());
         klarnav2TokenUpdater = new KlarnaV2TokenUpdater(requestSender);
@@ -69,19 +66,14 @@ describe('KlarnaV2PaymentStrategy', () => {
             klarnav2TokenUpdater,
         );
 
-        initializePaymentAction = of(
-            createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested),
-        );
-
         paymentMethodMock = { ...getKlarna(), id: 'pay_now', gateway: 'klarna' };
 
         klarnaPayments = {
             authorize: jest.fn((_params, _data, callback) => {
-                // eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-unsafe-call
                 callback({ approved: true, authorization_token: 'bar' });
             }),
             init: jest.fn(noop),
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/naming-convention, @typescript-eslint/no-unsafe-call
+
             load: jest.fn((_, callback) => callback({ show_form: true })),
         };
 
@@ -109,9 +101,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             getEUShippingAddress(),
         );
 
-        jest.spyOn(paymentIntegrationService, 'initializePayment').mockReturnValue(
-            initializePaymentAction,
-        );
+        jest.spyOn(paymentIntegrationService, 'initializePayment').mockImplementation(jest.fn());
 
         jest.spyOn(scriptLoader, 'load').mockImplementation(() => Promise.resolve(klarnaPayments));
 
@@ -201,10 +191,8 @@ describe('KlarnaV2PaymentStrategy', () => {
         });
 
         it('loads payments widget', () => {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             expect(klarnaPayments.init).toHaveBeenCalledWith({ client_token: 'foo' });
             expect(klarnaPayments.load).toHaveBeenCalledWith(
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 { container: '#container', payment_method_category: paymentMethod.id },
                 expect.any(Function),
             );
@@ -212,7 +200,6 @@ describe('KlarnaV2PaymentStrategy', () => {
         });
 
         it('triggers callback with response', () => {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             expect(onLoad).toHaveBeenCalledWith({ show_form: true });
         });
     });
@@ -228,12 +215,12 @@ describe('KlarnaV2PaymentStrategy', () => {
 
         it('authorizes against klarnav2', async () => {
             const loadCheckoutMock = jest.spyOn(paymentIntegrationService, 'loadCheckout');
-            loadCheckoutMock.mockImplementation(() => Promise.resolve());
+
+            loadCheckoutMock.mockImplementation(jest.fn());
 
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 { payment_method_category: paymentMethod.id },
                 getKlarnaV2UpdateSessionParamsPhone(),
                 expect.any(Function),
@@ -248,7 +235,6 @@ describe('KlarnaV2PaymentStrategy', () => {
             try {
                 await strategy.execute({ ...payload, payment: undefined });
             } catch (error) {
-                // eslint-disable-next-line jest/no-conditional-expect
                 expect(error).toMatchObject(
                     new InvalidArgumentError(
                         'Unable to proceed because "payload.payment" argument is not provided.',
@@ -262,12 +248,12 @@ describe('KlarnaV2PaymentStrategy', () => {
                 await strategy.execute({
                     ...payload,
                     payment: {
+                        methodId: '',
                         ...payload.payment,
-                        gatewayId: undefined,
+                        gatewayId: '',
                     },
                 });
             } catch (error) {
-                // eslint-disable-next-line jest/no-conditional-expect
                 expect(error).toMatchObject(
                     new InvalidArgumentError(
                         'Unable to proceed because "payload.payment.gatewayId" argument is not provided.',
@@ -306,7 +292,6 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 { payment_method_category: paymentMethod.id },
                 getKlarnaV2UpdateSessionParamsPhone(),
                 expect.any(Function),
@@ -343,7 +328,6 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 { payment_method_category: paymentMethod.id },
                 getKlarnaV2UpdateSessionParamsForOC(),
                 expect.any(Function),
@@ -386,7 +370,6 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 { payment_method_category: paymentMethod.id },
                 getKlarnaV2UpdateSessionParams(),
                 expect.any(Function),
@@ -439,7 +422,6 @@ describe('KlarnaV2PaymentStrategy', () => {
                 await strategy.execute(payload);
 
                 expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
                     { payment_method_category: paymentMethod.id },
                     {},
                     expect.any(Function),
@@ -450,7 +432,6 @@ describe('KlarnaV2PaymentStrategy', () => {
         describe('when klarnav2 authorization is not approved', () => {
             beforeEach(() => {
                 klarnaPayments.authorize = jest.fn((_params, _data, callback) =>
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/naming-convention, @typescript-eslint/no-unsafe-call
                     callback({ approved: false, show_form: true }),
                 );
             });
@@ -470,7 +451,6 @@ describe('KlarnaV2PaymentStrategy', () => {
         describe('when klarnav2 authorization fails', () => {
             beforeEach(() => {
                 klarnaPayments.authorize = jest.fn((_params, _data, callback) =>
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
                     callback({ approved: false }),
                 );
             });
@@ -522,7 +502,6 @@ describe('KlarnaV2PaymentStrategy', () => {
             try {
                 await strategy.finalize();
             } catch (error) {
-                // eslint-disable-next-line jest/no-conditional-expect
                 expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
             }
         });
