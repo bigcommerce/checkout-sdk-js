@@ -2,9 +2,7 @@ import { FormPoster } from '@bigcommerce/form-poster';
 import { merge } from 'lodash';
 
 import {
-    OrderActionType,
     OrderRequestBody,
-    PaymentActionType,
     PaymentArgumentInvalidError,
     PaymentExecuteError,
     PaymentIntegrationService,
@@ -24,8 +22,6 @@ import HummPaymentStrategy from './humm-payment-strategy';
 describe('HummPaymentStrategy', () => {
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
-    let submitOrderAction: OrderActionType;
-    let submitPaymentAction: PaymentActionType;
     let strategy: HummPaymentStrategy;
     let formPoster: FormPoster;
     let paymentIntegrationService: PaymentIntegrationService;
@@ -41,19 +37,15 @@ describe('HummPaymentStrategy', () => {
             },
         });
 
-        submitOrderAction = OrderActionType.SubmitOrderRequested;
-        submitPaymentAction = PaymentActionType.SubmitPaymentRequested;
-
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         formPoster = {
             postForm: jest.fn(),
         } as unknown as FormPoster;
 
-        jest.spyOn(formPoster, 'postForm').mockReturnValue(Promise.resolve());
+        jest.spyOn(formPoster, 'postForm').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
 
         jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
             paymentIntegrationService.getState(),
@@ -81,26 +73,21 @@ describe('HummPaymentStrategy', () => {
         });
 
         it('redirect to Humm', async () => {
-            const postFormMock = jest.fn((_url, _options, resolveFn) =>
+            const postFormMock = jest.fn((_url, _options, resolveFn) => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                Promise.resolve(resolveFn()),
-            );
+                resolveFn();
+            });
 
-            // TODO: remove rule and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             jest.spyOn(formPoster, 'postForm').mockImplementation(postFormMock);
 
             const data = JSON.stringify({ data: 'data' });
             const error = new RequestError(
                 getResponse({
                     ...getErrorPaymentResponseBody(),
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
                     provider_data: data,
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
                     additional_action_required: {
                         type: 'offsite_redirect',
                         data: {
-                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             redirect_url: 'https://sandbox-payment.humm.com',
                         },
                     },
