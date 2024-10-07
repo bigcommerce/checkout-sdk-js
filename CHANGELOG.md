@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.663.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.662.5...v1.663.0) (2024-10-07)
+
+
+### Features
+
+* **payment:** PAYPAL-4744 Add validation for credit-card when Fastlane is enabled to avoid redundant order creation requests ([#2673](https://github.com/bigcommerce/checkout-sdk-js/issues/2673)) ([abbd81d](https://github.com/bigcommerce/checkout-sdk-js/commit/abbd81d23d56e0c0fa8c86b48285e9373d6e76a7))
+
 ### [1.662.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.662.4...v1.662.5) (2024-10-07)
 
 
