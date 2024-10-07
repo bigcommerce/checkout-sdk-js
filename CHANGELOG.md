@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.662.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.662.4...v1.662.5) (2024-10-07)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-4704 fixed duplicate credit card payment ([#2670](https://github.com/bigcommerce/checkout-sdk-js/issues/2670)) ([c1eae72](https://github.com/bigcommerce/checkout-sdk-js/commit/c1eae7243e95e52c09547b32795426af0cc37190))
+
 ### [1.662.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.662.3...v1.662.4) (2024-10-04)
 
 
