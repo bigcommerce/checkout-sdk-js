@@ -130,25 +130,27 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
         const { paymentData, methodId } = payment;
 
-        const state = this.paymentIntegrationService.getState();
-        const cartId = state.getCartOrThrow().id;
+        const isVaultedFlow = paymentData && isVaultedInstrument(paymentData);
 
-        const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
-            cartId,
-        });
+        try {
+            const paymentPayload = isVaultedFlow
+                ? await this.prepareVaultedInstrumentPaymentPayload(methodId, paymentData)
+                : await this.preparePaymentPayload(methodId, paymentData);
 
-        const paymentPayload =
-            paymentData && isVaultedInstrument(paymentData)
-                ? this.prepareVaultedInstrumentPaymentPayload(methodId, orderId, paymentData)
-                : await this.preparePaymentPayload(methodId, orderId, paymentData);
+            await this.paymentIntegrationService.submitOrder(order, options);
+            await this.paymentIntegrationService.submitPayment<PayPalFastlanePaymentFormattedPayload>(
+                paymentPayload,
+            );
 
-        await this.paymentIntegrationService.submitOrder(order, options);
-        await this.paymentIntegrationService.submitPayment<PayPalFastlanePaymentFormattedPayload>(
-            paymentPayload,
-        );
+            // TODO: we should probably update this method with removeStorageSessionId for better reading experience
+            this.paypalCommerceFastlaneUtils.updateStorageSessionId(true);
+        } catch (error) {
+            if (error instanceof Error && error.name !== 'FastlaneError') {
+                throw error;
+            }
 
-        // TODO: we should probably update this method with removeStorageSessionId for better reading experience
-        this.paypalCommerceFastlaneUtils.updateStorageSessionId(true);
+            return Promise.reject();
+        }
     }
 
     finalize(): Promise<void> {
@@ -284,19 +286,24 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
      * Payment Payload preparation methods
      *
      */
-    private prepareVaultedInstrumentPaymentPayload(
+    private async prepareVaultedInstrumentPaymentPayload(
         methodId: string,
-        paypalOrderId: string,
         paymentData: VaultedInstrument,
-    ): Payment<PayPalFastlanePaymentFormattedPayload> {
+    ): Promise<Payment<PayPalFastlanePaymentFormattedPayload>> {
         const { instrumentId } = paymentData;
+        const state = this.paymentIntegrationService.getState();
+        const cartId = state.getCartOrThrow().id;
+
+        const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
+            cartId,
+        });
 
         return {
             methodId,
             paymentData: {
                 formattedPayload: {
                     paypal_fastlane_token: {
-                        order_id: paypalOrderId,
+                        order_id: orderId,
                         token: instrumentId,
                     },
                 },
@@ -306,16 +313,13 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
     private async preparePaymentPayload(
         methodId: string,
-        paypalOrderId: string,
         paymentData: OrderPaymentRequestBody['paymentData'],
     ): Promise<Payment<PayPalFastlanePaymentFormattedPayload>> {
         const state = this.paymentIntegrationService.getState();
+        const cartId = state.getCartOrThrow().id;
         const billingAddress = state.getBillingAddressOrThrow();
 
         const fullName = `${billingAddress.firstName} ${billingAddress.lastName}`.trim();
-
-        const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
-            isHostedInstrumentLike(paymentData) ? paymentData : {};
 
         const { getPaymentToken } = this.getPayPalComponentMethodsOrThrow();
 
@@ -323,6 +327,13 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             name: { fullName },
             billingAddress: this.paypalCommerceFastlaneUtils.mapBcToPayPalAddress(billingAddress),
         });
+
+        const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
+            cartId,
+        });
+
+        const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
+            isHostedInstrumentLike(paymentData) ? paymentData : {};
 
         return {
             methodId,
@@ -332,7 +343,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 shouldSetAsDefaultInstrument,
                 formattedPayload: {
                     paypal_fastlane_token: {
-                        order_id: paypalOrderId,
+                        order_id: orderId,
                         token: id,
                     },
                 },
