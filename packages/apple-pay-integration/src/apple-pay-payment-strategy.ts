@@ -278,10 +278,15 @@ export default class ApplePayPaymentStrategy implements PaymentStrategy {
 
     private async _initializeBraintreeSdk(): Promise<void> {
         // TODO: This is a temporary solution when we load braintree to get client token (should be fixed after PAYPAL-4122)
-        await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
-
         const state = this._paymentIntegrationService.getState();
-        const braintreePaymentMethod = state.getPaymentMethod(ApplePayGatewayType.BRAINTREE);
+        let braintreePaymentMethod =
+            state.getPaymentMethod(ApplePayGatewayType.BRAINTREE_FASTLANE) ||
+            state.getPaymentMethod(ApplePayGatewayType.BRAINTREE);
+
+        if (!braintreePaymentMethod) {
+            await this._paymentIntegrationService.loadPaymentMethod(ApplePayGatewayType.BRAINTREE);
+            braintreePaymentMethod = state.getPaymentMethod(ApplePayGatewayType.BRAINTREE);
+        }
 
         if (
             !braintreePaymentMethod ||
