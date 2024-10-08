@@ -208,9 +208,6 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                     payment: {
                         gatewayId: 'braintreelocalmethods',
                         methodId: NonInstantLocalPaymentMethods.TRUSTLY,
-                        paymentData: {
-                            phoneNumber: '380112223344',
-                        },
                     },
                 };
 
@@ -225,20 +222,6 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                 await strategy.execute(payload);
 
                 expect(localPaymentInstanceMock.startPayment).not.toHaveBeenCalled();
-            });
-
-            it('throws an error if phone number was not passed as required parameter', async () => {
-                try {
-                    await strategy.execute({
-                        ...payload,
-                        payment: {
-                            ...payload.payment,
-                            paymentData: {},
-                        },
-                    });
-                } catch (error) {
-                    expect(error).toBeInstanceOf(PaymentArgumentInvalidError);
-                }
             });
 
             it('submits order payload with payment data', async () => {
@@ -258,9 +241,6 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                                 device_info: 'token',
                                 method_id: 'trustly',
                                 set_as_default_stored_instrument: null,
-                                trustly_account: expect.objectContaining({
-                                    phone: '380112223344',
-                                }),
                             }),
                         }),
                     }),

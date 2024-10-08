@@ -2,7 +2,6 @@ import {
     WithAccountCreation,
     WithBankAccountInstrument,
     WithEcpInstrument,
-    WithPhoneNumberInstrument,
     WithSepaInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -56,8 +55,7 @@ export type OrderPaymentInstrument =
     | (CreditCardInstrument & WithCheckoutcomSEPAInstrument)
     | (CreditCardInstrument & WithIdealInstrument)
     | (HostedInstrument & WithMollieIssuerInstrument)
-    | WithAccountCreation
-    | WithPhoneNumberInstrument;
+    | WithAccountCreation;
 
 /**
  * An object that contains the payment information required for submitting an

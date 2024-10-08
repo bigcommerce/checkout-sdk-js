@@ -25,8 +25,6 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
-import isPhoneNumberInstrumentLike from '../is-phone-number-instrument-like';
-
 import {
     BraintreeLocalMethods,
     WithBraintreeLocalMethodsPaymentInitializeOptions,
@@ -122,15 +120,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         payment: OrderPaymentRequestBody,
         sessionId?: string,
     ): Promise<void> {
-        if (!isPhoneNumberInstrumentLike(payment.paymentData)) {
-            this.toggleLoadingIndicator(false);
-
-            throw new PaymentArgumentInvalidError(['payment.paymentData']);
-        }
-
         const { methodId } = payment;
-
-        const { phoneNumber } = payment.paymentData;
 
         const paymentData = {
             formattedPayload: {
@@ -138,9 +128,6 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 set_as_default_stored_instrument: null,
                 method_id: methodId,
                 device_info: sessionId || null,
-                [`${methodId}_account`]: {
-                    phone: phoneNumber,
-                },
             },
         };
 
