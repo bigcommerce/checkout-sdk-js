@@ -92,7 +92,7 @@ export function getDigitalRiverPaymentMethodMock(): PaymentMethod {
         },
         initializationData: getDigitalRiverInitializationDataMock(),
         type: 'PAYMENT_TYPE_API',
-        clientToken: 'clientToken',
+        clientToken: JSON.stringify(getClientMock()),
     };
 }
 

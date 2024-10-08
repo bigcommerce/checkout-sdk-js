@@ -1,11 +1,9 @@
-import { Action, createAction } from '@bigcommerce/data-store';
 import {
     createScriptLoader,
     createStylesheetLoader,
     ScriptLoader,
 } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { Observable, of } from 'rxjs';
 
 import {
     Checkout,
@@ -13,18 +11,12 @@ import {
     MissingDataError,
     NotInitializedError,
     NotInitializedErrorType,
-    OrderActionType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
-    PaymentActionType,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentMethod,
-    PaymentMethodActionType,
-    StoreCreditActionType,
-    SubmitOrderAction,
-    SubmitPaymentAction,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
@@ -36,8 +28,13 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import { AuthenticationSourceStatus, OnSuccessResponse } from './digitalriver';
+import {
+    AuthenticationSourceStatus,
+    OnCancelOrErrorResponse,
+    OnSuccessResponse,
+} from './digitalriver';
 import DigitalRiverError from './digitalriver-error';
+import { WithDigitalRiverPaymentInitializeOptions } from './digitalriver-payment-initialize-options';
 import DigitalRiverPaymentStrategy from './digitalriver-payment-strategy';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
 import {
@@ -53,15 +50,10 @@ describe('DigitalRiverPaymentStrategy', () => {
     let payload: OrderRequestBody;
     let checkoutMock: Checkout;
     let paymentIntegrationService: PaymentIntegrationService;
-    let loadPaymentMethodAction: Observable<Action>;
     let strategy: DigitalRiverPaymentStrategy;
     let digitalRiverScriptLoader: DigitalRiverScriptLoader;
     let paymentMethodMock: PaymentMethod;
     let scriptLoader: ScriptLoader;
-    let submitOrderAction: Observable<SubmitOrderAction>;
-    let submitPaymentAction: Observable<SubmitPaymentAction>;
-    let applyStoreCreditAction: Observable<Action>;
-    let updateAddressAction: string | unknown;
 
     beforeEach(() => {
         scriptLoader = createScriptLoader();
@@ -69,10 +61,12 @@ describe('DigitalRiverPaymentStrategy', () => {
         const stylesheetLoader = createStylesheetLoader();
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-
-        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
-
+        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
+            {
+                ...paymentIntegrationService.getState().getPaymentMethodOrThrow('digitalriver'),
+                clientToken: JSON.stringify(getClientMock()),
+            },
+        );
         paymentMethodMock = {
             ...getDigitalRiverPaymentMethodMock(),
             clientToken: JSON.stringify(getClientMock()),
@@ -80,26 +74,11 @@ describe('DigitalRiverPaymentStrategy', () => {
         digitalRiverScriptLoader = new DigitalRiverScriptLoader(scriptLoader, stylesheetLoader);
 
         checkoutMock = getCheckout();
-        applyStoreCreditAction = of(createAction(StoreCreditActionType.ApplyStoreCreditRequested));
-        loadPaymentMethodAction = of(
-            createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, {
-                methodId: paymentMethodMock.id,
-            }),
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+            paymentIntegrationService.getState(),
         );
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        paymentIntegrationService.loadPaymentMethod = jest.fn(() => loadPaymentMethodAction);
-        updateAddressAction = 'UPDATE_BILLING_ADDRESS_REQUESTED';
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod');
-        jest.spyOn(paymentIntegrationService, 'updateBillingAddress');
-        jest.spyOn(paymentIntegrationService, 'updateShippingAddress');
-        jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockReturnValue(
-            updateAddressAction,
-        );
-        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
-            paymentMethodMock,
-        );
+
+        jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockImplementation(jest.fn());
 
         jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
             checkoutMock,
@@ -107,33 +86,14 @@ describe('DigitalRiverPaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockImplementation(
             () => getBillingAddress(),
         );
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
 
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'applyStoreCredit').mockReturnValue(
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            applyStoreCreditAction,
-        );
+        jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
-            paymentMethodMock,
-        );
+        jest.spyOn(paymentIntegrationService, 'applyStoreCredit').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockReturnValue(
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            updateAddressAction,
-        );
+        jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockImplementation(jest.fn());
         strategy = new DigitalRiverPaymentStrategy(
             paymentIntegrationService,
             digitalRiverScriptLoader,
@@ -148,8 +108,8 @@ describe('DigitalRiverPaymentStrategy', () => {
             expect.any(Object),
         );
         const customer = getCustomer();
-        let options: PaymentInitializeOptions;
-        let onSuccessCallback: (data?: OnSuccessResponse) => void;
+        let options: PaymentInitializeOptions & WithDigitalRiverPaymentInitializeOptions;
+        let onSuccessCallback: (data: OnSuccessResponse) => void;
         let container: HTMLDivElement;
         let submitFormEvent: () => void;
 
@@ -217,8 +177,6 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('creates the order and submit payment with credit card', async () => {
-            onSuccessCallback = jest.fn();
-
             const orderRequest: OrderRequestBody = getOrderRequestBodyWithVaultedInstrument();
 
             jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue({
@@ -237,14 +195,13 @@ describe('DigitalRiverPaymentStrategy', () => {
                 },
             });
 
-            strategy.digitalRiverCheckoutData = getClientMock();
-            strategy.loadSuccessResponse = {
-                source: {
-                    id: '1',
-                    reusable: false,
-                },
-                readyForStorage: true,
-            };
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentIntegrationService.getState().getPaymentMethodOrThrow('digitalriver'),
+                clientToken: JSON.stringify(getClientMock()),
+            });
 
             await strategy.initialize(options);
             await strategy.execute(orderRequest);
@@ -311,14 +268,25 @@ describe('DigitalRiverPaymentStrategy', () => {
                 },
             });
 
-            strategy.digitalRiverCheckoutData = getClientMock();
-            strategy.loadSuccessResponse = {
-                source: {
-                    id: '1',
-                    reusable: false,
+            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
+                (configuration) => {
+                    if (configuration.onSuccess) {
+                        onSuccessCallback = configuration.onSuccess;
+                        configuration.onSuccess({
+                            source: {
+                                id: '1',
+                                reusable: true,
+                                browserInfo: {
+                                    browserIp: '',
+                                },
+                            },
+                            readyForStorage: true,
+                        });
+                    }
+
+                    return digitalRiverComponent;
                 },
-                readyForStorage: true,
-            };
+            );
 
             const payPalOptions = {
                 ...payload,
@@ -342,22 +310,12 @@ describe('DigitalRiverPaymentStrategy', () => {
                 phoneNumber: '000-000-0000',
             };
 
-            jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
-                (configuration) => {
-                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    onSuccessCallback = configuration.onSuccess;
-
-                    return digitalRiverComponent;
-                },
-            );
             jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue({
                 ...getCheckout(),
                 isStoreCreditApplied: false,
             });
-            jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockResolvedValue(
-                updateAddressAction,
+            jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockImplementation(
+                jest.fn(),
             );
             await strategy.initialize(payPal);
             await strategy.execute(payPalOptions);
@@ -489,10 +447,8 @@ describe('DigitalRiverPaymentStrategy', () => {
                 paymentIntegrationService.getState(),
                 'isPaymentMethodInitialized',
             ).mockReturnValue(true);
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            jest.spyOn(document, 'getElementById').mockReturnValue('mock');
+
+            jest.spyOn(document, 'getElementById').mockReturnValue(document.createElement('div'));
             jest.spyOn(document, 'getElementById').mockReturnValue(container);
 
             await strategy.initialize(options);
@@ -606,11 +562,10 @@ describe('DigitalRiverPaymentStrategy', () => {
         it('calls onSuccess callback from DigitalRiver', async () => {
             onSuccessCallback = jest.fn();
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
-                (configuration) => {
-                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    onSuccessCallback = configuration.onSuccess;
+                ({ onSuccess }) => {
+                    if (onSuccess) {
+                        onSuccessCallback = onSuccess;
+                    }
 
                     return digitalRiverComponent;
                 },
@@ -631,12 +586,11 @@ describe('DigitalRiverPaymentStrategy', () => {
         it('calls onReady callback from DigitalRiver', async () => {
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
                 ({ onReady }) => {
-                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    onReady({
-                        paymentMethodTypes: ['creditCard', 'paypal'],
-                    });
+                    if (onReady) {
+                        onReady({
+                            paymentMethodTypes: ['creditCard', 'paypal'],
+                        });
+                    }
 
                     return digitalRiverComponent;
                 },
@@ -648,14 +602,13 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('calls onError callback from DigitalRiver', async () => {
-            const onErrorCallback = jest.fn();
+            let onErrorCallback: (error: OnCancelOrErrorResponse) => void = jest.fn();
 
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
                 ({ onError }) => {
-                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    onErrorCallback = onError;
+                    if (onError) {
+                        onErrorCallback = onError;
+                    }
 
                     return digitalRiverComponent;
                 },
@@ -676,9 +629,6 @@ describe('DigitalRiverPaymentStrategy', () => {
 
         it('throws an error when load response is empty or not provided', () => {
             jest.spyOn(digitalRiverScriptLoader, 'load').mockRejectedValueOnce(
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
                 Promise.resolve(new Error()),
             );
 
@@ -694,18 +644,11 @@ describe('DigitalRiverPaymentStrategy', () => {
 
             const promise = strategy.initialize(options);
 
-            return expect(promise).rejects.toThrow(error);
+            expect(promise).rejects.toThrow(error);
         });
 
         it('throws an error when DigitalRiver clientToken is not provided', () => {
             paymentMethodMock = { ...getDigitalRiverPaymentMethodMock(), clientToken: '' };
-            loadPaymentMethodAction = of(
-                createAction(
-                    PaymentMethodActionType.LoadPaymentMethodSucceeded,
-                    paymentMethodMock,
-                    { methodId: paymentMethodMock.id },
-                ),
-            );
 
             options = getInitializeOptionsMock();
             payload = merge({}, getOrderRequestBody(), {
@@ -729,13 +672,6 @@ describe('DigitalRiverPaymentStrategy', () => {
 
         it('throws an error when DigitalRiver clientToken is not receiving correct data', () => {
             paymentMethodMock = { ...getDigitalRiverPaymentMethodMock(), clientToken: 'ok' };
-            loadPaymentMethodAction = of(
-                createAction(
-                    PaymentMethodActionType.LoadPaymentMethodSucceeded,
-                    paymentMethodMock,
-                    { methodId: paymentMethodMock.id },
-                ),
-            );
             payload = merge({}, getOrderRequestBody(), {
                 payment: {
                     useStoreCredit: false,
@@ -756,7 +692,14 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when data on onSuccess event is not provided', async () => {
-            strategy.digitalRiverCheckoutData = getClientMock();
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentIntegrationService.getState().getPaymentMethodOrThrow('digitalriver'),
+                clientToken: JSON.stringify(getClientMock()),
+            });
+            await strategy.initialize(options);
 
             const payloadWithEmptyOnSuccess = merge({}, getOrderRequestBody(), {
                 payment: paymentMethodMock,
@@ -775,7 +718,7 @@ describe('DigitalRiverPaymentStrategy', () => {
 
     describe('#execute()', () => {
         let options: PaymentInitializeOptions;
-        let onSuccessCallback: (data: OnSuccessResponse) => void;
+        let onSuccessCallback: (data?: OnSuccessResponse) => void;
         const digitalRiverLoadResponse = getDigitalRiverJSMock();
         const digitalRiverComponent = digitalRiverLoadResponse.createDropin(expect.any(Object));
 
@@ -786,19 +729,9 @@ describe('DigitalRiverPaymentStrategy', () => {
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(
                 digitalRiverComponent,
             );
-            submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
-            strategy.digitalRiverCheckoutData = getClientMock();
-            strategy.loadSuccessResponse = {
-                source: {
-                    id: '1',
-                    reusable: false,
-                },
-                readyForStorage: true,
-            };
+
+            jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
+
             options = getInitializeOptionsMock();
             payload = merge({}, getOrderRequestBody(), {
                 payment: {
@@ -823,28 +756,28 @@ describe('DigitalRiverPaymentStrategy', () => {
                         order: 'fake',
                     },
                     payment: {
-                        methodId: 'authorizenet',
+                        methodId: 'digitalriver',
                         paymentData: { instrumentId: '123', shouldSetAsDefaultInstrument: true },
                     },
                 },
             });
 
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
-                ({ onSuccess }) => {
-                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    onSuccessCallback = onSuccess;
+                (configuration) => {
+                    if (configuration.onSuccess) {
+                        configuration.onSuccess({
+                            source: {
+                                id: '1',
+                                reusable: false,
+                            },
+                            readyForStorage: true,
+                        });
+                    }
 
                     return digitalRiverComponent;
                 },
             );
-            jest.spyOn(paymentIntegrationService, 'applyStoreCredit').mockReturnValue(
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                true,
-            );
+            jest.spyOn(paymentIntegrationService, 'applyStoreCredit').mockImplementation(jest.fn());
 
             checkoutMock.isStoreCreditApplied = true;
             await strategy.initialize(options);
@@ -893,11 +826,17 @@ describe('DigitalRiverPaymentStrategy', () => {
         });
 
         it('throws an error when DigitalRiver checkout data is not provided', () => {
-            strategy.digitalRiverCheckoutData = undefined;
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentIntegrationService.getState().getPaymentMethodOrThrow('digitalriver'),
+                clientToken: '',
+            });
 
             const promise = strategy.execute(payload, undefined);
 
-            return expect(promise).rejects.toBeInstanceOf(MissingDataError);
+            expect(promise).rejects.toBeInstanceOf(MissingDataError);
         });
 
         describe('using vaulted cards', () => {
@@ -905,29 +844,39 @@ describe('DigitalRiverPaymentStrategy', () => {
                 jest.spyOn(digitalRiverScriptLoader, 'load').mockReturnValue(
                     Promise.resolve(digitalRiverLoadResponse),
                 );
-                paymentIntegrationService.loadPaymentMethod = jest.fn(
-                    () => loadPaymentMethodAction,
+                jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+                    paymentIntegrationService.getState(),
                 );
 
                 jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(
                     digitalRiverComponent,
                 );
 
-                submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(
-                    submitOrderAction,
-                );
-                strategy.digitalRiverCheckoutData = getClientMock();
-                strategy.loadSuccessResponse = {
-                    source: {
-                        id: '1',
-                        reusable: false,
+                jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockReturnValue({
+                    ...paymentIntegrationService.getState().getPaymentMethodOrThrow('digitalriver'),
+                    clientToken: JSON.stringify(getClientMock()),
+                });
+
+                jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(
+                    (configuration) => {
+                        if (configuration.onSuccess) {
+                            configuration.onSuccess({
+                                source: {
+                                    id: '1',
+                                    reusable: true,
+                                },
+                                readyForStorage: true,
+                            });
+                        }
+
+                        return digitalRiverComponent;
                     },
-                    readyForStorage: true,
-                };
+                );
                 options = getInitializeOptionsMock();
                 payload = merge({}, getOrderRequestBody(), {
                     payment: {
@@ -965,13 +914,6 @@ describe('DigitalRiverPaymentStrategy', () => {
                     },
                 };
 
-                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
-                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    submitPaymentAction,
-                );
-
                 await strategy.initialize(options);
                 await strategy.execute(getOrderRequestBodyWithVaultedInstrument());
 
@@ -981,8 +923,6 @@ describe('DigitalRiverPaymentStrategy', () => {
             });
 
             it('calls authenticateSource method when paying with vaulted instrument and 3DS is required', async () => {
-                strategy.digitalRiverCheckoutData = getClientMock();
-
                 const error = getAdditionalActionError();
 
                 jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
@@ -1006,20 +946,19 @@ describe('DigitalRiverPaymentStrategy', () => {
                 const error = getAdditionalActionError();
 
                 jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
-                    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    error,
-                );
-                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
                     Promise.reject(error),
                 );
                 jest.spyOn(digitalRiverLoadResponse, 'authenticateSource').mockReturnValue(
-                    Promise.reject({ status: AuthenticationSourceStatus.failed }),
+                    Promise.resolve({ status: AuthenticationSourceStatus.failed }),
                 );
 
                 await strategy.initialize(options);
-                await strategy.execute(getOrderRequestBodyWithVaultedInstrument());
+
+                const promise = strategy.execute(getOrderRequestBodyWithVaultedInstrument());
+
+                await expect(promise).rejects.toThrow(
+                    new Error('Source authentication failed, please try again'),
+                );
                 expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
                 expect(digitalRiverLoadResponse.authenticateSource).toHaveBeenCalled();
             });
@@ -1054,10 +993,7 @@ describe('DigitalRiverPaymentStrategy', () => {
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockReturnValue(
                 digitalRiverComponent,
             );
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            jest.spyOn(document, 'getElementById').mockReturnValue('');
+            jest.spyOn(document, 'getElementById').mockReturnValue(document.createElement('div'));
             options = getInitializeOptionsMock();
         });
 
