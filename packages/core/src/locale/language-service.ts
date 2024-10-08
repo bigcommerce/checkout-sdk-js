@@ -1,4 +1,4 @@
-import { IntlMessageFormat } from 'intl-messageformat';
+import { FormatError, IntlMessageFormat } from 'intl-messageformat';
 import { isObject, union } from 'lodash';
 import MessageFormat from 'messageformat';
 
@@ -113,7 +113,15 @@ export default class LanguageService {
                 );
             }
 
-            return this._formatters[prefixedKey].format(this._transformData(data));
+            try {
+                return this._formatters[prefixedKey].format(this._transformData(data));
+            } catch (error) {
+                if (this._isFormatError(error)) {
+                    return error.originalMessage ?? '';
+                }
+
+                throw error;
+            }
         }
 
         if (!this._formatters[prefixedKey]) {
@@ -201,6 +209,10 @@ export default class LanguageService {
                 .map((key) => this._locales[key])
                 .filter((code) => code.split('-')[0] === this._locale.split('-')[0]).length > 0
         );
+    }
+
+    private _isFormatError(error: unknown): error is FormatError {
+        return typeof error === 'object' && error !== null && 'originalMessage' in error;
     }
 }
 

@@ -56,6 +56,12 @@ describe('LanguageService', () => {
             expect(langService.translate('test.thank_you_text')).toBe('<strong>Thank you<strong>');
         });
 
+        it('returns template string when values are missing for template variables', () => {
+            expect(langService.translate('test.order_number_text')).toBe(
+                'Your order number is {orderNumber}',
+            );
+        });
+
         it('pluralizes strings using ICU format', () => {
             expect(langService.translate('test.item_count_text', { count: 0 })).toBe('0 Items');
             expect(langService.translate('test.item_count_text', { count: 1 })).toBe('1 Item');
