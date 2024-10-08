@@ -79,6 +79,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
         );
 
         jest.spyOn(braintreeIntegrationService, 'initialize');
+
         jest.spyOn(braintreeIntegrationService, 'getClient').mockReturnValue(
             paymentMethodMock.clientToken,
         );
