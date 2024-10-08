@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.664.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.663.0...v1.664.0) (2024-10-08)
+
+
+### Features
+
+* **common:** CHECKOUT-8519 Switch messageformat library to be compatible with strict-dynamic CSP header ([fbf9c6d](https://github.com/bigcommerce/checkout-sdk-js/commit/fbf9c6da9c48c45b9d484269ea69769d363a89f1))
+
 ## [1.663.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.662.5...v1.663.0) (2024-10-07)
 
 
