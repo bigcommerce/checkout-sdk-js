@@ -25,7 +25,6 @@ describe('LanguageService', () => {
                 'optimized_checkout.test.continue_as_guest_action': 'Continue as guest',
                 'optimized_checkout.test.email_label': 'Email Address',
                 'optimized_checkout.test.order_number_text': 'Your order number is {orderNumber}',
-                'optimized_checkout.test.thank_you_text': '<strong>Thank you<strong>',
             },
         };
 
@@ -52,10 +51,6 @@ describe('LanguageService', () => {
             );
         });
 
-        it('returns translated HTML strings', () => {
-            expect(langService.translate('test.thank_you_text')).toBe('<strong>Thank you<strong>');
-        });
-
         it('pluralizes strings using ICU format', () => {
             expect(langService.translate('test.item_count_text', { count: 0 })).toBe('0 Items');
             expect(langService.translate('test.item_count_text', { count: 1 })).toBe('1 Item');
@@ -75,7 +70,7 @@ describe('LanguageService', () => {
 
             expect(langService.translate('test.days_text', { count: 1 })).toBe('1 den');
             expect(langService.translate('test.days_text', { count: 2 })).toBe('2 dny');
-            expect(langService.translate('test.days_text', { count: 1.5 })).toBe('1,5 dne');
+            expect(langService.translate('test.days_text', { count: 1.5 })).toBe('1.5 dne');
             expect(langService.translate('test.days_text', { count: 100 })).toBe('100 dní');
         });
 

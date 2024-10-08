@@ -1,4 +1,3 @@
-import { IntlMessageFormat } from 'intl-messageformat';
 import { isObject, union } from 'lodash';
 import MessageFormat from 'messageformat';
 
@@ -6,12 +5,7 @@ import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
 
 import { Logger } from '../common/log';
 
-import LanguageConfig, {
-    Locales,
-    TransformedLanguageConfig,
-    TransformedTranslations,
-    Translations,
-} from './language-config';
+import LanguageConfig, { Locales, Translations } from './language-config';
 
 const DEFAULT_LOCALE = 'en';
 const KEY_PREFIX = 'optimized_checkout';
@@ -29,9 +23,8 @@ const KEY_PREFIX = 'optimized_checkout';
 export default class LanguageService {
     private _locale: string;
     private _locales: Locales;
-    private _translations: TransformedTranslations;
+    private _translations: Translations;
     private _formatters: { [key: string]: any };
-    private _isCspNonceExperimentEnabled: boolean;
 
     /**
      * @internal
@@ -43,7 +36,6 @@ export default class LanguageService {
         this._locales = locales;
         this._translations = translations;
         this._formatters = {};
-        this._isCspNonceExperimentEnabled = config.isCspNonceExperimentEnabled ?? true;
     }
 
     /**
@@ -103,19 +95,6 @@ export default class LanguageService {
             return prefixedKey;
         }
 
-        if (this._isCspNonceExperimentEnabled) {
-            if (!this._formatters[prefixedKey]) {
-                this._formatters[prefixedKey] = new IntlMessageFormat(
-                    this._translations[prefixedKey] || '',
-                    this._locales[prefixedKey],
-                    undefined,
-                    { ignoreTag: true },
-                );
-            }
-
-            return this._formatters[prefixedKey].format(this._transformData(data));
-        }
-
         if (!this._formatters[prefixedKey]) {
             const messageFormat = new MessageFormat(this._locales[prefixedKey]);
 
@@ -127,8 +106,8 @@ export default class LanguageService {
         return this._formatters[prefixedKey](this._transformData(data));
     }
 
-    private _transformConfig(config: Partial<LanguageConfig> = {}): TransformedLanguageConfig {
-        const output: TransformedLanguageConfig = {
+    private _transformConfig(config: Partial<LanguageConfig> = {}): LanguageConfig {
+        const output: LanguageConfig = {
             defaultLocale: '',
             defaultTranslations: {},
             translations: {},
@@ -164,9 +143,9 @@ export default class LanguageService {
 
     private _flattenObject(
         object: Translations,
-        result: TransformedTranslations = {},
+        result: Translations = {},
         parentKey = '',
-    ): TransformedTranslations {
+    ): Translations {
         try {
             Object.keys(object).forEach((key) => {
                 const value = object[key];
