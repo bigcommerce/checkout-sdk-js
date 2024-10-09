@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.666.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.665.0...v1.666.0) (2024-10-09)
+
+
+### Features
+
+* **checkout:** CHECKOUT-8606 Add Note HostedFiledType ([#2683](https://github.com/bigcommerce/checkout-sdk-js/issues/2683)) ([92413d2](https://github.com/bigcommerce/checkout-sdk-js/commit/92413d27bd087be89f9f1e0d3cbe90ab2a77bafc))
+
 ## [1.665.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.664.1...v1.665.0) (2024-10-08)
 
 

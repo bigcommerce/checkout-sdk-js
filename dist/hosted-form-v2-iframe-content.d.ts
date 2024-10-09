@@ -45,7 +45,8 @@ declare enum HostedFieldType {
     CardCode = "cardCode",
     CardExpiry = "cardExpiry",
     CardName = "cardName",
-    CardNumber = "cardNumber"
+    CardNumber = "cardNumber",
+    Note = "note"
 }
 
 declare interface HostedFieldValidateRequestEvent {
@@ -249,6 +250,7 @@ declare interface HostedInputValidateErrorDataMap {
     [HostedFieldType.CardExpiry]?: HostedInputValidateErrorData[];
     [HostedFieldType.CardName]?: HostedInputValidateErrorData[];
     [HostedFieldType.CardNumber]?: HostedInputValidateErrorData[];
+    [HostedFieldType.Note]?: HostedInputValidateErrorData[];
 }
 
 declare interface HostedInputValidateEvent {
@@ -269,6 +271,7 @@ declare class HostedInputValidator {
     private _getCardCodeSchema;
     private _getCardExpirySchema;
     private _getCardNameSchema;
+    private _getNoteSchema;
     private _getCardNumberSchema;
     private _isValidationErrorType;
 }
@@ -278,6 +281,7 @@ declare interface HostedInputValues {
     [HostedFieldType.CardExpiry]?: string;
     [HostedFieldType.CardName]?: string;
     [HostedFieldType.CardNumber]?: string;
+    [HostedFieldType.Note]?: string;
 }
 
 declare interface IframeEvent<TType = string, TPayload = any> {

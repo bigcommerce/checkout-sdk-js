@@ -26,9 +26,10 @@ declare interface HostedCardFieldOptions {
 
 declare interface HostedCardFieldOptionsMap {
     [HostedFieldType.CardCode]?: HostedCardFieldOptions;
-    [HostedFieldType.CardExpiry]: HostedCardFieldOptions;
-    [HostedFieldType.CardName]: HostedCardFieldOptions;
-    [HostedFieldType.CardNumber]: HostedCardFieldOptions;
+    [HostedFieldType.CardExpiry]?: HostedCardFieldOptions;
+    [HostedFieldType.CardName]?: HostedCardFieldOptions;
+    [HostedFieldType.CardNumber]?: HostedCardFieldOptions;
+    [HostedFieldType.Note]?: HostedCardFieldOptions;
 }
 
 declare class HostedField {
@@ -110,7 +111,8 @@ declare enum HostedFieldType {
     CardCode = "cardCode",
     CardExpiry = "cardExpiry",
     CardName = "cardName",
-    CardNumber = "cardNumber"
+    CardNumber = "cardNumber",
+    Note = "note"
 }
 
 declare type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
@@ -330,6 +332,7 @@ declare interface HostedInputValidateErrorDataMap {
     [HostedFieldType.CardExpiry]?: HostedInputValidateErrorData[];
     [HostedFieldType.CardName]?: HostedInputValidateErrorData[];
     [HostedFieldType.CardNumber]?: HostedInputValidateErrorData[];
+    [HostedFieldType.Note]?: HostedInputValidateErrorData[];
 }
 
 declare interface HostedInputValidateEvent {
