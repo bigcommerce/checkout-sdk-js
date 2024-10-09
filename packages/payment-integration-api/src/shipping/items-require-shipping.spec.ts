@@ -1,5 +1,7 @@
-import { Cart, StoreConfig } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { getCart, getConfig } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { Cart } from '../cart';
+import getCart from '../cart/carts.mock';
+import { StoreConfig } from '../config';
+import getConfig from '../config/config.mock';
 
 import itemsRequireShipping from './items-require-shipping';
 
