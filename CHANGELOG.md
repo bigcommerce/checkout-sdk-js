@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.666.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.666.0...v1.666.1) (2024-10-09)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2686 fixed types in the Digital River integration package specs ([#2689](https://github.com/bigcommerce/checkout-sdk-js/issues/2689)) ([ae8a674](https://github.com/bigcommerce/checkout-sdk-js/commit/ae8a67462c30331fd2bae41f2af5ff01e3a04233))
+
 ## [1.666.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.665.0...v1.666.0) (2024-10-09)
 
 
