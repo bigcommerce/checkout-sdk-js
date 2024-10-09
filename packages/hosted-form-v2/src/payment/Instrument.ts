@@ -1,4 +1,4 @@
-enum InstrumentType {
+export enum InstrumentType {
     Card = 'card',
     ManualPayment = 'manual_payment',
 }

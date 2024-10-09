@@ -4,7 +4,7 @@ import ContentType from '../common/http-request/content-type';
 import HostedFormManualOrderData from '../hosted-form-manual-order-data';
 import { HostedInputValues } from '../iframe-content';
 
-import { Instrument } from './Instrument';
+import { Instrument, InstrumentType } from './Instrument';
 
 const manualPaymentMethodId = 'bigcommerce.manual_payment';
 
@@ -22,7 +22,7 @@ export class ManualOrderPaymentRequestSender {
 
         if (paymentMethodId === manualPaymentMethodId) {
             instrument = {
-                type: 'manual_payment',
+                type: InstrumentType.ManualPayment,
                 note: instrumentFormData.note ?? '',
             };
         } else {
@@ -31,7 +31,7 @@ export class ManualOrderPaymentRequestSender {
                 : [];
 
             instrument = {
-                type: 'card',
+                type: InstrumentType.Card,
                 name: instrumentFormData.cardName ?? '',
                 number: instrumentFormData.cardNumber
                     ? instrumentFormData.cardNumber.replace(/ /g, '')
