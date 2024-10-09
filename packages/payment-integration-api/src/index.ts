@@ -193,6 +193,7 @@ export {
     ShippingOption,
     ShippingAddressRequestBody,
     getShippableItemsCount,
+    itemsRequireShipping,
 } from './shipping';
 export { RequestOptions, guard } from './util-types';
 export { default as ResolvableModule } from './resolvable-module';

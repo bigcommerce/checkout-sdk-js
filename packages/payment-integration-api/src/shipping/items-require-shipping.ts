@@ -1,4 +1,5 @@
-import { Cart, StoreConfig } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { Cart } from '../cart';
+import { StoreConfig } from '../config';
 
 const itemsRequireShipping = (cart?: Cart, config?: StoreConfig) => {
     if (!cart) {
