@@ -6,6 +6,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getConsignment,
+    getShippingOption,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
@@ -511,6 +512,59 @@ describe('GooglePayGateway', () => {
             });
             expect(selectShippingOptionMock).toHaveBeenCalledWith(
                 consignment.availableShippingOptions![0].id,
+            );
+        });
+
+        it('should return available shipping options with preselected recommended option first', async () => {
+            const consignment = {
+                ...getConsignment(),
+                selectedShippingOption: undefined,
+                availableShippingOptions: [
+                    {
+                        id: '7ac7895dc66b9773d19234c065ad4803',
+                        type: 'shipping_pickupinstore',
+                        description: 'Pick UP',
+                        imageUrl: '',
+                        isRecommended: false,
+                        cost: 0,
+                        transitTime: '',
+                        additionalDescription: '',
+                    },
+                    getShippingOption(),
+                ],
+            };
+
+            const expectedSippingOptions = [
+                {
+                    id: consignment.availableShippingOptions[0].id,
+                    label: consignment.availableShippingOptions[0].description,
+                    description: '$0.00',
+                },
+                {
+                    id: consignment.availableShippingOptions[1].id,
+                    label: consignment.availableShippingOptions[1].description,
+                    description: '$0.00',
+                },
+            ];
+            const selectShippingOptionMock = jest.spyOn(
+                paymentIntegrationService,
+                'selectShippingOption',
+            );
+
+            await gateway.initialize(getGeneric);
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValueOnce(
+                [consignment],
+            );
+
+            await expect(
+                gateway.handleShippingAddressChange(defaultGPayShippingAddress),
+            ).resolves.toStrictEqual({
+                defaultSelectedOptionId: consignment.availableShippingOptions[1].id,
+                shippingOptions: expectedSippingOptions,
+            });
+            expect(selectShippingOptionMock).toHaveBeenCalledWith(
+                consignment.availableShippingOptions[1].id,
             );
         });
 
