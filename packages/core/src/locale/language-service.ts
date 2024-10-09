@@ -106,7 +106,7 @@ export default class LanguageService {
         if (this._isCspNonceExperimentEnabled) {
             if (!this._formatters[prefixedKey]) {
                 this._formatters[prefixedKey] = new IntlMessageFormat(
-                    this._translations[prefixedKey] || '',
+                    this._escapeSpecialCharacters(this._translations[prefixedKey] || ''),
                     this._locales[prefixedKey],
                     undefined,
                     { ignoreTag: true },
@@ -213,6 +213,10 @@ export default class LanguageService {
 
     private _isFormatError(error: unknown): error is FormatError {
         return typeof error === 'object' && error !== null && 'originalMessage' in error;
+    }
+
+    private _escapeSpecialCharacters(message: string) {
+        return message.replace(/(\w+)='([^']*)'/g, "$1=''$2''");
     }
 }
 
