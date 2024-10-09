@@ -11,6 +11,7 @@ export default class HostedInputValidator {
         cardExpiry: this._getCardExpirySchema(),
         cardName: this._getCardNameSchema(),
         cardNumber: this._getCardNumberSchema(),
+        note: this._getNoteSchema(),
     };
 
     constructor() {
@@ -127,6 +128,10 @@ export default class HostedInputValidator {
 
     private _getCardNameSchema(): StringSchema {
         return string().max(200).required('Full name is required');
+    }
+
+    private _getNoteSchema(): StringSchema {
+        return string().max(128, 'Payment description cannot exceed 128 letters');
     }
 
     private _getCardNumberSchema(): StringSchema {

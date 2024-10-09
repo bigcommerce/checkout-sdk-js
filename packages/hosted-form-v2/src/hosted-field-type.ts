@@ -3,6 +3,7 @@ enum HostedFieldType {
     CardExpiry = 'cardExpiry',
     CardName = 'cardName',
     CardNumber = 'cardNumber',
+    Note = 'note',
 }
 
 export default HostedFieldType;

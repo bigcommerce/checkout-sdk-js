@@ -4,6 +4,10 @@ import ContentType from '../common/http-request/content-type';
 import HostedFormManualOrderData from '../hosted-form-manual-order-data';
 import { HostedInputValues } from '../iframe-content';
 
+import { Instrument, InstrumentType } from './Instrument';
+
+const manualPaymentMethodId = 'bigcommerce.manual_payment';
+
 export class ManualOrderPaymentRequestSender {
     constructor(private _requestSender: RequestSender, private _paymentOrigin: string) {}
 
@@ -14,9 +18,31 @@ export class ManualOrderPaymentRequestSender {
     ): Promise<Response<unknown>> {
         const { paymentMethodId, paymentSessionToken } = requestInitializationData;
 
-        const [expiryMonth, expiryYear] = instrumentFormData.cardExpiry
-            ? instrumentFormData.cardExpiry.split('/')
-            : [];
+        let instrument: Instrument;
+
+        if (paymentMethodId === manualPaymentMethodId) {
+            instrument = {
+                type: InstrumentType.ManualPayment,
+                note: instrumentFormData.note ?? '',
+            };
+        } else {
+            const [expiryMonth, expiryYear] = instrumentFormData.cardExpiry
+                ? instrumentFormData.cardExpiry.split('/')
+                : [];
+
+            instrument = {
+                type: InstrumentType.Card,
+                name: instrumentFormData.cardName ?? '',
+                number: instrumentFormData.cardNumber
+                    ? instrumentFormData.cardNumber.replace(/ /g, '')
+                    : '',
+                expires: {
+                    month: Number(expiryMonth.trim()),
+                    year: Number(`20${expiryYear.trim()}`),
+                },
+                verification_value: instrumentFormData.cardCode ?? undefined,
+            };
+        }
 
         const options = {
             headers: {
@@ -25,18 +51,7 @@ export class ManualOrderPaymentRequestSender {
                 'X-Payment-Session-Token': paymentSessionToken,
             },
             body: {
-                instrument: {
-                    type: 'card',
-                    name: instrumentFormData.cardName ?? '',
-                    number: instrumentFormData.cardNumber
-                        ? instrumentFormData.cardNumber.replace(/ /g, '')
-                        : '',
-                    expires: {
-                        month: Number(expiryMonth.trim()),
-                        year: Number(`20${expiryYear.trim()}`),
-                    },
-                    verification_value: instrumentFormData.cardCode ?? undefined,
-                },
+                instrument,
                 payment_method_id: paymentMethodId,
                 form_nonce: nonce ?? undefined,
             },

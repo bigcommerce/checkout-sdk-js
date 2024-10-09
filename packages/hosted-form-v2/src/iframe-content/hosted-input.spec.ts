@@ -135,6 +135,32 @@ describe('HostedInput', () => {
         expect(element.inputMode).toBe('text');
     });
 
+    it('renders payment note field', () => {
+        input = new HostedInput(
+            HostedFieldType.Note,
+            container,
+            '',
+            'Payment note',
+            '',
+            styles,
+            fontUrls,
+            eventListener as IframeEventListener<HostedFieldEventMap>,
+            eventPoster as IframeEventPoster<HostedInputEvent>,
+            inputAggregator as HostedInputAggregator,
+            inputValidator as HostedInputValidator,
+            manualOrderPaymentHandler as HostedInputManualOrderPaymentHandler,
+        );
+
+        input.attach();
+
+        const element = container.querySelector('input')!;
+
+        expect(element.id).toBe('note');
+        expect(element.placeholder).toBe('');
+        expect(element.getAttribute('aria-label')).toBe('Payment note');
+        expect(element.inputMode).toBe('text');
+    });
+
     it('configures card number input with numeric inputmode', () => {
         const cardNumberInput = new HostedInput(
             HostedFieldType.CardNumber,

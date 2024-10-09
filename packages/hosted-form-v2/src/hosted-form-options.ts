@@ -43,9 +43,10 @@ export type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
 
 export interface HostedCardFieldOptionsMap {
     [HostedFieldType.CardCode]?: HostedCardFieldOptions;
-    [HostedFieldType.CardExpiry]: HostedCardFieldOptions;
-    [HostedFieldType.CardName]: HostedCardFieldOptions;
-    [HostedFieldType.CardNumber]: HostedCardFieldOptions;
+    [HostedFieldType.CardExpiry]?: HostedCardFieldOptions;
+    [HostedFieldType.CardName]?: HostedCardFieldOptions;
+    [HostedFieldType.CardNumber]?: HostedCardFieldOptions;
+    [HostedFieldType.Note]?: HostedCardFieldOptions;
 }
 
 export interface HostedCardFieldOptions {

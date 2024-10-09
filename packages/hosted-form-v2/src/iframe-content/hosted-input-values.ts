@@ -5,4 +5,5 @@ export default interface HostedInputValues {
     [HostedFieldType.CardExpiry]?: string;
     [HostedFieldType.CardName]?: string;
     [HostedFieldType.CardNumber]?: string;
+    [HostedFieldType.Note]?: string;
 }

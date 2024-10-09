@@ -144,6 +144,7 @@ export default class HostedInput {
                 break;
 
             case 'card-name':
+            case 'note':
                 this._input.type = 'text';
                 this._input.inputMode = 'text';
                 break;

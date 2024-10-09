@@ -13,5 +13,8 @@ export default function mapToAccessibilityLabel(type: HostedFieldType): string {
 
         case HostedFieldType.CardNumber:
             return 'Credit card number';
+
+        case HostedFieldType.Note:
+            return 'Payment note';
     }
 }

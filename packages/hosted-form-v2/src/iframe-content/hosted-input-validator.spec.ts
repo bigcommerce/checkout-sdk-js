@@ -87,6 +87,27 @@ describe('HostedInputValidator', () => {
         });
     });
 
+    it('returns error if payment note is too long', async () => {
+        expect(
+            await validator.validate({
+                ...validData,
+                note: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;\':",.<>?/~`abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;\':",.<>?/~`\n',
+            }),
+        ).toEqual({
+            isValid: false,
+            errors: {
+                ...validResults.errors,
+                note: [
+                    {
+                        fieldType: 'note',
+                        type: 'max',
+                        message: 'Payment description cannot exceed 128 letters',
+                    },
+                ],
+            },
+        });
+    });
+
     it('does not return error if card number is not required', async () => {
         expect(await validator.validate(omit(validData, HostedFieldType.CardNumber))).toEqual({
             ...validResults,
