@@ -1,5 +1,10 @@
+enum InstrumentType {
+    Card = 'card',
+    ManualPayment = 'manual_payment',
+}
+
 interface CardInstrument {
-    type: 'card';
+    type: InstrumentType.Card;
     name: string;
     number: string;
     expires: {
@@ -10,7 +15,7 @@ interface CardInstrument {
 }
 
 interface ManualPaymentInstrument {
-    type: 'manual_payment';
+    type: InstrumentType.ManualPayment;
     note: string;
 }
 

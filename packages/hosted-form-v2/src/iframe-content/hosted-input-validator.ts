@@ -131,7 +131,7 @@ export default class HostedInputValidator {
     }
 
     private _getNoteSchema(): StringSchema {
-        return string().max(128, 'Payment note is too long');
+        return string().max(128, 'Payment description cannot exceed 128 letters');
     }
 
     private _getCardNumberSchema(): StringSchema {

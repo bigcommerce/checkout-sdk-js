@@ -101,7 +101,7 @@ describe('HostedInputValidator', () => {
                     {
                         fieldType: 'note',
                         type: 'max',
-                        message: 'Payment note is too long',
+                        message: 'Payment description cannot exceed 128 letters',
                     },
                 ],
             },
