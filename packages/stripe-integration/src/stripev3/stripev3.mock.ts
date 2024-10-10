@@ -19,6 +19,10 @@ import {
 } from './stripev3';
 import StripeV3PaymentInitializeOptions from './stripev3-initialize-options';
 
+export interface StripeV3InitializeOptions extends PaymentInitializeOptions {
+    stripev3: StripeV3PaymentInitializeOptions;
+}
+
 const gatewayId = 'stripev3';
 
 export function getStripeV3JsMock(): StripeV3Client {
@@ -29,6 +33,7 @@ export function getStripeV3JsMock(): StripeV3Client {
                     return {
                         mount: jest.fn(),
                         unmount: jest.fn(),
+                        destroy: jest.fn(),
                     };
                 }),
                 getElement: jest.fn().mockReturnValue(null),
@@ -53,6 +58,7 @@ export function getFailingStripeV3JsMock(): StripeV3Client {
                             throw new Error();
                         }),
                         unmount: jest.fn(),
+                        destroy: jest.fn(),
                     };
                 }),
                 getElement: jest.fn().mockReturnValue(null),
@@ -172,7 +178,7 @@ export function getStripeV3OrderRequestBodyVaultMock(
     };
 }
 
-export function getHostedFormInitializeOptions(): PaymentInitializeOptions {
+export function getHostedFormInitializeOptions(): StripeV3InitializeOptions {
     return {
         methodId: StripeElementType.CreditCard,
         gatewayId,
