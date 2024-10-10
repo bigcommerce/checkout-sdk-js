@@ -38,3 +38,4 @@ export { getShippingAddress, getShippingAddressWithCustomFields } from './shippi
 export { getAddress } from './address.mock';
 export { getCurrency } from './currency.mock';
 export { getGiftCertificate, getGiftCertificatesState } from './gift-certificates.mock';
+export { getDigitalItem } from './line-items.mock';

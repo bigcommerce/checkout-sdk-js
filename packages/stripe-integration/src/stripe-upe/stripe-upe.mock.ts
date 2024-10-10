@@ -32,14 +32,24 @@ export function getStripeUPE(method = 'card'): PaymentMethod {
     };
 }
 
+export const StripeEventMock = {
+    complete: false,
+    elementType: 'type',
+    empty: true,
+    value: {
+        type: StripePaymentMethodType.CreditCard,
+    },
+};
+
 export function getStripeUPEJsMock(): StripeUPEClient {
     return {
         elements: jest.fn(() => ({
             create: jest.fn(() => ({
                 mount: jest.fn(),
                 unmount: jest.fn(),
-                on: jest.fn((_, callback) => callback()),
+                on: jest.fn((_, callback) => callback(StripeEventMock)),
                 update: jest.fn(),
+                destroy: jest.fn(),
             })),
             getElement: jest.fn().mockReturnValue(null),
             update: jest.fn(),
@@ -59,6 +69,9 @@ export function getFailingStripeUPEJsMock(): StripeUPEClient {
                     throw new Error();
                 }),
                 unmount: jest.fn(),
+                on: jest.fn((_, callback) => callback(StripeEventMock)),
+                update: jest.fn(),
+                destroy: jest.fn(),
             })),
             getElement: jest.fn().mockReturnValue(null),
             update: jest.fn(),

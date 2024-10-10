@@ -1,13 +1,12 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import {
+    Address,
     Checkout,
     InvalidArgumentError,
     MissingDataError,
     NotInitializedError,
-    OrderActionType,
     OrderFinalizationNotRequiredError,
-    PaymentActionType,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
@@ -15,11 +14,15 @@ import {
     PaymentMethodCancelledError,
     PaymentMethodFailedError,
     RequestError,
+    StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
+    getCart,
     getCheckout,
+    getConfig,
     getCustomer,
+    getDigitalItem,
     getErrorPaymentResponseBody,
     getResponse,
     getShippingAddress,
@@ -53,14 +56,9 @@ import {
 
 describe('StripeUPEPaymentStrategy', () => {
     let checkoutMock: Checkout;
-    let finalizeOrderAction: OrderActionType;
-    let loadPaymentMethodAction: Promise<PaymentMethod>;
     let paymentMethodMock: PaymentMethod;
     let strategy: StripeUPEPaymentStrategy;
     let stripeScriptLoader: StripeUPEScriptLoader;
-    let submitOrderAction: OrderActionType;
-    let submitPaymentAction: PaymentActionType;
-    let updateAddressAction: string;
     let paymentIntegrationService: PaymentIntegrationService;
 
     beforeEach(() => {
@@ -71,22 +69,17 @@ describe('StripeUPEPaymentStrategy', () => {
         paymentMethodMock = { ...getStripeUPE(), clientToken: 'myToken' };
 
         stripeScriptLoader = new StripeUPEScriptLoader(scriptLoader);
-        finalizeOrderAction = OrderActionType.FinalizeOrderRequested;
-        submitOrderAction = OrderActionType.SubmitOrderRequested;
-        submitPaymentAction = PaymentActionType.SubmitPaymentRequested;
-        loadPaymentMethodAction = Promise.resolve(paymentMethodMock);
         checkoutMock = getCheckout();
-        updateAddressAction = 'UPDATE_BILLING_ADDRESS_REQUESTED';
 
         jest.useFakeTimers();
 
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
+        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
             paymentIntegrationService.getState(),
         );
 
@@ -94,9 +87,7 @@ describe('StripeUPEPaymentStrategy', () => {
             checkoutMock,
         );
 
-        jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockReturnValue(
-            updateAddressAction,
-        );
+        jest.spyOn(paymentIntegrationService, 'updateBillingAddress').mockImplementation(jest.fn());
 
         jest.spyOn(paymentIntegrationService, 'subscribe');
 
@@ -137,6 +128,7 @@ describe('StripeUPEPaymentStrategy', () => {
                 on: (_: string, callback: (event: StripeEventType) => void) =>
                     callback(onCallbackPayload),
                 update: updateMock,
+                destroy: jest.fn(),
             };
             const createElementMock = jest.fn(() => stripePaymentElementMock);
             const getElementMock = jest.fn(() =>
@@ -241,7 +233,7 @@ describe('StripeUPEPaymentStrategy', () => {
         });
 
         it('fails to load stripeUPE', () => {
-            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockReturnValue(undefined);
+            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockRejectedValue(undefined);
 
             expect(stripeUPEJsMock.elements).not.toHaveBeenCalled();
         });
@@ -403,10 +395,12 @@ describe('StripeUPEPaymentStrategy', () => {
             let updateTriggerFn: (payload: StripeElementUpdateOptions) => void = jest.fn();
 
             const setUpdateElementExperiment = (enabled?: boolean) => {
-                const storeConfig = {
+                const storeConfig: StoreConfig = {
+                    ...getConfig().storeConfig,
                     checkoutSettings: {
+                        ...getConfig().storeConfig.checkoutSettings,
                         features: {
-                            'PI-1679.trigger_update_stripe_payment_element': enabled,
+                            'PI-1679.trigger_update_stripe_payment_element': !!enabled,
                         },
                     },
                 };
@@ -596,9 +590,9 @@ describe('StripeUPEPaymentStrategy', () => {
                 });
 
                 it('with a stored instrument passing on the "make default" flag', async () => {
-                    stripeUPEJsMock.confirmPayment = jest.fn(() =>
-                        Promise.resolve(getConfirmPaymentResponse()),
-                    );
+                    stripeUPEJsMock.confirmPayment = jest
+                        .fn()
+                        .mockResolvedValue(getConfirmPaymentResponse());
 
                     await strategy.execute(
                         getStripeUPEOrderRequestBodyVaultMock(
@@ -625,9 +619,9 @@ describe('StripeUPEPaymentStrategy', () => {
 
                 describe('with card', () => {
                     beforeEach(() => {
-                        stripeUPEJsMock.confirmPayment = jest.fn(() =>
-                            Promise.resolve(getConfirmPaymentResponse()),
-                        );
+                        stripeUPEJsMock.confirmPayment = jest
+                            .fn()
+                            .mockResolvedValue(getConfirmPaymentResponse());
                     });
 
                     afterEach(() => {
@@ -753,14 +747,15 @@ describe('StripeUPEPaymentStrategy', () => {
                             jest.spyOn(
                                 paymentIntegrationService.getState(),
                                 'getShippingAddress',
-                            ).mockReturnValue({});
+                            ).mockReturnValue(undefined);
                             jest.spyOn(
                                 paymentIntegrationService.getState(),
                                 'getBillingAddress',
-                            ).mockReturnValue({});
-                            stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
-                                Promise.resolve(getRetrievePaymentIntentResponse()),
-                            );
+                            ).mockReturnValue(undefined);
+
+                            stripeUPEJsMock.retrievePaymentIntent = jest
+                                .fn()
+                                .mockResolvedValue(getRetrievePaymentIntentResponse());
                         });
 
                         afterEach(() => {
@@ -934,13 +929,14 @@ describe('StripeUPEPaymentStrategy', () => {
                             paymentIntegrationService.getState(),
                             'getCustomer',
                         ).mockReturnValue(undefined);
+
                         jest.spyOn(
                             paymentIntegrationService.getState(),
                             'getShippingAddress',
                         ).mockReturnValue({
                             ...getShippingAddress(),
                             line1: '12345',
-                        });
+                        } as Address);
 
                         await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
@@ -960,7 +956,7 @@ describe('StripeUPEPaymentStrategy', () => {
                         ).mockReturnValue({
                             ...getShippingAddress(),
                             line2: '123456',
-                        });
+                        } as Address);
 
                         await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
@@ -972,8 +968,12 @@ describe('StripeUPEPaymentStrategy', () => {
                     it('without shipping address if there is not physical items in cart', async () => {
                         jest.spyOn(paymentIntegrationService.getState(), 'getCart').mockReturnValue(
                             {
-                                ...paymentIntegrationService.getState().getCart(),
-                                lineItems: { physicalItems: [] },
+                                ...getCart(),
+                                lineItems: {
+                                    physicalItems: [],
+                                    giftCertificates: [],
+                                    digitalItems: [getDigitalItem()],
+                                },
                             },
                         );
 
@@ -1000,9 +1000,9 @@ describe('StripeUPEPaymentStrategy', () => {
                             }),
                         );
 
-                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
-                            Promise.resolve(getRetrievePaymentIntentResponse()),
-                        );
+                        stripeUPEJsMock.retrievePaymentIntent = jest
+                            .fn()
+                            .mockResolvedValue(getRetrievePaymentIntentResponse());
 
                         jest.spyOn(
                             paymentIntegrationService.getState(),
@@ -1076,9 +1076,9 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(errorResponse),
                         );
 
-                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
-                            Promise.resolve(getRetrievePaymentIntentResponse()),
-                        );
+                        stripeUPEJsMock.retrievePaymentIntent = jest
+                            .fn()
+                            .mockResolvedValue(getRetrievePaymentIntentResponse());
 
                         try {
                             await strategy.execute(getStripeUPEOrderRequestBodyMock());
@@ -1112,18 +1112,16 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(requiredFieldErrorResponse),
                         );
 
-                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
-                            Promise.resolve(getRetrievePaymentIntentResponse()),
-                        );
+                        stripeUPEJsMock.retrievePaymentIntent = jest
+                            .fn()
+                            .mockResolvedValue(getRetrievePaymentIntentResponse());
 
-                        stripeUPEJsMock.confirmPayment = jest.fn(() =>
-                            Promise.resolve({
-                                error: {
-                                    type: 'invalid_request_error',
-                                    message: stripeErrorMessage,
-                                },
-                            }),
-                        );
+                        stripeUPEJsMock.confirmPayment = jest.fn().mockResolvedValue({
+                            error: {
+                                type: 'invalid_request_error',
+                                message: stripeErrorMessage,
+                            },
+                        });
 
                         await expect(
                             strategy.execute(getStripeUPEOrderRequestBodyMock()),
@@ -1157,9 +1155,12 @@ describe('StripeUPEPaymentStrategy', () => {
                             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(
                                 1,
                             );
-                            expect(error.message).toEqual(
-                                unexpectedError && unexpectedError.message,
-                            );
+
+                            if (error instanceof Error) {
+                                expect(error.message).toEqual(
+                                    unexpectedError && unexpectedError.message,
+                                );
+                            }
                         }
                     });
 
@@ -1183,9 +1184,9 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(new Error('Error with 3ds')),
                         );
 
-                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
-                            Promise.resolve(getRetrievePaymentIntentResponse()),
-                        );
+                        stripeUPEJsMock.retrievePaymentIntent = jest
+                            .fn()
+                            .mockResolvedValue(getRetrievePaymentIntentResponse());
 
                         await strategy.execute(getStripeUPEOrderRequestBodyMock());
 
@@ -1208,9 +1209,9 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(threeDSecureRequiredErrorResponse),
                         );
 
-                        stripeUPEJsMock.confirmCardPayment = jest.fn(() =>
-                            Promise.resolve(getConfirmPaymentResponse()),
-                        );
+                        stripeUPEJsMock.confirmCardPayment = jest
+                            .fn()
+                            .mockResolvedValue(getConfirmPaymentResponse());
 
                         await strategy.execute(getStripeUPEOrderRequestBodyVaultMock());
 
@@ -1234,17 +1235,15 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(threeDSecureRequiredErrorResponse),
                         );
 
-                        stripeUPEJsMock.confirmCardPayment = jest.fn(() =>
-                            Promise.resolve({
-                                error: {
-                                    payment_intent: {
-                                        last_payment_error: {
-                                            message: 'canceled',
-                                        },
+                        stripeUPEJsMock.confirmCardPayment = jest.fn().mockResolvedValue({
+                            error: {
+                                payment_intent: {
+                                    last_payment_error: {
+                                        message: 'canceled',
                                     },
                                 },
-                            }),
-                        );
+                            },
+                        });
 
                         await expect(
                             strategy.execute(getStripeUPEOrderRequestBodyVaultMock()),
@@ -1270,18 +1269,16 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(threeDSecureRequiredErrorResponse),
                         );
 
-                        stripeUPEJsMock.confirmCardPayment = jest.fn(() =>
-                            Promise.resolve({
-                                error: {
-                                    payment_intent: {
-                                        last_payment_error: {
-                                            message: 'error',
-                                        },
+                        stripeUPEJsMock.confirmCardPayment = jest.fn().mockResolvedValue({
+                            error: {
+                                payment_intent: {
+                                    last_payment_error: {
+                                        message: 'error',
                                     },
-                                    type: 'unknown_error',
                                 },
-                            }),
-                        );
+                                type: 'unknown_error',
+                            },
+                        });
 
                         await expect(
                             strategy.execute(getStripeUPEOrderRequestBodyVaultMock()),
@@ -1334,17 +1331,15 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(threeDSecureRequiredErrorResponse),
                         );
 
-                        stripeUPEJsMock.confirmCardPayment = jest.fn(() =>
-                            Promise.resolve({
-                                error: {
-                                    type: 'card_error',
-                                    payment_intent: {
-                                        last_payment_error: { message: stripeErrorMessage },
-                                    },
-                                    message: stripeErrorMessage,
+                        stripeUPEJsMock.confirmCardPayment = jest.fn().mockResolvedValue({
+                            error: {
+                                type: 'card_error',
+                                payment_intent: {
+                                    last_payment_error: { message: stripeErrorMessage },
                                 },
-                            }),
-                        );
+                                message: stripeErrorMessage,
+                            },
+                        });
 
                         await expect(
                             strategy.execute(getStripeUPEOrderRequestBodyVaultMock()),
@@ -1384,17 +1379,17 @@ describe('StripeUPEPaymentStrategy', () => {
                             }),
                         );
 
-                        jest.spyOn(paymentIntegrationService, 'submitPayment')
-                            .mockReturnValueOnce(Promise.reject(threeDSecureRequiredErrorResponse))
-                            .mockReturnValueOnce(submitPaymentAction);
+                        jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
+                            Promise.reject(threeDSecureRequiredErrorResponse),
+                        );
 
                         stripeUPEJsMock.confirmCardPayment = jest.fn(() =>
                             Promise.reject(new Error('Error with 3ds')),
                         );
 
-                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
-                            Promise.resolve(getRetrievePaymentIntentResponse()),
-                        );
+                        stripeUPEJsMock.retrievePaymentIntent = jest
+                            .fn()
+                            .mockResolvedValue(getRetrievePaymentIntentResponse());
 
                         await strategy.execute(getStripeUPEOrderRequestBodyVaultMock());
 
@@ -1424,8 +1419,10 @@ describe('StripeUPEPaymentStrategy', () => {
                     });
 
                     it('not calling confirmPayment method when Payment Intent status is already „succeeded", case with additional_action_requires_payment_method and PI-626 Experiment on', async () => {
-                        const storeConfig = {
+                        const storeConfig: StoreConfig = {
+                            ...getConfig().storeConfig,
                             checkoutSettings: {
+                                ...getConfig().storeConfig.checkoutSettings,
                                 features: {
                                     'PI-626.Block_unnecessary_payment_confirmation_for_StripeUPE':
                                         true,
@@ -1457,9 +1454,9 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(errorResponse),
                         );
 
-                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
-                            Promise.resolve(getRetrievePaymentIntentResponseSucceeded()),
-                        );
+                        stripeUPEJsMock.retrievePaymentIntent = jest
+                            .fn()
+                            .mockResolvedValue(getRetrievePaymentIntentResponseSucceeded());
 
                         try {
                             await strategy.execute(getStripeUPEOrderRequestBodyMock());
@@ -1474,7 +1471,9 @@ describe('StripeUPEPaymentStrategy', () => {
 
                     it('not calling confirmPayment method when Payment Intent status is already „succeeded", case with redirect_to_url and PI-626 Experiment on', async () => {
                         const storeConfig = {
+                            ...getConfig().storeConfig,
                             checkoutSettings: {
+                                ...getConfig().storeConfig.checkoutSettings,
                                 features: {
                                     'PI-626.Block_unnecessary_payment_confirmation_for_StripeUPE':
                                         true,
@@ -1505,9 +1504,9 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(errorResponse),
                         );
 
-                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
-                            Promise.resolve(getRetrievePaymentIntentResponseSucceeded()),
-                        );
+                        stripeUPEJsMock.retrievePaymentIntent = jest
+                            .fn()
+                            .mockResolvedValue(getRetrievePaymentIntentResponseSucceeded());
 
                         try {
                             await strategy.execute(getStripeUPEOrderRequestBodyMock());
@@ -1521,8 +1520,10 @@ describe('StripeUPEPaymentStrategy', () => {
                     });
 
                     it('not calling confirmPayment method when Payment Intent status is already „succeeded", case with additional_action_requires_payment_method and PI-626 Experiment off', async () => {
-                        const storeConfig = {
+                        const storeConfig: StoreConfig = {
+                            ...getConfig().storeConfig,
                             checkoutSettings: {
+                                ...getConfig().storeConfig.checkoutSettings,
                                 features: {
                                     'PI-626.Block_unnecessary_payment_confirmation_for_StripeUPE':
                                         false,
@@ -1554,9 +1555,9 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(errorResponse),
                         );
 
-                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
-                            Promise.resolve(getRetrievePaymentIntentResponseSucceeded()),
-                        );
+                        stripeUPEJsMock.retrievePaymentIntent = jest
+                            .fn()
+                            .mockResolvedValue(getRetrievePaymentIntentResponseSucceeded());
 
                         try {
                             await strategy.execute(getStripeUPEOrderRequestBodyMock());
@@ -1571,7 +1572,9 @@ describe('StripeUPEPaymentStrategy', () => {
 
                     it('not calling confirmPayment method when Payment Intent status is already „succeeded", case with redirect_to_url and PI-626 Experiment off', async () => {
                         const storeConfig = {
+                            ...getConfig().storeConfig,
                             checkoutSettings: {
+                                ...getConfig().storeConfig.checkoutSettings,
                                 features: {
                                     'PI-626.Block_unnecessary_payment_confirmation_for_StripeUPE':
                                         false,
@@ -1602,9 +1605,9 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(errorResponse),
                         );
 
-                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
-                            Promise.resolve(getRetrievePaymentIntentResponseSucceeded()),
-                        );
+                        stripeUPEJsMock.retrievePaymentIntent = jest
+                            .fn()
+                            .mockResolvedValue(getRetrievePaymentIntentResponseSucceeded());
 
                         try {
                             await strategy.execute(getStripeUPEOrderRequestBodyMock());
@@ -1637,9 +1640,9 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(errorResponse),
                         );
 
-                        stripeUPEJsMock.confirmPayment = jest.fn(() =>
-                            Promise.resolve(getConfirmPaymentResponse()),
-                        );
+                        stripeUPEJsMock.confirmPayment = jest
+                            .fn()
+                            .mockResolvedValue(getConfirmPaymentResponse());
 
                         await strategy.initialize(getStripeUPEInitializeOptionsMock());
 
@@ -1661,11 +1664,14 @@ describe('StripeUPEPaymentStrategy', () => {
                     beforeEach(() => {
                         options = getStripeUPEInitializeOptionsMock(method);
                         paymentMethodMock = { ...getStripeUPE(method), clientToken: 'myToken' };
-                        loadPaymentMethodAction = Promise.resolve(paymentMethodMock);
 
-                        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
-                            loadPaymentMethodAction,
-                        );
+                        jest.spyOn(
+                            paymentIntegrationService,
+                            'loadPaymentMethod',
+                        ).mockResolvedValue({
+                            ...paymentIntegrationService.getState(),
+                            ...paymentMethodMock,
+                        });
                         jest.spyOn(
                             paymentIntegrationService.getState(),
                             'getPaymentMethodOrThrow',
@@ -1691,9 +1697,9 @@ describe('StripeUPEPaymentStrategy', () => {
                             Promise.reject(errorResponse),
                         );
 
-                        stripeUPEJsMock.retrievePaymentIntent = jest.fn(() =>
-                            Promise.resolve(getRetrievePaymentIntentResponse()),
-                        );
+                        stripeUPEJsMock.retrievePaymentIntent = jest
+                            .fn()
+                            .mockResolvedValue(getRetrievePaymentIntentResponse());
 
                         try {
                             await strategy.execute(getStripeUPEOrderRequestBodyMock(method));
