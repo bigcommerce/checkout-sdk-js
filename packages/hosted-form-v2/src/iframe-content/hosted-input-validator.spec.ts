@@ -87,7 +87,25 @@ describe('HostedInputValidator', () => {
         });
     });
 
-    it('returns error if payment note is too long', async () => {
+    it('returns error if payment note is missing or too long', async () => {
+        expect(
+            await validator.validate({
+                ...validData,
+                note: '',
+            }),
+        ).toEqual({
+            isValid: false,
+            errors: {
+                ...validResults.errors,
+                note: [
+                    {
+                        fieldType: 'note',
+                        type: 'required',
+                        message: 'Manual payment description is required',
+                    },
+                ],
+            },
+        });
         expect(
             await validator.validate({
                 ...validData,
