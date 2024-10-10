@@ -29,9 +29,10 @@ describe('AffirmPaymentStrategy', () => {
     let strategy: AffirmPaymentStrategy;
     let affirmScriptLoader: AffirmScriptLoader;
     let paymentIntegrationService: PaymentIntegrationService;
+    const affirmCheckoutMock = jest.fn();
 
     beforeEach(() => {
-        affirm = getAffirmScriptMock();
+        affirm = getAffirmScriptMock(affirmCheckoutMock);
         affirm.checkout.open = jest.fn();
         affirm.ui.error.on = jest.fn();
         paymentMethod = getAffirm();
@@ -136,7 +137,7 @@ describe('AffirmPaymentStrategy', () => {
                 { useStoreCredit: false },
                 options,
             );
-            expect(affirm.checkout).toHaveBeenCalled();
+            expect(affirmCheckoutMock).toHaveBeenCalled();
             expect(affirm.checkout.open).toHaveBeenCalled();
             expect(affirm.ui.error.on).toHaveBeenCalled();
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
@@ -240,7 +241,7 @@ describe('AffirmPaymentStrategy', () => {
 
             await strategy.execute(payload, options);
 
-            expect(affirm.checkout).toHaveBeenCalledWith(checkoutPayload);
+            expect(affirmCheckoutMock).toHaveBeenCalledWith(checkoutPayload);
         });
 
         it('does not create affirm object if shippingAddress does not exist', async () => {
@@ -333,7 +334,7 @@ describe('AffirmPaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(affirm.checkout).toHaveBeenCalled();
+            expect(affirmCheckoutMock).toHaveBeenCalled();
         });
 
         it('does not create affirm object if order does not exist', async () => {

@@ -8,7 +8,7 @@ export interface Affirm {
     };
 }
 
-interface AffirmCheckout {
+export interface AffirmCheckout {
     (options: AffirmRequestData): void;
     open(modalOptions: AffirmCallback): void;
     init(): void;

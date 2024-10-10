@@ -5,6 +5,7 @@ import {
     WithAccountCreation,
     WithBankAccountInstrument,
     WithEcpInstrument,
+    WithPayByBankInstrument,
     WithSepaInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -23,6 +24,7 @@ export default interface Payment {
 export type PaymentInstrument =
     | WithEcpInstrument
     | WithSepaInstrument
+    | WithPayByBankInstrument
     | WithIdealInstrument
     | CreditCardInstrument
     | (CreditCardInstrument & WithHostedFormNonce)
