@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.667.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.666.1...v1.667.0) (2024-10-10)
+
+
+### Features
+
+* **checkout:** CHECKOUT-8606 Make Payment Note Required ([#2694](https://github.com/bigcommerce/checkout-sdk-js/issues/2694)) ([7bacaca](https://github.com/bigcommerce/checkout-sdk-js/commit/7bacaca6fd4eec5fbd660c077b94b6fc3e29bc94))
+
 ### [1.666.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.666.0...v1.666.1) (2024-10-09)
 
 
