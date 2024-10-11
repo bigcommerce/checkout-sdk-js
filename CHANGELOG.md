@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.668.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.667.0...v1.668.0) (2024-10-11)
+
+
+### Features
+
+* **payment:** STRIPE-473 types correction in Stripe spec files ([84e488e](https://github.com/bigcommerce/checkout-sdk-js/commit/84e488ec84c6d3e8fff34c8672afed1d3a58ed8b))
+
 ## [1.667.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.666.1...v1.667.0) (2024-10-10)
 
 
