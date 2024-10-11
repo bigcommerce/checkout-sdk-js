@@ -76,6 +76,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
         onAuthorizeError: jest.fn(),
         onPaymentError: jest.fn(),
         onError: jest.fn(),
+        onEligibilityFailure: jest.fn(),
     };
 
     const initializationOptions: CheckoutButtonInitializeOptions = {
@@ -418,12 +419,10 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
         });
 
         it('renders braintree credit button if paylater is not eligible', async () => {
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             jest.spyOn(paypalSdkMock, 'Buttons').mockImplementationOnce(() => {
                 return {
                     isEligible: jest.fn(() => false),
+                    render: jest.fn(),
                 };
             });
 
@@ -453,6 +452,45 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
                     height: 45,
                 },
             });
+        });
+
+        it('does not render PayPal checkout button and calls onEligibilityFailure callback', async () => {
+            const renderMock = jest.fn();
+
+            jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation(() => {
+                return {
+                    isEligible: jest.fn(() => false),
+                    render: renderMock,
+                };
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
+                createOrder: expect.any(Function),
+                env: 'sandbox',
+                fundingSource: paypalSdkMock.FUNDING.PAYLATER,
+                onApprove: expect.any(Function),
+                style: {
+                    shape: 'rect',
+                    height: 45,
+                },
+            });
+
+            expect(paypalSdkMock.Buttons).toHaveBeenCalledWith({
+                createOrder: expect.any(Function),
+                env: 'sandbox',
+                fundingSource: paypalSdkMock.FUNDING.CREDIT,
+                onApprove: expect.any(Function),
+                style: {
+                    shape: 'rect',
+                    height: 45,
+                    label: 'credit',
+                },
+            });
+
+            expect(braintreePaypalCreditOptions.onEligibilityFailure).toHaveBeenCalled();
+            expect(renderMock).not.toHaveBeenCalled();
         });
 
         it('renders braintree checkout button in production environment if payment method is in test mode', async () => {
