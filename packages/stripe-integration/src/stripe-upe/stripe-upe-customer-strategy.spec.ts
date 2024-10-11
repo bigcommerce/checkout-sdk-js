@@ -1,7 +1,6 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-    CustomerInitializeOptions,
     CustomerStrategy,
     InvalidArgumentError,
     MissingDataError,
@@ -12,7 +11,6 @@ import {
     getBillingAddress,
     getConsignment,
     getCustomer,
-    getGuestCustomer,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
@@ -26,6 +24,7 @@ import StripeUPECustomerStrategy from './stripe-upe-customer-strategy';
 import {
     getCustomerStripeUPEJsMock,
     getStripeUPECustomerInitializeOptionsMock,
+    StripeUpeCustomerInitializeOptions,
 } from './stripe-upe-customer.mock';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import { getStripeUPE } from './stripe-upe.mock';
@@ -59,10 +58,14 @@ describe('StripeUpeCustomerStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockReturnValue(
             paymentMethodMock,
         );
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
-            loadPaymentMethodAction,
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+            paymentIntegrationService.getState(),
         );
-        paymentIntegrationService.loadPaymentMethod = jest.fn(() => loadPaymentMethodAction);
+
+        paymentIntegrationService.loadPaymentMethod = jest
+            .fn()
+            .mockResolvedValue(loadPaymentMethodAction);
+
         stripeUPEJsMock = getCustomerStripeUPEJsMock();
         jest.spyOn(stripeScriptLoader, 'getStripeClient').mockResolvedValue(stripeUPEJsMock);
 
@@ -81,16 +84,19 @@ describe('StripeUpeCustomerStrategy', () => {
 
     describe('#initialize()', () => {
         const customer = getCustomer();
-        let customerInitialization: CustomerInitializeOptions;
+        let customerInitialization: StripeUpeCustomerInitializeOptions;
 
         beforeEach(() => {
             jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(
                 customer,
             );
             customerInitialization = getStripeUPECustomerInitializeOptionsMock();
-            jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
-                getGuestCustomer,
-            );
+            jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue({
+                ...getCustomer(),
+                email: '',
+                isGuest: true,
+            });
+
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -125,6 +131,7 @@ describe('StripeUpeCustomerStrategy', () => {
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
+                update: jest.fn(),
                 on: jest.fn((_, callback) => callback(stripeCustomerEvent(true, true))),
             };
 
@@ -134,12 +141,13 @@ describe('StripeUpeCustomerStrategy', () => {
             ).mockReturnValue({ stripeLinkAuthenticationState: undefined });
 
             const stripeUPEJsMockWithElement = getCustomerStripeUPEJsMock(stripeMockElement);
-            const action = Promise.resolve(true);
 
             jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValue([
                 getConsignment(),
             ]);
-            jest.spyOn(paymentIntegrationService, 'deleteConsignment').mockReturnValue(action);
+            jest.spyOn(paymentIntegrationService, 'deleteConsignment').mockResolvedValue(
+                paymentIntegrationService.getState(),
+            );
             jest.spyOn(stripeScriptLoader, 'getStripeClient').mockResolvedValueOnce(
                 stripeUPEJsMockWithElement,
             );
@@ -164,21 +172,25 @@ describe('StripeUpeCustomerStrategy', () => {
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
+                update: jest.fn(),
                 on: jest.fn((_, callback) => callback(stripeCustomerEvent(true, true))),
             };
 
             const stripeUPEJsMockWithElement = getCustomerStripeUPEJsMock(stripeMockElement);
-            const action = Promise.resolve(true);
 
             jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValue([
                 getConsignment(),
             ]);
-            jest.spyOn(paymentIntegrationService, 'deleteConsignment').mockReturnValue(action);
+            jest.spyOn(paymentIntegrationService, 'deleteConsignment').mockResolvedValue(
+                paymentIntegrationService.getState(),
+            );
             jest.spyOn(stripeScriptLoader, 'getStripeClient').mockResolvedValueOnce(
                 stripeUPEJsMockWithElement,
             );
             jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue({
-                ...getGuestCustomer,
+                ...getCustomer(),
+                email: '',
+                isGuest: true,
             });
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -201,6 +213,7 @@ describe('StripeUpeCustomerStrategy', () => {
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
+                update: jest.fn(),
                 on: jest.fn((_, callback) => callback(stripeCustomerEvent(true, true))),
             };
 
@@ -228,12 +241,13 @@ describe('StripeUpeCustomerStrategy', () => {
                 value: {
                     email: 'foo@bar',
                 },
-            };
+            } as StripeCustomerEvent;
 
             const stripeMockElement: StripeElement = {
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
+                update: jest.fn(),
                 on: jest.fn((_, callback) => callback(missingAuthEvent)),
             };
 
@@ -263,6 +277,7 @@ describe('StripeUpeCustomerStrategy', () => {
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
+                update: jest.fn(),
                 on: jest.fn((_, callback) => callback(missingCompletionEvent)),
             };
 
