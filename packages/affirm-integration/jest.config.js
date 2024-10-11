@@ -7,9 +7,6 @@ module.exports = {
             diagnostics: false,
         },
     },
-    transform: {
-        '^.+\\.[tj]sx?$': 'ts-jest',
-    },
     setupFilesAfterEnv: ['../../jest-setup.js'],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
     coverageDirectory: '../../coverage/packages/affirm-integration',

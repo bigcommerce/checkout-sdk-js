@@ -55,9 +55,7 @@ describe('AmazonPayV2ButtonStrategy', () => {
         jest.spyOn(
             amazonPayV2PaymentProcessor,
             'prepareCheckoutWithCreationRequestConfig',
-        ).mockImplementation((callback: () => Promise<unknown>) => {
-            void callback();
-        });
+        ).mockImplementation(jest.fn());
 
         strategy = new AmazonPayV2ButtonStrategy(
             paymentIntegrationService,

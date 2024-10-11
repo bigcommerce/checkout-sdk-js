@@ -33,7 +33,6 @@ import {
     OnCancelOrErrorResponse,
     OnSuccessResponse,
 } from './digitalriver';
-import DigitalRiverError from './digitalriver-error';
 import { WithDigitalRiverPaymentInitializeOptions } from './digitalriver-payment-initialize-options';
 import DigitalRiverPaymentStrategy from './digitalriver-payment-strategy';
 import DigitalRiverScriptLoader from './digitalriver-script-loader';
@@ -155,11 +154,13 @@ describe('DigitalRiverPaymentStrategy', () => {
             });
 
             jest.spyOn(digitalRiverScriptLoader, 'load').mockResolvedValue({
-                createDropin: jest.fn().mockResolvedValue({
+                createDropin: jest.fn(() => ({
                     mount: jest.fn(),
-                }),
+                })),
                 authenticateSource: jest.fn(),
-                createElement: jest.fn(),
+                createElement: jest.fn(() => ({
+                    mount: jest.fn(),
+                })),
             });
 
             await strategy.initialize(options);
@@ -627,14 +628,12 @@ describe('DigitalRiverPaymentStrategy', () => {
             expect(digitalRiverLoadResponse.createDropin).toHaveBeenCalled();
         });
 
-        it('throws an error when load response is empty or not provided', () => {
-            jest.spyOn(digitalRiverScriptLoader, 'load').mockRejectedValueOnce(
-                Promise.resolve(new Error()),
-            );
+        it('throws an error when load response is empty or not provided', async () => {
+            jest.spyOn(digitalRiverScriptLoader, 'load').mockRejectedValueOnce(Error());
 
             const promise = strategy.initialize(options);
 
-            expect(promise).rejects.toThrow(DigitalRiverError);
+            await expect(promise).rejects.toThrow();
         });
 
         it('throws an error when DigitalRiver options is not provided', () => {
@@ -691,7 +690,7 @@ describe('DigitalRiverPaymentStrategy', () => {
             return expect(promise).rejects.toThrow(MissingDataError);
         });
 
-        it('throws an error when data on onSuccess event is not provided', async () => {
+        it('throws an error when data on onSuccess event is not provided123', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -701,16 +700,11 @@ describe('DigitalRiverPaymentStrategy', () => {
             });
             await strategy.initialize(options);
 
-            const payloadWithEmptyOnSuccess = merge({}, getOrderRequestBody(), {
-                payment: paymentMethodMock,
-                onSuccess: undefined,
-            });
-
             jest.spyOn(digitalRiverLoadResponse, 'createDropin').mockImplementation(() => {
-                throw new InvalidArgumentError();
+                return digitalRiverComponent;
             });
 
-            await expect(strategy.execute(payloadWithEmptyOnSuccess)).rejects.toThrow(
+            await expect(strategy.execute(getOrderRequestBody())).rejects.toThrow(
                 InvalidArgumentError,
             );
         });

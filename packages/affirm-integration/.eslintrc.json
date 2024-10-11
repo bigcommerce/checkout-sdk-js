@@ -3,9 +3,22 @@
     "ignorePatterns": ["!**/*"],
     "overrides": [
         {
-            "files": ["*.ts", "*.tsx"],
+            "files": ["*.ts"],
             "rules": {
                 "@typescript-eslint/naming-convention": "off"
+            }
+        },
+        {
+            "files": ["*.spec.ts"],
+            "rules": {
+                "@typescript-eslint/naming-convention": "off",
+                "@typescript-eslint/no-unsafe-assignment": "off"
+            }
+        },
+        {
+            "files": ["*.mock.ts"],
+            "rules": {
+                "@typescript-eslint/no-explicit-any": "off"
             }
         }
     ]
