@@ -2,6 +2,17 @@ import { CustomerInitializeOptions } from '@bigcommerce/checkout-sdk/payment-int
 
 import { StripeElement, StripeUPEClient } from './stripe-upe';
 
+export interface StripeUpeCustomerInitializeOptions extends CustomerInitializeOptions {
+    stripeupe: {
+        container: string;
+        methodId: string;
+        gatewayId: string;
+        onEmailChange(): void;
+        isLoading(): void;
+        getStyles(): void;
+    };
+}
+
 export function getCustomerStripeUPEJsMock(returnElement?: StripeElement): StripeUPEClient {
     return {
         elements: jest.fn(() => ({
@@ -9,8 +20,10 @@ export function getCustomerStripeUPEJsMock(returnElement?: StripeElement): Strip
                 mount: jest.fn(),
                 unmount: jest.fn(),
                 on: jest.fn(),
+                update: jest.fn(),
+                destroy: jest.fn(),
             })),
-            getElement: jest.fn(() => returnElement),
+            getElement: jest.fn().mockReturnValue(returnElement),
             update: jest.fn(),
             fetchUpdates: jest.fn(),
         })),
@@ -20,7 +33,7 @@ export function getCustomerStripeUPEJsMock(returnElement?: StripeElement): Strip
     };
 }
 
-export function getStripeUPECustomerInitializeOptionsMock(): CustomerInitializeOptions {
+export function getStripeUPECustomerInitializeOptionsMock(): StripeUpeCustomerInitializeOptions {
     return {
         methodId: 'stripeupe',
         stripeupe: {

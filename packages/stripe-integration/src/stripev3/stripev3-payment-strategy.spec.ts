@@ -3,27 +3,28 @@ import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import {
     Checkout,
     HostedForm,
+    HostedInputEventType,
+    HostedInputSubmitSuccessEvent,
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
-    Order,
-    OrderActionType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
-    PaymentActionType,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
+    PaymentIntegrationSelectors,
     PaymentIntegrationService,
     PaymentMethod,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
+    getCart,
     getCheckout,
     getCustomer,
+    getDigitalItem,
     getErrorPaymentResponseBody,
-    getOrder,
     getResponse,
     getShippingAddress,
     PaymentIntegrationServiceMock,
@@ -53,18 +54,15 @@ import {
     getStripeV3JsMock,
     getStripeV3OrderRequestBodyMock,
     getStripeV3OrderRequestBodyVaultMock,
+    StripeV3InitializeOptions,
 } from './stripev3.mock';
 
 // TODO: CHECKOUT-7766
 describe('StripeV3PaymentStrategy', () => {
     let checkoutMock: Checkout;
-    let finalizeOrderAction: OrderActionType;
-    let loadPaymentMethodAction: Promise<PaymentMethod>;
     let paymentMethodMock: PaymentMethod;
     let strategy: StripeV3PaymentStrategy;
     let stripeScriptLoader: StripeV3ScriptLoader;
-    let submitOrderAction: OrderActionType;
-    let submitPaymentAction: PaymentActionType;
 
     let scriptLoader: ScriptLoader;
     let paymentIntegrationService: PaymentIntegrationService;
@@ -76,22 +74,18 @@ describe('StripeV3PaymentStrategy', () => {
         paymentMethodMock = { ...getStripeV3(), clientToken: 'myToken' };
 
         stripeScriptLoader = new StripeV3ScriptLoader(scriptLoader);
-        finalizeOrderAction = OrderActionType.FinalizeOrderRequested;
-        submitOrderAction = OrderActionType.SubmitOrderRequested;
-        submitPaymentAction = PaymentActionType.SubmitPaymentRequested;
-        loadPaymentMethodAction = Promise.resolve(paymentMethodMock);
         checkoutMock = getCheckout();
 
         jest.useFakeTimers();
 
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
+        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
-            loadPaymentMethodAction,
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+            paymentIntegrationService.getState(),
         );
 
         jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
@@ -148,7 +142,9 @@ describe('StripeV3PaymentStrategy', () => {
         });
 
         it('fails to load stripe V3', async () => {
-            jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(undefined);
+            jest.spyOn(stripeScriptLoader, 'load').mockResolvedValue(
+                undefined as unknown as StripeV3Client,
+            );
 
             const promise = strategy.initialize(options);
 
@@ -280,9 +276,9 @@ describe('StripeV3PaymentStrategy', () => {
             it('with a stored instrument passing on the "make default" flag', async () => {
                 await strategy.initialize(options);
 
-                stripeV3JsMock.confirmCardPayment = jest.fn(() =>
-                    Promise.resolve(getConfirmPaymentResponse()),
-                );
+                stripeV3JsMock.confirmCardPayment = jest
+                    .fn()
+                    .mockResolvedValue(getConfirmPaymentResponse());
 
                 await strategy.execute(
                     getStripeV3OrderRequestBodyVaultMock(StripeElementType.CreditCard, true),
@@ -311,13 +307,13 @@ describe('StripeV3PaymentStrategy', () => {
                     elements = stripeV3JsMock.elements();
                     cardElement = elements.create(StripeElementType.CreditCard, {});
 
-                    stripeV3JsMock.confirmCardPayment = jest.fn(() =>
-                        Promise.resolve(getConfirmPaymentResponse()),
-                    );
+                    stripeV3JsMock.confirmCardPayment = jest
+                        .fn()
+                        .mockResolvedValue(getConfirmPaymentResponse());
 
-                    stripeV3JsMock.createPaymentMethod = jest.fn(() =>
-                        Promise.resolve(getPaymentMethodResponse()),
-                    );
+                    stripeV3JsMock.createPaymentMethod = jest
+                        .fn()
+                        .mockResolvedValue(getPaymentMethodResponse());
 
                     jest.spyOn(
                         paymentIntegrationService.getState(),
@@ -377,9 +373,10 @@ describe('StripeV3PaymentStrategy', () => {
                             'getCustomer',
                         ).mockReturnValue(undefined);
 
-                        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
-                            loadPaymentMethodAction,
-                        );
+                        jest.spyOn(
+                            paymentIntegrationService,
+                            'loadPaymentMethod',
+                        ).mockResolvedValue(paymentIntegrationService.getState());
 
                         await strategy.initialize(options);
 
@@ -491,8 +488,8 @@ describe('StripeV3PaymentStrategy', () => {
                         ...getBillingAddress(),
                         phone: '',
                     });
-                    jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
-                        loadPaymentMethodAction,
+                    jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+                        paymentIntegrationService.getState(),
                     );
 
                     await strategy.initialize(options);
@@ -510,8 +507,12 @@ describe('StripeV3PaymentStrategy', () => {
 
                 it('without shipping address if there is not physical items in cart', async () => {
                     jest.spyOn(paymentIntegrationService.getState(), 'getCart').mockReturnValue({
-                        ...paymentIntegrationService.getState().getCart(),
-                        lineItems: { physicalItems: [] },
+                        ...getCart(),
+                        lineItems: {
+                            physicalItems: [],
+                            giftCertificates: [],
+                            digitalItems: [getDigitalItem()],
+                        },
                     });
 
                     await strategy.initialize(options);
@@ -610,8 +611,8 @@ describe('StripeV3PaymentStrategy', () => {
                         },
                     });
 
-                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
-                        Promise.resolve(errorResponse),
+                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockResolvedValue(
+                        errorResponse as unknown as PaymentIntegrationSelectors,
                     );
 
                     await strategy.initialize(options);
@@ -665,9 +666,9 @@ describe('StripeV3PaymentStrategy', () => {
                         Promise.reject(requiredFieldErrorResponse),
                     );
 
-                    stripeV3JsMock.createPaymentMethod = jest.fn(() =>
-                        Promise.resolve({ error: { message: stripeErrorMessage } }),
-                    );
+                    stripeV3JsMock.createPaymentMethod = jest
+                        .fn()
+                        .mockResolvedValue({ error: { message: stripeErrorMessage } });
 
                     await strategy.initialize(options);
 
@@ -714,7 +715,12 @@ describe('StripeV3PaymentStrategy', () => {
                         expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
                         expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(1);
                         expect(stripeV3JsMock.createPaymentMethod).toHaveBeenCalled();
-                        expect(error.message).toEqual(unexpectedError && unexpectedError.message);
+
+                        if (error instanceof Error) {
+                            expect(error.message).toEqual(
+                                unexpectedError && unexpectedError.message,
+                            );
+                        }
                     }
                 });
 
@@ -754,20 +760,18 @@ describe('StripeV3PaymentStrategy', () => {
                     );
                     const stripeErrorMessage = 'Stripe error message.';
 
-                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
-                        Promise.reject(threeDSecureRequiredErrorResponse),
+                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue(
+                        threeDSecureRequiredErrorResponse,
                     );
 
-                    stripeV3JsMock.confirmCardPayment = jest.fn(() =>
-                        Promise.resolve({
-                            error: {
-                                payment_intent: {
-                                    last_payment_error: { message: stripeErrorMessage },
-                                },
-                                message: stripeErrorMessage,
+                    stripeV3JsMock.confirmCardPayment = jest.fn().mockResolvedValue({
+                        error: {
+                            payment_intent: {
+                                last_payment_error: { message: stripeErrorMessage },
                             },
-                        }),
-                    );
+                            message: stripeErrorMessage,
+                        },
+                    });
 
                     await strategy.initialize(options);
 
@@ -787,8 +791,8 @@ describe('StripeV3PaymentStrategy', () => {
                         }),
                     );
 
-                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
-                        Promise.reject(requiredFieldErrorResponse),
+                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue(
+                        requiredFieldErrorResponse,
                     );
 
                     expect(paymentIntegrationService.submitPayment).not.toHaveBeenNthCalledWith(
@@ -815,9 +819,9 @@ describe('StripeV3PaymentStrategy', () => {
                         }),
                     );
 
-                    jest.spyOn(paymentIntegrationService, 'submitPayment')
-                        .mockReturnValueOnce(Promise.reject(threeDSecureRequiredErrorResponse))
-                        .mockReturnValueOnce(Promise.resolve());
+                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
+                        Promise.reject(threeDSecureRequiredErrorResponse),
+                    );
 
                     stripeV3JsMock.confirmCardPayment = jest.fn(() =>
                         Promise.reject(new Error('Error with 3ds')),
@@ -874,15 +878,13 @@ describe('StripeV3PaymentStrategy', () => {
                         Promise.reject(threeDSecureRequiredErrorResponse),
                     );
 
-                    stripeV3JsMock.confirmCardPayment = jest.fn(() =>
-                        Promise.resolve({
-                            error: {
-                                payment_intent: {
-                                    last_payment_error: { message: stripeErrorMessage },
-                                },
+                    stripeV3JsMock.confirmCardPayment = jest.fn().mockResolvedValue({
+                        error: {
+                            payment_intent: {
+                                last_payment_error: { message: stripeErrorMessage },
                             },
-                        }),
-                    );
+                        },
+                    });
 
                     await strategy.initialize(options);
 
@@ -902,8 +904,8 @@ describe('StripeV3PaymentStrategy', () => {
                         }),
                     );
 
-                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
-                        Promise.reject(requiredFieldErrorResponse),
+                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue(
+                        requiredFieldErrorResponse,
                     );
 
                     expect(paymentIntegrationService.submitPayment).not.toHaveBeenNthCalledWith(
@@ -934,16 +936,14 @@ describe('StripeV3PaymentStrategy', () => {
                         Promise.reject(threeDSecureRequiredErrorResponse),
                     );
 
-                    stripeV3JsMock.confirmCardPayment = jest.fn(() =>
-                        Promise.resolve({
-                            error: {
-                                payment_intent: {
-                                    last_payment_error: { message: 'Stripe error message.' },
-                                },
-                                code: 'payment_intent_authentication_failure',
+                    stripeV3JsMock.confirmCardPayment = jest.fn().mockResolvedValue({
+                        error: {
+                            payment_intent: {
+                                last_payment_error: { message: 'Stripe error message.' },
                             },
-                        }),
-                    );
+                            code: 'payment_intent_authentication_failure',
+                        },
+                    });
 
                     await strategy.initialize(options);
 
@@ -987,11 +987,9 @@ describe('StripeV3PaymentStrategy', () => {
                         Promise.reject(threeDSecureRequiredErrorResponse),
                     );
 
-                    stripeV3JsMock.confirmCardPayment = jest.fn(() =>
-                        Promise.resolve({
-                            error: { payment_intent: { last_payment_error: undefined } },
-                        }),
-                    );
+                    stripeV3JsMock.confirmCardPayment = jest.fn().mockResolvedValue({
+                        error: { payment_intent: { last_payment_error: undefined } },
+                    });
 
                     await strategy.initialize(options);
 
@@ -1011,8 +1009,8 @@ describe('StripeV3PaymentStrategy', () => {
                         }),
                     );
 
-                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
-                        Promise.reject(requiredFieldErrorResponse),
+                    jest.spyOn(paymentIntegrationService, 'submitPayment').mockRejectedValue(
+                        requiredFieldErrorResponse,
                     );
 
                     expect(paymentIntegrationService.submitPayment).not.toHaveBeenNthCalledWith(
@@ -1051,9 +1049,9 @@ describe('StripeV3PaymentStrategy', () => {
                         .mockReturnValueOnce(Promise.reject(threeDSecureRequiredErrorResponse))
                         .mockReturnValueOnce(Promise.reject(serverSideError));
 
-                    stripeV3JsMock.confirmCardPayment = jest.fn(() =>
-                        Promise.resolve(getConfirmPaymentResponse()),
-                    );
+                    stripeV3JsMock.confirmCardPayment = jest
+                        .fn()
+                        .mockResolvedValue(getConfirmPaymentResponse());
 
                     await strategy.initialize(options);
 
@@ -1103,9 +1101,9 @@ describe('StripeV3PaymentStrategy', () => {
                         Promise.reject(errorResponse),
                     );
 
-                    stripeV3JsMock.confirmCardPayment = jest.fn(() =>
-                        Promise.resolve(getConfirmPaymentResponse()),
-                    );
+                    stripeV3JsMock.confirmCardPayment = jest
+                        .fn()
+                        .mockResolvedValue(getConfirmPaymentResponse());
 
                     await strategy.initialize(options);
                     await strategy.execute(getStripeV3OrderRequestBodyVaultMock());
@@ -1136,9 +1134,9 @@ describe('StripeV3PaymentStrategy', () => {
                         Promise.reject(errorResponse),
                     );
 
-                    stripeV3JsMock.confirmCardPayment = jest.fn(() =>
-                        Promise.resolve(getConfirmPaymentResponse()),
-                    );
+                    stripeV3JsMock.confirmCardPayment = jest
+                        .fn()
+                        .mockResolvedValue(getConfirmPaymentResponse());
 
                     await strategy.initialize(options);
                     await strategy.execute(getStripeV3OrderRequestBodyMock());
@@ -1253,8 +1251,8 @@ describe('StripeV3PaymentStrategy', () => {
                     ...getStripeV3(StripeElementType.Alipay),
                     clientToken: 'myToken',
                 };
-                jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
-                    loadPaymentMethodAction,
+                jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+                    paymentIntegrationService.getState(),
                 );
 
                 jest.spyOn(
@@ -1263,9 +1261,9 @@ describe('StripeV3PaymentStrategy', () => {
                 ).mockReturnValue(getStripeV3(StripeElementType.Alipay));
 
                 options = getStripeV3InitializeOptionsMock(StripeElementType.Alipay);
-                stripeV3JsMock.confirmAlipayPayment = jest.fn(() =>
-                    Promise.resolve(getConfirmPaymentResponse()),
-                );
+                stripeV3JsMock.confirmAlipayPayment = jest
+                    .fn()
+                    .mockResolvedValue(getConfirmPaymentResponse());
 
                 await strategy.initialize(options);
 
@@ -1282,8 +1280,8 @@ describe('StripeV3PaymentStrategy', () => {
                     ...getStripeV3(StripeElementType.IDEAL),
                     clientToken: 'myToken',
                 };
-                jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
-                    loadPaymentMethodAction,
+                jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+                    paymentIntegrationService.getState(),
                 );
 
                 jest.spyOn(
@@ -1292,9 +1290,9 @@ describe('StripeV3PaymentStrategy', () => {
                 ).mockReturnValue(getStripeV3(StripeElementType.IDEAL));
 
                 options = getStripeV3InitializeOptionsMock(StripeElementType.IDEAL);
-                stripeV3JsMock.confirmIdealPayment = jest.fn(() =>
-                    Promise.resolve(getConfirmPaymentResponse()),
-                );
+                stripeV3JsMock.confirmIdealPayment = jest
+                    .fn()
+                    .mockResolvedValue(getConfirmPaymentResponse());
 
                 await strategy.initialize(options);
 
@@ -1310,8 +1308,8 @@ describe('StripeV3PaymentStrategy', () => {
                     ...getStripeV3(StripeElementType.Sepa),
                     clientToken: 'myToken',
                 };
-                jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
-                    loadPaymentMethodAction,
+                jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+                    paymentIntegrationService.getState(),
                 );
 
                 jest.spyOn(
@@ -1320,9 +1318,9 @@ describe('StripeV3PaymentStrategy', () => {
                 ).mockReturnValue(getStripeV3(StripeElementType.Sepa));
 
                 options = getStripeV3InitializeOptionsMock(StripeElementType.Sepa);
-                stripeV3JsMock.confirmSepaDebitPayment = jest.fn(() =>
-                    Promise.resolve(getConfirmPaymentResponse()),
-                );
+                stripeV3JsMock.confirmSepaDebitPayment = jest
+                    .fn()
+                    .mockResolvedValue(getConfirmPaymentResponse());
 
                 await strategy.initialize(options);
 
@@ -1371,35 +1369,40 @@ describe('StripeV3PaymentStrategy', () => {
 
     describe('When Hosted Form is enabled', () => {
         let form: Pick<HostedForm, 'attach' | 'submit' | 'validate' | 'detach'>;
-        let initializeOptions: PaymentInitializeOptions;
-        let loadOrderAction: Promise<Order>;
+        let initializeOptions: StripeV3InitializeOptions;
         let state;
         const stripeV3JsMock = getStripeV3JsMock();
 
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
-                submit: jest.fn(() => Promise.resolve()),
+                submit: jest.fn(() =>
+                    Promise.resolve({
+                        type: HostedInputEventType.SubmitSucceeded,
+                        payload: {},
+                    } as HostedInputSubmitSuccessEvent),
+                ),
                 validate: jest.fn(() => Promise.resolve()),
                 detach: jest.fn(),
             };
             paymentMethodMock = { ...getStripeV3('card', false, true), clientToken: 'myToken' };
             initializeOptions = getHostedFormInitializeOptions();
-            loadOrderAction = Promise.resolve(getOrder());
             state = paymentIntegrationService.getState();
 
             jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(
                 getStripeV3(StripePaymentMethodType.CreditCard, false, true),
             );
 
-            jest.spyOn(paymentIntegrationService, 'loadCurrentOrder').mockReturnValue(
-                loadOrderAction,
+            jest.spyOn(paymentIntegrationService, 'loadCurrentOrder').mockResolvedValue(
+                paymentIntegrationService.getState(),
             );
 
-            jest.spyOn(paymentIntegrationService, 'createHostedForm').mockReturnValue(form);
+            jest.spyOn(paymentIntegrationService, 'createHostedForm').mockReturnValue(
+                form as HostedForm,
+            );
 
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
-                loadPaymentMethodAction,
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+                paymentIntegrationService.getState(),
             );
 
             jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
