@@ -25,6 +25,10 @@ describe('LanguageService', () => {
                 'optimized_checkout.test.continue_as_guest_action': 'Continue as guest',
                 'optimized_checkout.test.email_label': 'Email Address',
                 'optimized_checkout.test.order_number_text': 'Your order number is {orderNumber}',
+                'optimized_checkout.test.thank_you_text': '<strong>Thank you<strong>',
+                'optimized_checkout.test.link_single_quote_text':
+                    "Check <a href='/terms-and-conditions/' target='blank'>T&C</a>",
+                'optimized_checkout.test.escape_text': "Copy this code '{abc}'",
             },
         };
 
@@ -51,6 +55,26 @@ describe('LanguageService', () => {
             );
         });
 
+        it('returns translated HTML strings', () => {
+            expect(langService.translate('test.thank_you_text')).toBe('<strong>Thank you<strong>');
+        });
+
+        it('returns translated HTML strings with special ICU characters', () => {
+            expect(langService.translate('test.link_single_quote_text')).toBe(
+                "Check <a href='/terms-and-conditions/' target='blank'>T&C</a>",
+            );
+        });
+
+        it('returns translated text with escaped characters', () => {
+            expect(langService.translate('test.escape_text')).toBe('Copy this code {abc}');
+        });
+
+        it('returns template string when values are missing for template variables', () => {
+            expect(langService.translate('test.order_number_text')).toBe(
+                'Your order number is {orderNumber}',
+            );
+        });
+
         it('pluralizes strings using ICU format', () => {
             expect(langService.translate('test.item_count_text', { count: 0 })).toBe('0 Items');
             expect(langService.translate('test.item_count_text', { count: 1 })).toBe('1 Item');
@@ -70,7 +94,7 @@ describe('LanguageService', () => {
 
             expect(langService.translate('test.days_text', { count: 1 })).toBe('1 den');
             expect(langService.translate('test.days_text', { count: 2 })).toBe('2 dny');
-            expect(langService.translate('test.days_text', { count: 1.5 })).toBe('1.5 dne');
+            expect(langService.translate('test.days_text', { count: 1.5 })).toBe('1,5 dne');
             expect(langService.translate('test.days_text', { count: 100 })).toBe('100 dní');
         });
 
