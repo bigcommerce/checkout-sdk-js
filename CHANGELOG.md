@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.668.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.668.0...v1.668.1) (2024-10-13)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-8519 Escape single quotes used for HTML attributes before formatting to avoid problems with ICU special characters ([b906300](https://github.com/bigcommerce/checkout-sdk-js/commit/b906300a8807b446cd55c9373763ba770464aec7))
+* **checkout:** CHECKOUT-8519 Return original message instead of throwing error when there are missing template variables ([a4b757c](https://github.com/bigcommerce/checkout-sdk-js/commit/a4b757c70087a54c10e310b66b8f3bf9cc816124))
+
 ## [1.668.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.667.0...v1.668.0) (2024-10-11)
 
 

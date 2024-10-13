@@ -5703,6 +5703,10 @@ declare interface LanguageConfig {
     locale: string;
     locales: Locales;
     translations: Translations;
+    /**
+     * @hidden This property is intended for toggling an experimental change only.
+     */
+    isCspNonceExperimentEnabled?: boolean;
 }
 
 /**
@@ -5720,6 +5724,7 @@ declare class LanguageService {
     private _locales;
     private _translations;
     private _formatters;
+    private _isCspNonceExperimentEnabled;
     /**
      * Remaps a set of language strings with a different set of keys.
      *
@@ -5765,6 +5770,8 @@ declare class LanguageService {
     private _flattenObject;
     private _transformData;
     private _hasTranslations;
+    private _isFormatError;
+    private _escapeSpecialCharacters;
 }
 
 declare interface LineItem {
