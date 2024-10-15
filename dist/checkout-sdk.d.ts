@@ -32,6 +32,7 @@ import { Timeout } from '@bigcommerce/request-sender';
 import { WithAccountCreation } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WithBankAccountInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WithEcpInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { WithPayByBankInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { WithSepaInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { createTimeout } from '@bigcommerce/request-sender';
 
@@ -6202,7 +6203,7 @@ declare interface OrderPayment {
     amount: number;
 }
 
-declare type OrderPaymentInstrument = WithBankAccountInstrument | WithEcpInstrument | WithSepaInstrument | WithIdealInstrument | CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithIdealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
+declare type OrderPaymentInstrument = WithBankAccountInstrument | WithEcpInstrument | WithSepaInstrument | WithPayByBankInstrument | WithIdealInstrument | CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | NonceInstrument | VaultedInstrument | (CreditCardInstrument & WithDocumentInstrument) | (CreditCardInstrument & WithCheckoutcomFawryInstrument) | (CreditCardInstrument & WithCheckoutcomSEPAInstrument) | (CreditCardInstrument & WithIdealInstrument) | (HostedInstrument & WithMollieIssuerInstrument) | WithAccountCreation;
 
 /**
  * An object that contains the payment information required for submitting an

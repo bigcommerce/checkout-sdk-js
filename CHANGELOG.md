@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.668.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.668.1...v1.668.2) (2024-10-15)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2783 clenup async functions test errors ([#2693](https://github.com/bigcommerce/checkout-sdk-js/issues/2693)) ([1197d39](https://github.com/bigcommerce/checkout-sdk-js/commit/1197d39415d22e544a08cb96a5b871771987c36f))
+
 ### [1.668.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.668.0...v1.668.1) (2024-10-13)
 
 
