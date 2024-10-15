@@ -119,11 +119,6 @@ describe('AfterpayPaymentStrategy', () => {
                 gatewayId: paymentMethod.gateway,
             });
 
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            strategy.execute(payload).then(successHandler);
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
             jest.spyOn(paymentIntegrationService.getState(), 'getCart').mockReturnValue({
                 ...getCart(),
                 currency: { ...getCart().currency, code: 'USD' },
@@ -140,12 +135,22 @@ describe('AfterpayPaymentStrategy', () => {
             );
         });
 
-        it('redirects to Afterpay', () => {
+        it('redirects to Afterpay', async () => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            strategy.execute(payload).then(successHandler);
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
             expect(afterpaySdk.initialize).toHaveBeenCalledWith({ countryCode: 'US' });
             expect(afterpaySdk.redirect).toHaveBeenCalledWith({ token: paymentMethod.clientToken });
         });
 
-        it('applies store credit usage', () => {
+        it('applies store credit usage', async () => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            strategy.execute(payload).then(successHandler);
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
             expect(paymentIntegrationService.applyStoreCredit).toHaveBeenCalledWith(false);
         });
 
@@ -174,6 +179,18 @@ describe('AfterpayPaymentStrategy', () => {
             }
         });
 
+        it('loads payment client token', async () => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            strategy.execute(payload).then(successHandler);
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
+                paymentMethod.gateway,
+                { params: { method: paymentMethod.id } },
+            );
+        });
+
         it('throws InvalidArgumentError if loadPaymentMethod fails', async () => {
             const errorResponse = {
                 body: {
@@ -194,13 +211,6 @@ describe('AfterpayPaymentStrategy', () => {
             });
 
             await expect(strategy.execute(payload)).rejects.toThrow(InvalidArgumentError);
-        });
-
-        it('loads payment client token', () => {
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(
-                paymentMethod.gateway,
-                { params: { method: paymentMethod.id } },
-            );
         });
     });
 

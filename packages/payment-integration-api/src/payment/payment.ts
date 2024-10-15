@@ -12,6 +12,7 @@ export default interface Payment<T = unknown> {
 
 export type PaymentInstrumentPayload<T = unknown> =
     | WithEcpInstrument
+    | WithPayByBankInstrument
     | WithSepaInstrument
     | WithIdealInstrument
     | CreditCardInstrument

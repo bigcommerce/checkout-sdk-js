@@ -2,6 +2,7 @@ import {
     WithAccountCreation,
     WithBankAccountInstrument,
     WithEcpInstrument,
+    WithPayByBankInstrument,
     WithSepaInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -43,6 +44,7 @@ export type OrderPaymentInstrument =
     | WithBankAccountInstrument
     | WithEcpInstrument
     | WithSepaInstrument
+    | WithPayByBankInstrument
     | WithIdealInstrument
     | CreditCardInstrument
     | HostedInstrument
