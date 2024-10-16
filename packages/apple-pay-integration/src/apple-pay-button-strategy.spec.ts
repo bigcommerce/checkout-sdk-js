@@ -1,6 +1,5 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
-import { merge } from 'lodash';
 
 import {
     BraintreeScriptLoader,
@@ -103,10 +102,6 @@ describe('ApplePayButtonStrategy', () => {
             expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalled();
 
             expect(children).toHaveLength(1);
-
-            expect(Boolean(container.getElementsByClassName('apple-pay-checkout-button')[0])).toBe(
-                true,
-            );
         });
 
         it('doesnt call verifyCheckoutSpamProtection if cart undefined', async () => {
@@ -118,18 +113,6 @@ describe('ApplePayButtonStrategy', () => {
             await strategy.initialize(checkoutButtonInitializeOptions);
 
             expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalledTimes(0);
-        });
-
-        it('creates the button with a custom style class name', async () => {
-            const customClass = 'testClassName';
-            const CheckoutButtonInitializeOptions = merge(
-                getApplePayButtonInitializationOptions(),
-                { applepay: { buttonClassName: customClass } },
-            );
-
-            await strategy.initialize(CheckoutButtonInitializeOptions);
-
-            expect(Boolean(container.getElementsByClassName(customClass)[0])).toBe(true);
         });
 
         it('throws error when payment data is empty', async () => {

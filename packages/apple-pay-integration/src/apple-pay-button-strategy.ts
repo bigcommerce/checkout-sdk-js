@@ -34,9 +34,50 @@ enum DefaultLabels {
     Shipping = 'Shipping',
 }
 
+enum ButtonStyleOption {
+    Black = 'black',
+    White = 'white',
+    WhiteBorder = 'white-border',
+}
+
 function isShippingOptions(options: ShippingOption[] | undefined): options is ShippingOption[] {
     return options instanceof Array;
 }
+
+const getApplePayButtonStyle = (option?: ButtonStyleOption): Record<string, string> => {
+    const defaultStyle: Record<string, string> = {
+        backgroundPosition: '50% 50%',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '100% 60%',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        transition: '0.2s ease',
+        minHeight: '32px',
+        minWidth: '90px',
+        padding: '1.5rem',
+        display: 'block',
+    };
+
+    switch (option) {
+        case ButtonStyleOption.White:
+            defaultStyle.backgroundColor = '#fff';
+            defaultStyle.backgroundImage = '-webkit-named-image(apple-pay-logo-black)';
+            break;
+
+        case ButtonStyleOption.WhiteBorder:
+            defaultStyle.backgroundColor = '#fff';
+            defaultStyle.backgroundImage = '-webkit-named-image(apple-pay-logo-black)';
+            defaultStyle.border = '0.5px solid #000';
+            break;
+
+        case ButtonStyleOption.Black:
+        default:
+            defaultStyle.backgroundColor = '#000';
+            defaultStyle.backgroundImage = '-webkit-named-image(apple-pay-logo-white)';
+    }
+
+    return defaultStyle;
+};
 
 export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
@@ -65,8 +106,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const { buttonClassName, onPaymentAuthorize, buyNowInitializeOptions, requiresShipping } =
-            applepay;
+        const { onPaymentAuthorize, buyNowInitializeOptions, requiresShipping } = applepay;
 
         this._requiresShipping = requiresShipping;
 
@@ -94,7 +134,10 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             await this._initializeBraintreeSdk();
         }
 
-        this._applePayButton = this._createButton(containerId, buttonClassName);
+        this._applePayButton = this._createButton(
+            containerId,
+            this._paymentMethod.initializationData?.styleOption,
+        );
         this._applePayButton.addEventListener('click', this._handleWalletButtonClick.bind(this));
 
         return Promise.resolve();
@@ -104,10 +147,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         return Promise.resolve();
     }
 
-    private _createButton(
-        containerId: string,
-        buttonClassName = 'apple-pay-checkout-button',
-    ): HTMLElement {
+    private _createButton(containerId: string, styleOption?: ButtonStyleOption): HTMLElement {
         const container = document.getElementById(containerId);
 
         if (!container) {
@@ -116,13 +156,12 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             );
         }
 
-        document.body.classList.add('apple-pay-supported');
-
         const button = document.createElement('div');
 
-        button.setAttribute('class', buttonClassName);
         button.setAttribute('role', 'button');
         button.setAttribute('aria-label', 'Apple Pay button');
+        Object.assign(button.style, getApplePayButtonStyle(styleOption));
+
         container.appendChild(button);
 
         return button;
