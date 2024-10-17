@@ -94,6 +94,7 @@ export interface StripePaymentEvent extends StripeEvent {
     value: {
         type: StripePaymentMethodType;
     };
+    collapsed?: boolean;
 }
 
 interface Address {
@@ -203,6 +204,14 @@ export interface TermOptions {
     card?: AutoOrNever;
 }
 
+export interface StripeLayoutOptions {
+    type?: 'accordion' | 'tabs';
+    defaultCollapsed?: boolean;
+    radios?: boolean;
+    spacedAccordionItems?: boolean;
+    visibleAccordionItemsCount?: number;
+}
+
 /**
  * All available options are here https://stripe.com/docs/js/elements_object/create_payment_element
  */
@@ -215,7 +224,7 @@ export interface StripeElementsCreateOptions {
     validation?: validationElement;
     display?: { name: DisplayName };
     terms?: TermOptions;
-    layout?: any;
+    layout?: StripeLayoutOptions;
     paymentMethodOrder?: string[];
 }
 
@@ -295,7 +304,6 @@ export interface StripeElements {
  */
 export interface StripeUPEAppearanceOptions {
     variables?: {
-        [key: string]: any;
         colorPrimary?: string;
         colorBackground?: string;
         colorText?: string;
@@ -307,18 +315,14 @@ export interface StripeUPEAppearanceOptions {
         colorIconRedirect?: string;
         spacingUnit?: string;
         borderRadius?: string;
+        fontFamily?: string;
     };
 
     rules?: {
-        [key: string]: any;
-        '.Input'?: {
-            borderColor?: string;
-            color?: string;
-            boxShadow?: string;
+        [key: string]: {
+            [key: string]: string | number;
         };
     };
-
-    layout?: any;
 }
 
 export interface StripeElementsOptions {

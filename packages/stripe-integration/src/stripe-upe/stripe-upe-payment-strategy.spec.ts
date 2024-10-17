@@ -39,6 +39,7 @@ import {
     StripeUPEClient,
 } from './stripe-upe';
 import { WithStripeUPEPaymentInitializeOptions } from './stripe-upe-initialize-options';
+import StripeUPEIntegrationService from './stripe-upe-integration-service';
 import StripeUPEPaymentStrategy from './stripe-upe-payment-strategy';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import {
@@ -53,7 +54,6 @@ import {
     getStripeUPEOrderRequestBodyVaultMock,
     getStripeUPEWithLinkOrderRequestBodyMock,
 } from './stripe-upe.mock';
-import StripeUPEIntegrationService from './stripe-upe-integration-service';
 
 describe('StripeUPEPaymentStrategy', () => {
     let checkoutMock: Checkout;

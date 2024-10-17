@@ -20,6 +20,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import formatLocale from './format-locale';
+import { isStripePaymentEvent } from './is-stripe-payment-event';
 import { isStripeUPEPaymentMethodLike } from './is-stripe-upe-payment-method-like';
 import {
     StripeElement,
@@ -205,12 +206,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         });
 
         stripeElement.on('change', (event: StripeEventType) => {
-            if (!event?.value || !('type' in event.value)) {
-                return;
-            }
-
-            this.selectedMethodId = event.value.type;
-            paymentMethodSelect?.(`${gatewayId}-${methodId}`);
+            this._onStripeElementChange(event, gatewayId, methodId, paymentMethodSelect);
         });
 
         handleClosePaymentMethod?.(this._collapseStripeElement.bind(this));
@@ -401,5 +397,19 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         }
 
         throw error;
+    }
+
+    private _onStripeElementChange(
+        event: StripeEventType,
+        gatewayId: string,
+        methodId: string,
+        paymentMethodSelect?: (id: string) => void,
+    ) {
+        if (!isStripePaymentEvent(event) || event.collapsed) {
+            return;
+        }
+
+        this.selectedMethodId = event.value.type;
+        paymentMethodSelect?.(`${gatewayId}-${methodId}`);
     }
 }
