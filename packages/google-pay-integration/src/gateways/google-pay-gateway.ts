@@ -288,12 +288,20 @@ export default class GooglePayGateway {
             this._getGooglePayShippingOption.bind(this),
         );
 
+        const recommendedShippingOption = consignment.availableShippingOptions?.find(
+            (shippingOption) => shippingOption.isRecommended,
+        );
+
         if (availableShippingOptions.length) {
             const selectedShippingOptionId =
-                consignment.selectedShippingOption?.id || availableShippingOptions[0]?.id;
+                consignment.selectedShippingOption?.id ||
+                recommendedShippingOption?.id ||
+                availableShippingOptions[0]?.id;
 
             if (!consignment.selectedShippingOption?.id && availableShippingOptions[0]) {
-                await this.handleShippingOptionChange(availableShippingOptions[0].id);
+                await this.handleShippingOptionChange(
+                    recommendedShippingOption?.id || availableShippingOptions[0].id,
+                );
             }
 
             return {
