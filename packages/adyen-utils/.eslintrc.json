@@ -22,7 +22,6 @@
                 "jest/valid-expect": "off",
                 "jest/no-if": "off",
                 "@typescript-eslint/await-thenable": "off",
-                "@typescript-eslint/no-unsafe-assignment": "off",
                 "jest/no-conditional-expect": "off",
                 "jest/no-test-return-statement": "off",
                 "@typescript-eslint/no-shadow": "off"

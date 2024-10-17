@@ -18,6 +18,7 @@ const state = {
     getBillingAddressOrThrow: jest.fn(() => getBillingAddress()),
     getCart: jest.fn(() => getCart()),
     getCartOrThrow: jest.fn(() => getCart()),
+    getCardInstrument: jest.fn(() => getCardInstrument()),
     getCardInstrumentOrThrow: jest.fn(() => getCardInstrument()),
     getInstruments: jest.fn(() => getInstruments()),
     getInstrumentsMeta: jest.fn(),
@@ -36,23 +37,31 @@ const state = {
     getOrderMeta: jest.fn(() => getOrderMeta()),
     getShippingAddress: jest.fn(() => getAddress()),
     getShippingAddressOrThrow: jest.fn(() => getAddress()),
+    getShippingAddresses: jest.fn(() => [getAddress()]),
+    getShippingAddressesOrThrow: jest.fn(() => [getAddress()]),
     getShippingCountries: jest.fn(() => getCountries()),
-    getConfig: jest.fn(() => getConfig().storeConfig),
+    getConfig: jest.fn(() => getConfig()),
     getStoreConfig: jest.fn(() => getConfig().storeConfig),
     getStoreConfigOrThrow: jest.fn(() => getConfig().storeConfig),
     getPaymentId: jest.fn(() => getPaymentId()),
+    getPaymentIdOrThrow: jest.fn(() => getPaymentId()),
     getPaymentMethod: jest.fn(),
     getPaymentMethodOrThrow: jest.fn(),
     getPaymentMethodsMeta: jest.fn(),
     getPaymentProviderCustomer: jest.fn(),
     getPaymentProviderCustomerOrThrow: jest.fn(),
     getPaymentStatus: jest.fn(),
+    getPaymentStatusOrThrow: jest.fn(),
     getPaymentToken: jest.fn(),
+    getPaymentTokenOrThrow: jest.fn(),
     isPaymentMethodInitialized: jest.fn(),
     getOutstandingBalance: jest.fn(),
+    getPaymentRedirectUrl: jest.fn(),
+    getPaymentRedirectUrlOrThrow: jest.fn(),
+    isPaymentDataRequired: jest.fn(),
 };
 
-const createBuyNowCart = jest.fn();
+const createBuyNowCart = jest.fn(() => Promise.resolve(getCart()));
 const createHostedForm = jest.fn();
 const forgetCheckout = jest.fn();
 const remoteCheckoutSignOut = jest.fn();
@@ -66,7 +75,7 @@ const loadCheckout = jest.fn();
 const loadDefaultCheckout = jest.fn();
 const loadPaymentMethod = jest.fn();
 const loadPaymentMethods = jest.fn();
-const loadShippingCountries = jest.fn(() => state);
+const loadShippingCountries = jest.fn(() => Promise.resolve(state));
 const loadCurrentOrder = jest.fn();
 const submitOrder = jest.fn();
 const submitPayment = jest.fn();
@@ -81,13 +90,11 @@ const verifyCheckoutSpamProtection = jest.fn();
 const updatePaymentProviderCustomer = jest.fn();
 const initializePayment = jest.fn();
 const validateCheckout = jest.fn();
+const widgetInteraction = jest.fn();
 const handle = jest.fn();
 
 const PaymentIntegrationServiceMock = jest
-    // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    .fn<PaymentIntegrationService>()
+    .fn<PaymentIntegrationService, []>()
     .mockImplementation(() => {
         return {
             createBuyNowCart,
@@ -121,6 +128,7 @@ const PaymentIntegrationServiceMock = jest
             initializePayment,
             validateCheckout,
             handle,
+            widgetInteraction,
         };
     });
 

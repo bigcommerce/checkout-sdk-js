@@ -12,7 +12,6 @@
             "files": ["*.spec.ts"],
             "rules": {
                 "jest/no-conditional-expect": "off",
-                "@typescript-eslint/no-unsafe-assignment": "off",
                 "@typescript-eslint/consistent-type-assertions": "off"
             }
         }
