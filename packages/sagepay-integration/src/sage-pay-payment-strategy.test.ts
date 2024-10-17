@@ -1,21 +1,14 @@
-import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { FormPoster } from '@bigcommerce/form-poster';
 import { noop, omit } from 'lodash';
-import { Observable, of } from 'rxjs';
 
 import { CreditCardPaymentStrategy } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import {
-    FinalizeOrderAction,
     MissingDataError,
     NotInitializedError,
-    OrderActionType,
     OrderFinalizationNotRequiredError,
-    PaymentActionType,
     PaymentIntegrationService,
     PaymentMethod,
     RequestError,
-    SubmitOrderAction,
-    SubmitPaymentAction,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getConfig,
@@ -30,13 +23,10 @@ import {
 import SagePayPaymentStrategy from './sage-pay-payment-strategy';
 
 describe('SagePayPaymentStrategy', () => {
-    let finalizeOrderAction: Observable<FinalizeOrderAction>;
     let formPoster: FormPoster;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let strategy: SagePayPaymentStrategy;
-    let submitOrderAction: Observable<SubmitOrderAction>;
-    let submitPaymentAction: Observable<SubmitPaymentAction>;
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -44,9 +34,6 @@ describe('SagePayPaymentStrategy', () => {
             postForm: jest.fn(),
         } as unknown as FormPoster;
 
-        finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
-        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         paymentMethod = getPaymentMethod();
 
         jest.spyOn(formPoster, 'postForm').mockImplementation((_url, _data, callback = noop) =>
@@ -57,14 +44,14 @@ describe('SagePayPaymentStrategy', () => {
             paymentMethod,
         );
 
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
             paymentIntegrationService.getState(),
         );
-        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReturnValue(finalizeOrderAction);
+        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
-        jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(submitPaymentAction);
+        jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
 
         strategy = new SagePayPaymentStrategy(paymentIntegrationService, formPoster);
     });
@@ -128,11 +115,7 @@ describe('SagePayPaymentStrategy', () => {
     });
 
     it('does not post 3ds data to Sage if 3ds is not enabled', async () => {
-        const response = new RequestError(getResponse(getErrorPaymentResponseBody()));
-
-        jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
-            of(createErrorAction(PaymentActionType.SubmitPaymentFailed, response)),
-        );
+        jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
 
         await strategy.execute(getOrderRequestBody());
 
@@ -142,7 +125,7 @@ describe('SagePayPaymentStrategy', () => {
     it('does not finalize order if order is not created', async () => {
         const state = paymentIntegrationService.getState();
 
-        jest.spyOn(state, 'getOrder').mockReturnValue(null);
+        jest.spyOn(state, 'getOrder').mockReturnValue(undefined);
 
         try {
             await strategy.finalize();
@@ -155,7 +138,8 @@ describe('SagePayPaymentStrategy', () => {
     it('does not finalize order if order is not finalized', async () => {
         const order = getOrder();
 
-        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockReturnValue({
+        jest.spyOn(paymentIntegrationService, 'finalizeOrder').mockResolvedValue({
+            ...paymentIntegrationService.getState(),
             getOrder: () => order,
             getPaymentStatus: () => 'INITIALIZE',
         });
@@ -166,7 +150,7 @@ describe('SagePayPaymentStrategy', () => {
     it('throws error if order is missing', async () => {
         const state = paymentIntegrationService.getState();
 
-        jest.spyOn(state, 'getOrder').mockReturnValue(null);
+        jest.spyOn(state, 'getOrder').mockReturnValue(undefined);
 
         try {
             await strategy.finalize();
@@ -257,11 +241,6 @@ describe('SagePayPaymentStrategy', () => {
     });
     describe('should fail if...', () => {
         test('payment data is not provided', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({ ...getPaymentMethod(), payment: undefined });
-
             const payload = {
                 ...getOrderRequestBody(),
                 payment: undefined,
@@ -274,11 +253,6 @@ describe('SagePayPaymentStrategy', () => {
             }
         });
         test('payment is not provided', async () => {
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({ ...getPaymentMethod(), payment: undefined });
-
             const payload = {
                 ...getOrderRequestBody(),
                 payment: {
