@@ -34,7 +34,7 @@ enum DefaultLabels {
     Shipping = 'Shipping',
 }
 
-enum ButtonStyleOption {
+export enum ButtonStyleOption {
     Black = 'black',
     White = 'white',
     WhiteBorder = 'white-border',
