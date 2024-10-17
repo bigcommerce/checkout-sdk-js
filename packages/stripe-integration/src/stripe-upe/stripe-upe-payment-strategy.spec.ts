@@ -53,6 +53,7 @@ import {
     getStripeUPEOrderRequestBodyVaultMock,
     getStripeUPEWithLinkOrderRequestBodyMock,
 } from './stripe-upe.mock';
+import StripeUPEIntegrationService from './stripe-upe-integration-service';
 
 describe('StripeUPEPaymentStrategy', () => {
     let checkoutMock: Checkout;
@@ -60,6 +61,7 @@ describe('StripeUPEPaymentStrategy', () => {
     let strategy: StripeUPEPaymentStrategy;
     let stripeScriptLoader: StripeUPEScriptLoader;
     let paymentIntegrationService: PaymentIntegrationService;
+    let stripeUPEIntegrationService: StripeUPEIntegrationService;
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -91,7 +93,12 @@ describe('StripeUPEPaymentStrategy', () => {
 
         jest.spyOn(paymentIntegrationService, 'subscribe');
 
-        strategy = new StripeUPEPaymentStrategy(paymentIntegrationService, stripeScriptLoader);
+        stripeUPEIntegrationService = new StripeUPEIntegrationService(paymentIntegrationService);
+        strategy = new StripeUPEPaymentStrategy(
+            paymentIntegrationService,
+            stripeScriptLoader,
+            stripeUPEIntegrationService,
+        );
 
         const mockElement = document.createElement('div');
 
