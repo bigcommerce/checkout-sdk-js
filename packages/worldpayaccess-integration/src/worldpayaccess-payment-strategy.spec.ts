@@ -1,13 +1,11 @@
-import { Action, createAction } from '@bigcommerce/data-store';
 import { merge, omit } from 'lodash';
-import { Observable, of } from 'rxjs';
 
 import {
     HostedFieldType,
     HostedForm,
-    LoadOrderSucceededAction,
+    HostedInputEventType,
+    HostedInputSubmitSuccessEvent,
     NotInitializedError,
-    OrderActionType,
     OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
@@ -16,7 +14,6 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getErrorPaymentResponseBody,
-    getOrder,
     getOrderRequestBody,
     getPaymentMethod,
     getResponse,
@@ -28,7 +25,6 @@ import WorldpayAccessPaymetStrategy from './worldpayaccess-payment-strategy';
 describe('WorldpayAccessPaymetStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: WorldpayAccessPaymetStrategy;
-    let submitOrderAction: Observable<Action>;
     let initializeOptions: PaymentInitializeOptions;
 
     const payload = getOrderRequestBody();
@@ -52,14 +48,26 @@ describe('WorldpayAccessPaymetStrategy', () => {
         }),
     );
 
+    const mockHostedInputSubmitSuccessEvent: HostedInputSubmitSuccessEvent = {
+        type: HostedInputEventType.SubmitSucceeded,
+        payload: {
+            response: {
+                body: 'body',
+                headers: {
+                    header: 'header',
+                },
+                status: 1,
+                statusText: 'statusText',
+            },
+        },
+    };
+
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
-        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-
         strategy = new WorldpayAccessPaymetStrategy(paymentIntegrationService);
 
-        jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(submitOrderAction);
+        jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             merge(getPaymentMethod(), { config: { isHostedFormEnabled: true } }),
@@ -115,13 +123,15 @@ describe('WorldpayAccessPaymetStrategy', () => {
     });
 
     describe('when hosted form is enabled', () => {
-        let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
-        let loadOrderAction: Observable<LoadOrderSucceededAction>;
+        let form: HostedForm;
 
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
-                submit: jest.fn(() => Promise.resolve()),
+                detach: jest.fn(() => Promise.resolve()),
+                getBin: jest.fn(() => 'bin'),
+                getCardType: jest.fn(() => 'cardType'),
+                submit: jest.fn(() => Promise.resolve(mockHostedInputSubmitSuccessEvent)),
                 validate: jest.fn(() => Promise.resolve()),
             };
 
@@ -141,11 +151,7 @@ describe('WorldpayAccessPaymetStrategy', () => {
                 },
             };
 
-            loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
-
-            jest.spyOn(paymentIntegrationService, 'loadCurrentOrder').mockReturnValue(
-                loadOrderAction,
-            );
+            jest.spyOn(paymentIntegrationService, 'loadCurrentOrder').mockImplementation(jest.fn());
             jest.spyOn(paymentIntegrationService, 'createHostedForm').mockReturnValue(form);
         });
 
@@ -206,7 +212,10 @@ describe('WorldpayAccessPaymetStrategy', () => {
             beforeEach(() => {
                 form = {
                     attach: jest.fn(() => Promise.resolve()),
-                    submit: jest.fn(() => Promise.resolve()),
+                    detach: jest.fn(() => Promise.resolve()),
+                    getBin: jest.fn(() => 'bin'),
+                    getCardType: jest.fn(() => 'cardType'),
+                    submit: jest.fn(() => Promise.resolve(mockHostedInputSubmitSuccessEvent)),
                     validate: jest.fn(() => Promise.resolve()),
                 };
                 initializeOptions = {
@@ -220,12 +229,13 @@ describe('WorldpayAccessPaymetStrategy', () => {
                         onLoad: jest.fn(),
                     },
                 };
-                loadOrderAction = of(createAction(OrderActionType.LoadOrderSucceeded, getOrder()));
 
-                jest.spyOn(paymentIntegrationService, 'loadCurrentOrder').mockReturnValue(
-                    loadOrderAction,
+                jest.spyOn(paymentIntegrationService, 'loadCurrentOrder').mockImplementation(
+                    jest.fn(),
                 );
-                jest.spyOn(paymentIntegrationService, 'createHostedForm').mockReturnValue(form);
+                jest.spyOn(paymentIntegrationService, 'createHostedForm').mockImplementation(
+                    jest.fn(),
+                );
             });
 
             it('does not create hosted form', async () => {
