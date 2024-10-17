@@ -1,8 +1,8 @@
 import { Cart, CartSource } from '../cart';
-import { getCoupon } from '../coupon/coupons.mock';
-import { getCurrency } from '../currency/currency.mock';
 import { getDiscount } from '../discount/discounts.mock';
 
+import { getCoupon } from './coupons.mock';
+import { getCurrency } from './currency.mock';
 import {
     getCustomItem,
     getDigitalItem,

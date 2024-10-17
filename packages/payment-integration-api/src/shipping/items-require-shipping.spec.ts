@@ -1,7 +1,7 @@
 import { Cart } from '../cart';
-import getCart from '../cart/carts.mock';
 import { StoreConfig } from '../config';
-import getConfig from '../config/config.mock';
+import getCart from '../mocks/carts.mock';
+import getConfig from '../mocks/config.mock';
 
 import itemsRequireShipping from './items-require-shipping';
 

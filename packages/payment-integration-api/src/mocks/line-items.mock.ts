@@ -1,4 +1,4 @@
-import { CustomItem, DigitalItem, GiftCertificateItem, PhysicalItem } from './line-item';
+import { CustomItem, DigitalItem, GiftCertificateItem, PhysicalItem } from '../cart';
 
 export function getCustomItem(): CustomItem {
     return {
