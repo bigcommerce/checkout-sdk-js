@@ -5,7 +5,7 @@ export interface MollieClient {
 
 export interface MollieToken {
     token: string;
-    error: object;
+    error?: object;
 }
 
 export interface MollieConfigurationOptions {
