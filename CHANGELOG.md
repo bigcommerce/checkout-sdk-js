@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.669.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.668.3...v1.669.0) (2024-10-17)
+
+
+### Features
+
+* **payment:** PI-2777 Move itemsRequireShipping method to the utils ([#2687](https://github.com/bigcommerce/checkout-sdk-js/issues/2687)) ([a5e2d08](https://github.com/bigcommerce/checkout-sdk-js/commit/a5e2d08e094dc4435b344b9fedfa2fd2114cb35b))
+
 ### [1.668.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.668.2...v1.668.3) (2024-10-16)
 
 
