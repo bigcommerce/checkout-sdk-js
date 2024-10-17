@@ -3,6 +3,7 @@ import * as rxjs from 'rxjs';
 
 import {
     NotInitializedError,
+    PaymentExecuteError,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -11,12 +12,28 @@ import { SquareIntent } from './enums';
 import { getSquareV2MockFunctions } from './mocks/squarev2-web-payments-sdk.mock';
 import SquareV2PaymentProcessor from './squarev2-payment-processor';
 import SquareV2ScriptLoader from './squarev2-script-loader';
-import { Square } from './types';
+import {
+    BrowserNotSupportedError,
+    ElementNotFoundError,
+    InvalidEventListenerCallbackError,
+    InvalidOptionError,
+    InvalidPaymentRequestError,
+    InvalidPaymentRequestUpdateError,
+    PaymentMethodUnsupportedError,
+    PlaidMissingNameError,
+    PlaidUninitializedError,
+    ScriptLoaderError,
+    Square,
+    TokenizationError,
+    UnexpectedError,
+    VerifyBuyerError,
+    WebSdkEmbedError,
+} from './types';
 
 describe('SquareV2PaymentProcessor', () => {
     let squareV2ScriptLoader: SquareV2ScriptLoader;
     let squareV2MockFunctions: ReturnType<typeof getSquareV2MockFunctions>;
-    let squareWebPaymentsSdkMock: Omit<Square, 'errors'>;
+    let squareWebPaymentsSdkMock: Square;
     let paymentIntegrationService: PaymentIntegrationService;
     let processor: SquareV2PaymentProcessor;
 
@@ -24,7 +41,26 @@ describe('SquareV2PaymentProcessor', () => {
         squareV2ScriptLoader = new SquareV2ScriptLoader(createScriptLoader());
 
         squareV2MockFunctions = getSquareV2MockFunctions();
-        squareWebPaymentsSdkMock = { payments: squareV2MockFunctions.payments };
+
+        squareWebPaymentsSdkMock = {
+            payments: squareV2MockFunctions.payments,
+            errors: {
+                BrowserNotSupportedError,
+                ElementNotFoundError,
+                InvalidOptionError,
+                InvalidEventListenerCallbackError,
+                InvalidPaymentRequestError,
+                InvalidPaymentRequestUpdateError,
+                PaymentMethodUnsupportedError,
+                PlaidMissingNameError,
+                PlaidUninitializedError,
+                ScriptLoaderError,
+                TokenizationError,
+                UnexpectedError,
+                VerifyBuyerError,
+                WebSdkEmbedError,
+            },
+        };
 
         jest.spyOn(squareV2ScriptLoader, 'load').mockResolvedValue(squareWebPaymentsSdkMock);
 
@@ -191,8 +227,11 @@ describe('SquareV2PaymentProcessor', () => {
 
         it('throws an error if tokenization status is not OK', async () => {
             squareV2MockFunctions.tokenize.mockResolvedValue({
-                status: 'FOO',
-                errors: [{ err1: 'bar' }, { err2: 'baz' }],
+                status: 'OK',
+                errors: [
+                    { type: 'tokenization error 1', message: 'error message 1' },
+                    { type: 'tokenization error 2', message: 'error message 2' },
+                ],
             });
 
             const nonce = processor.tokenize();
@@ -202,19 +241,24 @@ describe('SquareV2PaymentProcessor', () => {
 
         it('should throw a PaymentExecuteError', async () => {
             squareV2MockFunctions.tokenize.mockResolvedValue({
-                status: 'FOO',
-                errors: [{ err1: 'bar' }, { err2: 'baz' }],
+                status: 'OK',
+                errors: [
+                    { type: 'tokenization error 1', message: 'error message 1' },
+                    { type: 'tokenization error 2', message: 'error message 2' },
+                ],
             });
 
             try {
                 await processor.tokenize();
             } catch (error) {
-                expect(error.name).toBe('SquareV2TokenizationError');
-                expect(error.type).toBe('custom_provider_execute_error');
-                expect(error.subtype).toBe('payment.errors.card_error');
-                expect(error.message).toBe(
-                    'Tokenization failed with status: FOO and errors: [{"err1":"bar"},{"err2":"baz"}]',
-                );
+                if (error instanceof PaymentExecuteError) {
+                    expect(error.name).toBe('SquareV2TokenizationError');
+                    expect(error.type).toBe('custom_provider_execute_error');
+                    expect(error.subtype).toBe('payment.errors.card_error');
+                    expect(error.message).toBe(
+                        'Tokenization failed with status: OK and errors: [{"type":"tokenization error 1","message":"error message 1"},{"type":"tokenization error 2","message":"error message 2"}]',
+                    );
+                }
             }
         });
     });
