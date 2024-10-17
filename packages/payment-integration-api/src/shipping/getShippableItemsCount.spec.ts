@@ -1,5 +1,5 @@
 import { Cart } from '../cart';
-import { getPhysicalItem } from '../cart/line-items.mock';
+import { getPhysicalItem } from '../mocks/line-items.mock';
 
 import getShippableItemsCount from './getShippableItemsCount';
 

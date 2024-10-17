@@ -7,6 +7,7 @@ import {
     CurrencyService,
     guard,
     InvalidArgumentError,
+    itemsRequireShipping,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
@@ -34,7 +35,6 @@ import {
     ShippingOptionParameters,
     TotalPriceStatusType,
 } from '../types';
-import itemsRequireShipping from '../utils/items-require-shipping';
 
 export default class GooglePayGateway {
     private _getPaymentMethodFn?: () => PaymentMethod<GooglePayInitializationData>;

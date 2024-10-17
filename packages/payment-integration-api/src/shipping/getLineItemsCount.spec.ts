@@ -1,4 +1,4 @@
-import { getPhysicalItem } from '../cart';
+import { getPhysicalItem } from '../mocks/line-items.mock';
 
 import getLineItemsCount from './getLineItemsCount';
 
