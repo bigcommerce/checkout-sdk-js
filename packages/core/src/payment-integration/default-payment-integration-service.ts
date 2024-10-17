@@ -246,7 +246,9 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         return this._storeProjection.getState();
     }
 
-    async loadShippingCountries(options?: RequestOptions): Promise<PaymentIntegrationSelectors> {
+    async loadShippingCountries(
+        options?: RequestOptions<{ channelId?: number }>,
+    ): Promise<PaymentIntegrationSelectors> {
         await this._store.dispatch(this._shippingCountryActionCreator.loadCountries(options));
 
         return this._storeProjection.getState();

@@ -12,10 +12,10 @@ export default class ShippingCountryActionCreator {
         private _shippingCountryRequestSender: ShippingCountryRequestSender,
         private _store: CheckoutStore,
     ) {}
-
-    loadCountries(options?: RequestOptions): Observable<LoadShippingCountriesAction> {
-        const { checkout } = this._store.getState();
-        const { channelId } = checkout.getCheckoutOrThrow();
+    loadCountries(
+        options?: RequestOptions<{ channelId?: number }>,
+    ): Observable<LoadShippingCountriesAction> {
+        const channelId = this.getChannelId(options?.params?.channelId);
 
         return Observable.create((observer: Observer<LoadShippingCountriesAction>) => {
             observer.next(createAction(ShippingCountryActionType.LoadShippingCountriesRequested));
@@ -40,5 +40,16 @@ export default class ShippingCountryActionCreator {
                     );
                 });
         });
+    }
+
+    private getChannelId(channelIdParam?: number): number {
+        if (channelIdParam) {
+            return channelIdParam;
+        }
+
+        const { checkout } = this._store.getState();
+        const data = checkout.getCheckoutOrThrow();
+
+        return data.channelId;
     }
 }

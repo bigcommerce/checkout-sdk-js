@@ -501,7 +501,9 @@ export default class CheckoutService {
      * @param options - Options for loading the available shipping countries.
      * @returns A promise that resolves to the current state.
      */
-    loadShippingCountries(options?: RequestOptions): Promise<CheckoutSelectors> {
+    loadShippingCountries(
+        options?: RequestOptions<{ channelId?: number }>,
+    ): Promise<CheckoutSelectors> {
         const action = this._shippingCountryActionCreator.loadCountries(options);
 
         return this._dispatch(action, { queueId: 'shippingCountries' });
@@ -575,7 +577,9 @@ export default class CheckoutService {
      * @param options - Options for loading the shipping address form fields.
      * @returns A promise that resolves to the current state.
      */
-    loadShippingAddressFields(options?: RequestOptions): Promise<CheckoutSelectors> {
+    loadShippingAddressFields(
+        options?: RequestOptions<{ channelId: number }>,
+    ): Promise<CheckoutSelectors> {
         return this.loadShippingCountries(options);
     }
 
