@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.670.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.670.0...v1.670.1) (2024-10-17)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2691 clenup legacy integration spec error, removed no-unsafe-assignment added rule ([#2702](https://github.com/bigcommerce/checkout-sdk-js/issues/2702)) ([e81d38c](https://github.com/bigcommerce/checkout-sdk-js/commit/e81d38ce2b03d39b0b89dcac6495abd50562aa87))
+
 ## [1.670.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.669.0...v1.670.0) (2024-10-17)
 
 
