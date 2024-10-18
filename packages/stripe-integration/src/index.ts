@@ -21,3 +21,8 @@ export {
     default as StripeUPECustomerInitializeOption,
     WithStripeUPECustomerInitializeOptions,
 } from './stripe-upe/stripeupe-customer-initialize-options';
+
+export {
+    StripeError,
+    StripeUPEClient,
+} from './stripe-upe/stripe-upe'
