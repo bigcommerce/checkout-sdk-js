@@ -43,30 +43,32 @@ export default class StripeUPEIntegrationService {
     ): void {
         this.checkoutEventsUnsubscribe = this.paymentIntegrationService.subscribe(
             async () => {
-                const payment = stripeElements?.getElement(StripeElementType.PAYMENT);
+                const paymentElement = stripeElements?.getElement(StripeElementType.PAYMENT);
 
-                if (payment) {
-                    let error;
+                if (!paymentElement) {
+                    return;
+                }
 
-                    try {
-                        await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
-                            params: { method: methodId },
-                        });
-                    } catch (err) {
-                        error = err;
+                let error;
+
+                try {
+                    await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+                        params: { method: methodId },
+                    });
+                } catch (err) {
+                    error = err;
+                }
+
+                if (error && error instanceof Error) {
+                    if (this.isMounted) {
+                        paymentElement.unmount();
+                        this.isMounted = false;
                     }
 
-                    if (error && error instanceof Error) {
-                        if (this.isMounted) {
-                            payment.unmount();
-                            this.isMounted = false;
-                        }
-
-                        stripeupe.onError?.(error);
-                    } else if (!this.isMounted) {
-                        await stripeElements?.fetchUpdates();
-                        this.mountElement(payment, stripeupe?.containerId);
-                    }
+                    stripeupe.onError?.(error);
+                } else if (!this.isMounted) {
+                    await stripeElements?.fetchUpdates();
+                    this.mountElement(paymentElement, stripeupe.containerId);
                 }
             },
             (state) => state.getCheckout()?.outstandingBalance,
@@ -119,8 +121,10 @@ export default class StripeUPEIntegrationService {
         );
     }
 
-    isCancellationError(stripeError?: StripeError) {
-        return stripeError?.payment_intent.last_payment_error?.message?.indexOf('canceled') !== -1;
+    isCancellationError(stripeError?: StripeError): boolean {
+        const errorMessage = stripeError?.payment_intent.last_payment_error?.message;
+
+        return !!errorMessage && errorMessage.indexOf('canceled') !== -1;
     }
 
     async isPaymentCompleted(
@@ -151,9 +155,8 @@ export default class StripeUPEIntegrationService {
         returnUrl?: string,
     ): StripeConfirmPaymentData {
         const billingAddress = this.paymentIntegrationService.getState().getBillingAddress();
-        const address = this._mapStripeAddress(billingAddress);
-
         const { firstName, lastName, email } = billingAddress || {};
+        const address = this._mapStripeAddress(billingAddress);
 
         if (!stripeElements) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
