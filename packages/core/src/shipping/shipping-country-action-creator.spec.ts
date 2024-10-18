@@ -71,5 +71,23 @@ describe('ShippingCountryActionCreator', () => {
                     ]);
                 });
         });
+
+        describe('when checkout is undefined', () => {
+            beforeEach(() => {
+                store = createCheckoutStore({ checkout: undefined });
+                shippingCountryActionCreator = new ShippingCountryActionCreator(
+                    requestSender,
+                    store,
+                );
+            });
+
+            it('passes null as channelId when checkout is undefined', () => {
+                const loadCountriesSpy = jest.spyOn(requestSender, 'loadCountries');
+
+                shippingCountryActionCreator.loadCountries().subscribe();
+
+                expect(loadCountriesSpy).toHaveBeenCalledWith(null, undefined);
+            });
+        });
     });
 });

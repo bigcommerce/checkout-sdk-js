@@ -15,7 +15,9 @@ export default class ShippingCountryActionCreator {
 
     loadCountries(options?: RequestOptions): Observable<LoadShippingCountriesAction> {
         const { checkout } = this._store.getState();
-        const { channelId } = checkout.getCheckoutOrThrow();
+        const checkoutData = checkout.getCheckout();
+
+        const channelId = checkoutData ? checkoutData.channelId : null;
 
         return Observable.create((observer: Observer<LoadShippingCountriesAction>) => {
             observer.next(createAction(ShippingCountryActionType.LoadShippingCountriesRequested));

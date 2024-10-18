@@ -47,6 +47,18 @@ describe('ShippingCountryRequestSender', () => {
             );
         });
 
+        it('loads shipping countries without channelId', async () => {
+            const output = await shippingCountryRequestSender.loadCountries(null);
+
+            expect(output).toEqual(response);
+            expect(requestSender.get).toHaveBeenCalledWith('/internalapi/v1/shipping/countries', {
+                headers: {
+                    'Accept-Language': 'en',
+                    ...SDK_VERSION_HEADERS,
+                },
+            });
+        });
+
         it('loads shipping countries with timeout', async () => {
             const options = { timeout: createTimeout() };
             const output = await shippingCountryRequestSender.loadCountries(2, options);

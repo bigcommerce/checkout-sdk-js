@@ -7,10 +7,11 @@ export default class ShippingCountryRequestSender {
     constructor(private _requestSender: RequestSender, private _config: { locale?: string }) {}
 
     loadCountries(
-        channelId: number,
+        channelId: number | null,
         { timeout }: RequestOptions = {},
     ): Promise<Response<CountryResponseBody>> {
-        const url = `/internalapi/v1/shipping/countries?channel_id=${channelId}`;
+        const channelIdParam = channelId ? `?channel_id=${channelId}` : '';
+        const url = `/internalapi/v1/shipping/countries${channelIdParam}`;
 
         const headers = {
             'Accept-Language': this._config.locale,
