@@ -121,7 +121,8 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
         methodId: string,
         paypalcommercecredit: PayPalCommerceCreditButtonInitializeOptions,
     ): void {
-        const { buyNowInitializeOptions, style, onComplete } = paypalcommercecredit;
+        const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } =
+            paypalcommercecredit;
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -182,6 +183,8 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
                 if (paypalButton.isEligible()) {
                     paypalButton.render(`#${containerId}`);
                     hasRenderedSmartButton = true;
+                } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
+                    onEligibilityFailure();
                 }
             }
         });
