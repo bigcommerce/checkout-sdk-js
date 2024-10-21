@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.672.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.672.0...v1.672.1) (2024-10-21)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2692 clenup Mollie integration package spec errors ([#2705](https://github.com/bigcommerce/checkout-sdk-js/issues/2705)) ([23dbf30](https://github.com/bigcommerce/checkout-sdk-js/commit/23dbf30ef9f8d6eec1760f60edd29c6512d607d7))
+
 ## [1.672.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.671.4...v1.672.0) (2024-10-21)
 
 
