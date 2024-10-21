@@ -271,10 +271,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
 
         const {
+            clientToken,
             initializationData: { stripePublishableKey, stripeConnectedAccount, shopperLanguage },
         } = paymentMethod;
 
-        if (!paymentMethod.clientToken) {
+        if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
@@ -300,7 +301,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
 
         this._stripeElements = await this.scriptLoader.getElements(this._stripeUPEClient, {
-            clientSecret: paymentMethod.clientToken,
+            clientSecret: clientToken,
             locale: formatLocale(shopperLanguage),
             appearance,
         });

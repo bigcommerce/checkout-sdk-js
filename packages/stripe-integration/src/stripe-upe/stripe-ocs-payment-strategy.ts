@@ -8,7 +8,6 @@ import {
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
     Payment,
-    PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationSelectors,
     PaymentIntegrationService,
@@ -79,10 +78,6 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         const { payment, ...order } = orderRequest;
         const { methodId, gatewayId } = payment || {};
 
-        if (!payment?.paymentData) {
-            throw new PaymentArgumentInvalidError(['payment.paymentData']);
-        }
-
         if (!this.stripeUPEClient) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -94,10 +89,10 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         }
 
         const state = this.paymentIntegrationService.getState();
-        const { isStoreCreditApplied: useStoreCredit } = state.getCheckoutOrThrow();
+        const { isStoreCreditApplied } = state.getCheckoutOrThrow();
 
-        if (useStoreCredit) {
-            await this.paymentIntegrationService.applyStoreCredit(useStoreCredit);
+        if (isStoreCreditApplied) {
+            await this.paymentIntegrationService.applyStoreCredit(isStoreCreditApplied);
         }
 
         await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
@@ -123,6 +118,8 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     deinitialize(): Promise<void> {
         this.stripeElements?.getElement(StripeElementType.PAYMENT)?.unmount();
         this.stripeUPEIntegrationService.deinitialize();
+        this.stripeElements = undefined;
+        this.stripeUPEClient = undefined;
 
         return Promise.resolve();
     }
@@ -333,11 +330,12 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         );
 
         if (
-            this.stripeUPEIntegrationService.isRedirectAction(
-                error.body.additional_action_required,
-            ) &&
-            !isPaymentCompleted
+            this.stripeUPEIntegrationService.isRedirectAction(error.body.additional_action_required)
         ) {
+            if (isPaymentCompleted) {
+                this.stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage();
+            }
+
             const { paymentIntent, error: stripeError } = await this.stripeUPEClient.confirmPayment(
                 stripePaymentData,
             );
