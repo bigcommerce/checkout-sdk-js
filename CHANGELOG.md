@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.671.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.671.2...v1.671.3) (2024-10-21)
+
+
+### Code Refactoring
+
+* **payment:** PI-2702 [checkout-sdk-js types] Clear checkout-sdk-js types errors in test files for the Worldpay Access related packages ([#2700](https://github.com/bigcommerce/checkout-sdk-js/issues/2700)) ([450ea93](https://github.com/bigcommerce/checkout-sdk-js/commit/450ea93e8481388c944a4c8d45e920e780619408))
+
 ### [1.671.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.671.1...v1.671.2) (2024-10-21)
 
 
