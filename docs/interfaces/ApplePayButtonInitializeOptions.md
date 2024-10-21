@@ -11,7 +11,6 @@ DOM. When a customer clicks on it, it will trigger Apple sheet.
 
 ### Properties
 
-- [buttonClassName](ApplePayButtonInitializeOptions.md#buttonclassname)
 - [buyNowInitializeOptions](ApplePayButtonInitializeOptions.md#buynowinitializeoptions)
 - [requiresShipping](ApplePayButtonInitializeOptions.md#requiresshipping)
 
@@ -20,14 +19,6 @@ DOM. When a customer clicks on it, it will trigger Apple sheet.
 - [onPaymentAuthorize](ApplePayButtonInitializeOptions.md#onpaymentauthorize)
 
 ## Properties
-
-### buttonClassName
-
-• `Optional` **buttonClassName**: `string`
-
-The class name of the ApplePay button style.
-
-___
 
 ### buyNowInitializeOptions
 

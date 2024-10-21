@@ -571,10 +571,6 @@ declare interface ApplePayButtonInitializeOptions {
         getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
     };
     /**
-     * The class name of the ApplePay button style.
-     */
-    buttonClassName?: string;
-    /**
      * A callback that gets called when a payment is successfully completed.
      */
     onPaymentAuthorize(): void;

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.672.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.671.4...v1.672.0) (2024-10-21)
+
+
+### Features
+
+* **payment:** PAYPAL-4737 applepay button style option ([e4140ca](https://github.com/bigcommerce/checkout-sdk-js/commit/e4140cacb372ca1bb01c908f446f5851a9a33134))
+* **payment:** PAYPAL-4737 test coverage ([48329bd](https://github.com/bigcommerce/checkout-sdk-js/commit/48329bd40c3a20680fb243a19247e88e72b0cc45))
+
 ### [1.671.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.671.3...v1.671.4) (2024-10-21)
 
 
