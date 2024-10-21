@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.671.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.670.1...v1.671.0) (2024-10-21)
+
+
+### Features
+
+* **shipping:** SHIPPING-3311 Update loadShippingCountries to allow for a default of no channel id ([#2704](https://github.com/bigcommerce/checkout-sdk-js/issues/2704)) ([2420032](https://github.com/bigcommerce/checkout-sdk-js/commit/2420032b2f4a9c83d0094a541ca16cf937867349))
+
 ### [1.670.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.670.0...v1.670.1) (2024-10-17)
 
 
