@@ -4,17 +4,18 @@ import {
     HostedForm,
     InvalidArgumentError,
     MissingDataError,
-    MissingDataErrorType,
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCart,
+    getConfig,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import { MollieClient, MollieElement, MollieHostWindow } from './mollie';
+import { WithMolliePaymentInitializeOptions } from './mollie-payment-initialize-options';
 import MolliePaymentStrategy from './mollie-payment-strategy';
 import MollieScriptLoader from './mollie-script-loader';
 import {
@@ -37,6 +38,7 @@ describe('MolliePaymentStrategy', () => {
     let mollieScriptLoader: MollieScriptLoader;
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: MolliePaymentStrategy;
+    const storeConfigMock = getConfig().storeConfig;
 
     beforeEach(() => {
         mollieClient = getMollieClient();
@@ -67,7 +69,7 @@ describe('MolliePaymentStrategy', () => {
     });
 
     describe('#Initialize & #Execute', () => {
-        let options: PaymentInitializeOptions;
+        let options: PaymentInitializeOptions & WithMolliePaymentInitializeOptions;
 
         beforeEach(() => {
             options = getInitializeOptions();
@@ -78,7 +80,8 @@ describe('MolliePaymentStrategy', () => {
             ).mockReturnValue(getMollie());
 
             jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
-                storeProfile: { storeLanguage: 'en_US' },
+                ...storeConfigMock,
+                storeProfile: { ...storeConfigMock.storeProfile, storeLanguage: 'en_US' },
             });
         });
 
@@ -164,9 +167,11 @@ describe('MolliePaymentStrategy', () => {
 
                 const cartMock = getCart();
                 const container = {
+                    ...document.createElement('div'),
                     appendChild: jest.fn(),
                 };
                 const paragraph = {
+                    ...document.createElement('p'),
                     innerText: '',
                     setAttribute: jest.fn(),
                 };
@@ -283,8 +288,6 @@ describe('MolliePaymentStrategy', () => {
                     },
                 };
 
-                const rejection = new MissingDataError(MissingDataErrorType.MissingCart);
-
                 const paragraph = {
                     innerText: '',
                     setAttribute: jest.fn(),
@@ -294,9 +297,6 @@ describe('MolliePaymentStrategy', () => {
                     paymentIntegrationService.getState(),
                     'getPaymentMethodOrThrow',
                 ).mockReturnValue(mollieMethod);
-                jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
-                    rejection,
-                );
                 jest.spyOn(document, 'createElement');
                 jest.spyOn(document, 'getElementById');
 
@@ -328,6 +328,7 @@ describe('MolliePaymentStrategy', () => {
                 };
 
                 const container = {
+                    ...document.createElement('div'),
                     remove: jest.fn(),
                     appendChild: jest.fn(),
                 };
@@ -477,15 +478,17 @@ describe('MolliePaymentStrategy', () => {
     });
 
     describe('When Hosted Form is enabled', () => {
-        let form: Pick<HostedForm, 'attach' | 'submit' | 'validate' | 'detach'>;
-        let initializeOptions: PaymentInitializeOptions;
+        let form: HostedForm;
+        let initializeOptions: PaymentInitializeOptions & WithMolliePaymentInitializeOptions;
 
         beforeEach(() => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
-                submit: jest.fn(() => Promise.resolve()),
+                submit: jest.fn(),
                 validate: jest.fn(() => Promise.resolve()),
                 detach: jest.fn(),
+                getBin: jest.fn(),
+                getCardType: jest.fn(),
             };
             initializeOptions = getHostedFormInitializeOptions();
 
@@ -496,10 +499,13 @@ describe('MolliePaymentStrategy', () => {
 
             jest.spyOn(paymentIntegrationService, 'createHostedForm').mockReturnValue(form);
             jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
+                ...storeConfigMock,
                 paymentSettings: {
+                    ...storeConfigMock.paymentSettings,
                     bigpayBaseUrl: 'https://bigpay.integration.zone',
                 },
                 storeProfile: {
+                    ...storeConfigMock.storeProfile,
                     storeLanguage: 'en_US',
                 },
             });
@@ -603,7 +609,8 @@ describe('MolliePaymentStrategy', () => {
             ).mockReturnValue(getMollie());
 
             jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
-                storeProfile: { storeLanguage: 'en_US' },
+                ...storeConfigMock,
+                storeProfile: { ...storeConfigMock.storeProfile, storeLanguage: 'en_US' },
             });
         });
 
