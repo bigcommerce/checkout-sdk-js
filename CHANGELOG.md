@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.671.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.671.0...v1.671.1) (2024-10-21)
+
+
+### Bug Fixes
+
+* **payment:** PI-2697 [checkout-sdk-js types] Clear checkout-sdk-js types errors in test files for the Sagepay related packages ([#2706](https://github.com/bigcommerce/checkout-sdk-js/issues/2706)) ([8a84290](https://github.com/bigcommerce/checkout-sdk-js/commit/8a84290998379d0a8a2fc40e6363a7e0965cc207))
+
 ## [1.671.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.670.1...v1.671.0) (2024-10-21)
 
 
