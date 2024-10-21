@@ -1,6 +1,5 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
-import { merge } from 'lodash';
 
 import {
     BraintreeScriptLoader,
@@ -27,7 +26,7 @@ import {
 
 import ApplePayButtonInitializeOptions from './apple-pay-button-initialize-options';
 import ApplePayButtonMethodType from './apple-pay-button-method-type';
-import ApplePayButtonStrategy from './apple-pay-button-strategy';
+import ApplePayButtonStrategy, { ButtonStyleOption } from './apple-pay-button-strategy';
 import ApplePaySessionFactory from './apple-pay-session-factory';
 import {
     getApplePayButtonInitializationOptions,
@@ -103,10 +102,6 @@ describe('ApplePayButtonStrategy', () => {
             expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalled();
 
             expect(children).toHaveLength(1);
-
-            expect(Boolean(container.getElementsByClassName('apple-pay-checkout-button')[0])).toBe(
-                true,
-            );
         });
 
         it('doesnt call verifyCheckoutSpamProtection if cart undefined', async () => {
@@ -118,18 +113,6 @@ describe('ApplePayButtonStrategy', () => {
             await strategy.initialize(checkoutButtonInitializeOptions);
 
             expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalledTimes(0);
-        });
-
-        it('creates the button with a custom style class name', async () => {
-            const customClass = 'testClassName';
-            const CheckoutButtonInitializeOptions = merge(
-                getApplePayButtonInitializationOptions(),
-                { applepay: { buttonClassName: customClass } },
-            );
-
-            await strategy.initialize(CheckoutButtonInitializeOptions);
-
-            expect(Boolean(container.getElementsByClassName(customClass)[0])).toBe(true);
         });
 
         it('throws error when payment data is empty', async () => {
@@ -634,6 +617,55 @@ describe('ApplePayButtonStrategy', () => {
                     }
                 }
             }
+        });
+
+        describe('button styling', () => {
+            const checkoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+            const applePayPaymentMethod = getApplePay();
+
+            const mockGetPaymentMethod = (styleOption: ButtonStyleOption) => {
+                applePayPaymentMethod.initializationData.styleOption = styleOption;
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getPaymentMethodOrThrow',
+                ).mockImplementation(() => applePayPaymentMethod);
+            };
+
+            it('should be black', async () => {
+                mockGetPaymentMethod(ButtonStyleOption.Black);
+
+                await strategy.initialize(checkoutButtonInitializeOptions);
+
+                const button = container.firstChild as HTMLElement;
+
+                expect(button.getAttribute('style')).toContain('background-color: rgb(0, 0, 0)');
+            });
+
+            it('should be white', async () => {
+                mockGetPaymentMethod(ButtonStyleOption.White);
+
+                await strategy.initialize(checkoutButtonInitializeOptions);
+
+                const button = container.firstChild as HTMLElement;
+
+                expect(button.getAttribute('style')).toContain(
+                    'background-color: rgb(255, 255, 255)',
+                );
+            });
+
+            it('should be white border', async () => {
+                mockGetPaymentMethod(ButtonStyleOption.WhiteBorder);
+
+                await strategy.initialize(checkoutButtonInitializeOptions);
+
+                const button = container.firstChild as HTMLElement;
+
+                const style = button.getAttribute('style');
+
+                expect(style).toContain('background-color: rgb(255, 255, 255)');
+                expect(style).toContain('border: 0.5px solid #000');
+            });
         });
     });
 

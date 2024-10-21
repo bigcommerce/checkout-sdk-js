@@ -1,10 +1,11 @@
-export function getApplePay() {
+import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+export function getApplePay(): PaymentMethod {
     return {
         id: 'applepay',
         logoUrl: '',
         method: 'credit-card',
         supportedCards: [],
-        providesShippingAddress: false,
         config: {
             displayName: '',
             helpText: '',
