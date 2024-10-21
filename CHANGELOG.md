@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.671.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.671.1...v1.671.2) (2024-10-21)
+
+
+### Code Refactoring
+
+* **payment:** PI-2699 Clear checkout-sdk-js types errors in test files for the SquareV2 related packages ([#2696](https://github.com/bigcommerce/checkout-sdk-js/issues/2696)) ([963cb37](https://github.com/bigcommerce/checkout-sdk-js/commit/963cb37ffb43519826d73e378e3d49c4a86954cf))
+
 ### [1.671.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.671.0...v1.671.1) (2024-10-21)
 
 
