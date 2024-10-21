@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.671.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.671.3...v1.671.4) (2024-10-21)
+
+
+### Bug Fixes
+
+* **payment:** PI-1647 [Affirm] When returning to a cart with digital … ([#2688](https://github.com/bigcommerce/checkout-sdk-js/issues/2688)) ([0ff86fa](https://github.com/bigcommerce/checkout-sdk-js/commit/0ff86fa4e52ed925b6b78aacceac4dd08c78cdad))
+
 ### [1.671.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.671.2...v1.671.3) (2024-10-21)
 
 
