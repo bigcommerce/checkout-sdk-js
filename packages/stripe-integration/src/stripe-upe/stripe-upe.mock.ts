@@ -50,6 +50,7 @@ export function getStripeUPEJsMock(): StripeUPEClient {
                 on: jest.fn((_, callback) => callback(StripeEventMock)),
                 update: jest.fn(),
                 destroy: jest.fn(),
+                collapse: jest.fn(),
             })),
             getElement: jest.fn().mockReturnValue(null),
             update: jest.fn(),
@@ -72,6 +73,7 @@ export function getFailingStripeUPEJsMock(): StripeUPEClient {
                 on: jest.fn((_, callback) => callback(StripeEventMock)),
                 update: jest.fn(),
                 destroy: jest.fn(),
+                collapse: jest.fn(),
             })),
             getElement: jest.fn().mockReturnValue(null),
             update: jest.fn(),
@@ -108,6 +110,17 @@ export function getStripeUPEOrderRequestBodyMock(
             paymentData: {
                 shouldSaveInstrument,
             },
+        },
+    };
+}
+
+export function getStripeOCSOrderRequestBodyMock(
+    stripePaymentMethodType: StripePaymentMethodType = StripePaymentMethodType.OCS,
+): OrderRequestBody {
+    return {
+        payment: {
+            methodId: stripePaymentMethodType,
+            gatewayId: 'stripeupe',
         },
     };
 }
