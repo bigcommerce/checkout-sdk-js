@@ -97,7 +97,7 @@ describe('StripeOCSPaymentStrategy', () => {
                     ...stripeOptions,
                     stripeupe: undefined,
                 }),
-            ).rejects.toThrowError(NotInitializedError);
+            ).rejects.toThrow(NotInitializedError);
             expect(
                 stripeUPEIntegrationService.initCheckoutEventsSubscription,
             ).not.toHaveBeenCalled();
@@ -967,7 +967,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 await stripeOCSPaymentStrategy.initialize(stripeOptions);
 
                 await expect(
-                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock())
+                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
                 ).rejects.toThrow(RequestError);
 
                 expect(confirmPaymentMock).toHaveBeenCalled();
@@ -1017,7 +1017,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 await stripeOCSPaymentStrategy.initialize(stripeOptions);
 
                 await expect(
-                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock())
+                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
                 ).rejects.toThrow(Error);
 
                 expect(confirmPaymentMock).toHaveBeenCalled();
@@ -1052,7 +1052,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 await stripeOCSPaymentStrategy.initialize(stripeOptions);
 
                 await expect(
-                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock())
+                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
                 ).rejects.toThrow(PaymentMethodCancelledError);
 
                 expect(confirmPaymentMock).toHaveBeenCalled();
@@ -1087,7 +1087,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 await stripeOCSPaymentStrategy.initialize(stripeOptions);
 
                 await expect(
-                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock())
+                    stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
                 ).rejects.toThrow(PaymentMethodFailedError);
 
                 expect(confirmPaymentMock).toHaveBeenCalled();
