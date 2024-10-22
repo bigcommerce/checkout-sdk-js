@@ -5,21 +5,20 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import StripeOCSPaymentStrategy from './stripe-ocs-payment-strategy';
 import StripeUPEIntegrationService from './stripe-upe-integration-service';
-import StripeUPEPaymentStrategy from './stripe-upe-payment-strategy';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
-const createStripeUPEPaymentStrategy: PaymentStrategyFactory<StripeUPEPaymentStrategy> = (
+const createStripeOCSPaymentStrategy: PaymentStrategyFactory<StripeOCSPaymentStrategy> = (
     paymentIntegrationService,
 ) => {
-    return new StripeUPEPaymentStrategy(
+    return new StripeOCSPaymentStrategy(
         paymentIntegrationService,
         new StripeUPEScriptLoader(getScriptLoader()),
         new StripeUPEIntegrationService(paymentIntegrationService),
     );
 };
 
-export default toResolvableModule(createStripeUPEPaymentStrategy, [
-    { gateway: 'stripeupe' },
-    { gateway: 'stripeupe', id: 'klarna' },
+export default toResolvableModule(createStripeOCSPaymentStrategy, [
+    { gateway: 'stripeupe', id: 'stripe_ocs' },
 ]);

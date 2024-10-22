@@ -53,6 +53,8 @@ export interface StripeElement {
      * https://docs.stripe.com/js/elements_object/update_payment_element
      */
     update(options?: StripeElementsCreateOptions): void;
+
+    collapse(): void;
 }
 
 export interface StripeEvent {
@@ -92,6 +94,7 @@ export interface StripePaymentEvent extends StripeEvent {
     value: {
         type: StripePaymentMethodType;
     };
+    collapsed?: boolean;
 }
 
 interface Address {
@@ -201,6 +204,14 @@ export interface TermOptions {
     card?: AutoOrNever;
 }
 
+export interface StripeLayoutOptions {
+    type?: 'accordion' | 'tabs';
+    defaultCollapsed?: boolean;
+    radios?: boolean;
+    spacedAccordionItems?: boolean;
+    visibleAccordionItemsCount?: number;
+}
+
 /**
  * All available options are here https://stripe.com/docs/js/elements_object/create_payment_element
  */
@@ -213,6 +224,8 @@ export interface StripeElementsCreateOptions {
     validation?: validationElement;
     display?: { name: DisplayName };
     terms?: TermOptions;
+    layout?: StripeLayoutOptions;
+    paymentMethodOrder?: string[];
 }
 
 interface validationElement {
@@ -302,13 +315,12 @@ export interface StripeUPEAppearanceOptions {
         colorIconRedirect?: string;
         spacingUnit?: string;
         borderRadius?: string;
+        fontFamily?: string;
     };
 
     rules?: {
-        '.Input'?: {
-            borderColor?: string;
-            color?: string;
-            boxShadow?: string;
+        [key: string]: {
+            [key: string]: string | number;
         };
     };
 }
@@ -336,13 +348,18 @@ export interface StripeElementsOptions {
      * Make sure that you have TLS enabled on any page that includes the client secret.
      * Refer to our docs to accept a payment and learn about how client_secret should be handled.
      */
-    clientSecret: string;
+    clientSecret?: string;
 
     /**
      * Match the design of your site with the appearance option.
      * The layout of each Element stays consistent, but you can modify colors, fonts, borders, padding, and more.
      */
     appearance?: StripeUPEAppearanceOptions;
+
+    mode?: string;
+    amount?: number;
+    currency?: string;
+    paymentMethodTypes?: string[];
 }
 
 export interface StripeUpdateElementsOptions {
@@ -407,6 +424,7 @@ export enum StripePaymentMethodType {
     GIROPAY = 'giropay',
     ALIPAY = 'alipay',
     KLARNA = 'klarna',
+    OCS = 'stripe_ocs',
 }
 
 type AutoOrNever = StripeStringConstants.AUTO | StripeStringConstants.NEVER;
@@ -446,4 +464,19 @@ export interface StripeUPEInitializationData {
 
 export interface StripeElementUpdateOptions {
     shouldShowTerms?: boolean;
+}
+
+export interface StripeAdditionalActionRequired {
+    type: string;
+    data: {
+        token?: string;
+        redirect_url?: string;
+    };
+}
+
+export interface StripeAdditionalActionResponseBody {
+    additional_action_required: StripeAdditionalActionRequired;
+    three_ds_result: {
+        token?: string;
+    };
 }
