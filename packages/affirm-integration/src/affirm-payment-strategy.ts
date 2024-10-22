@@ -1,6 +1,7 @@
 import {
     AmountTransformer,
     Consignment,
+    itemsRequireShipping,
     LineItemCategory,
     MissingDataError,
     MissingDataErrorType,
@@ -117,6 +118,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         const config = state.getStoreConfig();
         const consignments = state.getConsignments();
         const order = state.getOrder();
+        const cart = state.getCart();
 
         if (!config) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
@@ -129,13 +131,19 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         const amountTransformer = new AmountTransformer(order.currency.decimalPlaces);
         const billingAddress = this.getBillingAddress();
 
+        const retrievedShippingAddress = this.getShippingAddress();
+        const shippingAddress =
+            itemsRequireShipping(cart, config) && retrievedShippingAddress
+                ? retrievedShippingAddress
+                : billingAddress;
+
         return {
             merchant: {
                 user_confirmation_url: config.links.checkoutLink,
                 user_cancel_url: config.links.checkoutLink,
                 user_confirmation_url_action: 'POST',
             },
-            shipping: this.getShippingAddress() || billingAddress,
+            shipping: shippingAddress,
             billing: billingAddress,
             items: this.getItems(amountTransformer, order),
             metadata: {

@@ -322,6 +322,109 @@ describe('AffirmPaymentStrategy', () => {
             await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
         });
 
+        it('initializes the Affirm checkout call with the correct payload even when shipping address is undefined, it takes it from billing address', async () => {
+            const checkoutPayload = {
+                billing: {
+                    address: {
+                        city: 'Some City',
+                        country: 'US',
+                        line1: '12345 Testing Way',
+                        line2: '',
+                        state: 'CA',
+                        zipcode: '95555',
+                    },
+                    email: 'test@bigcommerce.com',
+                    name: {
+                        first: 'Test',
+                        full: 'Test Tester',
+                        last: 'Tester',
+                    },
+                    phone_number: '555-555-5555',
+                },
+                discounts: {
+                    '279F507D817E3E7': {
+                        discount_amount: 500,
+                        discount_display_name: '$5.00 off the shipping total',
+                    },
+                    DISCOUNTED_AMOUNT: {
+                        discount_amount: 1000,
+                        discount_display_name: 'discount',
+                    },
+                    savebig2015: {
+                        discount_amount: 500,
+                        discount_display_name: '20% off each item',
+                    },
+                },
+                items: [
+                    {
+                        categories: [['Cat 1'], ['Furniture', 'Bed']],
+                        display_name: 'Canvas Laundry Cart',
+                        item_image_url: '/images/canvas-laundry-cart.jpg',
+                        item_url: '/canvas-laundry-cart/',
+                        qty: 1,
+                        sku: 'CLC',
+                        unit_price: 19000,
+                    },
+                    {
+                        display_name: '$100 Gift Certificate',
+                        item_image_url: '',
+                        item_url: '',
+                        qty: 1,
+                        sku: '',
+                        unit_price: 10000,
+                    },
+                ],
+                merchant: {
+                    user_cancel_url: 'https://store-k1drp8k8.bcapp.dev/checkout',
+                    user_confirmation_url: 'https://store-k1drp8k8.bcapp.dev/checkout',
+                    user_confirmation_url_action: 'POST',
+                },
+                metadata: {
+                    mode: 'modal',
+                    platform_affirm: '',
+                    platform_type: 'BigCommerce',
+                    platform_version: '',
+                    shipping_type: 'shipping_flatrate',
+                },
+                order_id: '295',
+                shipping: {
+                    address: {
+                        city: 'Some City',
+                        country: 'US',
+                        line1: '12345 Testing Way',
+                        line2: '',
+                        state: 'CA',
+                        zipcode: '95555',
+                    },
+                    email: 'test@bigcommerce.com',
+                    name: {
+                        first: 'Test',
+                        full: 'Test Tester',
+                        last: 'Tester',
+                    },
+                    phone_number: '555-555-5555',
+                },
+                shipping_amount: 1500,
+                tax_amount: 300,
+                total: 19000,
+            };
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getShippingAddress').mockReturnValue(
+                undefined,
+            );
+
+            const options = { methodId: 'affirm', gatewayId: undefined };
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+            });
+
+            await strategy.execute(payload, options);
+
+            expect(affirmCheckoutMock).toHaveBeenCalledWith(checkoutPayload);
+        });
+
         it('execute checkout on Affirm script without shipping_type', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getConsignments').mockReturnValue(
                 undefined,
@@ -337,8 +440,10 @@ describe('AffirmPaymentStrategy', () => {
             expect(affirmCheckoutMock).toHaveBeenCalled();
         });
 
-        it('does not create affirm object if order does not exist', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getOrder').mockReturnValue(undefined);
+        it('does not create affirm object if config does not exist', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
+                undefined,
+            );
 
             await strategy.initialize({
                 methodId: paymentMethod.id,
@@ -348,10 +453,8 @@ describe('AffirmPaymentStrategy', () => {
             await expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
         });
 
-        it('does not create affirm object if config does not exist', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue(
-                undefined,
-            );
+        it('does not create affirm object if order does not exist', async () => {
+            jest.spyOn(paymentIntegrationService.getState(), 'getOrder').mockReturnValue(undefined);
 
             await strategy.initialize({
                 methodId: paymentMethod.id,
