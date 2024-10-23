@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.672.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.672.2...v1.672.3) (2024-10-23)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2688 clenup GPay integration package spec errors ([#2711](https://github.com/bigcommerce/checkout-sdk-js/issues/2711)) ([62c3832](https://github.com/bigcommerce/checkout-sdk-js/commit/62c383269c3d13ec3cce905f204cf62da1539417))
+
 ### [1.672.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.672.1...v1.672.2) (2024-10-22)
 
 ### [1.672.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.672.0...v1.672.1) (2024-10-21)
