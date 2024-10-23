@@ -93,7 +93,7 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
         methodId: string,
         paypalcommercevenmo: PayPalCommerceVenmoButtonInitializeOptions,
     ): void {
-        const { buyNowInitializeOptions, style } = paypalcommercevenmo;
+        const { buyNowInitializeOptions, style, onEligibilityFailure } = paypalcommercevenmo;
 
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
         const fundingSource = paypalSdk.FUNDING.VENMO;
@@ -121,6 +121,8 @@ export default class PayPalCommerceVenmoButtonStrategy implements CheckoutButton
 
         if (paypalButtonRender.isEligible()) {
             paypalButtonRender.render(`#${containerId}`);
+        } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
+            onEligibilityFailure();
         } else {
             this.paypalCommerceIntegrationService.removeElement(containerId);
         }
