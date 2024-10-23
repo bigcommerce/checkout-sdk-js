@@ -14,7 +14,6 @@ describe('isTdOnlineMartAdditionalAction', () => {
                             code: 'any_code',
                         },
                     ],
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
                     three_ds_result: {},
                 },
             }),
@@ -47,7 +46,7 @@ describe('isTdOnlineMartAdditionalAction', () => {
                             code: 'three_d_secure_required',
                         },
                     ],
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
+
                     three_ds_result: {},
                 },
             }),

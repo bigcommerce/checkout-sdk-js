@@ -7,7 +7,10 @@ import {
     PaymentIntegrationService,
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getResponse,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import GooglePayGateway from './gateways/google-pay-gateway';
 import GooglePayPaymentProcessor from './google-pay-payment-processor';
@@ -51,12 +54,14 @@ describe('GooglePayPaymentProcessor', () => {
         jest.spyOn(gateway, 'mapToShippingAddressRequestBody');
 
         requestSender = createRequestSender();
-        jest.spyOn(requestSender, 'post').mockResolvedValue(undefined);
+        jest.spyOn(requestSender, 'post').mockResolvedValue(getResponse(undefined));
 
         formPoster = createFormPoster();
-        jest.spyOn(formPoster, 'postForm').mockImplementation((_url, _data, callback) =>
-            callback(),
-        );
+        jest.spyOn(formPoster, 'postForm').mockImplementation((_url, _data, callback) => {
+            if (callback) {
+                return callback();
+            }
+        });
 
         processor = new GooglePayPaymentProcessor(scriptLoader, gateway, requestSender, formPoster);
     });
