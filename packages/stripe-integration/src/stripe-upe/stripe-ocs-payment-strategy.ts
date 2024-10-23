@@ -99,9 +99,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             await this.paymentIntegrationService.applyStoreCredit(isStoreCreditApplied);
         }
 
-        await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
-            params: { method: methodId },
-        });
+        await this.stripeUPEIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
 
         await this.paymentIntegrationService.submitOrder(order, options);
 

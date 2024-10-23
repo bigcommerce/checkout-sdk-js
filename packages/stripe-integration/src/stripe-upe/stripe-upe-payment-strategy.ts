@@ -119,9 +119,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
 
         if (gatewayId) {
-            await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
-                params: { method: methodId },
-            });
+            await this.stripeUPEIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
 
             const { email } = state.getCustomerOrThrow();
 

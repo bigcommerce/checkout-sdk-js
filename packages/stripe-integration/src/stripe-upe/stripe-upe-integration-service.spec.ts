@@ -636,4 +636,12 @@ describe('StripeUPEIntegrationService', () => {
             ).toBe(false);
         });
     });
+
+    describe('#updateStripePaymentIntent', () => {
+        it('should trigger payment intent update', async () => {
+            await stripeUPEIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
+        });
+    });
 });

@@ -432,11 +432,10 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
 
             expect(paymentIntegrationService.applyStoreCredit).not.toHaveBeenCalled();
-            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith('stripeupe', {
-                params: {
-                    method: 'stripe_ocs',
-                },
-            });
+            expect(stripeUPEIntegrationService.updateStripePaymentIntent).toHaveBeenCalledWith(
+                'stripeupe',
+                'stripe_ocs',
+            );
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
                 methodId: 'stripe_ocs',

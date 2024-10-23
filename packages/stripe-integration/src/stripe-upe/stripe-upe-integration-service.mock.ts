@@ -36,4 +36,5 @@ export const getStripeUPEIntegrationServiceMock = () =>
         isAdditionalActionError: jest.fn(() => false),
         isRedirectAction: jest.fn(() => false),
         isOnPageAdditionalAction: jest.fn(() => false),
+        updateStripePaymentIntent: jest.fn(() => Promise.resolve()),
     } as unknown as StripeUPEIntegrationService);
