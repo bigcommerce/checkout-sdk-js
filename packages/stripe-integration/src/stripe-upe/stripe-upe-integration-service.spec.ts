@@ -291,18 +291,14 @@ describe('StripeUPEIntegrationService', () => {
 
     describe('#throwDisplayableStripeError', () => {
         it('should throw displayable stripe error', () => {
-            let err;
-
             try {
                 stripeUPEIntegrationService.throwDisplayableStripeError({
                     type: 'invalid_request_error',
                     message: 'error message',
                 } as StripeError);
             } catch (error) {
-                err = error;
-            } finally {
-                expect(err).toBeInstanceOf(Error);
-                expect((err as Error).message).toBe('error message');
+                expect(error).toBeInstanceOf(Error);
+                expect((error as Error).message).toBe('error message');
             }
         });
 
@@ -324,14 +320,10 @@ describe('StripeUPEIntegrationService', () => {
 
     describe('#throwPaymentConfirmationProceedMessage', () => {
         it('throw default error', () => {
-            let err;
-
             try {
                 stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage();
             } catch (error) {
-                err = error;
-            } finally {
-                expect(err).toBeInstanceOf(PaymentMethodFailedError);
+                expect(error).toBeInstanceOf(PaymentMethodFailedError);
             }
         });
     });
@@ -504,20 +496,14 @@ describe('StripeUPEIntegrationService', () => {
         });
 
         it('throws error if stipe elements does not initialized', () => {
-            let err;
-
             try {
                 stripeUPEIntegrationService.mapStripePaymentData(undefined);
             } catch (error) {
-                err = error;
-            } finally {
-                expect(err).toBeInstanceOf(NotInitializedError);
+                expect(error).toBeInstanceOf(NotInitializedError);
             }
         });
 
         it('throws error if billing address not defined', () => {
-            let err;
-
             jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue(
                 undefined,
             );
@@ -525,15 +511,11 @@ describe('StripeUPEIntegrationService', () => {
             try {
                 stripeUPEIntegrationService.mapStripePaymentData(stripeElementsMock);
             } catch (error) {
-                err = error;
-            } finally {
-                expect(err).toBeInstanceOf(MissingDataError);
+                expect(error).toBeInstanceOf(MissingDataError);
             }
         });
 
         it('throws error if email not defined', () => {
-            let err;
-
             jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue({
                 ...getBillingAddress(),
                 email: undefined,
@@ -542,15 +524,11 @@ describe('StripeUPEIntegrationService', () => {
             try {
                 stripeUPEIntegrationService.mapStripePaymentData(stripeElementsMock);
             } catch (error) {
-                err = error;
-            } finally {
-                expect(err).toBeInstanceOf(MissingDataError);
+                expect(error).toBeInstanceOf(MissingDataError);
             }
         });
 
         it('throws error if firstName not defined', () => {
-            let err;
-
             jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue({
                 ...getBillingAddress(),
                 firstName: '',
@@ -559,15 +537,11 @@ describe('StripeUPEIntegrationService', () => {
             try {
                 stripeUPEIntegrationService.mapStripePaymentData(stripeElementsMock);
             } catch (error) {
-                err = error;
-            } finally {
-                expect(err).toBeInstanceOf(MissingDataError);
+                expect(error).toBeInstanceOf(MissingDataError);
             }
         });
 
         it('throws error if lastName not defined', () => {
-            let err;
-
             jest.spyOn(paymentIntegrationService.getState(), 'getBillingAddress').mockReturnValue({
                 ...getBillingAddress(),
                 lastName: '',
@@ -576,9 +550,7 @@ describe('StripeUPEIntegrationService', () => {
             try {
                 stripeUPEIntegrationService.mapStripePaymentData(stripeElementsMock);
             } catch (error) {
-                err = error;
-            } finally {
-                expect(err).toBeInstanceOf(MissingDataError);
+                expect(error).toBeInstanceOf(MissingDataError);
             }
         });
 

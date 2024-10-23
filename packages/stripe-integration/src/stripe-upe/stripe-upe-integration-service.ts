@@ -49,24 +49,24 @@ export default class StripeUPEIntegrationService {
                     return;
                 }
 
-                let error;
-
                 try {
                     await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
                         params: { method: methodId },
                     });
-                } catch (err) {
-                    error = err;
-                }
-
-                if (error && error instanceof Error) {
+                } catch (error) {
                     if (this.isMounted) {
                         paymentElement.unmount();
                         this.isMounted = false;
                     }
 
-                    stripeupe.onError?.(error);
-                } else if (!this.isMounted) {
+                    if (error instanceof Error) {
+                        stripeupe.onError?.(error);
+                    }
+
+                    return;
+                }
+
+                if (!this.isMounted) {
                     await stripeElements?.fetchUpdates();
                     this.mountElement(paymentElement, stripeupe.containerId);
                 }

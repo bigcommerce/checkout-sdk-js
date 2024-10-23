@@ -11,7 +11,7 @@ describe('createStripeOCSPaymentStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
     });
 
-    it('create stripe upe payment strategy', () => {
+    it('create stripe ocs payment strategy', () => {
         const strategy = createStripeOCSPaymentStrategy(paymentIntegrationService);
 
         expect(strategy).toBeInstanceOf(StripeOCSPaymentStrategy);

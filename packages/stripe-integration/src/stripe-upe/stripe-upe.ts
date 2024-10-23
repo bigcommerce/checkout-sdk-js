@@ -54,6 +54,10 @@ export interface StripeElement {
      */
     update(options?: StripeElementsCreateOptions): void;
 
+    /**
+     * This method collapses the Payment Element into a row of payment method tabs.
+     * https://docs.stripe.com/js/elements_object/collapse_payment_element
+     */
     collapse(): void;
 }
 

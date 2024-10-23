@@ -62,9 +62,13 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             );
         }
 
-        await this._initializeStripeElement(stripeupe, gatewayId, methodId).catch((error) =>
-            stripeupe.onError?.(error),
-        );
+        try {
+            await this._initializeStripeElement(stripeupe, gatewayId, methodId);
+        } catch (error) {
+            if (error instanceof Error) {
+                stripeupe.onError?.(error);
+            }
+        }
 
         this.stripeUPEIntegrationService.initCheckoutEventsSubscription(
             gatewayId,
@@ -101,8 +105,8 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         await this.paymentIntegrationService.submitOrder(order, options);
 
-        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
-        const paymentPayload = this._getPaymentPayload(methodId, paymentMethod.clientToken || '');
+        const { clientToken } = state.getPaymentMethodOrThrow(methodId);
+        const paymentPayload = this._getPaymentPayload(methodId, clientToken || '');
 
         try {
             await this.paymentIntegrationService.submitPayment(paymentPayload);
@@ -139,10 +143,11 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         }
 
         const {
+            clientToken,
             initializationData: { stripePublishableKey, stripeConnectedAccount, shopperLanguage },
         } = paymentMethod;
 
-        if (!paymentMethod.clientToken) {
+        if (!clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
@@ -155,7 +160,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             stripeupe;
 
         this.stripeElements = await this.scriptLoader.getElements(this.stripeUPEClient, {
-            clientSecret: paymentMethod.clientToken,
+            clientSecret: clientToken,
             locale: formatLocale(shopperLanguage),
             appearance: this._getElementAppearance(style),
             fonts: [
