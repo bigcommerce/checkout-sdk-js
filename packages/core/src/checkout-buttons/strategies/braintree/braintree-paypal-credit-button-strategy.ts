@@ -135,7 +135,8 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         methodId: string,
         testMode: boolean,
     ): void {
-        const { style, shouldProcessPayment, onAuthorizeError } = braintreepaypalcredit;
+        const { style, shouldProcessPayment, onAuthorizeError, onEligibilityFailure } =
+            braintreepaypalcredit;
         const { paypal } = this._window;
 
         let hasRenderedSmartButton = false;
@@ -174,6 +175,15 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
                     if (paypalButtonRender.isEligible()) {
                         paypalButtonRender.render(`#${containerId}`);
                         hasRenderedSmartButton = true;
+                    } else if (
+                        paypal.FUNDING.CREDIT &&
+                        onEligibilityFailure &&
+                        typeof onEligibilityFailure === 'function'
+                    ) {
+                        // the condition is related to paypal.FUNDING.CREDIT because when paypal.FUNDING.PAYLATER is not eligible then
+                        // CREDIT button should be configured and triggered to render with eligibility check
+                        // and if it is not eligible, then onEligibilityFailure callback should be called
+                        onEligibilityFailure();
                     }
                 }
             });
