@@ -7,7 +7,10 @@ import {
     PaymentIntegrationService,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getResponse,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import getCardDataResponse from '../mocks/google-pay-card-data-response.mock';
 import { getCheckoutCom, getGeneric } from '../mocks/google-pay-payment-method.mock';
@@ -28,8 +31,7 @@ describe('GooglePayCheckoutComGateway', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         requestSender = createRequestSender();
-        jest.spyOn(requestSender, 'post').mockResolvedValue({ body: { token: 'tok_f00b4r' } });
-
+        jest.spyOn(requestSender, 'post').mockResolvedValue(getResponse({ token: 'tok_f00b4r' }));
         gateway = new GooglePayCheckoutComGateway(paymentIntegrationService, requestSender);
     });
 

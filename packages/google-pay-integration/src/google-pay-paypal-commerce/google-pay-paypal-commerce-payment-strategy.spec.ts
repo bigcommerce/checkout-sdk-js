@@ -52,7 +52,7 @@ describe('PayPalCommerceGooglePayPaymentStrategy', () => {
         jest.spyOn(processor, 'initialize').mockResolvedValue(undefined);
         jest.spyOn(processor, 'processAdditionalAction').mockResolvedValue(undefined);
         jest.spyOn(processor, 'getNonce').mockResolvedValue('nonceValue');
-        jest.spyOn(scriptLoader, 'getGooglePayConfigOrThrow').mockResolvedValue({});
+        jest.spyOn(scriptLoader, 'getGooglePayConfigOrThrow').mockRejectedValue({});
 
         jest.spyOn(scriptLoader, 'getPayPalSDK').mockResolvedValue({
             Googlepay: jest.fn().mockReturnValue({

@@ -17,6 +17,14 @@ describe('GooglePayAdyenV2Gateway', () => {
     let adyenV2ScriptLoader: AdyenV2ScriptLoader;
     const createFromAction = jest.fn((action, { onAdditionalDetails }) => {
         onAdditionalDetails({ action });
+
+        return {
+            mount: jest.fn(() => {
+                return document.createElement('div');
+            }),
+            unmount: jest.fn(),
+            submit: jest.fn(),
+        };
     });
     const scriptLoader = createScriptLoader();
 
@@ -24,7 +32,10 @@ describe('GooglePayAdyenV2Gateway', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         adyenV2ScriptLoader = new AdyenV2ScriptLoader(scriptLoader, getStylesheetLoader());
         gateway = new GooglePayAdyenV2Gateway(paymentIntegrationService, adyenV2ScriptLoader);
-        jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue({ createFromAction });
+        jest.spyOn(adyenV2ScriptLoader, 'load').mockResolvedValue({
+            createFromAction,
+            create: jest.fn(),
+        });
     });
 
     it('#initialize()', async () => {

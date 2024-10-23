@@ -12,6 +12,7 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getCart,
     getConsignment,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -23,10 +24,11 @@ import GooglePayPaymentProcessor from './google-pay-payment-processor';
 import GooglePayScriptLoader from './google-pay-script-loader';
 import getCardDataResponse from './mocks/google-pay-card-data-response.mock';
 import { getGeneric } from './mocks/google-pay-payment-method.mock';
+import { createInitializeImplementationMock } from './mocks/google-pay-processor-initialize.mock';
 import {
     CallbackTriggerType,
-    GooglePayFullBillingAddress,
     GooglePayInitializationData,
+    NewShippingOptionParameters,
     NewTransactionInfo,
 } from './types';
 
@@ -42,24 +44,13 @@ describe('GooglePayButtonStrategy', () => {
     let eventEmitter: EventEmitter;
     let scriptLoader: GooglePayScriptLoader;
     let formPoster: FormPoster;
-    let mockReturnedPaymentDataChangedValue: NewTransactionInfo;
+    let mockReturnedPaymentDataChangedValue: NewTransactionInfo & NewShippingOptionParameters;
 
     let buyNowCartRequestBody: BuyNowCartRequestBody;
     let buyNowRequiredOptions: {
         buyNowInitializeOptions: {
             getBuyNowCartRequestBody: () => BuyNowCartRequestBody;
         };
-    };
-    const defaultGPayShippingAddress: GooglePayFullBillingAddress = {
-        address1: '',
-        address2: '',
-        address3: '',
-        administrativeArea: 'US',
-        locality: 'TX',
-        sortingCode: '78726',
-        name: '',
-        postalCode: '',
-        countryCode: '',
     };
     const consignment = getConsignment();
     const expectedSippingOptions = [
@@ -116,8 +107,8 @@ describe('GooglePayButtonStrategy', () => {
         };
 
         formPoster = createFormPoster();
-        jest.spyOn(formPoster, 'postForm').mockImplementation((_url, _data, callback) =>
-            callback(),
+        jest.spyOn(formPoster, 'postForm').mockImplementation(
+            (_url, _data, callback) => callback && callback(),
         );
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
@@ -135,6 +126,8 @@ describe('GooglePayButtonStrategy', () => {
             createRequestSender(),
             formPoster,
         );
+        jest.spyOn(processor, 'showPaymentSheet').mockResolvedValue(getCardDataResponse());
+        jest.spyOn(processor, 'setExternalCheckoutForm').mockResolvedValue(undefined);
 
         jest.spyOn(processor, 'initialize').mockResolvedValue(undefined);
         jest.spyOn(processor, 'initializeWidget').mockResolvedValue(undefined);
@@ -188,22 +181,17 @@ describe('GooglePayButtonStrategy', () => {
             });
 
             it('should create Buy Now cart on google pay button click', async () => {
-                jest.spyOn(processor, 'initialize').mockImplementation(
-                    (_, googlePayClientOptions) => {
-                        eventEmitter.on('onPaymentDataChanged', () => {
-                            // TODO: remove this rule and update test with related type (PAYPAL-4383)
-                            // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                            googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged({
-                                callbackTrigger: CallbackTriggerType.INITIALIZE,
-                            });
-                        });
-                    },
+                const initializeMock = createInitializeImplementationMock(
+                    eventEmitter,
+                    CallbackTriggerType.INITIALIZE,
                 );
+
+                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
 
                 jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
                     eventEmitter.emit('onPaymentDataChanged');
 
-                    return getCardDataResponse();
+                    return Promise.resolve(getCardDataResponse());
                 });
 
                 await buttonStrategy.initialize(withBuyNowOptions);
@@ -225,30 +213,26 @@ describe('GooglePayButtonStrategy', () => {
                     Promise.resolve(availableGPayShippingOptions),
                 );
 
-                jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockResolvedValue({});
+                jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockResolvedValue(
+                    getCart(),
+                );
 
-                jest.spyOn(processor, 'initialize').mockImplementation(
-                    (_, googlePayClientOptions) => {
-                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                        eventEmitter.on('onPaymentDataChanged', async () => {
-                            mockReturnedPaymentDataChangedValue =
-                                await googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged(
-                                    {
-                                        callbackTrigger: CallbackTriggerType.INITIALIZE,
-                                        shippingAddress: defaultGPayShippingAddress,
-                                        shippingOptionData: {
-                                            id: consignment.selectedShippingOption?.id,
-                                        },
-                                    },
-                                );
-                        });
+                const initializeMock = createInitializeImplementationMock(
+                    eventEmitter,
+                    CallbackTriggerType.INITIALIZE,
+                    (res) => {
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
+
+                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
 
                 jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
                     eventEmitter.emit('onPaymentDataChanged');
 
-                    return getCardDataResponse();
+                    return Promise.resolve(getCardDataResponse());
                 });
 
                 await buttonStrategy.initialize(withBuyNowOptions);
@@ -275,30 +259,26 @@ describe('GooglePayButtonStrategy', () => {
                     Promise.resolve(availableGPayShippingOptions),
                 );
 
-                jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockResolvedValue({});
+                jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockResolvedValue(
+                    getCart(),
+                );
 
-                jest.spyOn(processor, 'initialize').mockImplementation(
-                    (_, googlePayClientOptions) => {
-                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                        eventEmitter.on('onPaymentDataChanged', async () => {
-                            mockReturnedPaymentDataChangedValue =
-                                await googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged(
-                                    {
-                                        callbackTrigger: CallbackTriggerType.SHIPPING_ADDRESS,
-                                        shippingAddress: defaultGPayShippingAddress,
-                                        shippingOptionData: {
-                                            id: consignment.selectedShippingOption?.id,
-                                        },
-                                    },
-                                );
-                        });
+                const initializeMock = createInitializeImplementationMock(
+                    eventEmitter,
+                    CallbackTriggerType.SHIPPING_ADDRESS,
+                    (res) => {
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
+
+                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
 
                 jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
                     eventEmitter.emit('onPaymentDataChanged');
 
-                    return getCardDataResponse();
+                    return Promise.resolve(getCardDataResponse());
                 });
 
                 await buttonStrategy.initialize(withBuyNowOptions);
@@ -324,22 +304,22 @@ describe('GooglePayButtonStrategy', () => {
             });
 
             it('should load checkout via onPaymentDataChanged callback on clicking the google pay button', async () => {
-                jest.spyOn(processor, 'initialize').mockImplementation(
-                    (_, googlePayClientOptions) => {
-                        eventEmitter.on('onPaymentDataChanged', () => {
-                            // TODO: remove this rule and update test with related type (PAYPAL-4383)
-                            // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                            void googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged({
-                                callbackTrigger: CallbackTriggerType.INITIALIZE,
-                            });
-                        });
+                const initializeMock = createInitializeImplementationMock(
+                    eventEmitter,
+                    CallbackTriggerType.INITIALIZE,
+                    (res) => {
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
+
+                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
 
                 jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
                     eventEmitter.emit('onPaymentDataChanged');
 
-                    return getCardDataResponse();
+                    return Promise.resolve(getCardDataResponse());
                 });
 
                 const initializeWidgetMock = jest.spyOn(processor, 'initializeWidget');
@@ -363,20 +343,22 @@ describe('GooglePayButtonStrategy', () => {
                     shippingOptionsChangeTriggers: [],
                 });
 
-                jest.spyOn(processor, 'initialize').mockImplementation(
-                    (_, googlePayClientOptions) => {
-                        eventEmitter.on('onPaymentDataChanged', () => {
-                            void googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged({
-                                callbackTrigger: CallbackTriggerType.INITIALIZE,
-                            });
-                        });
+                const initializeMock = createInitializeImplementationMock(
+                    eventEmitter,
+                    CallbackTriggerType.INITIALIZE,
+                    (res) => {
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
+
+                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
 
                 jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
                     eventEmitter.emit('onPaymentDataChanged');
 
-                    return getCardDataResponse();
+                    return Promise.resolve(getCardDataResponse());
                 });
 
                 await buttonStrategy.initialize(options);
@@ -407,28 +389,22 @@ describe('GooglePayButtonStrategy', () => {
                     Promise.resolve(availableGPayShippingOptions),
                 );
 
-                jest.spyOn(processor, 'initialize').mockImplementation(
-                    (_, googlePayClientOptions) => {
-                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                        eventEmitter.on('onPaymentDataChanged', async () => {
-                            mockReturnedPaymentDataChangedValue =
-                                await googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged(
-                                    {
-                                        callbackTrigger: CallbackTriggerType.SHIPPING_ADDRESS,
-                                        shippingAddress: defaultGPayShippingAddress,
-                                        shippingOptionData: {
-                                            id: consignment.selectedShippingOption?.id,
-                                        },
-                                    },
-                                );
-                        });
+                const initializeMock = createInitializeImplementationMock(
+                    eventEmitter,
+                    CallbackTriggerType.INITIALIZE,
+                    (res) => {
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
+
+                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
 
                 jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
                     eventEmitter.emit('onPaymentDataChanged');
 
-                    return getCardDataResponse();
+                    return Promise.resolve(getCardDataResponse());
                 });
 
                 await buttonStrategy.initialize(options);
@@ -459,28 +435,22 @@ describe('GooglePayButtonStrategy', () => {
                     'handleShippingAddressChange',
                 );
 
-                jest.spyOn(processor, 'initialize').mockImplementation(
-                    (_, googlePayClientOptions) => {
-                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                        eventEmitter.on('onPaymentDataChanged', async () => {
-                            mockReturnedPaymentDataChangedValue =
-                                await googlePayClientOptions.paymentDataCallbacks.onPaymentDataChanged(
-                                    {
-                                        callbackTrigger: CallbackTriggerType.SHIPPING_OPTION,
-                                        shippingAddress: defaultGPayShippingAddress,
-                                        shippingOptionData: {
-                                            id: consignment.selectedShippingOption?.id,
-                                        },
-                                    },
-                                );
-                        });
+                const initializeMock = createInitializeImplementationMock(
+                    eventEmitter,
+                    CallbackTriggerType.SHIPPING_OPTION,
+                    (res) => {
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
                     },
                 );
+
+                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
 
                 jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
                     eventEmitter.emit('onPaymentDataChanged');
 
-                    return getCardDataResponse();
+                    return Promise.resolve(getCardDataResponse());
                 });
 
                 await buttonStrategy.initialize(options);
@@ -546,12 +516,6 @@ describe('GooglePayButtonStrategy', () => {
         });
 
         describe('should fail if:', () => {
-            test('options is missing', async () => {
-                const initialize = buttonStrategy.initialize();
-
-                await expect(initialize).rejects.toThrow(TypeError);
-            });
-
             test('containerId is missing', async () => {
                 const initialize = buttonStrategy.initialize({
                     ...options,

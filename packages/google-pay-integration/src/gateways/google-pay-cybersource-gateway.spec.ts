@@ -43,7 +43,9 @@ describe('GooglePayCybersourceGateway', () => {
         it('should return the gateway identifier', async () => {
             await gateway.initialize(getGeneric);
 
-            expect(gateway.getPaymentGatewayParameters().gateway).toBe('cybersource');
+            const params = await gateway.getPaymentGatewayParameters();
+
+            expect(params.gateway).toBe('cybersource');
         });
     });
 });

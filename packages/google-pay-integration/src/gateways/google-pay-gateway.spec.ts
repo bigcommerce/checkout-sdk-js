@@ -5,6 +5,7 @@ import {
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getBillingAddress,
     getConsignment,
     getShippingOption,
     PaymentIntegrationServiceMock,
@@ -36,7 +37,7 @@ describe('GooglePayGateway', () => {
         jest.clearAllMocks();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
-        jest.spyOn(paymentIntegrationService, 'loadShippingCountries').mockReturnValue(
+        jest.spyOn(paymentIntegrationService, 'loadShippingCountries').mockResolvedValue(
             paymentIntegrationService.getState(),
         );
 
@@ -317,7 +318,9 @@ describe('GooglePayGateway', () => {
             try {
                 await gateway.getNonce('methodId');
             } catch (err) {
-                error = err;
+                if (err instanceof MissingDataError) {
+                    error = err;
+                }
             } finally {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -347,7 +350,9 @@ describe('GooglePayGateway', () => {
             try {
                 await gateway.getNonce('methodId');
             } catch (err) {
-                error = err;
+                if (err instanceof MissingDataError) {
+                    error = err;
+                }
             } finally {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -674,7 +679,7 @@ describe('GooglePayGateway', () => {
                 paymentIntegrationService.getState(),
                 'getBillingAddress',
             ).mockReturnValueOnce({
-                ...paymentIntegrationService.getState().getBillingAddress(),
+                ...getBillingAddress(),
                 email: 'test.tester@bigcommerce.com',
             });
 
