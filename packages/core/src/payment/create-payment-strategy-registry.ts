@@ -65,7 +65,6 @@ import {
     PaymentResumer,
     PPSDKStrategy,
 } from './strategies/ppsdk';
-import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
 
 export default function createPaymentStrategyRegistry(
@@ -75,7 +74,7 @@ export default function createPaymentStrategyRegistry(
     spamProtection: GoogleRecaptcha,
     locale: string,
 ) {
-    const registry = new PaymentStrategyRegistry(store, {
+    const registry = new PaymentStrategyRegistry({
         defaultToken: PaymentStrategyType.CREDIT_CARD,
     });
     const scriptLoader = getScriptLoader();
@@ -302,21 +301,6 @@ export default function createPaymentStrategyRegistry(
                 ),
                 new PaymentResumer(requestSender, stepHandler),
                 new BrowserStorage('PPSDK'),
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.SQUARE,
-        () =>
-            new SquarePaymentStrategy(
-                store,
-                checkoutActionCreator,
-                orderActionCreator,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                paymentStrategyActionCreator,
-                requestSender,
-                new SquareScriptLoader(scriptLoader),
             ),
     );
 

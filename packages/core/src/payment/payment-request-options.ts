@@ -12,7 +12,6 @@ import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
 import { MonerisPaymentInitializeOptions } from './strategies/moneris';
 import { OpyPaymentInitializeOptions } from './strategies/opy';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
-import { SquarePaymentInitializeOptions } from './strategies/square';
 
 export { PaymentInitializeOptions } from '../generated/payment-initialize-options';
 
@@ -95,10 +94,4 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support PayPal Express.
      */
     paypalexpress?: PaypalExpressPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Square payment method.
-     * They can be omitted unless you need to support Square.
-     */
-    square?: SquarePaymentInitializeOptions;
 }
