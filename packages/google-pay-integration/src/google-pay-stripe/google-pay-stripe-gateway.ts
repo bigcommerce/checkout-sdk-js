@@ -32,6 +32,7 @@ export default class GooglePayStripeGateway extends GooglePayGateway {
         private scriptLoader: StripeUPEScriptLoader,
     ) {
         super('stripe', paymentIntegrationService);
+        console.log('Stripe gateway');
     }
 
     async mapToExternalCheckoutData(
