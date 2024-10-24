@@ -247,7 +247,7 @@ describe('CheckoutService', () => {
 
         jest.spyOn(paymentStrategy, 'deinitialize').mockResolvedValue(Promise.resolve());
 
-        paymentStrategyRegistry = new PaymentStrategyRegistry(store);
+        paymentStrategyRegistry = new PaymentStrategyRegistry();
         paymentStrategyRegistryV2 = createPaymentStrategyRegistryV2(paymentIntegrationService);
         customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
 
