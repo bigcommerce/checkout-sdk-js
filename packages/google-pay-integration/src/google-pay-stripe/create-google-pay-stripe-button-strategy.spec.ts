@@ -1,7 +1,7 @@
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import GooglePayButtonStrategy from '../../google-pay-button-strategy';
+import GooglePayButtonStrategy from '../google-pay-button-strategy';
 
 import createGooglePayStripeButtonStrategy from './create-google-pay-stripe-button-strategy';
 
