@@ -446,6 +446,12 @@ declare interface PayPalCommerceAlternativeMethodsButtonOptions {
      * A set of styling options for the checkout button.
      */
     style?: PayPalButtonStyleOptions;
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
 }
 
 /**
@@ -471,6 +477,12 @@ declare interface PayPalCommerceButtonInitializeOptions {
      * A callback that gets called when payment complete on paypal side.
      */
     onComplete?(): void;
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
 }
 
 declare interface PayPalCommerceCreditButtonInitializeOptions {
@@ -494,6 +506,12 @@ declare interface PayPalCommerceCreditButtonInitializeOptions {
      * A callback that gets called when payment complete on paypal side.
      */
     onComplete?(): void;
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
 }
 
 declare interface PayPalCommerceVenmoButtonInitializeOptions {
@@ -509,6 +527,12 @@ declare interface PayPalCommerceVenmoButtonInitializeOptions {
      * The options that required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
 }
 
 declare interface PaypalButtonInitializeOptions {

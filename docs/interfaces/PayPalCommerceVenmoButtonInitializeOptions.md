@@ -10,6 +10,10 @@
 - [currencyCode](PayPalCommerceVenmoButtonInitializeOptions.md#currencycode)
 - [style](PayPalCommerceVenmoButtonInitializeOptions.md#style)
 
+### Methods
+
+- [onEligibilityFailure](PayPalCommerceVenmoButtonInitializeOptions.md#oneligibilityfailure)
+
 ## Properties
 
 ### buyNowInitializeOptions
@@ -33,3 +37,15 @@ ___
 • `Optional` **style**: [`PayPalButtonStyleOptions`](PayPalButtonStyleOptions.md)
 
 A set of styling options for the checkout button.
+
+## Methods
+
+### onEligibilityFailure
+
+▸ `Optional` **onEligibilityFailure**(): `void`
+
+ A callback that gets called when PayPal SDK restricts to render PayPal component.
+
+#### Returns
+
+`void`

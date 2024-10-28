@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.674.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.673.0...v1.674.0) (2024-10-28)
+
+
+### Features
+
+* **payment:** PAYPAL-4697 added onEligibilityFailure callback to paypal commerce button strategies ([#2659](https://github.com/bigcommerce/checkout-sdk-js/issues/2659)) ([2a46a1d](https://github.com/bigcommerce/checkout-sdk-js/commit/2a46a1d5006199b06a76f906cdd93d7e758bee51))
+
 ## [1.673.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.672.3...v1.673.0) (2024-10-28)
 
 

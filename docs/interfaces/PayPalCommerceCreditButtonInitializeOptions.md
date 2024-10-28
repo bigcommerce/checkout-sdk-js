@@ -14,6 +14,7 @@
 ### Methods
 
 - [onComplete](PayPalCommerceCreditButtonInitializeOptions.md#oncomplete)
+- [onEligibilityFailure](PayPalCommerceCreditButtonInitializeOptions.md#oneligibilityfailure)
 
 ## Properties
 
@@ -54,6 +55,18 @@ A set of styling options for the checkout button.
 ▸ `Optional` **onComplete**(): `void`
 
 A callback that gets called when payment complete on paypal side.
+
+#### Returns
+
+`void`
+
+___
+
+### onEligibilityFailure
+
+▸ `Optional` **onEligibilityFailure**(): `void`
+
+ A callback that gets called when PayPal SDK restricts to render PayPal component.
 
 #### Returns
 
