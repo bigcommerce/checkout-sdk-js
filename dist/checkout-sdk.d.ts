@@ -1508,6 +1508,12 @@ declare interface BraintreePaypalButtonInitializeOptions {
      */
     onError?(error: BraintreeError_2 | StandardError): void;
     /**
+     *
+     *  A callback that gets called when Braintree SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
+    /**
      * The option that used to initialize a PayPal script with provided currency code.
      */
     currencyCode?: string;
@@ -1547,6 +1553,12 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
      * @param error - The error object describing the failure.
      */
     onError?(error: BraintreeError_2 | StandardError): void;
+    /**
+     *
+     *  A callback that gets called when Braintree SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
     /**
      * The option that used to initialize a PayPal script with provided currency code.
      */

@@ -15,6 +15,7 @@
 ### Methods
 
 - [onAuthorizeError](BraintreePaypalButtonInitializeOptions.md#onauthorizeerror)
+- [onEligibilityFailure](BraintreePaypalButtonInitializeOptions.md#oneligibilityfailure)
 - [onError](BraintreePaypalButtonInitializeOptions.md#onerror)
 - [onPaymentError](BraintreePaypalButtonInitializeOptions.md#onpaymenterror)
 
@@ -78,6 +79,18 @@ A callback that gets called if unable to authorize and tokenize payment.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `error` | [`BraintreeError_2`](BraintreeError_2.md) \| [`StandardError`](../classes/StandardError.md) | The error object describing the failure. |
+
+#### Returns
+
+`void`
+
+___
+
+### onEligibilityFailure
+
+▸ `Optional` **onEligibilityFailure**(): `void`
+
+ A callback that gets called when Braintree SDK restricts to render PayPal component.
 
 #### Returns
 
