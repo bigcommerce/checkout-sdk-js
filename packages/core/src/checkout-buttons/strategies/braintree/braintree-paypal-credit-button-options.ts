@@ -47,6 +47,13 @@ export interface BraintreePaypalCreditButtonInitializeOptions {
     onError?(error: BraintreeError | StandardError): void;
 
     /**
+     *
+     *  A callback that gets called when Braintree SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
+
+    /**
      * The option that used to initialize a PayPal script with provided currency code.
      */
     currencyCode?: string;
