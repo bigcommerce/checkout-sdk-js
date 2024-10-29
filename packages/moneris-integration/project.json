@@ -1,0 +1,23 @@
+{
+    "root": "packages/moneris-integration",
+    "sourceRoot": "packages/moneris-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/moneris-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/moneris-integration"],
+            "options": {
+                "jestConfig": "packages/moneris-integration/jest.config.js",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": ["scope:integration"]
+}
