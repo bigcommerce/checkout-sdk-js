@@ -8170,6 +8170,8 @@ declare interface StripeUPEPaymentInitializeOptions {
     onError?(error?: Error): void;
     render(): void;
     initStripeElementUpdateTrigger?(updateTriggerFn: (payload: StripeElementUpdateOptions) => void): void;
+    paymentMethodSelect?(id: string): void;
+    handleClosePaymentMethod?(collapseElement: () => void): void;
 }
 
 /**
