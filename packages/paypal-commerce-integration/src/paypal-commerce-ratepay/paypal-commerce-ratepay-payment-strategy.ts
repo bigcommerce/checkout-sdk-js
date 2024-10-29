@@ -39,6 +39,8 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
         private loadingIndicator: LoadingIndicator,
+        private pollingInterval: number = POLLING_INTERVAL,
+        private maxPollingIntervalTime: number = MAX_POLLING_TIME,
     ) {}
 
     async initialize(
@@ -309,7 +311,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         gatewayId?: string,
     ): Promise<void> {
         await new Promise<void>((resolve, reject) => {
-            const timeout = setTimeout(resolve, POLLING_INTERVAL);
+            const timeout = setTimeout(resolve, this.pollingInterval);
 
             this.stopPolling = () => {
                 clearTimeout(timeout);
@@ -320,7 +322,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
         });
 
         try {
-            this.pollingTimer += POLLING_INTERVAL;
+            this.pollingTimer += this.pollingInterval;
 
             const orderStatus = await this.paypalCommerceIntegrationService.getOrderStatus(
                 'paypalcommercealternativemethods',
@@ -344,7 +346,7 @@ export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStra
                 return rejectPromise();
             }
 
-            if (!isOrderApproved && this.pollingTimer < MAX_POLLING_TIME) {
+            if (!isOrderApproved && this.pollingTimer < this.maxPollingIntervalTime) {
                 return await this.initializePollingMechanism(
                     methodId,
                     resolvePromise,
