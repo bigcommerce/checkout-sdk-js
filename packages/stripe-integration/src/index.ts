@@ -1,6 +1,7 @@
 export { default as createStripeV3PaymentStrategy } from './stripev3/create-stripev3-payment-strategy';
 export { default as createStripeUPEPaymentStrategy } from './stripe-upe/create-stripe-upe-payment-strategy';
 export { default as createStripeUPECustomerStrategy } from './stripe-upe/create-stripe-upe-customer-strategy';
+export { default as createStripeOCSPaymentStrategy } from './stripe-upe/create-stripe-ocs-payment-strategy';
 
 export { default as StripeScriptLoader } from './stripev3/stripev3-script-loader';
 export { default as StripeUPEScriptLoader } from './stripe-upe/stripe-upe-script-loader';

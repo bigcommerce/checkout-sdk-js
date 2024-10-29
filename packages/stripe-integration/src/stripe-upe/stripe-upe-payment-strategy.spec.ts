@@ -39,6 +39,7 @@ import {
     StripeUPEClient,
 } from './stripe-upe';
 import { WithStripeUPEPaymentInitializeOptions } from './stripe-upe-initialize-options';
+import StripeUPEIntegrationService from './stripe-upe-integration-service';
 import StripeUPEPaymentStrategy from './stripe-upe-payment-strategy';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import {
@@ -60,6 +61,7 @@ describe('StripeUPEPaymentStrategy', () => {
     let strategy: StripeUPEPaymentStrategy;
     let stripeScriptLoader: StripeUPEScriptLoader;
     let paymentIntegrationService: PaymentIntegrationService;
+    let stripeUPEIntegrationService: StripeUPEIntegrationService;
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -91,7 +93,12 @@ describe('StripeUPEPaymentStrategy', () => {
 
         jest.spyOn(paymentIntegrationService, 'subscribe');
 
-        strategy = new StripeUPEPaymentStrategy(paymentIntegrationService, stripeScriptLoader);
+        stripeUPEIntegrationService = new StripeUPEIntegrationService(paymentIntegrationService);
+        strategy = new StripeUPEPaymentStrategy(
+            paymentIntegrationService,
+            stripeScriptLoader,
+            stripeUPEIntegrationService,
+        );
 
         const mockElement = document.createElement('div');
 
