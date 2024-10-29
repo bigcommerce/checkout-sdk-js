@@ -62,6 +62,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             paymentIntegrationService,
             paypalCommerceIntegrationService,
             loadingIndicator,
+            0,
         );
 
         jest.spyOn(loadingIndicator, 'show').mockReturnValue(undefined);
