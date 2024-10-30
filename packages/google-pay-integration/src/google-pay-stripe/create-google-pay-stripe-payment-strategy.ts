@@ -1,15 +1,18 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
     PaymentStrategyFactory,
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import GooglePayStripeGateway from '../../gateways/google-pay-stripe-gateway';
-import GooglePayPaymentProcessor from '../../google-pay-payment-processor';
-import GooglePayPaymentStrategy from '../../google-pay-payment-strategy';
-import createGooglePayScriptLoader from '../create-google-pay-script-loader';
+import createGooglePayScriptLoader from '../factories/create-google-pay-script-loader';
+import GooglePayPaymentProcessor from '../google-pay-payment-processor';
+import GooglePayPaymentStrategy from '../google-pay-payment-strategy';
+
+import GooglePayStripeGateway from './google-pay-stripe-gateway';
+import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
 const createGooglePayStripePaymentStrategy: PaymentStrategyFactory<GooglePayPaymentStrategy> = (
     paymentIntegrationService,
@@ -18,7 +21,10 @@ const createGooglePayStripePaymentStrategy: PaymentStrategyFactory<GooglePayPaym
         paymentIntegrationService,
         new GooglePayPaymentProcessor(
             createGooglePayScriptLoader(),
-            new GooglePayStripeGateway(paymentIntegrationService),
+            new GooglePayStripeGateway(
+                paymentIntegrationService,
+                new StripeUPEScriptLoader(getScriptLoader()),
+            ),
             createRequestSender(),
             createFormPoster(),
         ),
