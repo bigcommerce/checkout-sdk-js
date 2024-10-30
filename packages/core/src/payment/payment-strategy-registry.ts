@@ -1,6 +1,3 @@
-import { ReadableDataStore } from '@bigcommerce/data-store';
-
-import { InternalCheckoutSelectors } from '../checkout';
 import { InvalidArgumentError } from '../common/error/errors';
 import { Registry, RegistryOptions } from '../common/registry';
 
@@ -14,13 +11,6 @@ export default class PaymentStrategyRegistry extends Registry<
     PaymentStrategy,
     PaymentStrategyType
 > {
-    constructor(
-        private _store: ReadableDataStore<InternalCheckoutSelectors>,
-        options?: PaymentStrategyRegistryOptions,
-    ) {
-        super(options);
-    }
-
     getByMethod(paymentMethod?: PaymentMethod): PaymentStrategy {
         if (!paymentMethod) {
             return this.get();
@@ -36,16 +26,6 @@ export default class PaymentStrategyRegistry extends Registry<
     }
 
     private _getToken(paymentMethod: PaymentMethod): PaymentStrategyType {
-        const features = this._store.getState().config.getStoreConfig()?.checkoutSettings.features;
-
-        if (features) {
-            switch (true) {
-                case paymentMethod.id === 'squarev2' &&
-                    features['PROJECT-4113.squarev2_web_payments_sdk']:
-                    throw new Error(`${paymentMethod.id} requires using registryV2`);
-            }
-        }
-
         if (isPPSDKPaymentMethod(paymentMethod)) {
             return PaymentStrategyType.PPSDK;
         }
