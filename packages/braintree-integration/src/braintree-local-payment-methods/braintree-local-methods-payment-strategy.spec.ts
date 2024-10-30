@@ -239,7 +239,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                         paymentData: expect.objectContaining({
                             formattedPayload: expect.objectContaining({
                                 device_info: 'token',
-                                method_id: 'trustly',
+                                method: 'trustly',
                                 set_as_default_stored_instrument: null,
                             }),
                         }),

@@ -126,7 +126,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
             formattedPayload: {
                 vault_payment_instrument: null,
                 set_as_default_stored_instrument: null,
-                method_id: methodId,
+                method: methodId,
                 device_info: sessionId || null,
             },
         };
