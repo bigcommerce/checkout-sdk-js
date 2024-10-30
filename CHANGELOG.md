@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.675.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.675.1...v1.675.2) (2024-10-30)
+
+
+### Bug Fixes
+
+* **checkout:** PI-116 use Square via v2 resolver, removed v1 resolver experiment ([#2713](https://github.com/bigcommerce/checkout-sdk-js/issues/2713)) ([0deff9a](https://github.com/bigcommerce/checkout-sdk-js/commit/0deff9a39afe187f172daafd5148fe68e5dc94a6))
+
 ### [1.675.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.675.0...v1.675.1) (2024-10-29)
 
 ## [1.675.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.674.0...v1.675.0) (2024-10-29)

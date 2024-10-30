@@ -27,7 +27,6 @@ current checkout flow.
 - [opy](BasePaymentInitializeOptions.md#opy)
 - [params](BasePaymentInitializeOptions.md#params)
 - [paypalexpress](BasePaymentInitializeOptions.md#paypalexpress)
-- [square](BasePaymentInitializeOptions.md#square)
 - [timeout](BasePaymentInitializeOptions.md#timeout)
 
 ## Properties
@@ -151,15 +150,6 @@ ___
 
 The options that are required to initialize the PayPal Express payment method.
 They can be omitted unless you need to support PayPal Express.
-
-___
-
-### square
-
-• `Optional` **square**: [`SquarePaymentInitializeOptions`](SquarePaymentInitializeOptions.md)
-
-The options that are required to initialize the Square payment method.
-They can be omitted unless you need to support Square.
 
 ___
 
