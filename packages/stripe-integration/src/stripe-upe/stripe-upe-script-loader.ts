@@ -2,6 +2,8 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { StripeExpressCheckoutClient } from '../stripe-linkv2/types';
+
 import {
     StripeElements,
     StripeElementsOptions,
@@ -25,7 +27,7 @@ export default class StripeUPEScriptLoader {
         if (!stripeClient) {
             const stripe = await this.load();
 
-            stripeClient = stripe(stripePublishableKey, {
+            stripeClient = stripe<StripeUPEClient>(stripePublishableKey, {
                 stripeAccount,
                 locale,
                 betas: [
@@ -39,6 +41,22 @@ export default class StripeUPEScriptLoader {
             });
 
             Object.assign(this.stripeWindow, { bcStripeClient: stripeClient });
+        }
+
+        return stripeClient;
+    }
+
+    async getStripeLinkV2Client(
+        stripePublishableKey: string,
+    ): Promise<StripeExpressCheckoutClient> {
+        let stripeClient = this.stripeWindow.bcStripeLinkV2Client;
+
+        if (!stripeClient) {
+            const stripe = await this.load();
+
+            stripeClient = stripe<StripeExpressCheckoutClient>(stripePublishableKey);
+
+            Object.assign(this.stripeWindow, { bcStripeLinkV2Client: stripeClient });
         }
 
         return stripeClient;

@@ -1,3 +1,4 @@
+import { StripeExpressCheckoutClient } from '../stripe-linkv2/types';
 import {
     CustomFont,
     PaymentIntent,
@@ -101,7 +102,7 @@ export interface StripePaymentEvent extends StripeEvent {
     collapsed?: boolean;
 }
 
-interface Address {
+export interface Address {
     city: string;
     country: string;
     line1: string;
@@ -413,8 +414,12 @@ interface StripeUpeResult {
 
 export interface StripeHostWindow extends Window {
     bcStripeClient?: StripeUPEClient;
+    bcStripeLinkV2Client?: StripeExpressCheckoutClient;
     bcStripeElements?: StripeElements;
-    Stripe?(stripePublishableKey: string, options?: StripeConfigurationOptions): StripeUPEClient;
+    Stripe?<T = StripeUPEClient>(
+        stripePublishableKey: string,
+        options?: StripeConfigurationOptions,
+    ): T;
 }
 
 export enum StripePaymentMethodType {
@@ -445,6 +450,7 @@ export enum StripeElementType {
     PAYMENT = 'payment',
     AUTHENTICATION = 'linkAuthentication',
     SHIPPING = 'address',
+    EXPRESS_CHECKOUT = 'expressCheckout',
 }
 
 export enum StripeUPEPaymentIntentStatus {

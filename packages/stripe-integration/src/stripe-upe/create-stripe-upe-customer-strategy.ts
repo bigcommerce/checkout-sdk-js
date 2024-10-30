@@ -16,5 +16,5 @@ const createStripeUPECustomerStrategy: CustomerStrategyFactory<StripeUPECustomer
         new StripeUPEScriptLoader(getScriptLoader()),
     );
 };
-
-export default toResolvableModule(createStripeUPECustomerStrategy, [{ id: 'stripeupe' }]);
+// TODO mocking this id
+export default toResolvableModule(createStripeUPECustomerStrategy, [{ id: 'stripeupe-test' }]);
