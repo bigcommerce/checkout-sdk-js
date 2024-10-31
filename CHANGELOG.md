@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.676.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.675.2...v1.676.0) (2024-10-31)
+
+
+### Features
+
+* **payment:** STRIPE-476 Stripe Google Pay 3DS added ([1b256db](https://github.com/bigcommerce/checkout-sdk-js/commit/1b256dbd28d022c3ed0e8e27f2442bd3e8d777a0))
+
 ### [1.675.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.675.1...v1.675.2) (2024-10-30)
 
 
