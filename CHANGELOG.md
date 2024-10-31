@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.677.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.677.0...v1.677.1) (2024-10-31)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2696 clenup PayPal integration packages spec errors ([#2715](https://github.com/bigcommerce/checkout-sdk-js/issues/2715)) ([1d0b815](https://github.com/bigcommerce/checkout-sdk-js/commit/1d0b8159fcf8eb10b4483b77e6b04627ff9edf43))
+* **payment:** PI-2701 [checkout-sdk-js types] Clear checkout-sdk-js types errors in test files for the TD Bank related packages ([#2723](https://github.com/bigcommerce/checkout-sdk-js/issues/2723)) ([a67f637](https://github.com/bigcommerce/checkout-sdk-js/commit/a67f6373c1e0f069920183e9dcfc602fcbcabf3c))
+
 ## [1.677.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.676.0...v1.677.0) (2024-10-31)
 
 
