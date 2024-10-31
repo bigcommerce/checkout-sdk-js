@@ -270,6 +270,7 @@ export default class BodlEmitterService implements BodlService {
                 sku: item.sku,
                 variant_id: item.variantId,
                 discount: item.discountAmount,
+                coupon_amount: item.couponAmount,
                 brand_name: item.brand,
                 currency: currencyCode,
                 category_names: getCategoryNames(item),
