@@ -16,7 +16,7 @@ import {
     getPayPalSDKMock,
 } from '../mocks';
 import PayPalCommerceIntegrationService from '../paypal-commerce-integration-service';
-import { PayPalCommerceHostWindow, PayPalSDK } from '../paypal-commerce-types';
+import { PayPalCommerceHostWindow, PayPalOrderStatus, PayPalSDK } from '../paypal-commerce-types';
 
 import { PaypalCommerceRatePay } from './paypal-commerce-ratepay-initialize-options';
 import PaypalCommerceRatepayPaymentStrategy from './paypal-commerce-ratepay-payment-strategy';
@@ -68,14 +68,16 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
         jest.spyOn(loadingIndicator, 'show').mockReturnValue(undefined);
         jest.spyOn(loadingIndicator, 'hide').mockReturnValue(undefined);
 
-        jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockReturnValue(
-            'POLLING_STOP',
+        jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockResolvedValue(
+            PayPalOrderStatus.PollingStop,
         );
         jest.spyOn(document, 'getElementById').mockImplementation((id) => {
             if (id === 'legal-text-container') {
-                return {
-                    innerHTML: 'Mocked legal text',
-                };
+                const el = document.createElement('div');
+
+                el.innerHTML = 'Mocked legal text';
+
+                return el;
             }
 
             return null;
@@ -96,12 +98,12 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             'getBillingAddressOrThrow',
         ).mockReturnValue(billingAddress);
 
-        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockResolvedValue(paypalSdk);
         jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
             paypalSdk,
         );
-        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockReturnValue('1eddfd');
-        jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockReturnValue(undefined);
+        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockResolvedValue('1eddfd');
+        jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockResolvedValue();
     });
 
     afterEach(() => {
@@ -306,7 +308,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
         });
 
         it('throws an error if orderId is not defined', async () => {
-            jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockReturnValue(undefined);
+            jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockResolvedValue('');
 
             const payload = {
                 payment: {
@@ -405,8 +407,8 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
         });
 
         it('stop polling mechanism if corresponding status received', async () => {
-            jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockReturnValue(
-                'POLLING_ERROR',
+            jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockResolvedValue(
+                PayPalOrderStatus.PollingError,
             );
 
             const payload = {
@@ -442,14 +444,17 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
                 },
             };
 
-            jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockReturnValue(
-                'POLLING_STOP',
+            jest.spyOn(paypalCommerceIntegrationService, 'getOrderStatus').mockResolvedValue(
+                PayPalOrderStatus.PollingStop,
             );
+
             jest.spyOn(document, 'getElementById').mockImplementation((id) => {
                 if (id === 'legal-text-container') {
-                    return {
-                        remove: jest.fn(),
-                    };
+                    const el = document.createElement('div');
+
+                    el.remove = jest.fn();
+
+                    return el;
                 }
 
                 return null;

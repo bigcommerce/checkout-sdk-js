@@ -24,7 +24,7 @@ import {
     PaypalButtonStyleColorOption,
     PaypalButtonStyleShapeOption,
     PaypalButtonStyleSizeOption,
-    PaypalExpressTypes,
+    PaypalSDK,
 } from './paypal-express-types';
 
 import { PaypalExpressButtonStrategy, PaypalExpressScriptLoader } from './index';
@@ -36,7 +36,7 @@ describe('PaypalExpressButtonStrategy', () => {
     let options: CheckoutButtonInitializeOptions & WithPaypalExpressButtonInitializeOptions;
     let paypalOptions: PaypalExpressButtonInitializeOptions;
     let paymentIntegrationService: PaymentIntegrationService;
-    let paypal: PaypalExpressTypes;
+    let paypal: PaypalSDK;
     let paypalExpressScriptLoader: PaypalExpressScriptLoader;
     let strategy: PaypalExpressButtonStrategy;
     let paymentMethod: PaymentMethod;
@@ -287,7 +287,7 @@ describe('PaypalExpressButtonStrategy', () => {
     });
 
     it('sends create payment requests to the relative url by default', async () => {
-        jest.spyOn(paymentIntegrationService, 'loadDefaultCheckout').mockReturnValue(
+        jest.spyOn(paymentIntegrationService, 'loadDefaultCheckout').mockResolvedValue(
             paymentIntegrationService.getState(),
         );
         jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
@@ -325,7 +325,7 @@ describe('PaypalExpressButtonStrategy', () => {
         });
 
         it('sends create payment requests to the supplied host', async () => {
-            jest.spyOn(paymentIntegrationService, 'loadDefaultCheckout').mockReturnValue(
+            jest.spyOn(paymentIntegrationService, 'loadDefaultCheckout').mockResolvedValue(
                 paymentIntegrationService.getState(),
             );
             jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(

@@ -26,7 +26,25 @@ export function getCustomer(): Customer {
     };
 }
 
-export function getGuestCustomer(): InternalCustomer {
+export function getGuestCustomer(): Customer {
+    return {
+        id: 0,
+        addresses: [],
+        email: 'test@bigcommerce.com',
+        firstName: '',
+        fullName: '',
+        isGuest: true,
+        lastName: '',
+        storeCredit: 0,
+        shouldEncourageSignIn: false,
+        customerGroup: {
+            id: 0,
+            name: '',
+        },
+    };
+}
+
+export function getGuestInternalCustomer(): InternalCustomer {
     return {
         addresses: [],
         customerId: 0,

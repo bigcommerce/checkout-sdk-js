@@ -1,14 +1,14 @@
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 
 import { getPaypalExpressMock } from './mocks/paypal-express-mock';
-import { PaypalExpressTypes, PaypalHostWindow } from './paypal-express-types';
+import { PaypalHostWindow, PaypalSDK } from './paypal-express-types';
 
 import { PaypalExpressScriptLoader } from './index';
 
 describe('PaypalExpressScriptLoader', () => {
     let loader: ScriptLoader;
     let paypalLoader: PaypalExpressScriptLoader;
-    let paypal: PaypalExpressTypes;
+    let paypal: PaypalSDK;
 
     beforeEach(() => {
         loader = createScriptLoader();

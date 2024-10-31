@@ -8,6 +8,7 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getConfig,
     getConsignment,
     getShippingOption,
     PaymentIntegrationServiceMock,
@@ -44,6 +45,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
     const defaultContainerId = 'paypal-commerce-container-mock-id';
     const paypalOrderId = 'ORDER_ID';
     const approveDataOrderId = paypalOrderId;
+    const storeConfig = getConfig().storeConfig;
 
     const paypalCommerceOptions: PayPalCommerceCustomerInitializeOptions = {
         container: defaultContainerId,
@@ -77,7 +79,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
         );
         jest.spyOn(paymentIntegrationService, 'selectShippingOption').mockImplementation(jest.fn());
 
-        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockResolvedValue(paypalSdk);
         jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
             paypalSdk,
         );
@@ -100,7 +102,9 @@ describe('PayPalCommerceCustomerStrategy', () => {
             getShippingOption(),
         );
         jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
+            ...storeConfig,
             checkoutSettings: {
+                ...storeConfig.checkoutSettings,
                 features: {
                     'PAYPAL-4387.paypal_shipping_callbacks': true,
                 },
@@ -199,6 +203,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 return {
                     isEligible: jest.fn(() => true),
                     render: jest.fn(),
+                    close: jest.fn(),
                 };
             },
         );
@@ -339,7 +344,9 @@ describe('PayPalCommerceCustomerStrategy', () => {
 
         it('initializes paypal buttons with config related to hosted checkout feature and sipping callbacks experiment is off', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
+                ...storeConfig,
                 checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
                     features: {
                         'PAYPAL-4387.paypal_shipping_callbacks': false,
                     },
@@ -376,6 +383,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                close: jest.fn(),
                 isEligible: jest.fn(() => true),
                 render: paypalCommerceSdkRenderMock,
             }));
@@ -389,6 +397,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                close: jest.fn(),
                 isEligible: jest.fn(() => false),
                 render: paypalCommerceSdkRenderMock,
             }));
@@ -404,7 +413,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
 
     describe('#createOrder button callback', () => {
         it('creates an order', async () => {
-            jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockReturnValue('');
+            jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockResolvedValue('');
 
             await strategy.initialize(initializationOptions);
 
@@ -446,7 +455,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
                                     { orderID: approveDataOrderId },
                                     {
                                         order: {
-                                            get: jest.fn(() => paypalOrderDetails),
+                                            get: jest.fn(() => Promise.resolve(paypalOrderDetails)),
                                         },
                                     },
                                 );
@@ -454,6 +463,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
                         });
 
                         return {
+                            close: jest.fn(),
                             render: jest.fn(),
                             isEligible: jest.fn(() => true),
                         };
@@ -475,7 +485,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
             });
 
             it('takes order details data from paypal', async () => {
-                const getOrderActionMock = jest.fn(() => paypalOrderDetails);
+                const getOrderActionMock = jest.fn(() => Promise.resolve(paypalOrderDetails));
 
                 jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
                     (options: PayPalCommerceButtonsOptions) => {
@@ -493,6 +503,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
                         });
 
                         return {
+                            close: jest.fn(),
                             render: jest.fn(),
                             isEligible: jest.fn(() => true),
                         };
@@ -506,7 +517,7 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(getOrderActionMock).toHaveBeenCalled();
-                expect(getOrderActionMock).toHaveReturnedWith(paypalOrderDetails);
+                expect(getOrderActionMock).toHaveReturnedWith(Promise.resolve(paypalOrderDetails));
             });
 
             it('updates billing address with valid customers data', async () => {

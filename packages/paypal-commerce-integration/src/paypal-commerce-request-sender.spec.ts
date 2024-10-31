@@ -5,6 +5,7 @@ import {
     INTERNAL_USE_ONLY,
     SDK_VERSION_HEADERS,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { getResponse } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import PayPalCommerceRequestSender from './paypal-commerce-request-sender';
 
@@ -16,11 +17,7 @@ describe('PayPalCommerceRequestSender', () => {
         requestSender = createRequestSender();
         paypalCommerceRequestSender = new PayPalCommerceRequestSender(requestSender);
 
-        const requestResponseMock = {
-            body: {
-                orderId: '123',
-            },
-        };
+        const requestResponseMock = getResponse({ orderId: 123 });
 
         jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(requestResponseMock));
         jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(requestResponseMock));

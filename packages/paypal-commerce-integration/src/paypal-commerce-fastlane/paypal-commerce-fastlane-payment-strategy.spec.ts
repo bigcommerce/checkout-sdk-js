@@ -7,6 +7,7 @@ import {
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
     PaymentMethod,
+    UntrustedShippingCardVerificationType,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
@@ -45,7 +46,8 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
     const address = getBillingAddress();
     const cart = getCart();
-    const customer = getGuestCustomer();
+    const guestCustomer = getGuestCustomer();
+    const customer = getCustomer();
     const storeConfig = getConfig().storeConfig;
 
     const authenticationResultMock = getPayPalFastlaneAuthenticationResultMock();
@@ -62,11 +64,14 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
     };
 
     const bcAddressMock = {
+        id: 1,
+        type: 'type',
         address1: 'addressLine1',
         address2: 'addressLine2',
         city: 'addressCity',
         company: 'BigCommerce',
         countryCode: 'US',
+        country: 'US',
         customFields: [],
         firstName: 'John',
         lastName: 'Doe',
@@ -75,6 +80,8 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
         stateOrProvince: 'addressState',
         stateOrProvinceCode: 'addressState',
     };
+
+    const card = 'card' as const;
 
     const bcCardMock = {
         bigpayToken: 'nonce/token',
@@ -87,8 +94,8 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
         method: 'paypalcommerceacceleratedcheckout',
         provider: 'paypalcommerceacceleratedcheckout',
         trustedShippingAddress: false,
-        type: 'card',
-        untrustedShippingCardVerificationMode: 'pan',
+        type: card,
+        untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
     };
 
     beforeEach(async () => {
@@ -113,9 +120,11 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService, 'submitPayment');
         jest.spyOn(paymentIntegrationService, 'updatePaymentProviderCustomer');
         jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(cart);
-        jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(customer);
+        jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(
+            guestCustomer,
+        );
         jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
-            customer,
+            guestCustomer,
         );
         jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
             storeConfig,
@@ -134,12 +143,13 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             'getPaymentProviderCustomer',
         ).mockReturnValue({});
 
-        jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(
-            () => paypalFastlaneSdk,
+        jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+            Promise.resolve(paypalFastlaneSdk),
         );
 
-        jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue({
+        jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockResolvedValue({
             orderId: paypalOrderId,
+            approveUrl: 'url.com',
         });
 
         jest.spyOn(paypalCommerceFastlaneUtils, 'getPayPalFastlaneOrThrow').mockReturnValue(
@@ -148,12 +158,13 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
         jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalFastlane');
         jest.spyOn(paypalCommerceFastlaneUtils, 'getStorageSessionId').mockReturnValue(cart.id);
         jest.spyOn(paypalCommerceFastlaneUtils, 'updateStorageSessionId');
-        jest.spyOn(paypalCommerceFastlaneUtils, 'lookupCustomerOrThrow').mockReturnValue({
+        jest.spyOn(paypalCommerceFastlaneUtils, 'lookupCustomerOrThrow').mockResolvedValue({
             customerContextId,
         });
-        jest.spyOn(paypalCommerceFastlaneUtils, 'triggerAuthenticationFlowOrThrow').mockReturnValue(
-            getPayPalFastlaneAuthenticationResultMock(),
-        );
+        jest.spyOn(
+            paypalCommerceFastlaneUtils,
+            'triggerAuthenticationFlowOrThrow',
+        ).mockResolvedValue(getPayPalFastlaneAuthenticationResultMock());
         jest.spyOn(
             paypalCommerceFastlaneUtils,
             'mapPayPalFastlaneProfileToBcCustomerData',
@@ -502,9 +513,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
         it('throws an error if container is not provided', async () => {
             let onInitCallback = noop;
 
-            const onInitImplementation = (
-                renderComponentCallback: (container?: string) => void,
-            ) => {
+            const onInitImplementation = (renderComponentCallback: (container: string) => void) => {
                 onInitCallback = renderComponentCallback;
             };
 
@@ -525,11 +534,9 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
         it('renders paypal fastlane credit card component', async () => {
             const containerId = 'containerIdMock';
-            let onInitCallback: (container?: string) => void = noop;
+            let onInitCallback: (container: string) => void = noop;
 
-            const onInitImplementation = (
-                renderComponentCallback: (container?: string) => void,
-            ) => {
+            const onInitImplementation = (renderComponentCallback: (container: string) => void) => {
                 onInitCallback = renderComponentCallback;
             };
 
@@ -560,7 +567,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                 instruments: [bcCardMock],
             });
 
-            jest.spyOn(paypalFastlane.profile, 'showCardSelector').mockImplementation(() => ({
+            jest.spyOn(paypalFastlane.profile, 'showCardSelector').mockResolvedValue({
                 selectionChanged: true,
                 selectedCard: {
                     id: 'nonce/token',
@@ -571,20 +578,16 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                             lastDigits: '1111',
                             name: 'John Doe',
                             billingAddress: {
-                                firstName: 'John',
-                                lastName: 'Doe',
-                                company: 'BigCommerce',
-                                streetAddress: 'addressLine1',
-                                extendedAddress: 'addressLine2',
-                                locality: 'addressCity',
-                                region: 'addressState',
+                                addressLine1: 'addressLine1',
+                                adminArea1: 'adminArea1',
+                                adminArea2: 'adminArea2',
                                 postalCode: '03004',
-                                countryCodeAlpha2: 'US',
+                                countryCode: 'US',
                             },
                         },
                     },
                 },
-            }));
+            });
 
             let onChangeCallback: () => Promise<CardInstrument | undefined> = () =>
                 Promise.resolve(undefined);
@@ -629,10 +632,27 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
         });
 
         it('returns undefined if the customer selects the same instrument or closes a popup window', async () => {
-            jest.spyOn(paypalFastlane.profile, 'showCardSelector').mockImplementation(() => ({
+            jest.spyOn(paypalFastlane.profile, 'showCardSelector').mockResolvedValue({
                 selectionChanged: false,
-                selectedCard: {},
-            }));
+                selectedCard: {
+                    id: 'nonce/token',
+                    paymentSource: {
+                        card: {
+                            brand: 'Visa',
+                            expiry: '2030-12',
+                            lastDigits: '1111',
+                            name: 'John Doe',
+                            billingAddress: {
+                                addressLine1: 'addressLine1',
+                                adminArea1: 'adminArea1',
+                                adminArea2: 'adminArea2',
+                                postalCode: '03004',
+                                countryCode: 'US',
+                            },
+                        },
+                    },
+                },
+            });
 
             let onChangeCallback: () => Promise<CardInstrument | undefined> = () =>
                 Promise.resolve(undefined);

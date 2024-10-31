@@ -83,7 +83,7 @@ describe('PayPalCommerceIntegrationService', () => {
         jest.spyOn(state, 'getCartOrThrow').mockReturnValue(cart);
         jest.spyOn(state, 'getConsignmentsOrThrow').mockReturnValue(consignments);
 
-        jest.spyOn(paypalCommerceScriptLoader, 'getPayPalSDK').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalCommerceScriptLoader, 'getPayPalSDK').mockResolvedValue(paypalSdk);
     });
 
     it('creates an instance of the PayPalCommerceIntegrationService class', () => {
@@ -154,7 +154,7 @@ describe('PayPalCommerceIntegrationService', () => {
         });
 
         it('successfully creates buy now cart', async () => {
-            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(buyNowCart);
+            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockResolvedValue(buyNowCart);
 
             const output = await subject.createBuyNowCartOrThrow({
                 getBuyNowCartRequestBody,
@@ -180,8 +180,9 @@ describe('PayPalCommerceIntegrationService', () => {
 
     describe('#createOrder', () => {
         it('successfully creates paypal order', async () => {
-            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue({
+            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockResolvedValue({
                 orderId: mockedOrderId,
+                approveUrl: 'url.com',
             });
 
             const output = await subject.createOrder(defaultMethodId);
@@ -193,8 +194,9 @@ describe('PayPalCommerceIntegrationService', () => {
         });
 
         it('successfully creates paypal order with provided instrument data', async () => {
-            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockReturnValue({
+            jest.spyOn(paypalCommerceRequestSender, 'createOrder').mockResolvedValue({
                 orderId: mockedOrderId,
+                approveUrl: 'url.com',
             });
 
             const vaultedInstrumentData = { instrumentId: 'vaultedInstrumentIdMock' };
@@ -211,7 +213,9 @@ describe('PayPalCommerceIntegrationService', () => {
 
     describe('#updateOrder', () => {
         it('successfully updates order', async () => {
-            jest.spyOn(paypalCommerceRequestSender, 'updateOrder').mockReturnValue(undefined);
+            jest.spyOn(paypalCommerceRequestSender, 'updateOrder').mockResolvedValue({
+                statusCode: 200,
+            });
 
             await subject.updateOrder();
 
@@ -237,7 +241,7 @@ describe('PayPalCommerceIntegrationService', () => {
 
     describe('#getOrderStatus', () => {
         it('successfully updates order', async () => {
-            jest.spyOn(paypalCommerceRequestSender, 'getOrderStatus').mockReturnValue({
+            jest.spyOn(paypalCommerceRequestSender, 'getOrderStatus').mockResolvedValue({
                 status: PayPalOrderStatus.Approved,
             });
 
@@ -247,7 +251,7 @@ describe('PayPalCommerceIntegrationService', () => {
         });
 
         it('calls getOrderStatus with proper data', async () => {
-            jest.spyOn(paypalCommerceRequestSender, 'getOrderStatus').mockReturnValue({
+            jest.spyOn(paypalCommerceRequestSender, 'getOrderStatus').mockResolvedValue({
                 status: PayPalOrderStatus.Approved,
             });
 
@@ -391,7 +395,16 @@ describe('PayPalCommerceIntegrationService', () => {
             const consignment = {
                 ...getConsignment(),
                 availableShippingOptions: [recommendedShippingOption],
-                selectedShippingOption: null,
+                selectedShippingOption: {
+                    additionalDescription: 'string',
+                    description: 'string',
+                    id: 'string',
+                    isRecommended: true,
+                    imageUrl: 'string',
+                    cost: 12,
+                    transitTime: 'string',
+                    type: 'string',
+                },
             };
 
             const updatedConsignment = {
@@ -411,18 +424,27 @@ describe('PayPalCommerceIntegrationService', () => {
         it('returns first available shipping option if there is no recommended or selected options', () => {
             const firstShippingOption = {
                 ...getShippingOption(),
-                id: 1,
+                id: '1',
             };
 
             const secondShippingOption = {
                 ...getShippingOption(),
-                id: 2,
+                id: '2',
             };
 
             const consignment = {
                 ...getConsignment(),
                 availableShippingOptions: [firstShippingOption, secondShippingOption],
-                selectedShippingOption: null,
+                selectedShippingOption: {
+                    additionalDescription: 'string',
+                    description: 'string',
+                    id: '111',
+                    isRecommended: true,
+                    imageUrl: 'string',
+                    cost: 12,
+                    transitTime: 'string',
+                    type: 'string',
+                },
             };
 
             const updatedConsignment = {
