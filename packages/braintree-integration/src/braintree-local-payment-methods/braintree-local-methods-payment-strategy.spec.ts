@@ -40,6 +40,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
     let paymentMethodMock: PaymentMethod;
     let localPaymentInstanceMock: LocalPaymentInstance;
     let lpmButton: HTMLButtonElement;
+    const sessionId = 'sessionId';
 
     const initializationOptions: PaymentInitializeOptions = {
         methodId: 'giropay',
@@ -79,13 +80,8 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
         );
 
         jest.spyOn(braintreeIntegrationService, 'initialize');
-        jest.spyOn(braintreeIntegrationService, 'getClient').mockReturnValue(
-            paymentMethodMock.clientToken,
-        );
-        jest.spyOn(braintreeIntegrationService, 'getSessionId').mockReturnValue(
-            paymentMethodMock.clientToken,
-        );
-        jest.spyOn(braintreeIntegrationService, 'loadBraintreeLocalMethods').mockReturnValue(
+        jest.spyOn(braintreeIntegrationService, 'getSessionId').mockResolvedValue(sessionId);
+        jest.spyOn(braintreeIntegrationService, 'loadBraintreeLocalMethods').mockResolvedValue(
             localPaymentInstanceMock,
         );
     });
@@ -238,7 +234,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                         methodId: 'trustly',
                         paymentData: expect.objectContaining({
                             formattedPayload: expect.objectContaining({
-                                device_info: 'token',
+                                device_info: sessionId,
                                 method: 'trustly',
                                 set_as_default_stored_instrument: null,
                             }),

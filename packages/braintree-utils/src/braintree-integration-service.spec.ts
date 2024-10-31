@@ -65,23 +65,21 @@ describe('BraintreeIntegrationService', () => {
             braintreeHostWindowMock,
         );
 
-        jest.spyOn(braintreeScriptLoader, 'loadClient').mockImplementation(() => clientCreatorMock);
-        jest.spyOn(braintreeScriptLoader, 'loadFastlane').mockImplementation(
-            () => braintreeFastlaneCreatorMock,
+        jest.spyOn(braintreeScriptLoader, 'loadClient').mockResolvedValue(clientCreatorMock);
+        jest.spyOn(braintreeScriptLoader, 'loadFastlane').mockResolvedValue(
+            braintreeFastlaneCreatorMock,
         );
-        jest.spyOn(braintreeScriptLoader, 'loadDataCollector').mockImplementation(
-            () => dataCollectorCreatorMock,
+        jest.spyOn(braintreeScriptLoader, 'loadDataCollector').mockResolvedValue(
+            dataCollectorCreatorMock,
         );
-        jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockImplementation(
-            () => paypalCheckoutCreatorMock,
+        jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockResolvedValue(
+            paypalCheckoutCreatorMock,
         );
-        jest.spyOn(braintreeScriptLoader, 'loadBraintreeLocalMethods').mockImplementation(() =>
+        jest.spyOn(braintreeScriptLoader, 'loadBraintreeLocalMethods').mockResolvedValue(
             getModuleCreatorMock(),
         );
 
-        jest.spyOn(braintreeScriptLoader, 'load3DS').mockImplementation(
-            () => threeDSecureCreatorMock,
-        );
+        jest.spyOn(braintreeScriptLoader, 'load3DS').mockResolvedValue(threeDSecureCreatorMock);
     });
 
     afterEach(() => {
@@ -214,8 +212,8 @@ describe('BraintreeIntegrationService', () => {
                 true,
             );
 
-            jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockImplementation(
-                () => newPaypalCheckoutCreatorMock,
+            jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockResolvedValue(
+                newPaypalCheckoutCreatorMock,
             );
 
             braintreeIntegrationService.initialize(clientToken);

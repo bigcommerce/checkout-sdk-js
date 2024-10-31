@@ -28,7 +28,7 @@ describe('AffirmScriptLoader', () => {
         let affirmScript: Affirm;
 
         beforeEach(() => {
-            affirmScript = getAffirmScriptMock();
+            affirmScript = getAffirmScriptMock(jest.fn());
             affirmJsMock.mockImplementation(() => {
                 affirmWindow.affirm = affirmScript;
             });

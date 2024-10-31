@@ -131,6 +131,7 @@ describe('StripeUPEPaymentStrategy', () => {
             const updateMock = jest.fn();
             const stripePaymentElementMock = {
                 mount: jest.fn(),
+                collapse: jest.fn(),
                 unmount: jest.fn(),
                 on: (_: string, callback: (event: StripeEventType) => void) =>
                     callback(onCallbackPayload),

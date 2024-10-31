@@ -17,7 +17,7 @@ import {
 import { CreditCardPaymentStrategy, WithCreditCardPaymentInitializeOptions } from '.';
 
 describe('CreditCardPaymentStrategy', () => {
-    let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
+    let form: HostedForm;
     let options: PaymentInitializeOptions & WithCreditCardPaymentInitializeOptions;
     let strategy: CreditCardPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
@@ -27,8 +27,11 @@ describe('CreditCardPaymentStrategy', () => {
         strategy = new CreditCardPaymentStrategy(paymentIntegrationService);
         form = {
             attach: jest.fn(() => Promise.resolve()),
-            submit: jest.fn(() => Promise.resolve()),
+            submit: jest.fn(),
             validate: jest.fn(() => Promise.resolve()),
+            detach: jest.fn(),
+            getBin: jest.fn(),
+            getCardType: jest.fn(),
         };
         options = {
             creditCard: {

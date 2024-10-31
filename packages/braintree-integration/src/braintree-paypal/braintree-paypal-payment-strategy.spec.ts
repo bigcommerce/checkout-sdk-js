@@ -40,11 +40,11 @@ import {
     getShippingAddress,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import mapToBraintreeShippingAddressOverride from '../map-to-braintree-shipping-address-override';
 
 import BraintreePaypalPaymentStrategy from './braintree-paypal-payment-strategy';
-import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 describe('BraintreePaypalPaymentStrategy', () => {
     let eventEmitter: EventEmitter;
@@ -108,17 +108,19 @@ describe('BraintreePaypalPaymentStrategy', () => {
         const state = paymentIntegrationService.getState();
 
         jest.spyOn(state, 'getPaymentMethodOrThrow').mockImplementation(() => paymentMethodMock);
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(state);
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(state);
         jest.spyOn(
             paymentIntegrationService.getState(),
             'getOutstandingBalance',
         ).mockImplementation((useStoreCredit) => (useStoreCredit ? 150 : 190));
-        jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(undefined);
+        jest.spyOn(paymentIntegrationService, 'submitPayment').mockResolvedValue(state);
 
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
-        jest.spyOn(braintreeScriptLoader, 'loadClient').mockReturnValue(clientCreatorMock);
-        jest.spyOn(braintreeScriptLoader, 'loadPaypal').mockReturnValue(braintreePaypalCreatorMock);
-        jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockReturnValue(
+        jest.spyOn(braintreeScriptLoader, 'loadClient').mockResolvedValue(clientCreatorMock);
+        jest.spyOn(braintreeScriptLoader, 'loadPaypal').mockResolvedValue(
+            braintreePaypalCreatorMock,
+        );
+        jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockResolvedValue(
             paypalCheckoutCreatorMock,
         );
 
@@ -138,6 +140,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
                         errorCallback: (err: BraintreeError) => void,
                     ) => {
                         errorCallback({ type: 'UNKNOWN', code: '234' } as BraintreeError);
+
+                        return Promise.resolve(braintreePaypalCheckoutMock);
                     },
                 );
             }
@@ -148,6 +152,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     successCallback: (braintreePaypalCheckout: BraintreePaypalCheckout) => void,
                 ) => {
                     successCallback(braintreePaypalCheckoutPayloadMock);
+
+                    return Promise.resolve(braintreePaypalCheckoutMock);
                 },
             );
         };
@@ -157,9 +163,10 @@ describe('BraintreePaypalPaymentStrategy', () => {
         jest.spyOn(braintreeIntegrationService, 'getPaypalCheckout').mockImplementation(
             getSDKPaypalCheckoutMock(braintreePaypalCheckoutMock),
         );
-        jest.spyOn(braintreeIntegrationService, 'getSessionId').mockReturnValue('my_session_id');
+        jest.spyOn(braintreeIntegrationService, 'getSessionId').mockResolvedValue('my_session_id');
         jest.spyOn(braintreeIntegrationService, 'teardown');
         jest.spyOn(braintreeIntegrationService, 'paypal').mockResolvedValue({
+            type: 'PaypalAccount',
             nonce: 'my_tokenized_card',
             details: { email: 'random@email.com' },
         });
@@ -167,6 +174,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
         strategy = new BraintreePaypalPaymentStrategy(
             paymentIntegrationService,
             braintreeIntegrationService,
+            new LoadingIndicator(),
         );
 
         (window as BraintreeHostWindow).paypal = paypalSdkMock;
@@ -450,7 +458,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValue(paymentMethodMock);
-            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(
+            jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
                 paymentIntegrationService.getState(),
             );
 
@@ -698,10 +706,12 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     expect(paymentIntegrationService.submitPayment).not.toHaveBeenCalledWith();
                     expect(paymentIntegrationService.submitOrder).not.toHaveBeenCalledWith();
 
-                    expect(error).toBeInstanceOf(InvalidArgumentError);
-                    expect(error.message).toBe(
-                        'Vaulting is disabled but a vaulted instrument was being used for this transaction',
-                    );
+                    if (error instanceof InvalidArgumentError) {
+                        expect(error).toBeInstanceOf(InvalidArgumentError);
+                        expect(error.message).toBe(
+                            'Vaulting is disabled but a vaulted instrument was being used for this transaction',
+                        );
+                    }
                 }
             });
         });

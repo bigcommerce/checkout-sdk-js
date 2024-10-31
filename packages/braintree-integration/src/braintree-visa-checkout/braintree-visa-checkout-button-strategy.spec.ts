@@ -80,13 +80,15 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
         );
 
         jest.spyOn(braintreeSdk, 'initialize');
-        jest.spyOn(braintreeSdk, 'getBraintreeVisaCheckout').mockReturnValue(braintreeVisaCheckout);
-        jest.spyOn(braintreeSdk, 'getDataCollectorOrThrow').mockReturnValue(dataCollector);
+        jest.spyOn(braintreeSdk, 'getBraintreeVisaCheckout').mockResolvedValue(
+            braintreeVisaCheckout,
+        );
+        jest.spyOn(braintreeSdk, 'getDataCollectorOrThrow').mockResolvedValue(dataCollector);
 
         jest.spyOn(braintreeSdk, 'getVisaCheckoutSdk').mockImplementation(() => {
             mockWindow.V = visaCheckoutSDKMock;
 
-            return mockWindow.V;
+            return Promise.resolve(mockWindow.V);
         });
 
         jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
@@ -112,7 +114,10 @@ describe('BraintreeVisaCheckoutButtonStrategy', () => {
                 });
             } catch (error) {
                 expect(error).toBeInstanceOf(Error);
-                expect(error.message).toBe('Need a container to place the button');
+
+                if (error instanceof Error) {
+                    expect(error.message).toBe('Need a container to place the button');
+                }
             }
         });
 

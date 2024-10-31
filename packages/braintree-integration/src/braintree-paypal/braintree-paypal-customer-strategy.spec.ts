@@ -77,6 +77,8 @@ describe('BraintreePaypalCustomerStrategy', () => {
                     errorCallback: (err: BraintreeError) => void,
                 ) => {
                     errorCallback({ type: 'UNKNOWN', code: '234' } as BraintreeError);
+
+                    return Promise.resolve(braintreePaypalCheckoutMock);
                 },
             );
         }
@@ -87,6 +89,8 @@ describe('BraintreePaypalCustomerStrategy', () => {
                 successCallback: (braintreePaypalCheckout: BraintreePaypalCheckout) => void,
             ) => {
                 successCallback(braintreePaypalCheckoutPayloadMock);
+
+                return Promise.resolve(braintreePaypalCheckoutMock);
             },
         );
     };
@@ -123,12 +127,11 @@ describe('BraintreePaypalCustomerStrategy', () => {
         jest.spyOn(braintreeIntegrationService, 'getPaypalCheckout').mockImplementation(
             getSDKPaypalCheckoutMock(braintreePaypalCheckoutMock),
         );
-        jest.spyOn(braintreeIntegrationService, 'getClient').mockReturnValue(
-            paymentMethodMock.clientToken,
+        jest.spyOn(braintreeIntegrationService, 'getDataCollector').mockResolvedValue(
+            dataCollector,
         );
-        jest.spyOn(braintreeIntegrationService, 'getDataCollector').mockReturnValue(dataCollector);
         jest.spyOn(braintreeIntegrationService, 'removeElement').mockImplementation(jest.fn());
-        jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockReturnValue(
+        jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockResolvedValue(
             braintreePaypalCheckoutCreatorMock,
         );
         jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation((options: PaypalButtonOptions) => {
@@ -151,6 +154,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
             });
 
             return {
+                close: jest.fn(),
                 isEligible: jest.fn(() => true),
                 render: jest.fn(),
             };
@@ -285,6 +289,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
             jest.spyOn(paypalSdkMock, 'Buttons').mockReturnValue({
                 isEligible: jest.fn(() => false),
                 render: renderMock,
+                close: jest.fn(),
             });
 
             await strategy.initialize(initializationOptions);
@@ -371,6 +376,7 @@ describe('BraintreePaypalCustomerStrategy', () => {
             });
 
             jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValueOnce({
+                ...paymentIntegrationService.getState(),
                 getPaymentMethodOrThrow: jest.fn().mockReturnValue(paymentMethodMock),
                 getStoreConfigOrThrow: jest.fn().mockReturnValue(getConfig().storeConfig),
                 getCartOrThrow: jest.fn().mockReturnValue({ currency: { code: 'AUD' } }),
