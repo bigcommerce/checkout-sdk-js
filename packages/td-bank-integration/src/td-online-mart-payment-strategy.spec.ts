@@ -65,10 +65,9 @@ describe('TDOnlineMartPaymentStrategy', () => {
         tdOnlineMartClientScriptInitializationOptions = {
             methodId: 'tdonlinemart',
         };
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        formPoster = {
-            postForm: jest.fn(),
-        } as unknown as FormPoster;
+
+        formPoster = new FormPoster();
+        jest.spyOn(formPoster, 'postForm').mockImplementation(jest.fn());
 
         tdOnlineMartPaymentStrategy = new TDOnlineMartPaymentStrategy(
             paymentIntegrationService,
@@ -109,6 +108,7 @@ describe('TDOnlineMartPaymentStrategy', () => {
         tdOnlineMartClient.createToken = jest.fn((callback) => {
             callback({
                 token: 'td-online-mart-token',
+                code: '',
             });
         });
 
@@ -253,6 +253,7 @@ describe('TDOnlineMartPaymentStrategy', () => {
             tdOnlineMartClient.createToken = jest.fn((callback) => {
                 callback({
                     token: '',
+                    code: '',
                 });
             });
 
@@ -271,8 +272,11 @@ describe('TDOnlineMartPaymentStrategy', () => {
             tdOnlineMartClient.createToken = jest.fn((callback) => {
                 callback({
                     error: {
+                        field: 'field',
+                        type: 'type',
                         message: 'error occurs',
                     },
+                    code: '',
                 });
             });
 
@@ -305,7 +309,11 @@ describe('TDOnlineMartPaymentStrategy', () => {
             beforeEach(() => {
                 jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue({
                     ...getCart(),
-                    lineItems: { digitalItems: [] },
+                    lineItems: {
+                        digitalItems: [],
+                        physicalItems: [],
+                        giftCertificates: [],
+                    },
                 });
             });
 
@@ -506,14 +514,9 @@ describe('TDOnlineMartPaymentStrategy', () => {
             });
 
             it('execute 3DS challenge', async () => {
-                const postFormMock = jest.fn((_url, _options, resolveFn) =>
-                    Promise.resolve(resolveFn()),
-                );
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+                const postFormMock = jest.fn((_url, _options, resolveFn) => resolveFn());
 
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 jest.spyOn(formPoster, 'postForm').mockImplementation(postFormMock);
                 jest.spyOn(
                     TdOnlineMartAdditionalAction,

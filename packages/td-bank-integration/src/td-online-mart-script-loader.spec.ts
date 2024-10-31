@@ -2,13 +2,15 @@ import ScriptLoader from '@bigcommerce/script-loader/lib/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { TdOnlineMartHostWindow } from './td-online-mart';
+import { TDCustomCheckoutSDK, TdOnlineMartHostWindow } from './td-online-mart';
 import TDOnlineMartScriptLoader from './td-online-mart-script-loader';
+import { getTDOnlineMartClient } from './td-online-mart.mock';
 
 describe('TDOnlineMartScriptLoader', () => {
     let scriptLoader: ScriptLoader;
     let mockWindow: TdOnlineMartHostWindow;
     let tdOnlineMartScriptLoader: TDOnlineMartScriptLoader;
+    let tdOnlineMartClient: TDCustomCheckoutSDK;
 
     beforeEach(() => {
         scriptLoader = new ScriptLoader();
@@ -23,8 +25,11 @@ describe('TDOnlineMartScriptLoader', () => {
 
     describe('load method', () => {
         beforeEach(() => {
+            tdOnlineMartClient = getTDOnlineMartClient();
             scriptLoader.loadScript = jest.fn(() => {
-                mockWindow.customcheckout = jest.fn();
+                mockWindow.customcheckout = jest.fn(() => tdOnlineMartClient);
+
+                return Promise.resolve();
             });
         });
 
@@ -43,6 +48,8 @@ describe('TDOnlineMartScriptLoader', () => {
         it('throw error when custom checkout does not exist on window', async () => {
             scriptLoader.loadScript = jest.fn(() => {
                 mockWindow.customcheckout = undefined;
+
+                return Promise.resolve();
             });
 
             try {
