@@ -441,10 +441,10 @@ describe('PayPalCommerceScriptLoader', () => {
     it('throws an error if paypal is not loaded due to some issues', async () => {
         paypalLoadScript = jest.fn(
             () =>
-                new Promise((resolve) => {
+                new Promise((_, reject) => {
                     (window as PayPalCommerceHostWindow).paypal = undefined;
 
-                    return resolve(undefined);
+                    return reject(undefined);
                 }),
         );
 

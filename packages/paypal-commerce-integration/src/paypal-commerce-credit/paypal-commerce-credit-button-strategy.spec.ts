@@ -11,6 +11,7 @@ import {
     getBuyNowCart,
     getBuyNowCartRequestBody,
     getCart,
+    getConfig,
     getConsignment,
     getShippingOption,
     PaymentIntegrationServiceMock,
@@ -59,6 +60,7 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
     const paypalOrderId = 'ORDER_ID';
 
     const paypalCommerceSdkRenderMock = jest.fn();
+    const storeConfig = getConfig().storeConfig;
 
     const buyNowCartRequestBody = getBuyNowCartRequestBody();
 
@@ -195,7 +197,9 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
         }));
 
         jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
+            ...storeConfig,
             checkoutSettings: {
+                ...storeConfig.checkoutSettings,
                 features: {
                     'PAYPAL-4387.paypal_shipping_callbacks': true,
                 },
@@ -494,7 +498,9 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
 
         it('initializes PayPal button to render (with shipping options feature enabled and shipping experiment is off)', async () => {
             jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
+                ...storeConfig,
                 checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
                     features: {
                         'PAYPAL-4387.paypal_shipping_callbacks': false,
                     },

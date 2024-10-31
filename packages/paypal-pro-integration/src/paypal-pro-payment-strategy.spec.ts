@@ -1,5 +1,4 @@
 import { merge } from 'lodash';
-import { of } from 'rxjs';
 
 import {
     CardinalClient,
@@ -44,7 +43,7 @@ describe('PaypalProPaymentStrategy', () => {
 
         cardinalClient = {
             configure: jest.fn(() => Promise.resolve()),
-            getThreeDSecureData: jest.fn(() => Promise.resolve()),
+            getThreeDSecureData: jest.fn(() => Promise.resolve({ token: 'token' })),
             load: jest.fn(() => Promise.resolve()),
             runBinProcess: jest.fn(() => Promise.resolve()),
         };
@@ -54,8 +53,8 @@ describe('PaypalProPaymentStrategy', () => {
             cardinalClient as CardinalClient,
         );
 
-        jest.spyOn(cardinalThreeDSecureFlow, 'prepare').mockReturnValue(() => Promise.resolve());
-        jest.spyOn(cardinalThreeDSecureFlow, 'start').mockReturnValue(() => Promise.resolve());
+        jest.spyOn(cardinalThreeDSecureFlow, 'prepare').mockReturnValue(Promise.resolve());
+        jest.spyOn(cardinalThreeDSecureFlow, 'start').mockReturnValue(Promise.resolve());
 
         strategy = new PaypalProPaymentStrategy(
             paymentIntegrationService,
@@ -154,11 +153,7 @@ describe('PaypalProPaymentStrategy', () => {
             });
 
             it('submits order with payment method name', async () => {
-                const submitOrderAction = of();
-
-                jest.spyOn(paymentIntegrationService, 'submitOrder').mockReturnValue(
-                    submitOrderAction,
-                );
+                jest.spyOn(paymentIntegrationService, 'submitOrder').mockImplementation(jest.fn());
 
                 await strategy.execute(payload);
 
@@ -172,10 +167,8 @@ describe('PaypalProPaymentStrategy', () => {
             });
 
             it('does not submit payment separately', async () => {
-                const submitPaymentAction = of();
-
-                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
-                    submitPaymentAction,
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(
+                    jest.fn(),
                 );
 
                 await strategy.execute(payload);

@@ -67,8 +67,10 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethod,
         );
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockReturnValue(undefined);
-        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(paypalSdk);
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+            paymentIntegrationService.getState(),
+        );
+        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockResolvedValue(paypalSdk);
         jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
             paypalSdk,
         );
@@ -114,6 +116,7 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
                 return {
                     isEligible: jest.fn(() => true),
                     render: jest.fn(),
+                    close: jest.fn(),
                 };
             },
         );
@@ -235,6 +238,7 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                close: jest.fn(),
                 isEligible: jest.fn(() => true),
                 render: paypalCommerceSdkRenderMock,
             }));
@@ -248,6 +252,7 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                close: jest.fn(),
                 isEligible: jest.fn(() => false),
                 render: paypalCommerceSdkRenderMock,
             }));
@@ -261,6 +266,7 @@ describe('PayPalCommerceVenmoCustomerStrategy', () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                close: jest.fn(),
                 isEligible: jest.fn(() => false),
                 render: paypalCommerceSdkRenderMock,
             }));

@@ -64,6 +64,8 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
     const mockField = {
         render: mockRender,
         close: mockClose,
+        clear: jest.fn(),
+        removeClass: jest.fn(),
     };
     const hostedFormOrderId = 'hostedFormOrderId';
     let paypalCardNameFieldElement: HTMLDivElement;
@@ -195,12 +197,12 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
             'getBillingAddressOrThrow',
         ).mockReturnValue(billingAddress);
 
-        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockResolvedValue(paypalSdk);
         jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
             paypalSdk,
         );
         jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockImplementation(jest.fn());
-        jest.spyOn(paypalCommerceIntegrationService, 'createOrderCardFields').mockReturnValue({
+        jest.spyOn(paypalCommerceIntegrationService, 'createOrderCardFields').mockResolvedValue({
             orderId: 'orderId',
             setupToken: 'setupToken',
         });
@@ -213,14 +215,14 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                     }
                 });
 
-                return cardFieldsInstanceMock;
+                return Promise.resolve(cardFieldsInstanceMock);
             },
         );
 
-        jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(
-            () => paypalFastlaneSdk,
+        jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
+            Promise.resolve(paypalFastlaneSdk),
         );
-        jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalFastlane').mockImplementation(() =>
+        jest.spyOn(paypalCommerceFastlaneUtils, 'initializePayPalFastlane').mockImplementation(
             jest.fn(),
         );
     });
@@ -312,7 +314,8 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
 
     describe('#renderFields', () => {
         it('throws an error if card field is not eligible', async () => {
-            jest.spyOn(paypalSdk, 'CardFields').mockReturnValue({
+            jest.spyOn(paypalSdk, 'CardFields').mockResolvedValue({
+                ...cardFieldsInstanceMock,
                 isEligible: jest.fn().mockReturnValue(false),
             });
 
@@ -324,7 +327,8 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         });
 
         it('calls a callback from initialization options if there was an issue with form rendering process', async () => {
-            jest.spyOn(paypalSdk, 'CardFields').mockReturnValue({
+            jest.spyOn(paypalSdk, 'CardFields').mockResolvedValue({
+                ...cardFieldsInstanceMock,
                 isEligible: jest.fn().mockReturnValue(true),
                 NumberField: jest.fn().mockReturnValue({
                     render: jest.fn().mockImplementation(() => {
@@ -489,10 +493,11 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                         }
                     });
 
-                    return cardFieldsInstanceMock;
+                    return Promise.resolve(cardFieldsInstanceMock);
                 },
             );
             await strategy.initialize(initializationOptions);
+
             try {
                 eventEmitter.emit('onApprove');
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -513,7 +518,7 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
                         }
                     });
 
-                    return cardFieldsInstanceMock;
+                    return Promise.resolve(cardFieldsInstanceMock);
                 },
             );
 
@@ -555,16 +560,12 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
 
     describe('#submitHostedForm()', () => {
         it('throws an error if the hosted form is not valid on form submit', async () => {
-            const cardFields = paypalSdk.CardFields(
-                cardFieldsOptionsMock as PayPalCommerceCardFieldsConfig,
-            );
-
-            jest.spyOn(paypalSdk, 'CardFields').mockImplementation(() => ({
-                ...cardFields,
+            jest.spyOn(paypalSdk, 'CardFields').mockResolvedValue({
+                ...cardFieldsInstanceMock,
                 getState: jest
                     .fn()
                     .mockReturnValue(Promise.resolve({ fields: { number: { isValid: false } } })),
-            }));
+            });
             await strategy.initialize(initializationOptions);
 
             try {
@@ -575,15 +576,12 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         });
 
         it('submits hosted form with billing address', async () => {
-            const cardFields = paypalSdk.CardFields(
-                cardFieldsOptionsMock as PayPalCommerceCardFieldsConfig,
-            );
             const submitMock = jest.fn().mockReturnValue(Promise.resolve());
 
-            jest.spyOn(paypalSdk, 'CardFields').mockImplementation(() => ({
-                ...cardFields,
+            jest.spyOn(paypalSdk, 'CardFields').mockResolvedValue({
+                ...cardFieldsInstanceMock,
                 submit: submitMock,
-            }));
+            });
 
             await strategy.initialize(initializationOptions);
 
@@ -603,9 +601,6 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
         });
 
         it('submits hosted form without billing address if there is vaulted form', async () => {
-            const cardFields = paypalSdk.CardFields(
-                cardFieldsOptionsMock as PayPalCommerceCardFieldsConfig,
-            );
             const optionsWithVaultingForm = {
                 ...initializationOptions,
                 paypalcommercecreditcards: {
@@ -618,10 +613,10 @@ describe('PayPalCommerceCreditCardsPaymentStrategy', () => {
 
             const submitMock = jest.fn().mockReturnValue(Promise.resolve());
 
-            jest.spyOn(paypalSdk, 'CardFields').mockImplementation(() => ({
-                ...cardFields,
+            jest.spyOn(paypalSdk, 'CardFields').mockResolvedValue({
+                ...cardFieldsInstanceMock,
                 submit: submitMock,
-            }));
+            });
 
             await strategy.initialize(optionsWithVaultingForm);
 

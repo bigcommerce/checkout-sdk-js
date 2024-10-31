@@ -98,12 +98,12 @@ describe('PayPalCommercePaymentStrategy', () => {
             paymentMethod,
         );
 
-        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(paypalSdk);
+        jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockResolvedValue(paypalSdk);
         jest.spyOn(paypalCommerceIntegrationService, 'getPayPalSdkOrThrow').mockReturnValue(
             paypalSdk,
         );
-        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockReturnValue(undefined);
-        jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockReturnValue(undefined);
+        jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockResolvedValue('');
+        jest.spyOn(paypalCommerceIntegrationService, 'submitPayment').mockResolvedValue();
 
         jest.spyOn(loadingIndicator, 'show').mockReturnValue(undefined);
         jest.spyOn(loadingIndicator, 'hide').mockReturnValue(undefined);
@@ -235,6 +235,7 @@ describe('PayPalCommercePaymentStrategy', () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                close: jest.fn(),
                 isEligible: jest.fn(() => false),
                 render: paypalCommerceSdkRenderMock,
             }));
@@ -248,6 +249,7 @@ describe('PayPalCommercePaymentStrategy', () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                close: jest.fn(),
                 isEligible: jest.fn(() => false),
                 render: paypalCommerceSdkRenderMock,
             }));
@@ -278,6 +280,7 @@ describe('PayPalCommercePaymentStrategy', () => {
             };
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                close: jest.fn(),
                 isEligible: jest.fn(() => true),
                 render: paypalCommerceSdkRenderMock,
             }));
@@ -303,6 +306,7 @@ describe('PayPalCommercePaymentStrategy', () => {
             };
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                close: jest.fn(),
                 isEligible: jest.fn(() => true),
                 render: paypalCommerceSdkRenderMock,
             }));
@@ -318,6 +322,7 @@ describe('PayPalCommercePaymentStrategy', () => {
             const paypalCommerceSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
+                close: jest.fn(),
                 isEligible: jest.fn(() => true),
                 render: paypalCommerceSdkRenderMock,
             }));
@@ -556,7 +561,7 @@ describe('PayPalCommercePaymentStrategy', () => {
         it('submits payment with provided vaulting data', async () => {
             const { bigpayToken } = accountInstrument as AccountInstrument;
 
-            jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockReturnValue(
+            jest.spyOn(paypalCommerceIntegrationService, 'createOrder').mockResolvedValue(
                 paypalOrderId,
             );
 
