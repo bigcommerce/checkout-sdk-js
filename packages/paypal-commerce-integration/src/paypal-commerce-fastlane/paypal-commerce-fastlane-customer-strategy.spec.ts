@@ -421,6 +421,21 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
         });
 
         it('runs paypal fastlane authentication flow and updates customers data in checkout state', async () => {
+            const paymentMethodWithShippingAutoselect = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isFastlaneShippingOptionAutoSelectEnabled: true,
+                },
+            };
+            const state = paymentIntegrationService.getState();
+
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockReturnValue(
+                Promise.resolve(paymentIntegrationService.getState()),
+            );
+            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodWithShippingAutoselect,
+            );
             await strategy.initialize(initializationOptions);
             await strategy.executePaymentMethodCheckout(executionOptions);
 
@@ -461,6 +476,48 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
             await strategy.executePaymentMethodCheckout(executionOptions);
 
             expect(executionOptions.continueWithCheckoutCallback).toHaveBeenCalled();
+        });
+
+        it('doesnt select shipping option when isFastlaneShippingOptionAutoSelectEnabled is false', async () => {
+            const state = paymentIntegrationService.getState();
+            const paymentMethodWithShippingAutoselect = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isEnableFastlaneShippingOptionAutoSelect: false,
+                },
+            };
+
+            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodWithShippingAutoselect,
+            );
+
+            await strategy.initialize(initializationOptions);
+            await strategy.executePaymentMethodCheckout(executionOptions);
+
+            expect(paymentIntegrationService.selectShippingOption).not.toHaveBeenCalled();
+        });
+
+        it('automatically selects shipping option when isFastlaneShippingOptionAutoSelectEnabled is true', async () => {
+            const state = paymentIntegrationService.getState();
+            const paymentMethodWithShippingAutoselect = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isFastlaneShippingOptionAutoSelectEnabled: true,
+                },
+            };
+
+            jest.spyOn(paymentIntegrationService, 'updateShippingAddress').mockReturnValue(
+                Promise.resolve(paymentIntegrationService.getState()),
+            );
+            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(
+                paymentMethodWithShippingAutoselect,
+            );
+            await strategy.initialize(initializationOptions);
+            await strategy.executePaymentMethodCheckout(executionOptions);
+
+            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalled();
         });
     });
 });

@@ -175,16 +175,25 @@ export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerS
         }
 
         if (shippingAddress && cart.lineItems.physicalItems.length > 0) {
-            const consignments = state.getConsignments() || [];
+            const updatedState = await this.paymentIntegrationService.updateShippingAddress(
+                shippingAddress,
+            );
+
+            const paymentMethod =
+                updatedState.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+            const { isFastlaneShippingOptionAutoSelectEnabled } =
+                paymentMethod.initializationData || {};
+            const consignments = updatedState.getConsignments() || [];
             const availableShippingOptions = consignments[0]?.availableShippingOptions || [];
             const firstShippingOption = availableShippingOptions[0];
             const recommendedShippingOption = availableShippingOptions.find(
                 (option) => option.isRecommended,
             );
 
-            await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
-
-            if (recommendedShippingOption || firstShippingOption) {
+            if (
+                (recommendedShippingOption || firstShippingOption) &&
+                isFastlaneShippingOptionAutoSelectEnabled
+            ) {
                 const shippingOptionId = recommendedShippingOption?.id || firstShippingOption.id;
 
                 await this.paymentIntegrationService.selectShippingOption(shippingOptionId);
