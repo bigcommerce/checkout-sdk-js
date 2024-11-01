@@ -4,7 +4,7 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import GooglePayCustomerStrategy from '../google-pay-customer-strategy';
+import GooglePayCustomerStrategy from '../../google-pay-customer-strategy';
 
 import createGooglePayStripeUpeCustomerStrategy from './create-google-pay-stripeupe-customer-strategy';
 
