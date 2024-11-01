@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.678.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.677.3...v1.678.0) (2024-11-01)
+
+
+### Features
+
+* **payment:** PAYPAL-4813 added buyer country as an option to Braintree PayPal messages config ([#2728](https://github.com/bigcommerce/checkout-sdk-js/issues/2728)) ([b2134fd](https://github.com/bigcommerce/checkout-sdk-js/commit/b2134fd2c29631a378cd16633f56916af7eaaeba))
+
 ### [1.677.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.677.2...v1.677.3) (2024-11-01)
 
 ### [1.677.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.677.1...v1.677.2) (2024-11-01)
