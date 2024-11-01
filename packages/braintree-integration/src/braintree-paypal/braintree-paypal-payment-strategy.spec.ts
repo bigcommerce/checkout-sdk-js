@@ -274,6 +274,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             expect(paypalSdkMock.Messages).toHaveBeenCalledWith({
                 amount: 190,
+                buyerCountry: 'US',
                 placement: 'payment',
                 style: {
                     layout: 'text',

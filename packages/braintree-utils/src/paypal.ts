@@ -71,6 +71,7 @@ export interface PaypalExpressCheckoutOptions {
 
 export interface MessagingOptions {
     amount: number;
+    buyerCountry?: string;
     placement: string;
     style?: MessagesStyleOptions;
 }
