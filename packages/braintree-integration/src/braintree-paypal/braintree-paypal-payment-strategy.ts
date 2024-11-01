@@ -428,6 +428,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         ) {
             const state = this.paymentIntegrationService.getState();
             const checkout = state.getCheckout();
+            const billingAddress = state.getBillingAddressOrThrow();
 
             if (!checkout) {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
@@ -436,6 +437,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             this.braintreeHostWindow.paypal
                 .Messages({
                     amount: checkout.subtotal,
+                    buyerCountry: billingAddress.countryCode,
                     placement: 'payment',
                     style: {
                         layout: 'text',
