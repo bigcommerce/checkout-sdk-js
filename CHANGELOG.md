@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.677.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.677.1...v1.677.2) (2024-11-01)
+
+
+### Code Refactoring
+
+* **checkout:** PI-2681 clenup Braintree integration packages spec errors ([#2724](https://github.com/bigcommerce/checkout-sdk-js/issues/2724)) ([8fa2611](https://github.com/bigcommerce/checkout-sdk-js/commit/8fa2611495ae63a571db5159d25d08ac14839954))
+
 ### [1.677.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.677.0...v1.677.1) (2024-10-31)
 
 
