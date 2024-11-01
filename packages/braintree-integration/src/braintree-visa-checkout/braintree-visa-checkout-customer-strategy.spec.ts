@@ -135,9 +135,12 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
                 });
             } catch (error) {
                 expect(error).toBeInstanceOf(Error);
-                expect(error.message).toBe(
-                    'Unable to proceed because the provided container ID is not valid.',
-                );
+
+                if (error instanceof Error) {
+                    expect(error.message).toBe(
+                        'Unable to proceed because the provided container ID is not valid.',
+                    );
+                }
             }
         });
 
@@ -216,7 +219,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
 
         it('registers the error and success callbacks', async () => {
             // TODO: remove rule and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+
             visaCheckoutSDKMock.on = jest.fn((_, callback) => {
                 // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

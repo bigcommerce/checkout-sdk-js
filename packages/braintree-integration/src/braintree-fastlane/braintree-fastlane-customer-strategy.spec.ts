@@ -70,6 +70,7 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethod,
         );
+
         jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
             customer,
         );
@@ -77,10 +78,10 @@ describe('BraintreeFastlaneCustomerStrategy', () => {
             storeConfig,
         );
         jest.spyOn(braintreeFastlaneUtils, 'initializeBraintreeFastlaneOrThrow').mockImplementation(
-            jest.fn,
+            jest.fn(),
         );
         jest.spyOn(braintreeFastlaneUtils, 'runPayPalAuthenticationFlowOrThrow').mockImplementation(
-            jest.fn,
+            jest.fn(),
         );
     });
 

@@ -128,6 +128,7 @@ describe('StripeUpeCustomerStrategy', () => {
 
         it('triggers onChange event callback, dispatches delete consignments action and mounts component', async () => {
             const stripeMockElement: StripeElement = {
+                collapse: jest.fn(),
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
@@ -169,6 +170,7 @@ describe('StripeUpeCustomerStrategy', () => {
 
         it('triggers onChange event callback without delete consignments action and mounts component', async () => {
             const stripeMockElement: StripeElement = {
+                collapse: jest.fn(),
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
@@ -210,6 +212,7 @@ describe('StripeUpeCustomerStrategy', () => {
 
         it('triggers onChange event callback, dispatches correct action and mounts component', async () => {
             const stripeMockElement: StripeElement = {
+                collapse: jest.fn(),
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
@@ -244,6 +247,7 @@ describe('StripeUpeCustomerStrategy', () => {
             } as StripeCustomerEvent;
 
             const stripeMockElement: StripeElement = {
+                collapse: jest.fn(),
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
@@ -274,6 +278,7 @@ describe('StripeUpeCustomerStrategy', () => {
             };
 
             const stripeMockElement: StripeElement = {
+                collapse: jest.fn(),
                 destroy: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),

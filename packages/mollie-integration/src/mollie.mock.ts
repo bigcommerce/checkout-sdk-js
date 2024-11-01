@@ -52,13 +52,14 @@ export function getMollieClient(): MollieClient {
     return {
         createComponent: jest.fn(() => {
             return {
+                addEventListener: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
             };
         }),
 
         createToken: jest.fn(() => {
-            return 'test_t0k3n';
+            return Promise.resolve({ token: 'test_t0k3n' });
         }),
     };
 }

@@ -51,20 +51,17 @@ describe('BraintreeAchPaymentStrategy', () => {
 
         const state = paymentIntegrationService.getState();
 
-        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockImplementation(jest.fn);
-        jest.spyOn(state, 'getStoreConfigOrThrow').mockImplementation(() => storeConfigMock);
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockImplementation(jest.fn());
         jest.spyOn(state, 'getPaymentMethodOrThrow').mockImplementation(() => paymentMethodMock);
         jest.spyOn(paymentIntegrationService, 'submitOrder');
         jest.spyOn(paymentIntegrationService, 'submitPayment');
 
         jest.spyOn(braintreeSdk, 'initialize');
         jest.spyOn(braintreeSdk, 'deinitialize');
-        jest.spyOn(braintreeSdk, 'getDataCollectorOrThrow').mockImplementation(
-            () => braintreeDataCollector,
+        jest.spyOn(braintreeSdk, 'getDataCollectorOrThrow').mockResolvedValue(
+            braintreeDataCollector,
         );
-        jest.spyOn(braintreeSdk, 'getUsBankAccount').mockImplementation(
-            () => braintreeUsBankAccount,
-        );
+        jest.spyOn(braintreeSdk, 'getUsBankAccount').mockResolvedValue(braintreeUsBankAccount);
     });
 
     afterEach(() => {

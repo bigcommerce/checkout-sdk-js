@@ -68,7 +68,7 @@ describe('BraintreeFastlaneUtils', () => {
         jest.spyOn(paymentIntegrationService, 'updateBillingAddress');
         jest.spyOn(paymentIntegrationService, 'updateShippingAddress');
         jest.spyOn(paymentIntegrationService, 'updatePaymentProviderCustomer').mockImplementation(
-            jest.fn,
+            jest.fn(),
         );
         jest.spyOn(paymentIntegrationService, 'selectShippingOption');
         jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(cart);
@@ -85,16 +85,16 @@ describe('BraintreeFastlaneUtils', () => {
         );
 
         jest.spyOn(braintreeIntegrationService, 'initialize');
-        jest.spyOn(braintreeIntegrationService, 'getSessionId').mockImplementation(jest.fn);
-        jest.spyOn(braintreeIntegrationService, 'getBraintreeFastlane').mockImplementation(
-            () => braintreeFastlaneMock,
+        jest.spyOn(braintreeIntegrationService, 'getSessionId').mockImplementation(jest.fn());
+        jest.spyOn(braintreeIntegrationService, 'getBraintreeFastlane').mockResolvedValue(
+            braintreeFastlaneMock,
         );
 
-        jest.spyOn(braintreeFastlaneMock.identity, 'lookupCustomerByEmail').mockReturnValue({
+        jest.spyOn(braintreeFastlaneMock.identity, 'lookupCustomerByEmail').mockResolvedValue({
             customerContextId: 'customerContextId',
         });
 
-        jest.spyOn(braintreeFastlaneMock.identity, 'triggerAuthenticationFlow').mockReturnValue({
+        jest.spyOn(braintreeFastlaneMock.identity, 'triggerAuthenticationFlow').mockResolvedValue({
             authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
             profileData: getBraintreeFastlaneProfileDataMock(),
         });
@@ -166,7 +166,9 @@ describe('BraintreeFastlaneUtils', () => {
         });
 
         it('checks if there is PP Fastlane account with customer email', async () => {
-            jest.spyOn(braintreeFastlaneMock.identity, 'lookupCustomerByEmail').mockReturnValue({});
+            jest.spyOn(braintreeFastlaneMock.identity, 'lookupCustomerByEmail').mockResolvedValue(
+                {},
+            );
 
             await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
             await subject.runPayPalAuthenticationFlowOrThrow();
@@ -235,12 +237,13 @@ describe('BraintreeFastlaneUtils', () => {
 
             profileData.shippingAddress.phoneNumber = '12345';
 
-            jest.spyOn(braintreeFastlaneMock.identity, 'triggerAuthenticationFlow').mockReturnValue(
-                {
-                    authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
-                    profileData,
-                },
-            );
+            jest.spyOn(
+                braintreeFastlaneMock.identity,
+                'triggerAuthenticationFlow',
+            ).mockResolvedValue({
+                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
+                profileData,
+            });
             await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
             await subject.runPayPalAuthenticationFlowOrThrow();
 
@@ -271,7 +274,9 @@ describe('BraintreeFastlaneUtils', () => {
         });
 
         it('does not authenticate user if the customer unrecognized in PP Fastlane', async () => {
-            jest.spyOn(braintreeFastlaneMock.identity, 'lookupCustomerByEmail').mockReturnValue({});
+            jest.spyOn(braintreeFastlaneMock.identity, 'lookupCustomerByEmail').mockResolvedValue(
+                {},
+            );
 
             await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
             await subject.runPayPalAuthenticationFlowOrThrow();
@@ -352,12 +357,13 @@ describe('BraintreeFastlaneUtils', () => {
                 lastName: 'Smith',
             };
 
-            jest.spyOn(braintreeFastlaneMock.identity, 'triggerAuthenticationFlow').mockReturnValue(
-                {
-                    authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
-                    profileData,
-                },
-            );
+            jest.spyOn(
+                braintreeFastlaneMock.identity,
+                'triggerAuthenticationFlow',
+            ).mockResolvedValue({
+                authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
+                profileData,
+            });
 
             const updatePaymentProviderCustomerPayload = {
                 authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
@@ -426,12 +432,13 @@ describe('BraintreeFastlaneUtils', () => {
         });
 
         it('does not authenticate customer if the authentication was canceled or failed', async () => {
-            jest.spyOn(braintreeFastlaneMock.identity, 'triggerAuthenticationFlow').mockReturnValue(
-                {
-                    authenticationState: BraintreeFastlaneAuthenticationState.CANCELED,
-                    profileData: {},
-                },
-            );
+            jest.spyOn(
+                braintreeFastlaneMock.identity,
+                'triggerAuthenticationFlow',
+            ).mockResolvedValue({
+                authenticationState: BraintreeFastlaneAuthenticationState.CANCELED,
+                profileData: getBraintreeFastlaneProfileDataMock(),
+            });
 
             const updatePaymentProviderCustomerPayload = {
                 authenticationState: BraintreeFastlaneAuthenticationState.CANCELED,
@@ -496,15 +503,10 @@ describe('BraintreeFastlaneUtils', () => {
         });
 
         it('do not update billing and shipping address if paypal does not return any address in profile data', async () => {
-            jest.spyOn(braintreeFastlaneMock.identity, 'triggerAuthenticationFlow').mockReturnValue(
-                {
-                    authenticationState: BraintreeFastlaneAuthenticationState.SUCCEEDED,
-                    profileData: {
-                        addresses: [],
-                        instruments: [],
-                    },
-                },
-            );
+            jest.spyOn(
+                braintreeFastlaneMock.identity,
+                'triggerAuthenticationFlow',
+            ).mockRejectedValue({});
 
             await subject.initializeBraintreeFastlaneOrThrow(methodId);
             await subject.runPayPalAuthenticationFlowOrThrow();

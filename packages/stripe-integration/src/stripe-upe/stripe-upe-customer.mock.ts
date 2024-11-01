@@ -17,6 +17,7 @@ export function getCustomerStripeUPEJsMock(returnElement?: StripeElement): Strip
     return {
         elements: jest.fn(() => ({
             create: jest.fn(() => ({
+                collapse: jest.fn(),
                 mount: jest.fn(),
                 unmount: jest.fn(),
                 on: jest.fn(),
