@@ -513,10 +513,10 @@ describe('GooglePayPaymentProcessor', () => {
                 formPoster,
             );
 
-            const processError = processor.processAdditionalAction('error', 'someMethodId');
+            const processError = processor.processAdditionalAction('error');
 
             await expect(processError).resolves.toBeUndefined();
-            expect(myGateway.processAdditionalAction).toHaveBeenCalledWith('error', 'someMethodId');
+            expect(myGateway.processAdditionalAction).toHaveBeenCalled();
         });
 
         it('should reject the error', async () => {

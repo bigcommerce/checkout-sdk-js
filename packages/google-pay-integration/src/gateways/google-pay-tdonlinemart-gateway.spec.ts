@@ -74,7 +74,7 @@ describe('GooglePayTdOnlineMartGateway', () => {
 
         await strategy.execute(payload);
 
-        expect(processor.processAdditionalAction).toHaveBeenCalledWith('error', 'worldlinena');
+        expect(processor.processAdditionalAction).toHaveBeenCalledWith('error');
     });
 
     it('throw not additional action error', async () => {

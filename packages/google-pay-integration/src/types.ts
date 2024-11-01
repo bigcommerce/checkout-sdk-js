@@ -368,7 +368,7 @@ export interface GooglePaySetExternalCheckoutData {
 }
 
 export interface GooglePayAdditionalActionProcessable {
-    processAdditionalAction(error: unknown, methodId?: string): Promise<void>;
+    processAdditionalAction(error: unknown): Promise<void>;
 }
 
 export interface GooglePayErrorObject {

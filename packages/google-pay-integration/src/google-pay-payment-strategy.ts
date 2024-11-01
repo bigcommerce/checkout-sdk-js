@@ -89,7 +89,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 paymentData: { nonce, ...extraData },
             });
         } catch (error) {
-            await this._googlePayPaymentProcessor.processAdditionalAction(error, payment.methodId);
+            await this._googlePayPaymentProcessor.processAdditionalAction(error);
         }
     }
 

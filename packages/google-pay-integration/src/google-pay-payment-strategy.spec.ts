@@ -246,7 +246,7 @@ describe('GooglePayPaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(processor.processAdditionalAction).toHaveBeenCalledWith('error', 'example');
+            expect(processor.processAdditionalAction).toHaveBeenCalledWith('error');
         });
 
         describe('should fail if:', () => {

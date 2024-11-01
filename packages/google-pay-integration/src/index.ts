@@ -8,7 +8,7 @@ export { default as createGooglePayAuthorizeNetPaymentStrategy } from './factori
 export { default as createGooglePayCheckoutComPaymentStrategy } from './factories/payment/create-google-pay-checkoutcom-payment-strategy';
 export { default as createGooglePayCybersourcePaymentStrategy } from './factories/payment/create-google-pay-cybersource-payment-strategy';
 export { default as createGooglePayOrbitalPaymentStrategy } from './factories/payment/create-google-pay-orbital-payment-strategy';
-export { default as createGooglePayStripePaymentStrategy } from './google-pay-stripe/create-google-pay-stripe-payment-strategy';
+export { default as createGooglePayStripePaymentStrategy } from './factories/payment/create-google-pay-stripe-payment-strategy';
 export { default as createGooglePayWorldpayAccessPaymentStrategy } from './factories/payment/create-google-pay-worldpayaccess-payment-strategy';
 export { default as createGooglePayBraintreePaymentStrategy } from './factories/payment/create-google-pay-braintree-payment-strategy';
 export { default as createGooglePayPPCPPaymentStrategy } from './google-pay-paypal-commerce/create-google-pay-paypal-commerce-payment-strategy';
@@ -21,8 +21,8 @@ export { default as createGooglePayCheckoutComCustomerStrategy } from './factori
 export { default as createGooglePayCybersourceCustomerStrategy } from './factories/customer/create-google-pay-cybersource-customer-strategy';
 export { default as createGooglePayBnzCustomerStrategy } from './factories/customer/create-google-pay-bnz-customer-strategy';
 export { default as createGooglePayOrbitalCustomerStrategy } from './factories/customer/create-google-pay-orbital-customer-strategy';
-export { default as createGooglePayStripeCustomerStrategy } from './google-pay-stripe/create-google-pay-stripe-customer-strategy';
-export { default as createGooglePayStripeUpeCustomerStrategy } from './google-pay-stripe/create-google-pay-stripeupe-customer-strategy';
+export { default as createGooglePayStripeCustomerStrategy } from './factories/customer/create-google-pay-stripe-customer-strategy';
+export { default as createGooglePayStripeUpeCustomerStrategy } from './factories/customer/create-google-pay-stripeupe-customer-strategy';
 export { default as createGooglePayWorldpayAccessCustomerStrategy } from './factories/customer/create-google-pay-worldpayaccess-customer-strategy';
 export { default as createGooglePayBraintreeCustomerStrategy } from './factories/customer/create-google-pay-braintree-customer-strategy';
 export { default as createGooglePayPayPalCommerceCustomerStrategy } from './google-pay-paypal-commerce/create-google-pay-paypal-commerce-customer-strategy';
@@ -37,6 +37,6 @@ export { default as createGooglePayAuthorizeDotNetButtonStrategy } from './facto
 export { default as createGooglePayCheckoutComButtonStrategy } from './factories/button/create-google-pay-checkoutcom-button-strategy';
 export { default as createGooglePayCybersourceButtonStrategy } from './factories/button/create-google-pay-cybersource-button-strategy';
 export { default as createGooglePayOrbitalButtonStrategy } from './factories/button/create-google-pay-orbital-button-strategy';
-export { default as createGooglePayStripeButtonStrategy } from './google-pay-stripe/create-google-pay-stripe-button-strategy';
+export { default as createGooglePayStripeButtonStrategy } from './factories/button/create-google-pay-stripe-button-strategy';
 export { default as createGooglePayWorldpayAccessButtonStrategy } from './factories/button/create-google-pay-worldpayaccess-button-strategy';
 export { default as createGooglePayTdOnlineMartButtonStrategy } from './factories/button/create-google-pay-tdonlinemart-button-strategy';
