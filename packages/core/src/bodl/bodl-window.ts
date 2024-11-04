@@ -11,6 +11,7 @@ export interface BODLProduct {
     retail_price?: number;
     quantity: number;
     discount?: number;
+    coupon_amount?: number;
     index?: number;
     brand_name?: string;
     category_names?: string[];
