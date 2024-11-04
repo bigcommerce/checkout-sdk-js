@@ -86,6 +86,8 @@ export default class BraintreeFastlaneUtils {
      * Authentication methods
      *
      * */
+    // Remove this rule disabling after method refactor
+    // eslint-disable-next-line complexity
     async runPayPalAuthenticationFlowOrThrow(
         email?: string,
         shouldSetShippingOption?: boolean,
@@ -99,6 +101,9 @@ export default class BraintreeFastlaneUtils {
             const cart = state.getCartOrThrow();
             const customer = state.getCustomer();
             const billingAddress = state.getBillingAddress();
+            const { isFastlaneShippingOptionAutoSelectEnabled } =
+                state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId)
+                    .initializationData || {};
 
             const customerEmail = email || customer?.email || billingAddress?.email || '';
 
@@ -180,7 +185,7 @@ export default class BraintreeFastlaneUtils {
             if (shippingAddresses.length > 0 && cart.lineItems.physicalItems.length > 0) {
                 await this.paymentIntegrationService.updateShippingAddress(shippingAddresses[0]);
 
-                if (shouldSetShippingOption) {
+                if (shouldSetShippingOption && isFastlaneShippingOptionAutoSelectEnabled) {
                     await this.setShippingOption();
                 }
             }

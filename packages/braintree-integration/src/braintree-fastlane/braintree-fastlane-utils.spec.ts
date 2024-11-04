@@ -256,6 +256,17 @@ describe('BraintreeFastlaneUtils', () => {
         });
 
         it('preselects shipping option with first shipping option', async () => {
+            const paymentMethodWithShippingAutoselect = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isFastlaneShippingOptionAutoSelectEnabled: true,
+                },
+            };
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithShippingAutoselect);
             await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
             await subject.runPayPalAuthenticationFlowOrThrow(undefined, true);
 
@@ -264,6 +275,42 @@ describe('BraintreeFastlaneUtils', () => {
                     ? consignments[0]?.availableShippingOptions[0].id
                     : undefined,
             );
+        });
+
+        it('doesnt select shipping option if isFastlaneShippingOptionAutoSelectEnabled false', async () => {
+            const paymentMethodWithShippingAutoselect = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isFastlaneShippingOptionAutoSelectEnabled: false,
+                },
+            };
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithShippingAutoselect);
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow(undefined, true);
+
+            expect(paymentIntegrationService.selectShippingOption).not.toHaveBeenCalled();
+        });
+
+        it('select shipping option if isFastlaneShippingOptionAutoSelectEnabled true', async () => {
+            const paymentMethodWithShippingAutoselect = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    isFastlaneShippingOptionAutoSelectEnabled: true,
+                },
+            };
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodWithShippingAutoselect);
+            await subject.initializeBraintreeFastlaneOrThrow(methodId, undefined);
+            await subject.runPayPalAuthenticationFlowOrThrow(undefined, true);
+
+            expect(paymentIntegrationService.selectShippingOption).toHaveBeenCalled();
         });
 
         it('doesnt preselect shipping option', async () => {
