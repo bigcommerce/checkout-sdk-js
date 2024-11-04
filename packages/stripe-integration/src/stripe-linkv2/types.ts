@@ -7,7 +7,7 @@ import {
     StripeUPEClient,
 } from '../stripe-upe/stripe-upe';
 
-export type StripeExpressCheckoutElementEvent = 'click' | 'shippingaddresschange';
+export type StripeExpressCheckoutElementEvent = 'click' | 'shippingaddresschange' | 'shippingratechange';
 
 export interface StripeExpressCheckoutClient extends Omit<StripeUPEClient, 'elements'> {
     elements(options: StripeExpressCheckoutOptions): StripeExpressCheckoutElements;
@@ -18,7 +18,7 @@ export interface StripeExpressCheckoutElements extends Omit<StripeElements, 'cre
         elementType: StripeElementType,
         options?: StripeExpressCheckoutElementCreateOptions,
     ): StripeExpressCheckoutElement;
-    update(options?: StripeExpressCheckoutUpdateOptions): StripeExpressCheckoutElement;
+    update(options?: StripeExpressCheckoutOptions): StripeExpressCheckoutElement;
 }
 
 export interface StripeExpressCheckoutElement extends Omit<StripeElement, 'on' | 'update'> {
@@ -62,11 +62,6 @@ export interface StripeLinkV2ShippingRates {
 
 export interface StripeExpressCheckoutOptions {
     clientSecret?: string;
-    mode?: string;
-    currency?: string;
-    amount?: number;
-}
-export interface StripeExpressCheckoutUpdateOptions {
     mode?: string;
     currency?: string;
     amount?: number;

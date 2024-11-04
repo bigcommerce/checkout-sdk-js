@@ -123,29 +123,30 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         };
 
         this._stripeElements = stripeExpressCheckoutClient.elements(elementsOptions);
-        // this._stripeElements = await this.scriptLoader.getElements(stripeUPEClient, elementsOptions);
 
         this._expressCheckoutElement = this._stripeElements.create(
             StripeElementType.EXPRESS_CHECKOUT,
             expressCheckoutOptions,
         );
         this._expressCheckoutElement.mount(`#${container}`);
-
-        this._expressCheckoutElement.on('click', async (event: StripeLinkV2Event) =>
-            this.onClick(event),
-        );
-        this._expressCheckoutElement.on('shippingaddresschange', async (event: StripeLinkV2Event) =>
-            this.onShippingAddressChange(event),
-        );
+        this.initializeEvents(this._expressCheckoutElement);
     }
 
     /** Events * */
 
-    private async onClick(event: StripeLinkV2Event) {
-        if (!('resolve' in event)) {
-            return;
-        }
+    private initializeEvents(expressCheckoutElement: StripeExpressCheckoutElement): void {
+        expressCheckoutElement.on('click', async (event: StripeLinkV2Event) =>
+            this.onClick(event),
+        );
+        expressCheckoutElement.on('shippingaddresschange', async (event: StripeLinkV2Event) =>
+            this.onShippingAddressChange(event),
+        );
+        expressCheckoutElement.on('shippingratechange', async (event: StripeLinkV2Event) =>
+            this.onShippingRateChange(event),
+        );
+    }
 
+    private async onClick(event: StripeLinkV2Event) {
         const countries = await this.paymentIntegrationService.loadShippingCountries();
         const allowedShippingCountries = countries
             .getShippingCountries()
@@ -164,10 +165,6 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     }
 
     private async onShippingAddressChange(event: StripeLinkV2Event) {
-        if (!('resolve' in event)) {
-            return;
-        }
-
         const shippingAddress = event.address;
         const result = {
             firstName: '',
@@ -187,19 +184,46 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         await this.paymentIntegrationService.updateShippingAddress(result);
 
         const shippingRates = await this.getAvailableShippingOptions();
-        const totalPrice = this.getTotalPrice();
 
         if (this._stripeElements) {
             this._stripeElements.update({
                 currency: this.getCurrency(),
                 mode: 'payment',
-                amount: Math.round(+totalPrice * 100),
+                amount: this.getTotalPrice(),
             });
         }
 
         event.resolve({
             shippingRates,
         });
+    }
+
+    private async onShippingRateChange(event: StripeLinkV2Event) {
+            const gatewayId ='stripeupe';
+            const methodId= 'card';
+            await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+                params: { method: methodId },
+            });
+
+            const state = this.paymentIntegrationService.getState();
+            const paymentMethod = state.getPaymentMethodOrThrow(methodId, gatewayId);
+            const { clientToken } = paymentMethod;
+
+            console.log('shippingratechange totalPrice', this.getTotalPrice());
+            if (this._stripeElements) {
+                this._stripeElements.update({
+                    clientSecret: clientToken,
+                    currency: this.getCurrency(),
+                    mode: 'payment',
+                    amount: this.getTotalPrice() + this.getTotalPrice(),
+                });
+                // this._stripeElements.update({
+                //     clientSecret: clientToken
+                // });
+                // await this._stripeElements.fetchUpdates();
+            }
+
+            event.resolve({});
     }
 
     /** Utils * */
@@ -209,14 +233,14 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         return 'usd';
     }
 
-    private getTotalPrice(): string {
+    private getTotalPrice(): number {
         const { getCheckoutOrThrow, getCartOrThrow } = this.paymentIntegrationService.getState();
         const { decimalPlaces } = getCartOrThrow().currency;
         const totalPrice = round(getCheckoutOrThrow().outstandingBalance, decimalPlaces).toFixed(
             decimalPlaces,
         );
 
-        return totalPrice;
+        return Math.round(+totalPrice * 100);
     }
 
     private async getAvailableShippingOptions(): Promise<StripeLinkV2ShippingRates[] | undefined> {
