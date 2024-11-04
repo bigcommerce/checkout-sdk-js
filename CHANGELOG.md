@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.679.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.678.1...v1.679.0) (2024-11-04)
+
+
+### Features
+
+* **checkout:** DATA-11983 Populate discount_amount field for BODL events ([a47ddbc](https://github.com/bigcommerce/checkout-sdk-js/commit/a47ddbcfa24cbe8ffe1cf15d66fa5bf2e9ff34b5))
+
 ### [1.678.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.678.0...v1.678.1) (2024-11-04)
 
 ## [1.678.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.677.3...v1.678.0) (2024-11-01)
