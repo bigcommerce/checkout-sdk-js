@@ -52,6 +52,7 @@ export default class GooglePayPaymentProcessor {
         isBuyNowFlow?: boolean,
         currencyCode?: string,
     ): Promise<void> {
+        console.log('initialize Stripe GP');
         this._paymentsClient = await this._scriptLoader.getGooglePaymentsClient(
             getPaymentMethod().config.testMode,
             googlePayPaymentOptions,
