@@ -15,20 +15,23 @@ import {
     PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
-    RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import formatLocale from './format-locale';
+import { isStripeError } from './is-stripe-error';
 import { isStripePaymentEvent } from './is-stripe-payment-event';
 import { isStripeUPEPaymentMethodLike } from './is-stripe-upe-payment-method-like';
 import {
+    StripeAdditionalActionRequired,
     StripeElement,
     StripeElements,
     StripeElementType,
+    StripeError,
     StripeEventType,
     StripeStringConstants,
     StripeUPEAppearanceOptions,
     StripeUPEClient,
+    StripeUpeResult,
 } from './stripe-upe';
 import StripeUPEPaymentInitializeOptions, {
     WithStripeUPEPaymentInitializeOptions,
@@ -308,7 +311,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     private async _processAdditionalAction(
         error: unknown,
         methodId: string,
-    ): Promise<PaymentIntegrationSelectors | never> {
+    ): Promise<PaymentIntegrationSelectors | undefined> {
         if (
             !isRequestError(error) ||
             !this.stripeUPEIntegrationService.isAdditionalActionError(error.body.errors)
@@ -320,84 +323,66 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        const {
-            data: { token, redirect_url },
-        } = error.body.additional_action_required;
+        const { data: additionalActionData } = error.body.additional_action_required;
+        const { token } = additionalActionData;
+
+        const { paymentIntent } = await this._confirmStripePaymentOrThrow(
+            methodId,
+            additionalActionData,
+        );
+
+        const paymentPayload = this._getPaymentPayload(methodId, paymentIntent?.id || token);
+
+        try {
+            return await this.paymentIntegrationService.submitPayment(paymentPayload);
+        } catch (error) {
+            this.stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage();
+        }
+    }
+
+    private async _confirmStripePaymentOrThrow(
+        methodId: string,
+        additionalActionData: StripeAdditionalActionRequired['data'],
+    ): Promise<StripeUpeResult | never> {
+        const { token, redirect_url } = additionalActionData;
         const stripePaymentData = this.stripeUPEIntegrationService.mapStripePaymentData(
             this.stripeElements,
             redirect_url,
         );
-        const isPaymentCompleted = await this.stripeUPEIntegrationService.isPaymentCompleted(
-            methodId,
-            this.stripeUPEClient,
-        );
+        let stripeError: StripeError | undefined;
 
-        if (
-            this.stripeUPEIntegrationService.isRedirectAction(error.body.additional_action_required)
-        ) {
-            if (isPaymentCompleted) {
-                this.stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage();
-            }
-
-            const { paymentIntent, error: stripeError } = await this.stripeUPEClient.confirmPayment(
-                stripePaymentData,
-            );
-
-            if (stripeError) {
-                this.stripeUPEIntegrationService.throwDisplayableStripeError(stripeError);
-                throw new PaymentMethodFailedError();
-            }
-
-            if (!paymentIntent) {
-                throw new RequestError();
-            }
-        } else if (
-            this.stripeUPEIntegrationService.isOnPageAdditionalAction(
-                error.body.additional_action_required,
-            )
-        ) {
-            let result;
-            let isConfirmCatchError = false;
-
-            try {
-                result = !isPaymentCompleted
-                    ? await this.stripeUPEClient.confirmPayment(stripePaymentData)
-                    : await this.stripeUPEClient.retrievePaymentIntent(token);
-            } catch (error) {
-                try {
-                    result = await this.stripeUPEClient.retrievePaymentIntent(token);
-                } catch (error) {
-                    isConfirmCatchError = true;
-                }
-            }
-
-            if (result?.error) {
-                this.stripeUPEIntegrationService.throwDisplayableStripeError(result.error);
-
-                if (this.stripeUPEIntegrationService.isCancellationError(result.error)) {
-                    throw new PaymentMethodCancelledError();
-                }
-
-                throw new PaymentMethodFailedError();
-            }
-
-            if (!result?.paymentIntent && !isConfirmCatchError) {
-                throw new RequestError();
-            }
-
-            const paymentPayload = this._getPaymentPayload(
+        try {
+            const isPaymentCompleted = await this.stripeUPEIntegrationService.isPaymentCompleted(
                 methodId,
-                isConfirmCatchError ? token : result?.paymentIntent?.id,
+                this.stripeUPEClient,
             );
 
-            try {
-                return await this.paymentIntegrationService.submitPayment(paymentPayload);
-            } catch (error) {
-                this.stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage();
+            const confirmationResult = !isPaymentCompleted
+                ? await this.stripeUPEClient?.confirmPayment(stripePaymentData)
+                : await this.stripeUPEClient?.retrievePaymentIntent(token || '');
+
+            stripeError = confirmationResult?.error;
+
+            if (stripeError || !confirmationResult?.paymentIntent) {
+                throw new PaymentMethodFailedError();
+            }
+
+            return confirmationResult;
+        } catch (error: unknown) {
+            this._throwStripeError(stripeError);
+        }
+    }
+
+    private _throwStripeError(stripeError?: unknown): never {
+        if (isStripeError(stripeError)) {
+            this.stripeUPEIntegrationService.throwDisplayableStripeError(stripeError);
+
+            if (this.stripeUPEIntegrationService.isCancellationError(stripeError)) {
+                throw new PaymentMethodCancelledError();
             }
         }
 
-        throw error;
+        throw new PaymentMethodFailedError();
     }
 
     private _onStripeElementChange(

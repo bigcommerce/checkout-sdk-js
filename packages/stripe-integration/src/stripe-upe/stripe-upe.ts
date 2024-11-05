@@ -406,7 +406,7 @@ export interface StripeUPEClient {
     elements(options: StripeElementsOptions): StripeElements;
 }
 
-interface StripeUpeResult {
+export interface StripeUpeResult {
     paymentIntent?: PaymentIntent;
     error?: StripeError;
 }
