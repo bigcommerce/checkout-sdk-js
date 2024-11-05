@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.680.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.679.0...v1.680.0) (2024-11-05)
+
+
+### Features
+
+* **payment:** PAYPAL-4800 added ability to skip shipping step ([#2730](https://github.com/bigcommerce/checkout-sdk-js/issues/2730)) ([783775b](https://github.com/bigcommerce/checkout-sdk-js/commit/783775b383b30fc06e7a410ef0cb8f7b9980085c))
+* **payment:** STRIPE-484 Stripe OCS confirmation flow ([bb2cc0a](https://github.com/bigcommerce/checkout-sdk-js/commit/bb2cc0a3179a326fcc5f561b11ef2e5be26062ca))
+
 ## [1.679.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.678.1...v1.679.0) (2024-11-04)
 
 
