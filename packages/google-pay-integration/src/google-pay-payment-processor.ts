@@ -131,9 +131,9 @@ export default class GooglePayPaymentProcessor {
         return this._gateway.mapToShippingAddressRequestBody(response);
     }
 
-    processAdditionalAction(error: unknown): Promise<void> {
+    processAdditionalAction(error: unknown, methodId?: string): Promise<void> {
         return isGooglePayAdditionalActionProcessable(this._gateway)
-            ? this._gateway.processAdditionalAction(error)
+            ? this._gateway.processAdditionalAction(error, methodId)
             : Promise.reject(error);
     }
 
