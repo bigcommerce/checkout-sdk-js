@@ -43,6 +43,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     private stripeUPEClient?: StripeUPEClient;
     private stripeElements?: StripeElements;
     private selectedMethodId?: string;
+    private readonly stripeSVGSizeCoefficient = 0.88;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -238,6 +239,12 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         const titleColor = '#5f5f5f'; // TODO: get style from theme
         const radioColor = '#ddd'; // TODO: get style from theme
         const radioFocusColor = '#4496f6'; // TODO: get style from theme
+        const { radioIconOuterWidth, radioIconOuterStrokeWidth, radioIconInnerWidth } = style;
+        const radioIconSize = this._getRadioIconSizes(
+            radioIconOuterWidth,
+            radioIconOuterStrokeWidth,
+            radioIconInnerWidth,
+        );
 
         return {
             variables: {
@@ -265,23 +272,53 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
                     color: titleColor,
                 },
                 '.RadioIcon': {
-                    // 26px / 0.88 = 29.54
-                    width: '29.54px',
+                    width: radioIconSize.outerWidth,
                 },
                 '.RadioIconOuter': {
-                    // 1px / 26px * 0.88 = 0.034
-                    strokeWidth: '3.4',
+                    strokeWidth: radioIconSize.outerStrokeWidth,
                     stroke: radioColor,
                 },
                 '.RadioIconOuter--checked': {
                     stroke: radioFocusColor,
                 },
                 '.RadioIconInner': {
-                    // 17.16px / 26px * 0.88 = 0.58 / 2 = 29
-                    r: '29',
+                    r: radioIconSize.innerRadius,
                     fill: radioFocusColor,
                 },
             },
+        };
+    }
+
+    private _getRadioIconSizes(
+        realOuterWidth: string | number = 26,
+        realOuterStrokeWidth: string | number = 1,
+        realInnerWidth: string | number = 17,
+    ) {
+        const percentageCoefficient = this.stripeSVGSizeCoefficient * 100;
+
+        const outerWidth =
+            typeof realOuterWidth === 'string' ? parseInt(realOuterWidth, 10) : realOuterWidth;
+        const outerStrokeWidth =
+            typeof realOuterStrokeWidth === 'string'
+                ? parseInt(realOuterStrokeWidth, 10)
+                : realOuterStrokeWidth;
+        const innerWidth =
+            typeof realInnerWidth === 'string' ? parseInt(realInnerWidth, 10) : realInnerWidth;
+
+        const stripeEqualOuterWidth = (outerWidth / this.stripeSVGSizeCoefficient).toFixed(2);
+        const stripeEqualOuterStrokeWidth = (
+            (outerStrokeWidth / outerWidth) *
+            percentageCoefficient
+        ).toFixed(2);
+        const stripeEqualInnerRadius = (
+            ((innerWidth / outerWidth) * percentageCoefficient) /
+            2
+        ).toFixed(2);
+
+        return {
+            outerWidth: `${stripeEqualOuterWidth}px`,
+            outerStrokeWidth: `${stripeEqualOuterStrokeWidth}px`,
+            innerRadius: `${stripeEqualInnerRadius}px`,
         };
     }
 
