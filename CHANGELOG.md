@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.681.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.680.0...v1.681.0) (2024-11-06)
+
+
+### Features
+
+* **payment:** PAYPAL-4783 added shipping autoselect flag ([#2720](https://github.com/bigcommerce/checkout-sdk-js/issues/2720)) ([1fcc7d5](https://github.com/bigcommerce/checkout-sdk-js/commit/1fcc7d5976d03c8161b074ef5bf2f176574b1023))
+
 ## [1.680.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.679.0...v1.680.0) (2024-11-05)
 
 
