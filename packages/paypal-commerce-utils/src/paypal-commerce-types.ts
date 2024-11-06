@@ -26,6 +26,7 @@ export interface PayPalCommerceInitializationData {
     isDeveloperModeApplicable?: boolean;
     intent?: PayPalCommerceIntent;
     isAcceleratedCheckoutEnabled?: boolean; // PayPal Fastlane related
+    isFastlaneShippingOptionAutoSelectEnabled?: boolean; // PayPal Fastlane related
     isFastlaneStylingEnabled?: boolean;
     isHostedCheckoutEnabled?: boolean;
     isPayPalCommerceAnalyticsV2Enabled?: boolean; // PayPal Fastlane related
