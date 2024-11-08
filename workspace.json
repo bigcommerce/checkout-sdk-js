@@ -36,6 +36,7 @@
         "paypal-commerce-utils": "packages/paypal-commerce-utils",
         "paypal-express-integration": "packages/paypal-express-integration",
         "paypal-pro-integration": "packages/paypal-pro-integration",
+        "paypal-utils": "packages/paypal-utils",
         "sagepay-integration": "packages/sagepay-integration",
         "sezzle-integration": "packages/sezzle-integration",
         "squarev2-integration": "packages/squarev2-integration",
