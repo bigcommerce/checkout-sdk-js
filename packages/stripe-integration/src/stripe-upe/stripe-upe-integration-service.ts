@@ -84,7 +84,7 @@ export default class StripeUPEIntegrationService {
         this.isMounted = true;
     }
 
-    mapAppearanceVariables(styles: { [key: string]: string }) {
+    mapAppearanceVariables(styles: NonNullable<StripeUPEPaymentInitializeOptions['style']>) {
         return {
             colorPrimary: styles.fieldInnerShadow,
             colorBackground: styles.fieldBackground,
@@ -96,7 +96,7 @@ export default class StripeUPEIntegrationService {
         };
     }
 
-    mapInputAppearanceRules(styles: { [key: string]: string }) {
+    mapInputAppearanceRules(styles: NonNullable<StripeUPEPaymentInitializeOptions['style']>) {
         return {
             borderColor: styles.fieldBorder,
             color: styles.fieldText,
