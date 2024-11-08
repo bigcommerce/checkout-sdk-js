@@ -4,31 +4,27 @@
 
 
 export default class PayPalButton {
-    renderOrThrow({
-        containerId,
-        paymentMethodName, // (!) FundingSource
-        buttonStyles, // (?)
-        onEligibilityFailure, // (?)
-        onCancel, // (?)
-        onRenderButton, // (?)
-        buyNowOptions, // (?)
-        payNowOptions, // (?) -skip checkout
-        paypalSdk, // (!)
-    }): Promise<void> {
-        let paypalConfig = {
-            fundingSource: '',
-            style: {},
-            ...callbacks,
-        };
+    renderOrThrow(options): Promise<void> {
+        const {
+            containerId,
+            paymentMethodName, // (!) FundingSource
+            buttonStyles, // (?)
+            onEligibilityFailure, // (?)
+            onCancel, // (?)
+            onRenderButton, // (?)
+            buyNowOptions, // (?)
+            payNowOptions, // (?) -skip checkout
+            paypalSdk, // (!)
+        } = options;
 
-        // validate input data
+        let paypalConfig = {};
 
         /**
          *
-         * Get PayPal callbacks
+         * Get mapped FundingSource based on payment provider name
          *
-         * */
-
+         */
+        paypalConfig.fundingSource = this.getFundingSourceByPaymentMethodName(paymentMethodName);
 
 
         /**
@@ -40,12 +36,18 @@ export default class PayPalButton {
             paypalConfig.style = this.getValidButtonStyle(paymentMethodName, buttonStyles);
         }
 
-
         /**
          *
-         * Get mapped FundingSource based on payment provider name
+         * Get PayPal callbacks
          *
-         */
+         * */
+
+        const paypalCallbacks = this.getButtonCallbacks();
+
+        Object.assign(paypalConfig, paypalCallbacks);
+
+
+
 
 
         // render wallet button based on config
@@ -57,8 +59,6 @@ export default class PayPalButton {
         // get buy now callbacks -> buyNow config should be provided via render options
         // get pay now callbacks -> payNow config should be provided via render options
         // handle on eligibility failure -> should be provided via render options
-
-
 
         const paypalButton = paypal.Buttons(paypalConfig);
 
