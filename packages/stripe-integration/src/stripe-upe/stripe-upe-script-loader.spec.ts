@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { StripeElementsOptions, StripeHostWindow } from './stripe-upe';
+import { StripeElementsOptions, StripeHostWindow, StripeUPEClient } from './stripe-upe';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import { getStripeUPEJsMock } from './stripe-upe.mock';
 
@@ -67,6 +67,62 @@ describe('StripeUPEPayScriptLoader', () => {
             );
 
             await expect(result).rejects.toBeInstanceOf(StandardError);
+        });
+    });
+
+    describe('#updateStripeElements', () => {
+        const stripeUPEJsDefaultMock = getStripeUPEJsMock();
+        let updateMock: jest.Mock;
+        let fetchUpdatesMock: jest.Mock;
+        let stripeUPEJsMock: StripeUPEClient;
+        const elementsOptions: StripeElementsOptions = { clientSecret: 'myToken' };
+
+        beforeEach(() => {
+            updateMock = jest.fn();
+            fetchUpdatesMock = jest.fn();
+            stripeUPEJsMock = {
+                ...stripeUPEJsDefaultMock,
+                elements: jest.fn(() => ({
+                    create: jest.fn(() => ({
+                        mount: jest.fn(),
+                        unmount: jest.fn(),
+                        on: jest.fn(),
+                        update: jest.fn(),
+                        destroy: jest.fn(),
+                        collapse: jest.fn(),
+                    })),
+                    getElement: jest.fn().mockReturnValue(null),
+                    update: updateMock,
+                    fetchUpdates: fetchUpdatesMock,
+                })),
+            };
+
+            scriptLoader.loadScript = jest.fn(() => {
+                mockWindow.Stripe = jest.fn(() => stripeUPEJsMock);
+
+                return Promise.resolve();
+            });
+        });
+
+        it('updates stripe elements', async () => {
+            const getStripeClient = await stripeUPEScriptLoader.getStripeClient(
+                'STRIPE_PUBLIC_KEY',
+                'STRIPE_CONNECTED_ACCOUNT',
+            );
+
+            await stripeUPEScriptLoader.getElements(getStripeClient, elementsOptions);
+            await stripeUPEScriptLoader.updateStripeElements(elementsOptions);
+
+            expect(updateMock).toHaveBeenCalledTimes(1);
+            expect(updateMock).toHaveBeenCalledWith({ clientSecret: 'myToken' });
+            expect(fetchUpdatesMock).toHaveBeenCalledTimes(1);
+        });
+
+        it('does not update stripe elements if elements does not exist', async () => {
+            await stripeUPEScriptLoader.updateStripeElements(elementsOptions);
+
+            expect(updateMock).not.toHaveBeenCalled();
+            expect(fetchUpdatesMock).not.toHaveBeenCalledTimes(1);
         });
     });
 });

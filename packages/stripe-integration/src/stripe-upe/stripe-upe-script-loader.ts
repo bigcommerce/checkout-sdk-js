@@ -55,11 +55,21 @@ export default class StripeUPEScriptLoader {
 
             Object.assign(this.stripeWindow, { bcStripeElements: stripeElements });
         } else {
-            stripeElements.update(options);
-            await stripeElements.fetchUpdates();
+            await this.updateStripeElements(options);
         }
 
         return stripeElements;
+    }
+
+    async updateStripeElements(options: StripeElementsOptions) {
+        const stripeElements = this.stripeWindow.bcStripeElements;
+
+        if (!stripeElements) {
+            return;
+        }
+
+        stripeElements.update(options);
+        await stripeElements.fetchUpdates();
     }
 
     private async load() {
