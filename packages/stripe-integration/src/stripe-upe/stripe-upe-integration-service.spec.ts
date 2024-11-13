@@ -23,6 +23,7 @@ import StripeUPEPaymentInitializeOptions, {
     WithStripeUPEPaymentInitializeOptions,
 } from './stripe-upe-initialize-options';
 import StripeUPEIntegrationService from './stripe-upe-integration-service';
+import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import {
     getStripeUPE,
     getStripeUPEInitializeOptionsMock,
@@ -49,6 +50,7 @@ describe('StripeUPEIntegrationService', () => {
     };
     let stripeElementsMock: StripeElements;
     let stripeElementMock: StripeElement;
+    let stripeScriptLoader: StripeUPEScriptLoader;
 
     beforeEach(() => {
         initializeOptions = getStripeUPEInitializeOptionsMock(StripePaymentMethodType.OCS, style);
@@ -60,8 +62,14 @@ describe('StripeUPEIntegrationService', () => {
             };
         }
 
+        stripeScriptLoader = {
+            updateStripeElements: jest.fn(),
+        } as unknown as StripeUPEScriptLoader;
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        stripeUPEIntegrationService = new StripeUPEIntegrationService(paymentIntegrationService);
+        stripeUPEIntegrationService = new StripeUPEIntegrationService(
+            paymentIntegrationService,
+            stripeScriptLoader,
+        );
         stripeupeMock = {
             containerId: 'container',
             render: jest.fn(),
@@ -138,6 +146,7 @@ describe('StripeUPEIntegrationService', () => {
                     return jest.fn();
                 },
             );
+            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(getStripeUPE());
         });
 
         it('skip subscription actions if no stripe elements initialized', () => {
@@ -642,6 +651,24 @@ describe('StripeUPEIntegrationService', () => {
             await stripeUPEIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
+            expect(stripeScriptLoader.updateStripeElements).toHaveBeenCalled();
+        });
+
+        it('should throw error if no client token provided in payment provider', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...getStripeUPE(),
+                clientToken: undefined,
+            });
+
+            await expect(
+                stripeUPEIntegrationService.updateStripePaymentIntent(gatewayId, methodId),
+            ).rejects.toThrow(MissingDataError);
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
+            expect(stripeScriptLoader.updateStripeElements).not.toHaveBeenCalled();
         });
     });
 });

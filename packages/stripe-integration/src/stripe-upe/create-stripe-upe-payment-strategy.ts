@@ -12,10 +12,12 @@ import StripeUPEScriptLoader from './stripe-upe-script-loader';
 const createStripeUPEPaymentStrategy: PaymentStrategyFactory<StripeUPEPaymentStrategy> = (
     paymentIntegrationService,
 ) => {
+    const stripeScriptLoader = new StripeUPEScriptLoader(getScriptLoader());
+
     return new StripeUPEPaymentStrategy(
         paymentIntegrationService,
-        new StripeUPEScriptLoader(getScriptLoader()),
-        new StripeUPEIntegrationService(paymentIntegrationService),
+        stripeScriptLoader,
+        new StripeUPEIntegrationService(paymentIntegrationService, stripeScriptLoader),
     );
 };
 

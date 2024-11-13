@@ -6,7 +6,6 @@ import {
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
-    PaymentIntegrationSelectors,
     PaymentIntegrationService,
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -24,12 +23,16 @@ import {
     StripeUPEPaymentIntentStatus,
 } from './stripe-upe';
 import StripeUPEPaymentInitializeOptions from './stripe-upe-initialize-options';
+import StripeUPEScriptLoader from './stripe-upe-script-loader';
 
 export default class StripeUPEIntegrationService {
     private isMounted = false;
     private checkoutEventsUnsubscribe?: () => void;
 
-    constructor(private paymentIntegrationService: PaymentIntegrationService) {}
+    constructor(
+        private paymentIntegrationService: PaymentIntegrationService,
+        private scriptLoader: StripeUPEScriptLoader,
+    ) {}
 
     deinitialize(): void {
         this.checkoutEventsUnsubscribe?.();
@@ -203,14 +206,18 @@ export default class StripeUPEIntegrationService {
         return type === 'additional_action_requires_payment_method' && !!token;
     }
 
-    async updateStripePaymentIntent(
-        gatewayId: string,
-        methodId: string,
-    ): Promise<PaymentIntegrationSelectors> {
+    async updateStripePaymentIntent(gatewayId: string, methodId: string): Promise<void> {
         // INFO: to trigger payment intent update on the BE side we need to make stripe config request
-        return this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
+        const state = await this.paymentIntegrationService.loadPaymentMethod(gatewayId, {
             params: { method: methodId },
         });
+        const { clientToken } = state.getPaymentMethodOrThrow(methodId);
+
+        if (!clientToken) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        this.scriptLoader.updateStripeElements({ clientSecret: clientToken });
     }
 
     private _mapStripeAddress(address?: Address): AddressOptions {

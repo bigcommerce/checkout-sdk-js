@@ -93,7 +93,10 @@ describe('StripeUPEPaymentStrategy', () => {
 
         jest.spyOn(paymentIntegrationService, 'subscribe');
 
-        stripeUPEIntegrationService = new StripeUPEIntegrationService(paymentIntegrationService);
+        stripeUPEIntegrationService = new StripeUPEIntegrationService(
+            paymentIntegrationService,
+            stripeScriptLoader,
+        );
         strategy = new StripeUPEPaymentStrategy(
             paymentIntegrationService,
             stripeScriptLoader,
