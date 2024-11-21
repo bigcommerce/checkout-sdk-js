@@ -1,3 +1,4 @@
+import { DetachmentObserver, MutationObserverFactory } from '../common/dom';
 import { IFrameComponent, iframeResizer, isIframeEvent } from '../common/iframe';
 import { parseUrl } from '../common/url';
 
@@ -40,15 +41,17 @@ export default class ResizableIframeCreator {
         );
     }
 
-    private _toResizableFrame(
+    private async _toResizableFrame(
         iframe: HTMLIFrameElement,
         timeoutInterval: number,
         initCallback: () => void,
         failedCallback: () => void,
     ): Promise<IFrameComponent> {
+        const detachmentObserver = new DetachmentObserver(new MutationObserverFactory());
+
         // Can't simply listen to `load` event because it always gets triggered even if there's an error.
         // Instead, listen to the `load` inside the iframe and let the parent frame know when it happens.
-        return new Promise((resolve, reject) => {
+        const promise = new Promise<IFrameComponent>((resolve, reject) => {
             const timeout = window.setTimeout(() => {
                 failedCallback();
 
@@ -90,5 +93,7 @@ export default class ResizableIframeCreator {
 
             window.addEventListener('message', handleMessage);
         });
+
+        return detachmentObserver.ensurePresence([iframe], promise);
     }
 }

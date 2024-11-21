@@ -1,5 +1,7 @@
 import { EventEmitter } from 'events';
 
+import { UnexpectedDetachmentError } from '../common/dom/errors';
+
 import { ExtensionNotLoadedError } from './errors';
 import { Extension } from './extension';
 import { ExtensionInternalCommandType } from './extension-internal-commands';
@@ -142,6 +144,24 @@ describe('ResizableIframeCreator', () => {
                 'message',
                 expect.any(Function),
             );
+        }
+    });
+
+    it('throws error if container is removed before iframe finishes loading', async () => {
+        iframeCreator = new ResizableIframeCreator({
+            timeout: 1000,
+        });
+
+        setTimeout(() => {
+            container.remove();
+        });
+
+        try {
+            await iframeCreator.createFrame(url, 'checkout', initCallback, failedCallback);
+        } catch (error) {
+            expect(error).toBeInstanceOf(UnexpectedDetachmentError);
+            expect(initCallback).not.toHaveBeenCalled();
+            expect(failedCallback).not.toHaveBeenCalled();
         }
     });
 });
