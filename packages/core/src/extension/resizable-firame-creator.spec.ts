@@ -117,13 +117,21 @@ describe('ResizableIframeCreator', () => {
     });
 
     it('throws error if not receiving "loaded" event within certain timeframe', async () => {
+        jest.spyOn(console, 'error').mockImplementation();
+
         try {
-            await iframeCreator.createFrame(url, 'checkout', initCallback, failedCallback);
+            await iframeCreator.createFrame(url, 'checkout', initCallback, () => {
+                throw Error('failedCallback execution failed');
+            });
         } catch (error) {
             expect(error).toBeInstanceOf(ExtensionNotLoadedError);
             expect(initCallback).not.toHaveBeenCalled();
-            expect(failedCallback).toHaveBeenCalled();
         }
+
+        // eslint-disable-next-line no-console
+        expect(console.error).toHaveBeenCalledWith(
+            'Extension rendering timed out after 0ms, and the callback function could not be executed. Error: failedCallback execution failed',
+        );
     });
 
     it('removes iframe from container element if unable to load', async () => {
