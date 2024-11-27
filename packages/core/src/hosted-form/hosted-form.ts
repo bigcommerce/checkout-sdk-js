@@ -9,7 +9,7 @@ import { PaymentHumanVerificationHandler } from '../spam-protection';
 
 import { InvalidHostedFormConfigError } from './errors';
 import HostedField from './hosted-field';
-import HostedFormOptions from './hosted-form-options';
+import LegacyHostedFormOptions from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 import {
     HostedInputEnterEvent,
@@ -24,7 +24,7 @@ import {
 } from './stored-card-hosted-form-type';
 
 type HostedFormEventCallbacks = Pick<
-    HostedFormOptions,
+    LegacyHostedFormOptions,
     'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onEnter' | 'onValidate'
 >;
 

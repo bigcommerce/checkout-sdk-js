@@ -9,7 +9,7 @@ import {
     NotInitializedError,
     NotInitializedErrorType,
 } from '../../../common/error/errors';
-import { HostedForm, HostedFormFactory, HostedFormOptions } from '../../../hosted-form';
+import { HostedForm, HostedFormFactory, LegacyHostedFormOptions } from '../../../hosted-form';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { StoreCreditActionCreator } from '../../../store-credit';
@@ -236,7 +236,7 @@ export default class MonerisPaymentStrategy implements PaymentStrategy {
     }
 
     private async _mountCardVerificationfields(
-        formOptions: HostedFormOptions,
+        formOptions: LegacyHostedFormOptions,
     ): Promise<HostedForm> {
         const { config } = this._store.getState();
         const bigpayBaseUrl = config.getStoreConfig()?.paymentSettings.bigpayBaseUrl;
