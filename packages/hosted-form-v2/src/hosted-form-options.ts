@@ -47,6 +47,7 @@ export interface HostedCardFieldOptionsMap {
     [HostedFieldType.CardName]?: HostedCardFieldOptions;
     [HostedFieldType.CardNumber]?: HostedCardFieldOptions;
     [HostedFieldType.Note]?: HostedCardFieldOptions;
+    [HostedFieldType.Hidden]?: HostedCardFieldOptions;
 }
 
 export interface HostedCardFieldOptions {

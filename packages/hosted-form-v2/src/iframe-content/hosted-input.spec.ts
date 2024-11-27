@@ -135,6 +135,32 @@ describe('HostedInput', () => {
         expect(element.inputMode).toBe('text');
     });
 
+    it('renders hidden field as normal field', () => {
+        input = new HostedInput(
+            HostedFieldType.Hidden,
+            container,
+            '',
+            'Hidden field',
+            '',
+            styles,
+            fontUrls,
+            eventListener as IframeEventListener<HostedFieldEventMap>,
+            eventPoster as IframeEventPoster<HostedInputEvent>,
+            inputAggregator as HostedInputAggregator,
+            inputValidator as HostedInputValidator,
+            manualOrderPaymentHandler as HostedInputManualOrderPaymentHandler,
+        );
+
+        input.attach();
+
+        const element = container.querySelector('input')!;
+
+        expect(element.id).toBe('hidden');
+        expect(element.placeholder).toBe('');
+        expect(element.getAttribute('aria-label')).toBe('Hidden field');
+        expect(element.inputMode).toBe('text');
+    });
+
     it('renders payment note field', () => {
         input = new HostedInput(
             HostedFieldType.Note,

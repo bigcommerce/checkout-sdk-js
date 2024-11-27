@@ -3,10 +3,11 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 import ContentType from '../common/http-request/content-type';
 import HostedFormManualOrderData from '../hosted-form-manual-order-data';
 import { HostedInputValues } from '../iframe-content';
+import { isOfflinePaymentMethodId } from '../utils';
 
-import { Instrument, InstrumentType } from './Instrument';
+import { Instrument, InstrumentType, offlinePaymentMethodTypeMap } from './Instrument';
 
-const manualPaymentMethodId = 'bigcommerce.manual_payment';
+export const manualPaymentMethodId = 'bigcommerce.manual_payment';
 
 export class ManualOrderPaymentRequestSender {
     constructor(private _requestSender: RequestSender, private _paymentOrigin: string) {}
@@ -24,6 +25,10 @@ export class ManualOrderPaymentRequestSender {
             instrument = {
                 type: InstrumentType.ManualPayment,
                 note: instrumentFormData.note ?? '',
+            };
+        } else if (isOfflinePaymentMethodId(paymentMethodId)) {
+            instrument = {
+                type: offlinePaymentMethodTypeMap[paymentMethodId],
             };
         } else {
             const [expiryMonth, expiryYear] = instrumentFormData.cardExpiry
