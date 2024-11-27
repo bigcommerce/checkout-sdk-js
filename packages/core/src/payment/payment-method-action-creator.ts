@@ -15,6 +15,7 @@ import PaymentMethodRequestSender from './payment-method-request-sender';
 import { isApplePayWindow } from './strategies/apple-pay';
 
 import { PaymentMethod } from '.';
+import {MissingDataError, MissingDataErrorType} from "../common/error/errors";
 
 const APPLEPAYID = 'applepay';
 
@@ -138,6 +139,56 @@ export default class PaymentMethodActionCreator {
 
                 this._requestSender
                     .loadPaymentMethod(methodId, { ...options, params })
+                    .then((response) => {
+                        observer.next(
+                            createAction(
+                                PaymentMethodActionType.LoadPaymentMethodSucceeded,
+                                response.body,
+                                { methodId },
+                            ),
+                        );
+                        observer.complete();
+                    })
+                    .catch((response) => {
+                        observer.error(
+                            createErrorAction(
+                                PaymentMethodActionType.LoadPaymentMethodFailed,
+                                response,
+                                { methodId },
+                            ),
+                        );
+                    });
+            });
+    }
+
+    @cachableAction
+    loadPaymentWalletWithInitializationData(
+        methodId: string,
+        options?: RequestOptions & ActionOptions,
+    ): ThunkAction<LoadPaymentMethodAction, InternalCheckoutSelectors> {
+        return (store) =>
+            Observable.create((observer: Observer<LoadPaymentMethodAction>) => {
+                const state = store.getState();
+                const jwtToken = state.config.getStorefrontJwtToken();
+
+                if (!jwtToken) {
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
+                }
+
+                observer.next(
+                    createAction(PaymentMethodActionType.LoadPaymentMethodRequested, undefined, {
+                        methodId,
+                    }),
+                );
+
+                this._requestSender
+                    .loadPaymentWalletWithInitializationData(methodId, {
+                        headers: {
+                            Authorization: `Bearer ${jwtToken}`,
+                            'Content-Type': 'application/json',
+                        },
+                        ...options,
+                    })
                     .then((response) => {
                         observer.next(
                             createAction(

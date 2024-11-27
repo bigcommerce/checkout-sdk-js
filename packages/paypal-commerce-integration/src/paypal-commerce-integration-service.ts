@@ -18,6 +18,7 @@ import {
 import PayPalCommerceRequestSender from './paypal-commerce-request-sender';
 import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
 import {
+    CreatePaymentOrderIntentOptions,
     PayPalButtonStyleOptions,
     PayPalBuyNowInitializeOptions,
     PayPalCommerceInitializationData,
@@ -323,6 +324,39 @@ export default class PayPalCommerceIntegrationService {
         }
 
         return height;
+    }
+
+    /**
+     *
+     * GraphQL methods
+     *
+     */
+    async createPaymentOrderIntent(
+        providerId: string,
+        options?: Partial<CreatePaymentOrderIntentOptions>,
+    ): Promise<string> {
+        const cartId = this.paymentIntegrationService.getState().getCartOrThrow().id;
+        const state = this.paymentIntegrationService.getState();
+
+        const jwtToken = state.getStorefrontJwtToken();
+
+        if (!jwtToken) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
+        }
+
+        const { orderId } = await this.paypalCommerceRequestSender.createPaymentOrderIntent(
+            providerId,
+            cartId,
+            {
+                headers: {
+                    Authorization: `Bearer ${jwtToken}`,
+                    'Content-Type': 'application/json',
+                },
+                ...options,
+            },
+        );
+
+        return orderId;
     }
 
     /**

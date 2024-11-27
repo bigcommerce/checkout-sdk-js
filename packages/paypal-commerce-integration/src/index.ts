@@ -16,6 +16,9 @@ export { WithPayPalCommerceCustomerInitializeOptions } from './paypal-commerce/p
 export { default as createPayPalCommercePaymentStrategy } from './paypal-commerce/create-paypal-commerce-payment-strategy';
 export { WithPayPalCommercePaymentInitializeOptions } from './paypal-commerce/paypal-commerce-payment-initialize-options';
 
+export { default as createPayPalCommerceHeadlessButtonStrategy } from './paypal-commerce/create-paypal-commerce-headless-button-strategy';
+export { WithPayPalCommerceHeadlessButtonInitializeOptions } from './paypal-commerce/paypal-commerce-headless-button-initialize-options';
+
 /**
  *
  * PayPalCommerce Credit (PayLater) strategies
@@ -23,6 +26,9 @@ export { WithPayPalCommercePaymentInitializeOptions } from './paypal-commerce/pa
  */
 export { default as createPayPalCommerceCreditButtonStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-button-strategy';
 export { WithPayPalCommerceCreditButtonInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-button-initialize-options';
+
+export { default as createPayPalCommerceCreditHeadlessButtonStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-headless-button-strategy';
+export { WithPayPalCommerceCreditHeadlessButtonInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-headless-button-initialize-options';
 
 export { default as createPayPalCommerceCreditCustomerStrategy } from './paypal-commerce-credit/create-paypal-commerce-credit-customer-strategy';
 export { WithPayPalCommerceCreditCustomerInitializeOptions } from './paypal-commerce-credit/paypal-commerce-credit-customer-initialize-options';

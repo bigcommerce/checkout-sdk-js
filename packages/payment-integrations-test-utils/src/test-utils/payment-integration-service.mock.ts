@@ -59,6 +59,8 @@ const state = {
     getPaymentRedirectUrl: jest.fn(),
     getPaymentRedirectUrlOrThrow: jest.fn(),
     isPaymentDataRequired: jest.fn(),
+    getStorefrontJwtToken: jest.fn(),
+    getSiteLink: jest.fn(),
 };
 
 const createBuyNowCart = jest.fn(() => Promise.resolve(getCart()));
@@ -80,6 +82,7 @@ const loadCurrentOrder = jest.fn();
 const submitOrder = jest.fn();
 const submitPayment = jest.fn();
 const finalizeOrder = jest.fn();
+const loadCardEntity = jest.fn();
 const updateBillingAddress = jest.fn();
 const updateShippingAddress = jest.fn();
 const signInCustomer = jest.fn();
@@ -104,6 +107,7 @@ const PaymentIntegrationServiceMock = jest
             forgetCheckout,
             remoteCheckoutSignOut,
             getConsignments,
+            loadCardEntity,
             getPaymentProviderCustomerOrThrow,
             getState,
             handlePaymentHumanVerification,
