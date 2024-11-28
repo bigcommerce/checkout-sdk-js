@@ -107,6 +107,7 @@ export function getStripeUPEOrderRequestBodyMock(
     return {
         payment: {
             methodId: stripePaymentMethodType,
+            gatewayId: 'stripeupe',
             paymentData: {
                 shouldSaveInstrument,
             },
@@ -201,5 +202,14 @@ export function getRetrievePaymentIntentResponseSucceeded() {
             id: 'pi_1234',
             status: 'succeeded',
         },
+    };
+}
+
+export function getRetrievePaymentIntentResponseWithError() {
+    return {
+        paymentIntent: {
+            id: 'pi_1234',
+        },
+        error: new Error('retrieve_payment_intent_response_with_error'),
     };
 }
