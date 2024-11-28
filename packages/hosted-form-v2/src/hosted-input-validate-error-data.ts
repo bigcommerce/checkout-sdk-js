@@ -1,4 +1,4 @@
-import { HostedFieldType } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { default as HostedFieldType } from './hosted-field-type';
 
 export default interface HostedInputValidateErrorData {
     fieldType: string;
@@ -8,9 +8,9 @@ export default interface HostedInputValidateErrorData {
 
 export interface HostedInputValidateErrorDataMap {
     [HostedFieldType.CardCode]?: HostedInputValidateErrorData[];
-    [HostedFieldType.CardCodeVerification]?: HostedInputValidateErrorData[];
     [HostedFieldType.CardExpiry]?: HostedInputValidateErrorData[];
     [HostedFieldType.CardName]?: HostedInputValidateErrorData[];
     [HostedFieldType.CardNumber]?: HostedInputValidateErrorData[];
-    [HostedFieldType.CardNumberVerification]?: HostedInputValidateErrorData[];
+    [HostedFieldType.Note]?: HostedInputValidateErrorData[];
+    [HostedFieldType.Hidden]?: HostedInputValidateErrorData[];
 }
