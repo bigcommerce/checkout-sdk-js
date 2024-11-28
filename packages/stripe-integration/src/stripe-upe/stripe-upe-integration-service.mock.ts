@@ -19,7 +19,7 @@ export const getStripeUPEIntegrationServiceMock = () =>
         }),
         isCancellationError: jest.fn(() => false),
         isPaymentCompleted: jest.fn(() => Promise.resolve(false)),
-        mapStripePaymentData: jest.fn(() => ({
+        mapStripePaymentData: jest.fn((return_url?: string) => ({
             elements: getStripeUPEJsMock().elements({}),
             redirect: StripeStringConstants.IF_REQUIRED,
             confirmParams: {
@@ -30,11 +30,14 @@ export const getStripeUPEIntegrationServiceMock = () =>
                         name: 'firstName lastName',
                     },
                 },
-                return_url: 'return.url',
+                ...(return_url ? { return_url } : {}),
             },
         })),
         isAdditionalActionError: jest.fn(() => false),
         isRedirectAction: jest.fn(() => false),
         isOnPageAdditionalAction: jest.fn(() => false),
         updateStripePaymentIntent: jest.fn(() => Promise.resolve()),
+        throwStripeError: jest.fn(() => {
+            throw new Error('throw stripe error');
+        }),
     } as unknown as StripeUPEIntegrationService);

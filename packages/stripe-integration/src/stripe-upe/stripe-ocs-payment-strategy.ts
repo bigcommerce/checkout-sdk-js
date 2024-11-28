@@ -11,14 +11,12 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationSelectors,
     PaymentIntegrationService,
-    PaymentMethodCancelledError,
     PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import formatLocale from './format-locale';
-import { isStripeError } from './is-stripe-error';
 import { isStripePaymentEvent } from './is-stripe-payment-event';
 import { isStripeUPEPaymentMethodLike } from './is-stripe-upe-payment-method-like';
 import {
@@ -406,20 +404,8 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
             return confirmationResult;
         } catch (error: unknown) {
-            this._throwStripeError(stripeError);
+            this.stripeUPEIntegrationService.throwStripeError(stripeError);
         }
-    }
-
-    private _throwStripeError(stripeError?: unknown): never {
-        if (isStripeError(stripeError)) {
-            this.stripeUPEIntegrationService.throwDisplayableStripeError(stripeError);
-
-            if (this.stripeUPEIntegrationService.isCancellationError(stripeError)) {
-                throw new PaymentMethodCancelledError();
-            }
-        }
-
-        throw new PaymentMethodFailedError();
     }
 
     private _onStripeElementChange(

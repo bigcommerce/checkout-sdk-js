@@ -29,16 +29,20 @@ import formatLocale from './format-locale';
 import isStripeAcceleratedCheckoutCustomer from './is-stripe-accelerated-checkout-customer';
 import { isStripeUPEPaymentMethodLike } from './is-stripe-upe-payment-method-like';
 import {
+    StripeAdditionalActionRequired,
     StripeElement,
     StripeElements,
     StripeElementsCreateOptions,
     StripeElementType,
     StripeElementUpdateOptions,
+    StripeError,
     StripeEventType,
     StripePaymentMethodType,
     StripeStringConstants,
     StripeUPEAppearanceOptions,
     StripeUPEClient,
+    StripeUPEInitializationData,
+    StripeUpeResult,
 } from './stripe-upe';
 import StripeUPEPaymentInitializeOptions, {
     WithStripeUPEPaymentInitializeOptions,
@@ -152,6 +156,22 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             return;
         }
 
+        const { initializationData } =
+            state.getPaymentMethodOrThrow<StripeUPEInitializationData>(methodId);
+        const { newConfirmationFlow } = initializationData || {};
+
+        if (newConfirmationFlow) {
+            await this.paymentIntegrationService.submitOrder(order, options);
+
+            await this._executeWithStripeConfirmation(
+                payment.methodId,
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
+            );
+
+            return;
+        }
+
         if (includes(APM_REDIRECT, methodId)) {
             await this.paymentIntegrationService.submitOrder(order, options);
 
@@ -176,8 +196,36 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     deinitialize(): Promise<void> {
         this._stripeElements?.getElement(StripeElementType.PAYMENT)?.unmount();
         this.stripeUPEIntegrationService.deinitialize();
+        this._stripeElements = undefined;
+        this._stripeUPEClient = undefined;
 
         return Promise.resolve();
+    }
+
+    private async _executeWithStripeConfirmation(
+        methodId: string,
+        shouldSaveInstrument?: boolean,
+        shouldSetAsDefaultInstrument?: boolean,
+    ): Promise<void> {
+        const state = this.paymentIntegrationService.getState();
+        const { clientToken } = state.getPaymentMethodOrThrow(methodId);
+        const paymentPayload = this._getPaymentPayload(
+            methodId,
+            clientToken || '',
+            shouldSaveInstrument,
+            shouldSetAsDefaultInstrument,
+        );
+
+        try {
+            await this.paymentIntegrationService.submitPayment(paymentPayload);
+        } catch (error) {
+            await this._processAdditionalActionWithStripeConfirmation(
+                error,
+                methodId,
+                shouldSaveInstrument,
+                shouldSetAsDefaultInstrument,
+            );
+        }
     }
 
     private async _executeWithAPM(methodId: string): Promise<PaymentIntegrationSelectors> {
@@ -347,6 +395,78 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         }
     }
 
+    private async _processAdditionalActionWithStripeConfirmation(
+        error: unknown,
+        methodId: string,
+        shouldSaveInstrument = false,
+        shouldSetAsDefaultInstrument = false,
+    ): Promise<void> {
+        if (
+            !isRequestError(error) ||
+            !this.stripeUPEIntegrationService.isAdditionalActionError(error.body.errors)
+        ) {
+            throw error;
+        }
+
+        if (!this._stripeUPEClient || !this._stripeElements) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        const { data: additionalActionData } = error.body.additional_action_required;
+        const { token } = additionalActionData;
+
+        const { paymentIntent } = await this._confirmStripePaymentOrThrow(
+            methodId,
+            additionalActionData,
+        );
+
+        const paymentPayload = this._getPaymentPayload(
+            methodId,
+            paymentIntent?.id || token,
+            shouldSaveInstrument,
+            shouldSetAsDefaultInstrument,
+        );
+
+        try {
+            await this.paymentIntegrationService.submitPayment(paymentPayload);
+        } catch (error) {
+            this.stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage();
+        }
+    }
+
+    private async _confirmStripePaymentOrThrow(
+        methodId: string,
+        additionalActionData: StripeAdditionalActionRequired['data'],
+    ): Promise<StripeUpeResult | never> {
+        const { token, redirect_url } = additionalActionData;
+        const stripePaymentData = this.stripeUPEIntegrationService.mapStripePaymentData(
+            this._stripeElements,
+            redirect_url,
+        );
+        let stripeError: StripeError | undefined;
+
+        try {
+            const isPaymentCompleted = await this.stripeUPEIntegrationService.isPaymentCompleted(
+                methodId,
+                this._stripeUPEClient,
+            );
+
+            const confirmationResult = !isPaymentCompleted
+                ? await this._stripeUPEClient?.confirmPayment(stripePaymentData)
+                : await this._stripeUPEClient?.retrievePaymentIntent(token || '');
+
+            stripeError = confirmationResult?.error;
+
+            if (stripeError || !confirmationResult?.paymentIntent) {
+                throw new PaymentMethodFailedError();
+            }
+
+            return confirmationResult;
+        } catch (error: unknown) {
+            this.stripeUPEIntegrationService.throwStripeError(stripeError);
+        }
+    }
+
     // TODO: complexity of _processAdditionalAction method
 
     private async _processAdditionalAction(
@@ -459,7 +579,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         methodId?: string,
         shouldSetAsDefaultInstrument = false,
     ): Promise<PaymentIntegrationSelectors | never> {
-        if (!isRequestError(error)) {
+        if (
+            !methodId ||
+            !isRequestError(error) ||
+            !some(error.body.errors, { code: 'three_d_secure_required' })
+        ) {
             throw error;
         }
 
@@ -467,46 +591,36 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        if (some(error.body.errors, { code: 'three_d_secure_required' }) && methodId) {
-            const clientSecret = error.body.three_ds_result.token;
-            let result;
-            let catchedConfirmError = false;
+        const clientSecret = error.body.three_ds_result.token;
+        let result;
+        let catchedConfirmError = false;
 
+        try {
+            result = await this._stripeUPEClient.confirmCardPayment(clientSecret);
+        } catch (error) {
             try {
-                result = await this._stripeUPEClient.confirmCardPayment(clientSecret);
+                result = await this._stripeUPEClient.retrievePaymentIntent(clientSecret);
             } catch (error) {
-                try {
-                    result = await this._stripeUPEClient.retrievePaymentIntent(clientSecret);
-                } catch (error) {
-                    catchedConfirmError = true;
-                }
+                catchedConfirmError = true;
             }
-
-            if (result?.error) {
-                this.stripeUPEIntegrationService.throwDisplayableStripeError(result.error);
-
-                if (this.stripeUPEIntegrationService.isCancellationError(result.error)) {
-                    throw new PaymentMethodCancelledError();
-                }
-
-                throw new PaymentMethodFailedError();
-            }
-
-            if (!result?.paymentIntent && !catchedConfirmError) {
-                throw new RequestError();
-            }
-
-            const paymentPayload = this._getPaymentPayload(
-                methodId,
-                catchedConfirmError ? clientSecret : result?.paymentIntent?.id,
-                false,
-                shouldSetAsDefaultInstrument,
-            );
-
-            return this.paymentIntegrationService.submitPayment(paymentPayload);
         }
 
-        throw error;
+        if (result?.error) {
+            this.stripeUPEIntegrationService.throwStripeError(result.error);
+        }
+
+        if (!result?.paymentIntent && !catchedConfirmError) {
+            throw new RequestError();
+        }
+
+        const paymentPayload = this._getPaymentPayload(
+            methodId,
+            catchedConfirmError ? clientSecret : result?.paymentIntent?.id,
+            false,
+            shouldSetAsDefaultInstrument,
+        );
+
+        return this.paymentIntegrationService.submitPayment(paymentPayload);
     }
 
     private async _loadStripeJs(
