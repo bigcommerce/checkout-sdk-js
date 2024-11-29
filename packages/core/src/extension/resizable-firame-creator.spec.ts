@@ -1,5 +1,7 @@
 import { EventEmitter } from 'events';
 
+import { UnexpectedDetachmentError } from '../common/dom/errors';
+
 import { ExtensionNotLoadedError } from './errors';
 import { Extension } from './extension';
 import { ExtensionInternalCommandType } from './extension-internal-commands';
@@ -115,13 +117,21 @@ describe('ResizableIframeCreator', () => {
     });
 
     it('throws error if not receiving "loaded" event within certain timeframe', async () => {
+        jest.spyOn(console, 'error').mockImplementation();
+
         try {
-            await iframeCreator.createFrame(url, 'checkout', initCallback, failedCallback);
+            await iframeCreator.createFrame(url, 'checkout', initCallback, () => {
+                throw Error('failedCallback execution failed');
+            });
         } catch (error) {
             expect(error).toBeInstanceOf(ExtensionNotLoadedError);
             expect(initCallback).not.toHaveBeenCalled();
-            expect(failedCallback).toHaveBeenCalled();
         }
+
+        // eslint-disable-next-line no-console
+        expect(console.error).toHaveBeenCalledWith(
+            'Extension rendering timed out after 0ms, and the callback function could not be executed. Error: failedCallback execution failed',
+        );
     });
 
     it('removes iframe from container element if unable to load', async () => {
@@ -142,6 +152,24 @@ describe('ResizableIframeCreator', () => {
                 'message',
                 expect.any(Function),
             );
+        }
+    });
+
+    it('throws error if container is removed before iframe finishes loading', async () => {
+        iframeCreator = new ResizableIframeCreator({
+            timeout: 1000,
+        });
+
+        setTimeout(() => {
+            container.remove();
+        });
+
+        try {
+            await iframeCreator.createFrame(url, 'checkout', initCallback, failedCallback);
+        } catch (error) {
+            expect(error).toBeInstanceOf(UnexpectedDetachmentError);
+            expect(initCallback).not.toHaveBeenCalled();
+            expect(failedCallback).not.toHaveBeenCalled();
         }
     });
 });
