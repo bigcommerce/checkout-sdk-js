@@ -6,7 +6,7 @@ import {
     HostedFieldSubmitManualOrderRequestEvent,
 } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
-import { ManualOrderPaymentRequestSender, OfflinePaymentMethodId } from '../payment';
+import { ManualOrderPaymentRequestSender, OfflinePaymentMethodIds } from '../payment';
 
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
@@ -141,7 +141,7 @@ describe('HostedInputManualOrderPaymentHandler', () => {
             type: HostedFieldEventType.SubmitManualOrderRequested,
             payload: {
                 data: {
-                    paymentMethodId: OfflinePaymentMethodId.Cod,
+                    paymentMethodId: OfflinePaymentMethodIds.Cod,
                     paymentSessionToken: pstToken,
                 },
             },

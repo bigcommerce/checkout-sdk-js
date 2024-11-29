@@ -4,7 +4,7 @@ import ContentType from '../common/http-request/content-type';
 import HostedFormManualOrderData from '../hosted-form-manual-order-data';
 import { HostedInputValues } from '../iframe-content';
 
-import { InstrumentType, OfflinePaymentMethodId, OfflinePaymentMethodType } from './Instrument';
+import { InstrumentType, OfflinePaymentMethodIds, OfflinePaymentMethodTypes } from './Instrument';
 import {
     ManualOrderPaymentRequestSender,
     manualPaymentMethodId,
@@ -118,7 +118,7 @@ describe('ManualOrderPaymentRequestSender', () => {
             parameters: {},
         } as unknown as Response<unknown>;
 
-        requestInitializationData.paymentMethodId = OfflinePaymentMethodId.BankDeposit;
+        requestInitializationData.paymentMethodId = OfflinePaymentMethodIds.BankDeposit;
         (requestSender.post as jest.Mock).mockResolvedValue(response);
 
         const result = await manualOrderPaymentRequestSender.submitPayment(
@@ -137,9 +137,9 @@ describe('ManualOrderPaymentRequestSender', () => {
                 },
                 body: {
                     instrument: {
-                        type: OfflinePaymentMethodType.BankDeposit,
+                        type: OfflinePaymentMethodTypes.BankDeposit,
                     },
-                    payment_method_id: OfflinePaymentMethodId.BankDeposit,
+                    payment_method_id: OfflinePaymentMethodIds.BankDeposit,
                     form_nonce: undefined,
                 },
             }),

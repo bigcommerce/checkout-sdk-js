@@ -55,11 +55,11 @@ export default class HostedInputManualOrderPaymentHandler {
                 get(response.body, 'type') === 'failure' && isString(get(response.body, 'code'));
             const isError = get(response.body, 'type') === 'error';
 
-            const isSuccessOfflineOrder =
+            const isSuccessfulOfflineOrder =
                 isOfflinePaymentMethodId(data.paymentMethodId) &&
                 get(response.body, 'type') === 'continue' &&
                 get(response.body, 'code') === 'await_confirmation';
-            const isSuccess = get(response.body, 'type') === 'success' || isSuccessOfflineOrder;
+            const isSuccess = get(response.body, 'type') === 'success' || isSuccessfulOfflineOrder;
 
             if (isFailure) {
                 this._eventPoster.post({

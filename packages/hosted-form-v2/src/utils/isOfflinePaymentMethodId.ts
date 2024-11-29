@@ -1,5 +1,5 @@
-import { OfflinePaymentMethodId } from '../payment';
+import { OfflinePaymentMethodIds } from '../payment';
 
-export const isOfflinePaymentMethodId = (id: string): id is OfflinePaymentMethodId => {
-    return Object.values(OfflinePaymentMethodId).includes(id as OfflinePaymentMethodId);
+export const isOfflinePaymentMethodId = (id: string): id is OfflinePaymentMethodIds => {
+    return id in OfflinePaymentMethodIds;
 };
