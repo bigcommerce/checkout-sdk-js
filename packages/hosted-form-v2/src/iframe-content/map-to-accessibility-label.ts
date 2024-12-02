@@ -16,5 +16,8 @@ export default function mapToAccessibilityLabel(type: HostedFieldType): string {
 
         case HostedFieldType.Note:
             return 'Payment note';
+
+        case HostedFieldType.Hidden:
+            return 'Hidden field';
     }
 }

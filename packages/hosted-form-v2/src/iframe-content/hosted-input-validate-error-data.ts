@@ -12,4 +12,5 @@ export interface HostedInputValidateErrorDataMap {
     [HostedFieldType.CardName]?: HostedInputValidateErrorData[];
     [HostedFieldType.CardNumber]?: HostedInputValidateErrorData[];
     [HostedFieldType.Note]?: HostedInputValidateErrorData[];
+    [HostedFieldType.Hidden]?: HostedInputValidateErrorData[];
 }

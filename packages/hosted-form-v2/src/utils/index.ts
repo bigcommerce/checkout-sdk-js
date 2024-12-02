@@ -1,0 +1,1 @@
+export { isOfflinePaymentMethodId } from './isOfflinePaymentMethodId';
