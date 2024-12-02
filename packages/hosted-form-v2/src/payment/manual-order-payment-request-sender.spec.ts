@@ -4,11 +4,13 @@ import ContentType from '../common/http-request/content-type';
 import HostedFormManualOrderData from '../hosted-form-manual-order-data';
 import { HostedInputValues } from '../iframe-content';
 
-import {InstrumentType, manualPaymentMethod, OfflinePaymentMethods, OfflinePaymentMethodTypes} from './Instrument';
 import {
-    ManualOrderPaymentRequestSender,
-
-} from './manual-order-payment-request-sender';
+    InstrumentType,
+    manualPaymentMethod,
+    OfflinePaymentMethods,
+    OfflinePaymentMethodTypes,
+} from './Instrument';
+import { ManualOrderPaymentRequestSender } from './manual-order-payment-request-sender';
 
 describe('ManualOrderPaymentRequestSender', () => {
     let requestSender: RequestSender;
