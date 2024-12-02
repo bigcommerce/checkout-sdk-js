@@ -4,10 +4,10 @@ import ContentType from '../common/http-request/content-type';
 import HostedFormManualOrderData from '../hosted-form-manual-order-data';
 import { HostedInputValues } from '../iframe-content';
 
-import { InstrumentType, OfflinePaymentMethodIds, OfflinePaymentMethodTypes } from './Instrument';
+import {InstrumentType, manualPaymentMethod, OfflinePaymentMethods, OfflinePaymentMethodTypes} from './Instrument';
 import {
     ManualOrderPaymentRequestSender,
-    manualPaymentMethodId,
+
 } from './manual-order-payment-request-sender';
 
 describe('ManualOrderPaymentRequestSender', () => {
@@ -29,7 +29,7 @@ describe('ManualOrderPaymentRequestSender', () => {
             paymentOrigin,
         );
         requestInitializationData = {
-            paymentMethodId: manualPaymentMethodId,
+            paymentMethodId: manualPaymentMethod,
             paymentSessionToken: pstToken,
         } as HostedFormManualOrderData;
         response = { body: {} } as Response<unknown>;
@@ -61,7 +61,7 @@ describe('ManualOrderPaymentRequestSender', () => {
                         type: InstrumentType.ManualPayment,
                         note: testingManualPaymentNote,
                     },
-                    payment_method_id: manualPaymentMethodId,
+                    payment_method_id: manualPaymentMethod,
                     form_nonce: undefined,
                 },
             }),
@@ -118,7 +118,7 @@ describe('ManualOrderPaymentRequestSender', () => {
             parameters: {},
         } as unknown as Response<unknown>;
 
-        requestInitializationData.paymentMethodId = OfflinePaymentMethodIds.BankDeposit;
+        requestInitializationData.paymentMethodId = OfflinePaymentMethods.BankDeposit;
         (requestSender.post as jest.Mock).mockResolvedValue(response);
 
         const result = await manualOrderPaymentRequestSender.submitPayment(
@@ -139,7 +139,7 @@ describe('ManualOrderPaymentRequestSender', () => {
                     instrument: {
                         type: OfflinePaymentMethodTypes.BankDeposit,
                     },
-                    payment_method_id: OfflinePaymentMethodIds.BankDeposit,
+                    payment_method_id: OfflinePaymentMethods.BankDeposit,
                     form_nonce: undefined,
                 },
             }),

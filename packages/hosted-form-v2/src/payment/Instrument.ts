@@ -3,7 +3,9 @@ export enum InstrumentType {
     ManualPayment = 'manual_payment',
 }
 
-export enum OfflinePaymentMethodIds {
+export const manualPaymentMethod = 'bigcommerce.manual_payment';
+
+export enum OfflinePaymentMethods {
     BankDeposit = 'bigcommerce_offline.bank_deposit',
     Cheque = 'bigcommerce_offline.cheque',
     Cod = 'bigcommerce_offline.cod',
@@ -19,16 +21,14 @@ export enum OfflinePaymentMethodTypes {
     MoneyOrder = 'money_order',
 }
 
-export const offlinePaymentMethodTypeMap: Record<
-    OfflinePaymentMethodIds,
-    OfflinePaymentMethodTypes
-> = {
-    [OfflinePaymentMethodIds.BankDeposit]: OfflinePaymentMethodTypes.BankDeposit,
-    [OfflinePaymentMethodIds.Cheque]: OfflinePaymentMethodTypes.Cheque,
-    [OfflinePaymentMethodIds.Cod]: OfflinePaymentMethodTypes.Cod,
-    [OfflinePaymentMethodIds.InStore]: OfflinePaymentMethodTypes.InStore,
-    [OfflinePaymentMethodIds.MoneyOrder]: OfflinePaymentMethodTypes.MoneyOrder,
-};
+export const offlinePaymentMethodTypeMap: Record<OfflinePaymentMethods, OfflinePaymentMethodTypes> =
+    {
+        [OfflinePaymentMethods.BankDeposit]: OfflinePaymentMethodTypes.BankDeposit,
+        [OfflinePaymentMethods.Cheque]: OfflinePaymentMethodTypes.Cheque,
+        [OfflinePaymentMethods.Cod]: OfflinePaymentMethodTypes.Cod,
+        [OfflinePaymentMethods.InStore]: OfflinePaymentMethodTypes.InStore,
+        [OfflinePaymentMethods.MoneyOrder]: OfflinePaymentMethodTypes.MoneyOrder,
+    };
 
 interface CardInstrument {
     type: InstrumentType.Card;

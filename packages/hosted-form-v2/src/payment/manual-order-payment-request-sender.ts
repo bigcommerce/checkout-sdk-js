@@ -5,9 +5,12 @@ import HostedFormManualOrderData from '../hosted-form-manual-order-data';
 import { HostedInputValues } from '../iframe-content';
 import { isOfflinePaymentMethodId } from '../utils';
 
-import { Instrument, InstrumentType, offlinePaymentMethodTypeMap } from './Instrument';
-
-export const manualPaymentMethodId = 'bigcommerce.manual_payment';
+import {
+    Instrument,
+    InstrumentType,
+    manualPaymentMethod,
+    offlinePaymentMethodTypeMap,
+} from './Instrument';
 
 export class ManualOrderPaymentRequestSender {
     constructor(private _requestSender: RequestSender, private _paymentOrigin: string) {}
@@ -21,7 +24,7 @@ export class ManualOrderPaymentRequestSender {
 
         let instrument: Instrument;
 
-        if (paymentMethodId === manualPaymentMethodId) {
+        if (paymentMethodId === manualPaymentMethod) {
             instrument = {
                 type: InstrumentType.ManualPayment,
                 note: instrumentFormData.note ?? '',
