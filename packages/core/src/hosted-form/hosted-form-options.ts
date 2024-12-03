@@ -8,7 +8,7 @@ import {
     HostedInputValidateEvent,
 } from './iframe-content';
 
-export default interface HostedFormOptions {
+export default interface LegacyHostedFormOptions {
     fields: HostedFieldOptionsMap;
     styles?: HostedFieldStylesMap;
     onBlur?(data: HostedFieldBlurEventData): void;

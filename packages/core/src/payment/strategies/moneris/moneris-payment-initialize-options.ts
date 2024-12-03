@@ -1,4 +1,4 @@
-import { HostedFormOptions } from '../../../hosted-form';
+import { LegacyHostedFormOptions } from '../../../hosted-form';
 
 import MonerisStylingProps from './moneris';
 
@@ -39,5 +39,5 @@ export default interface MonerisPaymentInitializeOptions {
     /**
      * Hosted Form Validation Options
      */
-    form?: HostedFormOptions;
+    form?: LegacyHostedFormOptions;
 }
