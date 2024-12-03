@@ -7,6 +7,7 @@ export default function getPayPalCommerceOrderDetails(): PayPalOrderDetails {
                 shipping: {
                     address: {
                         address_line_1: '2 E 61st St',
+                        address_line_2: 'Apt.1',
                         admin_area_2: 'New York',
                         admin_area_1: 'NY',
                         postal_code: '10065',
@@ -23,6 +24,7 @@ export default function getPayPalCommerceOrderDetails(): PayPalOrderDetails {
             email_address: 'john@doe.com',
             address: {
                 address_line_1: '1 Main St',
+                address_line_2: 'Apt.2',
                 admin_area_2: 'San Jose',
                 admin_area_1: 'CA',
                 postal_code: '95131',

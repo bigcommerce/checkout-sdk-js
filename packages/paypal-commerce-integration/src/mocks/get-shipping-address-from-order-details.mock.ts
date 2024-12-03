@@ -15,7 +15,7 @@ export default function getShippingAddressFromOrderDetails(): BillingAddressRequ
         phone: '',
         company: '',
         address1: shippingAddress.address_line_1,
-        address2: '',
+        address2: shippingAddress.address_line_2,
         city: shippingAddress.admin_area_2,
         countryCode: shippingAddress.country_code,
         postalCode: shippingAddress.postal_code,
