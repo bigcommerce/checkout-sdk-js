@@ -246,7 +246,7 @@ export default class PayPalCommerceIntegrationService {
             phone: '',
             company: '',
             address1: address?.address1 || '',
-            address2: '',
+            address2: address?.address2 || '',
             city: address?.city || '',
             countryCode: address?.countryCode || '',
             postalCode: address?.postalCode || '',
@@ -262,6 +262,7 @@ export default class PayPalCommerceIntegrationService {
             lastName: payer.name.surname,
             email: payer.email_address,
             address1: payer.address.address_line_1,
+            address2: payer.address.address_line_2,
             city: payer.address.admin_area_2,
             countryCode: payer.address.country_code,
             postalCode: payer.address.postal_code,
@@ -273,17 +274,23 @@ export default class PayPalCommerceIntegrationService {
         orderDetails: PayPalOrderDetails,
     ): BillingAddressRequestBody {
         const { payer, purchase_units } = orderDetails;
-        const shippingAddress = purchase_units[0]?.shipping?.address || {};
+        const {
+            address,
+            name: { full_name },
+        } = purchase_units[0].shipping;
+
+        const [firstName, ...lastName] = full_name.split(' ');
 
         return this.getAddress({
-            firstName: payer.name.given_name,
-            lastName: payer.name.surname,
+            firstName,
+            lastName: lastName.join(' '),
             email: payer.email_address,
-            address1: shippingAddress.address_line_1,
-            city: shippingAddress.admin_area_2,
-            countryCode: shippingAddress.country_code,
-            postalCode: shippingAddress.postal_code,
-            stateOrProvinceCode: shippingAddress.admin_area_1,
+            address1: address.address_line_1,
+            address2: address.address_line_2,
+            city: address.admin_area_2,
+            countryCode: address.country_code,
+            postalCode: address.postal_code,
+            stateOrProvinceCode: address.admin_area_1,
         });
     }
 
