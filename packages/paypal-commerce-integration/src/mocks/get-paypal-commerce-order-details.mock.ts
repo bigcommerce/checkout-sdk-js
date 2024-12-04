@@ -13,6 +13,9 @@ export default function getPayPalCommerceOrderDetails(): PayPalOrderDetails {
                         postal_code: '10065',
                         country_code: 'US',
                     },
+                    name: {
+                        full_name: 'Full Name',
+                    },
                 },
             },
         ],

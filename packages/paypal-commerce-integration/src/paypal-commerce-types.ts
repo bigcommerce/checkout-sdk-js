@@ -455,6 +455,9 @@ export interface PayPalOrderDetails {
     purchase_units: Array<{
         shipping: {
             address: PayPalOrderAddress;
+            name: {
+                full_name: string;
+            };
         };
     }>;
 }
