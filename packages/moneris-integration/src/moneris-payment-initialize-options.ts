@@ -1,4 +1,4 @@
-import { HostedFormOptions } from '../../../hosted-form';
+import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import MonerisStylingProps from './moneris';
 
@@ -40,4 +40,8 @@ export default interface MonerisPaymentInitializeOptions {
      * Hosted Form Validation Options
      */
     form?: HostedFormOptions;
+}
+
+export interface WithMonerisPaymentInitializeOptions {
+    moneris?: MonerisPaymentInitializeOptions;
 }

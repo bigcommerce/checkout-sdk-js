@@ -7,14 +7,14 @@ import {
     StoredCardHostedFormInstrumentFieldsMock,
 } from './stored-card-hosted-form.mock';
 
-import { HostedForm, HostedFormFactory, HostedFormOptions } from '.';
+import { HostedForm, HostedFormFactory, LegacyHostedFormOptions } from '.';
 
 describe('StoredCardHostedFormService', () => {
     let formFactory: HostedFormFactory;
 
     let store: CheckoutStore;
     let service: StoredCardHostedFormService;
-    let initializeOptions: HostedFormOptions;
+    let initializeOptions: LegacyHostedFormOptions;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());

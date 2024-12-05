@@ -11,7 +11,7 @@ import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-p
 import HostedField from './hosted-field';
 import HostedFieldType from './hosted-field-type';
 import HostedForm from './hosted-form';
-import HostedFormOptions, {
+import LegacyHostedFormOptions, {
     HostedCardFieldOptionsMap,
     HostedStoredCardFieldOptionsMap,
 } from './hosted-form-options';
@@ -20,7 +20,7 @@ import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer
 export default class HostedFormFactory {
     constructor(private _store: ReadableCheckoutStore) {}
 
-    create(host: string, options: HostedFormOptions): HostedForm {
+    create(host: string, options: LegacyHostedFormOptions): HostedForm {
         const fieldTypes = Object.keys(options.fields) as HostedFieldType[];
         const fields = fieldTypes.reduce<HostedField[]>((result, type) => {
             const fields = options.fields as HostedStoredCardFieldOptionsMap &
