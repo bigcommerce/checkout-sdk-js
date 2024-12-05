@@ -7,7 +7,11 @@ import {
     MissingDataError,
     NotInitializedError,
     OrderRequestBody,
+    PaymentArgumentInvalidError,
     PaymentIntegrationService,
+    PaymentMethodCancelledError,
+    PaymentMethodFailedError,
+    RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getConfig,
@@ -34,6 +38,14 @@ describe('GooglePayStripeGateway', () => {
     let formPoster: FormPoster;
     let payload: OrderRequestBody;
     const storeConfig = getConfig().storeConfig;
+    const error3DS = {
+        body: {
+            errors: [{ code: 'three_d_secure_required' }],
+            three_ds_result: {
+                token: 'token_3ds',
+            },
+        },
+    };
 
     beforeEach(() => {
         formPoster = {
@@ -201,7 +213,7 @@ describe('GooglePayStripeGateway', () => {
             }
         });
 
-        it('returns error object if it"s not a request error', async () => {
+        it('throws an error object if there is not a request error', async () => {
             await gateway.initialize(getStripe);
 
             const otherError = {
@@ -220,6 +232,109 @@ describe('GooglePayStripeGateway', () => {
                 await strategy.execute(payload);
             } catch (error) {
                 expect(error).toBe(otherError);
+            }
+        });
+
+        it('should return error if there is no methodId', async () => {
+            try {
+                await processor.processAdditionalAction('some error');
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentArgumentInvalidError);
+            }
+        });
+
+        it('should call retrievePaymentIntent if confirmCardPayment failed', async () => {
+            await gateway.initialize(getStripe);
+
+            const confirmCardPayment = jest.fn().mockRejectedValue('error');
+            const retrievePaymentIntent = jest.fn().mockRejectedValue('error');
+
+            jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValueOnce({
+                ...getStripeUPEJsMock(),
+                confirmCardPayment,
+                retrievePaymentIntent,
+            });
+
+            try {
+                await processor.processAdditionalAction(error3DS, 'stripe');
+            } catch (error) {
+                expect(retrievePaymentIntent).toHaveBeenCalledWith('token_3ds');
+            }
+        });
+
+        it('should call _isCancellationError if there is an error returned from Stripe', async () => {
+            await gateway.initialize(getStripe);
+
+            const stripeError = {
+                error: {
+                    payment_intent: {
+                        last_payment_error: {
+                            message: 'canceled',
+                        },
+                    },
+                },
+            };
+            const confirmCardPayment = jest.fn().mockRejectedValue('error');
+            const retrievePaymentIntent = jest.fn().mockReturnValue(stripeError);
+
+            jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValueOnce({
+                ...getStripeUPEJsMock(),
+                confirmCardPayment,
+                retrievePaymentIntent,
+            });
+
+            try {
+                await processor.processAdditionalAction(error3DS, 'stripe');
+            } catch (e) {
+                expect(e).toBeInstanceOf(PaymentMethodCancelledError);
+            }
+        });
+
+        it('throw PaymentMethodFailedError if there is unknown Stripe error', async () => {
+            await gateway.initialize(getStripe);
+
+            const stripeError = {
+                error: {
+                    payment_intent: {
+                        last_payment_error: {
+                            message: 'some other error',
+                        },
+                    },
+                },
+            };
+            const confirmCardPayment = jest.fn().mockRejectedValue('error');
+            const retrievePaymentIntent = jest.fn().mockReturnValue(stripeError);
+
+            jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValueOnce({
+                ...getStripeUPEJsMock(),
+                confirmCardPayment,
+                retrievePaymentIntent,
+            });
+
+            try {
+                await processor.processAdditionalAction(error3DS, 'stripe');
+            } catch (e) {
+                expect(e).toBeInstanceOf(PaymentMethodFailedError);
+            }
+        });
+
+        it('throw RequestError if there is no payment intent', async () => {
+            await gateway.initialize(getStripe);
+
+            const stripeError = true;
+            const confirmCardPayment = jest.fn().mockRejectedValue('error');
+            const retrievePaymentIntent = jest.fn().mockReturnValue(stripeError);
+
+            jest.spyOn(scriptLoader, 'getStripeClient').mockResolvedValueOnce({
+                ...getStripeUPEJsMock(),
+                confirmCardPayment,
+                retrievePaymentIntent,
+            });
+
+            try {
+                await processor.processAdditionalAction(error3DS, 'stripe');
+            } catch (e) {
+                expect(e).toBeInstanceOf(RequestError);
             }
         });
     });
