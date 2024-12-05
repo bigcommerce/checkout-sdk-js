@@ -2,7 +2,7 @@ import { NotInitializedError, NotInitializedErrorType } from '../common/error/er
 
 import HostedForm from './hosted-form';
 import HostedFormFactory from './hosted-form-factory';
-import HostedFormOptions from './hosted-form-options';
+import LegacyHostedFormOptions from './hosted-form-options';
 import {
     StoredCardHostedFormData,
     StoredCardHostedFormInstrumentFields,
@@ -25,7 +25,7 @@ export default class StoredCardHostedFormService {
         await form.validate().then(() => form.submitStoredCard({ fields, data }));
     }
 
-    initialize(options: HostedFormOptions): Promise<void> {
+    initialize(options: LegacyHostedFormOptions): Promise<void> {
         const form = this._hostedFormFactory.create(this._host, options);
 
         return form.attach().then(() => {
