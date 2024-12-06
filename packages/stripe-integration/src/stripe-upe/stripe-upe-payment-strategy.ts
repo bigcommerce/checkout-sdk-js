@@ -113,6 +113,14 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             isHostedInstrumentLike(paymentData) ? paymentData : {};
         const state = this.paymentIntegrationService.getState();
         const { isStoreCreditApplied: useStoreCredit } = state.getCheckoutOrThrow();
+        const paymentProviderCustomer = state.getPaymentProviderCustomerOrThrow();
+        const stripePaymentProviderCustomer = isStripeAcceleratedCheckoutCustomer(
+            paymentProviderCustomer,
+        )
+            ? paymentProviderCustomer
+            : {};
+        const stripeLinkAuthenticationState =
+            stripePaymentProviderCustomer.stripeLinkAuthenticationState;
 
         if (useStoreCredit) {
             await this.paymentIntegrationService.applyStoreCredit(useStoreCredit);
@@ -122,15 +130,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             await this.stripeUPEIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
 
             const { email } = state.getCustomerOrThrow();
-
-            const paymentProviderCustomer = state.getPaymentProviderCustomerOrThrow();
-            const stripePaymentProviderCustomer = isStripeAcceleratedCheckoutCustomer(
-                paymentProviderCustomer,
-            )
-                ? paymentProviderCustomer
-                : {};
-            const stripeLinkAuthenticationState =
-                stripePaymentProviderCustomer.stripeLinkAuthenticationState;
 
             if (stripeLinkAuthenticationState !== undefined && !email) {
                 const billingAddress = state.getBillingAddressOrThrow();
@@ -165,7 +164,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         await this._executeWithoutRedirect(
             payment.methodId,
-            shouldSaveInstrument,
+            stripeLinkAuthenticationState ? false : shouldSaveInstrument,
             shouldSetAsDefaultInstrument,
         );
     }
@@ -349,7 +348,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     }
 
     // TODO: complexity of _processAdditionalAction method
-    // eslint-disable-next-line complexity
+
     private async _processAdditionalAction(
         error: unknown,
         methodId: string,
