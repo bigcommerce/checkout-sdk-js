@@ -1,4 +1,3 @@
-// TODO: separate mock in this file to different files by group
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
@@ -7,6 +6,10 @@ import {
     BraintreeFastlaneProfileData,
     BraintreeGooglePaymentDataRequest,
     BraintreeHostedFields,
+    BraintreeLocalPayment,
+    BraintreeLocalPaymentConfig,
+    BraintreeLocalPaymentsPayload,
+    BraintreeLPMStartPaymentError,
     BraintreePaypal,
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
@@ -14,7 +17,6 @@ import {
     BraintreeTokenizePayload,
     BraintreeVenmoCheckout,
     BraintreeVisaCheckout,
-    LocalPaymentInstance,
     TotalPriceStatusType,
     VisaCheckoutInitOptions,
 } from '../types';
@@ -212,17 +214,26 @@ export function getBraintreeFastlaneAuthenticationResultMock() {
     };
 }
 
-export function getBraintreeLocalPaymentMock(): LocalPaymentInstance {
+export function getBraintreeLocalPaymentMock(
+    orderId = '111',
+    startCallback: () => Promise<void> = () => Promise.resolve(),
+    startPaymentError: BraintreeLPMStartPaymentError | undefined = undefined,
+): BraintreeLocalPayment {
     return {
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         startPayment: jest.fn(
-            (_options: unknown, onPaymentStart: (payload: { paymentId: string }) => void) => {
-                onPaymentStart({ paymentId: '123456' });
+            async (
+                config: BraintreeLocalPaymentConfig,
+                callback: (
+                    startPaymentError: BraintreeLPMStartPaymentError | undefined,
+                    payload: BraintreeLocalPaymentsPayload,
+                ) => Promise<void>,
+            ) => {
+                await config.onPaymentStart({ paymentId: orderId }, startCallback);
+                await callback(startPaymentError, { nonce: 'braintree lpm nonce' });
             },
         ),
-        teardown: jest.fn(() => Promise.resolve()),
+        teardown: () => Promise.resolve(),
     };
 }
 

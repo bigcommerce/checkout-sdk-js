@@ -1,4 +1,4 @@
-export interface BraintreeLocalMethods {
+export interface BraintreeLocalMethodsPaymentInitializeOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
      */
@@ -24,5 +24,5 @@ export interface BraintreeLocalMethods {
 }
 
 export interface WithBraintreeLocalMethodsPaymentInitializeOptions {
-    braintreelocalmethods?: BraintreeLocalMethods;
+    braintreelocalmethods?: BraintreeLocalMethodsPaymentInitializeOptions;
 }

@@ -20,7 +20,7 @@ export { default as createBraintreePaypalCreditCustomerStrategy } from './braint
  * Braintree LPMs strategies
  */
 export { default as createBraintreeLocalMethodsPaymentStrategy } from './braintree-local-payment-methods/create-braintree-local-methods-payment-strategy';
-export { WithBraintreeLocalMethodsPaymentInitializeOptions } from './braintree-local-payment-methods/braintree-local-methods-options';
+export { WithBraintreeLocalMethodsPaymentInitializeOptions } from './braintree-local-payment-methods/braintree-local-methods-payment-initialize-options';
 
 /**
  * Braintree AXO strategies

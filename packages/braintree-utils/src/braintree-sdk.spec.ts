@@ -5,6 +5,7 @@ import { NotInitializedError } from '@bigcommerce/checkout-sdk/payment-integrati
 import BraintreeScriptLoader from './braintree-script-loader';
 import BraintreeSdk from './braintree-sdk';
 import {
+    getBraintreeLocalPaymentMock,
     getClientMock,
     getDataCollectorMock,
     getGooglePaymentMock,
@@ -18,9 +19,14 @@ import {
 import {
     BraintreeClient,
     BraintreeDataCollector,
+    BraintreeError,
     BraintreeErrorCode,
+    BraintreeErrorType,
     BraintreeGooglePayment,
     BraintreeGooglePaymentCreator,
+    BraintreeLocalPayment,
+    BraintreeLocalPaymentCreateConfig,
+    BraintreeLocalPaymentCreator,
     BraintreeModuleCreator,
     BraintreeThreeDSecure,
     BraintreeThreeDSecureCreator,
@@ -48,6 +54,8 @@ describe('BraintreeSdk', () => {
     let threeDSCreatorMock: BraintreeThreeDSecureCreator;
     let braintreeGooglePayment: BraintreeGooglePayment;
     let braintreeGooglePaymentCreator: BraintreeGooglePaymentCreator;
+    let braintreeLocalPayment: BraintreeLocalPayment;
+    let braintreeLocalPaymentCreator: BraintreeLocalPaymentCreator;
     let visaCheckoutSdkMock: VisaCheckoutSDK;
 
     const clientTokenMock = 'clientTokenMock';
@@ -69,6 +77,8 @@ describe('BraintreeSdk', () => {
         visaCheckoutSdkMock = getVisaCheckoutSDKMock();
         braintreeGooglePayment = getGooglePaymentMock();
         braintreeGooglePaymentCreator = getModuleCreatorMock(braintreeGooglePayment);
+        braintreeLocalPayment = getBraintreeLocalPaymentMock();
+        braintreeLocalPaymentCreator = getModuleCreatorMock(braintreeLocalPayment);
 
         braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
 
@@ -93,6 +103,10 @@ describe('BraintreeSdk', () => {
         jest.spyOn(braintreeScriptLoader, 'loadGooglePayment').mockImplementation(() =>
             Promise.resolve(braintreeGooglePaymentCreator),
         );
+        jest.spyOn(braintreeScriptLoader, 'loadLocalPayment').mockImplementation(() =>
+            Promise.resolve(braintreeLocalPaymentCreator),
+        );
+
         braintreeVisaCheckoutMock = getVisaCheckoutMock();
         braintreeVisaCheckoutCreatorMock = getModuleCreatorMock(braintreeVisaCheckoutMock);
     });
@@ -257,6 +271,89 @@ describe('BraintreeSdk', () => {
 
             expect(braintreeScriptLoader.loadGooglePayment).toHaveBeenCalledTimes(1);
             expect(braintreeGooglePaymentCreator.create).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('#getBraintreeLocalPayment()', () => {
+        const merchantId = 'merchantAccountId';
+        const getBraintreeLocalPaymentCreatorCreateMock = (
+            callbackError: BraintreeError | undefined = undefined,
+        ) => {
+            return async (
+                _: BraintreeLocalPaymentCreateConfig,
+                callback?: (
+                    error: BraintreeError | undefined,
+                    instance: BraintreeLocalPayment,
+                ) => void,
+            ): Promise<BraintreeLocalPayment> => {
+                if (callback && typeof callback === 'function') {
+                    callback(callbackError, braintreeLocalPayment);
+                }
+
+                return Promise.resolve(braintreeLocalPayment);
+            };
+        };
+
+        it('throws an error if client token is not defined', async () => {
+            try {
+                await braintreeSdk.getBraintreeLocalPayment(merchantId);
+            } catch (error: unknown) {
+                expect(error).toBeInstanceOf(NotInitializedError);
+            }
+        });
+
+        it('creates Braintree Local Payment module', async () => {
+            jest.spyOn(braintreeLocalPaymentCreator, 'create').mockImplementation(
+                getBraintreeLocalPaymentCreatorCreateMock(),
+            );
+
+            braintreeSdk.initialize(clientTokenMock);
+
+            await braintreeSdk.getBraintreeLocalPayment(merchantId);
+
+            expect(braintreeScriptLoader.loadLocalPayment).toHaveBeenCalled();
+            expect(braintreeLocalPaymentCreator.create).toHaveBeenCalledWith(
+                {
+                    client: clientMock,
+                    merchantAccountId: merchantId,
+                },
+                expect.any(Function),
+            );
+        });
+
+        it('throws an error if Braintree Local Payment module creation fails', async () => {
+            const braintreeError: BraintreeError = {
+                name: 'test',
+                type: BraintreeErrorType.Network,
+                code: 'NETWORK_ERROR',
+                message: 'Network error',
+            };
+
+            jest.spyOn(braintreeLocalPaymentCreator, 'create').mockImplementation(
+                getBraintreeLocalPaymentCreatorCreateMock(braintreeError),
+            );
+
+            braintreeSdk.initialize(clientTokenMock);
+
+            try {
+                await braintreeSdk.getBraintreeLocalPayment(merchantId);
+            } catch (error: unknown) {
+                expect(error).toEqual(braintreeError);
+            }
+        });
+
+        it('returns the same Braintree Local Payment module while calling method for second time', async () => {
+            jest.spyOn(braintreeLocalPaymentCreator, 'create').mockImplementation(
+                getBraintreeLocalPaymentCreatorCreateMock(),
+            );
+
+            braintreeSdk.initialize(clientTokenMock);
+
+            await braintreeSdk.getBraintreeLocalPayment(merchantId);
+            await braintreeSdk.getBraintreeLocalPayment(merchantId);
+
+            expect(braintreeScriptLoader.loadLocalPayment).toHaveBeenCalledTimes(1);
+            expect(braintreeLocalPaymentCreator.create).toHaveBeenCalledTimes(1);
         });
     });
 
