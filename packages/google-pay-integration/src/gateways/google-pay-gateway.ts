@@ -389,7 +389,7 @@ export default class GooglePayGateway {
             company,
             address1,
             address2: `${address2} ${address3}`.trim(),
-            city,
+            city: city || stateOrProvinceCode,
             stateOrProvince: stateOrProvinceCode,
             stateOrProvinceCode,
             countryCode,
