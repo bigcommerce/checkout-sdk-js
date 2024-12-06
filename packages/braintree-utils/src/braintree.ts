@@ -91,8 +91,9 @@ export interface BraintreeSDK {
 }
 
 export type BraintreeLocalPaymentCreator = BraintreeModuleCreator<
-    LocalPaymentInstance,
-    BraintreeLocalPaymentCreateConfig
+    BraintreeLocalPayment,
+    BraintreeLocalPaymentCreateConfig,
+    BraintreeError | undefined
 >;
 
 export interface BraintreeLocalPaymentCreateConfig extends BraintreeModuleCreatorConfig {
@@ -487,7 +488,7 @@ export interface BraintreeVisaCheckout extends BraintreeModule {
  * Braintree Local Methods
  *
  */
-export interface LocalPaymentInstanceConfig {
+export interface BraintreeLocalPaymentConfig {
     paymentType: string;
     amount: number;
     fallback: {
@@ -502,32 +503,30 @@ export interface LocalPaymentInstanceConfig {
     address: {
         countryCode: string;
     };
-    onPaymentStart(data: onPaymentStartData, start: () => Promise<void>): void;
+    onPaymentStart(data: BraintreeLPMPaymentStartData, start: () => Promise<void>): Promise<void>;
 }
 
-export interface StartPaymentError {
+export interface BraintreeLPMStartPaymentError {
     code: string;
 }
 
-export interface onPaymentStartData {
+export interface BraintreeLPMPaymentStartData {
     paymentId: string;
 }
 
-export interface LocalPaymentsPayload {
+export interface BraintreeLocalPaymentsPayload {
     nonce: string;
 }
 
-export interface LocalPaymentInstance extends BraintreeModule {
+export interface BraintreeLocalPayment extends BraintreeModule {
     startPayment(
-        config: LocalPaymentInstanceConfig,
+        config: BraintreeLocalPaymentConfig,
         callback: (
-            startPaymentError: StartPaymentError,
-            payload: LocalPaymentsPayload,
+            startPaymentError: BraintreeLPMStartPaymentError | undefined,
+            payload: BraintreeLocalPaymentsPayload,
         ) => Promise<void>,
     ): void;
 }
-
-export type GetLocalPaymentInstance = (localPaymentInstance: LocalPaymentInstance) => void;
 
 /**
  *

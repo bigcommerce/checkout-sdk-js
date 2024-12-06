@@ -263,6 +263,7 @@ describe('BraintreeFastlaneUtils', () => {
                     isFastlaneShippingOptionAutoSelectEnabled: true,
                 },
             };
+
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -285,6 +286,7 @@ describe('BraintreeFastlaneUtils', () => {
                     isFastlaneShippingOptionAutoSelectEnabled: false,
                 },
             };
+
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -303,6 +305,7 @@ describe('BraintreeFastlaneUtils', () => {
                     isFastlaneShippingOptionAutoSelectEnabled: true,
                 },
             };
+
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',

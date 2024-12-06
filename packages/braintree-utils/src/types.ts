@@ -672,3 +672,13 @@ export interface BraintreeRedirectError {
         };
     };
 }
+
+export interface BraintreeOrderSavedResponse {
+    body: {
+        additional_action_required: {
+            data: {
+                order_id_saved_successfully: string;
+            };
+        };
+    };
+}

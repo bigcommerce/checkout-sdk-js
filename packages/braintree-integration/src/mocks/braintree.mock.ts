@@ -36,10 +36,11 @@ export function getBraintreeLocalMethods() {
     return {
         id: 'braintreelocalmethods',
         logoUrl: '',
-        method: 'giropay',
+        method: 'ideal',
         supportedCards: [],
         config: {
-            displayName: 'Giropay',
+            displayName: 'Ideal',
+            merchantId: 'someMerchantId',
         },
         initializationData: {
             isAcceleratedCheckoutEnabled: false,

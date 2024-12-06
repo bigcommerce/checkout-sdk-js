@@ -1,10 +1,11 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-    BraintreeIntegrationService,
+    BraintreeLocalPayment,
     BraintreeScriptLoader,
+    BraintreeSdk,
     getBraintreeLocalPaymentMock,
-    LocalPaymentInstance,
+    getDataCollectorMock,
     NonInstantLocalPaymentMethods,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -16,10 +17,13 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationService,
     PaymentMethod,
+    PaymentMethodInvalidError,
     RequestError,
+    StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCheckout,
+    getConfig,
     getResponse,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -35,34 +39,44 @@ import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-paym
 describe('BraintreeLocalMethodsPaymentStrategy', () => {
     let strategy: BraintreeLocalMethodsPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
-    let braintreeIntegrationService: BraintreeIntegrationService;
+    let braintreeLocalPaymentMock: BraintreeLocalPayment;
+    let braintreeSdk: BraintreeSdk;
     let braintreeScriptLoader: BraintreeScriptLoader;
     let paymentMethodMock: PaymentMethod;
-    let localPaymentInstanceMock: LocalPaymentInstance;
+    let storeConfigMock: StoreConfig;
+    let loadingIndicator: LoadingIndicator;
     let lpmButton: HTMLButtonElement;
-    const sessionId = 'sessionId';
+    let lpmContainer: HTMLElement;
+    const sessionId = getDataCollectorMock().deviceData;
+
+    const instantPaymentMethodId = 'ideal';
+    const defaultOrderId = '123';
+
+    const braintreelocalmethods = getBraintreeLocalMethodsInitializationOptions();
 
     const initializationOptions: PaymentInitializeOptions = {
-        methodId: 'giropay',
+        methodId: instantPaymentMethodId,
         gatewayId: 'braintreelocalmethods',
-        braintreelocalmethods: getBraintreeLocalMethodsInitializationOptions(),
+        braintreelocalmethods,
     };
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
-        braintreeIntegrationService = new BraintreeIntegrationService(
-            braintreeScriptLoader,
-            window,
-        );
+        braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
+        loadingIndicator = new LoadingIndicator();
         strategy = new BraintreeLocalMethodsPaymentStrategy(
             paymentIntegrationService,
-            braintreeIntegrationService,
-            new LoadingIndicator(),
+            braintreeSdk,
+            loadingIndicator,
         );
 
+        lpmContainer = document.createElement('div');
+        lpmContainer.id = 'checkout-payment-continue';
+        document.body.appendChild(lpmContainer);
+
         lpmButton = document.createElement('button');
-        lpmButton.id = 'giropay';
+        lpmButton.id = instantPaymentMethodId;
         document.body.appendChild(lpmButton);
 
         paymentMethodMock = {
@@ -70,7 +84,16 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
             clientToken: 'token',
         };
 
-        localPaymentInstanceMock = getBraintreeLocalPaymentMock();
+        storeConfigMock = getConfig().storeConfig;
+        storeConfigMock.checkoutSettings.features = {
+            'PAYPAL-4853.add_new_payment_flow_for_braintree_lpms': true,
+        };
+
+        braintreeLocalPaymentMock = getBraintreeLocalPaymentMock(
+            defaultOrderId,
+            async () => {},
+            undefined,
+        );
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,
@@ -78,16 +101,30 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getCheckoutOrThrow').mockReturnValue(
             getCheckout(),
         );
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            storeConfigMock,
+        );
 
-        jest.spyOn(braintreeIntegrationService, 'initialize');
-        jest.spyOn(braintreeIntegrationService, 'getSessionId').mockResolvedValue(sessionId);
-        jest.spyOn(braintreeIntegrationService, 'loadBraintreeLocalMethods').mockResolvedValue(
-            localPaymentInstanceMock,
+        jest.spyOn(paymentIntegrationService, 'submitOrder');
+
+        jest.spyOn(loadingIndicator, 'show').mockImplementation(jest.fn);
+        jest.spyOn(loadingIndicator, 'hide').mockImplementation(jest.fn);
+
+        jest.spyOn(braintreeSdk, 'initialize');
+        jest.spyOn(braintreeSdk, 'getDataCollectorOrThrow').mockImplementation(() =>
+            Promise.resolve(getDataCollectorMock()),
+        );
+
+        jest.spyOn(braintreeSdk, 'getBraintreeLocalPayment').mockResolvedValue(
+            braintreeLocalPaymentMock,
         );
     });
 
     afterEach(() => {
+        jest.clearAllMocks();
+
         document.body.removeChild(lpmButton);
+        document.body.removeChild(lpmContainer);
     });
 
     it('creates BraintreeLocalMethodsPaymentStrategy', () => {
@@ -95,7 +132,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
     });
 
     describe('#initialize', () => {
-        it('throws error if methodId is not provided', async () => {
+        it('throws error when methodId is not provided', async () => {
             const options = {} as PaymentInitializeOptions;
 
             try {
@@ -105,7 +142,32 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
             }
         });
 
-        it('throws error if clientToken is not provided', async () => {
+        it('throws error when gatewayId is not provided', async () => {
+            const options = {
+                methodId: instantPaymentMethodId,
+            } as PaymentInitializeOptions;
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
+        it('throws error if options.braintreelocalmethods is not provided', async () => {
+            const options = {
+                methodId: instantPaymentMethodId,
+                gatewayId: 'braintreelocalmethods',
+            } as PaymentInitializeOptions;
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
+        it('throws error if clientToken is not provided (instant payment method only)', async () => {
             paymentMethodMock.clientToken = '';
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -119,7 +181,21 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
             }
         });
 
-        it('throws error if initializationData is not provided', async () => {
+        it('throws error if merchantId is not provided (instant payment method only)', async () => {
+            paymentMethodMock.config.merchantId = undefined;
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodMock);
+
+            try {
+                await strategy.initialize(initializationOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('throws error if initializationData is not provided (instant payment method only)', async () => {
             paymentMethodMock.initializationData = null;
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -133,53 +209,49 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
             }
         });
 
-        it('throws error if gatewayId is not provided', async () => {
-            const options = {
-                methodId: 'giropay',
-            } as PaymentInitializeOptions;
-
-            try {
-                await strategy.initialize(options);
-            } catch (error) {
-                expect(error).toBeInstanceOf(InvalidArgumentError);
-            }
-        });
-
-        it('throws error if options.braintreelocalmethods is not provided', async () => {
-            const options = {
-                methodId: 'giropay',
-                gatewayId: 'barintreelocalmethods',
-            } as PaymentInitializeOptions;
-
-            try {
-                await strategy.initialize(options);
-            } catch (error) {
-                expect(error).toBeInstanceOf(InvalidArgumentError);
-            }
-        });
-
-        it('initializes braintree integration service', async () => {
+        it('initializes braintree integration service (instant payment method only)', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
-                paymentMethodMock.clientToken,
+            expect(braintreeSdk.initialize).toHaveBeenCalledWith(paymentMethodMock.clientToken);
+        });
+
+        it('does not load BraintreeLocalMethods for non-instant payment methods', async () => {
+            await strategy.initialize({
+                ...initializationOptions,
+                methodId: NonInstantLocalPaymentMethods.TRUSTLY,
+            });
+
+            expect(braintreeSdk.getBraintreeLocalPayment).not.toHaveBeenCalled();
+        });
+
+        it('loads BraintreeLocalMethods (instant payment method only)', async () => {
+            await strategy.initialize(initializationOptions);
+
+            expect(braintreeSdk.getBraintreeLocalPayment).toHaveBeenCalledWith(
+                paymentMethodMock.config.merchantId,
             );
         });
 
-        it('loads Braintree Local Methods', async () => {
+        it('performs error handling flow when there is an error while getting braintree local payment sdk', async () => {
+            jest.spyOn(braintreeSdk, 'getBraintreeLocalPayment').mockImplementationOnce(() => {
+                throw new Error('error');
+            });
+
             await strategy.initialize(initializationOptions);
 
-            expect(braintreeIntegrationService.loadBraintreeLocalMethods).toHaveBeenCalled();
+            expect(braintreelocalmethods?.onError).toHaveBeenCalled();
         });
     });
 
-    describe('#renderButton', () => {
-        it('creates button element with id', async () => {
-            await strategy.initialize(initializationOptions);
+    describe('#deinitialize', () => {
+        it('deinitializes strategy', async () => {
+            await expect(strategy.deinitialize()).resolves.not.toThrow();
+        });
+    });
 
-            const button = document.getElementById('giropay');
-
-            expect(button).toBeDefined();
+    describe('#finalize', () => {
+        it('throws error to inform that order finalization is not required', async () => {
+            await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
         });
     });
 
@@ -194,6 +266,147 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
 
         it('throws PaymentArgumentInvalidError if payment is not provided', async () => {
             await expect(strategy.execute({})).rejects.toThrow(PaymentArgumentInvalidError);
+        });
+
+        describe('when instant payment method', () => {
+            let payload: OrderRequestBody;
+
+            beforeEach(() => {
+                payload = {
+                    payment: {
+                        gatewayId: 'braintreelocalmethods',
+                        methodId: instantPaymentMethodId,
+                    },
+                };
+            });
+
+            it('should call startPayment method from Braintree local payment methods instance', async () => {
+                braintreeLocalPaymentMock = getBraintreeLocalPaymentMock(
+                    defaultOrderId,
+                    async () => {},
+                    undefined,
+                );
+
+                jest.spyOn(braintreeSdk, 'getBraintreeLocalPayment').mockResolvedValue(
+                    braintreeLocalPaymentMock,
+                );
+
+                await strategy.initialize(initializationOptions);
+                await strategy.execute(payload);
+
+                expect(braintreeLocalPaymentMock.startPayment).toHaveBeenCalledWith(
+                    {
+                        address: {
+                            countryCode: 'US',
+                        },
+                        amount: 190,
+                        currencyCode: 'USD',
+                        email: 'foo@bar.com',
+                        fallback: {
+                            buttonText: 'button placeholder',
+                            url: 'url-placeholder',
+                        },
+                        givenName: 'Test',
+                        surname: 'Tester',
+                        onPaymentStart: expect.any(Function),
+                        paymentType: instantPaymentMethodId,
+                        shippingAddressRequired: true,
+                    },
+                    expect.any(Function),
+                );
+            });
+
+            it('starts Braintree LPM flow (opens popup) when orderId was successfully saved on BE side', async () => {
+                const startPaymentMock = jest.fn();
+
+                const error = new RequestError(
+                    getResponse({
+                        additional_action_required: {
+                            data: {
+                                order_id_saved_successfully: true,
+                            },
+                        },
+                    }),
+                );
+
+                jest.spyOn(paymentIntegrationService, 'submitPayment')
+                    .mockReturnValueOnce(Promise.reject(error))
+                    .mockReturnValueOnce(Promise.resolve(paymentIntegrationService.getState()));
+
+                braintreeLocalPaymentMock = getBraintreeLocalPaymentMock(
+                    defaultOrderId,
+                    () => {
+                        startPaymentMock();
+
+                        return Promise.resolve();
+                    },
+                    undefined,
+                );
+
+                jest.spyOn(braintreeSdk, 'getBraintreeLocalPayment').mockResolvedValue(
+                    braintreeLocalPaymentMock,
+                );
+
+                await strategy.initialize(initializationOptions);
+                await strategy.execute(payload);
+
+                expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+                expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
+                expect(startPaymentMock).toHaveBeenCalled();
+            });
+
+            it('triggers onError callback when there is an issue with Braintree LPM payment flow', async () => {
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
+                    Promise.resolve(paymentIntegrationService.getState()),
+                );
+
+                braintreeLocalPaymentMock = getBraintreeLocalPaymentMock(
+                    defaultOrderId,
+                    async () => {},
+                    {
+                        code: 'non close window lpm flow error',
+                    },
+                );
+
+                jest.spyOn(braintreeSdk, 'getBraintreeLocalPayment').mockResolvedValue(
+                    braintreeLocalPaymentMock,
+                );
+
+                await strategy.initialize(initializationOptions);
+
+                try {
+                    await strategy.execute(payload);
+                } catch (error: unknown) {
+                    expect(error).toBeInstanceOf(PaymentMethodInvalidError);
+                }
+            });
+
+            it('hides loader and does not throw anything when customer close popup window', async () => {
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValue(
+                    Promise.resolve(paymentIntegrationService.getState()),
+                );
+
+                braintreeLocalPaymentMock = getBraintreeLocalPaymentMock(
+                    defaultOrderId,
+                    async () => {},
+                    {
+                        code: 'LOCAL_PAYMENT_WINDOW_CLOSED',
+                    },
+                );
+
+                jest.spyOn(braintreeSdk, 'getBraintreeLocalPayment').mockResolvedValue(
+                    braintreeLocalPaymentMock,
+                );
+
+                await strategy.initialize(initializationOptions);
+
+                try {
+                    await strategy.execute(payload);
+                } catch (error: unknown) {
+                    expect(error).toBeUndefined();
+                    expect(loadingIndicator.hide).toHaveBeenCalled();
+                }
+            });
         });
 
         describe('when non-instant payment method', () => {
@@ -217,7 +430,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
             it('should not use startPayment method', async () => {
                 await strategy.execute(payload);
 
-                expect(localPaymentInstanceMock.startPayment).not.toHaveBeenCalled();
+                expect(braintreeLocalPaymentMock.startPayment).not.toHaveBeenCalled();
             });
 
             it('submits order payload with payment data', async () => {
@@ -233,11 +446,10 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                     expect.objectContaining({
                         methodId: 'trustly',
                         paymentData: expect.objectContaining({
-                            formattedPayload: expect.objectContaining({
-                                device_info: sessionId,
-                                method: 'trustly',
-                                set_as_default_stored_instrument: null,
-                            }),
+                            deviceSessionId: sessionId,
+                            formattedPayload: {
+                                method: NonInstantLocalPaymentMethods.TRUSTLY,
+                            },
                         }),
                     }),
                 );
@@ -255,7 +467,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                     }),
                 );
 
-                jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() =>
                     Promise.reject(error),
                 );
 
@@ -265,18 +477,65 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                     expect(window.location.replace).toHaveBeenCalledWith('redirect_url');
                 }
             });
-        });
-    });
 
-    describe('#deinitialize', () => {
-        it('deinitializes strategy', async () => {
-            await expect(strategy.deinitialize()).resolves.not.toThrow();
-        });
-    });
+            it('does not perform additional action when error has invalid shape #1', async () => {
+                const error = new RequestError(getResponse(undefined));
 
-    describe('#finalize', () => {
-        it('throws error to inform that order finalization is not required', async () => {
-            await expect(strategy.finalize()).rejects.toThrow(OrderFinalizationNotRequiredError);
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() =>
+                    Promise.reject(error),
+                );
+
+                try {
+                    await strategy.execute(payload);
+                } catch (_) {
+                    expect(window.location.replace).not.toHaveBeenCalled();
+                }
+            });
+
+            it('does not perform additional action when error has invalid shape #2', async () => {
+                const error = null;
+
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() =>
+                    Promise.reject(error),
+                );
+
+                try {
+                    await strategy.execute(payload);
+                } catch (_) {
+                    expect(window.location.replace).not.toHaveBeenCalled();
+                }
+            });
+
+            it('does not perform additional action when error has invalid shape #3', async () => {
+                const error = new RequestError(
+                    getResponse({
+                        additional_action_required: undefined,
+                    }),
+                );
+
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() =>
+                    Promise.reject(error),
+                );
+
+                try {
+                    await strategy.execute(payload);
+                } catch (_) {
+                    expect(window.location.replace).not.toHaveBeenCalled();
+                }
+            });
+
+            it('toggles loading indicator and throws an error when error is not an instance of additional action required', async () => {
+                jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(() =>
+                    Promise.reject(new Error('submit payment error')),
+                );
+
+                try {
+                    await strategy.execute(payload);
+                } catch (error: unknown) {
+                    expect(loadingIndicator.hide).toHaveBeenCalled();
+                    expect(error).toBeInstanceOf(Error);
+                }
+            });
         });
     });
 });

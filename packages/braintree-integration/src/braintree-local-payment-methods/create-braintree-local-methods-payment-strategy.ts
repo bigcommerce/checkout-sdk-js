@@ -2,8 +2,8 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
     BraintreeHostWindow,
-    BraintreeIntegrationService,
     BraintreeScriptLoader,
+    BraintreeSdk,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     PaymentStrategyFactory,
@@ -17,14 +17,13 @@ const createBraintreeLocalMethodsPaymentStrategy: PaymentStrategyFactory<
     BraintreeLocalMethodsPaymentStrategy
 > = (paymentIntegrationService) => {
     const braintreeHostWindow: BraintreeHostWindow = window;
-    const braintreeIntegrationService = new BraintreeIntegrationService(
+    const braintreeSdk = new BraintreeSdk(
         new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
-        braintreeHostWindow,
     );
 
     return new BraintreeLocalMethodsPaymentStrategy(
         paymentIntegrationService,
-        braintreeIntegrationService,
+        braintreeSdk,
         new LoadingIndicator({ styles: { backgroundColor: 'black' } }),
     );
 };
