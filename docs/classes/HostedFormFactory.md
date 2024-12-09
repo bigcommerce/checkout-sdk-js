@@ -35,7 +35,7 @@
 | Name | Type |
 | :------ | :------ |
 | `host` | `string` |
-| `options` | [`HostedFormOptions`](../interfaces/HostedFormOptions.md) |
+| `options` | [`LegacyHostedFormOptions`](../interfaces/LegacyHostedFormOptions.md) |
 
 #### Returns
 

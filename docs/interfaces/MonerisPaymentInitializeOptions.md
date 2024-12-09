@@ -44,7 +44,7 @@ ___
 
 ### form
 
-• `Optional` **form**: [`HostedFormOptions`](HostedFormOptions.md)
+• `Optional` **form**: [`LegacyHostedFormOptions`](LegacyHostedFormOptions.md)
 
 Hosted Form Validation Options
 

@@ -1,21 +1,21 @@
-[@bigcommerce/checkout-sdk](../README.md) / HostedFormOptions
+[@bigcommerce/checkout-sdk](../README.md) / LegacyHostedFormOptions
 
-# Interface: HostedFormOptions
+# Interface: LegacyHostedFormOptions
 
 ## Table of contents
 
 ### Properties
 
-- [fields](HostedFormOptions.md#fields)
-- [styles](HostedFormOptions.md#styles)
+- [fields](LegacyHostedFormOptions.md#fields)
+- [styles](LegacyHostedFormOptions.md#styles)
 
 ### Methods
 
-- [onBlur](HostedFormOptions.md#onblur)
-- [onCardTypeChange](HostedFormOptions.md#oncardtypechange)
-- [onEnter](HostedFormOptions.md#onenter)
-- [onFocus](HostedFormOptions.md#onfocus)
-- [onValidate](HostedFormOptions.md#onvalidate)
+- [onBlur](LegacyHostedFormOptions.md#onblur)
+- [onCardTypeChange](LegacyHostedFormOptions.md#oncardtypechange)
+- [onEnter](LegacyHostedFormOptions.md#onenter)
+- [onFocus](LegacyHostedFormOptions.md#onfocus)
+- [onValidate](LegacyHostedFormOptions.md#onvalidate)
 
 ## Properties
 

@@ -257,7 +257,6 @@
 - [HostedFieldSubmitRequestEvent](interfaces/HostedFieldSubmitRequestEvent.md)
 - [HostedFieldValidateRequestEvent](interfaces/HostedFieldValidateRequestEvent.md)
 - [HostedFormErrorData](interfaces/HostedFormErrorData.md)
-- [HostedFormOptions](interfaces/HostedFormOptions.md)
 - [HostedFormOrderData](interfaces/HostedFormOrderData.md)
 - [HostedInputAttachErrorEvent](interfaces/HostedInputAttachErrorEvent.md)
 - [HostedInputAttachSuccessEvent](interfaces/HostedInputAttachSuccessEvent.md)
@@ -301,6 +300,7 @@
 - [Item_2](interfaces/Item_2.md)
 - [LabelStyles](interfaces/LabelStyles.md)
 - [LanguageConfig](interfaces/LanguageConfig.md)
+- [LegacyHostedFormOptions](interfaces/LegacyHostedFormOptions.md)
 - [LineItem](interfaces/LineItem.md)
 - [LineItemCategory](interfaces/LineItemCategory.md)
 - [LineItemMap](interfaces/LineItemMap.md)
@@ -779,7 +779,7 @@ ___
 
 ### HostedFormEventCallbacks
 
-Ƭ **HostedFormEventCallbacks**: `Pick`<[`HostedFormOptions`](interfaces/HostedFormOptions.md), ``"onBlur"`` \| ``"onCardTypeChange"`` \| ``"onFocus"`` \| ``"onEnter"`` \| ``"onValidate"``\>
+Ƭ **HostedFormEventCallbacks**: `Pick`<[`LegacyHostedFormOptions`](interfaces/LegacyHostedFormOptions.md), ``"onBlur"`` \| ``"onCardTypeChange"`` \| ``"onFocus"`` \| ``"onEnter"`` \| ``"onValidate"``\>
 
 ___
 

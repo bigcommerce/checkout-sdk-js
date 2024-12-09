@@ -13,7 +13,7 @@ import { CreditCardPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/cr
 import { Currency as Currency_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CustomerAddress as CustomerAddress_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedForm as HostedFormInterface } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { HostedFormOptions as HostedFormOptions_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { HostedInstrument as HostedInstrument_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 import { Observable } from 'rxjs';
@@ -4314,7 +4314,7 @@ declare interface CreditCardInstrument {
  * ```
  */
 declare interface CreditCardPaymentInitializeOptions_2 {
-    form: HostedFormOptions_2;
+    form: HostedFormOptions;
     bigpayToken?: string;
 }
 
@@ -4492,7 +4492,7 @@ declare interface DeprecatedPayPalCommerceCreditCardsPaymentInitializeOptions {
     /**
      * The form is data for Credit Card Form
      */
-    form?: HostedFormOptions_2;
+    form?: HostedFormOptions;
     /**
      * The callback that gets called when there is an issue with rendering credit card fields
      */
@@ -5256,23 +5256,13 @@ declare type HostedFormErrorDataKeys = 'number' | 'expirationDate' | 'expiration
 
 declare type HostedFormErrorsData = Partial<Record<HostedFormErrorDataKeys, HostedFormErrorData>>;
 
-declare type HostedFormEventCallbacks = Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onEnter' | 'onValidate'>;
+declare type HostedFormEventCallbacks = Pick<LegacyHostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onEnter' | 'onValidate'>;
 
 declare class HostedFormFactory {
     private _store;
     constructor(_store: ReadableCheckoutStore);
-    create(host: string, options: HostedFormOptions): HostedForm;
+    create(host: string, options: LegacyHostedFormOptions): HostedForm;
     private _getCardInstrument;
-}
-
-declare interface HostedFormOptions {
-    fields: HostedFieldOptionsMap;
-    styles?: HostedFieldStylesMap;
-    onBlur?(data: HostedFieldBlurEventData): void;
-    onCardTypeChange?(data: HostedFieldCardTypeChangeEventData): void;
-    onEnter?(data: HostedFieldEnterEventData): void;
-    onFocus?(data: HostedFieldFocusEventData): void;
-    onValidate?(data: HostedFieldValidateEventData): void;
 }
 
 declare interface HostedFormOrderData {
@@ -5778,6 +5768,16 @@ declare class LanguageService {
     private _escapeSpecialCharacters;
 }
 
+declare interface LegacyHostedFormOptions {
+    fields: HostedFieldOptionsMap;
+    styles?: HostedFieldStylesMap;
+    onBlur?(data: HostedFieldBlurEventData): void;
+    onCardTypeChange?(data: HostedFieldCardTypeChangeEventData): void;
+    onEnter?(data: HostedFieldEnterEventData): void;
+    onFocus?(data: HostedFieldFocusEventData): void;
+    onValidate?(data: HostedFieldValidateEventData): void;
+}
+
 declare interface LineItem {
     id: string | number;
     variantId: number;
@@ -5943,7 +5943,7 @@ declare interface MolliePaymentInitializeOptions {
     /**
      * Hosted Form Validation Options
      */
-    form?: HostedFormOptions_2;
+    form?: HostedFormOptions;
     unsupportedMethodMessage?: string;
     disableButton(disabled: boolean): void;
 }
@@ -5983,7 +5983,7 @@ declare interface MonerisPaymentInitializeOptions {
     /**
      * Hosted Form Validation Options
      */
-    form?: HostedFormOptions;
+    form?: LegacyHostedFormOptions;
 }
 
 /**
@@ -6600,7 +6600,7 @@ declare interface PayPalCommerceCreditCardsPaymentInitializeOptions {
     /**
      * The form is data for Credit Card Form
      */
-    form: HostedFormOptions_2;
+    form: HostedFormOptions;
     /**
      * The callback that gets called when there is an issue with rendering credit card fields
      */
@@ -7807,7 +7807,7 @@ declare class StoredCardHostedFormService {
     protected _hostedForm?: HostedForm;
     constructor(_host: string, _hostedFormFactory: HostedFormFactory);
     submitStoredCard(fields: StoredCardHostedFormInstrumentFields, data: StoredCardHostedFormData): Promise<void>;
-    initialize(options: HostedFormOptions): Promise<void>;
+    initialize(options: LegacyHostedFormOptions): Promise<void>;
     deinitialize(): void;
 }
 
@@ -8175,7 +8175,7 @@ declare interface StripeV3PaymentInitializeOptions {
     /**
      * Hosted Form Validation Options
      */
-    form?: HostedFormOptions_2;
+    form?: HostedFormOptions;
 }
 
 declare enum StyleButtonColor {

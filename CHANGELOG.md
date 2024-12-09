@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.685.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.684.0...v1.685.0) (2024-12-09)
+
+
+### Features
+
+* **checkout:** PI-2943 Change HostedFormOptions interface name in core ([#2741](https://github.com/bigcommerce/checkout-sdk-js/issues/2741)) ([951a25f](https://github.com/bigcommerce/checkout-sdk-js/commit/951a25fe81a8826dba8e7483cb067b6dffc0393e))
+
 ## [1.684.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.683.1...v1.684.0) (2024-12-09)
 
 

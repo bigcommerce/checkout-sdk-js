@@ -47,7 +47,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`HostedFormOptions`](../interfaces/HostedFormOptions.md) |
+| `options` | [`LegacyHostedFormOptions`](../interfaces/LegacyHostedFormOptions.md) |
 
 #### Returns
 
