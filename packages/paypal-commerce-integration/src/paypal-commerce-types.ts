@@ -1,6 +1,6 @@
 import {
     BuyNowCartRequestBody,
-    HostedInstrument,
+    HostedInstrument, RequestOptions,
     ShippingOption,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -611,4 +611,35 @@ export interface PayPalOrderStatusData {
 export interface PayPalCreateOrderCardFieldsResponse {
     orderId: string;
     setupToken?: string;
+}
+
+/**
+ *
+ * GraphQL Request Types
+ *
+ */
+
+export interface CreatePaymentOrderIntentOptions extends RequestOptions {
+    body?: { query: string };
+    headers: { Authorization: string; [key: string]: string };
+}
+
+export interface CreatePaymentOrderIntentResponse {
+    data: {
+        payment: {
+            paymentWallet: {
+                createPaymentWalletIntent: {
+                    errors: Array<{
+                        location: Array<{ line: string; column: string }>;
+                        message: string
+                    }>;
+                    paymentWalletIntentData: {
+                        __typename: string;
+                        approvalUrl: string;
+                        orderId: string;
+                    };
+                };
+            };
+        };
+    };
 }
