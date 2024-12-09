@@ -679,11 +679,21 @@ describe('StripeUPEPaymentStrategy', () => {
                                 'getPaymentProviderCustomerOrThrow',
                             ).mockReturnValue({ stripeLinkAuthenticationState: true });
 
-                            await strategy.execute(getStripeUPEWithLinkOrderRequestBodyMock());
+                            await strategy.execute(
+                                getStripeUPEWithLinkOrderRequestBodyMock(undefined, true),
+                            );
 
                             expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
                             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
-                            expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
+                            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                                expect.objectContaining({
+                                    paymentData: expect.objectContaining({
+                                        formattedPayload: expect.objectContaining({
+                                            vault_payment_instrument: false,
+                                        }),
+                                    }),
+                                }),
+                            );
                             expect(
                                 paymentIntegrationService.updateBillingAddress,
                             ).not.toHaveBeenCalled();
@@ -723,11 +733,21 @@ describe('StripeUPEPaymentStrategy', () => {
                                 'getBillingAddressOrThrow',
                             ).mockReturnValue(getBillingAddress());
 
-                            await strategy.execute(getStripeUPEWithLinkOrderRequestBodyMock());
+                            await strategy.execute(
+                                getStripeUPEWithLinkOrderRequestBodyMock(undefined, true),
+                            );
 
                             expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
                             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
-                            expect(paymentIntegrationService.submitPayment).toHaveBeenCalled();
+                            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(
+                                expect.objectContaining({
+                                    paymentData: expect.objectContaining({
+                                        formattedPayload: expect.objectContaining({
+                                            vault_payment_instrument: true,
+                                        }),
+                                    }),
+                                }),
+                            );
                             expect(
                                 paymentIntegrationService.updateBillingAddress,
                             ).toHaveBeenCalled();
