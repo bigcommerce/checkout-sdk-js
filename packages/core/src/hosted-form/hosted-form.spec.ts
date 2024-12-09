@@ -9,7 +9,7 @@ import { createSpamProtection, PaymentHumanVerificationHandler } from '../spam-p
 import HostedField from './hosted-field';
 import HostedFieldType from './hosted-field-type';
 import HostedForm from './hosted-form';
-import HostedFormOptions from './hosted-form-options';
+import LegacyHostedFormOptions from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 import { getHostedFormOrderData } from './hosted-form-order-data.mock';
 import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
@@ -20,7 +20,7 @@ import {
 
 describe('HostedForm', () => {
     let callbacks: Pick<
-        HostedFormOptions,
+        LegacyHostedFormOptions,
         'onBlur' | 'onCardTypeChange' | 'onEnter' | 'onFocus' | 'onValidate'
     >;
     let eventListener: IframeEventListener<HostedInputEventMap>;
