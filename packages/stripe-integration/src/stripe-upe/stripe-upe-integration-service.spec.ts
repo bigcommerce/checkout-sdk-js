@@ -3,6 +3,7 @@ import {
     NotInitializedError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
+    PaymentMethodCancelledError,
     PaymentMethodFailedError,
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -295,6 +296,44 @@ describe('StripeUPEIntegrationService', () => {
                 color: testColor,
                 boxShadow: testColor,
             });
+        });
+    });
+
+    describe('#throwStripeError', () => {
+        it('throws non stripe error', () => {
+            try {
+                stripeUPEIntegrationService.throwStripeError(new Error('error message'));
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentMethodFailedError);
+            }
+        });
+
+        it('throws stripe displayable error', () => {
+            try {
+                stripeUPEIntegrationService.throwStripeError({
+                    type: 'invalid_request_error',
+                    message: 'error message',
+                } as StripeError);
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+                expect((error as Error).message).toBe('error message');
+            }
+        });
+
+        it('throws stripe cancellation error', () => {
+            try {
+                stripeUPEIntegrationService.throwStripeError({
+                    type: 'non_displayable_type',
+                    message: 'error message',
+                    payment_intent: {
+                        last_payment_error: {
+                            message: 'PaymentIntent was canceled.',
+                        },
+                    },
+                } as StripeError);
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentMethodCancelledError);
+            }
         });
     });
 

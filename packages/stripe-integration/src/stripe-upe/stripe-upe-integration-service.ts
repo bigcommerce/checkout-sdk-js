@@ -7,9 +7,11 @@ import {
     NotInitializedError,
     NotInitializedErrorType,
     PaymentIntegrationService,
+    PaymentMethodCancelledError,
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { isStripeError } from './is-stripe-error';
 import {
     AddressOptions,
     StripeAdditionalActionRequired,
@@ -107,6 +109,18 @@ export default class StripeUPEIntegrationService {
         };
     }
 
+    throwStripeError(stripeError?: unknown): never {
+        if (isStripeError(stripeError)) {
+            this.throwDisplayableStripeError(stripeError);
+
+            if (this.isCancellationError(stripeError)) {
+                throw new PaymentMethodCancelledError();
+            }
+        }
+
+        throw new PaymentMethodFailedError();
+    }
+
     throwDisplayableStripeError(stripeError: StripeError) {
         if (
             includes(['card_error', 'invalid_request_error', 'validation_error'], stripeError.type)
@@ -115,18 +129,18 @@ export default class StripeUPEIntegrationService {
         }
     }
 
+    isCancellationError(stripeError?: StripeError): boolean {
+        const errorMessage = stripeError?.payment_intent.last_payment_error?.message;
+
+        return !!errorMessage && errorMessage.indexOf('canceled') !== -1;
+    }
+
     throwPaymentConfirmationProceedMessage() {
         // INFO: for case if payment was successfully confirmed on Stripe side but on BC side something go wrong, request failed and order status hasn't changed yet
         // For shopper we need to show additional message that BC is waiting for stripe confirmation, to prevent additional payment creation
         throw new PaymentMethodFailedError(
             "We've received your order and are processing your payment. Once the payment is verified, your order will be completed. We will send you an email when it's completed. Please note, this process may take a few minutes depending on the processing times of your chosen method.",
         );
-    }
-
-    isCancellationError(stripeError?: StripeError): boolean {
-        const errorMessage = stripeError?.payment_intent.last_payment_error?.message;
-
-        return !!errorMessage && errorMessage.indexOf('canceled') !== -1;
     }
 
     async isPaymentCompleted(
