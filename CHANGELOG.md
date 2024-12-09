@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.684.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.683.1...v1.684.0) (2024-12-09)
+
+
+### Features
+
+* **payment:** CHECKOUT-7859 Add Offline Payment Method ([#2743](https://github.com/bigcommerce/checkout-sdk-js/issues/2743)) ([4cbd71e](https://github.com/bigcommerce/checkout-sdk-js/commit/4cbd71e882e596bf54ad7cd65fc44c914b75433d))
+
+
+### Bug Fixes
+
+* **extension:** CHECKOUT-8869 Fix Display Issue after Page Refresh ([#2738](https://github.com/bigcommerce/checkout-sdk-js/issues/2738)) ([f617a19](https://github.com/bigcommerce/checkout-sdk-js/commit/f617a19ed55ad747584355fd8818b241cab411cc))
+
 ### [1.683.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.683.0...v1.683.1) (2024-11-13)
 
 

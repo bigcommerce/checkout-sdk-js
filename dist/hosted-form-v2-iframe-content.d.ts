@@ -46,7 +46,8 @@ declare enum HostedFieldType {
     CardExpiry = "cardExpiry",
     CardName = "cardName",
     CardNumber = "cardNumber",
-    Note = "note"
+    Note = "note",
+    Hidden = "hidden"
 }
 
 declare interface HostedFieldValidateRequestEvent {
@@ -251,6 +252,7 @@ declare interface HostedInputValidateErrorDataMap {
     [HostedFieldType.CardName]?: HostedInputValidateErrorData[];
     [HostedFieldType.CardNumber]?: HostedInputValidateErrorData[];
     [HostedFieldType.Note]?: HostedInputValidateErrorData[];
+    [HostedFieldType.Hidden]?: HostedInputValidateErrorData[];
 }
 
 declare interface HostedInputValidateEvent {
