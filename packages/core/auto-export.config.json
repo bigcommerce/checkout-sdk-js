@@ -17,8 +17,8 @@
         },
         {
             "inputPath": "packages/*/src/index.ts",
-            "outputPath": "packages/core/src/generated/checkout-headless-button-strategies.ts",
-            "memberPattern": "^create.+HeadlessButtonStrategy$"
+            "outputPath": "packages/core/src/generated/checkout-headless-wallet-strategies.ts",
+            "memberPattern": "^create.+HeadlessWalletStrategy$"
         }
     ]
 }

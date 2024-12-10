@@ -15,7 +15,7 @@ export default class CartActionCreator {
     constructor(private _cartRequestSender: CartRequestSender) {}
 
     @cachableAction
-    loadCardEntity(
+    loadCard(
         cartId: string,
         options?: RequestOptions & ActionOptions,
     ): ThunkAction<LoadCartAction, InternalCheckoutSelectors> {
@@ -31,7 +31,7 @@ export default class CartActionCreator {
                 observer.next(createAction(CartActionType.LoadCartRequested, undefined));
 
                 this._cartRequestSender
-                    .loadCardEntity(cartId, {
+                    .loadCard(cartId, {
                         headers: {
                             Authorization: `Bearer ${jwtToken}`,
                             'Content-Type': 'application/json',

@@ -4,6 +4,7 @@ import { Observable, Observer } from 'rxjs';
 
 import { InternalCheckoutSelectors } from '../checkout';
 import { ActionOptions, cachableAction } from '../common/data-store';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import {
@@ -15,7 +16,6 @@ import PaymentMethodRequestSender from './payment-method-request-sender';
 import { isApplePayWindow } from './strategies/apple-pay';
 
 import { PaymentMethod } from '.';
-import {MissingDataError, MissingDataErrorType} from "../common/error/errors";
 
 const APPLEPAYID = 'applepay';
 

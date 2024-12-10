@@ -205,12 +205,9 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         return buyNowCart;
     }
 
-    async loadCardEntity(
-        cartId: string,
-        options?: RequestOptions,
-    ): Promise<PaymentIntegrationSelectors> {
+    async loadCard(cartId: string, options?: RequestOptions): Promise<PaymentIntegrationSelectors> {
         await this._store.dispatch(
-            this._cartActionCreator.loadCardEntity(cartId, { ...options, useCache: true }),
+            this._cartActionCreator.loadCard(cartId, { ...options, useCache: true }),
         );
 
         return this._storeProjection.getState();

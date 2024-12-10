@@ -14,7 +14,7 @@ import {
 import { CheckoutButtonInitializeOptions, CheckoutButtonOptions } from './checkout-button-options';
 import CheckoutButtonRegistryV2 from './checkout-button-strategy-registry-v2';
 
-export default class CheckoutHeadlessButtonStrategyActionCreator {
+export default class HeadlessCheckoutWalletStrategyActionCreator {
     constructor(
         private _registryV2: CheckoutButtonRegistryV2,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,

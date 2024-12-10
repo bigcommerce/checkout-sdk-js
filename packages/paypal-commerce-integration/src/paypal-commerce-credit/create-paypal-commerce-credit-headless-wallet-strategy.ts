@@ -5,12 +5,12 @@ import {
 
 import createPayPalCommerceIntegrationService from '../create-paypal-commerce-integration-service';
 
-import PayPalCommerceCreditHeadlessButtonStrategy from './paypal-commerce-credit-headless-button-strategy';
+import PaypalCommerceCreditHeadlessWalletStrategy from './paypal-commerce-credit-headless-wallet-strategy';
 
 const createPayPalCommerceHeadlessButtonStrategy: CheckoutButtonStrategyFactory<
-    PayPalCommerceCreditHeadlessButtonStrategy
+    PaypalCommerceCreditHeadlessWalletStrategy
 > = (paymentIntegrationService) =>
-    new PayPalCommerceCreditHeadlessButtonStrategy(
+    new PaypalCommerceCreditHeadlessWalletStrategy(
         paymentIntegrationService,
         createPayPalCommerceIntegrationService(paymentIntegrationService),
     );

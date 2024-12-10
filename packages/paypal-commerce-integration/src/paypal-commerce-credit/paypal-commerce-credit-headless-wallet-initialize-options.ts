@@ -1,6 +1,6 @@
 import { PayPalButtonStyleOptions } from '../paypal-commerce-types';
 
-export default interface PayPalCommerceCreditHeadlessButtonInitializeOptions {
+export default interface PaypalCommerceCreditHeadlessWalletInitializeOptions {
     cartId: string;
     /**
      * A set of styling options for the checkout button.
@@ -15,6 +15,6 @@ export default interface PayPalCommerceCreditHeadlessButtonInitializeOptions {
     onEligibilityFailure?(): void;
 }
 
-export interface WithPayPalCommerceCreditHeadlessButtonInitializeOptions {
-    paypalcommercecredit?: PayPalCommerceCreditHeadlessButtonInitializeOptions;
+export interface WithPayPalCommerceCreditHeadlessWalletInitializeOptions {
+    paypalcommercecredit?: PaypalCommerceCreditHeadlessWalletInitializeOptions;
 }

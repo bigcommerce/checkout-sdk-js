@@ -1,5 +1,5 @@
 export { default as createCheckoutButtonInitializer } from './create-checkout-button-initializer';
-export { default as createCheckoutHeadlessButtonInitializer } from './create-checkout-headless-button-initializer';
+export { default as createHeadlessCheckoutWalletInitializer } from './create-headless-checkout-wallet-initializer';
 export { default as checkoutButtonReducer } from './checkout-button-reducer';
 export {
     default as CheckoutButtonSelector,

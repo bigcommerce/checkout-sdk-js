@@ -79,7 +79,7 @@ export default interface PaymentIntegrationService {
 
     createBuyNowCart(body: BuyNowCartRequestBody, options?: RequestOptions): Promise<Cart>;
 
-    loadCardEntity(cartId: string, options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
+    loadCard(cartId: string, options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
 
     updatePaymentProviderCustomer(
         paymentProviderCustomer: PaymentProviderCustomer,

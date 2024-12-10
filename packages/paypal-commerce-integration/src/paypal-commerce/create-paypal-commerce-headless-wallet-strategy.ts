@@ -5,14 +5,16 @@ import {
 
 import createPayPalCommerceIntegrationService from '../create-paypal-commerce-integration-service';
 
-import PaypalCommerceHeadlessButtonStrategy from "./paypal-commerce-headless-button-strategy";
+import PaypalCommerceHeadlessWalletStrategy from './paypal-commerce-headless-wallet-strategy';
 
-const createPayPalCommerceHeadlessButtonStrategy: CheckoutButtonStrategyFactory<
-    PaypalCommerceHeadlessButtonStrategy
+const createPaypalCommerceHeadlessWalletStrategy: CheckoutButtonStrategyFactory<
+    PaypalCommerceHeadlessWalletStrategy
 > = (paymentIntegrationService) =>
-    new PaypalCommerceHeadlessButtonStrategy(
+    new PaypalCommerceHeadlessWalletStrategy(
         paymentIntegrationService,
         createPayPalCommerceIntegrationService(paymentIntegrationService),
     );
 
-export default toResolvableModule(createPayPalCommerceHeadlessButtonStrategy, [{ id: 'paypalcommerce' }]);
+export default toResolvableModule(createPaypalCommerceHeadlessWalletStrategy, [
+    { id: 'paypalcommerce' },
+]);

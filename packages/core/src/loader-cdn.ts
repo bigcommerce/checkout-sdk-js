@@ -2,21 +2,23 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import 'current-script-polyfill';
 
 import * as checkoutButtonBundle from './bundles/checkout-button';
-import * as checkoutHeadlessButtonBundle from './bundles/checkout-headless-button';
 import * as mainBundle from './bundles/checkout-sdk';
 import * as embeddedCheckoutBundle from './bundles/embedded-checkout';
+import * as headlessCheckoutWalletBundle from './bundles/headless-checkout-wallet';
 import * as hostedFormBundle from './bundles/hosted-form';
 import { parseUrl } from './common/url';
 
 export type CheckoutButtonBundle = typeof checkoutButtonBundle & { version: string };
-export type CheckoutHeadlessButtonBundle = typeof checkoutHeadlessButtonBundle & { version: string };
+export type HeadlessCheckoutWalletBundle = typeof headlessCheckoutWalletBundle & {
+    version: string;
+};
 export type EmbeddedCheckoutBundle = typeof embeddedCheckoutBundle & { version: string };
 export type HostedFormBundle = typeof hostedFormBundle & { version: string };
 export type MainBundle = typeof mainBundle & { version: string };
 
 export enum BundleType {
     CheckoutButton = 'checkout-button',
-    CheckoutHeadlessButton = 'checkout-headless-button',
+    HeadlessCheckoutWallet = 'headless-checkout-wallet',
     EmbeddedCheckout = 'embedded-checkout',
     HostedForm = 'hosted-form',
     Main = 'checkout-sdk',
@@ -28,13 +30,21 @@ const scriptOrigin = isScriptElement(document.currentScript)
 
 export function load(moduleName?: BundleType.Main): Promise<MainBundle>;
 export function load(moduleName: BundleType.CheckoutButton): Promise<CheckoutButtonBundle>;
-export function load(moduleName: BundleType.CheckoutHeadlessButton): Promise<CheckoutHeadlessButtonBundle>;
+export function load(
+    moduleName: BundleType.HeadlessCheckoutWallet,
+): Promise<HeadlessCheckoutWalletBundle>;
 export function load(moduleName: BundleType.EmbeddedCheckout): Promise<EmbeddedCheckoutBundle>;
 export function load(moduleName: BundleType.HostedForm): Promise<HostedFormBundle>;
 
 export async function load(
     moduleName: string = BundleType.Main,
-): Promise<MainBundle | CheckoutButtonBundle | CheckoutHeadlessButtonBundle | EmbeddedCheckoutBundle | HostedFormBundle> {
+): Promise<
+    | MainBundle
+    | CheckoutButtonBundle
+    | HeadlessCheckoutWalletBundle
+    | EmbeddedCheckoutBundle
+    | HostedFormBundle
+> {
     const { version, js } = MANIFEST_JSON;
     const manifestPath = js.find((path) => path.indexOf(moduleName) !== -1);
 

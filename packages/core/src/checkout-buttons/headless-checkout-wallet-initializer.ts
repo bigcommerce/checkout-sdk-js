@@ -5,11 +5,11 @@ import { isElementId, setUniqueElementId } from '../common/dom';
 
 import { CheckoutButtonInitializeOptions, CheckoutButtonOptions } from './checkout-button-options';
 import CheckoutButtonSelectors from './checkout-button-selectors';
-import CheckoutHeadlessButtonStrategyActionCreator from './checkout-headless-button-strategy-action-creator';
+import HeadlessCheckoutWalletStrategyActionCreator from './headless-checkout-wallet-strategy-action-creator';
 import createCheckoutButtonSelectors from './create-checkout-button-selectors';
 
 @bind
-export default class CheckoutHeadlessButtonInitializer {
+export default class HeadlessCheckoutWalletInitializer {
     private _state: CheckoutButtonSelectors;
 
     /**
@@ -17,7 +17,7 @@ export default class CheckoutHeadlessButtonInitializer {
      */
     constructor(
         private _store: CheckoutStore,
-        private _checkoutHeadlessButtonStrategyActionCreator: CheckoutHeadlessButtonStrategyActionCreator,
+        private _headlessCheckoutWalletStrategyActionCreator: HeadlessCheckoutWalletStrategyActionCreator,
     ) {
         this._state = createCheckoutButtonSelectors(this._store.getState());
 
@@ -114,7 +114,7 @@ export default class CheckoutHeadlessButtonInitializer {
 
         return Promise.all(
             containerIds.map((containerId) => {
-                const action = this._checkoutHeadlessButtonStrategyActionCreator.initialize({
+                const action = this._headlessCheckoutWalletStrategyActionCreator.initialize({
                     ...options,
                     containerId,
                 });
@@ -138,7 +138,7 @@ export default class CheckoutHeadlessButtonInitializer {
      * @returns A promise that resolves to the current state.
      */
     deinitializeHeadlessButton(options: CheckoutButtonOptions): Promise<CheckoutButtonSelectors> {
-        const action = this._checkoutHeadlessButtonStrategyActionCreator.deinitialize(options);
+        const action = this._headlessCheckoutWalletStrategyActionCreator.deinitialize(options);
         const queueId = `checkoutHeadlessButtonStrategy:${options.methodId}`;
 
         return this._store.dispatch(action, { queueId }).then(() => this.getState());

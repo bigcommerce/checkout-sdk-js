@@ -48,7 +48,7 @@ export default class CartRequestSender {
         return this._requestSender.post(url, { body, headers, timeout });
     }
 
-    loadCardEntity(cartId: string, options: LoadCartRequestOptions): Promise<Response<Cart>> {
+    loadCard(cartId: string, options: LoadCartRequestOptions): Promise<Response<Cart>> {
         const url = `/graphql`;
 
         const graphQLQuery = `
@@ -158,6 +158,8 @@ export default class CartRequestSender {
         } = response;
 
         const mappedLineItems: LineItemMap = {
+            // TODO:: add all missing fields
+            // eslint-disable-next-line
             // @ts-ignore
             physicalItems: lineItems.physicalItems.map((item) => ({
                 id: item.entityId,
@@ -171,6 +173,7 @@ export default class CartRequestSender {
             ...response,
             body: {
                 id: entityId,
+                // eslint-disable-next-line
                 // @ts-ignore
                 currency: {
                     code: amount.currencyCode,

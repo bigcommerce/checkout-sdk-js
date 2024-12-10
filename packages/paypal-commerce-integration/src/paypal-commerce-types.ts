@@ -1,6 +1,7 @@
 import {
     BuyNowCartRequestBody,
-    HostedInstrument, RequestOptions,
+    HostedInstrument,
+    RequestOptions,
     ShippingOption,
     VaultedInstrument,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -621,7 +622,7 @@ export interface PayPalCreateOrderCardFieldsResponse {
 
 export interface CreatePaymentOrderIntentOptions extends RequestOptions {
     body?: { query: string };
-    headers: { Authorization: string; [key: string]: string };
+    headers: { [key: string]: string; Authorization: string };
 }
 
 export interface CreatePaymentOrderIntentResponse {
@@ -631,7 +632,7 @@ export interface CreatePaymentOrderIntentResponse {
                 createPaymentWalletIntent: {
                     errors: Array<{
                         location: Array<{ line: string; column: string }>;
-                        message: string
+                        message: string;
                     }>;
                     paymentWalletIntentData: {
                         __typename: string;
