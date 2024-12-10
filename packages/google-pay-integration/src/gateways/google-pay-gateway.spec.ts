@@ -688,6 +688,57 @@ describe('GooglePayGateway', () => {
             expect(mappedAddress).toStrictEqual(expectedAddress);
         });
 
+        it('should use stateOrProvinceCode if city is empty', () => {
+            const expectedAddress = {
+                email: 'test.tester@bigcommerce.com',
+                firstName: 'John',
+                lastName: 'Doe',
+                company: 'Bigcommerce',
+                address1: '505 Oakland Ave',
+                address2: 'Building 1, 1st Floor',
+                city: 'TX',
+                stateOrProvince: 'TX',
+                stateOrProvinceCode: 'TX',
+                countryCode: 'US',
+                postalCode: '78703',
+                phone: '+1 555-555-5555',
+                customFields: [],
+            };
+
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getBillingAddress',
+            ).mockReturnValueOnce({
+                ...getBillingAddress(),
+                email: 'test.tester@bigcommerce.com',
+            });
+
+            const cardDataResponse = getCardDataResponse();
+            const mappedAddress = gateway.mapToBillingAddressRequestBody({
+                ...cardDataResponse,
+                paymentMethodData: {
+                    ...cardDataResponse.paymentMethodData,
+                    info: {
+                        ...cardDataResponse.paymentMethodData.info,
+                        billingAddress: {
+                            phoneNumber: '+1 555-555-5555',
+                            address3: '',
+                            sortingCode: '',
+                            address2: 'Building 1, 1st Floor',
+                            countryCode: 'US',
+                            address1: '505 Oakland Ave',
+                            postalCode: '78703',
+                            name: 'John Doe',
+                            administrativeArea: 'TX',
+                            locality: '',
+                        },
+                    },
+                },
+            });
+
+            expect(mappedAddress).toStrictEqual(expectedAddress);
+        });
+
         it('should call getBillingAddress', () => {
             gateway.mapToBillingAddressRequestBody(getCardDataResponse());
 
