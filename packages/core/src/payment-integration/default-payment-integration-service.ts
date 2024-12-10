@@ -14,7 +14,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BillingAddressActionCreator } from '../billing';
-import { CartRequestSender } from '../cart';
+import { CartActionCreator, CartRequestSender } from '../cart';
 import { Checkout, CheckoutActionCreator, CheckoutStore, CheckoutValidator } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
 import { CustomerActionCreator, CustomerCredentials } from '../customer';
@@ -46,6 +46,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _checkoutValidator: CheckoutValidator,
         private _hostedFormFactory: HostedFormFactory,
         private _orderActionCreator: OrderActionCreator,
+        private _cartActionCreator: CartActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
@@ -202,6 +203,14 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         );
 
         return buyNowCart;
+    }
+
+    async loadCard(cartId: string, options?: RequestOptions): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._cartActionCreator.loadCard(cartId, { ...options, useCache: true }),
+        );
+
+        return this._storeProjection.getState();
     }
 
     async applyStoreCredit(

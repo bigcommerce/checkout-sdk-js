@@ -8,6 +8,8 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    CreatePaymentOrderIntentOptions,
+    CreatePaymentOrderIntentResponse,
     PayPalCreateOrderRequestBody,
     PayPalOrderData,
     PayPalOrderStatusData,
@@ -68,5 +70,82 @@ export default class PayPalCommerceRequestSender {
         });
 
         return res.body;
+    }
+
+    /**
+     *
+     * GraphQL methods
+     *
+     */
+    async createPaymentOrderIntent(
+        walletEntityId: string,
+        cartId: string,
+        options: CreatePaymentOrderIntentOptions,
+    ): Promise<PayPalOrderData> {
+        const url = '/graphql';
+
+        const graphQLQuery = `
+            mutation {
+              payment {
+                paymentWallet {
+                  createPaymentWalletIntent(
+                    input: {cartEntityId: "${cartId}", paymentWalletEntityId: "${walletEntityId}"}
+                  ) {
+                    errors {
+                      ... on CreatePaymentWalletIntentGenericError {
+                        __typename
+                        message
+                      }
+                    }
+                    paymentWalletIntentData {
+                      ... on PayPalCommercePaymentWalletIntentData {
+                        __typename
+                        approvalUrl
+                        orderId
+                      }
+                    }
+                  }
+                }
+              }
+            }
+        `;
+
+        const requestOptions: CreatePaymentOrderIntentOptions = {
+            headers: {
+                ...options?.headers,
+                'Content-Type': 'application/json',
+            },
+            body: {
+                ...options.body,
+                query: graphQLQuery,
+            },
+        };
+
+        const res = await this.requestSender.post<CreatePaymentOrderIntentResponse>(
+            url,
+            requestOptions,
+        );
+
+        const {
+            data: {
+                payment: {
+                    paymentWallet: {
+                        createPaymentWalletIntent: { paymentWalletIntentData, errors },
+                    },
+                },
+            },
+        } = res.body;
+
+        const errorMessage = errors[0]?.message;
+
+        if (errorMessage) {
+            // TODO:: add error handling
+            throw new Error(errorMessage);
+        }
+
+        return {
+            orderId: paymentWalletIntentData.orderId,
+            approveUrl: paymentWalletIntentData.approvalUrl,
+        };
     }
 }
