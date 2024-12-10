@@ -5,7 +5,6 @@ import { IframeEventPoster } from '../common/iframe';
 import { InvalidHostedFormValueError, PaymentErrorResponseBody } from '../errors';
 import { HostedFieldSubmitManualOrderRequestEvent } from '../hosted-field-events';
 import { ManualOrderPaymentRequestSender } from '../payment';
-import { isOfflinePaymentMethodId } from '../utils';
 
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
@@ -56,7 +55,6 @@ export default class HostedInputManualOrderPaymentHandler {
             const isError = get(response.body, 'type') === 'error';
 
             const isSuccessfulOfflineOrder =
-                isOfflinePaymentMethodId(data.paymentMethodId) &&
                 get(response.body, 'type') === 'continue' &&
                 get(response.body, 'code') === 'await_confirmation';
             const isSuccess = get(response.body, 'type') === 'success' || isSuccessfulOfflineOrder;
