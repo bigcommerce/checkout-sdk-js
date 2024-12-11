@@ -27,7 +27,6 @@ import {
     SpamProtectionActionCreator,
     SpamProtectionRequestSender,
 } from '../spam-protection';
-import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 
 import createPaymentStrategyRegistryV2 from './create-payment-strategy-registry-v2';
 import PaymentActionCreator from './payment-action-creator';
@@ -56,7 +55,6 @@ import {
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mpgs';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
-import { MonerisPaymentStrategy } from './strategies/moneris';
 import { OpyPaymentStrategy, OpyScriptLoader } from './strategies/opy';
 import { PaypalExpressPaymentStrategy, PaypalScriptLoader } from './strategies/paypal';
 import {
@@ -92,9 +90,6 @@ export default function createPaymentStrategyRegistry(
     const orderActionCreator = new OrderActionCreator(
         new OrderRequestSender(requestSender),
         checkoutValidator,
-    );
-    const storeCreditActionCreator = new StoreCreditActionCreator(
-        new StoreCreditRequestSender(requestSender),
     );
     const paymentHumanVerificationHandler = new PaymentHumanVerificationHandler(
         createSpamProtection(createScriptLoader()),
@@ -238,18 +233,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 new MasterpassScriptLoader(scriptLoader),
                 locale,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.MONERIS,
-        () =>
-            new MonerisPaymentStrategy(
-                hostedFormFactory,
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                storeCreditActionCreator,
             ),
     );
 

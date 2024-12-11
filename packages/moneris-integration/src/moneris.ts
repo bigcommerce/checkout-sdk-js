@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /**
  * A set of stringified CSS to apply to Moneris' IFrame fields.
  * CSS attributes should be converted to string.
