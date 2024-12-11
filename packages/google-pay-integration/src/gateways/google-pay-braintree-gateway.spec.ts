@@ -126,6 +126,7 @@ describe('GooglePayBraintreeGateway', () => {
                     number: '1111',
                     type: 'VISA',
                     bin: '401288',
+                    isNetworkTokenized: false,
                 },
             };
 
@@ -172,6 +173,7 @@ describe('GooglePayBraintreeGateway', () => {
                 type: 'type',
                 number: '1234',
                 bin: 'bin',
+                isNetworkTokenized: false,
             };
 
             await googlePayBraintreeGateway.initialize(() => braintree);
@@ -189,6 +191,26 @@ describe('GooglePayBraintreeGateway', () => {
                 type: 'type',
                 number: '1234',
                 bin: 'bin',
+                isNetworkTokenized: false,
+            };
+
+            await googlePayBraintreeGateway.initialize(() => braintree);
+
+            const nonce = await googlePayBraintreeGateway.getNonce('googlepaybraintree');
+
+            expect(braintreeSdk.getBraintreeThreeDS).not.toHaveBeenCalled();
+            expect(nonce).toBe('token');
+        });
+
+        it('get nonce when card is network tokenized', async () => {
+            const braintree = getBraintree();
+
+            braintree.initializationData!.isThreeDSecureEnabled = true;
+            braintree.initializationData!.card_information = {
+                type: 'type',
+                number: '1234',
+                bin: 'bin',
+                isNetworkTokenized: true,
             };
 
             await googlePayBraintreeGateway.initialize(() => braintree);

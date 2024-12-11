@@ -62,10 +62,10 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
 
         const {
             isThreeDSecureEnabled,
-            card_information: { bin },
+            card_information: { bin, isNetworkTokenized },
         } = initializationData;
 
-        if (isThreeDSecureEnabled) {
+        if (isThreeDSecureEnabled && !isNetworkTokenized) {
             const threeDSecure = await this._braintreeSdk.getBraintreeThreeDS();
 
             const { orderAmount } = this._service.getState().getOrderOrThrow();
@@ -106,6 +106,8 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
 
         data.nonce = token.androidPayCards[0].nonce;
         data.card_information.bin = token.androidPayCards[0].details.bin;
+        data.card_information.isNetworkTokenized =
+            token.androidPayCards[0].details.isNetworkTokenized;
 
         return data;
     }

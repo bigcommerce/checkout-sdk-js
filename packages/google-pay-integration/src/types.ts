@@ -291,7 +291,7 @@ export interface GooglePayHostWindow extends Window {
 }
 
 interface GooglePayBaseInitializationData {
-    card_information?: { type: string; number: string; bin?: string };
+    card_information?: { type: string; number: string; bin?: string; isNetworkTokenized?: boolean };
     gateway: string;
     gatewayMerchantId?: string;
     googleMerchantId: string;
@@ -363,7 +363,7 @@ export type GooglePayInitializationData =
 
 export interface GooglePaySetExternalCheckoutData {
     nonce: string;
-    card_information: { type: string; number: string; bin?: string };
+    card_information: { type: string; number: string; bin?: string; isNetworkTokenized?: boolean };
     cart_id?: string;
 }
 
@@ -393,6 +393,7 @@ export interface GooglePayBraintreeTokenObject {
             nonce: string;
             details: {
                 bin: string;
+                isNetworkTokenized?: boolean;
             };
         },
     ];
