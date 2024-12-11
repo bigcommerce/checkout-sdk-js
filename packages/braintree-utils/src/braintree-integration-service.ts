@@ -26,8 +26,6 @@ import {
     BraintreeShippingAddressOverride,
     BraintreeTokenizationDetails,
     BraintreeTokenizePayload,
-    GetLocalPaymentInstance,
-    LocalPaymentInstance,
     PAYPAL_COMPONENTS,
 } from './types';
 import isBraintreeError from './utils/is-braintree-error';
@@ -48,7 +46,6 @@ export default class BraintreeIntegrationService {
     private clientToken?: string;
     private dataCollectors: BraintreeDataCollectors = {};
     private paypalCheckout?: BraintreePaypalCheckout;
-    private braintreeLocalMethods?: LocalPaymentInstance;
     private braintreePaypal?: Promise<BraintreePaypal>;
 
     constructor(
@@ -187,35 +184,6 @@ export default class BraintreeIntegrationService {
         );
 
         return this.paypalCheckout;
-    }
-
-    async loadBraintreeLocalMethods(
-        getLocalPaymentInstance: GetLocalPaymentInstance,
-        merchantAccountId: string,
-    ) {
-        const client = await this.getClient();
-        const braintreeLocalMethods = await this.braintreeScriptLoader.loadBraintreeLocalMethods();
-
-        if (!this.braintreeLocalMethods) {
-            this.braintreeLocalMethods = await braintreeLocalMethods.create(
-                {
-                    client,
-                    merchantAccountId,
-                },
-                (
-                    localPaymentErr: BraintreeError | undefined,
-                    localPaymentInstance: LocalPaymentInstance,
-                ) => {
-                    if (localPaymentErr) {
-                        throw new Error(localPaymentErr.message);
-                    }
-
-                    getLocalPaymentInstance(localPaymentInstance);
-                },
-            );
-        }
-
-        return this.braintreeLocalMethods;
     }
 
     async getDataCollector(

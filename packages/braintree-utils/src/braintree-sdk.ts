@@ -9,8 +9,10 @@ import {
     BraintreeClient,
     BraintreeDataCollector,
     BraintreeDataCollectorCreatorConfig,
+    BraintreeError,
     BraintreeErrorCode,
     BraintreeGooglePayment,
+    BraintreeLocalPayment,
     BraintreeModule,
     BraintreeThreeDSecure,
     BraintreeUsBankAccount,
@@ -22,6 +24,7 @@ import { VisaCheckoutSDK } from './visacheckout';
 
 export default class BraintreeSdk {
     private braintreeVenmo?: BraintreeVenmoCheckout;
+    private braintreeLocalPayment?: BraintreeLocalPayment;
     private client?: BraintreeClient;
     private clientToken?: string;
     private dataCollector?: BraintreeDataCollector;
@@ -134,6 +137,46 @@ export default class BraintreeSdk {
         }
 
         return this.threeDS;
+    }
+
+    /**
+     *
+     * Braintree Local Payment Methods
+     * braintree doc: https://braintree.github.io/braintree-web/current/module-braintree-web_local-payment.html
+     *
+     */
+    async getBraintreeLocalPayment(
+        merchantAccountId: string,
+    ): Promise<BraintreeLocalPayment | undefined> {
+        if (!this.braintreeLocalPayment) {
+            const [client, localPaymentCreator] = await Promise.all([
+                this.getClient(),
+                this.braintreeScriptLoader.loadLocalPayment(),
+            ]);
+
+            this.braintreeLocalPayment = await new Promise(
+                (
+                    resolve: (braintreeLocalPayment: BraintreeLocalPayment) => void,
+                    reject: (error: BraintreeError) => void,
+                ) => {
+                    void localPaymentCreator.create(
+                        { client, merchantAccountId },
+                        (
+                            error: BraintreeError | undefined,
+                            braintreeLocalPayment: BraintreeLocalPayment,
+                        ) => {
+                            if (error) {
+                                reject(error);
+                            }
+
+                            resolve(braintreeLocalPayment);
+                        },
+                    );
+                },
+            );
+        }
+
+        return this.braintreeLocalPayment;
     }
 
     /**
