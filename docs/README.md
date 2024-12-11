@@ -127,7 +127,7 @@
 - [BraintreeFormFieldValidateEventData](interfaces/BraintreeFormFieldValidateEventData.md)
 - [BraintreeFormFieldsMap](interfaces/BraintreeFormFieldsMap.md)
 - [BraintreeFormOptions](interfaces/BraintreeFormOptions.md)
-- [BraintreeLocalMethods](interfaces/BraintreeLocalMethods.md)
+- [BraintreeLocalMethodsPaymentInitializeOptions](interfaces/BraintreeLocalMethodsPaymentInitializeOptions.md)
 - [BraintreePaymentInitializeOptions](interfaces/BraintreePaymentInitializeOptions.md)
 - [BraintreePaypalButtonInitializeOptions](interfaces/BraintreePaypalButtonInitializeOptions.md)
 - [BraintreePaypalCreditButtonInitializeOptions](interfaces/BraintreePaypalCreditButtonInitializeOptions.md)

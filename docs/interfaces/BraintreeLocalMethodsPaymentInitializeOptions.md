@@ -1,19 +1,19 @@
-[@bigcommerce/checkout-sdk](../README.md) / BraintreeLocalMethods
+[@bigcommerce/checkout-sdk](../README.md) / BraintreeLocalMethodsPaymentInitializeOptions
 
-# Interface: BraintreeLocalMethods
+# Interface: BraintreeLocalMethodsPaymentInitializeOptions
 
 ## Table of contents
 
 ### Properties
 
-- [buttonText](BraintreeLocalMethods.md#buttontext)
-- [container](BraintreeLocalMethods.md#container)
+- [buttonText](BraintreeLocalMethodsPaymentInitializeOptions.md#buttontext)
+- [container](BraintreeLocalMethodsPaymentInitializeOptions.md#container)
 
 ### Methods
 
-- [onError](BraintreeLocalMethods.md#onerror)
-- [onRenderButton](BraintreeLocalMethods.md#onrenderbutton)
-- [submitForm](BraintreeLocalMethods.md#submitform)
+- [onError](BraintreeLocalMethodsPaymentInitializeOptions.md#onerror)
+- [onRenderButton](BraintreeLocalMethodsPaymentInitializeOptions.md#onrenderbutton)
+- [submitForm](BraintreeLocalMethodsPaymentInitializeOptions.md#submitform)
 
 ## Properties
 

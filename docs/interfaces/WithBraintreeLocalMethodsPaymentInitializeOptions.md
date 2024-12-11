@@ -12,4 +12,4 @@
 
 ### braintreelocalmethods
 
-• `Optional` **braintreelocalmethods**: [`BraintreeLocalMethods`](BraintreeLocalMethods.md)
+• `Optional` **braintreelocalmethods**: [`BraintreeLocalMethodsPaymentInitializeOptions`](BraintreeLocalMethodsPaymentInitializeOptions.md)

@@ -1331,7 +1331,7 @@ declare interface BraintreeFormOptions {
     onEnter?(data: BraintreeFormFieldEnterEventData): void;
 }
 
-declare interface BraintreeLocalMethods {
+declare interface BraintreeLocalMethodsPaymentInitializeOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
      */
@@ -8423,7 +8423,7 @@ declare interface WithBraintreeFastlanePaymentInitializeOptions {
 }
 
 declare interface WithBraintreeLocalMethodsPaymentInitializeOptions {
-    braintreelocalmethods?: BraintreeLocalMethods;
+    braintreelocalmethods?: BraintreeLocalMethodsPaymentInitializeOptions;
 }
 
 declare interface WithBraintreePaypalCustomerInitializeOptions {

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.686.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.685.0...v1.686.0) (2024-12-11)
+
+
+### Features
+
+* **payment:** PAYPAL-4884 send payment provider paymentId on payment start stage in Braintree LPMs payment strategy ([#2740](https://github.com/bigcommerce/checkout-sdk-js/issues/2740)) ([aa08491](https://github.com/bigcommerce/checkout-sdk-js/commit/aa084919ef0f825f17df14c3da1244989e363685))
+
 ## [1.685.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.684.0...v1.685.0) (2024-12-09)
 
 
