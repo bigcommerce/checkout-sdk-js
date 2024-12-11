@@ -85,6 +85,9 @@
             "@bigcommerce/checkout-sdk/mollie-integration": [
                 "packages/mollie-integration/src/index.ts"
             ],
+            "@bigcommerce/checkout-sdk/moneris-integration": [
+                "packages/moneris-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/no-payment-integration": [
                 "packages/no-payment-integration/src/index.ts"
             ],

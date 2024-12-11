@@ -27,6 +27,7 @@
         "klarna-integration": "packages/klarna-integration",
         "legacy-integration": "packages/legacy-integration",
         "mollie-integration": "packages/mollie-integration",
+        "moneris-integration": "packages/moneris-integration",
         "no-payment-integration": "packages/no-payment-integration",
         "offline-integration": "packages/offline-integration",
         "offsite-integration": "packages/offsite-integration",
