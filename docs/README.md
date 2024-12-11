@@ -312,8 +312,6 @@
 - [MasterpassCustomerInitializeOptions](interfaces/MasterpassCustomerInitializeOptions.md)
 - [MasterpassPaymentInitializeOptions](interfaces/MasterpassPaymentInitializeOptions.md)
 - [MolliePaymentInitializeOptions](interfaces/MolliePaymentInitializeOptions.md)
-- [MonerisPaymentInitializeOptions](interfaces/MonerisPaymentInitializeOptions.md)
-- [MonerisStylingProps](interfaces/MonerisStylingProps.md)
 - [MutationObeserverCreator](interfaces/MutationObeserverCreator.md)
 - [MutationObserverWindow](interfaces/MutationObserverWindow.md)
 - [NonceInstrument](interfaces/NonceInstrument.md)

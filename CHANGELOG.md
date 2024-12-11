@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.687.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.686.0...v1.687.0) (2024-12-11)
+
+
+### Features
+
+* **payment:** PI-1546 Refactor the existing moneris payment strategy in Checkout SDK to use the new checkout payment integration JS API ([#2716](https://github.com/bigcommerce/checkout-sdk-js/issues/2716)) ([d4717b7](https://github.com/bigcommerce/checkout-sdk-js/commit/d4717b70ba967263618b8d4ba2b55ac318bc7be4))
+
 ## [1.686.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.685.0...v1.686.0) (2024-12-11)
 
 

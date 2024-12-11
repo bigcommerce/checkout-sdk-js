@@ -23,7 +23,6 @@ current checkout flow.
 - [gatewayId](BasePaymentInitializeOptions.md#gatewayid)
 - [masterpass](BasePaymentInitializeOptions.md#masterpass)
 - [methodId](BasePaymentInitializeOptions.md#methodid)
-- [moneris](BasePaymentInitializeOptions.md#moneris)
 - [opy](BasePaymentInitializeOptions.md#opy)
 - [params](BasePaymentInitializeOptions.md#params)
 - [paypalexpress](BasePaymentInitializeOptions.md#paypalexpress)
@@ -111,15 +110,6 @@ The identifier of the payment method.
 #### Inherited from
 
 [PaymentRequestOptions](PaymentRequestOptions.md).[methodId](PaymentRequestOptions.md#methodid)
-
-___
-
-### moneris
-
-• `Optional` **moneris**: [`MonerisPaymentInitializeOptions`](MonerisPaymentInitializeOptions.md)
-
-The options that are required to initialize the Moneris payment method.
-They can be omitted unless you need to support Moneris.
 
 ___
 
