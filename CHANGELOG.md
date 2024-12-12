@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.687.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.687.0...v1.687.1) (2024-12-12)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-0 Skip 3D Secure when GooglePay card network tokenized ([#2751](https://github.com/bigcommerce/checkout-sdk-js/issues/2751)) ([a2bcad9](https://github.com/bigcommerce/checkout-sdk-js/commit/a2bcad9d1234a811dc5de2c37565bfbec501783e))
+
 ## [1.687.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.686.0...v1.687.0) (2024-12-11)
 
 
