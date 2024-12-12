@@ -455,12 +455,16 @@ export interface PayPalOrderDetails {
     purchase_units: Array<{
         shipping: {
             address: PayPalOrderAddress;
+            name: {
+                full_name: string;
+            };
         };
     }>;
 }
 
 export interface PayPalOrderAddress {
     address_line_1: string;
+    address_line_2: string;
     admin_area_2: string;
     admin_area_1?: string;
     postal_code: string;

@@ -12,7 +12,7 @@ export default function getBillingAddressFromOrderDetails(): BillingAddressReque
         phone: '',
         company: '',
         address1: payer.address.address_line_1,
-        address2: '',
+        address2: payer.address.address_line_2,
         city: payer.address.admin_area_2,
         countryCode: payer.address.country_code,
         postalCode: payer.address.postal_code,
