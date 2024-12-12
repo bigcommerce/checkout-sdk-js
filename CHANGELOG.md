@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.688.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.687.1...v1.688.0) (2024-12-12)
+
+
+### Features
+
+* **payment:** PAYPAL-4869 Missing 'Street Name' in Delivery Address ([#2744](https://github.com/bigcommerce/checkout-sdk-js/issues/2744)) ([87f9ce2](https://github.com/bigcommerce/checkout-sdk-js/commit/87f9ce2cd11337008cb076213e53f75d375ec746))
+
 ### [1.687.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.687.0...v1.687.1) (2024-12-12)
 
 
