@@ -3,6 +3,7 @@ import HostedForm from './hosted-form';
 import HostedFormFactory from './hosted-form-factory';
 import HostedFormManualOrderData from './hosted-form-manual-order-data';
 import HostedFormOptions from './hosted-form-options';
+import { HostedInputSubmitManualOrderSuccessEvent } from './iframe-content';
 
 export default class HostedFormService {
     protected _hostedForm?: HostedForm;
@@ -23,7 +24,9 @@ export default class HostedFormService {
         }
     }
 
-    async submitManualOrderPayment(data: HostedFormManualOrderData): Promise<void> {
+    async submitManualOrderPayment(
+        data: HostedFormManualOrderData,
+    ): Promise<HostedInputSubmitManualOrderSuccessEvent | void> {
         const form = this._hostedForm;
 
         if (!form) {
@@ -31,6 +34,7 @@ export default class HostedFormService {
         }
 
         await form.validate();
-        await form.submitManualOrderPayment({ data });
+
+        return form.submitManualOrderPayment({ data });
     }
 }

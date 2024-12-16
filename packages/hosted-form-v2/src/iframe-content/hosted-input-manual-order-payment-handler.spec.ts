@@ -121,18 +121,24 @@ describe('HostedInputManualOrderPaymentHandler', () => {
                 },
             },
         };
+        const response = {
+            body: { type: 'success' },
+        };
 
         jest.spyOn(inputAggregator, 'getInputValues').mockReturnValue({});
         jest.spyOn(inputValidator, 'validate').mockResolvedValue({ isValid: true, errors: {} });
-        jest.spyOn(manualOrderPaymentRequestSender, 'submitPayment').mockResolvedValue({
-            body: { type: 'success' },
-        } as Response<unknown>);
+        jest.spyOn(manualOrderPaymentRequestSender, 'submitPayment').mockResolvedValue(
+            response as Response<unknown>,
+        );
         jest.spyOn(eventPoster, 'post');
 
         await handler.handle(event);
 
         expect(eventPoster.post).toHaveBeenCalledWith({
             type: HostedInputEventType.SubmitManualOrderSucceeded,
+            payload: {
+                response,
+            },
         });
     });
 
@@ -146,22 +152,63 @@ describe('HostedInputManualOrderPaymentHandler', () => {
                 },
             },
         };
+        const response = {
+            body: {
+                type: 'continue',
+                code: 'complete_offline',
+                parameters: {},
+            },
+        };
 
         jest.spyOn(inputAggregator, 'getInputValues').mockReturnValue({});
         jest.spyOn(inputValidator, 'validate').mockResolvedValue({ isValid: true, errors: {} });
-        jest.spyOn(manualOrderPaymentRequestSender, 'submitPayment').mockResolvedValue({
-            body: {
-                type: 'continue',
-                code: 'await_confirmation',
-                parameters: {},
-            },
-        } as Response<unknown>);
+        jest.spyOn(manualOrderPaymentRequestSender, 'submitPayment').mockResolvedValue(
+            response as Response<unknown>,
+        );
         jest.spyOn(eventPoster, 'post');
 
         await handler.handle(event);
 
         expect(eventPoster.post).toHaveBeenCalledWith({
             type: HostedInputEventType.SubmitManualOrderSucceeded,
+            payload: {
+                response,
+            },
+        });
+    });
+
+    it('should post submit succeeded event if async payment is successful', async () => {
+        const event: HostedFieldSubmitManualOrderRequestEvent = {
+            type: HostedFieldEventType.SubmitManualOrderRequested,
+            payload: {
+                data: {
+                    paymentMethodId: 'asyncThirdPartyPayment',
+                    paymentSessionToken: pstToken,
+                },
+            },
+        };
+        const response = {
+            body: {
+                type: 'continue',
+                code: 'await_confirmation',
+                parameters: {},
+            },
+        };
+
+        jest.spyOn(inputAggregator, 'getInputValues').mockReturnValue({});
+        jest.spyOn(inputValidator, 'validate').mockResolvedValue({ isValid: true, errors: {} });
+        jest.spyOn(manualOrderPaymentRequestSender, 'submitPayment').mockResolvedValue(
+            response as Response<unknown>,
+        );
+        jest.spyOn(eventPoster, 'post');
+
+        await handler.handle(event);
+
+        expect(eventPoster.post).toHaveBeenCalledWith({
+            type: HostedInputEventType.SubmitManualOrderSucceeded,
+            payload: {
+                response,
+            },
         });
     });
 });
