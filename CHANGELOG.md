@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.690.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.689.0...v1.690.0) (2024-12-16)
+
+
+### Features
+
+* **payment:** STRIPE-485 Stripe Google Pay test coverage branches increased ([f657e5c](https://github.com/bigcommerce/checkout-sdk-js/commit/f657e5cf192c7fcaa83b373b4dcf7c1652abc469))
+
 ## [1.689.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.688.0...v1.689.0) (2024-12-16)
 
 
