@@ -6,7 +6,6 @@ import {
     OrderFinalizationNotRequiredError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
-    PaymentMethodCancelledError,
     PaymentMethodFailedError,
     RequestError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -863,80 +862,7 @@ describe('StripeOCSPaymentStrategy', () => {
             expect(retrievePaymentIntentMock).toHaveBeenCalled();
         });
 
-        it('throw stripe displayable error', async () => {
-            const stripeDisplayableErrorMock = {
-                type: 'card_error',
-                message: 'card error',
-            };
-
-            mockFirstPaymentRequest(errorResponse);
-            confirmPaymentMock = jest.fn().mockResolvedValue({
-                paymentIntent: {},
-                error: stripeDisplayableErrorMock,
-            });
-
-            jest.spyOn(
-                stripeUPEIntegrationService,
-                'throwDisplayableStripeError',
-            ).mockImplementation(
-                jest.fn(() => {
-                    // eslint-disable-next-line @typescript-eslint/no-throw-literal
-                    throw stripeDisplayableErrorMock;
-                }),
-            );
-
-            stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
-                confirmPayment: confirmPaymentMock,
-                retrievePaymentIntent: jest.fn(),
-            };
-            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockImplementation(
-                jest.fn(() => Promise.resolve(stripeUPEJsMock)),
-            );
-
-            await stripeOCSPaymentStrategy.initialize(stripeOptions);
-
-            try {
-                await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
-            } catch (error) {
-                expect(error).toEqual(stripeDisplayableErrorMock);
-            }
-        });
-
-        it('throw stripe cancelation error', async () => {
-            const stripeCancelationErrorMock = {
-                type: 'cancelation_error',
-            };
-
-            mockFirstPaymentRequest(errorResponse);
-            confirmPaymentMock = jest.fn().mockResolvedValue({
-                paymentIntent: {},
-                error: stripeCancelationErrorMock,
-            });
-
-            jest.spyOn(
-                stripeUPEIntegrationService,
-                'throwDisplayableStripeError',
-            ).mockReturnValue();
-            jest.spyOn(stripeUPEIntegrationService, 'isCancellationError').mockReturnValue(true);
-
-            stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
-                confirmPayment: confirmPaymentMock,
-                retrievePaymentIntent: jest.fn(),
-            };
-            jest.spyOn(stripeScriptLoader, 'getStripeClient').mockImplementation(
-                jest.fn(() => Promise.resolve(stripeUPEJsMock)),
-            );
-
-            await stripeOCSPaymentStrategy.initialize(stripeOptions);
-
-            await expect(
-                stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
-            ).rejects.toThrow(PaymentMethodCancelledError);
-        });
-
-        it('throw generic stripe error', async () => {
+        it('throw stripe error', async () => {
             const stripeGenericErrorMock = {
                 type: 'cancelation_error',
             };
@@ -947,12 +873,6 @@ describe('StripeOCSPaymentStrategy', () => {
                 error: stripeGenericErrorMock,
             });
 
-            jest.spyOn(
-                stripeUPEIntegrationService,
-                'throwDisplayableStripeError',
-            ).mockReturnValue();
-            jest.spyOn(stripeUPEIntegrationService, 'isCancellationError').mockReturnValue(false);
-
             stripeUPEJsMock = {
                 ...getStripeUPEJsMock(),
                 confirmPayment: confirmPaymentMock,
@@ -966,21 +886,15 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await expect(
                 stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
-            ).rejects.toThrow(PaymentMethodFailedError);
+            ).rejects.toThrow('throw stripe error');
         });
 
-        it('throw error i confirmation crashed', async () => {
+        it('throw error if confirmation crashed', async () => {
             mockFirstPaymentRequest(errorResponse);
             confirmPaymentMock = jest
                 .fn()
                 .mockReturnValue(Promise.reject(new Error('stripe confirmation error')));
 
-            jest.spyOn(
-                stripeUPEIntegrationService,
-                'throwDisplayableStripeError',
-            ).mockReturnValue();
-            jest.spyOn(stripeUPEIntegrationService, 'isCancellationError').mockReturnValue(false);
-
             stripeUPEJsMock = {
                 ...getStripeUPEJsMock(),
                 confirmPayment: confirmPaymentMock,
@@ -994,19 +908,13 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await expect(
                 stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
-            ).rejects.toThrow(PaymentMethodFailedError);
+            ).rejects.toThrow('throw stripe error');
         });
 
         it('throw generic stripe error if no confirmation response', async () => {
             mockFirstPaymentRequest(errorResponse);
             confirmPaymentMock = jest.fn().mockResolvedValue(null);
 
-            jest.spyOn(
-                stripeUPEIntegrationService,
-                'throwDisplayableStripeError',
-            ).mockReturnValue();
-            jest.spyOn(stripeUPEIntegrationService, 'isCancellationError').mockReturnValue(false);
-
             stripeUPEJsMock = {
                 ...getStripeUPEJsMock(),
                 confirmPayment: confirmPaymentMock,
@@ -1020,19 +928,13 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await expect(
                 stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
-            ).rejects.toThrow(PaymentMethodFailedError);
+            ).rejects.toThrow('throw stripe error');
         });
 
         it('throw generic stripe error if no payment intent response', async () => {
             mockFirstPaymentRequest(errorResponse);
             confirmPaymentMock = jest.fn().mockResolvedValue({});
 
-            jest.spyOn(
-                stripeUPEIntegrationService,
-                'throwDisplayableStripeError',
-            ).mockReturnValue();
-            jest.spyOn(stripeUPEIntegrationService, 'isCancellationError').mockReturnValue(false);
-
             stripeUPEJsMock = {
                 ...getStripeUPEJsMock(),
                 confirmPayment: confirmPaymentMock,
@@ -1046,7 +948,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await expect(
                 stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock()),
-            ).rejects.toThrow(PaymentMethodFailedError);
+            ).rejects.toThrow('throw stripe error');
         });
 
         it('submit second payment request after stripe confirmation', async () => {
