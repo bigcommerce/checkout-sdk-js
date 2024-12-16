@@ -7,6 +7,10 @@ import {
     SDK_VERSION_HEADERS,
 } from '../common/http-request';
 
+import HeadlessPaymentMethodConfig from './headless-payment-method-config';
+import { HeadlessPaymentMethodResponse } from './headless-payment-method-response';
+import { HeadlessPaymentMethodType } from './headless-payment-method-type';
+import HeadlessPaymentRequestOptions from './headless-payment-request-options';
 import PaymentMethod from './payment-method';
 
 export default class PaymentMethodRequestSender {
@@ -43,5 +47,80 @@ export default class PaymentMethodRequestSender {
             },
             params,
         });
+    }
+
+    /**
+     * GraphQL payment requests
+     */
+    loadPaymentWalletWithInitializationData(
+        methodId: string,
+        options: HeadlessPaymentRequestOptions,
+    ): Promise<Response<PaymentMethod>> {
+        const url = `/graphql`;
+
+        const entityId = this.getPaymentEntityId(methodId);
+
+        const graphQLQuery = `
+            query {
+                site {
+                    paymentWalletWithInitializationData(filter: {paymentWalletEntityId: "${entityId}"}) {
+                        clientToken
+                        initializationData
+                    }
+                }
+            }
+        `;
+
+        const requestOptions: HeadlessPaymentRequestOptions = {
+            headers: {
+                ...options.headers,
+                'Content-Type': 'application/json',
+            },
+            body: {
+                query: graphQLQuery,
+            },
+        };
+
+        return this._requestSender
+            .post<HeadlessPaymentMethodResponse<string>>(url, requestOptions)
+            .then((response) => this.transformToPaymentMethodResponse(response, methodId));
+    }
+
+    private transformToPaymentMethodResponse(
+        response: Response<HeadlessPaymentMethodResponse>,
+        methodId: string,
+    ): Response<PaymentMethod> {
+        const {
+            body: {
+                data: {
+                    site: { paymentWalletWithInitializationData },
+                },
+            },
+        } = response;
+
+        return {
+            ...response,
+            body: {
+                initializationData: JSON.parse(
+                    atob(paymentWalletWithInitializationData.initializationData),
+                ),
+                clientToken: paymentWalletWithInitializationData.clientToken,
+                id: methodId,
+                config: {},
+                method: '',
+                supportedCards: [],
+                type: 'PAYMENT_TYPE_API',
+            },
+        };
+    }
+
+    private getPaymentEntityId(methodId: string): HeadlessPaymentMethodType {
+        const entityId = HeadlessPaymentMethodConfig[methodId];
+
+        if (!entityId) {
+            throw new Error('Unable to get payment entity id.');
+        }
+
+        return entityId;
     }
 }
