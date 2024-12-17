@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.692.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.691.0...v1.692.0) (2024-12-17)
+
+
+### Features
+
+* **payment:** STRIPE-546 Google Pay use stateOrProvinceCode if city is empty ([73ae053](https://github.com/bigcommerce/checkout-sdk-js/commit/73ae05311759cfeba30b7d977509e8e4168a8ce9))
+
 ## [1.691.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.690.0...v1.691.0) (2024-12-16)
 
 
