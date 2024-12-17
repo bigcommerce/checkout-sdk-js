@@ -116,7 +116,7 @@ describe('ManualOrderPaymentRequestSender', () => {
     it('submits offline payment', async () => {
         response = {
             type: 'continue',
-            code: 'await_confirmation',
+            code: 'complete_offline',
             parameters: {},
         } as unknown as Response<unknown>;
 

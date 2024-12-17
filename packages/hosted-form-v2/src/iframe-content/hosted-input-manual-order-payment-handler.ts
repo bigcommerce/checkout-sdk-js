@@ -58,8 +58,14 @@ export default class HostedInputManualOrderPaymentHandler {
             const isSuccessfulOfflineOrder =
                 isOfflinePaymentMethodId(data.paymentMethodId) &&
                 get(response.body, 'type') === 'continue' &&
+                get(response.body, 'code') === 'complete_offline';
+            const isSuccessfulAsyncOrder =
+                get(response.body, 'type') === 'continue' &&
                 get(response.body, 'code') === 'await_confirmation';
-            const isSuccess = get(response.body, 'type') === 'success' || isSuccessfulOfflineOrder;
+            const isSuccess =
+                get(response.body, 'type') === 'success' ||
+                isSuccessfulOfflineOrder ||
+                isSuccessfulAsyncOrder;
 
             if (isFailure) {
                 this._eventPoster.post({
@@ -78,6 +84,9 @@ export default class HostedInputManualOrderPaymentHandler {
             } else if (isSuccess) {
                 this._eventPoster.post({
                     type: HostedInputEventType.SubmitManualOrderSucceeded,
+                    payload: {
+                        response,
+                    },
                 });
             }
         } catch (error) {

@@ -110,6 +110,9 @@ export interface HostedInputEnterEvent {
 }
 export interface HostedInputSubmitManualOrderSuccessEvent {
     type: HostedInputEventType.SubmitManualOrderSucceeded;
+    payload: {
+        response: Response<unknown>;
+    };
 }
 
 export interface HostedInputSubmitManualOrderErrorEvent {
