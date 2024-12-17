@@ -238,6 +238,9 @@ declare interface HostedInputSubmitManualOrderErrorEvent {
 
 declare interface HostedInputSubmitManualOrderSuccessEvent {
     type: HostedInputEventType.SubmitManualOrderSucceeded;
+    payload: {
+        response: Response<unknown>;
+    };
 }
 
 declare interface HostedInputValidateErrorData {

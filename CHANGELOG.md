@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.693.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.692.0...v1.693.0) (2024-12-17)
+
+
+### Features
+
+* **payment:** CHECKOUT-8901 Add Async Payment Methods ([#2753](https://github.com/bigcommerce/checkout-sdk-js/issues/2753)) ([74b04cb](https://github.com/bigcommerce/checkout-sdk-js/commit/74b04cb6c90097331cc716d93c9d589f4bdf2bbf))
+
 ## [1.692.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.691.0...v1.692.0) (2024-12-17)
 
 

@@ -208,7 +208,7 @@ declare class HostedFormService {
     constructor(_host: string, _hostedFormFactory: HostedFormFactory);
     initialize(options: HostedFormOptions): Promise<void>;
     deinitialize(): void;
-    submitManualOrderPayment(data: HostedFormManualOrderData): Promise<void>;
+    submitManualOrderPayment(data: HostedFormManualOrderData): Promise<HostedInputSubmitManualOrderSuccessEvent | void>;
 }
 
 declare interface HostedInputAttachErrorEvent {
@@ -314,6 +314,9 @@ declare interface HostedInputSubmitManualOrderErrorEvent {
 
 declare interface HostedInputSubmitManualOrderSuccessEvent {
     type: HostedInputEventType.SubmitManualOrderSucceeded;
+    payload: {
+        response: Response<unknown>;
+    };
 }
 
 declare interface HostedInputSubmitSuccessEvent {
