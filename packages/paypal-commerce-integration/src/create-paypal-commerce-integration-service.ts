@@ -13,10 +13,10 @@ import {
 const createPayPalCommerceIntegrationService = (
     paymentIntegrationService: PaymentIntegrationService,
 ) => {
-    const { getHost } = paymentIntegrationService.getState();
+    const { getHost, getSiteLink } = paymentIntegrationService.getState();
 
     return new PayPalCommerceIntegrationService(
-        createFormPoster(),
+        createFormPoster({ host: getSiteLink() }),
         paymentIntegrationService,
         new PayPalCommerceRequestSender(createRequestSender({ host: getHost() })),
         new PayPalCommerceScriptLoader(getScriptLoader()),
