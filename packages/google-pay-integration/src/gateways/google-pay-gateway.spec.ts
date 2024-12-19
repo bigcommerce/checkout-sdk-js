@@ -21,18 +21,6 @@ describe('GooglePayGateway', () => {
     let gateway: GooglePayGateway;
     let paymentIntegrationService: PaymentIntegrationService;
 
-    const getGenericInitialDataWithShippingOptions = (isExperimentEnabled = true) => {
-        const genericData = getGeneric();
-
-        return {
-            ...genericData,
-            initializationData: {
-                ...genericData.initializationData!,
-                isShippingOptionsEnabled: isExperimentEnabled,
-            },
-        };
-    };
-
     beforeEach(() => {
         jest.clearAllMocks();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -187,7 +175,7 @@ describe('GooglePayGateway', () => {
             const expectedRequiredData = {
                 emailRequired: true,
                 shippingAddressRequired: true,
-                shippingOptionRequired: false,
+                shippingOptionRequired: true,
                 shippingAddressParameters: {
                     phoneNumberRequired: true,
                     allowedCountryCodes: ['AU', 'US', 'JP'],
@@ -220,7 +208,7 @@ describe('GooglePayGateway', () => {
                 'getShippingAddress',
             ).mockReturnValueOnce(undefined);
 
-            await gateway.initialize(getGenericInitialDataWithShippingOptions);
+            await gateway.initialize(getGeneric);
 
             await expect(gateway.getRequiredData()).resolves.toStrictEqual(expectedRequiredData);
         });
@@ -238,7 +226,7 @@ describe('GooglePayGateway', () => {
         it('should return only offer callback intent when shipping not required', async () => {
             const expectedCallbackIntents = [CallbackIntentsType.OFFER];
 
-            await gateway.initialize(getGenericInitialDataWithShippingOptions);
+            await gateway.initialize(getGeneric);
 
             expect(gateway.getCallbackIntents()).toStrictEqual(expectedCallbackIntents);
         });
@@ -255,26 +243,13 @@ describe('GooglePayGateway', () => {
                 'getShippingAddress',
             ).mockReturnValueOnce(undefined);
 
-            await gateway.initialize(getGenericInitialDataWithShippingOptions);
+            await gateway.initialize(getGeneric);
 
             expect(gateway.getCallbackIntents()).toStrictEqual(expectedCallbackIntents);
         });
     });
 
     describe('#getCallbackTriggers', () => {
-        it('should return only initialize trigger when shipping experiment disabled', async () => {
-            const expectedCallbackTriggers = {
-                availableTriggers: [CallbackTriggerType.INITIALIZE],
-                initializationTrigger: [CallbackTriggerType.INITIALIZE],
-                addressChangeTriggers: [],
-                shippingOptionsChangeTriggers: [],
-            };
-
-            await gateway.initialize(getGeneric);
-
-            expect(gateway.getCallbackTriggers()).toStrictEqual(expectedCallbackTriggers);
-        });
-
         it('should return initialize triggers', async () => {
             const expectedCallbackTriggers = {
                 availableTriggers: [
@@ -290,7 +265,7 @@ describe('GooglePayGateway', () => {
                 shippingOptionsChangeTriggers: [CallbackTriggerType.SHIPPING_OPTION],
             };
 
-            await gateway.initialize(getGenericInitialDataWithShippingOptions);
+            await gateway.initialize(getGeneric);
 
             expect(gateway.getCallbackTriggers()).toStrictEqual(expectedCallbackTriggers);
         });

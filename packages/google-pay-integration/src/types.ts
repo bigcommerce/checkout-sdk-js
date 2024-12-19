@@ -297,7 +297,6 @@ interface GooglePayBaseInitializationData {
     googleMerchantId: string;
     googleMerchantName: string;
     isThreeDSecureEnabled: boolean;
-    isShippingOptionsEnabled?: boolean;
     nonce?: string;
     platformToken: string;
     storeCountry?: string;
