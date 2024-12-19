@@ -39,12 +39,12 @@ export function getPaymentResponse<T>(
     };
 }
 
-export function getHeadlessPaymentResponse<T>(
-    site: HeadlessPaymentMethod<T>,
+export function getHeadlessPaymentResponse(
+    site: HeadlessPaymentMethod,
     headers = {},
     status = 200,
     statusText = 'OK',
-): Response<HeadlessPaymentMethodResponse<T>> {
+): Response<HeadlessPaymentMethodResponse> {
     return {
         body: {
             data: {

@@ -82,7 +82,7 @@ export default class PaymentMethodRequestSender {
         };
 
         return this._requestSender
-            .post<HeadlessPaymentMethodResponse<string>>(url, requestOptions)
+            .post<HeadlessPaymentMethodResponse>(url, requestOptions)
             .then((response) => this.transformToPaymentMethodResponse(response, methodId));
     }
 
@@ -93,7 +93,9 @@ export default class PaymentMethodRequestSender {
         const {
             body: {
                 data: {
-                    site: { paymentWalletWithInitializationData },
+                    site: {
+                        paymentWalletWithInitializationData: { clientToken, initializationData },
+                    },
                 },
             },
         } = response;
@@ -101,10 +103,10 @@ export default class PaymentMethodRequestSender {
         return {
             ...response,
             body: {
-                initializationData: JSON.parse(
-                    atob(paymentWalletWithInitializationData.initializationData),
-                ),
-                clientToken: paymentWalletWithInitializationData.clientToken,
+                initializationData: initializationData
+                    ? JSON.parse(atob(initializationData))
+                    : null,
+                clientToken,
                 id: methodId,
                 config: {},
                 method: '',

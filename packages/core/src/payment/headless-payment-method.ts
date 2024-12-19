@@ -1,6 +1,7 @@
-export default interface HeadlessPaymentMethod<T = any> {
+export default interface HeadlessPaymentMethod {
     paymentWalletWithInitializationData: {
         clientToken?: string;
-        initializationData?: T;
+        // INFO:: initializationData given in base64 format
+        initializationData?: string;
     };
 }
