@@ -117,12 +117,12 @@ export default class GooglePayGateway {
                 phoneNumberRequired: true,
                 ...(allowedCountryCodes && { allowedCountryCodes }),
             },
-            shippingOptionRequired: this._isGooglePayShippingOptionsAvailable(),
+            shippingOptionRequired: true,
         };
     }
 
     getCallbackIntents(): CallbackIntentsType[] {
-        if (this._isGooglePayShippingOptionsAvailable() && this._isShippingAddressRequired()) {
+        if (this._isShippingAddressRequired()) {
             return [
                 CallbackIntentsType.OFFER,
                 CallbackIntentsType.SHIPPING_ADDRESS,
@@ -134,21 +134,17 @@ export default class GooglePayGateway {
     }
 
     getCallbackTriggers(): { [key: string]: CallbackTriggerType[] } {
-        const isGooglePayShippingOptionsAvailable = this._isGooglePayShippingOptionsAvailable();
-        const availableTriggers = isGooglePayShippingOptionsAvailable
-            ? [
-                  CallbackTriggerType.INITIALIZE,
-                  CallbackTriggerType.SHIPPING_ADDRESS,
-                  CallbackTriggerType.SHIPPING_OPTION,
-              ]
-            : [CallbackTriggerType.INITIALIZE];
+        const availableTriggers = [
+            CallbackTriggerType.INITIALIZE,
+            CallbackTriggerType.SHIPPING_ADDRESS,
+            CallbackTriggerType.SHIPPING_OPTION,
+        ];
         const initializationTrigger = [CallbackTriggerType.INITIALIZE];
-        const addressChangeTriggers = isGooglePayShippingOptionsAvailable
-            ? [CallbackTriggerType.INITIALIZE, CallbackTriggerType.SHIPPING_ADDRESS]
-            : [];
-        const shippingOptionsChangeTriggers = isGooglePayShippingOptionsAvailable
-            ? [CallbackTriggerType.SHIPPING_OPTION]
-            : [];
+        const addressChangeTriggers = [
+            CallbackTriggerType.INITIALIZE,
+            CallbackTriggerType.SHIPPING_ADDRESS,
+        ];
+        const shippingOptionsChangeTriggers = [CallbackTriggerType.SHIPPING_OPTION];
 
         return {
             availableTriggers,
@@ -349,10 +345,6 @@ export default class GooglePayGateway {
 
     protected setGatewayIdentifier(gateway?: string) {
         this._gatewayIdentifier = gateway || this.getGatewayIdentifier();
-    }
-
-    private _isGooglePayShippingOptionsAvailable(): boolean {
-        return !!this.getGooglePayInitializationData().isShippingOptionsEnabled;
     }
 
     private _isShippingAddressRequired(): boolean {
