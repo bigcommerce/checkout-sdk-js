@@ -8,7 +8,7 @@ import {
 import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getHeadlessPaymentResponse, getResponse } from '../common/http-request/responses.mock';
 
-import { HeadlessPaymentMethodResponse } from './headless-payment-method-response';
+import { HeadlessPaymentMethodResponse } from './headless-payment';
 import { getHeadlessPaymentMethod, initializationData } from './headless-payment-methods.mock';
 import PaymentMethod from './payment-method';
 import PaymentMethodRequestSender from './payment-method-request-sender';

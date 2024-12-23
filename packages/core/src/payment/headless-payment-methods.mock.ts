@@ -1,4 +1,4 @@
-import HeadlessPaymentMethod from './headless-payment-method';
+import { HeadlessPaymentMethod } from './headless-payment';
 
 export const initializationData = {
     merchantId: '100000',

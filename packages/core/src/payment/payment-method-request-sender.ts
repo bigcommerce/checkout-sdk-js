@@ -7,10 +7,12 @@ import {
     SDK_VERSION_HEADERS,
 } from '../common/http-request';
 
-import HeadlessPaymentMethodConfig from './headless-payment-method-config';
-import { HeadlessPaymentMethodResponse } from './headless-payment-method-response';
-import { HeadlessPaymentMethodType } from './headless-payment-method-type';
-import HeadlessPaymentRequestOptions from './headless-payment-request-options';
+import {
+    HeadlessPaymentMethodConfig,
+    HeadlessPaymentMethodResponse,
+    HeadlessPaymentMethodType,
+    HeadlessPaymentRequestOptions,
+} from './headless-payment';
 import PaymentMethod from './payment-method';
 
 export default class PaymentMethodRequestSender {
@@ -56,8 +58,6 @@ export default class PaymentMethodRequestSender {
         methodId: string,
         options: HeadlessPaymentRequestOptions,
     ): Promise<Response<PaymentMethod>> {
-        const url = `/graphql`;
-
         const entityId = this.getPaymentEntityId(methodId);
 
         const graphQLQuery = `
@@ -82,7 +82,7 @@ export default class PaymentMethodRequestSender {
         };
 
         return this._requestSender
-            .post<HeadlessPaymentMethodResponse>(url, requestOptions)
+            .post<HeadlessPaymentMethodResponse>('/graphql', requestOptions)
             .then((response) => this.transformToPaymentMethodResponse(response, methodId));
     }
 

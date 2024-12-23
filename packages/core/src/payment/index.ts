@@ -6,7 +6,6 @@ export {
 export * from './payment-method-actions';
 export * from './payment-method-types';
 export * from './payment-status-types';
-export * from './headless-payment-method-type';
 
 export {
     default as PaymentAdditionalAction,
@@ -19,6 +18,12 @@ export { default as isHostedInstrumentLike } from './is-hosted-intrument-like';
 export { default as isNonceLike } from './is-nonce-like';
 export { default as isVaultedInstrument } from './is-vaulted-instrument';
 export { default as PaymentActionCreator } from './payment-action-creator';
+export {
+    HeadlessPaymentMethod,
+    HeadlessPaymentMethodConfig,
+    HeadlessPaymentRequestOptions,
+    HeadlessPaymentMethodResponse,
+} from './headless-payment';
 export {
     default as Payment,
     CreditCardInstrument,
@@ -38,15 +43,12 @@ export {
     WithMollieIssuerInstrument,
 } from './payment';
 export { default as PaymentMethod } from './payment-method';
-export { default as HeadlessPaymentMethod } from './headless-payment-method';
 export { default as PaymentMethodMeta } from './payment-method-meta';
 export { default as PaymentMethodConfig } from './payment-method-config';
-export { default as HeadlessPaymentMethodConfig } from './headless-payment-method-config';
 export { default as InitializationStrategy } from './payment-method-initialization-strategy';
 export { default as PaymentMethodActionCreator } from './payment-method-action-creator';
 export { default as paymentMethodReducer } from './payment-method-reducer';
 export { default as PaymentMethodRequestSender } from './payment-method-request-sender';
-export { default as HeadlessPaymentRequestOptions } from './headless-payment-request-options';
 export {
     default as PaymentMethodSelector,
     PaymentMethodSelectorFactory,
@@ -59,7 +61,6 @@ export { default as PaymentRequestSender } from './payment-request-sender';
 export { default as PaymentRequestTransformer } from './payment-request-transformer';
 export { default as PaymentResponse } from './payment-response';
 export { default as PaymentResponseBody } from './payment-response-body';
-export { HeadlessPaymentMethodResponse } from './headless-payment-method-response';
 export {
     default as PaymentSelector,
     PaymentSelectorFactory,

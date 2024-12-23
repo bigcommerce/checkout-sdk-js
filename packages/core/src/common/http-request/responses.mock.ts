@@ -3,7 +3,7 @@ import { Response } from '@bigcommerce/request-sender';
 import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { HeadlessPaymentMethodResponse, PaymentResponse } from '../../payment';
-import HeadlessPaymentMethod from '../../payment/headless-payment-method';
+import { HeadlessPaymentMethod } from '../../payment/headless-payment';
 
 export function getResponse<T>(
     body: T,
