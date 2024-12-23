@@ -526,20 +526,46 @@ describe('PayPalCommerceCreditPaymentStrategy', () => {
             paypalcommercecredit: {
                 bannerContainerId: defaultMessageContainerId,
             },
-        } as PaymentInitializeOptions;
-
-        const div = document.createElement('div');
-
-        div.setAttribute('id', defaultMessageContainerId);
-        document.body.appendChild(div);
+        };
 
         beforeEach(() => {
+            const div = document.createElement('div');
+
+            div.setAttribute('id', defaultMessageContainerId);
+            document.body.appendChild(div);
+
             jest.spyOn(paypalCommerceSdk, 'getPayPalMessages').mockImplementation(() =>
                 Promise.resolve(payPalMessagesSdk),
             );
             jest.spyOn(payPalMessagesSdk, 'Messages').mockImplementation(() => ({
                 render: paypalCommerceSdkRenderMock,
             }));
+        });
+
+        afterEach(() => {
+            document.getElementById(defaultMessageContainerId)?.remove();
+        });
+
+        it('does not render PayPal message if banner is disabled in paypalBNPLConfiguration', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    paypalBNPLConfiguration: [
+                        {
+                            id: 'checkout',
+                            status: false,
+                        },
+                    ],
+                },
+            });
+
+            await strategy.initialize(options);
+
+            expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalled();
         });
 
         it('initializes PayPal Messages component', async () => {
@@ -551,7 +577,11 @@ describe('PayPalCommerceCreditPaymentStrategy', () => {
                 style: {
                     layout: 'text',
                     logo: {
-                        type: 'inline',
+                        type: 'alternative',
+                    },
+                    text: {
+                        color: 'white',
+                        size: 10,
                     },
                 },
             });

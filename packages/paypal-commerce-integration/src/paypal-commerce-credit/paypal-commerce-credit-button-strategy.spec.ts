@@ -888,6 +888,28 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
     });
 
     describe('PayPal Commerce Credit messages logic', () => {
+        it('does not render PayPal message if banner is disabled in paypalBNPLConfiguration', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    paypalBNPLConfiguration: [
+                        {
+                            id: 'checkout',
+                            status: false,
+                        },
+                    ],
+                },
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalCommerceSdkRenderMock).not.toHaveBeenCalled();
+        });
+
         it('initializes PayPal Messages component', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -896,6 +918,14 @@ describe('PayPalCommerceCreditButtonStrategy', () => {
                 placement: 'cart',
                 style: {
                     layout: 'text',
+                    logo: {
+                        position: 'right',
+                        type: 'alternative',
+                    },
+                    text: {
+                        color: 'white',
+                        size: 10,
+                    },
                 },
             });
         });
