@@ -11,7 +11,10 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getPaypalMessagesStylesFromBNPLConfig,
     MessagingOptions,
+    PayPalBNPLConfigurationItem,
+    PayPalCommerceInitializationData,
     PayPalCommerceSdk,
     PayPalMessagesSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
@@ -23,7 +26,6 @@ import {
     ClickCallbackActions,
     PayPalCommerceButtons,
     PayPalCommerceButtonsOptions,
-    PayPalCommerceInitializationData,
 } from '../paypal-commerce-types';
 
 import PayPalCommerceCreditPaymentInitializeOptions, {
@@ -66,9 +68,27 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+        // TODO: update paypalBNPLConfiguration with empty array as default value when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
+        const { paypalBNPLConfiguration, orderId } = paymentMethod.initializationData || {};
+        const { bannerContainerId = '', container } = paypalOptions;
 
-        const { bannerContainerId = '' } = paypalOptions;
+        // TODO: remove paypalBNPLConfiguration check when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
+        if (paypalBNPLConfiguration && document.getElementById(bannerContainerId)) {
+            const bannerConfiguration = paypalBNPLConfiguration.find(({ id }) => id === 'checkout');
 
+            if (!bannerConfiguration?.status) {
+                return;
+            }
+
+            const paypalMessages = await this.paypalCommerceSdk.getPayPalMessages(
+                paymentMethod,
+                state.getCartOrThrow().currency.code,
+            );
+
+            return this.renderMessages(paypalMessages, bannerContainerId, bannerConfiguration);
+        }
+
+        // TODO: this condition can be removed when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
         if (document.getElementById(bannerContainerId)) {
             const paypalMessages = await this.paypalCommerceSdk.getPayPalMessages(
                 paymentMethod,
@@ -82,15 +102,15 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
         // The PayPal button and fields should not be rendered when shopper was redirected to Checkout page
         // after using smart payment button on PDP or Cart page. In this case backend returns order id if
         // it is available in checkout session. Therefore, it is not necessary to render PayPal button.
-        if (paymentMethod.initializationData?.orderId) {
-            this.orderId = paymentMethod.initializationData?.orderId;
+        if (orderId) {
+            this.orderId = orderId;
 
             return;
         }
 
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
 
-        this.loadingIndicatorContainer = paypalOptions?.container?.split('#')[1];
+        this.loadingIndicatorContainer = container?.split('#')[1];
 
         this.renderButton(methodId, paypalOptions);
     }
@@ -248,20 +268,27 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
      * Render Pay Later Messages
      *
      * */
-    private renderMessages(paypalMessages: PayPalMessagesSdk, bannerContainerId: string): void {
+    private renderMessages(
+        paypalMessages: PayPalMessagesSdk,
+        bannerContainerId: string,
+        bannerConfiguration?: PayPalBNPLConfigurationItem, // TODO: this should not be optional when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
+    ): void {
         const checkout = this.paymentIntegrationService.getState().getCheckoutOrThrow();
-
         const grandTotal = checkout.outstandingBalance;
+        // TODO: default style can be removed when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
+        const style = bannerConfiguration
+            ? getPaypalMessagesStylesFromBNPLConfig(bannerConfiguration)
+            : {
+                  layout: 'text',
+                  logo: {
+                      type: 'inline',
+                  },
+              };
 
         const paypalMessagesOptions: MessagingOptions = {
             amount: grandTotal,
             placement: 'payment',
-            style: {
-                layout: 'text',
-                logo: {
-                    type: 'inline',
-                },
-            },
+            style,
         };
 
         paypalMessages.Messages(paypalMessagesOptions).render(`#${bannerContainerId}`);
