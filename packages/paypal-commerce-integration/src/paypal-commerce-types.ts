@@ -552,12 +552,13 @@ export interface PayPalCommerceFieldsStyleOptions {
 /**
  *
  * PayPalCommerce Messages
- *
  */
+// TODO: This interface can be removed once the PayPaySDK interface is removed
 export interface PayPalCommerceMessages {
     render(id: string): void;
 }
 
+// TODO: This interface can be removed once the PayPaySDK interface is removed
 export interface PayPalCommerceMessagesOptions {
     amount: number;
     placement: string;
@@ -565,6 +566,7 @@ export interface PayPalCommerceMessagesOptions {
     fundingSource?: string;
 }
 
+// TODO: This interface can be removed once the PayPaySDK interface is removed
 export interface PayPalCommerceMessagesStyleOptions {
     layout?: string;
 }

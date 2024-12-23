@@ -1,5 +1,6 @@
-import { FastlaneStylesSettings, PayPalFastlaneStylesOption } from '../index';
 import { omitBy } from 'lodash';
+
+import { FastlaneStylesSettings, PayPalFastlaneStylesOption } from '../index';
 
 function isInvalidStyleOption(styleOption: unknown) {
     return typeof styleOption !== 'string';
