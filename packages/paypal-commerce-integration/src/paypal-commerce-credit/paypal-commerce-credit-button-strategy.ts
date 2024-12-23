@@ -113,9 +113,7 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
             let bannerConfiguration: PayPalBNPLConfigurationItem | undefined;
 
             if (paypalBNPLConfiguration) {
-                bannerConfiguration = (paypalBNPLConfiguration || []).find(
-                    ({ id }) => id === 'cart',
-                );
+                bannerConfiguration = paypalBNPLConfiguration.find(({ id }) => id === 'cart');
 
                 if (!bannerConfiguration?.status) {
                     return;

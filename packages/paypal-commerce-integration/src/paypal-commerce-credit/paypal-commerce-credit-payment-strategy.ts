@@ -74,9 +74,7 @@ export default class PayPalCommerceCreditPaymentStrategy implements PaymentStrat
 
         // TODO: remove paypalBNPLConfiguration check when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
         if (paypalBNPLConfiguration && document.getElementById(bannerContainerId)) {
-            const bannerConfiguration = (paypalBNPLConfiguration || []).find(
-                ({ id }) => id === 'checkout',
-            );
+            const bannerConfiguration = paypalBNPLConfiguration.find(({ id }) => id === 'checkout');
 
             if (!bannerConfiguration?.status) {
                 return;
