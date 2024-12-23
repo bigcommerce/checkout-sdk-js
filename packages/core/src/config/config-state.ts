@@ -12,6 +12,8 @@ export interface ConfigMetaState {
     variantIdentificationToken?: string;
     host?: string;
     locale?: string;
+    storefrontJwtToken?: string;
+    siteLink?: string;
 }
 
 export interface ConfigErrorsState {
