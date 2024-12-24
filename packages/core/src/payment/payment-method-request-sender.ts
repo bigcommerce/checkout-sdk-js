@@ -14,6 +14,7 @@ import {
     HeadlessPaymentRequestOptions,
 } from './headless-payment';
 import PaymentMethod from './payment-method';
+import paymentMethodTransformer from './payment-method-transformer';
 
 export default class PaymentMethodRequestSender {
     constructor(private _requestSender: RequestSender) {}
@@ -58,12 +59,12 @@ export default class PaymentMethodRequestSender {
         methodId: string,
         options: HeadlessPaymentRequestOptions,
     ): Promise<Response<PaymentMethod>> {
-        const entityId = this.getPaymentEntityId(methodId);
+        const entityId = this._getPaymentEntityId(methodId);
 
         const graphQLQuery = `
             query {
                 site {
-                    paymentWalletWithInitializationData(filter: {paymentWalletEntityId: "${entityId}"}) {
+                    paymentWalletWithInitializationData(filter: { paymentWalletEntityId: "${entityId}" }) {
                         clientToken
                         initializationData
                     }
@@ -83,40 +84,10 @@ export default class PaymentMethodRequestSender {
 
         return this._requestSender
             .post<HeadlessPaymentMethodResponse>('/graphql', requestOptions)
-            .then((response) => this.transformToPaymentMethodResponse(response, methodId));
+            .then((response) => paymentMethodTransformer(response, methodId));
     }
 
-    private transformToPaymentMethodResponse(
-        response: Response<HeadlessPaymentMethodResponse>,
-        methodId: string,
-    ): Response<PaymentMethod> {
-        const {
-            body: {
-                data: {
-                    site: {
-                        paymentWalletWithInitializationData: { clientToken, initializationData },
-                    },
-                },
-            },
-        } = response;
-
-        return {
-            ...response,
-            body: {
-                initializationData: initializationData
-                    ? JSON.parse(atob(initializationData))
-                    : null,
-                clientToken,
-                id: methodId,
-                config: {},
-                method: '',
-                supportedCards: [],
-                type: 'PAYMENT_TYPE_API',
-            },
-        };
-    }
-
-    private getPaymentEntityId(methodId: string): HeadlessPaymentMethodType {
+    private _getPaymentEntityId(methodId: string): HeadlessPaymentMethodType {
         const entityId = HeadlessPaymentMethodConfig[methodId];
 
         if (!entityId) {
