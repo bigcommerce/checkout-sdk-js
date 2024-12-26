@@ -45,8 +45,7 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
 
     const methodId = 'paypalcommercecredit';
     const defaultContainerId = 'paypal-commerce-credit-container-mock-id';
-    const paypalOrderId = 'ORDER_ID';
-    const approveDataOrderId = paypalOrderId;
+    const approveDataOrderId = 'ORDER_ID';
 
     const paypalCommerceCreditOptions: PayPalCommerceCreditCustomerInitializeOptions = {
         container: defaultContainerId,
@@ -168,30 +167,6 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                         options.onShippingOptionsChange({
                             orderId: approveDataOrderId,
                             selectedShippingOption: {
-                                amount: {
-                                    currency_code: 'USD',
-                                    value: '100',
-                                },
-                                id: '1',
-                                label: 'Free shipping',
-                                selected: true,
-                                type: 'type_shipping',
-                            },
-                        });
-                    }
-                });
-
-                eventEmitter.on('onShippingChange', () => {
-                    if (options.onShippingChange) {
-                        options.onShippingChange({
-                            orderID: paypalOrderId,
-                            shipping_address: {
-                                city: 'New York',
-                                country_code: 'US',
-                                postal_code: '07564',
-                                state: 'New York',
-                            },
-                            selected_shipping_option: {
                                 amount: {
                                     currency_code: 'USD',
                                     value: '100',
@@ -341,43 +316,6 @@ describe('PayPalCommerceCreditCustomerStrategy', () => {
                 createOrder: expect.any(Function),
                 onShippingAddressChange: expect.any(Function),
                 onShippingOptionsChange: expect.any(Function),
-                onApprove: expect.any(Function),
-                onClick: expect.any(Function),
-            });
-        });
-
-        it('initializes paypal buttons with config related to hosted checkout feature and shipping callbacks experiment is off', async () => {
-            jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        'PAYPAL-4387.paypal_shipping_callbacks': false,
-                    },
-                },
-            });
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue({
-                ...paymentMethod,
-                initializationData: {
-                    ...paymentMethod.initializationData,
-                    isHostedCheckoutEnabled: true,
-                },
-            });
-
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalSdk.Buttons).toHaveBeenCalledWith({
-                fundingSource: paypalSdk.FUNDING.PAYLATER,
-                style: {
-                    height: DefaultCheckoutButtonHeight,
-                    color: StyleButtonColor.silver,
-                    label: 'checkout',
-                },
-                createOrder: expect.any(Function),
-                onShippingChange: expect.any(Function),
                 onApprove: expect.any(Function),
                 onClick: expect.any(Function),
             });
