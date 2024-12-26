@@ -20,7 +20,6 @@ import {
     PayPalCommerceButtonsOptions,
     PayPalCommerceInitializationData,
     ShippingAddressChangeCallbackPayload,
-    ShippingChangeCallbackPayload,
     ShippingOptionChangeCallbackPayload,
 } from '../paypal-commerce-types';
 
@@ -122,25 +121,11 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
             ...(onClick && { onClick: () => onClick() }),
         };
 
-        const isPaypalShippingCallbacksExperimentIsOn =
-            state.getStoreConfig()?.checkoutSettings.features[
-                'PAYPAL-4387.paypal_shipping_callbacks'
-            ];
-
-        const onShippingChangeCallbacks = isPaypalShippingCallbacksExperimentIsOn
-            ? {
-                  onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
-                      this.onShippingAddressChange(data),
-                  onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
-                      this.onShippingOptionsChange(data),
-              }
-            : {
-                  onShippingChange: (data: ShippingChangeCallbackPayload) =>
-                      this.onShippingChange(data),
-              };
-
         const hostedCheckoutCallbacks = {
-            ...onShippingChangeCallbacks,
+            onShippingAddressChange: (data: ShippingAddressChangeCallbackPayload) =>
+                this.onShippingAddressChange(data),
+            onShippingOptionsChange: (data: ShippingOptionChangeCallbackPayload) =>
+                this.onShippingOptionsChange(data),
             onApprove: (data: ApproveCallbackPayload, actions: ApproveCallbackActions) =>
                 this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
         };
@@ -239,29 +224,6 @@ export default class PayPalCommerceCustomerStrategy implements CustomerStrategy 
         );
 
         try {
-            await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
-            await this.paypalCommerceIntegrationService.updateOrder();
-        } catch (error) {
-            this.handleError(error);
-        }
-    }
-
-    private async onShippingChange(data: ShippingChangeCallbackPayload): Promise<void> {
-        const address = this.paypalCommerceIntegrationService.getAddress({
-            city: data.shipping_address.city,
-            countryCode: data.shipping_address.country_code,
-            postalCode: data.shipping_address.postal_code,
-            stateOrProvinceCode: data.shipping_address.state,
-        });
-
-        try {
-            await this.paymentIntegrationService.updateBillingAddress(address);
-            await this.paymentIntegrationService.updateShippingAddress(address);
-
-            const shippingOption = this.paypalCommerceIntegrationService.getShippingOptionOrThrow(
-                data.selected_shipping_option?.id,
-            );
-
             await this.paymentIntegrationService.selectShippingOption(shippingOption.id);
             await this.paypalCommerceIntegrationService.updateOrder();
         } catch (error) {
