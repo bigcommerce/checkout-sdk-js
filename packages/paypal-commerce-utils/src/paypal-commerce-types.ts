@@ -16,7 +16,7 @@ export type EnableFundingType = FundingType | string;
 export interface PayPalCommerceInitializationData {
     attributionId?: string;
     availableAlternativePaymentMethods: FundingType;
-    // buttonStyle?: PayPalButtonStyleOptions; // TODO: PayPalButtonStyleOptions interface will be moved in the future
+    buttonStyle?: PayPalButtonStyleOptions;
     buyerCountry?: string;
     clientId: string;
     clientToken?: string;
@@ -37,7 +37,8 @@ export interface PayPalCommerceInitializationData {
     orderId?: string;
     shouldRenderFields?: boolean;
     shouldRunAcceleratedCheckout?: boolean; // TODO: remove when PPCP Fastlane A/B test will be finished
-    // paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>; // TODO: PayPalButtonStyleOptions interface will be moved in the future
+    paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
+    paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
 }
 
 /**
@@ -263,16 +264,24 @@ export interface PayPalCommerceFieldsStyleOptions {
 /**
  *
  * PayLater Messages related types
- *
+ * doc: https://developer.paypal.com/docs/checkout/pay-later/us/integrate/reference
  */
 export interface MessagingRender {
     render(container: string): void;
 }
 
 export interface MessagesStyleOptions {
-    layout?: 'text' | 'flex';
+    color?: string; // 'blue' | 'black' | 'white' | 'white-no-border' | 'gray' | 'monochrome' | 'grayscale'
+    layout?: string; // 'text' | 'flex'
     logo?: {
-        type: 'none' | 'inline' | 'primary';
+        type?: string; // 'primary' | 'alternative' | 'inline' | 'none'
+        position?: string; // 'left' | 'right' | 'top'
+    };
+    ratio?: string; // '1x1' | '1x4' | '8x1' | '20x1'
+    text?: {
+        align?: string; // 'left' | 'right' | 'center'
+        color?: string; // 'black' | 'white' | 'monochrome' | 'grayscale'
+        size?: number; // from 10 to 16
     };
 }
 
@@ -280,6 +289,13 @@ export interface MessagingOptions {
     amount: number;
     placement: string;
     style?: MessagesStyleOptions;
+}
+
+export interface PayPalBNPLConfigurationItem {
+    id: string;
+    name: string;
+    status: boolean;
+    styles: Record<string, string>;
 }
 
 /**
