@@ -19,6 +19,12 @@ export { default as isNonceLike } from './is-nonce-like';
 export { default as isVaultedInstrument } from './is-vaulted-instrument';
 export { default as PaymentActionCreator } from './payment-action-creator';
 export {
+    HeadlessPaymentMethod,
+    HeadlessPaymentMethodConfig,
+    HeadlessPaymentRequestOptions,
+    HeadlessPaymentMethodResponse,
+} from './headless-payment';
+export {
     default as Payment,
     CreditCardInstrument,
     WithIdealInstrument,
