@@ -429,10 +429,8 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
         return isEqual(this._normalizeAddress(firstAddress), this._normalizeAddress(secondAddress));
     }
 
-    // TODO: reimplement this method when PAYPAL-3996.paypal_fastlane_shipping_update and Fastlane features will be rolled out to 100%
     private async _shouldUseBraintreeFastlaneShippingComponent(methodId: string): Promise<boolean> {
         const state = this._store.getState();
-        const features = state.config.getStoreConfigOrThrow().checkoutSettings.features;
         const paymentProviderCustomer = state.paymentProviderCustomer.getPaymentProviderCustomer();
         const braintreePaymentProviderCustomer = isBraintreeAcceleratedCheckoutCustomer(
             paymentProviderCustomer,
@@ -443,8 +441,6 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
         // Info: to avoid loading payment method we should check for values
         // that does not require api calls first
         if (
-            features &&
-            features['PAYPAL-3996.paypal_fastlane_shipping_update'] &&
             !!braintreePaymentProviderCustomer &&
             braintreePaymentProviderCustomer !== BraintreeFastlaneAuthenticationState.CANCELED
         ) {

@@ -9,7 +9,6 @@ import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api
 import {
     getBillingAddress,
     getCart,
-    getConfig,
     getCountries,
     getCustomer,
     getPaymentMethod,
@@ -130,12 +129,6 @@ describe('BraintreeFastlaneShippingStrategy', () => {
         jest.spyOn(store.getState().cart, 'getCart').mockReturnValue(getCart());
         jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(getCart());
         jest.spyOn(store.getState().countries, 'getCountries').mockReturnValue(getCountries());
-        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            getConfig().storeConfig,
-        );
         jest.spyOn(store.getState().customer, 'getCustomerOrThrow').mockReturnValue({
             ...getCustomer(),
             isGuest: true,
@@ -580,19 +573,6 @@ describe('BraintreeFastlaneShippingStrategy', () => {
 
     describe('#handleBraintreeFastlaneShippingAddressChange', () => {
         beforeEach(() => {
-            const storeConfig = getConfig().storeConfig;
-
-            const storeConfigWithAFeature = {
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-3996.paypal_fastlane_shipping_update': true,
-                    },
-                },
-            };
-
             jest.spyOn(braintreeIntegrationServiceMock, 'getBraintreeFastlane').mockImplementation(
                 () => braintreeFastlane,
             );
@@ -609,12 +589,6 @@ describe('BraintreeFastlaneShippingStrategy', () => {
                     isFastlaneEnabled: true,
                 },
             });
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                storeConfigWithAFeature,
-            );
             jest.spyOn(
                 store.getState().paymentProviderCustomer,
                 'getPaymentProviderCustomer',
