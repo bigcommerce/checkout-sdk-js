@@ -484,20 +484,6 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                 instruments: [bcInstrumentMock],
             });
 
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-3996.paypal_fastlane_shipping_update': true,
-                    },
-                },
-            });
-
             await strategy.initialize({
                 ...initializationOptions,
                 paypalcommercefastlane: {
@@ -528,20 +514,6 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 instruments: [bcInstrumentMock],
-            });
-
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
-                ...storeConfig,
-                checkoutSettings: {
-                    ...storeConfig.checkoutSettings,
-                    features: {
-                        ...storeConfig.checkoutSettings.features,
-                        'PAYPAL-3996.paypal_fastlane_shipping_update': true,
-                    },
-                },
             });
 
             jest.spyOn(paypalFastlane.profile, 'showShippingAddressSelector').mockImplementation(

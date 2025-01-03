@@ -129,15 +129,10 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
         return !customerAuthenticationState && paypalConnectSessionId === cart.id;
     }
 
-    // TODO: reimplement this method when PAYPAL-3996.paypal_fastlane_shipping_update and Fastlane features will be rolled out to 100%
     private _shouldUsePayPalFastlaneShippingComponent(): boolean {
-        const state = this._store.getState();
-        const features = state.config.getStoreConfigOrThrow().checkoutSettings.features;
         const customerAuthenticationState = this._getPayPalCustomerAuthenticationState();
 
         return (
-            features &&
-            features['PAYPAL-3996.paypal_fastlane_shipping_update'] &&
             !!customerAuthenticationState &&
             customerAuthenticationState !== PayPalFastlaneAuthenticationState.CANCELED
         );
