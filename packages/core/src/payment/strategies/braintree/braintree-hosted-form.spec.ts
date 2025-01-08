@@ -206,6 +206,16 @@ describe('BraintreeHostedForm', () => {
 
             expect(cardFields.teardown).toHaveBeenCalled();
         });
+
+        it('do not call teardown if fields are not initialized', async () => {
+            await subject.initialize({
+                ...formOptions,
+                fields: {},
+            });
+            await subject.deinitialize();
+
+            expect(cardFields.teardown).not.toHaveBeenCalled();
+        });
     });
 
     describe('#tokenize', () => {
