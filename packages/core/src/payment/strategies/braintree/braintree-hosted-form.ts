@@ -75,9 +75,11 @@ export default class BraintreeHostedForm {
     }
 
     async deinitialize(): Promise<void> {
-        this._isInitializedHostedForm = false;
+        if (this._isInitializedHostedForm) {
+            this._isInitializedHostedForm = false;
 
-        await this._cardFields?.teardown();
+            await this._cardFields?.teardown();
+        }
     }
 
     validate() {
