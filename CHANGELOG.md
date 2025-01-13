@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.696.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.695.2...v1.696.0) (2025-01-13)
+
+
+### Features
+
+* **payment:** PAYPAL-4995 added check for teardown call in deinitialize method ([1e16475](https://github.com/bigcommerce/checkout-sdk-js/commit/1e16475970a13dbfb40045fdf6a3bc85cdd12425))
+
 ### [1.695.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.695.1...v1.695.2) (2025-01-06)
 
 
