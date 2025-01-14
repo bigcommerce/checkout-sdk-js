@@ -91,6 +91,10 @@ export default class GooglePayGateway {
             },
         } = response;
 
+        if (!nonce) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
+        }
+
         return Promise.resolve({
             nonce,
             card_information: { type, number },
