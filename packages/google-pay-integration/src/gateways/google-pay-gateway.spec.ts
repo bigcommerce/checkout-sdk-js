@@ -630,6 +630,24 @@ describe('GooglePayGateway', () => {
 
             expect(mappedData).toStrictEqual(expectedData);
         });
+
+        it('should throw an error if nonce is not sent from Google', async () => {
+            const response = getCardDataResponse();
+
+            response.paymentMethodData.tokenizationData.token = '';
+
+            let error: MissingDataError | undefined;
+
+            try {
+                await gateway.mapToExternalCheckoutData(response);
+            } catch (err) {
+                if (err instanceof MissingDataError) {
+                    error = err;
+                }
+            } finally {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
     });
 
     describe('#mapToBillingAddressRequestBody', () => {
