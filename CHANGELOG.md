@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.696.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.696.0...v1.696.1) (2025-01-15)
+
+
+### Bug Fixes
+
+* **payment:** PI-3029 MissingDataError: Unable to proceed because the… ([#2761](https://github.com/bigcommerce/checkout-sdk-js/issues/2761)) ([321ddcd](https://github.com/bigcommerce/checkout-sdk-js/commit/321ddcd9b35c6e25448a7968b5b8365a2b792154))
+
 ## [1.696.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.695.2...v1.696.0) (2025-01-13)
 
 
