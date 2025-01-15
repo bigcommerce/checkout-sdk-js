@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.696.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.696.1...v1.696.2) (2025-01-15)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-4952 removed extra data attribute from paypal commerce credit banner to let paypal accept banner styles provided through paypal messages config ([#2762](https://github.com/bigcommerce/checkout-sdk-js/issues/2762)) ([292d6fb](https://github.com/bigcommerce/checkout-sdk-js/commit/292d6fb4566545ba1117ff6ef4f29bde484ff1a9))
+
 ### [1.696.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.696.0...v1.696.1) (2025-01-15)
 
 
