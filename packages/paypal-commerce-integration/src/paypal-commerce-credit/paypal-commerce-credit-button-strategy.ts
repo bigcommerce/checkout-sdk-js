@@ -119,9 +119,10 @@ export default class PayPalCommerceCreditButtonStrategy implements CheckoutButto
                 }
 
                 // TODO: remove this attributes reset when content service and PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
-                messagingContainer.removeAttribute('data-pp-style-text-color');
                 messagingContainer.removeAttribute('data-pp-style-logo-type');
                 messagingContainer.removeAttribute('data-pp-style-logo-position');
+                messagingContainer.removeAttribute('data-pp-style-text-color');
+                messagingContainer.removeAttribute('data-pp-style-text-size');
             }
 
             const paypalSdk = await this.paypalCommerceSdk.getPayPalMessages(
