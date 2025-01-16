@@ -1433,6 +1433,17 @@ export default class CheckoutService {
     }
 
     /**
+     * Clear cache for a checkout extension when removing it from UI.
+     * This function should be used whenver an extension is removed from the UI.
+     *
+     * @alpha
+     * @param region - The name of an area where the extension should be presented.
+     */
+    clearExtensionCache(region: ExtensionRegion): void {
+        this._extensionMessenger.clearCacheByRegion(region);
+    }
+
+    /**
      * Manages the command handler for an extension.
      *
      * @alpha
