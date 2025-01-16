@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.696.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.696.2...v1.696.3) (2025-01-16)
+
+
+### Bug Fixes
+
+* **extension:** CHECKOUT-8960 Fix Broadcast Interruption ([#2763](https://github.com/bigcommerce/checkout-sdk-js/issues/2763)) ([3e91af9](https://github.com/bigcommerce/checkout-sdk-js/commit/3e91af9a8e5290445df82969b8fbce2200875cfd))
+
 ### [1.696.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.696.1...v1.696.2) (2025-01-15)
 
 

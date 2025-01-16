@@ -21,6 +21,7 @@ retrieve the current checkout state and subscribe to its changes.
 - [applyStoreCredit](CheckoutService.md#applystorecredit)
 - [assignItemsToAddress](CheckoutService.md#assignitemstoaddress)
 - [clearError](CheckoutService.md#clearerror)
+- [clearExtensionCache](CheckoutService.md#clearextensioncache)
 - [continueAsGuest](CheckoutService.md#continueasguest)
 - [createConsignments](CheckoutService.md#createconsignments)
 - [createCustomerAccount](CheckoutService.md#createcustomeraccount)
@@ -211,6 +212,27 @@ console.log(state.errors.getError());
 `Promise`<[`CheckoutSelectors`](../interfaces/CheckoutSelectors.md)\>
 
 A promise that resolves to the current state.
+
+___
+
+### clearExtensionCache
+
+▸ **clearExtensionCache**(`region`): `void`
+
+Clear cache for a checkout extension when removing it from UI.
+This function should be used whenver an extension is removed from the UI.
+
+**`alpha`**
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `region` | [`ExtensionRegion`](../enums/ExtensionRegion.md) | The name of an area where the extension should be presented. |
+
+#### Returns
+
+`void`
 
 ___
 
