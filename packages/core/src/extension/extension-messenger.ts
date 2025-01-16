@@ -23,6 +23,22 @@ export class ExtensionMessenger {
         private _posters: { [extensionId: string]: IframeEventPoster<ExtensionEvent> } = {},
     ) {}
 
+    clearCacheByRegion(region: string): void {
+        const extension = this._getExtensionByRegion(region);
+
+        this.clearCacheById(extension.id);
+    }
+
+    clearCacheById(extensionId: string): void {
+        if (this._listeners[extensionId]) {
+            delete this._listeners[extensionId];
+        }
+
+        if (this._posters[extensionId]) {
+            delete this._posters[extensionId];
+        }
+    }
+
     listen<T extends keyof ExtensionCommandMap>(
         extensionId: string,
         command: T,
@@ -70,27 +86,28 @@ export class ExtensionMessenger {
     }
 
     post(extensionId: string, event: ExtensionEvent): void {
-        if (!this._posters[extensionId]) {
-            const extension = this._getExtensionById(extensionId);
+        try {
+            if (!this._posters[extensionId]) {
+                const extension = this._getExtensionById(extensionId);
 
-            this._posters[extensionId] = createExtensionEventPoster<ExtensionEvent>(extension);
+                this._posters[extensionId] = createExtensionEventPoster<ExtensionEvent>(extension);
+            }
+
+            this._posters[extensionId].post(event);
+        } catch (error) {
+            this.clearCacheById(extensionId);
+            // eslint-disable-next-line no-console
+            console.log(
+                `Unable to post event to extension(${extensionId}) because extension iframe is not mounted.\nThe event that could not be delivered:`,
+                event,
+            );
         }
-
-        this._posters[extensionId].post(event);
     }
 
     private _getExtensionById(extensionId: string): Extension {
-        const {
-            extensions: { getExtensions },
-        } = this._store.getState();
+        this._getExtensions();
 
-        this._extensions = getExtensions();
-
-        if (!this._extensions) {
-            throw new ExtensionNotFoundError(`Extension configurations not found.`);
-        }
-
-        const extension = this._extensions.find((e) => e.id === extensionId);
+        const extension = this._extensions?.find((e) => e.id === extensionId);
 
         if (!extension) {
             throw new ExtensionNotFoundError(
@@ -101,6 +118,35 @@ export class ExtensionMessenger {
         return extension;
     }
 
+    private _getExtensionByRegion(region: string): Extension {
+        this._getExtensions();
+
+        const extension = this._extensions?.find((e) => e.region === region);
+
+        if (!extension) {
+            throw new ExtensionNotFoundError(
+                `Unable to proceed due to no extension found for region: ${region}.`,
+            );
+        }
+
+        return extension;
+    }
+
+    private _getExtensions(): void {
+        if (this._extensions) {
+            return;
+        }
+
+        const {
+            extensions: { getExtensions },
+        } = this._store.getState();
+
+        this._extensions = getExtensions();
+
+        if (!this._extensions) {
+            throw new ExtensionNotFoundError(`Extension configurations not found.`);
+        }
+    }
     private _validateCommand<T extends keyof ExtensionCommandMap>(command: T): T {
         if (Object.values(ExtensionCommandType).includes(command)) {
             return command;

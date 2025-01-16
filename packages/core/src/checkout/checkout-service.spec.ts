@@ -1509,7 +1509,7 @@ describe('CheckoutService', () => {
         });
     });
 
-    describe('#loadExtensions()', () => {
+    describe('#CheckoutExtension', () => {
         it('loads extensions', async () => {
             await checkoutService.loadExtensions();
 
@@ -1542,9 +1542,7 @@ describe('CheckoutService', () => {
                 queueId: 'extensions',
             });
         });
-    });
 
-    describe('#renderExtension()', () => {
         it('render extensions', async () => {
             const action = () => of(createAction(ExtensionActionType.RenderExtensionSucceeded));
 
@@ -1559,9 +1557,17 @@ describe('CheckoutService', () => {
             expect(extensionActionCreator.renderExtension).toHaveBeenCalledWith(container, region);
             expect(extensionEventBroadcaster.listen).toHaveBeenCalled();
         });
-    });
 
-    describe('#handleExtensionCommand()', () => {
+        it('removes extension cache', async () => {
+            jest.spyOn(extensionMessenger, 'clearCacheByRegion');
+
+            const region = ExtensionRegion.ShippingShippingAddressFormBefore;
+
+            checkoutService.clearExtensionCache(region);
+
+            expect(extensionMessenger.clearCacheByRegion).toHaveBeenCalledWith(region);
+        });
+
         it('handles extension commands', () => {
             const extensions = getExtensions();
             const handler = jest.fn();

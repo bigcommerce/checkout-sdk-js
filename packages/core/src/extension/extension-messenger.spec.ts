@@ -164,16 +164,19 @@ describe('ExtensionMessenger', () => {
     });
 
     describe('#post()', () => {
-        it('should throw ExtensionNotFoundError if the extension is not rendered yet', () => {
-            const container = document.createElement('div');
-
-            document.querySelector = jest.fn().mockReturnValue(container);
+        it('should log out the error if an extension has not yet been rendered', () => {
+            document.querySelector = jest.fn().mockReturnValue(undefined);
 
             extensionMessenger = new ExtensionMessenger(store, {}, {});
 
-            expect(() => extensionMessenger.post(extension.id, event.data)).toThrow(
-                ExtensionNotFoundError,
-            );
+            jest.spyOn(extensionMessenger, 'clearCacheById');
+            jest.spyOn(console, 'log');
+
+            extensionMessenger.post(extension.id, event.data);
+
+            expect(extensionMessenger.clearCacheById).toHaveBeenCalledWith(extension.id);
+            // eslint-disable-next-line no-console
+            expect(console.log).toHaveBeenCalled();
         });
 
         it('should post to an extension', () => {
