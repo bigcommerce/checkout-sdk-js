@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.697.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.696.3...v1.697.0) (2025-01-20)
+
+
+### Features
+
+* **payment:** STRIPE-524 remove experiment for new stripe upe confirmation flow ([e643142](https://github.com/bigcommerce/checkout-sdk-js/commit/e643142cc4d5a87ab2572c98d9e90867ff70731d))
+
 ### [1.696.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.696.2...v1.696.3) (2025-01-16)
 
 
