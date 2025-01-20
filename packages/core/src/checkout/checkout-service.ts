@@ -25,6 +25,7 @@ import {
     ExtensionActionCreator,
     ExtensionCommandMap,
     ExtensionEventBroadcaster,
+    ExtensionMessage,
     ExtensionMessenger,
     ExtensionRegion,
 } from '../extension';
@@ -1441,6 +1442,17 @@ export default class CheckoutService {
      */
     clearExtensionCache(region: ExtensionRegion): void {
         this._extensionMessenger.clearCacheByRegion(region);
+    }
+
+    /**
+     * Posts a message to a checkout extension.
+     *
+     * @alpha
+     * @param extensionId - The ID of an extension to post the event to.
+     * @param message -The message to post to an extension.
+     */
+    postMessageToExtension(extensionId: string, message: ExtensionMessage): void {
+        this._extensionMessenger.post(extensionId, message);
     }
 
     /**

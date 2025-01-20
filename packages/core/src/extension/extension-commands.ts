@@ -1,12 +1,14 @@
 export type ExtensionCommand =
     | ReloadCheckoutCommand
     | ShowLoadingIndicatorCommand
-    | SetIframeStyleCommand;
+    | SetIframeStyleCommand
+    | GetConsignmentsCommand;
 
 export enum ExtensionCommandType {
     ReloadCheckout = 'EXTENSION:RELOAD_CHECKOUT',
     ShowLoadingIndicator = 'EXTENSION:SHOW_LOADING_INDICATOR',
     SetIframeStyle = 'EXTENSION:SET_IFRAME_STYLE',
+    GetConsignments = 'EXTENSION:GET_CONSIGNMENTS',
 }
 
 export interface ExtensionCommandContext {
@@ -33,8 +35,13 @@ export interface SetIframeStyleCommand {
     };
 }
 
+export interface GetConsignmentsCommand {
+    type: ExtensionCommandType.GetConsignments;
+}
+
 export interface ExtensionCommandMap {
     [ExtensionCommandType.ReloadCheckout]: ReloadCheckoutCommand;
     [ExtensionCommandType.ShowLoadingIndicator]: ShowLoadingIndicatorCommand;
     [ExtensionCommandType.SetIframeStyle]: SetIframeStyleCommand;
+    [ExtensionCommandType.GetConsignments]: GetConsignmentsCommand;
 }

@@ -45,6 +45,7 @@ import {
     ExtensionActionType,
     ExtensionCommandType,
     ExtensionEventBroadcaster,
+    ExtensionMessageType,
     ExtensionMessenger,
     ExtensionRegion,
     ExtensionRequestSender,
@@ -1566,6 +1567,21 @@ describe('CheckoutService', () => {
             checkoutService.clearExtensionCache(region);
 
             expect(extensionMessenger.clearCacheByRegion).toHaveBeenCalledWith(region);
+        });
+
+        it('posts a message to an extension', async () => {
+            jest.spyOn(extensionMessenger, 'post');
+
+            const message = {
+                type: ExtensionMessageType.CurrentConsignments,
+                payload: {
+                    consignments: [],
+                },
+            };
+
+            checkoutService.postMessageToExtension('xxx', message);
+
+            expect(extensionMessenger.post).toHaveBeenCalledWith('xxx', message);
         });
 
         it('handles extension commands', () => {

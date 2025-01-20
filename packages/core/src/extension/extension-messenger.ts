@@ -10,7 +10,7 @@ import {
     ExtensionCommandMap,
     ExtensionCommandType,
 } from './extension-commands';
-import { ExtensionEvent } from './extension-events';
+import { ExtensionMessage } from './extension-message';
 
 export class ExtensionMessenger {
     private _extensions: Extension[] | undefined;
@@ -20,7 +20,7 @@ export class ExtensionMessenger {
         private _listeners: {
             [extensionId: string]: IframeEventListener<ExtensionCommandMap>;
         } = {},
-        private _posters: { [extensionId: string]: IframeEventPoster<ExtensionEvent> } = {},
+        private _posters: { [extensionId: string]: IframeEventPoster<ExtensionMessage> } = {},
     ) {}
 
     clearCacheByRegion(region: string): void {
@@ -85,21 +85,22 @@ export class ExtensionMessenger {
         listener.stopListen();
     }
 
-    post(extensionId: string, event: ExtensionEvent): void {
+    post(extensionId: string, message: ExtensionMessage): void {
         try {
             if (!this._posters[extensionId]) {
                 const extension = this._getExtensionById(extensionId);
 
-                this._posters[extensionId] = createExtensionEventPoster<ExtensionEvent>(extension);
+                this._posters[extensionId] =
+                    createExtensionEventPoster<ExtensionMessage>(extension);
             }
 
-            this._posters[extensionId].post(event);
+            this._posters[extensionId].post(message);
         } catch (error) {
             this.clearCacheById(extensionId);
             // eslint-disable-next-line no-console
             console.log(
                 `Unable to post event to extension(${extensionId}) because extension iframe is not mounted.\nThe event that could not be delivered:`,
-                event,
+                message,
             );
         }
     }
