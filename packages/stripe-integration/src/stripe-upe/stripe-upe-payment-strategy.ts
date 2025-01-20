@@ -1,4 +1,4 @@
-import { includes, some } from 'lodash';
+import { some } from 'lodash';
 
 import {
     FormattedHostedInstrument,
@@ -17,7 +17,6 @@ import {
     PaymentInitializeOptions,
     PaymentIntegrationSelectors,
     PaymentIntegrationService,
-    PaymentMethodCancelledError,
     PaymentMethodFailedError,
     PaymentRequestOptions,
     PaymentStrategy,
@@ -41,7 +40,6 @@ import {
     StripeStringConstants,
     StripeUPEAppearanceOptions,
     StripeUPEClient,
-    StripeUPEInitializationData,
     StripeUpeResult,
 } from './stripe-upe';
 import StripeUPEPaymentInitializeOptions, {
@@ -49,17 +47,6 @@ import StripeUPEPaymentInitializeOptions, {
 } from './stripe-upe-initialize-options';
 import StripeUPEIntegrationService from './stripe-upe-integration-service';
 import StripeUPEScriptLoader from './stripe-upe-script-loader';
-
-const APM_REDIRECT = [
-    StripePaymentMethodType.SOFORT,
-    StripePaymentMethodType.EPS,
-    StripePaymentMethodType.GRABPAY,
-    StripePaymentMethodType.BANCONTACT,
-    StripePaymentMethodType.IDEAL,
-    StripePaymentMethodType.GIROPAY,
-    StripePaymentMethodType.ALIPAY,
-    StripePaymentMethodType.KLARNA,
-];
 
 export default class StripeUPEPaymentStrategy implements PaymentStrategy {
     private _stripeUPEClient?: StripeUPEClient;
@@ -142,9 +129,9 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             }
         }
 
-        if (isVaultedInstrument(paymentData)) {
-            await this.paymentIntegrationService.submitOrder(order, options);
+        await this.paymentIntegrationService.submitOrder(order, options);
 
+        if (isVaultedInstrument(paymentData)) {
             const { instrumentId } = paymentData;
 
             await this._executeWithVaulted(
@@ -156,33 +143,7 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             return;
         }
 
-        const { initializationData } =
-            state.getPaymentMethodOrThrow<StripeUPEInitializationData>(methodId);
-        const { newConfirmationFlow } = initializationData || {};
-
-        if (newConfirmationFlow) {
-            await this.paymentIntegrationService.submitOrder(order, options);
-
-            await this._executeWithStripeConfirmation(
-                payment.methodId,
-                shouldSaveInstrument,
-                shouldSetAsDefaultInstrument,
-            );
-
-            return;
-        }
-
-        if (includes(APM_REDIRECT, methodId)) {
-            await this.paymentIntegrationService.submitOrder(order, options);
-
-            await this._executeWithAPM(payment.methodId);
-
-            return;
-        }
-
-        await this.paymentIntegrationService.submitOrder(order, options);
-
-        await this._executeWithoutRedirect(
+        await this._executeWithStripeConfirmation(
             payment.methodId,
             stripeLinkAuthenticationState ? false : shouldSaveInstrument,
             shouldSetAsDefaultInstrument,
@@ -220,44 +181,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
             await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
             await this._processAdditionalActionWithStripeConfirmation(
-                error,
-                methodId,
-                shouldSaveInstrument,
-                shouldSetAsDefaultInstrument,
-            );
-        }
-    }
-
-    private async _executeWithAPM(methodId: string): Promise<PaymentIntegrationSelectors> {
-        const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
-        const paymentPayload = this._getPaymentPayload(methodId, paymentMethod.clientToken || '');
-
-        try {
-            return await this.paymentIntegrationService.submitPayment(paymentPayload);
-        } catch (error) {
-            return this._processAdditionalAction(error, methodId);
-        }
-    }
-
-    private async _executeWithoutRedirect(
-        methodId: string,
-        shouldSaveInstrument: boolean,
-        shouldSetAsDefaultInstrument: boolean,
-    ): Promise<PaymentIntegrationSelectors> {
-        const state = this.paymentIntegrationService.getState();
-        const paymentMethod = state.getPaymentMethodOrThrow(methodId);
-        const paymentPayload = this._getPaymentPayload(
-            methodId,
-            paymentMethod.clientToken || '',
-            shouldSaveInstrument,
-            shouldSetAsDefaultInstrument,
-        );
-
-        try {
-            return await this.paymentIntegrationService.submitPayment(paymentPayload);
-        } catch (error) {
-            return this._processAdditionalAction(
                 error,
                 methodId,
                 shouldSaveInstrument,
@@ -465,113 +388,6 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
         } catch (error: unknown) {
             this.stripeUPEIntegrationService.throwStripeError(stripeError);
         }
-    }
-
-    // TODO: complexity of _processAdditionalAction method
-
-    private async _processAdditionalAction(
-        error: unknown,
-        methodId: string,
-        shouldSaveInstrument = false,
-        shouldSetAsDefaultInstrument = false,
-    ): Promise<PaymentIntegrationSelectors | never> {
-        if (!isRequestError(error)) {
-            throw error;
-        }
-
-        if (!this._stripeUPEClient || !this._stripeElements) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-        }
-
-        if (this.stripeUPEIntegrationService.isAdditionalActionError(error.body.errors)) {
-            const {
-                data: { token, redirect_url },
-            } = error.body.additional_action_required;
-            const isPaymentCompleted = await this.stripeUPEIntegrationService.isPaymentCompleted(
-                methodId,
-                this._stripeUPEClient,
-            );
-
-            if (
-                this.stripeUPEIntegrationService.isRedirectAction(
-                    error.body.additional_action_required,
-                ) &&
-                !isPaymentCompleted
-            ) {
-                const { paymentIntent, error: stripeError } =
-                    await this._stripeUPEClient.confirmPayment(
-                        this.stripeUPEIntegrationService.mapStripePaymentData(
-                            this._stripeElements,
-                            redirect_url,
-                        ),
-                    );
-
-                if (stripeError) {
-                    this.stripeUPEIntegrationService.throwDisplayableStripeError(stripeError);
-                    throw new PaymentMethodFailedError();
-                }
-
-                if (!paymentIntent) {
-                    throw new RequestError();
-                }
-            } else if (
-                this.stripeUPEIntegrationService.isOnPageAdditionalAction(
-                    error.body.additional_action_required,
-                )
-            ) {
-                let result;
-                let catchedConfirmError = false;
-                const stripePaymentData = this.stripeUPEIntegrationService.mapStripePaymentData(
-                    this._stripeElements,
-                );
-                const isPaymentCompleted =
-                    await this.stripeUPEIntegrationService.isPaymentCompleted(
-                        methodId,
-                        this._stripeUPEClient,
-                    );
-
-                try {
-                    result = !isPaymentCompleted
-                        ? await this._stripeUPEClient.confirmPayment(stripePaymentData)
-                        : await this._stripeUPEClient.retrievePaymentIntent(token);
-                } catch (error) {
-                    try {
-                        result = await this._stripeUPEClient.retrievePaymentIntent(token);
-                    } catch (error) {
-                        catchedConfirmError = true;
-                    }
-                }
-
-                if (result?.error) {
-                    this.stripeUPEIntegrationService.throwDisplayableStripeError(result.error);
-
-                    if (this.stripeUPEIntegrationService.isCancellationError(result.error)) {
-                        throw new PaymentMethodCancelledError();
-                    }
-
-                    throw new PaymentMethodFailedError();
-                }
-
-                if (!result?.paymentIntent && !catchedConfirmError) {
-                    throw new RequestError();
-                }
-
-                const paymentPayload = this._getPaymentPayload(
-                    methodId,
-                    catchedConfirmError ? token : result?.paymentIntent?.id,
-                    shouldSaveInstrument,
-                    shouldSetAsDefaultInstrument,
-                );
-
-                try {
-                    return await this.paymentIntegrationService.submitPayment(paymentPayload);
-                } catch (error) {
-                    this.stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage();
-                }
-            }
-        }
-
-        throw error;
     }
 
     private async _processVaultedAdditionalAction(

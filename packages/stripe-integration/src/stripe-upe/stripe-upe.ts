@@ -464,7 +464,6 @@ export interface StripeUPEInitializationData {
     stripePublishableKey: string;
     stripeConnectedAccount: string;
     shopperLanguage: string;
-    newConfirmationFlow?: boolean;
 }
 
 export interface StripeElementUpdateOptions {
