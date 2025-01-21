@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.698.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.697.0...v1.698.0) (2025-01-21)
+
+
+### Features
+
+* **extension:** CHECKOUT-8964 Introduce GetConsignment Extension Command ([#2766](https://github.com/bigcommerce/checkout-sdk-js/issues/2766)) ([ee6a333](https://github.com/bigcommerce/checkout-sdk-js/commit/ee6a333fb48af35dce48fd9bc26e811e6cd50ebc))
+
 ## [1.697.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.696.3...v1.697.0) (2025-01-20)
 
 

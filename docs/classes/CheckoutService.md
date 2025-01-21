@@ -53,6 +53,7 @@ retrieve the current checkout state and subscribe to its changes.
 - [loadShippingCountries](CheckoutService.md#loadshippingcountries)
 - [loadShippingOptions](CheckoutService.md#loadshippingoptions)
 - [notifyState](CheckoutService.md#notifystate)
+- [postMessageToExtension](CheckoutService.md#postmessagetoextension)
 - [removeCoupon](CheckoutService.md#removecoupon)
 - [removeGiftCertificate](CheckoutService.md#removegiftcertificate)
 - [renderExtension](CheckoutService.md#renderextension)
@@ -1224,6 +1225,27 @@ Notifies all subscribers with the current state.
 
 When this method gets called, the subscribers get called regardless if
 they have any filters applied.
+
+#### Returns
+
+`void`
+
+___
+
+### postMessageToExtension
+
+▸ **postMessageToExtension**(`extensionId`, `message`): `void`
+
+Posts a message to a checkout extension.
+
+**`alpha`**
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `extensionId` | `string` | The ID of an extension to post the event to. |
+| `message` | [`ExtensionMessage`](../README.md#extensionmessage) | The message to post to an extension. |
 
 #### Returns
 

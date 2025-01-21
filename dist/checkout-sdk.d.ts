@@ -3175,6 +3175,14 @@ declare class CheckoutService {
      */
     clearExtensionCache(region: ExtensionRegion): void;
     /**
+     * Posts a message to a checkout extension.
+     *
+     * @alpha
+     * @param extensionId - The ID of an extension to post the event to.
+     * @param message - The message to post to an extension.
+     */
+    postMessageToExtension(extensionId: string, message: ExtensionMessage): void;
+    /**
      * Manages the command handler for an extension.
      *
      * @alpha
@@ -4176,6 +4184,14 @@ declare interface ConsignmentUpdateRequestBody {
     pickupOption?: ConsignmentPickupOption;
 }
 
+declare interface ConsignmentsChangedEvent {
+    type: ExtensionEventType.ConsignmentsChanged;
+    payload: {
+        consignments: Consignment[];
+        previousConsignments: Consignment[];
+    };
+}
+
 declare type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
 
 declare interface ContextConfig {
@@ -4800,12 +4816,26 @@ declare interface ExtensionCommandMap {
     [ExtensionCommandType.ReloadCheckout]: ReloadCheckoutCommand;
     [ExtensionCommandType.ShowLoadingIndicator]: ShowLoadingIndicatorCommand;
     [ExtensionCommandType.SetIframeStyle]: SetIframeStyleCommand;
+    [ExtensionCommandType.GetConsignments]: GetConsignmentsCommand;
 }
 
 export declare enum ExtensionCommandType {
     ReloadCheckout = "EXTENSION:RELOAD_CHECKOUT",
     ShowLoadingIndicator = "EXTENSION:SHOW_LOADING_INDICATOR",
-    SetIframeStyle = "EXTENSION:SET_IFRAME_STYLE"
+    SetIframeStyle = "EXTENSION:SET_IFRAME_STYLE",
+    GetConsignments = "EXTENSION:GET_CONSIGNMENTS"
+}
+
+declare type ExtensionEvent = ConsignmentsChangedEvent;
+
+declare enum ExtensionEventType {
+    ConsignmentsChanged = "EXTENSION:CONSIGNMENTS_CHANGED"
+}
+
+declare type ExtensionMessage = ExtensionEvent | GetConsignmentsMessage;
+
+declare const enum ExtensionMessageType {
+    GetConsignments = "EXTENSION:GET_CONSIGNMENTS"
 }
 
 declare const enum ExtensionRegion {
@@ -4899,6 +4929,17 @@ declare interface GatewayOrderPayment extends OrderPayment {
         mandateText?: {
             [key: string]: string;
         };
+    };
+}
+
+declare interface GetConsignmentsCommand {
+    type: ExtensionCommandType.GetConsignments;
+}
+
+declare interface GetConsignmentsMessage {
+    type: ExtensionMessageType.GetConsignments;
+    payload: {
+        consignments: Consignment[];
     };
 }
 

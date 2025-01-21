@@ -12,6 +12,8 @@
 - [CheckoutIncludes](enums/CheckoutIncludes.md)
 - [EmbeddedCheckoutEventType](enums/EmbeddedCheckoutEventType.md)
 - [ExtensionCommandType](enums/ExtensionCommandType.md)
+- [ExtensionEventType](enums/ExtensionEventType.md)
+- [ExtensionMessageType](enums/ExtensionMessageType.md)
 - [ExtensionRegion](enums/ExtensionRegion.md)
 - [GooglePayKey](enums/GooglePayKey.md)
 - [HostedFieldEventType](enums/HostedFieldEventType.md)
@@ -188,6 +190,7 @@
 - [ConsignmentPickupOption](interfaces/ConsignmentPickupOption.md)
 - [ConsignmentSelector](interfaces/ConsignmentSelector.md)
 - [ConsignmentUpdateRequestBody](interfaces/ConsignmentUpdateRequestBody.md)
+- [ConsignmentsChangedEvent](interfaces/ConsignmentsChangedEvent.md)
 - [ContextConfig](interfaces/ContextConfig.md)
 - [Coordinates](interfaces/Coordinates.md)
 - [Country](interfaces/Country.md)
@@ -241,6 +244,8 @@
 - [FormFields](interfaces/FormFields.md)
 - [FormSelector](interfaces/FormSelector.md)
 - [GatewayOrderPayment](interfaces/GatewayOrderPayment.md)
+- [GetConsignmentsCommand](interfaces/GetConsignmentsCommand.md)
+- [GetConsignmentsMessage](interfaces/GetConsignmentsMessage.md)
 - [GiftCertificate](interfaces/GiftCertificate.md)
 - [GiftCertificateItem](interfaces/GiftCertificateItem.md)
 - [GiftCertificateOrderPayment](interfaces/GiftCertificateOrderPayment.md)
@@ -504,6 +509,8 @@
 - [ConsignmentsRequestBody](README.md#consignmentsrequestbody)
 - [CustomerAddressRequestBody](README.md#customeraddressrequestbody)
 - [CustomerInitializeOptions](README.md#customerinitializeoptions)
+- [ExtensionEvent](README.md#extensionevent)
+- [ExtensionMessage](README.md#extensionmessage)
 - [FlashMessageType](README.md#flashmessagetype)
 - [FormFieldFieldType](README.md#formfieldfieldtype)
 - [FormFieldType](README.md#formfieldtype)
@@ -670,6 +677,18 @@ ___
 ### CustomerInitializeOptions
 
 Ƭ **CustomerInitializeOptions**: [`BaseCustomerInitializeOptions`](interfaces/BaseCustomerInitializeOptions.md) & [`WithAmazonPayV2CustomerInitializeOptions`](interfaces/WithAmazonPayV2CustomerInitializeOptions.md) & [`WithApplePayCustomerInitializeOptions`](interfaces/WithApplePayCustomerInitializeOptions.md) & [`WithBoltCustomerInitializeOptions`](interfaces/WithBoltCustomerInitializeOptions.md) & [`WithBraintreePaypalCustomerInitializeOptions`](interfaces/WithBraintreePaypalCustomerInitializeOptions.md) & [`WithBraintreeFastlaneCustomerInitializeOptions`](interfaces/WithBraintreeFastlaneCustomerInitializeOptions.md) & [`WithGooglePayCustomerInitializeOptions`](README.md#withgooglepaycustomerinitializeoptions) & [`WithPayPalCommerceCustomerInitializeOptions`](interfaces/WithPayPalCommerceCustomerInitializeOptions.md) & [`WithPayPalCommerceCreditCustomerInitializeOptions`](interfaces/WithPayPalCommerceCreditCustomerInitializeOptions.md) & [`WithPayPalCommerceVenmoCustomerInitializeOptions`](interfaces/WithPayPalCommerceVenmoCustomerInitializeOptions.md) & [`WithPayPalCommerceFastlaneCustomerInitializeOptions`](interfaces/WithPayPalCommerceFastlaneCustomerInitializeOptions.md) & [`WithStripeUPECustomerInitializeOptions`](interfaces/WithStripeUPECustomerInitializeOptions.md)
+
+___
+
+### ExtensionEvent
+
+Ƭ **ExtensionEvent**: [`ConsignmentsChangedEvent`](interfaces/ConsignmentsChangedEvent.md)
+
+___
+
+### ExtensionMessage
+
+Ƭ **ExtensionMessage**: [`ExtensionEvent`](README.md#extensionevent) \| [`GetConsignmentsMessage`](interfaces/GetConsignmentsMessage.md)
 
 ___
 

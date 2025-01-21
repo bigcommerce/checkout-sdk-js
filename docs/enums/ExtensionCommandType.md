@@ -6,11 +6,18 @@
 
 ### Enumeration Members
 
+- [GetConsignments](ExtensionCommandType.md#getconsignments)
 - [ReloadCheckout](ExtensionCommandType.md#reloadcheckout)
 - [SetIframeStyle](ExtensionCommandType.md#setiframestyle)
 - [ShowLoadingIndicator](ExtensionCommandType.md#showloadingindicator)
 
 ## Enumeration Members
+
+### GetConsignments
+
+• **GetConsignments**
+
+___
 
 ### ReloadCheckout
 
