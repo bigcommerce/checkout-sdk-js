@@ -3,6 +3,7 @@ export { getExtensions } from './extension.mock';
 export { ExtensionActionType } from './extension-actions';
 export { ExtensionActionCreator } from './extension-action-creator';
 export { ExtensionEventType } from './extension-events';
+export { ExtensionMessageType, ExtensionMessage } from './extension-message';
 export { ExtensionEventBroadcaster } from './extension-event-broadcaster';
 export { createExtensionEventBroadcaster } from './create-extension-event-broadcaster';
 export { ExtensionIframe } from './extension-iframe';
