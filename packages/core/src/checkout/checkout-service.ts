@@ -1449,7 +1449,7 @@ export default class CheckoutService {
      *
      * @alpha
      * @param extensionId - The ID of an extension to post the event to.
-     * @param message -The message to post to an extension.
+     * @param message - The message to post to an extension.
      */
     postMessageToExtension(extensionId: string, message: ExtensionMessage): void {
         this._extensionMessenger.post(extensionId, message);

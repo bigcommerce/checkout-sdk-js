@@ -1573,7 +1573,7 @@ describe('CheckoutService', () => {
             jest.spyOn(extensionMessenger, 'post');
 
             const message = {
-                type: ExtensionMessageType.CurrentConsignments,
+                type: ExtensionMessageType.GetConsignments,
                 payload: {
                     consignments: [],
                 },
