@@ -154,7 +154,14 @@ export default class HostedInputValidator {
     }
 
     private _getCardNameSchema(): StringSchema {
-        return string().max(200).required('Full name is required');
+        return string()
+            .max(200)
+            .required('Full name is required')
+            .test({
+                message: 'Credit card name must be valid',
+                name: 'invalid_card_name',
+                test: (value) => !number(value).isValid,
+            });
     }
 
     private _getCardNumberSchema(): StringSchema {
