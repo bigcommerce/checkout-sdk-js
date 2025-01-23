@@ -10,7 +10,7 @@ import {
 
 export default interface HostedFormOptions {
     fields: HostedCardFieldOptionsMap;
-    orderId: number;
+    orderId?: number;
     styles?: HostedFieldStylesMap;
     onBlur?(data: HostedFieldBlurEventData): void;
     onCardTypeChange?(data: HostedFieldCardTypeChangeEventData): void;

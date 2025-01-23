@@ -161,3 +161,16 @@ export function getErrorPaymentResponseBody(): PaymentResponseBody {
         errors: [{ code: 'insufficient_funds', message: 'Insufficient funds' }],
     };
 }
+
+export function getPaymentResponseBody(): PaymentResponseBody {
+    return {
+        status: 'ok',
+        id: 'b12e69cb-d76e-4d86-8d3d-94e8a07c9051',
+        avs_result: {},
+        cvv_result: {},
+        three_ds_result: {},
+        fraud_review: true,
+        transaction_type: 'purchase',
+        errors: [],
+    };
+}

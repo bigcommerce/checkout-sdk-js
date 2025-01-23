@@ -39,6 +39,8 @@ export interface HostedInputEventMap {
     [HostedInputEventType.SubmitManualOrderSucceeded]: HostedInputSubmitManualOrderSuccessEvent;
     [HostedInputEventType.SubmitManualOrderFailed]: HostedInputSubmitManualOrderErrorEvent;
     [HostedInputEventType.Validated]: HostedInputValidateEvent;
+    [HostedInputEventType.StoredCardFailed]: HostedInputStoredCardErrorEvent;
+    [HostedInputEventType.StoredCardSucceeded]: HostedInputStoredCardSucceededEvent;
 }
 
 // Events
@@ -53,7 +55,9 @@ export type HostedInputEvent =
     | HostedInputFocusEvent
     | HostedInputSubmitManualOrderSuccessEvent
     | HostedInputSubmitManualOrderErrorEvent
-    | HostedInputValidateEvent;
+    | HostedInputValidateEvent
+    | HostedInputStoredCardSucceededEvent
+    | HostedInputStoredCardErrorEvent;
 
 export interface HostedInputAttachSuccessEvent {
     type: HostedInputEventType.AttachSucceeded;
@@ -139,6 +143,19 @@ export interface HostedInputSubmitErrorEvent {
     type: HostedInputEventType.SubmitFailed;
     payload: {
         error: PaymentErrorData;
+        response?: Response<PaymentErrorResponseBody>;
+    };
+}
+
+export interface HostedInputStoredCardSucceededEvent {
+    type: HostedInputEventType.StoredCardSucceeded;
+}
+
+export interface HostedInputStoredCardErrorEvent {
+    type: HostedInputEventType.StoredCardFailed;
+    payload?: {
+        errors?: string[];
+        error?: PaymentErrorData;
         response?: Response<PaymentErrorResponseBody>;
     };
 }

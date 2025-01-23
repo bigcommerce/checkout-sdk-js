@@ -19,12 +19,17 @@ import HostedFormOrderData from './hosted-form-order-data';
 import {
     HostedInputEventMap,
     HostedInputEventType,
+    HostedInputStoredCardSucceededEvent,
     HostedInputSubmitErrorEvent,
     HostedInputSubmitManualOrderErrorEvent,
     HostedInputSubmitManualOrderSuccessEvent,
     HostedInputSubmitSuccessEvent,
     HostedInputValidateEvent,
 } from './iframe-content';
+import {
+    StoredCardHostedFormData,
+    StoredCardHostedFormInstrumentFields,
+} from './stored-card-hosted-form-type';
 
 export const RETRY_INTERVAL = 60 * 1000;
 export const LAST_RETRY_KEY = 'lastRetry';
@@ -35,21 +40,27 @@ export default class HostedField {
     constructor(
         private _type: HostedFieldType,
         private _containerId: string,
-        private _orderId: number,
         private _placeholder: string,
         private _accessibilityLabel: string,
         private _styles: HostedFieldStylesMap,
         private _eventPoster: IframeEventPoster<HostedFieldEvent>,
         private _eventListener: IframeEventListener<HostedInputEventMap>,
         private _detachmentObserver: DetachmentObserver,
+        private _orderId?: number,
     ) {
         this._iframe = document.createElement('iframe');
 
-        this._iframe.src = `/admin/payments/${this._orderId}/hosted-form-field?version=${LIBRARY_VERSION}`;
+        this._iframe.src = this.getFrameSrc(this._orderId);
         this._iframe.style.border = 'none';
         this._iframe.style.height = '100%';
         this._iframe.style.overflow = 'hidden';
         this._iframe.style.width = '100%';
+    }
+
+    private getFrameSrc(orderId?: number): string {
+        return typeof orderId !== 'undefined'
+            ? `/admin/payments/${this._orderId}/hosted-form-field?version=${LIBRARY_VERSION}`
+            : `/checkout/payment/hosted-field?version=${LIBRARY_VERSION}`;
     }
 
     getType(): HostedFieldType {
@@ -178,6 +189,24 @@ export default class HostedField {
 
             throw event;
         }
+    }
+
+    async submitStoredCardForm(
+        fields: StoredCardHostedFormInstrumentFields,
+        data: StoredCardHostedFormData,
+    ): Promise<HostedInputStoredCardSucceededEvent> {
+        const promise = this._eventPoster.post<HostedInputStoredCardSucceededEvent>(
+            {
+                type: HostedFieldEventType.StoredCardRequested,
+                payload: { fields, data },
+            },
+            {
+                successType: HostedInputEventType.StoredCardSucceeded,
+                errorType: HostedInputEventType.StoredCardFailed,
+            },
+        );
+
+        return this._detachmentObserver.ensurePresence([this._iframe], promise);
     }
 
     async validateForm(): Promise<void> {

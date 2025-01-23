@@ -11,6 +11,7 @@ import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
 import HostedInputManualOrderPaymentHandler from './hosted-input-manual-order-payment-handler';
+import HostedInputStoredCardHandler from './hosted-input-stored-card-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 
@@ -31,6 +32,7 @@ export default class HostedCardNumberInput extends HostedInput {
         inputAggregator: HostedInputAggregator,
         inputValidator: HostedInputValidator,
         manualOrderPaymentHandler: HostedInputManualOrderPaymentHandler,
+        storedCardHandler: HostedInputStoredCardHandler,
         private _autocompleteFieldset: HostedAutocompleteFieldset,
         private _formatter: CardNumberFormatter,
     ) {
@@ -47,6 +49,7 @@ export default class HostedCardNumberInput extends HostedInput {
             inputAggregator,
             inputValidator,
             manualOrderPaymentHandler,
+            storedCardHandler,
         );
     }
 
