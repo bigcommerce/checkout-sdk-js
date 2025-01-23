@@ -251,7 +251,7 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
                             errorColor: 'orange',
                         },
                         input: {
-                            borderRadius: '5px',
+                            borderColor: '#fffff',
                         },
                     },
                 },
@@ -266,7 +266,6 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
                     isFastlaneStylingEnabled: true,
                     fastlaneStyles: {
                         fastlaneRootSettingsBackgroundColor: 'red',
-                        fastlaneBrandingSettings: 'branding',
                     },
                 },
             };
@@ -287,9 +286,8 @@ describe('PayPalCommerceFastlaneCustomerStrategy', () => {
                         errorColor: 'orange',
                     },
                     input: {
-                        borderRadius: '5px',
+                        borderColor: '#fffff',
                     },
-                    branding: 'branding',
                 },
             );
         });

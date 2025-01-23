@@ -27,16 +27,8 @@ function mergeFastlaneStyles(
                 styleSettings?.fastlaneRootSettingsBackgroundColor ||
                 uiStyles?.root?.backgroundColorPrimary,
             errorColor: styleSettings?.fastlaneRootSettingsErrorColor || uiStyles?.root?.errorColor,
-            fontFamily: styleSettings?.fastlaneRootSettingsFontFamily || uiStyles?.root?.fontFamily,
-            fontSizeBase:
-                styleSettings?.fastlaneRootSettingsFontSize || uiStyles?.root?.fontSizeBase,
-            padding: styleSettings?.fastlaneRootSettingsPadding || uiStyles?.root?.padding,
-            primaryColor:
-                styleSettings?.fastlaneRootSettingsPrimaryColor || uiStyles?.root?.primaryColor,
         },
         input: {
-            borderRadius:
-                styleSettings?.fastlaneInputSettingsBorderRadius || uiStyles?.input?.borderRadius,
             borderColor:
                 styleSettings?.fastlaneInputSettingsBorderColor || uiStyles?.input?.borderColor,
             focusBorderColor:
@@ -45,35 +37,9 @@ function mergeFastlaneStyles(
             backgroundColor:
                 styleSettings?.fastlaneInputSettingsBackgroundColor ||
                 uiStyles?.input?.backgroundColor,
-            borderWidth:
-                styleSettings?.fastlaneInputSettingsBorderWidth || uiStyles?.input?.borderWidth,
             textColorBase:
                 styleSettings?.fastlaneInputSettingsTextColorBase || uiStyles?.input?.textColorBase,
         },
-        toggle: {
-            colorPrimary:
-                styleSettings?.fastlaneToggleSettingsColorPrimary || uiStyles?.toggle?.colorPrimary,
-            colorSecondary:
-                styleSettings?.fastlaneToggleSettingsColorSecondary ||
-                uiStyles?.toggle?.colorSecondary,
-        },
-        text: {
-            body: {
-                color: styleSettings?.fastlaneTextBodySettingsColor || uiStyles?.text?.body?.color,
-                fontSize:
-                    styleSettings?.fastlaneTextBodySettingsFontSize ||
-                    uiStyles?.text?.body?.fontSize,
-            },
-            caption: {
-                color:
-                    styleSettings?.fastlaneTextCaptionSettingsColor ||
-                    uiStyles?.text?.caption?.color,
-                fontSize:
-                    styleSettings?.fastlaneTextCaptionSettingsFontSize ||
-                    uiStyles?.text?.caption?.fontSize,
-            },
-        },
-        branding: styleSettings?.fastlaneBrandingSettings || uiStyles?.branding,
     };
 }
 

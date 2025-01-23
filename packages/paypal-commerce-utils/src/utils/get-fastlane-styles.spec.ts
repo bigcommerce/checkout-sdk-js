@@ -5,18 +5,11 @@ describe('#getFastlaneStyles()', () => {
         const styles = {
             fastlaneRootSettingsBackgroundColor: 'red',
             fastlaneInputSettingsBorderColor: 'green',
-            fastlaneTextBodySettingsFontSize: '12px',
-            fastlaneTextBodySettingsColor: 'blue',
         };
 
         const uiStyles = {
             root: {
                 backgroundColorPrimary: 'green',
-            },
-            text: {
-                caption: {
-                    fontSize: '15px',
-                },
             },
         };
 
@@ -26,15 +19,6 @@ describe('#getFastlaneStyles()', () => {
             },
             input: {
                 borderColor: 'green',
-            },
-            text: {
-                body: {
-                    fontSize: '12px',
-                    color: 'blue',
-                },
-                caption: {
-                    fontSize: '15px',
-                },
             },
         });
     });

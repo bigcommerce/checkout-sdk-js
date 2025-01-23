@@ -315,7 +315,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                             backgroundColorPrimary: 'red',
                         },
                         input: {
-                            borderRadius: '10px',
+                            borderColor: '#fffff',
                         },
                     },
                 },
@@ -331,12 +331,7 @@ describe('PayPalCommerceFastlaneShippingStrategy', () => {
                         backgroundColorPrimary: 'orange',
                     },
                     input: {
-                        borderRadius: '10px',
-                    },
-                    text: {
-                        caption: {
-                            color: 'blue',
-                        },
+                        borderColor: '#fffff',
                     },
                 },
             );
