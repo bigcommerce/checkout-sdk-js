@@ -14,3 +14,7 @@ export interface GetConsignmentsMessage {
 }
 
 export type ExtensionMessage = ExtensionEvent | GetConsignmentsMessage;
+
+export interface ExtensionMessageMap {
+    [ExtensionMessageType.GetConsignments]: GetConsignmentsMessage;
+}

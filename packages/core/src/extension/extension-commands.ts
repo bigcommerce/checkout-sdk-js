@@ -4,6 +4,10 @@ export type ExtensionCommand =
     | SetIframeStyleCommand
     | GetConsignmentsCommand;
 
+export enum InstantDataCommandType {
+    Consignments = 'consignments',
+}
+
 export enum ExtensionCommandType {
     ReloadCheckout = 'EXTENSION:RELOAD_CHECKOUT',
     ShowLoadingIndicator = 'EXTENSION:SHOW_LOADING_INDICATOR',

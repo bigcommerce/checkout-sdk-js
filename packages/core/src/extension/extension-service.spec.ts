@@ -1,23 +1,35 @@
+import EventEmitter from 'events';
 import { noop } from 'lodash';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
-import { ExtensionCommand, ExtensionCommandContext } from './extension-commands';
+import {
+    ExtensionCommand,
+    ExtensionCommandContext,
+    InstantDataCommandType,
+} from './extension-commands';
 import { ExtensionEventMap, ExtensionEventType } from './extension-events';
 import {
     ExtensionInternalCommand,
     ExtensionInternalCommandType,
 } from './extension-internal-commands';
 import { ExtensionInternalEventType } from './extension-internal-events';
+import {
+    ExtensionMessageMap,
+    ExtensionMessageType,
+    GetConsignmentsMessage,
+} from './extension-message';
 import ExtensionService from './extension-service';
 
 describe('ExtensionService', () => {
     let extensionService: ExtensionService;
+    let messageListener: IframeEventListener<ExtensionMessageMap>;
     let eventListener: IframeEventListener<ExtensionEventMap>;
     let eventPoster: IframeEventPoster<ExtensionCommand, ExtensionCommandContext>;
     let internalEventPoster: IframeEventPoster<ExtensionInternalCommand>;
 
     beforeEach(() => {
+        messageListener = new IframeEventListener('https://mybigcommerce.com');
         eventListener = new IframeEventListener('https://mybigcommerce.com');
         eventPoster = new IframeEventPoster('https://mybigcommerce.com');
         internalEventPoster = new IframeEventPoster('https://mybigcommerce.com');
@@ -27,7 +39,12 @@ describe('ExtensionService', () => {
         jest.spyOn(eventPoster, 'post');
         jest.spyOn(internalEventPoster, 'post');
 
-        extensionService = new ExtensionService(eventListener, eventPoster, internalEventPoster);
+        extensionService = new ExtensionService(
+            messageListener,
+            eventListener,
+            eventPoster,
+            internalEventPoster,
+        );
     });
 
     it('#initializes successfully', () => {
@@ -106,6 +123,48 @@ describe('ExtensionService', () => {
         expect(eventListener.addListener).toHaveBeenCalledWith(
             ExtensionEventType.ConsignmentsChanged,
             callbackFn,
+        );
+    });
+
+    it('gets data instantly', async () => {
+        const eventEmitter = new EventEmitter();
+        const replyMessage: GetConsignmentsMessage = {
+            type: ExtensionMessageType.GetConsignments,
+            payload: {
+                consignments: [],
+            },
+        };
+
+        jest.spyOn(window, 'addEventListener').mockImplementation((type, eventListener) => {
+            const listener =
+                typeof eventListener === 'function' ? eventListener : () => eventListener;
+
+            return eventEmitter.addListener(type, listener);
+        });
+        jest.spyOn(eventPoster, 'post').mockImplementation(() => {
+            eventEmitter.emit('message', {
+                origin: 'https://mybigcommerce.com',
+                data: replyMessage,
+                type: ExtensionMessageType.GetConsignments,
+            });
+
+            return Promise.resolve(replyMessage);
+        });
+        jest.spyOn(messageListener, 'removeListener');
+
+        void extensionService.initialize('test');
+
+        expect(await extensionService.get(InstantDataCommandType.Consignments)).toBe(
+            replyMessage.payload.consignments,
+        );
+        expect(messageListener.removeListener).toHaveBeenCalled();
+    });
+
+    it('throws error when trying to get unsupported data', async () => {
+        void extensionService.initialize('test');
+
+        await expect(extensionService.get('cart' as InstantDataCommandType)).rejects.toThrow(
+            'Unsupported data type: cart',
         );
     });
 });

@@ -6,6 +6,7 @@ import {
     ExtensionCommand,
     ExtensionCommandContext,
     ExtensionCommandType,
+    InstantDataCommandType,
 } from './extension-commands';
 import { ExtensionEventMap, ExtensionEventType } from './extension-events';
 import {
@@ -13,11 +14,17 @@ import {
     ExtensionInternalCommandType,
 } from './extension-internal-commands';
 import { ExtensionInternalEventType } from './extension-internal-events';
+import {
+    ExtensionMessageMap,
+    ExtensionMessageType,
+    GetConsignmentsMessage,
+} from './extension-message';
 
 export default class ExtensionService {
     private _extensionId?: string;
 
     constructor(
+        private _messageListener: IframeEventListener<ExtensionMessageMap>,
         private _eventListener: IframeEventListener<ExtensionEventMap>,
         private _commandPoster: IframeEventPoster<ExtensionCommand, ExtensionCommandContext>,
         private _internalCommandPoster: IframeEventPoster<ExtensionInternalCommand>,
@@ -33,6 +40,7 @@ export default class ExtensionService {
 
         this._extensionId = extensionId;
 
+        this._messageListener.listen();
         this._eventListener.listen();
         this._commandPoster.setContext({ extensionId });
 
@@ -62,6 +70,32 @@ export default class ExtensionService {
         }
 
         this._commandPoster.post(command);
+    }
+
+    async get(dataType: InstantDataCommandType): Promise<any> {
+        switch (dataType) {
+            case InstantDataCommandType.Consignments:
+                return new Promise((resolve) => {
+                    const callback = (event: GetConsignmentsMessage) => {
+                        this._messageListener.removeListener(
+                            ExtensionMessageType.GetConsignments,
+                            callback,
+                        );
+
+                        resolve(event.payload.consignments);
+                    };
+
+                    this._messageListener.addListener(
+                        ExtensionMessageType.GetConsignments,
+                        callback,
+                    );
+
+                    this.post({ type: ExtensionCommandType.GetConsignments });
+                });
+
+            default:
+                return Promise.reject(new Error(`Unsupported data type: ${dataType}`));
+        }
     }
 
     addListener(eventType: ExtensionEventType, callback: () => void = noop): () => void {
