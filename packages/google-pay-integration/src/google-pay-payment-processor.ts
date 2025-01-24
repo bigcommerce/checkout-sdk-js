@@ -5,7 +5,6 @@ import {
     AddressRequestBody,
     BillingAddressRequestBody,
     guard,
-    InvalidArgumentError,
     NotInitializedError,
     NotInitializedErrorType,
     PaymentMethod,
@@ -81,13 +80,11 @@ export default class GooglePayPaymentProcessor {
     addPaymentButton(
         containerId: string,
         options: Omit<GooglePayButtonOptions, 'allowedPaymentMethods'>,
-    ): HTMLElement {
+    ): HTMLElement | undefined {
         const container = document.querySelector<HTMLElement>(`#${containerId}`);
 
         if (!container) {
-            throw new InvalidArgumentError(
-                'Unable to render the Google Pay button to an invalid HTML container element.',
-            );
+            return;
         }
 
         const paymentButton = this._getPaymentsClient().createButton({

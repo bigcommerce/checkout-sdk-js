@@ -78,6 +78,12 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
                 placement: AmazonPayV2Placement.Checkout,
                 isButtonMicroTextDisabled,
             });
+
+            if (!this._amazonPayButton) {
+                throw new InvalidArgumentError(
+                    'Unable to render the Amazon Pay button to an invalid HTML container element.',
+                );
+            }
         }
     }
 

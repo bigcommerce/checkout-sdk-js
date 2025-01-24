@@ -248,6 +248,16 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
                 expect(amazonPayV2PaymentProcessor.initialize).not.toHaveBeenCalled();
             });
+
+            test("payment button wasn't rendered is not provided", async () => {
+                jest.spyOn(amazonPayV2PaymentProcessor, 'renderAmazonPayButton').mockReturnValue(
+                    undefined,
+                );
+
+                await expect(strategy.initialize(initializeOptions)).rejects.toThrow(
+                    'Unable to render the Amazon Pay button to an invalid HTML container element.',
+                );
+            });
         });
     });
 
