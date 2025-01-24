@@ -16,12 +16,12 @@ export default class AdyenV3ScriptLoader {
             this._stylesheetLoader.loadStylesheet(
                 `https://checkoutshopper-${
                     configuration.environment ?? ''
-                }.adyen.com/checkoutshopper/sdk/5.58.0/adyen.css`,
+                }.adyen.com/checkoutshopper/sdk/5.71.1/adyen.css`,
                 {
                     prepend: false,
                     attributes: {
                         integrity:
-                            'sha384-zgFNrGzbwuX5qJLys75cOUIGru/BoEzhGMyC07I3OSdHqXuhUfoDPVG03G+61oF4',
+                            'sha384-5MvB4RnzvviA3VBT4KYABZ4HXNZG5LRqREEgd41xt/pf/QvKmsj2O9GuNuywRXx9',
                         crossorigin: 'anonymous',
                     },
                 },
@@ -29,12 +29,12 @@ export default class AdyenV3ScriptLoader {
             this._scriptLoader.loadScript(
                 `https://checkoutshopper-${
                     configuration.environment ?? ''
-                }.adyen.com/checkoutshopper/sdk/5.58.0/adyen.js`,
+                }.adyen.com/checkoutshopper/sdk/5.71.1/adyen.js`,
                 {
                     async: true,
                     attributes: {
                         integrity:
-                            'sha384-e0EBlzLdOXxOJimp2uut2z1m98HS2cdhQw+OmeJDp7MRCPRNrQhjIWZiWiIscJvf',
+                            'sha384-yvY2yFNR4WqIjPqP9MzjI+gJimmaJnAvj4rLHKvgJbgFD5fMuf8zIJrFJOW8Lhhf',
                         crossorigin: 'anonymous',
                     },
                 },
