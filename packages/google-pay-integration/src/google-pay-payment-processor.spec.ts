@@ -278,16 +278,13 @@ describe('GooglePayPaymentProcessor', () => {
             expect(container.appendChild).toHaveBeenCalledWith(clientMocks.button);
         });
 
-        describe('should fail if:', () => {
+        describe('should not mount button if:', () => {
             test('an invalid container is provided', async () => {
                 await processor.initialize(getGeneric);
 
-                const addPaymentButton = () =>
-                    processor.addPaymentButton('wrong_container_id', buttonOptions);
-
-                expect(addPaymentButton).toThrow(
-                    'Unable to render the Google Pay button to an invalid HTML container element.',
-                );
+                expect(
+                    processor.addPaymentButton('wrong_container_id', buttonOptions),
+                ).toBeUndefined();
             });
 
             test('not initialized', () => {

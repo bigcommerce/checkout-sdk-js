@@ -2,7 +2,6 @@ import {
     CheckoutSettings,
     getShippableItemsCount,
     guard,
-    InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
@@ -124,13 +123,11 @@ export default class AmazonPayV2PaymentProcessor {
         options,
         placement,
         isButtonMicroTextDisabled = false,
-    }: AmazonPayV2ButtonRenderingOptions): HTMLDivElement {
+    }: AmazonPayV2ButtonRenderingOptions): HTMLDivElement | undefined {
         const container = document.querySelector<HTMLElement>(`#${containerId}`);
 
         if (!container) {
-            throw new InvalidArgumentError(
-                'Unable to render the Amazon Pay button to an invalid HTML container element.',
-            );
+            return;
         }
 
         const { id: parentContainerId } = container.appendChild(this.getButtonParentContainer());

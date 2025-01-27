@@ -1,7 +1,6 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import {
-    InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
@@ -369,7 +368,7 @@ describe('AmazonPayV2PaymentProcessor', () => {
                 paymentMethods: { getPaymentMethodOrThrow: jest.fn(() => getAmazonPayV2()) },
             } as InternalCheckoutSelectors;
         };
-        // eslint-disable-next-line  @typescript-eslint/no-unsafe-member-access
+
         const stateMock = new PaymentIntegrationServiceMock().getState();
         const getPaymentIntegrationSelectorsMock = () =>
             ({
@@ -610,12 +609,12 @@ describe('AmazonPayV2PaymentProcessor', () => {
 
         describe('should fail...', () => {
             test('if an invalid containerId is provided', async () => {
-                const renderAmazonPayButtonToAnInvalidContainer = () =>
-                    renderAmazonPayButton('bar');
+                const renderResult = renderAmazonPayButton('bar');
 
                 await processor.initialize(amazonPayV2Mock);
 
-                expect(renderAmazonPayButtonToAnInvalidContainer).toThrow(InvalidArgumentError);
+                expect(renderResult).toBeUndefined();
+
                 expect(amazonPayV2SDKMock.Pay.renderButton).not.toHaveBeenCalled();
             });
 
