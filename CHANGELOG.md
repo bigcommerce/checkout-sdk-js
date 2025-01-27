@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.698.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.698.0...v1.698.1) (2025-01-27)
+
+
+### Bug Fixes
+
+* **payment:** PI-3102 removed error throwing on initialization for amazon-pay and google-pay customer step buttons ([#2771](https://github.com/bigcommerce/checkout-sdk-js/issues/2771)) ([3834768](https://github.com/bigcommerce/checkout-sdk-js/commit/383476879b73910d4fcc6746380f7b33bd623201))
+
 ## [1.698.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.697.0...v1.698.0) (2025-01-21)
 
 
