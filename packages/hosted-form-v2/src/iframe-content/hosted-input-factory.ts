@@ -3,7 +3,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { appendWww, parseUrl } from '../common/url';
 import HostedFieldType from '../hosted-field-type';
-import { ManualOrderPaymentRequestSender } from '../payment';
+import { ManualOrderPaymentRequestSender, StorefrontStoredCardRequestSender } from '../payment';
 
 import CardExpiryFormatter from './card-expiry-formatter';
 import CardNumberFormatter from './card-number-formatter';
@@ -14,6 +14,7 @@ import HostedCardNumberInput from './hosted-card-number-input';
 import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';
 import HostedInputManualOrderPaymentHandler from './hosted-input-manual-order-payment-handler';
+import HostedInputStoredCardHandler from './hosted-input-stored-card-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 import mapToAccessibilityLabel from './map-to-accessibility-label';
@@ -105,6 +106,7 @@ export default class HostedInputFactory {
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(),
             this._createManualOrderPaymentHandler(),
+            this._createStoredCardHandler(),
             new CardExpiryFormatter(),
         );
     }
@@ -131,6 +133,7 @@ export default class HostedInputFactory {
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(),
             this._createManualOrderPaymentHandler(),
+            this._createStoredCardHandler(),
             new HostedAutocompleteFieldset(
                 form,
                 [HostedFieldType.CardCode, HostedFieldType.CardExpiry, HostedFieldType.CardName],
@@ -162,6 +165,7 @@ export default class HostedInputFactory {
             new HostedInputAggregator(window.parent),
             new HostedInputValidator(),
             this._createManualOrderPaymentHandler(),
+            this._createStoredCardHandler(),
         );
     }
 
@@ -172,6 +176,15 @@ export default class HostedInputFactory {
             getHostedInputStorage(),
             new IframeEventPoster(this._parentOrigin, window.parent),
             new ManualOrderPaymentRequestSender(createRequestSender(), this._paymentOrigin),
+        );
+    }
+
+    private _createStoredCardHandler(): HostedInputStoredCardHandler {
+        return new HostedInputStoredCardHandler(
+            new HostedInputAggregator(window.parent),
+            new HostedInputValidator(),
+            new IframeEventPoster(this._parentOrigin, window.parent),
+            new StorefrontStoredCardRequestSender(createRequestSender()),
         );
     }
 }

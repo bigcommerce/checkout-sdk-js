@@ -22,6 +22,7 @@ export {
     getPaymentMethodsMeta,
     getResponse,
     getPaymentResponse,
+    getPaymentResponseBody,
     getErrorResponse,
     getErrorResponseBody,
     getTimeoutResponse,

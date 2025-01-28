@@ -7,6 +7,7 @@ import HostedCardExpiryInput from './hosted-card-expiry-input';
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent } from './hosted-input-events';
 import HostedInputManualOrderPaymentHandler from './hosted-input-manual-order-payment-handler';
+import HostedInputStoredCardHandler from './hosted-input-stored-card-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 
@@ -22,6 +23,7 @@ describe('HostedCardExpiryInput', () => {
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
     let manualOrderPaymentHandler: Pick<HostedInputManualOrderPaymentHandler, 'handle'>;
+    let storedCardHandler: Pick<HostedInputStoredCardHandler, 'handle'>;
     let styles: HostedInputStylesMap;
 
     beforeEach(() => {
@@ -45,6 +47,7 @@ describe('HostedCardExpiryInput', () => {
             ),
         };
         manualOrderPaymentHandler = { handle: jest.fn() };
+        storedCardHandler = { handle: jest.fn() };
         styles = { default: { color: 'rgb(255, 255, 255)' } };
 
         container = document.createElement('form');
@@ -62,6 +65,7 @@ describe('HostedCardExpiryInput', () => {
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
             manualOrderPaymentHandler as HostedInputManualOrderPaymentHandler,
+            storedCardHandler as HostedInputStoredCardHandler,
             expiryFormatter as CardExpiryFormatter,
         );
     });

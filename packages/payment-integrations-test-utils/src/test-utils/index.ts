@@ -31,6 +31,7 @@ export {
     getCreditCardInstrument,
     getVaultedInstrument,
     getErrorPaymentResponseBody,
+    getPaymentResponseBody,
     getInstruments,
 } from './payments.mock';
 

@@ -12,6 +12,7 @@ import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
 import HostedInputManualOrderPaymentHandler from './hosted-input-manual-order-payment-handler';
+import HostedInputStoredCardHandler from './hosted-input-stored-card-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 import HostedInputValues from './hosted-input-values';
@@ -26,6 +27,7 @@ describe('HostedInput', () => {
     let eventPoster: Pick<IframeEventPoster<HostedInputEvent>, 'setTarget' | 'post'>;
     let fontUrls: string[];
     let input: HostedInput;
+    let storedCardHandler: Pick<HostedInputStoredCardHandler, 'handle'>;
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
     let manualOrderPaymentHandler: Pick<HostedInputManualOrderPaymentHandler, 'handle'>;
@@ -65,6 +67,7 @@ describe('HostedInput', () => {
         fontUrls = ['https://fonts.googleapis.com/css?family=Open+Sans&display=swap'];
 
         manualOrderPaymentHandler = { handle: jest.fn() };
+        storedCardHandler = { handle: jest.fn() };
 
         inputAggregator = {
             getInputValues: jest.fn(() => values),
@@ -99,6 +102,7 @@ describe('HostedInput', () => {
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
             manualOrderPaymentHandler as HostedInputManualOrderPaymentHandler,
+            storedCardHandler as HostedInputStoredCardHandler,
         );
     });
 
@@ -149,6 +153,7 @@ describe('HostedInput', () => {
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
             manualOrderPaymentHandler as HostedInputManualOrderPaymentHandler,
+            storedCardHandler as HostedInputStoredCardHandler,
         );
 
         input.attach();
@@ -175,6 +180,7 @@ describe('HostedInput', () => {
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
             manualOrderPaymentHandler as HostedInputManualOrderPaymentHandler,
+            storedCardHandler as HostedInputStoredCardHandler,
         );
 
         input.attach();
@@ -201,6 +207,7 @@ describe('HostedInput', () => {
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
             manualOrderPaymentHandler as HostedInputManualOrderPaymentHandler,
+            storedCardHandler as HostedInputStoredCardHandler,
         );
 
         cardNumberInput.attach();

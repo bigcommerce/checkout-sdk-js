@@ -23,13 +23,13 @@ export default class HostedFormFactory {
                 new HostedField(
                     type,
                     fieldOptions.containerId,
-                    options.orderId,
                     fieldOptions.placeholder || '',
                     fieldOptions.accessibilityLabel || '',
                     options.styles || {},
                     new IframeEventPoster(host),
                     new IframeEventListener(host),
                     new DetachmentObserver(new MutationObserverFactory()),
+                    options.orderId,
                 ),
             ];
         }, []);
