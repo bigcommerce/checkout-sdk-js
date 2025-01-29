@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.700.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.699.0...v1.700.0) (2025-01-29)
+
+
+### Features
+
+* **payment:** PI-3099 Remove iDEAL bank selection dropdown for Adyen ([cf35535](https://github.com/bigcommerce/checkout-sdk-js/commit/cf3553554206fb368e334119e19c2e1876f3bd08))
+
 ## [1.699.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.698.1...v1.699.0) (2025-01-29)
 
 
