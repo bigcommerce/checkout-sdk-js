@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.700.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.700.0...v1.700.1) (2025-01-29)
+
+
+### Bug Fixes
+
+* **payment:** PI-77 added Adyen es locale mapping ([#2775](https://github.com/bigcommerce/checkout-sdk-js/issues/2775)) ([3ff7bf2](https://github.com/bigcommerce/checkout-sdk-js/commit/3ff7bf2823451fad9843b037f079fd682875794a))
+
 ## [1.700.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.699.0...v1.700.0) (2025-01-29)
 
 
