@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.699.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.698.1...v1.699.0) (2025-01-29)
+
+
+### Features
+
+* **payment:** PI-3068 moved my account logic to hosted card v2 package in the checkout-sdk ([#2767](https://github.com/bigcommerce/checkout-sdk-js/issues/2767)) ([2082af7](https://github.com/bigcommerce/checkout-sdk-js/commit/2082af7e67153678155dd7b0a34b09d1dfc8d74c))
+
 ### [1.698.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.698.0...v1.698.1) (2025-01-27)
 
 

@@ -17,13 +17,23 @@ declare interface HostedFieldEventMap {
     [HostedFieldEventType.AttachRequested]: HostedFieldAttachEvent;
     [HostedFieldEventType.SubmitManualOrderRequested]: HostedFieldSubmitManualOrderRequestEvent;
     [HostedFieldEventType.ValidateRequested]: HostedFieldValidateRequestEvent;
+    [HostedFieldEventType.StoredCardRequested]: HostedFieldStoredCardRequestEvent;
 }
 
 declare enum HostedFieldEventType {
     AttachRequested = "HOSTED_FIELD:ATTACH_REQUESTED",
     SubmitRequested = "HOSTED_FIELD:SUBMITTED_REQUESTED",
     SubmitManualOrderRequested = "HOSTED_FIELD:SUBMIT_MANUAL_ORDER_REQUESTED",
-    ValidateRequested = "HOSTED_FIELD:VALIDATE_REQUESTED"
+    ValidateRequested = "HOSTED_FIELD:VALIDATE_REQUESTED",
+    StoredCardRequested = "HOSTED_FIELD:STORED_CARD_REQUESTED"
+}
+
+declare interface HostedFieldStoredCardRequestEvent {
+    type: HostedFieldEventType.StoredCardRequested;
+    payload: {
+        data: StoredCardHostedFormData;
+        fields: StoredCardHostedFormInstrumentFields;
+    };
 }
 
 declare type HostedFieldStyles = HostedInputStyles;
@@ -82,6 +92,7 @@ declare class HostedInput {
     protected _inputAggregator: HostedInputAggregator;
     protected _inputValidator: HostedInputValidator;
     protected _manualOrderPaymentHandler: HostedInputManualOrderPaymentHandler;
+    protected _storedCardHandler: HostedInputStoredCardHandler;
     protected _input: HTMLInputElement;
     protected _previousValue?: string;
     private _fontLinks?;
@@ -162,7 +173,7 @@ declare interface HostedInputEnterEvent {
     };
 }
 
-declare type HostedInputEvent = HostedInputAttachSuccessEvent | HostedInputAttachErrorEvent | HostedInputBinChangeEvent | HostedInputBlurEvent | HostedInputChangeEvent | HostedInputCardTypeChangeEvent | HostedInputEnterEvent | HostedInputFocusEvent | HostedInputSubmitManualOrderSuccessEvent | HostedInputSubmitManualOrderErrorEvent | HostedInputValidateEvent;
+declare type HostedInputEvent = HostedInputAttachSuccessEvent | HostedInputAttachErrorEvent | HostedInputBinChangeEvent | HostedInputBlurEvent | HostedInputChangeEvent | HostedInputCardTypeChangeEvent | HostedInputEnterEvent | HostedInputFocusEvent | HostedInputSubmitManualOrderSuccessEvent | HostedInputSubmitManualOrderErrorEvent | HostedInputValidateEvent | HostedInputStoredCardSucceededEvent | HostedInputStoredCardErrorEvent;
 
 declare enum HostedInputEventType {
     AttachSucceeded = "HOSTED_INPUT:ATTACH_SUCCEEDED",
@@ -218,6 +229,28 @@ declare class HostedInputStorage {
     private _nonce?;
     setNonce(nonce: string): void;
     getNonce(): string | undefined;
+}
+
+declare interface HostedInputStoredCardErrorEvent {
+    type: HostedInputEventType.StoredCardFailed;
+    payload?: {
+        errors?: string[];
+        error?: PaymentErrorData;
+        response?: Response<PaymentErrorResponseBody>;
+    };
+}
+
+declare class HostedInputStoredCardHandler {
+    private _inputAggregator;
+    private _inputValidator;
+    private _eventPoster;
+    private _storedCardRequestSender;
+    constructor(_inputAggregator: HostedInputAggregator, _inputValidator: HostedInputValidator, _eventPoster: IframeEventPoster<HostedInputEvent>, _storedCardRequestSender: StorefrontStoredCardRequestSender);
+    handle: (event: HostedFieldStoredCardRequestEvent) => Promise<void>;
+}
+
+declare interface HostedInputStoredCardSucceededEvent {
+    type: HostedInputEventType.StoredCardSucceeded;
 }
 
 declare type HostedInputStyles = Partial<Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>>;
@@ -342,6 +375,54 @@ declare interface PaymentErrorData {
 declare interface PaymentErrorResponseBody {
     status: string;
     errors: PaymentErrorData[];
+}
+
+declare interface StoredCardHostedFormBillingAddress {
+    address1: string;
+    address2?: string;
+    city: string;
+    postalCode: string;
+    countryCode: string;
+    company?: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+    stateOrProvinceCode?: string;
+}
+
+declare interface StoredCardHostedFormData {
+    currencyCode: string;
+    paymentsUrl: string;
+    providerId: string;
+    shopperId: string;
+    storeHash: string;
+    vaultToken: string;
+}
+
+declare interface StoredCardHostedFormInstrumentFields extends StoredCardHostedFormBillingAddress {
+    defaultInstrument: boolean;
+}
+
+declare interface StoredCardHostedFormInstrumentForm {
+    billingAddress: StoredCardHostedFormBillingAddress;
+    instrument: StoredCardHostedFormPaymentInstrument;
+    defaultInstrument: boolean;
+}
+
+declare interface StoredCardHostedFormPaymentInstrument {
+    type: string;
+    cardholderName: string;
+    number: string;
+    expiryMonth: number;
+    expiryYear: number;
+    verificationValue: string;
+}
+
+declare class StorefrontStoredCardRequestSender {
+    private _requestSender;
+    constructor(_requestSender: RequestSender);
+    submitPaymentInstrument(requestInitializationData: StoredCardHostedFormData, storeInstrumentFormData: StoredCardHostedFormInstrumentForm): Promise<void>;
 }
 
 export declare function initializeHostedInput(options: HostedInputOptions): Promise<HostedInput>;
