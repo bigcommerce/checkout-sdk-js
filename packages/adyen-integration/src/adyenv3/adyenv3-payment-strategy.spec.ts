@@ -167,6 +167,28 @@ describe('AdyenV3PaymentStrategy', () => {
                 expect(strategy.initialize(options));
                 expect(adyenComponent.mount).not.toHaveBeenCalled();
             });
+
+            it('set ES locale for es locales', () => {
+                jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue(
+                    'es-419',
+                );
+
+                expect(strategy.initialize(options));
+                expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
+                    expect.objectContaining({ locale: 'es' }),
+                );
+            });
+
+            it('set correct locale', () => {
+                jest.spyOn(paymentIntegrationService.getState(), 'getLocale').mockReturnValue(
+                    'en_US',
+                );
+
+                expect(strategy.initialize(options));
+                expect(adyenV3ScriptLoader.load).toHaveBeenCalledWith(
+                    expect.objectContaining({ locale: 'en_US' }),
+                );
+            });
         });
 
         describe('#execute', () => {

@@ -98,7 +98,7 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
                     : {}),
             },
             environment,
-            locale: this._paymentIntegrationService.getState().getLocale(),
+            locale: this._getLocale(),
             clientKey,
             paymentMethodsResponse,
             showPayButton: false,
@@ -271,6 +271,16 @@ export default class Adyenv3PaymentStrategy implements PaymentStrategy {
 
     private _updateComponentState(componentState: AdyenComponentEventState) {
         this._componentState = componentState;
+    }
+
+    private _getLocale(): string | undefined {
+        const locale = this._paymentIntegrationService.getState().getLocale();
+
+        if (locale && locale.substring(0, 2) === 'es') {
+            return 'es';
+        }
+
+        return locale;
     }
 
     private _getAdyenClient(): AdyenClient {
