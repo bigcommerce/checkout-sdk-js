@@ -24,6 +24,7 @@ import { ApplePayGatewayType } from './apple-pay';
 import ApplePayButtonInitializeOptions, {
     WithApplePayButtonInitializeOptions,
 } from './apple-pay-button-initialize-options';
+import ApplePayScriptLoader from './apple-pay-script-loader';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
@@ -43,6 +44,20 @@ export enum ButtonStyleOption {
 function isShippingOptions(options: ShippingOption[] | undefined): options is ShippingOption[] {
     return options instanceof Array;
 }
+
+const getButtonStyle = (buttonStyle?: ButtonStyleOption): string => {
+    switch (buttonStyle) {
+        case ButtonStyleOption.White:
+            return 'white';
+
+        case ButtonStyleOption.WhiteBorder:
+            return 'white-outline';
+
+        case ButtonStyleOption.Black:
+        default:
+            return 'black';
+    }
+};
 
 const getApplePayButtonStyle = (option?: ButtonStyleOption): Record<string, string> => {
     const defaultStyle: Record<string, string> = {
@@ -84,6 +99,7 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
     private _applePayButton?: HTMLElement;
     private _requiresShipping?: boolean;
     private _buyNowInitializeOptions?: ApplePayButtonInitializeOptions['buyNowInitializeOptions'];
+    private _isWebBrowserSupported?: boolean;
     private _onAuthorizeCallback = noop;
     private _subTotalLabel: string = DefaultLabels.Subtotal;
     private _shippingLabel: string = DefaultLabels.Shipping;
@@ -93,12 +109,19 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         private _paymentIntegrationService: PaymentIntegrationService,
         private _sessionFactory: ApplePaySessionFactory,
         private _braintreeSdk: BraintreeSdk,
+        private _applePayScriptLoader: ApplePayScriptLoader,
     ) {}
 
     async initialize(
         options: CheckoutButtonInitializeOptions & WithApplePayButtonInitializeOptions,
     ): Promise<void> {
         const { methodId, containerId, applepay } = options;
+
+        this._isWebBrowserSupported = applepay?.isWebBrowserSupported;
+
+        if (this._isWebBrowserSupported) {
+            await this._applePayScriptLoader.loadSdk();
+        }
 
         assertApplePayWindow(window);
 
@@ -156,15 +179,36 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
             );
         }
 
-        const button = document.createElement('div');
+        const applePayButton = this._getApplePayButton(styleOption);
 
-        button.setAttribute('role', 'button');
-        button.setAttribute('aria-label', 'Apple Pay button');
-        Object.assign(button.style, getApplePayButtonStyle(styleOption));
+        container.appendChild(applePayButton);
 
-        container.appendChild(button);
+        return applePayButton;
+    }
 
-        return button;
+    private _getApplePayButton(styleOption?: ButtonStyleOption): HTMLElement {
+        let applePayButton: HTMLElement;
+
+        if (this._isWebBrowserSupported) {
+            applePayButton = document.createElement('apple-pay-button');
+
+            applePayButton.setAttribute('buttonstyle', getButtonStyle(styleOption));
+            applePayButton.setAttribute('type', 'plain');
+            applePayButton.setAttribute(
+                'style',
+                '--apple-pay-button-width: 100%; --apple-pay-button-height: 40px; --apple-pay-button-border-radius: 4px;',
+            );
+
+            return applePayButton;
+        }
+
+        applePayButton = document.createElement('div');
+
+        applePayButton.setAttribute('role', 'button');
+        applePayButton.setAttribute('aria-label', 'Apple Pay button');
+        Object.assign(applePayButton.style, getApplePayButtonStyle(styleOption));
+
+        return applePayButton;
     }
 
     private async _handleWalletButtonClick(event: Event) {

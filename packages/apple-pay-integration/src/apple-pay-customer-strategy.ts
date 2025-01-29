@@ -23,6 +23,7 @@ import {
 
 import { ApplePayGatewayType } from './apple-pay';
 import { WithApplePayCustomerInitializeOptions } from './apple-pay-customer-initialize-options';
+import ApplePayScriptLoader from './apple-pay-script-loader';
 import ApplePaySessionFactory, { assertApplePayWindow } from './apple-pay-session-factory';
 
 const validationEndpoint = (bigPayEndpoint: string) =>
@@ -40,6 +41,7 @@ function isShippingOptions(options: ShippingOption[] | undefined): options is Sh
 export default class ApplePayCustomerStrategy implements CustomerStrategy {
     private _paymentMethod?: PaymentMethod;
     private _applePayButton?: HTMLElement;
+    private _isWebBrowserSupported?: boolean;
     private _onAuthorizeCallback = noop;
     private _onError = noop;
     private _onClick = noop;
@@ -52,14 +54,13 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         private _paymentIntegrationService: PaymentIntegrationService,
         private _sessionFactory: ApplePaySessionFactory,
         private _braintreeSdk: BraintreeSdk,
+        private _applePayScriptLoader: ApplePayScriptLoader,
     ) {}
 
     async initialize(
         options: CustomerInitializeOptions & WithApplePayCustomerInitializeOptions,
     ): Promise<void> {
         const { methodId, applepay } = options;
-
-        assertApplePayWindow(window);
 
         if (!methodId || !applepay) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -81,6 +82,15 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
         this._onClick = onClick;
 
         let state = this._paymentIntegrationService.getState();
+        const { features } = state.getStoreConfigOrThrow().checkoutSettings;
+
+        this._isWebBrowserSupported = features['PAYPAL-4324.applepay_web_browser_support'];
+
+        if (this._isWebBrowserSupported) {
+            await this._applePayScriptLoader.loadSdk();
+        }
+
+        assertApplePayWindow(window);
 
         try {
             this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
@@ -128,13 +138,35 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             );
         }
 
-        const button = document.createElement('button');
+        const applePayButton = this._getApplePayButton();
 
-        button.setAttribute('type', 'button');
-        button.setAttribute('aria-label', 'Apple Pay');
-        container.appendChild(button);
+        container.appendChild(applePayButton);
 
-        return button;
+        return applePayButton;
+    }
+
+    private _getApplePayButton(): HTMLElement {
+        let applePayButton: HTMLElement;
+
+        if (this._isWebBrowserSupported) {
+            applePayButton = document.createElement('apple-pay-button');
+
+            applePayButton.setAttribute('buttonstyle', 'black');
+            applePayButton.setAttribute('type', 'plain');
+            applePayButton.setAttribute(
+                'style',
+                '--apple-pay-button-width: 100%; --apple-pay-button-height: 36px; --apple-pay-button-border-radius: 4px;',
+            );
+
+            return applePayButton;
+        }
+
+        applePayButton = document.createElement('div');
+
+        applePayButton.setAttribute('type', 'button');
+        applePayButton.setAttribute('aria-label', 'Apple Pay');
+
+        return applePayButton;
     }
 
     private _handleWalletButtonClick(event: Event) {
