@@ -347,6 +347,20 @@ describe('PayPalCommerceCustomerStrategy', () => {
                 defaultContainerId,
             );
         });
+
+        it('logs an error when PayPalSDK Buttons implementation is not available for some reasons', async () => {
+            jest.spyOn(paypalCommerceIntegrationService, 'loadPayPalSdk').mockReturnValue(
+                Promise.resolve(undefined),
+            );
+
+            const log = jest.fn();
+
+            jest.spyOn(console, 'error').mockImplementation(log);
+
+            await strategy.initialize(initializationOptions);
+
+            expect(log).toHaveBeenCalled();
+        });
     });
 
     describe('#createOrder button callback', () => {
