@@ -73,7 +73,15 @@ export default class PayPalCommerceCreditCustomerStrategy implements CustomerStr
             await this.paymentIntegrationService.loadPaymentMethod(methodId);
         }
 
-        await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
+        const paypalSdk = await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId);
+
+        if (!paypalSdk || !paypalSdk.Buttons || typeof paypalSdk.Buttons !== 'function') {
+            console.error(
+                '[BC PayPal]: PayPal Button could not be rendered, due to issues with loading PayPal SDK',
+            );
+
+            return;
+        }
 
         this.renderButton(methodId, paypalcommercecredit);
     }
