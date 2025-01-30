@@ -22,13 +22,27 @@ export default class SpamProtectionActionCreator {
     initialize(
         options?: SpamProtectionOptions,
     ): ThunkAction<SpamProtectionAction, InternalCheckoutSelectors> {
-        return (store) =>
-            concat(
+        return (store) => {
+            const state = store.getState();
+            const isRecaptchaResetExperimentEnabled =
+                state.config.getConfig()?.storeConfig.checkoutSettings.features[
+                    'CHECKOUT-8264.recaptcha_error_fix'
+                ] ?? true;
+
+            return concat(
                 of(createAction(SpamProtectionActionType.InitializeRequested, undefined)),
                 defer(async () => {
                     const spamProtectionElementId = options
                         ? options.containerId
                         : 'spamProtectionContainer';
+
+                    if (isRecaptchaResetExperimentEnabled) {
+                        const element = document.getElementById(spamProtectionElementId);
+
+                        if (element) {
+                            this._googleRecaptcha.reset(spamProtectionElementId);
+                        }
+                    }
 
                     if (!options && !document.getElementById(spamProtectionElementId)) {
                         const spamProtectionElement = document.createElement('div');
@@ -50,6 +64,7 @@ export default class SpamProtectionActionCreator {
                     throwErrorAction(SpamProtectionActionType.InitializeFailed, error),
                 ),
             );
+        };
     }
 
     verifyCheckoutSpamProtection(): ThunkAction<SpamProtectionAction> {
