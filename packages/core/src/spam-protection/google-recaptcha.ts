@@ -83,7 +83,7 @@ export default class GoogleRecaptcha {
             });
     }
 
-    reset(containerId: string): any {
+    reset(containerId: string): void {
         const element = document.getElementById(containerId);
 
         element?.remove();

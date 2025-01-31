@@ -27,7 +27,7 @@ export default class SpamProtectionActionCreator {
             const isRecaptchaResetExperimentEnabled =
                 state.config.getConfig()?.storeConfig.checkoutSettings.features[
                     'CHECKOUT-8264.recaptcha_error_fix'
-                ] ?? true;
+                ] ?? false;
 
             return concat(
                 of(createAction(SpamProtectionActionType.InitializeRequested, undefined)),

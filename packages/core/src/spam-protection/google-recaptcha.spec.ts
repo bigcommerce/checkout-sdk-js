@@ -34,7 +34,11 @@ describe('GoogleRecaptcha', () => {
     });
 
     afterEach(() => {
-        document.body.removeChild(container);
+        const element = document.getElementById(containerId);
+
+        if (element) {
+            document.body.removeChild(container);
+        }
     });
 
     describe('#load()', () => {
@@ -153,6 +157,41 @@ describe('GoogleRecaptcha', () => {
 
                 expect(googleRecaptchaMock.execute).not.toHaveBeenCalled();
             });
+        });
+    });
+
+    describe('#reset', () => {
+        let googleRecaptchaMock: ReCaptchaV2.ReCaptcha;
+        let recaptchaChallengeContainer: HTMLElement;
+
+        beforeEach(() => {
+            googleRecaptchaMock = getGoogleRecaptchaMock();
+            googleRecaptchaMock.getResponse = jest.fn(() => 'google-recaptcha-token');
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            googleRecaptchaMock.render = jest.fn((_containerId, { callback }) => callback());
+
+            recaptchaChallengeContainer = new DOMParser().parseFromString(
+                '<div style="visibility: hidden"><div><iframe src="https://google.com/recaptcha/api2/bframe?query=1"></div></div>',
+                'text/html',
+            ).body;
+
+            jest.spyOn(googleRecaptchaScriptLoader, 'load').mockResolvedValue(googleRecaptchaMock);
+        });
+
+        it('resets the recaptcha successfully', async () => {
+            const sitekey = 'sitekey';
+
+            document.body.appendChild(recaptchaChallengeContainer);
+            await googleRecaptcha.load(containerId, sitekey);
+
+            expect(document.getElementById(containerId)).toBeTruthy();
+
+            googleRecaptcha.reset(containerId);
+
+            expect(googleRecaptchaMock.reset).toHaveBeenCalled();
+            expect(document.getElementById(containerId)).toBeFalsy();
         });
     });
 });
