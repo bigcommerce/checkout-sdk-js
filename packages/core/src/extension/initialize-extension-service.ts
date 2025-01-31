@@ -7,7 +7,7 @@ import {
 import { ExtensionCommand } from './extension-commands';
 import { ExtensionEventMap } from './extension-events';
 import { ExtensionInternalCommand } from './extension-internal-commands';
-import {ExtensionCommandOrQueryContext, ExtensionMessageMap} from './extension-message';
+import { ExtensionCommandOrQueryContext, ExtensionMessageMap } from './extension-message';
 import ExtensionService from './extension-service';
 import { iframeResizerSetup } from './iframe-resizer-setup';
 

@@ -124,7 +124,7 @@ describe('ExtensionService', () => {
         );
     });
 
-    it('gets data instantly', async () => {
+    it('getConsignments()', async () => {
         const eventEmitter = new EventEmitter();
         const replyMessage: GetConsignmentsMessage = {
             type: ExtensionMessageType.GetConsignments,
