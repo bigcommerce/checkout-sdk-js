@@ -9,6 +9,7 @@ export { createExtensionEventBroadcaster } from './create-extension-event-broadc
 export { ExtensionIframe } from './extension-iframe';
 export { ExtensionMessenger } from './extension-messenger';
 export { ExtensionCommand, ExtensionCommandType, ExtensionCommandMap } from './extension-commands';
+export { ExtensionQuery, ExtensionQueryType, ExtensionQueryMap } from './extension-queries';
 export { extensionReducer } from './extension-reducer';
 export { ExtensionRequestSender } from './extension-request-sender';
 export {

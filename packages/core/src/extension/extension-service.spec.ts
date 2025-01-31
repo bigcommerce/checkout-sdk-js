@@ -3,11 +3,7 @@ import { noop } from 'lodash';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
-import {
-    ExtensionCommand,
-    ExtensionCommandContext,
-    InstantDataCommandType,
-} from './extension-commands';
+import { ExtensionCommand } from './extension-commands';
 import { ExtensionEventMap, ExtensionEventType } from './extension-events';
 import {
     ExtensionInternalCommand,
@@ -15,6 +11,8 @@ import {
 } from './extension-internal-commands';
 import { ExtensionInternalEventType } from './extension-internal-events';
 import {
+    ExtensionCommandOrQuery,
+    ExtensionCommandOrQueryContext,
     ExtensionMessageMap,
     ExtensionMessageType,
     GetConsignmentsMessage,
@@ -25,7 +23,7 @@ describe('ExtensionService', () => {
     let extensionService: ExtensionService;
     let messageListener: IframeEventListener<ExtensionMessageMap>;
     let eventListener: IframeEventListener<ExtensionEventMap>;
-    let eventPoster: IframeEventPoster<ExtensionCommand, ExtensionCommandContext>;
+    let eventPoster: IframeEventPoster<ExtensionCommandOrQuery, ExtensionCommandOrQueryContext>;
     let internalEventPoster: IframeEventPoster<ExtensionInternalCommand>;
 
     beforeEach(() => {
@@ -135,6 +133,7 @@ describe('ExtensionService', () => {
             },
         };
 
+        jest.spyOn(extensionService, 'post');
         jest.spyOn(window, 'addEventListener').mockImplementation((type, eventListener) => {
             const listener =
                 typeof eventListener === 'function' ? eventListener : () => eventListener;
@@ -154,17 +153,15 @@ describe('ExtensionService', () => {
 
         void extensionService.initialize('test');
 
-        expect(await extensionService.get(InstantDataCommandType.Consignments)).toBe(
+        const useCache = Math.random() >= 0.5;
+
+        expect(await extensionService.getConsignments(useCache)).toBe(
             replyMessage.payload.consignments,
         );
+        expect(extensionService.post).toHaveBeenCalledWith({
+            type: ExtensionMessageType.GetConsignments,
+            payload: { useCache },
+        });
         expect(messageListener.removeListener).toHaveBeenCalled();
-    });
-
-    it('throws error when trying to get unsupported data', async () => {
-        void extensionService.initialize('test');
-
-        await expect(extensionService.get('cart' as InstantDataCommandType)).rejects.toThrow(
-            'Unsupported data type: cart',
-        );
     });
 });

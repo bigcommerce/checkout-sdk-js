@@ -27,6 +27,7 @@ import {
     ExtensionEventBroadcaster,
     ExtensionMessage,
     ExtensionMessenger,
+    ExtensionQueryMap,
     ExtensionRegion,
 } from '../extension';
 import { FormFieldsActionCreator } from '../form';
@@ -1469,7 +1470,24 @@ export default class CheckoutService {
         command: T,
         handler: (command: ExtensionCommandMap[T]) => void,
     ): () => void {
-        return this._extensionMessenger.listen(extensionId, command, handler);
+        return this._extensionMessenger.listenForCommand(extensionId, command, handler);
+    }
+
+    /**
+     * Manages the query handler for an extension.
+     *
+     * @alpha
+     * @param extensionId - The ID of the extension sending the query.
+     * @param query - The query to be handled.
+     * @param handler - The handler function for the extension query.
+     * @returns A function that, when called, will deregister the query handler.
+     */
+    handleExtensionQuery<T extends keyof ExtensionQueryMap>(
+        extensionId: string,
+        query: T,
+        handler: (command: ExtensionQueryMap[T]) => void,
+    ): () => void {
+        return this._extensionMessenger.listenForQuery(extensionId, query, handler);
     }
 
     /**

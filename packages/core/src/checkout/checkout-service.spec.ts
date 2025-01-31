@@ -47,6 +47,7 @@ import {
     ExtensionEventBroadcaster,
     ExtensionMessageType,
     ExtensionMessenger,
+    ExtensionQueryType,
     ExtensionRegion,
     ExtensionRequestSender,
     getExtensions,
@@ -169,7 +170,7 @@ describe('CheckoutService', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         storeProjection = createDataStoreProjection(store, createCheckoutSelectorsFactory());
 
-        extensionMessenger = new ExtensionMessenger(store, {}, {});
+        extensionMessenger = new ExtensionMessenger(store, {}, {}, {});
 
         const locale = 'en';
         const requestSender = createRequestSender();
@@ -1588,7 +1589,7 @@ describe('CheckoutService', () => {
             const extensions = getExtensions();
             const handler = jest.fn();
 
-            jest.spyOn(extensionMessenger, 'listen');
+            jest.spyOn(extensionMessenger, 'listenForCommand');
 
             checkoutService.handleExtensionCommand(
                 extensions[0].id,
@@ -1596,9 +1597,28 @@ describe('CheckoutService', () => {
                 handler,
             );
 
-            expect(extensionMessenger.listen).toHaveBeenCalledWith(
+            expect(extensionMessenger.listenForCommand).toHaveBeenCalledWith(
                 extensions[0].id,
                 ExtensionCommandType.ReloadCheckout,
+                handler,
+            );
+        });
+
+        it('handles extension queries', () => {
+            const extensions = getExtensions();
+            const handler = jest.fn();
+
+            jest.spyOn(extensionMessenger, 'listenForQuery');
+
+            checkoutService.handleExtensionQuery(
+                extensions[0].id,
+                ExtensionQueryType.GetConsignments,
+                handler,
+            );
+
+            expect(extensionMessenger.listenForQuery).toHaveBeenCalledWith(
+                extensions[0].id,
+                ExtensionQueryType.GetConsignments,
                 handler,
             );
         });
