@@ -2,23 +2,26 @@ import { ReadableCheckoutStore } from '../checkout';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
 import { createExtensionEventPoster } from './create-extension-event-poster';
-import { ExtensionNotFoundError } from './errors';
-import { UnsupportedExtensionCommandError } from './errors/unsupported-extension-command-error';
-import { Extension } from './extension';
 import {
-    ExtensionCommandContext,
-    ExtensionCommandMap,
-    ExtensionCommandType,
-} from './extension-commands';
-import { ExtensionMessage } from './extension-message';
+    ExtensionNotFoundError,
+    UnsupportedExtensionCommandError,
+    UnsupportedExtensionQueryError,
+} from './errors';
+import { Extension } from './extension';
+import { ExtensionCommandMap, ExtensionCommandType } from './extension-commands';
+import { ExtensionCommandOrQueryContext, ExtensionMessage } from './extension-message';
+import { ExtensionQueryMap, ExtensionQueryType } from './extension-queries';
 
 export class ExtensionMessenger {
     private _extensions: Extension[] | undefined;
 
     constructor(
         private _store: ReadableCheckoutStore,
-        private _listeners: {
+        private _commandListeners: {
             [extensionId: string]: IframeEventListener<ExtensionCommandMap>;
+        } = {},
+        private _queryListeners: {
+            [extensionId: string]: IframeEventListener<ExtensionQueryMap>;
         } = {},
         private _posters: { [extensionId: string]: IframeEventPoster<ExtensionMessage> } = {},
     ) {}
@@ -30,8 +33,12 @@ export class ExtensionMessenger {
     }
 
     clearCacheById(extensionId: string): void {
-        if (this._listeners[extensionId]) {
-            delete this._listeners[extensionId];
+        if (this._commandListeners[extensionId]) {
+            delete this._commandListeners[extensionId];
+        }
+
+        if (this._queryListeners[extensionId]) {
+            delete this._queryListeners[extensionId];
         }
 
         if (this._posters[extensionId]) {
@@ -39,21 +46,21 @@ export class ExtensionMessenger {
         }
     }
 
-    listen<T extends keyof ExtensionCommandMap>(
+    listenForCommand<T extends keyof ExtensionCommandMap>(
         extensionId: string,
         command: T,
         commandHandler: (
             command: ExtensionCommandMap[T],
-            context?: ExtensionCommandContext,
+            context?: ExtensionCommandOrQueryContext,
         ) => void,
     ): () => void {
         const extension = this._getExtensionById(extensionId);
 
-        if (!this._listeners[extensionId]) {
-            this._listeners[extensionId] = new IframeEventListener(extension.url);
+        if (!this._commandListeners[extensionId]) {
+            this._commandListeners[extensionId] = new IframeEventListener(extension.url);
         }
 
-        const listener = this._listeners[extensionId];
+        const listener = this._commandListeners[extensionId];
 
         listener.listen();
 
@@ -61,7 +68,7 @@ export class ExtensionMessenger {
 
         const commandHandlerProxy = (
             command: ExtensionCommandMap[T],
-            context?: ExtensionCommandContext,
+            context?: ExtensionCommandOrQueryContext,
         ) => {
             if (context?.extensionId === extensionId) {
                 commandHandler(command, context);
@@ -75,14 +82,50 @@ export class ExtensionMessenger {
         };
     }
 
-    stopListen(extensionId: string): void {
-        if (!this._listeners[extensionId]) {
-            return;
+    listenForQuery<T extends keyof ExtensionQueryMap>(
+        extensionId: string,
+        query: T,
+        queryHandler: (
+            query: ExtensionQueryMap[T],
+            context?: ExtensionCommandOrQueryContext,
+        ) => void,
+    ): () => void {
+        const extension = this._getExtensionById(extensionId);
+
+        if (!this._queryListeners[extensionId]) {
+            this._queryListeners[extensionId] = new IframeEventListener(extension.url);
         }
 
-        const listener = this._listeners[extensionId];
+        const listener = this._queryListeners[extensionId];
 
-        listener.stopListen();
+        listener.listen();
+
+        const validQueryType = this._validateQuery<T>(query);
+
+        const queryHandlerProxy = (
+            query: ExtensionQueryMap[T],
+            context?: ExtensionCommandOrQueryContext,
+        ) => {
+            if (context?.extensionId === extensionId) {
+                queryHandler(query, context);
+            }
+        };
+
+        listener.addListener(validQueryType, queryHandlerProxy);
+
+        return () => {
+            listener.removeListener(validQueryType, queryHandlerProxy);
+        };
+    }
+
+    stopListen(extensionId: string): void {
+        if (this._commandListeners[extensionId]) {
+            this._commandListeners[extensionId].stopListen();
+        }
+
+        if (this._queryListeners[extensionId]) {
+            this._queryListeners[extensionId].stopListen();
+        }
     }
 
     post(extensionId: string, message: ExtensionMessage): void {
@@ -148,11 +191,19 @@ export class ExtensionMessenger {
             throw new ExtensionNotFoundError(`Extension configurations not found.`);
         }
     }
+
     private _validateCommand<T extends keyof ExtensionCommandMap>(command: T): T {
         if (Object.values(ExtensionCommandType).includes(command)) {
             return command;
         }
 
         throw new UnsupportedExtensionCommandError();
+    }
+    private _validateQuery<T extends keyof ExtensionQueryMap>(query: T): T {
+        if (Object.values(ExtensionQueryType).includes(query)) {
+            return query;
+        }
+
+        throw new UnsupportedExtensionQueryError();
     }
 }

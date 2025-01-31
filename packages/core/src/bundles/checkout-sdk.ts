@@ -13,4 +13,4 @@ export {
 } from '../analytics';
 export { createStoredCardHostedFormService } from '../hosted-form';
 export { createBodlService } from '../bodl';
-export { ExtensionCommandType } from '../extension';
+export { ExtensionCommandType, ExtensionQueryType, ExtensionQueryMap } from '../extension';

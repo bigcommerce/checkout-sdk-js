@@ -4,16 +4,21 @@ import { createCheckoutStore, ReadableCheckoutStore } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
-import { ExtensionNotFoundError } from './errors';
-import { UnsupportedExtensionCommandError } from './errors/unsupported-extension-command-error';
+import {
+    ExtensionNotFoundError,
+    UnsupportedExtensionCommandError,
+    UnsupportedExtensionQueryError,
+} from './errors';
 import { Extension } from './extension';
 import { ExtensionCommandMap, ExtensionCommandType } from './extension-commands';
 import { ExtensionEvent } from './extension-events';
 import { ExtensionMessenger } from './extension-messenger';
+import { ExtensionQueryMap, ExtensionQueryType } from './extension-queries';
 import { getExtensionEvent, getExtensions } from './extension.mock';
 
 describe('ExtensionMessenger', () => {
     let extensionCommandHandler: jest.Mock;
+    let extensionQueryHandler: jest.Mock;
     let extension: Extension;
     let extensionMessenger: ExtensionMessenger;
     let event: {
@@ -27,9 +32,10 @@ describe('ExtensionMessenger', () => {
         extension = getExtensions()[0];
         event = getExtensionEvent();
         extensionCommandHandler = jest.fn();
+        extensionQueryHandler = jest.fn();
     });
 
-    describe('#listen() and #stopListen()', () => {
+    describe('#listenForCommand', () => {
         let listener: IframeEventListener<ExtensionCommandMap>;
 
         beforeEach(() => {
@@ -39,12 +45,12 @@ describe('ExtensionMessenger', () => {
                 [extension.id]: listener,
             };
 
-            extensionMessenger = new ExtensionMessenger(store, listeners, {});
+            extensionMessenger = new ExtensionMessenger(store, listeners, {}, {});
         });
 
-        it('should throw if unable to find the extensiion', () => {
+        it('should throw if unable to find the extension', () => {
             expect(() =>
-                extensionMessenger.listen(
+                extensionMessenger.listenForCommand(
                     'xxx',
                     ExtensionCommandType.ReloadCheckout,
                     extensionCommandHandler,
@@ -54,7 +60,7 @@ describe('ExtensionMessenger', () => {
 
         it('should throw if trying to listen for an unsupported command', () => {
             expect(() =>
-                extensionMessenger.listen(
+                extensionMessenger.listenForCommand(
                     extension.id,
                     'INVALID_COMMAND' as ExtensionCommandType,
                     extensionCommandHandler,
@@ -73,7 +79,7 @@ describe('ExtensionMessenger', () => {
                 });
             });
 
-            extensionMessenger.listen(
+            extensionMessenger.listenForCommand(
                 extension.id,
                 ExtensionCommandType.ReloadCheckout,
                 extensionCommandHandler,
@@ -100,7 +106,7 @@ describe('ExtensionMessenger', () => {
                 });
             });
 
-            extensionMessenger.listen(
+            extensionMessenger.listenForCommand(
                 extension.id,
                 ExtensionCommandType.ReloadCheckout,
                 extensionCommandHandler,
@@ -132,7 +138,7 @@ describe('ExtensionMessenger', () => {
                 eventEmitter.removeAllListeners(type);
             });
 
-            const remover = extensionMessenger.listen(
+            const remover = extensionMessenger.listenForCommand(
                 extension.id,
                 ExtensionCommandType.ReloadCheckout,
                 extensionCommandHandler,
@@ -150,10 +156,144 @@ describe('ExtensionMessenger', () => {
         it('should stop listening', () => {
             jest.spyOn(listener, 'stopListen');
 
-            extensionMessenger.listen(
+            extensionMessenger.listenForCommand(
                 extension.id,
                 ExtensionCommandType.ReloadCheckout,
                 extensionCommandHandler,
+            );
+
+            extensionMessenger.stopListen(extension.id);
+
+            // FIXME
+            expect(listener.stopListen).toHaveBeenCalled();
+        });
+    });
+
+    describe('#listenForQuery', () => {
+        let listener: IframeEventListener<ExtensionQueryMap>;
+
+        beforeEach(() => {
+            listener = new IframeEventListener(extension.url);
+
+            const listeners = {
+                [extension.id]: listener,
+            };
+
+            extensionMessenger = new ExtensionMessenger(store, {}, listeners, {});
+        });
+
+        it('should throw if unable to find the extension', () => {
+            expect(() =>
+                extensionMessenger.listenForQuery(
+                    'xxx',
+                    ExtensionQueryType.GetConsignments,
+                    extensionQueryHandler,
+                ),
+            ).toThrow(ExtensionNotFoundError);
+        });
+
+        it('should throw if trying to listen for an unsupported command', () => {
+            expect(() =>
+                extensionMessenger.listenForQuery(
+                    extension.id,
+                    'INVALID_QUERY' as ExtensionQueryType,
+                    extensionQueryHandler,
+                ),
+            ).toThrow(UnsupportedExtensionQueryError);
+        });
+
+        it('should listen and add an event listener', () => {
+            const eventEmitter = new EventEmitter();
+
+            jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
+                eventEmitter.addListener(type, ({ context }) => {
+                    if (type === ExtensionQueryType.GetConsignments) {
+                        listener({ type }, context);
+                    }
+                });
+            });
+
+            extensionMessenger.listenForQuery(
+                extension.id,
+                ExtensionQueryType.GetConsignments,
+                extensionQueryHandler,
+            );
+
+            eventEmitter.emit(ExtensionQueryType.GetConsignments, {
+                context: { extensionId: extension.id },
+            });
+
+            expect(extensionQueryHandler).toHaveBeenCalledWith(
+                { type: ExtensionQueryType.GetConsignments },
+                { extensionId: extension.id },
+            );
+        });
+
+        it('should listen to commands emitted by same extension', () => {
+            const eventEmitter = new EventEmitter();
+
+            jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
+                eventEmitter.addListener(type, ({ context }) => {
+                    if (type === ExtensionQueryType.GetConsignments) {
+                        listener({ type }, context);
+                    }
+                });
+            });
+
+            extensionMessenger.listenForQuery(
+                extension.id,
+                ExtensionQueryType.GetConsignments,
+                extensionQueryHandler,
+            );
+
+            eventEmitter.emit(ExtensionQueryType.GetConsignments, {
+                context: { extensionId: extension.id },
+            });
+
+            eventEmitter.emit(ExtensionQueryType.GetConsignments, {
+                context: { extensionId: getExtensions()[1].id },
+            });
+
+            expect(extensionQueryHandler).toHaveBeenCalledTimes(1);
+        });
+
+        it('should remove the event listener', () => {
+            const eventEmitter = new EventEmitter();
+
+            jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
+                eventEmitter.addListener(type, ({ context }) => {
+                    if (type === ExtensionQueryType.GetConsignments) {
+                        listener({ type }, context);
+                    }
+                });
+            });
+
+            jest.spyOn(listener, 'removeListener').mockImplementation((type) => {
+                eventEmitter.removeAllListeners(type);
+            });
+
+            const remover = extensionMessenger.listenForQuery(
+                extension.id,
+                ExtensionQueryType.GetConsignments,
+                extensionQueryHandler,
+            );
+
+            remover();
+
+            eventEmitter.emit(ExtensionQueryType.GetConsignments, {
+                context: { extensionId: extension.id },
+            });
+
+            expect(extensionQueryHandler).not.toHaveBeenCalled();
+        });
+
+        it('should stop listening', () => {
+            jest.spyOn(listener, 'stopListen');
+
+            extensionMessenger.listenForQuery(
+                extension.id,
+                ExtensionQueryType.GetConsignments,
+                extensionQueryHandler,
             );
 
             extensionMessenger.stopListen(extension.id);
@@ -167,7 +307,7 @@ describe('ExtensionMessenger', () => {
         it('should log out the error if an extension has not yet been rendered', () => {
             document.querySelector = jest.fn().mockReturnValue(undefined);
 
-            extensionMessenger = new ExtensionMessenger(store, {}, {});
+            extensionMessenger = new ExtensionMessenger(store, {}, {}, {});
 
             jest.spyOn(extensionMessenger, 'clearCacheById');
             jest.spyOn(console, 'log');
@@ -190,7 +330,7 @@ describe('ExtensionMessenger', () => {
                 [extension.id]: poster,
             };
 
-            extensionMessenger = new ExtensionMessenger(store, {}, posters);
+            extensionMessenger = new ExtensionMessenger(store, {}, {}, posters);
 
             document.querySelector = jest.fn().mockReturnValue(container);
 

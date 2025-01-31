@@ -4,9 +4,10 @@ import {
     setupContentWindowForIframeResizer,
 } from '../common/iframe';
 
-import { ExtensionCommand, ExtensionCommandContext } from './extension-commands';
+import { ExtensionCommand } from './extension-commands';
 import { ExtensionEventMap } from './extension-events';
 import { ExtensionInternalCommand } from './extension-internal-commands';
+import { ExtensionCommandOrQueryContext, ExtensionMessageMap } from './extension-message';
 import ExtensionService from './extension-service';
 import { iframeResizerSetup } from './iframe-resizer-setup';
 
@@ -25,8 +26,9 @@ export default async function initializeExtensionService(
     setupContentWindowForIframeResizer();
 
     const extension = new ExtensionService(
+        new IframeEventListener<ExtensionMessageMap>(parentOrigin),
         new IframeEventListener<ExtensionEventMap>(parentOrigin),
-        new IframeEventPoster<ExtensionCommand, ExtensionCommandContext>(parentOrigin),
+        new IframeEventPoster<ExtensionCommand, ExtensionCommandOrQueryContext>(parentOrigin),
         new IframeEventPoster<ExtensionInternalCommand>(parentOrigin),
     );
 

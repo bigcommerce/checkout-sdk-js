@@ -1,28 +1,38 @@
 import { noop } from 'lodash';
 
+import { Consignment } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
-import {
-    ExtensionCommand,
-    ExtensionCommandContext,
-    ExtensionCommandType,
-} from './extension-commands';
+import { ExtensionCommandType } from './extension-commands';
 import { ExtensionEventMap, ExtensionEventType } from './extension-events';
 import {
     ExtensionInternalCommand,
     ExtensionInternalCommandType,
 } from './extension-internal-commands';
 import { ExtensionInternalEventType } from './extension-internal-events';
+import {
+    ExtensionCommandOrQuery,
+    ExtensionCommandOrQueryContext,
+    ExtensionMessageMap,
+    ExtensionMessageType,
+    GetConsignmentsMessage,
+} from './extension-message';
+import { ExtensionQueryType } from './extension-queries';
 
 export default class ExtensionService {
     private _extensionId?: string;
 
     constructor(
+        private _messageListener: IframeEventListener<ExtensionMessageMap>,
         private _eventListener: IframeEventListener<ExtensionEventMap>,
-        private _commandPoster: IframeEventPoster<ExtensionCommand, ExtensionCommandContext>,
+        private _messagePoster: IframeEventPoster<
+            ExtensionCommandOrQuery,
+            ExtensionCommandOrQueryContext
+        >,
         private _internalCommandPoster: IframeEventPoster<ExtensionInternalCommand>,
     ) {
-        this._commandPoster.setTarget(window.parent);
+        this._messagePoster.setTarget(window.parent);
         this._internalCommandPoster.setTarget(window.parent);
     }
 
@@ -33,8 +43,9 @@ export default class ExtensionService {
 
         this._extensionId = extensionId;
 
+        this._messageListener.listen();
         this._eventListener.listen();
-        this._commandPoster.setContext({ extensionId });
+        this._messagePoster.setContext({ extensionId });
 
         try {
             await this._internalCommandPoster.post(
@@ -56,12 +67,12 @@ export default class ExtensionService {
         }
     }
 
-    post(command: ExtensionCommand): void {
-        if (!Object.values(ExtensionCommandType).includes(command.type)) {
+    post(command: ExtensionCommandOrQuery): void {
+        if (!this._isCommandOrQueryType(command.type)) {
             throw new Error(`${command.type} is not supported.`);
         }
 
-        this._commandPoster.post(command);
+        this._messagePoster.post(command);
     }
 
     addListener(eventType: ExtensionEventType, callback: () => void = noop): () => void {
@@ -92,9 +103,33 @@ export default class ExtensionService {
         };
     }
 
+    async getConsignments(useCache = true): Promise<Consignment[]> {
+        return new Promise((resolve) => {
+            const callback = (event: GetConsignmentsMessage) => {
+                this._messageListener.removeListener(
+                    ExtensionMessageType.GetConsignments,
+                    callback,
+                );
+
+                resolve(event.payload.consignments);
+            };
+
+            this._messageListener.addListener(ExtensionMessageType.GetConsignments, callback);
+
+            this.post({ type: ExtensionQueryType.GetConsignments, payload: { useCache } });
+        });
+    }
+
     private _isExtensionFailedEvent(
         event: any,
     ): event is ExtensionInternalEventType.ExtensionFailed {
         return event.type === ExtensionInternalEventType.ExtensionFailed;
+    }
+
+    private _isCommandOrQueryType(type: any): type is ExtensionCommandOrQuery['type'] {
+        return (
+            Object.values(ExtensionCommandType).includes(type) ||
+            Object.values(ExtensionQueryType).includes(type)
+        );
     }
 }
