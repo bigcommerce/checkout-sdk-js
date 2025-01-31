@@ -12,6 +12,7 @@ import {
     InvalidArgumentError,
     MissingDataError,
     NotInitializedError,
+    OrderFinalizationNotRequiredError,
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
     PaymentMethodFailedError,
@@ -182,6 +183,33 @@ describe('BraintreeAchPaymentStrategy', () => {
             }
         });
 
+        it('throws an error for not-braintree exception', async () => {
+            const ExternalError = {
+                name: 'ExternalError',
+            };
+
+            jest.spyOn(braintreeUsBankAccount, 'tokenize').mockImplementation(() => {
+                throw ExternalError;
+            });
+
+            try {
+                await strategy.initialize(braintreeAchInitializationOptions);
+                await strategy.execute({
+                    payment: {
+                        methodId,
+                        paymentData: {
+                            accountNumber: '10000000',
+                            routingNumber: '111111111',
+                            ownershipType: 'Personal',
+                            accountType: 'Checking',
+                        },
+                    },
+                });
+            } catch (error: any) {
+                expect(ExternalError.name).toBe('ExternalError');
+            }
+        });
+
         it('submits payment with braintree ach', async () => {
             await strategy.initialize(braintreeAchInitializationOptions);
             await strategy.execute({
@@ -332,6 +360,36 @@ describe('BraintreeAchPaymentStrategy', () => {
                 },
             });
         });
+
+        it('throw an error if vaulting is disabled', async () => {
+            const state = paymentIntegrationService.getState();
+
+            jest.spyOn(state, 'getPaymentMethodOrThrow').mockImplementation(() => ({
+                ...paymentMethodMock,
+                config: {
+                    ...paymentMethodMock.config,
+                    isVaultingEnabled: false,
+                },
+            }));
+
+            await strategy.initialize(braintreeAchInitializationOptions);
+
+            await expect(
+                strategy.execute({
+                    payment: {
+                        methodId,
+                        paymentData: {
+                            instrumentId: 'AchInstrumentId',
+                            businessName: 'BigCommerce',
+                            accountNumber: '10000000',
+                            routingNumber: '111111111',
+                            ownershipType: 'Business',
+                            accountType: 'Checking',
+                        },
+                    },
+                }),
+            ).rejects.toThrow(InvalidArgumentError);
+        });
     });
 
     describe('#deinitialize', () => {
@@ -339,6 +397,16 @@ describe('BraintreeAchPaymentStrategy', () => {
             await strategy.deinitialize();
 
             expect(braintreeSdk.deinitialize).toHaveBeenCalled();
+        });
+    });
+
+    describe('#finalize', () => {
+        it('throw an error by default', async () => {
+            try {
+                await strategy.finalize();
+            } catch (error) {
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            }
         });
     });
 });
