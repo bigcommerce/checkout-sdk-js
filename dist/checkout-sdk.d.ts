@@ -3193,6 +3193,16 @@ declare class CheckoutService {
      */
     handleExtensionCommand<T extends keyof ExtensionCommandMap>(extensionId: string, command: T, handler: (command: ExtensionCommandMap[T]) => void): () => void;
     /**
+     * Manages the query handler for an extension.
+     *
+     * @alpha
+     * @param extensionId - The ID of the extension sending the query.
+     * @param query - The query to be handled.
+     * @param handler - The handler function for the extension query.
+     * @returns A function that, when called, will deregister the query handler.
+     */
+    handleExtensionQuery<T extends keyof ExtensionQueryMap>(extensionId: string, query: T, handler: (command: ExtensionQueryMap[T]) => void): () => void;
+    /**
      * Dispatches an action through the data store and returns the current state
      * once the action is dispatched.
      *
@@ -4816,14 +4826,12 @@ declare interface ExtensionCommandMap {
     [ExtensionCommandType.ReloadCheckout]: ReloadCheckoutCommand;
     [ExtensionCommandType.ShowLoadingIndicator]: ShowLoadingIndicatorCommand;
     [ExtensionCommandType.SetIframeStyle]: SetIframeStyleCommand;
-    [ExtensionCommandType.GetConsignments]: GetConsignmentsCommand;
 }
 
 export declare enum ExtensionCommandType {
     ReloadCheckout = "EXTENSION:RELOAD_CHECKOUT",
     ShowLoadingIndicator = "EXTENSION:SHOW_LOADING_INDICATOR",
-    SetIframeStyle = "EXTENSION:SET_IFRAME_STYLE",
-    GetConsignments = "EXTENSION:GET_CONSIGNMENTS"
+    SetIframeStyle = "EXTENSION:SET_IFRAME_STYLE"
 }
 
 declare type ExtensionEvent = ConsignmentsChangedEvent;
@@ -4835,6 +4843,14 @@ declare enum ExtensionEventType {
 declare type ExtensionMessage = ExtensionEvent | GetConsignmentsMessage;
 
 declare const enum ExtensionMessageType {
+    GetConsignments = "EXTENSION:GET_CONSIGNMENTS"
+}
+
+export declare interface ExtensionQueryMap {
+    [ExtensionQueryType.GetConsignments]: GetConsignmentsQuery;
+}
+
+export declare enum ExtensionQueryType {
     GetConsignments = "EXTENSION:GET_CONSIGNMENTS"
 }
 
@@ -4932,14 +4948,17 @@ declare interface GatewayOrderPayment extends OrderPayment {
     };
 }
 
-declare interface GetConsignmentsCommand {
-    type: ExtensionCommandType.GetConsignments;
-}
-
 declare interface GetConsignmentsMessage {
     type: ExtensionMessageType.GetConsignments;
     payload: {
         consignments: Consignment[];
+    };
+}
+
+declare interface GetConsignmentsQuery {
+    type: ExtensionQueryType.GetConsignments;
+    payload?: {
+        useCache?: boolean;
     };
 }
 

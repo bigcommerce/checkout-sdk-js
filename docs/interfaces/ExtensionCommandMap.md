@@ -6,18 +6,11 @@
 
 ### Properties
 
-- [EXTENSION%3AGET_CONSIGNMENTS](ExtensionCommandMap.md#extension:get_consignments)
 - [EXTENSION%3ARELOAD_CHECKOUT](ExtensionCommandMap.md#extension:reload_checkout)
 - [EXTENSION%3ASET_IFRAME_STYLE](ExtensionCommandMap.md#extension:set_iframe_style)
 - [EXTENSION%3ASHOW_LOADING_INDICATOR](ExtensionCommandMap.md#extension:show_loading_indicator)
 
 ## Properties
-
-### EXTENSION:GET\_CONSIGNMENTS
-
-• **EXTENSION:GET\_CONSIGNMENTS**: [`GetConsignmentsCommand`](GetConsignmentsCommand.md)
-
-___
 
 ### EXTENSION:RELOAD\_CHECKOUT
 

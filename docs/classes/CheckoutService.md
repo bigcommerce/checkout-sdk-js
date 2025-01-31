@@ -36,6 +36,7 @@ retrieve the current checkout state and subscribe to its changes.
 - [finalizeOrderIfNeeded](CheckoutService.md#finalizeorderifneeded)
 - [getState](CheckoutService.md#getstate)
 - [handleExtensionCommand](CheckoutService.md#handleextensioncommand)
+- [handleExtensionQuery](CheckoutService.md#handleextensionquery)
 - [initializeCustomer](CheckoutService.md#initializecustomer)
 - [initializePayment](CheckoutService.md#initializepayment)
 - [initializeShipping](CheckoutService.md#initializeshipping)
@@ -705,6 +706,48 @@ Manages the command handler for an extension.
 `void`
 
 A function that, when called, will deregister the command handler.
+
+___
+
+### handleExtensionQuery
+
+▸ **handleExtensionQuery**<`T`\>(`extensionId`, `query`, `handler`): () => `void`
+
+Manages the query handler for an extension.
+
+**`alpha`**
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`GetConsignments`](../enums/ExtensionQueryType.md#getconsignments) |
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `extensionId` | `string` | The ID of the extension sending the query. |
+| `query` | `T` | The query to be handled. |
+| `handler` | (`command`: [`ExtensionQueryMap`](../interfaces/ExtensionQueryMap.md)[`T`]) => `void` | The handler function for the extension query. |
+
+#### Returns
+
+`fn`
+
+A function that, when called, will deregister the query handler.
+
+▸ (): `void`
+
+Manages the query handler for an extension.
+
+**`alpha`**
+
+##### Returns
+
+`void`
+
+A function that, when called, will deregister the query handler.
 
 ___
 

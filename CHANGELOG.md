@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.701.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.700.2...v1.701.0) (2025-01-31)
+
+
+### Features
+
+* **extension:** CHECKOUT-8974 Introduce Extension Query ([#2769](https://github.com/bigcommerce/checkout-sdk-js/issues/2769)) ([5d67c82](https://github.com/bigcommerce/checkout-sdk-js/commit/5d67c82ab7c3dc41cddde060e9da2fd1eb769062))
+
 ### [1.700.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.700.1...v1.700.2) (2025-01-30)
 
 
