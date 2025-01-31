@@ -105,7 +105,7 @@ describe('ApplePayButtonStrategy', () => {
             expect(applePayScriptLoader.loadSdk).toHaveBeenCalled();
         });
 
-        it('do not load Apple Pay SDK if isWebBrowserSupported is false', async () => {
+        it('does not load Apple Pay SDK if isWebBrowserSupported is false', async () => {
             const checkoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
 
             (

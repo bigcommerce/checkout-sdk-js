@@ -138,30 +138,30 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
             );
         }
 
-        const applePayButton = this._getApplePayButton();
+        const applePayButton = this._isWebBrowserSupported
+            ? this._createThirdPartyButton()
+            : this._createNativeButton();
 
         container.appendChild(applePayButton);
 
         return applePayButton;
     }
 
-    private _getApplePayButton(): HTMLElement {
-        let applePayButton: HTMLElement;
+    private _createThirdPartyButton(): HTMLElement {
+        const applePayButton = document.createElement('apple-pay-button');
 
-        if (this._isWebBrowserSupported) {
-            applePayButton = document.createElement('apple-pay-button');
+        applePayButton.setAttribute('buttonstyle', 'black');
+        applePayButton.setAttribute('type', 'plain');
+        applePayButton.setAttribute(
+            'style',
+            '--apple-pay-button-width: 100%; --apple-pay-button-height: 36px; --apple-pay-button-border-radius: 4px;',
+        );
 
-            applePayButton.setAttribute('buttonstyle', 'black');
-            applePayButton.setAttribute('type', 'plain');
-            applePayButton.setAttribute(
-                'style',
-                '--apple-pay-button-width: 100%; --apple-pay-button-height: 36px; --apple-pay-button-border-radius: 4px;',
-            );
+        return applePayButton;
+    }
 
-            return applePayButton;
-        }
-
-        applePayButton = document.createElement('div');
+    private _createNativeButton(): HTMLElement {
+        const applePayButton = document.createElement('div');
 
         applePayButton.setAttribute('type', 'button');
         applePayButton.setAttribute('aria-label', 'Apple Pay');
