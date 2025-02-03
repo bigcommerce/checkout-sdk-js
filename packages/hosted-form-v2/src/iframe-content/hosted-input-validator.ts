@@ -133,7 +133,22 @@ export default class HostedInputValidator {
             .test({
                 message: 'Credit card name must be valid',
                 name: 'invalid_card_name',
-                test: (value) => !number(value).isValid,
+                test: (value) => {
+                    // Get all numbers from the input value after removing whitespaces
+                    const numbers = value.replace(/\s/g, '').match(/[0-9]+/g);
+
+                    if (!numbers?.length) {
+                        return true;
+                    }
+
+                    for (const num of numbers) {
+                        if (number(num).isValid) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                },
             });
     }
 
