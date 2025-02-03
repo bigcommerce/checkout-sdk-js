@@ -499,6 +499,43 @@ describe('PayPalCommerceIntegrationService', () => {
                 customFields: [],
             });
         });
+
+        it('successfully returns valid address with phone number filled in', () => {
+            const paypalOrderDetails = getPayPalCommerceOrderDetails();
+            const address = {
+                firstName: paypalOrderDetails.payer.name.given_name,
+                lastName: paypalOrderDetails.payer.name.surname,
+                email: paypalOrderDetails.payer.email_address,
+                phone: '555',
+                company: '',
+                address1: paypalOrderDetails.payer.address.address_line_1,
+                address2: '',
+                city: paypalOrderDetails.payer.address.admin_area_2,
+                countryCode: paypalOrderDetails.payer.address.country_code,
+                postalCode: paypalOrderDetails.payer.address.postal_code,
+                stateOrProvince: '',
+                stateOrProvinceCode: paypalOrderDetails.payer.address.admin_area_1,
+                customFields: [],
+            };
+
+            const output = subject.getAddress(address);
+
+            expect(output).toStrictEqual({
+                firstName: paypalOrderDetails.payer.name.given_name,
+                lastName: paypalOrderDetails.payer.name.surname,
+                email: paypalOrderDetails.payer.email_address,
+                phone: '555',
+                company: '',
+                address1: paypalOrderDetails.payer.address.address_line_1,
+                address2: '',
+                city: paypalOrderDetails.payer.address.admin_area_2,
+                countryCode: paypalOrderDetails.payer.address.country_code,
+                postalCode: paypalOrderDetails.payer.address.postal_code,
+                stateOrProvince: '',
+                stateOrProvinceCode: paypalOrderDetails.payer.address.admin_area_1,
+                customFields: [],
+            });
+        });
     });
 
     describe('#getBillingAddressFromOrderDetails', () => {
@@ -508,6 +545,42 @@ describe('PayPalCommerceIntegrationService', () => {
             const output = subject.getBillingAddressFromOrderDetails(paypalOrderDetails);
 
             expect(output).toStrictEqual(getBillingAddressFromOrderDetails());
+        });
+
+        it('successfully returns empty string in phone number', () => {
+            const paypalOrderDetails = {
+                ...getPayPalCommerceOrderDetails(),
+                payer: {
+                    ...getPayPalCommerceOrderDetails().payer,
+                    phone: {
+                        phone_number: {
+                            national_number: '',
+                        },
+                    },
+                },
+            };
+
+            const output = subject.getBillingAddressFromOrderDetails(paypalOrderDetails);
+
+            expect(output.phone).toBe('');
+        });
+
+        it('successfully returns correct phone number', () => {
+            const paypalOrderDetails = {
+                ...getPayPalCommerceOrderDetails(),
+                payer: {
+                    ...getPayPalCommerceOrderDetails().payer,
+                    phone: {
+                        phone_number: {
+                            national_number: '555333',
+                        },
+                    },
+                },
+            };
+
+            const output = subject.getBillingAddressFromOrderDetails(paypalOrderDetails);
+
+            expect(output.phone).toBe('555333');
         });
     });
 

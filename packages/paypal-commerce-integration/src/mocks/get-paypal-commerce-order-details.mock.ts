@@ -33,6 +33,11 @@ export default function getPayPalCommerceOrderDetails(): PayPalOrderDetails {
                 postal_code: '95131',
                 country_code: 'US',
             },
+            phone: {
+                phone_number: {
+                    national_number: '123456789',
+                },
+            },
         },
     };
 }

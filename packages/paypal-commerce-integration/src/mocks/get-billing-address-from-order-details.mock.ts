@@ -9,7 +9,7 @@ export default function getBillingAddressFromOrderDetails(): BillingAddressReque
         firstName: payer.name.given_name,
         lastName: payer.name.surname,
         email: payer.email_address,
-        phone: '',
+        phone: payer.phone?.phone_number.national_number || '',
         company: '',
         address1: payer.address.address_line_1,
         address2: payer.address.address_line_2,

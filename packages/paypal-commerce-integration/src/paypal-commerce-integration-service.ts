@@ -243,7 +243,7 @@ export default class PayPalCommerceIntegrationService {
             firstName: address?.firstName || '',
             lastName: address?.lastName || '',
             email: address?.email || '',
-            phone: '',
+            phone: address?.phone || '',
             company: '',
             address1: address?.address1 || '',
             address2: address?.address2 || '',
@@ -267,6 +267,7 @@ export default class PayPalCommerceIntegrationService {
             countryCode: payer.address.country_code,
             postalCode: payer.address.postal_code,
             stateOrProvinceCode: payer.address.admin_area_1,
+            phone: payer.phone?.phone_number?.national_number,
         });
     }
 
