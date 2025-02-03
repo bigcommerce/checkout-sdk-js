@@ -66,16 +66,28 @@ export default class GoogleRecaptcha {
     }
 
     load(containerId: string, sitekey: string): Promise<void> {
-        return this.googleRecaptchaScriptLoader.load().then((recaptcha) => {
-            if (recaptcha) {
-                this._event$ = this._memoized(
-                    recaptcha,
-                    sitekey,
-                    document.getElementById(containerId),
-                );
-                this._recaptcha = recaptcha;
-            }
-        });
+        return this.googleRecaptchaScriptLoader
+            .load()
+            .then((recaptcha) => {
+                if (recaptcha) {
+                    this._event$ = this._memoized(
+                        recaptcha,
+                        sitekey,
+                        document.getElementById(containerId),
+                    );
+                    this._recaptcha = recaptcha;
+                }
+            })
+            .catch((err) => {
+                throw err;
+            });
+    }
+
+    reset(containerId: string): void {
+        const element = document.getElementById(containerId);
+
+        element?.remove();
+        this._recaptcha?.reset(this._widgetId);
     }
 
     execute(): Observable<RecaptchaResult> {

@@ -7,6 +7,7 @@ import { catchError, toArray } from 'rxjs/operators';
 import { Checkout, CheckoutStore, CheckoutStoreState, createCheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
+import { getConfigState } from '../config/configs.mock';
 
 import createSpamProtection from './create-spam-protection';
 import { SpamProtectionChallengeNotCompletedError, SpamProtectionFailedError } from './errors';
@@ -93,6 +94,17 @@ describe('SpamProtectionActionCreator', () => {
                 },
             ]);
         });
+
+        it('emits actions if able to initialize spam protection', async () => {
+            const actions = await from(spamProtectionActionCreator.initialize(options)(store))
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: SpamProtectionActionType.InitializeRequested },
+                { type: SpamProtectionActionType.InitializeSucceeded },
+            ]);
+        });
     });
 
     describe('#execute()', () => {
@@ -104,6 +116,56 @@ describe('SpamProtectionActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual(
+                expect.arrayContaining([
+                    { type: SpamProtectionActionType.ExecuteRequested },
+                    { type: SpamProtectionActionType.InitializeRequested },
+                    { type: SpamProtectionActionType.InitializeSucceeded },
+                    {
+                        type: SpamProtectionActionType.ExecuteSucceeded,
+                        payload: { token: 'spamProtectionToken' },
+                    },
+                ]),
+            );
+        });
+
+        it('emits actions if able to execute spam protection again', async () => {
+            const configState = getConfigState();
+
+            if (configState.data && configState.data.storeConfig.checkoutSettings.features) {
+                configState.data.storeConfig.checkoutSettings.features = {
+                    'CHECKOUT-8264.recaptcha_error_fix': true,
+                };
+            }
+
+            const stateWithExperiment = {
+                ...state,
+                config: configState,
+            };
+
+            store = createCheckoutStore(stateWithExperiment);
+            $event.next({ token: 'spamProtectionToken' });
+
+            const actions = await from(spamProtectionActionCreator.execute()(store))
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual(
+                expect.arrayContaining([
+                    { type: SpamProtectionActionType.ExecuteRequested },
+                    { type: SpamProtectionActionType.InitializeRequested },
+                    { type: SpamProtectionActionType.InitializeSucceeded },
+                    {
+                        type: SpamProtectionActionType.ExecuteSucceeded,
+                        payload: { token: 'spamProtectionToken' },
+                    },
+                ]),
+            );
+
+            const actions2 = await from(spamProtectionActionCreator.execute()(store))
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions2).toEqual(
                 expect.arrayContaining([
                     { type: SpamProtectionActionType.ExecuteRequested },
                     { type: SpamProtectionActionType.InitializeRequested },
