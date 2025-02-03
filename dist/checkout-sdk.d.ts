@@ -5155,6 +5155,7 @@ declare class GoogleRecaptcha {
     private _widgetId?;
     constructor(googleRecaptchaScriptLoader: GoogleRecaptchaScriptLoader, mutationObserverFactory: MutationObserverFactory);
     load(containerId: string, sitekey: string): Promise<void>;
+    reset(containerId: string): void;
     execute(): Observable<RecaptchaResult>;
     private _watchRecaptchaChallengeWindow;
 }

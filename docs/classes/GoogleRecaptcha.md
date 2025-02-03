@@ -12,6 +12,7 @@
 
 - [execute](GoogleRecaptcha.md#execute)
 - [load](GoogleRecaptcha.md#load)
+- [reset](GoogleRecaptcha.md#reset)
 
 ## Constructors
 
@@ -52,3 +53,19 @@ ___
 #### Returns
 
 `Promise`<`void`\>
+
+___
+
+### reset
+
+▸ **reset**(`containerId`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `containerId` | `string` |
+
+#### Returns
+
+`void`
