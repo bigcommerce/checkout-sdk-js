@@ -1468,7 +1468,7 @@ export default class CheckoutService {
     handleExtensionCommand<T extends keyof ExtensionCommandMap>(
         extensionId: string,
         command: T,
-        handler: (command: ExtensionCommandMap[T]) => void,
+        handler: (command: ExtensionCommandMap[T]) => Promise<void> | void,
     ): () => void {
         return this._extensionMessenger.listenForCommand(extensionId, command, handler);
     }
@@ -1485,7 +1485,7 @@ export default class CheckoutService {
     handleExtensionQuery<T extends keyof ExtensionQueryMap>(
         extensionId: string,
         query: T,
-        handler: (command: ExtensionQueryMap[T]) => void,
+        handler: (command: ExtensionQueryMap[T]) => Promise<void> | void,
     ): () => void {
         return this._extensionMessenger.listenForQuery(extensionId, query, handler);
     }
