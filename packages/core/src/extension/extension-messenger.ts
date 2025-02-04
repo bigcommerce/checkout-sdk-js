@@ -52,7 +52,7 @@ export class ExtensionMessenger {
         commandHandler: (
             command: ExtensionCommandMap[T],
             context?: ExtensionCommandOrQueryContext,
-        ) => void,
+        ) => Promise<void> | void,
     ): () => void {
         const extension = this._getExtensionById(extensionId);
 
@@ -88,7 +88,7 @@ export class ExtensionMessenger {
         queryHandler: (
             query: ExtensionQueryMap[T],
             context?: ExtensionCommandOrQueryContext,
-        ) => void,
+        ) => Promise<void> | void,
     ): () => void {
         const extension = this._getExtensionById(extensionId);
 
