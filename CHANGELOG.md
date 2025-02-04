@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.702.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.701.2...v1.702.0) (2025-02-04)
+
+
+### Features
+
+* **extension:** CHECKOUT-8974 Introduce ReRenderShippingForm Command ([#2778](https://github.com/bigcommerce/checkout-sdk-js/issues/2778)) ([05e70b8](https://github.com/bigcommerce/checkout-sdk-js/commit/05e70b8d6359eec84e4383d5939cca52ade54c34))
+
 ### [1.701.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.701.1...v1.701.2) (2025-02-03)
 
 ### [1.701.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.701.0...v1.701.1) (2025-01-31)

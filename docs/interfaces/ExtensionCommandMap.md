@@ -7,6 +7,7 @@
 ### Properties
 
 - [EXTENSION%3ARELOAD_CHECKOUT](ExtensionCommandMap.md#extension:reload_checkout)
+- [EXTENSION%3ARE_RENDER_SHIPPING_FORM](ExtensionCommandMap.md#extension:re_render_shipping_form)
 - [EXTENSION%3ASET_IFRAME_STYLE](ExtensionCommandMap.md#extension:set_iframe_style)
 - [EXTENSION%3ASHOW_LOADING_INDICATOR](ExtensionCommandMap.md#extension:show_loading_indicator)
 
@@ -15,6 +16,12 @@
 ### EXTENSION:RELOAD\_CHECKOUT
 
 • **EXTENSION:RELOAD\_CHECKOUT**: [`ReloadCheckoutCommand`](ReloadCheckoutCommand.md)
+
+___
+
+### EXTENSION:RE\_RENDER\_SHIPPING\_FORM
+
+• **EXTENSION:RE\_RENDER\_SHIPPING\_FORM**: [`ReRenderShippingForm`](ReRenderShippingForm.md)
 
 ___
 

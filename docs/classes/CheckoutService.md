@@ -687,7 +687,7 @@ Manages the command handler for an extension.
 | :------ | :------ | :------ |
 | `extensionId` | `string` | The ID of the extension sending the command. |
 | `command` | `T` | The command to be handled. |
-| `handler` | (`command`: [`ExtensionCommandMap`](../interfaces/ExtensionCommandMap.md)[`T`]) => `void` | The handler function for the extension command. |
+| `handler` | (`command`: [`ExtensionCommandMap`](../interfaces/ExtensionCommandMap.md)[`T`]) => `void` \| `Promise`<`void`\> | The handler function for the extension command. |
 
 #### Returns
 
@@ -729,7 +729,7 @@ Manages the query handler for an extension.
 | :------ | :------ | :------ |
 | `extensionId` | `string` | The ID of the extension sending the query. |
 | `query` | `T` | The query to be handled. |
-| `handler` | (`command`: [`ExtensionQueryMap`](../interfaces/ExtensionQueryMap.md)[`T`]) => `void` | The handler function for the extension query. |
+| `handler` | (`command`: [`ExtensionQueryMap`](../interfaces/ExtensionQueryMap.md)[`T`]) => `void` \| `Promise`<`void`\> | The handler function for the extension query. |
 
 #### Returns
 

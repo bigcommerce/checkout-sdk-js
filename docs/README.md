@@ -379,6 +379,7 @@
 - [PickupOptionSelector](interfaces/PickupOptionSelector.md)
 - [Promotion](interfaces/Promotion.md)
 - [Radius](interfaces/Radius.md)
+- [ReRenderShippingForm](interfaces/ReRenderShippingForm.md)
 - [RecaptchaResult](interfaces/RecaptchaResult.md)
 - [Region](interfaces/Region.md)
 - [ReloadCheckoutCommand](interfaces/ReloadCheckoutCommand.md)
