@@ -261,7 +261,7 @@ interface GooglePayIsReadyToPayResponse {
 }
 
 export interface GooglePayButtonOptions {
-    onClick: (event: MouseEvent) => void;
+    onClick: (event: MouseEvent) => Promise<void>;
     allowedPaymentMethods: [GooglePayBaseCardPaymentMethod];
     buttonColor?: GooglePayButtonColor;
     buttonType?: GooglePayButtonType;

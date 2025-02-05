@@ -9,6 +9,7 @@ import {
     NotImplementedError,
     PaymentIntegrationService,
     PaymentMethod,
+    PaymentMethodCancelledError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getConsignment,
@@ -26,6 +27,7 @@ import { createInitializeImplementationMock } from './mocks/google-pay-processor
 import {
     CallbackTriggerType,
     GooglePayButtonOptions,
+    GooglePayErrorObject,
     GooglePayInitializationData,
     NewTransactionInfo,
 } from './types';
@@ -72,6 +74,7 @@ describe('GooglePayCustomerStrategy', () => {
             googlepayworldpayaccess: {
                 container: CONTAINER_ID,
                 onClick: jest.fn(),
+                onError: jest.fn(),
             },
         };
     });
@@ -227,21 +230,43 @@ describe('GooglePayCustomerStrategy', () => {
     });
 
     describe('#handleClick', () => {
+        const mockFn = jest.fn();
+        const internalError = new Error('internal error');
+
+        const createInitializeWidgetMock = (error?: unknown) =>
+            jest.spyOn(processor, 'initializeWidget').mockImplementation(
+                error
+                    ? () => {
+                          throw error;
+                      }
+                    : undefined,
+            );
+
         beforeEach(() => {
             jest.spyOn(processor, 'addPaymentButton').mockImplementation(
                 (
                     _: string,
                     buttonOptions: Omit<GooglePayButtonOptions, 'allowedPaymentMethods'>,
                 ) => {
-                    button.onclick = buttonOptions.onClick;
+                    button.onclick = async (event) => {
+                        try {
+                            await buttonOptions.onClick(event);
+                        } catch (e) {
+                            mockFn(e);
+                        }
+                    };
 
                     return button;
                 },
             );
         });
 
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
         it('triggers onClick callback on wallet button click', async () => {
-            const initializeWidgetMock = jest.spyOn(processor, 'initializeWidget');
+            const initializeWidgetMock = createInitializeWidgetMock();
 
             await strategy.initialize(options);
 
@@ -251,6 +276,50 @@ describe('GooglePayCustomerStrategy', () => {
 
             expect(options.googlepayworldpayaccess?.onClick).toHaveBeenCalled();
             expect(initializeWidgetMock).toHaveBeenCalledTimes(1);
+        });
+
+        it('throw an error on wallet button click', async () => {
+            const rejectedInitializeWidgetMock = createInitializeWidgetMock(internalError);
+
+            await strategy.initialize(options);
+
+            button.click();
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(rejectedInitializeWidgetMock).toHaveBeenCalledTimes(1);
+            expect(mockFn).toHaveBeenCalledWith(internalError);
+        });
+
+        it('triggers onError callback on wallet button click', async () => {
+            const rejectedInitializeWidgetMock = createInitializeWidgetMock(internalError);
+
+            await strategy.initialize(options);
+
+            button.click();
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(rejectedInitializeWidgetMock).toHaveBeenCalledTimes(1);
+            expect(options.googlepayworldpayaccess?.onError).toHaveBeenCalled();
+        });
+
+        it('throw a canceled error on wallet button click', async () => {
+            const googlePayErrorObject: GooglePayErrorObject = {
+                statusCode: 'CANCELED',
+                statusMessage: 'Canceled',
+            };
+
+            const rejectedInitializeWidgetMock = createInitializeWidgetMock(googlePayErrorObject);
+
+            await strategy.initialize(options);
+
+            button.click();
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(rejectedInitializeWidgetMock).toHaveBeenCalledTimes(1);
+            expect(mockFn.mock.calls[0][0]).toBeInstanceOf(PaymentMethodCancelledError);
         });
 
         describe('#getGooglePayClientOptions', () => {

@@ -26,7 +26,6 @@ import getGooglePaymentsClientMocks from './mocks/google-pay-payments-client.moc
 import { createInitializeImplementationMock } from './mocks/google-pay-processor-initialize.mock';
 import {
     CallbackTriggerType,
-    GooglePayButtonOptions,
     GooglePayInitializationData,
     GooglePaymentsClient,
     NewTransactionInfo,
@@ -280,17 +279,32 @@ describe('GooglePayPaymentStrategy', () => {
     });
 
     describe('#handleClick', () => {
-        beforeEach(() => {
-            jest.spyOn(processor, 'addPaymentButton').mockImplementation(
-                (
-                    _: string,
-                    buttonOptions: Omit<GooglePayButtonOptions, 'allowedPaymentMethods'>,
-                ) => {
-                    button.onclick = buttonOptions.onClick;
+        const internalError = new Error('internal error');
 
-                    return button;
-                },
+        const createInitializeWidgetMock = (error?: unknown) =>
+            jest.spyOn(processor, 'initializeWidget').mockImplementation(
+                error
+                    ? () => {
+                          throw error;
+                      }
+                    : undefined,
             );
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('triggers onError callback on wallet button click', async () => {
+            const rejectedInitializeWidgetMock = createInitializeWidgetMock(internalError);
+
+            await strategy.initialize(options);
+
+            button.click();
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(rejectedInitializeWidgetMock).toHaveBeenCalledTimes(1);
+            expect(options.googlepayworldpayaccess?.onError).toHaveBeenCalled();
         });
 
         describe('#getGooglePayClientOptions', () => {

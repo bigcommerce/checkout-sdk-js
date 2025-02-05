@@ -125,7 +125,7 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
 
     private _handleClick(
         onError: GooglePayCustomerInitializeOptions['onError'],
-    ): (event: MouseEvent) => unknown {
+    ): (event: MouseEvent) => Promise<void> {
         return async (event: MouseEvent) => {
             event.preventDefault();
 

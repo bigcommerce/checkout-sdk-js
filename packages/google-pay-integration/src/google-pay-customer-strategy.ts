@@ -177,7 +177,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
     private _handleClick(
         onError: GooglePayCustomerInitializeOptions['onError'],
         onClick: GooglePayCustomerInitializeOptions['onClick'],
-    ): (event: MouseEvent) => unknown {
+    ): (event: MouseEvent) => Promise<void> {
         return async (event: MouseEvent) => {
             event.preventDefault();
 
