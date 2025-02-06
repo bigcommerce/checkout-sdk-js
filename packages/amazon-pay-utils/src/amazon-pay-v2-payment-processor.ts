@@ -225,7 +225,7 @@ export default class AmazonPayV2PaymentProcessor {
             isButtonMicroTextDisabled,
         } = initializationData;
 
-        if (!merchantId || !ledgerCurrency || !createCheckoutSessionConfig) {
+        if (!merchantId || !ledgerCurrency) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
@@ -258,6 +258,10 @@ export default class AmazonPayV2PaymentProcessor {
         } = getStoreConfigOrThrow();
 
         if (this.isPh4Enabled(features, storeCountryCode)) {
+            if (!createCheckoutSessionConfig) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
             const amount = getCheckout()?.outstandingBalance.toString();
             const currencyCode = cart?.currency.code;
             const buttonOptions: AmazonPayV2NewButtonParams = { ...buttonBaseConfig };
