@@ -12,6 +12,7 @@ DOM. When a customer clicks on it, it will trigger Apple sheet.
 ### Properties
 
 - [buyNowInitializeOptions](ApplePayButtonInitializeOptions.md#buynowinitializeoptions)
+- [isWebBrowserSupported](ApplePayButtonInitializeOptions.md#iswebbrowsersupported)
 - [requiresShipping](ApplePayButtonInitializeOptions.md#requiresshipping)
 
 ### Methods
@@ -31,6 +32,14 @@ The options that are required to initialize Buy Now functionality.
 | Name | Type |
 | :------ | :------ |
 | `getBuyNowCartRequestBody?` | () => `void` \| `default` |
+
+___
+
+### isWebBrowserSupported
+
+• `Optional` **isWebBrowserSupported**: `boolean`
+
+Enabling a new version of Apple Pay with using Apple Pay SDK
 
 ___
 

@@ -565,6 +565,10 @@ declare interface ApplePayButtonInitializeOptions {
      */
     requiresShipping?: boolean;
     /**
+     * Enabling a new version of Apple Pay with using Apple Pay SDK
+     */
+    isWebBrowserSupported?: boolean;
+    /**
      * The options that are required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: {

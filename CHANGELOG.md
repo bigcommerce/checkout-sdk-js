@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.705.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.704.0...v1.705.0) (2025-02-06)
+
+
+### Features
+
+* **payment:** PAYPAL-4324 added Apple Pay SDK for supporting third party browsers ([#2765](https://github.com/bigcommerce/checkout-sdk-js/issues/2765)) ([c0651b8](https://github.com/bigcommerce/checkout-sdk-js/commit/c0651b89d13ee8d47bdeebb0f99547e98020f73d))
+
 ## [1.704.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.703.0...v1.704.0) (2025-02-06)
 
 
