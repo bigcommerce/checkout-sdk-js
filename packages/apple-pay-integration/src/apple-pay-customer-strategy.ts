@@ -161,7 +161,7 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
     }
 
     private _createNativeButton(): HTMLElement {
-        const applePayButton = document.createElement('div');
+        const applePayButton = document.createElement('button');
 
         applePayButton.setAttribute('type', 'button');
         applePayButton.setAttribute('aria-label', 'Apple Pay');
