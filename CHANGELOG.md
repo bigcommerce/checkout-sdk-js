@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.706.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.705.0...v1.706.0) (2025-02-06)
+
+
+### Features
+
+* **payment:** PI-3064 fixed AmazonPay button for disabled ph4 flag ([#2781](https://github.com/bigcommerce/checkout-sdk-js/issues/2781)) ([27995de](https://github.com/bigcommerce/checkout-sdk-js/commit/27995deed7bf6fb8195ffb076ef49bad951d4380))
+
 ## [1.705.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.704.0...v1.705.0) (2025-02-06)
 
 
