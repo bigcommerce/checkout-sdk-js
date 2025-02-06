@@ -127,7 +127,29 @@ export default class HostedInputValidator {
     }
 
     private _getCardNameSchema(): StringSchema {
-        return string().max(200).required('Full name is required');
+        return string()
+            .max(200)
+            .required('Full name is required')
+            .test({
+                message: 'Credit card name must be valid',
+                name: 'invalid_card_name',
+                test: (value) => {
+                    // Get all numbers from the input value after removing whitespaces
+                    const numbers = value.replace(/\s/g, '').match(/[0-9]+/g);
+
+                    if (!numbers?.length) {
+                        return true;
+                    }
+
+                    for (const num of numbers) {
+                        if (number(num).isValid) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                },
+            });
     }
 
     private _getNoteSchema(): StringSchema {

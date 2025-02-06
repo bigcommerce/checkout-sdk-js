@@ -145,6 +145,27 @@ describe('HostedInputValidator', () => {
         });
     });
 
+    it('returns error if card name field includes a valid card number', async () => {
+        expect(
+            await validator.validate({
+                ...validData,
+                cardName: 'text before 4111 1111 1111 1111 and after',
+            }),
+        ).toEqual({
+            isValid: false,
+            errors: {
+                ...validResults.errors,
+                cardName: [
+                    {
+                        fieldType: 'cardName',
+                        type: 'invalid_card_name',
+                        message: 'Credit card name must be valid',
+                    },
+                ],
+            },
+        });
+    });
+
     it('does not return error if card name is not required', async () => {
         expect(await validator.validate(omit(validData, HostedFieldType.CardName))).toEqual({
             ...validResults,
