@@ -11,6 +11,7 @@ export function getApplePayButtonInitializationOptions(): CheckoutButtonInitiali
         methodId: ApplePayButtonMethodType.APPLEPAY,
         applepay: {
             onPaymentAuthorize: jest.fn(),
+            isWebBrowserSupported: true,
         },
     };
 }
@@ -26,6 +27,7 @@ export function getApplePayButtonInitializationOptionsWithBuyNow(): CheckoutButt
                 getBuyNowCartRequestBody: jest.fn().mockReturnValue(getBuyNowCartRequestBody()),
             },
             requiresShipping: false,
+            isWebBrowserSupported: true,
         },
     };
 }

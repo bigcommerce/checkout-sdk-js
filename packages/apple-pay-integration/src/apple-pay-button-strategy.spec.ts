@@ -27,6 +27,7 @@ import {
 import ApplePayButtonInitializeOptions from './apple-pay-button-initialize-options';
 import ApplePayButtonMethodType from './apple-pay-button-method-type';
 import ApplePayButtonStrategy, { ButtonStyleOption } from './apple-pay-button-strategy';
+import ApplePayScriptLoader from './apple-pay-script-loader';
 import ApplePaySessionFactory from './apple-pay-session-factory';
 import {
     getApplePayButtonInitializationOptions,
@@ -44,6 +45,7 @@ describe('ApplePayButtonStrategy', () => {
     let strategy: ApplePayButtonStrategy;
     let applePaySession: MockApplePaySession;
     let braintreeSdk: BraintreeSdk;
+    let applePayScriptLoader: ApplePayScriptLoader;
 
     beforeEach(() => {
         applePaySession = new MockApplePaySession();
@@ -56,9 +58,11 @@ describe('ApplePayButtonStrategy', () => {
         requestSender = createRequestSender();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeSdk = new BraintreeSdk(new BraintreeScriptLoader(getScriptLoader(), window));
+        applePayScriptLoader = new ApplePayScriptLoader(getScriptLoader());
 
         jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(getResponse({})));
         jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(getResponse({})));
+        jest.spyOn(applePayScriptLoader, 'loadSdk').mockReturnValue(Promise.resolve());
 
         jest.spyOn(applePayFactory, 'create').mockReturnValue(applePaySession);
 
@@ -67,6 +71,7 @@ describe('ApplePayButtonStrategy', () => {
             paymentIntegrationService,
             applePayFactory,
             braintreeSdk,
+            applePayScriptLoader,
         );
 
         container = document.createElement('div');
@@ -88,6 +93,30 @@ describe('ApplePayButtonStrategy', () => {
             jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
                 paymentIntegrationService.getState(),
             );
+        });
+
+        it('load Apple Pay SDK if isWebBrowserSupported is true', async () => {
+            const checkoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
+            await strategy.initialize(checkoutButtonInitializeOptions);
+
+            expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalled();
+
+            expect(applePayScriptLoader.loadSdk).toHaveBeenCalled();
+        });
+
+        it('does not load Apple Pay SDK if isWebBrowserSupported is false', async () => {
+            const checkoutButtonInitializeOptions = getApplePayButtonInitializationOptions();
+
+            (
+                checkoutButtonInitializeOptions.applepay as ApplePayButtonInitializeOptions
+            ).isWebBrowserSupported = false;
+
+            await strategy.initialize(checkoutButtonInitializeOptions);
+
+            expect(paymentIntegrationService.verifyCheckoutSpamProtection).toHaveBeenCalled();
+
+            expect(applePayScriptLoader.loadSdk).not.toHaveBeenCalled();
         });
 
         it('creates the button', async () => {
@@ -632,6 +661,24 @@ describe('ApplePayButtonStrategy', () => {
                 ).mockImplementation(() => applePayPaymentMethod);
             };
 
+            it('style should be valid', async () => {
+                await strategy.initialize(checkoutButtonInitializeOptions);
+
+                const button = container.firstChild as HTMLElement;
+
+                expect(button.getAttribute('style')).toContain(
+                    '--apple-pay-button-width: 100%; --apple-pay-button-height: 40px; --apple-pay-button-border-radius: 4px;',
+                );
+            });
+
+            it('type should be plain', async () => {
+                await strategy.initialize(checkoutButtonInitializeOptions);
+
+                const button = container.firstChild as HTMLElement;
+
+                expect(button.getAttribute('type')).toContain('plain');
+            });
+
             it('should be black', async () => {
                 mockGetPaymentMethod(ButtonStyleOption.Black);
 
@@ -639,7 +686,7 @@ describe('ApplePayButtonStrategy', () => {
 
                 const button = container.firstChild as HTMLElement;
 
-                expect(button.getAttribute('style')).toContain('background-color: rgb(0, 0, 0)');
+                expect(button.getAttribute('buttonstyle')).toContain('black');
             });
 
             it('should be white', async () => {
@@ -649,22 +696,62 @@ describe('ApplePayButtonStrategy', () => {
 
                 const button = container.firstChild as HTMLElement;
 
-                expect(button.getAttribute('style')).toContain(
-                    'background-color: rgb(255, 255, 255)',
-                );
+                expect(button.getAttribute('buttonstyle')).toContain('white');
             });
 
-            it('should be white border', async () => {
+            it('should be white-outline', async () => {
                 mockGetPaymentMethod(ButtonStyleOption.WhiteBorder);
 
                 await strategy.initialize(checkoutButtonInitializeOptions);
 
                 const button = container.firstChild as HTMLElement;
 
-                const style = button.getAttribute('style');
+                expect(button.getAttribute('buttonstyle')).toContain('white-outline');
+            });
 
-                expect(style).toContain('background-color: rgb(255, 255, 255)');
-                expect(style).toContain('border: 0.5px solid #000');
+            describe('when isWebBrowserSupported is false', () => {
+                beforeEach(() => {
+                    (
+                        checkoutButtonInitializeOptions.applepay as ApplePayButtonInitializeOptions
+                    ).isWebBrowserSupported = false;
+                });
+
+                it('should be black', async () => {
+                    mockGetPaymentMethod(ButtonStyleOption.Black);
+
+                    await strategy.initialize(checkoutButtonInitializeOptions);
+
+                    const button = container.firstChild as HTMLElement;
+
+                    expect(button.getAttribute('style')).toContain(
+                        'background-color: rgb(0, 0, 0)',
+                    );
+                });
+
+                it('should be white', async () => {
+                    mockGetPaymentMethod(ButtonStyleOption.White);
+
+                    await strategy.initialize(checkoutButtonInitializeOptions);
+
+                    const button = container.firstChild as HTMLElement;
+
+                    expect(button.getAttribute('style')).toContain(
+                        'background-color: rgb(255, 255, 255)',
+                    );
+                });
+
+                it('should be white border', async () => {
+                    mockGetPaymentMethod(ButtonStyleOption.WhiteBorder);
+
+                    await strategy.initialize(checkoutButtonInitializeOptions);
+
+                    const button = container.firstChild as HTMLElement;
+
+                    const style = button.getAttribute('style');
+
+                    expect(style).toContain('background-color: rgb(255, 255, 255)');
+                    expect(style).toContain('border: 0.5px solid #000');
+                });
             });
         });
     });
