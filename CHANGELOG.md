@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.707.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.706.0...v1.707.0) (2025-02-06)
+
+
+### Features
+
+* **payment:** PAYPAL-4324 added tests for GP ([57cdf95](https://github.com/bigcommerce/checkout-sdk-js/commit/57cdf95266b30df308c1d0d148a5b9f36acd0b63))
+
 ## [1.706.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.705.0...v1.706.0) (2025-02-06)
 
 
