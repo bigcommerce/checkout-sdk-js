@@ -444,6 +444,11 @@ export interface PayPalOrderDetails {
         };
         email_address: string;
         address: PayPalOrderAddress;
+        phone?: {
+            phone_number: {
+                national_number: string;
+            };
+        };
     };
     purchase_units: Array<{
         shipping: {
