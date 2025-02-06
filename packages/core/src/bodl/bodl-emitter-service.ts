@@ -42,6 +42,9 @@ export default class BodlEmitterService implements BodlService {
     checkoutBegin(): void {
         const data = this._getCommonCheckoutData();
 
+        console.log("LOG IS CAPTURED BELOW!!! ")
+        console.log(data)
+
         if (this._checkoutStarted || !data) {
             return;
         }
@@ -202,6 +205,8 @@ export default class BodlEmitterService implements BodlService {
             channelId,
         } = checkout;
 
+        console.log("Line items", lineItems)
+
         return {
             event_id: id,
             currency: currency.code,
@@ -216,7 +221,7 @@ export default class BodlEmitterService implements BodlService {
         const customItems: BODLProduct[] = (lineItems.customItems || []).map((item) => ({
             product_id: item.id,
             sku: item.sku,
-            base_price: item.listPrice,
+            base_price: item.originalPrice,
             sale_price: item.listPrice,
             purchase_price: item.listPrice,
             quantity: item.quantity,
@@ -260,11 +265,14 @@ export default class BodlEmitterService implements BodlService {
                 itemAttributes.sort();
             }
 
+            console.log("THE ITEM ", item)
+            console.log("THE BASE/ORIGIN PRICE IS")
+            console.log(item.originalPrice)
             return {
                 product_id: item.productId,
                 quantity: item.quantity,
                 product_name: item.name,
-                base_price: item.listPrice,
+                base_price: item.originalPrice,
                 sale_price: item.salePrice,
                 purchase_price: item.salePrice > 0 ? item.salePrice : item.listPrice,
                 sku: item.sku,
