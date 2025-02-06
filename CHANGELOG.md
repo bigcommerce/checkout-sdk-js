@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.704.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.703.0...v1.704.0) (2025-02-06)
+
+
+### Features
+
+* **payment:** PAYPAL-5041 added phone to order ([#2777](https://github.com/bigcommerce/checkout-sdk-js/issues/2777)) ([0d48a9d](https://github.com/bigcommerce/checkout-sdk-js/commit/0d48a9db6ba10b3200542a1ff79342e7ec2b9eb5))
+
 ## [1.703.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.702.0...v1.703.0) (2025-02-06)
 
 
