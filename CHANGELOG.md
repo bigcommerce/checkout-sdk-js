@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.703.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.702.0...v1.703.0) (2025-02-06)
+
+
+### Features
+
+* **payment:** PAYMENTS-10280 Add validation on hosted form card holder name to not have card number ([9fdf2cf](https://github.com/bigcommerce/checkout-sdk-js/commit/9fdf2cf2a4355a42dbab5747159b3abaaa905d02))
+* **payment:** PAYMENTS-10280 Add validation on hosted form card holder name to not include valid card number ([65a05f5](https://github.com/bigcommerce/checkout-sdk-js/commit/65a05f558a22a3ed78e289a210b0b0a668dd3c0a))
+
 ## [1.702.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.701.2...v1.702.0) (2025-02-04)
 
 
