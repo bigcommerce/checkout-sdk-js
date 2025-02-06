@@ -9,6 +9,7 @@ export function getCustomItem(): CustomItem {
     return {
         id: '55e11c8f-7dce-4da3-9413-b649533f8bad',
         listPrice: 10,
+        originalPrice: 25,
         extendedListPrice: 20,
         name: 'Custom item',
         quantity: 2,
@@ -32,6 +33,7 @@ export function getPhysicalItem(): PhysicalItem {
         discountAmount: 10,
         couponAmount: 0,
         listPrice: 200,
+        originalPrice: 250,
         salePrice: 190,
         retailPrice: 210,
         comparisonPrice: 200,
@@ -69,6 +71,7 @@ export function getDigitalItem(): DigitalItem {
         discountAmount: 0,
         couponAmount: 0,
         listPrice: 200,
+        originalPrice: 250,
         salePrice: 200,
         retailPrice: 210,
         comparisonPrice: 200,

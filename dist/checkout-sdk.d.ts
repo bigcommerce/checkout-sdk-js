@@ -565,10 +565,6 @@ declare interface ApplePayButtonInitializeOptions {
      */
     requiresShipping?: boolean;
     /**
-     * Enabling a new version of Apple Pay with using Apple Pay SDK
-     */
-    isWebBrowserSupported?: boolean;
-    /**
      * The options that are required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: {
@@ -3195,7 +3191,7 @@ declare class CheckoutService {
      * @param handler - The handler function for the extension command.
      * @returns A function that, when called, will deregister the command handler.
      */
-    handleExtensionCommand<T extends keyof ExtensionCommandMap>(extensionId: string, command: T, handler: (command: ExtensionCommandMap[T]) => Promise<void> | void): () => void;
+    handleExtensionCommand<T extends keyof ExtensionCommandMap>(extensionId: string, command: T, handler: (command: ExtensionCommandMap[T]) => void): () => void;
     /**
      * Manages the query handler for an extension.
      *
@@ -3205,7 +3201,7 @@ declare class CheckoutService {
      * @param handler - The handler function for the extension query.
      * @returns A function that, when called, will deregister the query handler.
      */
-    handleExtensionQuery<T extends keyof ExtensionQueryMap>(extensionId: string, query: T, handler: (command: ExtensionQueryMap[T]) => Promise<void> | void): () => void;
+    handleExtensionQuery<T extends keyof ExtensionQueryMap>(extensionId: string, query: T, handler: (command: ExtensionQueryMap[T]) => void): () => void;
     /**
      * Dispatches an action through the data store and returns the current state
      * once the action is dispatched.
@@ -4830,14 +4826,12 @@ declare interface ExtensionCommandMap {
     [ExtensionCommandType.ReloadCheckout]: ReloadCheckoutCommand;
     [ExtensionCommandType.ShowLoadingIndicator]: ShowLoadingIndicatorCommand;
     [ExtensionCommandType.SetIframeStyle]: SetIframeStyleCommand;
-    [ExtensionCommandType.ReRenderShippingForm]: ReRenderShippingForm;
 }
 
 export declare enum ExtensionCommandType {
     ReloadCheckout = "EXTENSION:RELOAD_CHECKOUT",
     ShowLoadingIndicator = "EXTENSION:SHOW_LOADING_INDICATOR",
-    SetIframeStyle = "EXTENSION:SET_IFRAME_STYLE",
-    ReRenderShippingForm = "EXTENSION:RE_RENDER_SHIPPING_FORM"
+    SetIframeStyle = "EXTENSION:SET_IFRAME_STYLE"
 }
 
 declare type ExtensionEvent = ConsignmentsChangedEvent;
@@ -7399,10 +7393,6 @@ declare interface Radius {
 declare enum RadiusUnit {
     KM = "KM",
     MI = "MI"
-}
-
-declare interface ReRenderShippingForm {
-    type: ExtensionCommandType.ReRenderShippingForm;
 }
 
 declare type ReadableCheckoutStore = ReadableDataStore<InternalCheckoutSelectors>;
