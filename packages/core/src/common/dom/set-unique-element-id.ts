@@ -13,7 +13,10 @@ export default function setUniqueElementId(selector: string, idPrefix: string): 
 
     return Array.prototype.slice.call(containers).map((container: HTMLElement) => {
         if (!container.id) {
-            container.id = uniqueId(idPrefix);
+            const getUniqId = (id: string): string =>
+                document.getElementById(id) ? getUniqId(uniqueId(idPrefix)) : id;
+
+            container.id = getUniqId(uniqueId(idPrefix));
         }
 
         return container.id;
