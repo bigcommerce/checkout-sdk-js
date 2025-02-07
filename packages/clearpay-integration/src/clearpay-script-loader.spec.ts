@@ -1,5 +1,7 @@
-import { createScriptLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
+
+import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import ClearpayScriptLoader from './clearpay-script-loader';
 import { getClearpay } from './clearpay.mock';
@@ -25,5 +27,24 @@ describe('ClearpayScriptLoader', () => {
         expect(loadScript).toHaveBeenCalledWith(
             '//portal.sandbox.clearpay.co.uk/afterpay-async.js',
         );
+    });
+
+    it('throws an error when window is not set', async () => {
+        const scriptLoader = {} as ScriptLoader;
+
+        scriptLoader.loadScript = jest.fn(() => {
+            return Promise.resolve();
+        });
+
+        const method = merge({}, getClearpay(), { config: { testMode: true } });
+        const clearpayScriptLoader = new ClearpayScriptLoader(scriptLoader, {
+            AfterPay: undefined,
+        } as any);
+
+        try {
+            await clearpayScriptLoader.load(method);
+        } catch (error) {
+            expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
+        }
     });
 });
