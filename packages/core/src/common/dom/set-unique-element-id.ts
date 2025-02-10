@@ -2,6 +2,12 @@ import { uniqueId } from 'lodash';
 
 import { InvalidArgumentError } from '../error/errors';
 
+const getUniqId = (idPrefix?: string): string => {
+    const id = uniqueId(idPrefix);
+
+    return document.getElementById(id) ? getUniqId(idPrefix) : id;
+};
+
 export default function setUniqueElementId(selector: string, idPrefix: string): string[] {
     const containers = document.querySelectorAll(selector);
 
@@ -13,10 +19,7 @@ export default function setUniqueElementId(selector: string, idPrefix: string): 
 
     return Array.prototype.slice.call(containers).map((container: HTMLElement) => {
         if (!container.id) {
-            const getUniqId = (id: string): string =>
-                document.getElementById(id) ? getUniqId(uniqueId(idPrefix)) : id;
-
-            container.id = getUniqId(uniqueId(idPrefix));
+            container.id = getUniqId(idPrefix);
         }
 
         return container.id;
