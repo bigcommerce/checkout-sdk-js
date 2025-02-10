@@ -20,7 +20,6 @@ export default class KlarnaV2TokenUpdater {
         return this.requestSender.get(url, {
             timeout,
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 Accept: ContentType.JsonV1,
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 ...SDK_VERSION_HEADERS,
@@ -36,7 +35,6 @@ export default class KlarnaV2TokenUpdater {
         const url = `/api/storefront/initialization/klarna`;
         const options = {
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 Accept: ContentType.JsonV1,
                 'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 ...SDK_VERSION_HEADERS,

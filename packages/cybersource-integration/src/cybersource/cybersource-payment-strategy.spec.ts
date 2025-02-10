@@ -4,6 +4,7 @@ import { CardinalThreeDSecureFlow } from '@bigcommerce/checkout-sdk/cardinal-int
 import { CreditCardPaymentStrategy } from '@bigcommerce/checkout-sdk/credit-card-integration';
 import {
     OrderRequestBody,
+    PaymentArgumentInvalidError,
     PaymentIntegrationService,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -89,6 +90,18 @@ describe('CyberSourcePaymentStrategy', () => {
                     gatewayId: paymentMethod.gateway,
                 },
             });
+        });
+
+        it('throws PaymentArgumentInvalidError with empty payload', async () => {
+            paymentMethod.config.is3dsEnabled = false;
+
+            try {
+                await strategy.execute({});
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentArgumentInvalidError);
+            }
+
+            expect(threeDSecureFlow.start).not.toHaveBeenCalled();
         });
 
         it('throws error if payment method is not defined', async () => {
