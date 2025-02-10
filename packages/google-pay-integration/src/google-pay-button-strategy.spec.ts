@@ -10,6 +10,7 @@ import {
     InvalidArgumentError,
     PaymentIntegrationService,
     PaymentMethod,
+    PaymentMethodCancelledError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getCart,
@@ -27,6 +28,8 @@ import { getGeneric } from './mocks/google-pay-payment-method.mock';
 import { createInitializeImplementationMock } from './mocks/google-pay-processor-initialize.mock';
 import {
     CallbackTriggerType,
+    GooglePayButtonOptions,
+    GooglePayErrorObject,
     GooglePayInitializationData,
     NewShippingOptionParameters,
     NewTransactionInfo,
@@ -64,6 +67,17 @@ describe('GooglePayButtonStrategy', () => {
         defaultSelectedOptionId: consignment.selectedShippingOption?.id,
         shippingOptions: expectedSippingOptions,
     };
+    const mockFn = jest.fn();
+    const internalError = new Error('internal error');
+
+    const createInitializeWidgetMock = (error?: unknown) =>
+        jest.spyOn(processor, 'initializeWidget').mockImplementation(
+            error
+                ? () => {
+                      throw error;
+                  }
+                : undefined,
+        );
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -95,7 +109,9 @@ describe('GooglePayButtonStrategy', () => {
         options = {
             methodId: 'googlepaybraintree',
             containerId: CONTAINER_ID,
-            googlepaybraintree: {},
+            googlepaybraintree: {
+                onError: jest.fn(),
+            },
         };
 
         withBuyNowOptions = {
@@ -130,12 +146,22 @@ describe('GooglePayButtonStrategy', () => {
         jest.spyOn(processor, 'setExternalCheckoutForm').mockResolvedValue(undefined);
 
         jest.spyOn(processor, 'initialize').mockResolvedValue(undefined);
-        jest.spyOn(processor, 'initializeWidget').mockResolvedValue(undefined);
-        jest.spyOn(processor, 'addPaymentButton').mockImplementation((_, { onClick }) => {
-            button.onclick = onClick;
 
-            return button;
-        });
+        createInitializeWidgetMock();
+
+        jest.spyOn(processor, 'addPaymentButton').mockImplementation(
+            (_: string, buttonOptions: Omit<GooglePayButtonOptions, 'allowedPaymentMethods'>) => {
+                button.onclick = async (event) => {
+                    try {
+                        await buttonOptions.onClick(event);
+                    } catch (e) {
+                        mockFn(e);
+                    }
+                };
+
+                return button;
+            },
+        );
         jest.spyOn(processor, 'signOut').mockResolvedValue(undefined);
 
         jest.spyOn(processor, 'getCallbackTriggers').mockReturnValue({
@@ -156,6 +182,10 @@ describe('GooglePayButtonStrategy', () => {
     });
 
     describe('#initialize', () => {
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
         describe('initialization of strategy with buy now required options', () => {
             it('should initialize the strategy', async () => {
                 expect(await buttonStrategy.initialize(withBuyNowOptions)).toBeUndefined();
@@ -289,6 +319,50 @@ describe('GooglePayButtonStrategy', () => {
 
                 expect(paymentIntegrationService.createBuyNowCart).toHaveBeenCalledTimes(1);
             });
+        });
+
+        it('throw an error on wallet button click', async () => {
+            const rejectedInitializeWidgetMock = createInitializeWidgetMock(internalError);
+
+            await buttonStrategy.initialize(options);
+
+            button.click();
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(rejectedInitializeWidgetMock).toHaveBeenCalledTimes(1);
+            expect(mockFn).toHaveBeenCalledWith(internalError);
+        });
+
+        it('triggers onError callback on wallet button click', async () => {
+            const rejectedInitializeWidgetMock = createInitializeWidgetMock(internalError);
+
+            await buttonStrategy.initialize(options);
+
+            button.click();
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(rejectedInitializeWidgetMock).toHaveBeenCalledTimes(1);
+            expect(options.googlepaybraintree?.onError).toHaveBeenCalled();
+        });
+
+        it('throw a canceled error on wallet button click', async () => {
+            const googlePayErrorObject: GooglePayErrorObject = {
+                statusCode: 'CANCELED',
+                statusMessage: 'Canceled',
+            };
+
+            const rejectedInitializeWidgetMock = createInitializeWidgetMock(googlePayErrorObject);
+
+            await buttonStrategy.initialize(options);
+
+            button.click();
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(rejectedInitializeWidgetMock).toHaveBeenCalledTimes(1);
+            expect(mockFn.mock.calls[0][0]).toBeInstanceOf(PaymentMethodCancelledError);
         });
 
         describe('initialization of strategy without buy now required options', () => {
