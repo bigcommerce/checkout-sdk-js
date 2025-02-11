@@ -13,4 +13,5 @@ module.exports = {
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
     setupFilesAfterEnv: ['../../jest-setup.js'],
     coverageDirectory: '../../coverage/packages/braintree-utils',
+    coveragePathIgnorePatterns: ['<rootDir>/src/index.ts', '<rootDir>/src/utils/index.ts'],
 };

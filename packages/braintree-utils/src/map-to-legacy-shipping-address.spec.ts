@@ -36,4 +36,25 @@ describe('mapToLegacyShippingAddress()', () => {
 
         expect(mapToLegacyShippingAddress(props)).toEqual(expects);
     });
+
+    it('should return only personal info when no shipping address is available', () => {
+        const details = {
+            email: 'noaddress@example.com',
+            phone: '5555555555',
+        };
+
+        const result = mapToLegacyShippingAddress(details);
+        expect(result).toEqual({
+            email: 'noaddress@example.com',
+            first_name: '',
+            last_name: '',
+            phone_number: '5555555555',
+            address_line_1: undefined,
+            address_line_2: undefined,
+            city: undefined,
+            state: undefined,
+            country_code: undefined,
+            postal_code: undefined,
+        });
+    });
 });

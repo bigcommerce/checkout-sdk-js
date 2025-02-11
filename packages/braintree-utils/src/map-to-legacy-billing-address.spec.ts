@@ -68,4 +68,27 @@ describe('mapToLegacyBillingAddress()', () => {
 
         expect(mapToLegacyBillingAddress(props)).toEqual(expects);
     });
+
+    it('should return only personal info when no address is available', () => {
+        const details = {
+            email: 'noaddress@example.com',
+            firstName: 'No',
+            lastName: 'Address',
+            phone: '5555555555',
+        };
+
+        const result = mapToLegacyBillingAddress(details);
+        expect(result).toEqual({
+            email: 'noaddress@example.com',
+            first_name: 'No',
+            last_name: 'Address',
+            phone_number: '5555555555',
+            address_line_1: undefined,
+            address_line_2: undefined,
+            city: undefined,
+            state: undefined,
+            country_code: undefined,
+            postal_code: undefined,
+        });
+    });
 });
