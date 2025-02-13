@@ -1,6 +1,12 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { getScriptLoader } from '@bigcommerce/script-loader';
 
+import {
+    CardinalClient,
+    CardinalScriptLoader,
+    CardinalThreeDSecureFlowV2,
+} from '@bigcommerce/checkout-sdk/cardinal-integration';
 import {
     PaymentStrategyFactory,
     toResolvableModule,
@@ -21,6 +27,10 @@ const createGooglePayCybersourcePaymentStrategy: PaymentStrategyFactory<
             new GooglePayCybersourceGateway(paymentIntegrationService),
             createRequestSender(),
             createFormPoster(),
+        ),
+        new CardinalThreeDSecureFlowV2(
+            paymentIntegrationService,
+            new CardinalClient(new CardinalScriptLoader(getScriptLoader())),
         ),
     );
 
