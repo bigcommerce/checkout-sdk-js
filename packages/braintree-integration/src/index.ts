@@ -7,9 +7,11 @@ export { WithBraintreeAchPaymentInitializeOptions } from './braintree-ach/braint
 /**
  * Braintree PayPal strategies
  */
+export { default as createBraintreePaypalButtonStrategy } from './braintree-paypal/create-braintree-paypal-button-strategy';
 export { default as createBraintreePaypalCustomerStrategy } from './braintree-paypal/create-braintree-paypal-customer-strategy';
-export { WithBraintreePaypalCustomerInitializeOptions } from './braintree-paypal/braintree-paypal-customer-initialize-options';
 export { default as createBraintreePaypalPaymentStrategy } from './braintree-paypal/create-braintree-paypal-payment-strategy';
+export { WithBraintreePaypalCustomerInitializeOptions } from './braintree-paypal/braintree-paypal-customer-initialize-options';
+export { WithBraintreePaypalButtonInitializeOptions } from './braintree-paypal/braintree-paypal-button-initialize-options';
 
 /**
  * Braintree PayPal Credit strategies

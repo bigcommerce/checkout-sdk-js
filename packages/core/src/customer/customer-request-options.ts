@@ -1,9 +1,5 @@
 import { RequestOptions } from '../common/http-request';
 
-import {
-    BraintreePaypalCreditCustomerInitializeOptions,
-    BraintreeVisaCheckoutCustomerInitializeOptions,
-} from './strategies/braintree';
 import { MasterpassCustomerInitializeOptions } from './strategies/masterpass';
 
 export { CustomerInitializeOptions } from '../generated/customer-initialize-options';
@@ -31,18 +27,6 @@ export interface CustomerRequestOptions extends RequestOptions {
  */
 export interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
     [key: string]: unknown;
-
-    /**
-     * The options that are required to facilitate Braintree Credit. They can be
-     * omitted unless you need to support Braintree Credit.
-     */
-    braintreepaypalcredit?: BraintreePaypalCreditCustomerInitializeOptions;
-
-    /**
-     * The options that are required to initialize the customer step of checkout
-     * when using Visa Checkout provided by Braintree.
-     */
-    braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the Masterpass payment method.
