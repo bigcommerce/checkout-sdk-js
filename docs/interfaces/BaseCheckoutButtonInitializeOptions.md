@@ -17,7 +17,6 @@
 ### Properties
 
 - [braintreepaypal](BaseCheckoutButtonInitializeOptions.md#braintreepaypal)
-- [braintreepaypalcredit](BaseCheckoutButtonInitializeOptions.md#braintreepaypalcredit)
 - [containerId](BaseCheckoutButtonInitializeOptions.md#containerid)
 - [currencyCode](BaseCheckoutButtonInitializeOptions.md#currencycode)
 - [methodId](BaseCheckoutButtonInitializeOptions.md#methodid)
@@ -33,15 +32,6 @@
 
 The options that are required to facilitate Braintree PayPal. They can be
 omitted unless you need to support Braintree PayPal.
-
-___
-
-### braintreepaypalcredit
-
-• `Optional` **braintreepaypalcredit**: [`BraintreePaypalCreditButtonInitializeOptions`](BraintreePaypalCreditButtonInitializeOptions.md)
-
-The options that are required to facilitate Braintree Credit. They can be
-omitted unless you need to support Braintree Credit.
 
 ___
 

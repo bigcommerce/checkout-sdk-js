@@ -1,7 +1,11 @@
+import { Address as Address_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { AmazonPayV2ButtonConfig } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import { AmazonPayV2ButtonParameters } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
+import { BraintreeError as BraintreeError_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PaypalStyleOptions as PaypalStyleOptions_2 } from '@bigcommerce/checkout-sdk/braintree-utils';
+import { StandardError as StandardError_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { Timeout } from '@bigcommerce/request-sender';
 import { createTimeout } from '@bigcommerce/request-sender';
 
@@ -67,11 +71,6 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
      * omitted unless you need to support Braintree PayPal.
      */
     braintreepaypal?: BraintreePaypalButtonInitializeOptions;
-    /**
-     * The options that are required to facilitate Braintree Credit. They can be
-     * omitted unless you need to support Braintree Credit.
-     */
-    braintreepaypalcredit?: BraintreePaypalCreditButtonInitializeOptions;
     /**
      * The ID of a container which the checkout button should be inserted.
      */
@@ -163,48 +162,48 @@ declare interface BraintreePaypalButtonInitializeOptions {
 
 declare interface BraintreePaypalCreditButtonInitializeOptions {
     /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
+    };
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
      * A set of styling options for the checkout button.
      */
-    style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
+    style?: Pick<PaypalStyleOptions_2, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
     /**
      * Address to be used for shipping.
      * If not provided, it will use the first saved address from the active customer.
      */
-    shippingAddress?: Address | null;
+    shippingAddress?: Address_2 | null;
     /**
      * A callback that gets called if unable to authorize and tokenize payment.
      *
      * @param error - The error object describing the failure.
      */
-    onAuthorizeError?(error: BraintreeError | StandardError): void;
+    onAuthorizeError?(error: BraintreeError_2 | StandardError_2): void;
     /**
      * A callback that gets called if unable to submit payment.
      *
      * @param error - The error object describing the failure.
      */
-    onPaymentError?(error: BraintreeError | StandardError): void;
+    onPaymentError?(error: BraintreeError_2 | StandardError_2): void;
     /**
      * A callback that gets called on any error instead of submit payment or authorization errors.
      *
      * @param error - The error object describing the failure.
      */
-    onError?(error: BraintreeError | StandardError): void;
+    onError?(error: BraintreeError_2 | StandardError_2): void;
     /**
      *
      *  A callback that gets called when Braintree SDK restricts to render PayPal component.
      *
      */
     onEligibilityFailure?(): void;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
 }
 
 /**
@@ -221,7 +220,7 @@ declare class CheckoutButtonErrorSelector {
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -682,6 +681,13 @@ declare interface WithBoltButtonInitializeOptions {
      * method. They can be omitted unless you need to support Bolt.
      */
     bolt?: BoltButtonInitializeOptions;
+}
+
+declare interface WithBraintreePaypalCreditButtonInitializeOptions {
+    /**
+     * The options that are required to initialize Braintree PayPal Credit wallet button on Product and Cart page.
+     */
+    braintreepaypalcredit?: BraintreePaypalCreditButtonInitializeOptions;
 }
 
 declare interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
