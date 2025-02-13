@@ -64,7 +64,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
     const braintreePaypalCreditOptions: BraintreePaypalCreditButtonInitializeOptions = {
         shouldProcessPayment: false,
         style: { height: 45 },
-        // shippingAddress: {}, // TODO: <---
         onAuthorizeError: jest.fn(),
         onPaymentError: jest.fn(),
         onError: jest.fn(),
