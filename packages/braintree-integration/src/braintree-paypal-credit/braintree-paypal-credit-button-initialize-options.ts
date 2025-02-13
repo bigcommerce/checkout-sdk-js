@@ -1,10 +1,23 @@
-import { Address } from '../../../address';
-import { BuyNowCartRequestBody } from '../../../cart';
-import { StandardError } from '../../../common/error/errors';
-import { BraintreeError } from '../../../payment/strategies/braintree';
-import { PaypalStyleOptions } from '../../../payment/strategies/paypal';
+import { BraintreeError, PaypalStyleOptions } from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
+    Address,
+    BuyNowCartRequestBody,
+    StandardError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-export interface BraintreePaypalCreditButtonInitializeOptions {
+export default interface BraintreePaypalCreditButtonInitializeOptions {
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
+
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+
     /**
      * @internal
      * This is an internal property and therefore subject to change. DO NOT USE.
@@ -52,16 +65,11 @@ export interface BraintreePaypalCreditButtonInitializeOptions {
      *
      */
     onEligibilityFailure?(): void;
+}
 
+export interface WithBraintreePaypalCreditButtonInitializeOptions {
     /**
-     * The option that used to initialize a PayPal script with provided currency code.
+     * The options that are required to initialize Braintree PayPal Credit wallet button on Product and Cart page.
      */
-    currencyCode?: string;
-
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
+    braintreepaypalcredit?: BraintreePaypalCreditButtonInitializeOptions;
 }

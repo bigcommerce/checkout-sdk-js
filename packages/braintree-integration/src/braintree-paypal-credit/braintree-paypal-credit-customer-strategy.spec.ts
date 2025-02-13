@@ -32,7 +32,7 @@ import { getPaypalSDKMock } from '../mocks/paypal.mock';
 
 import BraintreePaypalCreditCustomerInitializeOptions, {
     WithBraintreePaypalCreditCustomerInitializeOptions,
-} from './braintree-paypal-credit-customer-options';
+} from './braintree-paypal-credit-customer-initialize-options';
 import BraintreePaypalCreditCustomerStrategy from './braintree-paypal-credit-customer-strategy';
 
 describe('BraintreePaypalCreditCustomerStrategy', () => {

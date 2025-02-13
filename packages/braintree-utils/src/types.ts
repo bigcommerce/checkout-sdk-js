@@ -335,6 +335,36 @@ export interface BraintreeShippingAddress extends BraintreeAddress {
 
 /**
  *
+ * Braintree non-instant payment methods
+ *
+ */
+export enum NonInstantLocalPaymentMethods {
+    TRUSTLY = 'trustly',
+}
+
+export interface BraintreeLocalPaymentMethodRedirectAction {
+    body: {
+        additional_action_required: {
+            type: 'offsite_redirect';
+            data: {
+                redirect_url: string;
+            };
+        };
+    };
+}
+
+export interface BraintreeOrderSavedResponse {
+    body: {
+        additional_action_required: {
+            data: {
+                order_id_saved_successfully: string;
+            };
+        };
+    };
+}
+
+/**
+ *
  * Braintree Fastlane
  *
  */
@@ -642,42 +672,11 @@ export interface BraintreeError extends Error {
     details?: unknown;
 }
 
-/**
- *
- * Braintree non-instant payment methods
- *
- */
-
-export enum NonInstantLocalPaymentMethods {
-    TRUSTLY = 'trustly',
-}
-
-export interface BraintreeLocalPaymentMethodRedirectAction {
-    body: {
-        additional_action_required: {
-            type: 'offsite_redirect';
-            data: {
-                redirect_url: string;
-            };
-        };
-    };
-}
-
 export interface BraintreeRedirectError {
     body: {
         additional_action_required: {
             data: {
                 redirect_url: string;
-            };
-        };
-    };
-}
-
-export interface BraintreeOrderSavedResponse {
-    body: {
-        additional_action_required: {
-            data: {
-                order_id_saved_successfully: string;
             };
         };
     };

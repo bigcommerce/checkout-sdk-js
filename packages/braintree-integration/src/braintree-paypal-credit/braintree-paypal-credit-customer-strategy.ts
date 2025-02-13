@@ -30,7 +30,7 @@ import {
 
 import BraintreePaypalCreditCustomerInitializeOptions, {
     WithBraintreePaypalCreditCustomerInitializeOptions,
-} from './braintree-paypal-credit-customer-options';
+} from './braintree-paypal-credit-customer-initialize-options';
 
 export default class BraintreePaypalCreditCustomerStrategy implements CustomerStrategy {
     constructor(
