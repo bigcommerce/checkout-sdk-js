@@ -1,94 +1,74 @@
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
-import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 
-import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
-import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { getCart } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-
-import { CartRequestSender } from '../../../cart';
-import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
-import {
-    CheckoutActionCreator,
-    CheckoutRequestSender,
-    CheckoutStore,
-    createCheckoutStore,
-} from '../../../checkout';
-import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import {
-    InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
-} from '../../../common/error/errors';
-import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
-import { getConfig } from '../../../config/configs.mock';
-import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
-import { PaymentMethod } from '../../../payment';
-import { getBraintree } from '../../../payment/payment-methods.mock';
 import {
     BraintreeDataCollector,
+    BraintreeError,
+    BraintreeHostWindow,
+    BraintreeIntegrationService,
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
-    BraintreeSDKCreator,
-} from '../../../payment/strategies/braintree';
-import {
+    BraintreeScriptLoader,
+    getBraintree,
     getDataCollectorMock,
     getPayPalCheckoutCreatorMock,
     getPaypalCheckoutMock,
-} from '../../../payment/strategies/braintree/braintree.mock';
-import {
     PaypalButtonOptions,
-    PaypalHostWindow,
     PaypalSDK,
-} from '../../../payment/strategies/paypal';
-import { getPaypalMock } from '../../../payment/strategies/paypal/paypal.mock';
-import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
-import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
-import CheckoutButtonMethodType from '../checkout-button-method-type';
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
+    BuyNowCartCreationError,
+    BuyNowCartRequestBody,
+    Cart,
+    CartSource,
+    CheckoutButtonInitializeOptions,
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    PaymentIntegrationService,
+    PaymentMethod,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    getBuyNowCart,
+    getCart,
+    getCustomer,
+    getShippingAddress,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import { BraintreePaypalCreditButtonInitializeOptions } from './braintree-paypal-credit-button-options';
+import { getPaypalSDKMock } from '../mocks/paypal.mock';
+
+import BraintreePaypalCreditButtonInitializeOptions, {
+    WithBraintreePaypalCreditButtonInitializeOptions,
+} from './braintree-paypal-credit-button-initialize-options';
 import BraintreePaypalCreditButtonStrategy from './braintree-paypal-credit-button-strategy';
 
 describe('BraintreePaypalCreditButtonStrategy', () => {
-    let cartRequestSender: CartRequestSender;
-    let braintreeSDKCreator: BraintreeSDKCreator;
-    let braintreeScriptLoader: BraintreeScriptLoader;
-    let braintreePaypalCheckoutCreatorMock: BraintreePaypalCheckoutCreator;
-    let braintreePaypalCheckoutMock: BraintreePaypalCheckout;
-    let checkoutActionCreator: CheckoutActionCreator;
+    let buyNowCart: Cart;
+    let cart: Cart;
     let dataCollector: BraintreeDataCollector;
     let eventEmitter: EventEmitter;
+    let braintreeIntegrationService: BraintreeIntegrationService;
+    let braintreePaypalCheckoutMock: BraintreePaypalCheckout;
+    let braintreePaypalCheckoutCreatorMock: BraintreePaypalCheckoutCreator;
+    let braintreeScriptLoader: BraintreeScriptLoader;
     let formPoster: FormPoster;
-    let requestSender: RequestSender;
-    let paymentMethodMock: PaymentMethod;
-    let paypalButtonElement: HTMLDivElement;
+    let paymentIntegrationService: PaymentIntegrationService;
+    let paymentMethod: PaymentMethod;
     let paypalSdkMock: PaypalSDK;
-    let store: CheckoutStore;
     let strategy: BraintreePaypalCreditButtonStrategy;
+    let paypalButtonElement: HTMLDivElement;
 
-    const defaultButtonContainerId = 'braintree-paypal-button-mock-id';
-
+    const defaultButtonContainerId = 'braintree-paypal-credit-button-mock-id';
     const braintreePaypalCreditOptions: BraintreePaypalCreditButtonInitializeOptions = {
-        style: {
-            height: 45,
-        },
+        shouldProcessPayment: false,
+        style: { height: 45 },
+        // shippingAddress: {}, // TODO: <---
         onAuthorizeError: jest.fn(),
         onPaymentError: jest.fn(),
         onError: jest.fn(),
         onEligibilityFailure: jest.fn(),
-    };
-
-    const initializationOptions: CheckoutButtonInitializeOptions = {
-        methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT,
-        containerId: defaultButtonContainerId,
-        braintreepaypalcredit: braintreePaypalCreditOptions,
-    };
-
-    const buyNowCartMock = {
-        ...getCart(),
-        id: 999,
-        source: CartSource.BuyNow,
     };
 
     const buyNowCartRequestBody: BuyNowCartRequestBody = {
@@ -105,8 +85,15 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
         ],
     };
 
+    const initializationOptions: CheckoutButtonInitializeOptions &
+        WithBraintreePaypalCreditButtonInitializeOptions = {
+        methodId: 'braintreepaypalcredit',
+        containerId: defaultButtonContainerId,
+        braintreepaypalcredit: braintreePaypalCreditOptions,
+    };
+
     const buyNowInitializationOptions: CheckoutButtonInitializeOptions = {
-        methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT,
+        methodId: 'braintreepaypalcredit',
         containerId: defaultButtonContainerId,
         braintreepaypalcredit: {
             ...braintreePaypalCreditOptions,
@@ -117,89 +104,113 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
         },
     };
 
+    const getSDKPayPalCheckoutMockWithErrorCallbackCall = () => {
+        return jest.fn(
+            (
+                _options: unknown,
+                _successCallback: unknown,
+                errorCallback: (err: BraintreeError) => void,
+            ) => {
+                errorCallback({ type: 'UNKNOWN', code: '234' } as BraintreeError);
+
+                return Promise.resolve(braintreePaypalCheckoutMock);
+            },
+        );
+    };
+
+    const getSDKPaypalCheckoutMockWithSuccessCallbackCall = (
+        braintreePaypalCheckoutPayloadMock: BraintreePaypalCheckout,
+    ) => {
+        return jest.fn(
+            (
+                _options: unknown,
+                successCallback: (braintreePaypalCheckout: BraintreePaypalCheckout) => void,
+            ) => {
+                successCallback(braintreePaypalCheckoutPayloadMock);
+
+                return Promise.resolve(braintreePaypalCheckoutMock);
+            },
+        );
+    };
+
     beforeEach(() => {
+        buyNowCart = getBuyNowCart();
+        cart = getCart();
+        dataCollector = getDataCollectorMock();
+        eventEmitter = new EventEmitter();
+        paymentMethod = {
+            ...getBraintree(),
+            clientToken: 'myToken',
+        };
+        paypalSdkMock = getPaypalSDKMock();
+        (window as BraintreeHostWindow).paypal = paypalSdkMock;
         braintreePaypalCheckoutMock = getPaypalCheckoutMock();
         braintreePaypalCheckoutCreatorMock = getPayPalCheckoutCreatorMock(
             braintreePaypalCheckoutMock,
             false,
         );
-        dataCollector = getDataCollectorMock();
-        paypalSdkMock = getPaypalMock();
-        eventEmitter = new EventEmitter();
-
-        store = createCheckoutStore(getCheckoutStoreState());
-        requestSender = createRequestSender();
-        checkoutActionCreator = new CheckoutActionCreator(
-            new CheckoutRequestSender(createRequestSender()),
-            new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
-            new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender())),
-        );
-        cartRequestSender = new CartRequestSender(requestSender);
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
-        braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
-        formPoster = createFormPoster();
-
-        (window as PaypalHostWindow).paypal = paypalSdkMock;
-
-        strategy = new BraintreePaypalCreditButtonStrategy(
-            store,
-            checkoutActionCreator,
-            cartRequestSender,
-            braintreeSDKCreator,
-            formPoster,
-            window,
-        );
-
-        paymentMethodMock = {
-            ...getBraintree(),
-            clientToken: 'myToken',
-        };
 
         paypalButtonElement = document.createElement('div');
         paypalButtonElement.id = defaultButtonContainerId;
         document.body.appendChild(paypalButtonElement);
 
-        jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
-        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue(
-            paymentMethodMock,
+        formPoster = createFormPoster();
+        paymentIntegrationService = new PaymentIntegrationServiceMock();
+        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
+        braintreeIntegrationService = new BraintreeIntegrationService(
+            braintreeScriptLoader,
+            window,
         );
-        jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(
-            getConfig().storeConfig,
+
+        strategy = new BraintreePaypalCreditButtonStrategy(
+            paymentIntegrationService,
+            formPoster,
+            braintreeIntegrationService,
+            window,
         );
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(paymentMethodMock.clientToken);
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        jest.spyOn(braintreeSDKCreator, 'getDataCollector').mockReturnValue(dataCollector);
-        jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockReturnValue(
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+
+        jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
+        jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
+            paymentMethod,
+        );
+        jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(cart);
+        jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(
+            getCustomer(),
+        );
+        jest.spyOn(paymentIntegrationService, 'loadDefaultCheckout').mockImplementation(jest.fn());
+
+        jest.spyOn(braintreeIntegrationService, 'getPaypalCheckout').mockImplementation(
+            getSDKPaypalCheckoutMockWithSuccessCallbackCall(braintreePaypalCheckoutMock),
+        );
+
+        jest.spyOn(braintreeIntegrationService, 'getDataCollector').mockResolvedValue(
+            dataCollector,
+        );
+        jest.spyOn(braintreeIntegrationService, 'removeElement').mockImplementation(jest.fn());
+        jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockResolvedValue(
             braintreePaypalCheckoutCreatorMock,
         );
-        jest.spyOn(formPoster, 'postForm').mockImplementation(() => {});
-        // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout').mockImplementation(() => {});
-
         jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation((options: PaypalButtonOptions) => {
             eventEmitter.on('createOrder', () => {
-                if (options.createOrder) {
+                if (typeof options.createOrder === 'function') {
                     options.createOrder().catch(() => {});
                 }
             });
 
             eventEmitter.on('approve', () => {
-                if (options.onApprove) {
+                if (typeof options.onApprove === 'function') {
                     options.onApprove({ payerId: 'PAYER_ID' }).catch(() => {});
                 }
             });
 
+            eventEmitter.on('click', () => {
+                if (typeof options.onClick === 'function') {
+                    options.onClick();
+                }
+            });
+
             return {
+                close: jest.fn(),
                 isEligible: jest.fn(() => true),
                 render: jest.fn(),
             };
@@ -209,20 +220,31 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
     afterEach(() => {
         jest.clearAllMocks();
 
-        delete (window as PaypalHostWindow).paypal;
+        delete (window as BraintreeHostWindow).paypal;
 
         if (document.getElementById(defaultButtonContainerId)) {
             document.body.removeChild(paypalButtonElement);
         }
     });
 
-    it('creates an instance of the braintree paypal credit checkout button strategy', () => {
+    it('creates an instance of the braintree paypal credit button button strategy', () => {
         expect(strategy).toBeInstanceOf(BraintreePaypalCreditButtonStrategy);
     });
 
     describe('#initialize()', () => {
         it('throws error if methodId is not provided', async () => {
+            const options = {} as CheckoutButtonInitializeOptions;
+
+            try {
+                await strategy.initialize(options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
+        it('throws an error if braintreepaypalcredit is not provided', async () => {
             const options = {
+                methodId: 'braintreepaypalcredit',
                 containerId: defaultButtonContainerId,
             } as CheckoutButtonInitializeOptions;
 
@@ -233,9 +255,11 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             }
         });
 
-        it('throws an error if containerId is not provided', async () => {
+        it('throws an error if container id is not provided', async () => {
             const options = {
-                methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT,
+                methodId: 'braintreepaypalcredit',
+                containerId: '',
+                braintreepaypal: {},
             } as CheckoutButtonInitializeOptions;
 
             try {
@@ -245,11 +269,65 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             }
         });
 
-        it('calls braintreeSdk with proper options', async () => {
-            braintreeSDKCreator.initialize = jest.fn();
-            braintreeSDKCreator.getPaypalCheckout = jest.fn();
-            paymentMethodMock.initializationData = {
-                ...paymentMethodMock.initializationData,
+        it('throws an error if braintreepaypalcredit.currencyCode is not provided (BuyNow flow)', async () => {
+            try {
+                await strategy.initialize({
+                    methodId: 'braintreepaypalcredit',
+                    containerId: defaultButtonContainerId,
+                    braintreepaypalcredit: {
+                        ...braintreePaypalCreditOptions,
+                        buyNowInitializeOptions: {
+                            getBuyNowCartRequestBody: jest.fn(),
+                        },
+                    },
+                });
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidArgumentError);
+            }
+        });
+
+        it('does not load default checkout for BuyNowFlow', async () => {
+            await strategy.initialize(buyNowInitializationOptions);
+
+            expect(paymentIntegrationService.loadDefaultCheckout).not.toHaveBeenCalled();
+        });
+
+        it('throws error if client token is missing', async () => {
+            paymentMethod.clientToken = undefined;
+
+            try {
+                await strategy.initialize(initializationOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('throws error if initialization data is missing', async () => {
+            paymentMethod.initializationData = undefined;
+
+            try {
+                await strategy.initialize(initializationOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('initializes braintree integration service', async () => {
+            braintreeIntegrationService.initialize = jest.fn();
+            braintreeIntegrationService.getPaypalCheckout = jest.fn();
+
+            await strategy.initialize(initializationOptions);
+
+            expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
+                paymentMethod.clientToken,
+            );
+        });
+
+        it('initializes braintree paypal checkout with proper options', async () => {
+            braintreeIntegrationService.initialize = jest.fn();
+            braintreeIntegrationService.getPaypalCheckout = jest.fn();
+            paymentMethod.initializationData = {
+                ...paymentMethod.initializationData,
                 isCreditEnabled: true,
                 currency: 'USD',
                 intent: undefined,
@@ -257,7 +335,10 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
 
             await strategy.initialize(initializationOptions);
 
-            expect(braintreeSDKCreator.getPaypalCheckout).toHaveBeenCalledWith(
+            expect(braintreeIntegrationService.initialize).toHaveBeenCalledWith(
+                paymentMethod.clientToken,
+            );
+            expect(braintreeIntegrationService.getPaypalCheckout).toHaveBeenCalledWith(
                 {
                     currency: 'USD',
                     isCreditEnabled: true,
@@ -268,82 +349,18 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             );
         });
 
-        it('throws an error if braintreepaypalcredit is not provided', async () => {
-            const options = {
-                containerId: defaultButtonContainerId,
-                methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT,
-            } as CheckoutButtonInitializeOptions;
-
-            try {
-                await strategy.initialize(options);
-            } catch (error) {
-                expect(error).toBeInstanceOf(InvalidArgumentError);
-            }
-        });
-
-        it('throws error if client token is missing', async () => {
-            paymentMethodMock.clientToken = undefined;
-
-            try {
-                await strategy.initialize(initializationOptions);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
-        it('initializes braintree sdk creator', async () => {
-            braintreeSDKCreator.initialize = jest.fn();
-            braintreeSDKCreator.getPaypalCheckout = jest.fn();
-
-            await strategy.initialize(initializationOptions);
-
-            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
-                paymentMethodMock.clientToken,
-            );
-        });
-
-        it('initializes braintree paypal checkout', async () => {
-            braintreeSDKCreator.initialize = jest.fn();
-            braintreeSDKCreator.getPaypalCheckout = jest.fn();
-
-            await strategy.initialize(initializationOptions);
-
-            expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith(
-                paymentMethodMock.clientToken,
-            );
-            expect(braintreeSDKCreator.getPaypalCheckout).toHaveBeenCalled();
-        });
-
-        it('calls braintree paypal checkout create method', async () => {
-            await strategy.initialize(initializationOptions);
-
-            expect(braintreePaypalCheckoutCreatorMock.create).toHaveBeenCalled();
-        });
-
-        it('calls onError callback option if the error was caught on paypal checkout creation', async () => {
-            braintreePaypalCheckoutCreatorMock = getPayPalCheckoutCreatorMock(undefined, true);
-
-            jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockReturnValue(
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                braintreePaypalCheckoutCreatorMock,
-            );
+        it('calls onError callback option on paypal checkout creation failure', async () => {
+            braintreeIntegrationService.getPaypalCheckout =
+                getSDKPayPalCheckoutMockWithErrorCallbackCall();
 
             await strategy.initialize(initializationOptions);
 
             expect(initializationOptions.braintreepaypalcredit?.onError).toHaveBeenCalled();
         });
 
-        it('does not load default checkout for BuyNowFlow', async () => {
-            await strategy.initialize(buyNowInitializationOptions);
-
-            expect(checkoutActionCreator.loadDefaultCheckout).not.toHaveBeenCalled();
-        });
-
         it('throws an error if buy now cart request body data is not provided', async () => {
             const buyNowInitializationOptions: CheckoutButtonInitializeOptions = {
-                methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL,
+                methodId: 'braintreepaypalcredit',
                 containerId: defaultButtonContainerId,
                 braintreepaypalcredit: {
                     ...braintreePaypalCreditOptions,
@@ -365,13 +382,26 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             );
         });
 
+        it('throws an error if there was an issue with buy now cart creation (Buy Now flow)', async () => {
+            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
+                Promise.reject(new Error()),
+            );
+
+            await strategy.initialize(buyNowInitializationOptions);
+
+            eventEmitter.emit('createOrder');
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(braintreePaypalCreditOptions.onPaymentError).toHaveBeenCalledWith(
+                new BuyNowCartCreationError(),
+            );
+        });
+
         it('creates order with Buy Now cart id (Buy Now flow)', async () => {
-            jest.spyOn(cartRequestSender, 'createBuyNowCart').mockReturnValue({
-                // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                body: buyNowCartMock,
-            });
+            jest.spyOn(paymentIntegrationService, 'createBuyNowCart').mockReturnValue(
+                Promise.resolve(buyNowCart),
+            );
 
             await strategy.initialize(buyNowInitializationOptions);
 
@@ -386,7 +416,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             expect(formPoster.postForm).toHaveBeenCalledWith(
                 '/checkout.php',
                 expect.objectContaining({
-                    cart_id: buyNowCartMock.id,
+                    cart_id: buyNowCart.id,
                 }),
             );
         });
@@ -423,6 +453,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
                 return {
                     isEligible: jest.fn(() => false),
                     render: jest.fn(),
+                    close: jest.fn(),
                 };
             });
 
@@ -461,6 +492,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
                 return {
                     isEligible: jest.fn(() => false),
                     render: renderMock,
+                    close: jest.fn(),
                 };
             });
 
@@ -494,7 +526,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
         });
 
         it('renders braintree checkout button in production environment if payment method is in test mode', async () => {
-            paymentMethodMock.config.testMode = false;
+            paymentMethod.config.testMode = false;
 
             await strategy.initialize(initializationOptions);
 
@@ -503,24 +535,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             );
         });
 
-        it('loads checkout details when customer is ready to pay', async () => {
-            await strategy.initialize(initializationOptions);
-
-            eventEmitter.emit('createOrder');
-
-            await new Promise((resolve) => process.nextTick(resolve));
-
-            expect(checkoutActionCreator.loadDefaultCheckout).toHaveBeenCalledTimes(2);
-        });
-
         it('sets up PayPal payment flow with provided address', async () => {
-            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            jest.spyOn(store.getState().checkout, 'getCheckoutOrThrow').mockReturnValue({
-                outstandingBalance: 22,
-            });
-
             await strategy.initialize({
                 ...initializationOptions,
                 braintreepaypalcredit: {
@@ -561,7 +576,9 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
         });
 
         it('sets up PayPal payment flow with no address when null is passed', async () => {
-            jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(undefined);
+            jest.spyOn(paymentIntegrationService.getState(), 'getCustomer').mockReturnValue(
+                undefined,
+            );
 
             await strategy.initialize({
                 ...initializationOptions,
@@ -752,12 +769,12 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
 
     describe('#deinitialize()', () => {
         it('teardowns braintree sdk creator on strategy deinitialize', async () => {
-            braintreeSDKCreator.teardown = jest.fn();
+            braintreeIntegrationService.teardown = jest.fn();
 
             await strategy.initialize(initializationOptions);
             await strategy.deinitialize();
 
-            expect(braintreeSDKCreator.teardown).toHaveBeenCalled();
+            expect(braintreeIntegrationService.teardown).toHaveBeenCalled();
         });
     });
 });

@@ -14,7 +14,10 @@ export { default as createBraintreePaypalPaymentStrategy } from './braintree-pay
 /**
  * Braintree PayPal Credit strategies
  */
+export { default as createBraintreePaypalCreditButtonStrategy } from './braintree-paypal-credit/create-braintree-paypal-credit-button-strategy';
 export { default as createBraintreePaypalCreditCustomerStrategy } from './braintree-paypal-credit/create-braintree-paypal-credit-customer-strategy';
+export { WithBraintreePaypalCreditButtonInitializeOptions } from './braintree-paypal-credit/braintree-paypal-credit-button-initialize-options';
+export { WithBraintreePaypalCreditCustomerInitializeOptions } from './braintree-paypal-credit/braintree-paypal-credit-customer-initialize-options';
 
 /**
  * Braintree LPMs strategies

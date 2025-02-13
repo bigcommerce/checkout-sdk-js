@@ -1,10 +1,7 @@
 import { RequestOptions } from '../common/http-request';
 
 import { CheckoutButtonMethodType } from './strategies';
-import {
-    BraintreePaypalButtonInitializeOptions,
-    BraintreePaypalCreditButtonInitializeOptions,
-} from './strategies/braintree';
+import { BraintreePaypalButtonInitializeOptions } from './strategies/braintree';
 import { PaypalButtonInitializeOptions } from './strategies/paypal';
 
 export { CheckoutButtonInitializeOptions } from '../generated/checkout-button-initialize-options';
@@ -27,12 +24,6 @@ export interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptio
      * omitted unless you need to support Braintree PayPal.
      */
     braintreepaypal?: BraintreePaypalButtonInitializeOptions;
-
-    /**
-     * The options that are required to facilitate Braintree Credit. They can be
-     * omitted unless you need to support Braintree Credit.
-     */
-    braintreepaypalcredit?: BraintreePaypalCreditButtonInitializeOptions;
 
     /**
      * The ID of a container which the checkout button should be inserted.
