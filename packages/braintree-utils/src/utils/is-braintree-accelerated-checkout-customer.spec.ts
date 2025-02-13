@@ -18,4 +18,8 @@ describe('isBraintreeAcceleratedCheckoutCustomer', () => {
 
         expect(isBraintreeAcceleratedCheckoutCustomer(paymentProviderCustomer)).toBe(false);
     });
+
+    it('returns false if customer is not provided', () => {
+        expect(isBraintreeAcceleratedCheckoutCustomer(undefined)).toBe(false);
+    });
 });

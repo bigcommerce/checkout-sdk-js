@@ -86,6 +86,32 @@ describe('BraintreeIntegrationService', () => {
         localStorage.clear();
     });
 
+    describe('#getPaypal', () => {
+        it('throws an error if PayPal SDK cannot be loaded or created', async () => {
+            jest.spyOn(braintreeScriptLoader, 'loadPaypal').mockRejectedValue(
+                new Error('PayPal SDK failed to load'),
+            );
+
+            braintreeIntegrationService.initialize(clientToken);
+
+            await expect(braintreeIntegrationService.getPaypal()).rejects.toThrow(
+                'PayPal SDK failed to load',
+            );
+        });
+
+        it('throws if PayPal creation fails after being loaded', async () => {
+            jest.spyOn(braintreeScriptLoader, 'loadPaypal').mockResolvedValueOnce({
+                create: jest.fn().mockRejectedValue(new Error('PayPal creation failed')),
+            });
+
+            braintreeIntegrationService.initialize(clientToken);
+
+            await expect(braintreeIntegrationService.getPaypal()).rejects.toThrow(
+                'PayPal creation failed',
+            );
+        });
+    });
+
     describe('#getClient()', () => {
         it('uses the right arguments to create the client', async () => {
             braintreeIntegrationService.initialize(clientToken);
@@ -358,6 +384,39 @@ describe('BraintreeIntegrationService', () => {
             };
 
             expect(braintreeIntegrationService.mapToLegacyShippingAddress(props)).toEqual(expects);
+        });
+
+        it('returns empty string if name is empty', () => {
+            const details = {
+                email: 'test@test.com',
+                phone: '55555555555',
+                shippingAddress: {
+                    recipientName: '',
+                    line1: 'test',
+                    line2: 'test',
+                    city: 'New York',
+                    state: 'New York',
+                    postalCode: '01111',
+                    countryCode: '01',
+                },
+            };
+
+            const expects = {
+                email: 'test@test.com',
+                phone_number: '55555555555',
+                first_name: '',
+                last_name: '',
+                address_line_1: 'test',
+                address_line_2: 'test',
+                city: 'New York',
+                state: 'New York',
+                country_code: '01',
+                postal_code: '01111',
+            };
+
+            expect(braintreeIntegrationService.mapToLegacyShippingAddress(details)).toEqual(
+                expects,
+            );
         });
     });
 
