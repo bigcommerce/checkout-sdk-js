@@ -11,7 +11,7 @@ describe('createBraintreePaypalCreditCustomerStrategy', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
     });
 
-    it('instantiates paypal commerce credit customer strategy', () => {
+    it('instantiates braintree paypal credit customer strategy', () => {
         const strategy = createBraintreePaypalCreditCustomerStrategy(paymentIntegrationService);
 
         expect(strategy).toBeInstanceOf(BraintreePaypalCreditCustomerStrategy);

@@ -14,10 +14,7 @@ import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
 
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
-import {
-    BraintreePaypalButtonStrategy,
-    BraintreePaypalCreditButtonStrategy,
-} from './strategies/braintree';
+import { BraintreePaypalButtonStrategy } from './strategies/braintree';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
 
@@ -46,19 +43,6 @@ export default function createCheckoutButtonRegistry(
         CheckoutButtonMethodType.BRAINTREE_PAYPAL,
         () =>
             new BraintreePaypalButtonStrategy(
-                store,
-                checkoutActionCreator,
-                cartRequestSender,
-                braintreeSdkCreator,
-                formPoster,
-                window,
-            ),
-    );
-
-    registry.register(
-        CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT,
-        () =>
-            new BraintreePaypalCreditButtonStrategy(
                 store,
                 checkoutActionCreator,
                 cartRequestSender,
