@@ -71,6 +71,7 @@ describe('#getValidBraintreeFastlaneStyles()', () => {
         const uiStyles = {
             root: { backgroundColorPrimary: 'red' },
         };
+
         expect(getFastlaneStyles(undefined, uiStyles)).toEqual(uiStyles);
     });
 
@@ -78,6 +79,7 @@ describe('#getValidBraintreeFastlaneStyles()', () => {
         const styleSettings = {
             fastlaneRootSettingsBackgroundColor: 'blue',
         };
+
         expect(getFastlaneStyles(styleSettings)).toEqual({
             root: { backgroundColorPrimary: 'blue' },
         });
@@ -115,6 +117,7 @@ describe('#getValidBraintreeFastlaneStyles()', () => {
                 },
             },
         };
+
         expect(getFastlaneStyles(styleSettings, uiStyles)).toEqual({
             root: {
                 backgroundColorPrimary: 'blue',

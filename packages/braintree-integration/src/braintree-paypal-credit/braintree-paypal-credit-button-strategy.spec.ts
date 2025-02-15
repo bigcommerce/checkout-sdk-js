@@ -7,6 +7,7 @@ import {
     BraintreeError,
     BraintreeHostWindow,
     BraintreeIntegrationService,
+    BraintreeMessages,
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
     BraintreeScriptLoader,
@@ -50,6 +51,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
     let dataCollector: BraintreeDataCollector;
     let eventEmitter: EventEmitter;
     let braintreeIntegrationService: BraintreeIntegrationService;
+    let braintreeMessages: BraintreeMessages;
     let braintreePaypalCheckoutMock: BraintreePaypalCheckout;
     let braintreePaypalCheckoutCreatorMock: BraintreePaypalCheckoutCreator;
     let braintreeScriptLoader: BraintreeScriptLoader;
@@ -64,7 +66,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
     const braintreePaypalCreditOptions: BraintreePaypalCreditButtonInitializeOptions = {
         shouldProcessPayment: false,
         style: { height: 45 },
-        // shippingAddress: {}, // TODO: <---
         onAuthorizeError: jest.fn(),
         onPaymentError: jest.fn(),
         onError: jest.fn(),
@@ -161,11 +162,13 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             braintreeScriptLoader,
             window,
         );
+        braintreeMessages = new BraintreeMessages(paymentIntegrationService);
 
         strategy = new BraintreePaypalCreditButtonStrategy(
             paymentIntegrationService,
             formPoster,
             braintreeIntegrationService,
+            braintreeMessages,
             window,
         );
 
@@ -187,6 +190,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             dataCollector,
         );
         jest.spyOn(braintreeIntegrationService, 'removeElement').mockImplementation(jest.fn());
+        jest.spyOn(braintreeMessages, 'render').mockImplementation(jest.fn());
         jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockResolvedValue(
             braintreePaypalCheckoutCreatorMock,
         );
