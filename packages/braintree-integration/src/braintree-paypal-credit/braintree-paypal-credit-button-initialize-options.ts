@@ -19,6 +19,11 @@ export default interface BraintreePaypalCreditButtonInitializeOptions {
     currencyCode?: string;
 
     /**
+     * The ID of a container which the messaging should be inserted.
+     */
+    messagingContainerId?: string;
+
+    /**
      * @internal
      * This is an internal property and therefore subject to change. DO NOT USE.
      */

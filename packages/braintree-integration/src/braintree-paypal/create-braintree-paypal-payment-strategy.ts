@@ -3,6 +3,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import {
     BraintreeHostWindow,
     BraintreeIntegrationService,
+    BraintreeMessages,
     BraintreeScriptLoader,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -26,10 +27,12 @@ const createBraintreePaypalPaymentStrategy: PaymentStrategyFactory<
         braintreeHostWindow,
         overlay,
     );
+    const braintreeMessages = new BraintreeMessages(paymentIntegrationService);
 
     return new BraintreePaypalPaymentStrategy(
         paymentIntegrationService,
         braintreeIntegrationService,
+        braintreeMessages,
         new LoadingIndicator({
             containerStyles: LOADING_INDICATOR_STYLES,
         }),

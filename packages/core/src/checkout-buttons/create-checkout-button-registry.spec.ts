@@ -6,7 +6,8 @@ import { Registry } from '../common/registry';
 
 import createCheckoutButtonRegistry from './create-checkout-button-registry';
 import { CheckoutButtonStrategy } from './strategies';
-import { BraintreePaypalButtonStrategy } from './strategies/braintree';
+import { MasterpassButtonStrategy } from './strategies/masterpass';
+import { PaypalButtonStrategy } from './strategies/paypal';
 
 describe('createCheckoutButtonRegistry', () => {
     let registry: Registry<CheckoutButtonStrategy>;
@@ -22,7 +23,11 @@ describe('createCheckoutButtonRegistry', () => {
         );
     });
 
-    it('returns registry with Braintree PayPal registered', () => {
-        expect(registry.get('braintreepaypal')).toEqual(expect.any(BraintreePaypalButtonStrategy));
+    it('returns registry with PayPal Express registered', () => {
+        expect(registry.get('paypalexpress')).toEqual(expect.any(PaypalButtonStrategy));
+    });
+
+    it('returns registry with Masterpass registered', () => {
+        expect(registry.get('masterpass')).toEqual(expect.any(MasterpassButtonStrategy));
     });
 });

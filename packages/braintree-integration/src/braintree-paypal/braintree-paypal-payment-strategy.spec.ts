@@ -7,6 +7,7 @@ import {
     BraintreeError,
     BraintreeHostWindow,
     BraintreeIntegrationService,
+    BraintreeMessages,
     BraintreeModuleCreator,
     BraintreePaypal,
     BraintreePaypalCheckout,
@@ -34,7 +35,6 @@ import {
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    getCart,
     getConfig,
     getOrderRequestBody,
     getShippingAddress,
@@ -51,13 +51,13 @@ describe('BraintreePaypalPaymentStrategy', () => {
     let strategy: BraintreePaypalPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
     let braintreeScriptLoader: BraintreeScriptLoader;
+    let braintreeMessages: BraintreeMessages;
     let braintreeIntegrationService: BraintreeIntegrationService;
     let paymentMethodMock: PaymentMethod;
     let clientCreatorMock: BraintreeModuleCreator<BraintreeClient>;
     let braintreePaypalCreatorMock: BraintreeModuleCreator<BraintreePaypal>;
     let paypalCheckoutCreatorMock: BraintreeModuleCreator<BraintreePaypalCheckout>;
     let paypalSdkMock: PaypalSDK;
-    let paypalMessageElement: HTMLDivElement;
     let braintreePaypalCheckoutMock: BraintreePaypalCheckout;
 
     const storeConfig = getConfig().storeConfig;
@@ -87,14 +87,9 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
     beforeEach(() => {
         eventEmitter = new EventEmitter();
-        paypalMessageElement = document.createElement('div');
-        paypalMessageElement.id = 'banner-container-id';
-        document.body.appendChild(paypalMessageElement);
 
         paypalSdkMock = getPaypalMock();
-
         paymentMethodMock = getBraintreePaypal();
-
         clientCreatorMock = getModuleCreatorMock(getClientMock());
         braintreePaypalCreatorMock = getModuleCreatorMock(getBraintreePaypalMock());
         braintreePaypalCheckoutMock = getPaypalCheckoutMock();
@@ -103,7 +98,21 @@ describe('BraintreePaypalPaymentStrategy', () => {
             false,
         );
 
+        (window as BraintreeHostWindow).paypal = paypalSdkMock;
+
         paymentIntegrationService = new PaymentIntegrationServiceMock();
+        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
+        braintreeMessages = new BraintreeMessages(paymentIntegrationService);
+        braintreeIntegrationService = new BraintreeIntegrationService(
+            braintreeScriptLoader,
+            window,
+        );
+        strategy = new BraintreePaypalPaymentStrategy(
+            paymentIntegrationService,
+            braintreeIntegrationService,
+            braintreeMessages,
+            new LoadingIndicator(),
+        );
 
         const state = paymentIntegrationService.getState();
 
@@ -115,18 +124,12 @@ describe('BraintreePaypalPaymentStrategy', () => {
         ).mockImplementation((useStoreCredit) => (useStoreCredit ? 150 : 190));
         jest.spyOn(paymentIntegrationService, 'submitPayment').mockResolvedValue(state);
 
-        braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
         jest.spyOn(braintreeScriptLoader, 'loadClient').mockResolvedValue(clientCreatorMock);
         jest.spyOn(braintreeScriptLoader, 'loadPaypal').mockResolvedValue(
             braintreePaypalCreatorMock,
         );
         jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockResolvedValue(
             paypalCheckoutCreatorMock,
-        );
-
-        braintreeIntegrationService = new BraintreeIntegrationService(
-            braintreeScriptLoader,
-            window,
         );
 
         const getSDKPaypalCheckoutMock = (
@@ -171,17 +174,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
             details: { email: 'random@email.com' },
         });
 
-        strategy = new BraintreePaypalPaymentStrategy(
-            paymentIntegrationService,
-            braintreeIntegrationService,
-            new LoadingIndicator(),
-        );
-
-        (window as BraintreeHostWindow).paypal = paypalSdkMock;
-
-        jest.spyOn(paypalSdkMock, 'Messages').mockImplementation(() => ({
-            render: jest.fn(),
-        }));
+        jest.spyOn(braintreeMessages, 'render');
 
         jest.spyOn(paypalSdkMock, 'Buttons').mockImplementation((options: PaypalButtonOptions) => {
             eventEmitter.on('approve', () => {
@@ -251,20 +244,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
             );
         });
 
-        it('renders PayPal checkout message', async () => {
-            paymentMethodMock.initializationData.enableCheckoutPaywallBanner = true;
-
-            const cartMock = getCart();
-
-            jest.spyOn(
-                paymentIntegrationService.getState(),
-                'getPaymentMethodOrThrow',
-            ).mockReturnValue(paymentMethodMock);
-
-            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(
-                cartMock,
-            );
-
+        it('renders Braintree PayPal message', async () => {
             const options = {
                 methodId: paymentMethodMock.id,
                 braintree: { bannerContainerId: 'banner-container-id' },
@@ -272,17 +252,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             await strategy.initialize(options);
 
-            expect(paypalSdkMock.Messages).toHaveBeenCalledWith({
-                amount: 190,
-                buyerCountry: 'US',
-                placement: 'payment',
-                style: {
-                    layout: 'text',
-                    logo: {
-                        type: 'inline',
-                    },
-                },
-            });
+            expect(braintreeMessages.render).toHaveBeenCalled();
         });
 
         it('throws error if unable to initialize', async () => {
@@ -452,7 +422,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
             );
         });
 
-        it('if paypal fails we do not submit an order', async () => {
+        it('does not submit order when paypal fails', async () => {
             paymentIntegrationService = new PaymentIntegrationServiceMock();
 
             jest.spyOn(
@@ -463,11 +433,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 paymentIntegrationService.getState(),
             );
 
-            strategy = new BraintreePaypalPaymentStrategy(
-                paymentIntegrationService,
-                braintreeIntegrationService,
-                new LoadingIndicator(),
-            );
             braintreeIntegrationService.paypal = () =>
                 Promise.reject({ name: 'BraintreeError', message: 'my_message' });
 
@@ -720,12 +685,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
         describe('if paypal credit', () => {
             beforeEach(() => {
                 const state = paymentIntegrationService.getState();
-
-                strategy = new BraintreePaypalPaymentStrategy(
-                    paymentIntegrationService,
-                    braintreeIntegrationService,
-                    new LoadingIndicator(),
-                );
 
                 jest.spyOn(state, 'getPaymentMethodOrThrow').mockImplementation(() => ({
                     ...paymentMethodMock,
