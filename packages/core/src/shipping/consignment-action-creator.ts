@@ -366,7 +366,7 @@ export default class ConsignmentActionCreator {
                 const checkout = store.getState().checkout.getCheckout();
                 const { checkoutSettings } = store.getState().config.getStoreConfigOrThrow();
 
-                if (isExperimentEnabled(checkoutSettings, 'CHECKOUT-8999.remove_duplicate_shipping_option_call')) {
+                if (isExperimentEnabled(checkoutSettings.features, 'CHECKOUT-8999.remove_duplicate_shipping_option_call')) {
                     const consignmentInMemory = store.getState().consignments.getConsignmentById(consignment.id);
                     const alreadySelectedOptionId = consignmentInMemory?.selectedShippingOption?.id;
 

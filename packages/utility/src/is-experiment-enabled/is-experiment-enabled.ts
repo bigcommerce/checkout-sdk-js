@@ -1,8 +1,7 @@
-import { CheckoutSettings } from '@bigcommerce/checkout-sdk/payment-integration-api';
+export interface Features {
+    [featureName: string]: boolean | undefined;
+}
 
-export default function isExperimentEnabled(
-    checkoutSettings: CheckoutSettings | undefined,
-    experimentName: string,
-): boolean {
-    return Boolean(checkoutSettings?.features[experimentName] ?? true);
+export default function isExperimentEnabled(features: Features, experimentName: string): boolean {
+    return features[experimentName] ?? true;
 }
