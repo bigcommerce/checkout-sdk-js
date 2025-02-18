@@ -10,14 +10,6 @@ export default class ApplePayScriptLoader {
     async loadSdk() {
         await this.scriptLoader.loadScript(
             `https://applepay.cdn-apple.com/jsapi/${this.sdkVersion}/apple-pay-sdk.js`,
-            {
-                async: true,
-                attributes: {
-                    integrity:
-                        'sha384-vh0JXIPFX+H2WsQVoWR8E10Q1mo5IZQ92/a42dBIbtW8DCQaLrOC16Au8awuZUwA',
-                    crossorigin: 'anonymous',
-                },
-            },
         );
 
         assertApplePayWindow(window);
