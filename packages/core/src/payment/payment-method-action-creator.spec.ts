@@ -42,7 +42,16 @@ describe('PaymentMethodActionCreator', () => {
             Promise.resolve(paymentMethodsResponse),
         );
 
+        jest.spyOn(
+            paymentMethodRequestSender,
+            'loadPaymentWalletWithInitializationData',
+        ).mockReturnValue(Promise.resolve(paymentMethodResponse));
+
         jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(getCheckout().cart);
+
+        jest.spyOn(store.getState().config, 'getStorefrontJwtToken').mockReturnValue(
+            'storefront_jwt_token',
+        );
     });
 
     describe('#loadPaymentMethods()', () => {
@@ -178,6 +187,132 @@ describe('PaymentMethodActionCreator', () => {
             const errorHandler = jest.fn((action) => of(action));
             const actions = await from(
                 paymentMethodActionCreator.loadPaymentMethod(methodId)(store),
+            )
+                .pipe(catchError(errorHandler), toArray())
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: PaymentMethodActionType.LoadPaymentMethodRequested, meta: { methodId } },
+                {
+                    type: PaymentMethodActionType.LoadPaymentMethodFailed,
+                    meta: { methodId },
+                    payload: errorResponse,
+                    error: true,
+                },
+            ]);
+        });
+    });
+
+    describe('#loadPaymentWalletWithInitializationData()', () => {
+        it('loads payment wallet method', async () => {
+            const methodId = 'braintree';
+
+            await from(
+                paymentMethodActionCreator.loadPaymentWalletWithInitializationData(methodId)(store),
+            ).toPromise();
+
+            expect(
+                paymentMethodRequestSender.loadPaymentWalletWithInitializationData,
+            ).toHaveBeenCalledWith(methodId, {
+                headers: {
+                    Authorization: `Bearer storefront_jwt_token`,
+                    'Content-Type': 'application/json',
+                },
+            });
+        });
+
+        it('loads payment wallet method with timeout', async () => {
+            const methodId = 'braintree';
+            const options = {
+                timeout: createTimeout(),
+            };
+
+            await from(
+                paymentMethodActionCreator.loadPaymentWalletWithInitializationData(
+                    methodId,
+                    options,
+                )(store),
+            ).toPromise();
+
+            expect(
+                paymentMethodRequestSender.loadPaymentWalletWithInitializationData,
+            ).toHaveBeenCalledWith(methodId, {
+                headers: {
+                    Authorization: `Bearer storefront_jwt_token`,
+                    'Content-Type': 'application/json',
+                },
+                ...options,
+            });
+        });
+
+        it('emits actions if able to load payment wallet method', async () => {
+            const methodId = 'braintree';
+            const actions = await from(
+                paymentMethodActionCreator.loadPaymentWalletWithInitializationData(methodId)(store),
+            )
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: PaymentMethodActionType.LoadPaymentMethodRequested, meta: { methodId } },
+                {
+                    type: PaymentMethodActionType.LoadPaymentMethodSucceeded,
+                    meta: { methodId },
+                    payload: paymentMethodResponse.body,
+                },
+            ]);
+        });
+
+        it('emits actions with cached values if available', async () => {
+            const methodId = 'braintree';
+            const options = { useCache: true };
+            const actions = await merge(
+                from(
+                    paymentMethodActionCreator.loadPaymentWalletWithInitializationData(
+                        methodId,
+                        options,
+                    )(store),
+                ),
+                from(
+                    paymentMethodActionCreator.loadPaymentWalletWithInitializationData(
+                        methodId,
+                        options,
+                    )(store),
+                ),
+            )
+                .pipe(toArray())
+                .toPromise();
+
+            expect(
+                paymentMethodRequestSender.loadPaymentWalletWithInitializationData,
+            ).toHaveBeenCalledTimes(1);
+            expect(actions).toEqual([
+                { type: PaymentMethodActionType.LoadPaymentMethodRequested, meta: { methodId } },
+                { type: PaymentMethodActionType.LoadPaymentMethodRequested, meta: { methodId } },
+                {
+                    type: PaymentMethodActionType.LoadPaymentMethodSucceeded,
+                    meta: { methodId },
+                    payload: paymentMethodResponse.body,
+                },
+                {
+                    type: PaymentMethodActionType.LoadPaymentMethodSucceeded,
+                    meta: { methodId },
+                    payload: paymentMethodResponse.body,
+                },
+            ]);
+        });
+
+        it('emits error actions if unable to load payment wallet method', async () => {
+            jest.spyOn(
+                paymentMethodRequestSender,
+                'loadPaymentWalletWithInitializationData',
+            ).mockReturnValue(Promise.reject(errorResponse));
+
+            const methodId = 'braintree';
+            const errorHandler = jest.fn((action) => of(action));
+            const actions = await from(
+                paymentMethodActionCreator.loadPaymentWalletWithInitializationData(methodId)(store),
             )
                 .pipe(catchError(errorHandler), toArray())
                 .toPromise();

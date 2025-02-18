@@ -18,6 +18,7 @@ export default interface ConfigSelector {
     getHost(): string | undefined;
     getLocale(): string | undefined;
     getVariantIdentificationToken(): string | undefined;
+    getStorefrontJwtToken(): string | undefined;
     getLoadError(): Error | undefined;
     isLoading(): boolean;
 }
@@ -54,6 +55,11 @@ export function createConfigSelectorFactory(): ConfigSelectorFactory {
                 ? flashMessages.filter(({ type }) => filterType === type)
                 : flashMessages;
         },
+    );
+
+    const getStorefrontJwtToken = createSelector(
+        (state: ConfigState) => state.meta && state.meta.storefrontJwtToken,
+        (data) => () => data,
     );
 
     const getStoreConfig = createSelector(
@@ -120,6 +126,7 @@ export function createConfigSelectorFactory(): ConfigSelectorFactory {
                 getContextConfig: getContextConfig(state),
                 getExternalSource: getExternalSource(state),
                 getHost: getHost(state),
+                getStorefrontJwtToken: getStorefrontJwtToken(state),
                 getLocale: getLocale(state),
                 getVariantIdentificationToken: getVariantIdentificationToken(state),
                 getLoadError: getLoadError(state),

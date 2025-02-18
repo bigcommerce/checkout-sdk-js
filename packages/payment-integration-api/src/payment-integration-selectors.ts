@@ -85,6 +85,8 @@ export default interface PaymentIntegrationSelectors {
 
     getInstrumentsMeta(): InstrumentMeta | undefined;
 
+    getStorefrontJwtToken(): string | undefined;
+
     getOrderMeta(): OrderMetaState | undefined;
 
     getPaymentMethodsMeta(): PaymentMethodMeta | undefined;
