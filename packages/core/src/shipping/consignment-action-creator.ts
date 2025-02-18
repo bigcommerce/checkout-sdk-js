@@ -1,3 +1,4 @@
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { find } from 'lodash';
 import { Observable, Observer } from 'rxjs';
@@ -17,6 +18,7 @@ import {
     MissingDataErrorType,
 } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
+import { createLogger, Logger } from '../common/log';
 
 import Consignment, {
     ConsignmentAssignmentBaseRequestBodyWithAddress,
@@ -40,10 +42,14 @@ import {
 import ConsignmentRequestSender from './consignment-request-sender';
 
 export default class ConsignmentActionCreator {
+    private _logger: Logger;
+
     constructor(
         private _consignmentRequestSender: ConsignmentRequestSender,
         private _checkoutRequestSender: CheckoutRequestSender,
-    ) {}
+    ) {
+        this._logger = createLogger();
+    }
 
     unassignItemsByAddress(
         consignment: ConsignmentAssignmentRequestBody,
@@ -358,12 +364,26 @@ export default class ConsignmentActionCreator {
         return (store) =>
             Observable.create((observer: Observer<UpdateShippingOptionAction>) => {
                 const checkout = store.getState().checkout.getCheckout();
+                const { checkoutSettings } = store.getState().config.getStoreConfigOrThrow();
+
+                if (isExperimentEnabled(checkoutSettings, 'CHECKOUT-8999.remove_duplicate_shipping_option_call')) {
+                    const consignmentInMemory = store.getState().consignments.getConsignmentById(consignment.id);
+                    const alreadySelectedOptionId = consignmentInMemory?.selectedShippingOption?.id;
+
+                    if (alreadySelectedOptionId === consignment.shippingOptionId) {
+                        this._logger.info('Skip updating shipping option as it is set with same id already.')
+
+                        return;
+                    }
+                }
 
                 if (!checkout || !checkout.id) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckout);
                 }
 
                 const consignmentMeta = { id: consignment.id };
+
+                console.log('updateShippingOption: updating shipping option', consignment, options);
 
                 observer.next(
                     createAction(
