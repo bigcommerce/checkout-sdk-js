@@ -24,14 +24,6 @@ describe('ApplePayScriptLoader', () => {
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
             'https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js',
-            {
-                async: true,
-                attributes: {
-                    integrity:
-                        'sha384-vh0JXIPFX+H2WsQVoWR8E10Q1mo5IZQ92/a42dBIbtW8DCQaLrOC16Au8awuZUwA',
-                    crossorigin: 'anonymous',
-                },
-            },
         );
     });
 });
