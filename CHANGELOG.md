@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.711.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.711.0...v1.711.1) (2025-02-19)
+
+
+### Bug Fixes
+
+* **shipping:** CHECKOUT-8999 Remove duplicate call for shipping option ([#2794](https://github.com/bigcommerce/checkout-sdk-js/issues/2794)) ([f013305](https://github.com/bigcommerce/checkout-sdk-js/commit/f013305d6f7c99a2da97f34ed256da075280091f))
+
 ## [1.711.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.710.1...v1.711.0) (2025-02-18)
 
 

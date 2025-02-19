@@ -11,6 +11,7 @@
 - [lineItems](ConsignmentUpdateRequestBody.md#lineitems)
 - [pickupOption](ConsignmentUpdateRequestBody.md#pickupoption)
 - [shippingAddress](ConsignmentUpdateRequestBody.md#shippingaddress)
+- [shippingOptionId](ConsignmentUpdateRequestBody.md#shippingoptionid)
 
 ## Properties
 
@@ -41,3 +42,9 @@ ___
 ### shippingAddress
 
 • `Optional` **shippingAddress**: [`AddressRequestBody`](AddressRequestBody.md)
+
+___
+
+### shippingOptionId
+
+• `Optional` **shippingOptionId**: `string`
