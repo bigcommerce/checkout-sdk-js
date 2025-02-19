@@ -6,10 +6,17 @@ import { catchError, toArray } from 'rxjs/operators';
 
 import { Address } from '../address';
 import { getCart } from '../cart/carts.mock';
-import { Checkout, CheckoutRequestSender, CheckoutStore, createCheckoutStore } from '../checkout';
+import {
+    Checkout,
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutStoreState,
+    createCheckoutStore,
+} from '../checkout';
 import { getCheckout, getCheckoutState, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { getConfigState } from '../config/configs.mock';
 
 import {
     ConsignmentAssignmentRequestBody,
@@ -25,8 +32,9 @@ import {
     UpdateConsignmentAction,
     UpdateShippingOptionAction,
 } from './consignment-actions';
-import { getConsignment } from './consignments.mock';
+import { getConsignment, getConsignmentsState } from './consignments.mock';
 import { getShippingAddress } from './shipping-addresses.mock';
+import { getShippingOption } from './shipping-options.mock';
 
 import { Consignment, ConsignmentRequestSender } from '.';
 
@@ -37,6 +45,7 @@ describe('consignmentActionCreator', () => {
     let checkoutRequestSender: CheckoutRequestSender;
     let errorResponse: Response<Error>;
     let response: Response<Checkout>;
+    let state: CheckoutStoreState;
     let store: CheckoutStore;
     let consignmentActionCreator: ConsignmentActionCreator;
     const options = { timeout: createTimeout() };
@@ -44,7 +53,8 @@ describe('consignmentActionCreator', () => {
     beforeEach(() => {
         response = getResponse(getCheckout());
         errorResponse = getErrorResponse();
-        store = createCheckoutStore(getCheckoutStoreState());
+        state = getCheckoutStoreState();
+        store = createCheckoutStore(state);
 
         consignmentRequestSender = new ConsignmentRequestSender(createRequestSender());
 
@@ -852,6 +862,35 @@ describe('consignmentActionCreator', () => {
                 payload,
                 options,
             );
+        });
+
+        it('does not emit request to update shipping option if same id is passed', async () => {
+            const configState = getConfigState();
+            const consignment = {
+                ...getConsignment(),
+                selectedShippingOption: { ...getShippingOption(), id: 'bar' },
+            };
+            const consignmentState = {
+                ...getConsignmentsState(),
+                data: [consignment],
+            };
+
+            if (configState.data && configState.data.storeConfig.checkoutSettings.features) {
+                configState.data.storeConfig.checkoutSettings.features = {
+                    'CHECKOUT-8999.remove_duplicate_shipping_option_call': true,
+                };
+            }
+
+            const stateWithExperiment = {
+                ...state,
+                config: configState,
+                consignments: consignmentState,
+            };
+
+            store = createCheckoutStore(stateWithExperiment);
+            await from(thunkAction(store)).toPromise();
+
+            expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
         });
     });
 

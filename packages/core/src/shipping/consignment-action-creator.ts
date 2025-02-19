@@ -1,7 +1,8 @@
-import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { find } from 'lodash';
 import { Observable, Observer } from 'rxjs';
+
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { AddressRequestBody } from '../address';
 import { Cart } from '../cart';
@@ -18,7 +19,6 @@ import {
     MissingDataErrorType,
 } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
-import { createLogger, Logger } from '../common/log';
 
 import Consignment, {
     ConsignmentAssignmentBaseRequestBodyWithAddress,
@@ -42,14 +42,10 @@ import {
 import ConsignmentRequestSender from './consignment-request-sender';
 
 export default class ConsignmentActionCreator {
-    private _logger: Logger;
-
     constructor(
         private _consignmentRequestSender: ConsignmentRequestSender,
         private _checkoutRequestSender: CheckoutRequestSender,
-    ) {
-        this._logger = createLogger();
-    }
+    ) {}
 
     unassignItemsByAddress(
         consignment: ConsignmentAssignmentRequestBody,
@@ -366,12 +362,20 @@ export default class ConsignmentActionCreator {
                 const checkout = store.getState().checkout.getCheckout();
                 const { checkoutSettings } = store.getState().config.getStoreConfigOrThrow();
 
-                if (isExperimentEnabled(checkoutSettings.features, 'CHECKOUT-8999.remove_duplicate_shipping_option_call')) {
-                    const consignmentInMemory = store.getState().consignments.getConsignmentById(consignment.id);
+                if (
+                    isExperimentEnabled(
+                        checkoutSettings.features,
+                        'CHECKOUT-8999.remove_duplicate_shipping_option_call',
+                    )
+                ) {
+                    const consignmentInMemory = store
+                        .getState()
+                        .consignments.getConsignmentById(consignment.id);
+
                     const alreadySelectedOptionId = consignmentInMemory?.selectedShippingOption?.id;
 
                     if (alreadySelectedOptionId === consignment.shippingOptionId) {
-                        this._logger.info('Skip updating shipping option as it is set with same id already.')
+                        observer.complete();
 
                         return;
                     }
@@ -382,8 +386,6 @@ export default class ConsignmentActionCreator {
                 }
 
                 const consignmentMeta = { id: consignment.id };
-
-                console.log('updateShippingOption: updating shipping option', consignment, options);
 
                 observer.next(
                     createAction(
