@@ -45,6 +45,8 @@ import { SubscriptionsActionCreator, SubscriptionsRequestSender } from '../subsc
 import createPaymentIntegrationSelectors from './create-payment-integration-selectors';
 import DefaultPaymentIntegrationService from './default-payment-integration-service';
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
+import CouponActionCreator from '../coupon/coupon-action-creator';
+import CouponRequestSender from '../coupon/coupon-request-sender';
 
 export default function createPaymentIntegrationService(
     store: CheckoutStore,
@@ -112,6 +114,10 @@ export default function createPaymentIntegrationService(
         new StoreCreditRequestSender(requestSender),
     );
 
+    const applyCouponActionCreator = new CouponActionCreator(
+        new CouponRequestSender(requestSender),
+    );
+
     const spamProtection = createSpamProtection(createScriptLoader());
     const spamProtectionRequestSender = new SpamProtectionRequestSender(requestSender);
     const spamProtectionActionCreator = new SpamProtectionActionCreator(
@@ -150,6 +156,7 @@ export default function createPaymentIntegrationService(
         customerActionCreator,
         cartRequestSender,
         storeCreditActionCreator,
+        applyCouponActionCreator,
         spamProtectionActionCreator,
         paymentProviderCustomerActionCreator,
         shippingCountryActionCreator,
