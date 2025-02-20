@@ -41,6 +41,7 @@ import { StoreCreditActionCreator } from '../store-credit';
 
 import DefaultPaymentIntegrationService from './default-payment-integration-service';
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
+import CouponActionCreator from '../coupon/coupon-action-creator';
 
 describe('DefaultPaymentIntegrationService', () => {
     let subject: PaymentIntegrationService;
@@ -84,6 +85,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let customerActionCreator: Pick<CustomerActionCreator, 'signInCustomer' | 'signOutCustomer'>;
     let cartRequestSender: CartRequestSender;
     let storeCreditActionCreator: Pick<StoreCreditActionCreator, 'applyStoreCredit'>;
+    let applyCouponActionCreator: Pick<CouponActionCreator, 'applyCoupon'>;
     let paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator;
     let shippingCountryActionCreator: Pick<ShippingCountryActionCreator, 'loadCountries'>;
     let remoteCheckoutActionCreator: Pick<
@@ -226,6 +228,15 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
+        applyCouponActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            applyCoupon: jest.fn(
+                async () => () => createAction('APPLY_COUPON'),
+            ),
+        };
+
         spamProtectionActionCreator = {
             // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -295,6 +306,7 @@ describe('DefaultPaymentIntegrationService', () => {
             customerActionCreator as CustomerActionCreator,
             cartRequestSender,
             storeCreditActionCreator as StoreCreditActionCreator,
+            applyCouponActionCreator as CouponActionCreator,
             spamProtectionActionCreator as SpamProtectionActionCreator,
             paymentProviderCustomerActionCreator,
             shippingCountryActionCreator as ShippingCountryActionCreator,
