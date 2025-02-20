@@ -14,6 +14,11 @@
             "inputPath": "packages/*/src/index.ts",
             "outputPath": "packages/core/src/generated/checkout-button-strategies.ts",
             "memberPattern": "^create.+ButtonStrategy$"
+        },
+        {
+            "inputPath": "packages/*/src/index.ts",
+            "outputPath": "packages/core/src/generated/checkout-headless-wallet-strategies.ts",
+            "memberPattern": "^create.+HeadlessWalletStrategy$"
         }
     ]
 }

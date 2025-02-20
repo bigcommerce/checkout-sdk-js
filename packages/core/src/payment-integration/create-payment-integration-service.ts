@@ -4,7 +4,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
-import { CartRequestSender } from '../cart';
+import { CartActionCreator, CartRequestSender } from '../cart';
 import {
     CheckoutActionCreator,
     CheckoutRequestSender,
@@ -121,6 +121,8 @@ export default function createPaymentIntegrationService(
 
     const cartRequestSender = new CartRequestSender(requestSender);
 
+    const cartActionCreator = new CartActionCreator(cartRequestSender);
+
     const paymentProviderCustomerActionCreator = new PaymentProviderCustomerActionCreator();
 
     const shippingCountryActionCreator = new ShippingCountryActionCreator(
@@ -142,6 +144,7 @@ export default function createPaymentIntegrationService(
         checkoutValidator,
         hostedFormFactory,
         orderActionCreator,
+        cartActionCreator,
         billingAddressActionCreator,
         consignmentActionCreator,
         paymentMethodActionCreator,
