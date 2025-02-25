@@ -4211,6 +4211,7 @@ declare interface ConsignmentUpdateRequestBody {
     shippingAddress?: AddressRequestBody;
     lineItems?: ConsignmentLineItem[];
     pickupOption?: ConsignmentPickupOption;
+    shippingOptionId?: string;
 }
 
 declare interface ConsignmentsChangedEvent {

@@ -112,7 +112,6 @@ export default class PayPalCommerceSdk {
         sessionId: string,
     ): PayPalSdkConfig {
         const { clientToken, initializationData } = paymentMethod;
-        const isCSPNonceApplicable = cspNonceExperiment && cspNonce;
 
         if (!initializationData || !initializationData.clientId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -127,6 +126,7 @@ export default class PayPalCommerceSdk {
             cspNonce,
             cspNonceExperiment,
         } = initializationData;
+        const isCSPNonceApplicable = cspNonceExperiment && cspNonce;
 
         return {
             options: {

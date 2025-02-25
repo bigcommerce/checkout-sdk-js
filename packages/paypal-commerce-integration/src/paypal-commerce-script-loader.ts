@@ -64,6 +64,8 @@ export default class PayPalCommerceScriptLoader {
         return this.window.paypal;
     }
 
+    // TODO: Remove this rule after refactor
+    // eslint-disable-next-line complexity
     private getPayPalSdkScriptConfigOrThrow(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
