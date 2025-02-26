@@ -141,7 +141,6 @@ describe('PaymentMethodRequestSender', () => {
 
     describe('#loadPaymentWalletWithInitializationData()', () => {
         let response: Response<HeadlessPaymentMethodResponse>;
-        const authorization = 'authorization-1234';
 
         beforeEach(() => {
             response = getHeadlessPaymentResponse(getHeadlessPaymentMethod());
@@ -149,18 +148,20 @@ describe('PaymentMethodRequestSender', () => {
         });
 
         it('loads headless payment method', async () => {
+            const host = 'https://test.com';
+            const path = 'get-initialization-data';
+
             const walletInitData =
                 await paymentMethodRequestSender.loadPaymentWalletWithInitializationData(
                     'paypalcommerce',
-                    { headers: { Authorization: authorization } },
+                    host,
                 );
 
             expect(requestSender.post).toHaveBeenCalledWith(
-                '/graphql',
+                `${host}/${path}`,
                 expect.objectContaining({
-                    headers: {
-                        Authorization: authorization,
-                        'Content-Type': 'application/json',
+                    body: {
+                        entityId: 'paypalcommerce.paypal',
                     },
                 }),
             );

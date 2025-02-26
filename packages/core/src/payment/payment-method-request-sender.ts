@@ -11,8 +11,8 @@ import {
     HeadlessPaymentMethodConfig,
     HeadlessPaymentMethodResponse,
     HeadlessPaymentMethodType,
-    HeadlessPaymentRequestOptions,
 } from './headless-payment';
+import HeadlessPaymentRequestOptions from './headless-payment/headless-payment-request-options';
 import PaymentMethod from './payment-method';
 import paymentMethodTransformer from './payment-method-transformer';
 
@@ -53,37 +53,25 @@ export default class PaymentMethodRequestSender {
     }
 
     /**
-     * GraphQL payment requests
+     * Headless payment requests
      */
     loadPaymentWalletWithInitializationData(
         methodId: string,
-        options: HeadlessPaymentRequestOptions,
+        host?: string,
+        { timeout }: RequestOptions = {},
     ): Promise<Response<PaymentMethod>> {
-        const entityId = this._getPaymentEntityId(methodId);
-
-        const graphQLQuery = `
-            query {
-                site {
-                    paymentWalletWithInitializationData(filter: { paymentWalletEntityId: "${entityId}" }) {
-                        clientToken
-                        initializationData
-                    }
-                }
-            }
-        `;
+        const path = 'get-initialization-data';
+        const url = host ? `${host}/${path}` : `/${path}`;
 
         const requestOptions: HeadlessPaymentRequestOptions = {
-            headers: {
-                ...options.headers,
-                'Content-Type': 'application/json',
-            },
             body: {
-                query: graphQLQuery,
+                entityId: this._getPaymentEntityId(methodId),
             },
+            timeout,
         };
 
         return this._requestSender
-            .post<HeadlessPaymentMethodResponse>('/graphql', requestOptions)
+            .post<HeadlessPaymentMethodResponse>(url, requestOptions)
             .then((response) => paymentMethodTransformer(response, methodId));
     }
 

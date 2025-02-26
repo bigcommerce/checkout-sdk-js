@@ -48,10 +48,6 @@ describe('PaymentMethodActionCreator', () => {
         ).mockReturnValue(Promise.resolve(paymentMethodResponse));
 
         jest.spyOn(store.getState().cart, 'getCartOrThrow').mockReturnValue(getCheckout().cart);
-
-        jest.spyOn(store.getState().config, 'getStorefrontJwtToken').mockReturnValue(
-            'storefront_jwt_token',
-        );
     });
 
     describe('#loadPaymentMethods()', () => {
@@ -214,12 +210,7 @@ describe('PaymentMethodActionCreator', () => {
 
             expect(
                 paymentMethodRequestSender.loadPaymentWalletWithInitializationData,
-            ).toHaveBeenCalledWith(methodId, {
-                headers: {
-                    Authorization: `Bearer storefront_jwt_token`,
-                    'Content-Type': 'application/json',
-                },
-            });
+            ).toHaveBeenCalledWith(methodId, undefined, undefined);
         });
 
         it('loads payment wallet method with timeout', async () => {
@@ -237,13 +228,7 @@ describe('PaymentMethodActionCreator', () => {
 
             expect(
                 paymentMethodRequestSender.loadPaymentWalletWithInitializationData,
-            ).toHaveBeenCalledWith(methodId, {
-                headers: {
-                    Authorization: `Bearer storefront_jwt_token`,
-                    'Content-Type': 'application/json',
-                },
-                ...options,
-            });
+            ).toHaveBeenCalledWith(methodId, undefined, options);
         });
 
         it('emits actions if able to load payment wallet method', async () => {
