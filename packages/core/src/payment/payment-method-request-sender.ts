@@ -20,11 +20,6 @@ const paymentMethodConfig: Record<string, HeadlessPaymentMethodType> = {
     paypalcommercecredit: HeadlessPaymentMethodType.PAYPALCOMMERCECREDIT,
 };
 
-interface LoadPaymentWalletWithInitializationDataRequestOptions extends RequestOptions {
-    body?: { query: string };
-    headers: { Authorization: string; [key: string]: string };
-}
-
 interface LoadPaymentMethodResponse<T = any> {
     data: {
         site: {
@@ -78,31 +73,17 @@ export default class PaymentMethodRequestSender {
 
     loadPaymentWalletWithInitializationData(
         methodId: string,
-        options: LoadPaymentWalletWithInitializationDataRequestOptions,
+        host?: string,
+        { timeout }: RequestOptions = {},
     ): Promise<Response<PaymentMethod>> {
-        const url = `/graphql`;
+        const path = 'get-initialization-data';
+        const url = host ? `${host}/${path}` : `/${path}`;
 
-        const entityId = this.getPaymentEntityId(methodId);
-
-        const graphQLQuery = `
-            query {
-                site {
-                    paymentWalletWithInitializationData(filter: {paymentWalletEntityId: "${entityId}"}) {
-                        clientToken
-                        initializationData
-                    }
-                }
-            }
-        `;
-
-        const requestOptions: LoadPaymentWalletWithInitializationDataRequestOptions = {
-            headers: {
-                ...options.headers,
-                'Content-Type': 'application/json',
-            },
+        const requestOptions = {
             body: {
-                query: graphQLQuery,
+                entityId: this.getPaymentEntityId(methodId),
             },
+            timeout,
         };
 
         return this._requestSender

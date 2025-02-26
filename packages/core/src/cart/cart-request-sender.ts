@@ -6,29 +6,18 @@ import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http
 
 import { LineItemMap } from './index';
 
-interface LoadCartRequestOptions extends RequestOptions {
-    body?: { query: string };
-    headers: { Authorization: string; [key: string]: string };
-}
-
 interface LoadCartResponse {
-    data: {
-        site: {
-            cart: {
-                amount: {
-                    currencyCode: string;
-                };
-                entityId: string;
-                lineItems: {
-                    physicalItems: Array<{
-                        name: string;
-                        entityId: string;
-                        quantity: string;
-                        productEntityId: string;
-                    }>;
-                };
-            };
-        };
+    amount: {
+        currencyCode: string;
+    };
+    entityId: string;
+    lineItems: {
+        physicalItems: Array<{
+            name: string;
+            entityId: string;
+            quantity: string;
+            productEntityId: string;
+        }>;
     };
 }
 
@@ -48,99 +37,19 @@ export default class CartRequestSender {
         return this._requestSender.post(url, { body, headers, timeout });
     }
 
-    loadCard(cartId: string, options: LoadCartRequestOptions): Promise<Response<Cart>> {
-        const url = `/graphql`;
+    loadCard(cartId: string, host?: string, options?: RequestOptions): Promise<Response<Cart>> {
+        const path = 'cart-information';
+        const url = host ? `${host}/${path}` : `/${path}`;
 
-        const graphQLQuery = `
-        query {
-            site {
-                cart(entityId: "${cartId}") {
-                  currencyCode
-                  entityId
-                  id
-                  isTaxIncluded
-                  discounts {
-                    entityId
-                    discountedAmount {
-                      currencyCode
-                      value
-                    }
-                  }
-                  discountedAmount {
-                    currencyCode
-                    value
-                  }
-                  baseAmount {
-                    currencyCode
-                    value
-                  }
-                  amount {
-                    currencyCode
-                    value
-                  }
-                  lineItems {
-                    physicalItems {
-                      brand
-                      couponAmount {
-                        value
-                      }
-                      discountedAmount {
-                        value
-                      }
-                      discounts {
-                        discountedAmount {
-                          value
-                        }
-                        entityId
-                      }
-                      extendedListPrice {
-                        value
-                      }
-                      extendedSalePrice {
-                        value
-                      }
-                      giftWrapping {
-                        amount {
-                          value
-                        }
-                        message
-                        name
-                      }
-                      isShippingRequired
-                      isTaxable
-                      listPrice {
-                        value
-                      }
-                      name
-                      originalPrice {
-                        value
-                      }
-                      entityId
-                      quantity
-                      salePrice {
-                        value
-                      }
-                      sku
-                      url
-                    }
-                  }
-                }
-              }
-        }`;
-
-        const requestOptions: LoadCartRequestOptions = {
+        const requestOptions: RequestOptions = {
             ...options,
-            headers: {
-                ...options.headers,
-                'Content-Type': 'application/json',
-            },
-            body: {
-                query: graphQLQuery,
+            params: {
+                cartId,
             },
         };
 
         return this._requestSender
-            .post<LoadCartResponse>(url, {
+            .get<LoadCartResponse>(url, {
                 ...requestOptions,
             })
             .then(this.transformToCartResponse);
@@ -148,13 +57,7 @@ export default class CartRequestSender {
 
     private transformToCartResponse(response: Response<LoadCartResponse>): Response<Cart> {
         const {
-            body: {
-                data: {
-                    site: {
-                        cart: { amount, entityId, lineItems },
-                    },
-                },
-            },
+            body: { amount, entityId, lineItems },
         } = response;
 
         const mappedLineItems: LineItemMap = {

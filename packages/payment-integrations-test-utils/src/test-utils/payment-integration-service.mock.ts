@@ -59,8 +59,6 @@ const state = {
     getPaymentRedirectUrl: jest.fn(),
     getPaymentRedirectUrlOrThrow: jest.fn(),
     isPaymentDataRequired: jest.fn(),
-    getStorefrontJwtToken: jest.fn(),
-    getSiteLink: jest.fn(),
 };
 
 const createBuyNowCart = jest.fn(() => Promise.resolve(getCart()));

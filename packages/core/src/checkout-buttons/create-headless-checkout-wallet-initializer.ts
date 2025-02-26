@@ -14,14 +14,12 @@ import HeadlessCheckoutWalletStrategyActionCreator from './headless-checkout-wal
 export default function createHeadlessCheckoutWalletInitializer(
     options?: HeadlessCheckoutWalletInitializerOptions,
 ): HeadlessCheckoutWalletInitializer {
-    const { host, locale = 'en', storefrontJwtToken, siteLink } = options ?? {};
+    const { host, locale = 'en' } = options ?? {};
 
     const config: ConfigState = {
         meta: {
             host,
             locale,
-            storefrontJwtToken,
-            siteLink,
         },
         errors: {},
         statuses: {},

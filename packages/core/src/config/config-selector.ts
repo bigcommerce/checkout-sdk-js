@@ -18,8 +18,6 @@ export default interface ConfigSelector {
     getHost(): string | undefined;
     getLocale(): string | undefined;
     getVariantIdentificationToken(): string | undefined;
-    getStorefrontJwtToken(): string | undefined;
-    getSiteLink(): string | undefined;
     getLoadError(): Error | undefined;
     isLoading(): boolean;
 }
@@ -102,16 +100,6 @@ export function createConfigSelectorFactory(): ConfigSelectorFactory {
         (data) => () => data,
     );
 
-    const getStorefrontJwtToken = createSelector(
-        (state: ConfigState) => state.meta && state.meta.storefrontJwtToken,
-        (data) => () => data,
-    );
-
-    const getSiteLink = createSelector(
-        (state: ConfigState) => state.meta && state.meta.siteLink,
-        (data) => () => data,
-    );
-
     const getLoadError = createSelector(
         (state: ConfigState) => state.errors.loadError,
         (error) => () => error,
@@ -134,8 +122,6 @@ export function createConfigSelectorFactory(): ConfigSelectorFactory {
                 getHost: getHost(state),
                 getLocale: getLocale(state),
                 getVariantIdentificationToken: getVariantIdentificationToken(state),
-                getStorefrontJwtToken: getStorefrontJwtToken(state),
-                getSiteLink: getSiteLink(state),
                 getLoadError: getLoadError(state),
                 isLoading: isLoading(state),
             };

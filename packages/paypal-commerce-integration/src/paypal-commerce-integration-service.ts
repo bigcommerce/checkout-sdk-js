@@ -183,6 +183,24 @@ export default class PayPalCommerceIntegrationService {
         });
     }
 
+    proxyTokenizationPayment(methodId: string, orderId?: string): void {
+        const state = this.paymentIntegrationService.getState();
+
+        if (!orderId) {
+            throw new MissingDataError(MissingDataErrorType.MissingOrderId);
+        }
+
+        const host = state.getHost();
+        const path = 'redirect-to-checkout';
+
+        return this.formPoster.postForm(host ? `${host}/${path}` : `/${path}`, {
+            payment_type: 'paypal',
+            action: 'set_external_checkout',
+            provider: methodId,
+            order_id: orderId,
+        });
+    }
+
     async submitPayment(methodId: string, orderId: string, gatewayId?: string): Promise<void> {
         const paymentData = {
             formattedPayload: {
@@ -333,27 +351,18 @@ export default class PayPalCommerceIntegrationService {
      */
     async createPaymentOrderIntent(
         providerId: string,
-        options?: Partial<CreatePaymentOrderIntentOptions>,
+        options?: CreatePaymentOrderIntentOptions,
     ): Promise<string> {
         const cartId = this.paymentIntegrationService.getState().getCartOrThrow().id;
         const state = this.paymentIntegrationService.getState();
 
-        const jwtToken = state.getStorefrontJwtToken();
-
-        if (!jwtToken) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
-        }
+        const host = state.getHost();
 
         const { orderId } = await this.paypalCommerceRequestSender.createPaymentOrderIntent(
             providerId,
             cartId,
-            {
-                headers: {
-                    Authorization: `Bearer ${jwtToken}`,
-                    'Content-Type': 'application/json',
-                },
-                ...options,
-            },
+            host,
+            options,
         );
 
         return orderId;

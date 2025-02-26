@@ -80,44 +80,17 @@ export default class PayPalCommerceRequestSender {
     async createPaymentOrderIntent(
         walletEntityId: string,
         cartId: string,
-        options: CreatePaymentOrderIntentOptions,
+        host?: string,
+        options?: CreatePaymentOrderIntentOptions,
     ): Promise<PayPalOrderData> {
-        const url = '/graphql';
-
-        const graphQLQuery = `
-            mutation {
-              payment {
-                paymentWallet {
-                  createPaymentWalletIntent(
-                    input: {cartEntityId: "${cartId}", paymentWalletEntityId: "${walletEntityId}"}
-                  ) {
-                    errors {
-                      ... on CreatePaymentWalletIntentGenericError {
-                        __typename
-                        message
-                      }
-                    }
-                    paymentWalletIntentData {
-                      ... on PayPalCommercePaymentWalletIntentData {
-                        __typename
-                        approvalUrl
-                        orderId
-                      }
-                    }
-                  }
-                }
-              }
-            }
-        `;
+        const path = 'create-payment-wallet-intent';
+        const url = host ? `${host}/${path}` : `/${path}`;
 
         const requestOptions: CreatePaymentOrderIntentOptions = {
-            headers: {
-                ...options?.headers,
-                'Content-Type': 'application/json',
-            },
             body: {
-                ...options.body,
-                query: graphQLQuery,
+                ...options?.body,
+                walletEntityId,
+                cartId,
             },
         };
 

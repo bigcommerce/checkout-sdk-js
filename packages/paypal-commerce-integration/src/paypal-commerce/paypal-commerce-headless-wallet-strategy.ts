@@ -64,7 +64,7 @@ export default class PaypalCommerceHeadlessWalletStrategy implements CheckoutBut
                     'paypalcommerce.paypal',
                 ),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
+                this.paypalCommerceIntegrationService.proxyTokenizationPayment(methodId, orderID),
         };
 
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {

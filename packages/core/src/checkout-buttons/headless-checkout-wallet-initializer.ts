@@ -5,8 +5,8 @@ import { isElementId, setUniqueElementId } from '../common/dom';
 
 import { CheckoutButtonInitializeOptions, CheckoutButtonOptions } from './checkout-button-options';
 import CheckoutButtonSelectors from './checkout-button-selectors';
-import HeadlessCheckoutWalletStrategyActionCreator from './headless-checkout-wallet-strategy-action-creator';
 import createCheckoutButtonSelectors from './create-checkout-button-selectors';
+import HeadlessCheckoutWalletStrategyActionCreator from './headless-checkout-wallet-strategy-action-creator';
 
 @bind
 export default class HeadlessCheckoutWalletInitializer {

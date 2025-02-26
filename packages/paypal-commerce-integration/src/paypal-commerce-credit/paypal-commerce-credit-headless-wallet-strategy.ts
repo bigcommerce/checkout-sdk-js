@@ -70,7 +70,7 @@ export default class PaypalCommerceCreditHeadlessWalletStrategy implements Check
                     'paypalcommerce.paypalcredit',
                 ),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
+                this.paypalCommerceIntegrationService.proxyTokenizationPayment(methodId, orderID),
         };
 
         const fundingSources = [paypalSdk.FUNDING.PAYLATER, paypalSdk.FUNDING.CREDIT];
