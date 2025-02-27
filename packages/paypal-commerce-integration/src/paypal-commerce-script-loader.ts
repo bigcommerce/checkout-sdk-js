@@ -64,6 +64,8 @@ export default class PayPalCommerceScriptLoader {
         return this.window.paypal;
     }
 
+    // TODO: Remove this rule after refactor
+    // eslint-disable-next-line complexity
     private getPayPalSdkScriptConfigOrThrow(
         paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
         currencyCode: string,
@@ -88,6 +90,8 @@ export default class PayPalCommerceScriptLoader {
             availableAlternativePaymentMethods = [],
             enabledAlternativePaymentMethods = [],
             isGooglePayEnabled,
+            cspNonceExperiment,
+            cspNonce,
         } = initializationData;
 
         const commit = isHostedCheckoutEnabled || initializesOnCheckoutPage;
@@ -98,6 +102,7 @@ export default class PayPalCommerceScriptLoader {
 
         const enableCreditFunding = isPayPalCreditAvailable ? ['credit', 'paylater'] : [];
         const disableCreditFunding = !isPayPalCreditAvailable ? ['credit', 'paylater'] : [];
+        const isCSPNonceApplicable = cspNonceExperiment && cspNonce;
 
         const shouldEnableAPMs = initializesOnCheckoutPage || !commit;
         const enableVenmoFunding = shouldEnableAPMs && isVenmoEnabled ? ['venmo'] : [];
@@ -147,6 +152,7 @@ export default class PayPalCommerceScriptLoader {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-client-token': clientToken,
+                ...(isCSPNonceApplicable && { 'data-csp-nonce': cspNonce }),
             },
         };
     }

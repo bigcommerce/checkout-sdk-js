@@ -123,7 +123,10 @@ export default class PayPalCommerceSdk {
             merchantId,
             attributionId,
             connectClientToken, // TODO: remove when PPCP Fastlane A/B testing will be finished
+            cspNonce,
+            cspNonceExperiment,
         } = initializationData;
+        const isCSPNonceApplicable = cspNonceExperiment && cspNonce;
 
         return {
             options: {
@@ -139,6 +142,7 @@ export default class PayPalCommerceSdk {
                 'data-namespace': 'paypalFastlaneSdk',
                 'data-partner-attribution-id': attributionId,
                 'data-user-id-token': connectClientToken || clientToken,
+                ...(isCSPNonceApplicable && { 'data-csp-nonce': cspNonce }),
             },
         };
     }
@@ -162,12 +166,15 @@ export default class PayPalCommerceSdk {
             isDeveloperModeApplicable,
             availableAlternativePaymentMethods = [],
             enabledAlternativePaymentMethods = [],
+            cspNonce,
+            cspNonceExperiment,
         } = initializationData;
 
         const enableAPMsFunding = enabledAlternativePaymentMethods;
         const disableAPMsFunding = availableAlternativePaymentMethods.filter(
             (apm: string) => !enabledAlternativePaymentMethods.includes(apm),
         );
+        const isCSPNonceApplicable = cspNonceExperiment && cspNonce;
 
         return {
             options: {
@@ -184,6 +191,7 @@ export default class PayPalCommerceSdk {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-namespace': 'paypalApms',
+                ...(isCSPNonceApplicable && { 'data-csp-nonce': cspNonce }),
             },
         };
     }

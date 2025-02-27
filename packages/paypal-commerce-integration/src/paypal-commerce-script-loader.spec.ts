@@ -70,6 +70,32 @@ describe('PayPalCommerceScriptLoader', () => {
         expect(output).toEqual(paypalSdk);
     });
 
+    it('loads PayPalSDK with data-csp-nonce attribute', async () => {
+        const paymentMethodWithNonce = {
+            ...paymentMethod,
+            initializationData: {
+                ...paymentMethod.initializationData,
+                cspNonceExperiment: true,
+                cspNonce: 'csp-nonce',
+            },
+        };
+        const output = await paypalLoader.getPayPalSDK(paymentMethodWithNonce, 'USD');
+
+        const paypalSdkScriptSrc =
+            'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&disable-funding=card%2Ccredit%2Cpaylater%2Cvenmo&commit=true&components=buttons%2Chosted-fields%2Cpayment-fields%2Clegal%2Ccard-fields&currency=USD&intent=capture';
+        const paypalSdkAttributes = {
+            'data-client-token': paymentMethodWithNonce.clientToken,
+            'data-partner-attribution-id': paymentMethodWithNonce.initializationData.attributionId,
+            'data-csp-nonce': paymentMethodWithNonce.initializationData.cspNonce,
+        };
+
+        expect(loader.loadScript).toHaveBeenCalledWith(paypalSdkScriptSrc, {
+            async: true,
+            attributes: paypalSdkAttributes,
+        });
+        expect(output).toEqual(paypalSdk);
+    });
+
     it('loads PayPalSDK script every time if force load flag is provided', async () => {
         const paypalCommerceCreditPaymentMethod = {
             ...paymentMethod,
