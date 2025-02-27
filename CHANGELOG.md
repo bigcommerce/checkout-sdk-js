@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.712.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.711.1...v1.712.0) (2025-02-27)
+
+
+### Features
+
+* **payment:** PAYPAL-5187 added BT falback Url ([#2796](https://github.com/bigcommerce/checkout-sdk-js/issues/2796)) ([e466189](https://github.com/bigcommerce/checkout-sdk-js/commit/e4661899c9347e06e59fdab1798e3daee64d7449))
+
 ### [1.711.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.711.0...v1.711.1) (2025-02-19)
 
 
