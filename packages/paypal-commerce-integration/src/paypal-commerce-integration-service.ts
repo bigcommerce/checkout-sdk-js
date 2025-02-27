@@ -18,6 +18,7 @@ import {
 import PayPalCommerceRequestSender from './paypal-commerce-request-sender';
 import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
 import {
+    CreatePaymentOrderIntentOptions,
     PayPalButtonStyleOptions,
     PayPalBuyNowInitializeOptions,
     PayPalCommerceInitializationData,
@@ -182,6 +183,24 @@ export default class PayPalCommerceIntegrationService {
         });
     }
 
+    proxyTokenizationPayment(methodId: string, orderId?: string): void {
+        const state = this.paymentIntegrationService.getState();
+
+        if (!orderId) {
+            throw new MissingDataError(MissingDataErrorType.MissingOrderId);
+        }
+
+        const host = state.getHost();
+        const path = 'redirect-to-checkout';
+
+        return this.formPoster.postForm(host ? `${host}/${path}` : `/${path}`, {
+            payment_type: 'paypal',
+            action: 'set_external_checkout',
+            provider: methodId,
+            order_id: orderId,
+        });
+    }
+
     async submitPayment(methodId: string, orderId: string, gatewayId?: string): Promise<void> {
         const paymentData = {
             formattedPayload: {
@@ -331,6 +350,30 @@ export default class PayPalCommerceIntegrationService {
         }
 
         return height;
+    }
+
+    /**
+     *
+     * GraphQL methods
+     *
+     */
+    async createPaymentOrderIntent(
+        providerId: string,
+        options?: CreatePaymentOrderIntentOptions,
+    ): Promise<string> {
+        const cartId = this.paymentIntegrationService.getState().getCartOrThrow().id;
+        const state = this.paymentIntegrationService.getState();
+
+        const host = state.getHost();
+
+        const { orderId } = await this.paypalCommerceRequestSender.createPaymentOrderIntent(
+            providerId,
+            cartId,
+            host,
+            options,
+        );
+
+        return orderId;
     }
 
     /**

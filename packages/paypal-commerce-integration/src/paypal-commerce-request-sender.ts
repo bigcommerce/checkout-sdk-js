@@ -8,6 +8,8 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    CreatePaymentOrderIntentOptions,
+    CreatePaymentOrderIntentResponse,
     PayPalCreateOrderRequestBody,
     PayPalOrderData,
     PayPalOrderStatusData,
@@ -68,5 +70,55 @@ export default class PayPalCommerceRequestSender {
         });
 
         return res.body;
+    }
+
+    /**
+     *
+     * GraphQL methods
+     *
+     */
+    async createPaymentOrderIntent(
+        walletEntityId: string,
+        cartId: string,
+        host?: string,
+        options?: CreatePaymentOrderIntentOptions,
+    ): Promise<PayPalOrderData> {
+        const path = 'create-payment-wallet-intent';
+        const url = host ? `${host}/${path}` : `/${path}`;
+
+        const requestOptions: CreatePaymentOrderIntentOptions = {
+            body: {
+                ...options?.body,
+                walletEntityId,
+                cartId,
+            },
+        };
+
+        const res = await this.requestSender.post<CreatePaymentOrderIntentResponse>(
+            url,
+            requestOptions,
+        );
+
+        const {
+            data: {
+                payment: {
+                    paymentWallet: {
+                        createPaymentWalletIntent: { paymentWalletIntentData, errors },
+                    },
+                },
+            },
+        } = res.body;
+
+        const errorMessage = errors[0]?.message;
+
+        if (errorMessage) {
+            // TODO:: add error handling
+            throw new Error(errorMessage);
+        }
+
+        return {
+            orderId: paymentWalletIntentData.orderId,
+            approveUrl: paymentWalletIntentData.approvalUrl,
+        };
     }
 }
