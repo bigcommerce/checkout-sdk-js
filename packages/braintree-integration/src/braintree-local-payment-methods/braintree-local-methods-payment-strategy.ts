@@ -196,13 +196,17 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         const { currency, email, lineItems } = cart;
         const isShippingRequired = lineItems.physicalItems.length > 0;
         const grandTotal = state.getCheckoutOrThrow().outstandingBalance;
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
+        const isBraintreeFallbackUrlExperiment = features['PAYPAL-5187.braintree_lpm_fallback'];
+        const checkoutUrl = `${state.getConfig()?.storeConfig?.links?.siteLink ?? ''}/checkout`;
+        const fallbackUrl = isBraintreeFallbackUrlExperiment ? checkoutUrl : 'url-placeholder';
 
         return {
             paymentType: methodId,
             amount: grandTotal,
             fallback: {
-                url: 'url-placeholder',
-                buttonText: 'button placeholder',
+                url: fallbackUrl,
+                buttonText: 'Complete Payment',
             },
             currencyCode: currency.code,
             shippingAddressRequired: isShippingRequired,

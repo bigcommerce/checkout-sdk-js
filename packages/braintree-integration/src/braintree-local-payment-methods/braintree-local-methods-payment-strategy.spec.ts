@@ -303,7 +303,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                         currencyCode: 'USD',
                         email: 'foo@bar.com',
                         fallback: {
-                            buttonText: 'button placeholder',
+                            buttonText: 'Complete Payment',
                             url: 'url-placeholder',
                         },
                         givenName: 'Test',
