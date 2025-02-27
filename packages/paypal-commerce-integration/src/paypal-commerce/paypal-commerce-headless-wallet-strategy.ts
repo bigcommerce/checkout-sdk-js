@@ -48,14 +48,14 @@ export default class PaypalCommerceHeadlessWalletStrategy implements CheckoutBut
             false,
         );
 
-        this.renderButton(containerId, methodId);
+        this.renderButton(containerId);
     }
 
     deinitialize(): Promise<void> {
         return Promise.resolve();
     }
 
-    private renderButton(containerId: string, methodId: string): void {
+    private renderButton(containerId: string): void {
         const paypalSdk = this.paypalCommerceIntegrationService.getPayPalSdkOrThrow();
 
         const defaultCallbacks = {
@@ -64,7 +64,7 @@ export default class PaypalCommerceHeadlessWalletStrategy implements CheckoutBut
                     'paypalcommerce.paypal',
                 ),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
+                this.paypalCommerceIntegrationService.proxyTokenizationPayment(orderID),
         };
 
         const buttonRenderOptions: PayPalCommerceButtonsOptions = {

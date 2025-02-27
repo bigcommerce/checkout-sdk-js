@@ -4,7 +4,6 @@ import { Observable, Observer } from 'rxjs';
 
 import { InternalCheckoutSelectors } from '../checkout';
 import { ActionOptions, cachableAction } from '../common/data-store';
-import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import {
@@ -169,11 +168,7 @@ export default class PaymentMethodActionCreator {
         return (store) =>
             Observable.create((observer: Observer<LoadPaymentMethodAction>) => {
                 const state = store.getState();
-                const jwtToken = state.config.getStorefrontJwtToken();
-
-                if (!jwtToken) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
-                }
+                const host = state.config.getHost();
 
                 observer.next(
                     createAction(PaymentMethodActionType.LoadPaymentMethodRequested, undefined, {
@@ -182,13 +177,7 @@ export default class PaymentMethodActionCreator {
                 );
 
                 this._requestSender
-                    .loadPaymentWalletWithInitializationData(methodId, {
-                        headers: {
-                            Authorization: `Bearer ${jwtToken}`,
-                            'Content-Type': 'application/json',
-                        },
-                        ...options,
-                    })
+                    .loadPaymentWalletWithInitializationData(methodId, host, options)
                     .then((response) => {
                         observer.next(
                             createAction(

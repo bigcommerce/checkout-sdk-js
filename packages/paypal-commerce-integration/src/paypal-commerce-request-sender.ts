@@ -10,6 +10,7 @@ import {
 import {
     CreatePaymentOrderIntentOptions,
     CreatePaymentOrderIntentResponse,
+    CreateRedirectToCheckoutResponse,
     PayPalCreateOrderRequestBody,
     PayPalOrderData,
     PayPalOrderStatusData,
@@ -80,44 +81,17 @@ export default class PayPalCommerceRequestSender {
     async createPaymentOrderIntent(
         walletEntityId: string,
         cartId: string,
-        options: CreatePaymentOrderIntentOptions,
+        host?: string,
+        options?: CreatePaymentOrderIntentOptions,
     ): Promise<PayPalOrderData> {
-        const url = '/graphql';
-
-        const graphQLQuery = `
-            mutation {
-              payment {
-                paymentWallet {
-                  createPaymentWalletIntent(
-                    input: {cartEntityId: "${cartId}", paymentWalletEntityId: "${walletEntityId}"}
-                  ) {
-                    errors {
-                      ... on CreatePaymentWalletIntentGenericError {
-                        __typename
-                        message
-                      }
-                    }
-                    paymentWalletIntentData {
-                      ... on PayPalCommercePaymentWalletIntentData {
-                        __typename
-                        approvalUrl
-                        orderId
-                      }
-                    }
-                  }
-                }
-              }
-            }
-        `;
+        const path = 'create-payment-wallet-intent';
+        const url = host ? `${host}/${path}` : `/${path}`;
 
         const requestOptions: CreatePaymentOrderIntentOptions = {
-            headers: {
-                ...options?.headers,
-                'Content-Type': 'application/json',
-            },
             body: {
-                ...options.body,
-                query: graphQLQuery,
+                ...options?.body,
+                walletEntityId,
+                cartId,
             },
         };
 
@@ -147,5 +121,26 @@ export default class PayPalCommerceRequestSender {
             orderId: paymentWalletIntentData.orderId,
             approveUrl: paymentWalletIntentData.approvalUrl,
         };
+    }
+
+    async getRedirectToCheckoutUrl(
+        url: string,
+        options?: CreatePaymentOrderIntentOptions,
+    ): Promise<string> {
+        const res = await this.requestSender.get<CreateRedirectToCheckoutResponse>(url, options);
+
+        const {
+            data: {
+                cart: {
+                    createCartRedirectUrls: { redirectUrls },
+                },
+            },
+        } = res.body;
+
+        if (!redirectUrls?.redirectedCheckoutUrl) {
+            throw new Error('Failed to redirection to checkout page');
+        }
+
+        return redirectUrls.redirectedCheckoutUrl;
     }
 }

@@ -48,7 +48,7 @@ export default class PaypalCommerceCreditHeadlessWalletStrategy implements Check
 
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, currencyCode, false);
 
-        this.renderButton(containerId, methodId, paypalcommercecredit);
+        this.renderButton(containerId, paypalcommercecredit);
     }
 
     deinitialize(): Promise<void> {
@@ -57,7 +57,6 @@ export default class PaypalCommerceCreditHeadlessWalletStrategy implements Check
 
     private renderButton(
         containerId: string,
-        methodId: string,
         paypalcommercecredit: PaypalCommerceCreditHeadlessWalletInitializeOptions,
     ): void {
         const { style, onEligibilityFailure } = paypalcommercecredit;
@@ -70,7 +69,7 @@ export default class PaypalCommerceCreditHeadlessWalletStrategy implements Check
                     'paypalcommerce.paypalcredit',
                 ),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
-                this.paypalCommerceIntegrationService.tokenizePayment(methodId, orderID),
+                this.paypalCommerceIntegrationService.proxyTokenizationPayment(orderID),
         };
 
         const fundingSources = [paypalSdk.FUNDING.PAYLATER, paypalSdk.FUNDING.CREDIT];

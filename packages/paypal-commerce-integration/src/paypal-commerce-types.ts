@@ -621,8 +621,7 @@ export interface PayPalCreateOrderCardFieldsResponse {
  */
 
 export interface CreatePaymentOrderIntentOptions extends RequestOptions {
-    body?: { query: string };
-    headers: { [key: string]: string; Authorization: string };
+    body?: { walletEntityId: string; cartId: string };
 }
 
 export interface CreatePaymentOrderIntentResponse {
@@ -641,6 +640,14 @@ export interface CreatePaymentOrderIntentResponse {
                     };
                 };
             };
+        };
+    };
+}
+
+export interface CreateRedirectToCheckoutResponse {
+    data: {
+        cart: {
+            createCartRedirectUrls: { redirectUrls: { redirectedCheckoutUrl: string } | null };
         };
     };
 }
