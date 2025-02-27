@@ -6,8 +6,10 @@ import {
 } from '@bigcommerce/request-sender';
 
 import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../common/http-request';
-import { getResponse } from '../common/http-request/responses.mock';
+import { getHeadlessPaymentResponse, getResponse } from '../common/http-request/responses.mock';
 
+import { HeadlessPaymentMethodResponse } from './headless-payment';
+import { getHeadlessPaymentMethod, initializationData } from './headless-payment-methods.mock';
 import PaymentMethod from './payment-method';
 import PaymentMethodRequestSender from './payment-method-request-sender';
 import { getPaymentMethod, getPaymentMethods } from './payment-methods.mock';
@@ -134,6 +136,49 @@ describe('PaymentMethodRequestSender', () => {
                     ...SDK_VERSION_HEADERS,
                 },
             });
+        });
+    });
+
+    describe('#loadPaymentWalletWithInitializationData()', () => {
+        let response: Response<HeadlessPaymentMethodResponse>;
+
+        beforeEach(() => {
+            response = getHeadlessPaymentResponse(getHeadlessPaymentMethod());
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
+        });
+
+        it('loads headless payment method', async () => {
+            const host = 'https://test.com';
+            const path = 'get-initialization-data';
+
+            const walletInitData =
+                await paymentMethodRequestSender.loadPaymentWalletWithInitializationData(
+                    'paypalcommerce',
+                    host,
+                );
+
+            expect(requestSender.post).toHaveBeenCalledWith(
+                `${host}/${path}`,
+                expect.objectContaining({
+                    body: {
+                        entityId: 'paypalcommerce.paypal',
+                    },
+                }),
+            );
+
+            expect(walletInitData).toEqual(
+                expect.objectContaining({
+                    body: {
+                        initializationData,
+                        clientToken: 'clientToken',
+                        id: 'paypalcommerce',
+                        config: {},
+                        method: '',
+                        supportedCards: [],
+                        type: 'PAYMENT_TYPE_API',
+                    },
+                }),
+            );
         });
     });
 });
