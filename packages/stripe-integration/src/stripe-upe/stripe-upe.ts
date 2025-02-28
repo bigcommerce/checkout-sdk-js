@@ -464,6 +464,7 @@ export interface StripeUPEInitializationData {
     stripePublishableKey: string;
     stripeConnectedAccount: string;
     shopperLanguage: string;
+    isStripeStateMappingDisabledForES?: boolean;
 }
 
 export interface StripeElementUpdateOptions {

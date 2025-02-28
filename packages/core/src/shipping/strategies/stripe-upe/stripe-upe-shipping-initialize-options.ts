@@ -48,5 +48,18 @@ export default interface StripeUPEShippingInitializeOptions {
      * @param country
      * @param state
      */
-    getStripeState(country: string, state: string): string;
+    getStripeState(
+        country: string,
+        state: string,
+        isStripeStateMappingDisabledForES?: boolean,
+    ): string;
+
+    /**
+     * Set the Stripe experiments to be used in checkout-js components;
+     * Stripe specific experiments broadcasts to SDK from payment provider configs request.
+     *
+     * @param experiments
+     * @returns void
+     */
+    setStripeExperiments?(experiments: Record<string, boolean>): void;
 }
