@@ -124,6 +124,10 @@ describe('BraintreePaypalCustomerStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             paymentMethodMock,
         );
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValueOnce({
+            ...paymentIntegrationService.getState(),
+            getPaymentMethodOrThrow: () => ({ ...paymentMethodMock }),
+        });
         jest.spyOn(braintreeIntegrationService, 'getPaypalCheckout').mockImplementation(
             getSDKPaypalCheckoutMock(braintreePaypalCheckoutMock),
         );
@@ -227,6 +231,20 @@ describe('BraintreePaypalCustomerStrategy', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
+        });
+
+        it('fetch payment method if client token is not exist', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...paymentMethodMock,
+                clientToken: undefined,
+            });
+
+            await strategy.initialize(initializationOptions);
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
         });
 
         it('throws error if initialization data is missing', async () => {
@@ -377,7 +395,6 @@ describe('BraintreePaypalCustomerStrategy', () => {
 
             jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValueOnce({
                 ...paymentIntegrationService.getState(),
-                getPaymentMethodOrThrow: jest.fn().mockReturnValue(paymentMethodMock),
                 getStoreConfigOrThrow: jest.fn().mockReturnValue(getConfig().storeConfig),
                 getCartOrThrow: jest.fn().mockReturnValue({ currency: { code: 'AUD' } }),
             });
