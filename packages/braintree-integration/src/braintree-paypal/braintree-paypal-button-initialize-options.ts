@@ -1,20 +1,33 @@
-import { Address } from '../../../address';
-import { BuyNowCartRequestBody } from '../../../cart';
-import { StandardError } from '../../../common/error/errors';
-import { BraintreeError } from '../../../payment/strategies/braintree';
-import { PaypalStyleOptions } from '../../../payment/strategies/paypal';
+import { BraintreeError, PaypalStyleOptions } from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
+    Address,
+    BuyNowCartRequestBody,
+    StandardError,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-export interface BraintreePaypalButtonInitializeOptions {
+export default interface BraintreePaypalButtonInitializeOptions {
     /**
-     * @internal
-     * This is an internal property and therefore subject to change. DO NOT USE.
+     * The options that are required to initialize Buy Now functionality.
      */
-    shouldProcessPayment?: boolean;
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
+
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
 
     /**
      * The ID of a container which the messaging should be inserted.
      */
     messagingContainerId?: string;
+
+    /**
+     * @internal
+     * This is an internal property and therefore subject to change. DO NOT USE.
+     */
+    shouldProcessPayment?: boolean;
 
     /**
      * A set of styling options for the checkout button.
@@ -57,16 +70,11 @@ export interface BraintreePaypalButtonInitializeOptions {
      *
      */
     onEligibilityFailure?(): void;
+}
 
+export interface WithBraintreePaypalButtonInitializeOptions {
     /**
-     * The option that used to initialize a PayPal script with provided currency code.
+     * The options that are required to initialize Braintree PayPal wallet button on Product and Cart page.
      */
-    currencyCode?: string;
-
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
+    braintreepaypal?: BraintreePaypalButtonInitializeOptions;
 }
