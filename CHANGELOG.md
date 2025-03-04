@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.713.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.713.0...v1.713.1) (2025-03-04)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-660 Disable state code mapping for Spain in Stripe Link Address component ([2c2c1fd](https://github.com/bigcommerce/checkout-sdk-js/commit/2c2c1fd50c19d7b67961df79e355f3c04e10d0f6))
+
 ## [1.713.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.712.1...v1.713.0) (2025-03-04)
 
 
