@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.713.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.712.1...v1.713.0) (2025-03-04)
+
+
+### Features
+
+* **payment:** PAYPAL-5201 updates related to clientToken checking ([821eeb4](https://github.com/bigcommerce/checkout-sdk-js/commit/821eeb4692a9cd4e582d18fdf1a4b98e423a1dd4))
+
 ### [1.712.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.712.0...v1.712.1) (2025-03-04)
 
 
