@@ -18,6 +18,7 @@ import {
     InvalidArgumentError,
     MissingDataError,
     PaymentIntegrationService,
+    PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
@@ -37,6 +38,7 @@ describe('GooglePayBraintreeGateway', () => {
     let braintreeGooglePaymentMock: BraintreeGooglePayment;
     let braintreeThreeDSecureMock: BraintreeThreeDSecure;
     let braintreeClientMock: BraintreeClient;
+    let braintreeMock: PaymentMethod;
 
     const token =
         '{"androidPayCards":[{"type":"AndroidPayCard","nonce":"12345678-1234-1234-1515-123412341234","description":"Android Pay","consumed":false,"threeDSecureInfo":null,"details":{"bin":"401288","cardType":"Visa","isNetworkTokenized":false,"lastTwo":"11","lastFour":"1111"},"binData":{"prepaid":"No","healthcare":"Unknown","debit":"Unknown","durbinRegulated":"Unknown","commercial":"Unknown","payroll":"Unknown","issuingBank":"Unknown","countryOfIssuance":"Unknown","productId":"Unknown"}}]}';
@@ -50,6 +52,8 @@ describe('GooglePayBraintreeGateway', () => {
             getScriptLoader(),
             braintreeHostWindowMock,
         );
+
+        braintreeMock = getBraintree();
 
         braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
 
@@ -90,6 +94,10 @@ describe('GooglePayBraintreeGateway', () => {
             Promise.resolve(braintreeThreeDSecureMock),
         );
 
+        jest.spyOn(paymentIntegrationService, 'loadPaymentMethod').mockResolvedValue(
+            paymentIntegrationService.getState(),
+        );
+
         googlePayBraintreeGateway = new GooglePayBraintreeGateway(
             paymentIntegrationService,
             braintreeSdk,
@@ -108,13 +116,36 @@ describe('GooglePayBraintreeGateway', () => {
         });
 
         it('throw error if do not have clientToken', async () => {
-            const braintree = getBraintree();
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue({
+                ...braintreeMock,
+                clientToken: undefined,
+            });
 
-            braintree.clientToken = '';
+            await expect(
+                googlePayBraintreeGateway.initialize(() => ({
+                    ...braintreeMock,
+                    clientToken: undefined,
+                })),
+            ).rejects.toThrow(MissingDataError);
 
-            await expect(googlePayBraintreeGateway.initialize(() => braintree)).rejects.toThrow(
-                MissingDataError,
-            );
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
+        });
+
+        it('fetch payment method if client token is not exist', async () => {
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(braintreeMock);
+
+            await googlePayBraintreeGateway.initialize(() => ({
+                ...braintreeMock,
+                clientToken: undefined,
+            }));
+
+            expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
         });
     });
 
@@ -134,7 +165,7 @@ describe('GooglePayBraintreeGateway', () => {
 
             dataResponse.paymentMethodData.tokenizationData.token = token;
 
-            await googlePayBraintreeGateway.initialize(getBraintree);
+            await googlePayBraintreeGateway.initialize(() => braintreeMock);
 
             const mappedData = await googlePayBraintreeGateway.mapToExternalCheckoutData(
                 dataResponse,
@@ -166,17 +197,15 @@ describe('GooglePayBraintreeGateway', () => {
 
     describe('#getNonce', () => {
         it('get nonce when 3DSecure is enabled', async () => {
-            const braintree = getBraintree();
-
-            braintree.initializationData!.isThreeDSecureEnabled = true;
-            braintree.initializationData!.card_information = {
+            braintreeMock.initializationData.isThreeDSecureEnabled = true;
+            braintreeMock.initializationData.card_information = {
                 type: 'type',
                 number: '1234',
                 bin: 'bin',
                 isNetworkTokenized: false,
             };
 
-            await googlePayBraintreeGateway.initialize(() => braintree);
+            await googlePayBraintreeGateway.initialize(() => braintreeMock);
 
             const nonce = await googlePayBraintreeGateway.getNonce('googlepaybraintree');
 
@@ -185,16 +214,14 @@ describe('GooglePayBraintreeGateway', () => {
         });
 
         it('get nonce when 3DSecure is not enabled', async () => {
-            const braintree = getBraintree();
-
-            braintree.initializationData!.card_information = {
+            braintreeMock.initializationData.card_information = {
                 type: 'type',
                 number: '1234',
                 bin: 'bin',
                 isNetworkTokenized: false,
             };
 
-            await googlePayBraintreeGateway.initialize(() => braintree);
+            await googlePayBraintreeGateway.initialize(() => braintreeMock);
 
             const nonce = await googlePayBraintreeGateway.getNonce('googlepaybraintree');
 
@@ -203,17 +230,15 @@ describe('GooglePayBraintreeGateway', () => {
         });
 
         it('get nonce when card is network tokenized', async () => {
-            const braintree = getBraintree();
-
-            braintree.initializationData!.isThreeDSecureEnabled = true;
-            braintree.initializationData!.card_information = {
+            braintreeMock.initializationData.isThreeDSecureEnabled = true;
+            braintreeMock.initializationData.card_information = {
                 type: 'type',
                 number: '1234',
                 bin: 'bin',
                 isNetworkTokenized: true,
             };
 
-            await googlePayBraintreeGateway.initialize(() => braintree);
+            await googlePayBraintreeGateway.initialize(() => braintreeMock);
 
             const nonce = await googlePayBraintreeGateway.getNonce('googlepaybraintree');
 
@@ -224,7 +249,7 @@ describe('GooglePayBraintreeGateway', () => {
 
     describe('#extraPaymentData', () => {
         it('get extraPaymentData', async () => {
-            await googlePayBraintreeGateway.initialize(getBraintree);
+            await googlePayBraintreeGateway.initialize(() => braintreeMock);
 
             const extraData = await googlePayBraintreeGateway.extraPaymentData();
 
