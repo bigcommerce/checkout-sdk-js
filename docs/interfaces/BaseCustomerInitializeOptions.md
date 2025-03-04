@@ -24,32 +24,12 @@ information in order to initialize the customer step of checkout.
 
 ### Properties
 
-- [braintreepaypalcredit](BaseCustomerInitializeOptions.md#braintreepaypalcredit)
-- [braintreevisacheckout](BaseCustomerInitializeOptions.md#braintreevisacheckout)
 - [masterpass](BaseCustomerInitializeOptions.md#masterpass)
 - [methodId](BaseCustomerInitializeOptions.md#methodid)
 - [params](BaseCustomerInitializeOptions.md#params)
 - [timeout](BaseCustomerInitializeOptions.md#timeout)
 
 ## Properties
-
-### braintreepaypalcredit
-
-• `Optional` **braintreepaypalcredit**: [`BraintreePaypalCreditCustomerInitializeOptions`](BraintreePaypalCreditCustomerInitializeOptions.md)
-
-The options that are required to facilitate Braintree Credit. They can be
-omitted unless you need to support Braintree Credit.
-
-___
-
-### braintreevisacheckout
-
-• `Optional` **braintreevisacheckout**: [`BraintreeVisaCheckoutCustomerInitializeOptions`](BraintreeVisaCheckoutCustomerInitializeOptions.md)
-
-The options that are required to initialize the customer step of checkout
-when using Visa Checkout provided by Braintree.
-
-___
 
 ### masterpass
 
