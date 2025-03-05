@@ -99,6 +99,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         const paypalCheckoutSuccessCallback = (
             braintreePaypalCheckout: BraintreePaypalCheckout,
         ) => {
+            this.renderPayPalMessages(braintreepaypalcredit.messagingContainerId);
             this.renderPayPalButton(
                 braintreePaypalCheckout,
                 braintreepaypalcredit,
@@ -120,6 +121,26 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
 
     async deinitialize(): Promise<void> {
         await this.braintreeIntegrationService.teardown();
+    }
+
+    private renderPayPalMessages(messagingContainerId?: string): void {
+        const isMessageContainerAvailable =
+            messagingContainerId && Boolean(document.getElementById(messagingContainerId));
+        const { paypal } = this.braintreeHostWindow;
+
+        if (isMessageContainerAvailable && paypal) {
+            const state = this.paymentIntegrationService.getState();
+            const amount = state.getCartOrThrow().cartAmount;
+
+            const paypalMessagesRender = paypal.Messages({
+                amount,
+                placement: 'cart',
+            });
+
+            paypalMessagesRender.render(`#${messagingContainerId}`);
+        } else {
+            this.braintreeIntegrationService.removeElement(messagingContainerId);
+        }
     }
 
     private renderPayPalButton(
