@@ -296,6 +296,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
         const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
             cartId,
+            fastlaneToken: instrumentId,
         });
 
         return {
@@ -330,6 +331,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
         const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
             cartId,
+            fastlaneToken: id,
         });
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =

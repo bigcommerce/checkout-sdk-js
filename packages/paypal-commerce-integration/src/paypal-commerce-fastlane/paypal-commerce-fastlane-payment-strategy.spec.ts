@@ -428,11 +428,14 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
         });
 
         it('successfully places order with credit card flow', async () => {
+            const fastlaneToken = 'paypal_fastlane_instrument_id_nonce';
+
             await strategy.initialize(initializationOptions);
             await strategy.execute(executeOptions);
 
             expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(methodId, {
                 cartId: cart.id,
+                fastlaneToken,
             });
 
             const paypalFastlaneComponent = await paypalFastlane.FastlaneCardComponent({});
@@ -460,7 +463,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
                     formattedPayload: {
                         paypal_fastlane_token: {
                             order_id: paypalOrderId,
-                            token: 'paypal_fastlane_instrument_id_nonce',
+                            token: fastlaneToken,
                         },
                     },
                 },
@@ -474,6 +477,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
             expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(methodId, {
                 cartId: cart.id,
+                fastlaneToken: mockedInstrumentId,
             });
 
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith({}, undefined);
