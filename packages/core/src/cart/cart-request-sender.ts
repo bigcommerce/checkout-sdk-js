@@ -7,17 +7,23 @@ import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http
 import { LineItemMap } from './index';
 
 interface LoadCartResponse {
-    amount: {
-        currencyCode: string;
-    };
-    entityId: string;
-    lineItems: {
-        physicalItems: Array<{
-            name: string;
-            entityId: string;
-            quantity: string;
-            productEntityId: string;
-        }>;
+    data: {
+        site: {
+            cart: {
+                amount: {
+                    currencyCode: string;
+                };
+                entityId: string;
+                lineItems: {
+                    physicalItems: Array<{
+                        name: string;
+                        entityId: string;
+                        quantity: string;
+                        productEntityId: string;
+                    }>;
+                };
+            };
+        };
     };
 }
 
@@ -57,7 +63,13 @@ export default class CartRequestSender {
 
     private transformToCartResponse(response: Response<LoadCartResponse>): Response<Cart> {
         const {
-            body: { amount, entityId, lineItems },
+            body: {
+                data: {
+                    site: {
+                        cart: { amount, entityId, lineItems },
+                    },
+                },
+            },
         } = response;
 
         const mappedLineItems: LineItemMap = {
