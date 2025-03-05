@@ -9,7 +9,7 @@ import {
     SDK_VERSION_HEADERS,
 } from '../common/http-request';
 
-import { OrderTaxProviderUnavailableError } from './errors';
+import { MissingShippingMethodError, OrderTaxProviderUnavailableError } from './errors';
 import InternalOrderRequestBody from './internal-order-request-body';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import Order from './order';
@@ -73,6 +73,10 @@ export default class OrderRequestSender {
 
                 if (error.body.type === 'cart_has_changed') {
                     throw new CartConsistencyError();
+                }
+
+                if (error.body.type === 'missing_shipping_method') {
+                    throw new MissingShippingMethodError();
                 }
 
                 throw error;
