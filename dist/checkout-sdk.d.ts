@@ -1507,6 +1507,10 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
      */
     currencyCode?: string;
     /**
+     * The ID of a container where the messaging component should be inserted.
+     */
+    messagingContainerId?: string;
+    /**
      * A set of styling options for the checkout button.
      */
     style?: Pick<PaypalStyleOptions_2, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
