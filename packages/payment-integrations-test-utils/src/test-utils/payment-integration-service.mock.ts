@@ -80,6 +80,7 @@ const loadCurrentOrder = jest.fn();
 const submitOrder = jest.fn();
 const submitPayment = jest.fn();
 const finalizeOrder = jest.fn();
+const loadCard = jest.fn();
 const updateBillingAddress = jest.fn();
 const updateShippingAddress = jest.fn();
 const signInCustomer = jest.fn();
@@ -104,6 +105,7 @@ const PaymentIntegrationServiceMock = jest
             forgetCheckout,
             remoteCheckoutSignOut,
             getConsignments,
+            loadCard,
             getPaymentProviderCustomerOrThrow,
             getState,
             handlePaymentHumanVerification,
