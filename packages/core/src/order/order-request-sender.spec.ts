@@ -4,7 +4,7 @@ import { CartConsistencyError } from '../cart/errors';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
-import { OrderTaxProviderUnavailableError } from './errors';
+import { MissingShippingMethodError, OrderTaxProviderUnavailableError } from './errors';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import { getCompleteOrderResponseBody } from './internal-orders.mock';
 import Order from './order';
@@ -152,6 +152,31 @@ describe('OrderRequestSender', () => {
                 await orderRequestSender.submitOrder(payload);
             } catch (error) {
                 expect(error).toBeInstanceOf(CartConsistencyError);
+            }
+        });
+
+        it('throws `MissingShippingMethodError` if error type is `missing_shipping_method`', async () => {
+            const error = getErrorResponse(
+                {
+                    status: 400,
+                    title: 'Missing shipping method',
+                    type: 'missing_shipping_method',
+                },
+                undefined,
+                409,
+            );
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
+
+            try {
+                const payload = {
+                    cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                    useStoreCredit: false,
+                };
+
+                await orderRequestSender.submitOrder(payload);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingShippingMethodError);
             }
         });
 
