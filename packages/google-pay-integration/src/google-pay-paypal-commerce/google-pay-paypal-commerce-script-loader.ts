@@ -79,6 +79,8 @@ export default class GooglePayPayPalCommerceScriptLoader {
         return this.window.paypal;
     }
 
+    // TODO: Remove this rule disabling after method refactor
+    // eslint-disable-next-line complexity
     private getPayPalSdkScriptConfigOrThrow(
         paymentMethod: PaymentMethod<GooglePayPayPalCommerceInitializationData>,
         currencyCode: string,
@@ -103,6 +105,8 @@ export default class GooglePayPayPalCommerceScriptLoader {
             availableAlternativePaymentMethods = [],
             enabledAlternativePaymentMethods = [],
             isGooglePayEnabled,
+            cspNonce,
+            cspNonceExperiment,
         } = initializationData;
 
         const commit = isHostedCheckoutEnabled || initializesOnCheckoutPage;
@@ -140,6 +144,7 @@ export default class GooglePayPayPalCommerceScriptLoader {
             ...enableAPMsFunding,
         ];
         const googlePayComponent: ComponentsScriptType = isGooglePayEnabled ? ['googlepay'] : [];
+        const isCSPNonceApplicable = cspNonceExperiment && cspNonce;
 
         return {
             options: {
@@ -164,6 +169,7 @@ export default class GooglePayPayPalCommerceScriptLoader {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-client-token': clientToken,
+                ...(isCSPNonceApplicable && { 'data-csp-nonce': cspNonce }),
             },
         };
     }

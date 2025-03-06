@@ -100,6 +100,32 @@ describe('PayPalCommerceSdk', () => {
             );
         });
 
+        it('loads PayPal Fastlane sdk script with data-csp-nonce', async () => {
+            const paymentMethodWithNonce = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    cspNonceExperiment: true,
+                    cspNonce: 'csp-nonce',
+                },
+            };
+            await subject.getPayPalFastlaneSdk(paymentMethodWithNonce, 'USD', sessionId);
+
+            expect(loader.loadScript).toHaveBeenCalledWith(
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=fastlane&currency=USD&intent=capture',
+                {
+                    async: true,
+                    attributes: {
+                        'data-client-metadata-id': expectedSessionId,
+                        'data-namespace': 'paypalFastlaneSdk',
+                        'data-partner-attribution-id': '1123JLKJASD12',
+                        'data-user-id-token': 'asdcvY7XFSQasd',
+                        'data-csp-nonce': 'csp-nonce',
+                    },
+                },
+            );
+        });
+
         // TODO: remove this test when A/B testing will be finished
         it('loads PayPal Fastlane Sdk script with connectClientToken for paypalcommercecreditcards method', async () => {
             const mockPaymentMethod = {
@@ -222,6 +248,30 @@ describe('PayPalCommerceSdk', () => {
                     attributes: {
                         'data-namespace': 'paypalApms',
                         'data-partner-attribution-id': '1123JLKJASD12',
+                    },
+                },
+            );
+        });
+
+        it('loads APMs sdk script with data-csp-nonce attribute', async () => {
+            const paymentMethodWithNonce = {
+                ...paymentMethod,
+                initializationData: {
+                    ...mockAPMPaymentMethod.initializationData,
+                    cspNonce: 'csp-nonce',
+                    cspNonceExperiment: true,
+                },
+            };
+            await subject.getPayPalApmsSdk(paymentMethodWithNonce, 'USD');
+
+            expect(loader.loadScript).toHaveBeenCalledWith(
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&enable-funding=oxxo&commit=true&components=buttons%2Cpayment-fields&currency=USD&intent=capture',
+                {
+                    async: true,
+                    attributes: {
+                        'data-namespace': 'paypalApms',
+                        'data-partner-attribution-id': '1123JLKJASD12',
+                        'data-csp-nonce': 'csp-nonce',
                     },
                 },
             );
