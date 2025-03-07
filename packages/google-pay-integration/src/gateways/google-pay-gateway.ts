@@ -20,18 +20,18 @@ import {
 import isGooglePayCardNetworkKey from '../guards/is-google-pay-card-network-key';
 import {
     CallbackIntentsType,
-    CallbackTriggerType,
+    CallbackTriggerType, ErrorReasonType,
     ExtraPaymentData,
     GooglePayCardDataResponse,
     GooglePayCardNetwork,
-    GooglePayCardParameters,
+    GooglePayCardParameters, GooglePayError,
     GooglePayFullBillingAddress,
     GooglePayGatewayParameters,
     GooglePayInitializationData,
-    GooglePayMerchantInfo,
+    GooglePayMerchantInfo, GooglePayPaymentDataRequest,
     GooglePayRequiredPaymentData,
     GooglePaySetExternalCheckoutData,
-    GooglePayTransactionInfo,
+    GooglePayTransactionInfo, IntermediatePaymentData,
     ShippingOptionParameters,
     TotalPriceStatusType,
 } from '../types';
@@ -142,19 +142,23 @@ export default class GooglePayGateway {
             CallbackTriggerType.INITIALIZE,
             CallbackTriggerType.SHIPPING_ADDRESS,
             CallbackTriggerType.SHIPPING_OPTION,
+            CallbackTriggerType.OFFER,
         ];
+
         const initializationTrigger = [CallbackTriggerType.INITIALIZE];
         const addressChangeTriggers = [
             CallbackTriggerType.INITIALIZE,
             CallbackTriggerType.SHIPPING_ADDRESS,
         ];
         const shippingOptionsChangeTriggers = [CallbackTriggerType.SHIPPING_OPTION];
+        const offerChangeTriggers = [CallbackTriggerType.OFFER];
 
         return {
             availableTriggers,
             initializationTrigger,
             addressChangeTriggers,
             shippingOptionsChangeTriggers,
+            offerChangeTriggers,
         };
     }
 
@@ -245,7 +249,7 @@ export default class GooglePayGateway {
         this._getPaymentMethodFn = getPaymentMethod;
         this._isBuyNowFlow = Boolean(isBuyNowFlow);
         this._currencyCode = currencyCode;
-
+        console.log('isBuyNowFlow', isBuyNowFlow);
         if (this._isBuyNowFlow) {
             this._getCurrencyCodeOrThrow();
         }
@@ -327,6 +331,126 @@ export default class GooglePayGateway {
         );
 
         return totalPrice;
+    }
+
+    async handleCoupons(
+        offerData: IntermediatePaymentData['offerData'],
+        isCartPage = false,
+    ) {
+        const { redemptionCodes = [] } = offerData || {};
+        const appliedCoupons = this.getAppliedCoupons();
+
+        let error = undefined;
+
+        if (!redemptionCodes.length) {
+            await this.removeAllCoupons(appliedCoupons, isCartPage);
+
+            return {
+                newOfferInfo: this.getAppliedCoupons(),
+                error,
+            }
+        }
+
+        // Validate for applied coupons to make sure we have only one applied
+        if (appliedCoupons.offers.length) {
+            error = {
+                reason: ErrorReasonType.OFFER_INVALID,
+                message: "You can only apply one coupon per order.",
+                intent: CallbackTriggerType.OFFER
+            };
+
+            return {
+                newOfferInfo: appliedCoupons,
+                error,
+            }
+        }
+
+        const code = redemptionCodes[redemptionCodes.length - 1];
+        const appliedCouponError = await this.applyCoupon(code, isCartPage);
+
+        if (appliedCouponError) {
+            error = appliedCouponError;
+        }
+
+        return {
+            newOfferInfo: this.getAppliedCoupons(),
+            error,
+        }
+    }
+
+    getAppliedCoupons(): GooglePayPaymentDataRequest['offerInfo'] {
+        const state = this._paymentIntegrationService.getState();
+        const { coupons } = state.getCheckout() || {};
+        console.log('state.getCheckout()', state.getCheckout());
+
+        // @ts-ignore
+        window.check = state.getCheckout
+        const offers = (coupons || []).map((coupon) => {
+            const { displayName, code } = coupon;
+            return {
+                redemptionCode: code,
+                description: displayName,
+            }
+        });
+
+        return {
+            offers,
+        }
+    }
+
+    protected async applyCoupon(code: string, isCartPage: boolean) {
+        let error: GooglePayError | undefined = undefined;
+
+        try {
+            await this._paymentIntegrationService.applyCoupon(code);
+        } catch (e) {
+            if (e instanceof Error) {
+                error = {
+                    reason: ErrorReasonType.OFFER_INVALID,
+                    message: e.message,
+                    intent: CallbackTriggerType.OFFER
+                };
+            }
+
+            return error;
+        }
+
+        if (isCartPage) {
+            const couponCodeInput = document.getElementById('couponcode') as HTMLInputElement;
+
+            if (couponCodeInput) {
+                couponCodeInput.value = code;
+
+                const form = document.querySelector('.coupon-form');
+
+                if (form) {
+                    try {
+                        form.dispatchEvent(new CustomEvent('submit', { cancelable: true }));
+                    } catch (error) {}
+                }
+            }
+        }
+    }
+
+    protected async removeAllCoupons(
+        appliedCoupons: GooglePayPaymentDataRequest['offerInfo'],
+        withClickOnTheCartPage: boolean
+    ) {
+        const { offers } = appliedCoupons;
+
+        const couponsPromise = offers.map((couponCode) => {
+            return this._paymentIntegrationService.removeCoupon(couponCode.redemptionCode);
+        });
+
+        await Promise.all(couponsPromise);
+
+        if (withClickOnTheCartPage) {
+            const removeCouponLink = document.querySelector('a[href*="/cart.php?action=removecoupon"]') as HTMLAnchorElement;
+
+            if (removeCouponLink) {
+                removeCouponLink.click()
+            }
+        }
     }
 
     protected getGooglePayInitializationData(): GooglePayInitializationData {

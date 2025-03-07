@@ -35,6 +35,7 @@ import { PaymentHumanVerificationHandler, SpamProtectionActionCreator } from '..
 import { StoreCreditActionCreator } from '../store-credit';
 
 import PaymentIntegrationStoreProjectionFactory from './payment-integration-store-projection-factory';
+import CouponActionCreator from '../coupon/coupon-action-creator';
 
 export default class DefaultPaymentIntegrationService implements PaymentIntegrationService {
     private _storeProjection: DataStoreProjection<PaymentIntegrationSelectors>;
@@ -54,6 +55,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _customerActionCreator: CustomerActionCreator,
         private _cartRequestSender: CartRequestSender,
         private _storeCreditActionCreator: StoreCreditActionCreator,
+        private _couponActionCreator: CouponActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
         private _paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
@@ -210,6 +212,28 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
     ): Promise<PaymentIntegrationSelectors> {
         await this._store.dispatch(
             this._storeCreditActionCreator.applyStoreCredit(useStoreCredit, options),
+        );
+
+        return this._storeProjection.getState();
+    }
+
+    async applyCoupon(
+        coupon: string,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._couponActionCreator.applyCoupon(coupon, options),
+        );
+
+        return this._storeProjection.getState();
+    }
+
+    async removeCoupon(
+        coupon: string,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._couponActionCreator.removeCoupon(coupon, options),
         );
 
         return this._storeProjection.getState();
