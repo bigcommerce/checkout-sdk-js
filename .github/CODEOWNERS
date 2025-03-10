@@ -85,6 +85,7 @@
 /packages/paypal-commerce-integration @bigcommerce/team-paypal
 /packages/paypal-commerce-utils @bigcommerce/team-paypal
 /packages/paypal-pro-integration @bigcommerce/team-paypal
+/packages/paypal-utils @bigcommerce/team-paypal
 
 
 ## Shared
