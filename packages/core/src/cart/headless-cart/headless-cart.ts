@@ -130,4 +130,12 @@ export default interface HeadlessCartResponse {
             };
         }>;
     };
+    currency?: {
+        display: {
+            decimalPlaces: number;
+            symbol: string;
+        };
+        name: string;
+        code: string;
+    };
 }

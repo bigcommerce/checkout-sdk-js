@@ -4,61 +4,46 @@ import { HeadlessCartRequestResponse } from '../headless-cart-request-response';
 export function headlessLineItem(): HeadlessLineItem {
     return {
         discounts: [],
-        brand: 'null',
+        brand: 'OFS',
         couponAmount: {
-            value: 0,
+            value: 5,
         },
         discountedAmount: {
-            value: 0,
+            value: 10,
         },
-        entityId: 'e9543890-76a5-4026-bb7d-5f4bebd68b9f',
+        entityId: '666',
         extendedListPrice: {
-            value: 225,
+            value: 200,
         },
         extendedSalePrice: {
-            value: 225,
+            value: 190,
         },
-        imageUrl:
-            'https://cdn.integration.zone/s-wbaqgkqmcy/products/86/images/286/ablebrewingsystem4.1736764752.220.290.jpg?c=1',
+        imageUrl: '/images/canvas-laundry-cart.jpg',
         isTaxable: true,
         listPrice: {
-            value: 225,
+            value: 200,
         },
-        name: '[Sample] Able Brewing System',
+        name: 'Canvas Laundry Cart',
         originalPrice: {
             value: 225,
         },
-        productEntityId: 86,
+        productEntityId: 103,
         quantity: 1,
         salePrice: {
-            value: 225,
+            value: 190,
         },
         selectedOptions: [
             {
-                name: 'Color',
-                entityId: 114,
+                name: 'n',
+                entityId: 1,
                 __typename: 'CartSelectedMultipleChoiceOption',
-                value: 'Green',
-                valueEntityId: 102,
-            },
-            {
-                name: 'Size',
-                entityId: 115,
-                __typename: 'CartSelectedMultipleChoiceOption',
-                value: 'Medium',
-                valueEntityId: 105,
-            },
-            {
-                name: 'test',
-                entityId: 116,
-                __typename: 'CartSelectedMultipleChoiceOption',
-                value: 'test1',
-                valueEntityId: 107,
+                value: 'v',
+                valueEntityId: 3,
             },
         ],
-        sku: 'ABS-GR-ME-TE',
-        url: 'https://nicktsybulko1736764704-testly-the-third.my-integration.zone/able-brewing-system',
-        variantEntityId: 89,
+        sku: 'CLC',
+        url: '/canvas-laundry-cart/',
+        variantEntityId: 71,
     };
 }
 
@@ -68,27 +53,27 @@ export function getHeadlessCartResponse(): HeadlessCartRequestResponse {
             site: {
                 cart: {
                     amount: {
-                        value: 225,
+                        value: 190,
                     },
                     baseAmount: {
-                        value: 225,
+                        value: 200,
                     },
                     createdAt: {
-                        utc: '2025-01-13T19:08:43Z',
+                        utc: '2018-03-06T04:41:49+00:00',
                     },
                     updatedAt: {
-                        utc: '2025-01-13T19:46:00Z',
+                        utc: '2018-03-07T03:44:51+00:00',
                     },
                     currencyCode: 'USD',
                     discountedAmount: {
-                        value: 0,
+                        value: 10,
                     },
                     discounts: [
                         {
                             discountedAmount: {
-                                value: 0,
+                                value: 10,
                             },
-                            entityId: 'e9543890-76a5-4026-bb7d-5f4bebd68b9f',
+                            entityId: '12e11c8f-7dce-4da3-9413-b649533f8bad',
                         },
                     ],
                     entityId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -103,30 +88,50 @@ export function getHeadlessCartResponse(): HeadlessCartRequestResponse {
                 checkout: {
                     coupons: [
                         {
-                            entityId: '123',
-                            code: 'I534FA46H',
-                            couponType: 'promotion',
+                            entityId: '1',
+                            code: 'savebig2015',
+                            couponType: 'percentage_discount',
                             discountedAmount: {
-                                value: 10,
+                                value: 5,
+                            },
+                        },
+                        {
+                            entityId: '4',
+                            code: '279F507D817E3E7',
+                            couponType: 'shipping_discount',
+                            discountedAmount: {
+                                value: 5,
                             },
                         },
                     ],
+                },
+                currency: {
+                    display: {
+                        decimalPlaces: 2,
+                        symbol: '$',
+                    },
+                    name: 'US Dollar',
+                    code: 'USD',
                 },
             },
         },
     };
 }
 
-export function getPhysicalItem() {
+export function getPhysicalItem(hasGiftWrapping?: false) {
     return {
         isShippingRequired: true,
-        giftWrapping: {
-            name: 'gift',
-            message: 'message',
-            amount: {
-                value: 10,
-            },
-        },
+        ...(hasGiftWrapping
+            ? {
+                  giftWrapping: {
+                      name: 'gift',
+                      message: 'message',
+                      amount: {
+                          value: 10,
+                      },
+                  },
+              }
+            : {}),
         ...headlessLineItem(),
     };
 }

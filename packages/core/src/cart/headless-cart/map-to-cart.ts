@@ -5,9 +5,9 @@ import mapToCartLineItems from './map-to-cart-line-items';
 import { HeadlessCartResponse } from './';
 
 export default function mapToCart(headlessCartResponse: HeadlessCartResponse): Cart | undefined {
-    const { cart, checkout } = headlessCartResponse;
+    const { cart, checkout, currency } = headlessCartResponse;
 
-    if (!cart || !checkout) {
+    if (!cart || !checkout || !currency) {
         return;
     }
 
@@ -22,11 +22,10 @@ export default function mapToCart(headlessCartResponse: HeadlessCartResponse): C
         isTaxIncluded: cart.isTaxIncluded,
         lineItems: mapToCartLineItems(cart.lineItems),
         currency: {
-            code: cart.currencyCode,
-            // TODO:: we do not have any information regarding to fields below (name, symbol, decimalPlaces) in the GraphQL Storefront doc (https://developer.bigcommerce.com/docs/storefront/cart-checkout/guide/graphql-storefront)
-            name: '',
-            symbol: '',
-            decimalPlaces: 2,
+            code: currency.code,
+            name: currency.name,
+            symbol: currency.display.symbol,
+            decimalPlaces: currency.display.decimalPlaces,
         },
         createdTime: cart.createdAt.utc,
         updatedTime: cart.updatedAt.utc,
