@@ -321,7 +321,6 @@ export interface GooglePayPayPalCommerceInitializationData extends GooglePayBase
     shouldRenderFields?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     cspNonce?: string;
-    cspNonceExperiment?: boolean;
 }
 
 export interface GooglePayAuthorizeNetInitializationData extends GooglePayBaseInitializationData {

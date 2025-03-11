@@ -40,7 +40,6 @@ export interface PayPalCommerceInitializationData {
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
     cspNonce?: string;
-    cspNonceExperiment?: boolean;
 }
 
 /**

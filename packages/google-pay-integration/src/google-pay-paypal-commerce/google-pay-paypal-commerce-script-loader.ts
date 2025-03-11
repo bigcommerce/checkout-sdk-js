@@ -106,7 +106,6 @@ export default class GooglePayPayPalCommerceScriptLoader {
             enabledAlternativePaymentMethods = [],
             isGooglePayEnabled,
             cspNonce,
-            cspNonceExperiment,
         } = initializationData;
 
         const commit = isHostedCheckoutEnabled || initializesOnCheckoutPage;
@@ -144,7 +143,6 @@ export default class GooglePayPayPalCommerceScriptLoader {
             ...enableAPMsFunding,
         ];
         const googlePayComponent: ComponentsScriptType = isGooglePayEnabled ? ['googlepay'] : [];
-        const isCSPNonceApplicable = cspNonceExperiment && cspNonce;
 
         return {
             options: {
@@ -169,7 +167,7 @@ export default class GooglePayPayPalCommerceScriptLoader {
             attributes: {
                 'data-partner-attribution-id': attributionId,
                 'data-client-token': clientToken,
-                ...(isCSPNonceApplicable && { 'data-csp-nonce': cspNonce }),
+                ...(cspNonce && { 'data-csp-nonce': cspNonce }),
             },
         };
     }

@@ -104,8 +104,7 @@ describe('PayPalCommerceSdk', () => {
             const paymentMethodWithNonce = {
                 ...paymentMethod,
                 initializationData: {
-                    ...paymentMethod.initializationData,
-                    cspNonceExperiment: true,
+                    ...paymentMethod.initializationData,s
                     cspNonce: 'csp-nonce',
                 },
             };
@@ -259,7 +258,6 @@ describe('PayPalCommerceSdk', () => {
                 initializationData: {
                     ...mockAPMPaymentMethod.initializationData,
                     cspNonce: 'csp-nonce',
-                    cspNonceExperiment: true,
                 },
             };
             await subject.getPayPalApmsSdk(paymentMethodWithNonce, 'USD');

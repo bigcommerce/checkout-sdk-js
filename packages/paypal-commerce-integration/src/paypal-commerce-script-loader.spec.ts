@@ -75,7 +75,6 @@ describe('PayPalCommerceScriptLoader', () => {
             ...paymentMethod,
             initializationData: {
                 ...paymentMethod.initializationData,
-                cspNonceExperiment: true,
                 cspNonce: 'csp-nonce',
             },
         };

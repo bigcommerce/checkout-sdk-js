@@ -259,7 +259,6 @@ export interface PayPalCommerceInitializationData {
     shouldRenderFields?: boolean;
     shouldRunAcceleratedCheckout?: boolean;
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
-    cspNonceExperiment?: boolean;
     cspNonce?: string;
 }
 
