@@ -22,6 +22,7 @@ iframe has a list of shipping addresses for the customer to choose from.
 - [getStripeState](StripeUPEShippingInitializeOptions.md#getstripestate)
 - [getStyles](StripeUPEShippingInitializeOptions.md#getstyles)
 - [onChangeShipping](StripeUPEShippingInitializeOptions.md#onchangeshipping)
+- [setStripeExperiments](StripeUPEShippingInitializeOptions.md#setstripeexperiments)
 
 ## Properties
 
@@ -61,7 +62,7 @@ The identifier of the payment method.
 
 ### getStripeState
 
-▸ **getStripeState**(`country`, `state`): `string`
+▸ **getStripeState**(`country`, `state`, `isStripeStateMappingDisabledForES?`): `string`
 
 get the state code needed for shipping stripe element
 
@@ -71,6 +72,7 @@ get the state code needed for shipping stripe element
 | :------ | :------ |
 | `country` | `string` |
 | `state` | `string` |
+| `isStripeStateMappingDisabledForES?` | `boolean` |
 
 #### Returns
 
@@ -105,3 +107,24 @@ A callback that gets called whenever the Stripe Link Shipping Element's object i
 #### Returns
 
 `void`
+
+___
+
+### setStripeExperiments
+
+▸ `Optional` **setStripeExperiments**(`experiments`): `void`
+
+Set the Stripe experiments to be used in checkout-js components;
+Stripe specific experiments broadcasts to SDK from payment provider configs request.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `experiments` | `Record`<`string`, `boolean`\> |
+
+#### Returns
+
+`void`
+
+void

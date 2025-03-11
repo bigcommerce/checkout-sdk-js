@@ -8,6 +8,7 @@
 
 - [buyNowInitializeOptions](BraintreePaypalCreditButtonInitializeOptions.md#buynowinitializeoptions)
 - [currencyCode](BraintreePaypalCreditButtonInitializeOptions.md#currencycode)
+- [messagingContainerId](BraintreePaypalCreditButtonInitializeOptions.md#messagingcontainerid)
 - [shippingAddress](BraintreePaypalCreditButtonInitializeOptions.md#shippingaddress)
 - [style](BraintreePaypalCreditButtonInitializeOptions.md#style)
 
@@ -39,6 +40,14 @@ ___
 • `Optional` **currencyCode**: `string`
 
 The option that used to initialize a PayPal script with provided currency code.
+
+___
+
+### messagingContainerId
+
+• `Optional` **messagingContainerId**: `string`
+
+The ID of a container where the messaging component should be inserted.
 
 ___
 

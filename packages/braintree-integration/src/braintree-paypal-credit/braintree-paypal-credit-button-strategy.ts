@@ -83,7 +83,6 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
             currencyCode = state.getCartOrThrow().currency.code;
         }
 
-        // Should payment method be loaded here?
         const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
         const { clientToken, config, initializationData } = paymentMethod;
 
@@ -100,6 +99,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         const paypalCheckoutSuccessCallback = (
             braintreePaypalCheckout: BraintreePaypalCheckout,
         ) => {
+            this.renderPayPalMessages(braintreepaypalcredit.messagingContainerId);
             this.renderPayPalButton(
                 braintreePaypalCheckout,
                 braintreepaypalcredit,
@@ -121,6 +121,26 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
 
     async deinitialize(): Promise<void> {
         await this.braintreeIntegrationService.teardown();
+    }
+
+    private renderPayPalMessages(messagingContainerId?: string): void {
+        const isMessageContainerAvailable =
+            messagingContainerId && Boolean(document.getElementById(messagingContainerId));
+        const { paypal } = this.braintreeHostWindow;
+
+        if (isMessageContainerAvailable && paypal) {
+            const state = this.paymentIntegrationService.getState();
+            const amount = state.getCartOrThrow().cartAmount;
+
+            const paypalMessagesRender = paypal.Messages({
+                amount,
+                placement: 'cart',
+            });
+
+            paypalMessagesRender.render(`#${messagingContainerId}`);
+        } else {
+            this.braintreeIntegrationService.removeElement(messagingContainerId);
+        }
     }
 
     private renderPayPalButton(
@@ -206,9 +226,6 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
 
             this.buyNowCartId = buyNowCart?.id;
 
-            // Should we load checkout once again? Since it was loaded in initialization method
-            // await this.paymentIntegrationService.loadDefaultCheckout();
-            // needed only for non buy now flow
             const state = this.paymentIntegrationService.getState();
             const customer = state.getCustomer();
             const paymentMethod: PaymentMethod<BraintreeInitializationData> =

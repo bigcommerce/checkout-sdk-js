@@ -16,7 +16,6 @@
 
 ### Properties
 
-- [braintreepaypal](BaseCheckoutButtonInitializeOptions.md#braintreepaypal)
 - [containerId](BaseCheckoutButtonInitializeOptions.md#containerid)
 - [currencyCode](BaseCheckoutButtonInitializeOptions.md#currencycode)
 - [methodId](BaseCheckoutButtonInitializeOptions.md#methodid)
@@ -25,15 +24,6 @@
 - [timeout](BaseCheckoutButtonInitializeOptions.md#timeout)
 
 ## Properties
-
-### braintreepaypal
-
-• `Optional` **braintreepaypal**: [`BraintreePaypalButtonInitializeOptions`](BraintreePaypalButtonInitializeOptions.md)
-
-The options that are required to facilitate Braintree PayPal. They can be
-omitted unless you need to support Braintree PayPal.
-
-___
 
 ### containerId
 

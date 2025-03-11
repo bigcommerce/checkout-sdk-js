@@ -12,6 +12,7 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { GooglePayKey } from '../google-pay-payment-initialize-options';
 import assertIsGooglePayBraintreeTokenObject from '../guards/is-google-pay-braintree-token-object';
 import {
     GooglePayCardDataResponse,
@@ -25,6 +26,7 @@ import GooglePayGateway from './google-pay-gateway';
 export default class GooglePayBraintreeGateway extends GooglePayGateway {
     private _braintreeGooglePayment?: BraintreeGooglePayment;
     private _service: PaymentIntegrationService;
+    private _methodId = GooglePayKey.BRAINTREE;
 
     constructor(service: PaymentIntegrationService, private _braintreeSdk: BraintreeSdk) {
         super('braintree', service);
@@ -39,7 +41,13 @@ export default class GooglePayBraintreeGateway extends GooglePayGateway {
     ): Promise<void> {
         await super.initialize(getPaymentMethod, isBuyNowFlow, currencyCode);
 
-        const paymentMethod = super.getPaymentMethod();
+        let paymentMethod = super.getPaymentMethod();
+
+        if (!paymentMethod.clientToken) {
+            const state = await this._service.loadPaymentMethod(this._methodId);
+
+            paymentMethod = state.getPaymentMethodOrThrow(this._methodId);
+        }
 
         if (!paymentMethod.clientToken || !paymentMethod.initializationData) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);

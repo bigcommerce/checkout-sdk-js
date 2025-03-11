@@ -104,7 +104,7 @@ describe('PayPalCommerceSdk', () => {
             const paymentMethodWithNonce = {
                 ...paymentMethod,
                 initializationData: {
-                    ...paymentMethod.initializationData,s
+                    ...paymentMethod.initializationData,
                     cspNonce: 'csp-nonce',
                 },
             };

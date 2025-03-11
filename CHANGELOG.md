@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.714.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.713.2...v1.714.0) (2025-03-06)
+
+
+### Features
+
+* **payment:** PAYPAL-5213 added messages implementation to Braintree PayPal Credit button strategy ([#2801](https://github.com/bigcommerce/checkout-sdk-js/issues/2801)) ([3c7f14f](https://github.com/bigcommerce/checkout-sdk-js/commit/3c7f14fc48e6b45eb1281d826c7db60103d23d49))
+
+### [1.713.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.713.1...v1.713.2) (2025-03-06)
+
+### [1.713.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.713.0...v1.713.1) (2025-03-04)
+
+
+### Bug Fixes
+
+* **payment:** STRIPE-660 Disable state code mapping for Spain in Stripe Link Address component ([2c2c1fd](https://github.com/bigcommerce/checkout-sdk-js/commit/2c2c1fd50c19d7b67961df79e355f3c04e10d0f6))
+
+## [1.713.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.712.1...v1.713.0) (2025-03-04)
+
+
+### Features
+
+* **payment:** PAYPAL-5201 updates related to clientToken checking ([821eeb4](https://github.com/bigcommerce/checkout-sdk-js/commit/821eeb4692a9cd4e582d18fdf1a4b98e423a1dd4))
+
+### [1.712.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.712.0...v1.712.1) (2025-03-04)
+
+
+### Code Refactoring
+
+* **payment:** PAYPAL-2609 moved BraintreePayPalButtonStrategy from core to braintree-integration package ([#2791](https://github.com/bigcommerce/checkout-sdk-js/issues/2791)) ([70ff230](https://github.com/bigcommerce/checkout-sdk-js/commit/70ff230f2089a21804e6bf0b40516e2660d2b1d8))
+
+## [1.712.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.711.1...v1.712.0) (2025-02-27)
+
+
+### Features
+
+* **payment:** PAYPAL-5187 added BT falback Url ([#2796](https://github.com/bigcommerce/checkout-sdk-js/issues/2796)) ([e466189](https://github.com/bigcommerce/checkout-sdk-js/commit/e4661899c9347e06e59fdab1798e3daee64d7449))
+
 ### [1.711.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.711.0...v1.711.1) (2025-02-19)
 
 

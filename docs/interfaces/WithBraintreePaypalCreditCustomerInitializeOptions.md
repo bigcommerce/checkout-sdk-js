@@ -12,7 +12,7 @@
 
 ### braintreepaypalcredit
 
-• `Optional` **braintreepaypalcredit**: [`BraintreePaypalCreditCustomerInitializeOptions_2`](BraintreePaypalCreditCustomerInitializeOptions_2.md)
+• `Optional` **braintreepaypalcredit**: [`BraintreePaypalCreditCustomerInitializeOptions`](BraintreePaypalCreditCustomerInitializeOptions.md)
 
 The options that are required to initialize the customer step of checkout
 when using Braintree PayPal.

@@ -31,7 +31,7 @@ The options that are required to initialize Buy Now functionality.
 
 | Name | Type |
 | :------ | :------ |
-| `getBuyNowCartRequestBody?` | () => `void` \| [`BuyNowCartRequestBody`](BuyNowCartRequestBody.md) |
+| `getBuyNowCartRequestBody?` | () => `void` \| `default` |
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 ### shippingAddress
 
-• `Optional` **shippingAddress**: ``null`` \| [`Address`](Address.md)
+• `Optional` **shippingAddress**: ``null`` \| `default`
 
 Address to be used for shipping.
 If not provided, it will use the first saved address from the active customer.
@@ -62,7 +62,7 @@ ___
 
 ### style
 
-• `Optional` **style**: `Pick`<[`PaypalStyleOptions`](PaypalStyleOptions.md), ``"color"`` \| ``"height"`` \| ``"label"`` \| ``"size"`` \| ``"layout"`` \| ``"shape"`` \| ``"tagline"`` \| ``"fundingicons"``\>
+• `Optional` **style**: `Pick`<`PaypalStyleOptions`, ``"color"`` \| ``"height"`` \| ``"label"`` \| ``"size"`` \| ``"layout"`` \| ``"shape"`` \| ``"tagline"`` \| ``"fundingicons"``\>
 
 A set of styling options for the checkout button.
 
@@ -78,7 +78,7 @@ A callback that gets called if unable to authorize and tokenize payment.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `error` | [`BraintreeError_2`](BraintreeError_2.md) \| [`StandardError`](../classes/StandardError.md) | The error object describing the failure. |
+| `error` | `default` \| `BraintreeError` | The error object describing the failure. |
 
 #### Returns
 
@@ -108,7 +108,7 @@ A callback that gets called on any error instead of submit payment or authorizat
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `error` | [`BraintreeError_2`](BraintreeError_2.md) \| [`StandardError`](../classes/StandardError.md) | The error object describing the failure. |
+| `error` | `default` \| `BraintreeError` | The error object describing the failure. |
 
 #### Returns
 
@@ -126,7 +126,7 @@ A callback that gets called if unable to submit payment.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `error` | [`BraintreeError_2`](BraintreeError_2.md) \| [`StandardError`](../classes/StandardError.md) | The error object describing the failure. |
+| `error` | `default` \| `BraintreeError` | The error object describing the failure. |
 
 #### Returns
 

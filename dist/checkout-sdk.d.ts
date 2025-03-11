@@ -6,7 +6,7 @@ import { AmazonPayV2ButtonConfig } from '@bigcommerce/checkout-sdk/amazon-pay-ut
 import { AmazonPayV2ButtonParameters } from '@bigcommerce/checkout-sdk/amazon-pay-utils';
 import { BraintreeError } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
-import { BuyNowCartRequestBody as BuyNowCartRequestBody_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { BuyNowCartRequestBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CardClassSelectors } from '@square/web-payments-sdk-types';
 import { CardInstrument as CardInstrument_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -574,7 +574,7 @@ declare interface ApplePayButtonInitializeOptions {
      * The options that are required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
     /**
      * A callback that gets called when a payment is successfully completed.
@@ -670,11 +670,6 @@ declare interface BaseAccountInstrument extends BaseInstrument {
 declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOptions {
     [key: string]: unknown;
     /**
-     * The options that are required to facilitate Braintree PayPal. They can be
-     * omitted unless you need to support Braintree PayPal.
-     */
-    braintreepaypal?: BraintreePaypalButtonInitializeOptions;
-    /**
      * The ID of a container which the checkout button should be inserted.
      */
     containerId: string;
@@ -700,16 +695,6 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
  */
 declare interface BaseCustomerInitializeOptions extends CustomerRequestOptions {
     [key: string]: unknown;
-    /**
-     * The options that are required to facilitate Braintree Credit. They can be
-     * omitted unless you need to support Braintree Credit.
-     */
-    braintreepaypalcredit?: BraintreePaypalCreditCustomerInitializeOptions;
-    /**
-     * The options that are required to initialize the customer step of checkout
-     * when using Visa Checkout provided by Braintree.
-     */
-    braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
     /**
      * The options that are required to initialize the Masterpass payment method.
      * They can be omitted unless you need to support Masterpass.
@@ -1004,7 +989,7 @@ declare interface BoltButtonStyleOptions {
 
 declare interface BoltBuyNowInitializeOptions {
     storefrontApiToken?: string;
-    getBuyNowCartRequestBody(): BuyNowCartRequestBody_2;
+    getBuyNowCartRequestBody(): BuyNowCartRequestBody;
 }
 
 /**
@@ -1094,12 +1079,6 @@ declare interface BraintreeAnalyticTrackerService {
     paymentComplete(): void;
     selectedPaymentMethod(methodId: string): void;
     walletButtonClick(methodId: string): void;
-}
-
-declare interface BraintreeError_2 extends Error {
-    type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
-    code: string;
-    details?: unknown;
 }
 
 /**
@@ -1468,52 +1447,52 @@ declare interface BraintreePaymentInitializeOptions {
 
 declare interface BraintreePaypalButtonInitializeOptions {
     /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: {
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
+    };
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
      * The ID of a container which the messaging should be inserted.
      */
     messagingContainerId?: string;
     /**
      * A set of styling options for the checkout button.
      */
-    style?: Pick<PaypalStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
+    style?: Pick<PaypalStyleOptions_2, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons' | 'height'>;
     /**
      * Address to be used for shipping.
      * If not provided, it will use the first saved address from the active customer.
      */
-    shippingAddress?: Address | null;
+    shippingAddress?: Address_2 | null;
     /**
      * A callback that gets called if unable to authorize and tokenize payment.
      *
      * @param error - The error object describing the failure.
      */
-    onAuthorizeError?(error: BraintreeError_2 | StandardError): void;
+    onAuthorizeError?(error: BraintreeError | StandardError_2): void;
     /**
      * A callback that gets called if unable to submit payment.
      *
      * @param error - The error object describing the failure.
      */
-    onPaymentError?(error: BraintreeError_2 | StandardError): void;
+    onPaymentError?(error: BraintreeError | StandardError_2): void;
     /**
      * A callback that gets called on any error instead of submit payment or authorization errors.
      *
      * @param error - The error object describing the failure.
      */
-    onError?(error: BraintreeError_2 | StandardError): void;
+    onError?(error: BraintreeError | StandardError_2): void;
     /**
      *
      *  A callback that gets called when Braintree SDK restricts to render PayPal component.
      *
      */
     onEligibilityFailure?(): void;
-    /**
-     * The option that used to initialize a PayPal script with provided currency code.
-     */
-    currencyCode?: string;
-    /**
-     * The options that are required to initialize Buy Now functionality.
-     */
-    buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
-    };
 }
 
 declare interface BraintreePaypalCreditButtonInitializeOptions {
@@ -1521,12 +1500,16 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
      * The options that are required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
     /**
      * The option that used to initialize a PayPal script with provided currency code.
      */
     currencyCode?: string;
+    /**
+     * The ID of a container where the messaging component should be inserted.
+     */
+    messagingContainerId?: string;
     /**
      * A set of styling options for the checkout button.
      */
@@ -1563,24 +1546,6 @@ declare interface BraintreePaypalCreditButtonInitializeOptions {
 }
 
 declare interface BraintreePaypalCreditCustomerInitializeOptions {
-    /**
-     * The ID of a container which the checkout button should be inserted into.
-     */
-    container: string;
-    buttonHeight?: number;
-    /**
-     * A callback that gets called on any error instead of submit payment or authorization errors.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onError?(error: BraintreeError_2 | StandardError): void;
-    /**
-     * A callback that gets called when wallet button clicked
-     */
-    onClick?(): void;
-}
-
-declare interface BraintreePaypalCreditCustomerInitializeOptions_2 {
     /**
      * The ID of a container which the checkout button should be inserted into.
      */
@@ -1669,11 +1634,6 @@ declare interface BraintreeVerifyPayload {
     liabilityShifted?: boolean;
 }
 
-declare interface BraintreeVisaCheckoutCustomerInitializeOptions {
-    container: string;
-    onError?(error: Error): void;
-}
-
 /**
  * A set of options that are required to initialize the Visa Checkout payment
  * method provided by Braintree.
@@ -1741,14 +1701,6 @@ declare interface ButtonStyles extends BlockElementStyles {
     focus?: BlockElementStyles;
     hover?: BlockElementStyles;
     disabled?: BlockElementStyles;
-}
-
-/**
- * An object that contains the information required for creating 'Buy now' cart.
- */
-declare interface BuyNowCartRequestBody {
-    source: CartSource.BuyNow;
-    lineItems: LineItem_2[];
 }
 
 declare interface CardCvcElementOptions extends BaseIndividualElementOptions {
@@ -1957,7 +1909,7 @@ declare interface CheckoutButtonErrorsState {
     deinitializeError?: Error;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -5921,16 +5873,6 @@ declare interface LineItemSocialData {
     link: string;
 }
 
-declare interface LineItem_2 {
-    productId: number;
-    quantity: number;
-    variantId?: number;
-    optionSelections?: {
-        optionId: number;
-        optionValue: number | string;
-    };
-}
-
 declare interface LinkStyles extends InlineElementStyles {
     active?: InlineElementStyles;
     focus?: InlineElementStyles;
@@ -6312,7 +6254,7 @@ declare interface PayPalButtonStyleOptions {
  *
  */
 declare interface PayPalBuyNowInitializeOptions {
-    getBuyNowCartRequestBody(): BuyNowCartRequestBody_2;
+    getBuyNowCartRequestBody(): BuyNowCartRequestBody;
 }
 
 declare interface PayPalCommerceAlternativeMethodsButtonOptions {
@@ -8125,7 +8067,15 @@ declare interface StripeUPEShippingInitializeOptions {
      * @param country
      * @param state
      */
-    getStripeState(country: string, state: string): string;
+    getStripeState(country: string, state: string, isStripeStateMappingDisabledForES?: boolean): string;
+    /**
+     * Set the Stripe experiments to be used in checkout-js components;
+     * Stripe specific experiments broadcasts to SDK from payment provider configs request.
+     *
+     * @param experiments
+     * @returns void
+     */
+    setStripeExperiments?(experiments: Record<string, boolean>): void;
 }
 
 /**
@@ -8432,6 +8382,13 @@ declare interface WithBraintreeLocalMethodsPaymentInitializeOptions {
     braintreelocalmethods?: BraintreeLocalMethodsPaymentInitializeOptions;
 }
 
+declare interface WithBraintreePaypalButtonInitializeOptions {
+    /**
+     * The options that are required to initialize Braintree PayPal wallet button on Product and Cart page.
+     */
+    braintreepaypal?: BraintreePaypalButtonInitializeOptions;
+}
+
 declare interface WithBraintreePaypalCreditButtonInitializeOptions {
     /**
      * The options that are required to initialize Braintree PayPal Credit wallet button on Product and Cart page.
@@ -8444,7 +8401,7 @@ declare interface WithBraintreePaypalCreditCustomerInitializeOptions {
      * The options that are required to initialize the customer step of checkout
      * when using Braintree PayPal.
      */
-    braintreepaypalcredit?: BraintreePaypalCreditCustomerInitializeOptions_2;
+    braintreepaypalcredit?: BraintreePaypalCreditCustomerInitializeOptions;
 }
 
 declare interface WithBraintreePaypalCustomerInitializeOptions {
@@ -8460,7 +8417,7 @@ declare interface WithBuyNowFeature extends AmazonPayV2ButtonConfig {
      * The options that are required to initialize Buy Now functionality.
      */
     buyNowInitializeOptions?: {
-        getBuyNowCartRequestBody?(): BuyNowCartRequestBody_2 | void;
+        getBuyNowCartRequestBody?(): BuyNowCartRequestBody | void;
     };
 }
 

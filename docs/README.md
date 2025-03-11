@@ -117,7 +117,6 @@
 - [BoltPaymentInitializeOptions](interfaces/BoltPaymentInitializeOptions.md)
 - [BraintreeAchInitializeOptions](interfaces/BraintreeAchInitializeOptions.md)
 - [BraintreeAnalyticTrackerService](interfaces/BraintreeAnalyticTrackerService.md)
-- [BraintreeError_2](interfaces/BraintreeError_2.md)
 - [BraintreeFastlaneCustomerInitializeOptions](interfaces/BraintreeFastlaneCustomerInitializeOptions.md)
 - [BraintreeFastlanePaymentInitializeOptions](interfaces/BraintreeFastlanePaymentInitializeOptions.md)
 - [BraintreeFastlaneShippingInitializeOptions](interfaces/BraintreeFastlaneShippingInitializeOptions.md)
@@ -135,18 +134,15 @@
 - [BraintreePaypalButtonInitializeOptions](interfaces/BraintreePaypalButtonInitializeOptions.md)
 - [BraintreePaypalCreditButtonInitializeOptions](interfaces/BraintreePaypalCreditButtonInitializeOptions.md)
 - [BraintreePaypalCreditCustomerInitializeOptions](interfaces/BraintreePaypalCreditCustomerInitializeOptions.md)
-- [BraintreePaypalCreditCustomerInitializeOptions_2](interfaces/BraintreePaypalCreditCustomerInitializeOptions_2.md)
 - [BraintreePaypalCustomerInitializeOptions](interfaces/BraintreePaypalCustomerInitializeOptions.md)
 - [BraintreeStoredCardFieldOptions](interfaces/BraintreeStoredCardFieldOptions.md)
 - [BraintreeStoredCardFieldsMap](interfaces/BraintreeStoredCardFieldsMap.md)
 - [BraintreeThreeDSecureOptions](interfaces/BraintreeThreeDSecureOptions.md)
 - [BraintreeVerifyPayload](interfaces/BraintreeVerifyPayload.md)
-- [BraintreeVisaCheckoutCustomerInitializeOptions](interfaces/BraintreeVisaCheckoutCustomerInitializeOptions.md)
 - [BraintreeVisaCheckoutPaymentInitializeOptions](interfaces/BraintreeVisaCheckoutPaymentInitializeOptions.md)
 - [BrowserInfo](interfaces/BrowserInfo.md)
 - [ButtonResponse](interfaces/ButtonResponse.md)
 - [ButtonStyles](interfaces/ButtonStyles.md)
-- [BuyNowCartRequestBody](interfaces/BuyNowCartRequestBody.md)
 - [CardCvcElementOptions](interfaces/CardCvcElementOptions.md)
 - [CardDataPaymentMethodState](interfaces/CardDataPaymentMethodState.md)
 - [CardElementOptions](interfaces/CardElementOptions.md)
@@ -314,7 +310,6 @@
 - [LineItemMap](interfaces/LineItemMap.md)
 - [LineItemOption](interfaces/LineItemOption.md)
 - [LineItemSocialData](interfaces/LineItemSocialData.md)
-- [LineItem_2](interfaces/LineItem_2.md)
 - [LinkStyles](interfaces/LinkStyles.md)
 - [Locales](interfaces/Locales.md)
 - [MasterpassCustomerInitializeOptions](interfaces/MasterpassCustomerInitializeOptions.md)
@@ -460,6 +455,7 @@
 - [WithBraintreeFastlaneCustomerInitializeOptions](interfaces/WithBraintreeFastlaneCustomerInitializeOptions.md)
 - [WithBraintreeFastlanePaymentInitializeOptions](interfaces/WithBraintreeFastlanePaymentInitializeOptions.md)
 - [WithBraintreeLocalMethodsPaymentInitializeOptions](interfaces/WithBraintreeLocalMethodsPaymentInitializeOptions.md)
+- [WithBraintreePaypalButtonInitializeOptions](interfaces/WithBraintreePaypalButtonInitializeOptions.md)
 - [WithBraintreePaypalCreditButtonInitializeOptions](interfaces/WithBraintreePaypalCreditButtonInitializeOptions.md)
 - [WithBraintreePaypalCreditCustomerInitializeOptions](interfaces/WithBraintreePaypalCreditCustomerInitializeOptions.md)
 - [WithBraintreePaypalCustomerInitializeOptions](interfaces/WithBraintreePaypalCustomerInitializeOptions.md)
@@ -646,7 +642,7 @@ ___
 
 ### CheckoutButtonInitializeOptions
 
-Ƭ **CheckoutButtonInitializeOptions**: [`BaseCheckoutButtonInitializeOptions`](interfaces/BaseCheckoutButtonInitializeOptions.md) & [`WithAmazonPayV2ButtonInitializeOptions`](interfaces/WithAmazonPayV2ButtonInitializeOptions.md) & [`WithApplePayButtonInitializeOptions`](interfaces/WithApplePayButtonInitializeOptions.md) & [`WithBoltButtonInitializeOptions`](interfaces/WithBoltButtonInitializeOptions.md) & [`WithBraintreePaypalCreditButtonInitializeOptions`](interfaces/WithBraintreePaypalCreditButtonInitializeOptions.md) & [`WithGooglePayButtonInitializeOptions`](README.md#withgooglepaybuttoninitializeoptions) & [`WithPayPalCommerceButtonInitializeOptions`](interfaces/WithPayPalCommerceButtonInitializeOptions.md) & [`WithPayPalCommerceCreditButtonInitializeOptions`](interfaces/WithPayPalCommerceCreditButtonInitializeOptions.md) & [`WithPayPalCommerceVenmoButtonInitializeOptions`](interfaces/WithPayPalCommerceVenmoButtonInitializeOptions.md) & [`WithPayPalCommerceAlternativeMethodsButtonInitializeOptions`](interfaces/WithPayPalCommerceAlternativeMethodsButtonInitializeOptions.md)
+Ƭ **CheckoutButtonInitializeOptions**: [`BaseCheckoutButtonInitializeOptions`](interfaces/BaseCheckoutButtonInitializeOptions.md) & [`WithAmazonPayV2ButtonInitializeOptions`](interfaces/WithAmazonPayV2ButtonInitializeOptions.md) & [`WithApplePayButtonInitializeOptions`](interfaces/WithApplePayButtonInitializeOptions.md) & [`WithBoltButtonInitializeOptions`](interfaces/WithBoltButtonInitializeOptions.md) & [`WithBraintreePaypalButtonInitializeOptions`](interfaces/WithBraintreePaypalButtonInitializeOptions.md) & [`WithBraintreePaypalCreditButtonInitializeOptions`](interfaces/WithBraintreePaypalCreditButtonInitializeOptions.md) & [`WithGooglePayButtonInitializeOptions`](README.md#withgooglepaybuttoninitializeoptions) & [`WithPayPalCommerceButtonInitializeOptions`](interfaces/WithPayPalCommerceButtonInitializeOptions.md) & [`WithPayPalCommerceCreditButtonInitializeOptions`](interfaces/WithPayPalCommerceCreditButtonInitializeOptions.md) & [`WithPayPalCommerceVenmoButtonInitializeOptions`](interfaces/WithPayPalCommerceVenmoButtonInitializeOptions.md) & [`WithPayPalCommerceAlternativeMethodsButtonInitializeOptions`](interfaces/WithPayPalCommerceAlternativeMethodsButtonInitializeOptions.md)
 
 ___
 

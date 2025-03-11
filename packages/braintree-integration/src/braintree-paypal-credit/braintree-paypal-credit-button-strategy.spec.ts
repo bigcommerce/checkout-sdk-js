@@ -57,14 +57,17 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalSdkMock: PaypalSDK;
-    let strategy: BraintreePaypalCreditButtonStrategy;
     let paypalButtonElement: HTMLDivElement;
+    let paypalMessageElement: HTMLDivElement;
+    let strategy: BraintreePaypalCreditButtonStrategy;
 
     const defaultButtonContainerId = 'braintree-paypal-credit-button-mock-id';
+    const defaultMessageContainerId = 'braintree-paypal-credit-message-mock-id';
+
     const braintreePaypalCreditOptions: BraintreePaypalCreditButtonInitializeOptions = {
+        messagingContainerId: defaultMessageContainerId, // only available on cart page
         shouldProcessPayment: false,
         style: { height: 45 },
-        // shippingAddress: {}, // TODO: <---
         onAuthorizeError: jest.fn(),
         onPaymentError: jest.fn(),
         onError: jest.fn(),
@@ -154,6 +157,10 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
         paypalButtonElement.id = defaultButtonContainerId;
         document.body.appendChild(paypalButtonElement);
 
+        paypalMessageElement = document.createElement('div');
+        paypalMessageElement.id = defaultMessageContainerId;
+        document.body.appendChild(paypalMessageElement);
+
         formPoster = createFormPoster();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
@@ -215,6 +222,10 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
                 render: jest.fn(),
             };
         });
+
+        jest.spyOn(paypalSdkMock, 'Messages').mockImplementation(() => ({
+            render: jest.fn(),
+        }));
     });
 
     afterEach(() => {
@@ -224,6 +235,10 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
 
         if (document.getElementById(defaultButtonContainerId)) {
             document.body.removeChild(paypalButtonElement);
+        }
+
+        if (document.getElementById(defaultMessageContainerId)) {
+            document.body.removeChild(paypalMessageElement);
         }
     });
 
@@ -421,6 +436,15 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             );
         });
 
+        it('renders Braintree PayPal message', async () => {
+            await strategy.initialize(initializationOptions);
+
+            expect(paypalSdkMock.Messages).toHaveBeenCalledWith({
+                amount: cart.cartAmount,
+                placement: 'cart',
+            });
+        });
+
         it('renders braintree paylater button', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -483,6 +507,19 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
                     height: 45,
                 },
             });
+        });
+
+        it('removes Braintree PayPal Credit button and message containers when paypal is not available in window', async () => {
+            delete (window as BraintreeHostWindow).paypal;
+
+            await strategy.initialize(initializationOptions);
+
+            expect(braintreeIntegrationService.removeElement).toHaveBeenCalledWith(
+                defaultMessageContainerId,
+            );
+            expect(braintreeIntegrationService.removeElement).toHaveBeenCalledWith(
+                defaultButtonContainerId,
+            );
         });
 
         it('does not render PayPal checkout button and calls onEligibilityFailure callback', async () => {
