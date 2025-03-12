@@ -255,6 +255,7 @@ export interface WithEcpInstrument {
     accountType: BankAccountType | EcpAccountType;
     shopperPermission: boolean;
     routingNumber: string;
+    companyName?: string;
     shouldSaveInstrument?: boolean;
     shouldSetAsDefaultInstrument?: boolean;
     instrumentId?: string;
