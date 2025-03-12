@@ -57,15 +57,12 @@ describe('BraintreePaypalButtonStrategy', () => {
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalButtonElement: HTMLDivElement;
-    let paypalMessageElement: HTMLDivElement;
     let paypalSdkMock: PaypalSDK;
     let strategy: BraintreePaypalButtonStrategy;
 
     const defaultButtonContainerId = 'braintree-paypal-button-mock-id';
-    const defaultMessageContainerId = 'braintree-paypal-message-mock-id';
 
     const braintreePaypalOptions: BraintreePaypalButtonInitializeOptions = {
-        messagingContainerId: defaultMessageContainerId, // only available on cart page
         shouldProcessPayment: false,
         style: { height: 45 },
         onAuthorizeError: jest.fn(),
@@ -157,10 +154,6 @@ describe('BraintreePaypalButtonStrategy', () => {
         paypalButtonElement.id = defaultButtonContainerId;
         document.body.appendChild(paypalButtonElement);
 
-        paypalMessageElement = document.createElement('div');
-        paypalMessageElement.id = defaultMessageContainerId;
-        document.body.appendChild(paypalMessageElement);
-
         formPoster = createFormPoster();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
@@ -222,10 +215,6 @@ describe('BraintreePaypalButtonStrategy', () => {
                 render: jest.fn(),
             };
         });
-
-        jest.spyOn(paypalSdkMock, 'Messages').mockImplementation(() => ({
-            render: jest.fn(),
-        }));
     });
 
     afterEach(() => {
@@ -235,10 +224,6 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         if (document.getElementById(defaultButtonContainerId)) {
             document.body.removeChild(paypalButtonElement);
-        }
-
-        if (document.getElementById(defaultMessageContainerId)) {
-            document.body.removeChild(paypalMessageElement);
         }
     });
 
@@ -436,15 +421,6 @@ describe('BraintreePaypalButtonStrategy', () => {
             );
         });
 
-        it('renders Braintree PayPal message', async () => {
-            await strategy.initialize(initializationOptions);
-
-            expect(paypalSdkMock.Messages).toHaveBeenCalledWith({
-                amount: cart.cartAmount,
-                placement: 'cart',
-            });
-        });
-
         it('renders Braintree PayPal button', async () => {
             await strategy.initialize(initializationOptions);
 
@@ -460,14 +436,11 @@ describe('BraintreePaypalButtonStrategy', () => {
             });
         });
 
-        it('removes Braintree PayPal button and message containers when paypal is not available in window', async () => {
+        it('removes Braintree PayPal button container when paypal is not available in window', async () => {
             delete (window as BraintreeHostWindow).paypal;
 
             await strategy.initialize(initializationOptions);
 
-            expect(braintreeIntegrationService.removeElement).toHaveBeenCalledWith(
-                defaultMessageContainerId,
-            );
             expect(braintreeIntegrationService.removeElement).toHaveBeenCalledWith(
                 defaultButtonContainerId,
             );
