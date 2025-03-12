@@ -16,6 +16,7 @@ import CustomerState, {
     CustomerStatusesState,
     DEFAULT_STATE,
 } from './customer-state';
+import { HeadlessCustomerActionType } from './headless-customer/headless-customer-actions';
 
 type ReducerActionType =
     | CheckoutAction
@@ -41,6 +42,9 @@ function dataReducer(data: Customer | undefined, action: ReducerActionType): Cus
         case BillingAddressActionType.ContinueAsGuestSucceeded:
         case CheckoutActionType.LoadCheckoutSucceeded:
             return objectMerge(data, action.payload && action.payload.customer);
+
+        case HeadlessCustomerActionType.GetCustomerSucceeded:
+            return objectMerge(data, action.payload);
 
         case CustomerActionType.CreateCustomerAddressSucceeded:
             return objectMerge(data, action.payload);

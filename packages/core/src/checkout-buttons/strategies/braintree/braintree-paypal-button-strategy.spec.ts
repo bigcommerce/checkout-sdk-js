@@ -6,7 +6,7 @@ import { EventEmitter } from 'events';
 import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { CartRequestSender } from '../../../cart';
+import { CartActionCreator, CartRequestSender } from '../../../cart';
 import BuyNowCartRequestBody from '../../../cart/buy-now-cart-request-body';
 import { getCart } from '../../../cart/carts.mock';
 import {
@@ -22,6 +22,8 @@ import {
     MissingDataErrorType,
 } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { CustomerRequestSender } from '../../../customer';
+import HeadlessCustomerActionCreator from '../../../customer/headless-customer/headless-customer-action-creator';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../../../form';
 import { PaymentMethod } from '../../../payment';
 import { getBraintree } from '../../../payment/payment-methods.mock';
@@ -130,10 +132,18 @@ describe('BraintreePaypalButtonStrategy', () => {
         eventEmitter = new EventEmitter();
 
         store = createCheckoutStore(getCheckoutStoreState());
+
+        const cartActionCreator = new CartActionCreator(cartRequestSender);
+        const headlessCustomerActionCreator = new HeadlessCustomerActionCreator(
+            new CustomerRequestSender(createRequestSender()),
+        );
+
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(createRequestSender()),
             new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
             new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender())),
+            cartActionCreator,
+            headlessCustomerActionCreator,
         );
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
         braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);

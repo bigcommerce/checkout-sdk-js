@@ -2,10 +2,12 @@ import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-
 import { concat, defer, merge, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+import { CartActionCreator } from '../cart';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator, StoreConfig } from '../config';
+import HeadlessCustomerActionCreator from '../customer/headless-customer/headless-customer-action-creator';
 import { FormFieldsActionCreator } from '../form';
 
 import Checkout, { CheckoutRequestBody } from './checkout';
@@ -18,6 +20,8 @@ export default class CheckoutActionCreator {
         private _checkoutRequestSender: CheckoutRequestSender,
         private _configActionCreator: ConfigActionCreator,
         private _formFieldsActionCreator: FormFieldsActionCreator,
+        private _cartActionCreator: CartActionCreator,
+        private _headlessCustomerActionCreator: HeadlessCustomerActionCreator,
     ) {}
 
     loadCheckout(
@@ -101,6 +105,55 @@ export default class CheckoutActionCreator {
                     throwErrorAction(CheckoutActionType.LoadCheckoutFailed, error),
                 ),
             );
+    }
+
+    loadHeadlessCheckout(
+        cartId: string,
+        options?: RequestOptions,
+    ): ThunkAction<LoadCheckoutAction, InternalCheckoutSelectors> {
+        return (store) => {
+            return concat(
+                of(createAction(CheckoutActionType.LoadCheckoutRequested)),
+                merge(
+                    this._cartActionCreator.loadCard(cartId, { ...options, useCache: true })(store),
+                    this._headlessCustomerActionCreator.getHeadlessCustomer(options)(store),
+                ),
+                defer(() => {
+                    const state = store.getState();
+
+                    const cart = state.cart.getCart();
+
+                    if (!cart) {
+                        throw new MissingDataError(MissingDataErrorType.MissingCart);
+                    }
+
+                    const customer = state.customer.getCustomer();
+
+                    if (!customer) {
+                        throw new MissingDataError(MissingDataErrorType.MissingCustomer);
+                    }
+
+                    const host = state.config.getHost();
+
+                    return this._checkoutRequestSender
+                        .loadHeadlessCheckout(host, options)
+                        .then(({ body }) => {
+                            return createAction(
+                                CheckoutActionType.LoadCheckoutSucceeded,
+                                this._transformCustomerAddresses({
+                                    ...body,
+                                    cart,
+                                    customer,
+                                }),
+                            );
+                        });
+                }),
+            ).pipe(
+                catchError((error) =>
+                    throwErrorAction(CheckoutActionType.LoadCheckoutFailed, error),
+                ),
+            );
+        };
     }
 
     updateCheckout(

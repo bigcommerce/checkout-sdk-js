@@ -2,6 +2,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
+import { CartActionCreator, CartRequestSender } from '../cart';
 import { createDataStoreProjection } from '../common/data-store';
 import { ErrorActionCreator } from '../common/error';
 import { getDefaultLogger } from '../common/log';
@@ -20,6 +21,7 @@ import {
     CustomerRequestSender,
     CustomerStrategyActionCreator,
 } from '../customer';
+import HeadlessCustomerActionCreator from '../customer/headless-customer/headless-customer-action-creator';
 import {
     createExtensionEventBroadcaster,
     ExtensionActionCreator,
@@ -129,10 +131,19 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const formFieldsActionCreator = new FormFieldsActionCreator(
         new FormFieldsRequestSender(requestSender),
     );
+    const cartRequestSender = new CartRequestSender(requestSender);
+
+    const cartActionCreator = new CartActionCreator(cartRequestSender);
+
+    const headlessCustomerActionCreator = new HeadlessCustomerActionCreator(
+        new CustomerRequestSender(requestSender),
+    );
     const checkoutActionCreator = new CheckoutActionCreator(
         checkoutRequestSender,
         configActionCreator,
         formFieldsActionCreator,
+        cartActionCreator,
+        headlessCustomerActionCreator,
     );
     const paymentIntegrationService = createPaymentIntegrationService(store);
     const registryV2 = createPaymentStrategyRegistryV2(

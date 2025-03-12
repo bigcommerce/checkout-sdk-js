@@ -96,6 +96,8 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         const paymentIntegrationService = createPaymentIntegrationService(store);
         const customerRegistryV2 = createCustomerStrategyRegistryV2(paymentIntegrationService);
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),

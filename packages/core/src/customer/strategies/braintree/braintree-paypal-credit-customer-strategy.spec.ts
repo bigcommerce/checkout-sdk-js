@@ -8,6 +8,7 @@ import { Observable, of } from 'rxjs';
 import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { DefaultCheckoutButtonHeight } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { CartActionCreator, CartRequestSender } from '../../../cart';
 import {
     CheckoutActionCreator,
     CheckoutRequestSender,
@@ -55,6 +56,7 @@ import {
 import CustomerActionCreator from '../../customer-action-creator';
 import { CustomerInitializeOptions } from '../../customer-request-options';
 import CustomerRequestSender from '../../customer-request-sender';
+import HeadlessCustomerActionCreator from '../../headless-customer/headless-customer-action-creator';
 
 import BraintreePaypalCreditCustomerInitializeOptions from './braintree-paypal-credit-customer-options';
 import BraintreePaypalCreditCustomerStrategy from './braintree-paypal-credit-customer-strategy';
@@ -104,10 +106,19 @@ describe('BraintreePaypalCreditCustomerStrategy', () => {
         eventEmitter = new EventEmitter();
 
         store = createCheckoutStore(getCheckoutStoreState());
+
+        const cartRequestSender = new CartRequestSender(createRequestSender());
+        const cartActionCreator = new CartActionCreator(cartRequestSender);
+        const headlessCustomerActionCreator = new HeadlessCustomerActionCreator(
+            new CustomerRequestSender(createRequestSender()),
+        );
+
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(createRequestSender()),
             new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),
             new FormFieldsActionCreator(new FormFieldsRequestSender(createRequestSender())),
+            cartActionCreator,
+            headlessCustomerActionCreator,
         );
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
         braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);

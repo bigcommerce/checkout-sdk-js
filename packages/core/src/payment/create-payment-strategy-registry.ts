@@ -8,6 +8,7 @@ import {
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import { StorefrontPaymentRequestSender } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { CartActionCreator, CartRequestSender } from '../cart';
 import {
     CheckoutActionCreator,
     CheckoutRequestSender,
@@ -16,6 +17,8 @@ import {
 } from '../checkout';
 import { BrowserStorage } from '../common/storage';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { CustomerRequestSender } from '../customer';
+import HeadlessCustomerActionCreator from '../customer/headless-customer/headless-customer-action-creator';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
@@ -112,10 +115,19 @@ export default function createPaymentStrategyRegistry(
     const formFieldsActionCreator = new FormFieldsActionCreator(
         new FormFieldsRequestSender(requestSender),
     );
+    const cartRequestSender = new CartRequestSender(requestSender);
+
+    const cartActionCreator = new CartActionCreator(cartRequestSender);
+
+    const headlessCustomerActionCreator = new HeadlessCustomerActionCreator(
+        new CustomerRequestSender(requestSender),
+    );
     const checkoutActionCreator = new CheckoutActionCreator(
         checkoutRequestSender,
         configActionCreator,
         formFieldsActionCreator,
+        cartActionCreator,
+        headlessCustomerActionCreator,
     );
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(
         registry,

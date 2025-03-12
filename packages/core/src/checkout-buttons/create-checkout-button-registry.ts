@@ -4,10 +4,12 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { BraintreeScriptLoader } from '@bigcommerce/checkout-sdk/braintree-utils';
 
-import { CartRequestSender } from '../cart';
+import { CartActionCreator, CartRequestSender } from '../cart';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { CustomerRequestSender } from '../customer';
+import HeadlessCustomerActionCreator from '../customer/headless-customer/headless-customer-action-creator';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { BraintreeSDKCreator } from '../payment/strategies/braintree';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
@@ -31,16 +33,24 @@ export default function createCheckoutButtonRegistry(
     const registry = new Registry<CheckoutButtonStrategy, CheckoutButtonMethodType>();
     const scriptLoader = getScriptLoader();
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
+    const cartRequestSender = new CartRequestSender(requestSender);
+
+    const cartActionCreator = new CartActionCreator(cartRequestSender);
+
+    const headlessCustomerActionCreator = new HeadlessCustomerActionCreator(
+        new CustomerRequestSender(requestSender),
+    );
     const checkoutActionCreator = new CheckoutActionCreator(
         checkoutRequestSender,
         new ConfigActionCreator(new ConfigRequestSender(requestSender)),
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
+        cartActionCreator,
+        headlessCustomerActionCreator,
     );
 
     const braintreeSdkCreator = new BraintreeSDKCreator(
         new BraintreeScriptLoader(scriptLoader, window),
     );
-    const cartRequestSender = new CartRequestSender(requestSender);
 
     registry.register(
         CheckoutButtonMethodType.BRAINTREE_PAYPAL,

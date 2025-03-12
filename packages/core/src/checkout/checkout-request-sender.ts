@@ -11,6 +11,9 @@ import Checkout, { CheckoutRequestBody } from './checkout';
 import CHECKOUT_DEFAULT_INCLUDES from './checkout-default-includes';
 import CheckoutParams from './checkout-params';
 import { CheckoutNotAvailableError } from './errors';
+import { HeadlessCheckout } from './headless-checkout/headless-checkout';
+import { HeadlessCheckoutRequestResponse } from './headless-checkout/headless-checkout-request-response';
+import mapToCheckout from './headless-checkout/map-to-checkout';
 
 export default class CheckoutRequestSender {
     constructor(private _requestSender: RequestSender) {}
@@ -61,5 +64,37 @@ export default class CheckoutRequestSender {
             headers,
             timeout,
         });
+    }
+
+    loadHeadlessCheckout(
+        host?: string,
+        options?: RequestOptions,
+    ): Promise<Response<HeadlessCheckout>> {
+        const path = 'load-checkout';
+        const url = host ? `${host}/${path}` : `/${path}`;
+
+        return this._requestSender
+            .get<HeadlessCheckoutRequestResponse>(url, {
+                ...options,
+            })
+            .then(this.transformToCheckoutResponse);
+    }
+
+    private transformToCheckoutResponse(
+        response: Response<HeadlessCheckoutRequestResponse>,
+    ): Response<HeadlessCheckout> {
+        const {
+            body: {
+                data: { site },
+            },
+        } = response;
+
+        return {
+            ...response,
+            // TODO:: need to update HeadlessCheckoutRequestResponse providing all required data
+            // eslint-disable-next-line
+            // @ts-ignore
+            body: mapToCheckout(site),
+        };
     }
 }

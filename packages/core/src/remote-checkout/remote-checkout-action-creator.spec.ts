@@ -25,6 +25,8 @@ describe('RemoteCheckoutActionCreator', () => {
     beforeEach(() => {
         requestSender = new RemoteCheckoutRequestSender(createRequestSender());
         checkoutRequestSender = createRequestSender();
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(checkoutRequestSender),
             new ConfigActionCreator(new ConfigRequestSender(checkoutRequestSender)),

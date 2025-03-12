@@ -3,10 +3,13 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { concat, from, of, throwError } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { CartActionCreator, CartRequestSender } from '../cart';
 import { MissingDataError, StandardError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigActionType, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
+import { CustomerRequestSender } from '../customer';
+import HeadlessCustomerActionCreator from '../customer/headless-customer/headless-customer-action-creator';
 import { FormFieldsActionCreator, FormFieldsActionType, FormFieldsRequestSender } from '../form';
 import { getFormFields } from '../form/form.mock';
 
@@ -25,6 +28,10 @@ describe('CheckoutActionCreator', () => {
     let configActionCreator: ConfigActionCreator;
     let formFieldsActionCreator: FormFieldsActionCreator;
     let store: CheckoutStore;
+    let cartRequestSender: CartRequestSender;
+    let headlessCustomerActionCreator: HeadlessCustomerActionCreator;
+    let customerRequestSender: CustomerRequestSender;
+    let cartActionCreator: CartActionCreator;
 
     beforeEach(() => {
         const requestSender = createRequestSender();
@@ -32,6 +39,10 @@ describe('CheckoutActionCreator', () => {
         checkoutRequestSender = new CheckoutRequestSender(requestSender);
         configRequestSender = new ConfigRequestSender(requestSender);
         formFieldsRequestSender = new FormFieldsRequestSender(requestSender);
+        cartRequestSender = new CartRequestSender(requestSender);
+        cartActionCreator = new CartActionCreator(cartRequestSender);
+        customerRequestSender = new CustomerRequestSender(requestSender);
+        headlessCustomerActionCreator = new HeadlessCustomerActionCreator(customerRequestSender);
         store = createCheckoutStore(getCheckoutStoreState());
 
         jest.spyOn(formFieldsRequestSender, 'loadFields').mockReturnValue(
@@ -62,6 +73,8 @@ describe('CheckoutActionCreator', () => {
             checkoutRequestSender,
             configActionCreator,
             formFieldsActionCreator,
+            cartActionCreator,
+            headlessCustomerActionCreator,
         );
     });
 

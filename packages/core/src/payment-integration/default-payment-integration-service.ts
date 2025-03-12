@@ -105,6 +105,17 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         return this._storeProjection.getState();
     }
 
+    async loadHeadlessCheckout(
+        cartId: string,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(
+            this._checkoutActionCreator.loadHeadlessCheckout(cartId, options),
+        );
+
+        return this._storeProjection.getState();
+    }
+
     async loadPaymentMethod(
         methodId: string,
         options?: RequestOptions,

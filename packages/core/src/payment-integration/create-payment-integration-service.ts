@@ -13,6 +13,7 @@ import {
 } from '../checkout';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { CustomerActionCreator, CustomerRequestSender } from '../customer';
+import HeadlessCustomerActionCreator from '../customer/headless-customer/headless-customer-action-creator';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
@@ -59,10 +60,20 @@ export default function createPaymentIntegrationService(
         createPaymentIntegrationSelectors,
     );
 
+    const cartRequestSender = new CartRequestSender(requestSender);
+
+    const cartActionCreator = new CartActionCreator(cartRequestSender);
+
+    const headlessCustomerActionCreator = new HeadlessCustomerActionCreator(
+        new CustomerRequestSender(requestSender),
+    );
+
     const checkoutActionCreator = new CheckoutActionCreator(
         new CheckoutRequestSender(requestSender),
         new ConfigActionCreator(new ConfigRequestSender(requestSender)),
         new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
+        cartActionCreator,
+        headlessCustomerActionCreator,
     );
 
     const checkoutValidator = new CheckoutValidator(new CheckoutRequestSender(requestSender));
@@ -118,10 +129,6 @@ export default function createPaymentIntegrationService(
         spamProtection,
         spamProtectionRequestSender,
     );
-
-    const cartRequestSender = new CartRequestSender(requestSender);
-
-    const cartActionCreator = new CartActionCreator(cartRequestSender);
 
     const paymentProviderCustomerActionCreator = new PaymentProviderCustomerActionCreator();
 

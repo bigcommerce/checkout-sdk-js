@@ -73,7 +73,8 @@ describe('MasterpassButtonStrategy', () => {
         masterpassScriptLoader = new MasterpassScriptLoader(createScriptLoader());
 
         jest.spyOn(masterpassScriptLoader, 'load').mockReturnValue(Promise.resolve(masterpass));
-
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),

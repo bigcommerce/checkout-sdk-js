@@ -46,6 +46,8 @@ describe('SquareCustomerStrategy', () => {
         );
 
         requestSender = createRequestSender();
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),

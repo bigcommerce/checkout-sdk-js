@@ -129,6 +129,8 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
 
         store = createCheckoutStore(getCheckoutStoreState());
         requestSender = createRequestSender();
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(createRequestSender()),
             new ConfigActionCreator(new ConfigRequestSender(createRequestSender())),

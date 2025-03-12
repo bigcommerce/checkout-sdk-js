@@ -1,6 +1,8 @@
 import { Action } from '@bigcommerce/data-store';
 
+import { LoadCartAction } from '../cart';
 import { LoadConfigAction } from '../config';
+import { GetCustomerAction } from '../customer/headless-customer/headless-customer-actions';
 import { LoadFormFieldsAction } from '../form';
 
 import Checkout from './checkout';
@@ -22,7 +24,9 @@ export type LoadCheckoutAction =
     | LoadCheckoutSucceededAction
     | LoadCheckoutFailedAction
     | LoadFormFieldsAction
-    | LoadConfigAction;
+    | LoadConfigAction
+    | LoadCartAction
+    | GetCustomerAction;
 
 export type UpdateCheckoutAction =
     | UpdateCheckoutRequestedAction

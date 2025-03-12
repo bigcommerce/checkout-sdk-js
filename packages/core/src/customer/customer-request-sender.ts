@@ -5,6 +5,8 @@ import { RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 import Customer from './customer';
 import { CustomerAccountInternalRequestBody, CustomerAddressRequestBody } from './customer-account';
 import CustomerCredentials from './customer-credentials';
+import { HeadlessCustomerRequestResponse } from './headless-customer/headless-customer-request-response';
+import mapToCustomer from './headless-customer/map-to-customer';
 import { InternalCustomerResponseBody } from './internal-customer-responses';
 
 export default class CustomerRequestSender {
@@ -21,6 +23,17 @@ export default class CustomerRequestSender {
             headers: SDK_VERSION_HEADERS,
             body: customerAccount,
         });
+    }
+
+    getHeadlessCustomer(host?: string, options: RequestOptions = {}): Promise<Response<Customer>> {
+        const path = 'get-customer';
+        const url = host ? `${host}/${path}` : `/${path}`;
+
+        return this._requestSender
+            .get<HeadlessCustomerRequestResponse>(url, {
+                ...options,
+            })
+            .then(this.transformToCustomerResponse);
     }
 
     createAddress(
@@ -55,5 +68,23 @@ export default class CustomerRequestSender {
         const url = '/internalapi/v1/checkout/customer';
 
         return this._requestSender.delete(url, { timeout, headers: SDK_VERSION_HEADERS });
+    }
+
+    private transformToCustomerResponse(
+        response: Response<HeadlessCustomerRequestResponse>,
+    ): Response<Customer> {
+        const {
+            body: {
+                data: { site },
+            },
+        } = response;
+
+        return {
+            ...response,
+            // TODO:: need to update HeadlessCustomerRequestResponse providing all required data
+            // eslint-disable-next-line
+            // @ts-ignore
+            body: mapToCustomer(site),
+        };
     }
 }

@@ -7,6 +7,7 @@ import { catchError, toArray } from 'rxjs/operators';
 
 import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { CartActionCreator, CartRequestSender } from '../cart';
 import {
     CheckoutActionCreator,
     CheckoutActionType,
@@ -35,6 +36,7 @@ import CustomerActionCreator from './customer-action-creator';
 import { CustomerActionType } from './customer-actions';
 import CustomerRequestSender from './customer-request-sender';
 import { getCustomer } from './customers.mock';
+import HeadlessCustomerActionCreator from './headless-customer/headless-customer-action-creator';
 import { InternalCustomerResponseBody } from './internal-customer-responses';
 import { getCustomerResponseBody } from './internal-customers.mock';
 
@@ -83,10 +85,18 @@ describe('CustomerActionCreator', () => {
             Promise.resolve(response),
         );
 
+        const cartRequestSender = new CartRequestSender(createRequestSender());
+        const cartActionCreator = new CartActionCreator(cartRequestSender);
+        const headlessCustomerActionCreator = new HeadlessCustomerActionCreator(
+            new CustomerRequestSender(createRequestSender()),
+        );
+
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
             new FormFieldsActionCreator(new FormFieldsRequestSender(requestSender)),
+            cartActionCreator,
+            headlessCustomerActionCreator,
         );
 
         jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout').mockReturnValue(() =>

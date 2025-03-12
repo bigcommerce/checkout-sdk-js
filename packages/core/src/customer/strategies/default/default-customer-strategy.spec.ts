@@ -48,6 +48,8 @@ describe('DefaultCustomerStrategy', () => {
 
         customerActionCreator = new CustomerActionCreator(
             new CustomerRequestSender(requestSender),
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             new CheckoutActionCreator(
                 new CheckoutRequestSender(requestSender),
                 new ConfigActionCreator(new ConfigRequestSender(requestSender)),

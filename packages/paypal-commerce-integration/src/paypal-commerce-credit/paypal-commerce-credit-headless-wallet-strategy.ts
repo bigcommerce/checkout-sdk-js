@@ -44,6 +44,12 @@ export default class PaypalCommerceCreditHeadlessWalletStrategy implements Check
 
         const state = await this.paymentIntegrationService.loadCard(paypalcommercecredit.cartId);
 
+        const checkout = await this.paymentIntegrationService.loadHeadlessCheckout(
+            paypalcommercecredit.cartId,
+        );
+
+        console.log(checkout, '<---- checkout data');
+
         const currencyCode = state.getCartOrThrow().currency.code;
 
         await this.paypalCommerceIntegrationService.loadPayPalSdk(methodId, currencyCode, false);

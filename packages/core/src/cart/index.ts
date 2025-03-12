@@ -1,3 +1,5 @@
+export * from './cart-actions';
+
 export { default as BuyNowCartRequestBody } from './buy-now-cart-request-body';
 export { default as Cart } from './cart';
 export { default as InternalCart } from './internal-cart';

@@ -34,6 +34,11 @@ export default interface PaymentIntegrationService {
 
     loadDefaultCheckout(): Promise<PaymentIntegrationSelectors>;
 
+    loadHeadlessCheckout(
+        cartId: string,
+        options?: RequestOptions & { useCache?: boolean },
+    ): Promise<PaymentIntegrationSelectors>;
+
     loadPaymentMethod(
         methodId: string,
         options?: RequestOptions & { useCache?: boolean },

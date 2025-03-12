@@ -112,6 +112,8 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         checkoutActionCreator = new CheckoutActionCreator(
             new CheckoutRequestSender(requestSender),
             new ConfigActionCreator(new ConfigRequestSender(requestSender)),
