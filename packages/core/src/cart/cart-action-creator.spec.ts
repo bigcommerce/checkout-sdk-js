@@ -28,7 +28,7 @@ describe('CartActionCreator', () => {
 
         store = createCheckoutStore(getCheckoutStoreState());
 
-        jest.spyOn(cartRequestSender, 'loadCard').mockReturnValue(
+        jest.spyOn(cartRequestSender, 'loadCart').mockReturnValue(
             Promise.resolve(getResponse(getCart())),
         );
 
@@ -36,11 +36,11 @@ describe('CartActionCreator', () => {
     });
 
     it('emits action to notify loading progress', async () => {
-        const actions = await from(cartActionCreator.loadCard(cart.id)(store))
+        const actions = await from(cartActionCreator.loadCart(cart.id)(store))
             .pipe(toArray())
             .toPromise();
 
-        expect(cartRequestSender.loadCard).toHaveBeenCalledWith(cart.id, undefined, undefined);
+        expect(cartRequestSender.loadCart).toHaveBeenCalledWith(cart.id, undefined, undefined);
 
         expect(actions).toEqual(
             expect.arrayContaining([
@@ -54,17 +54,17 @@ describe('CartActionCreator', () => {
     });
 
     it('emits error action if unable to load cart', async () => {
-        jest.spyOn(cartRequestSender, 'loadCard').mockReturnValue(
+        jest.spyOn(cartRequestSender, 'loadCart').mockReturnValue(
             Promise.reject(getErrorResponse()),
         );
 
         const errorHandler = jest.fn((action) => of(action));
 
-        const actions = await from(cartActionCreator.loadCard(cart.id)(store))
+        const actions = await from(cartActionCreator.loadCart(cart.id)(store))
             .pipe(catchError(errorHandler), toArray())
             .toPromise();
 
-        expect(cartRequestSender.loadCard).toHaveBeenCalledWith(cart.id, undefined, undefined);
+        expect(cartRequestSender.loadCart).toHaveBeenCalledWith(cart.id, undefined, undefined);
 
         expect(actions).toEqual(
             expect.arrayContaining([

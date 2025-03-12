@@ -79,7 +79,7 @@ describe('CartRequestSender', () => {
         });
     });
 
-    describe('#loadCard', () => {
+    describe('#loadCart', () => {
         const cartId = '123123';
         const host = 'https://test.com';
 
@@ -90,7 +90,7 @@ describe('CartRequestSender', () => {
         });
 
         it('get headless cart', async () => {
-            await cartRequestSender.loadCard(cartId);
+            await cartRequestSender.loadCart(cartId);
 
             expect(requestSender.get).toHaveBeenCalledWith('/cart-information', {
                 params: {
@@ -100,7 +100,7 @@ describe('CartRequestSender', () => {
         });
 
         it('get headless cart with host url', async () => {
-            await cartRequestSender.loadCard(cartId, host);
+            await cartRequestSender.loadCart(cartId, host);
 
             expect(requestSender.get).toHaveBeenCalledWith('https://test.com/cart-information', {
                 params: {

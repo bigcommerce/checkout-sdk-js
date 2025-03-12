@@ -14,19 +14,19 @@ export default class CartActionCreator {
     constructor(private _cartRequestSender: CartRequestSender) {}
 
     @cachableAction
-    loadCard(
+    loadCart(
         cartId: string,
         options?: RequestOptions & ActionOptions,
     ): ThunkAction<LoadCartAction, InternalCheckoutSelectors> {
         return (store) => {
-            return Observable.create((observer: Observer<LoadCartAction>) => {
+            return new Observable((observer: Observer<LoadCartAction>) => {
                 const state = store.getState();
                 const host = state.config.getHost();
 
                 observer.next(createAction(CartActionType.LoadCartRequested, undefined));
 
                 this._cartRequestSender
-                    .loadCard(cartId, host, options)
+                    .loadCart(cartId, host, options)
                     .then((response) => {
                         observer.next(
                             createAction(CartActionType.LoadCartSucceeded, response.body),

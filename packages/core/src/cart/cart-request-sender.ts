@@ -22,7 +22,7 @@ export default class CartRequestSender {
         return this._requestSender.post(url, { body, headers, timeout });
     }
 
-    async loadCard(
+    async loadCart(
         cartId: string,
         host?: string,
         options?: RequestOptions,
