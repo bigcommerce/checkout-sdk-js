@@ -101,6 +101,46 @@ describe('BlueSnapDirectAPMPaymentStrategy', () => {
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(expectedPayment);
         });
 
+        it('should submit the ECP payment with company name', async () => {
+            await strategy.initialize();
+
+            const accountType = 'CORPORATE_CHECKING' as const;
+            const payload = {
+                payment: {
+                    gatewayId: 'bluesnapdirect',
+                    methodId: 'ecp',
+                    paymentData: {
+                        accountNumber: '223344556',
+                        companyName: 'BigCommerce',
+                        accountType,
+                        shopperPermission: true,
+                        routingNumber: '998877665',
+                    },
+                },
+            };
+
+            const expectedPayment = {
+                gatewayId: 'bluesnapdirect',
+                methodId: 'ecp',
+                paymentData: {
+                    formattedPayload: {
+                        ecp: {
+                            account_number: '223344556',
+                            account_type: 'CORPORATE_CHECKING',
+                            company_name: 'BigCommerce',
+                            routing_number: '998877665',
+                            shopper_permission: true,
+                        },
+                    },
+                },
+            };
+
+            await strategy.execute(payload);
+
+            expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
+            expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith(expectedPayment);
+        });
+
         it('should submit the SEPA payment', async () => {
             await strategy.initialize();
 

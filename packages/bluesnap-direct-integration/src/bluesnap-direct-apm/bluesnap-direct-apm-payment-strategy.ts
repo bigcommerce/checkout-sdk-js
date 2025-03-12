@@ -89,6 +89,9 @@ export default class BlueSnapDirectAPMPaymentStrategy implements PaymentStrategy
                             account_type: payment.paymentData.accountType,
                             shopper_permission: payment.paymentData.shopperPermission,
                             routing_number: payment.paymentData.routingNumber,
+                            ...(payment.paymentData.companyName
+                                ? { company_name: payment.paymentData.companyName }
+                                : {}),
                         },
                         vault_payment_instrument: payment.paymentData.shouldSaveInstrument,
                         set_as_default_stored_instrument:
