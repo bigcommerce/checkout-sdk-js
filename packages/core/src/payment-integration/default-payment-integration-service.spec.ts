@@ -15,7 +15,7 @@ import {
 
 import { BillingAddressActionCreator } from '../billing';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
-import { CartRequestSender } from '../cart';
+import { CartActionCreator, CartRequestSender } from '../cart';
 import {
     CheckoutActionCreator,
     CheckoutStore,
@@ -64,6 +64,7 @@ describe('DefaultPaymentIntegrationService', () => {
         'submitOrder' | 'finalizeOrder' | 'loadCurrentOrder'
     >;
     let billingAddressActionCreator: Pick<BillingAddressActionCreator, 'updateAddress'>;
+    let cartActionCreator: Pick<CartActionCreator, 'loadCard'>;
     let consignmentActionCreator: Pick<
         ConsignmentActionCreator,
         'updateAddress' | 'selectShippingOption' | 'deleteConsignment'
@@ -287,6 +288,7 @@ describe('DefaultPaymentIntegrationService', () => {
             checkoutValidator as CheckoutValidator,
             hostedFormFactory,
             orderActionCreator as OrderActionCreator,
+            cartActionCreator as CartActionCreator,
             billingAddressActionCreator as BillingAddressActionCreator,
             consignmentActionCreator as ConsignmentActionCreator,
             paymentMethodActionCreator as PaymentMethodActionCreator,
