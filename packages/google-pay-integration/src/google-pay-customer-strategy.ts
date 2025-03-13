@@ -20,10 +20,9 @@ import GooglePayPaymentProcessor from './google-pay-payment-processor';
 import isGooglePayErrorObject from './guards/is-google-pay-error-object';
 import isGooglePayKey from './guards/is-google-pay-key';
 import {
+    GooglePayError,
     GooglePayInitializationData,
     GooglePayPaymentOptions,
-    IntermediatePaymentData,
-    NewTransactionInfo,
     TotalPriceStatusType,
 } from './types';
 
@@ -112,12 +111,15 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
                     callbackTrigger,
                     shippingAddress,
                     shippingOptionData,
-                }: IntermediatePaymentData): Promise<NewTransactionInfo | void> => {
+                    offerData,
+                }) => {
                     const {
                         availableTriggers,
                         addressChangeTriggers,
                         shippingOptionsChangeTriggers,
+                        offerChangeTriggers,
                     } = this._googlePayPaymentProcessor.getCallbackTriggers();
+                    let error: GooglePayError | undefined;
 
                     if (!availableTriggers.includes(callbackTrigger)) {
                         return;
@@ -133,6 +135,15 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
                         await this._googlePayPaymentProcessor.handleShippingOptionChange(
                             shippingOptionData.id,
                         );
+                    }
+
+                    const { newOfferInfo = undefined, error: couponsError = undefined } =
+                        offerChangeTriggers.includes(callbackTrigger)
+                            ? await this._googlePayPaymentProcessor.handleCoupons(offerData)
+                            : {};
+
+                    if (couponsError) {
+                        error = couponsError;
                     }
 
                     await this._paymentIntegrationService.loadCheckout();
@@ -151,6 +162,12 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
                         },
                         ...(availableShippingOptions && {
                             newShippingOptionParameters: availableShippingOptions,
+                        }),
+                        ...(newOfferInfo && {
+                            newOfferInfo,
+                        }),
+                        ...(error && {
+                            error,
                         }),
                     };
                 },
@@ -217,6 +234,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             this._googlePayPaymentProcessor.mapToBillingAddressRequestBody(response);
         const shippingAddress =
             this._googlePayPaymentProcessor.mapToShippingAddressRequestBody(response);
+
         const siteLink =
             window.location.pathname === '/embedded-checkout'
                 ? this._paymentIntegrationService.getState().getStoreConfigOrThrow().links.siteLink

@@ -27,6 +27,8 @@ import {
     GooglePaymentsClient,
     GooglePayPaymentDataRequest,
     GooglePayPaymentOptions,
+    HandleCouponsOut,
+    IntermediatePaymentData,
     ShippingOptionParameters,
 } from './types';
 
@@ -152,6 +154,13 @@ export default class GooglePayPaymentProcessor {
         await this._gateway.handleShippingOptionChange(optionId);
     }
 
+    async handleCoupons(
+        offerData: IntermediatePaymentData['offerData'],
+        isCartPage = false,
+    ): Promise<HandleCouponsOut> {
+        return this._gateway.handleCoupons(offerData, isCartPage);
+    }
+
     getTotalPrice(): string {
         return this._gateway.getTotalPrice();
     }
@@ -244,6 +253,7 @@ export default class GooglePayPaymentProcessor {
             merchantInfo: this._gateway.getMerchantInfo(),
             ...(await this._gateway.getRequiredData()),
             callbackIntents: this._gateway.getCallbackIntents(),
+            offerInfo: this._gateway.getAppliedCoupons(),
         };
         this._isReadyToPayRequest = {
             ...this._baseRequest,
