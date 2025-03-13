@@ -78,6 +78,7 @@ describe('mapToLegacyBillingAddress()', () => {
         };
 
         const result = mapToLegacyBillingAddress(details);
+
         expect(result).toEqual({
             email: 'noaddress@example.com',
             first_name: 'No',
