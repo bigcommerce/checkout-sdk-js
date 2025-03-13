@@ -26,6 +26,7 @@ import getGooglePaymentsClientMocks from './mocks/google-pay-payments-client.moc
 import { createInitializeImplementationMock } from './mocks/google-pay-processor-initialize.mock';
 import {
     CallbackTriggerType,
+    ErrorReasonType,
     GooglePayInitializationData,
     GooglePaymentsClient,
     NewTransactionInfo,
@@ -68,6 +69,11 @@ describe('GooglePayPaymentStrategy', () => {
         jest.spyOn(processor, 'processAdditionalAction').mockResolvedValue(undefined);
         jest.spyOn(processor, 'showPaymentSheet').mockResolvedValue(getCardDataResponse());
         jest.spyOn(processor, 'setExternalCheckoutXhr').mockResolvedValue(undefined);
+        jest.spyOn(processor, 'handleCoupons').mockResolvedValue({
+            newOfferInfo: {
+                offers: [{ description: 'Coupon description', redemptionCode: 'code' }],
+            },
+        });
         strategy = new GooglePayPaymentStrategy(paymentIntegrationService, processor);
 
         options = {
@@ -357,6 +363,135 @@ describe('GooglePayPaymentStrategy', () => {
                         totalPriceStatus: 'FINAL',
                         totalPrice: '190.00',
                     },
+                });
+            });
+
+            describe('Coupons', () => {
+                it('should call handleCoupons on initialize', async () => {
+                    const initializeMock = createInitializeImplementationMock(
+                        eventEmitter,
+                        CallbackTriggerType.OFFER,
+                        (res) => {
+                            if (res) {
+                                mockReturnedPaymentDataChangedValue = res;
+                            }
+                        },
+                    );
+
+                    jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
+
+                    jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
+                        eventEmitter.emit('onPaymentDataChanged');
+
+                        return Promise.resolve(getCardDataResponse());
+                    });
+
+                    await strategy.initialize(options);
+
+                    button.click();
+
+                    await new Promise((resolve) => process.nextTick(resolve));
+
+                    expect(processor.handleCoupons).toHaveBeenCalledWith({
+                        redemptionCodes: ['coupon_code'],
+                    });
+                });
+
+                it('should update offers data', async () => {
+                    const initializeMock = createInitializeImplementationMock(
+                        eventEmitter,
+                        CallbackTriggerType.OFFER,
+                        (res) => {
+                            if (res) {
+                                mockReturnedPaymentDataChangedValue = res;
+                            }
+                        },
+                    );
+
+                    jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
+
+                    jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
+                        eventEmitter.emit('onPaymentDataChanged');
+
+                        return Promise.resolve(getCardDataResponse());
+                    });
+
+                    await strategy.initialize(options);
+
+                    button.click();
+
+                    await new Promise((resolve) => process.nextTick(resolve));
+
+                    expect(mockReturnedPaymentDataChangedValue).toStrictEqual({
+                        newTransactionInfo: {
+                            countryCode: 'US',
+                            currencyCode: 'USD',
+                            totalPriceStatus: 'FINAL',
+                            totalPrice: '190.00',
+                        },
+                        newOfferInfo: {
+                            offers: [
+                                {
+                                    description: 'Coupon description',
+                                    redemptionCode: 'code',
+                                },
+                            ],
+                        },
+                    });
+                });
+
+                it('should return a Google Pay error', async () => {
+                    jest.spyOn(processor, 'handleCoupons').mockResolvedValue({
+                        error: {
+                            message: 'Error message',
+                            reason: ErrorReasonType.OFFER_INVALID,
+                            intent: CallbackTriggerType.OFFER,
+                        },
+                        newOfferInfo: {
+                            offers: [],
+                        },
+                    });
+
+                    const initializeMock = createInitializeImplementationMock(
+                        eventEmitter,
+                        CallbackTriggerType.OFFER,
+                        (res) => {
+                            if (res) {
+                                mockReturnedPaymentDataChangedValue = res;
+                            }
+                        },
+                    );
+
+                    jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
+
+                    jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
+                        eventEmitter.emit('onPaymentDataChanged');
+
+                        return Promise.resolve(getCardDataResponse());
+                    });
+
+                    await strategy.initialize(options);
+
+                    button.click();
+
+                    await new Promise((resolve) => process.nextTick(resolve));
+
+                    expect(mockReturnedPaymentDataChangedValue).toStrictEqual({
+                        newTransactionInfo: {
+                            countryCode: 'US',
+                            currencyCode: 'USD',
+                            totalPriceStatus: 'FINAL',
+                            totalPrice: '190.00',
+                        },
+                        error: {
+                            message: 'Error message',
+                            reason: ErrorReasonType.OFFER_INVALID,
+                            intent: CallbackTriggerType.OFFER,
+                        },
+                        newOfferInfo: {
+                            offers: [],
+                        },
+                    });
                 });
             });
         });

@@ -23,10 +23,9 @@ import isGooglePayErrorObject from './guards/is-google-pay-error-object';
 import isGooglePayKey from './guards/is-google-pay-key';
 import {
     CallbackTriggerType,
+    GooglePayError,
     GooglePayInitializationData,
     GooglePayPaymentOptions,
-    IntermediatePaymentData,
-    NewTransactionInfo,
     TotalPriceStatusType,
 } from './types';
 
@@ -189,11 +188,26 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     protected _getGooglePayClientOptions(countryCode?: string): GooglePayPaymentOptions {
         return {
             paymentDataCallbacks: {
-                onPaymentDataChanged: async ({
-                    callbackTrigger,
-                }: IntermediatePaymentData): Promise<NewTransactionInfo | void> => {
-                    if (callbackTrigger !== CallbackTriggerType.INITIALIZE) {
+                onPaymentDataChanged: async ({ callbackTrigger, offerData }) => {
+                    let error: GooglePayError | undefined;
+
+                    if (
+                        callbackTrigger !== CallbackTriggerType.INITIALIZE &&
+                        callbackTrigger !== CallbackTriggerType.OFFER
+                    ) {
                         return;
+                    }
+
+                    const { offerChangeTriggers } =
+                        this._googlePayPaymentProcessor.getCallbackTriggers();
+
+                    const { newOfferInfo = undefined, error: couponsError = undefined } =
+                        offerChangeTriggers.includes(callbackTrigger)
+                            ? await this._googlePayPaymentProcessor.handleCoupons(offerData)
+                            : {};
+
+                    if (couponsError) {
+                        error = couponsError;
                     }
 
                     await this._paymentIntegrationService.loadCheckout();
@@ -213,6 +227,12 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                             totalPriceStatus: TotalPriceStatusType.FINAL,
                             totalPrice,
                         },
+                        ...(newOfferInfo && {
+                            newOfferInfo,
+                        }),
+                        ...(error && {
+                            error,
+                        }),
                     };
                 },
             },
