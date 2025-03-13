@@ -5,6 +5,7 @@ import {
     BraintreeHostWindow,
     BraintreeInitializationData,
     BraintreeIntegrationService,
+    BraintreeMessages,
     BraintreePaypalCheckout,
     BraintreePaypalSdkCreatorConfig,
     BraintreeTokenizePayload,
@@ -39,6 +40,7 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         private paymentIntegrationService: PaymentIntegrationService,
         private formPoster: FormPoster,
         private braintreeIntegrationService: BraintreeIntegrationService,
+        private braintreeMessages: BraintreeMessages,
         private braintreeHostWindow: BraintreeHostWindow,
     ) {}
 
@@ -99,7 +101,10 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         const paypalCheckoutSuccessCallback = (
             braintreePaypalCheckout: BraintreePaypalCheckout,
         ) => {
-            this.renderPayPalMessages(braintreepaypalcredit.messagingContainerId);
+            if (braintreepaypalcredit.messagingContainerId) {
+                this.renderPayPalMessages(methodId, braintreepaypalcredit.messagingContainerId);
+            }
+
             this.renderPayPalButton(
                 braintreePaypalCheckout,
                 braintreepaypalcredit,
@@ -123,24 +128,8 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
         await this.braintreeIntegrationService.teardown();
     }
 
-    private renderPayPalMessages(messagingContainerId?: string): void {
-        const isMessageContainerAvailable =
-            messagingContainerId && Boolean(document.getElementById(messagingContainerId));
-        const { paypal } = this.braintreeHostWindow;
-
-        if (isMessageContainerAvailable && paypal) {
-            const state = this.paymentIntegrationService.getState();
-            const amount = state.getCartOrThrow().cartAmount;
-
-            const paypalMessagesRender = paypal.Messages({
-                amount,
-                placement: 'cart',
-            });
-
-            paypalMessagesRender.render(`#${messagingContainerId}`);
-        } else {
-            this.braintreeIntegrationService.removeElement(messagingContainerId);
-        }
+    private renderPayPalMessages(methodId: string, messagingContainerId: string): void {
+        this.braintreeMessages.render(methodId, messagingContainerId, 'cart');
     }
 
     private renderPayPalButton(

@@ -4,6 +4,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import {
     BraintreeHostWindow,
     BraintreeIntegrationService,
+    BraintreeMessages,
     BraintreeScriptLoader,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
@@ -21,11 +22,13 @@ const createBraintreePaypalCreditButtonStrategy: CheckoutButtonStrategyFactory<
         new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
         braintreeHostWindow,
     );
+    const braintreeMessages = new BraintreeMessages(paymentIntegrationService);
 
     return new BraintreePaypalCreditButtonStrategy(
         paymentIntegrationService,
         createFormPoster(),
         braintreeIntegrationService,
+        braintreeMessages,
         braintreeHostWindow,
     );
 };

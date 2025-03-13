@@ -77,9 +77,17 @@ export interface MessagingOptions {
 }
 
 export interface MessagesStyleOptions {
-    layout?: 'text' | 'flex';
+    color?: string; // 'blue' | 'black' | 'white' | 'white-no-border' | 'gray' | 'monochrome' | 'grayscale'
+    layout?: string; // 'text' | 'flex'
     logo?: {
-        type: 'none' | 'inline' | 'primary';
+        type?: string; // 'primary' | 'alternative' | 'inline' | 'none'
+        position?: string; // 'left' | 'right' | 'top'
+    };
+    ratio?: string; // '1x1' | '1x4' | '8x1' | '20x1'
+    text?: {
+        align?: string; // 'left' | 'right' | 'center'
+        color?: string; // 'black' | 'white' | 'monochrome' | 'grayscale'
+        size?: number; // from 10 to 16
     };
 }
 

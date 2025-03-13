@@ -7,6 +7,7 @@ import {
     BraintreeError,
     BraintreeHostWindow,
     BraintreeIntegrationService,
+    BraintreeMessages,
     BraintreePaypalCheckout,
     BraintreePaypalCheckoutCreator,
     BraintreeScriptLoader,
@@ -50,6 +51,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
     let dataCollector: BraintreeDataCollector;
     let eventEmitter: EventEmitter;
     let braintreeIntegrationService: BraintreeIntegrationService;
+    let braintreeMessages: BraintreeMessages;
     let braintreePaypalCheckoutMock: BraintreePaypalCheckout;
     let braintreePaypalCheckoutCreatorMock: BraintreePaypalCheckoutCreator;
     let braintreeScriptLoader: BraintreeScriptLoader;
@@ -58,7 +60,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
     let paymentMethod: PaymentMethod;
     let paypalSdkMock: PaypalSDK;
     let paypalButtonElement: HTMLDivElement;
-    let paypalMessageElement: HTMLDivElement;
     let strategy: BraintreePaypalCreditButtonStrategy;
 
     const defaultButtonContainerId = 'braintree-paypal-credit-button-mock-id';
@@ -157,10 +158,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
         paypalButtonElement.id = defaultButtonContainerId;
         document.body.appendChild(paypalButtonElement);
 
-        paypalMessageElement = document.createElement('div');
-        paypalMessageElement.id = defaultMessageContainerId;
-        document.body.appendChild(paypalMessageElement);
-
         formPoster = createFormPoster();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
@@ -168,11 +165,13 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             braintreeScriptLoader,
             window,
         );
+        braintreeMessages = new BraintreeMessages(paymentIntegrationService);
 
         strategy = new BraintreePaypalCreditButtonStrategy(
             paymentIntegrationService,
             formPoster,
             braintreeIntegrationService,
+            braintreeMessages,
             window,
         );
 
@@ -194,6 +193,7 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             dataCollector,
         );
         jest.spyOn(braintreeIntegrationService, 'removeElement').mockImplementation(jest.fn());
+        jest.spyOn(braintreeMessages, 'render').mockImplementation(jest.fn());
         jest.spyOn(braintreeScriptLoader, 'loadPaypalCheckout').mockResolvedValue(
             braintreePaypalCheckoutCreatorMock,
         );
@@ -235,10 +235,6 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
 
         if (document.getElementById(defaultButtonContainerId)) {
             document.body.removeChild(paypalButtonElement);
-        }
-
-        if (document.getElementById(defaultMessageContainerId)) {
-            document.body.removeChild(paypalMessageElement);
         }
     });
 
@@ -436,13 +432,14 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             );
         });
 
-        it('renders Braintree PayPal message', async () => {
+        it('calls Braintree Messages render method', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(paypalSdkMock.Messages).toHaveBeenCalledWith({
-                amount: cart.cartAmount,
-                placement: 'cart',
-            });
+            expect(braintreeMessages.render).toHaveBeenCalledWith(
+                initializationOptions.methodId,
+                defaultMessageContainerId,
+                'cart',
+            );
         });
 
         it('renders braintree paylater button', async () => {
@@ -509,14 +506,11 @@ describe('BraintreePaypalCreditButtonStrategy', () => {
             });
         });
 
-        it('removes Braintree PayPal Credit button and message containers when paypal is not available in window', async () => {
+        it('removes Braintree PayPal Credit button container when paypal is not available in window', async () => {
             delete (window as BraintreeHostWindow).paypal;
 
             await strategy.initialize(initializationOptions);
 
-            expect(braintreeIntegrationService.removeElement).toHaveBeenCalledWith(
-                defaultMessageContainerId,
-            );
             expect(braintreeIntegrationService.removeElement).toHaveBeenCalledWith(
                 defaultButtonContainerId,
             );
