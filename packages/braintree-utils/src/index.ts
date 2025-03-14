@@ -3,6 +3,7 @@ export * from './types';
 export * from './utils';
 
 export { default as BraintreeIntegrationService } from './braintree-integration-service';
+export { default as BraintreeMessages } from './braintree-messages';
 export { default as BraintreeScriptLoader } from './braintree-script-loader';
 export { default as BraintreeSdk } from './braintree-sdk';
 export { default as createBraintreeSdk } from './create-braintree-sdk';

@@ -44,6 +44,7 @@ describe('mapToLegacyShippingAddress()', () => {
         };
 
         const result = mapToLegacyShippingAddress(details);
+
         expect(result).toEqual({
             email: 'noaddress@example.com',
             first_name: '',
