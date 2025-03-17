@@ -102,6 +102,7 @@ export interface BraintreeLocalPaymentCreateConfig extends BraintreeModuleCreato
 
 export interface BraintreeInitializationData {
     clientToken: string;
+    enableCheckoutPaywallBanner?: boolean;
     intent?: 'authorize' | 'order' | 'sale';
     isCreditEnabled?: boolean;
     isAcceleratedCheckoutEnabled?: boolean;
@@ -112,6 +113,7 @@ export interface BraintreeInitializationData {
     isBraintreeAnalyticsV2Enabled?: boolean;
     shouldRunAcceleratedCheckout?: boolean; // TODO: only for BT AXO A/B testing purposes, hence should be removed after testing
     paymentButtonStyles?: Record<string, PaypalStyleOptions>;
+    paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
 }
 
 export interface BraintreePaypalRequest {
@@ -481,6 +483,18 @@ export type BraintreeVisaCheckoutCreator = BraintreeModuleCreator<BraintreeVisaC
 export interface BraintreeVisaCheckout extends BraintreeModule {
     tokenize(payment: VisaCheckoutPaymentSuccessPayload): Promise<VisaCheckoutTokenizedPayload>;
     createInitOptions(options: Partial<VisaCheckoutInitOptions>): VisaCheckoutInitOptions;
+}
+
+/**
+ *
+ * Braintree BNPL Configurator related types
+ *
+ */
+export interface PayPalBNPLConfigurationItem {
+    id: string;
+    name: string;
+    status: boolean;
+    styles: Record<string, string>;
 }
 
 /**
