@@ -342,6 +342,7 @@ export default class GooglePayGateway {
         offerData: IntermediatePaymentData['offerData'],
         isCartPage = false,
     ): Promise<HandleCouponsOut> {
+        console.log('handleCoupons1');
         const { redemptionCodes = [] } = offerData;
         const appliedCoupons = this.getAppliedCoupons();
 
@@ -383,6 +384,7 @@ export default class GooglePayGateway {
     }
 
     getAppliedCoupons(): GooglePayPaymentDataRequest['offerInfo'] {
+        console.log('getAppliedCoupons1');
         const state = this._paymentIntegrationService.getState();
         const { coupons } = state.getCheckout() || {};
 
