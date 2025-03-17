@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.715.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.714.1...v1.715.0) (2025-03-17)
+
+
+### Features
+
+* **payment:** PAYPAL-5097 created Braintree Messages class and added Braintree BNPL Configurator implementation ([#2808](https://github.com/bigcommerce/checkout-sdk-js/issues/2808)) ([fadb981](https://github.com/bigcommerce/checkout-sdk-js/commit/fadb9812a1d08441aac11c4934775c8c0c4059f4))
+
 ### [1.714.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.714.0...v1.714.1) (2025-03-12)
 
 
