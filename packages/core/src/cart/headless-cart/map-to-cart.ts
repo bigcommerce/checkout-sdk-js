@@ -36,12 +36,12 @@ export default function mapToCart(headlessCartResponse: HeadlessCartResponse): C
             code: item.code,
             couponType: item.couponType,
             discountedAmount: item.discountedAmount.value,
-            // TODO:: there is no info about displayName field
+            // Info:: there is no info about displayName field
             displayName: '',
         })),
-        // TODO:: information about email field can be pulled from Billing Address or Shipping Address (https://developer.bigcommerce.com/docs/storefront/cart-checkout/guide/graphql-storefront#get-checkout)
+        // Info:: information about email field can be pulled from Billing Address or Shipping Address (https://developer.bigcommerce.com/docs/storefront/cart-checkout/guide/graphql-storefront#get-checkout)
         email: '',
-        // TODO:: there is no info about customerId field
+        // Info:: there is no info about customerId field
         customerId: 0,
     };
 }

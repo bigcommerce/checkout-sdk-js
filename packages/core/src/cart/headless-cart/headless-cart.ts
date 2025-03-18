@@ -101,7 +101,7 @@ export interface HeadlessLineItems {
 
 export default interface HeadlessCartResponse {
     cart?: {
-        amount: BaseFieldFragment; // cart amount;
+        amount: BaseFieldFragment;
         baseAmount: BaseFieldFragment;
         entityId: string;
         id: string;

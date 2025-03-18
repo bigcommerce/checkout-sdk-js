@@ -37,11 +37,11 @@ export default class CartRequestSender {
             },
         };
 
-        return this._requestSender
-            .get<HeadlessCartRequestResponse>(url, {
-                ...requestOptions,
-            })
-            .then(this.transformToCartResponse);
+        const response = await this._requestSender.get<HeadlessCartRequestResponse>(url, {
+            ...requestOptions,
+        });
+
+        return this.transformToCartResponse(response);
     }
 
     private transformToCartResponse(

@@ -34,7 +34,7 @@ export default function mapToLineItem(lineItem: HeadlessLineItem): LineItem {
         discountAmount: discountedAmount.value,
         discounts: discounts.map((discount) => ({
             discountedAmount: discount.discountedAmount.value,
-            // TODO:: discount item does not have name field in response body when making request using REST API, but there is name in interface, for a while set name as entityID
+            // Info:: discount item does not have name field in response body when making request using REST API, but there is name in interface, for a while set name as entityID
             name: discount.entityId,
         })),
         extendedListPrice: extendedListPrice.value,
@@ -53,7 +53,7 @@ export default function mapToLineItem(lineItem: HeadlessLineItem): LineItem {
             valueId: option.valueEntityId,
         })),
 
-        // TODO:: we do not have any information regarding to fields below in the GraphQL Storefront doc
+        // Info:: we do not have any information regarding to fields below in the GraphQL Storefront doc
         addedByPromotion: false,
         comparisonPrice: 0,
         extendedComparisonPrice: 0,
