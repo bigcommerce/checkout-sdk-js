@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.716.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.715.0...v1.716.0) (2025-03-19)
+
+
+### Features
+
+* **payment:** PI-3505 Added Company Name fields to the Bluesnap Direct ECP implementation ([#2807](https://github.com/bigcommerce/checkout-sdk-js/issues/2807)) ([f444a78](https://github.com/bigcommerce/checkout-sdk-js/commit/f444a7831ae4906e93f218a7bf8e5b74591e0bbf))
+
 ## [1.715.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.714.1...v1.715.0) (2025-03-17)
 
 
