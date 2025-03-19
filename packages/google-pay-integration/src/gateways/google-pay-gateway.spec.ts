@@ -2,7 +2,9 @@ import {
     InvalidArgumentError,
     MissingDataError,
     NotInitializedError,
+    PaymentIntegrationSelectors,
     PaymentIntegrationService,
+    RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
@@ -13,9 +15,16 @@ import {
 
 import getCardDataResponse from '../mocks/google-pay-card-data-response.mock';
 import { getAuthorizeNet, getGeneric } from '../mocks/google-pay-payment-method.mock';
-import { CallbackIntentsType, CallbackTriggerType, GooglePayFullBillingAddress } from '../types';
+import {
+    CallbackIntentsType,
+    CallbackTriggerType,
+    ErrorReasonType,
+    GooglePayFullBillingAddress,
+} from '../types';
 
 import GooglePayGateway from './google-pay-gateway';
+
+import SpyInstance = jest.SpyInstance;
 
 describe('GooglePayGateway', () => {
     let gateway: GooglePayGateway;
@@ -256,6 +265,7 @@ describe('GooglePayGateway', () => {
                     CallbackTriggerType.INITIALIZE,
                     CallbackTriggerType.SHIPPING_ADDRESS,
                     CallbackTriggerType.SHIPPING_OPTION,
+                    CallbackTriggerType.OFFER,
                 ],
                 initializationTrigger: [CallbackTriggerType.INITIALIZE],
                 addressChangeTriggers: [
@@ -263,6 +273,7 @@ describe('GooglePayGateway', () => {
                     CallbackTriggerType.SHIPPING_ADDRESS,
                 ],
                 shippingOptionsChangeTriggers: [CallbackTriggerType.SHIPPING_OPTION],
+                offerChangeTriggers: [CallbackTriggerType.OFFER],
             };
 
             await gateway.initialize(getGeneric);
@@ -354,6 +365,192 @@ describe('GooglePayGateway', () => {
             await gateway.initialize(initializeData);
 
             expect(await gateway.getNonce('methodId')).toBe('gpay-nonce');
+        });
+    });
+
+    describe('#handleCoupons', () => {
+        const removeCouponButton = {
+            ...document.createElement('a'),
+            click: jest.fn(),
+        };
+        const couponCodeInput = {
+            ...document.createElement('input'),
+        };
+
+        const form = {
+            ...document.createElement('form'),
+            dispatchEvent: jest.fn(),
+        };
+
+        let applyCouponIntegrationService: SpyInstance<
+            Promise<PaymentIntegrationSelectors>,
+            [coupon: string, options?: RequestOptions<Record<string, unknown>> | undefined]
+        >;
+
+        beforeEach(() => {
+            applyCouponIntegrationService = jest.spyOn(paymentIntegrationService, 'applyCoupon');
+
+            jest.spyOn(document, 'getElementById').mockImplementation((selector: string) => {
+                switch (selector) {
+                    case 'couponcode':
+                        return couponCodeInput;
+
+                    default:
+                        return null;
+                }
+            });
+
+            jest.spyOn(document, 'querySelector').mockImplementation((selector: string) => {
+                switch (selector) {
+                    case 'a[href*="/cart.php?action=removecoupon"]':
+                        return removeCouponButton;
+
+                    case '.coupon-form':
+                        return form;
+
+                    default:
+                        return null;
+                }
+            });
+            jest.spyOn(gateway, 'removeAllCoupons');
+        });
+
+        it('should return applied coupon code', async () => {
+            jest.spyOn(gateway, 'getAppliedCoupons')
+                .mockReturnValueOnce({ offers: [] })
+                .mockReturnValueOnce({
+                    offers: [{ redemptionCode: 'code1', description: 'some description' }],
+                });
+
+            await gateway.initialize(getGeneric);
+
+            const result = await gateway.handleCoupons({
+                redemptionCodes: ['code1'],
+            });
+
+            expect(applyCouponIntegrationService).toHaveBeenCalledWith('code1');
+            expect(result).toStrictEqual({
+                error: undefined,
+                newOfferInfo: {
+                    offers: [
+                        {
+                            description: 'some description',
+                            redemptionCode: 'code1',
+                        },
+                    ],
+                },
+            });
+        });
+
+        it('should return a google pay error object if there is a coupon code already applied', async () => {
+            jest.spyOn(gateway, 'getAppliedCoupons').mockReturnValueOnce({
+                offers: [{ redemptionCode: 'code2', description: 'some description' }],
+            });
+
+            await gateway.initialize(getGeneric);
+
+            const result = await gateway.handleCoupons({
+                redemptionCodes: ['code1'],
+            });
+
+            expect(result).toStrictEqual({
+                error: {
+                    intent: CallbackTriggerType.OFFER,
+                    message: 'You can only apply one promo code per order.',
+                    reason: ErrorReasonType.OFFER_INVALID,
+                },
+                newOfferInfo: {
+                    offers: [
+                        {
+                            description: 'some description',
+                            redemptionCode: 'code2',
+                        },
+                    ],
+                },
+            });
+        });
+
+        it('should call removeAllCoupons if there is no coupon codes came in the arguments', async () => {
+            jest.spyOn(gateway, 'getAppliedCoupons').mockReturnValueOnce({
+                offers: [{ redemptionCode: 'code_123', description: 'some description' }],
+            });
+
+            await gateway.initialize(getGeneric);
+            await gateway.handleCoupons({
+                redemptionCodes: [],
+            });
+
+            expect(gateway.removeAllCoupons).toHaveBeenCalledWith({
+                offers: [
+                    {
+                        description: 'some description',
+                        redemptionCode: 'code_123',
+                    },
+                ],
+            });
+            expect(removeCouponButton.click).toHaveBeenCalled();
+        });
+
+        it('should return applied coupon code if there is cart page selectors (behaviour on the cart page)', async () => {
+            jest.spyOn(gateway, 'getAppliedCoupons')
+                .mockReturnValueOnce({ offers: [] })
+                .mockReturnValueOnce({
+                    offers: [{ redemptionCode: 'code444', description: 'some description' }],
+                });
+
+            await gateway.initialize(getGeneric);
+
+            const result = await gateway.handleCoupons({
+                redemptionCodes: ['code444'],
+            });
+
+            expect(applyCouponIntegrationService).toHaveBeenCalledWith('code444');
+            expect(result).toStrictEqual({
+                error: undefined,
+                newOfferInfo: {
+                    offers: [
+                        {
+                            description: 'some description',
+                            redemptionCode: 'code444',
+                        },
+                    ],
+                },
+            });
+            expect(couponCodeInput.value).toBe('code444');
+            expect(form.dispatchEvent).toHaveBeenCalled();
+        });
+
+        it('should return Google Pay error object if applyCoupon is failed', async () => {
+            jest.spyOn(gateway, 'getAppliedCoupons')
+                .mockReturnValueOnce({ offers: [] })
+                .mockReturnValueOnce({
+                    offers: [{ redemptionCode: 'code444', description: 'some description' }],
+                });
+            jest.spyOn(paymentIntegrationService, 'applyCoupon').mockRejectedValueOnce(
+                new Error('Coupon error'),
+            );
+
+            await gateway.initialize(getGeneric);
+
+            const result = await gateway.handleCoupons({
+                redemptionCodes: ['code444'],
+            });
+
+            expect(result).toStrictEqual({
+                error: {
+                    intent: 'OFFER',
+                    message: 'Coupon error',
+                    reason: 'OFFER_INVALID',
+                },
+                newOfferInfo: {
+                    offers: [
+                        {
+                            description: 'some description',
+                            redemptionCode: 'code444',
+                        },
+                    ],
+                },
+            });
         });
     });
 

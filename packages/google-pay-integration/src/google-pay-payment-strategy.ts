@@ -3,6 +3,8 @@ import { round } from 'lodash';
 import {
     guard,
     InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
@@ -23,10 +25,12 @@ import isGooglePayErrorObject from './guards/is-google-pay-error-object';
 import isGooglePayKey from './guards/is-google-pay-key';
 import {
     CallbackTriggerType,
+    ErrorReasonType,
+    GooglePayError,
     GooglePayInitializationData,
     GooglePayPaymentOptions,
+    HandleCouponsOut,
     IntermediatePaymentData,
-    NewTransactionInfo,
     TotalPriceStatusType,
 } from './types';
 
@@ -186,15 +190,77 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
         );
     }
 
+    protected async _getIsSignedInOrThrow(): Promise<boolean> {
+        try {
+            return !!(await this._googlePayPaymentProcessor.getNonce(this._getMethodId()));
+        } catch (e) {
+            if (
+                e instanceof MissingDataError &&
+                e.subtype === MissingDataErrorType.MissingPaymentToken
+            ) {
+                return false;
+            }
+
+            throw e;
+        }
+    }
+
+    protected async _handleOfferTrigger(
+        offerData: IntermediatePaymentData['offerData'],
+    ): Promise<Partial<HandleCouponsOut>> {
+        let isSignedIn = false;
+        let errorMessage = 'Sign in to Google Pay first to apply or remove promo codes.';
+
+        try {
+            isSignedIn = await this._getIsSignedInOrThrow();
+        } catch (error) {
+            if (error instanceof MissingDataError) {
+                errorMessage = error.message;
+            }
+        }
+
+        // We can only apply/remove coupons on the payment step only if we are logged into Google Pay, otherwise we will get an error
+        if (isSignedIn) {
+            const { newOfferInfo, error } = await this._googlePayPaymentProcessor.handleCoupons(
+                offerData,
+            );
+
+            return {
+                newOfferInfo,
+                error,
+            };
+        }
+
+        return {
+            error: {
+                reason: ErrorReasonType.OFFER_INVALID,
+                message: errorMessage,
+                intent: CallbackTriggerType.OFFER,
+            },
+        };
+    }
+
     protected _getGooglePayClientOptions(countryCode?: string): GooglePayPaymentOptions {
         return {
             paymentDataCallbacks: {
-                onPaymentDataChanged: async ({
-                    callbackTrigger,
-                }: IntermediatePaymentData): Promise<NewTransactionInfo | void> => {
-                    if (callbackTrigger !== CallbackTriggerType.INITIALIZE) {
+                onPaymentDataChanged: async ({ callbackTrigger, offerData }) => {
+                    if (
+                        callbackTrigger !== CallbackTriggerType.INITIALIZE &&
+                        callbackTrigger !== CallbackTriggerType.OFFER
+                    ) {
                         return;
                     }
+
+                    const { offerChangeTriggers } =
+                        this._googlePayPaymentProcessor.getCallbackTriggers();
+
+                    const { newOfferInfo = undefined, error: couponsError = undefined } =
+                        offerChangeTriggers.includes(callbackTrigger)
+                            ? await this._handleOfferTrigger(offerData)
+                            : {};
+
+                    // We can add another errors if needed 'couponsError || shippingError || anotherError'
+                    const error: GooglePayError | undefined = couponsError;
 
                     await this._paymentIntegrationService.loadCheckout();
 
@@ -213,6 +279,12 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                             totalPriceStatus: TotalPriceStatusType.FINAL,
                             totalPrice,
                         },
+                        ...(newOfferInfo && {
+                            newOfferInfo,
+                        }),
+                        ...(error && {
+                            error,
+                        }),
                     };
                 },
             },
