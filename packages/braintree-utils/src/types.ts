@@ -252,6 +252,7 @@ export interface BraintreeThreeDSecureOptions {
     ): void;
     removeFrame?(): void;
     onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
+    collectDeviceData?: boolean;
 }
 
 export interface BraintreeThreeDSecureVerificationData {
@@ -528,6 +529,9 @@ export interface BraintreeFastlaneCardPaymentSource {
     lastDigits: string;
     name?: string;
     billingAddress: BraintreeFastlaneAddress;
+    binDetails?: {
+        bin: string;
+    }
 }
 
 export interface BraintreeFastlanePaymentSource {

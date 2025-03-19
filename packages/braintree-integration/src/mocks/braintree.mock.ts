@@ -3,6 +3,7 @@ import {
     DefaultCheckoutButtonHeight,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { BraintreeThreeDSecure } from '../../../core/src/payment/strategies/braintree';
 
 export function getBraintreeAcceleratedCheckoutPaymentMethod(): PaymentMethod {
     return {
@@ -19,6 +20,14 @@ export function getBraintreeAcceleratedCheckoutPaymentMethod(): PaymentMethod {
             isAcceleratedCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
+    };
+}
+
+export function getThreeDSecureMock(): BraintreeThreeDSecure {
+    return {
+        verifyCard: jest.fn(),
+        cancelVerifyCard: jest.fn(),
+        teardown: jest.fn(() => Promise.resolve()),
     };
 }
 
