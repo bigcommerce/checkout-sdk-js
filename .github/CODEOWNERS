@@ -37,7 +37,6 @@
 /packages/core/src/payment/strategies/klarnav2 @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/masterpass @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/moneris @bigcommerce/team-integrations
-/packages/core/src/payment/strategies/opy @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/ppsdk @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/quadpay @bigcommerce/team-integrations
 /packages/core/src/payment/strategies/square @bigcommerce/team-integrations

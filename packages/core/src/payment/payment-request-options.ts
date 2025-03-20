@@ -9,7 +9,6 @@ import {
 } from './strategies/braintree';
 import { DigitalRiverPaymentInitializeOptions } from './strategies/digitalriver';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
-import { OpyPaymentInitializeOptions } from './strategies/opy';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 
 export { PaymentInitializeOptions } from '../generated/payment-initialize-options';
@@ -75,12 +74,6 @@ export interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Masterpass.
      */
     masterpass?: MasterpassPaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Opy payment
-     * method. They can be omitted unless you need to support Opy.
-     */
-    opy?: OpyPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the PayPal Express payment method.
