@@ -14,7 +14,10 @@ import {
     PaymentIntegrationService,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import {
+    getConfig,
+    PaymentIntegrationServiceMock,
+} from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import GooglePayGateway from './gateways/google-pay-gateway';
 import { WithGooglePayPaymentInitializeOptions } from './google-pay-payment-initialize-options';
@@ -45,6 +48,17 @@ describe('GooglePayPaymentStrategy', () => {
     let options: PaymentInitializeOptions & WithGooglePayPaymentInitializeOptions;
     let button: HTMLDivElement;
     let eventEmitter: EventEmitter;
+    const storeConfig = getConfig().storeConfig;
+    const storeConfigWithFeaturesOn = {
+        ...storeConfig,
+        checkoutSettings: {
+            ...storeConfig.checkoutSettings,
+            features: {
+                ...storeConfig.checkoutSettings.features,
+                'PI-2875.googlepay_coupons_handling': true,
+            },
+        },
+    };
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -52,6 +66,10 @@ describe('GooglePayPaymentStrategy', () => {
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             getGeneric(),
+        );
+
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            storeConfigWithFeaturesOn,
         );
 
         clientMocks = getGooglePaymentsClientMocks();

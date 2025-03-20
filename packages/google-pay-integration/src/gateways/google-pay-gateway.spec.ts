@@ -8,6 +8,7 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
     getBillingAddress,
+    getConfig,
     getConsignment,
     getShippingOption,
     PaymentIntegrationServiceMock,
@@ -29,6 +30,17 @@ import SpyInstance = jest.SpyInstance;
 describe('GooglePayGateway', () => {
     let gateway: GooglePayGateway;
     let paymentIntegrationService: PaymentIntegrationService;
+    const storeConfig = getConfig().storeConfig;
+    const storeConfigWithFeaturesOn = {
+        ...storeConfig,
+        checkoutSettings: {
+            ...storeConfig.checkoutSettings,
+            features: {
+                ...storeConfig.checkoutSettings.features,
+                'PI-2875.googlepay_coupons_handling': true,
+            },
+        },
+    };
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -36,6 +48,10 @@ describe('GooglePayGateway', () => {
 
         jest.spyOn(paymentIntegrationService, 'loadShippingCountries').mockResolvedValue(
             paymentIntegrationService.getState(),
+        );
+
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            storeConfigWithFeaturesOn,
         );
 
         gateway = new GooglePayGateway('example', paymentIntegrationService);

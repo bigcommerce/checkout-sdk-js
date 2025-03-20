@@ -12,6 +12,7 @@ import {
     PaymentMethodCancelledError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
+    getConfig,
     getConsignment,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -42,6 +43,17 @@ describe('GooglePayCustomerStrategy', () => {
     let strategy: GooglePayCustomerStrategy;
     let options: CustomerInitializeOptions & WithGooglePayCustomerInitializeOptions;
     let eventEmitter: EventEmitter;
+    const storeConfig = getConfig().storeConfig;
+    const storeConfigWithFeaturesOn = {
+        ...storeConfig,
+        checkoutSettings: {
+            ...storeConfig.checkoutSettings,
+            features: {
+                ...storeConfig.checkoutSettings.features,
+                'PI-2875.googlepay_coupons_handling': true,
+            },
+        },
+    };
 
     beforeEach(() => {
         eventEmitter = new EventEmitter();
@@ -51,7 +63,9 @@ describe('GooglePayCustomerStrategy', () => {
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             getGeneric(),
         );
-
+        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfigOrThrow').mockReturnValue(
+            storeConfigWithFeaturesOn,
+        );
         button = document.createElement('button');
         jest.spyOn(button, 'remove');
 
