@@ -17,7 +17,6 @@ import {
 import { CBAMPGSPaymentStrategy } from './strategies/cba-mpgs';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy } from './strategies/masterpass';
-import { OpyPaymentStrategy } from './strategies/opy';
 import { PaypalExpressPaymentStrategy } from './strategies/paypal';
 import { PPSDKStrategy } from './strategies/ppsdk';
 import { WepayPaymentStrategy } from './strategies/wepay';
@@ -72,12 +71,6 @@ describe('CreatePaymentStrategyRegistry', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.BNZ);
 
         expect(paymentStrategy).toBeInstanceOf(BNZPaymentStrategy);
-    });
-
-    it('can instantiate openpay', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.OPY);
-
-        expect(paymentStrategy).toBeInstanceOf(OpyPaymentStrategy);
     });
 
     it('can instantiate paypalexpress', () => {

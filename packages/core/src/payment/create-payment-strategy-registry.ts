@@ -6,7 +6,6 @@ import {
     BraintreeIntegrationService,
     BraintreeScriptLoader,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
-import { StorefrontPaymentRequestSender } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
     CheckoutActionCreator,
@@ -55,7 +54,6 @@ import {
 import { CBAMPGSPaymentStrategy, CBAMPGSScriptLoader } from './strategies/cba-mpgs';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
-import { OpyPaymentStrategy, OpyScriptLoader } from './strategies/opy';
 import { PaypalExpressPaymentStrategy, PaypalScriptLoader } from './strategies/paypal';
 import {
     createStepHandler,
@@ -121,7 +119,6 @@ export default function createPaymentStrategyRegistry(
     const formPoster = createFormPoster();
     const stepHandler = createStepHandler(formPoster, paymentHumanVerificationHandler);
     const hostedFormFactory = new HostedFormFactory(store);
-    const storefrontPaymentRequestSender = new StorefrontPaymentRequestSender(requestSender);
 
     registry.register(
         PaymentStrategyType.BARCLAYS,
@@ -233,19 +230,6 @@ export default function createPaymentStrategyRegistry(
                 paymentActionCreator,
                 new MasterpassScriptLoader(scriptLoader),
                 locale,
-            ),
-    );
-
-    registry.register(
-        PaymentStrategyType.OPY,
-        () =>
-            new OpyPaymentStrategy(
-                store,
-                orderActionCreator,
-                paymentMethodActionCreator,
-                storefrontPaymentRequestSender,
-                paymentActionCreator,
-                new OpyScriptLoader(scriptLoader),
             ),
     );
 
