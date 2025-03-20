@@ -21,10 +21,10 @@ import isGooglePayErrorObject from './guards/is-google-pay-error-object';
 import isGooglePayKey from './guards/is-google-pay-key';
 import {
     GooglePayBuyNowInitializeOptions,
+    GooglePayError,
     GooglePayInitializationData,
+    GooglePayPaymentDataRequest,
     GooglePayPaymentOptions,
-    IntermediatePaymentData,
-    NewTransactionInfo,
     ShippingOptionParameters,
     TotalPriceStatusType,
 } from './types';
@@ -193,11 +193,13 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                     callbackTrigger,
                     shippingAddress,
                     shippingOptionData,
-                }: IntermediatePaymentData): Promise<NewTransactionInfo | void> => {
+                    offerData,
+                }) => {
                     const {
                         availableTriggers,
                         addressChangeTriggers,
                         shippingOptionsChangeTriggers,
+                        offerChangeTriggers,
                     } = this._googlePayPaymentProcessor.getCallbackTriggers();
 
                     if (!availableTriggers.includes(callbackTrigger)) {
@@ -216,11 +218,23 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
                         );
                     }
 
+                    const { newOfferInfo = undefined, error: couponsError = undefined } =
+                        offerChangeTriggers.includes(callbackTrigger)
+                            ? await this._googlePayPaymentProcessor.handleCoupons(offerData)
+                            : {};
+
+                    // We can add another errors if needed 'couponsError || shippingError || anotherError'
+                    const error: GooglePayError | undefined = couponsError;
+
                     if (this._buyNowInitializeOptions) {
-                        return this._getBuyNowTransactionInfo(availableShippingOptions);
+                        return this._getBuyNowTransactionInfo(
+                            availableShippingOptions,
+                            newOfferInfo,
+                            error,
+                        );
                     }
 
-                    return this._getTransactionInfo(availableShippingOptions);
+                    return this._getTransactionInfo(availableShippingOptions, newOfferInfo, error);
                 },
             },
         };
@@ -248,7 +262,11 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
         }
     }
 
-    private _getBuyNowTransactionInfo(availableShippingOptions?: ShippingOptionParameters) {
+    private _getBuyNowTransactionInfo(
+        availableShippingOptions?: ShippingOptionParameters,
+        newOfferInfo?: GooglePayPaymentDataRequest['offerInfo'],
+        error?: GooglePayError,
+    ) {
         if (!this._buyNowCart) {
             return;
         }
@@ -267,10 +285,20 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             ...(availableShippingOptions && {
                 newShippingOptionParameters: availableShippingOptions,
             }),
+            ...(newOfferInfo && {
+                newOfferInfo,
+            }),
+            ...(error && {
+                error,
+            }),
         };
     }
 
-    private async _getTransactionInfo(availableShippingOptions?: ShippingOptionParameters) {
+    private async _getTransactionInfo(
+        availableShippingOptions?: ShippingOptionParameters,
+        newOfferInfo?: GooglePayPaymentDataRequest['offerInfo'],
+        error?: GooglePayError,
+    ) {
         await this._paymentIntegrationService.loadCheckout();
 
         const totalPrice = this._googlePayPaymentProcessor.getTotalPrice();
@@ -287,6 +315,12 @@ export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
             },
             ...(availableShippingOptions && {
                 newShippingOptionParameters: availableShippingOptions,
+            }),
+            ...(newOfferInfo && {
+                newOfferInfo,
+            }),
+            ...(error && {
+                error,
             }),
         };
     }

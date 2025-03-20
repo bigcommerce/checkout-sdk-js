@@ -59,6 +59,7 @@ const state = {
     getPaymentRedirectUrl: jest.fn(),
     getPaymentRedirectUrlOrThrow: jest.fn(),
     isPaymentDataRequired: jest.fn(),
+    applyCoupon: jest.fn(),
 };
 
 const createBuyNowCart = jest.fn(() => Promise.resolve(getCart()));
@@ -92,6 +93,8 @@ const initializePayment = jest.fn();
 const validateCheckout = jest.fn();
 const widgetInteraction = jest.fn();
 const handle = jest.fn();
+const applyCoupon = jest.fn();
+const removeCoupon = jest.fn();
 
 const PaymentIntegrationServiceMock = jest
     .fn<PaymentIntegrationService, []>()
@@ -123,6 +126,8 @@ const PaymentIntegrationServiceMock = jest
             signOutCustomer,
             selectShippingOption,
             applyStoreCredit,
+            applyCoupon,
+            removeCoupon,
             verifyCheckoutSpamProtection,
             updatePaymentProviderCustomer,
             initializePayment,
