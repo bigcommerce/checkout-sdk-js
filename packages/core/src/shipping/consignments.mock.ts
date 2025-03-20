@@ -17,6 +17,7 @@ export function getConsignment(): Consignment {
         lineItemIds: ['12e11c8f-7dce-4da3-9413-b649533f8bad'],
         shippingAddress: omit(getShippingAddress(), 'id') as Address,
         availableShippingOptions: [getShippingOption()],
+        discounts: [],
     };
 }
 
