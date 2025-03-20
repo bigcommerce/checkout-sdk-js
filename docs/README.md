@@ -320,7 +320,6 @@
 - [NonceInstrument](interfaces/NonceInstrument.md)
 - [Option](interfaces/Option.md)
 - [OptionsResponse](interfaces/OptionsResponse.md)
-- [OpyPaymentInitializeOptions](interfaces/OpyPaymentInitializeOptions.md)
 - [Order](interfaces/Order.md)
 - [OrderBillingAddress](interfaces/OrderBillingAddress.md)
 - [OrderBillingAddressSelector](interfaces/OrderBillingAddressSelector.md)

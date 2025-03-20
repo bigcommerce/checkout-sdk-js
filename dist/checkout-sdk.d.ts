@@ -781,11 +781,6 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
      */
     masterpass?: MasterpassPaymentInitializeOptions;
     /**
-     * The options that are required to initialize the Opy payment
-     * method. They can be omitted unless you need to support Opy.
-     */
-    opy?: OpyPaymentInitializeOptions;
-    /**
      * The options that are required to initialize the PayPal Express payment method.
      * They can be omitted unless you need to support PayPal Express.
      */
@@ -6038,37 +6033,6 @@ declare interface OptionsResponse {
      * Additional configuration details for drop-in.
      */
     paymentMethodConfiguration?: BaseElementOptions;
-}
-
-/**
- * A set of options that are required to initialize the payment step of
- * checkout in order to support Opy.
- *
- * When Opy is initialized, a widget will be inserted into the DOM. The
- * widget will open a modal that will show more information about Opy when
- * clicking it.
- *
- * @example
- *
- * ```html
- * <!-- This is where the Opy widget will be inserted -->
- * <div id="opy-widget"></div>
- * ```
- *
- * ```js
- * service.initializePayment({
- *     methodId: 'opy',
- *     opy: {
- *         containerId: 'opy-widget',
- *     },
- * });
- * ```
- */
-declare interface OpyPaymentInitializeOptions {
-    /**
-     * The ID of a container which the payment widget should insert into.
-     */
-    containerId: string;
 }
 
 declare interface Order {

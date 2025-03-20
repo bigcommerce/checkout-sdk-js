@@ -23,7 +23,6 @@ current checkout flow.
 - [gatewayId](BasePaymentInitializeOptions.md#gatewayid)
 - [masterpass](BasePaymentInitializeOptions.md#masterpass)
 - [methodId](BasePaymentInitializeOptions.md#methodid)
-- [opy](BasePaymentInitializeOptions.md#opy)
 - [params](BasePaymentInitializeOptions.md#params)
 - [paypalexpress](BasePaymentInitializeOptions.md#paypalexpress)
 - [timeout](BasePaymentInitializeOptions.md#timeout)
@@ -110,15 +109,6 @@ The identifier of the payment method.
 #### Inherited from
 
 [PaymentRequestOptions](PaymentRequestOptions.md).[methodId](PaymentRequestOptions.md#methodid)
-
-___
-
-### opy
-
-• `Optional` **opy**: [`OpyPaymentInitializeOptions`](OpyPaymentInitializeOptions.md)
-
-The options that are required to initialize the Opy payment
-method. They can be omitted unless you need to support Opy.
 
 ___
 
