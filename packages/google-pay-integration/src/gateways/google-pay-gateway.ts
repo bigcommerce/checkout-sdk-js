@@ -150,6 +150,11 @@ export default class GooglePayGateway {
                 'PI-2875.googlepay_coupons_handling'
             ] || false;
 
+        console.log(
+            'getCallbackTriggers isGooglePayCouponsExperimentOn',
+            isGooglePayCouponsExperimentOn,
+        );
+
         const availableTriggers = [
             CallbackTriggerType.INITIALIZE,
             CallbackTriggerType.SHIPPING_ADDRESS,

@@ -251,6 +251,11 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                             'PI-2875.googlepay_coupons_handling'
                         ] || false;
 
+                    console.log(
+                        'payment step isGooglePayCouponsExperimentOn',
+                        isGooglePayCouponsExperimentOn,
+                    );
+
                     if (
                         callbackTrigger !== CallbackTriggerType.INITIALIZE &&
                         (!isGooglePayCouponsExperimentOn ||
