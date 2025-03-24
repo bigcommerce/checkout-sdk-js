@@ -323,6 +323,82 @@ describe('PayPalCommerceIntegrationService', () => {
         });
     });
 
+    describe('#createPaymentOrderIntent', () => {
+        const providerId = 'paypalcommerce.paypal';
+        const paymentOrderIntentResponse = {
+            orderId: '10',
+            approveUrl: 'test-url',
+        };
+
+        beforeEach(() => {
+            jest.spyOn(paypalCommerceRequestSender, 'createPaymentOrderIntent').mockResolvedValue(
+                paymentOrderIntentResponse,
+            );
+        });
+
+        it('throws an error if cart does not exist', async () => {
+            const err = new Error('cart does not exist');
+
+            jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockImplementation(
+                () => {
+                    throw err;
+                },
+            );
+
+            try {
+                await subject.createPaymentOrderIntent(providerId);
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+                expect((error as Error).message).toBe('cart does not exist');
+            }
+        });
+
+        it('successfully creation of payment order intent', async () => {
+            const orderId = await subject.createPaymentOrderIntent(providerId);
+
+            expect(paypalCommerceRequestSender.createPaymentOrderIntent).toHaveBeenCalledWith(
+                providerId,
+                cart.id,
+                undefined,
+            );
+
+            expect(orderId).toEqual(paymentOrderIntentResponse.orderId);
+        });
+    });
+
+    describe('#proxyTokenizationPayment', () => {
+        const redirectUrl = 'redirect-url';
+
+        beforeEach(() => {
+            jest.spyOn(paypalCommerceRequestSender, 'getRedirectToCheckoutUrl').mockResolvedValue(
+                redirectUrl,
+            );
+
+            Object.defineProperty(window, 'location', {
+                value: {
+                    assign: jest.fn(),
+                },
+            });
+        });
+
+        it('throws an error if orderId is not provided', async () => {
+            try {
+                await subject.proxyTokenizationPayment();
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('successfully tokenization payment', async () => {
+            await subject.proxyTokenizationPayment('10');
+
+            expect(paypalCommerceRequestSender.getRedirectToCheckoutUrl).toHaveBeenCalledWith(
+                '/redirect-to-checkout',
+            );
+            expect(window.location.assign).toHaveBeenCalledWith(redirectUrl);
+        });
+    });
+
     describe('#submitPayment', () => {
         it('successfully submits payment', async () => {
             jest.spyOn(paymentIntegrationService, 'submitPayment').mockImplementation(jest.fn());
