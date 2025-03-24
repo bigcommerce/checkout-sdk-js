@@ -4,13 +4,13 @@ import { getCart } from '../carts.mock';
 import { LineItem } from '../line-item';
 
 import mapToLineItem from './map-to-cart-line-item';
-import { headlessLineItem } from './mocks/headless-cart.mock';
+import { gqlCartLineItem } from './mocks/gql-cart.mock';
 
 describe('mapToLineItem', () => {
     let headlessLineItemResponse: LineItem | undefined;
 
     beforeEach(() => {
-        headlessLineItemResponse = mapToLineItem(headlessLineItem());
+        headlessLineItemResponse = mapToLineItem(gqlCartLineItem());
     });
 
     it('maps to line item', () => {

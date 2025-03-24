@@ -3,13 +3,13 @@ import { Cart } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { getCart } from '../carts.mock';
 
 import mapToCart from './map-to-cart';
-import { getHeadlessCartResponse } from './mocks/headless-cart.mock';
+import { getGQLCartResponse } from './mocks/gql-cart.mock';
 
 describe('mapToCart', () => {
     let headlessCartResponse: Cart | undefined;
 
     beforeEach(() => {
-        headlessCartResponse = mapToCart(getHeadlessCartResponse().data.site);
+        headlessCartResponse = mapToCart(getGQLCartResponse().data.site);
     });
 
     it('maps to internal cart', () => {

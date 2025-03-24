@@ -4,7 +4,7 @@ import { getCart } from '../carts.mock';
 import { LineItemMap } from '../index';
 
 import mapToCartLineItems from './map-to-cart-line-items';
-import { getHeadlessCartResponse } from './mocks/headless-cart.mock';
+import { getGQLCartResponse } from './mocks/gql-cart.mock';
 
 describe('mapToCartLinesItem', () => {
     let headlessCartLineItemsResponse: LineItemMap | undefined;
@@ -14,7 +14,7 @@ describe('mapToCartLinesItem', () => {
             data: {
                 site: { cart },
             },
-        } = getHeadlessCartResponse();
+        } = getGQLCartResponse();
 
         headlessCartLineItemsResponse = mapToCartLineItems(
             cart?.lineItems ?? {

@@ -4,7 +4,7 @@ import { BuyNowCartRequestBody, Cart } from '@bigcommerce/checkout-sdk/payment-i
 
 import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
-import { HeadlessCartRequestResponse, mapToCart } from './headless-cart';
+import { GQLCartRequestResponse, mapToCart } from './gql-cart';
 
 export default class CartRequestSender {
     constructor(private _requestSender: RequestSender) {}
@@ -23,7 +23,7 @@ export default class CartRequestSender {
     }
 
     async loadCart(cartId: string, options?: RequestOptions): Promise<Response<Cart | undefined>> {
-        const path = 'api/wallet-buttons/cart-information';
+        const path = `${window.location.origin}/api/wallet-buttons/cart-information`;
 
         const requestOptions: RequestOptions = {
             ...options,
@@ -32,7 +32,7 @@ export default class CartRequestSender {
             },
         };
 
-        const response = await this._requestSender.get<HeadlessCartRequestResponse>(path, {
+        const response = await this._requestSender.get<GQLCartRequestResponse>(path, {
             ...requestOptions,
         });
 
@@ -40,7 +40,7 @@ export default class CartRequestSender {
     }
 
     private transformToCartResponse(
-        response: Response<HeadlessCartRequestResponse>,
+        response: Response<GQLCartRequestResponse>,
     ): Response<Cart | undefined> {
         const {
             body: {

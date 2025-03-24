@@ -2,7 +2,7 @@ interface BaseFieldFragment {
     value: number;
 }
 
-export interface HeadlessLineItem {
+export interface GQLCartLineItem {
     name: string;
     entityId: string;
     quantity: number;
@@ -48,7 +48,7 @@ export interface HeadlessLineItem {
     }>;
 }
 
-interface HeadlessPhysicalItem extends HeadlessLineItem {
+interface GQLCartPhysicalItem extends GQLCartLineItem {
     isShippingRequired: boolean;
     giftWrapping?: {
         amount: {
@@ -59,13 +59,13 @@ interface HeadlessPhysicalItem extends HeadlessLineItem {
     } | null;
 }
 
-interface HeadlessDigitalItem extends HeadlessLineItem {
+interface GQLCartDigitalItem extends GQLCartLineItem {
     downloadFileUrls: string[];
     downloadPageUrl: string;
     downloadSize: string;
 }
 
-export interface HeadlessCustomItem {
+export interface GQLCartCustomItem {
     entityId: string;
     listPrice: BaseFieldFragment;
     extendedListPrice: BaseFieldFragment;
@@ -74,7 +74,7 @@ export interface HeadlessCustomItem {
     sku: string;
 }
 
-export interface HeadlessGiftCertificates {
+export interface GQLCartGiftCertificates {
     amount: BaseFieldFragment;
     name: string;
     theme: string;
@@ -91,14 +91,14 @@ export interface HeadlessGiftCertificates {
     };
 }
 
-export interface HeadlessLineItems {
-    physicalItems: HeadlessPhysicalItem[];
-    digitalItems: HeadlessDigitalItem[];
-    customItems: HeadlessCustomItem[];
-    giftCertificates?: HeadlessGiftCertificates[];
+export interface GQLCartLineItems {
+    physicalItems: GQLCartPhysicalItem[];
+    digitalItems: GQLCartDigitalItem[];
+    customItems: GQLCartCustomItem[];
+    giftCertificates?: GQLCartGiftCertificates[];
 }
 
-export default interface HeadlessCartResponse {
+export default interface GQLCartResponse {
     cart?: {
         amount: BaseFieldFragment;
         baseAmount: BaseFieldFragment;
@@ -117,7 +117,7 @@ export default interface HeadlessCartResponse {
         discountedAmount: BaseFieldFragment;
         isTaxIncluded: boolean;
         currencyCode: string;
-        lineItems: HeadlessLineItems;
+        lineItems: GQLCartLineItems;
     };
     checkout?: {
         coupons: Array<{

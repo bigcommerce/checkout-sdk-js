@@ -1,9 +1,9 @@
 import { LineItemMap } from '../index';
 
-import { HeadlessLineItems } from './headless-cart';
+import { GQLCartLineItems } from './gql-cart';
 import mapToLineItem from './map-to-cart-line-item';
 
-export default function mapToCartLineItems(lineItems: HeadlessLineItems): LineItemMap {
+export default function mapToCartLineItems(lineItems: GQLCartLineItems): LineItemMap {
     const {
         physicalItems = [],
         digitalItems = [],

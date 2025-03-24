@@ -1,7 +1,7 @@
-import { HeadlessLineItem } from '../headless-cart';
-import { HeadlessCartRequestResponse } from '../headless-cart-request-response';
+import { GQLCartLineItem } from '../gql-cart';
+import { GQLCartRequestResponse } from '../gql-cart-request-response';
 
-export function headlessLineItem(): HeadlessLineItem {
+export function gqlCartLineItem(): GQLCartLineItem {
     return {
         discounts: [],
         brand: 'OFS',
@@ -46,7 +46,7 @@ export function headlessLineItem(): HeadlessLineItem {
     };
 }
 
-export function getHeadlessCartResponse(): HeadlessCartRequestResponse {
+export function getGQLCartResponse(): GQLCartRequestResponse {
     return {
         data: {
             site: {
@@ -131,6 +131,6 @@ export function getPhysicalItem(hasGiftWrapping?: false) {
                   },
               }
             : {}),
-        ...headlessLineItem(),
+        ...gqlCartLineItem(),
     };
 }

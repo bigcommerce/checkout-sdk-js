@@ -14,15 +14,15 @@ import BuyNowCartRequestBody from './buy-now-cart-request-body';
 import Cart from './cart';
 import CartRequestSender from './cart-request-sender';
 import { getCart } from './carts.mock';
-import { HeadlessCartRequestResponse } from './headless-cart';
-import { getHeadlessCartResponse } from './headless-cart/mocks/headless-cart.mock';
+import { GQLCartRequestResponse } from './gql-cart';
+import { getGQLCartResponse } from './gql-cart/mocks/gql-cart.mock';
 
 describe('CartRequestSender', () => {
     let cart: Cart;
     let cartRequestSender: CartRequestSender;
     let requestSender: RequestSender;
     let response: Response<Cart>;
-    let headlessResponse: Response<HeadlessCartRequestResponse>;
+    let headlessResponse: Response<GQLCartRequestResponse>;
 
     beforeEach(() => {
         requestSender = createRequestSender();
@@ -83,7 +83,7 @@ describe('CartRequestSender', () => {
         const cartId = '123123';
 
         beforeEach(() => {
-            headlessResponse = getResponse(getHeadlessCartResponse());
+            headlessResponse = getResponse(getGQLCartResponse());
 
             jest.spyOn(requestSender, 'get').mockResolvedValue(headlessResponse);
         });
@@ -91,11 +91,14 @@ describe('CartRequestSender', () => {
         it('get headless cart', async () => {
             await cartRequestSender.loadCart(cartId);
 
-            expect(requestSender.get).toHaveBeenCalledWith('api/wallet-buttons/cart-information', {
-                params: {
-                    cartId,
+            expect(requestSender.get).toHaveBeenCalledWith(
+                'http://localhost/api/wallet-buttons/cart-information',
+                {
+                    params: {
+                        cartId,
+                    },
                 },
-            });
+            );
         });
     });
 });

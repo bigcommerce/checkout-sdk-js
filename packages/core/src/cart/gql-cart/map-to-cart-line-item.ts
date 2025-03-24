@@ -1,8 +1,8 @@
 import { LineItem } from '../line-item';
 
-import { HeadlessLineItem } from './headless-cart';
+import { GQLCartLineItem } from './gql-cart';
 
-export default function mapToLineItem(lineItem: HeadlessLineItem): LineItem {
+export default function mapToLineItem(lineItem: GQLCartLineItem): LineItem {
     const {
         entityId,
         name,
