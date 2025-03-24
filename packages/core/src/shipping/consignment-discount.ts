@@ -1,14 +1,12 @@
-interface ConsignmentDiscountBase {
+interface ConsignmentDiscountBase<T> {
     id: number;
     amount: number;
+    type: T;
 }
 
-interface ConsignmentAutomaticDiscount extends ConsignmentDiscountBase {
-    type: 'AUTOMATIC';
-}
+interface ConsignmentAutomaticDiscount extends ConsignmentDiscountBase<'AUTOMATIC'> {}
 
-interface ConsignmentCouponDiscount extends ConsignmentDiscountBase {
-    type: 'COUPON';
+interface ConsignmentCouponDiscount extends ConsignmentDiscountBase<'COUPON'> {
     couponId: number;
     couponCode: string;
 }

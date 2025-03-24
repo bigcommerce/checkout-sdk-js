@@ -1,6 +1,6 @@
 import { Address, AddressRequestBody } from '../address';
-import { ConsignmentDiscount } from './consignment-discount';
 
+import { ConsignmentDiscount } from './consignment-discount';
 import { ConsignmentPickupOption } from './pickup-option';
 import ShippingOption from './shipping-option';
 
