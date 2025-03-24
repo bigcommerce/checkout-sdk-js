@@ -22,13 +22,8 @@ export default class CartRequestSender {
         return this._requestSender.post(url, { body, headers, timeout });
     }
 
-    async loadCart(
-        cartId: string,
-        host?: string,
-        options?: RequestOptions,
-    ): Promise<Response<Cart | undefined>> {
-        const path = 'cart-information';
-        const url = host ? `${host}/${path}` : `/${path}`;
+    async loadCart(cartId: string, options?: RequestOptions): Promise<Response<Cart | undefined>> {
+        const path = 'api/wallet-buttons/cart-information';
 
         const requestOptions: RequestOptions = {
             ...options,
@@ -37,7 +32,7 @@ export default class CartRequestSender {
             },
         };
 
-        const response = await this._requestSender.get<HeadlessCartRequestResponse>(url, {
+        const response = await this._requestSender.get<HeadlessCartRequestResponse>(path, {
             ...requestOptions,
         });
 

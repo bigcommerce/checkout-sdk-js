@@ -41,7 +41,6 @@ export interface HeadlessLineItem {
     url: string;
     variantEntityId: number;
     selectedOptions: Array<{
-        __typename: string;
         value: string;
         valueEntityId: number;
         entityId: number;

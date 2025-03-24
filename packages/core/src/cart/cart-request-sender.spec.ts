@@ -81,7 +81,6 @@ describe('CartRequestSender', () => {
 
     describe('#loadCart', () => {
         const cartId = '123123';
-        const host = 'https://test.com';
 
         beforeEach(() => {
             headlessResponse = getResponse(getHeadlessCartResponse());
@@ -92,17 +91,7 @@ describe('CartRequestSender', () => {
         it('get headless cart', async () => {
             await cartRequestSender.loadCart(cartId);
 
-            expect(requestSender.get).toHaveBeenCalledWith('/cart-information', {
-                params: {
-                    cartId,
-                },
-            });
-        });
-
-        it('get headless cart with host url', async () => {
-            await cartRequestSender.loadCart(cartId, host);
-
-            expect(requestSender.get).toHaveBeenCalledWith('https://test.com/cart-information', {
+            expect(requestSender.get).toHaveBeenCalledWith('api/wallet-buttons/cart-information', {
                 params: {
                     cartId,
                 },

@@ -18,15 +18,12 @@ export default class CartActionCreator {
         cartId: string,
         options?: RequestOptions & ActionOptions,
     ): ThunkAction<LoadCartAction, InternalCheckoutSelectors> {
-        return (store) => {
+        return () => {
             return new Observable((observer: Observer<LoadCartAction>) => {
-                const state = store.getState();
-                const host = state.config.getHost();
-
                 observer.next(createAction(CartActionType.LoadCartRequested, undefined));
 
                 this._cartRequestSender
-                    .loadCart(cartId, host, options)
+                    .loadCart(cartId, options)
                     .then((response) => {
                         observer.next(
                             createAction(CartActionType.LoadCartSucceeded, response.body),

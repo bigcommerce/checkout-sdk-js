@@ -36,7 +36,6 @@ export function headlessLineItem(): HeadlessLineItem {
             {
                 name: 'n',
                 entityId: 1,
-                __typename: 'CartSelectedMultipleChoiceOption',
                 value: 'v',
                 valueEntityId: 3,
             },
