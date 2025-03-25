@@ -8,6 +8,7 @@
 
 - [address](Consignment.md#address)
 - [availableShippingOptions](Consignment.md#availableshippingoptions)
+- [discounts](Consignment.md#discounts)
 - [handlingCost](Consignment.md#handlingcost)
 - [id](Consignment.md#id)
 - [lineItemIds](Consignment.md#lineitemids)
@@ -27,6 +28,12 @@ ___
 ### availableShippingOptions
 
 • `Optional` **availableShippingOptions**: [`ShippingOption`](ShippingOption.md)[]
+
+___
+
+### discounts
+
+• **discounts**: [`ConsignmentDiscount`](../README.md#consignmentdiscount)[]
 
 ___
 

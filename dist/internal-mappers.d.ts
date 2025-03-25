@@ -130,12 +130,29 @@ declare interface Consignment {
     id: string;
     address: Address;
     shippingAddress: Address;
+    discounts: ConsignmentDiscount[];
     handlingCost: number;
     shippingCost: number;
     availableShippingOptions?: ShippingOption[];
     selectedShippingOption?: ShippingOption;
     selectedPickupOption?: ConsignmentPickupOption;
     lineItemIds: string[];
+}
+
+declare interface ConsignmentAutomaticDiscount extends ConsignmentDiscountBase<'AUTOMATIC'> {
+}
+
+declare interface ConsignmentCouponDiscount extends ConsignmentDiscountBase<'COUPON'> {
+    couponId: number;
+    couponCode: string;
+}
+
+declare type ConsignmentDiscount = ConsignmentAutomaticDiscount | ConsignmentCouponDiscount;
+
+declare interface ConsignmentDiscountBase<T> {
+    id: number;
+    amount: number;
+    type: T;
 }
 
 declare interface ConsignmentPickupOption {

@@ -4087,6 +4087,7 @@ declare interface Consignment {
     id: string;
     address: Address;
     shippingAddress: Address;
+    discounts: ConsignmentDiscount[];
     handlingCost: number;
     shippingCost: number;
     availableShippingOptions?: ShippingOption[];
@@ -4109,11 +4110,27 @@ declare interface ConsignmentAssignmentBaseRequestBodyWithShippingAddress {
 
 declare type ConsignmentAssignmentRequestBody = ConsignmentAssignmentBaseRequestBodyWithShippingAddress | ConsignmentAssignmentBaseRequestBodyWithAddress;
 
+declare interface ConsignmentAutomaticDiscount extends ConsignmentDiscountBase<'AUTOMATIC'> {
+}
+
+declare interface ConsignmentCouponDiscount extends ConsignmentDiscountBase<'COUPON'> {
+    couponId: number;
+    couponCode: string;
+}
+
 declare interface ConsignmentCreateRequestBody {
     address?: AddressRequestBody;
     shippingAddress?: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
     pickupOption?: ConsignmentPickupOption;
+}
+
+declare type ConsignmentDiscount = ConsignmentAutomaticDiscount | ConsignmentCouponDiscount;
+
+declare interface ConsignmentDiscountBase<T> {
+    id: number;
+    amount: number;
+    type: T;
 }
 
 declare interface ConsignmentLineItem {

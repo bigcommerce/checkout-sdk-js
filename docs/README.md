@@ -183,7 +183,10 @@
 - [Consignment](interfaces/Consignment.md)
 - [ConsignmentAssignmentBaseRequestBodyWithAddress](interfaces/ConsignmentAssignmentBaseRequestBodyWithAddress.md)
 - [ConsignmentAssignmentBaseRequestBodyWithShippingAddress](interfaces/ConsignmentAssignmentBaseRequestBodyWithShippingAddress.md)
+- [ConsignmentAutomaticDiscount](interfaces/ConsignmentAutomaticDiscount.md)
+- [ConsignmentCouponDiscount](interfaces/ConsignmentCouponDiscount.md)
 - [ConsignmentCreateRequestBody](interfaces/ConsignmentCreateRequestBody.md)
+- [ConsignmentDiscountBase](interfaces/ConsignmentDiscountBase.md)
 - [ConsignmentLineItem](interfaces/ConsignmentLineItem.md)
 - [ConsignmentPickupOption](interfaces/ConsignmentPickupOption.md)
 - [ConsignmentSelector](interfaces/ConsignmentSelector.md)
@@ -507,6 +510,7 @@
 - [CheckoutIncludeParam](README.md#checkoutincludeparam)
 - [ComparableCheckout](README.md#comparablecheckout)
 - [ConsignmentAssignmentRequestBody](README.md#consignmentassignmentrequestbody)
+- [ConsignmentDiscount](README.md#consignmentdiscount)
 - [ConsignmentsRequestBody](README.md#consignmentsrequestbody)
 - [CustomerAddressRequestBody](README.md#customeraddressrequestbody)
 - [CustomerInitializeOptions](README.md#customerinitializeoptions)
@@ -660,6 +664,12 @@ ___
 ### ConsignmentAssignmentRequestBody
 
 Ƭ **ConsignmentAssignmentRequestBody**: [`ConsignmentAssignmentBaseRequestBodyWithShippingAddress`](interfaces/ConsignmentAssignmentBaseRequestBodyWithShippingAddress.md) \| [`ConsignmentAssignmentBaseRequestBodyWithAddress`](interfaces/ConsignmentAssignmentBaseRequestBodyWithAddress.md)
+
+___
+
+### ConsignmentDiscount
+
+Ƭ **ConsignmentDiscount**: [`ConsignmentAutomaticDiscount`](interfaces/ConsignmentAutomaticDiscount.md) \| [`ConsignmentCouponDiscount`](interfaces/ConsignmentCouponDiscount.md)
 
 ___
 

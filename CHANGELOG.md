@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.718.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.717.0...v1.718.0) (2025-03-25)
+
+
+### Features
+
+* **checkout:** CHECKOUT-8517 convert type to fixed string ([f631383](https://github.com/bigcommerce/checkout-sdk-js/commit/f63138308a0b3f3e66f2f13f1489b9621136a4df))
+* **checkout:** CHECKOUT-8517 Introduce consignment discount interface ([d745c5e](https://github.com/bigcommerce/checkout-sdk-js/commit/d745c5e09ef08f945df7afc8d639100722e44167))
+* **checkout:** CHECKOUT-8517 Using T for type field ([2aa4c30](https://github.com/bigcommerce/checkout-sdk-js/commit/2aa4c3047cdd52d6d7f2755681955e88137a8a96))
+
 ## [1.717.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.716.0...v1.717.0) (2025-03-20)
 
 
