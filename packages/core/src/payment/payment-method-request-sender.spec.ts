@@ -8,7 +8,7 @@ import {
 import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getHeadlessPaymentResponse, getResponse } from '../common/http-request/responses.mock';
 
-import { HeadlessPaymentMethodResponse } from './headless-payment';
+import { GqlPaymentMethodResponse } from './gql-payment';
 import { getHeadlessPaymentMethod, initializationData } from './headless-payment-methods.mock';
 import PaymentMethod from './payment-method';
 import PaymentMethodRequestSender from './payment-method-request-sender';
@@ -140,7 +140,7 @@ describe('PaymentMethodRequestSender', () => {
     });
 
     describe('#loadPaymentWalletWithInitializationData()', () => {
-        let response: Response<HeadlessPaymentMethodResponse>;
+        let response: Response<GqlPaymentMethodResponse>;
 
         beforeEach(() => {
             response = getHeadlessPaymentResponse(getHeadlessPaymentMethod());

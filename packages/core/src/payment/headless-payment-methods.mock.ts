@@ -1,4 +1,4 @@
-import { HeadlessPaymentMethod } from './headless-payment';
+import { GqlPaymentMethod } from './gql-payment';
 
 export const initializationData = {
     merchantId: '100000',
@@ -9,7 +9,7 @@ export const initializationData = {
 
 export const encodedInitializationData = btoa(JSON.stringify(initializationData));
 
-export function getHeadlessPaymentMethod(): HeadlessPaymentMethod {
+export function getHeadlessPaymentMethod(): GqlPaymentMethod {
     return {
         paymentWalletWithInitializationData: {
             clientToken: 'clientToken',

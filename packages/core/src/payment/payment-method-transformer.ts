@@ -1,10 +1,10 @@
 import { Response } from '@bigcommerce/request-sender';
 
-import { HeadlessPaymentMethodResponse } from './headless-payment';
+import { GqlPaymentMethodResponse } from './gql-payment';
 import PaymentMethod from './payment-method';
 
 export default function paymentMethodTransformer(
-    response: Response<HeadlessPaymentMethodResponse>,
+    response: Response<GqlPaymentMethodResponse>,
     methodId: string,
 ): Response<PaymentMethod> {
     const {

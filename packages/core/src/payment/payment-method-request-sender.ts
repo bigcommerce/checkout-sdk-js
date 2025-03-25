@@ -8,11 +8,11 @@ import {
 } from '../common/http-request';
 
 import {
-    HeadlessPaymentMethodConfig,
-    HeadlessPaymentMethodResponse,
-    HeadlessPaymentMethodType,
-} from './headless-payment';
-import HeadlessPaymentRequestOptions from './headless-payment/headless-payment-request-options';
+    GqlPaymentMethodConfig,
+    GqlPaymentMethodResponse,
+    GqlPaymentMethodType,
+} from './gql-payment';
+import GqlPaymentRequestOptions from './gql-payment/gql-payment-request-options';
 import PaymentMethod from './payment-method';
 import paymentMethodTransformer from './payment-method-transformer';
 
@@ -61,7 +61,7 @@ export default class PaymentMethodRequestSender {
     ): Promise<Response<PaymentMethod>> {
         const url = `${window.location.origin}/api/wallet-buttons/get-initialization-data`;
 
-        const requestOptions: HeadlessPaymentRequestOptions = {
+        const requestOptions: GqlPaymentRequestOptions = {
             body: {
                 entityId: this._getPaymentEntityId(methodId),
             },
@@ -69,12 +69,12 @@ export default class PaymentMethodRequestSender {
         };
 
         return this._requestSender
-            .post<HeadlessPaymentMethodResponse>(url, requestOptions)
+            .post<GqlPaymentMethodResponse>(url, requestOptions)
             .then((response) => paymentMethodTransformer(response, methodId));
     }
 
-    private _getPaymentEntityId(methodId: string): HeadlessPaymentMethodType {
-        const entityId = HeadlessPaymentMethodConfig[methodId];
+    private _getPaymentEntityId(methodId: string): GqlPaymentMethodType {
+        const entityId = GqlPaymentMethodConfig[methodId];
 
         if (!entityId) {
             throw new Error('Unable to get payment entity id.');

@@ -1,5 +1,5 @@
 import { RequestOptions } from '../../common/http-request';
 
-export default interface HeadlessPaymentRequestOptions extends RequestOptions {
+export default interface GqlPaymentRequestOptions extends RequestOptions {
     body: { entityId: string };
 }
