@@ -148,17 +148,13 @@ describe('PaymentMethodRequestSender', () => {
         });
 
         it('loads headless payment method', async () => {
-            const host = 'https://test.com';
-            const path = 'get-initialization-data';
-
             const walletInitData =
                 await paymentMethodRequestSender.loadPaymentWalletWithInitializationData(
                     'paypalcommerce',
-                    host,
                 );
 
             expect(requestSender.post).toHaveBeenCalledWith(
-                `${host}/${path}`,
+                'http://localhost/api/wallet-buttons/get-initialization-data',
                 expect.objectContaining({
                     body: {
                         entityId: 'paypalcommerce.paypal',

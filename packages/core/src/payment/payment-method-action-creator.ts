@@ -165,11 +165,8 @@ export default class PaymentMethodActionCreator {
         methodId: string,
         options?: RequestOptions & ActionOptions,
     ): ThunkAction<LoadPaymentMethodAction, InternalCheckoutSelectors> {
-        return (store) =>
+        return () =>
             Observable.create((observer: Observer<LoadPaymentMethodAction>) => {
-                const state = store.getState();
-                const host = state.config.getHost();
-
                 observer.next(
                     createAction(PaymentMethodActionType.LoadPaymentMethodRequested, undefined, {
                         methodId,
@@ -177,7 +174,7 @@ export default class PaymentMethodActionCreator {
                 );
 
                 this._requestSender
-                    .loadPaymentWalletWithInitializationData(methodId, host, options)
+                    .loadPaymentWalletWithInitializationData(methodId, options)
                     .then((response) => {
                         observer.next(
                             createAction(

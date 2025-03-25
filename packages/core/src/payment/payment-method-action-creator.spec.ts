@@ -210,7 +210,7 @@ describe('PaymentMethodActionCreator', () => {
 
             expect(
                 paymentMethodRequestSender.loadPaymentWalletWithInitializationData,
-            ).toHaveBeenCalledWith(methodId, undefined, undefined);
+            ).toHaveBeenCalledWith(methodId, undefined);
         });
 
         it('loads payment wallet method with timeout', async () => {
@@ -228,7 +228,7 @@ describe('PaymentMethodActionCreator', () => {
 
             expect(
                 paymentMethodRequestSender.loadPaymentWalletWithInitializationData,
-            ).toHaveBeenCalledWith(methodId, undefined, options);
+            ).toHaveBeenCalledWith(methodId, options);
         });
 
         it('emits actions if able to load payment wallet method', async () => {

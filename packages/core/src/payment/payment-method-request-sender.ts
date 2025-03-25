@@ -57,11 +57,9 @@ export default class PaymentMethodRequestSender {
      */
     loadPaymentWalletWithInitializationData(
         methodId: string,
-        host?: string,
         { timeout }: RequestOptions = {},
     ): Promise<Response<PaymentMethod>> {
-        const path = 'get-initialization-data';
-        const url = host ? `${host}/${path}` : `/${path}`;
+        const url = `${window.location.origin}/api/wallet-buttons/get-initialization-data`;
 
         const requestOptions: HeadlessPaymentRequestOptions = {
             body: {
