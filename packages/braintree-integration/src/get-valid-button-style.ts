@@ -25,7 +25,7 @@ function getValidHeight(height: number | string): number {
 
     const currentHeight = Number(height);
 
-    if (Number.isNaN(currentHeight)) {
+    if (!currentHeight || Number.isNaN(currentHeight)) {
         return defaultHeight;
     }
 
