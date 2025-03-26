@@ -82,4 +82,42 @@ describe('#getValidButtonStyle()', () => {
 
         expect(getValidButtonStyle(stylesMock)).toEqual(expects);
     });
+
+    it('returns styles with default height if height value is not valid', () => {
+        const stylesMock = {
+            color: PaypalButtonStyleColorOption.SIlVER,
+            fundingicons: true,
+            height: 'ten',
+            layout: PaypalButtonStyleLayoutOption.HORIZONTAL,
+            shape: PaypalButtonStyleShapeOption.RECT,
+            size: PaypalButtonStyleSizeOption.SMALL,
+            tagline: true,
+        };
+
+        const expects = {
+            ...stylesMock,
+            height: 40,
+        };
+
+        expect(getValidButtonStyle(stylesMock)).toEqual(expects);
+    });
+
+    it('returns styles with valid height even if number inside a string was received', () => {
+        const stylesMock = {
+            color: PaypalButtonStyleColorOption.SIlVER,
+            fundingicons: true,
+            height: '45',
+            layout: PaypalButtonStyleLayoutOption.HORIZONTAL,
+            shape: PaypalButtonStyleShapeOption.RECT,
+            size: PaypalButtonStyleSizeOption.SMALL,
+            tagline: true,
+        };
+
+        const expects = {
+            ...stylesMock,
+            height: 45,
+        };
+
+        expect(getValidButtonStyle(stylesMock)).toEqual(expects);
+    });
 });

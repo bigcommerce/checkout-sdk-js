@@ -2,8 +2,8 @@ import { isNil, omitBy } from 'lodash';
 
 import { PaypalStyleOptions } from '@bigcommerce/checkout-sdk/braintree-utils';
 
-export default function getValidButtonStyle(style: PaypalStyleOptions): PaypalStyleOptions {
-    const { color, fundingicons, height, layout, shape, size, tagline } = style;
+export default function getValidButtonStyle(style?: PaypalStyleOptions): PaypalStyleOptions {
+    const { color, fundingicons, height = 40, layout, shape, size, tagline } = style || {};
 
     const validStyles = {
         color,
@@ -18,17 +18,24 @@ export default function getValidButtonStyle(style: PaypalStyleOptions): PaypalSt
     return omitBy(validStyles, isNil);
 }
 
-function getValidHeight(height?: number): number {
+function getValidHeight(height: number | string): number {
     const minHeight = 25;
+    const defaultHeight = 40;
     const maxHeight = 55;
 
-    if (typeof height !== 'number' || height > maxHeight) {
+    const currentHeight = Number(height);
+
+    if (Number.isNaN(currentHeight)) {
+        return defaultHeight;
+    }
+
+    if (currentHeight > maxHeight) {
         return maxHeight;
     }
 
-    if (height < minHeight) {
+    if (currentHeight < minHeight) {
         return minHeight;
     }
 
-    return height;
+    return currentHeight;
 }
