@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.718.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.718.2...v1.718.3) (2025-03-26)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-4585 fixed updated height pdp and cart page Braintree PayPal buttons when provided height is null or undefined ([#2815](https://github.com/bigcommerce/checkout-sdk-js/issues/2815)) ([dffe8f3](https://github.com/bigcommerce/checkout-sdk-js/commit/dffe8f38d40f7e5831ec0e8cc6cfebc493e4b4e7))
+
 ### [1.718.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.718.1...v1.718.2) (2025-03-26)
 
 
