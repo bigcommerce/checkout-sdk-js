@@ -102,6 +102,25 @@ describe('#getValidButtonStyle()', () => {
         expect(getValidButtonStyle(stylesMock)).toEqual(expects);
     });
 
+    it('returns styles with default height if height value is null', () => {
+        const stylesMock = {
+            color: PaypalButtonStyleColorOption.SIlVER,
+            fundingicons: true,
+            height: undefined,
+            layout: PaypalButtonStyleLayoutOption.HORIZONTAL,
+            shape: PaypalButtonStyleShapeOption.RECT,
+            size: PaypalButtonStyleSizeOption.SMALL,
+            tagline: true,
+        };
+
+        const expects = {
+            ...stylesMock,
+            height: 40,
+        };
+
+        expect(getValidButtonStyle(stylesMock)).toEqual(expects);
+    });
+
     it('returns styles with valid height even if number inside a string was received', () => {
         const stylesMock = {
             color: PaypalButtonStyleColorOption.SIlVER,
