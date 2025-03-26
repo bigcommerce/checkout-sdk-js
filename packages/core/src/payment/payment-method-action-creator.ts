@@ -160,6 +160,43 @@ export default class PaymentMethodActionCreator {
             });
     }
 
+    @cachableAction
+    loadPaymentWalletWithInitializationData(
+        methodId: string,
+        options?: RequestOptions & ActionOptions,
+    ): ThunkAction<LoadPaymentMethodAction, InternalCheckoutSelectors> {
+        return () =>
+            Observable.create((observer: Observer<LoadPaymentMethodAction>) => {
+                observer.next(
+                    createAction(PaymentMethodActionType.LoadPaymentMethodRequested, undefined, {
+                        methodId,
+                    }),
+                );
+
+                this._requestSender
+                    .loadPaymentWalletWithInitializationData(methodId, options)
+                    .then((response) => {
+                        observer.next(
+                            createAction(
+                                PaymentMethodActionType.LoadPaymentMethodSucceeded,
+                                response.body,
+                                { methodId },
+                            ),
+                        );
+                        observer.complete();
+                    })
+                    .catch((response) => {
+                        observer.error(
+                            createErrorAction(
+                                PaymentMethodActionType.LoadPaymentMethodFailed,
+                                response,
+                                { methodId },
+                            ),
+                        );
+                    });
+            });
+    }
+
     private _filterApplePay(methods: PaymentMethod[]): PaymentMethod[] {
         return filter(methods, (method) => {
             if (method.id === APPLEPAYID && !isApplePayWindow(window)) {
