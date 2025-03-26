@@ -148,13 +148,15 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
 
         if (paypal) {
             const fundingSources = [paypal.FUNDING.PAYLATER, paypal.FUNDING.CREDIT];
-            const commonButtonStyle = style ? getValidButtonStyle(style) : {};
 
             fundingSources.forEach((fundingSource) => {
                 const buttonStyle =
                     fundingSource === paypal.FUNDING.CREDIT
-                        ? { label: PaypalButtonStyleLabelOption.CREDIT, ...commonButtonStyle }
-                        : commonButtonStyle;
+                        ? {
+                              label: PaypalButtonStyleLabelOption.CREDIT,
+                              ...getValidButtonStyle(style),
+                          }
+                        : getValidButtonStyle(style);
 
                 if (!hasRenderedSmartButton) {
                     const paypalButtonRender = paypal.Buttons({

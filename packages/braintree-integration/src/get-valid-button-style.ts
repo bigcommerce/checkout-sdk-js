@@ -2,8 +2,8 @@ import { isNil, omitBy } from 'lodash';
 
 import { PaypalStyleOptions } from '@bigcommerce/checkout-sdk/braintree-utils';
 
-export default function getValidButtonStyle(style: PaypalStyleOptions): PaypalStyleOptions {
-    const { color, fundingicons, height, layout, shape, size, tagline } = style;
+export default function getValidButtonStyle(style?: PaypalStyleOptions): PaypalStyleOptions {
+    const { color, fundingicons, height = 40, layout, shape, size, tagline } = style || {};
 
     const validStyles = {
         color,

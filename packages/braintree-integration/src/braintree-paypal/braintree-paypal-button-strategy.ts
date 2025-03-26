@@ -133,12 +133,10 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         const { paypal } = this.braintreeHostWindow;
 
         if (paypal) {
-            const buttonStyle = style ? getValidButtonStyle(style) : {};
-
             const paypalButtonRender = paypal.Buttons({
                 env: testMode ? 'sandbox' : 'production',
                 fundingSource: paypal.FUNDING.PAYPAL,
-                style: buttonStyle,
+                style: getValidButtonStyle(style),
                 createOrder: () =>
                     this.setupPayment(braintreePaypalCheckout, braintreepaypal, methodId),
                 onApprove: (authorizeData: PaypalAuthorizeData) =>
