@@ -18,17 +18,24 @@ export default function getValidButtonStyle(style?: PaypalStyleOptions): PaypalS
     return omitBy(validStyles, isNil);
 }
 
-function getValidHeight(height?: number): number {
+function getValidHeight(height: number | string): number {
     const minHeight = 25;
+    const defaultHeight = 40;
     const maxHeight = 55;
 
-    if (typeof height !== 'number' || height > maxHeight) {
+    const currentHeight = Number(height);
+
+    if (Number.isNaN(currentHeight)) {
+        return defaultHeight;
+    }
+
+    if (currentHeight > maxHeight) {
         return maxHeight;
     }
 
-    if (height < minHeight) {
+    if (currentHeight < minHeight) {
         return minHeight;
     }
 
-    return height;
+    return currentHeight;
 }
