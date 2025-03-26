@@ -126,7 +126,7 @@ export interface PaypalStyleOptions {
     shape?: PaypalButtonStyleShapeOption;
     tagline?: boolean;
     fundingicons?: boolean;
-    height?: number;
+    height?: number | string;
 }
 
 export interface PaypalClientToken {

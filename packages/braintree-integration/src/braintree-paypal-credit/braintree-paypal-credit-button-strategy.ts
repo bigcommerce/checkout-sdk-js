@@ -187,6 +187,8 @@ export default class BraintreePaypalCreditButtonStrategy implements CheckoutButt
                         onEligibilityFailure &&
                         typeof onEligibilityFailure === 'function'
                     ) {
+                        console.log('Braintree PayPal Credit button is not eligible');
+
                         // the condition is related to paypal.FUNDING.CREDIT because when paypal.FUNDING.PAYLATER is not eligible then
                         // CREDIT button should be configured and triggered to render with eligibility check
                         // and if it is not eligible, then onEligibilityFailure callback should be called
