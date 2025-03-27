@@ -6,6 +6,7 @@ import {
     BraintreeFastlaneAuthenticationState,
     BraintreeIntegrationService,
     BraintreeScriptLoader,
+    BraintreeSdk,
     getBraintree,
     getFastlaneMock,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
@@ -40,6 +41,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
     let browserStorage: BrowserStorage;
     let paymentIntegrationService: PaymentIntegrationService;
     let strategy: BraintreeFastlanePaymentStrategy;
+    let braintreeSdk: BraintreeSdk;
 
     const methodId = 'braintreeacceleratedcheckout';
     const deviceSessionId = 'device_session_id_mock';
@@ -170,10 +172,13 @@ describe('BraintreeFastlanePaymentStrategy', () => {
             browserStorage,
         );
 
+        braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
+
         strategy = new BraintreeFastlanePaymentStrategy(
             paymentIntegrationService,
             braintreeFastlaneUtils,
             browserStorage,
+            braintreeSdk
         );
 
         jest.spyOn(browserStorage, 'getItem');
@@ -220,6 +225,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
         jest.spyOn(braintreeFastlaneMock, 'FastlaneCardComponent').mockImplementation(
             getFastlaneCardComponent('nonce'),
         );
+        jest.spyOn(braintreeSdk, 'initialize');
     });
 
     afterEach(() => {
@@ -275,6 +281,12 @@ describe('BraintreeFastlanePaymentStrategy', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(InvalidArgumentError);
             }
+        });
+
+        it('should intialize braintreeSdk', async () => {
+            await strategy.initialize(defaultInitializationOptions);
+
+            expect(braintreeSdk.initialize).toHaveBeenCalled();
         });
 
         it('gets PayPal Fastlane component', async () => {

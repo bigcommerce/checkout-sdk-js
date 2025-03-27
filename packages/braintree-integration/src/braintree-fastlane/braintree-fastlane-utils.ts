@@ -126,6 +126,8 @@ export default class BraintreeFastlaneUtils {
                 customerContextId,
             );
 
+            console.log('PROFILEDATA', profileData);
+
             const phoneNumber = profileData?.shippingAddress?.phoneNumber || '';
 
             if (authenticationState === BraintreeFastlaneAuthenticationState.CANCELED) {
@@ -154,6 +156,7 @@ export default class BraintreeFastlaneUtils {
                 billingAddresses,
             );
 
+            console.log('instruments', instruments);
             this.browserStorage.setItem('sessionId', cart.id);
             await this.paymentIntegrationService.updatePaymentProviderCustomer({
                 authenticationState,
@@ -210,13 +213,14 @@ export default class BraintreeFastlaneUtils {
 
         return instruments.map((instrument) => {
             const { id, paymentSource } = instrument;
-            const { brand, expiry, lastDigits } = paymentSource.card;
+            const { brand, expiry, lastDigits, binDetails } = paymentSource.card;
 
             const [expiryYear, expiryMonth] = expiry.split('-');
 
             return {
                 bigpayToken: id,
                 brand,
+                bin: binDetails?.bin || '',
                 defaultInstrument: false,
                 expiryMonth,
                 expiryYear,
