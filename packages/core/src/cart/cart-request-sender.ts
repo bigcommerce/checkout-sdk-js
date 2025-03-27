@@ -22,8 +22,13 @@ export default class CartRequestSender {
         return this._requestSender.post(url, { body, headers, timeout });
     }
 
-    async loadCart(cartId: string, options?: RequestOptions): Promise<Response<Cart | undefined>> {
-        const path = `${window.location.origin}/api/wallet-buttons/cart-information`;
+    async loadCart(
+        cartId: string,
+        host?: string,
+        options?: RequestOptions,
+    ): Promise<Response<Cart | undefined>> {
+        const path = 'api/wallet-buttons/cart-information';
+        const url = host ? `${host}/${path}` : `${window.location.origin}/${path}`;
 
         const requestOptions: RequestOptions = {
             ...options,
@@ -32,7 +37,7 @@ export default class CartRequestSender {
             },
         };
 
-        const response = await this._requestSender.get<GQLCartRequestResponse>(path, {
+        const response = await this._requestSender.get<GQLCartRequestResponse>(url, {
             ...requestOptions,
         });
 

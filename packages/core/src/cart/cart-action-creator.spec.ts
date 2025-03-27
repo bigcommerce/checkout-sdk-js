@@ -40,7 +40,7 @@ describe('CartActionCreator', () => {
             .pipe(toArray())
             .toPromise();
 
-        expect(cartRequestSender.loadCart).toHaveBeenCalledWith(cart.id, undefined);
+        expect(cartRequestSender.loadCart).toHaveBeenCalledWith(cart.id, undefined, undefined);
 
         expect(actions).toEqual(
             expect.arrayContaining([
@@ -64,7 +64,7 @@ describe('CartActionCreator', () => {
             .pipe(catchError(errorHandler), toArray())
             .toPromise();
 
-        expect(cartRequestSender.loadCart).toHaveBeenCalledWith(cart.id, undefined);
+        expect(cartRequestSender.loadCart).toHaveBeenCalledWith(cart.id, undefined, undefined);
 
         expect(actions).toEqual(
             expect.arrayContaining([
