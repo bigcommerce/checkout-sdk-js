@@ -10,6 +10,7 @@ import {
     BraintreeRedirectError,
     BraintreeSdk,
     NonInstantLocalPaymentMethods,
+    PayPalOrderStatus,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     InvalidArgumentError,
@@ -32,6 +33,10 @@ import {
     BraintreeLocalMethodsPaymentInitializeOptions,
     WithBraintreeLocalMethodsPaymentInitializeOptions,
 } from './braintree-local-methods-payment-initialize-options';
+import { noop } from 'lodash';
+
+const POLLING_INTERVAL = 3000;
+const MAX_POLLING_TIME = 300000;
 
 export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStrategy {
     private braintreelocalmethods?: BraintreeLocalMethodsPaymentInitializeOptions;
@@ -39,11 +44,15 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
     private loadingIndicatorContainer?: string;
     private orderId?: string;
     private isLPMsUpdateExperimentEnabled = false;
+    private pollingTimer = 0;
+    private stopPolling = noop;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeSdk: BraintreeSdk,
         private loadingIndicator: LoadingIndicator,
+        private pollingInterval: number = POLLING_INTERVAL,
+        private maxPollingIntervalTime: number = MAX_POLLING_TIME,
     ) {}
 
     async initialize(
@@ -120,12 +129,28 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         const { methodId } = payment;
 
         this.toggleLoadingIndicator(true);
+        try {
 
-        if (this.isNonInstantPaymentMethod(methodId)) {
-            await this.executeWithNotInstantLPM(methodId);
-        } else {
-            await this.executeWithInstantLPM(methodId, order, options);
+            if (this.isNonInstantPaymentMethod(methodId)) {
+                await this.executeWithNotInstantLPM(methodId);
+            } else {
+                await this.executeWithInstantLPM(methodId, order, options);
+            }
+
+            return await new Promise((resolve, reject) => {
+                this.initializePollingMechanism(
+                    payment.methodId,
+                    resolve,
+                    reject,
+                    payment.gatewayId,
+                );
+            });
+        } catch (error) {
+            this.handleError(error);
+
+            return new Promise((_resolve, reject) => reject());
         }
+
     }
 
     private async executeWithNotInstantLPM(methodId: string): Promise<void> {
@@ -334,6 +359,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
     private handleError(error: unknown) {
         const { onError } = this.braintreelocalmethods || {};
 
+        this.resetPollingMechanism();
         this.toggleLoadingIndicator(false);
 
         if (onError && typeof onError === 'function') {
@@ -378,5 +404,91 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         }
 
         return body.additional_action_required?.data.hasOwnProperty('order_id_saved_successfully');
+    }
+
+    /**
+     *
+     * Polling mechanism
+     *
+     *
+     * */
+    private async initializePollingMechanism(
+        methodId: string,
+        resolvePromise: () => void,
+        rejectPromise: () => void,
+        gatewayId?: string,
+    ): Promise<void> {
+        await new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(resolve, this.pollingInterval);
+
+            this.stopPolling = () => {
+                clearTimeout(timeout);
+                this.toggleLoadingIndicator(false);
+
+                return reject();
+            };
+        });
+
+        try {
+            this.pollingTimer += this.pollingInterval;
+
+            const orderStatus = await this.paypalCommerceIntegrationService.getOrderStatus(
+                'braintreelocalpaymentmethods',
+                {
+                    params: {
+                        useMetadata: true,
+                    },
+                },
+            );
+
+            const isOrderApproved = orderStatus === PayPalOrderStatus.PollingStop;
+            const isPollingError = orderStatus === PayPalOrderStatus.PollingError;
+
+            if (isOrderApproved) {
+                this.deinitializePollingMechanism();
+
+                return resolvePromise();
+            }
+
+            if (isPollingError) {
+                return rejectPromise();
+            }
+
+            if (!isOrderApproved && this.pollingTimer < this.maxPollingIntervalTime) {
+                return await this.initializePollingMechanism(
+                    methodId,
+                    resolvePromise,
+                    rejectPromise,
+                    gatewayId,
+                );
+            }
+
+            this.reinitializeStrategy({
+                methodId,
+                gatewayId,
+                braintreelocalmethods: this.braintreelocalmethods,
+            });
+
+            this.handleError(new Error('Timeout Error'));
+        } catch (error) {
+            this.handleError(error);
+            rejectPromise();
+        }
+    }
+
+    private deinitializePollingMechanism(): void {
+        this.stopPolling();
+        this.pollingTimer = 0;
+    }
+
+    private resetPollingMechanism(): void {
+        this.deinitializePollingMechanism();
+    }
+
+    private reinitializeStrategy(
+        options: PaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions
+    ) {
+        this.deinitialize();
+        this.initialize(options);
     }
 }

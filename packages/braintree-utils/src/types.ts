@@ -266,6 +266,14 @@ export interface BraintreeThreeDSecureVerificationData {
     };
 }
 
+export enum PayPalOrderStatus {
+    Approved = 'APPROVED',
+    Created = 'CREATED',
+    PayerActionRequired = 'PAYER_ACTION_REQUIRED',
+    PollingStop = 'POLLING_STOP',
+    PollingError = 'POLLING_ERROR',
+}
+
 /**
  *
  * Braintree US Bank Account (ACH)

@@ -21,6 +21,11 @@ export interface BraintreeLocalMethodsPaymentInitializeOptions {
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
     onError(error: unknown): void;
+
+    /**
+     * Loading container ID
+     */
+    loadingContainerId: string;
 }
 
 export interface WithBraintreeLocalMethodsPaymentInitializeOptions {
