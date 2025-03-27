@@ -228,8 +228,32 @@ export type BraintreeThreeDSecureCreator = BraintreeModuleCreator<
 >;
 
 export interface BraintreeThreeDSecure extends BraintreeModule {
-    verifyCard(options: BraintreeThreeDSecureOptions): Promise<BraintreeVerifyPayload>;
+    verifyCard(
+        options: BraintreeThreeDSecureOptions,
+        callback?: Braintree3DSVerifyCardCallback,
+    ): Promise<BraintreeVerifyPayload>;
     cancelVerifyCard(): Promise<BraintreeVerifyPayload>;
+    on<K extends keyof BraintreeThreeDSecureEventMap>(
+        event: K,
+        handler: BraintreeThreeDSecureEventMap[K],
+    ): void;
+}
+
+export type Braintree3DSVerifyCardCallback = (
+    verifyError: Braintree3DSVerifyCardError,
+    payload: Braintree3DSVerifyCardPayload,
+) => void;
+
+export interface BraintreeThreeDSecureEventMap {
+    'customer-canceled': () => void;
+}
+
+export interface Braintree3DSVerifyCardError {
+    code: string;
+}
+
+export interface Braintree3DSVerifyCardPayload {
+    nonce: string;
 }
 
 export interface BraintreeThreeDSecureCreatorConfig extends BraintreeModuleCreatorConfig {
@@ -238,21 +262,21 @@ export interface BraintreeThreeDSecureCreatorConfig extends BraintreeModuleCreat
 
 export interface BraintreeThreeDSecureOptions {
     nonce: string;
-    amount: number;
+    amount: number | string;
     challengeRequested?: boolean;
     showLoader?: boolean;
     bin?: string;
     additionalInformation?: {
         acsWindowSize?: '01' | '02' | '03' | '04' | '05';
     };
+    collectDeviceData?: boolean;
     addFrame?(
         error: Error | undefined,
         iframe: HTMLIFrameElement,
         cancel: () => Promise<BraintreeVerifyPayload> | undefined,
     ): void;
     removeFrame?(): void;
-    onLookupComplete(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
-    collectDeviceData?: boolean;
+    onLookupComplete?(data: BraintreeThreeDSecureVerificationData, next: () => void): void;
 }
 
 export interface BraintreeThreeDSecureVerificationData {
@@ -531,7 +555,7 @@ export interface BraintreeFastlaneCardPaymentSource {
     billingAddress: BraintreeFastlaneAddress;
     binDetails?: {
         bin: string;
-    }
+    };
 }
 
 export interface BraintreeFastlanePaymentSource {
