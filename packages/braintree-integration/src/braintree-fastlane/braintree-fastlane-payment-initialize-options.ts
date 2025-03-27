@@ -77,6 +77,7 @@ export default interface BraintreeFastlanePaymentInitializeOptions {
      * 3DS
      */
     threeDSecure?: BraintreeThreeDSecureOptions;
+    onError?: (error: Error) => void;
 }
 
 export interface WithBraintreeFastlanePaymentInitializeOptions {

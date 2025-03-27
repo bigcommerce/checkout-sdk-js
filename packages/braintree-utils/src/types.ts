@@ -228,8 +228,31 @@ export type BraintreeThreeDSecureCreator = BraintreeModuleCreator<
 >;
 
 export interface BraintreeThreeDSecure extends BraintreeModule {
-    verifyCard(options: BraintreeThreeDSecureOptions): Promise<BraintreeVerifyPayload>;
+    verifyCard(options: BraintreeThreeDSecureOptions, callback: Braintree3DsVerifyCardCallback): Promise<BraintreeVerifyPayload>;
     cancelVerifyCard(): Promise<BraintreeVerifyPayload>;
+    on<K extends keyof BraintreeThreeDSecureEventMap>(
+        event: K,
+        handler: BraintreeThreeDSecureEventMap[K]
+    ): void;
+}
+
+export interface Braintree3DsVerifyCardCallback {
+    (
+        verifyError: Braintree3DsVerifyCardError,
+        payload: Braintree3DsVerifyCardPayload
+    ): void;
+}
+
+export interface BraintreeThreeDSecureEventMap {
+    'customer-canceled': () => void;
+}
+
+export interface Braintree3DsVerifyCardError {
+    code: string;
+}
+
+export interface Braintree3DsVerifyCardPayload {
+  nonce: string;
 }
 
 export interface BraintreeThreeDSecureCreatorConfig extends BraintreeModuleCreatorConfig {

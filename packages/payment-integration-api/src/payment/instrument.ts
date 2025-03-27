@@ -23,6 +23,7 @@ export interface CardInstrument extends BaseInstrument {
     iin: string;
     last4: string;
     type: 'card';
+    bin?: string;
     untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType;
 }
 
