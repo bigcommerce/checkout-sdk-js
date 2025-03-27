@@ -127,6 +127,7 @@ export default class BraintreeSdk {
      *
      */
     async getBraintreeThreeDS(): Promise<BraintreeThreeDSecure> {
+        console.log('getBraintreeThreeDS');
         if (!this.threeDS) {
             const [client, threeDSecure] = await Promise.all([
                 this.getClient(),

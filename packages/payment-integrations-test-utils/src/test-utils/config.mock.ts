@@ -16,7 +16,9 @@ export default function getConfig(): Config {
         storeConfig: {
             cdnPath: 'https://cdn.bcapp.dev/rHEAD',
             checkoutSettings: {
-                features: {},
+                features: {
+                    'PROJECT-7080.braintree_fastlane_three_ds': true,
+                },
                 checkoutBillingSameAsShippingEnabled: true,
                 checkoutUserExperienceSettings: {
                     walletButtonsOnTop: false,

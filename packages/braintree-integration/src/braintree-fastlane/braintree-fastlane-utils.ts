@@ -210,13 +210,14 @@ export default class BraintreeFastlaneUtils {
 
         return instruments.map((instrument) => {
             const { id, paymentSource } = instrument;
-            const { brand, expiry, lastDigits } = paymentSource.card;
+            const { brand, expiry, lastDigits, binDetails } = paymentSource.card;
 
             const [expiryYear, expiryMonth] = expiry.split('-');
 
             return {
                 bigpayToken: id,
                 brand,
+                bin: binDetails?.bin || '',
                 defaultInstrument: false,
                 expiryMonth,
                 expiryYear,

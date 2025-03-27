@@ -1,20 +1,19 @@
 import {
+    Braintree3DsVerifyCardError,
+    Braintree3DsVerifyCardPayload,
     BraintreeFastlaneAddress,
     BraintreeFastlaneAuthenticationState,
     BraintreeFastlaneCardComponent,
     BraintreeFastlaneCardComponentOptions,
     BraintreeInitializationData,
-    BraintreeSdk, BraintreeThreeDSecureOptions,
-    BraintreeVerifyPayload,
+    BraintreeSdk,
     getFastlaneStyles,
     isBraintreeAcceleratedCheckoutCustomer,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
-    Address, CancellablePromise,
+    Address,
     CardInstrument,
     InvalidArgumentError,
-    NotInitializedError,
-    NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
     Payment,
@@ -34,7 +33,7 @@ import BraintreeFastlaneUtils from './braintree-fastlane-utils';
 export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy {
     private braintreeCardComponent?: BraintreeFastlaneCardComponent;
     private is3DSEnabled?: boolean;
-    private threeDSecureOptions?: BraintreeThreeDSecureOptions;
+    private onError?: (error: Error) => void;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -52,7 +51,6 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         options: PaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions,
     ): Promise<void> {
         const { methodId, braintreefastlane } = options;
-        this.threeDSecureOptions = braintreefastlane?.threeDSecure;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -84,10 +82,14 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(methodId);
         const { initializationData, clientToken } = paymentMethod || {};
         const { isFastlaneStylingEnabled } = initializationData || {};
+        const threeDSFeature =
+            state.getStoreConfigOrThrow().checkoutSettings.features[
+                'PROJECT-7080.braintree_fastlane_three_ds'
+            ];
 
         this.is3DSEnabled = paymentMethod.config.is3dsEnabled;
 
-        if (clientToken) {
+        if (clientToken && threeDSFeature) {
             this.braintreeSdk.initialize(clientToken);
         }
 
@@ -110,6 +112,8 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         }
 
         await this.initializeCardComponent();
+
+        this.onError = braintreefastlane.onError;
 
         braintreefastlane.onInit((container) => this.renderBraintreeCardComponent(container));
         braintreefastlane.onChange(() => this.handleBraintreeStoredInstrumentChange(methodId));
@@ -196,8 +200,16 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
         const paypalInstrument = this.getPayPalInstruments()[0];
 
         const deviceSessionId = await this.braintreeFastlaneUtils.getDeviceSessionId();
+        const threeDSFeature =
+            state.getStoreConfigOrThrow().checkoutSettings.features[
+                'PROJECT-7080.braintree_fastlane_three_ds'
+            ];
 
         if (paypalInstrument) {
+            const threeDS =
+                this.is3DSEnabled && threeDSFeature
+                    ? await this.get3DS(paypalInstrument.bigpayToken, paypalInstrument?.bin || '')
+                    : undefined;
 
             return {
                 methodId,
@@ -205,7 +217,7 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
                     deviceSessionId,
                     formattedPayload: {
                         paypal_fastlane_token: {
-                            token: paypalInstrument.bigpayToken,
+                            token: threeDS || paypalInstrument.bigpayToken,
                         },
                     },
                 },
@@ -219,15 +231,17 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
             billingAddress: this.mapToPayPalAddress(billingAddress),
         });
 
-        const bin = paymentToken.paymentSource.card?.binDetails?.bin || '';
-        const threeDSGuest = this.is3DSEnabled ?
-            await this.get3DS(paymentToken.id, bin) : null;
+        const binGuest = paymentToken.paymentSource.card?.binDetails?.bin || '';
+        const threeDSGuest =
+            this.is3DSEnabled && threeDSFeature
+                ? await this.get3DS(paymentToken.id, binGuest)
+                : undefined;
 
         return {
             methodId,
             paymentData: {
                 deviceSessionId,
-                nonce: threeDSGuest?.nonce ?? paymentToken.id,
+                nonce: threeDSGuest ?? paymentToken.id,
             },
         };
     }
@@ -235,50 +249,42 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
     /**
      * 3DS
      */
-   async get3DS(nonce: string, bin: string): Promise<BraintreeVerifyPayload> {
-       const state = this.paymentIntegrationService.getState();
-       const threeDSecure = await this.braintreeSdk.getBraintreeThreeDS();
-       const amount = state.getCartOrThrow().cartAmount;
-
-       if (!this.threeDSecureOptions || !nonce) {
-           throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-       }
-
-        const {
-            addFrame,
-            removeFrame,
-            challengeRequested = true,
-            additionalInformation,
-        } = this.threeDSecureOptions;
-        const cancelVerifyCard = async () => {
-            const response = await threeDSecure.cancelVerifyCard();
-
-            verification.cancel(new PaymentMethodCancelledError());
-
-            return response;
-        };
-
+    private async get3DS(nonce: string, bin: string): Promise<string> {
+        const state = this.paymentIntegrationService.getState();
+        const threeDSecure = await this.braintreeSdk.getBraintreeThreeDS();
+        const amount = state.getCartOrThrow().cartAmount;
         const roundedAmount = amount.toFixed(2);
 
-        const verification = new CancellablePromise(
-            threeDSecure.verifyCard({
-                addFrame: (error, iframe) => {
-                    addFrame && addFrame(error, iframe, cancelVerifyCard);
-                },
-                amount: Number(roundedAmount),
-                bin,
-                challengeRequested,
-                nonce,
-                removeFrame,
-                onLookupComplete: (_data, next) => {
-                    next();
-                },
-                collectDeviceData: true,
-                additionalInformation,
-            }),
-        );
+        return await new Promise<string>((resolve, reject) => {
+            threeDSecure.verifyCard(
+                {
+                    amount: +roundedAmount,
+                    nonce,
+                    bin,
+                    onLookupComplete: (_data, next) => {
+                        threeDSecure.on('customer-canceled', () => {
+                            reject(new PaymentMethodCancelledError());
 
-        return verification.promise;
+                            return this.onError && this.onError(new PaymentMethodCancelledError());
+                        });
+
+                        next();
+                    },
+                },
+                (
+                    verifyError: Braintree3DsVerifyCardError,
+                    payload: Braintree3DsVerifyCardPayload,
+                ) => {
+                    if (verifyError) {
+                        if (verifyError.code === 'THREEDS_VERIFY_CARD_CANCELED_BY_MERCHANT ') {
+                            return this.onError && this.onError(new PaymentMethodCancelledError());
+                        }
+                    }
+
+                    return resolve(payload.nonce);
+                },
+            );
+        });
     }
 
     /**

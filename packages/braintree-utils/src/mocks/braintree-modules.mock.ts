@@ -74,6 +74,7 @@ export function getThreeDSecureMock(): BraintreeThreeDSecure {
         verifyCard: jest.fn(),
         cancelVerifyCard: jest.fn(),
         teardown: jest.fn(() => Promise.resolve()),
+        on: jest.fn(),
     };
 }
 
