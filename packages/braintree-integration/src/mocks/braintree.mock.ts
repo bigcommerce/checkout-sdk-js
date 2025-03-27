@@ -1,9 +1,12 @@
-import { PaypalButtonStyleColorOption } from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
+    BraintreeThreeDSecure,
+    PaypalButtonStyleColorOption,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+
 import {
     DefaultCheckoutButtonHeight,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { BraintreeThreeDSecure } from '../../../core/src/payment/strategies/braintree';
 
 export function getBraintreeAcceleratedCheckoutPaymentMethod(): PaymentMethod {
     return {
@@ -25,9 +28,17 @@ export function getBraintreeAcceleratedCheckoutPaymentMethod(): PaymentMethod {
 
 export function getThreeDSecureMock(): BraintreeThreeDSecure {
     return {
-        verifyCard: jest.fn(),
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        verifyCard: (_options, callback) => {
+            if (callback) {
+                callback({ code: '' }, { nonce: 'fastlane_token_mock' });
+            }
+
+            return Promise.resolve('fastlane_token_mock');
+        },
         cancelVerifyCard: jest.fn(),
-        teardown: jest.fn(() => Promise.resolve()),
+        on: jest.fn(),
+        teardown: jest.fn(),
     };
 }
 
