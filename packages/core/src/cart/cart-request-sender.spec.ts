@@ -14,12 +14,15 @@ import BuyNowCartRequestBody from './buy-now-cart-request-body';
 import Cart from './cart';
 import CartRequestSender from './cart-request-sender';
 import { getCart } from './carts.mock';
+import { GQLCartRequestResponse } from './gql-cart';
+import { getGQLCartResponse } from './gql-cart/mocks/gql-cart.mock';
 
 describe('CartRequestSender', () => {
     let cart: Cart;
     let cartRequestSender: CartRequestSender;
     let requestSender: RequestSender;
     let response: Response<Cart>;
+    let headlessResponse: Response<GQLCartRequestResponse>;
 
     beforeEach(() => {
         requestSender = createRequestSender();
@@ -73,6 +76,29 @@ describe('CartRequestSender', () => {
                     ...SDK_VERSION_HEADERS,
                 },
             });
+        });
+    });
+
+    describe('#loadCart', () => {
+        const cartId = '123123';
+
+        beforeEach(() => {
+            headlessResponse = getResponse(getGQLCartResponse());
+
+            jest.spyOn(requestSender, 'get').mockResolvedValue(headlessResponse);
+        });
+
+        it('get headless cart', async () => {
+            await cartRequestSender.loadCart(cartId);
+
+            expect(requestSender.get).toHaveBeenCalledWith(
+                'http://localhost/api/wallet-buttons/cart-information',
+                {
+                    params: {
+                        cartId,
+                    },
+                },
+            );
         });
     });
 });

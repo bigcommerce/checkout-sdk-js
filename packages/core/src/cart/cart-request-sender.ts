@@ -4,6 +4,8 @@ import { BuyNowCartRequestBody, Cart } from '@bigcommerce/checkout-sdk/payment-i
 
 import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
+import { GQLCartRequestResponse, mapToCart } from './gql-cart';
+
 export default class CartRequestSender {
     constructor(private _requestSender: RequestSender) {}
 
@@ -18,5 +20,42 @@ export default class CartRequestSender {
         };
 
         return this._requestSender.post(url, { body, headers, timeout });
+    }
+
+    async loadCart(
+        cartId: string,
+        host?: string,
+        options?: RequestOptions,
+    ): Promise<Response<Cart | undefined>> {
+        const path = 'api/wallet-buttons/cart-information';
+        const url = host ? `${host}/${path}` : `${window.location.origin}/${path}`;
+
+        const requestOptions: RequestOptions = {
+            ...options,
+            params: {
+                cartId,
+            },
+        };
+
+        const response = await this._requestSender.get<GQLCartRequestResponse>(url, {
+            ...requestOptions,
+        });
+
+        return this.transformToCartResponse(response);
+    }
+
+    private transformToCartResponse(
+        response: Response<GQLCartRequestResponse>,
+    ): Response<Cart | undefined> {
+        const {
+            body: {
+                data: { site },
+            },
+        } = response;
+
+        return {
+            ...response,
+            body: mapToCart(site),
+        };
     }
 }
