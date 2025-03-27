@@ -598,6 +598,7 @@ export interface PayPalCreateOrderRequestBody extends HostedInstrument, VaultedI
     cartId: string;
     metadataId?: string;
     setupToken?: boolean;
+    fastlaneToken?: string;
 }
 
 export enum PayPalOrderStatus {

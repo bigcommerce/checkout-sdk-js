@@ -81,6 +81,26 @@ export default class PayPalCommerceSdk {
         return this.window.paypalMessages;
     }
 
+    async getPayPal3DSecure(
+        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
+        currencyCode: string,
+    ): Promise<any> {
+        if (!this.window.paypalThreeDomainSecure) {
+            const paypalSdk3DSConfig = this.getPayPalSdk3DSConfiguration(
+                paymentMethod,
+                currencyCode,
+            );
+
+            await this.loadPayPalSdk(paypalSdk3DSConfig);
+
+            if (!this.window.paypalThreeDomainSecure) {
+                throw new PaymentMethodClientUnavailableError();
+            }
+        }
+
+        return this.window.paypalThreeDomainSecure;
+    }
+
     /**
      *
      *  loadPayPalSdk is a paypal sdk script loader
@@ -130,7 +150,7 @@ export default class PayPalCommerceSdk {
                 'client-id': clientId,
                 'merchant-id': merchantId,
                 commit: true,
-                components: ['fastlane'],
+                components: ['fastlane', 'buttons', 'payment-fields', 'hosted-fields', 'three-domain-secure'],
                 currency: currencyCode,
                 intent,
             },
@@ -211,6 +231,34 @@ export default class PayPalCommerceSdk {
             },
             attributes: {
                 'data-namespace': 'paypalMessages',
+                'data-partner-attribution-id': attributionId,
+            },
+        };
+    }
+
+    private getPayPalSdk3DSConfiguration(
+        paymentMethod: PaymentMethod<PayPalCommerceInitializationData>,
+        currencyCode: string,
+    ): PayPalSdkConfig {
+        const { initializationData } = paymentMethod;
+
+        if (!initializationData || !initializationData.clientId) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const { clientId, merchantId, attributionId, isDeveloperModeApplicable, buyerCountry } =
+            initializationData;
+
+        return {
+            options: {
+                'client-id': clientId,
+                'merchant-id': merchantId,
+                components: ['three-domain-secure'],
+                currency: currencyCode,
+                ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
+            },
+            attributes: {
+                'data-namespace': 'paypalThreeDomainSecure',
                 'data-partner-attribution-id': attributionId,
             },
         };
