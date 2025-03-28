@@ -10,7 +10,7 @@ import {
     BraintreeRedirectError,
     BraintreeSdk,
     NonInstantLocalPaymentMethods,
-    PayPalOrderStatus,
+    BraintreeOrderStatus,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     InvalidArgumentError,
@@ -129,28 +129,12 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         const { methodId } = payment;
 
         this.toggleLoadingIndicator(true);
-        try {
 
             if (this.isNonInstantPaymentMethod(methodId)) {
                 await this.executeWithNotInstantLPM(methodId);
             } else {
                 await this.executeWithInstantLPM(methodId, order, options);
             }
-
-            return await new Promise((resolve, reject) => {
-                this.initializePollingMechanism(
-                    payment.methodId,
-                    resolve,
-                    reject,
-                    payment.gatewayId,
-                );
-            });
-        } catch (error) {
-            this.handleError(error);
-
-            return new Promise((_resolve, reject) => reject());
-        }
-
     }
 
     private async executeWithNotInstantLPM(methodId: string): Promise<void> {
@@ -276,7 +260,14 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                         // Start method call initiates the popup
                         start();
 
-                        return;
+                        return await new Promise((resolve, reject) => {
+                            this.initializePollingMechanism(
+                                methodId,
+                                resolve,
+                                reject,
+                                gatewayId,
+                            );
+                        });
                     }
 
                     throw error;
@@ -432,8 +423,8 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         try {
             this.pollingTimer += this.pollingInterval;
 
-            const orderStatus = await this.paypalCommerceIntegrationService.getOrderStatus(
-                'braintreelocalpaymentmethods',
+            const orderStatus = await this.braintreeSdk.getOrderStatus(
+                'braintreelocalmethods',
                 {
                     params: {
                         useMetadata: true,
@@ -441,8 +432,8 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 },
             );
 
-            const isOrderApproved = orderStatus === PayPalOrderStatus.PollingStop;
-            const isPollingError = orderStatus === PayPalOrderStatus.PollingError;
+            const isOrderApproved = orderStatus === BraintreeOrderStatus.PollingStop;
+            const isPollingError = orderStatus === BraintreeOrderStatus.PollingError;
 
             if (isOrderApproved) {
                 this.deinitializePollingMechanism();

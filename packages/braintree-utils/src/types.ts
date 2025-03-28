@@ -266,12 +266,16 @@ export interface BraintreeThreeDSecureVerificationData {
     };
 }
 
-export enum PayPalOrderStatus {
+export enum BraintreeOrderStatus {
     Approved = 'APPROVED',
     Created = 'CREATED',
     PayerActionRequired = 'PAYER_ACTION_REQUIRED',
     PollingStop = 'POLLING_STOP',
     PollingError = 'POLLING_ERROR',
+}
+
+export interface BraintreeOrderStatusData {
+    status: BraintreeOrderStatus;
 }
 
 /**
@@ -370,6 +374,8 @@ export interface BraintreeOrderSavedResponse {
         };
     };
 }
+
+
 
 /**
  *
