@@ -52,6 +52,8 @@ export interface PayPalCommerceHostWindow extends Window {
     paypalFastlaneSdk?: PayPalFastlaneSdk;
     paypalMessages?: PayPalMessagesSdk;
     paypalApms?: PayPalApmSdk;
+    // paypalThreeDomainSecure?: PayPalThreeDomainSecure;
+    paypalThreeDomainSecure?: any;
 }
 
 /**
@@ -85,7 +87,7 @@ export enum PayPalCommerceIntent {
     CAPTURE = 'capture',
 }
 
-export type PayPalSdkComponents = Array<'fastlane' | 'messages' | 'buttons' | 'payment-fields'>;
+export type PayPalSdkComponents = Array<'fastlane' | 'messages' | 'buttons' | 'payment-fields' | 'three-domain-secure' | 'hosted-fields'>;
 
 /**
  *
@@ -510,10 +512,6 @@ export interface PayPalFastlaneOrderPlacedEventOptions extends PayPalFastlaneEve
 }
 
 export interface PayPalFastlanePaymentFormattedPayload {
-    paypal_connect_token?: {
-        order_id?: string;
-        token: string;
-    };
     paypal_fastlane_token?: {
         order_id?: string;
         token: string;
