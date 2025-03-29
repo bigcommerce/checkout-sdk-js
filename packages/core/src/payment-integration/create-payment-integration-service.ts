@@ -12,6 +12,8 @@ import {
     CheckoutValidator,
 } from '../checkout';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import CouponActionCreator from '../coupon/coupon-action-creator';
+import CouponRequestSender from '../coupon/coupon-request-sender';
 import { CustomerActionCreator, CustomerRequestSender } from '../customer';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { HostedFormFactory } from '../hosted-form';
@@ -112,6 +114,10 @@ export default function createPaymentIntegrationService(
         new StoreCreditRequestSender(requestSender),
     );
 
+    const applyCouponActionCreator = new CouponActionCreator(
+        new CouponRequestSender(requestSender),
+    );
+
     const spamProtection = createSpamProtection(createScriptLoader());
     const spamProtectionRequestSender = new SpamProtectionRequestSender(requestSender);
     const spamProtectionActionCreator = new SpamProtectionActionCreator(
@@ -150,6 +156,7 @@ export default function createPaymentIntegrationService(
         customerActionCreator,
         cartRequestSender,
         storeCreditActionCreator,
+        applyCouponActionCreator,
         spamProtectionActionCreator,
         paymentProviderCustomerActionCreator,
         shippingCountryActionCreator,

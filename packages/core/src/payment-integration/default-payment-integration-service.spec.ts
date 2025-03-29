@@ -24,6 +24,7 @@ import {
 } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
 import { getResponse } from '../common/http-request/responses.mock';
+import { CouponActionCreator } from '../coupon';
 import { CustomerActionCreator } from '../customer';
 import { HostedForm, HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
@@ -84,6 +85,7 @@ describe('DefaultPaymentIntegrationService', () => {
     let customerActionCreator: Pick<CustomerActionCreator, 'signInCustomer' | 'signOutCustomer'>;
     let cartRequestSender: CartRequestSender;
     let storeCreditActionCreator: Pick<StoreCreditActionCreator, 'applyStoreCredit'>;
+    let couponActionCreator: Pick<CouponActionCreator, 'applyCoupon' | 'removeCoupon'>;
     let paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator;
     let shippingCountryActionCreator: Pick<ShippingCountryActionCreator, 'loadCountries'>;
     let remoteCheckoutActionCreator: Pick<
@@ -226,6 +228,17 @@ describe('DefaultPaymentIntegrationService', () => {
             ),
         };
 
+        couponActionCreator = {
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            applyCoupon: jest.fn(async () => () => createAction('APPLY_COUPON_REQUESTED')),
+            // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            removeCoupon: jest.fn(async () => () => createAction('REMOVE_COUPON_REQUESTED')),
+        };
+
         spamProtectionActionCreator = {
             // TODO: remove ts-ignore and update test with related type (PAYPAL-4383)
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -295,6 +308,7 @@ describe('DefaultPaymentIntegrationService', () => {
             customerActionCreator as CustomerActionCreator,
             cartRequestSender,
             storeCreditActionCreator as StoreCreditActionCreator,
+            couponActionCreator as CouponActionCreator,
             spamProtectionActionCreator as SpamProtectionActionCreator,
             paymentProviderCustomerActionCreator,
             shippingCountryActionCreator as ShippingCountryActionCreator,
@@ -567,6 +581,44 @@ describe('DefaultPaymentIntegrationService', () => {
             });
             expect(store.dispatch).toHaveBeenCalledWith(
                 storeCreditActionCreator.applyStoreCredit(true, {
+                    params: {},
+                }),
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#applyCoupon', () => {
+        it('applies a coupon', async () => {
+            const coupon = 'some_coupon';
+            const output = await subject.applyCoupon(coupon, {
+                params: {},
+            });
+
+            expect(couponActionCreator.applyCoupon).toHaveBeenCalledWith(coupon, {
+                params: {},
+            });
+            expect(store.dispatch).toHaveBeenCalledWith(
+                couponActionCreator.applyCoupon(coupon, {
+                    params: {},
+                }),
+            );
+            expect(output).toEqual(paymentIntegrationSelectors);
+        });
+    });
+
+    describe('#removeCoupon', () => {
+        it('removes a coupon', async () => {
+            const coupon = 'some_coupon';
+            const output = await subject.removeCoupon(coupon, {
+                params: {},
+            });
+
+            expect(couponActionCreator.removeCoupon).toHaveBeenCalledWith(coupon, {
+                params: {},
+            });
+            expect(store.dispatch).toHaveBeenCalledWith(
+                couponActionCreator.removeCoupon(coupon, {
                     params: {},
                 }),
             );
