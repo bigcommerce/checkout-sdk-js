@@ -431,7 +431,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 'braintreelocalmethods',
                 {
                     params: {
-                        useMetadata: true,
+                        useMetadata: false,
                     },
                 },
             );
