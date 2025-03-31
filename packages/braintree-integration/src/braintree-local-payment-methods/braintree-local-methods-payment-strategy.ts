@@ -436,8 +436,8 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 },
             );
 
-            const isOrderApproved = orderStatus === BraintreeOrderStatus.PollingStop;
-            const isPollingError = orderStatus === BraintreeOrderStatus.PollingError;
+            const isOrderApproved = orderStatus.status === BraintreeOrderStatus.PollingStop;
+            const isPollingError = orderStatus.status === BraintreeOrderStatus.PollingError;
 
             if (isOrderApproved) {
                 this.deinitializePollingMechanism();
