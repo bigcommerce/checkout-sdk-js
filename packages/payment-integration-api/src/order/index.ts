@@ -5,6 +5,7 @@ export {
     OrderConsignment,
     OrderMeta,
     OrderShippingConsignment,
+    OrderShippingConsignmentDiscount,
 } from './order';
 export { default as OrderRequestBody, OrderPaymentRequestBody } from './order-request-body';
 export {

@@ -113,6 +113,7 @@ export {
     Order,
     OrderConsignment,
     OrderShippingConsignment,
+    OrderShippingConsignmentDiscount,
     OrderPaymentRequestBody,
     OrderRequestBody,
     FinalizeOrderAction,
