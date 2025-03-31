@@ -34,6 +34,7 @@ import {
     WithBraintreeLocalMethodsPaymentInitializeOptions,
 } from './braintree-local-methods-payment-initialize-options';
 import { noop } from 'lodash';
+import BraintreeRequestSender from '../braintree-request-sender';
 
 const POLLING_INTERVAL = 3000;
 const MAX_POLLING_TIME = 300000;
@@ -43,6 +44,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
     private braintreeLocalPayment?: BraintreeLocalPayment;
     private loadingIndicatorContainer?: string;
     private orderId?: string;
+    private gatewayId?: string;
     private isLPMsUpdateExperimentEnabled = false;
     private pollingTimer = 0;
     private stopPolling = noop;
@@ -50,6 +52,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeSdk: BraintreeSdk,
+        private braintreeRequestSender: BraintreeRequestSender,
         private loadingIndicator: LoadingIndicator,
         private pollingInterval: number = POLLING_INTERVAL,
         private maxPollingIntervalTime: number = MAX_POLLING_TIME,
@@ -59,6 +62,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         options: PaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions,
     ): Promise<void> {
         const { gatewayId, methodId, braintreelocalmethods } = options;
+        this.gatewayId = gatewayId;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -265,7 +269,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                                 methodId,
                                 resolve,
                                 reject,
-                                gatewayId,
+                                this.gatewayId,
                             );
                         });
                     }
@@ -423,7 +427,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         try {
             this.pollingTimer += this.pollingInterval;
 
-            const orderStatus = await this.braintreeSdk.getOrderStatus(
+            const orderStatus = await this.braintreeRequestSender.getOrderStatus(
                 'braintreelocalmethods',
                 {
                     params: {

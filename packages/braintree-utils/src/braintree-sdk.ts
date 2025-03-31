@@ -1,6 +1,6 @@
 import {
     NotInitializedError,
-    NotInitializedErrorType, RequestError, RequestOptions,
+    NotInitializedErrorType,
     UnsupportedBrowserError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
@@ -13,7 +13,7 @@ import {
     BraintreeErrorCode,
     BraintreeGooglePayment,
     BraintreeLocalPayment,
-    BraintreeModule, BraintreeOrderStatus, BraintreeOrderStatusData,
+    BraintreeModule,
     BraintreeThreeDSecure,
     BraintreeUsBankAccount,
     BraintreeVenmoCheckout,
@@ -254,19 +254,6 @@ export default class BraintreeSdk {
         }
 
         return this.braintreeVenmo;
-    }
-
-    async getOrderStatus(methodId?: string, options?: RequestOptions): Promise<BraintreeOrderStatus> {
-        try {
-            const { status } = await this.braintreeScriptLoader.getOrderStatus(
-                methodId,
-                options,
-            );
-
-            return status;
-        } catch (_error) {
-            throw new RequestError();
-        }
     }
 
     /**
