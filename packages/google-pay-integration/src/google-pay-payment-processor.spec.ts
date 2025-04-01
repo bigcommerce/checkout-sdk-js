@@ -160,6 +160,9 @@ describe('GooglePayPaymentProcessor', () => {
                     totalPrice: '0',
                     totalPriceStatus: 'ESTIMATED',
                 },
+                offerInfo: {
+                    offers: [],
+                },
                 callbackIntents: ['OFFER'],
             };
 
@@ -331,6 +334,9 @@ describe('GooglePayPaymentProcessor', () => {
                     authJwt: 'foo.bar.baz',
                     merchantId: '12345678901234567890',
                     merchantName: 'Example Merchant',
+                },
+                offerInfo: {
+                    offers: [],
                 },
                 transactionInfo: {
                     countryCode: 'US',
