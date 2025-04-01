@@ -373,8 +373,6 @@ export interface BraintreeOrderSavedResponse {
     };
 }
 
-
-
 /**
  *
  * Braintree Fastlane

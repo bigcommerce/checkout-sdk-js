@@ -134,11 +134,11 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
 
         this.toggleLoadingIndicator(true);
 
-            if (this.isNonInstantPaymentMethod(methodId)) {
-                await this.executeWithNotInstantLPM(methodId);
-            } else {
-                await this.executeWithInstantLPM(methodId, order, options);
-            }
+        if (this.isNonInstantPaymentMethod(methodId)) {
+            await this.executeWithNotInstantLPM(methodId);
+        } else {
+            await this.executeWithInstantLPM(methodId, order, options);
+        }
     }
 
     private async executeWithNotInstantLPM(methodId: string): Promise<void> {
