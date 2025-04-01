@@ -17,6 +17,7 @@ import { BillingAddressActionCreator } from '../billing';
 import { CartRequestSender } from '../cart';
 import { Checkout, CheckoutActionCreator, CheckoutStore, CheckoutValidator } from '../checkout';
 import { DataStoreProjection } from '../common/data-store';
+import CouponActionCreator from '../coupon/coupon-action-creator';
 import { CustomerActionCreator, CustomerCredentials } from '../customer';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator } from '../order';
@@ -54,6 +55,7 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         private _customerActionCreator: CustomerActionCreator,
         private _cartRequestSender: CartRequestSender,
         private _storeCreditActionCreator: StoreCreditActionCreator,
+        private _couponActionCreator: CouponActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator,
         private _paymentProviderCustomerActionCreator: PaymentProviderCustomerActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
@@ -211,6 +213,24 @@ export default class DefaultPaymentIntegrationService implements PaymentIntegrat
         await this._store.dispatch(
             this._storeCreditActionCreator.applyStoreCredit(useStoreCredit, options),
         );
+
+        return this._storeProjection.getState();
+    }
+
+    async applyCoupon(
+        coupon: string,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(this._couponActionCreator.applyCoupon(coupon, options));
+
+        return this._storeProjection.getState();
+    }
+
+    async removeCoupon(
+        coupon: string,
+        options?: RequestOptions,
+    ): Promise<PaymentIntegrationSelectors> {
+        await this._store.dispatch(this._couponActionCreator.removeCoupon(coupon, options));
 
         return this._storeProjection.getState();
     }
