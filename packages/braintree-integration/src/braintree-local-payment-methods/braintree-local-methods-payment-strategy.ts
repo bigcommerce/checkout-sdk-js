@@ -7,10 +7,10 @@ import {
     BraintreeLPMPaymentStartData,
     BraintreeLPMStartPaymentError,
     BraintreeOrderSavedResponse,
+    BraintreeOrderStatus,
     BraintreeRedirectError,
     BraintreeSdk,
     NonInstantLocalPaymentMethods,
-    BraintreeOrderStatus,
 } from '@bigcommerce/checkout-sdk/braintree-utils';
 import {
     InvalidArgumentError,
@@ -257,6 +257,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                         paymentData,
                     });
                 } catch (error: unknown) {
+
                     if (
                         this.isBraintreeOrderSavedResponse(error) &&
                         error.body.additional_action_required.data.order_id_saved_successfully
@@ -436,7 +437,8 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 },
             );
 
-            const isOrderApproved = orderStatus.status === BraintreeOrderStatus.PollingStop;
+            const isOrderPending = orderStatus.status === BraintreeOrderStatus.Pending;
+            const isOrderApproved = orderStatus.status === BraintreeOrderStatus.Approved;
             const isPollingError = orderStatus.status === BraintreeOrderStatus.PollingError;
 
             if (isOrderApproved) {
@@ -449,7 +451,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 return rejectPromise();
             }
 
-            if (!isOrderApproved && this.pollingTimer < this.maxPollingIntervalTime) {
+            if (!isOrderApproved && isOrderPending && this.pollingTimer < this.maxPollingIntervalTime) {
                 return await this.initializePollingMechanism(
                     methodId,
                     resolvePromise,
