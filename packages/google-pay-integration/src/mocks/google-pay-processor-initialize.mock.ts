@@ -46,6 +46,9 @@ export const createInitializeImplementationMock = (
                                 ? consignment.selectedShippingOption.id
                                 : '',
                         },
+                        offerData: {
+                            redemptionCodes: ['coupon_code'],
+                        },
                     })
                     .then((res) => {
                         if (cb) {
