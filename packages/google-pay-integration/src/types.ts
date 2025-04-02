@@ -155,6 +155,7 @@ export interface GooglePayPaymentDataRequest extends GooglePayGatewayBaseRequest
         allowedCountryCodes?: string[];
         phoneNumberRequired?: boolean;
     };
+    offerInfo: Offers;
     shippingOptionRequired?: boolean;
     callbackIntents?: CallbackIntentsType[];
 }
@@ -176,6 +177,39 @@ export interface NewShippingOptionParameters {
     newShippingOptionParameters?: ShippingOptionParameters;
 }
 
+export interface NewOfferInfo {
+    newOfferInfo?: Offers;
+}
+
+export interface Offers {
+    offers: OfferInfoItem[];
+}
+
+export interface GooglePayError {
+    message: string;
+    reason: ErrorReasonType;
+    intent: CallbackTriggerType;
+}
+
+export enum ErrorReasonType {
+    OFFER_INVALID = 'OFFER_INVALID',
+    PAYMENT_DATA_INVALID = 'PAYMENT_DATA_INVALID',
+    SHIPPING_ADDRESS_INVALID = 'SHIPPING_ADDRESS_INVALID',
+    SHIPPING_ADDRESS_UNSERVICEABLE = 'SHIPPING_ADDRESS_UNSERVICEABLE',
+    SHIPPING_OPTION_INVALID = 'SHIPPING_OPTION_INVALID',
+    OTHER_ERROR = 'OTHER_ERROR',
+}
+
+export interface OfferInfoItem {
+    redemptionCode: string;
+    description: string;
+}
+
+export interface HandleCouponsOut {
+    newOfferInfo: GooglePayPaymentDataRequest['offerInfo'];
+    error?: GooglePayError;
+}
+
 export interface GoogleShippingOption {
     id: string;
     label?: string;
@@ -192,15 +226,23 @@ export interface IntermediatePaymentData {
     callbackTrigger: CallbackTriggerType;
     shippingAddress: GooglePayFullBillingAddress;
     shippingOptionData: GoogleShippingOption;
+    offerData: {
+        redemptionCodes: string[];
+    };
 }
 
 export interface GooglePayPaymentOptions {
     paymentDataCallbacks?: {
         onPaymentDataChanged(
             intermediatePaymentData: IntermediatePaymentData,
-        ): Promise<(NewTransactionInfo & NewShippingOptionParameters) | void>;
+        ): onPaymentDataChangedOut;
     };
 }
+
+export type onPaymentDataChangedOut = Promise<
+    | (NewTransactionInfo & NewShippingOptionParameters & NewOfferInfo & { error?: GooglePayError })
+    | void
+>;
 
 export type GooglePayRequiredPaymentData = Pick<
     GooglePayPaymentDataRequest,

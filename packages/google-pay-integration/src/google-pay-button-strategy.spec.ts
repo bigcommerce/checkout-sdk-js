@@ -28,6 +28,7 @@ import { getGeneric } from './mocks/google-pay-payment-method.mock';
 import { createInitializeImplementationMock } from './mocks/google-pay-processor-initialize.mock';
 import {
     CallbackTriggerType,
+    ErrorReasonType,
     GooglePayButtonOptions,
     GooglePayErrorObject,
     GooglePayInitializationData,
@@ -48,7 +49,7 @@ describe('GooglePayButtonStrategy', () => {
     let scriptLoader: GooglePayScriptLoader;
     let formPoster: FormPoster;
     let mockReturnedPaymentDataChangedValue: NewTransactionInfo & NewShippingOptionParameters;
-
+    let gateway: GooglePayGateway;
     let buyNowCartRequestBody: BuyNowCartRequestBody;
     let buyNowRequiredOptions: {
         buyNowInitializeOptions: {
@@ -78,6 +79,17 @@ describe('GooglePayButtonStrategy', () => {
                   }
                 : undefined,
         );
+    const prepareInitialize = (
+        initializeMockCallback: ReturnType<typeof createInitializeImplementationMock>,
+    ) => {
+        jest.spyOn(processor, 'initialize').mockImplementation(initializeMockCallback);
+
+        jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
+            eventEmitter.emit('onPaymentDataChanged');
+
+            return Promise.resolve(getCardDataResponse());
+        });
+    };
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -136,12 +148,20 @@ describe('GooglePayButtonStrategy', () => {
 
         scriptLoader = new GooglePayScriptLoader(createScriptLoader());
 
+        gateway = new GooglePayGateway('example', paymentIntegrationService);
         processor = new GooglePayPaymentProcessor(
             scriptLoader,
-            new GooglePayGateway('example', paymentIntegrationService),
+            gateway,
             createRequestSender(),
             formPoster,
         );
+
+        jest.spyOn(processor, 'handleCoupons').mockResolvedValue({
+            newOfferInfo: {
+                offers: [{ description: 'Coupon description', redemptionCode: 'code' }],
+            },
+        });
+
         jest.spyOn(processor, 'showPaymentSheet').mockResolvedValue(getCardDataResponse());
         jest.spyOn(processor, 'setExternalCheckoutForm').mockResolvedValue(undefined);
 
@@ -169,6 +189,7 @@ describe('GooglePayButtonStrategy', () => {
                 CallbackTriggerType.INITIALIZE,
                 CallbackTriggerType.SHIPPING_ADDRESS,
                 CallbackTriggerType.SHIPPING_OPTION,
+                CallbackTriggerType.OFFER,
             ],
             initializationTrigger: [CallbackTriggerType.INITIALIZE],
             addressChangeTriggers: [
@@ -176,6 +197,7 @@ describe('GooglePayButtonStrategy', () => {
                 CallbackTriggerType.SHIPPING_ADDRESS,
             ],
             shippingOptionsChangeTriggers: [CallbackTriggerType.SHIPPING_OPTION],
+            offerChangeTriggers: [CallbackTriggerType.OFFER],
         });
 
         buttonStrategy = new GooglePayButtonStrategy(paymentIntegrationService, processor);
@@ -216,13 +238,7 @@ describe('GooglePayButtonStrategy', () => {
                     CallbackTriggerType.INITIALIZE,
                 );
 
-                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
-
-                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
-                    eventEmitter.emit('onPaymentDataChanged');
-
-                    return Promise.resolve(getCardDataResponse());
-                });
+                prepareInitialize(initializeMock);
 
                 await buttonStrategy.initialize(withBuyNowOptions);
 
@@ -257,13 +273,7 @@ describe('GooglePayButtonStrategy', () => {
                     },
                 );
 
-                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
-
-                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
-                    eventEmitter.emit('onPaymentDataChanged');
-
-                    return Promise.resolve(getCardDataResponse());
-                });
+                prepareInitialize(initializeMock);
 
                 await buttonStrategy.initialize(withBuyNowOptions);
 
@@ -303,13 +313,7 @@ describe('GooglePayButtonStrategy', () => {
                     },
                 );
 
-                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
-
-                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
-                    eventEmitter.emit('onPaymentDataChanged');
-
-                    return Promise.resolve(getCardDataResponse());
-                });
+                prepareInitialize(initializeMock);
 
                 await buttonStrategy.initialize(withBuyNowOptions);
 
@@ -388,13 +392,7 @@ describe('GooglePayButtonStrategy', () => {
                     },
                 );
 
-                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
-
-                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
-                    eventEmitter.emit('onPaymentDataChanged');
-
-                    return Promise.resolve(getCardDataResponse());
-                });
+                prepareInitialize(initializeMock);
 
                 const initializeWidgetMock = jest.spyOn(processor, 'initializeWidget');
 
@@ -427,13 +425,7 @@ describe('GooglePayButtonStrategy', () => {
                     },
                 );
 
-                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
-
-                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
-                    eventEmitter.emit('onPaymentDataChanged');
-
-                    return Promise.resolve(getCardDataResponse());
-                });
+                prepareInitialize(initializeMock);
 
                 await buttonStrategy.initialize(options);
 
@@ -473,13 +465,7 @@ describe('GooglePayButtonStrategy', () => {
                     },
                 );
 
-                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
-
-                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
-                    eventEmitter.emit('onPaymentDataChanged');
-
-                    return Promise.resolve(getCardDataResponse());
-                });
+                prepareInitialize(initializeMock);
 
                 await buttonStrategy.initialize(options);
 
@@ -519,13 +505,7 @@ describe('GooglePayButtonStrategy', () => {
                     },
                 );
 
-                jest.spyOn(processor, 'initialize').mockImplementation(initializeMock);
-
-                jest.spyOn(processor, 'showPaymentSheet').mockImplementation(() => {
-                    eventEmitter.emit('onPaymentDataChanged');
-
-                    return Promise.resolve(getCardDataResponse());
-                });
+                prepareInitialize(initializeMock);
 
                 await buttonStrategy.initialize(options);
 
@@ -586,6 +566,117 @@ describe('GooglePayButtonStrategy', () => {
                 buttonColor: 'default',
                 buttonType: 'plain',
                 onClick: expect.any(Function),
+            });
+        });
+
+        describe('Coupons', () => {
+            it('should call handleCoupons on initialize', async () => {
+                const initializeMock = createInitializeImplementationMock(
+                    eventEmitter,
+                    CallbackTriggerType.OFFER,
+                    (res) => {
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
+                    },
+                );
+
+                prepareInitialize(initializeMock);
+
+                await buttonStrategy.initialize(options);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(processor.handleCoupons).toHaveBeenCalledWith({
+                    redemptionCodes: ['coupon_code'],
+                });
+            });
+
+            it('should update offers data', async () => {
+                const initializeMock = createInitializeImplementationMock(
+                    eventEmitter,
+                    CallbackTriggerType.OFFER,
+                    (res) => {
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
+                    },
+                );
+
+                prepareInitialize(initializeMock);
+
+                await buttonStrategy.initialize(options);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(mockReturnedPaymentDataChangedValue).toStrictEqual({
+                    newTransactionInfo: {
+                        countryCode: 'US',
+                        currencyCode: 'USD',
+                        totalPriceStatus: 'FINAL',
+                        totalPrice: '190.00',
+                    },
+                    newOfferInfo: {
+                        offers: [
+                            {
+                                description: 'Coupon description',
+                                redemptionCode: 'code',
+                            },
+                        ],
+                    },
+                });
+            });
+
+            it('should return a Google Pay error', async () => {
+                jest.spyOn(processor, 'handleCoupons').mockResolvedValue({
+                    error: {
+                        message: 'Error message',
+                        reason: ErrorReasonType.OFFER_INVALID,
+                        intent: CallbackTriggerType.OFFER,
+                    },
+                    newOfferInfo: {
+                        offers: [],
+                    },
+                });
+
+                const initializeMock = createInitializeImplementationMock(
+                    eventEmitter,
+                    CallbackTriggerType.OFFER,
+                    (res) => {
+                        if (res) {
+                            mockReturnedPaymentDataChangedValue = res;
+                        }
+                    },
+                );
+
+                prepareInitialize(initializeMock);
+
+                await buttonStrategy.initialize(options);
+
+                button.click();
+
+                await new Promise((resolve) => process.nextTick(resolve));
+
+                expect(mockReturnedPaymentDataChangedValue).toStrictEqual({
+                    newTransactionInfo: {
+                        countryCode: 'US',
+                        currencyCode: 'USD',
+                        totalPriceStatus: 'FINAL',
+                        totalPrice: '190.00',
+                    },
+                    error: {
+                        message: 'Error message',
+                        reason: ErrorReasonType.OFFER_INVALID,
+                        intent: CallbackTriggerType.OFFER,
+                    },
+                    newOfferInfo: {
+                        offers: [],
+                    },
+                });
             });
         });
 

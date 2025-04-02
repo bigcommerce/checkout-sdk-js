@@ -77,6 +77,10 @@ export default interface PaymentIntegrationService {
         options?: RequestOptions,
     ): Promise<PaymentIntegrationSelectors>;
 
+    applyCoupon(coupon: string, options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
+
+    removeCoupon(couponId: string, options?: RequestOptions): Promise<PaymentIntegrationSelectors>;
+
     createBuyNowCart(body: BuyNowCartRequestBody, options?: RequestOptions): Promise<Cart>;
 
     updatePaymentProviderCustomer(
