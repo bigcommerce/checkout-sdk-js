@@ -296,11 +296,13 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
             payloadData: BraintreeLocalPaymentsPayload,
         ) => {
             if (startPaymentError) {
+
                 if (startPaymentError.code === 'LOCAL_PAYMENT_WINDOW_CLOSED') {
                     this.toggleLoadingIndicator(false);
 
                     return reject();
                 }
+                this.resetPollingMechanism();
 
                 this.toggleLoadingIndicator(false);
 
@@ -438,8 +440,8 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
             );
 
             const isOrderPending = orderStatus.status === BraintreeOrderStatus.Pending;
-            const isOrderApproved = orderStatus.status === BraintreeOrderStatus.Approved;
-            const isPollingError = orderStatus.status === BraintreeOrderStatus.PollingError;
+            const isOrderApproved = orderStatus.status === BraintreeOrderStatus.Completed;
+            const isPollingError = orderStatus.status === BraintreeOrderStatus.Failed;
 
             if (isOrderApproved) {
                 this.deinitializePollingMechanism();

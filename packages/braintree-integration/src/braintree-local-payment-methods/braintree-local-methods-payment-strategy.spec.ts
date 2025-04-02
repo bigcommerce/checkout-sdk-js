@@ -325,7 +325,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
 
             it('initialize polling mechanism', async () => {
                 jest.spyOn(braintreeRequestSender, 'getOrderStatus').mockResolvedValue({
-                    status: BraintreeOrderStatus.Approved,
+                    status: BraintreeOrderStatus.Completed,
                 });
 
                 const validBraintreeResponse = {
