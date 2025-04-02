@@ -5,6 +5,7 @@ import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import { MissingShippingMethodError, OrderTaxProviderUnavailableError } from './errors';
+import InvalidShippingAddressError from './errors/invalid-shipping-address-error';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import { getCompleteOrderResponseBody } from './internal-orders.mock';
 import Order from './order';
@@ -177,6 +178,31 @@ describe('OrderRequestSender', () => {
                 await orderRequestSender.submitOrder(payload);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingShippingMethodError);
+            }
+        });
+
+        it('throws `InvalidShippingAddressError` if error type is `invalid_shipping_address`', async () => {
+            const error = getErrorResponse(
+                {
+                    status: 400,
+                    title: 'Invalid shipping address',
+                    type: 'invalid_shipping_address',
+                },
+                undefined,
+                409,
+            );
+
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
+
+            try {
+                const payload = {
+                    cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                    useStoreCredit: false,
+                };
+
+                await orderRequestSender.submitOrder(payload);
+            } catch (error) {
+                expect(error).toBeInstanceOf(InvalidShippingAddressError);
             }
         });
 

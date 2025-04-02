@@ -10,6 +10,7 @@ import {
 } from '../common/http-request';
 
 import { MissingShippingMethodError, OrderTaxProviderUnavailableError } from './errors';
+import InvalidShippingAddressError from './errors/invalid-shipping-address-error';
 import InternalOrderRequestBody from './internal-order-request-body';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import Order from './order';
@@ -77,6 +78,10 @@ export default class OrderRequestSender {
 
                 if (error.body.type === 'missing_shipping_method') {
                     throw new MissingShippingMethodError(error.body.detail);
+                }
+
+                if (error.body.type === 'invalid_shipping_address') {
+                    throw new InvalidShippingAddressError(error.body.detail);
                 }
 
                 throw error;
