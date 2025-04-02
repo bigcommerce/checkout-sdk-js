@@ -1,7 +1,13 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
-import BraintreeRequestSender from './braintree-request-sender';
+import {
+    ContentType,
+    INTERNAL_USE_ONLY,
+    SDK_VERSION_HEADERS,
+} from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 import { getResponse } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import { ContentType, INTERNAL_USE_ONLY, SDK_VERSION_HEADERS } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
+import BraintreeRequestSender from './braintree-request-sender';
 
 describe('BraintreeRequestSender', () => {
     let requestSender: RequestSender;

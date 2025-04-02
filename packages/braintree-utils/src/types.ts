@@ -267,9 +267,9 @@ export interface BraintreeThreeDSecureVerificationData {
 }
 
 export enum BraintreeOrderStatus {
-    Approved = 'APPROVED',
+    Completed = 'COMPLETED',
     Pending = 'PENDING',
-    PollingError = 'POLLING_ERROR',
+    Failed = 'FAILED',
 }
 
 export interface BraintreeOrderStatusData {

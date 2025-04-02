@@ -1,11 +1,13 @@
 import { RequestSender } from '@bigcommerce/request-sender';
+
+import { BraintreeOrderStatusData } from '@bigcommerce/checkout-sdk/braintree-utils';
+
 import {
     ContentType,
     INTERNAL_USE_ONLY,
     RequestOptions,
     SDK_VERSION_HEADERS,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { BraintreeOrderStatusData } from '@bigcommerce/checkout-sdk/braintree-utils';
 
 export default class BraintreeRequestSender {
     constructor(private requestSender: RequestSender) {}

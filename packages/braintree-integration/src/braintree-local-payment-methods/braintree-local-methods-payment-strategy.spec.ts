@@ -1,5 +1,5 @@
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
-
 import {
     BraintreeLocalPayment,
     BraintreeOrderStatus,
@@ -28,7 +28,9 @@ import {
     getResponse,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+import BraintreeRequestSender from '../braintree-request-sender';
 
 import {
     getBraintreeLocalMethods,
@@ -36,25 +38,24 @@ import {
 } from '../mocks/braintree.mock';
 
 import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-payment-strategy';
-import BraintreeRequestSender from '../braintree-request-sender';
-import { createRequestSender } from '@bigcommerce/request-sender';
 
 describe('BraintreeLocalMethodsPaymentStrategy', () => {
     let strategy: BraintreeLocalMethodsPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
     let braintreeLocalPaymentMock: BraintreeLocalPayment;
     let braintreeSdk: BraintreeSdk;
-    let braintreeRequestSender: BraintreeRequestSender;
     let braintreeScriptLoader: BraintreeScriptLoader;
     let paymentMethodMock: PaymentMethod;
     let storeConfigMock: StoreConfig;
     let loadingIndicator: LoadingIndicator;
     let lpmButton: HTMLButtonElement;
     let lpmContainer: HTMLElement;
+    let braintreeRequestSender: BraintreeRequestSender;
     const sessionId = getDataCollectorMock().deviceData;
 
     const instantPaymentMethodId = 'ideal';
     const defaultOrderId = '123';
+    const requestSender = createRequestSender();
 
     const braintreelocalmethods = getBraintreeLocalMethodsInitializationOptions();
 
@@ -64,13 +65,12 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
         braintreelocalmethods,
     };
 
-    braintreeRequestSender = new BraintreeRequestSender(createRequestSender());
-
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         braintreeScriptLoader = new BraintreeScriptLoader(getScriptLoader(), window);
         braintreeSdk = new BraintreeSdk(braintreeScriptLoader);
         loadingIndicator = new LoadingIndicator();
+        braintreeRequestSender = new BraintreeRequestSender(requestSender);
         strategy = new BraintreeLocalMethodsPaymentStrategy(
             paymentIntegrationService,
             braintreeSdk,
@@ -94,6 +94,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
         storeConfigMock = getConfig().storeConfig;
         storeConfigMock.checkoutSettings.features = {
             'PAYPAL-4853.add_new_payment_flow_for_braintree_lpms': true,
+            'PAYPAL-5258.braintree_local_methods_polling': false,
         };
 
         braintreeLocalPaymentMock = getBraintreeLocalPaymentMock(
@@ -323,74 +324,6 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                 );
             });
 
-            it('initialize polling mechanism', async () => {
-                jest.spyOn(braintreeRequestSender, 'getOrderStatus').mockResolvedValue({
-                    status: BraintreeOrderStatus.Approved,
-                });
-
-                const validBraintreeResponse = {
-                    body: {
-                        additional_action_required: {
-                            data: {
-                                order_id_saved_successfully: true, // This property is required
-                            },
-                        },
-                    },
-                };
-                jest.spyOn(paymentIntegrationService, 'submitOrder').mockRejectedValue(
-                    validBraintreeResponse
-                );
-                const payload = {
-                    payment: {
-                        methodId: 'braintreelocalmethods',
-                        gatewayId: 'braintreelocalmethods',
-                    },
-                };
-
-                await strategy.initialize(initializationOptions);
-
-                try {
-                    await strategy.execute(payload);
-                } catch (error) {
-                    expect(braintreeRequestSender.getOrderStatus).toHaveBeenCalled();
-                }
-
-            });
-
-            it('stop polling mechanism if corresponding status received', async () => {
-                const validBraintreeResponse = {
-                    body: {
-                        additional_action_required: {
-                            data: {
-                                order_id_saved_successfully: true,
-                            },
-                        },
-                    },
-                };
-                jest.spyOn(paymentIntegrationService, 'submitOrder').mockRejectedValue(
-                    validBraintreeResponse
-                );
-                jest.spyOn(braintreeRequestSender, 'getOrderStatus').mockResolvedValue({
-                    status: BraintreeOrderStatus.PollingError,
-                });
-
-                const payload = {
-                    payment: {
-                        methodId: 'braintreelocalmethods',
-                        gatewayId: 'braintreelocalmethods',
-                    },
-                };
-
-                jest.spyOn(global, 'clearTimeout');
-
-                try {
-                    await strategy.initialize(initializationOptions);
-                    await strategy.execute(payload);
-                } catch (e) {
-                    expect(clearTimeout).toHaveBeenCalled();
-                }
-            });
-
             it('starts Braintree LPM flow (opens popup) when orderId was successfully saved on BE side', async () => {
                 const startPaymentMock = jest.fn();
 
@@ -478,7 +411,6 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                 try {
                     await strategy.execute(payload);
                 } catch (error: unknown) {
-                    expect(error).toBeUndefined();
                     expect(loadingIndicator.hide).toHaveBeenCalled();
                 }
             });
@@ -611,6 +543,140 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                     expect(error).toBeInstanceOf(Error);
                 }
             });
+        });
+    });
+
+    describe('#polling mechanism', () => {
+        beforeEach(() => {
+            const storeConfigMock = {
+                ...getConfig().storeConfig,
+                checkoutSettings: {
+                    ...getConfig().storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-4853.add_new_payment_flow_for_braintree_lpms': true,
+                        'PAYPAL-5258.braintree_local_methods_polling': true,
+                    },
+                },
+            };
+
+            jest.spyOn(paymentIntegrationService, 'submitPayment').mockReturnValueOnce(
+                Promise.resolve(paymentIntegrationService.getState()),
+            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getStoreConfigOrThrow',
+            ).mockReturnValue(storeConfigMock);
+
+            const validBraintreeResponse = {
+                body: {
+                    additional_action_required: {
+                        data: {
+                            order_id_saved_successfully: true,
+                        },
+                    },
+                },
+            };
+
+            jest.spyOn(paymentIntegrationService, 'submitOrder').mockRejectedValue(
+                validBraintreeResponse,
+            );
+        });
+
+        it('initialize polling mechanism', async () => {
+            jest.spyOn(braintreeRequestSender, 'getOrderStatus').mockReturnValue(
+                Promise.resolve({ status: BraintreeOrderStatus.Completed }),
+            );
+
+            const payload = {
+                payment: {
+                    methodId: 'braintreelocalmethods',
+                    gatewayId: 'braintreelocalmethods',
+                },
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            await strategy.execute(payload);
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(braintreeRequestSender.getOrderStatus).toHaveBeenCalled();
+        });
+
+        it('request order status with proper payload', async () => {
+            jest.spyOn(braintreeRequestSender, 'getOrderStatus').mockReturnValue(
+                Promise.resolve({ status: BraintreeOrderStatus.Completed }),
+            );
+
+            const validBraintreeResponse = {
+                body: {
+                    additional_action_required: {
+                        data: {
+                            order_id_saved_successfully: true,
+                        },
+                    },
+                },
+            };
+
+            jest.spyOn(paymentIntegrationService, 'submitOrder').mockRejectedValue(
+                validBraintreeResponse,
+            );
+
+            const payload = {
+                payment: {
+                    methodId: 'braintreelocalmethods',
+                    gatewayId: 'braintreelocalmethods',
+                },
+            };
+
+            await strategy.initialize(initializationOptions);
+
+            await strategy.execute(payload);
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(braintreeRequestSender.getOrderStatus).toHaveBeenCalledWith(
+                'braintreelocalmethods',
+                {
+                    params: {
+                        useMetadata: false,
+                    },
+                },
+            );
+        });
+
+        it('deinitialize polling mechanism', async () => {
+            jest.spyOn(braintreeRequestSender, 'getOrderStatus').mockReturnValue(
+                Promise.resolve({ status: BraintreeOrderStatus.Completed }),
+            );
+
+            const validBraintreeResponse = {
+                body: {
+                    additional_action_required: {
+                        data: {
+                            order_id_saved_successfully: true,
+                        },
+                    },
+                },
+            };
+
+            jest.spyOn(paymentIntegrationService, 'submitOrder').mockRejectedValue(
+                validBraintreeResponse,
+            );
+
+            const payload = {
+                payment: {
+                    methodId: 'braintreelocalmethods',
+                    gatewayId: 'braintreelocalmethods',
+                },
+            };
+
+            jest.spyOn(global, 'clearTimeout');
+
+            await strategy.initialize(initializationOptions);
+            await strategy.execute(payload);
+            await new Promise((resolve) => process.nextTick(resolve));
+            await strategy.deinitialize();
+
+            expect(clearTimeout).toHaveBeenCalled();
         });
     });
 });

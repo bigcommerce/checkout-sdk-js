@@ -1,3 +1,5 @@
+import { noop } from 'lodash';
+
 import {
     BraintreeInitializationData,
     BraintreeLocalPayment,
@@ -26,15 +28,18 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
     RequestOptions,
+    TimeoutError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
+
+import BraintreeRequestSender from '../braintree-request-sender';
 
 import {
     BraintreeLocalMethodsPaymentInitializeOptions,
     WithBraintreeLocalMethodsPaymentInitializeOptions,
 } from './braintree-local-methods-payment-initialize-options';
-import { noop } from 'lodash';
-import BraintreeRequestSender from '../braintree-request-sender';
 
 const POLLING_INTERVAL = 3000;
 const MAX_POLLING_TIME = 300000;
@@ -48,6 +53,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
     private isLPMsUpdateExperimentEnabled = false;
     private pollingTimer = 0;
     private stopPolling = noop;
+    private isPollingEnabled = false;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -62,6 +68,7 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         options: PaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions,
     ): Promise<void> {
         const { gatewayId, methodId, braintreelocalmethods } = options;
+
         this.gatewayId = gatewayId;
 
         if (!methodId) {
@@ -90,11 +97,17 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(gatewayId);
         const { clientToken, config, initializationData } = paymentMethod;
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
 
-        this.isLPMsUpdateExperimentEnabled =
-            state.getStoreConfigOrThrow().checkoutSettings.features[
-                'PAYPAL-4853.add_new_payment_flow_for_braintree_lpms'
-            ] || false;
+        this.isPollingEnabled = isExperimentEnabled(
+            features,
+            'PAYPAL-5258.braintree_local_methods_polling',
+        );
+
+        this.isLPMsUpdateExperimentEnabled = isExperimentEnabled(
+            features,
+            'PAYPAL-4853.add_new_payment_flow_for_braintree_lpms',
+        );
 
         if (!clientToken || !initializationData || !config.merchantId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -257,7 +270,6 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                         paymentData,
                     });
                 } catch (error: unknown) {
-
                     if (
                         this.isBraintreeOrderSavedResponse(error) &&
                         error.body.additional_action_required.data.order_id_saved_successfully
@@ -265,14 +277,18 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                         // Start method call initiates the popup
                         start();
 
-                        return await new Promise((resolve, reject) => {
-                            this.initializePollingMechanism(
-                                methodId,
-                                resolve,
-                                reject,
-                                this.gatewayId,
-                            );
-                        });
+                        if (this.isPollingEnabled) {
+                            return new Promise((resolve, reject) => {
+                                void this.initializePollingMechanism(
+                                    methodId,
+                                    resolve,
+                                    reject,
+                                    this.gatewayId,
+                                );
+                            });
+                        }
+
+                        return;
                     }
 
                     throw error;
@@ -298,8 +314,13 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
             if (startPaymentError) {
                 if (startPaymentError.code === 'LOCAL_PAYMENT_WINDOW_CLOSED') {
                     this.toggleLoadingIndicator(false);
+                    this.resetPollingMechanism();
 
                     return reject();
+                }
+
+                if (this.isPollingEnabled) {
+                    this.resetPollingMechanism();
                 }
 
                 this.toggleLoadingIndicator(false);
@@ -355,7 +376,10 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
     private handleError(error: unknown) {
         const { onError } = this.braintreelocalmethods || {};
 
-        this.resetPollingMechanism();
+        if (this.isPollingEnabled) {
+            this.resetPollingMechanism();
+        }
+
         this.toggleLoadingIndicator(false);
 
         if (onError && typeof onError === 'function') {
@@ -428,18 +452,15 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         try {
             this.pollingTimer += this.pollingInterval;
 
-            const orderStatus = await this.braintreeRequestSender.getOrderStatus(
-                'braintreelocalmethods',
-                {
-                    params: {
-                        useMetadata: false,
-                    },
+            const orderStatus = await this.braintreeRequestSender.getOrderStatus(gatewayId, {
+                params: {
+                    useMetadata: false,
                 },
-            );
+            });
 
             const isOrderPending = orderStatus.status === BraintreeOrderStatus.Pending;
-            const isOrderApproved = orderStatus.status === BraintreeOrderStatus.Approved;
-            const isPollingError = orderStatus.status === BraintreeOrderStatus.PollingError;
+            const isOrderApproved = orderStatus.status === BraintreeOrderStatus.Completed;
+            const isPollingError = orderStatus.status === BraintreeOrderStatus.Failed;
 
             if (isOrderApproved) {
                 this.deinitializePollingMechanism();
@@ -451,7 +472,11 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 return rejectPromise();
             }
 
-            if (!isOrderApproved && isOrderPending && this.pollingTimer < this.maxPollingIntervalTime) {
+            if (
+                !isOrderApproved &&
+                isOrderPending &&
+                this.pollingTimer < this.maxPollingIntervalTime
+            ) {
                 return await this.initializePollingMechanism(
                     methodId,
                     resolvePromise,
@@ -460,15 +485,14 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                 );
             }
 
-            this.reinitializeStrategy({
+            await this.reinitializeStrategy({
                 methodId,
                 gatewayId,
                 braintreelocalmethods: this.braintreelocalmethods,
             });
 
-            this.handleError(new Error('Timeout Error'));
+            this.handleError(new TimeoutError());
         } catch (error) {
-            this.handleError(error);
             rejectPromise();
         }
     }
@@ -482,10 +506,10 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         this.deinitializePollingMechanism();
     }
 
-    private reinitializeStrategy(
-        options: PaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions
+    private async reinitializeStrategy(
+        options: PaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions,
     ) {
-        this.deinitialize();
-        this.initialize(options);
+        await this.deinitialize();
+        await this.initialize(options);
     }
 }

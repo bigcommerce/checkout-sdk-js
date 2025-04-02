@@ -1,3 +1,4 @@
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import {
@@ -11,9 +12,9 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
-import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-payment-strategy';
 import BraintreeRequestSender from '../braintree-request-sender';
-import { createRequestSender } from '@bigcommerce/request-sender';
+
+import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-payment-strategy';
 
 const createBraintreeLocalMethodsPaymentStrategy: PaymentStrategyFactory<
     BraintreeLocalMethodsPaymentStrategy
