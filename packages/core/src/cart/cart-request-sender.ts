@@ -2,9 +2,18 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { BuyNowCartRequestBody, Cart } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { GQL_REQUEST_URL } from '../common/gql-request';
 import { ContentType, RequestOptions, SDK_VERSION_HEADERS } from '../common/http-request';
 
-import { GQLCartRequestResponse, mapToCart } from './gql-cart';
+import {
+    GQLCartResponse,
+    GQLCurrencyResponse,
+    GQLRequestOptions,
+    GQLRequestResponse,
+} from './gql-cart';
+import CartRetrievalError from './gql-cart/errors/cart-retrieval-error';
+import getCartCurrencyQuery from './gql-cart/get-cart-currency-query';
+import getCartQuery from './gql-cart/get-cart-query';
 
 export default class CartRequestSender {
     constructor(private _requestSender: RequestSender) {}
@@ -22,40 +31,52 @@ export default class CartRequestSender {
         return this._requestSender.post(url, { body, headers, timeout });
     }
 
-    async loadCart(
-        cartId: string,
-        host?: string,
-        options?: RequestOptions,
-    ): Promise<Response<Cart | undefined>> {
-        const path = 'api/wallet-buttons/cart-information';
-        const url = host ? `${host}/${path}` : `${window.location.origin}/${path}`;
+    async loadCart(cartId: string, gqlUrl?: string, options?: RequestOptions) {
+        const url = gqlUrl ?? GQL_REQUEST_URL;
 
-        const requestOptions: RequestOptions = {
+        const requestOptions: GQLRequestOptions = {
             ...options,
-            params: {
-                cartId,
+            body: {
+                query: getCartQuery(cartId),
             },
         };
 
-        const response = await this._requestSender.get<GQLCartRequestResponse>(url, {
+        const response = await this._requestSender.post<GQLRequestResponse<GQLCartResponse>>(url, {
             ...requestOptions,
         });
 
-        return this.transformToCartResponse(response);
+        if (!response.body.data.site.cart) {
+            throw new CartRetrievalError(
+                `Could not retrieve cart information by cartId: ${cartId}`,
+            );
+        }
+
+        return response;
     }
 
-    private transformToCartResponse(
-        response: Response<GQLCartRequestResponse>,
-    ): Response<Cart | undefined> {
-        const {
-            body: {
-                data: { site },
-            },
-        } = response;
+    async loadCartCurrency(currencyCode: string, gqlUrl?: string, options?: RequestOptions) {
+        const url = gqlUrl ?? GQL_REQUEST_URL;
 
-        return {
-            ...response,
-            body: mapToCart(site),
+        const requestOptions: GQLRequestOptions = {
+            ...options,
+            body: {
+                query: getCartCurrencyQuery(currencyCode),
+            },
         };
+
+        const response = await this._requestSender.post<GQLRequestResponse<GQLCurrencyResponse>>(
+            url,
+            {
+                ...requestOptions,
+            },
+        );
+
+        if (!response.body.data.site.currency) {
+            throw new CartRetrievalError(
+                `Could not retrieve currency information by currencyCode: ${currencyCode}`,
+            );
+        }
+
+        return response;
     }
 }

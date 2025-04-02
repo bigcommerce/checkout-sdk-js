@@ -1,15 +1,19 @@
+import { merge } from 'lodash';
+
 import { Cart } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import { getCart } from '../carts.mock';
 
 import mapToCart from './map-to-cart';
-import { getGQLCartResponse } from './mocks/gql-cart.mock';
+import { getGQLCartResponse, getGQLCurrencyResponse } from './mocks/gql-cart.mock';
 
 describe('mapToCart', () => {
     let headlessCartResponse: Cart | undefined;
 
     beforeEach(() => {
-        headlessCartResponse = mapToCart(getGQLCartResponse().data.site);
+        headlessCartResponse = mapToCart(
+            merge(getGQLCartResponse().data.site, getGQLCurrencyResponse().data.site),
+        );
     });
 
     it('maps to internal cart', () => {

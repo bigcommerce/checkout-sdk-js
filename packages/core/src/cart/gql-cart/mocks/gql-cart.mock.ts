@@ -1,5 +1,5 @@
-import { GQLCartLineItem } from '../gql-cart';
-import { GQLCartRequestResponse } from '../gql-cart-request-response';
+import { GQLCartLineItem, GQLCartResponse, GQLCurrencyResponse } from '../gql-cart';
+import { GQLRequestResponse } from '../gql-request-response';
 
 export function gqlCartLineItem(): GQLCartLineItem {
     return {
@@ -46,7 +46,7 @@ export function gqlCartLineItem(): GQLCartLineItem {
     };
 }
 
-export function getGQLCartResponse(): GQLCartRequestResponse {
+export function getGQLCartResponse(): GQLRequestResponse<GQLCartResponse> {
     return {
         data: {
             site: {
@@ -104,14 +104,6 @@ export function getGQLCartResponse(): GQLCartRequestResponse {
                         },
                     ],
                 },
-                currency: {
-                    display: {
-                        decimalPlaces: 2,
-                        symbol: '$',
-                    },
-                    name: 'US Dollar',
-                    code: 'USD',
-                },
             },
         },
     };
@@ -132,5 +124,22 @@ export function getPhysicalItem(hasGiftWrapping?: false) {
               }
             : {}),
         ...gqlCartLineItem(),
+    };
+}
+
+export function getGQLCurrencyResponse(): GQLRequestResponse<GQLCurrencyResponse> {
+    return {
+        data: {
+            site: {
+                currency: {
+                    display: {
+                        decimalPlaces: 2,
+                        symbol: '$',
+                    },
+                    name: 'US Dollar',
+                    code: 'USD',
+                },
+            },
+        },
     };
 }

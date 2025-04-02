@@ -7,6 +7,7 @@ import {
 
 import { CartSource } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { GQL_REQUEST_URL } from '../common/gql-request';
 import { ContentType, SDK_VERSION_HEADERS } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
@@ -14,15 +15,18 @@ import BuyNowCartRequestBody from './buy-now-cart-request-body';
 import Cart from './cart';
 import CartRequestSender from './cart-request-sender';
 import { getCart } from './carts.mock';
-import { GQLCartRequestResponse } from './gql-cart';
-import { getGQLCartResponse } from './gql-cart/mocks/gql-cart.mock';
+import { GQLCartResponse, GQLCurrencyResponse, GQLRequestResponse } from './gql-cart';
+import getCartCurrencyQuery from './gql-cart/get-cart-currency-query';
+import getCartQuery from './gql-cart/get-cart-query';
+import { getGQLCartResponse, getGQLCurrencyResponse } from './gql-cart/mocks/gql-cart.mock';
 
 describe('CartRequestSender', () => {
     let cart: Cart;
     let cartRequestSender: CartRequestSender;
     let requestSender: RequestSender;
     let response: Response<Cart>;
-    let headlessResponse: Response<GQLCartRequestResponse>;
+    let gqlResponse: Response<GQLRequestResponse<GQLCartResponse>>;
+    let gqlCurrencyResponse: Response<GQLRequestResponse<GQLCurrencyResponse>>;
 
     beforeEach(() => {
         requestSender = createRequestSender();
@@ -81,24 +85,63 @@ describe('CartRequestSender', () => {
 
     describe('#loadCart', () => {
         const cartId = '123123';
+        const gqlUrl = 'https://test.com/graphql';
 
         beforeEach(() => {
-            headlessResponse = getResponse(getGQLCartResponse());
+            gqlResponse = getResponse(getGQLCartResponse());
 
-            jest.spyOn(requestSender, 'get').mockResolvedValue(headlessResponse);
+            jest.spyOn(requestSender, 'post').mockResolvedValue(gqlResponse);
         });
 
-        it('get headless cart', async () => {
+        it('get gql cart', async () => {
             await cartRequestSender.loadCart(cartId);
 
-            expect(requestSender.get).toHaveBeenCalledWith(
-                'http://localhost/api/wallet-buttons/cart-information',
-                {
-                    params: {
-                        cartId,
-                    },
+            expect(requestSender.post).toHaveBeenCalledWith(GQL_REQUEST_URL, {
+                body: {
+                    query: getCartQuery(cartId),
                 },
-            );
+            });
+        });
+
+        it('get gql cart with graphql url', async () => {
+            await cartRequestSender.loadCart(cartId, gqlUrl);
+
+            expect(requestSender.post).toHaveBeenCalledWith('https://test.com/graphql', {
+                body: {
+                    query: getCartQuery(cartId),
+                },
+            });
+        });
+    });
+
+    describe('#loadCartCurrency', () => {
+        const currencyCode = 'USD';
+        const gqlUrl = 'https://test.com/graphql';
+
+        beforeEach(() => {
+            gqlCurrencyResponse = getResponse(getGQLCurrencyResponse());
+
+            jest.spyOn(requestSender, 'post').mockResolvedValue(gqlCurrencyResponse);
+        });
+
+        it('get gql cart currency', async () => {
+            await cartRequestSender.loadCartCurrency(currencyCode);
+
+            expect(requestSender.post).toHaveBeenCalledWith(GQL_REQUEST_URL, {
+                body: {
+                    query: getCartCurrencyQuery(currencyCode),
+                },
+            });
+        });
+
+        it('get gql cart currency with host url', async () => {
+            await cartRequestSender.loadCartCurrency(currencyCode, gqlUrl);
+
+            expect(requestSender.post).toHaveBeenCalledWith('https://test.com/graphql', {
+                body: {
+                    query: getCartCurrencyQuery(currencyCode),
+                },
+            });
         });
     });
 });

@@ -2,14 +2,10 @@ import { Cart } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import mapToCartLineItems from './map-to-cart-line-items';
 
-import { GQLCartResponse } from './';
+import { GQLCartResponse, GQLCurrencyResponse } from './';
 
-export default function mapToCart(headlessCartResponse: GQLCartResponse): Cart | undefined {
-    const { cart, checkout, currency } = headlessCartResponse;
-
-    if (!cart || !checkout || !currency) {
-        return;
-    }
+export default function mapToCart(response: GQLCartResponse & GQLCurrencyResponse): Cart {
+    const { cart, checkout, currency } = response;
 
     return {
         id: cart.entityId,

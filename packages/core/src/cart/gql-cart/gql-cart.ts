@@ -1,5 +1,13 @@
+import { RequestOptions } from '@bigcommerce/request-sender';
+
 interface BaseFieldFragment {
     value: number;
+}
+
+export interface GQLRequestOptions extends RequestOptions {
+    body: {
+        query: string;
+    };
 }
 
 export interface GQLCartLineItem {
@@ -98,8 +106,8 @@ export interface GQLCartLineItems {
     giftCertificates?: GQLCartGiftCertificates[];
 }
 
-export default interface GQLCartResponse {
-    cart?: {
+export interface GQLCartResponse {
+    cart: {
         amount: BaseFieldFragment;
         baseAmount: BaseFieldFragment;
         entityId: string;
@@ -119,7 +127,7 @@ export default interface GQLCartResponse {
         currencyCode: string;
         lineItems: GQLCartLineItems;
     };
-    checkout?: {
+    checkout: {
         coupons: Array<{
             entityId: string;
             code: string;
@@ -129,7 +137,10 @@ export default interface GQLCartResponse {
             };
         }>;
     };
-    currency?: {
+}
+
+export interface GQLCurrencyResponse {
+    currency: {
         display: {
             decimalPlaces: number;
             symbol: string;

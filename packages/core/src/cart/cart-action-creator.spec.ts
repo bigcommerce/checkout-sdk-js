@@ -12,6 +12,7 @@ import CartActionCreator from './cart-action-creator';
 import { CartActionType } from './cart-actions';
 import CartRequestSender from './cart-request-sender';
 import { getCart } from './carts.mock';
+import { getGQLCartResponse, getGQLCurrencyResponse } from './gql-cart/mocks/gql-cart.mock';
 
 describe('CartActionCreator', () => {
     let cartActionCreator: CartActionCreator;
@@ -29,7 +30,11 @@ describe('CartActionCreator', () => {
         store = createCheckoutStore(getCheckoutStoreState());
 
         jest.spyOn(cartRequestSender, 'loadCart').mockReturnValue(
-            Promise.resolve(getResponse(getCart())),
+            Promise.resolve(getResponse(getGQLCartResponse())),
+        );
+
+        jest.spyOn(cartRequestSender, 'loadCartCurrency').mockReturnValue(
+            Promise.resolve(getResponse(getGQLCurrencyResponse())),
         );
 
         cartActionCreator = new CartActionCreator(cartRequestSender);
@@ -47,7 +52,29 @@ describe('CartActionCreator', () => {
                 { type: CartActionType.LoadCartRequested },
                 {
                     type: CartActionType.LoadCartSucceeded,
-                    payload: getCart(),
+                    payload: expect.objectContaining({
+                        id: cart.id,
+                        currency: {
+                            code: cart.currency.code,
+                            name: cart.currency.name,
+                            symbol: cart.currency.symbol,
+                            decimalPlaces: cart.currency.decimalPlaces,
+                        },
+                        lineItems: expect.objectContaining({
+                            physicalItems: cart.lineItems.physicalItems.map((item) =>
+                                expect.objectContaining({
+                                    id: item.id,
+                                    variantId: item.variantId,
+                                    productId: item.productId,
+                                    sku: item.sku,
+                                    name: item.name,
+                                    url: item.url,
+                                    quantity: item.quantity,
+                                    isShippingRequired: item.isShippingRequired,
+                                }),
+                            ),
+                        }),
+                    }),
                 },
             ]),
         );
