@@ -124,6 +124,7 @@ export interface CheckoutSettings {
     realtimeShippingProviders: string[];
     requiresMarketingConsent: boolean;
     remoteCheckoutProviders: any[];
+    shouldRedirectToStorefrontLoginPage: boolean;
 }
 
 export interface CustomizationConfig {
