@@ -100,8 +100,8 @@ export default class PayPalCommerceScriptLoader {
         const disableCreditFunding = !isPayPalCreditAvailable ? ['credit', 'paylater'] : [];
 
         const shouldEnableAPMs = initializesOnCheckoutPage || !commit;
-        const enableVenmoFunding = shouldEnableAPMs && isVenmoEnabled ? ['venmo'] : [];
-        const disableVenmoFunding = !shouldEnableAPMs || !isVenmoEnabled ? ['venmo'] : [];
+        const enableVenmoFunding = isVenmoEnabled ? ['venmo'] : [];
+        const disableVenmoFunding = !isVenmoEnabled ? ['venmo'] : [];
         const enableAPMsFunding = shouldEnableAPMs ? enabledAlternativePaymentMethods : [];
         const disableAPMsFunding = shouldEnableAPMs
             ? availableAlternativePaymentMethods.filter(
