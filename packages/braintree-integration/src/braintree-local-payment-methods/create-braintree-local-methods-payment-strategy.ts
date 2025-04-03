@@ -12,6 +12,8 @@ import {
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import BraintreeLocalMethodsPaymentStrategy from './braintree-local-methods-payment-strategy';
+import BraintreeRequestSender from '../braintree-request-sender';
+import { createRequestSender } from '@bigcommerce/request-sender';
 
 const createBraintreeLocalMethodsPaymentStrategy: PaymentStrategyFactory<
     BraintreeLocalMethodsPaymentStrategy
@@ -20,10 +22,13 @@ const createBraintreeLocalMethodsPaymentStrategy: PaymentStrategyFactory<
     const braintreeSdk = new BraintreeSdk(
         new BraintreeScriptLoader(getScriptLoader(), braintreeHostWindow),
     );
+    const requestSender = createRequestSender();
+    const braintreeRequestSender = new BraintreeRequestSender(requestSender);
 
     return new BraintreeLocalMethodsPaymentStrategy(
         paymentIntegrationService,
         braintreeSdk,
+        braintreeRequestSender,
         new LoadingIndicator({ styles: { backgroundColor: 'black' } }),
     );
 };
