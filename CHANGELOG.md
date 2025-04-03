@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.719.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.719.1...v1.719.2) (2025-04-03)
+
+
+### Bug Fixes
+
+* **payment:** PAYPAL-5286 made PPCP Venmo appear on cart page ([#2820](https://github.com/bigcommerce/checkout-sdk-js/issues/2820)) ([c9f741c](https://github.com/bigcommerce/checkout-sdk-js/commit/c9f741cab659ed8099cb7539a35ad5f26e708f1d))
+
 ### [1.719.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.719.0...v1.719.1) (2025-04-03)
 
 ## [1.719.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.718.3...v1.719.0) (2025-04-01)
