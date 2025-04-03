@@ -169,16 +169,14 @@ describe('OrderRequestSender', () => {
 
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
 
-            try {
-                const payload = {
-                    cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
-                    useStoreCredit: false,
-                };
+            const payload = {
+                cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                useStoreCredit: false,
+            };
 
-                await orderRequestSender.submitOrder(payload);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingShippingMethodError);
-            }
+            await expect(orderRequestSender.submitOrder(payload)).rejects.toThrow(
+                MissingShippingMethodError,
+            );
         });
 
         it('throws `InvalidShippingAddressError` if error type is `invalid_shipping_address`', async () => {
@@ -194,16 +192,14 @@ describe('OrderRequestSender', () => {
 
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.reject(error));
 
-            try {
-                const payload = {
-                    cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
-                    useStoreCredit: false,
-                };
+            const payload = {
+                cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                useStoreCredit: false,
+            };
 
-                await orderRequestSender.submitOrder(payload);
-            } catch (error) {
-                expect(error).toBeInstanceOf(InvalidShippingAddressError);
-            }
+            await expect(orderRequestSender.submitOrder(payload)).rejects.toThrow(
+                InvalidShippingAddressError,
+            );
         });
 
         it('submits order and returns response with timeout', async () => {
