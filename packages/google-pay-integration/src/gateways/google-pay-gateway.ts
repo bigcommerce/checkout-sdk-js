@@ -260,6 +260,7 @@ export default class GooglePayGateway {
         isBuyNowFlow?: boolean,
         currencyCode?: string,
     ): Promise<void> {
+        console.log('init');
         this._getPaymentMethodFn = getPaymentMethod;
         this._isBuyNowFlow = Boolean(isBuyNowFlow);
         this._currencyCode = currencyCode;
@@ -555,6 +556,7 @@ export default class GooglePayGateway {
             state.getStoreConfigOrThrow().checkoutSettings.features[
                 'PI-3540.googlepay_new_shipping_options_description'
             ];
+        console.log('_getGooglePayShippingOption');
 
         if (isNewShippingOptionsExperimentOn) {
             return {
