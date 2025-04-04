@@ -1,4 +1,7 @@
-import { BraintreeFastlaneStylesOption } from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
+    BraintreeFastlaneStylesOption,
+    BraintreeThreeDSecureOptions,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
 import { CardInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
@@ -70,6 +73,11 @@ export default interface BraintreeFastlanePaymentInitializeOptions {
      * no matter what strategy was initialised first
      */
     styles?: BraintreeFastlaneStylesOption;
+    /**
+     * 3DS
+     */
+    threeDSecure?: BraintreeThreeDSecureOptions;
+    onError?: (error: Error) => void;
 }
 
 export interface WithBraintreeFastlanePaymentInitializeOptions {

@@ -1,4 +1,8 @@
-import { PaypalButtonStyleColorOption } from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
+    BraintreeThreeDSecure,
+    PaypalButtonStyleColorOption
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+
 import {
     DefaultCheckoutButtonHeight,
     PaymentMethod,
@@ -19,6 +23,17 @@ export function getBraintreeAcceleratedCheckoutPaymentMethod(): PaymentMethod {
             isAcceleratedCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
+    };
+}
+
+export function getThreeDSecureMock(): BraintreeThreeDSecure {
+    return {
+        verifyCard: (_options, callback) => {
+            callback && callback({ code: '' }, { nonce: 'fastlane_token_mock' });
+        },
+        cancelVerifyCard: jest.fn(),
+        on: jest.fn(),
+        teardown: jest.fn(),
     };
 }
 
