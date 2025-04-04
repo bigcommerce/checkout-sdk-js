@@ -35,6 +35,7 @@
 - [remoteCheckoutProviders](CheckoutSettings.md#remotecheckoutproviders)
 - [requiresMarketingConsent](CheckoutSettings.md#requiresmarketingconsent)
 - [shippingQuoteFailedMessage](CheckoutSettings.md#shippingquotefailedmessage)
+- [shouldRedirectToStorefrontLoginPage](CheckoutSettings.md#shouldredirecttostorefrontloginpage)
 
 ## Properties
 
@@ -213,3 +214,9 @@ ___
 ### shippingQuoteFailedMessage
 
 • **shippingQuoteFailedMessage**: `string`
+
+___
+
+### shouldRedirectToStorefrontLoginPage
+
+• **shouldRedirectToStorefrontLoginPage**: `boolean`
