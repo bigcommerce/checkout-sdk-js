@@ -789,6 +789,143 @@ describe('GooglePayGateway', () => {
             });
             expect(selectShippingOptionMock).not.toHaveBeenCalled();
         });
+
+        describe('with enabled experiment PI-3540.googlepay_new_shipping_options_description', () => {
+            beforeEach(() => {
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getStoreConfigOrThrow',
+                ).mockReturnValue({
+                    ...storeConfigWithFeaturesOn,
+                    checkoutSettings: {
+                        ...storeConfigWithFeaturesOn.checkoutSettings,
+                        features: {
+                            ...storeConfigWithFeaturesOn.checkoutSettings.features,
+                            'PI-3540.googlepay_new_shipping_options_description': true,
+                        },
+                    },
+                });
+            });
+
+            it('should return empty available shipping methods with no preselected option', async () => {
+                const consignment = {
+                    ...getConsignment(),
+                    selectedShippingOption: undefined,
+                };
+                const expectedSippingOptions = [
+                    {
+                        id: consignment.availableShippingOptions![0].id,
+                        label: `$0.00 ${consignment.availableShippingOptions![0].description}`,
+                        description: consignment.availableShippingOptions![0].additionalDescription,
+                    },
+                ];
+                const selectShippingOptionMock = jest.spyOn(
+                    paymentIntegrationService,
+                    'selectShippingOption',
+                );
+
+                await gateway.initialize(getGeneric);
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getConsignments',
+                ).mockReturnValueOnce([consignment]);
+
+                await expect(
+                    gateway.handleShippingAddressChange(defaultGPayShippingAddress),
+                ).resolves.toStrictEqual({
+                    defaultSelectedOptionId: consignment.availableShippingOptions![0].id,
+                    shippingOptions: expectedSippingOptions,
+                });
+                expect(selectShippingOptionMock).toHaveBeenCalledWith(
+                    consignment.availableShippingOptions![0].id,
+                );
+            });
+
+            it('should return available shipping options with preselected recommended option first', async () => {
+                const consignment = {
+                    ...getConsignment(),
+                    selectedShippingOption: undefined,
+                    availableShippingOptions: [
+                        {
+                            id: '7ac7895dc66b9773d19234c065ad4803',
+                            type: 'shipping_pickupinstore',
+                            description: 'Pick UP',
+                            imageUrl: '',
+                            isRecommended: false,
+                            cost: 0,
+                            transitTime: '',
+                            additionalDescription: '',
+                        },
+                        getShippingOption(),
+                    ],
+                };
+
+                const expectedSippingOptions = [
+                    {
+                        id: consignment.availableShippingOptions[0].id,
+                        label: `$0.00 ${consignment.availableShippingOptions[0].description}`,
+                        description: consignment.availableShippingOptions[0].additionalDescription,
+                    },
+                    {
+                        id: consignment.availableShippingOptions[1].id,
+                        label: `$0.00 ${consignment.availableShippingOptions[1].description}`,
+                        description: consignment.availableShippingOptions[1].additionalDescription,
+                    },
+                ];
+                const selectShippingOptionMock = jest.spyOn(
+                    paymentIntegrationService,
+                    'selectShippingOption',
+                );
+
+                await gateway.initialize(getGeneric);
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getConsignments',
+                ).mockReturnValueOnce([consignment]);
+
+                await expect(
+                    gateway.handleShippingAddressChange(defaultGPayShippingAddress),
+                ).resolves.toStrictEqual({
+                    defaultSelectedOptionId: consignment.availableShippingOptions[1].id,
+                    shippingOptions: expectedSippingOptions,
+                });
+                expect(selectShippingOptionMock).toHaveBeenCalledWith(
+                    consignment.availableShippingOptions[1].id,
+                );
+            });
+
+            it('should return empty available shipping methods with preselected option', async () => {
+                const consignment = getConsignment();
+                const expectedSippingOptions = [
+                    {
+                        id: consignment.availableShippingOptions![0].id,
+                        label: `$0.00 ${consignment.availableShippingOptions![0].description}`,
+                        description: consignment.availableShippingOptions![0].additionalDescription,
+                    },
+                ];
+                const selectShippingOptionMock = jest.spyOn(
+                    paymentIntegrationService,
+                    'selectShippingOption',
+                );
+
+                await gateway.initialize(getGeneric);
+
+                jest.spyOn(
+                    paymentIntegrationService.getState(),
+                    'getConsignments',
+                ).mockReturnValueOnce([consignment]);
+
+                await expect(
+                    gateway.handleShippingAddressChange(defaultGPayShippingAddress),
+                ).resolves.toStrictEqual({
+                    defaultSelectedOptionId: consignment.selectedShippingOption?.id,
+                    shippingOptions: expectedSippingOptions,
+                });
+                expect(selectShippingOptionMock).not.toHaveBeenCalled();
+            });
+        });
     });
 
     describe('#handleShippingOptionChange', () => {
