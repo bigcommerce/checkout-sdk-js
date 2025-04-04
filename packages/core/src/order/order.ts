@@ -84,6 +84,12 @@ export interface OrderConsignment {
     shipping: OrderShippingConsignment[];
 }
 
+export interface OrderShippingConsignmentDiscount {
+    id: number;
+    amount: number;
+    code: string | null;
+}
+
 export interface OrderShippingConsignment {
     lineItems: Array<{
         id: number;
@@ -120,4 +126,5 @@ export interface OrderShippingConsignment {
         name: string;
         value: string | null;
     }>;
+    discounts: OrderShippingConsignmentDiscount[];
 }
