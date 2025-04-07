@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.721.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.720.0...v1.721.0) (2025-04-07)
+
+
+### Features
+
+* **payment:** PI-3539 added additionalDescription to the shipping options in Google Pay popup ([121bc21](https://github.com/bigcommerce/checkout-sdk-js/commit/121bc2176c83d35ce578fc867edbf3468cbfe6b4))
+
 ## [1.720.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.719.3...v1.720.0) (2025-04-07)
 
 
