@@ -543,8 +543,26 @@ export default class GooglePayGateway {
         );
     }
 
-    private _getGooglePayShippingOption({ id, cost, description }: ShippingOption) {
+    private _getGooglePayShippingOption({
+        id,
+        cost,
+        description,
+        additionalDescription,
+    }: ShippingOption) {
         const formattedCost = this._currencyService?.toCustomerCurrency(cost);
+        const state = this._paymentIntegrationService.getState();
+        const isNewShippingOptionsExperimentOn =
+            state.getStoreConfigOrThrow().checkoutSettings.features[
+                'PI-3540.googlepay_new_shipping_options_description'
+            ];
+
+        if (isNewShippingOptionsExperimentOn) {
+            return {
+                id,
+                label: `${formattedCost || cost} ${description}`,
+                description: additionalDescription,
+            };
+        }
 
         return {
             id,
