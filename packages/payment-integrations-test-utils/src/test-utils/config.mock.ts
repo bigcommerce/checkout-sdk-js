@@ -49,7 +49,7 @@ export default function getConfig(): Config {
                 realtimeShippingProviders: ['Fedex', 'UPS', 'USPS'],
                 requiresMarketingConsent: false,
                 remoteCheckoutProviders: [],
-                shouldRedirectToStorefrontLoginPage: false,
+                shouldRedirectToStorefrontForAuth: false,
             },
             currency: {
                 code: 'USD',
