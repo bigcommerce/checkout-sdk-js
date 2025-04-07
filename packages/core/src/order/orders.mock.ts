@@ -149,5 +149,6 @@ export function getOrderShippingConsignment(): OrderShippingConsignment {
                 value: 'foobar',
             },
         ],
+        discounts: [],
     };
 }
