@@ -334,6 +334,7 @@
 - [OrderRequestBody](interfaces/OrderRequestBody.md)
 - [OrderSelector](interfaces/OrderSelector.md)
 - [OrderShippingConsignment](interfaces/OrderShippingConsignment.md)
+- [OrderShippingConsignmentDiscount](interfaces/OrderShippingConsignmentDiscount.md)
 - [PasswordRequirements](interfaces/PasswordRequirements.md)
 - [PayPalButtonStyleOptions](interfaces/PayPalButtonStyleOptions.md)
 - [PayPalBuyNowInitializeOptions](interfaces/PayPalBuyNowInitializeOptions.md)

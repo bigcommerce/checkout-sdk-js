@@ -19,6 +19,7 @@
 - [country](OrderShippingConsignment.md#country)
 - [countryCode](OrderShippingConsignment.md#countrycode)
 - [customFields](OrderShippingConsignment.md#customfields)
+- [discounts](OrderShippingConsignment.md#discounts)
 - [email](OrderShippingConsignment.md#email)
 - [firstName](OrderShippingConsignment.md#firstname)
 - [handlingCostExTax](OrderShippingConsignment.md#handlingcostextax)
@@ -114,6 +115,12 @@ ___
 ### customFields
 
 • **customFields**: { `name`: `string` ; `value`: ``null`` \| `string`  }[]
+
+___
+
+### discounts
+
+• **discounts**: [`OrderShippingConsignmentDiscount`](OrderShippingConsignmentDiscount.md)[]
 
 ___
 

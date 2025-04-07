@@ -3213,7 +3213,7 @@ declare interface CheckoutSettings {
     realtimeShippingProviders: string[];
     requiresMarketingConsent: boolean;
     remoteCheckoutProviders: any[];
-    shouldRedirectToStorefrontLoginPage: boolean;
+    shouldRedirectToStorefrontForAuth: boolean;
 }
 
 /**
@@ -6210,6 +6210,13 @@ declare interface OrderShippingConsignment {
         name: string;
         value: string | null;
     }>;
+    discounts: OrderShippingConsignmentDiscount[];
+}
+
+declare interface OrderShippingConsignmentDiscount {
+    id: number;
+    amount: number;
+    code: string | null;
 }
 
 declare interface PasswordRequirements {

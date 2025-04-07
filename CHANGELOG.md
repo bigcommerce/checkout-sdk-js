@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.720.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.719.3...v1.720.0) (2025-04-07)
+
+
+### Features
+
+* **checkout:** CHECKOUT-8521 Introduce OrderShippingConsignmentDiscount interface ([fcec57d](https://github.com/bigcommerce/checkout-sdk-js/commit/fcec57d2f88791d0fab32cf8ec2131c2167a732d))
+* **checkout:** CHECKOUT-9138 Rename shouldRedirectToStorefrontLoginPage ([3765c68](https://github.com/bigcommerce/checkout-sdk-js/commit/3765c68a79201642c45d8b5cd65625d02f5cc0a1))
+
 ### [1.719.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.719.2...v1.719.3) (2025-04-04)
 
 ### [1.719.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.719.1...v1.719.2) (2025-04-03)
