@@ -113,5 +113,5 @@ export interface OrderShippingConsignment {
         name: string;
         value: string | null;
     }>;
-    discounts: OrderShippingConsignmentDiscount[];
+    discounts?: OrderShippingConsignmentDiscount[];
 }
