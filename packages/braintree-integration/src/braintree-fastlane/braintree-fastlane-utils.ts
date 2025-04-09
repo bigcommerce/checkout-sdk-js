@@ -210,7 +210,7 @@ export default class BraintreeFastlaneUtils {
 
         return instruments.map((instrument) => {
             const { id, paymentSource } = instrument;
-            const { brand, expiry, lastDigits } = paymentSource.card;
+            const { brand, expiry, lastDigits, binDetails } = paymentSource.card;
 
             const [expiryYear, expiryMonth] = expiry.split('-');
 
@@ -220,7 +220,7 @@ export default class BraintreeFastlaneUtils {
                 defaultInstrument: false,
                 expiryMonth,
                 expiryYear,
-                iin: '',
+                iin: binDetails?.bin || '',
                 last4: lastDigits,
                 method: methodId,
                 provider: methodId,

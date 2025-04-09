@@ -1,4 +1,9 @@
-import { PaypalButtonStyleColorOption } from '@bigcommerce/checkout-sdk/braintree-utils';
+import {
+    Braintree3DSVerifyCardCallback,
+    BraintreeThreeDSecure,
+    PaypalButtonStyleColorOption,
+} from '@bigcommerce/checkout-sdk/braintree-utils';
+
 import {
     DefaultCheckoutButtonHeight,
     PaymentMethod,
@@ -19,6 +24,22 @@ export function getBraintreeAcceleratedCheckoutPaymentMethod(): PaymentMethod {
             isAcceleratedCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
+    };
+}
+
+export function getThreeDSecureMock(): BraintreeThreeDSecure {
+    return {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        verifyCard: (_options, callback: Braintree3DSVerifyCardCallback) => {
+            if (callback) {
+                callback({ code: '' }, { nonce: 'fastlane_token_mock' });
+            }
+
+            return Promise.resolve('fastlane_token_mock');
+        },
+        cancelVerifyCard: jest.fn(),
+        on: jest.fn(),
+        teardown: jest.fn(),
     };
 }
 
