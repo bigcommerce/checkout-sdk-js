@@ -1193,6 +1193,7 @@ declare interface BraintreeFastlanePaymentInitializeOptions {
      * no matter what strategy was initialised first
      */
     styles?: BraintreeFastlaneStylesOption;
+    onError?: (error: Error) => void;
 }
 
 /**

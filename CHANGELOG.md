@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.722.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.721.0...v1.722.0) (2025-04-09)
+
+
+### Features
+
+* **payment:** PAYPAL-5197 added 3ds verification for BT FL ([#2816](https://github.com/bigcommerce/checkout-sdk-js/issues/2816)) ([9d0faa6](https://github.com/bigcommerce/checkout-sdk-js/commit/9d0faa6d29388076703ebb0f9f0a0eb5fa6ebd6d))
+
 ## [1.721.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.720.0...v1.721.0) (2025-04-07)
 
 

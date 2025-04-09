@@ -57,6 +57,7 @@ service.initializePayment({
 ### Methods
 
 - [onChange](BraintreeFastlanePaymentInitializeOptions.md#onchange)
+- [onError](BraintreeFastlanePaymentInitializeOptions.md#onerror)
 - [onInit](BraintreeFastlanePaymentInitializeOptions.md#oninit)
 
 ## Properties
@@ -85,6 +86,22 @@ when get triggered
 | Name | Type |
 | :------ | :------ |
 | `showPayPalCardSelector` | () => `Promise`<`undefined` \| `CardInstrument`\> |
+
+#### Returns
+
+`void`
+
+___
+
+### onError
+
+▸ `Optional` **onError**(`error`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `error` | `Error` |
 
 #### Returns
 
