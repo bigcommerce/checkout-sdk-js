@@ -64,7 +64,6 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             getStyles,
             availableCountries,
             getStripeState,
-            setStripeExperiments,
         } = options.stripeupe;
 
         Object.entries(options.stripeupe).forEach(([key, value]) => {
@@ -82,11 +81,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
         );
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId, gatewayId);
         const {
-            initializationData: {
-                stripePublishableKey,
-                stripeConnectedAccount,
-                isStripeStateMappingDisabledForES,
-            },
+            initializationData: { stripePublishableKey, stripeConnectedAccount },
         } = paymentMethod;
 
         if (
@@ -96,10 +91,6 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
         ) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
-
-        setStripeExperiments?.({
-            isStripeStateMappingDisabledForES,
-        });
 
         this._stripeUPEClient = await this._stripeUPEScriptLoader.getStripeClient(
             stripePublishableKey,
@@ -183,11 +174,7 @@ export default class StripeUPEShippingStrategy implements ShippingStrategy {
             } = shipping;
             const stripeState =
                 stateOrProvinceCode && countryCode
-                    ? getStripeState(
-                          countryCode,
-                          stateOrProvinceCode,
-                          isStripeStateMappingDisabledForES,
-                      )
+                    ? getStripeState(countryCode, stateOrProvinceCode)
                     : stateOrProvinceCode;
 
             option = {
