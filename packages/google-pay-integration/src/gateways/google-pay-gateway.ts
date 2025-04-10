@@ -350,39 +350,35 @@ export default class GooglePayGateway {
     async handleCoupons(
         offerData: IntermediatePaymentData['offerData'],
     ): Promise<HandleCouponsOut> {
-        const { redemptionCodes = [] } = offerData;
-        const appliedCoupons = this.getAppliedCoupons();
-
+        const { redemptionCodes: newCouponsState = [] } = offerData;
+        const { offers: appliedCoupons } = this.getAppliedCoupons();
         let error;
 
-        if (!redemptionCodes.length) {
-            await this.removeAllCoupons(appliedCoupons);
+        await newCouponsState.reduce(async (promise, code) => {
+            await promise;
 
-            return {
-                newOfferInfo: this.getAppliedCoupons(),
-            };
-        }
+            const exists = appliedCoupons.some(({ redemptionCode }) => redemptionCode === code);
 
-        // Validate for applied coupons to make sure we have only one applied
-        if (appliedCoupons.offers.length) {
-            error = {
-                reason: ErrorReasonType.OFFER_INVALID,
-                message: 'You can only apply one promo code per order.',
-                intent: CallbackTriggerType.OFFER,
-            };
+            if (exists) {
+                return;
+            }
 
-            return {
-                newOfferInfo: appliedCoupons,
-                error,
-            };
-        }
+            const appliedCouponError = await this.applyCoupon(code);
 
-        const code = redemptionCodes[redemptionCodes.length - 1];
-        const appliedCouponError = await this.applyCoupon(code);
+            if (appliedCouponError) {
+                error = appliedCouponError;
+            }
+        }, Promise.resolve());
 
-        if (appliedCouponError) {
-            error = appliedCouponError;
-        }
+        await appliedCoupons.reduce(async (promise, coupon) => {
+            await promise;
+
+            const stillExists = newCouponsState.includes(coupon.redemptionCode);
+
+            if (!stillExists) {
+                await this._paymentIntegrationService.removeCoupon(coupon.redemptionCode);
+            }
+        }, Promise.resolve());
 
         return {
             newOfferInfo: this.getAppliedCoupons(),
@@ -423,34 +419,6 @@ export default class GooglePayGateway {
             }
 
             return error;
-        }
-
-        const couponCodeInput = document.getElementById('couponcode');
-
-        if (couponCodeInput) {
-            (couponCodeInput as HTMLInputElement).value = code;
-
-            const form = document.querySelector('.coupon-form');
-
-            if (form) {
-                form.dispatchEvent(new CustomEvent('submit', { cancelable: true }));
-            }
-        }
-    }
-
-    async removeAllCoupons(appliedCoupons: GooglePayPaymentDataRequest['offerInfo']) {
-        const { offers } = appliedCoupons;
-
-        const couponsPromise = offers.map((couponCode) => {
-            return this._paymentIntegrationService.removeCoupon(couponCode.redemptionCode);
-        });
-
-        await Promise.all(couponsPromise);
-
-        const removeCouponLink = document.querySelector('a[href*="/cart.php?action=removecoupon"]');
-
-        if (removeCouponLink) {
-            (removeCouponLink as HTMLAnchorElement).click();
         }
     }
 
