@@ -1,3 +1,5 @@
+import { noop } from 'lodash';
+
 import {
     BraintreeInitializationData,
     BraintreeLocalPayment,
@@ -7,6 +9,7 @@ import {
     BraintreeLPMPaymentStartData,
     BraintreeLPMStartPaymentError,
     BraintreeOrderSavedResponse,
+    BraintreeOrderStatus,
     BraintreeRedirectError,
     BraintreeSdk,
     NonInstantLocalPaymentMethods,
@@ -25,31 +28,48 @@ import {
     PaymentRequestOptions,
     PaymentStrategy,
     RequestOptions,
+    TimeoutError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
+
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
+
+import BraintreeRequestSender from '../braintree-request-sender';
 
 import {
     BraintreeLocalMethodsPaymentInitializeOptions,
     WithBraintreeLocalMethodsPaymentInitializeOptions,
 } from './braintree-local-methods-payment-initialize-options';
 
+const POLLING_INTERVAL = 3000;
+const MAX_POLLING_TIME = 300000;
+
 export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStrategy {
     private braintreelocalmethods?: BraintreeLocalMethodsPaymentInitializeOptions;
     private braintreeLocalPayment?: BraintreeLocalPayment;
     private loadingIndicatorContainer?: string;
     private orderId?: string;
+    private gatewayId?: string;
     private isLPMsUpdateExperimentEnabled = false;
+    private pollingTimer = 0;
+    private stopPolling = noop;
+    private isPollingEnabled = false;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private braintreeSdk: BraintreeSdk,
+        private braintreeRequestSender: BraintreeRequestSender,
         private loadingIndicator: LoadingIndicator,
+        private pollingInterval: number = POLLING_INTERVAL,
+        private maxPollingIntervalTime: number = MAX_POLLING_TIME,
     ) {}
 
     async initialize(
         options: PaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions,
     ): Promise<void> {
         const { gatewayId, methodId, braintreelocalmethods } = options;
+
+        this.gatewayId = gatewayId;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -77,11 +97,17 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow<BraintreeInitializationData>(gatewayId);
         const { clientToken, config, initializationData } = paymentMethod;
+        const features = state.getStoreConfigOrThrow().checkoutSettings.features;
 
-        this.isLPMsUpdateExperimentEnabled =
-            state.getStoreConfigOrThrow().checkoutSettings.features[
-                'PAYPAL-4853.add_new_payment_flow_for_braintree_lpms'
-            ] || false;
+        this.isPollingEnabled = isExperimentEnabled(
+            features,
+            'PAYPAL-5258.braintree_local_methods_polling',
+        );
+
+        this.isLPMsUpdateExperimentEnabled = isExperimentEnabled(
+            features,
+            'PAYPAL-4853.add_new_payment_flow_for_braintree_lpms',
+        );
 
         if (!clientToken || !initializationData || !config.merchantId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -251,6 +277,17 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
                         // Start method call initiates the popup
                         start();
 
+                        if (this.isPollingEnabled) {
+                            return new Promise((resolve, reject) => {
+                                void this.initializePollingMechanism(
+                                    methodId,
+                                    resolve,
+                                    reject,
+                                    this.gatewayId,
+                                );
+                            });
+                        }
+
                         return;
                     }
 
@@ -277,8 +314,13 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
             if (startPaymentError) {
                 if (startPaymentError.code === 'LOCAL_PAYMENT_WINDOW_CLOSED') {
                     this.toggleLoadingIndicator(false);
+                    this.resetPollingMechanism();
 
                     return reject();
+                }
+
+                if (this.isPollingEnabled) {
+                    this.resetPollingMechanism();
                 }
 
                 this.toggleLoadingIndicator(false);
@@ -334,6 +376,10 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
     private handleError(error: unknown) {
         const { onError } = this.braintreelocalmethods || {};
 
+        if (this.isPollingEnabled) {
+            this.resetPollingMechanism();
+        }
+
         this.toggleLoadingIndicator(false);
 
         if (onError && typeof onError === 'function') {
@@ -378,5 +424,92 @@ export default class BraintreeLocalMethodsPaymentStrategy implements PaymentStra
         }
 
         return body.additional_action_required?.data.hasOwnProperty('order_id_saved_successfully');
+    }
+
+    /**
+     *
+     * Polling mechanism
+     *
+     *
+     * */
+    private async initializePollingMechanism(
+        methodId: string,
+        resolvePromise: () => void,
+        rejectPromise: () => void,
+        gatewayId?: string,
+    ): Promise<void> {
+        await new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(resolve, this.pollingInterval);
+
+            this.stopPolling = () => {
+                clearTimeout(timeout);
+                this.toggleLoadingIndicator(false);
+
+                return reject();
+            };
+        });
+
+        try {
+            this.pollingTimer += this.pollingInterval;
+
+            const orderStatus = await this.braintreeRequestSender.getOrderStatus(gatewayId, {
+                params: {
+                    useMetadata: false,
+                },
+            });
+
+            const isOrderPending = orderStatus.status === BraintreeOrderStatus.Pending;
+            const isOrderApproved = orderStatus.status === BraintreeOrderStatus.Completed;
+            const isPollingError = orderStatus.status === BraintreeOrderStatus.Failed;
+
+            if (isOrderApproved) {
+                this.deinitializePollingMechanism();
+
+                return resolvePromise();
+            }
+
+            if (isPollingError) {
+                return rejectPromise();
+            }
+
+            if (
+                !isOrderApproved &&
+                isOrderPending &&
+                this.pollingTimer < this.maxPollingIntervalTime
+            ) {
+                return await this.initializePollingMechanism(
+                    methodId,
+                    resolvePromise,
+                    rejectPromise,
+                    gatewayId,
+                );
+            }
+
+            await this.reinitializeStrategy({
+                methodId,
+                gatewayId,
+                braintreelocalmethods: this.braintreelocalmethods,
+            });
+
+            this.handleError(new TimeoutError());
+        } catch (error) {
+            rejectPromise();
+        }
+    }
+
+    private deinitializePollingMechanism(): void {
+        this.stopPolling();
+        this.pollingTimer = 0;
+    }
+
+    private resetPollingMechanism(): void {
+        this.deinitializePollingMechanism();
+    }
+
+    private async reinitializeStrategy(
+        options: PaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions,
+    ) {
+        await this.deinitialize();
+        await this.initialize(options);
     }
 }
