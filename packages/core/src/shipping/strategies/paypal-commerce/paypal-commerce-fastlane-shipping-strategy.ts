@@ -246,7 +246,7 @@ export default class PayPalCommerceFastlaneShippingStrategy implements ShippingS
                 selectedAddress.address,
                 selectedAddress.name,
                 selectedAddress.phoneNumber,
-                shipping[0].customFields,
+                shipping[0]?.customFields,
             );
 
             const paymentProviderCustomerAddresses =

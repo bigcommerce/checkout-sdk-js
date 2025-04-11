@@ -369,7 +369,7 @@ export default class BraintreeFastlaneShippingStrategy implements ShippingStrate
                 selectedAddress,
                 countries,
                 selectedAddress.phoneNumber,
-                shipping[0].customFields,
+                shipping[0]?.customFields,
             );
 
             if (shippingAddress) {
