@@ -76,6 +76,7 @@ export interface StoreLinks {
     createAccountLink: string;
     forgotPasswordLink: string;
     loginLink: string;
+    logoutLink: string;
     siteLink: string;
     orderConfirmationLink: string;
 }
