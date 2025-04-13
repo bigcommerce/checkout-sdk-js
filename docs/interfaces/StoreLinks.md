@@ -11,6 +11,7 @@
 - [createAccountLink](StoreLinks.md#createaccountlink)
 - [forgotPasswordLink](StoreLinks.md#forgotpasswordlink)
 - [loginLink](StoreLinks.md#loginlink)
+- [logoutLink](StoreLinks.md#logoutlink)
 - [orderConfirmationLink](StoreLinks.md#orderconfirmationlink)
 - [siteLink](StoreLinks.md#sitelink)
 
@@ -43,6 +44,12 @@ ___
 ### loginLink
 
 • **loginLink**: `string`
+
+___
+
+### logoutLink
+
+• **logoutLink**: `string`
 
 ___
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.723.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.722.0...v1.723.0) (2025-04-13)
+
+
+### Features
+
+* **checkout:** CHECKOUT-9167 Exposing logoutLink into setting interface ([89adb47](https://github.com/bigcommerce/checkout-sdk-js/commit/89adb4778bfc04f97c75d929964399fd15ef2497))
+
 ## [1.722.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.721.0...v1.722.0) (2025-04-09)
 
 
