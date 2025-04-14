@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.726.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.725.0...v1.726.0) (2025-04-14)
+
+
+### Features
+
+* **payment:** PI-3669 apply multiple coupons in the Google Pay modal ([bd5322e](https://github.com/bigcommerce/checkout-sdk-js/commit/bd5322e11b34ee75f5b49d7eab9a417b05f7d3e8))
+
 ## [1.725.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.724.0...v1.725.0) (2025-04-14)
 
 
