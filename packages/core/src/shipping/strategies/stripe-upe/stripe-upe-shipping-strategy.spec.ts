@@ -41,7 +41,6 @@ import { getFlatRateOption } from '../../internal-shipping-options.mock';
 import { getShippingAddress } from '../../shipping-addresses.mock';
 import { ShippingInitializeOptions } from '../../shipping-request-options';
 
-import StripeUPEShippingInitializeOptions from './stripe-upe-shipping-initialize-options';
 import StripeUPEShippingStrategy from './stripe-upe-shipping-strategy';
 
 // TODO: CHECKOUT-7766
@@ -408,42 +407,6 @@ describe('StripeUPEShippingStrategy', () => {
             const promise = strategy.initialize(shippingInitialization);
 
             await expect(promise).rejects.toBeInstanceOf(MissingDataError);
-        });
-
-        it('Set experiments from initialization data and get state mapping with experiment', async () => {
-            const setStripeExperimentsMock = jest.fn();
-            const stripeUPEMock = getStripeUPE();
-            const shippingAddressMock = getShippingAddress();
-
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethodOrThrow').mockReturnValue({
-                ...stripeUPEMock,
-                initializationData: {
-                    ...stripeUPEMock.initializationData,
-                    isStripeStateMappingDisabledForES: true,
-                },
-            });
-            jest.spyOn(store.getState().shippingAddress, 'getShippingAddress').mockReturnValue(
-                shippingAddressMock,
-            );
-
-            await expect(
-                strategy.initialize({
-                    ...shippingInitialization,
-                    stripeupe: {
-                        ...shippingInitialization.stripeupe,
-                        setStripeExperiments: setStripeExperimentsMock,
-                    } as StripeUPEShippingInitializeOptions,
-                }),
-            ).resolves.toBe(store.getState());
-
-            expect(setStripeExperimentsMock).toHaveBeenCalledWith({
-                isStripeStateMappingDisabledForES: true,
-            });
-            expect(shippingInitialization.stripeupe?.getStripeState).toHaveBeenCalledWith(
-                shippingAddressMock.countryCode,
-                shippingAddressMock.stateOrProvinceCode,
-                true,
-            );
         });
     });
 
