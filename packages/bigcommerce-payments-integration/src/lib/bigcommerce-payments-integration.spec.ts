@@ -2,6 +2,6 @@ import { bigcommercePaymentsIntegration } from './bigcommerce-payments-integrati
 
 describe('bigcommercePaymentsIntegration', () => {
     it('should work', () => {
-        expect(bigcommercePaymentsIntegration()).toEqual('bigcommerce-payments-integration');
+        expect(bigcommercePaymentsIntegration()).toBe('bigcommerce-payments-integration');
     });
 });
