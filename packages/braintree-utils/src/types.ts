@@ -291,6 +291,16 @@ export interface BraintreeThreeDSecureVerificationData {
     };
 }
 
+export enum BraintreeOrderStatus {
+    Completed = 'COMPLETED',
+    Pending = 'PENDING',
+    Failed = 'FAILED',
+}
+
+export interface BraintreeOrderStatusData {
+    status: BraintreeOrderStatus;
+}
+
 /**
  *
  * Braintree US Bank Account (ACH)
