@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.724.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.723.0...v1.724.0) (2025-04-14)
+
+
+### Features
+
+* **payment:** PAYPAL-5258 added polling for BT Local methods ([#2822](https://github.com/bigcommerce/checkout-sdk-js/issues/2822)) ([e2276fb](https://github.com/bigcommerce/checkout-sdk-js/commit/e2276fb0c655ce4d1f9fd932730a2273017062ae))
+
 ## [1.723.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.722.0...v1.723.0) (2025-04-13)
 
 
