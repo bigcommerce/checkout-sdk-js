@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.727.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.726.0...v1.727.0) (2025-04-15)
+
+
+### Features
+
+* **payment:** PI-3825 Added new link for the storefront hosted fields ([#2833](https://github.com/bigcommerce/checkout-sdk-js/issues/2833)) ([4a83ba5](https://github.com/bigcommerce/checkout-sdk-js/commit/4a83ba55b46cc01ac567e28f68a6f8df3c2a53fa))
+
 ## [1.726.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.725.0...v1.726.0) (2025-04-14)
 
 
