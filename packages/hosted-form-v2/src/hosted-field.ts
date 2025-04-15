@@ -60,7 +60,7 @@ export default class HostedField {
     private getFrameSrc(orderId?: number): string {
         return typeof orderId !== 'undefined'
             ? `/admin/payments/${this._orderId}/hosted-form-field?version=${LIBRARY_VERSION}`
-            : `/checkout/payment/hosted-field?version=${LIBRARY_VERSION}`;
+            : `/account/stored-instruments/hosted-fields?version=${LIBRARY_VERSION}`;
     }
 
     getType(): HostedFieldType {
