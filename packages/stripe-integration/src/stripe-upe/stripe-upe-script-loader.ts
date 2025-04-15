@@ -44,6 +44,21 @@ export default class StripeUPEScriptLoader {
         return stripeClient;
     }
 
+    async getStripeLinkV2Client(
+        stripePublishableKey: string,
+    ): Promise<StripeUPEClient> {
+        let stripeClient = this.stripeWindow.bcStripeClient;
+
+        if (!stripeClient) {
+            const stripe = await this.load();
+            stripeClient = stripe(stripePublishableKey);
+
+            Object.assign(this.stripeWindow, { bcStripeClient: stripeClient });
+        }
+
+        return stripeClient;
+    }
+
     async getElements(
         stripeClient: StripeUPEClient,
         options: StripeElementsOptions,
