@@ -1,0 +1,23 @@
+{
+    "root": "packages/bigcommerce-payments-utils",
+    "sourceRoot": "packages/bigcommerce-payments-utils/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/bigcommerce-payments-utils/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/bigcommerce-payments-utils"],
+            "options": {
+                "jestConfig": "packages/bigcommerce-payments-utils/jest.config.js",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": ["scope:shared"]
+}
