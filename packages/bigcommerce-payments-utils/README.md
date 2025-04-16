@@ -1,6 +1,6 @@
 # bigcommerce-payments-utils
 
-This library was generated with [Nx](https://nx.dev).
+This package contains utils for the integration layer of the BigCommerce provider.
 
 ## Running unit tests
 
