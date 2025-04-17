@@ -41,9 +41,7 @@
             "@bigcommerce/checkout-sdk/apple-pay-integration": [
                 "packages/apple-pay-integration/src/index.ts"
             ],
-            "@bigcommerce/checkout-sdk/bigcommerce-payments-utils": [
-                "packages/bigcommerce-payments-utils/src/index.ts"
-            ],
+            "@bigcommerce/checkout-sdk/bcpay-utils": ["packages/bcpay-utils/src/index.ts"],
             "@bigcommerce/checkout-sdk/bluesnap-direct-integration": [
                 "packages/bluesnap-direct-integration/src/index.ts"
             ],
