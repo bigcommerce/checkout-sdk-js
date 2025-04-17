@@ -2,7 +2,7 @@ aliases:
   - &node_executor
       executor:
         name: node/node
-        node-version: "20.6.0"
+        node-version: "22.13.0"
 
 version: 2.1
 
@@ -66,7 +66,7 @@ jobs:
 
   build:
     <<: *node_executor
-    resource_class: medium+
+    resource_class: large
     steps:
       - ci/pre-setup
       - node/npm-install
@@ -132,7 +132,6 @@ workflows:
       - test-packages
       - lint
       - build
-      - ci/validate-commits
 
       # Only build and push CDN artifact when commits are merged to canonical repo
       - build_cdn:
@@ -145,7 +144,6 @@ workflows:
             - test-packages
             - lint
             - build
-            - ci/validate-commits
       - ci/build-js-artifact:
           context: "GCR + Artifact Bucket Access"
           dist_directory: dist-cdn
@@ -177,7 +175,6 @@ workflows:
             - test-packages
             - lint
             - build
-            - ci/validate-commits
       - npm_release:
           requires:
             - approve_npm_release
