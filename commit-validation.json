@@ -12,7 +12,6 @@
         "shipping",
         "shopper",
         "spam-protection",
-        "extension",
-        "integration"
+        "extension"
     ]
 }
