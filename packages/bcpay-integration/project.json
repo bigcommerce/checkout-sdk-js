@@ -1,0 +1,23 @@
+{
+    "root": "packages/bcpay-integration",
+    "sourceRoot": "packages/bcpay-integration/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/bcpay-integration/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/bcpay-integration"],
+            "options": {
+                "jestConfig": "packages/bcpay-integration/jest.config.js",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": []
+}
