@@ -1,6 +1,6 @@
 {
   "name": "@bigcommerce/checkout-sdk",
-  "version": "1.726.0",
+  "version": "1.727.1",
   "description": "BigCommerce Checkout JavaScript SDK",
   "license": "MIT",
   "main": "dist/checkout-sdk.js",
@@ -19,13 +19,13 @@
     "url": "https://github.com/bigcommerce/checkout-sdk-js/issues"
   },
   "engines": {
-    "node": "20",
-    "npm": "9"
+    "node": "22",
+    "npm": "10"
   },
   "prettier": "@bigcommerce/eslint-config/prettier",
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
   "scripts": {
-    "prepare": "check-node-version --node '>=20' --npm '>=9'",
+    "prepare": "check-node-version --node '>=22' --npm '>=10'",
     "build": "npm run bundle && npm run bundle-dts",
     "build:link": "rm -rf dist && npx nx run core:build --skip-nx-cache && npm run bundle-dts",
     "prebuild-cdn": "rm -rf dist-cdn",

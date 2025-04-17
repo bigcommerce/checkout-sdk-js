@@ -75,7 +75,7 @@ describe('HostedField', () => {
 
         // tslint:disable-next-line:no-non-null-assertion
         expect(document.querySelector<HTMLIFrameElement>('#field-container-id iframe')!.src).toBe(
-            `${location.origin}/checkout/payment/hosted-field?version=1.0.0`,
+            `${location.origin}/account/stored-instruments/hosted-fields?version=1.0.0`,
         );
     });
 
