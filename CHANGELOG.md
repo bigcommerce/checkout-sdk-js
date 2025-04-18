@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.728.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.727.1...v1.728.0) (2025-04-18)
+
+
+### Features
+
+* **payment:** PAYPAL-5354 fix of cannot read properties of undefined ([e745e71](https://github.com/bigcommerce/checkout-sdk-js/commit/e745e71794d7499b8ce42fe2fa1674c86bbb6bdf))
+
 ### [1.727.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.727.0...v1.727.1) (2025-04-17)
 
 ## [1.727.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.726.0...v1.727.0) (2025-04-15)
