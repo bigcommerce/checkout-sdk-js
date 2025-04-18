@@ -16,6 +16,7 @@ import {
     PaymentMethodFailedError,
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { DEFAULT_CONTAINER_STYLES, LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 
 import GooglePayPaymentInitializeOptions, {
     WithGooglePayPaymentInitializeOptions,
@@ -35,6 +36,8 @@ import {
 } from './types';
 
 export default class GooglePayPaymentStrategy implements PaymentStrategy {
+    private _loadingIndicator: LoadingIndicator;
+    private _loadingIndicatorContainer?: string;
     private _paymentButton?: HTMLElement;
     private _clickListener?: (event: MouseEvent) => unknown;
     private _methodId?: keyof WithGooglePayPaymentInitializeOptions;
@@ -42,7 +45,11 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
     constructor(
         protected _paymentIntegrationService: PaymentIntegrationService,
         protected _googlePayPaymentProcessor: GooglePayPaymentProcessor,
-    ) {}
+    ) {
+        this._loadingIndicator = new LoadingIndicator({
+            containerStyles: DEFAULT_CONTAINER_STYLES,
+        });
+    }
 
     async initialize(
         options?: PaymentInitializeOptions & WithGooglePayPaymentInitializeOptions,
@@ -61,7 +68,9 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Unable to proceed without valid options.');
         }
 
-        const { walletButton, ...callbacks } = googlePayOptions;
+        const { walletButton, loadingContainerId, ...callbacks } = googlePayOptions;
+
+        this._loadingIndicatorContainer = loadingContainerId;
 
         await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
 
@@ -147,6 +156,8 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             } catch (error) {
                 let err: unknown = error;
 
+                this._toggleLoadingIndicator(false);
+
                 if (isGooglePayErrorObject(error)) {
                     if (error.statusCode === 'CANCELED') {
                         throw new PaymentMethodCancelledError();
@@ -170,6 +181,9 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
     protected async _interactWithPaymentSheet(): Promise<void> {
         const response = await this._googlePayPaymentProcessor.showPaymentSheet();
+
+        this._toggleLoadingIndicator(true);
+
         const billingAddress =
             this._googlePayPaymentProcessor.mapToBillingAddressRequestBody(response);
 
@@ -181,6 +195,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
         await this._paymentIntegrationService.loadCheckout();
         await this._paymentIntegrationService.loadPaymentMethod(this._getMethodId());
+        this._toggleLoadingIndicator(false);
     }
 
     protected _getMethodId(): keyof WithGooglePayPaymentInitializeOptions {
@@ -297,5 +312,13 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
                 },
             },
         };
+    }
+
+    private _toggleLoadingIndicator(isLoading: boolean): void {
+        if (isLoading && this._loadingIndicatorContainer) {
+            this._loadingIndicator.show(this._loadingIndicatorContainer);
+        } else {
+            this._loadingIndicator.hide();
+        }
     }
 }

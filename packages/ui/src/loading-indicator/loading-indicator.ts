@@ -9,6 +9,12 @@ const DEFAULT_STYLES: LoadingIndicatorStyles = {
     backgroundColor: '#ffffff',
 };
 
+export const DEFAULT_CONTAINER_STYLES = {
+    position: 'fixed',
+    'background-color': 'rgba(0, 0, 0, 0.4)',
+    'z-index': '1000',
+};
+
 const ROTATION_ANIMATION = 'embedded-checkout-loading-indicator-rotation';
 
 interface LoadingIndicatorOptions {
