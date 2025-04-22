@@ -9,7 +9,7 @@
         "amazon-pay-utils": "packages/amazon-pay-utils",
         "analytics": "packages/analytics",
         "apple-pay-integration": "packages/apple-pay-integration",
-        "bcpay-utils": "packages/bcpay-utils",
+        "bigcommerce-payments-utils": "packages/bigcommerce-payments-utils",
         "bluesnap-direct-integration": "packages/bluesnap-direct-integration",
         "bolt-integration": "packages/bolt-integration",
         "braintree-integration": "packages/braintree-integration",
