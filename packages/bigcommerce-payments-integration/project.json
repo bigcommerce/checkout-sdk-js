@@ -1,20 +1,20 @@
 {
-    "root": "packages/bcpay-integration",
-    "sourceRoot": "packages/bcpay-integration/src",
+    "root": "packages/bigcommerce-payments-integration",
+    "sourceRoot": "packages/bigcommerce-payments-integration/src",
     "projectType": "library",
     "targets": {
         "lint": {
             "executor": "@nrwl/linter:eslint",
             "outputs": ["{options.outputFile}"],
             "options": {
-                "lintFilePatterns": ["packages/bcpay-integration/**/*.ts"]
+                "lintFilePatterns": ["packages/bigcommerce-payments-integration/**/*.ts"]
             }
         },
         "test": {
             "executor": "@nrwl/jest:jest",
-            "outputs": ["coverage/packages/bcpay-integration"],
+            "outputs": ["coverage/packages/bigcommerce-payments-integration"],
             "options": {
-                "jestConfig": "packages/bcpay-integration/jest.config.js",
+                "jestConfig": "packages/bigcommerce-payments-integration/jest.config.js",
                 "passWithNoTests": true
             }
         }
