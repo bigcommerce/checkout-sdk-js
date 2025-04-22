@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.728.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.728.0...v1.728.1) (2025-04-22)
+
+
+### Bug Fixes
+
+* **payment:** take fresh data from state on the amazonpay customer strategy initialization ([#2838](https://github.com/bigcommerce/checkout-sdk-js/issues/2838)) ([c3b74b3](https://github.com/bigcommerce/checkout-sdk-js/commit/c3b74b30234d39d1f66295785c8ad2a9fd0959a5))
+
 ## [1.728.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.727.1...v1.728.0) (2025-04-18)
 
 
