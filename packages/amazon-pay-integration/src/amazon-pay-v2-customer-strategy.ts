@@ -33,14 +33,17 @@ export default class AmazonPayV2CustomerStrategy implements CustomerStrategy {
             );
         }
 
-        const state = this.paymentIntegrationService.getState();
         let paymentMethod: PaymentMethod<AmazonPayV2InitializeOptions>;
 
         try {
-            paymentMethod = state.getPaymentMethodOrThrow(methodId);
+            paymentMethod = this.paymentIntegrationService
+                .getState()
+                .getPaymentMethodOrThrow(methodId);
         } catch (_e) {
             await this.paymentIntegrationService.loadPaymentMethod(methodId);
-            paymentMethod = state.getPaymentMethodOrThrow(methodId);
+            paymentMethod = this.paymentIntegrationService
+                .getState()
+                .getPaymentMethodOrThrow(methodId);
         }
 
         await this.amazonPayV2PaymentProcessor.initialize(paymentMethod);
