@@ -36,6 +36,16 @@ import {
     NewTransactionInfo,
 } from './types';
 
+const LoadingShow = jest.fn();
+const LoadingHide = jest.fn();
+
+jest.mock('@bigcommerce/checkout-sdk/ui', () => ({
+    LoadingIndicator: jest.fn().mockImplementation(() => ({
+        show: LoadingShow,
+        hide: LoadingHide,
+    })),
+}));
+
 describe('GooglePayPaymentStrategy', () => {
     const BUTTON_ID = 'my_awesome_google_pay_button';
 
@@ -99,6 +109,7 @@ describe('GooglePayPaymentStrategy', () => {
         options = {
             methodId: 'googlepayworldpayaccess',
             googlepayworldpayaccess: {
+                loadingContainerId: 'id',
                 walletButton: BUTTON_ID,
                 onError: jest.fn(),
                 onPaymentSelect: jest.fn(),
@@ -333,6 +344,7 @@ describe('GooglePayPaymentStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
+            expect(LoadingHide).toHaveBeenCalled();
             expect(rejectedInitializeWidgetMock).toHaveBeenCalledTimes(1);
             expect(options.googlepayworldpayaccess?.onError).toHaveBeenCalled();
         });
@@ -371,6 +383,7 @@ describe('GooglePayPaymentStrategy', () => {
 
                 expect(paymentIntegrationService.loadCheckout).toHaveBeenCalled();
                 expect(initializeWidgetMock).toHaveBeenCalledTimes(1);
+                expect(LoadingShow).toHaveBeenCalled();
             });
 
             it('should return updated transactionInfo', async () => {
