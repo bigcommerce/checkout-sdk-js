@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.729.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.728.1...v1.729.0) (2025-04-23)
+
+
+### Features
+
+* **payment:** Added loadingIndicator to the google-pay-payment-strategy ([27ca8fd](https://github.com/bigcommerce/checkout-sdk-js/commit/27ca8fdb2e0664127178c81590ec8ed17863e92d))
+
 ### [1.728.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.728.0...v1.728.1) (2025-04-22)
 
 
