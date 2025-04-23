@@ -11,7 +11,6 @@ import {
     getBuyNowCart,
     getBuyNowCartRequestBody,
     getCart,
-    getConfig,
     getConsignment,
     getShippingOption,
     PaymentIntegrationServiceMock,
@@ -102,8 +101,6 @@ describe('PayPalCommerceButtonStrategy', () => {
         type: 'type_shipping',
     };
 
-    const storeConfig = getConfig().storeConfig;
-
     beforeEach(() => {
         buyNowCart = getBuyNowCart();
         cart = getCart();
@@ -162,16 +159,6 @@ describe('PayPalCommerceButtonStrategy', () => {
         jest.spyOn(paypalCommerceIntegrationService, 'getShippingOptionOrThrow').mockReturnValue(
             getShippingOption(),
         );
-        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
-            ...storeConfig,
-            checkoutSettings: {
-                ...storeConfig.checkoutSettings,
-                features: {
-                    // TODO: remove this experiment
-                    'PAYPAL-4387.paypal_shipping_callbacks': true,
-                },
-            },
-        });
 
         jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
             (options: PayPalCommerceButtonsOptions) => {
