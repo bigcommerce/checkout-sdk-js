@@ -1,6 +1,8 @@
 # bigcommerce-payments-utils
 
-This package contains utils cloned from paypal-commerce-utils for the integration layer of the BigCommerce provider (bcpay-integration).
+BigCommerce Payments (also known as BCP) is an all-in-one payment solution that is recommended by BigCommerce for all cohorts of clients
+
+bigcommerce-payments-utils contains shared utils logic, interfaces related to BCP that could be used in different packages (core package as well)
 
 ## Running unit tests
 
