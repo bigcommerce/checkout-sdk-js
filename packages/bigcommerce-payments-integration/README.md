@@ -1,6 +1,8 @@
 # bigcommerce-payments-integration
 
-This package contains the integration layer for the BigCommerce provider.
+BigCommerce Payments (also known as BCP) is an all-in-one payment solution that is recommended by BigCommerce for all cohorts of clients.
+
+bigcommerce-payment-integration contains core BCP logic: different strategies for placing order with different PayPal instruments and other logic.
 
 ## Running unit tests
 
