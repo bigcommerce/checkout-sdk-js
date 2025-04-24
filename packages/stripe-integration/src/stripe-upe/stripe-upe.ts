@@ -1,11 +1,133 @@
-import {
-    CustomFont,
-    PaymentIntent,
-    PaymentMethod,
-    StripeConfigurationOptions,
-} from '../stripev3/stripev3';
+/**
+ * Initialization options.
+ */
+export interface StripeConfigurationOptions {
+    /**
+     * For usage with [Connect](https://stripe.com/docs/connect) only.
+     * Specifying a connected account ID (e.g., acct_24BFMpJ1svR5A89k) allows you to perform actions on behalf of that account.
+     */
+    stripeAccount: string;
 
-export { StripeAdditionalAction } from '../stripev3/stripev3';
+    /**
+     * Override your account's [API version](https://stripe.com/docs/api/versioning)
+     */
+    apiVersion?: string;
+
+    /**
+     * A locale used to globally configure localization in Stripe. Setting the locale here will localize error strings for all Stripe.js methods. It will also configure the locale for Elements and Checkout. Default is auto (Stripe detects the locale of the browser).
+     * Note that Checkout supports a slightly different set of locales than Stripe.js.
+     */
+    locale?: string;
+
+    betas?: string[];
+}
+
+export interface StripeAdditionalActionData {
+    redirect_url?: string;
+    intent?: string;
+}
+
+export interface StripeAdditionalAction {
+    type: string;
+    data: StripeAdditionalActionData;
+}
+
+/**
+ * The PaymentIntent object.
+ */
+export interface PaymentIntent {
+    /**
+     * Unique identifier for the object.
+     */
+    id: string;
+
+    /**
+     * Status of this PaymentIntent. Read more about each PaymentIntent [status](https://stripe.com/docs/payments/intents#intent-statuses).
+     */
+    status: 'succeeded' | string;
+
+    /**
+     * The payment error encountered in the previous PaymentIntent confirmation. It will be cleared if the PaymentIntent is later updated for any reason.
+     */
+    last_payment_error: LastPaymentError | null;
+}
+
+/**
+ * The payment error encountered in the previous PaymentIntent confirmation. It will be cleared if the PaymentIntent is later updated for any reason.
+ */
+export interface LastPaymentError {
+    /**
+     * A human-readable message providing more details about the error. For card errors, these messages can be shown to your users.
+     */
+    message?: string;
+}
+
+/**
+ * The PaymentMethod object
+ */
+export interface PaymentMethod {
+    /**
+     * Unique identifier for the object.
+     */
+    id: string;
+
+    /**
+     * The type of the PaymentMethod. An additional hash is included on the PaymentMethod with a name matching this value.
+     * It contains additional information specific to the PaymentMethod type.
+     */
+    type: string;
+}
+
+/**
+ * This object is used to pass custom fonts when creating an [Elements](https://stripe.com/docs/js/elements_object/create) object.
+ */
+export interface CssFontSource {
+    /**
+     * A relative or absolute URL pointing to a CSS file with [@font-face](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face) definitions, for example:
+     * `https://fonts.googleapis.com/css?family=Open+Sans`
+     * Note that if you are using a [content security policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) (CSP),
+     * [additional directives](https://stripe.com/docs/security#content-security-policy) may be necessary.
+     */
+    cssSrc: string;
+}
+
+/**
+ * This object is used to pass custom fonts when creating an [Elements](https://stripe.com/docs/js/elements_object/create) object.
+ */
+export interface CustomFontSource {
+    /**
+     * The name to give the font.
+     */
+    family: string;
+
+    /**
+     * A valid [src](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/src) value pointing to your
+     * custom font file. This is usually (though not always) a link to a file with a .woff , .otf, or .svg suffix.
+     */
+    src: string;
+
+    /**
+     * A valid [font-display](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display) value.
+     */
+    display?: string;
+
+    /**
+     * One of normal, italic, oblique. Defaults to normal.
+     */
+    style?: string;
+
+    /**
+     * A valid [unicode-range](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/unicode-range) value.
+     */
+    unicodeRange?: string;
+
+    /**
+     * A valid [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight). Note that this is a string, not a number.
+     */
+    weight?: string;
+}
+
+export type CustomFont = CssFontSource | CustomFontSource;
 
 export interface StripeError {
     /**
