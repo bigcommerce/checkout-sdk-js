@@ -49,7 +49,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
         paymentIntegrationService.widgetInteraction = jest.fn();
         storeConfigMock.checkoutSettings.features = {
             'PROJECT-3483.amazon_pay_ph4': false,
-            'INT-6399.amazon_pay_apb': false,
+            'PI-3837.amazon_pay_apb': false,
         };
 
         editMethodButton = document.createElement('div');
@@ -162,7 +162,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
             storeConfigMock.checkoutSettings.features = {
                 'PROJECT-3483.amazon_pay_ph4': true,
-                'INT-6399.amazon_pay_apb': true,
+                'PI-3837.amazon_pay_apb': true,
             };
 
             jest.spyOn(
@@ -304,7 +304,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
             storeConfigMock.checkoutSettings.features = {
                 'PROJECT-3483.amazon_pay_ph4': true,
-                'INT-6399.amazon_pay_apb': true,
+                'PI-3837.amazon_pay_apb': true,
             };
             jest.spyOn(
                 paymentIntegrationService.getState(),
@@ -366,7 +366,7 @@ describe('AmazonPayV2PaymentStrategy', () => {
 
             storeConfigMock.checkoutSettings.features = {
                 'PROJECT-3483.amazon_pay_ph4': true,
-                'INT-6399.amazon_pay_apb': true,
+                'PI-3837.amazon_pay_apb': true,
             };
             jest.spyOn(
                 paymentIntegrationService.getState(),

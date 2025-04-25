@@ -227,7 +227,7 @@ export default class AmazonPayV2PaymentStrategy implements PaymentStrategy {
     ): boolean {
         return (
             this.amazonPayV2PaymentProcessor.isPh4Enabled(features, storeCountryCode) &&
-            features['INT-6399.amazon_pay_apb']
+            features['PI-3837.amazon_pay_apb']
         );
     }
 
