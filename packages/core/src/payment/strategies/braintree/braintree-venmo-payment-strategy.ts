@@ -103,9 +103,13 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
 
         try {
             this._braintreePaymentProcessor.initialize(clientToken);
-            this._braintreeVenmoCheckout = await this._braintreePaymentProcessor.getVenmoCheckout({
-                mobileWebFallBack: isBraintreeVenmoWebFallbackSupport,
-            });
+            this._braintreeVenmoCheckout = await this._braintreePaymentProcessor.getVenmoCheckout(
+                isBraintreeVenmoWebFallbackSupport
+                    ? {
+                          mobileWebFallBack: isBraintreeVenmoWebFallbackSupport,
+                      }
+                    : undefined,
+            );
         } catch (error) {
             this._handleError(error);
         }
