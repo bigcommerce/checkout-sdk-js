@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.730.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.729.1...v1.730.0) (2025-04-28)
+
+
+### Features
+
+* **payment:** upload Stripe client with custom options ([04e497e](https://github.com/bigcommerce/checkout-sdk-js/commit/04e497e569e17105448a949f657274d6e0f078b0))
+
 ### [1.729.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.729.0...v1.729.1) (2025-04-23)
 
 
