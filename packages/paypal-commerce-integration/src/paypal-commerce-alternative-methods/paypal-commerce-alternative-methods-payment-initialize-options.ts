@@ -90,7 +90,7 @@ export default interface PayPalCommerceAlternativeMethodsPaymentOptions {
     /**
      * A callback for displaying error popup. This callback requires error object as parameter.
      */
-    onError?(error: Error): void;
+    onError?(error: Error | unknown): void;
 
     /**
      * A callback right before render Smart Payment Button that gets called when
