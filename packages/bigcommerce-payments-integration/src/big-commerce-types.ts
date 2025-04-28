@@ -244,7 +244,7 @@ export interface BigCommerceHostWindow extends Window {
 export interface BigCommerceInitializationData {
     attributionId?: string;
     availableAlternativePaymentMethods: FundingType;
-    buttonStyle?: BigButtonStyleOptions;
+    buttonStyle?: BigCommerceButtonStyleOptions;
     buyerCountry?: string;
     clientId: string;
     clientToken?: string;
@@ -260,7 +260,7 @@ export interface BigCommerceInitializationData {
     orderId?: string;
     shouldRenderFields?: boolean;
     shouldRunAcceleratedCheckout?: boolean;
-    paymentButtonStyles?: Record<string, BigButtonStyleOptions>;
+    paymentButtonStyles?: Record<string, BigCommerceButtonStyleOptions>;
 }
 
 /**
@@ -268,7 +268,7 @@ export interface BigCommerceInitializationData {
  * Big Commerce BuyNow
  *
  */
-export interface BigBuyNowInitializeOptions {
+export interface BigCommerceBuyNowInitializeOptions {
     getBuyNowCartRequestBody(): BuyNowCartRequestBody;
 }
 
@@ -357,7 +357,7 @@ export interface BigCommerceButtons {
 
 export interface BigCommerceButtonsOptions {
     experience?: string;
-    style?: BigButtonStyleOptions;
+    style?: BigCommerceButtonStyleOptions;
     fundingSource: string;
     createOrder(): Promise<string>;
     onApprove(
@@ -375,12 +375,12 @@ export interface BigCommerceButtonsOptions {
 
 export interface ShippingOptionChangeCallbackPayload {
     orderId: string;
-    selectedShippingOption: BigSelectedShippingOption;
+    selectedShippingOption: BigCommerceSelectedShippingOption;
 }
 
 export interface ShippingAddressChangeCallbackPayload {
     orderId: string;
-    shippingAddress: BigAddress;
+    shippingAddress: BigCommerceAddress;
 }
 
 export interface ClickCallbackPayload {
@@ -401,21 +401,21 @@ export interface InitCallbackActions {
     enable(): void;
 }
 
-export interface BigAddress {
+export interface BigCommerceAddress {
     city: string;
     countryCode: string;
     postalCode: string;
     state: string;
 }
 
-export interface BigAddressCallbackData {
+export interface BigCommerceAddressCallbackData {
     city: string;
     country_code: string;
     postal_code: string;
     state: string;
 }
 
-export interface BigSelectedShippingOption {
+export interface BigCommerceSelectedShippingOption {
     amount: {
         currency_code: string;
         value: string;
@@ -432,18 +432,18 @@ export interface ApproveCallbackPayload {
 
 export interface ApproveCallbackActions {
     order: {
-        get: () => Promise<BigOrderDetails>;
+        get: () => Promise<BigCommerceOrderDetails>;
     };
 }
 
-export interface BigOrderDetails {
+export interface BigCommerceOrderDetails {
     payer: {
         name: {
             given_name: string;
             surname: string;
         };
         email_address: string;
-        address: BigOrderAddress;
+        address: BigCommerceOrderAddress;
         phone?: {
             phone_number: {
                 national_number: string;
@@ -452,7 +452,7 @@ export interface BigOrderDetails {
     };
     purchase_units: Array<{
         shipping: {
-            address: BigOrderAddress;
+            address: BigCommerceOrderAddress;
             name: {
                 full_name: string;
             };
@@ -460,7 +460,7 @@ export interface BigOrderDetails {
     }>;
 }
 
-export interface BigOrderAddress {
+export interface BigCommerceOrderAddress {
     address_line_1: string;
     address_line_2: string;
     admin_area_2: string;
@@ -495,7 +495,7 @@ export enum StyleButtonShape {
     rect = 'rect',
 }
 
-export interface BigButtonStyleOptions {
+export interface BigCommerceButtonStyleOptions {
     color?: StyleButtonColor;
     shape?: StyleButtonShape;
     height?: number;
@@ -578,29 +578,29 @@ export enum NonInstantAlternativePaymentMethods {
     OXXO = 'oxxo',
 }
 
-export interface BigOrderData {
+export interface BigCommerceOrderData {
     orderId: string;
     setupToken?: string;
     approveUrl: string;
 }
 
-export interface BigUpdateOrderRequestBody {
+export interface BigCommerceUpdateOrderRequestBody {
     availableShippingOptions?: ShippingOption[];
     cartId: string;
     selectedShippingOption?: ShippingOption;
 }
 
-export interface BigUpdateOrderResponse {
+export interface BigCommerceUpdateOrderResponse {
     statusCode: number;
 }
 
-export interface BigCreateOrderRequestBody extends HostedInstrument, VaultedInstrument {
+export interface BigCommerceCreateOrderRequestBody extends HostedInstrument, VaultedInstrument {
     cartId: string;
     metadataId?: string;
     setupToken?: boolean;
 }
 
-export enum BigOrderStatus {
+export enum BigCommerceOrderStatus {
     Approved = 'APPROVED',
     Created = 'CREATED',
     PayerActionRequired = 'PAYER_ACTION_REQUIRED',
@@ -608,11 +608,11 @@ export enum BigOrderStatus {
     PollingError = 'POLLING_ERROR',
 }
 
-export interface BigOrderStatusData {
-    status: BigOrderStatus;
+export interface BigCommerceOrderStatusData {
+    status: BigCommerceOrderStatus;
 }
 
-export interface BigCreateOrderCardFieldsResponse {
+export interface BigCommerceCreateOrderCardFieldsResponse {
     orderId: string;
     setupToken?: string;
 }

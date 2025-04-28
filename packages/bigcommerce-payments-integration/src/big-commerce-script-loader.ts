@@ -50,7 +50,7 @@ export default class BigCommerceScriptLoader {
                 bigCommerceSdkScriptConfig.attributes,
             );
 
-            const paypalSdkUrl = 'https://www.paypal.com/sdk/js';
+            const paypalSdkUrl = 'https://www.paypal.com/sdk/js'; // paypal method remains the same
             const scriptQuery = new URLSearchParams(options).toString();
             const scriptSrc = `${paypalSdkUrl}?${scriptQuery}`;
 
@@ -92,7 +92,7 @@ export default class BigCommerceScriptLoader {
 
         const commit = isHostedCheckoutEnabled || initializesOnCheckoutPage;
 
-        const shouldEnableCard = id === 'paypalcommercecreditcards';
+        const shouldEnableCard = id === 'paypalcommercecreditcards'; //TODO: check if this is correct
         const enableCardFunding = shouldEnableCard ? ['card'] : [];
         const disableCardFunding = !shouldEnableCard ? ['card'] : [];
 
