@@ -111,7 +111,7 @@ export function getOrder(): Order {
             giftCertificates: [getGiftCertificateItem()],
             customItems: [],
         },
-        orderAmount: 250,
+        orderAmount: 190,
         orderAmountAsInteger: 19000,
         giftWrappingCostTotal: 0,
         orderId: 295,

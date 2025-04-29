@@ -9,14 +9,6 @@ import {
     getGiftCertificateItem,
     getPhysicalItem,
 } from './line-items.mock';
-import Order from '../../../core/src/order/order';
-import { getBillingAddress } from '@bigcommerce/checkout-sdk/core';
-import { getShippingCoupon } from '../../../core/src/coupon/coupons.mock';
-import {
-    getGatewayOrderPayment,
-    getGiftCertificateOrderPayment,
-    getOrderConsignment,
-} from '../../../core/src/order/orders.mock';
 
 export default function getCart(): Cart {
     return {
@@ -45,48 +37,5 @@ export function getBuyNowCart(): Cart {
     return {
         ...getCart(),
         source: CartSource.BuyNow,
-    };
-}
-
-export function getOrder(): Order {
-    return {
-        baseAmount: 200,
-        billingAddress: getBillingAddress(),
-        cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
-        consignments: getOrderConsignment(),
-        coupons: [getCoupon(), getShippingCoupon()],
-        currency: getCurrency(),
-        customerMessage: '',
-        customerCanBeCreated: true,
-        customerId: 0,
-        discountAmount: 10,
-        handlingCostTotal: 8,
-        hasDigitalItems: false,
-        isComplete: true,
-        isDownloadable: false,
-        isTaxIncluded: false,
-        lineItems: {
-            physicalItems: [getPhysicalItem()],
-            digitalItems: [],
-            giftCertificates: [getGiftCertificateItem()],
-            customItems: [],
-        },
-        orderAmount: 190,
-        orderAmountAsInteger: 19000,
-        giftWrappingCostTotal: 0,
-        orderId: 295,
-        payments: [getGatewayOrderPayment(), getGiftCertificateOrderPayment()],
-        shippingCostTotal: 15,
-        shippingCostBeforeDiscount: 20,
-        status: 'ORDER_STATUS_AWAITING_FULFILLMENT',
-        taxes: [
-            {
-                name: 'Tax',
-                amount: 3,
-            },
-        ],
-        taxTotal: 3,
-        channelId: 1,
-        fees: [],
     };
 }

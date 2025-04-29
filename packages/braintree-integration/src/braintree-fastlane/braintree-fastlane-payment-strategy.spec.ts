@@ -26,10 +26,10 @@ import {
 import {
     getBillingAddress,
     getCart,
-    getOrder,
     getConfig,
     getCustomer,
     getGuestCustomer,
+    getOrder,
     getShippingAddress,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
@@ -877,7 +877,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
 
             expect(threeDSecure.verifyCard).toHaveBeenCalledWith(
                 {
-                    amount: 250,
+                    amount: 190,
                     bin: 'guest_bin',
                     nonce: 'guest_nonce',
                     onLookupComplete: expect.any(Function),
@@ -920,7 +920,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
 
             expect(threeDSecure.verifyCard).toHaveBeenCalledWith(
                 {
-                    amount: 250,
+                    amount: 190,
                     bin: '411111',
                     nonce: instrumentId,
                     onLookupComplete: expect.any(Function),
