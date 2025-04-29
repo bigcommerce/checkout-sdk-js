@@ -192,7 +192,7 @@ export default class BigCommerceIntegrationService {
                 set_as_default_stored_instrument: null,
                 device_info: null,
                 method_id: methodId,
-                // TODO: check if this is correct
+                // TODO: check if this is correct "paypal_account" or should be "bigcommerce_account"
                 paypal_account: {
                     order_id: orderId,
                 },

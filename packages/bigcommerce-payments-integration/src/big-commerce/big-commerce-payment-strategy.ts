@@ -35,7 +35,7 @@ import BigCommercePaymentInitializeOptions, {
 export default class BigCommercePaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?: string;
     private orderId?: string;
-    private bigCommerceButton?: BigCommerceButtons;
+    private bigcommerceButton?: BigCommerceButtons;
     private bigcommerce?: BigCommercePaymentInitializeOptions;
 
     constructor(
@@ -130,7 +130,7 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
 
                 await new Promise((_resolve, reject) => {
                     if (this.bigcommerce) {
-                        this.bigCommerceButton?.close();
+                        this.bigcommerceButton?.close();
                         this.renderButton(payment.methodId, this.bigcommerce);
                         this.handleError(new Error('INSTRUMENT_DECLINED'), onError);
                     }
@@ -152,14 +152,14 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
     deinitialize(): Promise<void> {
         this.orderId = undefined;
 
-        this.bigCommerceButton?.close();
+        this.bigcommerceButton?.close();
 
         return Promise.resolve();
     }
 
     private prepareVaultedInstrumentPaymentPayload(
         methodId: string,
-        bigCommerceOrderId: string,
+        bigcommerceOrderId: string,
         paymentData: VaultedInstrument & HostedInstrument,
     ): Payment {
         const { instrumentId, shouldSetAsDefaultInstrument } = paymentData;
@@ -174,7 +174,7 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
                     shouldSetAsDefaultInstrument,
                     formattedPayload: {
                         bigcommerce_account: {
-                            order_id: bigCommerceOrderId,
+                            order_id: bigcommerceOrderId,
                         },
                     },
                 },
@@ -188,7 +188,7 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
                 shouldSetAsDefaultInstrument,
                 formattedPayload: {
                     bigcommerce_account: {
-                        order_id: bigCommerceOrderId,
+                        order_id: bigcommerceOrderId,
                     },
                     bigpay_token: {
                         token: instrumentId,
@@ -200,7 +200,7 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
 
     private preparePaymentPayload(
         methodId: string,
-        bigCommerceOrderId: string,
+        bigcommerceOrderId: string,
         paymentData: OrderPaymentRequestBody['paymentData'],
     ): Payment {
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
@@ -213,7 +213,7 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
                 shouldSetAsDefaultInstrument,
                 formattedPayload: {
                     bigcommerce_account: {
-                        order_id: bigCommerceOrderId,
+                        order_id: bigcommerceOrderId,
                     },
                 },
             },
@@ -247,9 +247,9 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
             onCancel: () => this.toggleLoadingIndicator(false),
         };
 
-        this.bigCommerceButton = bigCommerceSdk.Buttons(buttonOptions);
+        this.bigcommerceButton = bigCommerceSdk.Buttons(buttonOptions);
 
-        if (!this.bigCommerceButton.isEligible()) {
+        if (!this.bigcommerceButton.isEligible()) {
             return;
         }
 
@@ -257,7 +257,7 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
             onRenderButton();
         }
 
-        this.bigCommerceButton.render(container);
+        this.bigcommerceButton.render(container);
     }
 
     private async handleClick(

@@ -6,6 +6,14 @@ import {
     MissingDataErrorType,
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import {
+    getPaypalMessagesStylesFromBNPLConfig,
+    MessagingOptions,
+    PayPalBNPLConfigurationItem,
+    PayPalCommerceInitializationData,
+    PayPalCommerceSdk,
+    PayPalMessagesSdk,
+} from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import BigCommerceIntegrationService from '../big-commerce-integration-service';
 import {
@@ -13,27 +21,32 @@ import {
     ApproveCallbackPayload,
     BigCommerceButtonsOptions,
     BigCommerceBuyNowInitializeOptions,
-    BigCommerceInitializationData,
     ShippingAddressChangeCallbackPayload,
     ShippingOptionChangeCallbackPayload,
 } from '../big-commerce-types';
 
-import BigCommerceButtonInitializeOptions, {
-    WithBigCommerceButtonInitializeOptions,
-} from './big-commerce-button-initialize-options';
+import BigCommerceCreditButtonInitializeOptions, {
+    WithBigCommerceCreditButtonInitializeOptions,
+} from './big-commerce-credit-button-initialize-options';
 
-export default class BigCommerceButtonStrategy implements CheckoutButtonStrategy {
+export default class BigCommerceCreditButtonStrategy implements CheckoutButtonStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private bigCommerceIntegrationService: BigCommerceIntegrationService,
+        private paypalCommerceSdk: PayPalCommerceSdk,
     ) {}
 
     async initialize(
-        options: CheckoutButtonInitializeOptions & WithBigCommerceButtonInitializeOptions,
+        options: CheckoutButtonInitializeOptions & WithBigCommerceCreditButtonInitializeOptions,
     ): Promise<void> {
-        const { bigcommerce, containerId, methodId } = options;
+        const { bigcommercecredit, containerId, methodId } = options;
+        const {
+            buyNowInitializeOptions,
+            currencyCode: providedCurrencyCode,
+            messagingContainerId,
+        } = bigcommercecredit || {};
 
-        const isBuyNowFlow = Boolean(bigcommerce?.buyNowInitializeOptions);
+        const isBuyNowFlow = !!buyNowInitializeOptions;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -47,24 +60,24 @@ export default class BigCommerceButtonStrategy implements CheckoutButtonStrategy
             );
         }
 
-        if (!bigcommerce) {
+        if (!bigcommercecredit) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommerce" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommercecredit" argument is not provided.`,
             );
         }
 
-        if (isBuyNowFlow && !bigcommerce.currencyCode) {
+        if (isBuyNowFlow && !providedCurrencyCode) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommerce.currencyCode" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommercecredit.currencyCode" argument is not provided.`,
             );
         }
 
         if (
             isBuyNowFlow &&
-            typeof bigcommerce.buyNowInitializeOptions?.getBuyNowCartRequestBody !== 'function'
+            typeof buyNowInitializeOptions?.getBuyNowCartRequestBody !== 'function'
         ) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommerce.buyNowInitializeOptions.getBuyNowCartRequestBody" argument is not provided or it is not a function.`,
+                `Unable to initialize payment because "options.bigcommercecredit.buyNowInitializeOptions.getBuyNowCartRequestBody" argument is not provided or it is not a function.`,
             );
         }
 
@@ -74,16 +87,51 @@ export default class BigCommerceButtonStrategy implements CheckoutButtonStrategy
             await this.paymentIntegrationService.loadDefaultCheckout();
         }
 
+        const state = this.paymentIntegrationService.getState();
+
         // Info: we are using provided currency code for buy now cart,
         // because checkout session is not available before buy now cart creation,
         // hence application will throw an error on getCartOrThrow method call
         const currencyCode = isBuyNowFlow
-            ? bigcommerce.currencyCode
-            : this.paymentIntegrationService.getState().getCartOrThrow().currency.code;
+            ? providedCurrencyCode
+            : state.getCartOrThrow().currency.code;
 
         await this.bigCommerceIntegrationService.loadBigCommerceSdk(methodId, currencyCode, false);
 
-        this.renderButton(containerId, methodId, bigcommerce);
+        this.renderButton(containerId, methodId, bigcommercecredit);
+
+        const messagingContainer =
+            messagingContainerId && document.getElementById(messagingContainerId);
+
+        if (currencyCode && messagingContainer) {
+            const paymentMethod =
+                state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
+
+            // TODO: update paypalBNPLConfiguration with empty array as default value when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
+            const { paypalBNPLConfiguration } = paymentMethod.initializationData || {};
+            let bannerConfiguration: PayPalBNPLConfigurationItem | undefined;
+
+            if (paypalBNPLConfiguration) {
+                bannerConfiguration = paypalBNPLConfiguration.find(({ id }) => id === 'cart');
+
+                if (!bannerConfiguration?.status) {
+                    return;
+                }
+
+                // TODO: remove this attributes reset when content service and PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
+                messagingContainer.removeAttribute('data-pp-style-logo-type');
+                messagingContainer.removeAttribute('data-pp-style-logo-position');
+                messagingContainer.removeAttribute('data-pp-style-text-color');
+                messagingContainer.removeAttribute('data-pp-style-text-size');
+            }
+
+            const paypalSdk = await this.paypalCommerceSdk.getPayPalMessages(
+                paymentMethod,
+                currencyCode,
+            );
+
+            this.renderMessages(paypalSdk, messagingContainerId, bannerConfiguration);
+        }
     }
 
     deinitialize(): Promise<void> {
@@ -93,18 +141,19 @@ export default class BigCommerceButtonStrategy implements CheckoutButtonStrategy
     private renderButton(
         containerId: string,
         methodId: string,
-        bigcommerce: BigCommerceButtonInitializeOptions,
+        bigcommercecredit: BigCommerceCreditButtonInitializeOptions,
     ): void {
-        const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = bigcommerce;
+        const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } =
+            bigcommercecredit;
 
         const bigcommerceSdk = this.bigCommerceIntegrationService.getBigCommerceSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
-            state.getPaymentMethodOrThrow<BigCommerceInitializationData>(methodId);
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
         const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
-            createOrder: () => this.bigCommerceIntegrationService.createOrder('bigcommerce'),
+            createOrder: () => this.bigCommerceIntegrationService.createOrder('bigcommercecredit'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.bigCommerceIntegrationService.tokenizePayment(methodId, orderID),
         };
@@ -123,21 +172,31 @@ export default class BigCommerceButtonStrategy implements CheckoutButtonStrategy
                 this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
         };
 
-        const buttonRenderOptions: BigCommerceButtonsOptions = {
-            fundingSource: bigcommerceSdk.FUNDING.BIGCOMMERCE,
-            style: this.bigCommerceIntegrationService.getValidButtonStyle(style),
-            ...defaultCallbacks,
-            ...(buyNowInitializeOptions && buyNowFlowCallbacks),
-            ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),
-        };
+        const fundingSources = [bigcommerceSdk.FUNDING.PAYLATER, bigcommerceSdk.FUNDING.CREDIT];
+        let hasRenderedSmartButton = false;
 
-        const bigcommerceButton = bigcommerceSdk.Buttons(buttonRenderOptions);
+        fundingSources.forEach((fundingSource) => {
+            if (!hasRenderedSmartButton) {
+                const buttonRenderOptions: BigCommerceButtonsOptions = {
+                    fundingSource,
+                    style: this.bigCommerceIntegrationService.getValidButtonStyle(style),
+                    ...defaultCallbacks,
+                    ...(buyNowInitializeOptions && buyNowFlowCallbacks),
+                    ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),
+                };
 
-        if (bigcommerceButton.isEligible()) {
-            bigcommerceButton.render(`#${containerId}`);
-        } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
-            onEligibilityFailure();
-        } else {
+                const bigcommerceButton = bigcommerceSdk.Buttons(buttonRenderOptions);
+
+                if (bigcommerceButton.isEligible()) {
+                    bigcommerceButton.render(`#${containerId}`);
+                    hasRenderedSmartButton = true;
+                } else if (onEligibilityFailure && typeof onEligibilityFailure === 'function') {
+                    onEligibilityFailure();
+                }
+            }
+        });
+
+        if (!hasRenderedSmartButton) {
             this.bigCommerceIntegrationService.removeElement(containerId);
         }
     }
@@ -247,5 +306,30 @@ export default class BigCommerceButtonStrategy implements CheckoutButtonStrategy
 
             throw error;
         }
+    }
+
+    private renderMessages(
+        paypalMessagesSdk: PayPalMessagesSdk,
+        messagingContainerId: string,
+        bannerConfiguration?: PayPalBNPLConfigurationItem, // TODO: this should not be optional when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
+    ): void {
+        const checkout = this.paymentIntegrationService.getState().getCheckoutOrThrow();
+        const grandTotal = checkout.outstandingBalance;
+        // TODO: default style can be removed when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
+        const style = bannerConfiguration
+            ? getPaypalMessagesStylesFromBNPLConfig(bannerConfiguration)
+            : {
+                  layout: 'text',
+              };
+
+        const paypalMessagesOptions: MessagingOptions = {
+            amount: grandTotal,
+            placement: 'cart',
+            style,
+        };
+
+        const paypalMessages = paypalMessagesSdk.Messages(paypalMessagesOptions);
+
+        paypalMessages.render(`#${messagingContainerId}`);
     }
 }

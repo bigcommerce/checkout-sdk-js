@@ -23,11 +23,11 @@ import {
     ShippingOptionChangeCallbackPayload,
 } from '../big-commerce-types';
 
-import BigCommerceCustomerInitializeOptions, {
-    WithBigCommerceCustomerInitializeOptions,
-} from './big-commerce-customer-initialize-options';
+import BigCommerceCreditCustomerInitializeOptions, {
+    WithBigCommerceCreditCustomerInitializeOptions,
+} from './big-commerce-credit-customer-initialize-options';
 
-export default class BigCommerceCustomerStrategy implements CustomerStrategy {
+export default class BigCommerceCreditCustomerStrategy implements CustomerStrategy {
     private onError = noop;
 
     constructor(
@@ -36,9 +36,9 @@ export default class BigCommerceCustomerStrategy implements CustomerStrategy {
     ) {}
 
     async initialize(
-        options: CustomerInitializeOptions & WithBigCommerceCustomerInitializeOptions,
+        options: CustomerInitializeOptions & WithBigCommerceCreditCustomerInitializeOptions,
     ): Promise<void> {
-        const { bigcommerce, methodId } = options;
+        const { bigcommercecredit, methodId } = options;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -46,25 +46,25 @@ export default class BigCommerceCustomerStrategy implements CustomerStrategy {
             );
         }
 
-        if (!bigcommerce) {
+        if (!bigcommercecredit) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommerce" argument is not provided.',
+                'Unable to initialize payment because "options.bigcommercecredit" argument is not provided.',
             );
         }
 
-        if (!bigcommerce.container) {
+        if (!bigcommercecredit.container) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommerce.container" argument is not provided.',
+                'Unable to initialize payment because "options.bigcommercecredit.container" argument is not provided.',
             );
         }
 
-        if (bigcommerce.onClick && typeof bigcommerce.onClick !== 'function') {
+        if (bigcommercecredit.onClick && typeof bigcommercecredit.onClick !== 'function') {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommerce.onClick" argument is not a function.',
+                'Unable to initialize payment because "options.bigcommercecredit.onClick" argument is not a function.',
             );
         }
 
-        this.onError = bigcommerce.onError || noop;
+        this.onError = bigcommercecredit.onError || noop;
 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethod(methodId);
@@ -82,7 +82,6 @@ export default class BigCommerceCustomerStrategy implements CustomerStrategy {
             !bigcommerceSdk.Buttons ||
             typeof bigcommerceSdk.Buttons !== 'function'
         ) {
-            // eslint-disable-next-line no-console
             console.error(
                 '[BC BigCommerce]: BigCommerce Button could not be rendered, due to issues with loading BigCommerce SDK',
             );
@@ -90,7 +89,7 @@ export default class BigCommerceCustomerStrategy implements CustomerStrategy {
             return;
         }
 
-        this.renderButton(methodId, bigcommerce);
+        this.renderButton(methodId, bigcommercecredit);
     }
 
     deinitialize(): Promise<void> {
@@ -99,14 +98,10 @@ export default class BigCommerceCustomerStrategy implements CustomerStrategy {
 
     async signIn(credentials: CustomerCredentials, options?: RequestOptions): Promise<void> {
         await this.paymentIntegrationService.signInCustomer(credentials, options);
-
-        return Promise.resolve();
     }
 
     async signOut(options?: RequestOptions): Promise<void> {
         await this.paymentIntegrationService.signOutCustomer(options);
-
-        return Promise.resolve();
     }
 
     executePaymentMethodCheckout(options?: ExecutePaymentMethodCheckoutOptions): Promise<void> {
@@ -117,9 +112,9 @@ export default class BigCommerceCustomerStrategy implements CustomerStrategy {
 
     private renderButton(
         methodId: string,
-        bigcommerce: BigCommerceCustomerInitializeOptions,
+        bigCommerceCredit: BigCommerceCreditCustomerInitializeOptions,
     ): void {
-        const { container, onClick, onComplete } = bigcommerce;
+        const { container, onComplete, onClick } = bigCommerceCredit;
 
         const bigcommerceSdk = this.bigCommerceIntegrationService.getBigCommerceSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -130,7 +125,7 @@ export default class BigCommerceCustomerStrategy implements CustomerStrategy {
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         const defaultCallbacks = {
-            createOrder: () => this.bigCommerceIntegrationService.createOrder('bigcommerce'),
+            createOrder: () => this.bigCommerceIntegrationService.createOrder('bigcommercecredit'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.bigCommerceIntegrationService.tokenizePayment(methodId, orderID),
             ...(onClick && { onClick: () => onClick() }),
@@ -145,21 +140,31 @@ export default class BigCommerceCustomerStrategy implements CustomerStrategy {
                 this.onHostedCheckoutApprove(data, actions, methodId, onComplete),
         };
 
-        const buttonRenderOptions: BigCommerceButtonsOptions = {
-            fundingSource: bigcommerceSdk.FUNDING.BIGCOMMERCE,
-            style: this.bigCommerceIntegrationService.getValidButtonStyle({
-                ...checkoutTopButtonStyles,
-                height: DefaultCheckoutButtonHeight,
-            }),
-            ...defaultCallbacks,
-            ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),
-        };
+        const fundingSources = [bigcommerceSdk.FUNDING.PAYLATER, bigcommerceSdk.FUNDING.CREDIT];
+        let hasRenderedSmartButton = false;
 
-        const bigcommerceButton = bigcommerceSdk.Buttons(buttonRenderOptions);
+        fundingSources.forEach((fundingSource) => {
+            if (!hasRenderedSmartButton) {
+                const buttonRenderOptions: BigCommerceButtonsOptions = {
+                    fundingSource,
+                    style: this.bigCommerceIntegrationService.getValidButtonStyle({
+                        ...checkoutTopButtonStyles,
+                        height: DefaultCheckoutButtonHeight,
+                    }),
+                    ...defaultCallbacks,
+                    ...(isHostedCheckoutEnabled && hostedCheckoutCallbacks),
+                };
 
-        if (bigcommerceButton.isEligible()) {
-            bigcommerceButton.render(`#${container}`);
-        } else {
+                const bigcommerceButton = bigcommerceSdk.Buttons(buttonRenderOptions);
+
+                if (bigcommerceButton.isEligible()) {
+                    bigcommerceButton.render(`#${container}`);
+                    hasRenderedSmartButton = true;
+                }
+            }
+        });
+
+        if (!hasRenderedSmartButton) {
             this.bigCommerceIntegrationService.removeElement(container);
         }
     }
