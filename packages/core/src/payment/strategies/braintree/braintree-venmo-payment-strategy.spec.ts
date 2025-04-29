@@ -7,6 +7,7 @@ import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-inte
 import { CheckoutStore, createCheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
+import { getConfig } from '../../../config/configs.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -37,6 +38,7 @@ describe('BraintreeVenmoPaymentStrategy', () => {
     let submitPaymentAction: Observable<Action>;
     let tokenizeMock: BraintreeVenmoCheckout['tokenize'];
     let options: PaymentInitializeOptions;
+    const storeConfig = getConfig().storeConfig;
 
     beforeEach(() => {
         const braintreeTokenizePayload: BraintreeTokenizePayload = {
@@ -145,6 +147,24 @@ describe('BraintreeVenmoPaymentStrategy', () => {
             } catch (error) {
                 expect((error as Error).message).toBe('my_message');
             }
+        });
+
+        it('should intialize Venmo with an appropriate config', async () => {
+            jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue({
+                ...storeConfig,
+                checkoutSettings: {
+                    ...storeConfig.checkoutSettings,
+                    features: {
+                        'PAYPAL-5406.braintree_venmo_web_fallback_support': true,
+                    },
+                },
+            });
+
+            await braintreeVenmoPaymentStrategy.initialize(options);
+
+            expect(braintreePaymentProcessorMock.getVenmoCheckout).toHaveBeenCalledWith({
+                mobileWebFallBack: true,
+            });
         });
     });
 
