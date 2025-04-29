@@ -138,9 +138,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             await this.paymentIntegrationService.submitOrder(order, options);
         }
 
-        console.log('GATEWAY ID', gatewayId);
-
-        if (this.isPollingEnabled && gatewayId === 'ideal') {
+        if (this.isPollingEnabled && methodId === 'ideal') {
             return new Promise((resolve, reject) => {
                 void this.initializePollingMechanism(
                     methodId,
@@ -164,6 +162,10 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
 
     deinitialize(): Promise<void> {
         this.orderId = undefined;
+
+        if (this.isPollingEnabled) {
+            this.resetPollingMechanism();
+        }
 
         this.paypalButton?.close();
 
