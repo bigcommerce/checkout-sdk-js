@@ -301,6 +301,8 @@ export interface StripeElements {
      * https://stripe.com/docs/js/elements_object/fetch_updates
      */
     fetchUpdates(): Promise<void>;
+
+    submit(): Promise<any>;
 }
 
 /**
@@ -364,6 +366,7 @@ export interface StripeElementsOptions {
     amount?: number;
     currency?: string;
     paymentMethodTypes?: string[];
+    customPaymentMethods?: any[];
 }
 
 export interface StripeUpdateElementsOptions {

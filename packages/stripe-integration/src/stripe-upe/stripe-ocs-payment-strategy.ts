@@ -103,6 +103,14 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         await this.stripeUPEIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
 
+        try {
+            await this._stripeSubmit();
+
+            return;
+        } catch (error) {
+            console.log('*** stripe submit error', error);
+        }
+
         await this.paymentIntegrationService.submitOrder(order, options);
 
         const { clientToken } = state.getPaymentMethodOrThrow(methodId);
@@ -168,6 +176,22 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
                     cssSrc: 'https://fonts.googleapis.com/css?family=Montserrat:700,500,400%7CKarla:400&display=swap', // TODO: get style from theme
                 },
             ],
+            customPaymentMethods: [
+                {
+                    id: 'cpmt_1RJ8GaFYHgt19eoy1zvsNQus',
+                    options: {
+                        type: 'static',
+                        subtitle: '<i>Optional subtitle</i>',
+                    },
+                },
+                {
+                    id: 'cpmt_1RJ9e8FYHgt19eoyogUXH2w1',
+                    options: {
+                        type: 'static',
+                        subtitle: 'one more description',
+                    },
+                },
+            ],
         });
 
         const { getBillingAddress, getShippingAddress } = state;
@@ -199,6 +223,10 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
                     spacedAccordionItems: false,
                     visibleAccordionItemsCount: 0,
                 },
+                paymentMethodOrder: [
+                    'cpmt_1RJ8GaFYHgt19eoy1zvsNQus',
+                    'cpmt_1RJ9e8FYHgt19eoyogUXH2w1',
+                ],
             });
 
         this.stripeUPEIntegrationService.mountElement(stripeElement, containerId);
@@ -420,5 +448,11 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         this.selectedMethodId = event.value.type;
         paymentMethodSelect?.(`${gatewayId}-${methodId}`);
+    }
+
+    private async _stripeSubmit(): Promise<void> {
+        const res = await this.stripeElements?.submit();
+
+        console.log('*** res', res);
     }
 }
