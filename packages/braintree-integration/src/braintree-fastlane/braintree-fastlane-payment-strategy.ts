@@ -128,9 +128,10 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
+        await this.paymentIntegrationService.submitOrder(order, options);
+
         const paymentPayload = await this.preparePaymentPayload(payment.methodId);
 
-        await this.paymentIntegrationService.submitOrder(order, options);
         await this.paymentIntegrationService.submitPayment(paymentPayload);
 
         this.browserStorage.removeItem('sessionId');
@@ -255,13 +256,12 @@ export default class BraintreeFastlanePaymentStrategy implements PaymentStrategy
     private async get3DS(nonce: string, bin: string): Promise<string> {
         const state = this.paymentIntegrationService.getState();
         const threeDSecure = await this.braintreeSdk.getBraintreeThreeDS();
-        const amount = state.getCartOrThrow().cartAmount;
-        const roundedAmount = amount.toFixed(2);
+        const order = state.getOrderOrThrow();
 
         return new Promise<string>((resolve, reject) => {
             void threeDSecure.verifyCard(
                 {
-                    amount: roundedAmount,
+                    amount: order?.orderAmount,
                     nonce,
                     bin,
                     onLookupComplete: (_data, next) => {

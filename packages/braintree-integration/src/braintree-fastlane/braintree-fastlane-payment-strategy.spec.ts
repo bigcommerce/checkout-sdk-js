@@ -26,6 +26,7 @@ import {
 import {
     getBillingAddress,
     getCart,
+    getOrder,
     getConfig,
     getCustomer,
     getGuestCustomer,
@@ -55,6 +56,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
     const instrumentId = 'asd123';
 
     const cart = getCart();
+    const order = getOrder();
     const customer = getGuestCustomer();
     const billingAddress = getBillingAddress();
     const shippingAddress = getShippingAddress();
@@ -202,6 +204,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
         jest.spyOn(paymentIntegrationService, 'submitOrder');
         jest.spyOn(paymentIntegrationService, 'submitPayment');
         jest.spyOn(paymentIntegrationService.getState(), 'getCartOrThrow').mockReturnValue(cart);
+        jest.spyOn(paymentIntegrationService.getState(), 'getOrderOrThrow').mockReturnValue(order);
         jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
             customer,
         );
@@ -874,7 +877,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
 
             expect(threeDSecure.verifyCard).toHaveBeenCalledWith(
                 {
-                    amount: '190.00',
+                    amount: 250,
                     bin: 'guest_bin',
                     nonce: 'guest_nonce',
                     onLookupComplete: expect.any(Function),
@@ -917,7 +920,7 @@ describe('BraintreeFastlanePaymentStrategy', () => {
 
             expect(threeDSecure.verifyCard).toHaveBeenCalledWith(
                 {
-                    amount: '190.00',
+                    amount: 250,
                     bin: '411111',
                     nonce: instrumentId,
                     onLookupComplete: expect.any(Function),
