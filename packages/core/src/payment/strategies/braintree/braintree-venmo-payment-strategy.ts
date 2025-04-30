@@ -1,4 +1,5 @@
 import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
@@ -93,9 +94,22 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
+        const features = this._store.getState().config.getStoreConfigOrThrow()
+            .checkoutSettings.features;
+        const isBraintreeVenmoWebFallbackSupport = isExperimentEnabled(
+            features,
+            'PAYPAL-5406.braintree_venmo_web_fallback_support',
+        );
+
         try {
             this._braintreePaymentProcessor.initialize(clientToken);
-            this._braintreeVenmoCheckout = await this._braintreePaymentProcessor.getVenmoCheckout();
+            this._braintreeVenmoCheckout = await this._braintreePaymentProcessor.getVenmoCheckout(
+                isBraintreeVenmoWebFallbackSupport
+                    ? {
+                          mobileWebFallBack: isBraintreeVenmoWebFallbackSupport,
+                      }
+                    : undefined,
+            );
         } catch (error) {
             this._handleError(error);
         }

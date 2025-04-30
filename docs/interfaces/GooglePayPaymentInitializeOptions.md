@@ -44,6 +44,7 @@ service.initializePayment({
 
 ### Properties
 
+- [loadingContainerId](GooglePayPaymentInitializeOptions.md#loadingcontainerid)
 - [walletButton](GooglePayPaymentInitializeOptions.md#walletbutton)
 
 ### Methods
@@ -52,6 +53,14 @@ service.initializePayment({
 - [onPaymentSelect](GooglePayPaymentInitializeOptions.md#onpaymentselect)
 
 ## Properties
+
+### loadingContainerId
+
+• `Optional` **loadingContainerId**: `string`
+
+A container for loading spinner.
+
+___
 
 ### walletButton
 

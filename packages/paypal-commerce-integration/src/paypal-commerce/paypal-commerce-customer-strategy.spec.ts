@@ -8,7 +8,6 @@ import {
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    getConfig,
     getConsignment,
     getShippingOption,
     PaymentIntegrationServiceMock,
@@ -44,7 +43,6 @@ describe('PayPalCommerceCustomerStrategy', () => {
     const methodId = 'paypalcommerce';
     const defaultContainerId = 'paypal-commerce-container-mock-id';
     const approveDataOrderId = 'ORDER_ID';
-    const storeConfig = getConfig().storeConfig;
 
     const paypalCommerceOptions: PayPalCommerceCustomerInitializeOptions = {
         container: defaultContainerId,
@@ -100,15 +98,6 @@ describe('PayPalCommerceCustomerStrategy', () => {
         jest.spyOn(paypalCommerceIntegrationService, 'getShippingOptionOrThrow').mockReturnValue(
             getShippingOption(),
         );
-        jest.spyOn(paymentIntegrationService.getState(), 'getStoreConfig').mockReturnValue({
-            ...storeConfig,
-            checkoutSettings: {
-                ...storeConfig.checkoutSettings,
-                features: {
-                    'PAYPAL-4387.paypal_shipping_callbacks': true,
-                },
-            },
-        });
 
         jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
             (options: PayPalCommerceButtonsOptions) => {
