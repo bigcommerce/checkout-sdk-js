@@ -40,5 +40,5 @@ export default interface BigCommerceCreditPaymentInitializeOptions {
 
 export interface WithBigCommerceCreditPaymentInitializeOptions {
     bigcommerce?: BigCommerceCreditPaymentInitializeOptions; // FIXME: this option is deprecated
-    bigcommercecredit?: BigCommerceCreditPaymentInitializeOptions;
+    bigcommerce_payments_paylater?: BigCommerceCreditPaymentInitializeOptions;
 }

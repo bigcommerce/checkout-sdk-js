@@ -28,5 +28,5 @@ export default interface BigCommerceVenmoButtonInitializeOptions {
 }
 
 export interface WithBigCommerceVenmoButtonInitializeOptions {
-    bigcommercevenmo?: BigCommerceVenmoButtonInitializeOptions;
+    bigcommerce_payments_venmo?: BigCommerceVenmoButtonInitializeOptions;
 }

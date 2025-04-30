@@ -48,9 +48,9 @@ export default class BigCommerceCreditPaymentStrategy implements PaymentStrategy
     async initialize(
         options?: PaymentInitializeOptions & WithBigCommerceCreditPaymentInitializeOptions,
     ): Promise<void> {
-        const { methodId, bigcommerce, bigcommercecredit } = options || {};
+        const { methodId, bigcommerce, bigcommerce_payments_paylater } = options || {};
 
-        const bigcommerceOptions = bigcommercecredit || bigcommerce;
+        const bigcommerceOptions = bigcommerce_payments_paylater || bigcommerce;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -68,7 +68,7 @@ export default class BigCommerceCreditPaymentStrategy implements PaymentStrategy
 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
-            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId); //TODO: double check if this is correct type
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId); // TODO: double check if this is correct type
         // TODO: update paypalBNPLConfiguration with empty array as default value when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
         const { paypalBNPLConfiguration, orderId } = paymentMethod.initializationData || {};
         const { bannerContainerId = '', container } = bigcommerceOptions;

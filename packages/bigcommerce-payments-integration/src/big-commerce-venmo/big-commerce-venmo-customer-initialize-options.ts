@@ -19,5 +19,5 @@ export default interface BigCommerceVenmoCustomerInitializeOptions {
 }
 
 export interface WithBigCommerceVenmoCustomerInitializeOptions {
-    bigcommercevenmo?: BigCommerceVenmoCustomerInitializeOptions;
+    bigcommerce_payments_venmo?: BigCommerceVenmoCustomerInitializeOptions;
 }

@@ -27,9 +27,9 @@ export default class BigCommerceVenmoButtonStrategy implements CheckoutButtonStr
     async initialize(
         options: CheckoutButtonInitializeOptions & WithBigCommerceVenmoButtonInitializeOptions,
     ): Promise<void> {
-        const { bigcommercevenmo, containerId, methodId } = options;
+        const { bigcommerce_payments_venmo, containerId, methodId } = options;
         const { buyNowInitializeOptions, currencyCode: providedCurrencyCode } =
-            bigcommercevenmo || {};
+            bigcommerce_payments_venmo || {};
 
         const isBuyNowFlow = !!buyNowInitializeOptions;
 
@@ -45,15 +45,15 @@ export default class BigCommerceVenmoButtonStrategy implements CheckoutButtonStr
             );
         }
 
-        if (!bigcommercevenmo) {
+        if (!bigcommerce_payments_venmo) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommercevenmo" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_venmo" argument is not provided.`,
             );
         }
 
         if (isBuyNowFlow && !providedCurrencyCode) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommercevenmo.currencyCode" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_venmo.currencyCode" argument is not provided.`,
             );
         }
 
@@ -62,7 +62,7 @@ export default class BigCommerceVenmoButtonStrategy implements CheckoutButtonStr
             typeof buyNowInitializeOptions?.getBuyNowCartRequestBody !== 'function'
         ) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommercevenmo.buyNowInitializeOptions.getBuyNowCartRequestBody" argument is not provided or it is not a function.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_venmo.buyNowInitializeOptions.getBuyNowCartRequestBody" argument is not provided or it is not a function.`,
             );
         }
 
@@ -81,7 +81,7 @@ export default class BigCommerceVenmoButtonStrategy implements CheckoutButtonStr
 
         await this.bigCommerceIntegrationService.loadBigCommerceSdk(methodId, currencyCode, false);
 
-        this.renderButton(containerId, methodId, bigcommercevenmo);
+        this.renderButton(containerId, methodId, bigcommerce_payments_venmo);
     }
 
     deinitialize(): Promise<void> {
@@ -91,15 +91,16 @@ export default class BigCommerceVenmoButtonStrategy implements CheckoutButtonStr
     private renderButton(
         containerId: string,
         methodId: string,
-        bigcommercevenmo: BigCommerceVenmoButtonInitializeOptions,
+        bigcommerce_payments_venmo: BigCommerceVenmoButtonInitializeOptions,
     ): void {
-        const { buyNowInitializeOptions, style, onEligibilityFailure } = bigcommercevenmo;
+        const { buyNowInitializeOptions, style, onEligibilityFailure } = bigcommerce_payments_venmo;
 
         const paypalSdk = this.bigCommerceIntegrationService.getBigCommerceSdkOrThrow();
         const fundingSource = paypalSdk.FUNDING.VENMO;
 
         const defaultCallbacks = {
-            createOrder: () => this.bigCommerceIntegrationService.createOrder('bigcommercevenmo'),
+            createOrder: () =>
+                this.bigCommerceIntegrationService.createOrder('bigcommerce_payments_venmo'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.bigCommerceIntegrationService.tokenizePayment(methodId, orderID),
         };

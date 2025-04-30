@@ -29,7 +29,7 @@ export default class BigCommerceVenmoCustomerStrategy implements CustomerStrateg
     async initialize(
         options: CustomerInitializeOptions & WithBigCommerceVenmoCustomerInitializeOptions,
     ): Promise<void> {
-        const { bigcommercevenmo, methodId } = options;
+        const { bigcommerce_payments_venmo, methodId } = options;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -37,21 +37,24 @@ export default class BigCommerceVenmoCustomerStrategy implements CustomerStrateg
             );
         }
 
-        if (!bigcommercevenmo) {
+        if (!bigcommerce_payments_venmo) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommercevenmo" argument is not provided.',
+                'Unable to initialize payment because "options.bigcommerce_payments_venmo" argument is not provided.',
             );
         }
 
-        if (!bigcommercevenmo.container) {
+        if (!bigcommerce_payments_venmo.container) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommercevenmo.container" argument is not provided.',
+                'Unable to initialize payment because "options.bigcommerce_payments_venmo.container" argument is not provided.',
             );
         }
 
-        if (bigcommercevenmo.onClick && typeof bigcommercevenmo.onClick !== 'function') {
+        if (
+            bigcommerce_payments_venmo.onClick &&
+            typeof bigcommerce_payments_venmo.onClick !== 'function'
+        ) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommercevenmo.onClick" argument is not a function.',
+                'Unable to initialize payment because "options.bigcommerce_payments_venmo.onClick" argument is not a function.',
             );
         }
 
@@ -78,7 +81,7 @@ export default class BigCommerceVenmoCustomerStrategy implements CustomerStrateg
             return;
         }
 
-        this.renderButton(methodId, bigcommercevenmo);
+        this.renderButton(methodId, bigcommerce_payments_venmo);
     }
 
     deinitialize(): Promise<void> {
@@ -101,9 +104,9 @@ export default class BigCommerceVenmoCustomerStrategy implements CustomerStrateg
 
     private renderButton(
         methodId: string,
-        bigcommercevenmo: BigCommerceVenmoCustomerInitializeOptions,
+        bigcommerce_payments_venmo: BigCommerceVenmoCustomerInitializeOptions,
     ): void {
-        const { container, onClick } = bigcommercevenmo;
+        const { container, onClick } = bigcommerce_payments_venmo;
 
         const bigcommerceSdk = this.bigCommerceIntegrationService.getBigCommerceSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -118,7 +121,8 @@ export default class BigCommerceVenmoCustomerStrategy implements CustomerStrateg
                 ...checkoutTopButtonStyles,
                 height: DefaultCheckoutButtonHeight,
             }),
-            createOrder: () => this.bigCommerceIntegrationService.createOrder('bigcommercevenmo'),
+            createOrder: () =>
+                this.bigCommerceIntegrationService.createOrder('bigcommerce_payments_venmo'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.bigCommerceIntegrationService.tokenizePayment(methodId, orderID),
             ...(onClick && { onClick: () => onClick() }),

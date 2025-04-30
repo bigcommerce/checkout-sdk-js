@@ -18,5 +18,5 @@ const createBigCommerceVenmoPaymentStrategy: PaymentStrategyFactory<
     );
 
 export default toResolvableModule(createBigCommerceVenmoPaymentStrategy, [
-    { id: 'bigcommercevenmo' },
+    { id: 'bigcommerce_payments_venmo' },
 ]);

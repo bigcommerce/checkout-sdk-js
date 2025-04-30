@@ -9,19 +9,21 @@ import { LOADING_INDICATOR_STYLES } from '../big-commerce-constants';
 import createBigCommerceIntegrationService from '../create-big-commerce-integration-service';
 
 import BigCommerceAlternativeMethodsPaymentStrategy from './big-commerce-alternative-methods-payment-strategy';
+import createPayPalCommerceIntegrationService from 'packages/paypal-commerce-integration/src/create-paypal-commerce-integration-service'; // TODO: remove this import after implementing bigcommerce-utils
 
 const createBigCommerceAlternativeMethodsPaymentStrategy: PaymentStrategyFactory<
     BigCommerceAlternativeMethodsPaymentStrategy
 > = (paymentIntegrationService) =>
-    new BigCommerceAlternativeMethodsPaymentStrategy(
-        paymentIntegrationService,
-        createBigCommerceIntegrationService(paymentIntegrationService),
-        createPayPalCommerceSdk(),
-        new LoadingIndicator({
-            containerStyles: LOADING_INDICATOR_STYLES,
-        }),
-    );
+        new BigCommerceAlternativeMethodsPaymentStrategy(
+            paymentIntegrationService,
+            createBigCommerceIntegrationService(paymentIntegrationService),
+            createPayPalCommerceIntegrationService(paymentIntegrationService), // TODO: remove this import after implementing bigcommerce-utils
+            createPayPalCommerceSdk(),
+            new LoadingIndicator({
+                containerStyles: LOADING_INDICATOR_STYLES,
+            }),
+        );
 
 export default toResolvableModule(createBigCommerceAlternativeMethodsPaymentStrategy, [
-    { gateway: 'bigcommercealternativemethods' },
+    { gateway: 'bigcommerce_payments_apms' },
 ]);

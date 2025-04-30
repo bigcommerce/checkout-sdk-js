@@ -33,5 +33,5 @@ export default interface BigCommerceAlternativeMethodsButtonOptions {
 }
 
 export interface WithBigCommerceAlternativeMethodsButtonInitializeOptions {
-    bigcommercealternativemethods?: BigCommerceAlternativeMethodsButtonOptions;
+    bigcommerce_payments_apms?: BigCommerceAlternativeMethodsButtonOptions;
 }

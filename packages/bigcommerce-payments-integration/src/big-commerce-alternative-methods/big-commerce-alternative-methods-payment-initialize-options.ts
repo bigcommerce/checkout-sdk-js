@@ -55,5 +55,5 @@ export default interface BigCommerceAlternativeMethodsPaymentOptions {
 
 export interface WithBigCommerceAlternativeMethodsPaymentInitializeOptions {
     bigcommerce?: BigCommerceAlternativeMethodsPaymentOptions; // FIXME: this option is deprecated
-    bigcommercealternativemethods?: BigCommerceAlternativeMethodsPaymentOptions;
+    bigcommerce_payments_apms?: BigCommerceAlternativeMethodsPaymentOptions;
 }

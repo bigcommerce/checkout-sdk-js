@@ -16,5 +16,5 @@ const createBigCommerceVenmoButtonStrategy: CheckoutButtonStrategyFactory<
     );
 
 export default toResolvableModule(createBigCommerceVenmoButtonStrategy, [
-    { id: 'bigcommercevenmo' },
+    { id: 'bigcommerce_payments_venmo' },
 ]);

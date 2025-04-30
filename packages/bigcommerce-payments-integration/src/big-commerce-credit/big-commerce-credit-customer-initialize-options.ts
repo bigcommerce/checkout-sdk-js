@@ -24,5 +24,5 @@ export default interface BigCommerceCreditCustomerInitializeOptions {
 }
 
 export interface WithBigCommerceCreditCustomerInitializeOptions {
-    bigcommercecredit?: BigCommerceCreditCustomerInitializeOptions;
+    bigcommerce_payments_paylater?: BigCommerceCreditCustomerInitializeOptions;
 }

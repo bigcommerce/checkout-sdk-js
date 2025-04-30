@@ -39,9 +39,9 @@ export default class BigCommerceVenmoPaymentStrategy implements PaymentStrategy 
     async initialize(
         options?: PaymentInitializeOptions & WithBigCommerceVenmoPaymentInitializeOptions,
     ): Promise<void> {
-        const { methodId, bigcommerce, bigcommercevenmo } = options || {};
+        const { methodId, bigcommerce, bigcommerce_payments_venmo } = options || {};
 
-        const bigcommerceOptions = bigcommercevenmo || bigcommerce;
+        const bigcommerceOptions = bigcommerce_payments_venmo || bigcommerce;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -51,7 +51,7 @@ export default class BigCommerceVenmoPaymentStrategy implements PaymentStrategy 
 
         if (!bigcommerceOptions) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommercevenmo" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_venmo" argument is not provided.`,
             );
         }
 
@@ -112,7 +112,7 @@ export default class BigCommerceVenmoPaymentStrategy implements PaymentStrategy 
      * */
     private renderButton(
         methodId: string,
-        bigcommercevenmo: BigCommerceVenmoPaymentInitializeOptions,
+        bigcommerce_payments_venmo: BigCommerceVenmoPaymentInitializeOptions,
     ): void {
         const bigcommerceSdk = this.bigCommerceIntegrationService.getBigCommerceSdkOrThrow();
 
@@ -122,7 +122,8 @@ export default class BigCommerceVenmoPaymentStrategy implements PaymentStrategy 
         const { paymentButtonStyles } = paymentMethod.initializationData || {};
         const { checkoutPaymentButtonStyles } = paymentButtonStyles || {};
 
-        const { container, onError, onRenderButton, onValidate, submitForm } = bigcommercevenmo;
+        const { container, onError, onRenderButton, onValidate, submitForm } =
+            bigcommerce_payments_venmo;
 
         const buttonOptions: BigCommerceButtonsOptions = {
             fundingSource: bigcommerceSdk.FUNDING.VENMO,
@@ -130,7 +131,9 @@ export default class BigCommerceVenmoPaymentStrategy implements PaymentStrategy 
                 checkoutPaymentButtonStyles,
             ),
             createOrder: () =>
-                this.bigCommerceIntegrationService.createOrder('bigcommercevenmocheckout'),
+                this.bigCommerceIntegrationService.createOrder(
+                    'bigcommerce_payments_venmocheckout',
+                ),
             onClick: (_, actions) => this.handleClick(actions, onValidate),
             onApprove: (data) => this.handleApprove(data, submitForm),
             onCancel: () => this.toggleLoadingIndicator(false),

@@ -15,7 +15,7 @@ import {
 import { PayPalApmSdk, PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
 // TODO: remove this import after implementing bigcommerce-utils
-import PayPalCommerceIntegrationService from 'packages/paypal-commerce-integration/src/paypal-commerce-integration-service';
+import PayPalCommerceIntegrationService from '../../../paypal-commerce-integration/src/paypal-commerce-integration-service';
 // TODO: remove this import after implementing bigcommerce-utils
 import {
     PayPalCommerceButtonsOptions,
@@ -44,7 +44,7 @@ export default class BigCommerceAlternativeMethodsPaymentStrategy implements Pay
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private bigCommerceIntegrationService: BigCommerceIntegrationService,
-        private paypalCommerceIntegrationService: PayPalCommerceIntegrationService,
+        private paypalCommerceIntegrationService: PayPalCommerceIntegrationService, // TODO: remove this import after implementing bigcommerce-utils
         private paypalCommerceSdk: PayPalCommerceSdk,
         private loadingIndicator: LoadingIndicator,
     ) {}
@@ -57,9 +57,9 @@ export default class BigCommerceAlternativeMethodsPaymentStrategy implements Pay
             gatewayId,
             methodId,
             bigcommerce, // FIXME: this option is deprecated
-            bigcommercealternativemethods,
+            bigcommerce_payments_apms,
         } = options;
-        const bigcommerceOptions = bigcommercealternativemethods || bigcommerce;
+        const bigcommerceOptions = bigcommerce_payments_apms || bigcommerce;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -75,7 +75,7 @@ export default class BigCommerceAlternativeMethodsPaymentStrategy implements Pay
 
         if (!bigcommerceOptions) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommercealternativemethods" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_apms" argument is not provided.`,
             );
         }
 
@@ -264,7 +264,7 @@ export default class BigCommerceAlternativeMethodsPaymentStrategy implements Pay
 
         if (!apmFieldsContainer) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommercealternativemethods" argument should contain "apmFieldsContainer".',
+                'Unable to initialize payment because "options.bigcommerce_payments_apms" argument should contain "apmFieldsContainer".',
             );
         }
 

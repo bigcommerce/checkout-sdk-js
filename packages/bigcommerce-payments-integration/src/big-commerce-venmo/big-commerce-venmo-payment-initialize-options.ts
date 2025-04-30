@@ -35,5 +35,5 @@ export default interface BigCommerceVenmoPaymentInitializeOptions {
 
 export interface WithBigCommerceVenmoPaymentInitializeOptions {
     bigcommerce?: BigCommerceVenmoPaymentInitializeOptions; // FIXME: this option is deprecated
-    bigcommercevenmo?: BigCommerceVenmoPaymentInitializeOptions;
+    bigcommerce_payments_venmo?: BigCommerceVenmoPaymentInitializeOptions;
 }

@@ -38,5 +38,5 @@ export default interface BigCommerceCreditButtonInitializeOptions {
 }
 
 export interface WithBigCommerceCreditButtonInitializeOptions {
-    bigcommercecredit?: BigCommerceCreditButtonInitializeOptions;
+    bigcommerce_payments_paylater?: BigCommerceCreditButtonInitializeOptions;
 }

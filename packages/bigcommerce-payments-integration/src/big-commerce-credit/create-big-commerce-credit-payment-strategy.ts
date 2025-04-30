@@ -23,5 +23,5 @@ const createBigCommerceCreditPaymentStrategy: PaymentStrategyFactory<
     );
 
 export default toResolvableModule(createBigCommerceCreditPaymentStrategy, [
-    { id: 'paypalcommercecredit' },
+    { id: 'bigcommerce_payments_paylater' },
 ]);

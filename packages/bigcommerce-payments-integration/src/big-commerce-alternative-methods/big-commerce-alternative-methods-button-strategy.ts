@@ -26,12 +26,12 @@ export default class BigCommerceAlternativeMethodsButtonStrategy implements Chec
         options: CheckoutButtonInitializeOptions &
             WithBigCommerceAlternativeMethodsButtonInitializeOptions,
     ): Promise<void> {
-        const { bigcommercealternativemethods, containerId, methodId } = options;
+        const { bigcommerce_payments_apms, containerId, methodId } = options;
         const {
             apm,
             buyNowInitializeOptions,
             currencyCode: providedCurrencyCode,
-        } = bigcommercealternativemethods || {};
+        } = bigcommerce_payments_apms || {};
 
         const isBuyNowFlow = !!buyNowInitializeOptions;
 
@@ -47,21 +47,21 @@ export default class BigCommerceAlternativeMethodsButtonStrategy implements Chec
             );
         }
 
-        if (!bigcommercealternativemethods) {
+        if (!bigcommerce_payments_apms) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommercealternativemethods" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_apms" argument is not provided.`,
             );
         }
 
         if (!apm) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommercealternativemethods.apm" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_apms.apm" argument is not provided.`,
             );
         }
 
         if (isBuyNowFlow && !providedCurrencyCode) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommercealternativemethods.currencyCode" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_apms.currencyCode" argument is not provided.`,
             );
         }
 
@@ -70,7 +70,7 @@ export default class BigCommerceAlternativeMethodsButtonStrategy implements Chec
             typeof buyNowInitializeOptions?.getBuyNowCartRequestBody !== 'function'
         ) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommercealternativemethods.buyNowInitializeOptions.getBuyNowCartRequestBody" argument is not provided or it is not a function.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_apms.buyNowInitializeOptions.getBuyNowCartRequestBody" argument is not provided or it is not a function.`,
             );
         }
 
@@ -89,7 +89,7 @@ export default class BigCommerceAlternativeMethodsButtonStrategy implements Chec
 
         await this.bigCommerceIntegrationService.loadBigCommerceSdk(methodId, currencyCode, false);
 
-        this.renderButton(containerId, methodId, bigcommercealternativemethods);
+        this.renderButton(containerId, methodId, bigcommerce_payments_apms);
     }
 
     deinitialize(): Promise<void> {
@@ -99,17 +99,17 @@ export default class BigCommerceAlternativeMethodsButtonStrategy implements Chec
     private renderButton(
         containerId: string,
         methodId: string,
-        bigcommercealternativemethods: BigCommerceAlternativeMethodsButtonOptions,
+        bigcommerce_payments_apms: BigCommerceAlternativeMethodsButtonOptions,
     ): void {
         const { apm, buyNowInitializeOptions, style, onEligibilityFailure } =
-            bigcommercealternativemethods;
+            bigcommerce_payments_apms;
 
         const bigcommerceSdk = this.bigCommerceIntegrationService.getBigCommerceSdkOrThrow();
         const isAvailableFundingSource = Object.values(bigcommerceSdk.FUNDING).includes(apm);
 
         if (!isAvailableFundingSource) {
             throw new InvalidArgumentError(
-                `Unable to initialize BigCommerce button because "options.bigcommercealternativemethods.apm" argument is not valid funding source.`,
+                `Unable to initialize BigCommerce button because "options.bigcommerce_payments_apms.apm" argument is not valid funding source.`,
             );
         }
 

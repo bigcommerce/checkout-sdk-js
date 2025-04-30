@@ -39,12 +39,12 @@ export default class BigCommerceCreditButtonStrategy implements CheckoutButtonSt
     async initialize(
         options: CheckoutButtonInitializeOptions & WithBigCommerceCreditButtonInitializeOptions,
     ): Promise<void> {
-        const { bigcommercecredit, containerId, methodId } = options;
+        const { bigcommerce_payments_paylater, containerId, methodId } = options;
         const {
             buyNowInitializeOptions,
             currencyCode: providedCurrencyCode,
             messagingContainerId,
-        } = bigcommercecredit || {};
+        } = bigcommerce_payments_paylater || {};
 
         const isBuyNowFlow = !!buyNowInitializeOptions;
 
@@ -60,15 +60,15 @@ export default class BigCommerceCreditButtonStrategy implements CheckoutButtonSt
             );
         }
 
-        if (!bigcommercecredit) {
+        if (!bigcommerce_payments_paylater) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommercecredit" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_paylater" argument is not provided.`,
             );
         }
 
         if (isBuyNowFlow && !providedCurrencyCode) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommercecredit.currencyCode" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_paylater.currencyCode" argument is not provided.`,
             );
         }
 
@@ -77,7 +77,7 @@ export default class BigCommerceCreditButtonStrategy implements CheckoutButtonSt
             typeof buyNowInitializeOptions?.getBuyNowCartRequestBody !== 'function'
         ) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommercecredit.buyNowInitializeOptions.getBuyNowCartRequestBody" argument is not provided or it is not a function.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_paylater.buyNowInitializeOptions.getBuyNowCartRequestBody" argument is not provided or it is not a function.`,
             );
         }
 
@@ -98,7 +98,7 @@ export default class BigCommerceCreditButtonStrategy implements CheckoutButtonSt
 
         await this.bigCommerceIntegrationService.loadBigCommerceSdk(methodId, currencyCode, false);
 
-        this.renderButton(containerId, methodId, bigcommercecredit);
+        this.renderButton(containerId, methodId, bigcommerce_payments_paylater);
 
         const messagingContainer =
             messagingContainerId && document.getElementById(messagingContainerId);
@@ -141,10 +141,10 @@ export default class BigCommerceCreditButtonStrategy implements CheckoutButtonSt
     private renderButton(
         containerId: string,
         methodId: string,
-        bigcommercecredit: BigCommerceCreditButtonInitializeOptions,
+        bigcommerce_payments_paylater: BigCommerceCreditButtonInitializeOptions,
     ): void {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } =
-            bigcommercecredit;
+            bigcommerce_payments_paylater;
 
         const bigcommerceSdk = this.bigCommerceIntegrationService.getBigCommerceSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -153,7 +153,8 @@ export default class BigCommerceCreditButtonStrategy implements CheckoutButtonSt
         const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
-            createOrder: () => this.bigCommerceIntegrationService.createOrder('bigcommercecredit'),
+            createOrder: () =>
+                this.bigCommerceIntegrationService.createOrder('bigcommerce_payments_paylater'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.bigCommerceIntegrationService.tokenizePayment(methodId, orderID),
         };

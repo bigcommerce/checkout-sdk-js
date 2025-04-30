@@ -38,7 +38,7 @@ export default class BigCommerceCreditCustomerStrategy implements CustomerStrate
     async initialize(
         options: CustomerInitializeOptions & WithBigCommerceCreditCustomerInitializeOptions,
     ): Promise<void> {
-        const { bigcommercecredit, methodId } = options;
+        const { bigcommerce_payments_paylater, methodId } = options;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -46,25 +46,28 @@ export default class BigCommerceCreditCustomerStrategy implements CustomerStrate
             );
         }
 
-        if (!bigcommercecredit) {
+        if (!bigcommerce_payments_paylater) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommercecredit" argument is not provided.',
+                'Unable to initialize payment because "options.bigcommerce_payments_paylater" argument is not provided.',
             );
         }
 
-        if (!bigcommercecredit.container) {
+        if (!bigcommerce_payments_paylater.container) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommercecredit.container" argument is not provided.',
+                'Unable to initialize payment because "options.bigcommerce_payments_paylater.container" argument is not provided.',
             );
         }
 
-        if (bigcommercecredit.onClick && typeof bigcommercecredit.onClick !== 'function') {
+        if (
+            bigcommerce_payments_paylater.onClick &&
+            typeof bigcommerce_payments_paylater.onClick !== 'function'
+        ) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommercecredit.onClick" argument is not a function.',
+                'Unable to initialize payment because "options.bigcommerce_payments_paylater.onClick" argument is not a function.',
             );
         }
 
-        this.onError = bigcommercecredit.onError || noop;
+        this.onError = bigcommerce_payments_paylater.onError || noop;
 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethod(methodId);
@@ -89,7 +92,7 @@ export default class BigCommerceCreditCustomerStrategy implements CustomerStrate
             return;
         }
 
-        this.renderButton(methodId, bigcommercecredit);
+        this.renderButton(methodId, bigcommerce_payments_paylater);
     }
 
     deinitialize(): Promise<void> {
@@ -125,7 +128,8 @@ export default class BigCommerceCreditCustomerStrategy implements CustomerStrate
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         const defaultCallbacks = {
-            createOrder: () => this.bigCommerceIntegrationService.createOrder('bigcommercecredit'),
+            createOrder: () =>
+                this.bigCommerceIntegrationService.createOrder('bigcommerce_payments_paylater'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.bigCommerceIntegrationService.tokenizePayment(methodId, orderID),
             ...(onClick && { onClick: () => onClick() }),

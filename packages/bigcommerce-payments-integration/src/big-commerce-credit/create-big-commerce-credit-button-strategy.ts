@@ -14,9 +14,9 @@ const createBigCommerceCreditButtonStrategy: CheckoutButtonStrategyFactory<
     new BigCommerceCreditButtonStrategy(
         paymentIntegrationService,
         createBigCommerceIntegrationService(paymentIntegrationService),
-        createPayPalCommerceSdk(), //TODO: Doublecheck should we leave it or change to bigCommerceSdk?
+        createPayPalCommerceSdk(), // TODO: Doublecheck should we leave it or change to bigCommerceSdk?
     );
 
 export default toResolvableModule(createBigCommerceCreditButtonStrategy, [
-    { id: 'bigcommercecredit' },
+    { id: 'bigcommerce_payments_paylater' },
 ]);
