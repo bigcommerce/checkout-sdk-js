@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.731.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.731.0...v1.731.1) (2025-04-30)
+
+
+### Bug Fixes
+
+* **payment:** fixed bt fl 3ds amount ([#2851](https://github.com/bigcommerce/checkout-sdk-js/issues/2851)) ([3c0b622](https://github.com/bigcommerce/checkout-sdk-js/commit/3c0b622b355ecf835db368f0e5e9f4fd22b4d79c))
+
 ## [1.731.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.730.0...v1.731.0) (2025-04-29)
 
 
