@@ -81,6 +81,7 @@
 /packages/braintree-integration @bigcommerce/team-paypal
 /packages/braintree-utils @bigcommerce/team-paypal
 /packages/bigcommerce-payments-utils @bigcommerce/team-paypal
+/packages/bigcommerce-payments-integration @bigcommerce/team-paypal
 /packages/paypal-express-integration @bigcommerce/team-paypal
 /packages/paypal-commerce-integration @bigcommerce/team-paypal
 /packages/paypal-commerce-utils @bigcommerce/team-paypal

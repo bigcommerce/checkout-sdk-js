@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.731.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.731.0...v1.731.1) (2025-04-30)
+
+
+### Bug Fixes
+
+* **payment:** fixed bt fl 3ds amount ([#2851](https://github.com/bigcommerce/checkout-sdk-js/issues/2851)) ([3c0b622](https://github.com/bigcommerce/checkout-sdk-js/commit/3c0b622b355ecf835db368f0e5e9f4fd22b4d79c))
+
+## [1.731.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.730.0...v1.731.0) (2025-04-29)
+
+
+### Features
+
+* **payment:** updated braintree venmo config ([73e1e59](https://github.com/bigcommerce/checkout-sdk-js/commit/73e1e59f709cde5e252280f57590c57ca2a4e458))
+* **payment:** updates after review ([3d0ff3b](https://github.com/bigcommerce/checkout-sdk-js/commit/3d0ff3b24e3cf46bf2dbea1d7bd7cfa3293c7ed2))
+
+## [1.730.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.729.1...v1.730.0) (2025-04-28)
+
+
+### Features
+
+* **payment:** upload Stripe client with custom options ([04e497e](https://github.com/bigcommerce/checkout-sdk-js/commit/04e497e569e17105448a949f657274d6e0f078b0))
+
+### [1.729.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.729.0...v1.729.1) (2025-04-23)
+
+
+### Code Refactoring
+
+* **payment:** cleaned up paypal commerce tests from unused fastlane shipping callback experiment ([#2845](https://github.com/bigcommerce/checkout-sdk-js/issues/2845)) ([24a49a5](https://github.com/bigcommerce/checkout-sdk-js/commit/24a49a540a1d65722e97d66e2d070f09ecbce09b))
+
+## [1.729.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.728.1...v1.729.0) (2025-04-23)
+
+
+### Features
+
+* **payment:** Added loadingIndicator to the google-pay-payment-strategy ([27ca8fd](https://github.com/bigcommerce/checkout-sdk-js/commit/27ca8fdb2e0664127178c81590ec8ed17863e92d))
+
+### [1.728.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.728.0...v1.728.1) (2025-04-22)
+
+
+### Bug Fixes
+
+* **payment:** take fresh data from state on the amazonpay customer strategy initialization ([#2838](https://github.com/bigcommerce/checkout-sdk-js/issues/2838)) ([c3b74b3](https://github.com/bigcommerce/checkout-sdk-js/commit/c3b74b30234d39d1f66295785c8ad2a9fd0959a5))
+
 ## [1.728.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.727.1...v1.728.0) (2025-04-18)
 
 

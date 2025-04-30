@@ -293,6 +293,24 @@ describe('Braintree SDK Creator', () => {
             expect(braintreeVenmoCheckout).toBe(braintreeVenmoCheckoutMock);
         });
 
+        it('create a venmo by passing an additional configuration to it', async () => {
+            const onSuccessCallback = jest.fn();
+            const onErrorCallback = jest.fn();
+            const braintreeVenmoCheckout = await braintreeSDKCreator.getVenmoCheckout(
+                onSuccessCallback,
+                onErrorCallback,
+                {
+                    mobileWebFallBack: false,
+                },
+            );
+
+            expect(braintreeVenmoCheckoutCreatorMock.create).toHaveBeenCalledWith(
+                expect.objectContaining({ mobileWebFallBack: false }),
+                expect.any(Function),
+            );
+            expect(braintreeVenmoCheckout).toBe(braintreeVenmoCheckoutMock);
+        });
+
         it('always returns the same instance of the BraintreeVenmoCheckout client', async () => {
             const onSuccessCallback = jest.fn();
             const onErrorCallback = jest.fn();
