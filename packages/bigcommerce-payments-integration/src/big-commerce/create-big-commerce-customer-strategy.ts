@@ -15,4 +15,6 @@ const createBigCommerceCustomerStrategy: CustomerStrategyFactory<BigCommerceCust
         createBigCommerceIntegrationService(paymentIntegrationService),
     );
 
-export default toResolvableModule(createBigCommerceCustomerStrategy, [{ id: 'bigcommerce' }]);
+export default toResolvableModule(createBigCommerceCustomerStrategy, [
+    { id: 'bigcommerce_payments_paypal' },
+]);

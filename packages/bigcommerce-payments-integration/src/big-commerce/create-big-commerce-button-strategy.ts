@@ -15,4 +15,6 @@ const createBigCommerceButtonStrategy: CheckoutButtonStrategyFactory<BigCommerce
         createBigCommerceIntegrationService(paymentIntegrationService),
     );
 
-export default toResolvableModule(createBigCommerceButtonStrategy, [{ id: 'bigcommerce' }]);
+export default toResolvableModule(createBigCommerceButtonStrategy, [
+    { id: 'bigcommerce_payments_paypal' },
+]);

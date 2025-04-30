@@ -36,7 +36,7 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?: string;
     private orderId?: string;
     private bigcommerceButton?: BigCommerceButtons;
-    private bigcommerce?: BigCommercePaymentInitializeOptions;
+    private bigcommerce_payments_paypal?: BigCommercePaymentInitializeOptions;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -47,9 +47,9 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
     async initialize(
         options?: PaymentInitializeOptions & WithBigCommercePaymentInitializeOptions,
     ): Promise<void> {
-        const { methodId, bigcommerce } = options || {};
+        const { methodId, bigcommerce_payments_paypal } = options || {};
 
-        this.bigcommerce = bigcommerce;
+        this.bigcommerce_payments_paypal = bigcommerce_payments_paypal;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -57,9 +57,9 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
             );
         }
 
-        if (!bigcommerce) {
+        if (!bigcommerce_payments_paypal) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommerce" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_paypal" argument is not provided.`,
             );
         }
 
@@ -69,7 +69,7 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
         const paymentMethod =
             state.getPaymentMethodOrThrow<BigCommerceInitializationData>(methodId);
 
-        this.loadingIndicatorContainer = bigcommerce.container.split('#')[1];
+        this.loadingIndicatorContainer = bigcommerce_payments_paypal.container.split('#')[1];
 
         // Info:
         // The BigCommerce button and fields should not be rendered when shopper was redirected to Checkout page
@@ -83,21 +83,27 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
 
         await this.bigCommerceIntegrationService.loadBigCommerceSdk(methodId);
 
-        if (bigcommerce.onInit && typeof bigcommerce.onInit === 'function') {
-            bigcommerce.onInit(() => this.renderButton(methodId, bigcommerce));
+        if (
+            bigcommerce_payments_paypal.onInit &&
+            typeof bigcommerce_payments_paypal.onInit === 'function'
+        ) {
+            bigcommerce_payments_paypal.onInit(() =>
+                this.renderButton(methodId, bigcommerce_payments_paypal),
+            );
         }
 
         if (
-            bigcommerce.shouldRenderBigCommerceButtonOnInitialization === undefined ||
-            bigcommerce.shouldRenderBigCommerceButtonOnInitialization
+            bigcommerce_payments_paypal.shouldRenderBigCommerceButtonOnInitialization ===
+                undefined ||
+            bigcommerce_payments_paypal.shouldRenderBigCommerceButtonOnInitialization
         ) {
-            this.renderButton(methodId, bigcommerce);
+            this.renderButton(methodId, bigcommerce_payments_paypal);
         }
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
         const { payment, ...order } = payload;
-        const { onError } = this.bigcommerce || {};
+        const { onError } = this.bigcommerce_payments_paypal || {};
         const state = this.paymentIntegrationService.getState();
         const features = state.getStoreConfigOrThrow().checkoutSettings.features;
         const shouldHandleInstrumentDeclinedError =
@@ -129,9 +135,9 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
                 await this.bigCommerceIntegrationService.loadBigCommerceSdk(payment.methodId);
 
                 await new Promise((_resolve, reject) => {
-                    if (this.bigcommerce) {
+                    if (this.bigcommerce_payments_paypal) {
                         this.bigcommerceButton?.close();
-                        this.renderButton(payment.methodId, this.bigcommerce);
+                        this.renderButton(payment.methodId, this.bigcommerce_payments_paypal);
                         this.handleError(new Error('INSTRUMENT_DECLINED'), onError);
                     }
 
@@ -225,7 +231,10 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
      * Button methods/callbacks
      *
      * */
-    private renderButton(methodId: string, bigcommerce: BigCommercePaymentInitializeOptions): void {
+    private renderButton(
+        methodId: string,
+        bigcommerce_payments_paypal: BigCommercePaymentInitializeOptions,
+    ): void {
         const bigCommerceSdk = this.bigCommerceIntegrationService.getBigCommerceSdkOrThrow();
 
         const state = this.paymentIntegrationService.getState();
@@ -233,7 +242,8 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
             state.getPaymentMethodOrThrow<BigCommerceInitializationData>(methodId);
         const { paymentButtonStyles } = paymentMethod.initializationData || {};
         const { checkoutPaymentButtonStyles } = paymentButtonStyles || {};
-        const { container, onError, onRenderButton, onValidate, submitForm } = bigcommerce;
+        const { container, onError, onRenderButton, onValidate, submitForm } =
+            bigcommerce_payments_paypal;
 
         const buttonOptions: BigCommerceButtonsOptions = {
             fundingSource: bigCommerceSdk.FUNDING.BIGCOMMERCE,
@@ -310,7 +320,7 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
      *
      * */
     private getFieldsValues(): HostedInstrument | undefined {
-        const { getFieldsValues } = this.bigcommerce || {};
+        const { getFieldsValues } = this.bigcommerce_payments_paypal || {};
 
         return typeof getFieldsValues === 'function' ? getFieldsValues() : undefined;
     }

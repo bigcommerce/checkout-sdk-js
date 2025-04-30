@@ -20,4 +20,6 @@ const createBigCommercePaymentStrategy: PaymentStrategyFactory<BigCommercePaymen
         }),
     );
 
-export default toResolvableModule(createBigCommercePaymentStrategy, [{ id: 'bigcommerce' }]);
+export default toResolvableModule(createBigCommercePaymentStrategy, [
+    { id: 'bigcommerce_payments_paypal' },
+]);

@@ -31,9 +31,9 @@ export default class BigCommerceButtonStrategy implements CheckoutButtonStrategy
     async initialize(
         options: CheckoutButtonInitializeOptions & WithBigCommerceButtonInitializeOptions,
     ): Promise<void> {
-        const { bigcommerce, containerId, methodId } = options;
+        const { bigcommerce_payments_paypal, containerId, methodId } = options;
 
-        const isBuyNowFlow = Boolean(bigcommerce?.buyNowInitializeOptions);
+        const isBuyNowFlow = Boolean(bigcommerce_payments_paypal?.buyNowInitializeOptions);
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -47,24 +47,25 @@ export default class BigCommerceButtonStrategy implements CheckoutButtonStrategy
             );
         }
 
-        if (!bigcommerce) {
+        if (!bigcommerce_payments_paypal) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommerce" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_paypal" argument is not provided.`,
             );
         }
 
-        if (isBuyNowFlow && !bigcommerce.currencyCode) {
+        if (isBuyNowFlow && !bigcommerce_payments_paypal.currencyCode) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommerce.currencyCode" argument is not provided.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_paypal.currencyCode" argument is not provided.`,
             );
         }
 
         if (
             isBuyNowFlow &&
-            typeof bigcommerce.buyNowInitializeOptions?.getBuyNowCartRequestBody !== 'function'
+            typeof bigcommerce_payments_paypal.buyNowInitializeOptions?.getBuyNowCartRequestBody !==
+                'function'
         ) {
             throw new InvalidArgumentError(
-                `Unable to initialize payment because "options.bigcommerce.buyNowInitializeOptions.getBuyNowCartRequestBody" argument is not provided or it is not a function.`,
+                `Unable to initialize payment because "options.bigcommerce_payments_paypal.buyNowInitializeOptions.getBuyNowCartRequestBody" argument is not provided or it is not a function.`,
             );
         }
 
@@ -78,12 +79,12 @@ export default class BigCommerceButtonStrategy implements CheckoutButtonStrategy
         // because checkout session is not available before buy now cart creation,
         // hence application will throw an error on getCartOrThrow method call
         const currencyCode = isBuyNowFlow
-            ? bigcommerce.currencyCode
+            ? bigcommerce_payments_paypal.currencyCode
             : this.paymentIntegrationService.getState().getCartOrThrow().currency.code;
 
         await this.bigCommerceIntegrationService.loadBigCommerceSdk(methodId, currencyCode, false);
 
-        this.renderButton(containerId, methodId, bigcommerce);
+        this.renderButton(containerId, methodId, bigcommerce_payments_paypal);
     }
 
     deinitialize(): Promise<void> {
@@ -93,9 +94,10 @@ export default class BigCommerceButtonStrategy implements CheckoutButtonStrategy
     private renderButton(
         containerId: string,
         methodId: string,
-        bigcommerce: BigCommerceButtonInitializeOptions,
+        bigcommerce_payments_paypal: BigCommerceButtonInitializeOptions,
     ): void {
-        const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } = bigcommerce;
+        const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } =
+            bigcommerce_payments_paypal;
 
         const bigcommerceSdk = this.bigCommerceIntegrationService.getBigCommerceSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -104,7 +106,8 @@ export default class BigCommerceButtonStrategy implements CheckoutButtonStrategy
         const { isHostedCheckoutEnabled } = paymentMethod.initializationData || {};
 
         const defaultCallbacks = {
-            createOrder: () => this.bigCommerceIntegrationService.createOrder('bigcommerce'),
+            createOrder: () =>
+                this.bigCommerceIntegrationService.createOrder('bigcommerce_payments_paypal'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.bigCommerceIntegrationService.tokenizePayment(methodId, orderID),
         };

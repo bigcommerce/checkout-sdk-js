@@ -54,5 +54,5 @@ export default interface BigCommercePaymentInitializeOptions {
 }
 
 export interface WithBigCommercePaymentInitializeOptions {
-    bigcommerce?: BigCommercePaymentInitializeOptions;
+    bigcommerce_payments_paypal?: BigCommercePaymentInitializeOptions;
 }

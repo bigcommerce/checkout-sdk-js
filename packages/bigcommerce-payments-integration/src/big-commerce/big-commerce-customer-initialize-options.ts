@@ -32,5 +32,5 @@ export interface WithBigCommerceCustomerInitializeOptions {
      * The options that are required to initialize the customer step of checkout
      * when using BigCommerce.
      */
-    bigcommerce?: BigCommerceCustomerInitializeOptions;
+    bigcommerce_payments_paypal?: BigCommerceCustomerInitializeOptions;
 }

@@ -39,5 +39,5 @@ export default interface BigCommerceButtonInitializeOptions {
 }
 
 export interface WithBigCommerceButtonInitializeOptions {
-    bigcommerce?: BigCommerceButtonInitializeOptions;
+    bigcommerce_payments_paypal?: BigCommerceButtonInitializeOptions;
 }

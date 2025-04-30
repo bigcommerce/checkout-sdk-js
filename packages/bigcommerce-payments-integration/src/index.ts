@@ -54,3 +54,30 @@ export { WithBigCommerceAlternativeMethodsButtonInitializeOptions } from './big-
 
 export { default as createBigCommerceAlternativeMethodsPaymentStrategy } from './big-commerce-alternative-methods/create-big-commerce-alternative-methods-payment-strategy';
 export { WithBigCommerceAlternativeMethodsPaymentInitializeOptions } from './big-commerce-alternative-methods/big-commerce-alternative-methods-payment-initialize-options';
+
+/**
+ *
+ * BigCommerce Credit Cards strategies
+ *
+ */
+export { default as createBigCommerceCreditCardsPaymentStrategy } from './big-commerce-credit-card/create-big-commerce-credit-cards-payment-strategy';
+export { WithBigCommerceCreditCardsPaymentInitializeOptions } from './big-commerce-credit-card/big-commerce-credit-cards-payment-initialize-options';
+
+/**
+ *
+ * BigCommerce Ratepay strategy
+ *
+ */
+export { default as createBigCommerceRatepayPaymentStrategy } from './big-commerce-ratepay/create-big-commerce-ratepay-payment-strategy';
+export { WithBigCommerceRatePayPaymentInitializeOptions } from './big-commerce-ratepay/big-commerce-ratepay-initialize-options';
+
+/**
+ *
+ * BigCommerce Fastlane strategy //bigcommerce_payments_fastlane
+ *
+ */
+export { default as createBigCommerceFastlaneCustomerStrategy } from './big-commerce-fastlane/create-big-commerce-fastlane-customer-strategy';
+export { WithBigCommerceFastlaneCustomerInitializeOptions } from './big-commerce-fastlane/big-commerce-fastlane-customer-initialize-options';
+
+export { default as createBigCommerceFastlanePaymentStrategy } from './big-commerce-fastlane/create-big-commerce-fastlane-payment-strategy';
+export { WithBigCommerceFastlanePaymentInitializeOptions } from './big-commerce-fastlane/big-commerce-fastlane-payment-initialize-options';

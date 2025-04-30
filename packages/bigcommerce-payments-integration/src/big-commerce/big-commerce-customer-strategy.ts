@@ -38,7 +38,7 @@ export default class BigCommerceCustomerStrategy implements CustomerStrategy {
     async initialize(
         options: CustomerInitializeOptions & WithBigCommerceCustomerInitializeOptions,
     ): Promise<void> {
-        const { bigcommerce, methodId } = options;
+        const { bigcommerce_payments_paypal, methodId } = options;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -46,25 +46,28 @@ export default class BigCommerceCustomerStrategy implements CustomerStrategy {
             );
         }
 
-        if (!bigcommerce) {
+        if (!bigcommerce_payments_paypal) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommerce" argument is not provided.',
+                'Unable to initialize payment because "options.bigcommerce_payments_paypal" argument is not provided.',
             );
         }
 
-        if (!bigcommerce.container) {
+        if (!bigcommerce_payments_paypal.container) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommerce.container" argument is not provided.',
+                'Unable to initialize payment because "options.bigcommerce_payments_paypal.container" argument is not provided.',
             );
         }
 
-        if (bigcommerce.onClick && typeof bigcommerce.onClick !== 'function') {
+        if (
+            bigcommerce_payments_paypal.onClick &&
+            typeof bigcommerce_payments_paypal.onClick !== 'function'
+        ) {
             throw new InvalidArgumentError(
-                'Unable to initialize payment because "options.bigcommerce.onClick" argument is not a function.',
+                'Unable to initialize payment because "options.bigcommerce_payments_paypal.onClick" argument is not a function.',
             );
         }
 
-        this.onError = bigcommerce.onError || noop;
+        this.onError = bigcommerce_payments_paypal.onError || noop;
 
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethod(methodId);
@@ -90,7 +93,7 @@ export default class BigCommerceCustomerStrategy implements CustomerStrategy {
             return;
         }
 
-        this.renderButton(methodId, bigcommerce);
+        this.renderButton(methodId, bigcommerce_payments_paypal);
     }
 
     deinitialize(): Promise<void> {
@@ -117,9 +120,9 @@ export default class BigCommerceCustomerStrategy implements CustomerStrategy {
 
     private renderButton(
         methodId: string,
-        bigcommerce: BigCommerceCustomerInitializeOptions,
+        bigcommerce_payments_paypal: BigCommerceCustomerInitializeOptions,
     ): void {
-        const { container, onClick, onComplete } = bigcommerce;
+        const { container, onClick, onComplete } = bigcommerce_payments_paypal;
 
         const bigcommerceSdk = this.bigCommerceIntegrationService.getBigCommerceSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
@@ -130,7 +133,8 @@ export default class BigCommerceCustomerStrategy implements CustomerStrategy {
         const { checkoutTopButtonStyles } = paymentButtonStyles || {};
 
         const defaultCallbacks = {
-            createOrder: () => this.bigCommerceIntegrationService.createOrder('bigcommerce'),
+            createOrder: () =>
+                this.bigCommerceIntegrationService.createOrder('bigcommerce_payments_paypal'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.bigCommerceIntegrationService.tokenizePayment(methodId, orderID),
             ...(onClick && { onClick: () => onClick() }),
