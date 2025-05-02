@@ -31,7 +31,7 @@ import BigCommerceRequestSender from '../big-commerce-request-sender';
 
 import { WithBigCommerceFastlanePaymentInitializeOptions } from './big-commerce-fastlane-payment-initialize-options';
 
-export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
+export default class BigCommerceFastlanePaymentStrategy implements PaymentStrategy {
     private paypalComponentMethods?: PayPalFastlaneCardComponentMethods;
 
     constructor(

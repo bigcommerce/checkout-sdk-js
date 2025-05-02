@@ -21,7 +21,7 @@ import BigCommerceFastlaneCustomerInitializeOptions, {
     WithBigCommerceFastlaneCustomerInitializeOptions,
 } from './big-commerce-fastlane-customer-initialize-options';
 
-export default class PayPalCommerceFastlaneCustomerStrategy implements CustomerStrategy {
+export default class BigCommerceFastlaneCustomerStrategy implements CustomerStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private paypalCommerceSdk: PayPalCommerceSdk,

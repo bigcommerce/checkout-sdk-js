@@ -230,10 +230,10 @@ export type ComponentsScriptType = Array<
 >;
 
 export interface BigCommerceHostWindow extends Window {
-    bigCommerce?: BigCommerceSDK;
-    bigCommerceLoadScript?: (
+    bigcommerce?: BigCommerceSDK;
+    bigcommerceLoadScript?: (
         options: BigCommerceScriptParams,
-    ) => Promise<{ bigCommerce: BigCommerceSDK }>;
+    ) => Promise<{ bigcommerce: BigCommerceSDK }>;
 }
 
 /**

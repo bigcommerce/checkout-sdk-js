@@ -37,5 +37,5 @@ export interface BigCommerceRatePay {
 }
 
 export interface WithBigCommerceRatePayPaymentInitializeOptions {
-    bigcommerce_payments_ratepay?: BigCommerceRatePay;
+    bigcommerce_payments_ratepay?: BigCommerceRatePay; //TODO: doublecheck Should we use bigcommerce_payments_apms instead? of bigcommerce_payments_ratepay
 }

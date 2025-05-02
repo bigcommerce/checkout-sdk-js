@@ -28,9 +28,9 @@ import {
 const POLLING_INTERVAL = 3000;
 const MAX_POLLING_TIME = 300000;
 
-export default class PaypalCommerceRatepayPaymentStrategy implements PaymentStrategy {
+export default class BigCommerceRatepayPaymentStrategy implements PaymentStrategy {
     private guid?: string;
-    private bigcommerce_payments_ratepay?: BigCommerceRatePay;
+    private bigcommerce_payments_ratepay?: BigCommerceRatePay; //TODO: doublecheck Should we use bigcommerce_payments_apms isntead of bigcommerce_payments_ratepay
     private loadingIndicatorContainer?: string;
     private pollingTimer = 0;
     private stopPolling = noop;
