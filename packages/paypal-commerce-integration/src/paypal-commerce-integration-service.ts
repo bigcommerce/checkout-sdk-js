@@ -18,6 +18,7 @@ import {
 import PayPalCommerceRequestSender from './paypal-commerce-request-sender';
 import PayPalCommerceScriptLoader from './paypal-commerce-script-loader';
 import {
+    CreatePaymentOrderIntentOptions,
     PayPalButtonStyleOptions,
     PayPalBuyNowInitializeOptions,
     PayPalCommerceInitializationData,
@@ -200,6 +201,38 @@ export default class PayPalCommerceIntegrationService {
             paymentData,
             ...(gatewayId ? { gatewayId } : {}),
         });
+    }
+
+    async proxyTokenizationPayment(orderId?: string): Promise<void> {
+        const state = this.paymentIntegrationService.getState();
+
+        if (!orderId) {
+            throw new MissingDataError(MissingDataErrorType.MissingOrderId);
+        }
+
+        const host = state.getHost();
+        const path = 'redirect-to-checkout';
+
+        const redirectUrl = await this.paypalCommerceRequestSender.getRedirectToCheckoutUrl(
+            host ? `${host}/${path}` : `/${path}`,
+        );
+
+        window.location.assign(redirectUrl);
+    }
+
+    async createPaymentOrderIntent(
+        providerId: string,
+        options?: CreatePaymentOrderIntentOptions,
+    ): Promise<string> {
+        const cartId = this.paymentIntegrationService.getState().getCartOrThrow().id;
+
+        const { orderId } = await this.paypalCommerceRequestSender.createPaymentOrderIntent(
+            providerId,
+            cartId,
+            options,
+        );
+
+        return orderId;
     }
 
     /**
