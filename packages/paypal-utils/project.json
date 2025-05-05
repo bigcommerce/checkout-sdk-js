@@ -1,0 +1,23 @@
+{
+    "root": "packages/paypal-utils",
+    "sourceRoot": "packages/paypal-utils/src",
+    "projectType": "library",
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["packages/paypal-utils/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/packages/paypal-utils"],
+            "options": {
+                "jestConfig": "packages/paypal-utils/jest.config.js",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": []
+}
