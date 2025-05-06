@@ -57,7 +57,7 @@ describe('BigCommerceFastlanePaymentStrategy', () => {
     const methodId = 'paypalcommerceacceleratedcheckout';
     const initializationOptions = {
         methodId,
-        paypalcommercefastlane: {
+        bigcommerce_payments_fastlane: {
             onInit: jest.fn(),
             onChange: jest.fn(),
         },
@@ -188,7 +188,7 @@ describe('BigCommerceFastlanePaymentStrategy', () => {
             }
         });
 
-        it('throws an error if paypalcommercefastlane is not provided', async () => {
+        it('throws an error if bigcommerce_payments_fastlane is not provided', async () => {
             try {
                 await strategy.initialize({ methodId });
             } catch (error: unknown) {
@@ -196,11 +196,11 @@ describe('BigCommerceFastlanePaymentStrategy', () => {
             }
         });
 
-        it('throws an error if paypalcommercefastlane.onInit is not provided or it is not a function', async () => {
+        it('throws an error if bigcommerce_payments_fastlane.onInit is not provided or it is not a function', async () => {
             try {
                 const options = {
                     methodId,
-                    paypalcommercefastlane: {},
+                    bigcommerce_payments_fastlane: {},
                 };
 
                 await strategy.initialize(options);
@@ -209,11 +209,11 @@ describe('BigCommerceFastlanePaymentStrategy', () => {
             }
         });
 
-        it('throws an error if paypalcommercefastlane.onChange is not provided or it is not a function', async () => {
+        it('throws an error if bigcommerce_payments_fastlane.onChange is not provided or it is not a function', async () => {
             try {
                 const options = {
                     methodId,
-                    paypalcommercefastlane: {
+                    bigcommerce_payments_fastlane: {
                         onInit: jest.fn(),
                     },
                 };
@@ -227,7 +227,7 @@ describe('BigCommerceFastlanePaymentStrategy', () => {
         it('initializes paypal fastlane with correct styles', async () => {
             const newInitializationOptions = {
                 methodId,
-                paypalcommercefastlane: {
+                bigcommerce_payments_fastlane: {
                     onInit: jest.fn(),
                     onChange: jest.fn(),
                     styles: {
@@ -396,8 +396,8 @@ describe('BigCommerceFastlanePaymentStrategy', () => {
         it('provides callback function to be able to use them on ui', async () => {
             await strategy.initialize(initializationOptions);
 
-            expect(initializationOptions.paypalcommercefastlane.onInit).toHaveBeenCalled();
-            expect(initializationOptions.paypalcommercefastlane.onChange).toHaveBeenCalled();
+            expect(initializationOptions.bigcommerce_payments_fastlane.onInit).toHaveBeenCalled();
+            expect(initializationOptions.bigcommerce_payments_fastlane.onChange).toHaveBeenCalled();
         });
     });
 
@@ -519,7 +519,7 @@ describe('BigCommerceFastlanePaymentStrategy', () => {
 
             await strategy.initialize({
                 methodId,
-                paypalcommercefastlane: {
+                bigcommerce_payments_fastlane: {
                     onInit: jest.fn(onInitImplementation),
                     onChange: jest.fn(),
                 },
@@ -542,7 +542,7 @@ describe('BigCommerceFastlanePaymentStrategy', () => {
 
             await strategy.initialize({
                 methodId,
-                paypalcommercefastlane: {
+                bigcommerce_payments_fastlane: {
                     onInit: jest.fn(onInitImplementation),
                     onChange: jest.fn(),
                 },
@@ -599,7 +599,7 @@ describe('BigCommerceFastlanePaymentStrategy', () => {
 
             await strategy.initialize({
                 methodId,
-                paypalcommercefastlane: {
+                bigcommerce_payments_fastlane: {
                     onInit: jest.fn(),
                     onChange: jest.fn(onChangeImplementation),
                 },
@@ -664,7 +664,7 @@ describe('BigCommerceFastlanePaymentStrategy', () => {
 
             await strategy.initialize({
                 methodId,
-                paypalcommercefastlane: {
+                bigcommerce_payments_fastlane: {
                     onInit: jest.fn(),
                     onChange: jest.fn(onChangeImplementation),
                 },

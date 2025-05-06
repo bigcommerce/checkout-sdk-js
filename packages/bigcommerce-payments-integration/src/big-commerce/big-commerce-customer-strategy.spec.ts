@@ -52,7 +52,7 @@ describe('BigCommerceCustomerStrategy', () => {
 
     const initializationOptions: CustomerInitializeOptions = {
         methodId,
-        bigcommerce: bigCommerceOptions,
+        bigcommerce_payments_paypal: bigCommerceOptions,
     };
 
     beforeEach(() => {
@@ -362,7 +362,9 @@ describe('BigCommerceCustomerStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(bigCommerceIntegrationService.createOrder).toHaveBeenCalledWith('bigcommerce');
+            expect(bigCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
+                'bigcommerce_payments_paypal',
+            );
         });
     });
 

@@ -4,7 +4,7 @@ export default function getBigCommercePaymentMethod(): PaymentMethod {
     return {
         id: 'bigcommerce',
         logoUrl: '',
-        method: 'bigcommerce',
+        method: 'bigcommerce_payments_paypal',
         supportedCards: [],
         clientToken: 'asdcvY7XFSQasd',
         config: {

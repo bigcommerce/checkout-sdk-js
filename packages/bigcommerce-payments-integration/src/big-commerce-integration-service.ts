@@ -177,7 +177,7 @@ export default class BigCommerceIntegrationService {
         }
 
         return this.formPoster.postForm('/checkout.php', {
-            payment_type: 'paypal', // TODO: check if this is correct
+            payment_type: 'bigcommerce', // TODO: check if this is correct
             action: 'set_external_checkout',
             provider: methodId,
             order_id: orderId,

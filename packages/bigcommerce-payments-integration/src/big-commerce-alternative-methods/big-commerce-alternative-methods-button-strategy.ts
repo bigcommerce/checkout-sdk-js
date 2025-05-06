@@ -20,7 +20,7 @@ export default class BigCommerceAlternativeMethodsButtonStrategy implements Chec
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private bigCommerceIntegrationService: BigCommerceIntegrationService,
-    ) {}
+    ) { }
 
     async initialize(
         options: CheckoutButtonInitializeOptions &
@@ -115,7 +115,7 @@ export default class BigCommerceAlternativeMethodsButtonStrategy implements Chec
 
         const defaultCallbacks = {
             createOrder: () =>
-                this.bigCommerceIntegrationService.createOrder('bigcommercealternativemethod'),
+                this.bigCommerceIntegrationService.createOrder('bigcommerce_payments_apms'),
             onApprove: ({ orderID }: ApproveCallbackPayload) =>
                 this.bigCommerceIntegrationService.tokenizePayment(methodId, orderID),
         };

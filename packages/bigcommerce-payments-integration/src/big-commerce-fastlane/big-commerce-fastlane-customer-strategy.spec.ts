@@ -139,7 +139,7 @@ describe('BigCommerceFastlaneCustomerStrategy', () => {
 
     const initializationOptions = {
         methodId,
-        paypalcommercefastlane: {
+        bigcommerce_payments_fastlane: {
             styles: {
                 root: {
                     backgroundColorPrimary: 'white',
@@ -242,7 +242,7 @@ describe('BigCommerceFastlaneCustomerStrategy', () => {
         it('initializes paypal fastlane with correct styles', async () => {
             const newInitializationOptions = {
                 methodId,
-                paypalcommercefastlane: {
+                bigcommerce_payments_fastlane: {
                     onInit: jest.fn(),
                     onChange: jest.fn(),
                     styles: {
@@ -306,7 +306,7 @@ describe('BigCommerceFastlaneCustomerStrategy', () => {
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
                 paypalFastlaneSdk,
                 false,
-                initializationOptions.paypalcommercefastlane.styles,
+                initializationOptions.bigcommerce_payments_fastlane.styles,
             );
         });
 
@@ -329,7 +329,7 @@ describe('BigCommerceFastlaneCustomerStrategy', () => {
             expect(paypalCommerceFastlaneUtils.initializePayPalFastlane).toHaveBeenCalledWith(
                 paypalFastlaneSdk,
                 true,
-                initializationOptions.paypalcommercefastlane.styles,
+                initializationOptions.bigcommerce_payments_fastlane.styles,
             );
         });
 

@@ -42,7 +42,7 @@ export default class BigCommerceScriptLoader {
         bigCommerceSdkScriptConfig: BigCommerceScriptParams,
         forceLoad = false,
     ): Promise<BigCommerceSDK> {
-        if (!this.window.bigCommerce || forceLoad) {
+        if (!this.window.bigcommerce || forceLoad) {
             const options = this.transformConfig<BigCommerceScriptParams['options']>(
                 bigCommerceSdkScriptConfig.options,
             );
@@ -57,11 +57,11 @@ export default class BigCommerceScriptLoader {
             await this.scriptLoader.loadScript(scriptSrc, { async: true, attributes });
         }
 
-        if (!this.window.bigCommerce) {
+        if (!this.window.bigcommerce) {
             throw new PaymentMethodClientUnavailableError();
         }
 
-        return this.window.bigCommerce;
+        return this.window.bigcommerce;
     }
 
     private getBigCommerceSdkScriptConfigOrThrow(
@@ -92,7 +92,7 @@ export default class BigCommerceScriptLoader {
 
         const commit = isHostedCheckoutEnabled || initializesOnCheckoutPage;
 
-        const shouldEnableCard = id === 'paypalcommercecreditcards'; //TODO: check if this is correct
+        const shouldEnableCard = id === 'paypalcommercecreditcards';
         const enableCardFunding = shouldEnableCard ? ['card'] : [];
         const disableCardFunding = !shouldEnableCard ? ['card'] : [];
 

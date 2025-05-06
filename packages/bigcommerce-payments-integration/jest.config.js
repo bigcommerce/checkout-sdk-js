@@ -10,7 +10,7 @@ module.exports = {
     transform: {
         '^.+\\.[tj]sx?$': 'ts-jest',
     },
-    moduleFileExtensions: ['ts', 'tsx'],
-    coverageDirectory: '../../coverage/packages/bigcommerce-payments-integration',
     setupFilesAfterEnv: ['../../jest-setup.js'],
+    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+    coverageDirectory: '../../coverage/packages/bigcommerce-payments-integration',
 };

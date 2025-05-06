@@ -251,7 +251,7 @@ describe('BigCommerceVenmoPaymentStrategy', () => {
             await new Promise((resolve) => process.nextTick(resolve));
 
             expect(bigCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
-                'paypalcommercevenmocheckout', //TODO: check if this is correct
+                'bigcommerce_payments_venmocheckout',
             );
         });
     });

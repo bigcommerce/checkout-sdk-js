@@ -52,10 +52,10 @@ describe('BigCommerceAlternativeMethodsPaymentStrategy', () => {
     let strategy: BigCommerceAlternativeMethodsPaymentStrategy;
     let paypalCommerceSdk: PayPalCommerceSdk; // TODO: remove this import after implementing bigcommerce-utils
 
-    const bigCommerceOrderId = 'bigcommerce123';
+    const bigCommerceOrderId = 'paypal123';
 
     const defaultMethodId = 'sepa';
-    const defaultGatewayId = 'bigcommerce_payments_apms';
+    const defaultGatewayId = 'paypalcommercealternativemethods';
     const defaultContainerId = '#container';
     const defaultApmFieldsContainerId = '#container';
 
@@ -70,7 +70,7 @@ describe('BigCommerceAlternativeMethodsPaymentStrategy', () => {
     const initializationOptions: PaymentInitializeOptions = {
         methodId: defaultMethodId,
         gatewayId: defaultGatewayId,
-        bigcommerce_payments_apms: bigCommerceAlternativeMethodsOptions,
+        paypalcommercealternativemethods: bigCommerceAlternativeMethodsOptions,
     };
 
     beforeEach(() => {

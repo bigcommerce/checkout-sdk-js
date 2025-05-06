@@ -308,8 +308,7 @@ export default class BigCommercePaymentStrategy implements PaymentStrategy {
     private async createOrder(): Promise<string> {
         const fieldsValues = this.getFieldsValues();
 
-        // TODO: check if we need this naming convention
-        return this.bigCommerceIntegrationService.createOrder('paypalcommercecheckout', {
+        return this.bigCommerceIntegrationService.createOrder('bigcommerce_payments_paypal', {
             shouldSaveInstrument: fieldsValues?.shouldSaveInstrument || false,
         });
     }

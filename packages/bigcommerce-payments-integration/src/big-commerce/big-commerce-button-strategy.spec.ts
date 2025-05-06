@@ -66,7 +66,7 @@ describe('BigCommerceButtonStrategy', () => {
     const buyNowInitializationOptions: CheckoutButtonInitializeOptions = {
         methodId: defaultMethodId,
         containerId: defaultButtonContainerId,
-        bigcommerce: buyNowBigCommerceOptions,
+        bigcommerce_payments_paypal: buyNowBigCommerceOptions,
     };
 
     const bigCommerceOptions: BigCommerceButtonInitializeOptions = {
@@ -80,7 +80,7 @@ describe('BigCommerceButtonStrategy', () => {
     const initializationOptions: CheckoutButtonInitializeOptions = {
         methodId: defaultMethodId,
         containerId: defaultButtonContainerId,
-        bigcommerce: bigCommerceOptions,
+        bigcommerce_payments_paypal: bigCommerceOptions,
     };
 
     const bigcommerceShippingAddressPayloadMock = {
@@ -301,7 +301,7 @@ describe('BigCommerceButtonStrategy', () => {
 
             const newInitializationOptions = {
                 ...buyNowInitializationOptions,
-                bigcommerce: rest,
+                bigcommerce_payments_paypal: rest,
             };
 
             try {
@@ -316,7 +316,7 @@ describe('BigCommerceButtonStrategy', () => {
 
             const newInitializationOptions = {
                 ...buyNowInitializationOptions,
-                bigcommerce: {
+                bigcommerce_payments_paypal: {
                     ...rest,
                     buyNowInitializeOptions: {
                         getBuyNowCartRequestBody: 'string',
@@ -468,7 +468,7 @@ describe('BigCommerceButtonStrategy', () => {
 
             await strategy.initialize({
                 ...initializationOptions,
-                bigcommerce: {
+                bigcommerce_payments_paypal: {
                     ...bigCommerceOptions,
                     onEligibilityFailure: undefined,
                 },
@@ -488,7 +488,9 @@ describe('BigCommerceButtonStrategy', () => {
 
             await new Promise((resolve) => process.nextTick(resolve));
 
-            expect(bigCommerceIntegrationService.createOrder).toHaveBeenCalledWith('bigcommerce');
+            expect(bigCommerceIntegrationService.createOrder).toHaveBeenCalledWith(
+                'bigcommerce_payments_paypal',
+            );
         });
     });
 

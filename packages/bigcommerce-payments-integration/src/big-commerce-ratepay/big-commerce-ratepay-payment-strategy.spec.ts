@@ -25,7 +25,7 @@ import {
 import { BigCommerceRatePay } from './big-commerce-ratepay-initialize-options';
 import BigCommerceRatepayPaymentStrategy from './big-commerce-ratepay-payment-strategy';
 
-describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
+describe('BigCommerceAlternativeMethodRatePayPaymentStrategy', () => {
     let billingAddress: BillingAddress;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
@@ -53,8 +53,8 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
 
     const initializationOptions: PaymentInitializeOptions = {
         methodId: 'ratepay',
-        gatewayId: 'bigcommerce_payments_apms',
-        bigcommerceratepay: bigCommerceRatePayMethodsOptions,
+        gatewayId: 'paypalcommercealternativemethods',
+        bigcommerce_payments_ratepay: bigCommerceRatePayMethodsOptions,
     };
 
     beforeEach(() => {
@@ -136,8 +136,8 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
         it('throws error if loadingContainerId is not provided', async () => {
             const options = {
                 methodId: 'ratepay',
-                gatewayId: 'bigcommerce_payments_apms',
-                bigcommerceratepay: {
+                gatewayId: 'paypalcommercealternativemethods',
+                bigcommerce_payments_ratepay: {
                     legalTextContainer: 'legal-text-container',
                     container: '#checkout-payment-continue',
                 },
@@ -162,10 +162,10 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             }
         });
 
-        it('throws error if options.bigcommerceratepay is not provided', async () => {
+        it('throws error if options.bigcommerce_payments_ratepay is not provided', async () => {
             const options = {
                 methodId: 'ratepay',
-                gatewayId: 'bigcommerce_payments_apms',
+                gatewayId: 'paypalcommercealternativemethods',
             } as PaymentInitializeOptions;
 
             try {
@@ -178,8 +178,8 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
         it('throws error if container is not provided', async () => {
             const options = {
                 methodId: 'ratepay',
-                gatewayId: 'bigcommerce_payments_apms',
-                bigcommerceratepay: {
+                gatewayId: 'paypalcommercealternativemethods',
+                bigcommerce_payments_ratepay: {
                     legalTextContainer: 'legal-text-container',
                 },
             } as PaymentInitializeOptions;
@@ -194,8 +194,8 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
         it('throws error if legalTextContainer is not provided', async () => {
             const options = {
                 methodId: 'ratepay',
-                gatewayId: 'bigcommerce_payments_apms',
-                bigcommerceratepay: {
+                gatewayId: 'paypalcommercealternativemethods',
+                bigcommerce_payments_ratepay: {
                     container: '#checkout-payment-continue',
                 },
             } as PaymentInitializeOptions;
@@ -212,8 +212,8 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
 
             const options = {
                 methodId: 'ratepay',
-                gatewayId: 'bigcommerce_payments_apms',
-                bigcommerceratepay: {
+                gatewayId: 'paypalcommercealternativemethods',
+                bigcommerce_payments_ratepay: {
                     container: '#checkout-payment-continue',
                     legalTextContainer: 'legal-text-container',
                 },
@@ -232,7 +232,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             const payload = {
                 payment: {
                     methodId: 'ratepay',
-                    gatewayId: 'bigcommerce_payments_apms',
+                    gatewayId: 'paypalcommercealternativemethods',
                 },
             };
 
@@ -246,7 +246,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             const payload = {
                 payment: {
                     methodId: 'ratepay',
-                    gatewayId: 'bigcommerce_payments_apms',
+                    gatewayId: 'paypalcommercealternativemethods',
                 },
             };
 
@@ -319,7 +319,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             const payload = {
                 payment: {
                     methodId: 'ratepay',
-                    gatewayId: 'bigcommerce_payments_apms',
+                    gatewayId: 'paypalcommercealternativemethods',
                 },
             };
 
@@ -334,7 +334,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             const payload = {
                 payment: {
                     methodId: 'ratepay',
-                    gatewayId: 'bigcommerce_payments_apms',
+                    gatewayId: 'paypalcommercealternativemethods',
                 },
             };
 
@@ -342,7 +342,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(bigCommerceIntegrationService.getOrderStatus).toHaveBeenCalledWith(
-                'bigcommerce_payments_apms',
+                'paypalcommercealternativemethods',
                 { params: { useMetadata: true } },
             );
         });
@@ -351,7 +351,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             const payload = {
                 payment: {
                     methodId: 'ratepay',
-                    gatewayId: 'bigcommerce_payments_apms',
+                    gatewayId: 'paypalcommercealternativemethods',
                 },
             };
 
@@ -365,7 +365,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             const payload = {
                 payment: {
                     methodId: 'ratepay',
-                    gatewayId: 'bigcommerce_payments_apms',
+                    gatewayId: 'paypalcommercealternativemethods',
                 },
             };
 
@@ -401,7 +401,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             const payload = {
                 payment: {
                     methodId: 'ratepay',
-                    gatewayId: 'bigcommerce_payments_apms',
+                    gatewayId: 'paypalcommercealternativemethods',
                 },
             };
 
@@ -420,7 +420,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             const payload = {
                 payment: {
                     methodId: 'ratepay',
-                    gatewayId: 'bigcommerce_payments_apms',
+                    gatewayId: 'paypalcommercealternativemethods',
                 },
             };
 
@@ -446,7 +446,7 @@ describe('PayPalCommerceAlternativeMethodRatePayPaymentStrategy', () => {
             const payload = {
                 payment: {
                     methodId: 'ratepay',
-                    gatewayId: 'bigcommerce_payments_apms',
+                    gatewayId: 'paypalcommercealternativemethods',
                 },
             };
 
