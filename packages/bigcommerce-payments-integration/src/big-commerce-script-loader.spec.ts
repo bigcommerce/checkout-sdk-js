@@ -341,7 +341,7 @@ describe('BigCommerceScriptLoader', () => {
     it('successfully enables all provided funding sources', async () => {
         const paymentMethodMock = {
             ...paymentMethod,
-            id: 'paypalcommercecreditcards',
+            id: 'bigcommerce_payments_creditcard',
             initializationData: {
                 ...paymentMethod.initializationData,
                 isHostedCheckoutEnabled: false,

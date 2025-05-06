@@ -12,13 +12,13 @@ import BigCommerceFastlaneCustomerStrategy from './big-commerce-fastlane-custome
 const createBigCommerceFastlaneCustomerStrategy: CustomerStrategyFactory<
     BigCommerceFastlaneCustomerStrategy
 > = (paymentIntegrationService) =>
-    new BigCommerceFastlaneCustomerStrategy(
-        paymentIntegrationService,
-        createPayPalCommerceSdk(),
-        createPayPalCommerceFastlaneUtils(),
-    );
+        new BigCommerceFastlaneCustomerStrategy(
+            paymentIntegrationService,
+            createPayPalCommerceSdk(),
+            createPayPalCommerceFastlaneUtils(),
+        );
 
 export default toResolvableModule(createBigCommerceFastlaneCustomerStrategy, [
     { id: 'paypalcommerceacceleratedcheckout' }, // this method id will be provided for users from test group
-    { id: 'paypalcommercecreditcards' }, // this method id will be provided for users from control group
+    { id: 'bigcommerce_payments_creditcard' }, // this method id will be provided for users from control group
 ]);

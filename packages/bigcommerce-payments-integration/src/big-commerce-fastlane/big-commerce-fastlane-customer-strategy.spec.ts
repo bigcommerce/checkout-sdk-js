@@ -40,7 +40,7 @@ describe('BigCommerceFastlaneCustomerStrategy', () => {
     const storeConfig = getConfig().storeConfig;
 
     const methodId = 'paypalcommerceacceleratedcheckout';
-    const secondaryMethodId = 'paypalcommercecreditcards';
+    const secondaryMethodId = 'bigcommerce_payments_creditcard';
     const customerContextIdMock = 'customerId123';
     const authenticationResultMock = {
         authenticationState: PayPalFastlaneAuthenticationState.SUCCEEDED,

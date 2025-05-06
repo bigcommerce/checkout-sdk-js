@@ -1,5 +1,74 @@
 import { BigCommerceFieldsStyleOptions, InitCallbackActions } from '../big-commerce-types';
 
+/**
+ * A set of options that are required to initialize the PayPal Commerce payment
+ * method for presenting its PayPal button.
+ *
+ * Please note that the minimum version of checkout-sdk is 1.100
+ *
+ * Also, PayPal (also known as PayPal Commerce Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
+ * ```html
+ * <!-- This is where the PayPal button will be inserted -->
+ * <div id="container"></div>
+ * <!-- This is where the PayPal alternative payment methods fields will be inserted.  -->
+ * <div id="apm-fields-container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     gatewayId: 'paypalcommercealternativemethods',
+ *     methodId: 'sepa',
+ *     paypalcommercealternativemethods: {
+ *         container: '#container',
+ *         apmFieldsContainer: '#apm-fields-container',
+ *         apmFieldsStyles: {
+ *             base: {
+ *                 backgroundColor: 'transparent',
+ *             },
+ *             input: {
+ *                 backgroundColor: 'white',
+ *                 fontSize: '1rem',
+ *                 color: '#333',
+ *                 borderColor: '#d9d9d9',
+ *                 borderRadius: '4px',
+ *                 borderWidth: '1px',
+ *                 padding: '1rem',
+ *             },
+ *             invalid: {
+ *                 color: '#ed6a6a',
+ *             },
+ *             active: {
+ *                 color: '#4496f6',
+ *             },
+ *         },
+ *         clientId: 'YOUR_CLIENT_ID',
+ * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
+ *         submitForm: () => {
+ *         // Example function
+ *             this.submitOrder(
+ *                {
+ *                   payment: { methodId: 'paypalcommercealternativemethods', }
+ *               }
+ *            );
+ *         },
+ * // Callback is used to define the state of the payment form, validate if it is applicable for submit.
+ *         onValidate: (resolve, reject) => {
+ *         // Example function
+ *             const isValid = this.validatePaymentForm();
+ *             if (isValid) {
+ *                 return resolve();
+ *             }
+ *             return reject();
+ *         },
+ * // Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular PayPal method. This callback can be used to hide the standard submit button.
+ *         onRenderButton: () => {
+ *         // Example function
+ *             this.hidePaymentSubmitButton();
+ *         }
+ *     },
+ * });
+ * ```
+ */
 export default interface BigCommerceAlternativeMethodsPaymentOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.

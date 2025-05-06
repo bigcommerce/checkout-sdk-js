@@ -55,7 +55,7 @@ describe('BigCommerceAlternativeMethodsPaymentStrategy', () => {
     const bigCommerceOrderId = 'paypal123';
 
     const defaultMethodId = 'sepa';
-    const defaultGatewayId = 'paypalcommercealternativemethods';
+    const defaultGatewayId = 'bigcommerce_payments_apms';
     const defaultContainerId = '#container';
     const defaultApmFieldsContainerId = '#container';
 
@@ -70,7 +70,7 @@ describe('BigCommerceAlternativeMethodsPaymentStrategy', () => {
     const initializationOptions: PaymentInitializeOptions = {
         methodId: defaultMethodId,
         gatewayId: defaultGatewayId,
-        paypalcommercealternativemethods: bigCommerceAlternativeMethodsOptions,
+        bigcommerce_payments_apms: bigCommerceAlternativeMethodsOptions,
     };
 
     beforeEach(() => {

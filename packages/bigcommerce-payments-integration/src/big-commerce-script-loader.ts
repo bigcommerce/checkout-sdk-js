@@ -92,7 +92,7 @@ export default class BigCommerceScriptLoader {
 
         const commit = isHostedCheckoutEnabled || initializesOnCheckoutPage;
 
-        const shouldEnableCard = id === 'paypalcommercecreditcards';
+        const shouldEnableCard = id === 'bigcommerce_payments_creditcard';
         const enableCardFunding = shouldEnableCard ? ['card'] : [];
         const disableCardFunding = !shouldEnableCard ? ['card'] : [];
 
