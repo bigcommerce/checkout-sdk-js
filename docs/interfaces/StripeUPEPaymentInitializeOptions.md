@@ -49,13 +49,9 @@ ___
 
 ### style
 
-• `Optional` **style**: `Object`
+• `Optional` **style**: `Record`<`string`, [`StripeUPEAppearanceValues`](../README.md#stripeupeappearancevalues)\>
 
 Checkout styles from store theme
-
-#### Index signature
-
-▪ [key: `string`]: `string`
 
 ## Methods
 

@@ -7943,6 +7943,8 @@ declare interface StripeShippingEvent extends StripeEvent {
     };
 }
 
+declare type StripeUPEAppearanceValues = string | string[] | number | undefined;
+
 declare interface StripeUPECustomerInitializeOptions {
     /**
      * The ID of a container which the stripe iframe should be inserted.
@@ -8006,9 +8008,7 @@ declare interface StripeUPEPaymentInitializeOptions {
     /**
      * Checkout styles from store theme
      */
-    style?: {
-        [key: string]: string;
-    };
+    style?: Record<string, StripeUPEAppearanceValues>;
     onError?(error?: Error): void;
     render(): void;
     initStripeElementUpdateTrigger?(updateTriggerFn: (payload: StripeElementUpdateOptions) => void): void;

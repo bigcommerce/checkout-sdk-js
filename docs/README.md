@@ -550,6 +550,7 @@
 - [ReadableCheckoutStore](README.md#readablecheckoutstore)
 - [StripeElementOptions](README.md#stripeelementoptions)
 - [StripeEventType](README.md#stripeeventtype)
+- [StripeUPEAppearanceValues](README.md#stripeupeappearancevalues)
 - [WithGooglePayButtonInitializeOptions](README.md#withgooglepaybuttoninitializeoptions)
 - [WithGooglePayCustomerInitializeOptions](README.md#withgooglepaycustomerinitializeoptions)
 - [WithGooglePayPaymentInitializeOptions](README.md#withgooglepaypaymentinitializeoptions)
@@ -912,6 +913,12 @@ ___
 ### StripeEventType
 
 Ƭ **StripeEventType**: [`StripeShippingEvent`](interfaces/StripeShippingEvent.md) \| [`StripeCustomerEvent`](interfaces/StripeCustomerEvent.md)
+
+___
+
+### StripeUPEAppearanceValues
+
+Ƭ **StripeUPEAppearanceValues**: `string` \| `string`[] \| `number` \| `undefined`
 
 ___
 
