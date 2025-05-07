@@ -429,27 +429,12 @@ export interface StripeElements {
  * All available options are here https://stripe.com/docs/stripe-js/appearance-api#supported-css-properties
  */
 export interface StripeUPEAppearanceOptions {
-    variables?: {
-        colorPrimary?: string;
-        colorBackground?: string;
-        colorText?: string;
-        colorDanger?: string;
-        colorTextSecondary?: string;
-        colorTextPlaceholder?: string;
-        colorIcon?: string;
-        colorIconCardError?: string;
-        colorIconRedirect?: string;
-        spacingUnit?: string;
-        borderRadius?: string;
-        fontFamily?: string;
-    };
+    variables?: Record<string, StripeUPEAppearanceValues>;
 
-    rules?: {
-        [key: string]: {
-            [key: string]: string | number;
-        };
-    };
+    rules?: Record<string, Record<string, StripeUPEAppearanceValues>>;
 }
+
+export type StripeUPEAppearanceValues = string | string[] | number | undefined;
 
 export interface StripeElementsOptions {
     /**

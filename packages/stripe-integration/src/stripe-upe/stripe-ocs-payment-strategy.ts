@@ -28,6 +28,7 @@ import {
     StripeEventType,
     StripeStringConstants,
     StripeUPEAppearanceOptions,
+    StripeUPEAppearanceValues,
     StripeUPEClient,
     StripeUpeResult,
 } from './stripe-upe';
@@ -163,11 +164,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             clientSecret: clientToken,
             locale: formatLocale(shopperLanguage),
             appearance: this._getElementAppearance(style),
-            fonts: [
-                {
-                    cssSrc: 'https://fonts.googleapis.com/css?family=Montserrat:700,500,400%7CKarla:400&display=swap', // TODO: get style from theme
-                },
-            ],
+            fonts: this._getElementFonts(style),
         });
 
         const { getBillingAddress, getShippingAddress } = state;
@@ -232,42 +229,32 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             return;
         }
 
-        const titleFontSize = '15px'; // TODO: get style from theme
-        const titleFontWeight = '700'; // TODO: get style from theme
-        const titleColor = '#5f5f5f'; // TODO: get style from theme
         const radioColor = '#ddd'; // TODO: get style from theme
         const radioFocusColor = '#4496f6'; // TODO: get style from theme
-        const { radioIconOuterWidth, radioIconOuterStrokeWidth, radioIconInnerWidth } = style;
-        const radioIconSize = this._getRadioIconSizes(
-            radioIconOuterWidth,
-            radioIconOuterStrokeWidth,
-            radioIconInnerWidth,
-        );
+        const radioIconSize = this._getRadioIconSizes(style);
 
         return {
             variables: {
                 ...this.stripeUPEIntegrationService.mapAppearanceVariables(style),
-                fontFamily: 'Montserrat, Arial, Helvetica', // TODO: get style from theme
+                fontFamily: style.fontFamily?.toString(),
             },
             rules: {
                 '.Input': this.stripeUPEIntegrationService.mapInputAppearanceRules(style),
                 '.AccordionItem': {
                     borderRadius: 0,
                     borderWidth: 0,
-                    borderBottomWidth: '1px',
+                    borderBottom: style.accordionBorderBottom,
                     boxShadow: 'none',
-                    fontSize: titleFontSize,
-                    fontWeight: titleFontWeight,
-                    padding: '13px 20px 13px 18px',
+                    fontSize: style.accordionItemTitleFontSize,
+                    fontWeight: style.accordionItemTitleFontWeight,
+                    color: style.accordionHeaderColor,
+                    padding: style.accordionHeaderPadding,
                 },
-                '.TabLabel, .AccordionItem': {
-                    fontSize: titleFontSize,
-                    fontWeight: titleFontWeight,
-                    color: titleColor,
+                '.TabLabel': {
+                    color: style.accordionHeaderColor,
                 },
-                '.TabLabel--selected, .AccordionItem--selected': {
-                    fontWeight: titleFontWeight,
-                    color: titleColor,
+                '.AccordionItem--selected': {
+                    color: style.accordionHeaderColor,
                 },
                 '.RadioIcon': {
                     width: radioIconSize.outerWidth,
@@ -287,21 +274,29 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         };
     }
 
-    private _getRadioIconSizes(
-        realOuterWidth: string | number = 26,
-        realOuterStrokeWidth: string | number = 1,
-        realInnerWidth: string | number = 17,
-    ) {
+    private _getElementFonts(style?: StripeUPEPaymentInitializeOptions['style']) {
+        if (!style?.fontsSrc || !Array.isArray(style?.fontsSrc)) {
+            return;
+        }
+
+        return style.fontsSrc.map((cssSrc: string) => ({ cssSrc }));
+    }
+
+    private _getRadioIconSizes(style?: StripeUPEPaymentInitializeOptions['style']) {
+        if (!style) {
+            return {};
+        }
+
+        const {
+            radioIconOuterWidth = 26,
+            radioIconOuterStrokeWidth = 1,
+            radioIconInnerWidth = 17,
+        } = style;
         const percentageCoefficient = this.stripeSVGSizeCoefficient * 100;
 
-        const outerWidth =
-            typeof realOuterWidth === 'string' ? parseInt(realOuterWidth, 10) : realOuterWidth;
-        const outerStrokeWidth =
-            typeof realOuterStrokeWidth === 'string'
-                ? parseInt(realOuterStrokeWidth, 10)
-                : realOuterStrokeWidth;
-        const innerWidth =
-            typeof realInnerWidth === 'string' ? parseInt(realInnerWidth, 10) : realInnerWidth;
+        const outerWidth = this._parseRadioIconNumberSize(radioIconOuterWidth);
+        const outerStrokeWidth = this._parseRadioIconNumberSize(radioIconOuterStrokeWidth);
+        const innerWidth = this._parseRadioIconNumberSize(radioIconInnerWidth);
 
         const stripeEqualOuterWidth = (outerWidth / this.stripeSVGSizeCoefficient).toFixed(2);
         const stripeEqualOuterStrokeWidth = (
@@ -318,6 +313,18 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             outerStrokeWidth: `${stripeEqualOuterStrokeWidth}px`,
             innerRadius: `${stripeEqualInnerRadius}px`,
         };
+    }
+
+    private _parseRadioIconNumberSize(size: StripeUPEAppearanceValues = 0): number {
+        if (Array.isArray(size)) {
+            size = parseInt(size[0], 10);
+        }
+
+        if (typeof size === 'string') {
+            size = parseInt(size, 10);
+        }
+
+        return size;
     }
 
     private _collapseStripeElement() {
