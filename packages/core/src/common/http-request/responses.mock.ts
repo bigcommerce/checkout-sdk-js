@@ -2,7 +2,8 @@ import { Response } from '@bigcommerce/request-sender';
 
 import { ErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { PaymentResponse } from '../../payment';
+import { GqlPaymentMethodResponse, PaymentResponse } from '../../payment';
+import { HeadlessPaymentMethod } from '../../payment/gql-payment';
 
 export function getResponse<T>(
     body: T,
@@ -29,6 +30,27 @@ export function getPaymentResponse<T>(
 ): PaymentResponse<T> {
     return {
         data,
+        status,
+        statusText,
+        headers: {
+            'content-type': 'application/json',
+            ...headers,
+        },
+    };
+}
+
+export function getHeadlessPaymentResponse(
+    site: HeadlessPaymentMethod,
+    headers = {},
+    status = 200,
+    statusText = 'OK',
+): Response<GqlPaymentMethodResponse> {
+    return {
+        body: {
+            data: {
+                site,
+            },
+        },
         status,
         statusText,
         headers: {
