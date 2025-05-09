@@ -1,5 +1,6 @@
 import { InternalCheckoutSelectors } from '../checkout';
 import { selector } from '../common/selector';
+import HeadlessButtonSelectors from '../headless-buttons/headless-button-selectors';
 
 import CheckoutButtonSelector from './checkout-button-selector';
 import { CheckoutButtonMethodType } from './strategies';
@@ -11,7 +12,7 @@ export default class CheckoutButtonStatusSelector {
     /**
      * @internal
      */
-    constructor(selectors: InternalCheckoutSelectors) {
+    constructor(selectors: InternalCheckoutSelectors | HeadlessButtonSelectors) {
         this._checkoutButton = selectors.checkoutButton;
     }
 

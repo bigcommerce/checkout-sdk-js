@@ -41,9 +41,11 @@
             "@bigcommerce/checkout-sdk/apple-pay-integration": [
                 "packages/apple-pay-integration/src/index.ts"
             ],
-            "@bigcommerce/checkout-sdk/bigcommerce-payments-utils": ["packages/bigcommerce-payments-utils/src/index.ts"],
             "@bigcommerce/checkout-sdk/bigcommerce-payments-integration": [
                 "packages/bigcommerce-payments-integration/src/index.ts"
+            ],
+            "@bigcommerce/checkout-sdk/bigcommerce-payments-utils": [
+                "packages/bigcommerce-payments-utils/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/bluesnap-direct-integration": [
                 "packages/bluesnap-direct-integration/src/index.ts"
@@ -77,6 +79,9 @@
             ],
             "@bigcommerce/checkout-sdk/google-pay-integration": [
                 "packages/google-pay-integration/src/index.ts"
+            ],
+            "@bigcommerce/checkout-sdk/headless-wallet-button-integration": [
+                "packages/headless-wallet-button-integration/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/hosted-form-v2": ["packages/hosted-form-v2/src/index.ts"],
             "@bigcommerce/checkout-sdk/humm": ["packages/humm-integration/src/index.ts"],
