@@ -616,3 +616,32 @@ export interface PayPalCreateOrderCardFieldsResponse {
     orderId: string;
     setupToken?: string;
 }
+
+export interface CreatePaymentOrderIntentResponse {
+    data: {
+        payment: {
+            paymentWallet: {
+                createPaymentWalletIntent: {
+                    errors: Array<{
+                        location: Array<{ line: string; column: string }>;
+                        message: string;
+                    }>;
+                    paymentWalletIntentData: {
+                        __typename: string;
+                        approvalUrl: string;
+                        orderId: string;
+                        initializationEntityId: string;
+                    };
+                };
+            };
+        };
+    };
+}
+
+export interface CreateRedirectToCheckoutResponse {
+    data: {
+        cart: {
+            createCartRedirectUrls: { redirectUrls: { redirectedCheckoutUrl: string } | null };
+        };
+    };
+}
