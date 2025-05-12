@@ -10,7 +10,6 @@ import {
 import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import {
-    BigCommercePaymentsHostWindow,
     PayPalFastlane,
     PayPalFastlaneAddress,
     PayPalFastlaneAuthenticationResult,
@@ -22,10 +21,11 @@ import {
     PayPalFastlaneProfileToBcCustomerDataMappingResult,
     PayPalFastlaneSdk,
     PayPalFastlaneStylesOption,
+    PayPalHostWindow,
 } from './bigcommerce-payments-types';
 
 export default class BigCommercePaymentsFastlaneUtils {
-    private window: BigCommercePaymentsHostWindow;
+    private window: PayPalHostWindow;
 
     constructor(private browserStorage: BrowserStorage) {
         this.window = window;

@@ -6,9 +6,9 @@ import { BrowserStorage } from '@bigcommerce/checkout-sdk/storage';
 
 import BigCommercePaymentsFastlaneUtils from './bigcommerce-payments-fastlane-utils';
 import {
-    BigCommercePaymentsHostWindow,
     PayPalFastlaneAuthenticationState,
     PayPalFastlaneSdk,
+    PayPalHostWindow,
 } from './bigcommerce-payments-types';
 import { getPayPalFastlaneAuthenticationResultMock, getPayPalFastlaneSdk } from './mocks';
 
@@ -17,7 +17,7 @@ describe('BigCommercePaymentsFastlaneUtils', () => {
     let paypalFastlaneSdk: PayPalFastlaneSdk;
     let subject: BigCommercePaymentsFastlaneUtils;
 
-    const methodIdMock = 'bigcommercepaymentsacceleratedcheckout'; // TODO:double check if this is correct
+    const methodIdMock = 'bigcommerce_payments_fastlane';
     const authenticationResultMock = getPayPalFastlaneAuthenticationResultMock();
 
     const bcAddressMock = {
@@ -51,8 +51,8 @@ describe('BigCommercePaymentsFastlaneUtils', () => {
         expiryYear: '2030',
         iin: '',
         last4: '1111',
-        method: 'bigcommercepaymentsacceleratedcheckout',
-        provider: 'bigcommercepaymentsacceleratedcheckout',
+        method: 'bigcommerce_payments_fastlane',
+        provider: 'bigcommerce_payments_fastlane',
         trustedShippingAddress: false,
         untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
         type: 'card',
@@ -68,7 +68,7 @@ describe('BigCommercePaymentsFastlaneUtils', () => {
     });
 
     afterEach(() => {
-        (window as BigCommercePaymentsHostWindow).paypalFastlane = undefined;
+        (window as PayPalHostWindow).paypalFastlane = undefined;
 
         jest.resetAllMocks();
         jest.restoreAllMocks();

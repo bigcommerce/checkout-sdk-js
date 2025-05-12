@@ -1,6 +1,6 @@
-import isBigCommercePaymentsAcceleratedCheckoutCustomer from './is-bigcommerce-payments-accelerated-checkout-customer';
+import isBigCommercePaymentsFastlaneCustomer from './is-bigcommerce-payments-fastlane-customer';
 
-describe('isBigCommercePaymentsAcceleratedCheckoutCustomer', () => {
+describe('isBigCommercePaymentsFastlaneCustomer', () => {
     it('returns true if payment provider customer is BigCommercePayments related', () => {
         const paymentProviderCustomer = {
             authenticationState: 'success',
@@ -8,9 +8,7 @@ describe('isBigCommercePaymentsAcceleratedCheckoutCustomer', () => {
             instruments: [],
         };
 
-        expect(isBigCommercePaymentsAcceleratedCheckoutCustomer(paymentProviderCustomer)).toBe(
-            true,
-        );
+        expect(isBigCommercePaymentsFastlaneCustomer(paymentProviderCustomer)).toBe(true);
     });
 
     it('returns false if payment provider customer is not BigCommercePayments related', () => {
@@ -18,8 +16,6 @@ describe('isBigCommercePaymentsAcceleratedCheckoutCustomer', () => {
             stripeLinkAuthenticationState: true,
         };
 
-        expect(isBigCommercePaymentsAcceleratedCheckoutCustomer(paymentProviderCustomer)).toBe(
-            false,
-        );
+        expect(isBigCommercePaymentsFastlaneCustomer(paymentProviderCustomer)).toBe(false);
     });
 });

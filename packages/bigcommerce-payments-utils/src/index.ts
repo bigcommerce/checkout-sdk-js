@@ -11,7 +11,7 @@ export { default as isBigCommercePaymentsProviderError } from './utils/is-bigcom
  *
  * */
 export { default as createBigCommercePaymentsSdk } from './create-bigcommerce-payments-sdk';
-export { default as BigCommercePaymentsSdk } from './bigcommerce-payments-sdk';
+export { default as PayPalSdkHelper } from './paypal-sdk-helper';
 
 /**
  *

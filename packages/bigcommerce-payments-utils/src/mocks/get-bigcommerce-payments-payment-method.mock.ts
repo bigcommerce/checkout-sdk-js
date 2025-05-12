@@ -57,12 +57,12 @@ export default function getBigCommercePaymentsPaymentMethod(): PaymentMethod {
     };
 }
 
-export function getBigCommercePaymentsAcceleratedCheckoutPaymentMethod(): PaymentMethod {
+export function getBigCommercePaymentsFastlanePaymentMethod(): PaymentMethod {
     const bigCommercePaymentsDefaultPaymentMethod = getBigCommercePaymentsPaymentMethod();
 
     return {
         ...bigCommercePaymentsDefaultPaymentMethod,
-        id: 'bigcommercepaymentsacceleratedcheckout', // TODO: check BE team if this is correct
+        id: 'bigcommerce_payments_fastlane',
         initializationData: {
             ...bigCommercePaymentsDefaultPaymentMethod.initializationData,
             isAcceleratedCheckoutEnabled: true,

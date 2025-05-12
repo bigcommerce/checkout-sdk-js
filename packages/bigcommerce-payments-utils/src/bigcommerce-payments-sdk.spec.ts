@@ -6,23 +6,20 @@ import {
     PaymentMethodClientUnavailableError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import BigCommercePaymentsSdk from './bigcommerce-payments-sdk';
 import {
-    BigCommercePaymentsHostWindow,
     PayPalApmSdk,
     PayPalFastlaneSdk,
+    PayPalHostWindow,
     PayPalMessagesSdk,
 } from './bigcommerce-payments-types';
-import {
-    getBigCommercePaymentsAcceleratedCheckoutPaymentMethod,
-    getPayPalFastlaneSdk,
-} from './mocks';
+import { getBigCommercePaymentsFastlanePaymentMethod, getPayPalFastlaneSdk } from './mocks';
+import PayPalSdkHelper from './paypal-sdk-helper';
 
-describe('BigCommercePaymentsSdk', () => {
+describe('PayPalSdkHelper', () => {
     let loader: ScriptLoader;
     let paymentMethod: PaymentMethod;
     let paypalFastlaneSdk: PayPalFastlaneSdk;
-    let subject: BigCommercePaymentsSdk;
+    let subject: PayPalSdkHelper;
     let mockAPMPaymentMethod: PaymentMethod;
 
     const paypalMessagesSdk: PayPalMessagesSdk = {
@@ -39,7 +36,7 @@ describe('BigCommercePaymentsSdk', () => {
 
     beforeEach(() => {
         loader = createScriptLoader();
-        paymentMethod = getBigCommercePaymentsAcceleratedCheckoutPaymentMethod();
+        paymentMethod = getBigCommercePaymentsFastlanePaymentMethod();
         mockAPMPaymentMethod = {
             ...paymentMethod,
             id: 'oxxo',
@@ -50,21 +47,21 @@ describe('BigCommercePaymentsSdk', () => {
             },
         };
         paypalFastlaneSdk = getPayPalFastlaneSdk();
-        subject = new BigCommercePaymentsSdk(loader);
+        subject = new PayPalSdkHelper(loader);
 
         jest.spyOn(loader, 'loadScript').mockImplementation(() => {
-            (window as BigCommercePaymentsHostWindow).paypalFastlaneSdk = paypalFastlaneSdk;
-            (window as BigCommercePaymentsHostWindow).paypalMessages = paypalMessagesSdk;
-            (window as BigCommercePaymentsHostWindow).paypalApms = paypalApmsSdk;
+            (window as PayPalHostWindow).paypalFastlaneSdk = paypalFastlaneSdk;
+            (window as PayPalHostWindow).paypalMessages = paypalMessagesSdk;
+            (window as PayPalHostWindow).paypalApms = paypalApmsSdk;
 
             return Promise.resolve();
         });
     });
 
     afterEach(() => {
-        (window as BigCommercePaymentsHostWindow).paypalFastlaneSdk = undefined;
-        (window as BigCommercePaymentsHostWindow).paypalMessages = undefined;
-        (window as BigCommercePaymentsHostWindow).paypalApms = undefined;
+        (window as PayPalHostWindow).paypalFastlaneSdk = undefined;
+        (window as PayPalHostWindow).paypalMessages = undefined;
+        (window as PayPalHostWindow).paypalApms = undefined;
 
         jest.clearAllMocks();
     });
@@ -104,10 +101,10 @@ describe('BigCommercePaymentsSdk', () => {
         });
 
         // TODO: remove this test when A/B testing will be finished
-        it('loads PayPal Fastlane Sdk script with connectClientToken for bigcommercepaymentstypescreditcards method', async () => {
+        it('loads PayPal Fastlane Sdk script with connectClientToken for bigcommerce_payments_creditcards method', async () => {
             const mockPaymentMethod = {
                 ...paymentMethod,
-                methodId: 'bigcommercepaymentstypescreditcards', // TODO: double check if this is correct
+                methodId: 'bigcommerce_payments_creditcards',
                 initializationData: {
                     ...paymentMethod.initializationData,
                     clientToken: undefined,

@@ -8,15 +8,15 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
-    BigCommercePaymentsHostWindow,
     BigCommercePaymentsInitializationData,
     PayPalFastlaneSdk,
+    PayPalHostWindow,
     PayPalMessagesSdk,
     PayPalSdkConfig,
 } from './bigcommerce-payments-types';
 
-export default class BigCommercePaymentsSdk {
-    private window: BigCommercePaymentsHostWindow;
+export default class PayPalSdkHelper {
+    private window: PayPalHostWindow;
 
     constructor(private scriptLoader: ScriptLoader) {
         this.window = window;
@@ -122,7 +122,7 @@ export default class BigCommercePaymentsSdk {
             clientId,
             merchantId,
             attributionId,
-            connectClientToken, // TODO: remove when PPCP Fastlane A/B testing will be finished
+            connectClientToken, // TODO: remove when BCP Fastlane A/B testing will be finished
         } = initializationData;
 
         return {

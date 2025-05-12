@@ -1,7 +1,7 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import BigCommercePaymentsSdk from './bigcommerce-payments-sdk';
+import PayPalSdkHelper from './paypal-sdk-helper';
 
-export default function createBigCommercePaymentsSdk(): BigCommercePaymentsSdk {
-    return new BigCommercePaymentsSdk(createScriptLoader());
+export default function createBigCommercePaymentsSdk(): PayPalSdkHelper {
+    return new PayPalSdkHelper(createScriptLoader());
 }

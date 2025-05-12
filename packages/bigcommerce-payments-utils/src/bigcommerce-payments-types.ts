@@ -21,7 +21,7 @@ export interface BigCommercePaymentsInitializationData {
     clientId: string;
     clientToken?: string;
     fastlaneStyles?: FastlaneStylesSettings;
-    connectClientToken?: string; // TODO: remove when PPCP Fastlane A/B test will be finished
+    connectClientToken?: string; // TODO: remove when BCP Fastlane A/B test will be finished
     enabledAlternativePaymentMethods: FundingType;
     isDeveloperModeApplicable?: boolean;
     intent?: BigCommercePaymentsIntent;
@@ -29,25 +29,25 @@ export interface BigCommercePaymentsInitializationData {
     isFastlaneShippingOptionAutoSelectEnabled?: boolean; // PayPal Fastlane related
     isFastlaneStylingEnabled?: boolean;
     isHostedCheckoutEnabled?: boolean;
-    isBigCommercePaymentsAnalyticsV2Enabled?: boolean; // PayPal Fastlane related //TODO: doublecheck BE Team
+    isBigCommercePaymentsAnalyticsV2Enabled?: boolean; // PayPal Fastlane related
     isPayPalCreditAvailable?: boolean;
     isVenmoEnabled?: boolean;
     isGooglePayEnabled?: boolean;
     merchantId?: string;
     orderId?: string;
     shouldRenderFields?: boolean;
-    shouldRunAcceleratedCheckout?: boolean; // TODO: remove when PPCP Fastlane A/B test will be finished
+    shouldRunAcceleratedCheckout?: boolean; // TODO: remove when BCP Fastlane A/B test will be finished
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
 }
 
 /**
  *
- * BigCommercePaymentsHostWindow contains different
+ * PayPalHostWindow contains different
  * PayPal Sdk instances for different purposes
  *
  */
-export interface BigCommercePaymentsHostWindow extends Window {
+export interface PayPalHostWindow extends Window {
     paypalFastlane?: PayPalFastlane;
     paypalFastlaneSdk?: PayPalFastlaneSdk;
     paypalMessages?: PayPalMessagesSdk;
