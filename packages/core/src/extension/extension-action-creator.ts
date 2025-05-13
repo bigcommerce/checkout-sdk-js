@@ -10,6 +10,7 @@ import { ExtensionRegion } from './extension';
 import { ExtensionAction, ExtensionActionType } from './extension-actions';
 import { ExtensionIframe } from './extension-iframe';
 import { ExtensionRequestSender } from './extension-request-sender';
+import { ExtensionWebWorker } from './extension-webworker';
 
 export class ExtensionActionCreator {
     constructor(private _requestSender: ExtensionRequestSender) {}
@@ -67,12 +68,21 @@ export class ExtensionActionCreator {
 
                     observer.next(createAction(ExtensionActionType.RenderExtensionRequested));
 
-                    const iframe = new ExtensionIframe(container, extension, {
-                        cartId,
-                        parentOrigin: parseUrl(checkoutLink).origin,
-                    });
+                    if (extension.type === 'worker') {
+                        const worker = new ExtensionWebWorker(extension.url);
 
-                    await iframe.attach();
+                        console.log('Worker created:', worker);
+
+                        // TODO: maintain worker reference
+                        // Access extension messenger or extension worker here, then add the worker to the store
+                    } else {
+                        const iframe = new ExtensionIframe(container, extension, {
+                            cartId,
+                            parentOrigin: parseUrl(checkoutLink).origin,
+                        });
+
+                        await iframe.attach();
+                    }
 
                     observer.next(createAction(ExtensionActionType.RenderExtensionSucceeded));
                     observer.complete();
