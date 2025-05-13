@@ -169,10 +169,25 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         const { getBillingAddress, getShippingAddress } = state;
         const { postalCode } = getShippingAddress() || getBillingAddress() || {};
+        const { email, firstName, lastName, city, country, address1, stateOrProvince, phone } = getBillingAddress() || {};
 
         const stripeElement: StripeElement =
             this.stripeElements.getElement(StripeElementType.PAYMENT) ||
             this.stripeElements.create(StripeElementType.PAYMENT, {
+                defaultValues: {
+                    billingDetails: {
+                        name: `${firstName} ${lastName}`,
+                        email,
+                        phone: phone || '',
+                        address: {
+                            city: city || '',
+                            country: country || '',
+                            line1: address1 || '',
+                            postal_code: postalCode || '',
+                            state: stateOrProvince || ''
+                        }
+                    },
+                },
                 fields: {
                     billingDetails: {
                         email: StripeStringConstants.NEVER,

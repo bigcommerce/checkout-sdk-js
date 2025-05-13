@@ -349,7 +349,7 @@ export interface StripeElementsCreateOptions {
     fields?: FieldsOptions;
     wallets?: WalletOptions;
     allowedCountries?: string[];
-    defaultValues?: ShippingDefaultValues | CustomerDefaultValues;
+    defaultValues?: ShippingDefaultValues | CustomerDefaultValues | LinkV2DefaultValues;
     validation?: validationElement;
     display?: { name: DisplayName };
     terms?: TermOptions;
@@ -399,6 +399,16 @@ interface CustomerDefaultValues {
         name: DisplayName;
     };
 }
+
+interface LinkV2DefaultValues {
+    billingDetails?: {
+        name?: string;
+        email?: string;
+        phone?: string;
+        address: Address;
+    }
+}
+
 
 export interface StripeElements {
     /**
