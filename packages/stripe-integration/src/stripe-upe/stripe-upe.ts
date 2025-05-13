@@ -1,3 +1,5 @@
+import { StripeExpressCheckoutClient } from '../stripe-link-v2/types';
+
 /**
  * Initialization options.
  */
@@ -7,6 +9,7 @@ export interface StripeConfigurationOptions {
      * Specifying a connected account ID (e.g., acct_24BFMpJ1svR5A89k) allows you to perform actions on behalf of that account.
      */
     stripeAccount: string;
+
 
     /**
      * Override your account's [API version](https://stripe.com/docs/api/versioning)
@@ -223,7 +226,7 @@ export interface StripePaymentEvent extends StripeEvent {
     collapsed?: boolean;
 }
 
-interface Address {
+export interface Address {
     city: string;
     country: string;
     line1: string;
@@ -346,7 +349,7 @@ export interface StripeElementsCreateOptions {
     fields?: FieldsOptions;
     wallets?: WalletOptions;
     allowedCountries?: string[];
-    defaultValues?: ShippingDefaultValues | CustomerDefaultValues;
+    defaultValues?: ShippingDefaultValues | CustomerDefaultValues | LinkV2DefaultValues;
     validation?: validationElement;
     display?: { name: DisplayName };
     terms?: TermOptions;
@@ -396,6 +399,16 @@ interface CustomerDefaultValues {
         name: DisplayName;
     };
 }
+
+interface LinkV2DefaultValues {
+    billingDetails?: {
+        name?: string;
+        email?: string;
+        phone?: string;
+        address: Address;
+    }
+}
+
 
 export interface StripeElements {
     /**
@@ -487,6 +500,10 @@ export interface StripeUpdateElementsOptions {
      * The layout of each Element stays consistent, but you can modify colors, fonts, borders, padding, and more.
      */
     appearance?: StripeUPEAppearanceOptions;
+
+    mode?: string;
+    amount?: number;
+    currency?: string;
 }
 
 export interface StripeUPEClient {
@@ -520,8 +537,12 @@ export interface StripeUpeResult {
 
 export interface StripeHostWindow extends Window {
     bcStripeClient?: StripeUPEClient;
+    bcStripeLinkV2Client?: StripeExpressCheckoutClient;
     bcStripeElements?: StripeElements;
-    Stripe?(stripePublishableKey: string, options?: StripeConfigurationOptions): StripeUPEClient;
+    Stripe?<T = StripeUPEClient>(
+        stripePublishableKey: string,
+        options?: StripeConfigurationOptions,
+    ): T;
 }
 
 export enum StripePaymentMethodType {
@@ -552,6 +573,7 @@ export enum StripeElementType {
     PAYMENT = 'payment',
     AUTHENTICATION = 'linkAuthentication',
     SHIPPING = 'address',
+    EXPRESS_CHECKOUT = 'expressCheckout',
 }
 
 export enum StripeUPEPaymentIntentStatus {
