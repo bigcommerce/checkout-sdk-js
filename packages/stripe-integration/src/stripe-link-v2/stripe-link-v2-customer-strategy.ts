@@ -196,7 +196,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
         const shippingRates = await this.getAvailableShippingOptions();
 
-        this.updateDisplayedPrice();
+        await this.updateDisplayedPrice();
 
         event.resolve({
             shippingRates,
@@ -208,7 +208,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
         await this.handleShippingOptionChange(shippingRate?.id);
 
-        this.updateDisplayedPrice();
+        await this.updateDisplayedPrice();
 
         event.resolve({});
     }
@@ -274,7 +274,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
 
     /** Utils * */
 
-    private updateDisplayedPrice() {
+    private async updateDisplayedPrice() {
         if (this._stripeElements) {
             this._stripeElements.update({
                 currency: this.getCurrency(),
@@ -351,8 +351,8 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         };
     }
 
-    private async handleShippingOptionChange(optionId: string) {
-        if (optionId === 'shipping_option_unselected') {
+    private async handleShippingOptionChange(optionId?: string) {
+        if (!optionId || optionId === 'shipping_option_unselected') {
             return;
         }
 

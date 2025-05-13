@@ -1,10 +1,12 @@
 import {
     Address,
+    StripeConfirmPaymentData,
     StripeElement,
     StripeElements,
     StripeElementType,
     StripeStringConstants,
     StripeUPEClient,
+    StripeUpeResult,
 } from '../stripe-upe/stripe-upe';
 
 export type StripeExpressCheckoutElementEvent =
@@ -13,8 +15,14 @@ export type StripeExpressCheckoutElementEvent =
     | 'shippingratechange'
     | 'confirm';
 
-export interface StripeExpressCheckoutClient extends Omit<StripeUPEClient, 'elements'> {
+export interface StripeExpressCheckoutClient extends Omit<StripeUPEClient, 'elements' | 'confirmPayment'> {
     elements(options: StripeExpressCheckoutOptions): StripeExpressCheckoutElements;
+    confirmPayment(options: StripeExpressCheckoutConfirmPaymentData): Promise<StripeUpeResult>;
+}
+
+export interface StripeExpressCheckoutConfirmPaymentData extends Omit<StripeConfirmPaymentData, 'elements'> {
+    elements: StripeExpressCheckoutElements;
+    clientSecret?: string;
 }
 
 export interface StripeExpressCheckoutElements extends Omit<StripeElements, 'create' | 'update'> {
@@ -71,3 +79,5 @@ export interface StripeExpressCheckoutOptions {
     currency?: string;
     amount?: number;
 }
+
+export interface StripeLinkV2ShippingRate {}

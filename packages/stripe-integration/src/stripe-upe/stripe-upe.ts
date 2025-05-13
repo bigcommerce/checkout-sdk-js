@@ -490,6 +490,10 @@ export interface StripeUpdateElementsOptions {
      * The layout of each Element stays consistent, but you can modify colors, fonts, borders, padding, and more.
      */
     appearance?: StripeUPEAppearanceOptions;
+
+    mode?: string;
+    amount?: number;
+    currency?: string;
 }
 
 export interface StripeUPEClient {
