@@ -45,4 +45,5 @@ export interface WithStripeUPECustomerInitializeOptions {
      * when using StripeUPE.
      */
     stripeupe?: StripeUPECustomerInitializeOptions;
+    stripe_link_v2?: StripeUPECustomerInitializeOptions;
 }
