@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 export class ExtensionWebWorker {
-    private worker: Worker;
+    private url: string;
 
     constructor(url: string) {
         if (!window.Worker) {
@@ -9,34 +9,37 @@ export class ExtensionWebWorker {
             );
         }
 
+        this.url = url;
+    }
+
+    attach(): Worker {
+        // TODO: error handling
         const blob = URL.createObjectURL(
             new Blob(
                 [
-                    `importScripts=((i)=>(...a)=>i(...a.map((u)=>''+new URL(u,"${url}"))))(importScripts);importScripts("${url}")`,
+                    `importScripts=((i)=>(...a)=>i(...a.map((u)=>''+new URL(u,"${this.url}"))))(importScripts);importScripts("${this.url}")`,
                 ],
                 { type: 'text/javascript' },
             ),
         );
 
-        this.worker = new Worker(blob);
+        const worker = new Worker(blob);
 
         // Code below is temporary
         try {
-            this.worker.onmessage = (event) => {
+            worker.onmessage = (event) => {
                 console.log('Host got message:', event.data);
             };
 
-            this.worker.onerror = (error) => {
+            worker.onerror = (error) => {
                 console.error('Main Script: Worker error:', error.message);
             };
 
-            this.worker.postMessage('hello world');
+            worker.postMessage('hello world');
         } catch (e: any) {
             console.error('Main Script: Failed during worker/observer setup.', e);
         }
-    }
 
-    // TODO: handleMessageFromWorker() - handle messages from the worker
-    // TODO: postMessageToWorker() - send a message to the worker
-    // TODO: terminate() - terminate the worker
+        return worker;
+    }
 }

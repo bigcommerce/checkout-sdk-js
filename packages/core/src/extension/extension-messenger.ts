@@ -12,6 +12,7 @@ import { ExtensionCommandMap, ExtensionCommandType } from './extension-commands'
 import { ExtensionCommandOrQueryContext, ExtensionMessage } from './extension-message';
 import { ExtensionQueryMap, ExtensionQueryType } from './extension-queries';
 
+// TODO: CHECKOUT-9251 Create ExtensionWorkers
 export class ExtensionMessenger {
     private _extensions: Extension[] | undefined;
 
@@ -46,7 +47,6 @@ export class ExtensionMessenger {
         }
     }
 
-    // TODO: Add support for handling worker commands
     listenForCommand<T extends keyof ExtensionCommandMap>(
         extensionId: string,
         command: T,
@@ -83,7 +83,6 @@ export class ExtensionMessenger {
         };
     }
 
-    // TODO: Add support for handling worker queries
     listenForQuery<T extends keyof ExtensionQueryMap>(
         extensionId: string,
         query: T,
@@ -130,7 +129,6 @@ export class ExtensionMessenger {
         }
     }
 
-    // TODO: Add support for posting to worker
     post(extensionId: string, message: ExtensionMessage): void {
         try {
             if (!this._posters[extensionId]) {

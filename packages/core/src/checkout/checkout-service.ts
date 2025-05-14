@@ -1425,7 +1425,6 @@ export default class CheckoutService {
      * @param region - The name of an area where the extension should be presented.
      * @returns A promise that resolves to the current state.
      */
-    // Keep this interface?
     async renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors> {
         const action = this._extensionActionCreator.renderExtension(container, region);
         const state = await this._dispatch(action, { queueId: 'extensions' });
@@ -1453,7 +1452,6 @@ export default class CheckoutService {
      * @param extensionId - The ID of an extension to post the event to.
      * @param message - The message to post to an extension.
      */
-    // Keep this interface?
     postMessageToExtension(extensionId: string, message: ExtensionMessage): void {
         this._extensionMessenger.post(extensionId, message);
     }
@@ -1467,7 +1465,6 @@ export default class CheckoutService {
      * @param handler - The handler function for the extension command.
      * @returns A function that, when called, will deregister the command handler.
      */
-    // Keep this interface?
     handleExtensionCommand<T extends keyof ExtensionCommandMap>(
         extensionId: string,
         command: T,
@@ -1485,7 +1482,6 @@ export default class CheckoutService {
      * @param handler - The handler function for the extension query.
      * @returns A function that, when called, will deregister the query handler.
      */
-    // Keep this interface?
     handleExtensionQuery<T extends keyof ExtensionQueryMap>(
         extensionId: string,
         query: T,

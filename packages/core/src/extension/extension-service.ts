@@ -20,7 +20,7 @@ import {
 } from './extension-message';
 import { ExtensionQueryType } from './extension-queries';
 
-// TO BE DISCUSSED: Shall we create a new ExtensionService for worker?
+// TODO: CHECKOUT-9247 new ExtensionService for worker
 export default class ExtensionService {
     private _extensionId?: string;
 
