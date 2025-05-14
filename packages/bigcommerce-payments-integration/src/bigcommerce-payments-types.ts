@@ -12,7 +12,7 @@ import {
  */
 export type FundingType = string[];
 export type EnableFundingType = FundingType | string;
-
+// TODO: rename BigCommercePaymentsSDKFunding to PayPalSDKFunding
 export interface BigCommercePaymentsSDKFunding {
     CARD: string;
     PAYPAL: string;

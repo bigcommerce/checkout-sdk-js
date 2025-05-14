@@ -4,7 +4,7 @@ import { BigCommercePaymentsIntent } from '../bigcommerce-payments-types';
 
 export default function getBigCommercePaymentsPaymentMethod(): PaymentMethod {
     return {
-        id: 'bigcommercepayments',
+        id: 'bigcommerce_payments_paypal',
         logoUrl: '',
         method: 'paypal',
         supportedCards: [],

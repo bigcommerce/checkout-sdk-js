@@ -10,6 +10,7 @@ export { default as isBigCommercePaymentsProviderError } from './utils/is-bigcom
  * BigCommerce Payments Sdk exports
  *
  * */
+// TODO Rename createBigCommercePaymentsSdk to createBigCommercePaymentsPayPalSdk
 export { default as createBigCommercePaymentsSdk } from './create-bigcommerce-payments-sdk';
 export { default as PayPalSdkHelper } from './paypal-sdk-helper';
 

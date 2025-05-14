@@ -355,7 +355,7 @@ describe('BigCommercePaymentsPayPalButtonStrategy', () => {
             expect(paymentIntegrationService.loadDefaultCheckout).not.toHaveBeenCalled();
         });
 
-        it('loads BigCommercePayments sdk script', async () => {
+        it('loads BigCommercePaymentsPayPal sdk script', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(bigCommercePaymentsIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(
@@ -365,7 +365,7 @@ describe('BigCommercePaymentsPayPalButtonStrategy', () => {
             );
         });
 
-        it('loads BigCommercePayments sdk script with provided currency code (Buy Now flow)', async () => {
+        it('loads BigCommercePaymentsPayPal sdk script with provided currency code (Buy Now flow)', async () => {
             await strategy.initialize(buyNowInitializationOptions);
 
             expect(bigCommercePaymentsIntegrationService.loadPayPalSdk).toHaveBeenCalledWith(

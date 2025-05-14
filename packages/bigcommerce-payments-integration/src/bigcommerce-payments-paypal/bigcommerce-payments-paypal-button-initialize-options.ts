@@ -4,9 +4,9 @@ import {
 } from '../bigcommerce-payments-types';
 
 /**
- * A set of options that are required to initialize BigCommercePayments in cart or product details page.
+ * A set of options that are required to initialize BigCommercePaymentsPayPal in cart or product details page.
  *
- * When BigCommercePayments is initialized, an BigCommercePayments button will be inserted into the
+ * When BigCommercePaymentsPayPal is initialized, an BigCommercePaymentsPayPal button will be inserted into the
  * DOM. When a customer clicks on it, it will trigger Apple sheet.
  */
 export default interface BigCommercePaymentsPayPalButtonInitializeOptions {

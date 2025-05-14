@@ -1,5 +1,6 @@
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+// Rename getBigCommercePaymentsPaymentMethod to getBigCommercePaymentsPayPalPaymentMethod
 export default function getBigCommercePaymentsPaymentMethod(): PaymentMethod {
     return {
         id: 'bigcommerce_payments_paypal',
