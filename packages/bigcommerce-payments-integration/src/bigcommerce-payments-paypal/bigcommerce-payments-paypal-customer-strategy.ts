@@ -23,11 +23,11 @@ import {
     ShippingOptionChangeCallbackPayload,
 } from '../bigcommerce-payments-types';
 
-import BigCommercePaymentsCustomerInitializeOptions, {
-    WithBigCommercePaymentsCustomerInitializeOptions,
-} from './bigcommerce-payments-customer-initialize-options';
+import BigCommercePaymentsPayPalCustomerInitializeOptions, {
+    WithBigCommercePaymentsPayPalCustomerInitializeOptions,
+} from './bigcommerce-payments-paypal-customer-initialize-options';
 
-export default class BigCommercePaymentsCustomerStrategy implements CustomerStrategy {
+export default class BigCommercePaymentsPayPalCustomerStrategy implements CustomerStrategy {
     private onError = noop;
 
     constructor(
@@ -36,7 +36,7 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
     ) {}
 
     async initialize(
-        options: CustomerInitializeOptions & WithBigCommercePaymentsCustomerInitializeOptions,
+        options: CustomerInitializeOptions & WithBigCommercePaymentsPayPalCustomerInitializeOptions,
     ): Promise<void> {
         const { bigcommerce_payments_paypal, methodId } = options;
 
@@ -114,7 +114,7 @@ export default class BigCommercePaymentsCustomerStrategy implements CustomerStra
 
     private renderButton(
         methodId: string,
-        bigcommerce_payments_paypal: BigCommercePaymentsCustomerInitializeOptions,
+        bigcommerce_payments_paypal: BigCommercePaymentsPayPalCustomerInitializeOptions,
     ): void {
         const { container, onClick, onComplete } = bigcommerce_payments_paypal;
 

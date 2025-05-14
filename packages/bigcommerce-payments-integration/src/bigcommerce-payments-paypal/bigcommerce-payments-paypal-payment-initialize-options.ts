@@ -44,7 +44,7 @@ import { HostedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-
  * });
  * ```
  */
-export default interface BigCommercePaymentsPaymentInitializeOptions {
+export default interface BigCommercePaymentsPayPalPaymentInitializeOptions {
     /**
      * The CSS selector of a container where the payment widget should be inserted into.
      */
@@ -97,6 +97,6 @@ export default interface BigCommercePaymentsPaymentInitializeOptions {
     submitForm(): void;
 }
 
-export interface WithBigCommercePaymentsPaymentInitializeOptions {
-    bigcommerce_payments_paypal?: BigCommercePaymentsPaymentInitializeOptions;
+export interface WithBigCommercePaymentsPayPalPaymentInitializeOptions {
+    bigcommerce_payments_paypal?: BigCommercePaymentsPayPalPaymentInitializeOptions;
 }

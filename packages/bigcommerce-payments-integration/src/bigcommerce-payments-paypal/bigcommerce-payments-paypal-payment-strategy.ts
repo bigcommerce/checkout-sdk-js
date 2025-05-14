@@ -28,15 +28,15 @@ import {
     ClickCallbackActions,
 } from '../bigcommerce-payments-types';
 
-import BigCommercePaymentsPaymentInitializeOptions, {
-    WithBigCommercePaymentsPaymentInitializeOptions,
-} from './bigcommerce-payments-payment-initialize-options';
+import BigCommercePaymentsPayPalPaymentInitializeOptions, {
+    WithBigCommercePaymentsPayPalPaymentInitializeOptions,
+} from './bigcommerce-payments-paypal-payment-initialize-options';
 
-export default class BigCommercePaymentsPaymentStrategy implements PaymentStrategy {
+export default class BigCommercePaymentsPayPalPaymentStrategy implements PaymentStrategy {
     private loadingIndicatorContainer?: string;
     private orderId?: string;
     private paypalButton?: BigCommercePaymentsButtons;
-    private bigcommerce_payments_paypal?: BigCommercePaymentsPaymentInitializeOptions;
+    private bigcommerce_payments_paypal?: BigCommercePaymentsPayPalPaymentInitializeOptions;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -45,7 +45,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
     ) {}
 
     async initialize(
-        options?: PaymentInitializeOptions & WithBigCommercePaymentsPaymentInitializeOptions,
+        options?: PaymentInitializeOptions & WithBigCommercePaymentsPayPalPaymentInitializeOptions,
     ): Promise<void> {
         const { methodId, bigcommerce_payments_paypal } = options || {};
 
@@ -232,7 +232,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
      * */
     private renderButton(
         methodId: string,
-        bigcommerce_payments_paypal: BigCommercePaymentsPaymentInitializeOptions,
+        bigcommerce_payments_paypal: BigCommercePaymentsPayPalPaymentInitializeOptions,
     ): void {
         const paypalSdk = this.bigCommercePaymentsIntegrationService.getPayPalSdkOrThrow();
 
@@ -271,7 +271,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
 
     private async handleClick(
         actions: ClickCallbackActions,
-        onValidate: BigCommercePaymentsPaymentInitializeOptions['onValidate'],
+        onValidate: BigCommercePaymentsPayPalPaymentInitializeOptions['onValidate'],
     ): Promise<void> {
         const { resolve, reject } = actions;
 
@@ -286,7 +286,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
 
     private handleApprove(
         { orderID }: ApproveCallbackPayload,
-        submitForm: BigCommercePaymentsPaymentInitializeOptions['submitForm'],
+        submitForm: BigCommercePaymentsPayPalPaymentInitializeOptions['submitForm'],
     ): void {
         this.orderId = orderID;
 
@@ -295,7 +295,7 @@ export default class BigCommercePaymentsPaymentStrategy implements PaymentStrate
 
     private handleError(
         error: unknown,
-        onError: BigCommercePaymentsPaymentInitializeOptions['onError'],
+        onError: BigCommercePaymentsPayPalPaymentInitializeOptions['onError'],
     ): void {
         this.toggleLoadingIndicator(false);
 

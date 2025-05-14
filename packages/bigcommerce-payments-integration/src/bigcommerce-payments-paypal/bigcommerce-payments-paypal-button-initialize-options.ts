@@ -9,7 +9,7 @@ import {
  * When BigCommercePayments is initialized, an BigCommercePayments button will be inserted into the
  * DOM. When a customer clicks on it, it will trigger Apple sheet.
  */
-export default interface BigCommercePaymentsButtonInitializeOptions {
+export default interface BigCommercePaymentsPayPalButtonInitializeOptions {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
@@ -38,6 +38,6 @@ export default interface BigCommercePaymentsButtonInitializeOptions {
     onEligibilityFailure?(): void;
 }
 
-export interface WithBigCommercePaymentsButtonInitializeOptions {
-    bigcommerce_payments_paypal?: BigCommercePaymentsButtonInitializeOptions;
+export interface WithBigCommercePaymentsPayPalButtonInitializeOptions {
+    bigcommerce_payments_paypal?: BigCommercePaymentsPayPalButtonInitializeOptions;
 }

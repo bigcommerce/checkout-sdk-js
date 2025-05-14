@@ -5,16 +5,16 @@ import {
 
 import createBigCommercePaymentsIntegrationService from '../create-bigcommerce-payments-integration-service';
 
-import BigCommercePaymentsButtonStrategy from './bigcommerce-payments-button-strategy';
+import BigCommercePaymentsPayPalButtonStrategy from './bigcommerce-payments-paypal-button-strategy';
 
-const createBigCommercePaymentsButtonStrategy: CheckoutButtonStrategyFactory<
-    BigCommercePaymentsButtonStrategy
+const createBigCommercePaymentsPaypalButtonStrategy: CheckoutButtonStrategyFactory<
+    BigCommercePaymentsPayPalButtonStrategy
 > = (paymentIntegrationService) =>
-    new BigCommercePaymentsButtonStrategy(
+    new BigCommercePaymentsPayPalButtonStrategy(
         paymentIntegrationService,
         createBigCommercePaymentsIntegrationService(paymentIntegrationService),
     );
 
-export default toResolvableModule(createBigCommercePaymentsButtonStrategy, [
+export default toResolvableModule(createBigCommercePaymentsPaypalButtonStrategy, [
     { id: 'bigcommerce_payments_paypal' },
 ]);

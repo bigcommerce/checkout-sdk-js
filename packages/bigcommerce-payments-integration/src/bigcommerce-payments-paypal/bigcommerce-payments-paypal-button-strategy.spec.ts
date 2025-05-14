@@ -31,14 +31,14 @@ import {
     getShippingAddressFromOrderDetails,
 } from '../mocks';
 
-import BigCommercePaymentsButtonInitializeOptions from './bigcommerce-payments-button-initialize-options';
-import BigCommercePaymentsButtonStrategy from './bigcommerce-payments-button-strategy';
+import BigCommercePaymentsPayPalButtonInitializeOptions from './bigcommerce-payments-paypal-button-initialize-options';
+import BigCommercePaymentsPayPalButtonStrategy from './bigcommerce-payments-paypal-button-strategy';
 
-describe('BigCommercePaymentsButtonStrategy', () => {
+describe('BigCommercePaymentsPayPalButtonStrategy', () => {
     let buyNowCart: Cart;
     let cart: Cart;
     let eventEmitter: EventEmitter;
-    let strategy: BigCommercePaymentsButtonStrategy;
+    let strategy: BigCommercePaymentsPayPalButtonStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
     let paypalButtonElement: HTMLDivElement;
@@ -51,7 +51,7 @@ describe('BigCommercePaymentsButtonStrategy', () => {
 
     const buyNowCartRequestBody = getBuyNowCartRequestBody();
 
-    const buyNowBigCommercePaymentsOptions: BigCommercePaymentsButtonInitializeOptions = {
+    const buyNowBigCommercePaymentsOptions: BigCommercePaymentsPayPalButtonInitializeOptions = {
         buyNowInitializeOptions: {
             getBuyNowCartRequestBody: jest.fn().mockReturnValue(buyNowCartRequestBody),
         },
@@ -69,7 +69,7 @@ describe('BigCommercePaymentsButtonStrategy', () => {
         bigcommerce_payments_paypal: buyNowBigCommercePaymentsOptions,
     };
 
-    const bigCommercePaymentsOptions: BigCommercePaymentsButtonInitializeOptions = {
+    const bigCommercePaymentsOptions: BigCommercePaymentsPayPalButtonInitializeOptions = {
         style: {
             height: 45,
         },
@@ -113,7 +113,7 @@ describe('BigCommercePaymentsButtonStrategy', () => {
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
-        strategy = new BigCommercePaymentsButtonStrategy(
+        strategy = new BigCommercePaymentsPayPalButtonStrategy(
             paymentIntegrationService,
             bigCommercePaymentsIntegrationService,
         );
@@ -266,8 +266,8 @@ describe('BigCommercePaymentsButtonStrategy', () => {
         }
     });
 
-    it('creates an instance of the BigCommercePayments checkout button strategy', () => {
-        expect(strategy).toBeInstanceOf(BigCommercePaymentsButtonStrategy);
+    it('creates an instance of the BigCommercePaymentsPayPalButtonStrategy checkout button strategy', () => {
+        expect(strategy).toBeInstanceOf(BigCommercePaymentsPayPalButtonStrategy);
     });
 
     describe('#initialize()', () => {

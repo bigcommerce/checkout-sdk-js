@@ -18,18 +18,19 @@ import {
     ShippingOptionChangeCallbackPayload,
 } from '../bigcommerce-payments-types';
 
-import BigCommercePaymentsButtonInitializeOptions, {
-    WithBigCommercePaymentsButtonInitializeOptions,
-} from './bigcommerce-payments-button-initialize-options';
+import BigCommercePaymentsPayPalButtonInitializeOptions, {
+    WithBigCommercePaymentsPayPalButtonInitializeOptions,
+} from './bigcommerce-payments-paypal-button-initialize-options';
 
-export default class BigCommercePaymentsButtonStrategy implements CheckoutButtonStrategy {
+export default class BigCommercePaymentsPayPalButtonStrategy implements CheckoutButtonStrategy {
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private bigCommercePaymentsIntegrationService: BigCommercePaymentsIntegrationService,
     ) {}
 
     async initialize(
-        options: CheckoutButtonInitializeOptions & WithBigCommercePaymentsButtonInitializeOptions,
+        options: CheckoutButtonInitializeOptions &
+            WithBigCommercePaymentsPayPalButtonInitializeOptions,
     ): Promise<void> {
         const { bigcommerce_payments_paypal, containerId, methodId } = options;
 
@@ -98,7 +99,7 @@ export default class BigCommercePaymentsButtonStrategy implements CheckoutButton
     private renderButton(
         containerId: string,
         methodId: string,
-        bigcommerce_payments_paypal: BigCommercePaymentsButtonInitializeOptions,
+        bigcommerce_payments_paypal: BigCommercePaymentsPayPalButtonInitializeOptions,
     ): void {
         const { buyNowInitializeOptions, style, onComplete, onEligibilityFailure } =
             bigcommerce_payments_paypal;
