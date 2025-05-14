@@ -21,8 +21,8 @@ export { WithBigCommercePaymentsPayPalPaymentInitializeOptions } from './bigcomm
  * BigCommercePayments Alternative methods strategies
  *
  */
-export { default as createPayPalCommerceAlternativeMethodsButtonStrategy } from './bigcommerce-payments-alternative-methods/create-bigcommerce-payments-alternative-methods-button-strategy';
+export { default as createBigCommercePaymentsAlternativeMethodsButtonStrategy } from './bigcommerce-payments-alternative-methods/create-bigcommerce-payments-alternative-methods-button-strategy';
 export { WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions } from './bigcommerce-payments-alternative-methods/bigcommerce-payments-alternative-methods-button-initialize-options';
 
-export { default as createPayPalCommerceAlternativeMethodsPaymentStrategy } from './bigcommerce-payments-alternative-methods/create-bigcommerce-payments-alternative-methods-payment-strategy';
+export { default as createBigCommercePaymentsAlternativeMethodsPaymentStrategy } from './bigcommerce-payments-alternative-methods/create-bigcommerce-payments-alternative-methods-payment-strategy';
 export { WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions } from './bigcommerce-payments-alternative-methods/bigcommerce-payments-alternative-methods-payment-initialize-options';
