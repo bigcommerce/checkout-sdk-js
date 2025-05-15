@@ -15,3 +15,14 @@ export { WithBigCommercePaymentsPayPalCustomerInitializeOptions } from './bigcom
 
 export { default as createBigCommercePaymentsPayPalPaymentStrategy } from './bigcommerce-payments-paypal/create-bigcommerce-payments-paypal-payment-strategy';
 export { WithBigCommercePaymentsPayPalPaymentInitializeOptions } from './bigcommerce-payments-paypal/bigcommerce-payments-paypal-payment-initialize-options';
+
+/**
+ *
+ * BigCommercePayments Fastlane strategy
+ *
+ */
+export { default as createBigCommercePaymentsFastlaneCustomerStrategy } from './bigcommerce-payments-fastlane/create-bigcommerce-payments-fastlane-customer-strategy';
+export { WithBigCommercePaymentsFastlaneCustomerInitializeOptions } from './bigcommerce-payments-fastlane/bigcommerce-payments-fastlane-customer-initialize-options';
+
+export { default as createBigCommercePaymentsFastlanePaymentStrategy } from './bigcommerce-payments-fastlane/create-bigcommerce-payments-fastlane-payment-strategy';
+export { WithBigCommercePaymentsFastlanePaymentInitializeOptions } from './bigcommerce-payments-fastlane/bigcommerce-payments-fastlane-payment-initialize-options';
