@@ -15,3 +15,17 @@ export { WithBigCommercePaymentsPayPalCustomerInitializeOptions } from './bigcom
 
 export { default as createBigCommercePaymentsPayPalPaymentStrategy } from './bigcommerce-payments-paypal/create-bigcommerce-payments-paypal-payment-strategy';
 export { WithBigCommercePaymentsPayPalPaymentInitializeOptions } from './bigcommerce-payments-paypal/bigcommerce-payments-paypal-payment-initialize-options';
+
+/**
+ *
+ * BigCommercePaymentsPaypal (PayLater) strategies
+ *
+ */
+export { default as createBigCommercePaymentsPayLaterButtonStrategy } from './bigcommerce-payments-paylater/create-bigcommerce-payments-paylater-button-strategy';
+export { WithBigCommercePaymentsPayLaterButtonInitializeOptions } from './bigcommerce-payments-paylater/bigcommerce-payments-paylater-button-initialize-options';
+
+export { default as createBigCommercePaymentsPayLaterCustomerStrategy } from './bigcommerce-payments-paylater/create-bigcommerce-payments-paylater-customer-strategy';
+export { WithBigCommercePaymentsPayLaterCustomerInitializeOptions } from './bigcommerce-payments-paylater/bigcommerce-payments-paylater-customer-initialize-options';
+
+export { default as createBigCommercePaymentsPayLaterPaymentStrategy } from './bigcommerce-payments-paylater/create-bigcommerce-payments-paylater-payment-strategy';
+export { WithBigCommercePaymentsPayLaterPaymentInitializeOptions } from './bigcommerce-payments-paylater/bigcommerce-payments-paylater-payment-initialize-options';
