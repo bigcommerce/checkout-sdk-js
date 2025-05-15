@@ -15,3 +15,11 @@ export { WithBigCommercePaymentsPayPalCustomerInitializeOptions } from './bigcom
 
 export { default as createBigCommercePaymentsPayPalPaymentStrategy } from './bigcommerce-payments-paypal/create-bigcommerce-payments-paypal-payment-strategy';
 export { WithBigCommercePaymentsPayPalPaymentInitializeOptions } from './bigcommerce-payments-paypal/bigcommerce-payments-paypal-payment-initialize-options';
+
+/**
+ *
+ * BigCommercePayments Credit Cards strategies
+ *
+ */
+export { default as createBigCommercePaymentsCreditCardsPaymentStrategy } from './bigcommerce-payments-credit-cards/create-bigcommerce-payments-credit-cards-payment-strategy';
+export { WithBigCommercePaymentsCreditCardsPaymentInitializeOptions } from './bigcommerce-payments-credit-cards/bigcommerce-payments-credit-cards-payment-initialize-options';
