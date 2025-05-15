@@ -18,6 +18,17 @@ export { WithBigCommercePaymentsPayPalPaymentInitializeOptions } from './bigcomm
 
 /**
  *
+ * BigCommercePayments Fastlane strategy
+ *
+ */
+export { default as createBigCommercePaymentsFastlaneCustomerStrategy } from './bigcommerce-payments-fastlane/create-bigcommerce-payments-fastlane-customer-strategy';
+export { WithBigCommercePaymentsFastlaneCustomerInitializeOptions } from './bigcommerce-payments-fastlane/bigcommerce-payments-fastlane-customer-initialize-options';
+
+export { default as createBigCommercePaymentsFastlanePaymentStrategy } from './bigcommerce-payments-fastlane/create-bigcommerce-payments-fastlane-payment-strategy';
+export { WithBigCommercePaymentsFastlanePaymentInitializeOptions } from './bigcommerce-payments-fastlane/bigcommerce-payments-fastlane-payment-initialize-options';
+
+/**
+ *
  * BigCommercePayments PayLater strategies
  *
  */
