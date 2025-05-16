@@ -1,3 +1,5 @@
+import { StripeLinkV2Client } from '../stripe-link-v2/types';
+
 /**
  * Initialization options.
  */
@@ -223,7 +225,7 @@ export interface StripePaymentEvent extends StripeEvent {
     collapsed?: boolean;
 }
 
-interface Address {
+export interface Address {
     city: string;
     country: string;
     line1: string;
@@ -487,6 +489,10 @@ export interface StripeUpdateElementsOptions {
      * The layout of each Element stays consistent, but you can modify colors, fonts, borders, padding, and more.
      */
     appearance?: StripeUPEAppearanceOptions;
+
+    mode?: string;
+    amount?: number;
+    currency?: string;
 }
 
 export interface StripeUPEClient {
@@ -520,8 +526,12 @@ export interface StripeUpeResult {
 
 export interface StripeHostWindow extends Window {
     bcStripeClient?: StripeUPEClient;
+    bcStripeLinkV2Client?: StripeLinkV2Client;
     bcStripeElements?: StripeElements;
-    Stripe?(stripePublishableKey: string, options?: StripeConfigurationOptions): StripeUPEClient;
+    Stripe?<T = StripeUPEClient>(
+        stripePublishableKey: string,
+        options?: StripeConfigurationOptions,
+    ): T;
 }
 
 export enum StripePaymentMethodType {
@@ -552,6 +562,7 @@ export enum StripeElementType {
     PAYMENT = 'payment',
     AUTHENTICATION = 'linkAuthentication',
     SHIPPING = 'address',
+    EXPRESS_CHECKOUT = 'expressCheckout',
 }
 
 export enum StripeUPEPaymentIntentStatus {
