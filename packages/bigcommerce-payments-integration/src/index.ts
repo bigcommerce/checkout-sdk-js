@@ -15,3 +15,11 @@ export { WithBigCommercePaymentsPayPalCustomerInitializeOptions } from './bigcom
 
 export { default as createBigCommercePaymentsPayPalPaymentStrategy } from './bigcommerce-payments-paypal/create-bigcommerce-payments-paypal-payment-strategy';
 export { WithBigCommercePaymentsPayPalPaymentInitializeOptions } from './bigcommerce-payments-paypal/bigcommerce-payments-paypal-payment-initialize-options';
+
+/**
+ *
+ * BigCommercePayments RatePay strategy
+ *
+ */
+export { default as createBigCommercePaymentsRatePayPayPaymentStrategy } from './bigcommerce-payments-ratepay/create-bigcommerce-payments-ratepay-payment-strategy';
+export { WithBigCommercePaymentsRatePayPaymentInitializeOptions } from './bigcommerce-payments-ratepay/bigcommerce-payments-ratepay-initialize-options';
