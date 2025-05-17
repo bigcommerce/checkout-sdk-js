@@ -1,4 +1,4 @@
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const path = require('path');
 const { major } = require('semver');
 const { DefinePlugin } = require('webpack');
@@ -75,7 +75,10 @@ async function getCdnLoaderConfig(options, argv) {
             {
                 apply(compiler) {
                     compiler.hooks.done.tap('DuplicateLoader', () => {
-                        execSync(`cp ${path.join(outputPath, `loader-v${version}.js`)} ${path.join(outputPath, `loader.js`)}`);
+                        execFileSync('cp', [
+                            path.join(outputPath, `loader-v${version}.js`),
+                            path.join(outputPath, `loader.js`)
+                        ]);
                     });
                 },
             },
