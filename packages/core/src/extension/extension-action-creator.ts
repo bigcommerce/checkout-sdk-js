@@ -4,8 +4,8 @@ import { Observable, Observer } from 'rxjs';
 import { InternalCheckoutSelectors } from '../checkout';
 import { RequestOptions } from '../common/http-request';
 import { parseUrl } from '../common/url';
-import { createExtensionWebWorker } from './create-extension-web-worker';
 
+import { createExtensionWebWorker } from './create-extension-web-worker';
 import { ExtensionNotFoundError } from './errors';
 import { ExtensionRegion } from './extension';
 import { ExtensionAction, ExtensionActionType } from './extension-actions';

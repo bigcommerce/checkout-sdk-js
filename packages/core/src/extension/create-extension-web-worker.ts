@@ -1,6 +1,4 @@
 export function createExtensionWebWorker(url: string): Worker {
-    let worker: Worker;
-
     if (!window.Worker) {
         throw new Error(
             `Unable to load the extension's web worker: your browser does not support Web Workers.`,
@@ -17,13 +15,8 @@ export function createExtensionWebWorker(url: string): Worker {
             ),
         );
 
-        worker = new Worker(blob);
-
+        return new Worker(blob);
     } catch (error) {
-        throw new Error(
-            `Unable to load the extension's web worker`,
-        );
+        throw new Error(`Unable to load the extension's web worker`);
     }
-
-    return worker;
 }
