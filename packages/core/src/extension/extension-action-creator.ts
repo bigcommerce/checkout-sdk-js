@@ -4,6 +4,7 @@ import { Observable, Observer } from 'rxjs';
 import { InternalCheckoutSelectors } from '../checkout';
 import { RequestOptions } from '../common/http-request';
 import { parseUrl } from '../common/url';
+import { createExtensionWebWorker } from './create-extension-web-worker';
 
 import { ExtensionNotFoundError } from './errors';
 import { ExtensionRegion } from './extension';
@@ -67,12 +68,20 @@ export class ExtensionActionCreator {
 
                     observer.next(createAction(ExtensionActionType.RenderExtensionRequested));
 
-                    const iframe = new ExtensionIframe(container, extension, {
-                        cartId,
-                        parentOrigin: parseUrl(checkoutLink).origin,
-                    });
+                    if (extension.type === 'worker') {
+                        const worker = createExtensionWebWorker(extension.url);
 
-                    await iframe.attach();
+                        // TODO: CHECKOUT-9248 Add the web worker reference to the checkout SDK internal state for consistent access and management.
+                        // eslint-disable-next-line no-console
+                        console.log('Worker created:', worker);
+                    } else {
+                        const iframe = new ExtensionIframe(container, extension, {
+                            cartId,
+                            parentOrigin: parseUrl(checkoutLink).origin,
+                        });
+
+                        await iframe.attach();
+                    }
 
                     observer.next(createAction(ExtensionActionType.RenderExtensionSucceeded));
                     observer.complete();
