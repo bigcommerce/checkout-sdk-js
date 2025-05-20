@@ -76,6 +76,8 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
             braintreeSdk,
             braintreeRequestSender,
             loadingIndicator,
+            1,
+            10,
         );
 
         lpmContainer = document.createElement('div');
@@ -312,7 +314,7 @@ describe('BraintreeLocalMethodsPaymentStrategy', () => {
                         email: 'foo@bar.com',
                         fallback: {
                             buttonText: 'Complete Payment',
-                            url: 'url-placeholder',
+                            url: storeConfigMock.links.checkoutLink,
                         },
                         givenName: 'Test',
                         surname: 'Tester',
