@@ -33,6 +33,8 @@ export default interface StripeUPEPaymentInitializeOptions {
      */
     style?: Record<string, StripeUPEAppearanceValues>;
 
+    isCollapsed?: boolean;
+
     onError?(error?: Error): void;
 
     render(): void;

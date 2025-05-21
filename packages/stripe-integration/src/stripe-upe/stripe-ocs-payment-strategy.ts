@@ -42,6 +42,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     private stripeUPEClient?: StripeUPEClient;
     private stripeElements?: StripeElements;
     private selectedMethodId?: string;
+    private isStripeAccordionInitialized = false;
     private readonly stripeSVGSizeCoefficient = 0.88;
 
     constructor(
@@ -157,8 +158,14 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             stripeConnectedAccount,
         );
 
-        const { containerId, style, render, paymentMethodSelect, handleClosePaymentMethod } =
-            stripeupe;
+        const {
+            containerId,
+            style,
+            isCollapsed,
+            render,
+            paymentMethodSelect,
+            handleClosePaymentMethod,
+        } = stripeupe;
 
         this.stripeElements = await this.scriptLoader.getElements(this.stripeUPEClient, {
             clientSecret: clientToken,
@@ -191,7 +198,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
                 },
                 layout: {
                     type: 'accordion',
-                    defaultCollapsed: false,
+                    defaultCollapsed: isCollapsed,
                     radios: true,
                     spacedAccordionItems: false,
                     visibleAccordionItemsCount: 0,
@@ -201,6 +208,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         this.stripeUPEIntegrationService.mountElement(stripeElement, containerId);
 
         stripeElement.on('ready', () => {
+            this.isStripeAccordionInitialized = true;
             render();
         });
 
@@ -421,7 +429,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         methodId: string,
         paymentMethodSelect?: (id: string) => void,
     ) {
-        if (!isStripePaymentEvent(event) || event.collapsed) {
+        if (!isStripePaymentEvent(event) || event.collapsed || !this.isStripeAccordionInitialized) {
             return;
         }
 
