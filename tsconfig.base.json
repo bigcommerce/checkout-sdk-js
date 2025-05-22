@@ -41,9 +41,11 @@
             "@bigcommerce/checkout-sdk/apple-pay-integration": [
                 "packages/apple-pay-integration/src/index.ts"
             ],
-            "@bigcommerce/checkout-sdk/bigcommerce-payments-utils": ["packages/bigcommerce-payments-utils/src/index.ts"],
             "@bigcommerce/checkout-sdk/bigcommerce-payments-integration": [
                 "packages/bigcommerce-payments-integration/src/index.ts"
+            ],
+            "@bigcommerce/checkout-sdk/bigcommerce-payments-utils": [
+                "packages/bigcommerce-payments-utils/src/index.ts"
             ],
             "@bigcommerce/checkout-sdk/bluesnap-direct-integration": [
                 "packages/bluesnap-direct-integration/src/index.ts"
@@ -137,6 +139,9 @@
             ],
             "@bigcommerce/checkout-sdk/ui": ["packages/ui/src/index.ts"],
             "@bigcommerce/checkout-sdk/utility": ["packages/utility/src/index.ts"],
+            "@bigcommerce/checkout-sdk/wallet-button-integration": [
+                "packages/wallet-button-integration/src/index.ts"
+            ],
             "@bigcommerce/checkout-sdk/workspace-tools": ["packages/workspace-tools/src/index.ts"],
             "@bigcommerce/checkout-sdk/worldpayaccess-integration": [
                 "packages/worldpayaccess-integration/src/index.ts"
