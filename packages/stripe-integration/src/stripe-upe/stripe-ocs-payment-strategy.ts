@@ -157,8 +157,14 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             stripeConnectedAccount,
         );
 
-        const { containerId, style, render, paymentMethodSelect, handleClosePaymentMethod } =
-            stripeupe;
+        const {
+            containerId,
+            style,
+            layout,
+            render,
+            paymentMethodSelect,
+            handleClosePaymentMethod,
+        } = stripeupe;
 
         this.stripeElements = await this.scriptLoader.getElements(this.stripeUPEClient, {
             clientSecret: clientToken,
@@ -189,13 +195,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
                     applePay: StripeStringConstants.NEVER,
                     googlePay: StripeStringConstants.NEVER,
                 },
-                layout: {
-                    type: 'accordion',
-                    defaultCollapsed: false,
-                    radios: true,
-                    spacedAccordionItems: false,
-                    visibleAccordionItemsCount: 0,
-                },
+                layout,
             });
 
         this.stripeUPEIntegrationService.mountElement(stripeElement, containerId);

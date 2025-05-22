@@ -29,6 +29,11 @@ export default interface StripeUPEPaymentInitializeOptions {
     containerId: string;
 
     /**
+     * Stripe OCS layout options
+     */
+    layout?: Record<string, string | number | boolean>;
+
+    /**
      * Checkout styles from store theme
      */
     style?: Record<string, StripeUPEAppearanceValues>;

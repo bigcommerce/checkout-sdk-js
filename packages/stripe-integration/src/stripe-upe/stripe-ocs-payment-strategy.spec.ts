@@ -18,12 +18,8 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import StripeOCSPaymentStrategy from './stripe-ocs-payment-strategy';
-import {
-    StripeElementType,
-    StripePaymentMethodType,
-    StripeStringConstants,
-    StripeUPEClient,
-} from './stripe-upe';
+import { getStripeOCSInitializeOptionsMock } from './stripe-ocs.mock';
+import { StripeElementType, StripeStringConstants, StripeUPEClient } from './stripe-upe';
 import { WithStripeUPEPaymentInitializeOptions } from './stripe-upe-initialize-options';
 import StripeUPEIntegrationService from './stripe-upe-integration-service';
 import { getStripeUPEIntegrationServiceMock } from './stripe-upe-integration-service.mock';
@@ -31,7 +27,6 @@ import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import {
     getStripeOCSOrderRequestBodyMock,
     getStripeUPE,
-    getStripeUPEInitializeOptionsMock,
     getStripeUPEJsMock,
     StripeEventMock,
 } from './stripe-upe.mock';
@@ -67,7 +62,7 @@ describe('StripeOCSPaymentStrategy', () => {
             stripeUPEIntegrationService,
         );
 
-        stripeOptions = getStripeUPEInitializeOptionsMock(StripePaymentMethodType.OCS, style);
+        stripeOptions = getStripeOCSInitializeOptionsMock();
         stripeUPEJsMock = getStripeUPEJsMock();
 
         jest.spyOn(stripeScriptLoader, 'getStripeClient').mockImplementation(
@@ -221,6 +216,7 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
                 stripeupe: {
+                    ...stripeOptions.stripeupe,
                     containerId: 'containerId',
                     render: renderMock,
                     onError: onErrorMock,
@@ -281,6 +277,7 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
                 stripeupe: {
+                    ...stripeOptions.stripeupe,
                     containerId: 'containerId',
                     render: renderMock,
                     onError: onErrorMock,
@@ -382,10 +379,7 @@ describe('StripeOCSPaymentStrategy', () => {
         describe('Stripe Element styling', () => {
             describe('RadioButton styling', () => {
                 it('should initialize with default style', async () => {
-                    stripeOptions = getStripeUPEInitializeOptionsMock(
-                        StripePaymentMethodType.OCS,
-                        style,
-                    );
+                    stripeOptions = getStripeOCSInitializeOptionsMock(style);
                     await stripeOCSPaymentStrategy.initialize(stripeOptions);
 
                     expect(stripeScriptLoader.getElements).toHaveBeenCalledWith(
@@ -414,7 +408,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 });
 
                 it('should initialize with custom style', async () => {
-                    stripeOptions = getStripeUPEInitializeOptionsMock(StripePaymentMethodType.OCS, {
+                    stripeOptions = getStripeOCSInitializeOptionsMock({
                         ...style,
                         radioIconOuterWidth: '52px',
                         radioIconOuterStrokeWidth: '4px',
@@ -1107,7 +1101,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 }),
             );
 
-            await stripeOCSPaymentStrategy.initialize(getStripeUPEInitializeOptionsMock());
+            await stripeOCSPaymentStrategy.initialize(getStripeOCSInitializeOptionsMock());
             await stripeOCSPaymentStrategy.deinitialize();
 
             expect(stripeUPEIntegrationService.deinitialize).toHaveBeenCalled();
@@ -1115,7 +1109,7 @@ describe('StripeOCSPaymentStrategy', () => {
         });
 
         it('when stripe element not initialized', async () => {
-            await stripeOCSPaymentStrategy.initialize(getStripeUPEInitializeOptionsMock());
+            await stripeOCSPaymentStrategy.initialize(getStripeOCSInitializeOptionsMock());
 
             jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
                 Promise.resolve({
