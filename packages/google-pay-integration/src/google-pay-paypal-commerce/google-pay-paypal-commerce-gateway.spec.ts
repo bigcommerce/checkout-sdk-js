@@ -2,6 +2,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import GooglePayGateway from '../gateways/google-pay-gateway';
 import isGooglePayPaypalCommercePaymentMethod from '../guards/is-google-pay-paypal-commerce-payment-method';
@@ -9,12 +10,11 @@ import getCardDataResponse from '../mocks/google-pay-card-data-response.mock';
 import { getPayPalCommerce } from '../mocks/google-pay-payment-method.mock';
 
 import GooglePayPayPalCommerceGateway from './google-pay-paypal-commerce-gateway';
-import PayPalCommerceScriptLoader from './google-pay-paypal-commerce-script-loader';
 
 describe('GooglePayPayPalCommerceGateway', () => {
     let gateway: GooglePayPayPalCommerceGateway;
     let paymentIntegrationService: PaymentIntegrationService;
-    let scriptLoader: PayPalCommerceScriptLoader;
+    let scriptLoader: PayPalCommerceSdk;
     const googlePayConfigMock = {
         allowedPaymentMethods: [
             {
@@ -47,28 +47,13 @@ describe('GooglePayPayPalCommerceGateway', () => {
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        scriptLoader = new PayPalCommerceScriptLoader(getScriptLoader());
+        scriptLoader = new PayPalCommerceSdk(getScriptLoader());
 
         gateway = new GooglePayPayPalCommerceGateway(paymentIntegrationService, scriptLoader);
-        jest.spyOn(scriptLoader, 'getGooglePayConfigOrThrow').mockResolvedValue({
-            ...googlePayConfigMock,
-            allowedPaymentMethods: [
-                {
-                    ...googlePayConfigMock.allowedPaymentMethods[0],
-                    tokenizationSpecification: {
-                        ...googlePayConfigMock.allowedPaymentMethods[0].tokenizationSpecification,
-                        parameters: {
-                            gateway: 'paypalsb',
-                            gatewayMerchantId: 'ID',
-                        },
-                    },
-                },
-            ],
-        });
 
-        jest.spyOn(scriptLoader, 'getPayPalSDK').mockResolvedValue({
+        jest.spyOn(scriptLoader, 'getPayPalGooglePaySdk').mockResolvedValue({
             Googlepay: jest.fn().mockReturnValue({
-                config: jest.fn().mockReturnValue({}),
+                config: jest.fn().mockReturnValue(googlePayConfigMock),
                 confirmOrder: jest.fn().mockResolvedValue({ status: 'APPROVED' }),
             }),
         });
@@ -101,7 +86,7 @@ describe('GooglePayPayPalCommerceGateway', () => {
     describe('#getPaymentGatewayParameters', () => {
         it('should return payment gateway parameters', async () => {
             const expectedParams = {
-                gateway: 'paypalsb',
+                gateway: 'paypalppcp',
                 gatewayMerchantId: 'ID',
             };
 
@@ -115,10 +100,6 @@ describe('GooglePayPayPalCommerceGateway', () => {
         });
 
         it('should return payment gateway parameters in production mode', async () => {
-            jest.spyOn(scriptLoader, 'getGooglePayConfigOrThrow').mockResolvedValue(
-                googlePayConfigMock,
-            );
-
             const expectedParams = {
                 gateway: 'paypalppcp',
                 gatewayMerchantId: 'ID',
@@ -134,25 +115,8 @@ describe('GooglePayPayPalCommerceGateway', () => {
         });
 
         it('should return default payment gateway name', async () => {
-            jest.spyOn(scriptLoader, 'getGooglePayConfigOrThrow').mockResolvedValue({
-                ...googlePayConfigMock,
-                allowedPaymentMethods: [
-                    {
-                        ...googlePayConfigMock.allowedPaymentMethods[0],
-                        tokenizationSpecification: {
-                            ...googlePayConfigMock.allowedPaymentMethods[0]
-                                .tokenizationSpecification,
-                            parameters: {
-                                gateway: '',
-                                gatewayMerchantId: 'ID',
-                            },
-                        },
-                    },
-                ],
-            });
-
             const expectedParams = {
-                gateway: 'paypalsb',
+                gateway: 'paypalppcp',
                 gatewayMerchantId: 'ID',
             };
 

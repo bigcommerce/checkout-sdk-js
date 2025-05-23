@@ -52,6 +52,7 @@ export interface PayPalCommerceHostWindow extends Window {
     paypalFastlaneSdk?: PayPalFastlaneSdk;
     paypalMessages?: PayPalMessagesSdk;
     paypalApms?: PayPalApmSdk;
+    paypalGooglePay?: PayPalGooglePaySdk;
 }
 
 /**
@@ -85,7 +86,9 @@ export enum PayPalCommerceIntent {
     CAPTURE = 'capture',
 }
 
-export type PayPalSdkComponents = Array<'fastlane' | 'messages' | 'buttons' | 'payment-fields'>;
+export type PayPalSdkComponents = Array<
+    'fastlane' | 'messages' | 'buttons' | 'payment-fields' | 'googlepay'
+>;
 
 /**
  *
@@ -103,6 +106,75 @@ export interface PayPalMessagesSdk {
 export interface PayPalApmSdk {
     Buttons(options: PayPalCommerceButtonsOptions): PayPalCommerceButtons;
     PaymentFields(options: PayPalCommercePaymentFieldsOptions): PayPalCommercePaymentFields;
+}
+
+export interface PayPalGooglePaySdk {
+    Googlepay(): GooglePay;
+}
+
+/**
+ *
+ * Google Pay related types
+ *
+ */
+
+interface GooglePay {
+    config: () => Promise<GooglePayConfig>;
+    confirmOrder: (confirmOrderConfig: ConfirmOrderConfig) => Promise<{ status: string }>;
+    initiatePayerAction: (payerActionConfig: PayerActionConfig) => Promise<void>;
+}
+
+interface ConfirmOrderConfig {
+    orderId: string;
+    paymentMethodData: ConfirmOrderData;
+}
+
+export interface ConfirmOrderData {
+    tokenizationData: {
+        type: string;
+        token: string;
+    };
+    info: {
+        cardNetwork: string;
+        cardDetails: string;
+    };
+    type: string;
+}
+
+interface PayerActionConfig {
+    orderId: string;
+}
+
+export interface GooglePayConfig {
+    allowedPaymentMethods: AllowedPaymentMethods[];
+    apiVersion: number;
+    apiVersionMinor: number;
+    countryCode: string;
+    isEligible: boolean;
+    merchantInfo: {
+        merchantId: string;
+        merchantOrigin: string;
+    };
+}
+
+export interface AllowedPaymentMethods {
+    type: string;
+    parameters: {
+        allowedAuthMethods: string[];
+        allowedCardNetworks: string[];
+        billingAddressRequired: boolean;
+        assuranceDetailsRequired: boolean;
+        billingAddressParameters: {
+            format: string;
+        };
+    };
+    tokenizationSpecification: {
+        type: string;
+        parameters: {
+            gateway: string;
+            gatewayMerchantId: string;
+        };
+    };
 }
 
 /**

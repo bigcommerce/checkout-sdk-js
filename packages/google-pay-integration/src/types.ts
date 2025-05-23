@@ -346,7 +346,7 @@ interface GooglePayBaseInitializationData {
 
 export interface GooglePayPayPalCommerceInitializationData extends GooglePayBaseInitializationData {
     merchantId?: string;
-    clientId?: string;
+    clientId: string;
     attributionId?: string;
     availableAlternativePaymentMethods: FundingType;
     buttonStyle?: PayPalButtonStyleOptions;
