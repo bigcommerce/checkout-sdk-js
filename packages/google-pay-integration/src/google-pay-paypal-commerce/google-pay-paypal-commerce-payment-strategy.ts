@@ -4,24 +4,26 @@ import {
     ContentType,
     INTERNAL_USE_ONLY,
     InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
     SDK_VERSION_HEADERS,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import GooglePayPaymentProcessor from '../google-pay-payment-processor';
 import GooglePayPaymentStrategy from '../google-pay-payment-strategy';
 import { GooglePayInitializationData, GooglePayPayPalCommerceInitializationData } from '../types';
 
-import PayPalCommerceScriptLoader from './google-pay-paypal-commerce-script-loader';
 import { ConfirmOrderData, ConfirmOrderStatus } from './types';
 
 export default class GooglePayPaypalCommercePaymentStrategy extends GooglePayPaymentStrategy {
     constructor(
         _paymentIntegrationService: PaymentIntegrationService,
         _googlePayPaymentProcessor: GooglePayPaymentProcessor,
-        private _paypalCommerceScriptLoader: PayPalCommerceScriptLoader,
+        private _payPalCommerceSdk: PayPalCommerceSdk,
         private _requestSender: RequestSender,
     ) {
         super(_paymentIntegrationService, _googlePayPaymentProcessor);
@@ -83,9 +85,13 @@ export default class GooglePayPaypalCommercePaymentStrategy extends GooglePayPay
                 this._getMethodId(),
             );
 
+        if (!paymentMethod.initializationData) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
         const currencyCode = state.getCartOrThrow().currency.code;
 
-        const payPalSDK = await this._paypalCommerceScriptLoader.getPayPalSDK(
+        const payPalSDK = await this._payPalCommerceSdk.getPayPalGooglePaySdk(
             paymentMethod,
             currencyCode,
             true,

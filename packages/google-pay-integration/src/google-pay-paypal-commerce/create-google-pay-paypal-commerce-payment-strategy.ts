@@ -13,22 +13,22 @@ import GooglePayPaymentStrategy from '../google-pay-payment-strategy';
 
 import GooglePayPaypalCommerceGateway from './google-pay-paypal-commerce-gateway';
 import GooglePayPaypalCommercePaymentStrategy from './google-pay-paypal-commerce-payment-strategy';
-import PayPalCommerceScriptLoader from './google-pay-paypal-commerce-script-loader';
+import { PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 const createGooglePayPayPalCommercePaymentStrategy: PaymentStrategyFactory<
     GooglePayPaymentStrategy
 > = (paymentIntegrationService) => {
-    const scriptLoader = new PayPalCommerceScriptLoader(getScriptLoader());
+    const payPalCommerceSdk = new PayPalCommerceSdk(getScriptLoader());
 
     return new GooglePayPaypalCommercePaymentStrategy(
         paymentIntegrationService,
         new GooglePayPaymentProcessor(
             createGooglePayScriptLoader(),
-            new GooglePayPaypalCommerceGateway(paymentIntegrationService, scriptLoader),
+            new GooglePayPaypalCommerceGateway(paymentIntegrationService, payPalCommerceSdk),
             createRequestSender(),
             createFormPoster(),
         ),
-        scriptLoader,
+        payPalCommerceSdk,
         createRequestSender(),
     );
 };
