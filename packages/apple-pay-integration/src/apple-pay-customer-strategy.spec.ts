@@ -14,6 +14,7 @@ import {
     InvalidArgumentError,
     MissingDataError,
     PaymentIntegrationService,
+    PaymentMethodFailedError,
     ShippingOption,
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -155,6 +156,16 @@ describe('ApplePayCustomerStrategy', () => {
 
         it('throws error when payment data is empty', async () => {
             await expect(strategy.initialize({})).rejects.toThrow(MissingDataError);
+        });
+
+        it('throws error if canMakePayments returns false', async () => {
+            MockApplePaySession.canMakePayments = jest.fn().mockReturnValue(false);
+
+            await expect(
+                strategy.initialize(getApplePayCustomerInitializationOptions()),
+            ).rejects.toThrow(PaymentMethodFailedError);
+
+            MockApplePaySession.canMakePayments = jest.fn().mockReturnValue(true);
         });
 
         it('sets up request for digital items', async () => {
