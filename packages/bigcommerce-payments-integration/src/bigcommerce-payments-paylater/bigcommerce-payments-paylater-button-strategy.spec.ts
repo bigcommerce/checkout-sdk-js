@@ -30,7 +30,7 @@ import {
 import {
     getBigCommercePaymentsIntegrationServiceMock,
     getBigCommercePaymentsOrderDetails,
-    getBigCommercePaymentsPaymentMethod,
+    getBigCommercePaymentsPayPalPaymentMethod,
     getBillingAddressFromOrderDetails,
     getPayPalSDKMock,
     getShippingAddressFromOrderDetails,
@@ -125,7 +125,7 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
         };
 
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();
-        paymentMethod = getBigCommercePaymentsPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
         paypalSdk = getPayPalSDKMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         paypalSdkHelper = createBigCommercePaymentsSdk();
@@ -405,7 +405,7 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
     });
 
     describe('#renderButton', () => {
-        it('initializes PayPal button to render (default flow)', async () => {
+        it('initializes PayLater button to render (default flow)', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
@@ -439,7 +439,7 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
             });
         });
 
-        it('initializes PayPal button to render (buy now flow)', async () => {
+        it('initializes PayLater button to render (buy now flow)', async () => {
             await strategy.initialize(buyNowInitializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
@@ -452,7 +452,7 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
             });
         });
 
-        it('initializes PayPal button to render (with shipping options feature enabled)', async () => {
+        it('initializes PayLater button to render (with shipping options feature enabled)', async () => {
             const paymentMethodWithShippingOptionsFeature = {
                 ...paymentMethod,
                 initializationData: {
@@ -478,7 +478,7 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
             });
         });
 
-        it('renders PayPal button if it is eligible', async () => {
+        it('renders PayLater button if it is eligible', async () => {
             const renderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
@@ -492,7 +492,7 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
             expect(renderMock).toHaveBeenCalled();
         });
 
-        it('calls onEligibilityFailure callback when PayPal button is not eligible', async () => {
+        it('calls onEligibilityFailure callback when PayLater button is not eligible', async () => {
             const renderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
@@ -507,7 +507,7 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
             expect(renderMock).not.toHaveBeenCalled();
         });
 
-        it('removes PayPal button container if the button is not eligible', async () => {
+        it('removes PayLater button container if the button is not eligible', async () => {
             const renderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
@@ -525,7 +525,7 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
     });
 
     describe('#createOrder', () => {
-        it('creates paypal order', async () => {
+        it('creates an order', async () => {
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('createOrder');
@@ -781,7 +781,7 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
             );
         });
 
-        it('updates PayPal order after shipping option selection', async () => {
+        it('updates an order after shipping option selection', async () => {
             const consignment = getConsignment();
 
             // INFO: lets imagine that it is a state that we get after consignmentActionCreator.selectShippingOption call
@@ -831,7 +831,7 @@ describe('BigCommercePaymentsPayLaterButtonStrategy', () => {
             );
         });
 
-        it('updates PayPal order', async () => {
+        it('updates order', async () => {
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingOptionsChange');

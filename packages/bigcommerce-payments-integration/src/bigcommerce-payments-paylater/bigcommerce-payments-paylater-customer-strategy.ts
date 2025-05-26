@@ -82,7 +82,7 @@ export default class BigCommercePaymentsPayLaterCustomerStrategy implements Cust
         if (!paypalSdk || !paypalSdk.Buttons || typeof paypalSdk.Buttons !== 'function') {
             // eslint-disable-next-line no-console
             console.error(
-                '[BC BigCommercePayments]: BigCommercePayments Button could not be rendered, due to issues with loading BigCommercePayments SDK',
+                '[BC BigCommercePayments PayLater]: button could not be rendered, due to issues with loading PayPal SDK',
             );
 
             return;

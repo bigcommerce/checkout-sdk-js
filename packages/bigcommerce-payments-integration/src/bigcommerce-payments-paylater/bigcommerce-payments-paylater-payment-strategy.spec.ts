@@ -26,7 +26,7 @@ import {
 } from '../bigcommerce-payments-types';
 import {
     getBigCommercePaymentsIntegrationServiceMock,
-    getBigCommercePaymentsPaymentMethod,
+    getBigCommercePaymentsPayPalPaymentMethod,
     getPayPalSDKMock,
 } from '../mocks';
 
@@ -70,7 +70,7 @@ describe('BigCommercePaymentsPayLaterPaymentStrategy', () => {
         };
 
         paypalSdk = getPayPalSDKMock();
-        paymentMethod = getBigCommercePaymentsPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
         paymentMethod.id = defaultMethodId;
         paymentMethod.initializationData.orderId = undefined;
 

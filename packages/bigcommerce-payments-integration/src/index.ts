@@ -18,7 +18,7 @@ export { WithBigCommercePaymentsPayPalPaymentInitializeOptions } from './bigcomm
 
 /**
  *
- * BigCommercePaymentsPaypal (PayLater) strategies
+ * BigCommercePayments PayLater strategies
  *
  */
 export { default as createBigCommercePaymentsPayLaterButtonStrategy } from './bigcommerce-payments-paylater/create-bigcommerce-payments-paylater-button-strategy';

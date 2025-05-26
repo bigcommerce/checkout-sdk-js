@@ -1,12 +1,11 @@
 /**
- * A set of options that are required to initialize the BigCommercePayments  payment
- * method for presenting its BigCommercePayments button.
+ * A set of options that are required to initialize the BigCommercePayments PayLater payment
+ * method for presenting its BigCommercePayments PayLater button.
  *
- * Please note that the minimum version of checkout-sdk is 1.100
  *
- * Also, BigCommercePayments (also known as BigCommercePayments  Platform) requires specific options to initialize the BigCommercePayments Smart Payment Button on checkout page that substitutes a standard submit button
+ * Also, BigCommercePayments requires specific options to initialize the BigCommercePayments Smart Payment Button on checkout page that substitutes a standard submit button
  * ```html
- * <!-- This is where the BigCommercePayments button will be inserted -->
+ * <!-- This is where the BigCommercePayments PayLater button will be inserted -->
  * <div id="container"></div>
  * ```
  *
@@ -83,6 +82,5 @@ export default interface BigCommercePaymentsPayLaterPaymentInitializeOptions {
 }
 
 export interface WithBigCommercePaymentsPayLaterPaymentInitializeOptions {
-    bigcommerce_payments_paypal?: BigCommercePaymentsPayLaterPaymentInitializeOptions; // FIXME: this option is deprecated
     bigcommerce_payments_paylater?: BigCommercePaymentsPayLaterPaymentInitializeOptions;
 }

@@ -23,7 +23,7 @@ import {
 import {
     getBigCommercePaymentsIntegrationServiceMock,
     getBigCommercePaymentsOrderDetails,
-    getBigCommercePaymentsPaymentMethod,
+    getBigCommercePaymentsPayPalPaymentMethod,
     getBillingAddressFromOrderDetails,
     getPayPalSDKMock,
     getShippingAddressFromOrderDetails,
@@ -62,7 +62,7 @@ describe('BigCommercePaymentsPayLaterCustomerStrategy', () => {
     beforeEach(() => {
         eventEmitter = new EventEmitter();
 
-        paymentMethod = { ...getBigCommercePaymentsPaymentMethod(), id: methodId };
+        paymentMethod = { ...getBigCommercePaymentsPayPalPaymentMethod(), id: methodId };
         paypalSdk = getPayPalSDKMock();
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -195,7 +195,7 @@ describe('BigCommercePaymentsPayLaterCustomerStrategy', () => {
         delete (window as BigCommercePaymentsHostWindow).paypal;
     });
 
-    it('creates an interface of the BigCommercePayments PayLater (PayLater) customer strategy', () => {
+    it('creates an interface of the BigCommercePayments PayLater customer strategy', () => {
         expect(strategy).toBeInstanceOf(BigCommercePaymentsPayLaterCustomerStrategy);
     });
 
@@ -278,7 +278,7 @@ describe('BigCommercePaymentsPayLaterCustomerStrategy', () => {
     });
 
     describe('#renderButton', () => {
-        it('initializes paypal button with default configuration', async () => {
+        it('initializes PayLater button with default configuration', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
@@ -294,7 +294,7 @@ describe('BigCommercePaymentsPayLaterCustomerStrategy', () => {
             });
         });
 
-        it('initializes paypal buttons with config related to hosted checkout feature', async () => {
+        it('initializes PayLater buttons with config related to hosted checkout feature', async () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
@@ -323,7 +323,7 @@ describe('BigCommercePaymentsPayLaterCustomerStrategy', () => {
             });
         });
 
-        it('renders PayPal PayLater button if it is eligible', async () => {
+        it('renders PayLater button if it is eligible', async () => {
             const bigCommercePaymentsSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
@@ -337,7 +337,7 @@ describe('BigCommercePaymentsPayLaterCustomerStrategy', () => {
             expect(bigCommercePaymentsSdkRenderMock).toHaveBeenCalled();
         });
 
-        it('renders PayPal Credit button if PayPal PayLater button is not eligible', async () => {
+        it('renders PayPal Credit button if PayLater button is not eligible', async () => {
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(
                 (options: BigCommercePaymentsButtonsOptions) => {
                     return {
@@ -365,7 +365,7 @@ describe('BigCommercePaymentsPayLaterCustomerStrategy', () => {
             });
         });
 
-        it('does not render PayPal button if it is not eligible', async () => {
+        it('does not render wallet button if it is not eligible', async () => {
             const bigCommercePaymentsSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
@@ -630,7 +630,7 @@ describe('BigCommercePaymentsPayLaterCustomerStrategy', () => {
             );
         });
 
-        it('updates PayPal order after shipping option selection', async () => {
+        it('updates an order after shipping option selection', async () => {
             const consignment = getConsignment();
 
             // INFO: lets imagine that it is a state that we get after consignmentActionCreator.selectShippingOption call
@@ -680,7 +680,7 @@ describe('BigCommercePaymentsPayLaterCustomerStrategy', () => {
             );
         });
 
-        it('updates PayPal order', async () => {
+        it('updates an order', async () => {
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('onShippingOptionsChange');
