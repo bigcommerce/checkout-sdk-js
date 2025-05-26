@@ -12,7 +12,7 @@ import GooglePayCustomerStrategy from '../google-pay-customer-strategy';
 import GooglePayPaymentProcessor from '../google-pay-payment-processor';
 
 import GooglePayPaypalCommerceGateway from './google-pay-paypal-commerce-gateway';
-import PayPalCommerceScriptLoader from './google-pay-paypal-commerce-script-loader';
+import { PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 const createGooglePayPayPalCommerceCustomerStrategy: CustomerStrategyFactory<
     GooglePayCustomerStrategy
@@ -23,7 +23,7 @@ const createGooglePayPayPalCommerceCustomerStrategy: CustomerStrategyFactory<
             createGooglePayScriptLoader(),
             new GooglePayPaypalCommerceGateway(
                 paymentIntegrationService,
-                new PayPalCommerceScriptLoader(getScriptLoader()),
+                new PayPalCommerceSdk(getScriptLoader()),
             ),
             createRequestSender(),
             createFormPoster(),
