@@ -27,6 +27,7 @@ service.initializePayment({
 ### Properties
 
 - [containerId](StripeUPEPaymentInitializeOptions.md#containerid)
+- [layout](StripeUPEPaymentInitializeOptions.md#layout)
 - [style](StripeUPEPaymentInitializeOptions.md#style)
 
 ### Methods
@@ -44,6 +45,14 @@ service.initializePayment({
 • **containerId**: `string`
 
 The location to insert the credit card number form field.
+
+___
+
+### layout
+
+• `Optional` **layout**: `Record`<`string`, `string` \| `number` \| `boolean`\>
+
+Stripe OCS layout options
 
 ___
 
