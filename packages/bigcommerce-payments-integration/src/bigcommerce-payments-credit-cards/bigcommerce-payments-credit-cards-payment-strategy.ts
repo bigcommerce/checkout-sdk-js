@@ -83,9 +83,8 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
         options: PaymentInitializeOptions &
             WithBigCommercePaymentsCreditCardsPaymentInitializeOptions,
     ): Promise<void> {
-        const { methodId, bigcommerce_payments_creditcards, bigcommerce_payments_paypal } = options;
-        const bigCommercePaymentsInitializationOptions =
-            bigcommerce_payments_creditcards || bigcommerce_payments_paypal;
+        const { methodId, bigcommerce_payments_creditcards } = options;
+        const bigCommercePaymentsInitializationOptions = bigcommerce_payments_creditcards;
 
         const { form, onCreditCardFieldsRenderingError } =
             bigCommercePaymentsInitializationOptions || {};
@@ -139,7 +138,7 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
             await this.validateHostedFormOrThrow();
             await this.submitHostedForm();
         } else {
-            // This condition is triggered when we pay with vaulted instrument and shipping address is truste
+            // The condition gets triggered when customer pays with vaulted instrument and shipping address is trusted
             const { orderId } =
                 await this.bigCommercePaymentsIntegrationService.createOrderCardFields(
                     'bigcommerce_payments_creditcardsscheckout',
@@ -456,6 +455,7 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
      *
      * Form submit method
      * Triggers a form submit
+     *
      * */
     private async submitHostedForm() {
         const cardFields = this.getCardFieldsOrThrow();
@@ -722,7 +722,7 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
      * BigCommercePayments Accelerated checkout related methods
      *
      */
-    // TODO: remove this part when PPCP AXO A/B testing will be finished
+    // TODO: remove this part when BCP Fastlane A/B testing will be finished
     private shouldInitializePayPalFastlane(methodId: string) {
         const state = this.paymentIntegrationService.getState();
         const paymentMethod =
@@ -741,7 +741,7 @@ export default class BigCommercePaymentsCreditCardsPaymentStrategy implements Pa
         );
     }
 
-    // TODO: remove this part when PPCP AXO A/B testing will be finished
+    // TODO: remove this part when BCP Fastlane A/B testing will be finished
     private async initializePayPalFastlaneOrThrow(methodId: string): Promise<void> {
         try {
             const state = this.paymentIntegrationService.getState();

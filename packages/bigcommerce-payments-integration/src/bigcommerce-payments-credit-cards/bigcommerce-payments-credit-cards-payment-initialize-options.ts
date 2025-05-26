@@ -1,7 +1,7 @@
 import { HostedFormOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
- * A set of options that are required to initialize the BigCommercePayments payment
+ * A set of options that are required to initialize the BigCommercePayments Credit Card payment
  * method for presenting its credit card form.
  *
  * ```html
@@ -88,23 +88,6 @@ export default interface BigCommercePaymentsCreditCardsPaymentInitializeOptions 
     onCreditCardFieldsRenderingError?: (error: unknown) => void;
 }
 
-// TODO: this interface should be removed
-// We should give some time for other developers to update their PPC CC components
-// with bigcommerce_payments_creditcards.form instead of bigcommerce_payments_paypal.form.
-// The interface can be removed after 14.06.2023
-export interface DeprecatedBigCommercePaymentsCreditCardsPaymentInitializeOptions {
-    /**
-     * The form is data for Credit Card Form
-     */
-    form?: HostedFormOptions;
-
-    /**
-     * The callback that gets called when there is an issue with rendering credit card fields
-     */
-    onCreditCardFieldsRenderingError?: (error: unknown) => void;
-}
-
 export interface WithBigCommercePaymentsCreditCardsPaymentInitializeOptions {
     bigcommerce_payments_creditcards?: BigCommercePaymentsCreditCardsPaymentInitializeOptions;
-    bigcommerce_payments_paypal?: DeprecatedBigCommercePaymentsCreditCardsPaymentInitializeOptions; // FIXME: the option is deprecated
 }
