@@ -1557,10 +1557,15 @@ describe('CheckoutService', () => {
 
             const container = 'checkout.extension';
             const region = ExtensionRegion.ShippingShippingAddressFormBefore;
+            const workerExtensionMessenger = new WorkerExtensionMessenger();
 
             await checkoutService.renderExtension(container, region);
 
-            expect(extensionActionCreator.renderExtension).toHaveBeenCalledWith(container, region);
+            expect(extensionActionCreator.renderExtension).toHaveBeenCalledWith(
+                container,
+                region,
+                workerExtensionMessenger,
+            );
             expect(extensionEventBroadcaster.listen).toHaveBeenCalled();
         });
 
