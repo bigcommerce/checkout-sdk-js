@@ -15,3 +15,14 @@ export { WithBigCommercePaymentsPayPalCustomerInitializeOptions } from './bigcom
 
 export { default as createBigCommercePaymentsPayPalPaymentStrategy } from './bigcommerce-payments-paypal/create-bigcommerce-payments-paypal-payment-strategy';
 export { WithBigCommercePaymentsPayPalPaymentInitializeOptions } from './bigcommerce-payments-paypal/bigcommerce-payments-paypal-payment-initialize-options';
+
+/**
+ *
+ * BigCommercePayments Alternative methods strategies
+ *
+ */
+export { default as createBigCommercePaymentsAlternativeMethodsButtonStrategy } from './bigcommerce-payments-alternative-methods/create-bigcommerce-payments-alternative-methods-button-strategy';
+export { WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions } from './bigcommerce-payments-alternative-methods/bigcommerce-payments-alternative-methods-button-initialize-options';
+
+export { default as createBigCommercePaymentsAlternativeMethodsPaymentStrategy } from './bigcommerce-payments-alternative-methods/create-bigcommerce-payments-alternative-methods-payment-strategy';
+export { WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions } from './bigcommerce-payments-alternative-methods/bigcommerce-payments-alternative-methods-payment-initialize-options';
