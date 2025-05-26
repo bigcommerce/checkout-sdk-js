@@ -787,6 +787,255 @@ declare interface BasePaymentInitializeOptions extends PaymentRequestOptions {
     paypalexpress?: PaypalExpressPaymentInitializeOptions;
 }
 
+declare interface BigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
+    /**
+     * Alternative payment method id what used for initialization PayPal button as funding source.
+     */
+    apm: string;
+    /**
+     * The options that required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PayPalButtonStyleOptions;
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
+}
+
+/**
+ * A set of options that are required to initialize the BigCommercePayments payment
+ * method for presenting its PayPal button.
+ *
+ *
+ * Also, BCP (also known as BigCommercePayments) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
+ * ```html
+ * <!-- This is where the APM button will be inserted -->
+ * <div id="container"></div>
+ * <!-- This is where the alternative payment methods fields will be inserted.  -->
+ * <div id="apm-fields-container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     gatewayId: 'bigcommerce_payments_apms',
+ *     methodId: 'sepa',
+ *     bigcommerce_payments_apms: {
+ *         container: '#container',
+ *         apmFieldsContainer: '#apm-fields-container',
+ *         apmFieldsStyles: {
+ *             base: {
+ *                 backgroundColor: 'transparent',
+ *             },
+ *             input: {
+ *                 backgroundColor: 'white',
+ *                 fontSize: '1rem',
+ *                 color: '#333',
+ *                 borderColor: '#d9d9d9',
+ *                 borderRadius: '4px',
+ *                 borderWidth: '1px',
+ *                 padding: '1rem',
+ *             },
+ *             invalid: {
+ *                 color: '#ed6a6a',
+ *             },
+ *             active: {
+ *                 color: '#4496f6',
+ *             },
+ *         },
+ *         clientId: 'YOUR_CLIENT_ID',
+ * // Callback for submitting payment form that gets called when a buyer approves payment
+ *         submitForm: () => {
+ *         // Example function
+ *             this.submitOrder(
+ *                {
+ *                   payment: { methodId: 'bigcommerce_payments_apms', }
+ *               }
+ *            );
+ *         },
+ * // Callback is used to define the state of the payment form, validate if it is applicable for submit.
+ *         onValidate: (resolve, reject) => {
+ *         // Example function
+ *             const isValid = this.validatePaymentForm();
+ *             if (isValid) {
+ *                 return resolve();
+ *             }
+ *             return reject();
+ *         },
+ * // Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular PayPal method. This callback can be used to hide the standard submit button.
+ *         onRenderButton: () => {
+ *         // Example function
+ *             this.hidePaymentSubmitButton();
+ *         }
+ *     },
+ * });
+ * ```
+ */
+declare interface BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    container: string;
+    /**
+     * The CSS selector of a container where the alternative payment methods fields widget should be inserted into.
+     * It's necessary to specify this parameter when using Alternative Payment Methods.
+     * Without it alternative payment methods will not work.
+     */
+    apmFieldsContainer?: string;
+    /**
+     * Object with styles to customize alternative payment methods fields.
+     */
+    apmFieldsStyles?: BigCommercePaymentsFieldsStyleOptions;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: Error): void;
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback that gets called when a buyer click on Smart Payment Button
+     * and should validate payment form.
+     *
+     * @param resolve - A function, that gets called if form is valid.
+     * @param reject - A function, that gets called if form is not valid.
+     *
+     * @returns reject() or resolve()
+     */
+    onValidate(resolve: () => void, reject: () => void): Promise<void>;
+    /**
+     * A callback for submitting payment form that gets called
+     * when buyer approved PayPal account.
+     */
+    submitForm(): void;
+    /**
+     * A callback that gets called
+     * when Smart Payment Button is initialized.
+     */
+    onInitButton(actions: InitCallbackActions): Promise<void>;
+}
+
+/**
+ * A set of options that are required to initialize the BigCommercePayments Credit Card payment
+ * method for presenting its credit card form.
+ *
+ * ```html
+ * <!-- These containers are where the hosted (iframed) credit card fields will be inserted -->
+ * <div id="card-number"></div>
+ * <div id="card-name"></div>
+ * <div id="card-expiry"></div>
+ * <div id="card-code"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'bigcommerce_payments_creditcards',
+ *     bigcommerce_payments_creditcards: {
+ *         form: {
+ *             fields: {
+ *                 cardNumber: { containerId: 'card-number' },
+ *                 cardName: { containerId: 'card-name' },
+ *                 cardExpiry: { containerId: 'card-expiry' },
+ *                 cardCode: { containerId: 'card-code' },
+ *             },
+ *         },
+ *         onCreditCardFieldsRenderingError: (error) => handleError(error),
+ *     },
+ * });
+ * ```
+ *
+ * Additional options can be passed in to customize the fields and register
+ * event callbacks.
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'bigcommerce_payments_creditcards',
+ *     bigcommerce_payments_creditcards: {
+ *         form: {
+ *             fields: {
+ *                 cardNumber: { containerId: 'card-number', placeholder: 'Number of card' },
+ *                 cardName: { containerId: 'card-name', placeholder: 'Name of card' },
+ *                 cardExpiry: { containerId: 'card-expiry', placeholder: 'Expiry of card' },
+ *                 cardCode: { containerId: 'card-code', placeholder: 'Code of card' },
+ *             },
+ *             styles: {
+ *                 default: {
+ *                     color: '#000',
+ *                 },
+ *                 error: {
+ *                     color: '#f00',
+ *                 },
+ *                 focus: {
+ *                     color: '#0f0',
+ *                 },
+ *             },
+ *             onBlur({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onFocus({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onEnter({ fieldType }) {
+ *                 console.log(fieldType);
+ *             },
+ *             onCardTypeChange({ cardType }) {
+ *                 console.log(cardType);
+ *             },
+ *             onValidate({ errors, isValid }) {
+ *                 console.log(errors);
+ *                 console.log(isValid);
+ *             },
+ *         },
+ *         onCreditCardFieldsRenderingError: (error) => handleError(error),
+ *     },
+ * });
+ * ```
+ */
+declare interface BigCommercePaymentsCreditCardsPaymentInitializeOptions {
+    /**
+     * The form is data for Credit Card Form
+     */
+    form: HostedFormOptions;
+    /**
+     * The callback that gets called when there is an issue with rendering credit card fields
+     */
+    onCreditCardFieldsRenderingError?: (error: unknown) => void;
+}
+
+declare interface BigCommercePaymentsFieldsStyleOptions {
+    variables?: {
+        fontFamily?: string;
+        fontSizeBase?: string;
+        fontSizeSm?: string;
+        fontSizeM?: string;
+        fontSizeLg?: string;
+        textColor?: string;
+        colorTextPlaceholder?: string;
+        colorBackground?: string;
+        colorInfo?: string;
+        colorDanger?: string;
+        borderRadius?: string;
+        borderColor?: string;
+        borderWidth?: string;
+        borderFocusColor?: string;
+        spacingUnit?: string;
+    };
+    rules?: {
+        [key: string]: any;
+    };
+}
+
 /**
  * A set of options that are required to initialize BigCommercePaymentsPayPal in cart or product details page.
  *
@@ -2048,7 +2297,7 @@ declare interface CheckoutButtonErrorsState {
     deinitializeError?: Error;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBigCommercePaymentsPayPalButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBigCommercePaymentsPayPalButtonInitializeOptions & WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -5727,6 +5976,11 @@ declare interface InitCallbackActions {
     enable(): void;
 }
 
+declare interface InitCallbackActions_2 {
+    disable(): void;
+    enable(): void;
+}
+
 declare interface InitiaizedQuery {
     methodId: string;
     gatewayId?: string;
@@ -6547,7 +6801,7 @@ declare interface PayPalCommerceAlternativeMethodsPaymentOptions {
      * A callback that gets called
      * when Smart Payment Button is initialized.
      */
-    onInitButton(actions: InitCallbackActions): Promise<void>;
+    onInitButton(actions: InitCallbackActions_2): Promise<void>;
 }
 
 declare interface PayPalCommerceAnalyticTrackerService {
@@ -7218,7 +7472,7 @@ declare class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest;
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPayPalPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPayPalPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -8169,6 +8423,10 @@ declare interface StripeUPEPaymentInitializeOptions {
      */
     containerId: string;
     /**
+     * Stripe OCS layout options
+     */
+    layout?: Record<string, string | number | boolean>;
+    /**
      * Checkout styles from store theme
      */
     style?: Record<string, StripeUPEAppearanceValues>;
@@ -8507,6 +8765,18 @@ declare interface WithApplePayPaymentInitializeOptions {
      * method. They can be omitted unless you need to support Apple Pay.
      */
     applepay?: ApplePayPaymentInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
+    bigcommerce_payments_apms?: BigCommercePaymentsAlternativeMethodsButtonInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions {
+    bigcommerce_payments_apms?: BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsCreditCardsPaymentInitializeOptions {
+    bigcommerce_payments_creditcards?: BigCommercePaymentsCreditCardsPaymentInitializeOptions;
 }
 
 declare interface WithBigCommercePaymentsPayPalButtonInitializeOptions {
