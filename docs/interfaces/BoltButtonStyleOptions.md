@@ -13,7 +13,7 @@
 
 ### shape
 
-• `Optional` **shape**: [`StyleButtonShape`](../enums/StyleButtonShape.md)
+• `Optional` **shape**: [`StyleButtonShape_2`](../enums/StyleButtonShape_2.md)
 
 ___
 
