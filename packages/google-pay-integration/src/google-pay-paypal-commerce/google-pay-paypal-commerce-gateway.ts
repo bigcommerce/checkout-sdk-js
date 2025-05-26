@@ -4,6 +4,7 @@ import {
     PaymentIntegrationService,
     PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import GooglePayGateway from '../gateways/google-pay-gateway';
 import assertsIsGooglePayPayPalCommercePaymentMethod from '../guards/is-google-pay-paypal-commerce-payment-method';
@@ -14,17 +15,13 @@ import {
     GooglePaySetExternalCheckoutData,
 } from '../types';
 
-import PayPalCommerceScriptLoader from './google-pay-paypal-commerce-script-loader';
 import { GooglePayConfig } from './types';
 
 export default class GooglePayPaypalCommerceGateway extends GooglePayGateway {
     private googlepayConfig?: GooglePayConfig;
     private service: PaymentIntegrationService;
 
-    constructor(
-        service: PaymentIntegrationService,
-        private paypalCommerceScriptLoader: PayPalCommerceScriptLoader,
-    ) {
+    constructor(service: PaymentIntegrationService, private payPalCommerceSdk: PayPalCommerceSdk) {
         super('paypalsb', service);
 
         this.service = service;
@@ -51,9 +48,12 @@ export default class GooglePayPaypalCommerceGateway extends GooglePayGateway {
 
         assertsIsGooglePayPayPalCommercePaymentMethod(paymentMethod);
 
-        await this.paypalCommerceScriptLoader.getPayPalSDK(paymentMethod, currency);
+        const googlePaySdk = await this.payPalCommerceSdk.getPayPalGooglePaySdk(
+            paymentMethod,
+            currency,
+        );
 
-        this.googlepayConfig = await this.paypalCommerceScriptLoader.getGooglePayConfigOrThrow();
+        this.googlepayConfig = await googlePaySdk.Googlepay().config();
 
         const { allowedPaymentMethods } = this.googlepayConfig;
 
