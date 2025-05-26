@@ -78,7 +78,7 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
         const { orderId, shouldRenderFields } = paymentMethod.initializationData || {};
 
         // Info:
-        // The PayPal button and fields should not be rendered when shopper was redirected to Checkout page
+        // The APM button and fields should not be rendered when shopper was redirected to Checkout page
         // after using smart payment button on PDP or Cart page. In this case backend returns order id if
         // it is available in checkout session. Therefore, it is not necessary to render the button.
         if (orderId) {
