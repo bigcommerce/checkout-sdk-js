@@ -32,6 +32,14 @@ export { WithBigCommercePaymentsPayLaterPaymentInitializeOptions } from './bigco
 
 /**
  *
+ * BigCommercePayments RatePay strategy
+ *
+ */
+export { default as createBigCommercePaymentsRatePayPayPaymentStrategy } from './bigcommerce-payments-ratepay/create-bigcommerce-payments-ratepay-payment-strategy';
+export { WithBigCommercePaymentsRatePayPaymentInitializeOptions } from './bigcommerce-payments-ratepay/bigcommerce-payments-ratepay-initialize-options';
+
+/**
+ *
  * BigCommercePayments Credit Cards strategies
  *
  */
