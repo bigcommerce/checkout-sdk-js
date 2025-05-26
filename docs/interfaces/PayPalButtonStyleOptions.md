@@ -33,4 +33,4 @@ ___
 
 ### shape
 
-• `Optional` **shape**: [`StyleButtonShape_2`](../enums/StyleButtonShape_2.md)
+• `Optional` **shape**: [`StyleButtonShape`](../enums/StyleButtonShape.md)

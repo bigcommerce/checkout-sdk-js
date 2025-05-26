@@ -23,7 +23,7 @@ import {
 import {
     getBigCommercePaymentsIntegrationServiceMock,
     getBigCommercePaymentsOrderDetails,
-    getBigCommercePaymentsPaymentMethod,
+    getBigCommercePaymentsPayPalPaymentMethod,
     getBillingAddressFromOrderDetails,
     getPayPalSDKMock,
     getShippingAddressFromOrderDetails,
@@ -57,7 +57,7 @@ describe('BigCommercePaymentsPayPalCustomerStrategy', () => {
 
     beforeEach(() => {
         eventEmitter = new EventEmitter();
-        paymentMethod = getBigCommercePaymentsPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
         paypalSdk = getPayPalSDKMock();
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();
         paymentIntegrationService = new PaymentIntegrationServiceMock();

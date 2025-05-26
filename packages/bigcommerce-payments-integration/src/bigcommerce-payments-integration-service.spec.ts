@@ -33,7 +33,7 @@ import {
 } from './bigcommerce-payments-types';
 import {
     getBigCommercePaymentsOrderDetails,
-    getBigCommercePaymentsPaymentMethod,
+    getBigCommercePaymentsPayPalPaymentMethod,
     getBillingAddressFromOrderDetails,
     getPayPalSDKMock,
     getShippingAddressFromOrderDetails,
@@ -61,7 +61,7 @@ describe('BigCommercePaymentsIntegrationService', () => {
         cart = getCart();
         consignments = [getConsignment()];
 
-        paymentMethod = getBigCommercePaymentsPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
         paypalSdk = getPayPalSDKMock();
 
         formPoster = createFormPoster();

@@ -18,7 +18,7 @@
 
 ### buyNowInitializeOptions
 
-• `Optional` **buyNowInitializeOptions**: [`PayPalBuyNowInitializeOptions`](PayPalBuyNowInitializeOptions.md)
+• `Optional` **buyNowInitializeOptions**: [`PayPalBuyNowInitializeOptions_2`](PayPalBuyNowInitializeOptions_2.md)
 
 The options that required to initialize Buy Now functionality.
 
@@ -34,7 +34,7 @@ ___
 
 ### style
 
-• `Optional` **style**: [`PayPalButtonStyleOptions`](PayPalButtonStyleOptions.md)
+• `Optional` **style**: [`PayPalButtonStyleOptions_2`](PayPalButtonStyleOptions_2.md)
 
 A set of styling options for the checkout button.
 
