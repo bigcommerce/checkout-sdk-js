@@ -1,6 +1,6 @@
 {
   "name": "@bigcommerce/checkout-sdk",
-  "version": "1.732.0",
+  "version": "1.733.0",
   "description": "BigCommerce Checkout JavaScript SDK",
   "license": "MIT",
   "main": "dist/checkout-sdk.js",
@@ -52,7 +52,7 @@
     "addFileAttribute": "true"
   },
   "dependencies": {
-    "@bigcommerce/bigpay-client": "^5.27.4",
+    "@bigcommerce/bigpay-client": "^5.28.0",
     "@bigcommerce/data-store": "^1.0.1",
     "@bigcommerce/form-poster": "^1.5.0",
     "@bigcommerce/memoize": "^1.0.0",

@@ -143,7 +143,7 @@ when Smart Payment Button is initialized.
 
 | Name | Type |
 | :------ | :------ |
-| `actions` | [`InitCallbackActions`](InitCallbackActions.md) |
+| `actions` | [`InitCallbackActions_2`](InitCallbackActions_2.md) |
 
 #### Returns
 
