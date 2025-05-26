@@ -48,11 +48,7 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
         options?: PaymentInitializeOptions &
             WithBigCommercePaymentsPayLaterPaymentInitializeOptions,
     ): Promise<void> {
-        const { methodId, bigcommerce_payments_paypal, bigcommerce_payments_paylater } =
-            options || {};
-
-        const bigCommercePaymentsOption =
-            bigcommerce_payments_paylater || bigcommerce_payments_paypal;
+        const { methodId, bigcommerce_payments_paylater } = options || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -60,7 +56,7 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
             );
         }
 
-        if (!bigCommercePaymentsOption) {
+        if (!bigcommerce_payments_paylater) {
             throw new InvalidArgumentError(
                 `Unable to initialize payment because "options.bigcommerce_payments_paypal" argument is not provided.`,
             );
@@ -73,7 +69,7 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
             state.getPaymentMethodOrThrow<BigCommercePaymentsInitializationData>(methodId);
         // TODO: update paypalBNPLConfiguration with empty array as default value when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
         const { paypalBNPLConfiguration, orderId } = paymentMethod.initializationData || {};
-        const { bannerContainerId = '', container } = bigCommercePaymentsOption;
+        const { bannerContainerId = '', container } = bigcommerce_payments_paylater;
 
         // TODO: remove paypalBNPLConfiguration check when PROJECT-6784.paypal_commerce_bnpl_configurator experiment is rolled out to 100%
         if (paypalBNPLConfiguration && document.getElementById(bannerContainerId)) {
@@ -115,7 +111,7 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
 
         this.loadingIndicatorContainer = container?.split('#')[1];
 
-        this.renderButton(methodId, bigCommercePaymentsOption);
+        this.renderButton(methodId, bigcommerce_payments_paylater);
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -155,9 +151,9 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
      * */
     private renderButton(
         methodId: string,
-        bigCommercePaymentsOption: BigCommercePaymentsPayLaterPaymentInitializeOptions,
+        bigcommerce_payments_paylater: BigCommercePaymentsPayLaterPaymentInitializeOptions,
     ): void {
-        if (!bigCommercePaymentsOption?.container) {
+        if (!bigcommerce_payments_paylater?.container) {
             throw new InvalidArgumentError(
                 'Unable to initialize payment because "container" argument is not provided.',
             );
@@ -172,7 +168,7 @@ export default class BigCommercePaymentsPayLaterPaymentStrategy implements Payme
         const { checkoutPaymentButtonStyles } = paymentButtonStyles || {};
 
         const { container, onError, onRenderButton, onValidate, submitForm } =
-            bigCommercePaymentsOption;
+            bigcommerce_payments_paylater;
 
         const fundingSources = [bigCommerceSdk.FUNDING.PAYLATER, bigCommerceSdk.FUNDING.CREDIT];
         let hasRenderedSmartButton = false;
