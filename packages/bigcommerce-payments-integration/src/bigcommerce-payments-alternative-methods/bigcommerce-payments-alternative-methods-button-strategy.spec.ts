@@ -22,7 +22,7 @@ import {
 } from '../bigcommerce-payments-types';
 import {
     getBigCommercePaymentsIntegrationServiceMock,
-    getBigCommercePaymentsPaymentMethod,
+    getBigCommercePaymentsPayPalPaymentMethod,
     getPayPalSDKMock,
 } from '../mocks';
 
@@ -41,7 +41,7 @@ describe('BigCommercePaymentsAlternativeMethodsButtonStrategy', () => {
     let paypalSdk: PayPalSDK;
 
     const defaultMethodId = 'bigcommerce_payments_apms';
-    const defaultButtonContainerId = 'paypal-commerce-alternative-methods-button-mock-id';
+    const defaultButtonContainerId = 'bigcommerce-payments-alternative-methods-button-mock-id';
     const paypalOrderId = 'ORDER_ID';
     const apmProviderId = 'sepa';
 
@@ -87,7 +87,7 @@ describe('BigCommercePaymentsAlternativeMethodsButtonStrategy', () => {
         eventEmitter = new EventEmitter();
 
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();
-        paymentMethod = { ...getBigCommercePaymentsPaymentMethod(), id: defaultMethodId };
+        paymentMethod = { ...getBigCommercePaymentsPayPalPaymentMethod(), id: defaultMethodId };
         paypalSdk = getPayPalSDKMock();
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
@@ -342,7 +342,7 @@ describe('BigCommercePaymentsAlternativeMethodsButtonStrategy', () => {
             });
         });
 
-        it('initializes PayPal APM button to render (BuyNow flow)', async () => {
+        it('initializes BCP APM button to render (BuyNow flow)', async () => {
             await strategy.initialize(buyNowInitializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
@@ -374,7 +374,7 @@ describe('BigCommercePaymentsAlternativeMethodsButtonStrategy', () => {
             }
         });
 
-        it('renders PayPal APM button if it is eligible', async () => {
+        it('renders BCP APM button if it is eligible', async () => {
             const bigCommercePaymentsSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
@@ -388,7 +388,7 @@ describe('BigCommercePaymentsAlternativeMethodsButtonStrategy', () => {
             expect(bigCommercePaymentsSdkRenderMock).toHaveBeenCalled();
         });
 
-        it('calls onEligibilityFailure callback when PayPal APM button is not eligible', async () => {
+        it('calls onEligibilityFailure callback when BCP APM button is not eligible', async () => {
             const bigCommercePaymentsSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
@@ -405,7 +405,7 @@ describe('BigCommercePaymentsAlternativeMethodsButtonStrategy', () => {
             expect(bigCommercePaymentsSdkRenderMock).not.toHaveBeenCalled();
         });
 
-        it('removes PayPal APM button container if the button has not rendered', async () => {
+        it('removes BCP APM button container if the button has not rendered', async () => {
             const bigCommercePaymentsSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
@@ -429,7 +429,7 @@ describe('BigCommercePaymentsAlternativeMethodsButtonStrategy', () => {
     });
 
     describe('#createOrder', () => {
-        it('creates paypal order', async () => {
+        it('creates order on server side', async () => {
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('createOrder');

@@ -30,7 +30,7 @@ import {
 } from '../bigcommerce-payments-types';
 import {
     getBigCommercePaymentsIntegrationServiceMock,
-    getBigCommercePaymentsPaymentMethod,
+    getBigCommercePaymentsPayPalPaymentMethod,
     getPayPalSDKMock,
 } from '../mocks';
 
@@ -76,7 +76,7 @@ describe('BigCommercePaymentsAlternativeMethodsPaymentStrategy', () => {
 
         billingAddress = getBillingAddress();
         paypalSdk = getPayPalSDKMock();
-        paymentMethod = getBigCommercePaymentsPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
         paymentMethod.id = defaultGatewayId;
         paymentMethod.initializationData.orderId = undefined;
 
@@ -243,7 +243,7 @@ describe('BigCommercePaymentsAlternativeMethodsPaymentStrategy', () => {
     });
 
     describe('#renderButton()', () => {
-        it('initializes paypal button', async () => {
+        it('initializes APM button', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
@@ -276,7 +276,7 @@ describe('BigCommercePaymentsAlternativeMethodsPaymentStrategy', () => {
             expect(bigCommercePaymentsSdkRenderMock).not.toHaveBeenCalled();
         });
 
-        it('renders paypal button if it is eligible', async () => {
+        it('renders APM button if it is eligible', async () => {
             const bigCommercePaymentsSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
@@ -292,7 +292,7 @@ describe('BigCommercePaymentsAlternativeMethodsPaymentStrategy', () => {
     });
 
     describe('#createOrder button callback', () => {
-        it('creates paypal order', async () => {
+        it('creates order', async () => {
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('createOrder');
@@ -610,7 +610,7 @@ describe('BigCommercePaymentsAlternativeMethodsPaymentStrategy', () => {
     });
 
     describe('#deinitialize()', () => {
-        it('closes paypal button component on deinitialize strategy', async () => {
+        it('closes button component on deinitialize strategy', async () => {
             const bigCommercePaymentsSdkCloseMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({

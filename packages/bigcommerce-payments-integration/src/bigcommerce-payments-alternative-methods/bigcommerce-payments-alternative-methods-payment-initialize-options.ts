@@ -7,13 +7,12 @@ import {
  * A set of options that are required to initialize the BigCommercePayments payment
  * method for presenting its PayPal button.
  *
- * Please note that the minimum version of checkout-sdk is 1.100
  *
- * Also, PayPal (also known as BigCommercePayments Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
+ * Also, BCP (also known as BigCommercePayments) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
  * ```html
- * <!-- This is where the PayPal button will be inserted -->
+ * <!-- This is where the APM button will be inserted -->
  * <div id="container"></div>
- * <!-- This is where the PayPal alternative payment methods fields will be inserted.  -->
+ * <!-- This is where the alternative payment methods fields will be inserted.  -->
  * <div id="apm-fields-container"></div>
  * ```
  *
@@ -45,7 +44,7 @@ import {
  *             },
  *         },
  *         clientId: 'YOUR_CLIENT_ID',
- * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
+ * // Callback for submitting payment form that gets called when a buyer approves payment
  *         submitForm: () => {
  *         // Example function
  *             this.submitOrder(
@@ -126,6 +125,5 @@ export default interface BigCommercePaymentsAlternativeMethodsPaymentInitializeO
 }
 
 export interface WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions {
-    bigcommerce_payments_paypal?: BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions; // FIXME: this option is deprecated
     bigcommerce_payments_apms?: BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions;
 }

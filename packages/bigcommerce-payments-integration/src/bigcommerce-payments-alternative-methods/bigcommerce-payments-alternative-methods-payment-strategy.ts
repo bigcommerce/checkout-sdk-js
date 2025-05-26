@@ -50,13 +50,7 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
         options: PaymentInitializeOptions &
             WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions,
     ): Promise<void> {
-        const {
-            gatewayId,
-            methodId,
-            bigcommerce_payments_paypal, // FIXME: this option is deprecated
-            bigcommerce_payments_apms,
-        } = options;
-        const paypalOptions = bigcommerce_payments_apms || bigcommerce_payments_paypal;
+        const { gatewayId, methodId, bigcommerce_payments_apms } = options;
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -70,7 +64,7 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
             );
         }
 
-        if (!paypalOptions) {
+        if (!bigcommerce_payments_apms) {
             throw new InvalidArgumentError(
                 `Unable to initialize payment because "options.bigcommerce_payments_apms" argument is not provided.`,
             );
@@ -86,7 +80,7 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
         // Info:
         // The PayPal button and fields should not be rendered when shopper was redirected to Checkout page
         // after using smart payment button on PDP or Cart page. In this case backend returns order id if
-        // it is available in checkout session. Therefore, it is not necessary to render PayPal button.
+        // it is available in checkout session. Therefore, it is not necessary to render the button.
         if (orderId) {
             this.orderId = orderId;
 
@@ -98,12 +92,12 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
             state.getCartOrThrow().currency.code,
         );
 
-        this.loadingIndicatorContainer = paypalOptions.container.split('#')[1];
+        this.loadingIndicatorContainer = bigcommerce_payments_apms.container.split('#')[1];
 
-        this.renderButton(methodId, gatewayId, paypalOptions);
+        this.renderButton(methodId, gatewayId, bigcommerce_payments_apms);
 
         if (shouldRenderFields) {
-            this.renderFields(methodId, paypalOptions);
+            this.renderFields(methodId, bigcommerce_payments_apms);
         }
     }
 
@@ -151,7 +145,7 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
     private renderButton(
         methodId: string,
         gatewayId: string,
-        paypalOptions: BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions,
+        bigcommerce_payments_apms: BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions,
     ): void {
         const paypalAmpsSdk = this.getPaypalAmpsSdkOrThrow();
 
@@ -162,18 +156,18 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
         );
         const { buttonStyle } = paymentMethod.initializationData || {};
 
-        const { container, onError, onRenderButton, submitForm } = paypalOptions;
+        const { container, onError, onRenderButton, submitForm } = bigcommerce_payments_apms;
 
         const buttonOptions: BigCommercePaymentsButtonsOptions = {
             fundingSource: methodId,
             style: this.bigCommercePaymentsIntegrationService.getValidButtonStyle(buttonStyle),
-            onInit: (_, actions) => paypalOptions.onInitButton(actions),
-            createOrder: () => this.onCreateOrder(methodId, gatewayId, paypalOptions),
+            onInit: (_, actions) => bigcommerce_payments_apms.onInitButton(actions),
+            createOrder: () => this.onCreateOrder(methodId, gatewayId, bigcommerce_payments_apms),
             onApprove: (data) => this.handleApprove(data, submitForm),
             onCancel: () => this.toggleLoadingIndicator(false),
             onError: (error) => this.handleFailure(error, onError),
             onClick: async (_, actions) =>
-                paypalOptions.onValidate(actions.resolve, actions.reject),
+                bigcommerce_payments_apms.onValidate(actions.resolve, actions.reject),
         };
 
         this.bigCommercePaymentsButton = paypalAmpsSdk.Buttons(buttonOptions);
@@ -192,9 +186,9 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
     private async onCreateOrder(
         methodId: string,
         gatewayId: string,
-        paypalOptions: BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions,
+        bigcommerce_payments_apms: BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions,
     ): Promise<string> {
-        const { onValidate } = paypalOptions;
+        const { onValidate } = bigcommerce_payments_apms;
 
         const onValidationPassed = () => {
             this.toggleLoadingIndicator(true);
@@ -255,13 +249,13 @@ export default class BigCommercePaymentsAlternativeMethodsPaymentStrategy
      * */
     private renderFields(
         methodId: string,
-        paypalOptions: BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions,
+        bigcommerce_payments_apms: BigCommercePaymentsAlternativeMethodsPaymentInitializeOptions,
     ): void {
         const paypalAmpsSdk = this.getPaypalAmpsSdkOrThrow();
         const state = this.paymentIntegrationService.getState();
         const { firstName, lastName, email } = state.getBillingAddressOrThrow();
 
-        const { apmFieldsContainer, apmFieldsStyles } = paypalOptions;
+        const { apmFieldsContainer, apmFieldsStyles } = bigcommerce_payments_apms;
 
         if (!apmFieldsContainer) {
             throw new InvalidArgumentError(
