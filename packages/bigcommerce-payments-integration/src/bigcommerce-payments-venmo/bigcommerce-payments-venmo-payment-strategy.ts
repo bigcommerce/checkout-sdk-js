@@ -39,9 +39,7 @@ export default class BigCommercePaymentsVenmoPaymentStrategy implements PaymentS
     async initialize(
         options?: PaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions,
     ): Promise<void> {
-        const { methodId, bigcommerce_payments_paypal, bigcommerce_payments_venmo } = options || {};
-
-        const paypalOptions = bigcommerce_payments_venmo || bigcommerce_payments_paypal;
+        const { methodId, bigcommerce_payments_venmo } = options || {};
 
         if (!methodId) {
             throw new InvalidArgumentError(
@@ -49,7 +47,7 @@ export default class BigCommercePaymentsVenmoPaymentStrategy implements PaymentS
             );
         }
 
-        if (!paypalOptions) {
+        if (!bigcommerce_payments_venmo) {
             throw new InvalidArgumentError(
                 `Unable to initialize payment because "options.bigcommerce_payments_venmo" argument is not provided.`,
             );
@@ -73,9 +71,9 @@ export default class BigCommercePaymentsVenmoPaymentStrategy implements PaymentS
 
         await this.bigCommercePaymentsIntegrationService.loadPayPalSdk(methodId);
 
-        this.loadingIndicatorContainer = paypalOptions.container.split('#')[1];
+        this.loadingIndicatorContainer = bigcommerce_payments_venmo.container.split('#')[1];
 
-        this.renderButton(methodId, paypalOptions);
+        this.renderButton(methodId, bigcommerce_payments_venmo);
     }
 
     async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<void> {
@@ -147,7 +145,7 @@ export default class BigCommercePaymentsVenmoPaymentStrategy implements PaymentS
 
         if (!this.paypalButton.isEligible()) {
             throw new NotImplementedError(
-                `PayPal Venmo is not available for your region. Please use PayPal Checkout instead.`,
+                `Venmo is not available for your region. Please another payment method instead.`,
             );
         }
 

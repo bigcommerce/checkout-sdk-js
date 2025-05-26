@@ -21,7 +21,7 @@ import {
 } from '../bigcommerce-payments-types';
 import {
     getBigCommercePaymentsIntegrationServiceMock,
-    getBigCommercePaymentsPaymentMethod,
+    getBigCommercePaymentsPayPalPaymentMethod,
     getPayPalSDKMock,
 } from '../mocks';
 
@@ -58,7 +58,7 @@ describe('BigCommercePaymentsVenmoPaymentStrategy', () => {
         eventEmitter = new EventEmitter();
 
         paypalSdk = getPayPalSDKMock();
-        paymentMethod = getBigCommercePaymentsPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
         paymentMethod.id = defaultMethodId;
         paymentMethod.initializationData.orderId = undefined;
 
@@ -195,7 +195,7 @@ describe('BigCommercePaymentsVenmoPaymentStrategy', () => {
     });
 
     describe('#renderButton()', () => {
-        it('initializes paypal button', async () => {
+        it('initializes Venmo button', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paypalSdk.Buttons).toHaveBeenCalledWith({
@@ -213,7 +213,7 @@ describe('BigCommercePaymentsVenmoPaymentStrategy', () => {
             });
         });
 
-        it('throws an error if paypal button is not eligible', async () => {
+        it('throws an error if Venmo button is not eligible', async () => {
             const bigCommercePaymentsSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
@@ -229,7 +229,7 @@ describe('BigCommercePaymentsVenmoPaymentStrategy', () => {
             }
         });
 
-        it('renders paypal button if it is eligible', async () => {
+        it('renders Venmo button if it is eligible', async () => {
             const bigCommercePaymentsSdkRenderMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({
@@ -245,7 +245,7 @@ describe('BigCommercePaymentsVenmoPaymentStrategy', () => {
     });
 
     describe('#createOrder button callback', () => {
-        it('creates paypal order', async () => {
+        it('creates an order', async () => {
             await strategy.initialize(initializationOptions);
 
             eventEmitter.emit('createOrder');
@@ -423,7 +423,7 @@ describe('BigCommercePaymentsVenmoPaymentStrategy', () => {
     });
 
     describe('#deinitialize()', () => {
-        it('closes paypal button component on deinitialize strategy', async () => {
+        it('closes Venmo button component on deinitialize strategy', async () => {
             const bigCommercePaymentsSdkCloseMock = jest.fn();
 
             jest.spyOn(paypalSdk, 'Buttons').mockImplementation(() => ({

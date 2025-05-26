@@ -70,7 +70,7 @@ export default class BigCommercePaymentsVenmoCustomerStrategy implements Custome
         if (!paypalSdk || !paypalSdk.Buttons || typeof paypalSdk.Buttons !== 'function') {
             // eslint-disable-next-line no-console
             console.error(
-                '[BC PayPal]: PayPal Button could not be rendered, due to issues with loading PayPal SDK',
+                '[BC Payments Venmo]: Button could not be rendered, due to issues with loading PayPal SDK',
             );
 
             return;

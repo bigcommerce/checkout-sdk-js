@@ -1,12 +1,11 @@
 /**
- * A set of options that are required to initialize the BigCommercePayments payment
- * method for presenting its PayPal button.
+ * A set of options that are required to initialize the BigCommercePayments Venmo payment
+ * method for presenting its Venmo button.
  *
- * Please note that the minimum version of checkout-sdk is 1.100
  *
- * Also, PayPal (also known as BigCommercePayments Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
+ * Also, BigCommercePayments requires specific options to initialize the Venmo Button on checkout page that substitutes a standard submit button
  * ```html
- * <!-- This is where the PayPal button will be inserted -->
+ * <!-- This is where the Venmo button will be inserted -->
  * <div id="container"></div>
  * ```
  *
@@ -15,7 +14,7 @@
  *     methodId: 'bigcommerce_payments_venmo',
  *     bigcommerce_payments_venmo: {
  *         container: '#container',
- * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
+ * // Callback for submitting payment form that gets called when a buyer approves payment
  *         submitForm: () => {
  *         // Example function
  *             this.submitOrder(
@@ -78,6 +77,5 @@ export default interface BigCommercePaymentsVenmoPaymentInitializeOptions {
 }
 
 export interface WithBigCommercePaymentsVenmoPaymentInitializeOptions {
-    bigcommerce_payments_paypal?: BigCommercePaymentsVenmoPaymentInitializeOptions; // FIXME: this option is deprecated
     bigcommerce_payments_venmo?: BigCommercePaymentsVenmoPaymentInitializeOptions;
 }

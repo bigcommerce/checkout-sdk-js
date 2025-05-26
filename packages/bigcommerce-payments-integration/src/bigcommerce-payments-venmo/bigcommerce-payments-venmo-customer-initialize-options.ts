@@ -13,7 +13,7 @@ export default interface BigCommercePaymentsVenmoCustomerInitializeOptions {
     onError?(error?: Error): void;
 
     /**
-     * A callback that gets called when paypal button clicked.
+     * A callback that gets called when Venmo button clicked.
      */
     onClick?(): void;
 }
