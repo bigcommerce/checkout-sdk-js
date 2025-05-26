@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.732.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.732.1...v1.732.2) (2025-05-26)
+
+### [1.732.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.732.0...v1.732.1) (2025-05-26)
+
+
+### Code Refactoring
+
+* **payment:** removed Braintree LPM fallback experiment and speed up related tests run ([#2871](https://github.com/bigcommerce/checkout-sdk-js/issues/2871)) ([9e74eb0](https://github.com/bigcommerce/checkout-sdk-js/commit/9e74eb07a8737b78ad7d5aed8232ce3e1f75603b))
+
 ## [1.732.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.731.2...v1.732.0) (2025-05-07)
 
 
