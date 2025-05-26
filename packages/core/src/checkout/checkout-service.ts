@@ -29,6 +29,7 @@ import {
     ExtensionMessenger,
     ExtensionQueryMap,
     ExtensionRegion,
+    WorkerExtensionMessenger,
 } from '../extension';
 import { FormFieldsActionCreator } from '../form';
 import { CountryActionCreator } from '../geography';
@@ -106,6 +107,7 @@ export default class CheckoutService {
         private _subscriptionsActionCreator: SubscriptionsActionCreator,
         private _formFieldsActionCreator: FormFieldsActionCreator,
         private _extensionActionCreator: ExtensionActionCreator,
+        private _workerExtensionMessenger: WorkerExtensionMessenger,
     ) {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
     }
@@ -1426,7 +1428,11 @@ export default class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     async renderExtension(container: string, region: ExtensionRegion): Promise<CheckoutSelectors> {
-        const action = this._extensionActionCreator.renderExtension(container, region);
+        const action = this._extensionActionCreator.renderExtension(
+            container,
+            region,
+            this._workerExtensionMessenger,
+        );
         const state = await this._dispatch(action, { queueId: 'extensions' });
 
         this._extensionEventBroadcaster.listen();

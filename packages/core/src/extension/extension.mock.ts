@@ -22,6 +22,16 @@ export function getExtensions(): Extension[] {
     ];
 }
 
+export function getWorkerExtension(): Extension {
+    return {
+        id: '789',
+        name: 'Worker Extension',
+        region: ExtensionRegion.GlobalWebWorker,
+        url: 'https://worker.extension.com/worker.js',
+        type: 'worker',
+    };
+}
+
 export function getExtensionState(): ExtensionState {
     return {
         data: getExtensions(),
@@ -56,4 +66,29 @@ export function getExtensionEvent(): {
             },
         },
     };
+}
+
+// Mock Worker implementation for testing purposes
+export class MockWorker {
+    url: string;
+    onmessage: ((this: Worker, ev: MessageEvent) => any) | null = null;
+    onerror: ((this: Worker, ev: ErrorEvent) => any) | null = null;
+    constructor(url: string) {
+        this.url = url;
+    }
+    postMessage(): void {
+        /* mock */
+    }
+    terminate(): void {
+        /* mock */
+    }
+    addEventListener(): void {
+        /* mock */
+    }
+    removeEventListener(): void {
+        /* mock */
+    }
+    dispatchEvent(): boolean {
+        return true; /* mock */
+    }
 }
