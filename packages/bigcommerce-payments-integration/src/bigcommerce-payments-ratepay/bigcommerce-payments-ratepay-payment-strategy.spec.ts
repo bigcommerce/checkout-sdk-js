@@ -25,7 +25,7 @@ import {
 import { BigCommercePaymentsRatePayPaymentInitializeOptions } from './bigcommerce-payments-ratepay-initialize-options';
 import BigCommercePaymentsRatePayPaymentStrategy from './bigcommerce-payments-ratepay-payment-strategy';
 
-describe('BigCommercePaymentsAlternativeMethodRatePayPaymentStrategy', () => {
+describe('BigCommercePaymentsRatePayPaymentStrategy', () => {
     let billingAddress: BillingAddress;
     let paymentIntegrationService: PaymentIntegrationService;
     let paymentMethod: PaymentMethod;
