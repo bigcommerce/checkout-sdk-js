@@ -18,6 +18,14 @@ export { WithBigCommercePaymentsPayPalPaymentInitializeOptions } from './bigcomm
 
 /**
  *
+ * BigCommercePayments Credit Cards strategies
+ *
+ */
+export { default as createBigCommercePaymentsCreditCardsPaymentStrategy } from './bigcommerce-payments-credit-cards/create-bigcommerce-payments-credit-cards-payment-strategy';
+export { WithBigCommercePaymentsCreditCardsPaymentInitializeOptions } from './bigcommerce-payments-credit-cards/bigcommerce-payments-credit-cards-payment-initialize-options';
+
+/**
+ *
  * BigCommercePayments Alternative methods strategies
  *
  */
