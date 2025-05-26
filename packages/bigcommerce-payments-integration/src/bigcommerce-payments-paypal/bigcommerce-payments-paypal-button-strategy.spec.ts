@@ -25,7 +25,7 @@ import {
 import {
     getBigCommercePaymentsIntegrationServiceMock,
     getBigCommercePaymentsOrderDetails,
-    getBigCommercePaymentsPaymentMethod,
+    getBigCommercePaymentsPayPalPaymentMethod,
     getBillingAddressFromOrderDetails,
     getPayPalSDKMock,
     getShippingAddressFromOrderDetails,
@@ -108,7 +108,7 @@ describe('BigCommercePaymentsPayPalButtonStrategy', () => {
         eventEmitter = new EventEmitter();
 
         bigCommercePaymentsIntegrationService = getBigCommercePaymentsIntegrationServiceMock();
-        paymentMethod = getBigCommercePaymentsPaymentMethod();
+        paymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
         paypalSdk = getPayPalSDKMock();
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();

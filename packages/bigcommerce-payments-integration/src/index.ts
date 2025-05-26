@@ -23,3 +23,22 @@ export { WithBigCommercePaymentsPayPalPaymentInitializeOptions } from './bigcomm
  */
 export { default as createBigCommercePaymentsRatePayPayPaymentStrategy } from './bigcommerce-payments-ratepay/create-bigcommerce-payments-ratepay-payment-strategy';
 export { WithBigCommercePaymentsRatePayPaymentInitializeOptions } from './bigcommerce-payments-ratepay/bigcommerce-payments-ratepay-initialize-options';
+
+/**
+ *
+ * BigCommercePayments Credit Cards strategies
+ *
+ */
+export { default as createBigCommercePaymentsCreditCardsPaymentStrategy } from './bigcommerce-payments-credit-cards/create-bigcommerce-payments-credit-cards-payment-strategy';
+export { WithBigCommercePaymentsCreditCardsPaymentInitializeOptions } from './bigcommerce-payments-credit-cards/bigcommerce-payments-credit-cards-payment-initialize-options';
+
+/**
+ *
+ * BigCommercePayments Alternative methods strategies
+ *
+ */
+export { default as createBigCommercePaymentsAlternativeMethodsButtonStrategy } from './bigcommerce-payments-alternative-methods/create-bigcommerce-payments-alternative-methods-button-strategy';
+export { WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions } from './bigcommerce-payments-alternative-methods/bigcommerce-payments-alternative-methods-button-initialize-options';
+
+export { default as createBigCommercePaymentsAlternativeMethodsPaymentStrategy } from './bigcommerce-payments-alternative-methods/create-bigcommerce-payments-alternative-methods-payment-strategy';
+export { WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions } from './bigcommerce-payments-alternative-methods/bigcommerce-payments-alternative-methods-payment-initialize-options';
