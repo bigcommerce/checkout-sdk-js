@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.734.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.733.0...v1.734.0) (2025-05-26)
+
+
+### Features
+
+* **payment:** clone bigcommerce payments paylater methods files ([#2863](https://github.com/bigcommerce/checkout-sdk-js/issues/2863)) ([f56d714](https://github.com/bigcommerce/checkout-sdk-js/commit/f56d7149a8e1d6eb4fce59bc988ad44b374b80a4))
+* **payment:** clone BigCommercePayments RatePay files ([#2866](https://github.com/bigcommerce/checkout-sdk-js/issues/2866)) ([d7a3157](https://github.com/bigcommerce/checkout-sdk-js/commit/d7a3157ffb3707fc1cba2bba82a573032bddd7f2))
+* **payment:** clone BigCommercePayments Venmo files ([#2867](https://github.com/bigcommerce/checkout-sdk-js/issues/2867)) ([0ce2b68](https://github.com/bigcommerce/checkout-sdk-js/commit/0ce2b6805c85d0c0c624a26396582235a3fe5ed9))
+
 ## [1.733.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.732.3...v1.733.0) (2025-05-26)
 
 

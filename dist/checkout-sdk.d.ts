@@ -1036,6 +1036,135 @@ declare interface BigCommercePaymentsFieldsStyleOptions {
     };
 }
 
+declare interface BigCommercePaymentsPayLaterButtonInitializeOptions {
+    /**
+     * The ID of a container which the messaging should be inserted.
+     */
+    messagingContainerId?: string;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PayPalButtonStyleOptions;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
+}
+
+declare interface BigCommercePaymentsPayLaterCustomerInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback that gets called if unable to initialize the widget or select
+     * one of the address options provided by the widget.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error?: Error): void;
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
+    /**
+     * A callback that gets called when paypal button clicked.
+     */
+    onClick?(): void;
+}
+
+/**
+ * A set of options that are required to initialize the BigCommercePayments PayLater payment
+ * method for presenting its BigCommercePayments PayLater button.
+ *
+ *
+ * Also, BigCommercePayments requires specific options to initialize the BigCommercePayments Smart Payment Button on checkout page that substitutes a standard submit button
+ * ```html
+ * <!-- This is where the BigCommercePayments PayLater button will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'bigcommerce_payments_paylater',
+ *     bigcommerce_payments_paylater: {
+ *         container: '#container',
+ * // Callback for submitting payment form that gets called when a buyer approves BigCommercePayments payment
+ *         submitForm: () => {
+ *         // Example function
+ *             this.submitOrder(
+ *                {
+ *                   payment: { methodId: 'bigcommerce_payments_paylater', }
+ *               }
+ *            );
+ *         },
+ * // Callback is used to define the state of the payment form, validate if it is applicable for submit.
+ *         onValidate: (resolve, reject) => {
+ *         // Example function
+ *             const isValid = this.validatePaymentForm();
+ *             if (isValid) {
+ *                 return resolve();
+ *             }
+ *             return reject();
+ *         },
+ * // Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular BigCommercePayments method. This callback can be used to hide the standard submit button.
+ *         onRenderButton: () => {
+ *         // Example function
+ *             this.hidePaymentSubmitButton();
+ *         }
+ *     },
+ * });
+ * ```
+ */
+declare interface BigCommercePaymentsPayLaterPaymentInitializeOptions {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    container?: string;
+    /**
+     * The location to insert the Pay Later Messages.
+     */
+    bannerContainerId?: string;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: Error): void;
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback that gets called when a buyer click on Smart Payment Button
+     * and should validate payment form.
+     *
+     * @param resolve - A function, that gets called if form is valid.
+     * @param reject - A function, that gets called if form is not valid.
+     *
+     * @returns reject() or resolve()
+     */
+    onValidate?(resolve: () => void, reject: () => void): Promise<void>;
+    /**
+     * A callback for submitting payment form that gets called
+     * when buyer approved BigCommercePayments account.
+     */
+    submitForm?(): void;
+}
+
 /**
  * A set of options that are required to initialize BigCommercePaymentsPayPal in cart or product details page.
  *
@@ -1183,6 +1312,151 @@ declare interface BigCommercePaymentsPayPalPaymentInitializeOptions {
     submitForm(): void;
 }
 
+declare interface BigCommercePaymentsRatePayPaymentInitializeOptions {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    container: string;
+    /**
+     * The CSS selector of a container where the legal text should be inserted into.
+     */
+    legalTextContainer: string;
+    /**
+     * The CSS selector of a container where loading indicator should be rendered
+     */
+    loadingContainerId: string;
+    /**
+     * A callback that gets form values
+     */
+    getFieldsValues?(): {
+        ratepayBirthDate: BirthDate;
+        ratepayPhoneNumber: string;
+        ratepayPhoneCountryCode: string;
+    };
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: unknown): void;
+}
+
+declare interface BigCommercePaymentsVenmoButtonInitializeOptions {
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PayPalButtonStyleOptions;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * The options that required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
+}
+
+declare interface BigCommercePaymentsVenmoCustomerInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback that gets called if unable to initialize the widget or select
+     * one of the address options provided by the widget.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error?: Error): void;
+    /**
+     * A callback that gets called when Venmo button clicked.
+     */
+    onClick?(): void;
+}
+
+/**
+ * A set of options that are required to initialize the BigCommercePayments Venmo payment
+ * method for presenting its Venmo button.
+ *
+ *
+ * Also, BigCommercePayments requires specific options to initialize the Venmo Button on checkout page that substitutes a standard submit button
+ * ```html
+ * <!-- This is where the Venmo button will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'bigcommerce_payments_venmo',
+ *     bigcommerce_payments_venmo: {
+ *         container: '#container',
+ * // Callback for submitting payment form that gets called when a buyer approves payment
+ *         submitForm: () => {
+ *         // Example function
+ *             this.submitOrder(
+ *                {
+ *                   payment: { methodId: 'bigcommerce_payments_venmo', }
+ *               }
+ *            );
+ *         },
+ * // Callback is used to define the state of the payment form, validate if it is applicable for submit.
+ *         onValidate: (resolve, reject) => {
+ *         // Example function
+ *             const isValid = this.validatePaymentForm();
+ *             if (isValid) {
+ *                 return resolve();
+ *             }
+ *             return reject();
+ *         },
+ * // Callback that is called right before render of a Smart Payment Button. It gets called when a buyer is eligible for use of the particular PayPal method. This callback can be used to hide the standard submit button.
+ *         onRenderButton: () => {
+ *         // Example function
+ *             this.hidePaymentSubmitButton();
+ *         }
+ *     },
+ * });
+ * ```
+ */
+declare interface BigCommercePaymentsVenmoPaymentInitializeOptions {
+    /**
+     * The CSS selector of a container where the payment widget should be inserted into.
+     */
+    container: string;
+    /**
+     * A callback for displaying error popup. This callback requires error object as parameter.
+     */
+    onError?(error: Error): void;
+    /**
+     * A callback right before render Smart Payment Button that gets called when
+     * Smart Payment Button is eligible. This callback can be used to hide the standard submit button.
+     */
+    onRenderButton?(): void;
+    /**
+     * A callback that gets called when a buyer click on Smart Payment Button
+     * and should validate payment form.
+     *
+     * @param resolve - A function, that gets called if form is valid.
+     * @param reject - A function, that gets called if form is not valid.
+     *
+     * @returns reject() or resolve()
+     */
+    onValidate(resolve: () => void, reject: () => void): Promise<void>;
+    /**
+     * A callback for submitting payment form that gets called
+     * when buyer approved PayPal account.
+     */
+    submitForm(): void;
+}
+
 declare interface BillingAddress extends Address {
     id: string;
     email?: string;
@@ -1204,6 +1478,12 @@ declare interface BillingAddressSelector {
 }
 
 declare interface BirthDate {
+    getFullYear(): number;
+    getDate(): number;
+    getMonth(): number;
+}
+
+declare interface BirthDate_2 {
     getFullYear(): number;
     getDate(): number;
     getMonth(): number;
@@ -2297,7 +2577,7 @@ declare interface CheckoutButtonErrorsState {
     deinitializeError?: Error;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBigCommercePaymentsPayPalButtonInitializeOptions & WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBigCommercePaymentsPayPalButtonInitializeOptions & WithBigCommercePaymentsPayLaterButtonInitializeOptions & WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions & WithBigCommercePaymentsVenmoButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -4847,7 +5127,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithAmazonPayV2CustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBigCommercePaymentsPayPalCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithBraintreePaypalCreditCustomerInitializeOptions & WithBraintreeFastlaneCustomerInitializeOptions & WithGooglePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions & WithStripeUPECustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithAmazonPayV2CustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBigCommercePaymentsPayPalCustomerInitializeOptions & WithBigCommercePaymentsPayLaterCustomerInitializeOptions & WithBigCommercePaymentsVenmoCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithBraintreePaypalCreditCustomerInitializeOptions & WithBraintreeFastlaneCustomerInitializeOptions & WithGooglePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions & WithStripeUPECustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -7472,7 +7752,7 @@ declare class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest;
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPayPalPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPayPalPaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions & WithBigCommercePaymentsRatePayPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -7668,7 +7948,7 @@ declare interface PaypalCommerceRatePay {
      * A callback that gets form values
      */
     getFieldsValues?(): {
-        ratepayBirthDate: BirthDate;
+        ratepayBirthDate: BirthDate_2;
         ratepayPhoneNumber: string;
         ratepayPhoneCountryCode: string;
     };
@@ -8779,6 +9059,18 @@ declare interface WithBigCommercePaymentsCreditCardsPaymentInitializeOptions {
     bigcommerce_payments_creditcards?: BigCommercePaymentsCreditCardsPaymentInitializeOptions;
 }
 
+declare interface WithBigCommercePaymentsPayLaterButtonInitializeOptions {
+    bigcommerce_payments_paylater?: BigCommercePaymentsPayLaterButtonInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsPayLaterCustomerInitializeOptions {
+    bigcommerce_payments_paylater?: BigCommercePaymentsPayLaterCustomerInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsPayLaterPaymentInitializeOptions {
+    bigcommerce_payments_paylater?: BigCommercePaymentsPayLaterPaymentInitializeOptions;
+}
+
 declare interface WithBigCommercePaymentsPayPalButtonInitializeOptions {
     bigcommerce_payments_paypal?: BigCommercePaymentsPayPalButtonInitializeOptions;
 }
@@ -8793,6 +9085,22 @@ declare interface WithBigCommercePaymentsPayPalCustomerInitializeOptions {
 
 declare interface WithBigCommercePaymentsPayPalPaymentInitializeOptions {
     bigcommerce_payments_paypal?: BigCommercePaymentsPayPalPaymentInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsRatePayPaymentInitializeOptions {
+    bigcommerce_payments_ratepay?: BigCommercePaymentsRatePayPaymentInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsVenmoButtonInitializeOptions {
+    bigcommerce_payments_venmo?: BigCommercePaymentsVenmoButtonInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsVenmoCustomerInitializeOptions {
+    bigcommerce_payments_venmo?: BigCommercePaymentsVenmoCustomerInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsVenmoPaymentInitializeOptions {
+    bigcommerce_payments_venmo?: BigCommercePaymentsVenmoPaymentInitializeOptions;
 }
 
 declare interface WithBlueSnapDirectAPMPaymentInitializeOptions {
