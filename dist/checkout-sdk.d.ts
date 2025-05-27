@@ -5478,6 +5478,7 @@ declare interface Extension {
     name: string;
     region: ExtensionRegion;
     url: string;
+    type?: 'iframe' | 'worker';
 }
 
 declare interface ExtensionCommandMap {
@@ -5519,7 +5520,8 @@ declare const enum ExtensionRegion {
     ShippingShippingAddressFormAfter = "shipping.shippingAddressForm.after",
     ShippingSelectedShippingMethod = "shipping.selectedShippingMethod",
     SummaryAfter = "summary.after",
-    SummaryLastItemAfter = "summary.lastItem.after"
+    SummaryLastItemAfter = "summary.lastItem.after",
+    GlobalWebWorker = "global"
 }
 
 declare interface ExtensionSelector {

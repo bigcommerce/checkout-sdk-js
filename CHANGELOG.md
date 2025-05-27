@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.735.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.734.0...v1.735.0) (2025-05-27)
+
+
+### Features
+
+* **checkout:** create new method to register extension web worker ([#2869](https://github.com/bigcommerce/checkout-sdk-js/issues/2869)) ([0f70f55](https://github.com/bigcommerce/checkout-sdk-js/commit/0f70f55a4f035d8b029ed83d510151ba68f48e1b))
+
 ## [1.734.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.733.0...v1.734.0) (2025-05-26)
 
 
