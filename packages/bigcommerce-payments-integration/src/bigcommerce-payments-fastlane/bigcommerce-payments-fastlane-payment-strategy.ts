@@ -49,7 +49,6 @@ export default class BigCommercePaymentsFastlanePaymentStrategy implements Payme
     async initialize(
         options: PaymentInitializeOptions & WithBigCommercePaymentsFastlanePaymentInitializeOptions,
     ): Promise<void> {
-        // TODO: remove bigcommerce_payments_acceleratedcheckout if it was removed on checkout js side
         const { methodId, bigcommerce_payments_fastlane } = options;
 
         if (!methodId) {

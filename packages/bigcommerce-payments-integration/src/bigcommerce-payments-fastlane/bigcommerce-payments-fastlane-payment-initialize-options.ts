@@ -2,7 +2,7 @@ import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/bigcommerc
 import { CardInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
- * A set of options that are required to initialize the BigCommercePayments Accelerated Checkout payment
+ * A set of options that are required to initialize the BigCommercePayments Fastlane payment
  * method for presenting on the page.
  *
  *
@@ -13,7 +13,7 @@ import { CardInstrument } from '@bigcommerce/checkout-sdk/payment-integration-ap
  * ```
  * ```js
  * service.initializePayment({
- *     methodId: 'bigcommerce_payments_acceleratedcheckout', // BigCommercePayments Fastlane has 'bigcommerce_payments_acceleratedcheckout' method id
+ *     methodId: 'bigcommerce_payments_fastlane',
  *     bigcommerce_payments_fastlane: {
  *         onInit: (renderPayPalCardComponent) => renderPayPalCardComponent('#container-id'),
  *         onChange: (showPayPalCardSelector) => showPayPalCardSelector(),
@@ -56,7 +56,7 @@ export default interface BigCommercePaymentsFastlanePaymentInitializeOptions {
     onInit?: (renderPayPalCardComponent: (container: string) => void) => void;
 
     /**
-     * Is a callback that shows PayPal stored instruments
+     * Is a callback that shows fastlane stored instruments
      * when get triggered
      */
     onChange?: (showPayPalCardSelector: () => Promise<CardInstrument | undefined>) => void;

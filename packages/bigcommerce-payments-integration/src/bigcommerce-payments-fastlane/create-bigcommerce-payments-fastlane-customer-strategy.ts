@@ -19,6 +19,6 @@ const createBigCommercePaymentsFastlaneCustomerStrategy: CustomerStrategyFactory
     );
 
 export default toResolvableModule(createBigCommercePaymentsFastlaneCustomerStrategy, [
-    { id: 'bigcommerce_payments_acceleratedcheckout' }, // this method id will be provided for users from test group
+    { id: 'bigcommerce_payments_fastlane' }, // this method id will be provided for users from test group
     { id: 'bigcommerce_payments_creditcards' }, // this method id will be provided for users from control group
 ]);

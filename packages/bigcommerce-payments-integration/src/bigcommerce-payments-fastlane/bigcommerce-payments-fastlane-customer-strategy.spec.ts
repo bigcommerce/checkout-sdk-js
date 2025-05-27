@@ -39,7 +39,7 @@ describe('BigCommercePaymentsFastlaneCustomerStrategy', () => {
     const consignments = [getConsignment()];
     const storeConfig = getConfig().storeConfig;
 
-    const methodId = 'bigcommerce_payments_acceleratedcheckout';
+    const methodId = 'bigcommerce_payments_fastlane';
     const secondaryMethodId = 'bigcommerce_payments_creditcards';
     const customerContextIdMock = 'customerId123';
     const authenticationResultMock = {
@@ -130,8 +130,8 @@ describe('BigCommercePaymentsFastlaneCustomerStrategy', () => {
         expiryYear: '2030',
         iin: '',
         last4: '1111',
-        method: 'bigcommerce_payments_acceleratedcheckout',
-        provider: 'bigcommerce_payments_acceleratedcheckout',
+        method: 'bigcommerce_payments_fastlane',
+        provider: 'bigcommerce_payments_fastlane',
         untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.CVV,
         trustedShippingAddress: false,
         type: card,
@@ -223,7 +223,7 @@ describe('BigCommercePaymentsFastlaneCustomerStrategy', () => {
             }
         });
 
-        it('loads BigCommercePayments accelerated checkout payment method', async () => {
+        it('loads BigCommercePayments Fastlane payment method', async () => {
             await strategy.initialize(initializationOptions);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalledWith(methodId);

@@ -6,7 +6,7 @@ import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/bigcommerc
  *
  * ```js
  * service.initializeCustomer({
- *     methodId: 'bigcommerce_payments_acceleratedcheckout', // BigCommercePayments Fastlane has 'bigcommerce_payments_acceleratedcheckout' method id
+ *     methodId: 'bigcommerce_payments_fastlane',
  *     bigcommerce_payments_fastlane: {
  *         styles: {
  *              root: {

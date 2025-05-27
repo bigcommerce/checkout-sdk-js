@@ -27,5 +27,5 @@ const createBigCommercePaymentsFastlanePaymentStrategy: PaymentStrategyFactory<
 };
 
 export default toResolvableModule(createBigCommercePaymentsFastlanePaymentStrategy, [
-    { id: 'bigcommerce_payments_acceleratedcheckout' }, // BigCommercePayments Fastlane relates to 'bigcommerce_payments_acceleratedcheckout' method id
+    { id: 'bigcommerce_payments_fastlane' }, // BigCommercePayments Fastlane relates to 'bigcommerce_payments_fastlane' method id
 ]);

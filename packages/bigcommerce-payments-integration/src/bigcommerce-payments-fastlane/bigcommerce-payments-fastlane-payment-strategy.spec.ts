@@ -54,7 +54,7 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
     const customerContextId = 'id123';
     const paypalOrderId = 'paypalOrderId123';
 
-    const methodId = 'bigcommerce_payments_acceleratedcheckout';
+    const methodId = 'bigcommerce_payments_fastlane';
     const initializationOptions = {
         methodId,
         bigcommerce_payments_fastlane: {
@@ -91,8 +91,8 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
         expiryYear: '2031',
         iin: '',
         last4: '2233',
-        method: 'bigcommerce_payments_acceleratedcheckout',
-        provider: 'bigcommerce_payments_acceleratedcheckout',
+        method: 'bigcommerce_payments_fastlane',
+        provider: 'bigcommerce_payments_fastlane',
         trustedShippingAddress: false,
         type: card,
         untrustedShippingCardVerificationMode: UntrustedShippingCardVerificationType.PAN,
@@ -540,7 +540,7 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
             }
         });
 
-        it('renders paypal fastlane credit card component', async () => {
+        it('renders fastlane credit card component', async () => {
             const containerId = 'containerIdMock';
             let onInitCallback: (container: string) => void = noop;
 
@@ -623,8 +623,8 @@ describe('BigCommercePaymentsFastlanePaymentStrategy', () => {
                 expiryYear: '2030',
                 iin: '',
                 last4: '1111',
-                method: 'bigcommerce_payments_acceleratedcheckout',
-                provider: 'bigcommerce_payments_acceleratedcheckout',
+                method: 'bigcommerce_payments_fastlane',
+                provider: 'bigcommerce_payments_fastlane',
                 trustedShippingAddress: false,
                 type: 'card',
                 untrustedShippingCardVerificationMode: 'pan',
