@@ -73,11 +73,11 @@ export class MockWorker {
     url: string;
     onmessage: ((this: Worker, ev: MessageEvent) => any) | null = null;
     onerror: ((this: Worker, ev: ErrorEvent) => any) | null = null;
+    // Using jest.Mock for postMessage to spy on its calls
+    postMessage: jest.Mock;
     constructor(url: string) {
         this.url = url;
-    }
-    postMessage(): void {
-        /* mock */
+        this.postMessage = jest.fn();
     }
     terminate(): void {
         /* mock */

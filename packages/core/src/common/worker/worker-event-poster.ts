@@ -9,7 +9,7 @@ export interface IframeEventPostOptions<
 }
 
 export class WorkerEventPoster<TEvent, TContext = undefined> {
-    constructor(private _worker: Worker, private _context?: TContext) {}
+    constructor(private _worker: Worker, private _context: TContext) {}
 
     post(event: TEvent): void {
         if (!this._worker) {
