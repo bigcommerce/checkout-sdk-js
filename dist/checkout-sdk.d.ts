@@ -19,7 +19,8 @@ import { HostedInstrument as HostedInstrument_2 } from '@bigcommerce/checkout-sd
 import { LoadingIndicatorStyles } from '@bigcommerce/checkout-sdk/ui';
 import { Observable } from 'rxjs';
 import { Omit as Omit_2 } from '@bigcommerce/checkout-sdk/payment-integration-api';
-import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
+import { PayPalFastlaneStylesOption } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
+import { PayPalFastlaneStylesOption as PayPalFastlaneStylesOption_2 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { PaymentErrorData } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentErrorResponseBody } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentProviderCustomer as PaymentProviderCustomerType } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -1011,6 +1012,124 @@ declare interface BigCommercePaymentsCreditCardsPaymentInitializeOptions {
      * The callback that gets called when there is an issue with rendering credit card fields
      */
     onCreditCardFieldsRenderingError?: (error: unknown) => void;
+}
+
+/**
+ * A set of options that are optional to initialize the BigCommercePayments Fastlane customer strategy
+ * that are responsible for BigCommercePayments Fastlane components styling and initialization
+ *
+ * ```js
+ * service.initializeCustomer({
+ *     methodId: 'bigcommerce_payments_fastlane',
+ *     bigcommerce_payments_fastlane: {
+ *         styles: {
+ *              root: {
+ *                  backgroundColorPrimary: 'transparent',
+ *                  errorColor: '#C40B0B',
+ *                  fontFamily: 'Montserrat, Helvetica, Arial, sans-serif',
+ *              },
+ *              input: {
+ *                  borderRadius: '0.25rem',
+ *                  borderColor: '#9E9E9E',
+ *                  focusBorderColor: '#4496F6',
+ *              },
+ *              toggle: {
+ *                  colorPrimary: '#0F005E',
+ *                  colorSecondary: '#ffffff',
+ *              },
+ *              text: {
+ *                  body: {
+ *                      color: '#222222',
+ *                      fontSize: '1rem',
+ *                  },
+ *                  caption: {
+ *                      color: '#515151',
+ *                      fontSize: '0.875rem',
+ *                  },
+ *              },
+ *              branding: 'light',
+ *         },
+ *     },
+ * });
+ * ```
+ */
+declare interface BigCommercePaymentsFastlaneCustomerInitializeOptions {
+    /**
+     * Is a stylisation options for customizing BigCommercePayments Fastlane components
+     *
+     * Note: the styles for all BigCommercePayments Fastlane strategies should be the same,
+     * because they will be provided to PayPal library only for the first strategy initialization
+     * no matter which strategy was initialised first
+     */
+    styles?: PayPalFastlaneStylesOption;
+}
+
+/**
+ * A set of options that are required to initialize the BigCommercePayments Fastlane payment
+ * method for presenting on the page.
+ *
+ *
+ * Also, BigCommercePayments requires specific options to initialize BigCommercePayments Fastlane Card Component
+ * ```html
+ * <!-- This is where the BigCommercePayments Fastlane Card Component will be inserted -->
+ * <div id="container"></div>
+ * ```
+ * ```js
+ * service.initializePayment({
+ *     methodId: 'bigcommerce_payments_fastlane',
+ *     bigcommerce_payments_fastlane: {
+ *         onInit: (renderPayPalCardComponent) => renderPayPalCardComponent('#container-id'),
+ *         onChange: (showPayPalCardSelector) => showPayPalCardSelector(),
+ *         styles: {
+ *              root: {
+ *                  backgroundColorPrimary: 'transparent',
+ *                  errorColor: '#C40B0B',
+ *                  fontFamily: 'Montserrat, Helvetica, Arial, sans-serif',
+ *              },
+ *              input: {
+ *                  borderRadius: '0.25rem',
+ *                  borderColor: '#9E9E9E',
+ *                  focusBorderColor: '#4496F6',
+ *              },
+ *              toggle: {
+ *                  colorPrimary: '#0F005E',
+ *                  colorSecondary: '#ffffff',
+ *              },
+ *              text: {
+ *                  body: {
+ *                      color: '#222222',
+ *                      fontSize: '1rem',
+ *                  },
+ *                  caption: {
+ *                      color: '#515151',
+ *                      fontSize: '0.875rem',
+ *                  },
+ *              },
+ *              branding: 'light',
+ *         },
+ *     },
+ * });
+ * ```
+ */
+declare interface BigCommercePaymentsFastlanePaymentInitializeOptions {
+    /**
+     * Is a callback that takes the CSS selector of a container
+     * where the BigCommercePayments Fastlane form should be inserted into.
+     */
+    onInit?: (renderPayPalCardComponent: (container: string) => void) => void;
+    /**
+     * Is a callback that shows fastlane stored instruments
+     * when get triggered
+     */
+    onChange?: (showPayPalCardSelector: () => Promise<CardInstrument_2 | undefined>) => void;
+    /**
+     * Is a stylisation options for customizing BigCommercePayments Fastlane components
+     *
+     * Note: the styles for all BigCommercePaymentsFastlane strategies should be the same,
+     * because they will be provided to PayPal library only for the first strategy initialization
+     * no matter what strategy was initialised first
+     */
+    styles?: PayPalFastlaneStylesOption;
 }
 
 declare interface BigCommercePaymentsFieldsStyleOptions {
@@ -5127,7 +5246,7 @@ declare interface CustomerGroup {
     name: string;
 }
 
-declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithAmazonPayV2CustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBigCommercePaymentsPayPalCustomerInitializeOptions & WithBigCommercePaymentsPayLaterCustomerInitializeOptions & WithBigCommercePaymentsVenmoCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithBraintreePaypalCreditCustomerInitializeOptions & WithBraintreeFastlaneCustomerInitializeOptions & WithGooglePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions & WithStripeUPECustomerInitializeOptions;
+declare type CustomerInitializeOptions = BaseCustomerInitializeOptions & WithAmazonPayV2CustomerInitializeOptions & WithApplePayCustomerInitializeOptions & WithBigCommercePaymentsPayPalCustomerInitializeOptions & WithBigCommercePaymentsFastlaneCustomerInitializeOptions & WithBigCommercePaymentsPayLaterCustomerInitializeOptions & WithBigCommercePaymentsVenmoCustomerInitializeOptions & WithBoltCustomerInitializeOptions & WithBraintreePaypalCustomerInitializeOptions & WithBraintreePaypalCreditCustomerInitializeOptions & WithBraintreeFastlaneCustomerInitializeOptions & WithGooglePayCustomerInitializeOptions & WithPayPalCommerceCustomerInitializeOptions & WithPayPalCommerceCreditCustomerInitializeOptions & WithPayPalCommerceVenmoCustomerInitializeOptions & WithPayPalCommerceFastlaneCustomerInitializeOptions & WithStripeUPECustomerInitializeOptions;
 
 declare interface CustomerPasswordRequirements {
     alpha: string;
@@ -7414,7 +7533,7 @@ declare interface PayPalCommerceFastlaneCustomerInitializeOptions {
      * because they will be provided to PayPal library only for the first strategy initialization
      * no matter which strategy was initialised first
      */
-    styles?: PayPalFastlaneStylesOption;
+    styles?: PayPalFastlaneStylesOption_2;
 }
 
 /**
@@ -7482,7 +7601,7 @@ declare interface PayPalCommerceFastlanePaymentInitializeOptions {
      * because they will be provided to PayPal library only for the first strategy initialization
      * no matter what strategy was initialised first
      */
-    styles?: PayPalFastlaneStylesOption;
+    styles?: PayPalFastlaneStylesOption_2;
 }
 
 /**
@@ -7497,7 +7616,7 @@ declare interface PayPalCommerceFastlaneShippingInitializeOptions {
      * because they will be provided to PayPal library only for the first strategy initialization
      * no matter what strategy was initialised first
      */
-    styles?: PayPalFastlaneStylesOption;
+    styles?: PayPalFastlaneStylesOption_2;
     /**
      * Is a callback that shows PayPal Fastlane popup with customer addresses
      * when get triggered
@@ -7754,7 +7873,7 @@ declare class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest;
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPayPalPaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions & WithBigCommercePaymentsRatePayPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPayPalPaymentInitializeOptions & WithBigCommercePaymentsFastlanePaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions & WithBigCommercePaymentsRatePayPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -9059,6 +9178,14 @@ declare interface WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOpti
 
 declare interface WithBigCommercePaymentsCreditCardsPaymentInitializeOptions {
     bigcommerce_payments_creditcards?: BigCommercePaymentsCreditCardsPaymentInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsFastlaneCustomerInitializeOptions {
+    bigcommerce_payments_fastlane?: BigCommercePaymentsFastlaneCustomerInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsFastlanePaymentInitializeOptions {
+    bigcommerce_payments_fastlane?: BigCommercePaymentsFastlanePaymentInitializeOptions;
 }
 
 declare interface WithBigCommercePaymentsPayLaterButtonInitializeOptions {
