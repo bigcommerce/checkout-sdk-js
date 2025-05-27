@@ -1,12 +1,12 @@
 import { HostedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 /**
- * A set of options that are required to initialize the PayPal Commerce payment
+ * A set of options that are required to initialize the BigCommercePayments payment
  * method for presenting its PayPal button.
  *
  * Please note that the minimum version of checkout-sdk is 1.100
  *
- * Also, PayPal (also known as PayPal Commerce Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
+ * Also, PayPal (also known as BigCommercePayments Platform) requires specific options to initialize the PayPal Smart Payment Button on checkout page that substitutes a standard submit button
  * ```html
  * <!-- This is where the PayPal button will be inserted -->
  * <div id="container"></div>
@@ -14,15 +14,15 @@ import { HostedInstrument } from '@bigcommerce/checkout-sdk/payment-integration-
  *
  * ```js
  * service.initializePayment({
- *     methodId: 'paypalcommerce',
- *     paypalcommerce: {
+ *     methodId: 'bigcommerce_payments_paypal',
+ *     bigcommerce_payments_paypal: {
  *         container: '#container',
  * // Callback for submitting payment form that gets called when a buyer approves PayPal payment
  *         submitForm: () => {
  *         // Example function
  *             this.submitOrder(
  *                {
- *                   payment: { methodId: 'paypalcommerce', }
+ *                   payment: { methodId: 'bigcommerce_payments_paypal', }
  *               }
  *            );
  *         },

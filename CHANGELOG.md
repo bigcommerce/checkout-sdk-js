@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.735.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.734.0...v1.735.0) (2025-05-27)
+
+
+### Features
+
+* **checkout:** create new method to register extension web worker ([#2869](https://github.com/bigcommerce/checkout-sdk-js/issues/2869)) ([0f70f55](https://github.com/bigcommerce/checkout-sdk-js/commit/0f70f55a4f035d8b029ed83d510151ba68f48e1b))
+
+## [1.734.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.733.0...v1.734.0) (2025-05-26)
+
+
+### Features
+
+* **payment:** clone bigcommerce payments paylater methods files ([#2863](https://github.com/bigcommerce/checkout-sdk-js/issues/2863)) ([f56d714](https://github.com/bigcommerce/checkout-sdk-js/commit/f56d7149a8e1d6eb4fce59bc988ad44b374b80a4))
+* **payment:** clone BigCommercePayments RatePay files ([#2866](https://github.com/bigcommerce/checkout-sdk-js/issues/2866)) ([d7a3157](https://github.com/bigcommerce/checkout-sdk-js/commit/d7a3157ffb3707fc1cba2bba82a573032bddd7f2))
+* **payment:** clone BigCommercePayments Venmo files ([#2867](https://github.com/bigcommerce/checkout-sdk-js/issues/2867)) ([0ce2b68](https://github.com/bigcommerce/checkout-sdk-js/commit/0ce2b6805c85d0c0c624a26396582235a3fe5ed9))
+
+## [1.733.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.732.3...v1.733.0) (2025-05-26)
+
+
+### Features
+
+* **payment:** clone bigcommerce payments alternative methods files ([#2862](https://github.com/bigcommerce/checkout-sdk-js/issues/2862)) ([a50ac03](https://github.com/bigcommerce/checkout-sdk-js/commit/a50ac03673ef5358318ad58e878a8d6542dfd512))
+* **payment:** clone bigcommerce payments credit cards files ([#2864](https://github.com/bigcommerce/checkout-sdk-js/issues/2864)) ([1a687c1](https://github.com/bigcommerce/checkout-sdk-js/commit/1a687c1de2f180674cd17ec6ee9d1cacb8b0c5fd))
+* **payment:** Stripe OCS accordion state on initialization ([c119c5c](https://github.com/bigcommerce/checkout-sdk-js/commit/c119c5cc2fb2ff0f10aa4317db066313cb3c5cf2))
+
+### [1.732.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.732.2...v1.732.3) (2025-05-26)
+
+### [1.732.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.732.1...v1.732.2) (2025-05-26)
+
+### [1.732.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.732.0...v1.732.1) (2025-05-26)
+
+
+### Code Refactoring
+
+* **payment:** removed Braintree LPM fallback experiment and speed up related tests run ([#2871](https://github.com/bigcommerce/checkout-sdk-js/issues/2871)) ([9e74eb0](https://github.com/bigcommerce/checkout-sdk-js/commit/9e74eb07a8737b78ad7d5aed8232ce3e1f75603b))
+
 ## [1.732.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.731.2...v1.732.0) (2025-05-07)
 
 

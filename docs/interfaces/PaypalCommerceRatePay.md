@@ -54,7 +54,7 @@ A callback that gets form values
 
 | Name | Type |
 | :------ | :------ |
-| `ratepayBirthDate` | [`BirthDate`](BirthDate.md) |
+| `ratepayBirthDate` | [`BirthDate_2`](BirthDate_2.md) |
 | `ratepayPhoneCountryCode` | `string` |
 | `ratepayPhoneNumber` | `string` |
 

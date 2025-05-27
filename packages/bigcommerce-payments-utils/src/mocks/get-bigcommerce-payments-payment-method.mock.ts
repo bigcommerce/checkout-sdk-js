@@ -2,7 +2,7 @@ import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api
 
 import { BigCommercePaymentsIntent } from '../bigcommerce-payments-types';
 
-export default function getBigCommercePaymentsPaymentMethod(): PaymentMethod {
+export default function getBigCommercePaymentsPayPalPaymentMethod(): PaymentMethod {
     return {
         id: 'bigcommerce_payments_paypal',
         logoUrl: '',
@@ -58,7 +58,7 @@ export default function getBigCommercePaymentsPaymentMethod(): PaymentMethod {
 }
 
 export function getBigCommercePaymentsFastlanePaymentMethod(): PaymentMethod {
-    const bigCommercePaymentsDefaultPaymentMethod = getBigCommercePaymentsPaymentMethod();
+    const bigCommercePaymentsDefaultPaymentMethod = getBigCommercePaymentsPayPalPaymentMethod();
 
     return {
         ...bigCommercePaymentsDefaultPaymentMethod,

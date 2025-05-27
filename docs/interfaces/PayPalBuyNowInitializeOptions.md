@@ -2,7 +2,7 @@
 
 # Interface: PayPalBuyNowInitializeOptions
 
-PayPal Commerce BuyNow
+BigCommerce Payments BuyNow
 
 ## Table of contents
 

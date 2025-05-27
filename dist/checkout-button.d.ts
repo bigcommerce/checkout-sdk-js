@@ -57,6 +57,112 @@ declare interface BaseCheckoutButtonInitializeOptions extends CheckoutButtonOpti
     paypal?: PaypalButtonInitializeOptions;
 }
 
+declare interface BigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
+    /**
+     * Alternative payment method id what used for initialization PayPal button as funding source.
+     */
+    apm: string;
+    /**
+     * The options that required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PayPalButtonStyleOptions;
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
+}
+
+declare interface BigCommercePaymentsPayLaterButtonInitializeOptions {
+    /**
+     * The ID of a container which the messaging should be inserted.
+     */
+    messagingContainerId?: string;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PayPalButtonStyleOptions;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
+}
+
+/**
+ * A set of options that are required to initialize BigCommercePaymentsPayPal in cart or product details page.
+ *
+ * When BigCommercePaymentsPayPal is initialized, an BigCommercePaymentsPayPal button will be inserted into the
+ * DOM. When a customer clicks on it, it will trigger Apple sheet.
+ */
+declare interface BigCommercePaymentsPayPalButtonInitializeOptions {
+    /**
+     * The options that are required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PayPalButtonStyleOptions;
+    /**
+     * A callback that gets called when payment complete on paypal side.
+     */
+    onComplete?(): void;
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
+}
+
+declare interface BigCommercePaymentsVenmoButtonInitializeOptions {
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: PayPalButtonStyleOptions;
+    /**
+     * The option that used to initialize a PayPal script with provided currency code.
+     */
+    currencyCode?: string;
+    /**
+     * The options that required to initialize Buy Now functionality.
+     */
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    /**
+     *
+     *  A callback that gets called when PayPal SDK restricts to render PayPal component.
+     *
+     */
+    onEligibilityFailure?(): void;
+}
+
 declare interface BoltButtonInitializeOptions {
     /**
      * The options that are required to initialize Buy Now functionality.
@@ -66,7 +172,7 @@ declare interface BoltButtonInitializeOptions {
 }
 
 declare interface BoltButtonStyleOptions {
-    shape?: StyleButtonShape;
+    shape?: StyleButtonShape_2;
     size?: StyleButtonSize;
 }
 
@@ -177,7 +283,7 @@ declare class CheckoutButtonErrorSelector {
     getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
-declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
+declare type CheckoutButtonInitializeOptions = BaseCheckoutButtonInitializeOptions & WithAmazonPayV2ButtonInitializeOptions & WithApplePayButtonInitializeOptions & WithBigCommercePaymentsPayPalButtonInitializeOptions & WithBigCommercePaymentsPayLaterButtonInitializeOptions & WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions & WithBigCommercePaymentsVenmoButtonInitializeOptions & WithBoltButtonInitializeOptions & WithBraintreePaypalButtonInitializeOptions & WithBraintreePaypalCreditButtonInitializeOptions & WithGooglePayButtonInitializeOptions & WithPayPalCommerceButtonInitializeOptions & WithPayPalCommerceCreditButtonInitializeOptions & WithPayPalCommerceVenmoButtonInitializeOptions & WithPayPalCommerceAlternativeMethodsButtonInitializeOptions;
 
 declare class CheckoutButtonInitializer {
     private _store;
@@ -365,9 +471,25 @@ declare enum GooglePayKey {
 
 declare interface PayPalButtonStyleOptions {
     color?: StyleButtonColor;
-    shape?: StyleButtonShape_2;
+    shape?: StyleButtonShape;
     height?: number;
     label?: StyleButtonLabel;
+}
+
+declare interface PayPalButtonStyleOptions_2 {
+    color?: StyleButtonColor_2;
+    shape?: StyleButtonShape_3;
+    height?: number;
+    label?: StyleButtonLabel_2;
+}
+
+/**
+ *
+ * BigCommerce Payments BuyNow
+ *
+ */
+declare interface PayPalBuyNowInitializeOptions {
+    getBuyNowCartRequestBody(): BuyNowCartRequestBody;
 }
 
 /**
@@ -375,7 +497,7 @@ declare interface PayPalButtonStyleOptions {
  * PayPal Commerce BuyNow
  *
  */
-declare interface PayPalBuyNowInitializeOptions {
+declare interface PayPalBuyNowInitializeOptions_2 {
     getBuyNowCartRequestBody(): BuyNowCartRequestBody;
 }
 
@@ -387,7 +509,7 @@ declare interface PayPalCommerceAlternativeMethodsButtonOptions {
     /**
      * The options that required to initialize Buy Now functionality.
      */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions_2;
     /**
      * The option that used to initialize a PayPal script with provided currency code.
      */
@@ -395,7 +517,7 @@ declare interface PayPalCommerceAlternativeMethodsButtonOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: PayPalButtonStyleOptions;
+    style?: PayPalButtonStyleOptions_2;
     /**
      *
      *  A callback that gets called when PayPal SDK restricts to render PayPal component.
@@ -414,7 +536,7 @@ declare interface PayPalCommerceButtonInitializeOptions {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions_2;
     /**
      * The option that used to initialize a PayPal script with provided currency code.
      */
@@ -422,7 +544,7 @@ declare interface PayPalCommerceButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: PayPalButtonStyleOptions;
+    style?: PayPalButtonStyleOptions_2;
     /**
      * A callback that gets called when payment complete on paypal side.
      */
@@ -443,7 +565,7 @@ declare interface PayPalCommerceCreditButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: PayPalButtonStyleOptions;
+    style?: PayPalButtonStyleOptions_2;
     /**
      * The option that used to initialize a PayPal script with provided currency code.
      */
@@ -451,7 +573,7 @@ declare interface PayPalCommerceCreditButtonInitializeOptions {
     /**
      * The options that are required to initialize Buy Now functionality.
      */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions_2;
     /**
      * A callback that gets called when payment complete on paypal side.
      */
@@ -468,7 +590,7 @@ declare interface PayPalCommerceVenmoButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: PayPalButtonStyleOptions;
+    style?: PayPalButtonStyleOptions_2;
     /**
      * The option that used to initialize a PayPal script with provided currency code.
      */
@@ -476,7 +598,7 @@ declare interface PayPalCommerceVenmoButtonInitializeOptions {
     /**
      * The options that required to initialize Buy Now functionality.
      */
-    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions;
+    buyNowInitializeOptions?: PayPalBuyNowInitializeOptions_2;
     /**
      *
      *  A callback that gets called when PayPal SDK restricts to render PayPal component.
@@ -590,6 +712,14 @@ declare enum StyleButtonColor {
     white = "white"
 }
 
+declare enum StyleButtonColor_2 {
+    gold = "gold",
+    blue = "blue",
+    silver = "silver",
+    black = "black",
+    white = "white"
+}
+
 declare enum StyleButtonLabel {
     paypal = "paypal",
     checkout = "checkout",
@@ -598,12 +728,25 @@ declare enum StyleButtonLabel {
     installment = "installment"
 }
 
+declare enum StyleButtonLabel_2 {
+    paypal = "paypal",
+    checkout = "checkout",
+    buynow = "buynow",
+    pay = "pay",
+    installment = "installment"
+}
+
 declare enum StyleButtonShape {
+    pill = "pill",
+    rect = "rect"
+}
+
+declare enum StyleButtonShape_2 {
     Pill = "pill",
     Rect = "rect"
 }
 
-declare enum StyleButtonShape_2 {
+declare enum StyleButtonShape_3 {
     pill = "pill",
     rect = "rect"
 }
@@ -620,6 +763,22 @@ declare interface WithAmazonPayV2ButtonInitializeOptions {
 
 declare interface WithApplePayButtonInitializeOptions {
     applepay?: ApplePayButtonInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsAlternativeMethodsButtonInitializeOptions {
+    bigcommerce_payments_apms?: BigCommercePaymentsAlternativeMethodsButtonInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsPayLaterButtonInitializeOptions {
+    bigcommerce_payments_paylater?: BigCommercePaymentsPayLaterButtonInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsPayPalButtonInitializeOptions {
+    bigcommerce_payments_paypal?: BigCommercePaymentsPayPalButtonInitializeOptions;
+}
+
+declare interface WithBigCommercePaymentsVenmoButtonInitializeOptions {
+    bigcommerce_payments_venmo?: BigCommercePaymentsVenmoButtonInitializeOptions;
 }
 
 declare interface WithBoltButtonInitializeOptions {
