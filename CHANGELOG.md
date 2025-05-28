@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.737.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.736.0...v1.737.0) (2025-05-28)
+
+
+### Features
+
+* **payment:** remove Sofort and Giropay enums from StripeUPE ([8c43601](https://github.com/bigcommerce/checkout-sdk-js/commit/8c436015e893b11f254d0273404b348e2fa834bc))
+
 ## [1.736.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.735.0...v1.736.0) (2025-05-27)
 
 
