@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.738.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.737.0...v1.738.0) (2025-05-28)
+
+
+### Features
+
+* **payment:** removed google-pay-paypal-commerce-script-loader.ts and moved logic to paypal-commerce-sdk ([6240a2f](https://github.com/bigcommerce/checkout-sdk-js/commit/6240a2f86955e2e684555a7d9c8b9d80fdfbbb18))
+
 ## [1.737.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.736.0...v1.737.0) (2025-05-28)
 
 
