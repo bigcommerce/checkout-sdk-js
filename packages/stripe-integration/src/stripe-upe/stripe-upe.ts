@@ -527,12 +527,10 @@ export interface StripeHostWindow extends Window {
 export enum StripePaymentMethodType {
     CreditCard = 'card',
     Link = 'link',
-    SOFORT = 'sofort',
     EPS = 'eps',
     GRABPAY = 'grabpay',
     BANCONTACT = 'bancontact',
     IDEAL = 'ideal',
-    GIROPAY = 'giropay',
     ALIPAY = 'alipay',
     KLARNA = 'klarna',
     OCS = 'stripe_ocs',
