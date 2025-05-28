@@ -1,6 +1,6 @@
 import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
 
-import { IframeEventMap } from '../iframe/iframe-event';
+import { EventListeners, IframeEventMap } from '../iframe';
 
 export class WorkerEventListener<
     TEventMap extends IframeEventMap<keyof TEventMap>,
@@ -20,7 +20,6 @@ export class WorkerEventListener<
         }
 
         this._isListening = true;
-
         this._worker.addEventListener('message', this._handleMessage);
     }
 
@@ -30,7 +29,6 @@ export class WorkerEventListener<
         }
 
         this._isListening = false;
-
         this._worker.removeEventListener('message', this._handleMessage);
     }
 
@@ -83,7 +81,3 @@ export class WorkerEventListener<
         this.trigger(event, context);
     }
 }
-
-type EventListeners<TEventMap, TContext = undefined> = {
-    [key in keyof TEventMap]?: Array<(event: TEventMap[key], context?: TContext) => void>;
-};

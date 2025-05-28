@@ -99,6 +99,6 @@ export default class IframeEventListener<
     }
 }
 
-type EventListeners<TEventMap, TContext = undefined> = {
+export type EventListeners<TEventMap, TContext = undefined> = {
     [key in keyof TEventMap]?: Array<(event: TEventMap[key], context?: TContext) => void>;
 };
