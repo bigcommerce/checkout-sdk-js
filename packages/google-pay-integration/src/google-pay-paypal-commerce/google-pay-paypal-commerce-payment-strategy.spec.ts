@@ -11,6 +11,7 @@ import {
     PaymentIntegrationService,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
+import { PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import { WithGooglePayPaymentInitializeOptions } from '../google-pay-payment-initialize-options';
 import GooglePayPaymentProcessor from '../google-pay-payment-processor';
@@ -20,7 +21,6 @@ import { getGeneric, getPayPalCommerce } from '../mocks/google-pay-payment-metho
 
 import GooglePayGateway from './google-pay-paypal-commerce-gateway';
 import GooglePayPaymentStrategy from './google-pay-paypal-commerce-payment-strategy';
-import PayPalCommerceScriptLoader from './google-pay-paypal-commerce-script-loader';
 import { ConfirmOrderStatus } from './types';
 
 describe('PayPalCommerceGooglePayPaymentStrategy', () => {
@@ -31,13 +31,13 @@ describe('PayPalCommerceGooglePayPaymentStrategy', () => {
     let strategy: GooglePayPaymentStrategy;
     let options: PaymentInitializeOptions & WithGooglePayPaymentInitializeOptions;
     let button: HTMLDivElement;
-    let scriptLoader: PayPalCommerceScriptLoader;
+    let scriptLoader: PayPalCommerceSdk;
     let requestSender: RequestSender;
     let response: Response<{ orderId: string }>;
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        scriptLoader = new PayPalCommerceScriptLoader(getScriptLoader());
+        scriptLoader = new PayPalCommerceSdk(getScriptLoader());
         requestSender = createRequestSender();
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
             getGeneric(),
@@ -52,9 +52,8 @@ describe('PayPalCommerceGooglePayPaymentStrategy', () => {
         jest.spyOn(processor, 'initialize').mockResolvedValue(undefined);
         jest.spyOn(processor, 'processAdditionalAction').mockResolvedValue(undefined);
         jest.spyOn(processor, 'getNonce').mockResolvedValue('nonceValue');
-        jest.spyOn(scriptLoader, 'getGooglePayConfigOrThrow').mockRejectedValue({});
 
-        jest.spyOn(scriptLoader, 'getPayPalSDK').mockResolvedValue({
+        jest.spyOn(scriptLoader, 'getPayPalGooglePaySdk').mockResolvedValue({
             Googlepay: jest.fn().mockReturnValue({
                 config: jest.fn(),
                 confirmOrder: jest.fn().mockResolvedValue({ status: 'APPROVED' }),
@@ -134,7 +133,7 @@ describe('PayPalCommerceGooglePayPaymentStrategy', () => {
 
             isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
 
-            await scriptLoader.getPayPalSDK(googlePayPaymentMethod, 'USD');
+            await scriptLoader.getPayPalGooglePaySdk(googlePayPaymentMethod, 'USD');
 
             const execute = strategy.execute(payload);
 
@@ -180,7 +179,7 @@ describe('PayPalCommerceGooglePayPaymentStrategy', () => {
         });
 
         it('should initiate payer action', async () => {
-            jest.spyOn(scriptLoader, 'getPayPalSDK').mockResolvedValue({
+            jest.spyOn(scriptLoader, 'getPayPalGooglePaySdk').mockResolvedValue({
                 Googlepay: jest.fn().mockReturnValue({
                     config: jest.fn(),
                     confirmOrder: jest
@@ -194,7 +193,7 @@ describe('PayPalCommerceGooglePayPaymentStrategy', () => {
 
             isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
 
-            const sdk = await scriptLoader.getPayPalSDK(googlePayPaymentMethod, 'USD');
+            const sdk = await scriptLoader.getPayPalGooglePaySdk(googlePayPaymentMethod, 'USD');
 
             await strategy.execute(payload);
 
