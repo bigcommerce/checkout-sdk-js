@@ -4,14 +4,12 @@ import { Observable, Observer } from 'rxjs';
 import { InternalCheckoutSelectors } from '../checkout';
 import { RequestOptions } from '../common/http-request';
 import { parseUrl } from '../common/url';
-import { WorkerEventListener } from '../common/worker';
 
 import { createExtensionWebWorker } from './create-extension-web-worker';
 import { ExtensionNotFoundError } from './errors';
 import { ExtensionRegion } from './extension';
 import { ExtensionAction, ExtensionActionType } from './extension-actions';
 import { ExtensionIframe } from './extension-iframe';
-import { ExtensionMessageMap, ExtensionMessageType } from './extension-message';
 import { ExtensionRequestSender } from './extension-request-sender';
 
 export class ExtensionActionCreator {
