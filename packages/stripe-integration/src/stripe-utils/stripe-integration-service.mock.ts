@@ -1,10 +1,10 @@
 import { PaymentMethodFailedError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { StripeStringConstants } from './stripe-upe';
-import StripeUPEIntegrationService from './stripe-upe-integration-service';
-import { getStripeUPEJsMock } from './stripe-upe.mock';
+import { StripeStringConstants } from './stripe';
+import StripeIntegrationService from './stripe-integration-service';
+import { getStripeJsMock } from './stripe.mock';
 
-export const getStripeUPEIntegrationServiceMock = () =>
+export const getStripeIntegrationServiceMock = () =>
     ({
         deinitialize: jest.fn(),
         initCheckoutEventsSubscription: jest.fn(),
@@ -20,7 +20,7 @@ export const getStripeUPEIntegrationServiceMock = () =>
         isCancellationError: jest.fn(() => false),
         isPaymentCompleted: jest.fn(() => Promise.resolve(false)),
         mapStripePaymentData: jest.fn((return_url?: string) => ({
-            elements: getStripeUPEJsMock().elements({}),
+            elements: getStripeJsMock().elements({}),
             redirect: StripeStringConstants.IF_REQUIRED,
             confirmParams: {
                 payment_method_data: {
@@ -40,4 +40,4 @@ export const getStripeUPEIntegrationServiceMock = () =>
         throwStripeError: jest.fn(() => {
             throw new Error('throw stripe error');
         }),
-    } as unknown as StripeUPEIntegrationService);
+    } as unknown as StripeIntegrationService);

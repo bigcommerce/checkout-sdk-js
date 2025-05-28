@@ -10,17 +10,18 @@ import {
     RequestOptions,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import isStripeAcceleratedCheckoutCustomer from './is-stripe-accelerated-checkout-customer';
-import { isStripeUPEPaymentMethodLike } from './is-stripe-upe-payment-method-like';
 import {
+    isStripePaymentMethodLike,
+    StripeAppearanceOptions,
+    StripeClient,
     StripeElements,
     StripeElementType,
     StripeEventType,
     StripeFormMode,
-    StripeUPEAppearanceOptions,
-    StripeUPEClient,
-} from './stripe-upe';
-import StripeUPEScriptLoader from './stripe-upe-script-loader';
+    StripeScriptLoader,
+} from '../stripe-utils';
+
+import isStripeAcceleratedCheckoutCustomer from './is-stripe-accelerated-checkout-customer';
 import { WithStripeUPECustomerInitializeOptions } from './stripeupe-customer-initialize-options';
 
 export default class StripeUPECustomerStrategy implements CustomerStrategy {
@@ -28,13 +29,13 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private scriptLoader: StripeUPEScriptLoader,
+        private scriptLoader: StripeScriptLoader,
     ) {}
 
     async initialize(
         options: CustomerInitializeOptions & WithStripeUPECustomerInitializeOptions,
     ): Promise<void> {
-        let stripeUPEClient: StripeUPEClient;
+        let stripeUPEClient: StripeClient;
 
         if (!options.stripeupe) {
             throw new InvalidArgumentError(
@@ -61,7 +62,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
         const paymentMethod = state.getPaymentMethodOrThrow(methodId, gatewayId);
         const { clientToken } = paymentMethod;
 
-        if (!isStripeUPEPaymentMethodLike(paymentMethod) || !clientToken) {
+        if (!isStripePaymentMethodLike(paymentMethod) || !clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
         }
 
@@ -80,7 +81,7 @@ export default class StripeUPECustomerStrategy implements CustomerStrategy {
             stripePaymentProviderCustomer.stripeLinkAuthenticationState;
 
         if (!email) {
-            let appearance: StripeUPEAppearanceOptions | undefined;
+            let appearance: StripeAppearanceOptions | undefined;
             const styles = typeof getStyles === 'function' && getStyles();
 
             if (styles) {

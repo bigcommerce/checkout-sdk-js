@@ -13,30 +13,28 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
+import StripeUPEPaymentInitializeOptions, {
+    WithStripeUPEPaymentInitializeOptions,
+} from '../stripe-upe//stripe-upe-initialize-options';
+import { getStripeUPEMock } from '../stripe-upe/stripe-upe.mock';
+
 import {
+    StripeClient,
     StripeElement,
     StripeElements,
     StripeError,
     StripePaymentMethodType,
-    StripeUPEClient,
-} from './stripe-upe';
-import StripeUPEPaymentInitializeOptions, {
-    WithStripeUPEPaymentInitializeOptions,
-} from './stripe-upe-initialize-options';
-import StripeUPEIntegrationService from './stripe-upe-integration-service';
-import StripeUPEScriptLoader from './stripe-upe-script-loader';
-import {
-    getStripeUPE,
-    getStripeUPEInitializeOptionsMock,
-    getStripeUPEJsMock,
-} from './stripe-upe.mock';
+} from './stripe';
+import StripeIntegrationService from './stripe-integration-service';
+import StripeScriptLoader from './stripe-script-loader';
+import { getStripeInitializeOptionsMock, getStripeJsMock } from './stripe.mock';
 
-describe('StripeUPEIntegrationService', () => {
+describe('StripeIntegrationService', () => {
     let paymentIntegrationService: PaymentIntegrationService;
-    let stripeUPEIntegrationService: StripeUPEIntegrationService;
+    let stripeIntegrationService: StripeIntegrationService;
     let initializeOptions: PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
     let stripeupeMock: StripeUPEPaymentInitializeOptions;
-    let stripeUPEJsMock: StripeUPEClient;
+    let stripeUPEJsMock: StripeClient;
     const gatewayId = 'stripeupe';
     const methodId = StripePaymentMethodType.OCS;
     const testColor = '#123456';
@@ -51,10 +49,10 @@ describe('StripeUPEIntegrationService', () => {
     };
     let stripeElementsMock: StripeElements;
     let stripeElementMock: StripeElement;
-    let stripeScriptLoader: StripeUPEScriptLoader;
+    let stripeScriptLoader: StripeScriptLoader;
 
     beforeEach(() => {
-        initializeOptions = getStripeUPEInitializeOptionsMock(StripePaymentMethodType.OCS, style);
+        initializeOptions = getStripeInitializeOptionsMock(StripePaymentMethodType.OCS, style);
 
         if (!initializeOptions.stripeupe) {
             initializeOptions.stripeupe = {
@@ -65,9 +63,9 @@ describe('StripeUPEIntegrationService', () => {
 
         stripeScriptLoader = {
             updateStripeElements: jest.fn(),
-        } as unknown as StripeUPEScriptLoader;
+        } as unknown as StripeScriptLoader;
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        stripeUPEIntegrationService = new StripeUPEIntegrationService(
+        stripeIntegrationService = new StripeIntegrationService(
             paymentIntegrationService,
             stripeScriptLoader,
         );
@@ -105,32 +103,32 @@ describe('StripeUPEIntegrationService', () => {
                 () => subscriptionMock,
             );
 
-            stripeUPEIntegrationService.initCheckoutEventsSubscription(
+            stripeIntegrationService.initCheckoutEventsSubscription(
                 gatewayId,
                 methodId,
                 stripeupeMock,
                 stripeElementsMock,
             );
-            stripeUPEIntegrationService.deinitialize();
+            stripeIntegrationService.deinitialize();
 
             expect(subscriptionMock).toHaveBeenCalled();
             // eslint-disable-next-line @typescript-eslint/dot-notation, dot-notation
-            expect(stripeUPEIntegrationService['isMounted']).toBe(false);
+            expect(stripeIntegrationService['isMounted']).toBe(false);
         });
 
         it('should not unsibscribe when subscription is not set', () => {
             jest.spyOn(paymentIntegrationService, 'subscribe').mockImplementation(undefined);
 
-            stripeUPEIntegrationService.initCheckoutEventsSubscription(
+            stripeIntegrationService.initCheckoutEventsSubscription(
                 gatewayId,
                 methodId,
                 stripeupeMock,
                 stripeElementsMock,
             );
-            stripeUPEIntegrationService.deinitialize();
+            stripeIntegrationService.deinitialize();
 
             // eslint-disable-next-line @typescript-eslint/dot-notation, dot-notation
-            expect(stripeUPEIntegrationService['checkoutEventsUnsubscribe']).toBeUndefined();
+            expect(stripeIntegrationService['checkoutEventsUnsubscribe']).toBeUndefined();
         });
     });
 
@@ -147,11 +145,11 @@ describe('StripeUPEIntegrationService', () => {
                     return jest.fn();
                 },
             );
-            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(getStripeUPE());
+            jest.spyOn(state, 'getPaymentMethodOrThrow').mockReturnValue(getStripeUPEMock());
         });
 
         it('skip subscription actions if no stripe elements initialized', () => {
-            stripeUPEIntegrationService.initCheckoutEventsSubscription(
+            stripeIntegrationService.initCheckoutEventsSubscription(
                 gatewayId,
                 methodId,
                 stripeupeMock,
@@ -164,7 +162,7 @@ describe('StripeUPEIntegrationService', () => {
         it('skip subscription actions if no stripe payment element found', () => {
             stripeElementsMock.getElement = () => null;
 
-            stripeUPEIntegrationService.initCheckoutEventsSubscription(
+            stripeIntegrationService.initCheckoutEventsSubscription(
                 gatewayId,
                 methodId,
                 stripeupeMock,
@@ -180,7 +178,7 @@ describe('StripeUPEIntegrationService', () => {
                 new Error(),
             );
 
-            stripeUPEIntegrationService.initCheckoutEventsSubscription(
+            stripeIntegrationService.initCheckoutEventsSubscription(
                 gatewayId,
                 methodId,
                 stripeupeMock,
@@ -200,8 +198,8 @@ describe('StripeUPEIntegrationService', () => {
             );
             jest.spyOn(document, 'getElementById').mockReturnValue(document.createElement('div'));
 
-            stripeUPEIntegrationService.mountElement(stripeElementMock, stripeupeMock.containerId);
-            stripeUPEIntegrationService.initCheckoutEventsSubscription(
+            stripeIntegrationService.mountElement(stripeElementMock, stripeupeMock.containerId);
+            stripeIntegrationService.initCheckoutEventsSubscription(
                 gatewayId,
                 methodId,
                 stripeupeMock,
@@ -212,13 +210,13 @@ describe('StripeUPEIntegrationService', () => {
 
             expect(stripeElementMock.unmount).toHaveBeenCalled();
             // eslint-disable-next-line @typescript-eslint/dot-notation, dot-notation
-            expect(stripeUPEIntegrationService['isMounted']).toBe(false);
+            expect(stripeIntegrationService['isMounted']).toBe(false);
         });
 
         it('mount stripe payment element if not mounted', async () => {
             jest.spyOn(document, 'getElementById').mockReturnValue(document.createElement('div'));
 
-            stripeUPEIntegrationService.initCheckoutEventsSubscription(
+            stripeIntegrationService.initCheckoutEventsSubscription(
                 gatewayId,
                 methodId,
                 stripeupeMock,
@@ -230,14 +228,14 @@ describe('StripeUPEIntegrationService', () => {
             expect(stripeElementsMock.fetchUpdates).toHaveBeenCalled();
             expect(stripeElementMock.mount).toHaveBeenCalled();
             // eslint-disable-next-line @typescript-eslint/dot-notation, dot-notation
-            expect(stripeUPEIntegrationService['isMounted']).toBe(true);
+            expect(stripeIntegrationService['isMounted']).toBe(true);
         });
 
         it('does not mount stripe payment element if already mounted', async () => {
             jest.spyOn(document, 'getElementById').mockReturnValue(document.createElement('div'));
 
-            stripeUPEIntegrationService.mountElement(stripeElementMock, stripeupeMock.containerId);
-            stripeUPEIntegrationService.initCheckoutEventsSubscription(
+            stripeIntegrationService.mountElement(stripeElementMock, stripeupeMock.containerId);
+            stripeIntegrationService.initCheckoutEventsSubscription(
                 gatewayId,
                 methodId,
                 stripeupeMock,
@@ -249,7 +247,7 @@ describe('StripeUPEIntegrationService', () => {
             expect(stripeElementsMock.fetchUpdates).not.toHaveBeenCalled();
             expect(stripeElementMock.mount).toHaveBeenCalledTimes(1);
             // eslint-disable-next-line @typescript-eslint/dot-notation, dot-notation
-            expect(stripeUPEIntegrationService['isMounted']).toBe(true);
+            expect(stripeIntegrationService['isMounted']).toBe(true);
         });
     });
 
@@ -257,27 +255,27 @@ describe('StripeUPEIntegrationService', () => {
         it('should mount stripe element', () => {
             jest.spyOn(document, 'getElementById').mockReturnValue(document.createElement('div'));
 
-            stripeUPEIntegrationService.mountElement(stripeElementMock, stripeupeMock.containerId);
+            stripeIntegrationService.mountElement(stripeElementMock, stripeupeMock.containerId);
 
             expect(stripeElementMock.mount).toHaveBeenCalled();
             // eslint-disable-next-line @typescript-eslint/dot-notation, dot-notation
-            expect(stripeUPEIntegrationService['isMounted']).toBe(true);
+            expect(stripeIntegrationService['isMounted']).toBe(true);
         });
 
         it('should not mount stripe element if container is not found', () => {
             jest.spyOn(document, 'getElementById').mockReturnValue(null);
 
-            stripeUPEIntegrationService.mountElement(stripeElementMock, stripeupeMock.containerId);
+            stripeIntegrationService.mountElement(stripeElementMock, stripeupeMock.containerId);
 
             expect(stripeElementMock.mount).not.toHaveBeenCalled();
             // eslint-disable-next-line @typescript-eslint/dot-notation, dot-notation
-            expect(stripeUPEIntegrationService['isMounted']).toBe(false);
+            expect(stripeIntegrationService['isMounted']).toBe(false);
         });
     });
 
     describe('#mapAppearanceVariables', () => {
         it('should map appearance variables', () => {
-            expect(stripeUPEIntegrationService.mapAppearanceVariables(style)).toEqual({
+            expect(stripeIntegrationService.mapAppearanceVariables(style)).toEqual({
                 colorPrimary: testColor,
                 colorBackground: testColor,
                 colorText: testColor,
@@ -291,7 +289,7 @@ describe('StripeUPEIntegrationService', () => {
 
     describe('#mapInputAppearanceRules', () => {
         it('should map appearance variables', () => {
-            expect(stripeUPEIntegrationService.mapInputAppearanceRules(style)).toEqual({
+            expect(stripeIntegrationService.mapInputAppearanceRules(style)).toEqual({
                 borderColor: testColor,
                 color: testColor,
                 boxShadow: testColor,
@@ -302,7 +300,7 @@ describe('StripeUPEIntegrationService', () => {
     describe('#throwStripeError', () => {
         it('throws non stripe error', () => {
             try {
-                stripeUPEIntegrationService.throwStripeError(new Error('error message'));
+                stripeIntegrationService.throwStripeError(new Error('error message'));
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodFailedError);
             }
@@ -310,7 +308,7 @@ describe('StripeUPEIntegrationService', () => {
 
         it('throws stripe displayable error', () => {
             try {
-                stripeUPEIntegrationService.throwStripeError({
+                stripeIntegrationService.throwStripeError({
                     type: 'invalid_request_error',
                     message: 'error message',
                 } as StripeError);
@@ -322,7 +320,7 @@ describe('StripeUPEIntegrationService', () => {
 
         it('throws stripe cancellation error', () => {
             try {
-                stripeUPEIntegrationService.throwStripeError({
+                stripeIntegrationService.throwStripeError({
                     type: 'non_displayable_type',
                     message: 'error message',
                     payment_intent: {
@@ -340,7 +338,7 @@ describe('StripeUPEIntegrationService', () => {
     describe('#throwDisplayableStripeError', () => {
         it('should throw displayable stripe error', () => {
             try {
-                stripeUPEIntegrationService.throwDisplayableStripeError({
+                stripeIntegrationService.throwDisplayableStripeError({
                     type: 'invalid_request_error',
                     message: 'error message',
                 } as StripeError);
@@ -354,7 +352,7 @@ describe('StripeUPEIntegrationService', () => {
             let err;
 
             try {
-                stripeUPEIntegrationService.throwDisplayableStripeError({
+                stripeIntegrationService.throwDisplayableStripeError({
                     type: 'any_other_code',
                     message: 'error message',
                 } as StripeError);
@@ -369,7 +367,7 @@ describe('StripeUPEIntegrationService', () => {
     describe('#throwPaymentConfirmationProceedMessage', () => {
         it('throw default error', () => {
             try {
-                stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage();
+                stripeIntegrationService.throwPaymentConfirmationProceedMessage();
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodFailedError);
             }
@@ -379,7 +377,7 @@ describe('StripeUPEIntegrationService', () => {
     describe('#isCancellationError', () => {
         it('should return true if error is cancellation error', () => {
             expect(
-                stripeUPEIntegrationService.isCancellationError({
+                stripeIntegrationService.isCancellationError({
                     type: 'invalid_request_error',
                     message: 'error message',
                     payment_intent: {
@@ -392,12 +390,12 @@ describe('StripeUPEIntegrationService', () => {
         });
 
         it('should return false if error is undefined', () => {
-            expect(stripeUPEIntegrationService.isCancellationError(undefined)).toBe(false);
+            expect(stripeIntegrationService.isCancellationError(undefined)).toBe(false);
         });
 
         it('should return false if error does not contain last payment error', () => {
             expect(
-                stripeUPEIntegrationService.isCancellationError({
+                stripeIntegrationService.isCancellationError({
                     type: 'invalid_request_error',
                     message: 'error message',
                     payment_intent: {},
@@ -407,7 +405,7 @@ describe('StripeUPEIntegrationService', () => {
 
         it('should return false if error in not cancellation error', () => {
             expect(
-                stripeUPEIntegrationService.isCancellationError({
+                stripeIntegrationService.isCancellationError({
                     type: 'invalid_request_error',
                     message: 'error message',
                     payment_intent: {
@@ -441,7 +439,7 @@ describe('StripeUPEIntegrationService', () => {
         beforeEach(() => {
             setConfirmationExperiment(true);
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 retrievePaymentIntent: jest.fn().mockResolvedValue({
                     paymentIntent: {
                         status: 'succeeded',
@@ -452,12 +450,12 @@ describe('StripeUPEIntegrationService', () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
-            ).mockReturnValue(getStripeUPE(StripePaymentMethodType.CreditCard));
+            ).mockReturnValue(getStripeUPEMock(StripePaymentMethodType.CreditCard));
         });
 
         it('returns true if payment intent already completed', async () => {
             expect(
-                await stripeUPEIntegrationService.isPaymentCompleted(
+                await stripeIntegrationService.isPaymentCompleted(
                     StripePaymentMethodType.CreditCard,
                     stripeUPEJsMock,
                 ),
@@ -469,12 +467,12 @@ describe('StripeUPEIntegrationService', () => {
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValue({
-                ...getStripeUPE(StripePaymentMethodType.CreditCard),
+                ...getStripeUPEMock(StripePaymentMethodType.CreditCard),
                 clientToken: undefined,
             });
 
             expect(
-                await stripeUPEIntegrationService.isPaymentCompleted(
+                await stripeIntegrationService.isPaymentCompleted(
                     StripePaymentMethodType.CreditCard,
                     stripeUPEJsMock,
                 ),
@@ -483,7 +481,7 @@ describe('StripeUPEIntegrationService', () => {
 
         it('returns false if no stripe client', async () => {
             expect(
-                await stripeUPEIntegrationService.isPaymentCompleted(
+                await stripeIntegrationService.isPaymentCompleted(
                     StripePaymentMethodType.CreditCard,
                     undefined,
                 ),
@@ -494,7 +492,7 @@ describe('StripeUPEIntegrationService', () => {
             setConfirmationExperiment(false);
 
             expect(
-                await stripeUPEIntegrationService.isPaymentCompleted(
+                await stripeIntegrationService.isPaymentCompleted(
                     StripePaymentMethodType.CreditCard,
                     stripeUPEJsMock,
                 ),
@@ -503,14 +501,14 @@ describe('StripeUPEIntegrationService', () => {
 
         it('returns false if no payment intent retrieved', async () => {
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 retrievePaymentIntent: jest.fn().mockResolvedValue({
                     paymentIntent: undefined,
                 }),
             };
 
             expect(
-                await stripeUPEIntegrationService.isPaymentCompleted(
+                await stripeIntegrationService.isPaymentCompleted(
                     StripePaymentMethodType.CreditCard,
                     stripeUPEJsMock,
                 ),
@@ -519,7 +517,7 @@ describe('StripeUPEIntegrationService', () => {
 
         it('returns false if payment status not succeed', async () => {
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 retrievePaymentIntent: jest.fn().mockResolvedValue({
                     paymentIntent: {
                         status: 'failed',
@@ -528,7 +526,7 @@ describe('StripeUPEIntegrationService', () => {
             };
 
             expect(
-                await stripeUPEIntegrationService.isPaymentCompleted(
+                await stripeIntegrationService.isPaymentCompleted(
                     StripePaymentMethodType.CreditCard,
                     stripeUPEJsMock,
                 ),
@@ -545,7 +543,7 @@ describe('StripeUPEIntegrationService', () => {
 
         it('throws error if stipe elements does not initialized', () => {
             try {
-                stripeUPEIntegrationService.mapStripePaymentData(undefined);
+                stripeIntegrationService.mapStripePaymentData(undefined);
             } catch (error) {
                 expect(error).toBeInstanceOf(NotInitializedError);
             }
@@ -557,7 +555,7 @@ describe('StripeUPEIntegrationService', () => {
             );
 
             try {
-                stripeUPEIntegrationService.mapStripePaymentData(stripeElementsMock);
+                stripeIntegrationService.mapStripePaymentData(stripeElementsMock);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -570,7 +568,7 @@ describe('StripeUPEIntegrationService', () => {
             });
 
             try {
-                stripeUPEIntegrationService.mapStripePaymentData(stripeElementsMock);
+                stripeIntegrationService.mapStripePaymentData(stripeElementsMock);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -583,7 +581,7 @@ describe('StripeUPEIntegrationService', () => {
             });
 
             try {
-                stripeUPEIntegrationService.mapStripePaymentData(stripeElementsMock);
+                stripeIntegrationService.mapStripePaymentData(stripeElementsMock);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -596,7 +594,7 @@ describe('StripeUPEIntegrationService', () => {
             });
 
             try {
-                stripeUPEIntegrationService.mapStripePaymentData(stripeElementsMock);
+                stripeIntegrationService.mapStripePaymentData(stripeElementsMock);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -604,10 +602,7 @@ describe('StripeUPEIntegrationService', () => {
 
         it('returns mapped payment data', () => {
             expect(
-                stripeUPEIntegrationService.mapStripePaymentData(
-                    stripeElementsMock,
-                    'redirect.url',
-                ),
+                stripeIntegrationService.mapStripePaymentData(stripeElementsMock, 'redirect.url'),
             ).toEqual({
                 elements: stripeElementsMock,
                 redirect: 'if_required',
@@ -634,21 +629,21 @@ describe('StripeUPEIntegrationService', () => {
     describe('#isAdditionalActionError', () => {
         it('should return true if error is additional action error', () => {
             expect(
-                stripeUPEIntegrationService.isAdditionalActionError([
+                stripeIntegrationService.isAdditionalActionError([
                     { code: 'additional_action_required' },
                 ]),
             ).toBe(true);
         });
 
         it('should return false if error is not additional action error', () => {
-            expect(stripeUPEIntegrationService.isAdditionalActionError([])).toBe(false);
+            expect(stripeIntegrationService.isAdditionalActionError([])).toBe(false);
         });
     });
 
     describe('#isRedirectAction', () => {
         it('should return true if additional action is redirect action', () => {
             expect(
-                stripeUPEIntegrationService.isRedirectAction({
+                stripeIntegrationService.isRedirectAction({
                     type: 'redirect_to_url',
                     data: { redirect_url: 'url' },
                 }),
@@ -657,7 +652,7 @@ describe('StripeUPEIntegrationService', () => {
 
         it('should return false if additional action is not redirect action', () => {
             expect(
-                stripeUPEIntegrationService.isRedirectAction({
+                stripeIntegrationService.isRedirectAction({
                     type: 'additional_action_requires_payment_method',
                     data: { token: 'token' },
                 }),
@@ -668,7 +663,7 @@ describe('StripeUPEIntegrationService', () => {
     describe('#isOnPageAdditionalAction', () => {
         it('should return true if additional action is on page action', () => {
             expect(
-                stripeUPEIntegrationService.isOnPageAdditionalAction({
+                stripeIntegrationService.isOnPageAdditionalAction({
                     type: 'additional_action_requires_payment_method',
                     data: { token: 'token' },
                 }),
@@ -677,7 +672,7 @@ describe('StripeUPEIntegrationService', () => {
 
         it('should return false if additional action is not on page action', () => {
             expect(
-                stripeUPEIntegrationService.isOnPageAdditionalAction({
+                stripeIntegrationService.isOnPageAdditionalAction({
                     type: 'redirect_to_url',
                     data: { redirect_url: 'url' },
                 }),
@@ -687,7 +682,7 @@ describe('StripeUPEIntegrationService', () => {
 
     describe('#updateStripePaymentIntent', () => {
         it('should trigger payment intent update', async () => {
-            await stripeUPEIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
+            await stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();
             expect(stripeScriptLoader.updateStripeElements).toHaveBeenCalled();
@@ -698,12 +693,12 @@ describe('StripeUPEIntegrationService', () => {
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValue({
-                ...getStripeUPE(),
+                ...getStripeUPEMock(),
                 clientToken: undefined,
             });
 
             await expect(
-                stripeUPEIntegrationService.updateStripePaymentIntent(gatewayId, methodId),
+                stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId),
             ).rejects.toThrow(MissingDataError);
 
             expect(paymentIntegrationService.loadPaymentMethod).toHaveBeenCalled();

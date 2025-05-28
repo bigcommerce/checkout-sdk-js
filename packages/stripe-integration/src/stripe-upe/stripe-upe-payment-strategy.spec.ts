@@ -25,27 +25,28 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import {
+    getConfirmPaymentResponse,
+    getFailingStripeJsMock,
+    getRetrievePaymentIntentResponseSucceeded,
+    getRetrievePaymentIntentResponseWithError,
+    getStripeIntegrationServiceMock,
+    getStripeJsMock,
+    StripeClient,
     StripeElementsOptions,
     StripeElementType,
     StripeElementUpdateOptions,
     StripeEventType,
+    StripeIntegrationService,
     StripePaymentMethodType,
+    StripeScriptLoader,
     StripeStringConstants,
-    StripeUPEClient,
-} from './stripe-upe';
+} from '../stripe-utils';
+
 import { WithStripeUPEPaymentInitializeOptions } from './stripe-upe-initialize-options';
-import StripeUPEIntegrationService from './stripe-upe-integration-service';
-import { getStripeUPEIntegrationServiceMock } from './stripe-upe-integration-service.mock';
 import StripeUPEPaymentStrategy from './stripe-upe-payment-strategy';
-import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import {
-    getConfirmPaymentResponse,
-    getFailingStripeUPEJsMock,
-    getRetrievePaymentIntentResponseSucceeded,
-    getRetrievePaymentIntentResponseWithError,
-    getStripeUPE,
     getStripeUPEInitializeOptionsMock,
-    getStripeUPEJsMock,
+    getStripeUPEMock,
     getStripeUPEOrderRequestBodyMock,
     getStripeUPEOrderRequestBodyVaultMock,
 } from './stripe-upe.mock';
@@ -53,16 +54,16 @@ import {
 describe('StripeUPEPaymentStrategy', () => {
     let checkoutMock: Checkout;
     let strategy: StripeUPEPaymentStrategy;
-    let stripeScriptLoader: StripeUPEScriptLoader;
+    let stripeScriptLoader: StripeScriptLoader;
     let paymentIntegrationService: PaymentIntegrationService;
-    let stripeUPEIntegrationService: StripeUPEIntegrationService;
+    let stripeUPEIntegrationService: StripeIntegrationService;
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
 
         const scriptLoader = createScriptLoader();
 
-        stripeScriptLoader = new StripeUPEScriptLoader(scriptLoader);
+        stripeScriptLoader = new StripeScriptLoader(scriptLoader);
         checkoutMock = getCheckout();
 
         jest.useFakeTimers();
@@ -87,7 +88,7 @@ describe('StripeUPEPaymentStrategy', () => {
 
         jest.spyOn(paymentIntegrationService.getState(), 'getCart').mockReturnValue(getCart());
 
-        stripeUPEIntegrationService = new StripeUPEIntegrationService(
+        stripeUPEIntegrationService = new StripeIntegrationService(
             paymentIntegrationService,
             stripeScriptLoader,
         );
@@ -109,7 +110,7 @@ describe('StripeUPEPaymentStrategy', () => {
     describe('#initialize()', () => {
         let options: PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
         const elementsOptions: StripeElementsOptions = { clientSecret: 'clientToken' };
-        let stripeUPEJsMock: StripeUPEClient;
+        let stripeUPEJsMock: StripeClient;
         const testColor = '#123456';
         const style = {
             labelText: testColor,
@@ -147,7 +148,7 @@ describe('StripeUPEPaymentStrategy', () => {
             };
 
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 elements: jest.fn(() => stripeElementsMock),
             };
 
@@ -165,7 +166,7 @@ describe('StripeUPEPaymentStrategy', () => {
         };
 
         beforeEach(() => {
-            stripeUPEJsMock = getStripeUPEJsMock();
+            stripeUPEJsMock = getStripeJsMock();
             options = getStripeUPEInitializeOptionsMock(StripePaymentMethodType.CreditCard, style);
 
             const { create, getElement, update, fetchUpdates } =
@@ -180,7 +181,7 @@ describe('StripeUPEPaymentStrategy', () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
-            ).mockReturnValue(getStripeUPE());
+            ).mockReturnValue(getStripeUPEMock());
         });
 
         afterEach(() => {
@@ -280,7 +281,7 @@ describe('StripeUPEPaymentStrategy', () => {
             });
 
             it('fails mounting a stripe payment element', () => {
-                stripeUPEJsMock = getFailingStripeUPEJsMock();
+                stripeUPEJsMock = getFailingStripeJsMock();
 
                 const { create, getElement } = stripeUPEJsMock.elements(elementsOptions);
 
@@ -546,14 +547,14 @@ describe('StripeUPEPaymentStrategy', () => {
     });
 
     describe('#execute()', () => {
-        let stripeUPEJsMock: StripeUPEClient;
+        let stripeUPEJsMock: StripeClient;
         let options: PaymentInitializeOptions;
         let strategy: StripeUPEPaymentStrategy;
 
         beforeEach(async () => {
-            stripeUPEJsMock = getStripeUPEJsMock();
+            stripeUPEJsMock = getStripeJsMock();
             options = getStripeUPEInitializeOptionsMock();
-            stripeUPEIntegrationService = getStripeUPEIntegrationServiceMock();
+            stripeUPEIntegrationService = getStripeIntegrationServiceMock();
 
             jest.spyOn(stripeScriptLoader, 'getStripeClient').mockReturnValueOnce(
                 Promise.resolve(stripeUPEJsMock),
@@ -561,7 +562,7 @@ describe('StripeUPEPaymentStrategy', () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
-            ).mockReturnValue(getStripeUPE());
+            ).mockReturnValue(getStripeUPEMock());
             jest.spyOn(paymentIntegrationService.getState(), 'getCustomerOrThrow').mockReturnValue(
                 getCustomer(),
             );
@@ -1064,7 +1065,7 @@ describe('StripeUPEPaymentStrategy', () => {
             });
 
             it('successfully payed on first payments request without client token', async () => {
-                const defaultStripeConfigMock = getStripeUPE();
+                const defaultStripeConfigMock = getStripeUPEMock();
 
                 jest.spyOn(
                     paymentIntegrationService.getState(),
@@ -1374,7 +1375,7 @@ describe('StripeUPEPaymentStrategy', () => {
     });
 
     describe('#deinitialize()', () => {
-        const stripeUPEJsMock = getStripeUPEJsMock();
+        const stripeUPEJsMock = getStripeJsMock();
 
         beforeEach(async () => {
             jest.spyOn(stripeScriptLoader, 'getStripeClient').mockReturnValue(

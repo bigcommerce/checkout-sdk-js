@@ -14,19 +14,25 @@ import { StripeElementUpdateOptions, StripeUPEAppearanceValues } from '../stripe
  *
  * ```js
  * service.initializePayment({
- *     methodId: 'stripeupe',
- *     stripeupe {
+ *     gateway: 'stripeocs',
+ *     id: 'optimized_checkout',
+ *     stripeocs {
  *         containerId: 'container',
  *     },
  * });
  * ```
  */
 
-export default interface StripeUPEPaymentInitializeOptions {
+export default interface StripeOCSPaymentInitializeOptions {
     /**
      * The location to insert the credit card number form field.
      */
     containerId: string;
+
+    /**
+     * Stripe OCS layout options
+     */
+    layout?: Record<string, string | number | boolean>;
 
     /**
      * Checkout styles from store theme
@@ -40,8 +46,13 @@ export default interface StripeUPEPaymentInitializeOptions {
     initStripeElementUpdateTrigger?(
         updateTriggerFn: (payload: StripeElementUpdateOptions) => void,
     ): void;
+
+    paymentMethodSelect?(id: string): void;
+
+    handleClosePaymentMethod?(collapseElement: () => void): void;
 }
 
-export interface WithStripeUPEPaymentInitializeOptions {
-    stripeupe?: StripeUPEPaymentInitializeOptions;
+export interface WithStripeOCSPaymentInitializeOptions {
+    stripeupe?: StripeOCSPaymentInitializeOptions;
+    stripeocs?: StripeOCSPaymentInitializeOptions;
 }

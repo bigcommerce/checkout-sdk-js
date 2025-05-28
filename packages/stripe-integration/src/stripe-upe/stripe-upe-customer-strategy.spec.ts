@@ -15,25 +15,26 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
 import {
+    StripeClient,
     StripeCustomerEvent,
     StripeElement,
     StripeHostWindow,
-    StripeUPEClient,
-} from './stripe-upe';
+    StripeScriptLoader,
+} from '../stripe-utils';
+
 import StripeUPECustomerStrategy from './stripe-upe-customer-strategy';
 import {
     getCustomerStripeUPEJsMock,
     getStripeUPECustomerInitializeOptionsMock,
     StripeUpeCustomerInitializeOptions,
 } from './stripe-upe-customer.mock';
-import StripeUPEScriptLoader from './stripe-upe-script-loader';
-import { getStripeUPE } from './stripe-upe.mock';
+import { getStripeUPEMock } from './stripe-upe.mock';
 
 describe('StripeUpeCustomerStrategy', () => {
     let paymentMethodMock: PaymentMethod;
     let strategy: CustomerStrategy;
-    let stripeScriptLoader: StripeUPEScriptLoader;
-    let stripeUPEJsMock: StripeUPEClient;
+    let stripeScriptLoader: StripeScriptLoader;
+    let stripeUPEJsMock: StripeClient;
     let loadPaymentMethodAction: Promise<PaymentMethod>;
     let paymentIntegrationService: PaymentIntegrationService;
 
@@ -51,9 +52,9 @@ describe('StripeUpeCustomerStrategy', () => {
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        paymentMethodMock = { ...getStripeUPE(), clientToken: 'myToken' };
+        paymentMethodMock = { ...getStripeUPEMock(), clientToken: 'myToken' };
         loadPaymentMethodAction = Promise.resolve(paymentMethodMock);
-        stripeScriptLoader = new StripeUPEScriptLoader(createScriptLoader());
+        stripeScriptLoader = new StripeScriptLoader(createScriptLoader());
 
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethod').mockReturnValue(
             paymentMethodMock,
@@ -100,7 +101,7 @@ describe('StripeUpeCustomerStrategy', () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
-            ).mockReturnValue(getStripeUPE());
+            ).mockReturnValue(getStripeUPEMock());
         });
 
         afterEach(() => {
@@ -312,7 +313,7 @@ describe('StripeUpeCustomerStrategy', () => {
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValue({
-                ...getStripeUPE(),
+                ...getStripeUPEMock(),
                 initializationData: {},
             });
 
