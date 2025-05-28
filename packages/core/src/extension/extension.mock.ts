@@ -1,6 +1,6 @@
 import { getConsignments } from '../shipping/consignments.mock';
 
-import { Extension, ExtensionRegion } from './extension';
+import { Extension, ExtensionRegion, ExtensionType } from './extension';
 import { ExtensionCommand, ExtensionCommandType } from './extension-commands';
 import { ExtensionEvent, ExtensionEventType } from './extension-events';
 import { ExtensionState } from './extension-state';
@@ -28,7 +28,7 @@ export function getWorkerExtension(): Extension {
         name: 'Worker Extension',
         region: ExtensionRegion.GlobalWebWorker,
         url: 'https://worker.extension.com/worker.js',
-        type: 'worker',
+        type: ExtensionType.Worker,
     };
 }
 

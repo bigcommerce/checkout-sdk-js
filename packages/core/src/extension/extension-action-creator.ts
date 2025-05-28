@@ -7,7 +7,7 @@ import { parseUrl } from '../common/url';
 
 import { createExtensionWebWorker } from './create-extension-web-worker';
 import { ExtensionNotFoundError } from './errors';
-import { ExtensionRegion } from './extension';
+import { ExtensionRegion, ExtensionType } from './extension';
 import { ExtensionAction, ExtensionActionType } from './extension-actions';
 import { ExtensionIframe } from './extension-iframe';
 import { ExtensionRequestSender } from './extension-request-sender';
@@ -70,7 +70,7 @@ export class ExtensionActionCreator {
 
                     observer.next(createAction(ExtensionActionType.RenderExtensionRequested));
 
-                    if (extension.type === 'worker') {
+                    if (extension.type === ExtensionType.Worker) {
                         const worker = createExtensionWebWorker(extension.url);
 
                         workerExtensionMessenger.add(extension.id, worker);

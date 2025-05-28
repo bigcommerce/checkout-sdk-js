@@ -7,7 +7,7 @@ import {
     UnsupportedExtensionCommandError,
     UnsupportedExtensionQueryError,
 } from './errors';
-import { Extension } from './extension';
+import { Extension, ExtensionType } from './extension';
 import { ExtensionCommandMap, ExtensionCommandType } from './extension-commands';
 import { ExtensionCommandOrQueryContext, ExtensionMessage } from './extension-message';
 import { ExtensionQueryMap, ExtensionQueryType } from './extension-queries';
@@ -31,7 +31,7 @@ export class ExtensionMessenger {
     clearCacheByRegion(region: string): void {
         const extension = this._getExtensionByRegion(region);
 
-        if (extension.type === 'worker') {
+        if (extension.type === ExtensionType.Worker) {
             this._workerExtensionMessenger.clearCacheById(extension.id);
 
             return;
@@ -140,7 +140,7 @@ export class ExtensionMessenger {
         try {
             const extension = this._getExtensionById(extensionId);
 
-            if (extension.type === 'worker') {
+            if (extension.type === ExtensionType.Worker) {
                 this._workerExtensionMessenger.post(extensionId, message);
 
                 return;

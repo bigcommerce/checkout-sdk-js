@@ -3,7 +3,7 @@ export interface Extension {
     name: string;
     region: ExtensionRegion;
     url: string;
-    type?: 'iframe' | 'worker';
+    type?: ExtensionType;
 }
 
 export interface ExtensionIframeConfig {
@@ -18,4 +18,9 @@ export const enum ExtensionRegion {
     SummaryAfter = 'summary.after',
     SummaryLastItemAfter = 'summary.lastItem.after',
     GlobalWebWorker = 'global',
+}
+
+export const enum ExtensionType {
+    Iframe = 'iframe',
+    Worker = 'worker',
 }

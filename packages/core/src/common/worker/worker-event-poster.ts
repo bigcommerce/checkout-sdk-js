@@ -1,13 +1,3 @@
-import { IframeEvent } from '../iframe';
-
-export interface IframeEventPostOptions<
-    TSuccessEvent extends IframeEvent,
-    TErrorEvent extends IframeEvent,
-> {
-    errorType?: TErrorEvent['type'];
-    successType?: TSuccessEvent['type'];
-}
-
 export class WorkerEventPoster<TEvent, TContext = undefined> {
     constructor(private _worker: Worker, private _context: TContext) {}
 
