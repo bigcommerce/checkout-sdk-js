@@ -1,23 +1,15 @@
 import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
 
-import { appendWww, parseUrl } from '../url';
+import { EventListeners, IframeEventMap } from '../iframe';
 
-import { IframeEventMap } from './iframe-event';
-import isIframeEvent from './is-iframe-event';
-
-export default class IframeEventListener<
+export class WorkerEventListener<
     TEventMap extends IframeEventMap<keyof TEventMap>,
     TContext = undefined,
 > {
     private _isListening: boolean;
     private _listeners: EventListeners<TEventMap, TContext>;
-    private _sourceOrigins: string[];
 
-    constructor(sourceOrigin: string) {
-        this._sourceOrigins = [
-            parseUrl(sourceOrigin).origin,
-            appendWww(parseUrl(sourceOrigin)).origin,
-        ];
+    constructor(private _worker: Worker) {
         this._isListening = false;
         this._listeners = {};
     }
@@ -28,8 +20,7 @@ export default class IframeEventListener<
         }
 
         this._isListening = true;
-
-        window.addEventListener('message', this._handleMessage);
+        this._worker.addEventListener('message', this._handleMessage);
     }
 
     stopListen(): void {
@@ -38,8 +29,7 @@ export default class IframeEventListener<
         }
 
         this._isListening = false;
-
-        window.removeEventListener('message', this._handleMessage);
+        this._worker.removeEventListener('message', this._handleMessage);
     }
 
     addListener<TType extends keyof TEventMap>(
@@ -86,19 +76,8 @@ export default class IframeEventListener<
 
     @bind
     private _handleMessage(messageEvent: MessageEvent): void {
-        if (
-            this._sourceOrigins.indexOf(messageEvent.origin) === -1 ||
-            !isIframeEvent(messageEvent.data as TEventMap[keyof TEventMap], messageEvent.data.type)
-        ) {
-            return;
-        }
-
         const { context, ...event } = messageEvent.data;
 
         this.trigger(event, context);
     }
 }
-
-export type EventListeners<TEventMap, TContext = undefined> = {
-    [key in keyof TEventMap]?: Array<(event: TEventMap[key], context?: TContext) => void>;
-};
