@@ -16,7 +16,6 @@ import {
     PaymentIntegrationService,
     PaymentMethod,
     PaymentMethodCancelledError,
-    PaymentMethodFailedError,
     ShippingOption,
     StoreConfig,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
@@ -127,9 +126,9 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
         assertApplePayWindow(window);
 
         if (!this._sessionFactory.canMakePayment()) {
-            throw new PaymentMethodFailedError(
-                'This device is not capable of making Apple Pay payments',
-            );
+            console.error('This device is not capable of making Apple Pay payments');
+
+            return;
         }
 
         if (!methodId || !applepay) {
