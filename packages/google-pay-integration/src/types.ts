@@ -1,3 +1,4 @@
+import { BigCommercePaymentsIntent } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import {
     BrowserInfo,
     BuyNowCartRequestBody,
@@ -354,7 +355,7 @@ export interface GooglePayPayPalCommerceInitializationData extends GooglePayBase
     clientToken?: string;
     enabledAlternativePaymentMethods: FundingType;
     isDeveloperModeApplicable?: boolean;
-    intent?: PayPalCommerceIntent;
+    intent?: PayPalCommerceIntent | BigCommercePaymentsIntent;
     isHostedCheckoutEnabled?: boolean;
     isPayPalCreditAvailable?: boolean;
     isVenmoEnabled?: boolean;

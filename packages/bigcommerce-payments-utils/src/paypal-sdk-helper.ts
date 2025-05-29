@@ -10,6 +10,7 @@ import {
 import {
     BigCommercePaymentsInitializationData,
     PayPalFastlaneSdk,
+    PayPalGooglePaySdk,
     PayPalHostWindow,
     PayPalMessagesSdk,
     PayPalSdkConfig,
@@ -44,6 +45,29 @@ export default class PayPalSdkHelper {
         return this.window.paypalFastlaneSdk;
     }
 
+    async getPayPalGooglePaySdk(
+        paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>,
+        currencyCode: string,
+        initializesOnCheckoutPage?: boolean,
+        forceLoad?: boolean,
+    ): Promise<PayPalGooglePaySdk> {
+        if (!this.window.paypalGooglePay || forceLoad) {
+            const paypalSdkScriptConfig = this.getPayPalGooglePaySdkScriptConfigOrThrow(
+                paymentMethod,
+                currencyCode,
+                initializesOnCheckoutPage,
+            );
+
+            await this.loadPayPalSdk(paypalSdkScriptConfig);
+        }
+
+        if (!this.window.paypalGooglePay) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this.window.paypalGooglePay;
+    }
+
     async getPayPalApmsSdk(
         paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>,
         currencyCode: string,
@@ -72,10 +96,10 @@ export default class PayPalSdkHelper {
             );
 
             await this.loadPayPalSdk(paypalSdkMessagesConfig);
+        }
 
-            if (!this.window.paypalMessages) {
-                throw new PaymentMethodClientUnavailableError();
-            }
+        if (!this.window.paypalMessages) {
+            throw new PaymentMethodClientUnavailableError();
         }
 
         return this.window.paypalMessages;
@@ -139,6 +163,47 @@ export default class PayPalSdkHelper {
                 'data-namespace': 'paypalFastlaneSdk',
                 'data-partner-attribution-id': attributionId,
                 'data-user-id-token': connectClientToken || clientToken,
+            },
+        };
+    }
+
+    private getPayPalGooglePaySdkScriptConfigOrThrow(
+        paymentMethod: PaymentMethod<BigCommercePaymentsInitializationData>,
+        currencyCode: string,
+        initializesOnCheckoutPage = true,
+    ): PayPalSdkConfig {
+        const { clientToken, initializationData } = paymentMethod;
+
+        if (!initializationData || !initializationData.clientId) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const {
+            intent,
+            clientId,
+            merchantId,
+            buyerCountry,
+            attributionId,
+            isHostedCheckoutEnabled,
+            isDeveloperModeApplicable,
+        } = initializationData;
+
+        const commit = isHostedCheckoutEnabled || initializesOnCheckoutPage;
+
+        return {
+            options: {
+                'client-id': clientId,
+                'merchant-id': merchantId,
+                commit,
+                components: ['googlepay'],
+                currency: currencyCode,
+                intent,
+                ...(isDeveloperModeApplicable && { 'buyer-country': buyerCountry }),
+            },
+            attributes: {
+                'data-partner-attribution-id': attributionId,
+                'data-client-token': clientToken,
+                'data-namespace': 'paypalGooglePay',
             },
         };
     }
