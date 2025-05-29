@@ -1,3 +1,5 @@
+import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
+
 /**
  * Initialization options.
  */
@@ -60,22 +62,6 @@ export interface LastPaymentError {
      * A human-readable message providing more details about the error. For card errors, these messages can be shown to your users.
      */
     message?: string;
-}
-
-/**
- * The PaymentMethod object
- */
-export interface PaymentMethod {
-    /**
-     * Unique identifier for the object.
-     */
-    id: string;
-
-    /**
-     * The type of the PaymentMethod. An additional hash is included on the PaymentMethod with a name matching this value.
-     * It contains additional information specific to the PaymentMethod type.
-     */
-    type: string;
 }
 
 /**
@@ -283,7 +269,7 @@ export interface PaymentMethodDataOptions {
 /**
  * Parameters that will be passed on to the Stripe API to confirm the PaymentIntent.
  */
-export interface StripeUPEConfirmParams {
+export interface StripeConfirmParams {
     /*
      * If you are [handling next actions yourself](https://stripe.com/docs/payments/payment-intents/verifying-status#next-actions), pass in a return_url. If the subsequent action
      * is redirect_to_url, this URL will be used on the return path for the redirect.
@@ -307,7 +293,7 @@ export interface StripeConfirmPaymentData {
     /**
      * Parameters that will be passed on to the Stripe API to confirm the PaymentIntent.
      */
-    confirmParams?: StripeUPEConfirmParams;
+    confirmParams?: StripeConfirmParams;
 
     /**
      * By default, confirmPayment will always redirect to your return_url after a successful confirmation.
@@ -428,7 +414,7 @@ export interface StripeElements {
 /**
  * All available options are here https://stripe.com/docs/stripe-js/appearance-api#supported-css-properties
  */
-export interface StripeUPEAppearanceOptions {
+export interface StripeAppearanceOptions {
     variables?: Record<string, StripeUPEAppearanceValues>;
 
     rules?: Record<string, Record<string, StripeUPEAppearanceValues>>;
@@ -465,7 +451,7 @@ export interface StripeElementsOptions {
      * Match the design of your site with the appearance option.
      * The layout of each Element stays consistent, but you can modify colors, fonts, borders, padding, and more.
      */
-    appearance?: StripeUPEAppearanceOptions;
+    appearance?: StripeAppearanceOptions;
 
     mode?: string;
     amount?: number;
@@ -486,26 +472,26 @@ export interface StripeUpdateElementsOptions {
      * Match the design of your site with the appearance option.
      * The layout of each Element stays consistent, but you can modify colors, fonts, borders, padding, and more.
      */
-    appearance?: StripeUPEAppearanceOptions;
+    appearance?: StripeAppearanceOptions;
 }
 
-export interface StripeUPEClient {
+export interface StripeClient {
     /**
      * Use confirmPayment to confirm a PaymentIntent using data collected by the Payment Element.
      * When called, confirmPayment will attempt to complete any required actions,
      * such as authenticating your user by displaying a 3DS dialog or redirecting them to a bank authorization page.
      */
-    confirmPayment(options: StripeConfirmPaymentData): Promise<StripeUpeResult>;
+    confirmPayment(options: StripeConfirmPaymentData): Promise<StripeResult>;
 
     /**
      * When called, it will confirm the PaymentIntent with data you provide and carry out 3DS or other next actions if they are required.
      */
-    confirmCardPayment(clientSecret: string): Promise<StripeUpeResult>;
+    confirmCardPayment(clientSecret: string): Promise<StripeResult>;
 
     /**
      * Retrieve a PaymentIntent using its client secret.
      */
-    retrievePaymentIntent(clientSecret: string): Promise<StripeUpeResult>;
+    retrievePaymentIntent(clientSecret: string): Promise<StripeResult>;
 
     /**
      * Create an `Elements` instance, which manages a group of elements.
@@ -513,15 +499,15 @@ export interface StripeUPEClient {
     elements(options: StripeElementsOptions): StripeElements;
 }
 
-export interface StripeUpeResult {
+export interface StripeResult {
     paymentIntent?: PaymentIntent;
     error?: StripeError;
 }
 
 export interface StripeHostWindow extends Window {
-    bcStripeClient?: StripeUPEClient;
+    bcStripeClient?: StripeClient;
     bcStripeElements?: StripeElements;
-    Stripe?(stripePublishableKey: string, options?: StripeConfigurationOptions): StripeUPEClient;
+    Stripe?(stripePublishableKey: string, options?: StripeConfigurationOptions): StripeClient;
 }
 
 export enum StripePaymentMethodType {
@@ -533,7 +519,7 @@ export enum StripePaymentMethodType {
     IDEAL = 'ideal',
     ALIPAY = 'alipay',
     KLARNA = 'klarna',
-    OCS = 'stripe_ocs',
+    OCS = 'optimized_checkout',
 }
 
 type AutoOrNever = StripeStringConstants.AUTO | StripeStringConstants.NEVER;
@@ -552,7 +538,7 @@ export enum StripeElementType {
     SHIPPING = 'address',
 }
 
-export enum StripeUPEPaymentIntentStatus {
+export enum StripePaymentIntentStatus {
     REQUIRES_PAYMENT_METHOD = 'requires_payment_method',
     REQUIRES_CONFIRMATION = 'requires_confirmation',
     REQUIRES_ACTION = 'requires_action',
@@ -561,11 +547,11 @@ export enum StripeUPEPaymentIntentStatus {
     CANCELED = 'canceled',
 }
 
-export interface StripeUPEPaymentMethod extends PaymentMethod {
-    initializationData: StripeUPEInitializationData;
+export interface StripePaymentMethod extends PaymentMethod {
+    initializationData: StripeInitializationData;
 }
 
-export interface StripeUPEInitializationData {
+export interface StripeInitializationData {
     stripePublishableKey: string;
     stripeConnectedAccount: string;
     shopperLanguage: string;

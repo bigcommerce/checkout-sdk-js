@@ -1,4 +1,4 @@
-import { supportedLocales } from './stripe-upe-supported-locales';
+import { supportedLocales } from './stripe-supported-locales';
 
 export default function formatLocale(localeLanguage: string): string {
     const [language, country] = localeLanguage.replace(/_/g, '-').toLowerCase().split('-');

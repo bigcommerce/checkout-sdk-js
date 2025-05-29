@@ -2,23 +2,23 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { StripeElementsOptions, StripeHostWindow, StripeUPEClient } from './stripe-upe';
-import StripeUPEScriptLoader from './stripe-upe-script-loader';
-import { getStripeUPEJsMock } from './stripe-upe.mock';
+import { StripeClient, StripeElementsOptions, StripeHostWindow } from './stripe';
+import StripeScriptLoader from './stripe-script-loader';
+import { getStripeJsMock } from './stripe.mock';
 
-describe('StripeUPEPayScriptLoader', () => {
-    let stripeUPEScriptLoader: StripeUPEScriptLoader;
+describe('StripePayScriptLoader', () => {
+    let stripeUPEScriptLoader: StripeScriptLoader;
     let scriptLoader: ScriptLoader;
     let mockWindow: StripeHostWindow;
 
     beforeEach(() => {
         mockWindow = {} as StripeHostWindow;
         scriptLoader = {} as ScriptLoader;
-        stripeUPEScriptLoader = new StripeUPEScriptLoader(scriptLoader, mockWindow);
+        stripeUPEScriptLoader = new StripeScriptLoader(scriptLoader, mockWindow);
     });
 
     describe('#load()', () => {
-        const stripeUPEJsMock = getStripeUPEJsMock();
+        const stripeUPEJsMock = getStripeJsMock();
         const elementsOptions: StripeElementsOptions = { clientSecret: 'myToken' };
 
         beforeEach(() => {
@@ -71,10 +71,10 @@ describe('StripeUPEPayScriptLoader', () => {
     });
 
     describe('#updateStripeElements', () => {
-        const stripeUPEJsDefaultMock = getStripeUPEJsMock();
+        const stripeUPEJsDefaultMock = getStripeJsMock();
         let updateMock: jest.Mock;
         let fetchUpdatesMock: jest.Mock;
-        let stripeUPEJsMock: StripeUPEClient;
+        let stripeUPEJsMock: StripeClient;
         const elementsOptions: StripeElementsOptions = { clientSecret: 'myToken' };
 
         beforeEach(() => {

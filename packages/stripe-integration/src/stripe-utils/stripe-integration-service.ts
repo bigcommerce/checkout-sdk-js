@@ -11,29 +11,31 @@ import {
     PaymentMethodFailedError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import StripeOCSPaymentInitializeOptions from '../stripe-ocs/stripe-ocs-initialize-options';
+import StripeUPEPaymentInitializeOptions from '../stripe-upe/stripe-upe-initialize-options';
+
 import { isStripeError } from './is-stripe-error';
 import {
     AddressOptions,
     StripeAdditionalActionRequired,
+    StripeClient,
     StripeConfirmPaymentData,
     StripeElement,
     StripeElements,
     StripeElementType,
     StripeError,
+    StripePaymentIntentStatus,
     StripeStringConstants,
-    StripeUPEClient,
-    StripeUPEPaymentIntentStatus,
-} from './stripe-upe';
-import StripeUPEPaymentInitializeOptions from './stripe-upe-initialize-options';
-import StripeUPEScriptLoader from './stripe-upe-script-loader';
+} from './stripe';
+import StripeScriptLoader from './stripe-script-loader';
 
-export default class StripeUPEIntegrationService {
+export default class StripeIntegrationService {
     private isMounted = false;
     private checkoutEventsUnsubscribe?: () => void;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private scriptLoader: StripeUPEScriptLoader,
+        private scriptLoader: StripeScriptLoader,
     ) {}
 
     deinitialize(): void {
@@ -44,7 +46,9 @@ export default class StripeUPEIntegrationService {
     initCheckoutEventsSubscription(
         gatewayId: string,
         methodId: string,
-        stripeupe: StripeUPEPaymentInitializeOptions,
+        stripeInitializationOptions:
+            | StripeUPEPaymentInitializeOptions
+            | StripeOCSPaymentInitializeOptions,
         stripeElements?: StripeElements,
     ): void {
         this.checkoutEventsUnsubscribe = this.paymentIntegrationService.subscribe(
@@ -64,7 +68,7 @@ export default class StripeUPEIntegrationService {
                     }
 
                     if (error instanceof Error) {
-                        stripeupe.onError?.(error);
+                        stripeInitializationOptions.onError?.(error);
                     }
 
                     return;
@@ -72,7 +76,7 @@ export default class StripeUPEIntegrationService {
 
                 if (!this.isMounted) {
                     await stripeElements?.fetchUpdates();
-                    this.mountElement(paymentElement, stripeupe.containerId);
+                    this.mountElement(paymentElement, stripeInitializationOptions.containerId);
                 }
             },
             (state) => state.getCheckout()?.outstandingBalance,
@@ -143,10 +147,7 @@ export default class StripeUPEIntegrationService {
         );
     }
 
-    async isPaymentCompleted(
-        methodId: string,
-        stripeUPEClient?: StripeUPEClient,
-    ): Promise<boolean> {
+    async isPaymentCompleted(methodId: string, stripeUPEClient?: StripeClient): Promise<boolean> {
         const state = this.paymentIntegrationService.getState();
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
         const { features } = state.getStoreConfigOrThrow().checkoutSettings;
@@ -163,7 +164,7 @@ export default class StripeUPEIntegrationService {
             paymentMethod.clientToken,
         );
 
-        return paymentIntent?.status === StripeUPEPaymentIntentStatus.SUCCEEDED;
+        return paymentIntent?.status === StripePaymentIntentStatus.SUCCEEDED;
     }
 
     mapStripePaymentData(

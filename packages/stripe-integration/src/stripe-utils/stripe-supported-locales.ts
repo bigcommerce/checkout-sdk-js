@@ -1,4 +1,4 @@
-export const supportedLocales: { [language: string]: string[] } = {
+export const supportedLocales: Record<string, string[]> = {
     ar: ['ar'],
     bg: ['bg'],
     cs: ['cs'],

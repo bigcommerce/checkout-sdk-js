@@ -1,6 +1,6 @@
 import { CustomerInitializeOptions } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { StripeElement, StripeUPEClient } from './stripe-upe';
+import { StripeClient, StripeElement } from '../stripe-utils';
 
 export interface StripeUpeCustomerInitializeOptions extends CustomerInitializeOptions {
     stripeupe: {
@@ -13,7 +13,7 @@ export interface StripeUpeCustomerInitializeOptions extends CustomerInitializeOp
     };
 }
 
-export function getCustomerStripeUPEJsMock(returnElement?: StripeElement): StripeUPEClient {
+export function getCustomerStripeUPEJsMock(returnElement?: StripeElement): StripeClient {
     return {
         elements: jest.fn(() => ({
             create: jest.fn(() => ({

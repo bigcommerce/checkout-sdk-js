@@ -17,27 +17,35 @@ import {
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import StripeOCSPaymentStrategy from './stripe-ocs-payment-strategy';
-import { getStripeOCSInitializeOptionsMock } from './stripe-ocs.mock';
-import { StripeElementType, StripeStringConstants, StripeUPEClient } from './stripe-upe';
-import { WithStripeUPEPaymentInitializeOptions } from './stripe-upe-initialize-options';
-import StripeUPEIntegrationService from './stripe-upe-integration-service';
-import { getStripeUPEIntegrationServiceMock } from './stripe-upe-integration-service.mock';
-import StripeUPEScriptLoader from './stripe-upe-script-loader';
 import {
-    getStripeOCSOrderRequestBodyMock,
-    getStripeUPE,
-    getStripeUPEJsMock,
+    getStripeIntegrationServiceMock,
+    getStripeJsMock,
+    StripeClient,
+    StripeElementType,
     StripeEventMock,
-} from './stripe-upe.mock';
+    StripeIntegrationService,
+    StripeScriptLoader,
+    StripeStringConstants,
+} from '../stripe-utils';
+
+import { WithStripeOCSPaymentInitializeOptions } from './stripe-ocs-initialize-options';
+import StripeOCSPaymentStrategy from './stripe-ocs-payment-strategy';
+import {
+    getStripeOCSInitializeOptionsMock,
+    getStripeOCSMock,
+    getStripeOCSOrderRequestBodyMock,
+} from './stripe-ocs.mock';
 
 describe('StripeOCSPaymentStrategy', () => {
     let stripeOCSPaymentStrategy: StripeOCSPaymentStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
-    let stripeScriptLoader: StripeUPEScriptLoader;
-    let stripeUPEIntegrationService: StripeUPEIntegrationService;
-    let stripeOptions: PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions;
-    let stripeUPEJsMock: StripeUPEClient;
+    let stripeScriptLoader: StripeScriptLoader;
+    let stripeIntegrationService: StripeIntegrationService;
+    let stripeOptions: PaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions;
+    let stripeUPEJsMock: StripeClient;
+
+    const methodId = 'optymized_checkout';
+    const gatewayId = 'stripeocs';
 
     const testColor = '#123456';
     const style = {
@@ -54,16 +62,16 @@ describe('StripeOCSPaymentStrategy', () => {
         const scriptLoader = createScriptLoader();
 
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        stripeScriptLoader = new StripeUPEScriptLoader(scriptLoader);
-        stripeUPEIntegrationService = getStripeUPEIntegrationServiceMock();
+        stripeScriptLoader = new StripeScriptLoader(scriptLoader);
+        stripeIntegrationService = getStripeIntegrationServiceMock();
         stripeOCSPaymentStrategy = new StripeOCSPaymentStrategy(
             paymentIntegrationService,
             stripeScriptLoader,
-            stripeUPEIntegrationService,
+            stripeIntegrationService,
         );
 
         stripeOptions = getStripeOCSInitializeOptionsMock();
-        stripeUPEJsMock = getStripeUPEJsMock();
+        stripeUPEJsMock = getStripeJsMock();
 
         jest.spyOn(stripeScriptLoader, 'getStripeClient').mockImplementation(
             jest.fn(() => Promise.resolve(stripeUPEJsMock)),
@@ -73,7 +81,7 @@ describe('StripeOCSPaymentStrategy', () => {
             paymentIntegrationService.getState(),
         );
         jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
-            getStripeUPE(),
+            getStripeOCSMock(),
         );
         jest.spyOn(stripeScriptLoader, 'getElements').mockReturnValue(
             Promise.resolve(stripeUPEJsMock.elements({})),
@@ -89,28 +97,24 @@ describe('StripeOCSPaymentStrategy', () => {
             await expect(
                 stripeOCSPaymentStrategy.initialize({
                     ...stripeOptions,
-                    stripeupe: undefined,
+                    stripeocs: undefined,
                 }),
             ).rejects.toThrow(NotInitializedError);
-            expect(
-                stripeUPEIntegrationService.initCheckoutEventsSubscription,
-            ).not.toHaveBeenCalled();
+            expect(stripeIntegrationService.initCheckoutEventsSubscription).not.toHaveBeenCalled();
         });
 
         it('throws error if no container id in stripe options', async () => {
             await expect(
                 stripeOCSPaymentStrategy.initialize({
                     ...stripeOptions,
-                    stripeupe: {
-                        ...stripeOptions.stripeupe,
+                    stripeocs: {
+                        ...stripeOptions.stripeocs,
                         render: jest.fn(),
                         containerId: '',
                     },
                 }),
             ).rejects.toThrow(NotInitializedError);
-            expect(
-                stripeUPEIntegrationService.initCheckoutEventsSubscription,
-            ).not.toHaveBeenCalled();
+            expect(stripeIntegrationService.initCheckoutEventsSubscription).not.toHaveBeenCalled();
         });
 
         it('throws error if no gatewayId option', async () => {
@@ -120,13 +124,11 @@ describe('StripeOCSPaymentStrategy', () => {
                     gatewayId: undefined,
                 }),
             ).rejects.toThrow(InvalidArgumentError);
-            expect(
-                stripeUPEIntegrationService.initCheckoutEventsSubscription,
-            ).not.toHaveBeenCalled();
+            expect(stripeIntegrationService.initCheckoutEventsSubscription).not.toHaveBeenCalled();
         });
 
         it('throws error if payment method does not like stripe payment method', async () => {
-            const stripePaymentMethod = getStripeUPE();
+            const stripePaymentMethod = getStripeOCSMock();
             const onErrorMock = jest.fn();
 
             jest.spyOn(
@@ -139,7 +141,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
-                stripeupe: {
+                stripeocs: {
                     containerId: 'containerId',
                     render: jest.fn(),
                     onError: onErrorMock,
@@ -150,7 +152,7 @@ describe('StripeOCSPaymentStrategy', () => {
         });
 
         it('throws error if payment method does not have clientToken', async () => {
-            const stripePaymentMethod = getStripeUPE();
+            const stripePaymentMethod = getStripeOCSMock();
             const onErrorMock = jest.fn();
 
             jest.spyOn(
@@ -163,7 +165,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
-                stripeupe: {
+                stripeocs: {
                     containerId: 'containerId',
                     render: jest.fn(),
                     onError: onErrorMock,
@@ -179,7 +181,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
-                stripeupe: {
+                stripeocs: {
                     containerId: 'containerId',
                     render: renderMock,
                     onError: onErrorMock,
@@ -189,7 +191,7 @@ describe('StripeOCSPaymentStrategy', () => {
             expect(stripeScriptLoader.getElements).toHaveBeenCalled();
             expect(onErrorMock).not.toHaveBeenCalled();
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalled();
-            expect(stripeUPEIntegrationService.initCheckoutEventsSubscription).toHaveBeenCalled();
+            expect(stripeIntegrationService.initCheckoutEventsSubscription).toHaveBeenCalled();
         });
 
         it('should initialize and get postal code when shipping address unavailable', async () => {
@@ -215,8 +217,8 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
-                stripeupe: {
-                    ...stripeOptions.stripeupe,
+                stripeocs: {
+                    ...stripeOptions.stripeocs,
                     containerId: 'containerId',
                     render: renderMock,
                     onError: onErrorMock,
@@ -247,7 +249,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 },
             });
             expect(onErrorMock).not.toHaveBeenCalled();
-            expect(stripeUPEIntegrationService.mountElement).toHaveBeenCalled();
+            expect(stripeIntegrationService.mountElement).toHaveBeenCalled();
         });
 
         it('should initialize if postal code unavailable', async () => {
@@ -276,8 +278,8 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
-                stripeupe: {
-                    ...stripeOptions.stripeupe,
+                stripeocs: {
+                    ...stripeOptions.stripeocs,
                     containerId: 'containerId',
                     render: renderMock,
                     onError: onErrorMock,
@@ -331,7 +333,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
-                stripeupe: {
+                stripeocs: {
                     containerId: 'containerId',
                     render: jest.fn(),
                     onError: onErrorMock,
@@ -355,7 +357,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
-                stripeupe: {
+                stripeocs: {
                     containerId: 'containerId',
                     render: jest.fn(),
                     onError: onErrorMock,
@@ -469,7 +471,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 stripeOCSPaymentStrategy.execute({
                     payment: {
                         methodId: '',
-                        gatewayId: 'stripeupe',
+                        gatewayId,
                     },
                 }),
             ).rejects.toThrow(InvalidArgumentError);
@@ -495,13 +497,13 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
 
             expect(paymentIntegrationService.applyStoreCredit).not.toHaveBeenCalled();
-            expect(stripeUPEIntegrationService.updateStripePaymentIntent).toHaveBeenCalledWith(
-                'stripeupe',
-                'stripe_ocs',
+            expect(stripeIntegrationService.updateStripePaymentIntent).toHaveBeenCalledWith(
+                gatewayId,
+                methodId,
             );
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalled();
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                methodId: 'stripe_ocs',
+                methodId,
                 paymentData: {
                     formattedPayload: {
                         cart_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -537,7 +539,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
-                stripeupe: {
+                stripeocs: {
                     render: jest.fn(),
                     containerId: 'containerId',
                 },
@@ -545,7 +547,7 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                methodId: 'stripe_ocs',
+                methodId,
                 paymentData: {
                     formattedPayload: {
                         cart_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -582,7 +584,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
-                stripeupe: {
+                stripeocs: {
                     render: jest.fn(),
                     containerId: 'containerId',
                     paymentMethodSelect: paymentMethodSelectMock,
@@ -591,7 +593,7 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                methodId: 'stripe_ocs',
+                methodId,
                 paymentData: {
                     formattedPayload: {
                         cart_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -603,7 +605,7 @@ describe('StripeOCSPaymentStrategy', () => {
                     },
                 },
             });
-            expect(paymentMethodSelectMock).toHaveBeenCalledWith('stripeupe-stripe_ocs');
+            expect(paymentMethodSelectMock).toHaveBeenCalledWith(`${gatewayId}-${methodId}`);
         });
 
         it('does not change selected payment method id if accordion collapsed', async () => {
@@ -628,7 +630,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await stripeOCSPaymentStrategy.initialize({
                 ...stripeOptions,
-                stripeupe: {
+                stripeocs: {
                     render: jest.fn(),
                     containerId: 'containerId',
                 },
@@ -636,7 +638,7 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                methodId: 'stripe_ocs',
+                methodId,
                 paymentData: {
                     formattedPayload: {
                         cart_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -654,12 +656,12 @@ describe('StripeOCSPaymentStrategy', () => {
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
-            ).mockReturnValueOnce(getStripeUPE());
+            ).mockReturnValueOnce(getStripeOCSMock());
             jest.spyOn(
                 paymentIntegrationService.getState(),
                 'getPaymentMethodOrThrow',
             ).mockReturnValueOnce({
-                ...getStripeUPE(),
+                ...getStripeOCSMock(),
                 clientToken: undefined,
             });
 
@@ -667,7 +669,7 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                methodId: 'stripe_ocs',
+                methodId,
                 paymentData: {
                     formattedPayload: {
                         cart_id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -688,7 +690,7 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                methodId: 'stripe_ocs',
+                methodId,
                 paymentData: {
                     formattedPayload: {
                         cart_id: '',
@@ -712,7 +714,7 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.execute(getStripeOCSOrderRequestBodyMock());
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                methodId: 'stripe_ocs',
+                methodId,
                 paymentData: {
                     formattedPayload: {
                         cart_id: '',
@@ -739,10 +741,8 @@ describe('StripeOCSPaymentStrategy', () => {
         };
 
         beforeEach(() => {
-            jest.spyOn(stripeUPEIntegrationService, 'isAdditionalActionError').mockReturnValue(
-                true,
-            );
-            jest.spyOn(stripeUPEIntegrationService, 'isPaymentCompleted').mockReturnValue(
+            jest.spyOn(stripeIntegrationService, 'isAdditionalActionError').mockReturnValue(true);
+            jest.spyOn(stripeIntegrationService, 'isPaymentCompleted').mockReturnValue(
                 Promise.resolve(false),
             );
 
@@ -765,7 +765,7 @@ describe('StripeOCSPaymentStrategy', () => {
             retrievePaymentIntentMock = jest.fn();
 
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmPayment: confirmPaymentMock,
                 retrievePaymentIntent: retrievePaymentIntentMock,
             };
@@ -786,9 +786,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
         it('throws not additional action error', async () => {
             mockFirstPaymentRequest(errorResponse);
-            jest.spyOn(stripeUPEIntegrationService, 'isAdditionalActionError').mockReturnValue(
-                false,
-            );
+            jest.spyOn(stripeIntegrationService, 'isAdditionalActionError').mockReturnValue(false);
 
             await stripeOCSPaymentStrategy.initialize(stripeOptions);
 
@@ -810,7 +808,7 @@ describe('StripeOCSPaymentStrategy', () => {
             });
 
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmPayment: confirmPaymentMock,
                 retrievePaymentIntent: retrievePaymentIntentMock,
             };
@@ -831,7 +829,7 @@ describe('StripeOCSPaymentStrategy', () => {
         it('skips stripe confirmation if payment has been already completed', async () => {
             errorResponse.body.additional_action_required.data.token = undefined;
             mockFirstPaymentRequest(errorResponse);
-            jest.spyOn(stripeUPEIntegrationService, 'isPaymentCompleted').mockReturnValue(
+            jest.spyOn(stripeIntegrationService, 'isPaymentCompleted').mockReturnValue(
                 Promise.resolve(true),
             );
 
@@ -841,7 +839,7 @@ describe('StripeOCSPaymentStrategy', () => {
             });
 
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmPayment: confirmPaymentMock,
                 retrievePaymentIntent: retrievePaymentIntentMock,
             };
@@ -868,7 +866,7 @@ describe('StripeOCSPaymentStrategy', () => {
             });
 
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmPayment: confirmPaymentMock,
                 retrievePaymentIntent: jest.fn(),
             };
@@ -890,7 +888,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 .mockReturnValue(Promise.reject(new Error('stripe confirmation error')));
 
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmPayment: confirmPaymentMock,
                 retrievePaymentIntent: jest.fn(),
             };
@@ -910,7 +908,7 @@ describe('StripeOCSPaymentStrategy', () => {
             confirmPaymentMock = jest.fn().mockResolvedValue(null);
 
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmPayment: confirmPaymentMock,
                 retrievePaymentIntent: jest.fn(),
             };
@@ -930,7 +928,7 @@ describe('StripeOCSPaymentStrategy', () => {
             confirmPaymentMock = jest.fn().mockResolvedValue({});
 
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmPayment: confirmPaymentMock,
                 retrievePaymentIntent: jest.fn(),
             };
@@ -954,7 +952,7 @@ describe('StripeOCSPaymentStrategy', () => {
             });
 
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmPayment: confirmPaymentMock,
                 retrievePaymentIntent: jest.fn(),
             };
@@ -967,7 +965,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                methodId: 'stripe_ocs',
+                methodId,
                 paymentData: {
                     formattedPayload: {
                         cart_id: '',
@@ -980,7 +978,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 },
             });
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                methodId: 'stripe_ocs',
+                methodId,
                 paymentData: {
                     formattedPayload: {
                         cart_id: '',
@@ -1003,7 +1001,7 @@ describe('StripeOCSPaymentStrategy', () => {
             });
 
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmPayment: confirmPaymentMock,
                 retrievePaymentIntent: jest.fn(),
             };
@@ -1016,7 +1014,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                methodId: 'stripe_ocs',
+                methodId,
                 paymentData: {
                     formattedPayload: {
                         cart_id: '',
@@ -1029,7 +1027,7 @@ describe('StripeOCSPaymentStrategy', () => {
                 },
             });
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledWith({
-                methodId: 'stripe_ocs',
+                methodId,
                 paymentData: {
                     formattedPayload: {
                         cart_id: '',
@@ -1053,7 +1051,7 @@ describe('StripeOCSPaymentStrategy', () => {
             });
 
             stripeUPEJsMock = {
-                ...getStripeUPEJsMock(),
+                ...getStripeJsMock(),
                 confirmPayment: confirmPaymentMock,
                 retrievePaymentIntent: jest.fn(),
             };
@@ -1069,7 +1067,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             expect(paymentIntegrationService.submitPayment).toHaveBeenCalledTimes(2);
             expect(
-                stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage,
+                stripeIntegrationService.throwPaymentConfirmationProceedMessage,
             ).toHaveBeenCalled();
         });
     });
@@ -1104,7 +1102,7 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.initialize(getStripeOCSInitializeOptionsMock());
             await stripeOCSPaymentStrategy.deinitialize();
 
-            expect(stripeUPEIntegrationService.deinitialize).toHaveBeenCalled();
+            expect(stripeIntegrationService.deinitialize).toHaveBeenCalled();
             expect(unmountMock).toHaveBeenCalled();
         });
 
@@ -1120,7 +1118,7 @@ describe('StripeOCSPaymentStrategy', () => {
 
             await stripeOCSPaymentStrategy.deinitialize();
 
-            expect(stripeUPEIntegrationService.deinitialize).toHaveBeenCalled();
+            expect(stripeIntegrationService.deinitialize).toHaveBeenCalled();
         });
     });
 });

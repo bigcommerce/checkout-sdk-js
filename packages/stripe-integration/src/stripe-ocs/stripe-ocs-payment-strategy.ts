@@ -16,46 +16,53 @@ import {
     PaymentStrategy,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import formatLocale from './format-locale';
-import { isStripePaymentEvent } from './is-stripe-payment-event';
-import { isStripeUPEPaymentMethodLike } from './is-stripe-upe-payment-method-like';
 import {
+    formatLocale,
+    isStripePaymentEvent,
+    isStripePaymentMethodLike,
     StripeAdditionalActionRequired,
+    StripeAppearanceOptions,
+    StripeClient,
     StripeElement,
     StripeElements,
     StripeElementType,
     StripeError,
     StripeEventType,
+    StripeIntegrationService,
+    StripeResult,
+    StripeScriptLoader,
     StripeStringConstants,
-    StripeUPEAppearanceOptions,
     StripeUPEAppearanceValues,
-    StripeUPEClient,
-    StripeUpeResult,
-} from './stripe-upe';
-import StripeUPEPaymentInitializeOptions, {
-    WithStripeUPEPaymentInitializeOptions,
-} from './stripe-upe-initialize-options';
-import StripeUPEIntegrationService from './stripe-upe-integration-service';
-import StripeUPEScriptLoader from './stripe-upe-script-loader';
+} from '../stripe-utils';
+
+import StripeOCSPaymentInitializeOptions, {
+    WithStripeOCSPaymentInitializeOptions,
+} from './stripe-ocs-initialize-options';
 
 export default class StripeOCSPaymentStrategy implements PaymentStrategy {
-    private stripeUPEClient?: StripeUPEClient;
+    private stripeUPEClient?: StripeClient;
     private stripeElements?: StripeElements;
     private selectedMethodId?: string;
     private readonly stripeSVGSizeCoefficient = 0.88;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
-        private scriptLoader: StripeUPEScriptLoader,
-        private stripeUPEIntegrationService: StripeUPEIntegrationService,
+        private scriptLoader: StripeScriptLoader,
+        private stripeUPEIntegrationService: StripeIntegrationService,
     ) {}
 
     async initialize(
-        options: PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions,
+        options: PaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions,
     ): Promise<void> {
-        const { stripeupe, methodId, gatewayId } = options;
+        const {
+            stripeupe: stripeupeInitData,
+            stripeocs: stripeocsInitData,
+            methodId,
+            gatewayId,
+        } = options;
+        const stripeocs = stripeocsInitData || stripeupeInitData;
 
-        if (!stripeupe?.containerId) {
+        if (!stripeocs?.containerId) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
@@ -66,17 +73,17 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         }
 
         try {
-            await this._initializeStripeElement(stripeupe, gatewayId, methodId);
+            await this._initializeStripeElement(stripeocs, gatewayId, methodId);
         } catch (error) {
             if (error instanceof Error) {
-                stripeupe.onError?.(error);
+                stripeocs.onError?.(error);
             }
         }
 
         this.stripeUPEIntegrationService.initCheckoutEventsSubscription(
             gatewayId,
             methodId,
-            stripeupe,
+            stripeocs,
             this.stripeElements,
         );
     }
@@ -130,7 +137,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     }
 
     private async _initializeStripeElement(
-        stripeupe: StripeUPEPaymentInitializeOptions,
+        stripeupe: StripeOCSPaymentInitializeOptions,
         gatewayId: string,
         methodId: string,
     ) {
@@ -139,7 +146,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         });
         const paymentMethod = state.getPaymentMethodOrThrow(methodId);
 
-        if (!isStripeUPEPaymentMethodLike(paymentMethod)) {
+        if (!isStripePaymentMethodLike(paymentMethod)) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
@@ -214,7 +221,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     private async _loadStripeJs(
         stripePublishableKey: string,
         stripeConnectedAccount: string,
-    ): Promise<StripeUPEClient> {
+    ): Promise<StripeClient> {
         if (this.stripeUPEClient) {
             return this.stripeUPEClient;
         }
@@ -223,8 +230,8 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     }
 
     private _getElementAppearance(
-        style?: StripeUPEPaymentInitializeOptions['style'],
-    ): StripeUPEAppearanceOptions | undefined {
+        style?: StripeOCSPaymentInitializeOptions['style'],
+    ): StripeAppearanceOptions | undefined {
         if (!style) {
             return;
         }
@@ -274,7 +281,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         };
     }
 
-    private _getElementFonts(style?: StripeUPEPaymentInitializeOptions['style']) {
+    private _getElementFonts(style?: StripeOCSPaymentInitializeOptions['style']) {
         if (!style?.fontsSrc || !Array.isArray(style?.fontsSrc)) {
             return;
         }
@@ -282,7 +289,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         return style.fontsSrc.map((cssSrc: string) => ({ cssSrc }));
     }
 
-    private _getRadioIconSizes(style?: StripeUPEPaymentInitializeOptions['style']) {
+    private _getRadioIconSizes(style?: StripeOCSPaymentInitializeOptions['style']) {
         if (!style) {
             return {};
         }
@@ -385,7 +392,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     private async _confirmStripePaymentOrThrow(
         methodId: string,
         additionalActionData: StripeAdditionalActionRequired['data'],
-    ): Promise<StripeUpeResult | never> {
+    ): Promise<StripeResult | never> {
         const { token, redirect_url } = additionalActionData;
         const stripePaymentData = this.stripeUPEIntegrationService.mapStripePaymentData(
             this.stripeElements,
@@ -411,7 +418,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
             return confirmationResult;
         } catch (error: unknown) {
-            this.stripeUPEIntegrationService.throwStripeError(stripeError);
+            return this.stripeUPEIntegrationService.throwStripeError(stripeError);
         }
     }
 

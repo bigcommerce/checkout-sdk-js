@@ -3,14 +3,14 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import {
+    StripeClient,
     StripeConfigurationOptions,
     StripeElements,
     StripeElementsOptions,
     StripeHostWindow,
-    StripeUPEClient,
-} from './stripe-upe';
+} from './stripe';
 
-export default class StripeUPEScriptLoader {
+export default class StripeScriptLoader {
     constructor(
         private scriptLoader: ScriptLoader,
         private stripeWindow: StripeHostWindow = window,
@@ -21,7 +21,7 @@ export default class StripeUPEScriptLoader {
         stripeAccount: string,
         locale?: string,
         options?: StripeConfigurationOptions,
-    ): Promise<StripeUPEClient> {
+    ): Promise<StripeClient> {
         let stripeClient = this.stripeWindow.bcStripeClient;
 
         if (!stripeClient) {
@@ -29,6 +29,7 @@ export default class StripeUPEScriptLoader {
             const defaultOptions = {
                 stripeAccount,
                 locale,
+                // TODO: move this options to Stripe UPE components
                 betas: [
                     'payment_element_beta_2',
                     'alipay_pm_beta_1',
@@ -48,7 +49,7 @@ export default class StripeUPEScriptLoader {
     }
 
     async getElements(
-        stripeClient: StripeUPEClient,
+        stripeClient: StripeClient,
         options: StripeElementsOptions,
     ): Promise<StripeElements> {
         let stripeElements = this.stripeWindow.bcStripeElements;
