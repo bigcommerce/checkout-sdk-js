@@ -7873,7 +7873,7 @@ declare class PaymentHumanVerificationHandler {
     private _isPaymentHumanVerificationRequest;
 }
 
-declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPayPalPaymentInitializeOptions & WithBigCommercePaymentsFastlanePaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions & WithBigCommercePaymentsRatePayPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
+declare type PaymentInitializeOptions = BasePaymentInitializeOptions & WithAdyenV3PaymentInitializeOptions & WithAdyenV2PaymentInitializeOptions & WithAmazonPayV2PaymentInitializeOptions & WithApplePayPaymentInitializeOptions & WithBigCommercePaymentsPayPalPaymentInitializeOptions & WithBigCommercePaymentsFastlanePaymentInitializeOptions & WithBigCommercePaymentsPayLaterPaymentInitializeOptions & WithBigCommercePaymentsRatePayPaymentInitializeOptions & WithBigCommercePaymentsCreditCardsPaymentInitializeOptions & WithBigCommercePaymentsAlternativeMethodsPaymentInitializeOptions & WithBigCommercePaymentsVenmoPaymentInitializeOptions & WithBlueSnapDirectAPMPaymentInitializeOptions & WithBoltPaymentInitializeOptions & WithBraintreeAchPaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions & WithBraintreeFastlanePaymentInitializeOptions & WithCreditCardPaymentInitializeOptions & WithGooglePayPaymentInitializeOptions & WithMolliePaymentInitializeOptions & WithPayPalCommercePaymentInitializeOptions & WithPayPalCommerceCreditPaymentInitializeOptions & WithPayPalCommerceVenmoPaymentInitializeOptions & WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions & WithPayPalCommerceCreditCardsPaymentInitializeOptions & WithPayPalCommerceRatePayPaymentInitializeOptions & WithPayPalCommerceFastlanePaymentInitializeOptions & WithSquareV2PaymentInitializeOptions & WithStripeV3PaymentInitializeOptions & WithStripeUPEPaymentInitializeOptions & WithStripeOCSPaymentInitializeOptions & WithWorldpayAccessPaymentInitializeOptions;
 
 declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
@@ -8735,6 +8735,48 @@ declare interface StripeEvent {
 
 declare type StripeEventType = StripeShippingEvent | StripeCustomerEvent;
 
+/**
+ * A set of options that are required to initialize the Stripe payment method.
+ *
+ * Once Stripe payment is initialized, credit card form fields, provided by the
+ * payment provider as iframes, will be inserted into the current page. These
+ * options provide a location and styling for each of the form fields.
+ *
+ * ```html
+ * <!-- This is where the credit card component will be inserted -->
+ * <div id="container"></div>
+ * ```
+ *
+ * ```js
+ * service.initializePayment({
+ *     gateway: 'stripeocs',
+ *     id: 'optimized_checkout',
+ *     stripeocs {
+ *         containerId: 'container',
+ *     },
+ * });
+ * ```
+ */
+declare interface StripeOCSPaymentInitializeOptions {
+    /**
+     * The location to insert the credit card number form field.
+     */
+    containerId: string;
+    /**
+     * Stripe OCS layout options
+     */
+    layout?: Record<string, string | number | boolean>;
+    /**
+     * Checkout styles from store theme
+     */
+    style?: Record<string, StripeUPEAppearanceValues>;
+    onError?(error?: Error): void;
+    render(): void;
+    initStripeElementUpdateTrigger?(updateTriggerFn: (payload: StripeElementUpdateOptions) => void): void;
+    paymentMethodSelect?(id: string): void;
+    handleClosePaymentMethod?(collapseElement: () => void): void;
+}
+
 declare interface StripeShippingEvent extends StripeEvent {
     mode?: string;
     isNewAddress?: boolean;
@@ -9446,6 +9488,11 @@ declare interface WithSquareV2PaymentInitializeOptions {
      * They can be omitted unless you need to support Square.
      */
     squarev2?: SquareV2PaymentInitializeOptions;
+}
+
+declare interface WithStripeOCSPaymentInitializeOptions {
+    stripeupe?: StripeOCSPaymentInitializeOptions;
+    stripeocs?: StripeOCSPaymentInitializeOptions;
 }
 
 declare interface WithStripeUPECustomerInitializeOptions {
