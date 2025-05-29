@@ -1,4 +1,5 @@
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
+import { StripeLinkV2Client } from '../stripe-link-v2/types';
 
 /**
  * Initialization options.
@@ -209,7 +210,7 @@ export interface StripePaymentEvent extends StripeEvent {
     collapsed?: boolean;
 }
 
-interface Address {
+export interface Address {
     city: string;
     country: string;
     line1: string;
@@ -473,6 +474,9 @@ export interface StripeUpdateElementsOptions {
      * The layout of each Element stays consistent, but you can modify colors, fonts, borders, padding, and more.
      */
     appearance?: StripeAppearanceOptions;
+    mode?: string;
+    amount?: number;
+    currency?: string;
 }
 
 export interface StripeClient {
@@ -507,7 +511,11 @@ export interface StripeResult {
 export interface StripeHostWindow extends Window {
     bcStripeClient?: StripeClient;
     bcStripeElements?: StripeElements;
-    Stripe?(stripePublishableKey: string, options?: StripeConfigurationOptions): StripeClient;
+    Stripe?<T = StripeClient>(
+        stripePublishableKey: string,
+        options?: StripeConfigurationOptions,
+    ): T;
+    bcStripeLinkV2Client?: StripeLinkV2Client;
 }
 
 export enum StripePaymentMethodType {
@@ -536,6 +544,7 @@ export enum StripeElementType {
     PAYMENT = 'payment',
     AUTHENTICATION = 'linkAuthentication',
     SHIPPING = 'address',
+    EXPRESS_CHECKOUT = 'expressCheckout',
 }
 
 export enum StripePaymentIntentStatus {
