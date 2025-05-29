@@ -2,14 +2,13 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import { StripeLinkV2Client } from '../stripe-link-v2/types';
-
 import {
     StripeClient,
     StripeConfigurationOptions,
     StripeElements,
     StripeElementsOptions,
     StripeHostWindow,
+    StripeLinkV2Client,
 } from './stripe';
 
 export default class StripeScriptLoader {

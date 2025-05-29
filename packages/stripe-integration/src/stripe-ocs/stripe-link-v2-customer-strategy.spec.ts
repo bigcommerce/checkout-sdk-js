@@ -6,22 +6,22 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
-import { StripeStringConstants } from '../stripe-upe/stripe-upe';
-import StripeUPEScriptLoader from '../stripe-upe/stripe-upe-script-loader';
-import { getStripeUPEJsMock } from '../stripe-upe/stripe-upe.mock';
-
-import StripeLinkV2CustomerStrategy from './stripe-link-v2-customer-strategy';
 import {
     StripeLinkV2Client,
     StripeLinkV2Element,
     StripeLinkV2ElementEvent,
     StripeLinkV2Elements,
-} from './types';
+    StripeStringConstants,
+} from '../stripe-utils/stripe';
+import StripeScriptLoader from '../stripe-utils/stripe-script-loader';
+
+import StripeLinkV2CustomerStrategy from './stripe-link-v2-customer-strategy';
+import { getStripeOCSMock } from './stripe-ocs.mock';
 
 describe('StripeLinkV2CustomerStrategy', () => {
     let strategy: StripeLinkV2CustomerStrategy;
     let paymentIntegrationService: PaymentIntegrationService;
-    let scriptLoader: jest.Mocked<StripeUPEScriptLoader>;
+    let scriptLoader: jest.Mocked<StripeScriptLoader>;
     let stripeClient: jest.Mocked<StripeLinkV2Client>;
     let elements: jest.Mocked<StripeLinkV2Elements>;
     let element: jest.Mocked<StripeLinkV2Element>;
@@ -61,7 +61,7 @@ describe('StripeLinkV2CustomerStrategy', () => {
         } as any;
 
         stripeClient = {
-            ...getStripeUPEJsMock(),
+            ...getStripeOCSMock(),
             elements: jest.fn().mockReturnValue(elements),
             confirmPayment: jest.fn(),
         } as any;

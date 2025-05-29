@@ -5,7 +5,7 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import StripeUPEScriptLoader from '../stripe-upe/stripe-upe-script-loader';
+import StripeUPEScriptLoader from '../stripe-utils/stripe-script-loader';
 
 import StripeLinkV2CustomerStrategy from './stripe-link-v2-customer-strategy';
 

@@ -12,12 +12,9 @@ import {
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 // import { isStripeUPEPaymentMethodLike } from '../stripe-upe/is-stripe-upe-payment-method-like';
-import { StripeElementType, StripeStringConstants } from '../stripe-utils/stripe';
-import StripeScriptLoader from '../stripe-utils/stripe-script-loader';
 import { WithStripeUPECustomerInitializeOptions } from '../stripe-upe/stripeupe-customer-initialize-options';
-
-import { expressCheckoutAllowedCountryCodes } from './constants';
 import {
+    StripeElementType,
     StripeLinkV2Client,
     StripeLinkV2Element,
     StripeLinkV2ElementCreateOptions,
@@ -26,7 +23,11 @@ import {
     StripeLinkV2Event,
     StripeLinkV2Options,
     StripeLinkV2ShippingRate,
-} from './types';
+    StripeStringConstants,
+} from '../stripe-utils/stripe';
+import StripeScriptLoader from '../stripe-utils/stripe-script-loader';
+
+import { expressCheckoutAllowedCountryCodes } from './constants';
 
 export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private _stripeLinkV2Client?: StripeLinkV2Client;
@@ -63,7 +64,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             }
         });
 
-        const stripePublishableKey = undefined;
+        const stripePublishableKey = 'key';
         // TODO uncomment below lines on finalizing
 
         // const state = this.paymentIntegrationService.getState();
@@ -78,8 +79,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         // } = paymentMethod;
 
         // TODO remove mock below on finalizing
-        this._stripePublishableKey =
-            stripePublishableKey || 'pk_test_iyRKkVUt0YWpJ3Lq7mfsw3VW008KiFDH4s';
+        this._stripePublishableKey = stripePublishableKey;
 
         this._stripeLinkV2Client = await this.scriptLoader.getStripeLinkV2Client(
             this._stripePublishableKey,
@@ -114,10 +114,15 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
         container: string,
         stripeExpressCheckoutClient: StripeLinkV2Client,
     ) {
+        const shouldRequireShippingAddress = this.shouldRequireShippingAddress();
         const expressCheckoutOptions: StripeLinkV2ElementCreateOptions = {
-            allowedShippingCountries: await this.getAvailableCountries(),
-            shippingAddressRequired: true,
-            shippingRates: [{ id: '_', amount: 0, displayName: 'Pending rates' }],
+            shippingAddressRequired: shouldRequireShippingAddress,
+            ...(shouldRequireShippingAddress
+                ? { allowedShippingCountries: await this.getAvailableCountries() }
+                : {}),
+            ...(shouldRequireShippingAddress
+                ? { shippingRates: [{ id: '_', amount: 0, displayName: 'Pending rates' }] }
+                : {}),
             billingAddressRequired: true,
             emailRequired: true,
             phoneNumberRequired: true,
@@ -153,12 +158,19 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     /** Events * */
 
     private initializeEvents(expressCheckoutElement: StripeLinkV2Element): void {
-        expressCheckoutElement.on(StripeLinkV2ElementEvent.SHIPPING_ADDRESS_CHANGE, async (event) =>
-            this.onShippingAddressChange(event),
-        );
-        expressCheckoutElement.on(StripeLinkV2ElementEvent.SHIPPING_RATE_CHANGE, async (event) =>
-            this.onShippingRateChange(event),
-        );
+        const shouldRequireShippingAddress = this.shouldRequireShippingAddress();
+
+        if (shouldRequireShippingAddress) {
+            expressCheckoutElement.on(
+                StripeLinkV2ElementEvent.SHIPPING_ADDRESS_CHANGE,
+                async (event) => this.onShippingAddressChange(event),
+            );
+            expressCheckoutElement.on(
+                StripeLinkV2ElementEvent.SHIPPING_RATE_CHANGE,
+                async (event) => this.onShippingRateChange(event),
+            );
+        }
+
         expressCheckoutElement.on(StripeLinkV2ElementEvent.CONFIRM, async (event) =>
             this.onConfirm(event),
         );
@@ -266,6 +278,13 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     }
 
     /** Utils * */
+
+    private shouldRequireShippingAddress() {
+        const { getCartOrThrow } = this.paymentIntegrationService.getState();
+        const { lineItems } = getCartOrThrow();
+
+        return !!lineItems.physicalItems.length;
+    }
 
     private async updateDisplayedPrice() {
         if (this._stripeElements) {
