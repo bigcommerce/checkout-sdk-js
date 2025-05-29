@@ -8824,18 +8824,12 @@ declare interface StripeUPEPaymentInitializeOptions {
      */
     containerId: string;
     /**
-     * Stripe OCS layout options
-     */
-    layout?: Record<string, string | number | boolean>;
-    /**
      * Checkout styles from store theme
      */
     style?: Record<string, StripeUPEAppearanceValues>;
     onError?(error?: Error): void;
     render(): void;
     initStripeElementUpdateTrigger?(updateTriggerFn: (payload: StripeElementUpdateOptions) => void): void;
-    paymentMethodSelect?(id: string): void;
-    handleClosePaymentMethod?(collapseElement: () => void): void;
 }
 
 /**

@@ -27,15 +27,12 @@ service.initializePayment({
 ### Properties
 
 - [containerId](StripeUPEPaymentInitializeOptions.md#containerid)
-- [layout](StripeUPEPaymentInitializeOptions.md#layout)
 - [style](StripeUPEPaymentInitializeOptions.md#style)
 
 ### Methods
 
-- [handleClosePaymentMethod](StripeUPEPaymentInitializeOptions.md#handleclosepaymentmethod)
 - [initStripeElementUpdateTrigger](StripeUPEPaymentInitializeOptions.md#initstripeelementupdatetrigger)
 - [onError](StripeUPEPaymentInitializeOptions.md#onerror)
-- [paymentMethodSelect](StripeUPEPaymentInitializeOptions.md#paymentmethodselect)
 - [render](StripeUPEPaymentInitializeOptions.md#render)
 
 ## Properties
@@ -48,14 +45,6 @@ The location to insert the credit card number form field.
 
 ___
 
-### layout
-
-• `Optional` **layout**: `Record`<`string`, `string` \| `number` \| `boolean`\>
-
-Stripe OCS layout options
-
-___
-
 ### style
 
 • `Optional` **style**: `Record`<`string`, [`StripeUPEAppearanceValues`](../README.md#stripeupeappearancevalues)\>
@@ -63,22 +52,6 @@ ___
 Checkout styles from store theme
 
 ## Methods
-
-### handleClosePaymentMethod
-
-▸ `Optional` **handleClosePaymentMethod**(`collapseElement`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `collapseElement` | () => `void` |
-
-#### Returns
-
-`void`
-
-___
 
 ### initStripeElementUpdateTrigger
 
@@ -105,22 +78,6 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `error?` | `Error` |
-
-#### Returns
-
-`void`
-
-___
-
-### paymentMethodSelect
-
-▸ `Optional` **paymentMethodSelect**(`id`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `id` | `string` |
 
 #### Returns
 

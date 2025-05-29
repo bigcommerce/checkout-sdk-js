@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.739.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.738.0...v1.739.0) (2025-05-29)
+
+
+### Features
+
+* **checkout:** Add worker-event-listener ([#2870](https://github.com/bigcommerce/checkout-sdk-js/issues/2870)) ([0723433](https://github.com/bigcommerce/checkout-sdk-js/commit/0723433e8289edb4b0cdf737210c88e09a9bf6ae))
+* **payment:** move Stripe OCS and UPE to separate modules ([00debe6](https://github.com/bigcommerce/checkout-sdk-js/commit/00debe6848abe499fa118963fd5eba4ba865eee5))
+
 ## [1.738.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.737.0...v1.738.0) (2025-05-28)
 
 
