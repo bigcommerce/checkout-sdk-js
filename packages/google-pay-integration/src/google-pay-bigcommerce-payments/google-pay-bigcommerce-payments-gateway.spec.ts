@@ -7,7 +7,7 @@ import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment
 import GooglePayGateway from '../gateways/google-pay-gateway';
 import isGooglePayPaypalCommercePaymentMethod from '../guards/is-google-pay-paypal-commerce-payment-method';
 import getCardDataResponse from '../mocks/google-pay-card-data-response.mock';
-import { getPayPalCommerce } from '../mocks/google-pay-payment-method.mock';
+import { getBigCommercePayments } from '../mocks/google-pay-payment-method.mock';
 
 import GooglePayBigCommercePaymentsGateway from './google-pay-bigcommerce-payments-gateway';
 
@@ -90,7 +90,7 @@ describe('GooglePayBigCommercePaymentsGateway', () => {
                 gatewayMerchantId: 'ID',
             };
 
-            const googlePayPaymentMethod = getPayPalCommerce();
+            const googlePayPaymentMethod = getBigCommercePayments();
 
             isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
 
@@ -105,7 +105,7 @@ describe('GooglePayBigCommercePaymentsGateway', () => {
                 gatewayMerchantId: 'ID',
             };
 
-            const googlePayPaymentMethod = getPayPalCommerce();
+            const googlePayPaymentMethod = getBigCommercePayments();
 
             isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
 
@@ -120,7 +120,7 @@ describe('GooglePayBigCommercePaymentsGateway', () => {
                 gatewayMerchantId: 'ID',
             };
 
-            const googlePayPaymentMethod = getPayPalCommerce();
+            const googlePayPaymentMethod = getBigCommercePayments();
 
             isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
 

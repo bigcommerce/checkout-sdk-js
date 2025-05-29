@@ -74,6 +74,7 @@ export enum GooglePayKey {
     BNZ = 'googlepaybnz',
     BRAINTREE = 'googlepaybraintree',
     PAYPAL_COMMERCE = 'googlepaypaypalcommerce',
+    BIGCOMMERCE_PAYMENTS = 'googlepay_bigcommerce_payments',
     CHECKOUT_COM = 'googlepaycheckoutcom',
     CYBERSOURCE_V2 = 'googlepaycybersourcev2',
     ORBITAL = 'googlepayorbital',

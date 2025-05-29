@@ -2,7 +2,10 @@ import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender, Response } from '@bigcommerce/request-sender';
 import { createScriptLoader, getScriptLoader } from '@bigcommerce/script-loader';
 
-import { PayPalSdkHelper } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
+import {
+    BigCommercePaymentsInitializationData,
+    PayPalSdkHelper,
+} from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import {
     MissingDataError,
     MissingDataErrorType,
@@ -10,6 +13,7 @@ import {
     PaymentArgumentInvalidError,
     PaymentInitializeOptions,
     PaymentIntegrationService,
+    PaymentMethod,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 
@@ -17,7 +21,7 @@ import { WithGooglePayPaymentInitializeOptions } from '../google-pay-payment-ini
 import GooglePayPaymentProcessor from '../google-pay-payment-processor';
 import GooglePayScriptLoader from '../google-pay-script-loader';
 import isGooglePayPaypalCommercePaymentMethod from '../guards/is-google-pay-paypal-commerce-payment-method';
-import { getGeneric, getPayPalCommerce } from '../mocks/google-pay-payment-method.mock';
+import { getBigCommercePayments, getGeneric } from '../mocks/google-pay-payment-method.mock';
 
 import GooglePayBigCommercePaymentsGateway from './google-pay-bigcommerce-payments-gateway';
 import GooglePayBigCommercePaymentsPaymentStrategy from './google-pay-bigcommerce-payments-payment-strategy';
@@ -129,11 +133,14 @@ describe('BigCommercePaymentsGooglePayPaymentStrategy', () => {
         });
 
         it('should execute the strategy', async () => {
-            const googlePayPaymentMethod = getPayPalCommerce();
+            const googlePayPaymentMethod = getBigCommercePayments();
 
             isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
 
-            await scriptLoader.getPayPalGooglePaySdk(googlePayPaymentMethod, 'USD');
+            await scriptLoader.getPayPalGooglePaySdk(
+                googlePayPaymentMethod as PaymentMethod<BigCommercePaymentsInitializationData>,
+                'USD',
+            );
 
             const execute = strategy.execute(payload);
 
@@ -189,11 +196,14 @@ describe('BigCommercePaymentsGooglePayPaymentStrategy', () => {
                 }),
             });
 
-            const googlePayPaymentMethod = getPayPalCommerce();
+            const googlePayPaymentMethod = getBigCommercePayments();
 
             isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
 
-            const sdk = await scriptLoader.getPayPalGooglePaySdk(googlePayPaymentMethod, 'USD');
+            const sdk = await scriptLoader.getPayPalGooglePaySdk(
+                googlePayPaymentMethod as PaymentMethod<BigCommercePaymentsInitializationData>,
+                'USD',
+            );
 
             await strategy.execute(payload);
 
