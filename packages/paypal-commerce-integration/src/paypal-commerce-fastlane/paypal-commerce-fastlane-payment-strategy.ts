@@ -30,9 +30,11 @@ import {
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
 
 import { WithPayPalCommerceFastlanePaymentInitializeOptions } from './paypal-commerce-fastlane-payment-initialize-options';
+import { LiabilityShiftEnum } from '../paypal-commerce-types';
 
 export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
     private paypalComponentMethods?: PayPalFastlaneCardComponentMethods;
+    private paypalFastlaneSdk?: any;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -88,7 +90,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const { isDeveloperModeApplicable, isFastlaneStylingEnabled } =
             paymentMethod.initializationData || {};
 
-        const paypalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
+        this.paypalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
             paymentMethod,
             cart.currency.code,
             cart.id,
@@ -104,7 +106,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         );
 
         await this.paypalCommerceFastlaneUtils.initializePayPalFastlane(
-            paypalFastlaneSdk,
+            this.paypalFastlaneSdk,
             !!isDeveloperModeApplicable,
             fastlaneStyles,
         );
@@ -293,10 +295,18 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const { instrumentId } = paymentData;
         const state = this.paymentIntegrationService.getState();
         const cartId = state.getCartOrThrow().id;
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
         const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
             cartId,
+            fastlaneToken: instrumentId,
         });
+
+        const fastlaneToken = paymentMethod.config.is3dsEnabled
+            ? await this.get3DSNonce(instrumentId)
+            : instrumentId;
+
 
         return {
             methodId,
@@ -304,7 +314,7 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 formattedPayload: {
                     paypal_fastlane_token: {
                         order_id: orderId,
-                        token: instrumentId,
+                        token: fastlaneToken,
                     },
                 },
             },
@@ -318,6 +328,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const state = this.paymentIntegrationService.getState();
         const cartId = state.getCartOrThrow().id;
         const billingAddress = state.getBillingAddressOrThrow();
+        const paymentMethod =
+            state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
 
         const fullName = `${billingAddress.firstName} ${billingAddress.lastName}`.trim();
 
@@ -330,7 +342,12 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
 
         const { orderId } = await this.paypalCommerceRequestSender.createOrder(methodId, {
             cartId,
+            fastlaneToken: id,
         });
+
+        const fastlaneToken = paymentMethod.config.is3dsEnabled
+            ? await this.get3DSNonce(id)
+            : id;
 
         const { shouldSaveInstrument = false, shouldSetAsDefaultInstrument = false } =
             isHostedInstrumentLike(paymentData) ? paymentData : {};
@@ -344,11 +361,76 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
                 formattedPayload: {
                     paypal_fastlane_token: {
                         order_id: orderId,
-                        token: id,
+                        token: fastlaneToken,
                     },
                 },
             },
         };
+    }
+
+    /**
+     *
+     * 3DSecure methods
+     *
+     * */
+    async get3DSNonce(nonce: string): Promise<string> {
+        const state = this.paymentIntegrationService.getState();
+        const cart = state.getCartOrThrow();
+        const order = state.getOrderOrThrow();
+        const checkoutUrl = state.getStoreConfigOrThrow().links.checkoutLink;
+
+        const threeDomainSecureComponent = this.paypalFastlaneSdk?.ThreeDomainSecureClient;
+
+        if (!threeDomainSecureComponent) {
+            throw new Error(); // TODO: add Payment client error
+        }
+
+        const threeDomainSecureParameters = {
+            amount: order.orderAmount.toString(),
+            currency: cart.currency.code,
+            nonce,
+            threeDSRequested: true, // TODO: Sets SCA_ALWAYS in the eligibility API request, otherwise defaults to SCA_WHEN_REQUIRED
+            // Should be optional. Asked PayPal when its ready on their side
+            transactionContext: {
+                experience_context: {
+                    locale: 'en-US',
+                    return_url: checkoutUrl,
+                    cancel_url: checkoutUrl,
+                },
+            },
+        };
+
+        const isThreeDomainSecureEligible = await threeDomainSecureComponent.isEligible(
+            threeDomainSecureParameters,
+        );
+
+        if (isThreeDomainSecureEligible) {
+            const {
+                liabilityShift, // "no", "unknown", "possible"
+                authenticationState, // "success", "cancelled", "errored"
+                nonce, //Enriched nonce or the original nonce
+            } = await threeDomainSecureComponent.show();
+
+            if (liabilityShift === LiabilityShiftEnum.No || liabilityShift === LiabilityShiftEnum.Unknown) {
+                throw new Error(); // TODO: specify an error
+            }
+
+            if (authenticationState === "success") {
+                return nonce;
+            }
+
+            // Cancelled or errored, merchant can choose to send the customer back to 3D Secure or submit a payment and or vault the payment token.
+            if (authenticationState === 'errored') {
+                throw new Error();
+            }
+
+            if (authenticationState === 'canceled') {
+                console.log('3DS check was canceled');
+            }
+
+        }
+
+        return nonce;
     }
 
     /**

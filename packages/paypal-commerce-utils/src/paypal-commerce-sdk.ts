@@ -146,7 +146,6 @@ export default class PayPalCommerceSdk {
             clientId,
             merchantId,
             attributionId,
-            connectClientToken, // TODO: remove when PPCP Fastlane A/B testing will be finished
         } = initializationData;
 
         return {
@@ -154,7 +153,7 @@ export default class PayPalCommerceSdk {
                 'client-id': clientId,
                 'merchant-id': merchantId,
                 commit: true,
-                components: ['fastlane'],
+                components: ['fastlane', 'buttons', 'payment-fields', 'hosted-fields', 'three-domain-secure'],
                 currency: currencyCode,
                 intent,
             },
@@ -162,7 +161,7 @@ export default class PayPalCommerceSdk {
                 'data-client-metadata-id': sessionId.replace(/-/g, ''),
                 'data-namespace': 'paypalFastlaneSdk',
                 'data-partner-attribution-id': attributionId,
-                'data-user-id-token': connectClientToken || clientToken,
+                'data-sdk-client-token': clientToken,
             },
         };
     }
