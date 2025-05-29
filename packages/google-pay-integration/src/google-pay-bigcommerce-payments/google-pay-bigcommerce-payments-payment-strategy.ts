@@ -1,6 +1,9 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import { PayPalSdkHelper } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
+import {
+    BigCommercePaymentsInitializationData,
+    PayPalSdkHelper,
+} from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import {
     ContentType,
     INTERNAL_USE_ONLY,
@@ -10,13 +13,14 @@ import {
     OrderRequestBody,
     PaymentArgumentInvalidError,
     PaymentIntegrationService,
+    PaymentMethod,
     SDK_VERSION_HEADERS,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import GooglePayPaymentProcessor from '../google-pay-payment-processor';
 import GooglePayPaymentStrategy from '../google-pay-payment-strategy';
 import {
-    GooglePayPayPalCommerceInitializationData,
+    GooglePayBigCommercePaymentsInitializationData,
     GooglePayInitializationData,
 } from '../types';
 
@@ -26,7 +30,7 @@ export default class GooglePayBigCommercePaymentsPaymentStrategy extends GoogleP
     constructor(
         _paymentIntegrationService: PaymentIntegrationService,
         _googlePayPaymentProcessor: GooglePayPaymentProcessor,
-        private _payPalCommerceSdk: PayPalSdkHelper,
+        private _payPalSdkHelper: PayPalSdkHelper,
         private _requestSender: RequestSender,
     ) {
         super(_paymentIntegrationService, _googlePayPaymentProcessor);
@@ -84,7 +88,7 @@ export default class GooglePayBigCommercePaymentsPaymentStrategy extends GoogleP
     private async confirmOrder(orderId: string, confirmOrderData: ConfirmOrderData) {
         const state = this._paymentIntegrationService.getState();
         const paymentMethod =
-            state.getPaymentMethodOrThrow<GooglePayPayPalCommerceInitializationData>(
+            state.getPaymentMethodOrThrow<GooglePayBigCommercePaymentsInitializationData>(
                 this._getMethodId(),
             );
 
@@ -94,8 +98,8 @@ export default class GooglePayBigCommercePaymentsPaymentStrategy extends GoogleP
 
         const currencyCode = state.getCartOrThrow().currency.code;
 
-        const payPalSDK = await this._payPalCommerceSdk.getPayPalGooglePaySdk(
-            paymentMethod,
+        const payPalSDK = await this._payPalSdkHelper.getPayPalGooglePaySdk(
+            paymentMethod as PaymentMethod<BigCommercePaymentsInitializationData>,
             currencyCode,
             true,
         );

@@ -23,7 +23,7 @@ import GooglePayBigCommercePaymentsGateway from './google-pay-bigcommerce-paymen
 import GooglePayBigCommercePaymentsPaymentStrategy from './google-pay-bigcommerce-payments-payment-strategy';
 import { ConfirmOrderStatus } from './types';
 
-describe('PayPalCommerceGooglePayPaymentStrategy', () => {
+describe('BigCommercePaymentsGooglePayPaymentStrategy', () => {
     const BUTTON_ID = 'my_awesome_google_pay_button';
 
     let paymentIntegrationService: PaymentIntegrationService;

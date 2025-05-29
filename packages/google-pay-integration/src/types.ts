@@ -355,7 +355,28 @@ export interface GooglePayPayPalCommerceInitializationData extends GooglePayBase
     clientToken?: string;
     enabledAlternativePaymentMethods: FundingType;
     isDeveloperModeApplicable?: boolean;
-    intent?: PayPalCommerceIntent | BigCommercePaymentsIntent;
+    intent?: PayPalCommerceIntent;
+    isHostedCheckoutEnabled?: boolean;
+    isPayPalCreditAvailable?: boolean;
+    isVenmoEnabled?: boolean;
+    isGooglePayEnabled?: boolean;
+    orderId?: string;
+    shouldRenderFields?: boolean;
+    paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
+}
+
+export interface GooglePayBigCommercePaymentsInitializationData
+    extends GooglePayBaseInitializationData {
+    merchantId?: string;
+    clientId: string;
+    attributionId?: string;
+    availableAlternativePaymentMethods: FundingType;
+    buttonStyle?: PayPalButtonStyleOptions;
+    buyerCountry?: string;
+    clientToken?: string;
+    enabledAlternativePaymentMethods: FundingType;
+    isDeveloperModeApplicable?: boolean;
+    intent?: BigCommercePaymentsIntent;
     isHostedCheckoutEnabled?: boolean;
     isPayPalCreditAvailable?: boolean;
     isVenmoEnabled?: boolean;
@@ -401,7 +422,8 @@ export type GooglePayInitializationData =
     | GooglePayAuthorizeNetInitializationData
     | GooglePayStripeInitializationData
     | GooglePayCheckoutComInitializationData
-    | GooglePayPayPalCommerceInitializationData;
+    | GooglePayPayPalCommerceInitializationData
+    | GooglePayBigCommercePaymentsInitializationData;
 
 export interface GooglePaySetExternalCheckoutData {
     nonce: string;

@@ -9,10 +9,10 @@ import isGooglePayPaypalCommercePaymentMethod from '../guards/is-google-pay-payp
 import getCardDataResponse from '../mocks/google-pay-card-data-response.mock';
 import { getPayPalCommerce } from '../mocks/google-pay-payment-method.mock';
 
-import GooglePayPayPalCommerceGateway from './google-pay-bigcommerce-payments-gateway';
+import GooglePayBigCommercePaymentsGateway from './google-pay-bigcommerce-payments-gateway';
 
-describe('GooglePayPayPalCommerceGateway', () => {
-    let gateway: GooglePayPayPalCommerceGateway;
+describe('GooglePayBigCommercePaymentsGateway', () => {
+    let gateway: GooglePayBigCommercePaymentsGateway;
     let paymentIntegrationService: PaymentIntegrationService;
     let scriptLoader: PayPalSdkHelper;
     const googlePayConfigMock = {
@@ -49,7 +49,7 @@ describe('GooglePayPayPalCommerceGateway', () => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
         scriptLoader = new PayPalSdkHelper(getScriptLoader());
 
-        gateway = new GooglePayPayPalCommerceGateway(paymentIntegrationService, scriptLoader);
+        gateway = new GooglePayBigCommercePaymentsGateway(paymentIntegrationService, scriptLoader);
 
         jest.spyOn(scriptLoader, 'getPayPalGooglePaySdk').mockResolvedValue({
             Googlepay: jest.fn().mockReturnValue({
