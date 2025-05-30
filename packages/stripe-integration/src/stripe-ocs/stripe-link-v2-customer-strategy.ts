@@ -64,7 +64,7 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             }
         });
 
-        const stripePublishableKey = 'key';
+        const stripePublishableKey = 'py_test';
         // TODO uncomment below lines on finalizing
 
         // const state = this.paymentIntegrationService.getState();
