@@ -433,6 +433,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
             expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(methodId, {
                 cartId: cart.id,
+                fastlaneToken: 'paypal_fastlane_instrument_id_nonce',
             });
 
             const paypalFastlaneComponent = await paypalFastlane.FastlaneCardComponent({});
@@ -474,6 +475,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
             expect(paypalCommerceRequestSender.createOrder).toHaveBeenCalledWith(methodId, {
                 cartId: cart.id,
+                fastlaneToken: mockedInstrumentId,
             });
 
             expect(paymentIntegrationService.submitOrder).toHaveBeenCalledWith({}, undefined);
