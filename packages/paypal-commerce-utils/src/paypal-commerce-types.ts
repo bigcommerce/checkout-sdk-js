@@ -39,6 +39,7 @@ export interface PayPalCommerceInitializationData {
     shouldRunAcceleratedCheckout?: boolean; // TODO: remove when PPCP Fastlane A/B test will be finished
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
+    threeDSVerificationMethod?: string;
 }
 
 /**
@@ -75,7 +76,7 @@ export interface PayPalSdkConfig {
     attributes: {
         'data-client-metadata-id'?: string;
         'data-partner-attribution-id'?: string;
-        'data-user-id-token'?: string;
+        'data-sdk-client-token'?: string;
         'data-namespace'?: string;
         'data-client-token'?: string;
     };
@@ -87,7 +88,7 @@ export enum PayPalCommerceIntent {
 }
 
 export type PayPalSdkComponents = Array<
-    'fastlane' | 'messages' | 'buttons' | 'payment-fields' | 'googlepay'
+    'fastlane' | 'messages' | 'buttons' | 'payment-fields' | 'three-domain-secure' | 'hosted-fields' | 'googlepay'
 >;
 
 /**
