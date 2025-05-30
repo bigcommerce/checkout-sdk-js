@@ -15,12 +15,14 @@ import { ExtensionEvent } from './extension-events';
 import { ExtensionMessenger } from './extension-messenger';
 import { ExtensionQueryMap, ExtensionQueryType } from './extension-queries';
 import { getExtensionEvent, getExtensions } from './extension.mock';
+import { WorkerExtensionMessenger } from './worker-extension-messenger';
 
 describe('ExtensionMessenger', () => {
     let extensionCommandHandler: jest.Mock;
     let extensionQueryHandler: jest.Mock;
     let extension: Extension;
     let extensionMessenger: ExtensionMessenger;
+    let workerExtensionMessenger: WorkerExtensionMessenger;
     let event: {
         origin: string;
         data: ExtensionEvent;
@@ -33,6 +35,7 @@ describe('ExtensionMessenger', () => {
         event = getExtensionEvent();
         extensionCommandHandler = jest.fn();
         extensionQueryHandler = jest.fn();
+        workerExtensionMessenger = new WorkerExtensionMessenger();
     });
 
     describe('#listenForCommand', () => {
@@ -45,7 +48,13 @@ describe('ExtensionMessenger', () => {
                 [extension.id]: listener,
             };
 
-            extensionMessenger = new ExtensionMessenger(store, listeners, {}, {});
+            extensionMessenger = new ExtensionMessenger(
+                store,
+                workerExtensionMessenger,
+                listeners,
+                {},
+                {},
+            );
         });
 
         it('should throw if unable to find the extension', () => {
@@ -179,7 +188,13 @@ describe('ExtensionMessenger', () => {
                 [extension.id]: listener,
             };
 
-            extensionMessenger = new ExtensionMessenger(store, {}, listeners, {});
+            extensionMessenger = new ExtensionMessenger(
+                store,
+                workerExtensionMessenger,
+                {},
+                listeners,
+                {},
+            );
         });
 
         it('should throw if unable to find the extension', () => {
@@ -307,7 +322,13 @@ describe('ExtensionMessenger', () => {
         it('should log out the error if an extension has not yet been rendered', () => {
             document.querySelector = jest.fn().mockReturnValue(undefined);
 
-            extensionMessenger = new ExtensionMessenger(store, {}, {}, {});
+            extensionMessenger = new ExtensionMessenger(
+                store,
+                workerExtensionMessenger,
+                {},
+                {},
+                {},
+            );
 
             jest.spyOn(extensionMessenger, 'clearCacheById');
             jest.spyOn(console, 'log');
@@ -330,7 +351,13 @@ describe('ExtensionMessenger', () => {
                 [extension.id]: poster,
             };
 
-            extensionMessenger = new ExtensionMessenger(store, {}, {}, posters);
+            extensionMessenger = new ExtensionMessenger(
+                store,
+                workerExtensionMessenger,
+                {},
+                {},
+                posters,
+            );
 
             document.querySelector = jest.fn().mockReturnValue(container);
 

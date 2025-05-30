@@ -17,7 +17,13 @@ import { ExtensionActionCreator } from './extension-action-creator';
 import { ExtensionActionType } from './extension-actions';
 import { ExtensionInternalCommandType } from './extension-internal-commands';
 import { ExtensionRequestSender } from './extension-request-sender';
-import { getExtensionCommand, getExtensions } from './extension.mock';
+import {
+    getExtensionCommand,
+    getExtensions,
+    getWorkerExtension,
+    MockWorker,
+} from './extension.mock';
+import { WorkerExtensionMessenger } from './worker-extension-messenger';
 
 describe('ExtensionActionCreator', () => {
     let errorResponse: Response<ErrorResponseBody>;
@@ -26,6 +32,7 @@ describe('ExtensionActionCreator', () => {
     let extensionsResponse: Response<Extension[]>;
     let store: CheckoutStore;
     let storeConfig: StoreConfig;
+    let workerExtensionMessenger: WorkerExtensionMessenger;
 
     beforeEach(() => {
         errorResponse = getErrorResponse();
@@ -39,6 +46,7 @@ describe('ExtensionActionCreator', () => {
 
         extensionRequestSender = new ExtensionRequestSender(createRequestSender());
         extensionActionCreator = new ExtensionActionCreator(extensionRequestSender);
+        workerExtensionMessenger = new WorkerExtensionMessenger();
 
         jest.spyOn(store.getState().config, 'getStoreConfigOrThrow').mockReturnValue(storeConfig);
         jest.spyOn(extensionRequestSender, 'loadExtensions').mockReturnValue(
@@ -103,6 +111,7 @@ describe('ExtensionActionCreator', () => {
                 extensionActionCreator.renderExtension(
                     'foo',
                     ExtensionRegion.ShippingShippingAddressFormAfter,
+                    workerExtensionMessenger,
                 )(store),
             )
                 .pipe(catchError(errorHandler))
@@ -137,6 +146,7 @@ describe('ExtensionActionCreator', () => {
                 extensionActionCreator.renderExtension(
                     'foo',
                     ExtensionRegion.ShippingShippingAddressFormBefore,
+                    workerExtensionMessenger,
                 )(store),
             )
                 .pipe(toArray())
@@ -156,6 +166,7 @@ describe('ExtensionActionCreator', () => {
                 extensionActionCreator.renderExtension(
                     'foo',
                     ExtensionRegion.ShippingShippingAddressFormAfter,
+                    workerExtensionMessenger,
                 )(store),
             )
                 .pipe(catchError(errorHandler), toArray())
@@ -181,12 +192,85 @@ describe('ExtensionActionCreator', () => {
                 extensionActionCreator.renderExtension(
                     'foo',
                     ExtensionRegion.ShippingShippingAddressFormBefore,
+                    workerExtensionMessenger,
                 )(store),
             )
                 .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([]);
+        });
+    });
+
+    describe('#renderExtension() with worker extensions', () => {
+        it('emits error actions if unable to render a worker extension', async () => {
+            const workerExtension = getWorkerExtension();
+
+            jest.spyOn(store.getState().extensions, 'getExtensionByRegion').mockReturnValue(
+                workerExtension,
+            );
+
+            const errorHandler = jest.fn((action) => of(action));
+            const actions = await from(
+                extensionActionCreator.renderExtension(
+                    '',
+                    ExtensionRegion.GlobalWebWorker,
+                    workerExtensionMessenger,
+                )(store),
+            )
+                .pipe(catchError(errorHandler), toArray())
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: ExtensionActionType.RenderExtensionRequested },
+                {
+                    type: ExtensionActionType.RenderExtensionFailed,
+                    payload: new Error(
+                        "Unable to load the extension's web worker: your browser does not support Web Workers.",
+                    ),
+                    error: true,
+                },
+            ]);
+        });
+
+        it('emits actions if able to render a worker extension', async () => {
+            const workerExtension = getWorkerExtension();
+
+            jest.spyOn(store.getState().extensions, 'getExtensionByRegion').mockReturnValue(
+                workerExtension,
+            );
+
+            const mockCreateObjectURL = jest.fn().mockReturnValue(`blob:${workerExtension.url}`);
+
+            URL.createObjectURL = mockCreateObjectURL;
+
+            const mockBlobConstructor = jest.fn((content, options) => ({
+                content,
+                options,
+                size: content.join('').length,
+                type: options.type,
+            }));
+
+            window.Blob = mockBlobConstructor as any;
+
+            const mockWorkerConstructor = jest.fn(() => new MockWorker(workerExtension.url));
+
+            window.Worker = mockWorkerConstructor as any;
+
+            const actions = await from(
+                extensionActionCreator.renderExtension(
+                    '',
+                    ExtensionRegion.GlobalWebWorker,
+                    workerExtensionMessenger,
+                )(store),
+            )
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: ExtensionActionType.RenderExtensionRequested },
+                { type: ExtensionActionType.RenderExtensionSucceeded },
+            ]);
         });
     });
 });
