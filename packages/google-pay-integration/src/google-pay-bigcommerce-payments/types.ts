@@ -1,3 +1,5 @@
+import { GooglePayConfig } from '../types';
+
 export type FundingType = string[];
 export type EnableFundingType = FundingType | string;
 
@@ -65,38 +67,6 @@ export type ComponentsScriptType = Array<
     | 'googlepay'
     | 'card-fields'
 >;
-
-export interface GooglePayConfig {
-    allowedPaymentMethods: AllowedPaymentMethods[];
-    apiVersion: number;
-    apiVersionMinor: number;
-    countryCode: string;
-    isEligible: boolean;
-    merchantInfo: {
-        merchantId: string;
-        merchantOrigin: string;
-    };
-}
-
-export interface AllowedPaymentMethods {
-    type: string;
-    parameters: {
-        allowedAuthMethods: string[];
-        allowedCardNetworks: string[];
-        billingAddressRequired: boolean;
-        assuranceDetailsRequired: boolean;
-        billingAddressParameters: {
-            format: string;
-        };
-    };
-    tokenizationSpecification: {
-        type: string;
-        parameters: {
-            gateway: string;
-            gatewayMerchantId: string;
-        };
-    };
-}
 
 export interface PayPalGoogleSdk {
     version: string;

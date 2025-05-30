@@ -408,6 +408,38 @@ export interface GooglePayAdyenV2InitializationData extends GooglePayBaseInitial
     paymentMethodsResponse: object;
 }
 
+export interface GooglePayConfig {
+    allowedPaymentMethods: AllowedPaymentMethods[];
+    apiVersion: number;
+    apiVersionMinor: number;
+    countryCode: string;
+    isEligible: boolean;
+    merchantInfo: {
+        merchantId: string;
+        merchantOrigin: string;
+    };
+}
+
+export interface AllowedPaymentMethods {
+    type: string;
+    parameters: {
+        allowedAuthMethods: string[];
+        allowedCardNetworks: string[];
+        billingAddressRequired: boolean;
+        assuranceDetailsRequired: boolean;
+        billingAddressParameters: {
+            format: string;
+        };
+    };
+    tokenizationSpecification: {
+        type: string;
+        parameters: {
+            gateway: string;
+            gatewayMerchantId: string;
+        };
+    };
+}
+
 export interface GooglePayAdyenV3InitializationData extends GooglePayBaseInitializationData {
     clientKey: string;
     environment?: string;
