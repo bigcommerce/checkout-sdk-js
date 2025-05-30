@@ -34,7 +34,7 @@ import { LiabilityShiftEnum } from '../paypal-commerce-types';
 
 export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
     private paypalComponentMethods?: PayPalFastlaneCardComponentMethods;
-    private paypalFastlaneSdk?: any;
+    private paypalFastlaneSdk?: any; // TODO: FIX
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -390,7 +390,6 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             currency: cart.currency.code,
             nonce,
             threeDSRequested: true, // TODO: Sets SCA_ALWAYS in the eligibility API request, otherwise defaults to SCA_WHEN_REQUIRED
-            // Should be optional. Asked PayPal when its ready on their side
             transactionContext: {
                 experience_context: {
                     locale: 'en-US',
