@@ -3,7 +3,7 @@ export interface Extension {
     name: string;
     region: ExtensionRegion;
     url: string;
-    type?: ExtensionType;
+    type: ExtensionType;
 }
 
 export interface ExtensionIframeConfig {

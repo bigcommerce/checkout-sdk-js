@@ -12,12 +12,14 @@ export function getExtensions(): Extension[] {
             name: 'Foo',
             region: ExtensionRegion.ShippingShippingAddressFormBefore,
             url: 'https://widget.foo.com/',
+            type: ExtensionType.Iframe,
         },
         {
             id: '456',
             name: 'Bar',
             region: ExtensionRegion.ShippingShippingAddressFormAfter,
             url: 'https://widget.bar.com/',
+            type: ExtensionType.Iframe,
         },
     ];
 }
