@@ -24,7 +24,7 @@ export default class GooglePayBigCommercePaymentsGateway extends GooglePayGatewa
     private service: PaymentIntegrationService;
 
     constructor(service: PaymentIntegrationService, private payPalSdkHelper: PayPalSdkHelper) {
-        super('paypalsb', service);
+        super('googlepay_bigcommerce_payments', service);
 
         this.service = service;
     }
