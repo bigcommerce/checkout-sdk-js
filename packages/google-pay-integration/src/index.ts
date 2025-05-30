@@ -12,6 +12,7 @@ export { default as createGooglePayStripePaymentStrategy } from './google-pay-st
 export { default as createGooglePayWorldpayAccessPaymentStrategy } from './factories/payment/create-google-pay-worldpayaccess-payment-strategy';
 export { default as createGooglePayBraintreePaymentStrategy } from './factories/payment/create-google-pay-braintree-payment-strategy';
 export { default as createGooglePayPPCPPaymentStrategy } from './google-pay-paypal-commerce/create-google-pay-paypal-commerce-payment-strategy';
+export { default as createGooglePayBigCommercePaymentsPaymentStrategy } from './google-pay-bigcommerce-payments/create-google-pay-bigcommerce-payments-payment-strategy';
 export { default as createGooglePayTdOnlineMartPaymentStrategy } from './factories/payment/create-google-pay-tdonlinemart-payment-strategy';
 
 export { default as createGooglePayAdyenV2CustomerStrategy } from './factories/customer/create-google-pay-adyenv2-customer-strategy';
@@ -26,10 +27,12 @@ export { default as createGooglePayStripeUpeCustomerStrategy } from './google-pa
 export { default as createGooglePayWorldpayAccessCustomerStrategy } from './factories/customer/create-google-pay-worldpayaccess-customer-strategy';
 export { default as createGooglePayBraintreeCustomerStrategy } from './factories/customer/create-google-pay-braintree-customer-strategy';
 export { default as createGooglePayPayPalCommerceCustomerStrategy } from './google-pay-paypal-commerce/create-google-pay-paypal-commerce-customer-strategy';
+export { default as createGooglePayBigCommercePaymentsCustomerStrategy } from './google-pay-bigcommerce-payments/create-google-pay-bigcommerce-payments-customer-strategy';
 export { default as createGooglePayTdOnlineMartCustomerStrategy } from './factories/customer/create-google-pay-tdonlinemart-customer-strategy';
 
 export { default as createGooglePayBraintreeButtonStrategy } from './factories/button/create-google-pay-braintree-button-strategy';
 export { default as createGooglePayPayPalCommerceButtonStrategy } from './google-pay-paypal-commerce/create-google-pay-paypal-commerce-button-strategy';
+export { default as createGooglePayBigCommercePaymentsButtonStrategy } from './google-pay-bigcommerce-payments/create-google-pay-bigcommerce-payments-button-strategy';
 export { default as createGooglePayAdyenV2ButtonStrategy } from './factories/button/create-google-pay-adyenv2-button-strategy';
 export { default as createGooglePayAdyenV3ButtonStrategy } from './factories/button/create-google-pay-adyenv3-button-strategy';
 

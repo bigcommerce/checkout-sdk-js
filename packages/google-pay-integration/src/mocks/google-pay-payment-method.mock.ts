@@ -46,6 +46,24 @@ export function getPayPalCommerce(): PaymentMethod<GooglePayInitializationData> 
     };
 }
 
+export function getBigCommercePayments(): PaymentMethod<GooglePayInitializationData> {
+    const generic = getGeneric();
+
+    return {
+        ...generic,
+        initializationData: {
+            ...generic.initializationData!,
+            merchantId: 'merchantId',
+            clientId: 'clientId',
+            attributionId: 'bc',
+            isVenmoEnabled: true,
+            isGooglePayEnabled: true,
+            isPayPalCreditAvailable: true,
+        },
+        clientToken: 'clientToken',
+    };
+}
+
 export function getStripe(): PaymentMethod<GooglePayInitializationData> {
     const generic = getGeneric();
 

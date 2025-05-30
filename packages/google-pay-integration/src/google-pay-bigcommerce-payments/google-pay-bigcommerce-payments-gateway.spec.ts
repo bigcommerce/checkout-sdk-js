@@ -1,27 +1,27 @@
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
+import { PayPalSdkHelper } from '@bigcommerce/checkout-sdk/bigcommerce-payments-utils';
 import { PaymentIntegrationService } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
-import { PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import GooglePayGateway from '../gateways/google-pay-gateway';
 import isGooglePayPaypalCommercePaymentMethod from '../guards/is-google-pay-paypal-commerce-payment-method';
 import getCardDataResponse from '../mocks/google-pay-card-data-response.mock';
 import { googlePayConfigMock } from '../mocks/google-pay-config.mock';
-import { getPayPalCommerce } from '../mocks/google-pay-payment-method.mock';
+import { getBigCommercePayments } from '../mocks/google-pay-payment-method.mock';
 
-import GooglePayPayPalCommerceGateway from './google-pay-paypal-commerce-gateway';
+import GooglePayBigCommercePaymentsGateway from './google-pay-bigcommerce-payments-gateway';
 
-describe('GooglePayPayPalCommerceGateway', () => {
-    let gateway: GooglePayPayPalCommerceGateway;
+describe('GooglePayBigCommercePaymentsGateway', () => {
+    let gateway: GooglePayBigCommercePaymentsGateway;
     let paymentIntegrationService: PaymentIntegrationService;
-    let scriptLoader: PayPalCommerceSdk;
+    let scriptLoader: PayPalSdkHelper;
 
     beforeEach(() => {
         paymentIntegrationService = new PaymentIntegrationServiceMock();
-        scriptLoader = new PayPalCommerceSdk(getScriptLoader());
+        scriptLoader = new PayPalSdkHelper(getScriptLoader());
 
-        gateway = new GooglePayPayPalCommerceGateway(paymentIntegrationService, scriptLoader);
+        gateway = new GooglePayBigCommercePaymentsGateway(paymentIntegrationService, scriptLoader);
 
         jest.spyOn(scriptLoader, 'getPayPalGooglePaySdk').mockResolvedValue({
             Googlepay: jest.fn().mockReturnValue({
@@ -62,7 +62,7 @@ describe('GooglePayPayPalCommerceGateway', () => {
                 gatewayMerchantId: 'ID',
             };
 
-            const googlePayPaymentMethod = getPayPalCommerce();
+            const googlePayPaymentMethod = getBigCommercePayments();
 
             isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
 
@@ -77,7 +77,7 @@ describe('GooglePayPayPalCommerceGateway', () => {
                 gatewayMerchantId: 'ID',
             };
 
-            const googlePayPaymentMethod = getPayPalCommerce();
+            const googlePayPaymentMethod = getBigCommercePayments();
 
             isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
 
@@ -92,7 +92,7 @@ describe('GooglePayPayPalCommerceGateway', () => {
                 gatewayMerchantId: 'ID',
             };
 
-            const googlePayPaymentMethod = getPayPalCommerce();
+            const googlePayPaymentMethod = getBigCommercePayments();
 
             isGooglePayPaypalCommercePaymentMethod(googlePayPaymentMethod);
 
