@@ -39,6 +39,7 @@ export interface PayPalCommerceInitializationData {
     shouldRunAcceleratedCheckout?: boolean; // TODO: remove when PPCP Fastlane A/B test will be finished
     paymentButtonStyles?: Record<string, PayPalButtonStyleOptions>;
     paypalBNPLConfiguration?: PayPalBNPLConfigurationItem[];
+    threeDSVerificationMethod?: string;
 }
 
 /**
@@ -97,6 +98,29 @@ export type PayPalSdkComponents = Array<
  */
 export interface PayPalFastlaneSdk {
     Fastlane(options?: PayPalFastlaneOptions): Promise<PayPalFastlane>;
+    ThreeDomainSecureClient: {
+        isEligible(params:threeDSecureParameters): boolean;
+        show(): {
+            liabilityShift: string;
+            authenticationState: string;
+            nonce: string;
+        },
+    },
+}
+
+export interface threeDSecureParameters {
+    amount: string;
+    currency: string;
+    nonce: string;
+    threeDSRequested: string;
+    transactionContext: {
+        experience_context: {
+            brand_name?: string;
+            locale: string;
+            return_url: string;
+            cancel_url: string;
+        },
+    },
 }
 
 export interface PayPalMessagesSdk {

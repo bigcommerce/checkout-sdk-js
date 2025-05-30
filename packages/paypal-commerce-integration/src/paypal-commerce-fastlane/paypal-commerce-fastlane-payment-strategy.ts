@@ -25,6 +25,7 @@ import {
     PayPalFastlaneCardComponentMethods,
     PayPalFastlaneCardComponentOptions,
     PayPalFastlanePaymentFormattedPayload,
+    PayPalFastlaneSdk,
 } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 
 import PayPalCommerceRequestSender from '../paypal-commerce-request-sender';
@@ -34,7 +35,8 @@ import { LiabilityShiftEnum } from '../paypal-commerce-types';
 
 export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStrategy {
     private paypalComponentMethods?: PayPalFastlaneCardComponentMethods;
-    private paypalFastlaneSdk?: any; // TODO: FIX
+    private paypalFastlaneSdk?: PayPalFastlaneSdk;
+    private threeDSVerificationMethod?: string;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
@@ -89,6 +91,8 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
             state.getPaymentMethodOrThrow<PayPalCommerceInitializationData>(methodId);
         const { isDeveloperModeApplicable, isFastlaneStylingEnabled } =
             paymentMethod.initializationData || {};
+
+        this.threeDSVerificationMethod = paymentMethod.initializationData?.threeDSVerificationMethod;
 
         this.paypalFastlaneSdk = await this.paypalCommerceSdk.getPayPalFastlaneSdk(
             paymentMethod,
@@ -382,14 +386,14 @@ export default class PaypalCommerceFastlanePaymentStrategy implements PaymentStr
         const threeDomainSecureComponent = this.paypalFastlaneSdk?.ThreeDomainSecureClient;
 
         if (!threeDomainSecureComponent) {
-            throw new Error(); // TODO: add Payment client error
+            throw new PaymentMethodClientUnavailableError();
         }
 
         const threeDomainSecureParameters = {
             amount: order.orderAmount.toString(),
             currency: cart.currency.code,
             nonce,
-            threeDSRequested: true, // TODO: Sets SCA_ALWAYS in the eligibility API request, otherwise defaults to SCA_WHEN_REQUIRED
+            threeDSRequested: this.threeDSVerificationMethod || 'SCA_WHEN_REQUIRED',
             transactionContext: {
                 experience_context: {
                     locale: 'en-US',
