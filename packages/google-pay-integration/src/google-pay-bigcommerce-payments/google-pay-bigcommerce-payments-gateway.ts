@@ -13,12 +13,11 @@ import GooglePayGateway from '../gateways/google-pay-gateway';
 import assertsIsGooglePayPayPalCommercePaymentMethod from '../guards/is-google-pay-paypal-commerce-payment-method';
 import {
     GooglePayCardDataResponse,
+    GooglePayConfig,
     GooglePayPayPalCommerceGatewayParameters,
     GooglePayPayPalCommerceInitializationData,
     GooglePaySetExternalCheckoutData,
 } from '../types';
-
-import { GooglePayConfig } from './types';
 
 export default class GooglePayBigCommercePaymentsGateway extends GooglePayGateway {
     private googlepayConfig?: GooglePayConfig;

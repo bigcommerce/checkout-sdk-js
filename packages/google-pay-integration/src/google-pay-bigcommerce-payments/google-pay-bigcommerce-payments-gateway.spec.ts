@@ -7,7 +7,7 @@ import { PaymentIntegrationServiceMock } from '@bigcommerce/checkout-sdk/payment
 import GooglePayGateway from '../gateways/google-pay-gateway';
 import isGooglePayPaypalCommercePaymentMethod from '../guards/is-google-pay-paypal-commerce-payment-method';
 import getCardDataResponse from '../mocks/google-pay-card-data-response.mock';
-import googlePayConfigMock from '../mocks/google-pay-config.mock';
+import { googlePayConfigMock } from '../mocks/google-pay-config.mock';
 import { getBigCommercePayments } from '../mocks/google-pay-payment-method.mock';
 
 import GooglePayBigCommercePaymentsGateway from './google-pay-bigcommerce-payments-gateway';
