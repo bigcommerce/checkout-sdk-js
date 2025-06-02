@@ -9,8 +9,8 @@
         "amazon-pay-utils": "packages/amazon-pay-utils",
         "analytics": "packages/analytics",
         "apple-pay-integration": "packages/apple-pay-integration",
-        "bigcommerce-payments-utils": "packages/bigcommerce-payments-utils",
         "bigcommerce-payments-integration": "packages/bigcommerce-payments-integration",
+        "bigcommerce-payments-utils": "packages/bigcommerce-payments-utils",
         "bluesnap-direct-integration": "packages/bluesnap-direct-integration",
         "bolt-integration": "packages/bolt-integration",
         "braintree-integration": "packages/braintree-integration",
@@ -47,6 +47,7 @@
         "td-bank-integration": "packages/td-bank-integration",
         "ui": "packages/ui",
         "utility": "packages/utility",
+        "wallet-button-integration": "packages/wallet-button-integration",
         "workspace-tools": "packages/workspace-tools",
         "worldpayaccess-integration": "packages/worldpayaccess-integration",
         "zip-integration": "packages/zip-integration"
