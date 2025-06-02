@@ -7,10 +7,11 @@ import { parseUrl } from '../common/url';
 
 import { createExtensionWebWorker } from './create-extension-web-worker';
 import { ExtensionNotFoundError } from './errors';
-import { ExtensionRegion } from './extension';
+import { ExtensionRegion, ExtensionType } from './extension';
 import { ExtensionAction, ExtensionActionType } from './extension-actions';
 import { ExtensionIframe } from './extension-iframe';
 import { ExtensionRequestSender } from './extension-request-sender';
+import { WorkerExtensionMessenger } from './worker-extension-messenger';
 
 export class ExtensionActionCreator {
     constructor(private _requestSender: ExtensionRequestSender) {}
@@ -43,6 +44,7 @@ export class ExtensionActionCreator {
     renderExtension(
         container: string,
         region: ExtensionRegion,
+        workerExtensionMessenger: WorkerExtensionMessenger,
     ): ThunkAction<ExtensionAction, InternalCheckoutSelectors> {
         return (store) =>
             Observable.create(async (observer: Observer<ExtensionAction>) => {
@@ -68,8 +70,10 @@ export class ExtensionActionCreator {
 
                     observer.next(createAction(ExtensionActionType.RenderExtensionRequested));
 
-                    if (extension.type === 'worker') {
+                    if (extension.type === ExtensionType.Worker) {
                         const worker = createExtensionWebWorker(extension.url);
+
+                        workerExtensionMessenger.add(extension.id, worker);
 
                         // TODO: CHECKOUT-9248 Add the web worker reference to the checkout SDK internal state for consistent access and management.
                         // eslint-disable-next-line no-console

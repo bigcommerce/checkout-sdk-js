@@ -1,34 +1,10 @@
 import { createExtensionWebWorker } from './create-extension-web-worker';
+import { MockWorker } from './extension.mock';
 
 // Store original window properties
 const originalWorker = window.Worker;
 const originalCreateObjectURL = URL.createObjectURL;
 const originalBlob = window.Blob;
-
-// Mock Worker class
-class MockWorker {
-    url: string;
-    onmessage: ((this: Worker, ev: MessageEvent) => any) | null = null;
-    onerror: ((this: Worker, ev: ErrorEvent) => any) | null = null;
-    constructor(url: string) {
-        this.url = url;
-    }
-    postMessage(): void {
-        /* mock */
-    }
-    terminate(): void {
-        /* mock */
-    }
-    addEventListener(): void {
-        /* mock */
-    }
-    removeEventListener(): void {
-        /* mock */
-    }
-    dispatchEvent(): boolean {
-        return true; /* mock */
-    }
-}
 
 describe('createExtensionWebWorker', () => {
     let mockCreateObjectURL: jest.Mock;

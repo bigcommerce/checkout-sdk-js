@@ -25,6 +25,7 @@ import {
     ExtensionActionCreator,
     ExtensionMessenger,
     ExtensionRequestSender,
+    WorkerExtensionMessenger,
 } from '../extension';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import * as defaultPaymentStrategyFactories from '../generated/payment-strategies';
@@ -144,7 +145,8 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const extensionActionCreator = new ExtensionActionCreator(
         new ExtensionRequestSender(requestSender),
     );
-    const extensionMessenger = new ExtensionMessenger(store);
+    const workerExtensionMessenger = new WorkerExtensionMessenger();
+    const extensionMessenger = new ExtensionMessenger(store, workerExtensionMessenger);
     const storeProjection = createDataStoreProjection(store, createCheckoutSelectorsFactory());
 
     return new CheckoutService(
@@ -202,6 +204,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         subscriptionsActionCreator,
         formFieldsActionCreator,
         extensionActionCreator,
+        workerExtensionMessenger,
     );
 }
 
