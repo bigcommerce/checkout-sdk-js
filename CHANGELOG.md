@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.742.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.741.0...v1.742.0) (2025-06-02)
+
+
+### Features
+
+* **payment:** added canMakePayments method as additional verification of payment capability ([72f03c1](https://github.com/bigcommerce/checkout-sdk-js/commit/72f03c1efa3cf7a2dea53f78da72c483bb777b4d))
+* **payment:** console.error instead of throw error ([643394e](https://github.com/bigcommerce/checkout-sdk-js/commit/643394ef7d13a9404453333b918b3f47a8f6ab74))
+
 ## [1.741.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.740.0...v1.741.0) (2025-06-02)
 
 
