@@ -157,6 +157,18 @@ describe('ApplePayCustomerStrategy', () => {
             await expect(strategy.initialize({})).rejects.toThrow(MissingDataError);
         });
 
+        it('throws error if canMakePayments returns false', async () => {
+            jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+            MockApplePaySession.canMakePayments = jest.fn().mockReturnValue(false);
+
+            await strategy.initialize(getApplePayCustomerInitializationOptions());
+
+            expect(console.error).toHaveBeenCalled();
+
+            MockApplePaySession.canMakePayments = jest.fn().mockReturnValue(true);
+        });
+
         it('sets up request for digital items', async () => {
             const cart = getCart();
 
