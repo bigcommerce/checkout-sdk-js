@@ -16,6 +16,7 @@
 - [ExtensionMessageType](enums/ExtensionMessageType.md)
 - [ExtensionQueryType](enums/ExtensionQueryType.md)
 - [ExtensionRegion](enums/ExtensionRegion.md)
+- [ExtensionType](enums/ExtensionType.md)
 - [GooglePayKey](enums/GooglePayKey.md)
 - [HostedFieldEventType](enums/HostedFieldEventType.md)
 - [HostedFieldType](enums/HostedFieldType.md)

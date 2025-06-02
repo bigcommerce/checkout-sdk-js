@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.741.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.740.0...v1.741.0) (2025-06-02)
+
+
+### Features
+
+* **checkout:** Add worker extension messenger and worker-event-poster ([#2876](https://github.com/bigcommerce/checkout-sdk-js/issues/2876)) ([afcaeaa](https://github.com/bigcommerce/checkout-sdk-js/commit/afcaeaa9a5cbc2eeea3e9364e98408038647ee04))
+
 ## [1.740.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.739.0...v1.740.0) (2025-05-29)
 
 

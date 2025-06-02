@@ -2939,6 +2939,7 @@ declare class CheckoutService {
     private _subscriptionsActionCreator;
     private _formFieldsActionCreator;
     private _extensionActionCreator;
+    private _workerExtensionMessenger;
     private _errorTransformer;
     /**
      * Returns a snapshot of the current checkout state.
@@ -5597,7 +5598,7 @@ declare interface Extension {
     name: string;
     region: ExtensionRegion;
     url: string;
-    type?: 'iframe' | 'worker';
+    type: ExtensionType;
 }
 
 declare interface ExtensionCommandMap {
@@ -5648,6 +5649,11 @@ declare interface ExtensionSelector {
     getExtensionByRegion(region: ExtensionRegion): Extension | undefined;
     getLoadError(): Error | undefined;
     isLoading(): boolean;
+}
+
+declare const enum ExtensionType {
+    Iframe = "iframe",
+    Worker = "worker"
 }
 
 declare interface Fee {

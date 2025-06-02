@@ -34,7 +34,7 @@ ___
 
 ### type
 
-• `Optional` **type**: ``"iframe"`` \| ``"worker"``
+• **type**: [`ExtensionType`](../enums/ExtensionType.md)
 
 ___
 
