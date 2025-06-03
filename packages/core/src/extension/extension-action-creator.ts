@@ -74,10 +74,6 @@ export class ExtensionActionCreator {
                         const worker = createExtensionWebWorker(extension.url);
 
                         workerExtensionMessenger.add(extension.id, worker);
-
-                        // TODO: CHECKOUT-9248 Add the web worker reference to the checkout SDK internal state for consistent access and management.
-                        // eslint-disable-next-line no-console
-                        console.log('Worker created:', worker);
                     } else {
                         const iframe = new ExtensionIframe(container, extension, {
                             cartId,
