@@ -1,5 +1,7 @@
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { StripeLinkV2Event, StripeLinkV2ShippingRate } from '../stripe-ocs/stripe-ocs';
+
 /**
  * Initialization options.
  */
@@ -154,10 +156,7 @@ export interface StripeElement {
      * in addition to some Element-specific keys.
      * https://stripe.com/docs/js/element/events/on_change?type=paymentElement
      */
-    on(
-        event: 'change' | 'ready' | 'shippingaddresschange' | 'shippingratechange' | 'confirm',
-        handler: (event: StripeEventType) => void,
-    ): void;
+    on(event: StripeElementEvent, handler: (event: StripeEventType) => void): void;
 
     /**
      * Updates the options the Payment Element was initialized with. Updates are merged into the existing configuration.
@@ -620,41 +619,4 @@ export enum StripeElementEvent {
 export interface LineItem {
     name: string;
     amount: number;
-}
-
-export interface StripeLinkV2Event {
-    value?: null;
-    address?: {
-        city?: string;
-        country?: string;
-        postal_code?: string;
-        state?: string;
-    };
-    shippingRate?: StripeLinkV2ShippingRate;
-    elementType: string;
-    expressPaymentType: string;
-    resolve(data: StripeLinkV2EventResolveData): void;
-}
-
-export interface StripeLinkV2EventResolveData {
-    lineItems?: LineItem[];
-    allowedShippingCountries?: string[];
-    shippingAddressRequired?: boolean;
-    shippingRates?: StripeLinkV2ShippingRate[];
-    billingAddressRequired?: boolean;
-    emailRequired?: boolean;
-    phoneNumberRequired?: boolean;
-}
-
-export interface StripeLinkV2ShippingRate {
-    id: string;
-    amount: number;
-    displayName: string;
-}
-
-export interface StripeLinkV2Options {
-    clientSecret?: string;
-    mode?: string;
-    currency?: string;
-    amount?: number;
 }

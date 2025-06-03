@@ -5,7 +5,7 @@ import {
     toResolvableModule,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-import StripeUPEScriptLoader from '../stripe-utils/stripe-script-loader';
+import { StripeScriptLoader } from '../stripe-utils';
 
 import StripeLinkV2CustomerStrategy from './stripe-link-v2-customer-strategy';
 
@@ -14,7 +14,7 @@ const createStripeLinkV2CustomerStrategy: CustomerStrategyFactory<StripeLinkV2Cu
 ) => {
     return new StripeLinkV2CustomerStrategy(
         paymentIntegrationService,
-        new StripeUPEScriptLoader(getScriptLoader()),
+        new StripeScriptLoader(getScriptLoader()),
     );
 };
 
