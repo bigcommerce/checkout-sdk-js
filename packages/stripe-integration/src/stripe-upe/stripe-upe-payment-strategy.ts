@@ -31,6 +31,7 @@ import {
     StripeAppearanceOptions,
     StripeClient,
     StripeElement,
+    StripeElementEvent,
     StripeElements,
     StripeElementsCreateOptions,
     StripeElementType,
@@ -302,11 +303,11 @@ export default class StripeUPEPaymentStrategy implements PaymentStrategy {
 
         this.stripeIntegrationService.mountElement(stripeElement, containerId);
 
-        stripeElement.on('ready', () => {
+        stripeElement.on(StripeElementEvent.READY, () => {
             render();
         });
 
-        stripeElement.on('change', (event: StripeEventType) => {
+        stripeElement.on(StripeElementEvent.CHANGE, (event: StripeEventType) => {
             if (!event?.value || !('type' in event.value)) {
                 return;
             }

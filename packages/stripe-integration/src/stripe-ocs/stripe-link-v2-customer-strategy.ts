@@ -23,13 +23,12 @@ import {
     StripeElementsCreateOptions,
     StripeElementType,
     StripeEventType,
-    StripeLinkV2Options,
-    StripeLinkV2ShippingRate,
     StripeStringConstants,
 } from '../stripe-utils/stripe';
 import StripeScriptLoader from '../stripe-utils/stripe-script-loader';
 
 import { expressCheckoutAllowedCountryCodes } from './constants';
+import { StripeLinkV2Options, StripeLinkV2ShippingRate } from './stripe-ocs';
 import { WithStripeOCSCustomerInitializeOptions } from './stripe-ocs-customer-initialize-options';
 
 export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
