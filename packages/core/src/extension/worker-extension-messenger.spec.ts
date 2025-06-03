@@ -97,7 +97,7 @@ describe('WorkerExtensionMessenger', () => {
             );
         });
 
-        it('should listen to commands emitted by same extension', () => {
+        it('should listen to commands emitted by the same extension', () => {
             const eventEmitter = new EventEmitter();
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
@@ -230,7 +230,7 @@ describe('WorkerExtensionMessenger', () => {
             );
         });
 
-        it('should listen to queries emitted by same extension', () => {
+        it('should listen to queries emitted by the same extension', () => {
             const eventEmitter = new EventEmitter();
 
             jest.spyOn(listener, 'addListener').mockImplementation((type, listener) => {
