@@ -18,4 +18,4 @@ const createStripeLinkV2CustomerStrategy: CustomerStrategyFactory<StripeLinkV2Cu
     );
 };
 
-export default toResolvableModule(createStripeLinkV2CustomerStrategy, [{ id: 'stripe_link_v2' }]);
+export default toResolvableModule(createStripeLinkV2CustomerStrategy, [{ id: 'stripeocs' }]);

@@ -8,7 +8,6 @@ import {
     StripeElements,
     StripeElementsOptions,
     StripeHostWindow,
-    StripeLinkV2Client,
 } from './stripe';
 
 export default class StripeScriptLoader {
@@ -19,7 +18,7 @@ export default class StripeScriptLoader {
 
     async getStripeClient(
         stripePublishableKey: string,
-        stripeAccount: string,
+        stripeAccount?: string,
         locale?: string,
         options?: StripeConfigurationOptions,
     ): Promise<StripeClient> {
@@ -44,20 +43,6 @@ export default class StripeScriptLoader {
             stripeClient = stripe<StripeClient>(stripePublishableKey, options || defaultOptions);
 
             Object.assign(this.stripeWindow, { bcStripeClient: stripeClient });
-        }
-
-        return stripeClient;
-    }
-
-    async getStripeLinkV2Client(stripePublishableKey: string): Promise<StripeLinkV2Client> {
-        let stripeClient = this.stripeWindow.bcStripeLinkV2Client;
-
-        if (!stripeClient) {
-            const stripe = await this.load();
-
-            stripeClient = stripe<StripeLinkV2Client>(stripePublishableKey);
-
-            Object.assign(this.stripeWindow, { bcStripeLinkV2Client: stripeClient });
         }
 
         return stripeClient;

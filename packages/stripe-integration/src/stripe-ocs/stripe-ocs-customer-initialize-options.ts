@@ -1,4 +1,6 @@
 export default interface StripeOCSCustomerInitializeOptions {
+    buttonHeight?: number;
+
     /**
      * The ID of a container which the stripe iframe should be inserted.
      */
@@ -10,10 +12,8 @@ export default interface StripeOCSCustomerInitializeOptions {
     methodId: string;
 
     gatewayId: string;
-
-    isLoading(mounted: boolean): void;
 }
 
 export interface WithStripeOCSCustomerInitializeOptions {
-    stripe_link_v2?: StripeOCSCustomerInitializeOptions;
+    stripeocs?: StripeOCSCustomerInitializeOptions;
 }
