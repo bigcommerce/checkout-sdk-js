@@ -9,6 +9,7 @@
 - [id](Extension.md#id)
 - [name](Extension.md#name)
 - [region](Extension.md#region)
+- [type](Extension.md#type)
 - [url](Extension.md#url)
 
 ## Properties
@@ -28,6 +29,12 @@ ___
 ### region
 
 • **region**: [`ExtensionRegion`](../enums/ExtensionRegion.md)
+
+___
+
+### type
+
+• **type**: [`ExtensionType`](../enums/ExtensionType.md)
 
 ___
 

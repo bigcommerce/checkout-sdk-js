@@ -2,6 +2,124 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.742.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.741.0...v1.742.0) (2025-06-02)
+
+
+### Features
+
+* **payment:** added canMakePayments method as additional verification of payment capability ([72f03c1](https://github.com/bigcommerce/checkout-sdk-js/commit/72f03c1efa3cf7a2dea53f78da72c483bb777b4d))
+* **payment:** console.error instead of throw error ([643394e](https://github.com/bigcommerce/checkout-sdk-js/commit/643394ef7d13a9404453333b918b3f47a8f6ab74))
+
+## [1.741.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.740.0...v1.741.0) (2025-06-02)
+
+
+### Features
+
+* **checkout:** Add worker extension messenger and worker-event-poster ([#2876](https://github.com/bigcommerce/checkout-sdk-js/issues/2876)) ([afcaeaa](https://github.com/bigcommerce/checkout-sdk-js/commit/afcaeaa9a5cbc2eeea3e9364e98408038647ee04))
+
+## [1.740.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.739.0...v1.740.0) (2025-05-29)
+
+
+### Features
+
+* **payment:** move Stripe OCS and UPE to separate modules ([b02df3e](https://github.com/bigcommerce/checkout-sdk-js/commit/b02df3ec06eabd12f451db555035bd30513fae35))
+
+## [1.739.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.738.0...v1.739.0) (2025-05-29)
+
+
+### Features
+
+* **checkout:** Add worker-event-listener ([#2870](https://github.com/bigcommerce/checkout-sdk-js/issues/2870)) ([0723433](https://github.com/bigcommerce/checkout-sdk-js/commit/0723433e8289edb4b0cdf737210c88e09a9bf6ae))
+* **payment:** move Stripe OCS and UPE to separate modules ([00debe6](https://github.com/bigcommerce/checkout-sdk-js/commit/00debe6848abe499fa118963fd5eba4ba865eee5))
+
+## [1.738.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.737.0...v1.738.0) (2025-05-28)
+
+
+### Features
+
+* **payment:** removed google-pay-paypal-commerce-script-loader.ts and moved logic to paypal-commerce-sdk ([6240a2f](https://github.com/bigcommerce/checkout-sdk-js/commit/6240a2f86955e2e684555a7d9c8b9d80fdfbbb18))
+
+## [1.737.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.736.0...v1.737.0) (2025-05-28)
+
+
+### Features
+
+* **payment:** remove Sofort and Giropay enums from StripeUPE ([8c43601](https://github.com/bigcommerce/checkout-sdk-js/commit/8c436015e893b11f254d0273404b348e2fa834bc))
+
+## [1.736.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.735.0...v1.736.0) (2025-05-27)
+
+
+### Features
+
+* **payment:** clone bigcommerce payments fastlane files ([#2879](https://github.com/bigcommerce/checkout-sdk-js/issues/2879)) ([b5d8fc4](https://github.com/bigcommerce/checkout-sdk-js/commit/b5d8fc430fc9c8be220fe7bf4b8d9241a7ebf516))
+
+## [1.735.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.734.0...v1.735.0) (2025-05-27)
+
+
+### Features
+
+* **checkout:** create new method to register extension web worker ([#2869](https://github.com/bigcommerce/checkout-sdk-js/issues/2869)) ([0f70f55](https://github.com/bigcommerce/checkout-sdk-js/commit/0f70f55a4f035d8b029ed83d510151ba68f48e1b))
+
+## [1.734.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.733.0...v1.734.0) (2025-05-26)
+
+
+### Features
+
+* **payment:** clone bigcommerce payments paylater methods files ([#2863](https://github.com/bigcommerce/checkout-sdk-js/issues/2863)) ([f56d714](https://github.com/bigcommerce/checkout-sdk-js/commit/f56d7149a8e1d6eb4fce59bc988ad44b374b80a4))
+* **payment:** clone BigCommercePayments RatePay files ([#2866](https://github.com/bigcommerce/checkout-sdk-js/issues/2866)) ([d7a3157](https://github.com/bigcommerce/checkout-sdk-js/commit/d7a3157ffb3707fc1cba2bba82a573032bddd7f2))
+* **payment:** clone BigCommercePayments Venmo files ([#2867](https://github.com/bigcommerce/checkout-sdk-js/issues/2867)) ([0ce2b68](https://github.com/bigcommerce/checkout-sdk-js/commit/0ce2b6805c85d0c0c624a26396582235a3fe5ed9))
+
+## [1.733.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.732.3...v1.733.0) (2025-05-26)
+
+
+### Features
+
+* **payment:** clone bigcommerce payments alternative methods files ([#2862](https://github.com/bigcommerce/checkout-sdk-js/issues/2862)) ([a50ac03](https://github.com/bigcommerce/checkout-sdk-js/commit/a50ac03673ef5358318ad58e878a8d6542dfd512))
+* **payment:** clone bigcommerce payments credit cards files ([#2864](https://github.com/bigcommerce/checkout-sdk-js/issues/2864)) ([1a687c1](https://github.com/bigcommerce/checkout-sdk-js/commit/1a687c1de2f180674cd17ec6ee9d1cacb8b0c5fd))
+* **payment:** Stripe OCS accordion state on initialization ([c119c5c](https://github.com/bigcommerce/checkout-sdk-js/commit/c119c5cc2fb2ff0f10aa4317db066313cb3c5cf2))
+
+### [1.732.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.732.2...v1.732.3) (2025-05-26)
+
+### [1.732.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.732.1...v1.732.2) (2025-05-26)
+
+### [1.732.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.732.0...v1.732.1) (2025-05-26)
+
+
+### Code Refactoring
+
+* **payment:** removed Braintree LPM fallback experiment and speed up related tests run ([#2871](https://github.com/bigcommerce/checkout-sdk-js/issues/2871)) ([9e74eb0](https://github.com/bigcommerce/checkout-sdk-js/commit/9e74eb07a8737b78ad7d5aed8232ce3e1f75603b))
+
+## [1.732.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.731.2...v1.732.0) (2025-05-07)
+
+
+### Features
+
+* **payment:** Stripe OCS accordion element styling ([5463f92](https://github.com/bigcommerce/checkout-sdk-js/commit/5463f9256038acd95d7621f9ac2733e666d5cbe0))
+
+### [1.731.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.731.1...v1.731.2) (2025-04-30)
+
+### [1.731.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.731.0...v1.731.1) (2025-04-30)
+
+
+### Bug Fixes
+
+* **payment:** fixed bt fl 3ds amount ([#2851](https://github.com/bigcommerce/checkout-sdk-js/issues/2851)) ([3c0b622](https://github.com/bigcommerce/checkout-sdk-js/commit/3c0b622b355ecf835db368f0e5e9f4fd22b4d79c))
+
+## [1.731.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.730.0...v1.731.0) (2025-04-29)
+
+
+### Features
+
+* **payment:** updated braintree venmo config ([73e1e59](https://github.com/bigcommerce/checkout-sdk-js/commit/73e1e59f709cde5e252280f57590c57ca2a4e458))
+* **payment:** updates after review ([3d0ff3b](https://github.com/bigcommerce/checkout-sdk-js/commit/3d0ff3b24e3cf46bf2dbea1d7bd7cfa3293c7ed2))
+
+## [1.730.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.729.1...v1.730.0) (2025-04-28)
+
+
+### Features
+
+* **payment:** upload Stripe client with custom options ([04e497e](https://github.com/bigcommerce/checkout-sdk-js/commit/04e497e569e17105448a949f657274d6e0f078b0))
+
 ### [1.729.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.729.0...v1.729.1) (2025-04-23)
 
 

@@ -6,6 +6,7 @@
 
 ### Enumeration Members
 
+- [GlobalWebWorker](ExtensionRegion.md#globalwebworker)
 - [ShippingSelectedShippingMethod](ExtensionRegion.md#shippingselectedshippingmethod)
 - [ShippingShippingAddressFormAfter](ExtensionRegion.md#shippingshippingaddressformafter)
 - [ShippingShippingAddressFormBefore](ExtensionRegion.md#shippingshippingaddressformbefore)
@@ -13,6 +14,12 @@
 - [SummaryLastItemAfter](ExtensionRegion.md#summarylastitemafter)
 
 ## Enumeration Members
+
+### GlobalWebWorker
+
+• **GlobalWebWorker**
+
+___
 
 ### ShippingSelectedShippingMethod
 

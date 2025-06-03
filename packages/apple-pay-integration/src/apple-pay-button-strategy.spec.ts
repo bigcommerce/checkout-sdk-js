@@ -154,6 +154,18 @@ describe('ApplePayButtonStrategy', () => {
             ).rejects.toThrow(MissingDataError);
         });
 
+        it('throws error if canMakePayments returns false', async () => {
+            jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
+            MockApplePaySession.canMakePayments = jest.fn().mockReturnValue(false);
+
+            await strategy.initialize(getApplePayButtonInitializationOptions());
+
+            expect(console.error).toHaveBeenCalled();
+
+            MockApplePaySession.canMakePayments = jest.fn().mockReturnValue(true);
+        });
+
         it('throws error when params object is empty', async () => {
             await expect(
                 strategy.initialize({

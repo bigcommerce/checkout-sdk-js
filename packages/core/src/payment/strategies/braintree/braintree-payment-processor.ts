@@ -20,6 +20,7 @@ import {
     BraintreeRequestData,
     BraintreeThreeDSecure,
     BraintreeVenmoCheckout,
+    BraintreeVenmoCreatorConfig,
     BraintreeVerifyPayload,
     TokenizationPayload,
 } from './braintree';
@@ -157,9 +158,11 @@ export default class BraintreePaymentProcessor {
         return this._present3DSChallenge(threeDSecure, amount, tokenizationPayload);
     }
 
-    async getVenmoCheckout(): Promise<BraintreeVenmoCheckout> {
+    async getVenmoCheckout(
+        venmoConfig?: BraintreeVenmoCreatorConfig,
+    ): Promise<BraintreeVenmoCheckout> {
         return new Promise((resolve, reject) => {
-            this._braintreeSDKCreator.getVenmoCheckout(resolve, reject);
+            this._braintreeSDKCreator.getVenmoCheckout(resolve, reject, venmoConfig);
         });
     }
 

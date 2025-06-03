@@ -92,6 +92,12 @@ export default class ApplePayCustomerStrategy implements CustomerStrategy {
 
         assertApplePayWindow(window);
 
+        if (!this._sessionFactory.canMakePayment()) {
+            console.error('This device is not capable of making Apple Pay payments');
+
+            return;
+        }
+
         try {
             this._paymentMethod = state.getPaymentMethodOrThrow(methodId);
         } catch (_e) {

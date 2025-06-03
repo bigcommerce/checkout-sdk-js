@@ -21,6 +21,8 @@ import {
 } from '../../../common/error/errors';
 import { PaypalHostWindow } from '../paypal';
 
+import { BraintreeVenmoCreatorConfig } from './braintree';
+
 export default class BraintreeSDKCreator {
     private _client?: Promise<BraintreeClient>;
     private _3ds?: Promise<BraintreeThreeDSecure>;
@@ -93,6 +95,7 @@ export default class BraintreeSDKCreator {
     async getVenmoCheckout(
         onSuccess: (braintreeVenmoCheckout: BraintreeVenmoCheckout) => void,
         onError: (error: BraintreeError | UnsupportedBrowserError) => void,
+        venmoConfig?: BraintreeVenmoCreatorConfig,
     ): Promise<BraintreeVenmoCheckout> {
         if (!this._venmoCheckout) {
             const client = await this.getClient();
@@ -103,6 +106,7 @@ export default class BraintreeSDKCreator {
                 client,
                 allowDesktop: true,
                 paymentMethodUsage: 'multi_use',
+                ...(venmoConfig || {}),
             };
 
             const venmoCheckoutCallback = (

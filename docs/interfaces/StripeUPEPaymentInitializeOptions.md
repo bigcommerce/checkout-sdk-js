@@ -31,10 +31,8 @@ service.initializePayment({
 
 ### Methods
 
-- [handleClosePaymentMethod](StripeUPEPaymentInitializeOptions.md#handleclosepaymentmethod)
 - [initStripeElementUpdateTrigger](StripeUPEPaymentInitializeOptions.md#initstripeelementupdatetrigger)
 - [onError](StripeUPEPaymentInitializeOptions.md#onerror)
-- [paymentMethodSelect](StripeUPEPaymentInitializeOptions.md#paymentmethodselect)
 - [render](StripeUPEPaymentInitializeOptions.md#render)
 
 ## Properties
@@ -49,31 +47,11 @@ ___
 
 ### style
 
-• `Optional` **style**: `Object`
+• `Optional` **style**: `Record`<`string`, [`StripeUPEAppearanceValues`](../README.md#stripeupeappearancevalues)\>
 
 Checkout styles from store theme
 
-#### Index signature
-
-▪ [key: `string`]: `string`
-
 ## Methods
-
-### handleClosePaymentMethod
-
-▸ `Optional` **handleClosePaymentMethod**(`collapseElement`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `collapseElement` | () => `void` |
-
-#### Returns
-
-`void`
-
-___
 
 ### initStripeElementUpdateTrigger
 
@@ -100,22 +78,6 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `error?` | `Error` |
-
-#### Returns
-
-`void`
-
-___
-
-### paymentMethodSelect
-
-▸ `Optional` **paymentMethodSelect**(`id`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `id` | `string` |
 
 #### Returns
 
