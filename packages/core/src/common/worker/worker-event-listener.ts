@@ -1,13 +1,13 @@
 import { bindDecorator as bind } from '@bigcommerce/checkout-sdk/utility';
 
-import { EventListeners, IframeEventMap } from '../iframe';
+import { WorkerEventListeners, WorkerEventMap } from './WorkerEvent';
 
 export class WorkerEventListener<
-    TEventMap extends IframeEventMap<keyof TEventMap>,
+    TEventMap extends WorkerEventMap<keyof TEventMap>,
     TContext = undefined,
 > {
     private _isListening: boolean;
-    private _listeners: EventListeners<TEventMap, TContext>;
+    private _listeners: WorkerEventListeners<TEventMap, TContext>;
 
     constructor(private _worker: Worker) {
         this._isListening = false;

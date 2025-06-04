@@ -1580,7 +1580,7 @@ describe('CheckoutService', () => {
         });
 
         it('posts a message to an extension', async () => {
-            jest.spyOn(extensionMessenger, 'post');
+            jest.spyOn(extensionMessenger, 'post').mockImplementation(() => Promise.resolve());
 
             const message = {
                 type: ExtensionMessageType.GetConsignments,

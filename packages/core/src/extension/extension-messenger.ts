@@ -41,6 +41,14 @@ export class ExtensionMessenger {
     }
 
     clearCacheById(extensionId: string): void {
+        const extension = this._getExtensionById(extensionId);
+
+        if (extension.type === ExtensionType.Worker) {
+            this._workerExtensionMessenger.clearCacheById(extension.id);
+
+            return;
+        }
+
         if (this._commandListeners[extensionId]) {
             delete this._commandListeners[extensionId];
         }
@@ -63,6 +71,14 @@ export class ExtensionMessenger {
         ) => Promise<void> | void,
     ): () => void {
         const extension = this._getExtensionById(extensionId);
+
+        if (extension.type === ExtensionType.Worker) {
+            return this._workerExtensionMessenger.listenForCommand(
+                extensionId,
+                command,
+                commandHandler,
+            );
+        }
 
         if (!this._commandListeners[extensionId]) {
             this._commandListeners[extensionId] = new IframeEventListener(extension.url);
@@ -100,6 +116,10 @@ export class ExtensionMessenger {
     ): () => void {
         const extension = this._getExtensionById(extensionId);
 
+        if (extension.type === ExtensionType.Worker) {
+            return this._workerExtensionMessenger.listenForQuery(extensionId, query, queryHandler);
+        }
+
         if (!this._queryListeners[extensionId]) {
             this._queryListeners[extensionId] = new IframeEventListener(extension.url);
         }
@@ -127,6 +147,14 @@ export class ExtensionMessenger {
     }
 
     stopListen(extensionId: string): void {
+        const extension = this._getExtensionById(extensionId);
+
+        if (extension.type === ExtensionType.Worker) {
+            this._workerExtensionMessenger.stopListen(extensionId);
+
+            return;
+        }
+
         if (this._commandListeners[extensionId]) {
             this._commandListeners[extensionId].stopListen();
         }
