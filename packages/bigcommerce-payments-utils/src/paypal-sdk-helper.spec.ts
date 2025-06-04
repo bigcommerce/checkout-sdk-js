@@ -9,6 +9,7 @@ import {
 import {
     PayPalApmSdk,
     PayPalFastlaneSdk,
+    PayPalGooglePaySdk,
     PayPalHostWindow,
     PayPalMessagesSdk,
 } from './bigcommerce-payments-types';
@@ -29,6 +30,10 @@ describe('PayPalSdkHelper', () => {
     const paypalApmsSdk: PayPalApmSdk = {
         Buttons: jest.fn(),
         PaymentFields: jest.fn(),
+    };
+
+    const payPalGooglePaySdk: PayPalGooglePaySdk = {
+        Googlepay: jest.fn(),
     };
 
     const sessionId = '8a232bf4-d9ba-4621-a1a9-ed8f685f92d1';
@@ -53,6 +58,7 @@ describe('PayPalSdkHelper', () => {
             (window as PayPalHostWindow).paypalFastlaneSdk = paypalFastlaneSdk;
             (window as PayPalHostWindow).paypalMessages = paypalMessagesSdk;
             (window as PayPalHostWindow).paypalApms = paypalApmsSdk;
+            (window as PayPalHostWindow).paypalGooglePay = payPalGooglePaySdk;
 
             return Promise.resolve();
         });
@@ -62,6 +68,7 @@ describe('PayPalSdkHelper', () => {
         (window as PayPalHostWindow).paypalFastlaneSdk = undefined;
         (window as PayPalHostWindow).paypalMessages = undefined;
         (window as PayPalHostWindow).paypalApms = undefined;
+        (window as PayPalHostWindow).paypalGooglePay = undefined;
 
         jest.clearAllMocks();
     });
@@ -191,6 +198,70 @@ describe('PayPalSdkHelper', () => {
             const result = await subject.getPayPalMessages(paymentMethod, 'USD');
 
             expect(result).toEqual(paypalMessagesSdk);
+        });
+    });
+
+    describe('#getPayPalGooglePaySdk()', () => {
+        it('throws an error if clientId is not defined in payment method while getting configuration for PayPal Sdk', async () => {
+            const mockPaymentMethod = {
+                ...paymentMethod,
+                initializationData: {
+                    ...paymentMethod.initializationData,
+                    clientId: undefined,
+                },
+            };
+
+            try {
+                await subject.getPayPalGooglePaySdk(mockPaymentMethod, 'USD');
+            } catch (error: unknown) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('loads PayPal Google Pay sdk script', async () => {
+            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD');
+
+            expect(loader.loadScript).toHaveBeenCalledWith(
+                'https://www.paypal.com/sdk/js?client-id=abc&merchant-id=JTS4DY7XFSQZE&commit=true&components=googlepay&currency=USD&intent=capture',
+                {
+                    async: true,
+                    attributes: {
+                        'data-namespace': 'paypalGooglePay',
+                        'data-client-token': 'asdcvY7XFSQasd',
+                        'data-partner-attribution-id': '1123JLKJASD12',
+                    },
+                },
+            );
+        });
+
+        it('throws an error if there was an issue with loading paypal google pay sdk', async () => {
+            jest.spyOn(loader, 'loadScript').mockImplementation(jest.fn());
+
+            try {
+                await subject.getPayPalGooglePaySdk(paymentMethod, 'USD');
+            } catch (error: unknown) {
+                expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
+            }
+        });
+
+        it('returns PayPal Google Pay Sdk', async () => {
+            const result = await subject.getPayPalGooglePaySdk(paymentMethod, 'USD');
+
+            expect(result).toEqual(payPalGooglePaySdk);
+        });
+
+        it('does not load Google Pay Sdk if already exist', async () => {
+            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD');
+            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD');
+
+            expect(loader.loadScript).toHaveBeenCalledTimes(1);
+        });
+
+        it('reload Google Pay Sdk', async () => {
+            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD');
+            await subject.getPayPalGooglePaySdk(paymentMethod, 'USD', false, true);
+
+            expect(loader.loadScript).toHaveBeenCalledTimes(2);
         });
     });
 
