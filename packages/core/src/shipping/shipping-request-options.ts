@@ -1,6 +1,7 @@
 import { RequestOptions } from '../common/http-request';
 
 import { AmazonPayV2ShippingInitializeOptions } from './strategies/amazon-pay-v2';
+import { BigCommercePaymentsFastlaneShippingInitializeOptions } from './strategies/bigcommerce-payments';
 import { BraintreeFastlaneInitializeOptions } from './strategies/braintree';
 import { PayPalCommerceFastlaneShippingInitializeOptions } from './strategies/paypal-commerce';
 import { StripeUPEShippingInitializeOptions } from './strategies/stripe-upe';
@@ -52,4 +53,10 @@ export interface ShippingInitializeOptions<T = {}> extends ShippingRequestOption
      * when using PayPal Commerce Fastlane.
      */
     paypalcommercefastlane?: PayPalCommerceFastlaneShippingInitializeOptions;
+
+    /**
+     * The options that are required to initialize the shipping step of checkout
+     * when using BigCommercePayments Fastlane.
+     */
+    bigcommerce_payments_fastlane?: BigCommercePaymentsFastlaneShippingInitializeOptions;
 }
