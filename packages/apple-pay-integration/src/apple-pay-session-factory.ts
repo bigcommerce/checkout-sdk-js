@@ -18,10 +18,4 @@ export default class ApplePaySessionFactory {
 
         return new ApplePaySession(1, request);
     }
-
-    canMakePayment(): boolean {
-        assertApplePayWindow(window);
-
-        return ApplePaySession.canMakePayments();
-    }
 }
