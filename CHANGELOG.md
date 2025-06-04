@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.743.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.742.0...v1.743.0) (2025-06-04)
+
+
+### Features
+
+* **checkout:** Add listening methods to worker extension messenger ([#2886](https://github.com/bigcommerce/checkout-sdk-js/issues/2886)) ([4cc883a](https://github.com/bigcommerce/checkout-sdk-js/commit/4cc883a5bdf700571945278cb147da2e7f66cc8b))
+
 ## [1.742.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.741.0...v1.742.0) (2025-06-02)
 
 
