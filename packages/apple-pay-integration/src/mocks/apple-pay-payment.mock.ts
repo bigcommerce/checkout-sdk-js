@@ -1,6 +1,6 @@
 export class MockApplePaySession {
     static supportsVersion: () => boolean;
-    static canMakePayments: () => boolean = jest.fn().mockReturnValue(true);
+    static canMakePayments: () => boolean;
 
     addEventListener = jest.fn();
     dispatchEvent = jest.fn();

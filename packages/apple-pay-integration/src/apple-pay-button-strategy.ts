@@ -125,12 +125,6 @@ export default class ApplePayButtonStrategy implements CheckoutButtonStrategy {
 
         assertApplePayWindow(window);
 
-        if (!this._sessionFactory.canMakePayment()) {
-            console.error('This device is not capable of making Apple Pay payments');
-
-            return;
-        }
-
         if (!methodId || !applepay) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
