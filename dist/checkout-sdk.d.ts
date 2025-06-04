@@ -1132,6 +1132,26 @@ declare interface BigCommercePaymentsFastlanePaymentInitializeOptions {
     styles?: PayPalFastlaneStylesOption;
 }
 
+/**
+ * A set of options that are required to initialize the shipping step of
+ * checkout in order to support BigCommercePayments  Fastlane.
+ */
+declare interface BigCommercePaymentsFastlaneShippingInitializeOptions {
+    /**
+     * Is a stylisation options for customizing BigCommercePayments Fastlane components
+     *
+     * Note: the styles for all BigCommercePayments Fastlane strategies should be the same,
+     * because they will be provided to fastlane library only for the first strategy initialization
+     * no matter what strategy was initialised first
+     */
+    styles?: PayPalFastlaneStylesOption;
+    /**
+     * Is a callback that shows BigCommercePayments Fastlane popup with customer addresses
+     * when get triggered
+     */
+    onPayPalFastlaneAddressChange?: (showPayPalFastlaneAddressSelector: () => Promise<CustomerAddress_2 | undefined>) => void;
+}
+
 declare interface BigCommercePaymentsFieldsStyleOptions {
     variables?: {
         fontFamily?: string;
@@ -8308,6 +8328,11 @@ declare interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptio
      * when using PayPal Commerce Fastlane.
      */
     paypalcommercefastlane?: PayPalCommerceFastlaneShippingInitializeOptions;
+    /**
+     * The options that are required to initialize the shipping step of checkout
+     * when using BigCommercePayments Fastlane.
+     */
+    bigcommerce_payments_fastlane?: BigCommercePaymentsFastlaneShippingInitializeOptions;
 }
 
 declare interface ShippingOption {
