@@ -27,3 +27,5 @@ export {
     default as StripeOCSPaymentInitializeOption,
     WithStripeOCSPaymentInitializeOptions,
 } from './stripe-ocs/stripe-ocs-initialize-options';
+
+export { StripeAppearanceOptions, StripeCustomFont } from './stripe-utils';

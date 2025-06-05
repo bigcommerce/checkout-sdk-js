@@ -113,7 +113,7 @@ export interface CustomFontSource {
     weight?: string;
 }
 
-export type CustomFont = CssFontSource | CustomFontSource;
+export type StripeCustomFont = CssFontSource | CustomFontSource;
 
 export interface StripeError {
     /**
@@ -415,12 +415,12 @@ export interface StripeElements {
  * All available options are here https://stripe.com/docs/stripe-js/appearance-api#supported-css-properties
  */
 export interface StripeAppearanceOptions {
-    variables?: Record<string, StripeUPEAppearanceValues>;
+    variables?: Record<string, StripeAppearanceValues>;
 
-    rules?: Record<string, Record<string, StripeUPEAppearanceValues>>;
+    rules?: Record<string, Record<string, StripeAppearanceValues>>;
 }
 
-export type StripeUPEAppearanceValues = string | string[] | number | undefined;
+export type StripeAppearanceValues = string | string[] | number | undefined;
 
 export interface StripeElementsOptions {
     /**
@@ -428,7 +428,7 @@ export interface StripeElementsOptions {
      * Fonts can be specified as [CssFontSource](https://stripe.com/docs/js/appendix/css_font_source_object)
      * or [CustomFontSource](https://stripe.com/docs/js/appendix/custom_font_source_object) objects.
      */
-    fonts?: CustomFont[];
+    fonts?: StripeCustomFont[];
 
     /**
      * A [locale](https://stripe.com/docs/js/appendix/supported_locales) to display placeholders and
