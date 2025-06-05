@@ -433,6 +433,8 @@ export interface StripeElements {
      * https://stripe.com/docs/js/elements_object/fetch_updates
      */
     fetchUpdates(): Promise<void>;
+
+    submit?(): Promise<any>;
 }
 
 /**

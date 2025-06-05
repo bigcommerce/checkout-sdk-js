@@ -33,4 +33,5 @@ const createGooglePayStripeUpeCustomerStrategy: CustomerStrategyFactory<
 
 export default toResolvableModule(createGooglePayStripeUpeCustomerStrategy, [
     { id: 'googlepaystripeupe' },
+    { id: 'googlepaystripeocs' },
 ]);

@@ -78,6 +78,7 @@ export enum GooglePayKey {
     CYBERSOURCE_V2 = 'googlepaycybersourcev2',
     ORBITAL = 'googlepayorbital',
     STRIPE = 'googlepaystripe',
+    STRIPE_OCS = 'googlepaystripeocs',
     STRIPE_UPE = 'googlepaystripeupe',
     WORLDPAY_ACCESS = 'googlepayworldpayaccess',
     TD_ONLINE_MART = 'googlepaytdonlinemart',

@@ -5,16 +5,17 @@ import {
     CustomerInitializeOptions,
     CustomerStrategy,
     InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
     Payment,
-    // MissingDataError,
-    // MissingDataErrorType,
     PaymentIntegrationService,
     ShippingOption,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
-// import { isStripeUPEPaymentMethodLike } from '../stripe-upe/is-stripe-upe-payment-method-like';
+import { StripeIntegrationService } from '../stripe-utils';
+import { isStripePaymentMethodLike } from '../stripe-utils/is-stripe-payment-method-like';
 import {
     StripeClient,
     StripeElement,
@@ -40,13 +41,14 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     private _stripePublishableKey?: string;
     private _currencyCode?: string;
 
-    // We'll keep it hardcoded for now as it will be finalized together with onConfirm method
-    private _methodId = 'card';
+    // TODO We'll keep it hardcoded for now as it will be finalized together with onConfirm method
+    private _methodId = 'optimized_checkout';
     private _gatewayId = 'stripeocs';
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private scriptLoader: StripeScriptLoader,
+        private stripeUPEIntegrationService: StripeIntegrationService,
     ) {}
 
     async initialize(
@@ -64,29 +66,18 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        // TODO uncomment below lines on finalizing
-        // if (!stripeocs.gatewayId) {
-        //     throw new InvalidArgumentError(
-        //         'Unable to initialize payment because "gatewayId" argument is not provided.',
-        //     );
-        // }
-
         const { container, buttonHeight } = stripeocs;
+        const state = await this.paymentIntegrationService.loadPaymentMethod(this._gatewayId, {
+            params: { method: this._methodId },
+        });
+        const paymentMethod = state.getPaymentMethodOrThrow(this._gatewayId);
 
-        // TODO remove mock below on finalizing
-        const stripePublishableKey = 'py_test';
-        // TODO uncomment below lines on finalizing
-        // const state = this.paymentIntegrationService.getState();
-        // const paymentMethod = state.getPaymentMethodOrThrow(this._methodId, this._gatewayId);
-        //
-        // if (!isStripeUPEPaymentMethodLike(paymentMethod)) {
-        //     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        // }
-        //
-        // const {
-        //     initializationData: { stripePublishableKey },
-        // } = paymentMethod;
+        if (!isStripePaymentMethodLike(paymentMethod)) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
 
+        const { initializationData } = paymentMethod;
+        const { stripePublishableKey } = initializationData;
         this._stripePublishableKey = stripePublishableKey;
 
         this._stripeClient = await this.scriptLoader.getStripeClient(this._stripePublishableKey);
@@ -225,46 +216,83 @@ export default class StripeLinkV2CustomerStrategy implements CustomerStrategy {
     /** Confirm methods * */
 
     private async _onConfirm(event: StripeEventType) {
-        if ('resolve' in event) {
-            if (!this._methodId) {
-                return event.resolve({});
+        if (
+            'billingDetails' in event &&
+            'shippingAddress' in event &&
+            this._stripeClient &&
+            this._stripeElements
+        ) {
+            const firstName = event.shippingAddress?.name?.split(' ')[0] || '';
+            const lastName = event.shippingAddress?.name?.split(' ')[1] || '';
+
+            const shippingAddress = {
+                firstName,
+                lastName,
+                phone: event.billingDetails?.phone || '',
+                company: '',
+                address1: event.shippingAddress?.address?.line1 || '',
+                address2: event.shippingAddress?.address?.line2 || '',
+                city: event.shippingAddress?.address?.city || '',
+                countryCode: event.shippingAddress?.address?.country || '',
+                postalCode: event.shippingAddress?.address?.postal_code || '',
+                stateOrProvince: event.shippingAddress?.address?.state || '',
+                stateOrProvinceCode: '',
+                customFields: [],
+            };
+
+            await this.paymentIntegrationService.updateShippingAddress(shippingAddress);
+            await this.paymentIntegrationService.updateBillingAddress({
+                email: event.billingDetails?.email || '',
+                firstName,
+                lastName,
+                phone: event.billingDetails?.phone || '',
+                company: '',
+                address1: event.billingDetails?.address?.line1 || '',
+                address2: '',
+                city: event.billingDetails?.address?.city || '',
+                countryCode: event.billingDetails?.address?.country || '',
+                postalCode: event.billingDetails?.address?.postal_code || '',
+                stateOrProvince: event.billingDetails?.address?.state || '',
+                stateOrProvinceCode: '',
+                customFields: [],
+            });
+
+            await this.paymentIntegrationService.submitOrder();
+
+            const state = await this.paymentIntegrationService.loadPaymentMethod(this._gatewayId, {
+                params: { method: this._methodId },
+            });
+            const { returnUrl: return_url, clientToken } = state.getPaymentMethodOrThrow(
+                this._gatewayId,
+            );
+
+            const stripePaymentData = this.stripeUPEIntegrationService.mapStripePaymentData(
+                this._stripeElements,
+                return_url,
+            );
+
+            if (!clientToken) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             }
 
-            const state = this.paymentIntegrationService.getState();
+            // TODO probably don't need it below
+            await this.scriptLoader.updateStripeElements({ clientSecret: clientToken });
 
-            const { clientToken } = state.getPaymentMethodOrThrow(this._methodId, this._gatewayId);
-            const paymentPayload = this._getPaymentPayload(this._methodId, clientToken || '');
-
-            await this.paymentIntegrationService.submitPayment(paymentPayload);
-
-            if (this._stripeClient && this._stripeElements) {
-                await this._stripeClient.confirmPayment({
-                    // `elements` instance used to create the Express Checkout Element
-                    elements: this._stripeElements,
-                    // `clientSecret` from the created PaymentIntent
-                    clientSecret: this._stripePublishableKey,
-                    // TODO update example below
-                    confirmParams: {
-                        return_url: 'https://example.com/order/123/complete',
-                    },
-                });
-            }
-
-            // const {error} = await stripe.confirmPayment({
-            //     // `elements` instance used to create the Express Checkout Element
-            //     elements,
-            //     // `clientSecret` from the created PaymentIntent
-            //     clientSecret,
-            //     confirmParams: {
-            //         return_url: 'https://example.com/order/123/complete',
-            //     },
-            // });
-            // await this.paymentIntegrationService.submitOrder(order, options);
-            // await this.paymentIntegrationService.submitPayment(paymentPayload);
-            //
-            // const {error: submitError} = await elements.submit();
-            event.resolve({});
+            const paymentMethod = this._getPaymentPayload(this._gatewayId, clientToken || '');
+            console.log('stripePaymentData', stripePaymentData);
+            await this._stripeClient.confirmPayment({
+                // ...stripePaymentData,
+                elements: this._stripeElements,
+                redirect: StripeStringConstants.IF_REQUIRED,
+                confirmParams: {
+                    ...(return_url && { return_url: return_url }),
+                },
+                clientSecret: clientToken,
+            });
+            await this.paymentIntegrationService.submitPayment(paymentMethod);
         }
+
+        return Promise.resolve();
     }
 
     private _getPaymentPayload(methodId: string, token: string): Payment {
