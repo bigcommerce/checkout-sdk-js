@@ -1,4 +1,8 @@
-import { StripeElementUpdateOptions, StripeUPEAppearanceValues } from '../stripe-utils';
+import {
+    StripeAppearanceOptions,
+    StripeCustomFont,
+    StripeElementUpdateOptions,
+} from '../stripe-utils';
 
 /**
  * A set of options that are required to initialize the Stripe payment method.
@@ -35,9 +39,14 @@ export default interface StripeOCSPaymentInitializeOptions {
     layout?: Record<string, string | number | boolean>;
 
     /**
-     * Checkout styles from store theme
+     * Stripe OCS appearance options for styling the accordion.
      */
-    style?: Record<string, StripeUPEAppearanceValues>;
+    appearance?: StripeAppearanceOptions;
+
+    /**
+     * Stripe OCS fonts options for styling the accordion.
+     */
+    fonts?: StripeCustomFont[];
 
     onError?(error?: Error): void;
 

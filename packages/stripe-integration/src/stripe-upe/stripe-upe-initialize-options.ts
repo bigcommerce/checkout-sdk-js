@@ -1,4 +1,4 @@
-import { StripeElementUpdateOptions, StripeUPEAppearanceValues } from '../stripe-utils';
+import { StripeAppearanceValues, StripeElementUpdateOptions } from '../stripe-utils';
 
 /**
  * A set of options that are required to initialize the Stripe payment method.
@@ -31,7 +31,7 @@ export default interface StripeUPEPaymentInitializeOptions {
     /**
      * Checkout styles from store theme
      */
-    style?: Record<string, StripeUPEAppearanceValues>;
+    style?: Record<string, StripeAppearanceValues>;
 
     onError?(error?: Error): void;
 
