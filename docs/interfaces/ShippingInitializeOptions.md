@@ -28,6 +28,7 @@ step of checkout.
 ### Properties
 
 - [amazonpay](ShippingInitializeOptions.md#amazonpay)
+- [bigcommerce_payments_fastlane](ShippingInitializeOptions.md#bigcommerce_payments_fastlane)
 - [braintreefastlane](ShippingInitializeOptions.md#braintreefastlane)
 - [methodId](ShippingInitializeOptions.md#methodid)
 - [params](ShippingInitializeOptions.md#params)
@@ -43,6 +44,15 @@ step of checkout.
 
 The options that are required to initialize the shipping step of checkout
 when using AmazonPayV2.
+
+___
+
+### bigcommerce\_payments\_fastlane
+
+• `Optional` **bigcommerce\_payments\_fastlane**: [`BigCommercePaymentsFastlaneShippingInitializeOptions`](BigCommercePaymentsFastlaneShippingInitializeOptions.md)
+
+The options that are required to initialize the shipping step of checkout
+when using BigCommercePayments Fastlane.
 
 ___
 

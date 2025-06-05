@@ -51,6 +51,7 @@ import {
     ExtensionRegion,
     ExtensionRequestSender,
     getExtensions,
+    WorkerExtensionMessenger,
 } from '../extension';
 import { FormFieldsActionCreator, FormFieldsRequestSender } from '../form';
 import { getAddressFormFields, getFormFields } from '../form/form.mock';
@@ -164,13 +165,15 @@ describe('CheckoutService', () => {
     let storeProjection: DataStoreProjection<CheckoutSelectors>;
     let storeCreditRequestSender: StoreCreditRequestSender;
     let extensionMessenger: ExtensionMessenger;
+    let workerExtensionMessenger: WorkerExtensionMessenger;
     let extensionEventBroadcaster: ExtensionEventBroadcaster;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
         storeProjection = createDataStoreProjection(store, createCheckoutSelectorsFactory());
 
-        extensionMessenger = new ExtensionMessenger(store, {}, {}, {});
+        workerExtensionMessenger = new WorkerExtensionMessenger();
+        extensionMessenger = new ExtensionMessenger(store, workerExtensionMessenger, {}, {}, {});
 
         const locale = 'en';
         const requestSender = createRequestSender();
@@ -442,6 +445,7 @@ describe('CheckoutService', () => {
             subscriptionsActionCreator,
             formFieldsActionCreator,
             extensionActionCreator,
+            workerExtensionMessenger,
         );
     });
 
@@ -1553,10 +1557,15 @@ describe('CheckoutService', () => {
 
             const container = 'checkout.extension';
             const region = ExtensionRegion.ShippingShippingAddressFormBefore;
+            const workerExtensionMessenger = new WorkerExtensionMessenger();
 
             await checkoutService.renderExtension(container, region);
 
-            expect(extensionActionCreator.renderExtension).toHaveBeenCalledWith(container, region);
+            expect(extensionActionCreator.renderExtension).toHaveBeenCalledWith(
+                container,
+                region,
+                workerExtensionMessenger,
+            );
             expect(extensionEventBroadcaster.listen).toHaveBeenCalled();
         });
 
@@ -1571,7 +1580,7 @@ describe('CheckoutService', () => {
         });
 
         it('posts a message to an extension', async () => {
-            jest.spyOn(extensionMessenger, 'post');
+            jest.spyOn(extensionMessenger, 'post').mockImplementation(() => Promise.resolve());
 
             const message = {
                 type: ExtensionMessageType.GetConsignments,

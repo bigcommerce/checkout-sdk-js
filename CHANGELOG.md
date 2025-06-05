@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.743.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.743.1...v1.743.2) (2025-06-04)
+
+### [1.743.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.743.0...v1.743.1) (2025-06-04)
+
+## [1.743.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.742.0...v1.743.0) (2025-06-04)
+
+
+### Features
+
+* **checkout:** Add listening methods to worker extension messenger ([#2886](https://github.com/bigcommerce/checkout-sdk-js/issues/2886)) ([4cc883a](https://github.com/bigcommerce/checkout-sdk-js/commit/4cc883a5bdf700571945278cb147da2e7f66cc8b))
+
+## [1.742.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.741.0...v1.742.0) (2025-06-02)
+
+
+### Features
+
+* **payment:** added canMakePayments method as additional verification of payment capability ([72f03c1](https://github.com/bigcommerce/checkout-sdk-js/commit/72f03c1efa3cf7a2dea53f78da72c483bb777b4d))
+* **payment:** console.error instead of throw error ([643394e](https://github.com/bigcommerce/checkout-sdk-js/commit/643394ef7d13a9404453333b918b3f47a8f6ab74))
+
+## [1.741.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.740.0...v1.741.0) (2025-06-02)
+
+
+### Features
+
+* **checkout:** Add worker extension messenger and worker-event-poster ([#2876](https://github.com/bigcommerce/checkout-sdk-js/issues/2876)) ([afcaeaa](https://github.com/bigcommerce/checkout-sdk-js/commit/afcaeaa9a5cbc2eeea3e9364e98408038647ee04))
+
+## [1.740.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.739.0...v1.740.0) (2025-05-29)
+
+
+### Features
+
+* **payment:** move Stripe OCS and UPE to separate modules ([b02df3e](https://github.com/bigcommerce/checkout-sdk-js/commit/b02df3ec06eabd12f451db555035bd30513fae35))
+
 ## [1.739.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.738.0...v1.739.0) (2025-05-29)
 
 
