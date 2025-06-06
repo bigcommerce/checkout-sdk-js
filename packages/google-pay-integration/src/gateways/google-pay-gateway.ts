@@ -78,11 +78,13 @@ export default class GooglePayGateway {
             company = '',
             phone = '',
             email,
+            customFields = [],
         } = this._paymentIntegrationService.getState().getBillingAddress() || {};
 
         return {
             ...this._mapToAddressRequestBody(billingAddress, company, phone),
             email: email || response.email,
+            customFields,
         };
     }
 
