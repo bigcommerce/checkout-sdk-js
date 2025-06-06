@@ -12,6 +12,7 @@ import {
     NotInitializedErrorType,
     OrderFinalizationNotRequiredError,
     OrderRequestBody,
+    PaymentIntegrationSelectors,
     PaymentIntegrationService,
     PaymentMethod,
     PaymentMethodCancelledError,
@@ -193,7 +194,7 @@ describe('KlarnaV2PaymentStrategy', () => {
         it('loads payments widget', () => {
             expect(klarnaPayments.init).toHaveBeenCalledWith({ client_token: 'foo' });
             expect(klarnaPayments.load).toHaveBeenCalledWith(
-                { container: '#container', payment_method_category: paymentMethod.id },
+                { container: '#container', payment_method_category: paymentMethod.gateway },
                 expect.any(Function),
             );
             expect(klarnaPayments.load).toHaveBeenCalledTimes(1);
@@ -201,6 +202,35 @@ describe('KlarnaV2PaymentStrategy', () => {
 
         it('triggers callback with response', () => {
             expect(onLoad).toHaveBeenCalledWith({ show_form: true });
+        });
+
+        it('calls loadPaymentsWidget when subscription is triggered and isPaymentMethodInitialized is true', async () => {
+            const loadPaymentsWidgetMock = jest
+                .spyOn(
+                    strategy as unknown as { loadPaymentsWidget: jest.Mock },
+                    'loadPaymentsWidget',
+                )
+                .mockImplementation(jest.fn());
+
+            const subscribeMock = jest.spyOn(paymentIntegrationService, 'subscribe');
+
+            await strategy.initialize({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+                klarnav2: { container: '#container' },
+            });
+
+            const subscriber = subscribeMock.mock.calls[0][0];
+
+            subscriber({
+                isPaymentMethodInitialized: () => true,
+            } as unknown as PaymentIntegrationSelectors);
+
+            expect(loadPaymentsWidgetMock).toHaveBeenCalledWith({
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
+                klarnav2: { container: '#container' },
+            });
         });
     });
 
@@ -221,7 +251,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                { payment_method_category: paymentMethod.id },
+                { payment_method_category: paymentMethod.gateway },
                 getKlarnaV2UpdateSessionParamsPhone(),
                 expect.any(Function),
             );
@@ -292,7 +322,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                { payment_method_category: paymentMethod.id },
+                { payment_method_category: paymentMethod.gateway },
                 getKlarnaV2UpdateSessionParamsPhone(),
                 expect.any(Function),
             );
@@ -328,7 +358,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                { payment_method_category: paymentMethod.id },
+                { payment_method_category: paymentMethod.gateway },
                 getKlarnaV2UpdateSessionParamsForOC(),
                 expect.any(Function),
             );
@@ -370,7 +400,7 @@ describe('KlarnaV2PaymentStrategy', () => {
             await strategy.execute(payload);
 
             expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                { payment_method_category: paymentMethod.id },
+                { payment_method_category: paymentMethod.gateway },
                 getKlarnaV2UpdateSessionParams(),
                 expect.any(Function),
             );
@@ -422,7 +452,7 @@ describe('KlarnaV2PaymentStrategy', () => {
                 await strategy.execute(payload);
 
                 expect(klarnaPayments.authorize).toHaveBeenCalledWith(
-                    { payment_method_category: paymentMethod.id },
+                    { payment_method_category: paymentMethod.gateway },
                     {},
                     expect.any(Function),
                 );
