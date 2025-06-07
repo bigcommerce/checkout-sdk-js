@@ -11,6 +11,7 @@ import {
     PaymentMethodInvalidError,
     PaymentRequestOptions,
     PaymentStrategy,
+    TimeoutError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import { PayPalApmSdk, PayPalCommerceSdk } from '@bigcommerce/checkout-sdk/paypal-commerce-utils';
 import { LoadingIndicator } from '@bigcommerce/checkout-sdk/ui';
@@ -21,15 +22,13 @@ import {
     NonInstantAlternativePaymentMethods,
     PayPalCommerceButtons,
     PayPalCommerceButtonsOptions,
-    PayPalCommerceInitializationData, PayPalOrderStatus,
+    PayPalCommerceInitializationData,
+    PayPalOrderStatus,
 } from '../paypal-commerce-types';
-
-import { TimeoutError } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
 import PayPalCommerceAlternativeMethodsPaymentOptions, {
     WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions,
 } from './paypal-commerce-alternative-methods-payment-initialize-options';
-import { WithBraintreeLocalMethodsPaymentInitializeOptions } from '@bigcommerce/checkout-sdk/braintree-integration';
 import { isExperimentEnabled } from '@bigcommerce/checkout-sdk/utility';
 
 const POLLING_INTERVAL = 3000;
@@ -134,19 +133,14 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             throw new PaymentMethodInvalidError();
         }
 
-        if (!this.isNonInstantPaymentMethod(methodId)) {
-            await this.paymentIntegrationService.submitOrder(order, options);
+        if (this.isPollingEnabled && methodId === 'ideal') {
+            await new Promise((resolve, reject) => {
+                void this.initializePollingMechanism(methodId, resolve, reject, gatewayId);
+            });
         }
 
-        if (this.isPollingEnabled && methodId === 'ideal') {
-            return new Promise((resolve, reject) => {
-                void this.initializePollingMechanism(
-                    methodId,
-                    resolve,
-                    reject,
-                    gatewayId,
-                );
-            });
+        if (!this.isNonInstantPaymentMethod(methodId)) {
+            await this.paymentIntegrationService.submitOrder(order, options);
         }
 
         await this.paypalCommerceIntegrationService.submitPayment(
@@ -180,8 +174,8 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
      * */
     private async initializePollingMechanism(
         methodId: string,
-        resolvePromise: () => void,
-        rejectPromise: () => void,
+        resolvePromise: (value?: unknown) => void,
+        rejectPromise: (value?: unknown) => void,
         gatewayId?: string,
     ): Promise<void> {
         await new Promise<void>((resolve, reject) => {
@@ -198,11 +192,9 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
         try {
             this.pollingTimer += this.pollingInterval;
 
-            const orderStatus = await this.paypalCommerceIntegrationService.getOrderStatus(gatewayId, {
-                params: {
-                    useMetadata: false,
-                },
-            });
+            const orderStatus = await this.paypalCommerceIntegrationService.getOrderStatus(
+                gatewayId,
+            );
 
             const isOrderApproved = orderStatus === PayPalOrderStatus.Approved;
             const isPollingError = orderStatus === PayPalOrderStatus.PollingError;
@@ -217,10 +209,7 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
                 return rejectPromise();
             }
 
-            if (
-                !isOrderApproved &&
-                this.pollingTimer < this.maxPollingIntervalTime
-            ) {
+            if (!isOrderApproved && this.pollingTimer < this.maxPollingIntervalTime) {
                 return await this.initializePollingMechanism(
                     methodId,
                     resolvePromise,
@@ -251,7 +240,8 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
     }
 
     private async reinitializeStrategy(
-        options: PaymentInitializeOptions & WithBraintreeLocalMethodsPaymentInitializeOptions,
+        options: PaymentInitializeOptions &
+            WithPayPalCommerceAlternativeMethodsPaymentInitializeOptions,
     ) {
         await this.deinitialize();
         await this.initialize(options);
@@ -298,8 +288,14 @@ export default class PayPalCommerceAlternativeMethodsPaymentStrategy implements 
             onInit: (_, actions) => paypalOptions.onInitButton(actions),
             createOrder: () => this.onCreateOrder(methodId, gatewayId, paypalOptions),
             onApprove: (data) => this.handleApprove(data, submitForm),
-            onCancel: () => this.toggleLoadingIndicator(false),
-            onError: (error) => this.handleFailure(error, onError),
+            onCancel: () => {
+                this.toggleLoadingIndicator(false);
+                this.deinitializePollingMechanism();
+            },
+            onError: (error) => {
+                this.deinitializePollingMechanism();
+                this.handleFailure(error, onError);
+            },
             onClick: async (_, actions) =>
                 paypalOptions.onValidate(actions.resolve, actions.reject),
         };

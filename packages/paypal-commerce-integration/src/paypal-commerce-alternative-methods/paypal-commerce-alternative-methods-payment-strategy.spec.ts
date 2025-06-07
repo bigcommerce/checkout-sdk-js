@@ -11,7 +11,8 @@ import {
     PaymentMethodInvalidError,
 } from '@bigcommerce/checkout-sdk/payment-integration-api';
 import {
-    getBillingAddress, getConfig,
+    getBillingAddress,
+    getConfig,
     PaymentIntegrationServiceMock,
 } from '@bigcommerce/checkout-sdk/payment-integrations-test-utils';
 import {
@@ -701,11 +702,6 @@ describe('PayPalCommerceAlternativeMethodsPaymentStrategy', () => {
 
             expect(paypalCommerceIntegrationService.getOrderStatus).toHaveBeenCalledWith(
                 'paypalcommercealternativemethods',
-                {
-                    params: {
-                        useMetadata: false,
-                    },
-                },
             );
         });
 
