@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.744.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.744.0...v1.744.1) (2025-06-10)
+
+
+### Bug Fixes
+
+* **payment:** Google Pay billing address update customFields added ([925cefa](https://github.com/bigcommerce/checkout-sdk-js/commit/925cefad0ef0a0bb6c676d23661f6ebe70f0dec1))
+
 ## [1.744.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.743.2...v1.744.0) (2025-06-10)
 
 
