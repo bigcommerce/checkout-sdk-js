@@ -78,10 +78,11 @@ export default class GooglePayGateway {
             company = '',
             phone = '',
             email,
+            customFields = [],
         } = this._paymentIntegrationService.getState().getBillingAddress() || {};
 
         return {
-            ...this._mapToAddressRequestBody(billingAddress, company, phone),
+            ...this._mapToAddressRequestBody(billingAddress, company, phone, customFields),
             email: email || response.email,
         };
     }
@@ -458,6 +459,7 @@ export default class GooglePayGateway {
         address: GooglePayFullBillingAddress,
         company: string,
         phone: string,
+        customFields?: AddressRequestBody['customFields'],
     ): AddressRequestBody {
         const {
             name,
@@ -484,7 +486,7 @@ export default class GooglePayGateway {
             countryCode,
             postalCode,
             phone: phoneNumber || phone,
-            customFields: [],
+            customFields: customFields || [],
         };
     }
 
