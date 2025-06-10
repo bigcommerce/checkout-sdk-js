@@ -5151,6 +5151,19 @@ declare interface CreditCardPlaceHolder {
     encryptedSecurityCode: string;
 }
 
+/**
+ * This object is used to pass custom fonts when creating an [Elements](https://stripe.com/docs/js/elements_object/create) object.
+ */
+declare interface CssFontSource {
+    /**
+     * A relative or absolute URL pointing to a CSS file with [@font-face](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face) definitions, for example:
+     * `https://fonts.googleapis.com/css?family=Open+Sans`
+     * Note that if you are using a [content security policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) (CSP),
+     * [additional directives](https://stripe.com/docs/security#content-security-policy) may be necessary.
+     */
+    cssSrc: string;
+}
+
 declare interface CssProperties {
     background?: string;
     caretColor?: string;
@@ -5206,6 +5219,37 @@ declare interface CustomError extends Error {
     message: string;
     type: string;
     subtype?: string;
+}
+
+/**
+ * This object is used to pass custom fonts when creating an [Elements](https://stripe.com/docs/js/elements_object/create) object.
+ */
+declare interface CustomFontSource {
+    /**
+     * The name to give the font.
+     */
+    family: string;
+    /**
+     * A valid [src](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/src) value pointing to your
+     * custom font file. This is usually (though not always) a link to a file with a .woff , .otf, or .svg suffix.
+     */
+    src: string;
+    /**
+     * A valid [font-display](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display) value.
+     */
+    display?: string;
+    /**
+     * One of normal, italic, oblique. Defaults to normal.
+     */
+    style?: string;
+    /**
+     * A valid [unicode-range](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/unicode-range) value.
+     */
+    unicodeRange?: string;
+    /**
+     * A valid [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight). Note that this is a string, not a number.
+     */
+    weight?: string;
 }
 
 declare interface CustomItem {
@@ -8599,6 +8643,18 @@ declare class StoredCardHostedFormService {
     deinitialize(): void;
 }
 
+/**
+ * All available options are here https://stripe.com/docs/stripe-js/appearance-api#supported-css-properties
+ */
+declare interface StripeAppearanceOptions {
+    variables?: Record<string, StripeAppearanceValues>;
+    rules?: Record<string, Record<string, StripeAppearanceValues>>;
+}
+
+declare type StripeAppearanceValues = string | string[] | number | undefined;
+
+declare type StripeCustomFont = CssFontSource | CustomFontSource;
+
 declare interface StripeCustomerEvent extends StripeEvent {
     collapsed?: boolean;
     authenticated: boolean;
@@ -8798,9 +8854,13 @@ declare interface StripeOCSPaymentInitializeOptions {
      */
     layout?: Record<string, string | number | boolean>;
     /**
-     * Checkout styles from store theme
+     * Stripe OCS appearance options for styling the accordion.
      */
-    style?: Record<string, StripeUPEAppearanceValues>;
+    appearance?: StripeAppearanceOptions;
+    /**
+     * Stripe OCS fonts options for styling the accordion.
+     */
+    fonts?: StripeCustomFont[];
     onError?(error?: Error): void;
     render(): void;
     initStripeElementUpdateTrigger?(updateTriggerFn: (payload: StripeElementUpdateOptions) => void): void;
@@ -8833,8 +8893,6 @@ declare interface StripeShippingEvent extends StripeEvent {
         name: string;
     };
 }
-
-declare type StripeUPEAppearanceValues = string | string[] | number | undefined;
 
 declare interface StripeUPECustomerInitializeOptions {
     /**
@@ -8899,7 +8957,7 @@ declare interface StripeUPEPaymentInitializeOptions {
     /**
      * Checkout styles from store theme
      */
-    style?: Record<string, StripeUPEAppearanceValues>;
+    style?: Record<string, StripeAppearanceValues>;
     onError?(error?: Error): void;
     render(): void;
     initStripeElementUpdateTrigger?(updateTriggerFn: (payload: StripeElementUpdateOptions) => void): void;

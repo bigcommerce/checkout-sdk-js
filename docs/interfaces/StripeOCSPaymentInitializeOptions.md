@@ -27,9 +27,10 @@ service.initializePayment({
 
 ### Properties
 
+- [appearance](StripeOCSPaymentInitializeOptions.md#appearance)
 - [containerId](StripeOCSPaymentInitializeOptions.md#containerid)
+- [fonts](StripeOCSPaymentInitializeOptions.md#fonts)
 - [layout](StripeOCSPaymentInitializeOptions.md#layout)
-- [style](StripeOCSPaymentInitializeOptions.md#style)
 
 ### Methods
 
@@ -41,6 +42,14 @@ service.initializePayment({
 
 ## Properties
 
+### appearance
+
+• `Optional` **appearance**: [`StripeAppearanceOptions`](StripeAppearanceOptions.md)
+
+Stripe OCS appearance options for styling the accordion.
+
+___
+
 ### containerId
 
 • **containerId**: `string`
@@ -49,19 +58,19 @@ The location to insert the credit card number form field.
 
 ___
 
+### fonts
+
+• `Optional` **fonts**: [`StripeCustomFont`](../README.md#stripecustomfont)[]
+
+Stripe OCS fonts options for styling the accordion.
+
+___
+
 ### layout
 
 • `Optional` **layout**: `Record`<`string`, `string` \| `number` \| `boolean`\>
 
 Stripe OCS layout options
-
-___
-
-### style
-
-• `Optional` **style**: `Record`<`string`, [`StripeUPEAppearanceValues`](../README.md#stripeupeappearancevalues)\>
-
-Checkout styles from store theme
 
 ## Methods
 
