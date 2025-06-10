@@ -1,5 +1,7 @@
 import { PaymentMethod } from '@bigcommerce/checkout-sdk/payment-integration-api';
 
+import { StripeLinkV2Event, StripeLinkV2ShippingRate } from '../stripe-ocs/stripe-ocs';
+
 /**
  * Initialization options.
  */
@@ -8,7 +10,7 @@ export interface StripeConfigurationOptions {
      * For usage with [Connect](https://stripe.com/docs/connect) only.
      * Specifying a connected account ID (e.g., acct_24BFMpJ1svR5A89k) allows you to perform actions on behalf of that account.
      */
-    stripeAccount: string;
+    stripeAccount?: string;
 
     /**
      * Override your account's [API version](https://stripe.com/docs/api/versioning)
@@ -154,7 +156,7 @@ export interface StripeElement {
      * in addition to some Element-specific keys.
      * https://stripe.com/docs/js/element/events/on_change?type=paymentElement
      */
-    on(event: 'change' | 'ready', handler: (event: StripeEventType) => void): void;
+    on(event: StripeElementEvent, handler: (event: StripeEventType) => void): void;
 
     /**
      * Updates the options the Payment Element was initialized with. Updates are merged into the existing configuration.
@@ -209,7 +211,7 @@ export interface StripePaymentEvent extends StripeEvent {
     collapsed?: boolean;
 }
 
-interface Address {
+export interface Address {
     city: string;
     country: string;
     line1: string;
@@ -218,7 +220,11 @@ interface Address {
     state: string;
 }
 
-export type StripeEventType = StripeShippingEvent | StripeCustomerEvent | StripePaymentEvent;
+export type StripeEventType =
+    | StripeShippingEvent
+    | StripeCustomerEvent
+    | StripePaymentEvent
+    | StripeLinkV2Event;
 
 /**
  * Object definition for part of the data sent to confirm the PaymentIntent.
@@ -300,6 +306,8 @@ export interface StripeConfirmPaymentData {
      * If you set redirect: "if_required", then confirmPayment will only redirect if your user chooses a redirect-based payment method.
      */
     redirect?: StripeStringConstants.ALWAYS | StripeStringConstants.IF_REQUIRED;
+
+    clientSecret?: string;
 }
 
 export interface FieldsOptions {
@@ -338,6 +346,22 @@ export interface StripeElementsCreateOptions {
     terms?: TermOptions;
     layout?: StripeLayoutOptions;
     paymentMethodOrder?: string[];
+    //  Link v2 options
+    lineItems?: LineItem[];
+    allowedShippingCountries?: string[];
+    shippingAddressRequired?: boolean;
+    shippingRates?: StripeLinkV2ShippingRate[];
+    billingAddressRequired?: boolean;
+    emailRequired?: boolean;
+    phoneNumberRequired?: boolean;
+    paymentMethods?: {
+        link: StripeStringConstants.AUTO;
+        applePay: StripeStringConstants.NEVER;
+        googlePay: StripeStringConstants.NEVER;
+        amazonPay: StripeStringConstants.NEVER;
+        paypal: StripeStringConstants.NEVER;
+    };
+    buttonHeight?: number;
 }
 
 interface validationElement {
@@ -473,6 +497,9 @@ export interface StripeUpdateElementsOptions {
      * The layout of each Element stays consistent, but you can modify colors, fonts, borders, padding, and more.
      */
     appearance?: StripeAppearanceOptions;
+    mode?: string;
+    amount?: number;
+    currency?: string;
 }
 
 export interface StripeClient {
@@ -507,7 +534,10 @@ export interface StripeResult {
 export interface StripeHostWindow extends Window {
     bcStripeClient?: StripeClient;
     bcStripeElements?: StripeElements;
-    Stripe?(stripePublishableKey: string, options?: StripeConfigurationOptions): StripeClient;
+    Stripe?<T = StripeClient>(
+        stripePublishableKey: string,
+        options?: StripeConfigurationOptions,
+    ): T;
 }
 
 export enum StripePaymentMethodType {
@@ -536,6 +566,7 @@ export enum StripeElementType {
     PAYMENT = 'payment',
     AUTHENTICATION = 'linkAuthentication',
     SHIPPING = 'address',
+    EXPRESS_CHECKOUT = 'expressCheckout',
 }
 
 export enum StripePaymentIntentStatus {
@@ -574,4 +605,18 @@ export interface StripeAdditionalActionResponseBody {
     three_ds_result: {
         token?: string;
     };
+}
+
+export enum StripeElementEvent {
+    CLICK = 'click',
+    CHANGE = 'change',
+    READY = 'ready',
+    SHIPPING_ADDRESS_CHANGE = 'shippingaddresschange',
+    SHIPPING_RATE_CHANGE = 'shippingratechange',
+    CONFIRM = 'confirm',
+}
+
+export interface LineItem {
+    name: string;
+    amount: number;
 }

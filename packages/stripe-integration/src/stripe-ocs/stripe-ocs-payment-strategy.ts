@@ -23,6 +23,7 @@ import {
     StripeAdditionalActionRequired,
     StripeClient,
     StripeElement,
+    StripeElementEvent,
     StripeElements,
     StripeElementType,
     StripeError,
@@ -202,11 +203,11 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
         this.stripeIntegrationService.mountElement(stripeElement, containerId);
 
-        stripeElement.on('ready', () => {
+        stripeElement.on(StripeElementEvent.READY, () => {
             render();
         });
 
-        stripeElement.on('change', (event: StripeEventType) => {
+        stripeElement.on(StripeElementEvent.CHANGE, (event: StripeEventType) => {
             this._onStripeElementChange(event, gatewayId, methodId, paymentMethodSelect);
         });
 
