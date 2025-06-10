@@ -21,7 +21,6 @@ import {
     isStripePaymentEvent,
     isStripePaymentMethodLike,
     StripeAdditionalActionRequired,
-    StripeAppearanceOptions,
     StripeClient,
     StripeElement,
     StripeElements,
@@ -32,7 +31,6 @@ import {
     StripeResult,
     StripeScriptLoader,
     StripeStringConstants,
-    StripeUPEAppearanceValues,
 } from '../stripe-utils';
 
 import StripeOCSPaymentInitializeOptions, {
@@ -40,15 +38,14 @@ import StripeOCSPaymentInitializeOptions, {
 } from './stripe-ocs-initialize-options';
 
 export default class StripeOCSPaymentStrategy implements PaymentStrategy {
-    private stripeUPEClient?: StripeClient;
+    private stripeClient?: StripeClient;
     private stripeElements?: StripeElements;
     private selectedMethodId?: string;
-    private readonly stripeSVGSizeCoefficient = 0.88;
 
     constructor(
         private paymentIntegrationService: PaymentIntegrationService,
         private scriptLoader: StripeScriptLoader,
-        private stripeUPEIntegrationService: StripeIntegrationService,
+        private stripeIntegrationService: StripeIntegrationService,
     ) {}
 
     async initialize(
@@ -80,7 +77,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             }
         }
 
-        this.stripeUPEIntegrationService.initCheckoutEventsSubscription(
+        this.stripeIntegrationService.initCheckoutEventsSubscription(
             gatewayId,
             methodId,
             stripeocs,
@@ -92,7 +89,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         const { payment, ...order } = orderRequest;
         const { methodId, gatewayId } = payment || {};
 
-        if (!this.stripeUPEClient) {
+        if (!this.stripeClient) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
@@ -109,7 +106,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             await this.paymentIntegrationService.applyStoreCredit(isStoreCreditApplied);
         }
 
-        await this.stripeUPEIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
+        await this.stripeIntegrationService.updateStripePaymentIntent(gatewayId, methodId);
 
         await this.paymentIntegrationService.submitOrder(order, options);
 
@@ -129,15 +126,15 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
     deinitialize(): Promise<void> {
         this.stripeElements?.getElement(StripeElementType.PAYMENT)?.unmount();
-        this.stripeUPEIntegrationService.deinitialize();
+        this.stripeIntegrationService.deinitialize();
         this.stripeElements = undefined;
-        this.stripeUPEClient = undefined;
+        this.stripeClient = undefined;
 
         return Promise.resolve();
     }
 
     private async _initializeStripeElement(
-        stripeupe: StripeOCSPaymentInitializeOptions,
+        stripe: StripeOCSPaymentInitializeOptions,
         gatewayId: string,
         methodId: string,
     ) {
@@ -159,25 +156,23 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this.stripeUPEClient = await this._loadStripeJs(
-            stripePublishableKey,
-            stripeConnectedAccount,
-        );
+        this.stripeClient = await this._loadStripeJs(stripePublishableKey, stripeConnectedAccount);
 
         const {
+            appearance,
             containerId,
-            style,
+            fonts,
             layout,
             render,
             paymentMethodSelect,
             handleClosePaymentMethod,
-        } = stripeupe;
+        } = stripe;
 
-        this.stripeElements = await this.scriptLoader.getElements(this.stripeUPEClient, {
+        this.stripeElements = await this.scriptLoader.getElements(this.stripeClient, {
             clientSecret: clientToken,
             locale: formatLocale(shopperLanguage),
-            appearance: this._getElementAppearance(style),
-            fonts: this._getElementFonts(style),
+            appearance,
+            fonts,
         });
 
         const { getBillingAddress, getShippingAddress } = state;
@@ -205,7 +200,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
                 layout,
             });
 
-        this.stripeUPEIntegrationService.mountElement(stripeElement, containerId);
+        this.stripeIntegrationService.mountElement(stripeElement, containerId);
 
         stripeElement.on('ready', () => {
             render();
@@ -222,116 +217,11 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         stripePublishableKey: string,
         stripeConnectedAccount: string,
     ): Promise<StripeClient> {
-        if (this.stripeUPEClient) {
-            return this.stripeUPEClient;
+        if (this.stripeClient) {
+            return this.stripeClient;
         }
 
         return this.scriptLoader.getStripeClient(stripePublishableKey, stripeConnectedAccount);
-    }
-
-    private _getElementAppearance(
-        style?: StripeOCSPaymentInitializeOptions['style'],
-    ): StripeAppearanceOptions | undefined {
-        if (!style) {
-            return;
-        }
-
-        const radioColor = '#ddd'; // TODO: get style from theme
-        const radioFocusColor = '#4496f6'; // TODO: get style from theme
-        const radioIconSize = this._getRadioIconSizes(style);
-
-        return {
-            variables: {
-                ...this.stripeUPEIntegrationService.mapAppearanceVariables(style),
-                fontFamily: style.fontFamily?.toString(),
-            },
-            rules: {
-                '.Input': this.stripeUPEIntegrationService.mapInputAppearanceRules(style),
-                '.AccordionItem': {
-                    borderRadius: 0,
-                    borderWidth: 0,
-                    borderBottom: style.accordionBorderBottom,
-                    boxShadow: 'none',
-                    fontSize: style.accordionItemTitleFontSize,
-                    fontWeight: style.accordionItemTitleFontWeight,
-                    color: style.accordionHeaderColor,
-                    padding: style.accordionHeaderPadding,
-                },
-                '.TabLabel': {
-                    color: style.accordionHeaderColor,
-                },
-                '.AccordionItem--selected': {
-                    color: style.accordionHeaderColor,
-                },
-                '.RadioIcon': {
-                    width: radioIconSize.outerWidth,
-                },
-                '.RadioIconOuter': {
-                    strokeWidth: radioIconSize.outerStrokeWidth,
-                    stroke: radioColor,
-                },
-                '.RadioIconOuter--checked': {
-                    stroke: radioFocusColor,
-                },
-                '.RadioIconInner': {
-                    r: radioIconSize.innerRadius,
-                    fill: radioFocusColor,
-                },
-            },
-        };
-    }
-
-    private _getElementFonts(style?: StripeOCSPaymentInitializeOptions['style']) {
-        if (!style?.fontsSrc || !Array.isArray(style?.fontsSrc)) {
-            return;
-        }
-
-        return style.fontsSrc.map((cssSrc: string) => ({ cssSrc }));
-    }
-
-    private _getRadioIconSizes(style?: StripeOCSPaymentInitializeOptions['style']) {
-        if (!style) {
-            return {};
-        }
-
-        const {
-            radioIconOuterWidth = 26,
-            radioIconOuterStrokeWidth = 1,
-            radioIconInnerWidth = 17,
-        } = style;
-        const percentageCoefficient = this.stripeSVGSizeCoefficient * 100;
-
-        const outerWidth = this._parseRadioIconNumberSize(radioIconOuterWidth);
-        const outerStrokeWidth = this._parseRadioIconNumberSize(radioIconOuterStrokeWidth);
-        const innerWidth = this._parseRadioIconNumberSize(radioIconInnerWidth);
-
-        const stripeEqualOuterWidth = (outerWidth / this.stripeSVGSizeCoefficient).toFixed(2);
-        const stripeEqualOuterStrokeWidth = (
-            (outerStrokeWidth / outerWidth) *
-            percentageCoefficient
-        ).toFixed(2);
-        const stripeEqualInnerRadius = (
-            ((innerWidth / outerWidth) * percentageCoefficient) /
-            2
-        ).toFixed(2);
-
-        return {
-            outerWidth: `${stripeEqualOuterWidth}px`,
-            outerStrokeWidth: `${stripeEqualOuterStrokeWidth}px`,
-            innerRadius: `${stripeEqualInnerRadius}px`,
-        };
-    }
-
-    private _parseRadioIconNumberSize(size: StripeUPEAppearanceValues = 0): number {
-        if (Array.isArray(size)) {
-            size = parseInt(size[0], 10);
-        }
-
-        if (typeof size === 'string') {
-            size = parseInt(size, 10);
-        }
-
-        return size;
     }
 
     private _collapseStripeElement() {
@@ -363,12 +253,12 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
     ): Promise<PaymentIntegrationSelectors | undefined> {
         if (
             !isRequestError(error) ||
-            !this.stripeUPEIntegrationService.isAdditionalActionError(error.body.errors)
+            !this.stripeIntegrationService.isAdditionalActionError(error.body.errors)
         ) {
             throw error;
         }
 
-        if (!this.stripeUPEClient || !this.stripeElements) {
+        if (!this.stripeClient || !this.stripeElements) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
@@ -385,7 +275,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         try {
             return await this.paymentIntegrationService.submitPayment(paymentPayload);
         } catch (error) {
-            this.stripeUPEIntegrationService.throwPaymentConfirmationProceedMessage();
+            this.stripeIntegrationService.throwPaymentConfirmationProceedMessage();
         }
     }
 
@@ -394,21 +284,21 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
         additionalActionData: StripeAdditionalActionRequired['data'],
     ): Promise<StripeResult | never> {
         const { token, redirect_url } = additionalActionData;
-        const stripePaymentData = this.stripeUPEIntegrationService.mapStripePaymentData(
+        const stripePaymentData = this.stripeIntegrationService.mapStripePaymentData(
             this.stripeElements,
             redirect_url,
         );
         let stripeError: StripeError | undefined;
 
         try {
-            const isPaymentCompleted = await this.stripeUPEIntegrationService.isPaymentCompleted(
+            const isPaymentCompleted = await this.stripeIntegrationService.isPaymentCompleted(
                 methodId,
-                this.stripeUPEClient,
+                this.stripeClient,
             );
 
             const confirmationResult = !isPaymentCompleted
-                ? await this.stripeUPEClient?.confirmPayment(stripePaymentData)
-                : await this.stripeUPEClient?.retrievePaymentIntent(token || '');
+                ? await this.stripeClient?.confirmPayment(stripePaymentData)
+                : await this.stripeClient?.retrievePaymentIntent(token || '');
 
             stripeError = confirmationResult?.error;
 
@@ -418,7 +308,7 @@ export default class StripeOCSPaymentStrategy implements PaymentStrategy {
 
             return confirmationResult;
         } catch (error: unknown) {
-            return this.stripeUPEIntegrationService.throwStripeError(stripeError);
+            return this.stripeIntegrationService.throwStripeError(stripeError);
         }
     }
 

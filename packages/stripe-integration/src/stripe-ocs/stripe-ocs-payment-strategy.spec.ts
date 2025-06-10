@@ -47,17 +47,6 @@ describe('StripeOCSPaymentStrategy', () => {
     const methodId = 'optymized_checkout';
     const gatewayId = 'stripeocs';
 
-    const testColor = '#123456';
-    const style = {
-        labelText: testColor,
-        fieldText: testColor,
-        fieldPlaceholderText: testColor,
-        fieldErrorText: testColor,
-        fieldBackground: testColor,
-        fieldInnerShadow: testColor,
-        fieldBorder: testColor,
-    };
-
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
 
@@ -376,73 +365,6 @@ describe('StripeOCSPaymentStrategy', () => {
             await stripeOCSPaymentStrategy.initialize(stripeOptions);
 
             expect(stripeScriptLoader.getStripeClient).toHaveBeenCalledTimes(1);
-        });
-
-        describe('Stripe Element styling', () => {
-            describe('RadioButton styling', () => {
-                it('should initialize with default style', async () => {
-                    stripeOptions = getStripeOCSInitializeOptionsMock(style);
-                    await stripeOCSPaymentStrategy.initialize(stripeOptions);
-
-                    expect(stripeScriptLoader.getElements).toHaveBeenCalledWith(
-                        stripeUPEJsMock,
-                        expect.objectContaining({
-                            appearance: expect.objectContaining({
-                                rules: expect.objectContaining({
-                                    '.RadioIcon': {
-                                        width: '29.55px',
-                                    },
-                                    '.RadioIconOuter': {
-                                        strokeWidth: '3.38px',
-                                        stroke: '#ddd',
-                                    },
-                                    '.RadioIconOuter--checked': {
-                                        stroke: '#4496f6',
-                                    },
-                                    '.RadioIconInner': {
-                                        r: '28.77px',
-                                        fill: '#4496f6',
-                                    },
-                                }),
-                            }),
-                        }),
-                    );
-                });
-
-                it('should initialize with custom style', async () => {
-                    stripeOptions = getStripeOCSInitializeOptionsMock({
-                        ...style,
-                        radioIconOuterWidth: '52px',
-                        radioIconOuterStrokeWidth: '4px',
-                        radioIconInnerWidth: '25px',
-                    });
-                    await stripeOCSPaymentStrategy.initialize(stripeOptions);
-
-                    expect(stripeScriptLoader.getElements).toHaveBeenCalledWith(
-                        stripeUPEJsMock,
-                        expect.objectContaining({
-                            appearance: expect.objectContaining({
-                                rules: expect.objectContaining({
-                                    '.RadioIcon': {
-                                        width: '59.09px',
-                                    },
-                                    '.RadioIconOuter': {
-                                        strokeWidth: '6.77px',
-                                        stroke: '#ddd',
-                                    },
-                                    '.RadioIconOuter--checked': {
-                                        stroke: '#4496f6',
-                                    },
-                                    '.RadioIconInner': {
-                                        r: '21.15px',
-                                        fill: '#4496f6',
-                                    },
-                                }),
-                            }),
-                        }),
-                    );
-                });
-            });
         });
     });
 
