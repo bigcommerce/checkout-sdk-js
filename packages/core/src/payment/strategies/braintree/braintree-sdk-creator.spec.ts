@@ -301,11 +301,12 @@ describe('Braintree SDK Creator', () => {
                 onErrorCallback,
                 {
                     mobileWebFallBack: false,
+                    allowDesktop: false,
                 },
             );
 
             expect(braintreeVenmoCheckoutCreatorMock.create).toHaveBeenCalledWith(
-                expect.objectContaining({ mobileWebFallBack: false }),
+                expect.objectContaining({ mobileWebFallBack: false, allowDesktop: false }),
                 expect.any(Function),
             );
             expect(braintreeVenmoCheckout).toBe(braintreeVenmoCheckoutMock);

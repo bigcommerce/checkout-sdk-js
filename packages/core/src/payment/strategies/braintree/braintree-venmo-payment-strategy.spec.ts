@@ -166,6 +166,20 @@ describe('BraintreeVenmoPaymentStrategy', () => {
                 mobileWebFallBack: true,
             });
         });
+
+        it('should intialize Venmo with providing venmo options', async () => {
+            await braintreeVenmoPaymentStrategy.initialize({
+                ...options,
+                braintreevenmo: {
+                    allowDesktop: true,
+                },
+            });
+
+            expect(braintreePaymentProcessorMock.getVenmoCheckout).toHaveBeenCalledWith({
+                allowDesktop: true,
+                mobileWebFallBack: true,
+            });
+        });
     });
 
     describe('#execute()', () => {
