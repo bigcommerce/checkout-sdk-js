@@ -141,19 +141,20 @@ export default class PayPalCommerceSdk {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const {
-            intent,
-            clientId,
-            merchantId,
-            attributionId,
-        } = initializationData;
+        const { intent, clientId, merchantId, attributionId } = initializationData;
 
         return {
             options: {
                 'client-id': clientId,
                 'merchant-id': merchantId,
                 commit: true,
-                components: ['fastlane', 'buttons', 'payment-fields', 'hosted-fields', 'three-domain-secure'],
+                components: [
+                    'fastlane',
+                    'buttons',
+                    'payment-fields',
+                    'hosted-fields',
+                    'three-domain-secure',
+                ],
                 currency: currencyCode,
                 intent,
             },

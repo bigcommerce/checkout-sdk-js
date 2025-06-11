@@ -47,7 +47,7 @@ ___
 
 ### style
 
-• `Optional` **style**: `Record`<`string`, [`StripeUPEAppearanceValues`](../README.md#stripeupeappearancevalues)\>
+• `Optional` **style**: `Record`<`string`, [`StripeAppearanceValues`](../README.md#stripeappearancevalues)\>
 
 Checkout styles from store theme
 

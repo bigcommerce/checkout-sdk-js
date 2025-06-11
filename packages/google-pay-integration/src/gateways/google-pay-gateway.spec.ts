@@ -936,7 +936,7 @@ describe('GooglePayGateway', () => {
                 countryCode: 'US',
                 postalCode: '78703',
                 phone: '+1 555-555-5555',
-                customFields: [],
+                customFields: [{ fieldId: 'test field', fieldValue: '123123' }],
             };
 
             jest.spyOn(
@@ -945,6 +945,7 @@ describe('GooglePayGateway', () => {
             ).mockReturnValueOnce({
                 ...getBillingAddress(),
                 email: 'test.tester@bigcommerce.com',
+                customFields: [{ fieldId: 'test field', fieldValue: '123123' }],
             });
 
             const mappedAddress = gateway.mapToBillingAddressRequestBody(getCardDataResponse());

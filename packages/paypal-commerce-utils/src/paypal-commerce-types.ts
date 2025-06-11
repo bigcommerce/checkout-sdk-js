@@ -88,7 +88,13 @@ export enum PayPalCommerceIntent {
 }
 
 export type PayPalSdkComponents = Array<
-    'fastlane' | 'messages' | 'buttons' | 'payment-fields' | 'three-domain-secure' | 'hosted-fields' | 'googlepay'
+    | 'fastlane'
+    | 'messages'
+    | 'buttons'
+    | 'payment-fields'
+    | 'three-domain-secure'
+    | 'hosted-fields'
+    | 'googlepay'
 >;
 
 /**
@@ -97,30 +103,39 @@ export type PayPalSdkComponents = Array<
  *
  */
 export interface PayPalFastlaneSdk {
-    Fastlane(options?: PayPalFastlaneOptions): Promise<PayPalFastlane>;
     ThreeDomainSecureClient: {
-        isEligible(params:threeDSecureParameters): boolean;
-        show(): {
-            liabilityShift: string;
-            authenticationState: string;
-            nonce: string;
-        },
-    },
+        isEligible(params: threeDSecureParameters): Promise<boolean>;
+        show(): Promise<ThreeDomainSecureClientShowResponse>;
+    };
+    Fastlane(options?: PayPalFastlaneOptions): Promise<PayPalFastlane>;
+}
+
+interface ThreeDomainSecureClientShowResponse {
+    liabilityShift: LiabilityShiftEnum;
+    authenticationState: string;
+    nonce: string;
+}
+
+export enum LiabilityShiftEnum {
+    Possible = 'POSSIBLE',
+    No = 'NO',
+    Unknown = 'UNKNOWN',
+    Yes = 'YES',
 }
 
 export interface threeDSecureParameters {
     amount: string;
     currency: string;
     nonce: string;
-    threeDSRequested: string;
+    threeDSRequested: boolean;
     transactionContext: {
         experience_context: {
             brand_name?: string;
             locale: string;
             return_url: string;
             cancel_url: string;
-        },
-    },
+        };
+    };
 }
 
 export interface PayPalMessagesSdk {

@@ -223,9 +223,11 @@
 - [CreditCardInstrument](interfaces/CreditCardInstrument.md)
 - [CreditCardPaymentInitializeOptions_2](interfaces/CreditCardPaymentInitializeOptions_2.md)
 - [CreditCardPlaceHolder](interfaces/CreditCardPlaceHolder.md)
+- [CssFontSource](interfaces/CssFontSource.md)
 - [CssProperties](interfaces/CssProperties.md)
 - [Currency](interfaces/Currency.md)
 - [CustomError](interfaces/CustomError.md)
+- [CustomFontSource](interfaces/CustomFontSource.md)
 - [CustomItem](interfaces/CustomItem.md)
 - [Customer](interfaces/Customer.md)
 - [CustomerAccountRequestBody](interfaces/CustomerAccountRequestBody.md)
@@ -439,6 +441,7 @@
 - [StoredCardHostedFormBillingAddress](interfaces/StoredCardHostedFormBillingAddress.md)
 - [StoredCardHostedFormData](interfaces/StoredCardHostedFormData.md)
 - [StoredCardHostedFormInstrumentFields](interfaces/StoredCardHostedFormInstrumentFields.md)
+- [StripeAppearanceOptions](interfaces/StripeAppearanceOptions.md)
 - [StripeCustomerEvent](interfaces/StripeCustomerEvent.md)
 - [StripeElementCSSProperties](interfaces/StripeElementCSSProperties.md)
 - [StripeElementClasses](interfaces/StripeElementClasses.md)
@@ -590,9 +593,10 @@
 - [PaymentInstrument](README.md#paymentinstrument)
 - [PaymentProviderCustomer](README.md#paymentprovidercustomer)
 - [ReadableCheckoutStore](README.md#readablecheckoutstore)
+- [StripeAppearanceValues](README.md#stripeappearancevalues)
+- [StripeCustomFont](README.md#stripecustomfont)
 - [StripeElementOptions](README.md#stripeelementoptions)
 - [StripeEventType](README.md#stripeeventtype)
-- [StripeUPEAppearanceValues](README.md#stripeupeappearancevalues)
 - [WithGooglePayButtonInitializeOptions](README.md#withgooglepaybuttoninitializeoptions)
 - [WithGooglePayCustomerInitializeOptions](README.md#withgooglepaycustomerinitializeoptions)
 - [WithGooglePayPaymentInitializeOptions](README.md#withgooglepaypaymentinitializeoptions)
@@ -946,6 +950,18 @@ ___
 
 ___
 
+### StripeAppearanceValues
+
+Ƭ **StripeAppearanceValues**: `string` \| `string`[] \| `number` \| `undefined`
+
+___
+
+### StripeCustomFont
+
+Ƭ **StripeCustomFont**: [`CssFontSource`](interfaces/CssFontSource.md) \| [`CustomFontSource`](interfaces/CustomFontSource.md)
+
+___
+
 ### StripeElementOptions
 
 Ƭ **StripeElementOptions**: [`CardElementOptions`](interfaces/CardElementOptions.md) \| [`CardExpiryElementOptions`](interfaces/CardExpiryElementOptions.md) \| [`CardNumberElementOptions`](interfaces/CardNumberElementOptions.md) \| [`CardCvcElementOptions`](interfaces/CardCvcElementOptions.md) \| [`IdealElementOptions`](interfaces/IdealElementOptions.md) \| [`IbanElementOptions`](interfaces/IbanElementOptions.md) \| [`ZipCodeElementOptions`](interfaces/ZipCodeElementOptions.md)
@@ -955,12 +971,6 @@ ___
 ### StripeEventType
 
 Ƭ **StripeEventType**: [`StripeShippingEvent`](interfaces/StripeShippingEvent.md) \| [`StripeCustomerEvent`](interfaces/StripeCustomerEvent.md)
-
-___
-
-### StripeUPEAppearanceValues
-
-Ƭ **StripeUPEAppearanceValues**: `string` \| `string`[] \| `number` \| `undefined`
 
 ___
 

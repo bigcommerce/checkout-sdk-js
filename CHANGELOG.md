@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.744.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.744.0...v1.744.1) (2025-06-10)
+
+
+### Bug Fixes
+
+* **payment:** Google Pay billing address update customFields added ([925cefa](https://github.com/bigcommerce/checkout-sdk-js/commit/925cefad0ef0a0bb6c676d23661f6ebe70f0dec1))
+
+## [1.744.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.743.2...v1.744.0) (2025-06-10)
+
+
+### Features
+
+* **payment:** Move all Stripe OCS styling configs to checkout-js side ([2241704](https://github.com/bigcommerce/checkout-sdk-js/commit/2241704b2463ffcefce528dd3b21d64ae303a6e5))
+
 ### [1.743.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.743.1...v1.743.2) (2025-06-04)
 
 ### [1.743.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.743.0...v1.743.1) (2025-06-04)

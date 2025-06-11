@@ -13,4 +13,5 @@ module.exports = {
     setupFilesAfterEnv: ['../../jest-setup.js'],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
     coverageDirectory: '../../coverage/packages/stripe-integration',
+    coveragePathIgnorePatterns: ['<rootDir>/src/index.ts'],
 };

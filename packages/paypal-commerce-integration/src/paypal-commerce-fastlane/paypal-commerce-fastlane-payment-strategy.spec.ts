@@ -531,12 +531,14 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             };
             const isEligibleMock = jest.fn();
             const threeDomainSecureComponentMock = {
-                    isEligible: isEligibleMock,
+                isEligible: isEligibleMock,
+                show: jest.fn(),
             };
 
-            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
-                paymentMethodMock,
-            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodMock);
             jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
                 Promise.resolve({
                     ...paypalFastlaneSdk,
@@ -547,7 +549,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
             await strategy.execute(executeOptions);
 
-            expect(isEligibleMock).toHaveBeenCalled()
+            expect(isEligibleMock).toHaveBeenCalled();
         });
 
         it('calls threeDomainSecureComponent show', async () => {
@@ -561,16 +563,17 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             const showMock = jest.fn().mockReturnValue({
                 liabilityShift: 'possible',
                 authenticationState: 'success',
-                nonce: 'paypal_fastlane_instrument_id_nonce_3ds'
+                nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
             });
             const threeDomainSecureComponentMock = {
                 isEligible: isEligibleMock,
                 show: showMock,
             };
 
-            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
-                paymentMethodMock,
-            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodMock);
             jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
                 Promise.resolve({
                     ...paypalFastlaneSdk,
@@ -581,10 +584,10 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
 
             await strategy.execute(executeOptions);
 
-            expect(showMock).toHaveBeenCalled()
+            expect(showMock).toHaveBeenCalled();
         });
 
-        it('it throws an error if liabilityShift no or unknown', async () => {
+        it('throws an error if liabilityShift no or unknown', async () => {
             const paymentMethodMock = {
                 ...getPayPalCommerceAcceleratedCheckoutPaymentMethod(),
                 config: {
@@ -595,16 +598,17 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             const showMock = jest.fn().mockReturnValue({
                 liabilityShift: 'NO',
                 authenticationState: 'success',
-                nonce: 'paypal_fastlane_instrument_id_nonce_3ds'
+                nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
             });
             const threeDomainSecureComponentMock = {
                 isEligible: isEligibleMock,
                 show: showMock,
             };
 
-            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
-                paymentMethodMock,
-            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodMock);
 
             jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
                 Promise.resolve({
@@ -621,7 +625,7 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             }
         });
 
-        it('it throws an error if authenticationState is errored', async () => {
+        it('throws an error if authenticationState is errored', async () => {
             const paymentMethodMock = {
                 ...getPayPalCommerceAcceleratedCheckoutPaymentMethod(),
                 config: {
@@ -632,16 +636,17 @@ describe('PayPalCommerceFastlanePaymentStrategy', () => {
             const showMock = jest.fn().mockReturnValue({
                 liabilityShift: 'possible',
                 authenticationState: 'errored',
-                nonce: 'paypal_fastlane_instrument_id_nonce_3ds'
+                nonce: 'paypal_fastlane_instrument_id_nonce_3ds',
             });
             const threeDomainSecureComponentMock = {
                 isEligible: isEligibleMock,
                 show: showMock,
             };
 
-            jest.spyOn(paymentIntegrationService.getState(), 'getPaymentMethodOrThrow').mockReturnValue(
-                paymentMethodMock,
-            );
+            jest.spyOn(
+                paymentIntegrationService.getState(),
+                'getPaymentMethodOrThrow',
+            ).mockReturnValue(paymentMethodMock);
 
             jest.spyOn(paypalCommerceSdk, 'getPayPalFastlaneSdk').mockImplementation(() =>
                 Promise.resolve({
