@@ -15,10 +15,12 @@ import PaymentStrategy from '../payment-strategy';
 
 import { BraintreeError, BraintreeTokenizePayload, BraintreeVenmoCheckout } from './braintree';
 import BraintreePaymentProcessor from './braintree-payment-processor';
+import BraintreeVenmoInitializeOptions from './braintree-venmo-payment-initialize-options';
 import isBraintreeError from './is-braintree-error';
 
 export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
     private _braintreeVenmoCheckout?: BraintreeVenmoCheckout;
+    private _venmoOptions?: BraintreeVenmoInitializeOptions;
 
     constructor(
         private _store: CheckoutStore,
@@ -34,6 +36,8 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
         const state = await this._store.dispatch(
             this._paymentMethodActionCreator.loadPaymentMethod(methodId),
         );
+
+        this._venmoOptions = options.braintreevenmo;
 
         const paymentMethod = state.paymentMethods.getPaymentMethodOrThrow(methodId);
 
@@ -103,13 +107,16 @@ export default class BraintreeVenmoPaymentStrategy implements PaymentStrategy {
 
         try {
             this._braintreePaymentProcessor.initialize(clientToken);
-            this._braintreeVenmoCheckout = await this._braintreePaymentProcessor.getVenmoCheckout(
-                isBraintreeVenmoWebFallbackSupport
+            this._braintreeVenmoCheckout = await this._braintreePaymentProcessor.getVenmoCheckout({
+                ...(this._venmoOptions?.allowDesktop !== undefined
+                    ? { allowDesktop: this._venmoOptions.allowDesktop }
+                    : {}),
+                ...(isBraintreeVenmoWebFallbackSupport
                     ? {
                           mobileWebFallBack: isBraintreeVenmoWebFallbackSupport,
                       }
-                    : undefined,
-            );
+                    : {}),
+            });
         } catch (error) {
             this._handleError(error);
         }
