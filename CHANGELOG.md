@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.745.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.744.1...v1.745.0) (2025-06-11)
+
+
+### Features
+
+* **payment:** updated braintree-venmo-payment-strategy with providing initialization options ([99a6e12](https://github.com/bigcommerce/checkout-sdk-js/commit/99a6e123006a1c25a00c7be75ee4dfc9c6170d89))
+
 ### [1.744.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.744.0...v1.744.1) (2025-06-10)
 
 
